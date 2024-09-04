@@ -1,124 +1,153 @@
-Return-Path: <linux-kernel+bounces-314957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA09796BB87
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:05:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FC696BB8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837671F23151
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37EB1F23D00
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F420A1D67AA;
-	Wed,  4 Sep 2024 12:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BF21D6191;
+	Wed,  4 Sep 2024 12:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="On7ShQON"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pTuknbrN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ry9ae7zJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D8F84A21;
-	Wed,  4 Sep 2024 12:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2AD1D79AC;
+	Wed,  4 Sep 2024 12:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451512; cv=none; b=qz2A64d7dzcdR55PJjh9WZDua4GfLqTCE2msU4GsPNaXN2+Ok9S7MIpjtSityLfmzCpFjNIo2+QwjT5AqG8JuaAoEzEw69cMz/QEId6PQenobczvIuhsoyeIspPcy+1A+EyJyLKjRP+dMM3L+0VC2syMikyqax+OdpDIfX9S3Kc=
+	t=1725451540; cv=none; b=ty38PwJUT3hBip8h8aqexdJP3V8fFMGjMS13NUYkNVrO9udLyo9mIAIB/ZiSbch8k9Fo9i3ep1bYYDbs1aWyQ/BkIswZgK8k1EMLQtKGWLj/DveCf3vXf4vf/HnPwRukU8VeFgHI1M5ZJjbgP9obTByogyhTvxnRZeMw330uHB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451512; c=relaxed/simple;
-	bh=Ew+Isg/8eV7d4ccQHBgEBJbQqw5N9Qx5hh27gZJqL1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcTbGAlhhwN2mK3fH09CJBh/7+cqfCk6smksKSf7gS5Jw+poHnjW8/Xii77OscXAESTG4GB7LlCPT/UxTD+gKFFeQTGPkvxLUIISJpCCilsrZYcOGAtsS2kPbcQxIhllI69KaeJrM9f3n0eVIYUEfy+VEEMqLfo66qj7lgAXg7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=On7ShQON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B05D7C4CEC2;
-	Wed,  4 Sep 2024 12:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725451511;
-	bh=Ew+Isg/8eV7d4ccQHBgEBJbQqw5N9Qx5hh27gZJqL1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=On7ShQONg3QFun4tSzq3jLuojeGW8QbyPLT47x8Gd5tzULqq4AMycrOnh7VY7nJUJ
-	 TvqZNRJh6EeXUHrpvhzlDg1yq/ySSrFZQ56Gy7N66xP+k9esiHI6rC4Iedkgj5tM3y
-	 5L3IRPXRqE5LyJN4+8CWCiaVU0LNxZCE+4ZFjEyKh7yZDlqKWjgHJdcE0Bw/ltyh8Y
-	 4meZ6v++H4gauq8o9ZZ532RazQHHbYs2q4v0lfu/G7uAHCGR2aLe6MwaCHI0XTIHb6
-	 fWb4IptbFM6T+ZLhoKb0t3D1kyB3VHPq1kI+A+Y/y1o4MTfa/a/Yfc1N5gIFA+um+D
-	 7RqLN+A32XPXw==
-Date: Wed, 4 Sep 2024 13:05:06 +0100
-From: Will Deacon <will@kernel.org>
-To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, Theodore Ts'o <tytso@mit.edu>,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
+	s=arc-20240116; t=1725451540; c=relaxed/simple;
+	bh=AluXlLMLUiosq5okUXrQbIUwFREMxfFBRwRD+cg6JNY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UgBu/M/1lOua1vXXvPtxZGqVXuXR12h53E//YUHUTaW4BQvckQxHyBZ8eK3+PrFalQoRHLfr9JPxhQvTJ5DTrdt2OxPdtWDCE6TVSlmSlvjv6jduL5qH/Um9YCZZ9ziJOcGURAJmwyVWp4q7gFLRTmGVs/1V9Rl4VW6ItBu5xyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pTuknbrN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ry9ae7zJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725451536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6Hw9KX0aDsRCvtt79V/opkkqT87C26On3Pt3xup9fqA=;
+	b=pTuknbrNwWG8hP66O0ZwPZU0gN+D10ZzumBtgEGDQod+hHJTYtL/UtX5XCxdeQzWGw6NvD
+	zeQ8gfk6lrGw+9J3M5O05i2tseQr8TV9TPSMUj6cm4sy7fOMX7FX+JSRdf/pQCOjGgRoIJ
+	NQEWMRntCw0KIL1THWS6ANSjoSXq1KE4t/2w4Rs05QSBA/rW/LJZxnzjNClQ6wkbiGb6JA
+	mqZYbShDyNJxfsDmPevynORjT5+95Bk6MHEPwch5qWKGZ8kfwMU2SWYhaW9r3Is5hLMRVY
+	5Ap/jBkNKgw/HRFvIpazYo2rkhwP/pqWYuuMTjCzoadlWw84agzUmdauG5tNfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725451536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6Hw9KX0aDsRCvtt79V/opkkqT87C26On3Pt3xup9fqA=;
+	b=Ry9ae7zJcnI6y8LJouuKGpar6/93DfW4mXKrj+F7/bVTCDeFNVozryHcJS/7ftm3ylejqg
+	yM5im2yzFLsxiwBw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, ardb@kernel.org
-Subject: Re: [PATCH v5 0/2] arm64: Implement getrandom() in vDSO
-Message-ID: <20240904120504.GB13550@willie-the-truck>
-References: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: [PATCH printk v6 00/17] add threaded printing + the rest
+Date: Wed,  4 Sep 2024 14:11:19 +0206
+Message-Id: <20240904120536.115780-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-+Ard as he had helpful comments on the previous version.
+Hi,
 
-On Tue, Sep 03, 2024 at 12:09:15PM +0000, Adhemerval Zanella wrote:
-> Implement stack-less ChaCha20 and wire it with the generic vDSO
-> getrandom code.  The first patch is Mark's fix to the alternatives
-> system in the vDSO, while the the second is the actual vDSO work.
-> 
-> Changes from v4:
-> - Improve BE handling.
-> 
-> Changes from v3:
-> - Use alternative_has_cap_likely instead of ALTERNATIVE.
-> - Header/include and comment fixups.
-> 
-> Changes from v2:
-> - Refactor Makefile to use same flags for vgettimeofday and
->   vgetrandom.
-> - Removed rodata usage and fixed BE on vgetrandom-chacha.S.
-> 
-> Changes from v1:
-> - Fixed style issues and typos.
-> - Added fallback for systems without NEON support.
-> - Avoid use of non-volatile vector registers in neon chacha20.
-> - Use c-getrandom-y for vgetrandom.c.
-> - Fixed TIMENS vdso_rnd_data access.
-> 
-> Adhemerval Zanella (1):
->   arm64: vdso: wire up getrandom() vDSO implementation
-> 
-> Mark Rutland (1):
->   arm64: alternative: make alternative_has_cap_likely() VDSO compatible
-> 
->  arch/arm64/Kconfig                          |   1 +
->  arch/arm64/include/asm/alternative-macros.h |   4 +
->  arch/arm64/include/asm/mman.h               |   6 +-
->  arch/arm64/include/asm/vdso.h               |   6 +
->  arch/arm64/include/asm/vdso/getrandom.h     |  50 ++++++
->  arch/arm64/include/asm/vdso/vsyscall.h      |  10 ++
->  arch/arm64/kernel/vdso.c                    |   6 -
->  arch/arm64/kernel/vdso/Makefile             |  25 ++-
->  arch/arm64/kernel/vdso/vdso                 |   1 +
->  arch/arm64/kernel/vdso/vdso.lds.S           |   4 +
->  arch/arm64/kernel/vdso/vgetrandom-chacha.S  | 172 ++++++++++++++++++++
->  arch/arm64/kernel/vdso/vgetrandom.c         |  15 ++
->  tools/arch/arm64/vdso                       |   1 +
->  tools/include/linux/compiler.h              |   4 +
->  tools/testing/selftests/vDSO/Makefile       |   3 +-
->  15 files changed, 292 insertions(+), 16 deletions(-)
->  create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
->  create mode 120000 arch/arm64/kernel/vdso/vdso
->  create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
->  create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
->  create mode 120000 tools/arch/arm64/vdso
-> 
-> -- 
-> 2.43.0
-> 
+This is v6 of a series to implement threaded console printing
+as well as some other minor pieces (such as proc and sysfs
+recognition of nbcon consoles). v5 is here [0].
+
+For information about the motivation of the nbcon consoles,
+please read the cover letter of the original v1 [1].
+
+This series provides the remaining pieces of the printk
+rework. All other components are either already mainline or are
+currently in linux-next. In particular this series does:
+
+- Implement dedicated printing threads per nbcon console.
+
+- Implement forced threading of legacy consoles for PREEMPT_RT.
+
+- Implement nbcon support for proc and sysfs console-related
+  files.
+
+- Provide a new helper function nbcon_reacquire_nobuf() to
+  allow nbcon console drivers to reacquire ownership.
+
+Note that this series does *not* provide an nbcon console
+driver. That will come in a follow-up series.
+
+Here are the changes since v5:
+
+- In nbcon_kthreads_wake(), skip !CON_NBCON consoles.
+
+- In console_flush_all(), also skip nbcon consoles if
+  ft.nbcon_atomic == true and improve comments explaining
+  why.
+
+- In legacy_kthread_should_wakeup(), also skip nbcon consoles
+  if ft.nbcon_atomic == true and improve comments explaining
+  why.
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/20240830152916.10136-1-john.ogness@linutronix.de
+
+[1] https://lore.kernel.org/lkml/20230302195618.156940-1-john.ogness@linutronix.de
+
+John Ogness (16):
+  printk: nbcon: Add function for printers to reacquire ownership
+  printk: Fail pr_flush() if before SYSTEM_SCHEDULING
+  printk: Flush console on unregister_console()
+  printk: nbcon: Add context to usable() and emit()
+  printk: nbcon: Init @nbcon_seq to highest possible
+  printk: nbcon: Relocate nbcon_atomic_emit_one()
+  printk: nbcon: Use thread callback if in task context for legacy
+  printk: nbcon: Rely on kthreads for normal operation
+  printk: Provide helper for message prepending
+  printk: nbcon: Show replay message on takeover
+  proc: consoles: Add notation to c_start/c_stop
+  proc: Add nbcon support for /proc/consoles
+  tty: sysfs: Add nbcon support for 'active'
+  printk: Implement legacy printer kthread for PREEMPT_RT
+  printk: nbcon: Assign nice -20 for printing threads
+  printk: Avoid false positive lockdep report for legacy printing
+
+Thomas Gleixner (1):
+  printk: nbcon: Introduce printer kthreads
+
+ drivers/tty/tty_io.c              |   2 +-
+ fs/proc/consoles.c                |   7 +-
+ include/linux/console.h           |  48 +++
+ kernel/printk/internal.h          |  82 ++++-
+ kernel/printk/nbcon.c             | 507 +++++++++++++++++++++++++-----
+ kernel/printk/printk.c            | 467 ++++++++++++++++++++++++---
+ kernel/printk/printk_ringbuffer.h |   2 +
+ kernel/printk/printk_safe.c       |   4 +-
+ 8 files changed, 986 insertions(+), 133 deletions(-)
+
+
+base-commit: d33d5e683b0d3b4f5fc6a49ce17583f8ca663944
+-- 
+2.39.2
+
 
