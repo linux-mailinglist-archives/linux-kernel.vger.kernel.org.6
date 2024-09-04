@@ -1,216 +1,113 @@
-Return-Path: <linux-kernel+bounces-314664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25D596B68D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 695F496B690
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597682853CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238D02860C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 09:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055531CF5D1;
-	Wed,  4 Sep 2024 09:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D379D1CF5EF;
+	Wed,  4 Sep 2024 09:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4AVUaFf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Q8FF0q3T"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740821CC17F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 09:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B631CDA0A;
+	Wed,  4 Sep 2024 09:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725441891; cv=none; b=EQH15kxb7Lf8w3thbZ6tg4OJo9jX1IMNeeTesRGm/uamxquML1tVj+WnOiIjqoPvccjmIq/xqB6IKrHsTJxM9AF72ifolrauE415I3V20b2d6ZJv5p/dVss5MqSDuTJIXcWiuhdVsZhLojRdkDN+eNvNViAOU0JP9wYKUNuhGew=
+	t=1725441908; cv=none; b=GFZ6OWYpSmMxxkwbaG04VMaJ9VYs47OBUfxLnDR1qbZVX+3UuKcJQrBchiCYG0wJIyXnMFQr4A3UMD2cGoGW13C7jh12cZRhayTZI+9egcDIAx920j/U9FxNpGxrlTC9dHzjERFFNhb0KxmgFk2Ts+yhEaU7UzLGTTSaAkfWFLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725441891; c=relaxed/simple;
-	bh=4nxcKmU6jajiBD6KoLWSyQ9jwCUxguiTh+f/ZG7gKqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGpuEe9n1+Fdu3nCCggX6Hlfmy9cIkTyvWxrKADpTzzC+lSqyH1A/AdBm1dEcXHxJmI6Ipt0g+VGIWFN0GzlkYzcccPdUSb72XVQCsRExmKfRhztrStdXlyll7B+XixNwnfKZ9HztW2yVENs3adoO9C/RL+fmdaZRvBlSZjyqnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4AVUaFf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725441888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KGFQMJUPYsNlq0LAJVuMgJTw6GHx1CtdiS4TMfy5EFE=;
-	b=i4AVUaFfOnnLmSzYW84ecgX1CxhjpPDVzXWSIc7ZgQaQK/744Pn4TE+bQJT03s4/joigJZ
-	yZYK1ec9xOI10vh5VYRHCBwXmwvP60deOoW84NYbX/uUea02ooV9Jnu54AYgvZovTvsogm
-	Q8YEYynPMii3Xg51/4ntJf7YOP65XCI=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-259-UVy-f5hqOHao5mb1OtkPfA-1; Wed, 04 Sep 2024 05:24:47 -0400
-X-MC-Unique: UVy-f5hqOHao5mb1OtkPfA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8698664af8so82689566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 02:24:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725441886; x=1726046686;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGFQMJUPYsNlq0LAJVuMgJTw6GHx1CtdiS4TMfy5EFE=;
-        b=Iuc+ybBCoX6rDIF76JUv3YNG6bXAExIo0zg/57XIlNk/DlV/n8Sscc9sW3CAN4U7Bu
-         3pjlCiur4FIQtE/wQEoAxWOyhGNCAkrZOgZbfFybmI4kVg558FMWAqYObbZBQy6iN/90
-         HOlib/+o5yOBNxbOj37YxWIZMgBZde5JCoAarIBenbYI2B89ice4v8C6wxhNGsaBtKdx
-         x3lp7jYk1jLil/p5qb/f48oAS/EOoVa616FgLbOhPOQ/Z6JElvfVgdbR304IIYanmyaF
-         OKg4pK4lK8z3ZzF/C1wUaTTAJhGyZ1hNObI0k58T0YFefv1fKDsRN0Rz8yv7z2EhiMJn
-         Z6zw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8SwiAwqLaCCO9Jw8IAhpS/Od2s130CWaCBS2oYL8YFqZ6hqWBZmDTk8BbO2n/8G4ga3EsvYzT0rc/HtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS5tRZcy2AqCifSLF3B6Xj8fN4BSGQojudnRARXsu40GMNp8zO
-	y8iupaW4DRmWTfGHHWDNvhMsYqL631oXVKFOYO9N4QXFuGqlBBNNV1H7d+N8sxwqOTVvmU8Jjm7
-	Mq801TxMwsnK5dyixdF0VetBsJSBIinkA/2CRMn6BfuOkEEMmXRVijT90if2G9gWfkbKTIw==
-X-Received: by 2002:a17:906:c146:b0:a80:b016:2525 with SMTP id a640c23a62f3a-a8a4301f534mr128277566b.8.1725441885905;
-        Wed, 04 Sep 2024 02:24:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFDsGede9Yc2gEAKLKlEg1/e3/t0ltuY4f8Y/xq3t26rMqJZZIeQL9fQPB76Fol7KljyrNR4A==
-X-Received: by 2002:a17:906:c146:b0:a80:b016:2525 with SMTP id a640c23a62f3a-a8a4301f534mr128275866b.8.1725441885392;
-        Wed, 04 Sep 2024 02:24:45 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d7482sm779964266b.165.2024.09.04.02.24.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 02:24:45 -0700 (PDT)
-Message-ID: <f31f8bea-95da-4d32-afe0-9c2abc69d833@redhat.com>
-Date: Wed, 4 Sep 2024 11:24:44 +0200
+	s=arc-20240116; t=1725441908; c=relaxed/simple;
+	bh=xKWQ04VFPvAAt7omya/i1jZhJAiunLJS81ofGulNJFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AhKCfv71bWDsfWalJ+B/imLJKGOIwIPXsCFPOQK7xxc7aoJFnYnjbZFKrdfkreWYx3vpbgaPFtiEhDz/5agl0vmZKKcSqktwMF4poXUyC+9IBwe+p+GKrKkococvbR5ReVt2MoQ98F+XzhAVJHfwDp2tjexpJpktyYfXIRfAI4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Q8FF0q3T; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=23vxBjkpGpq9LNmrKHPd6qsEoTUnSRILY6cL7IaACKI=; b=Q8FF0q3TdSMGURQ0RxaNpfgSUd
+	c6+fo7jwy1pUpN6tuk0mM8yZCZr4WGjRVlZZlSzApFuKDjbOMXCsDqoJsralJ39xvo9NFbkIV2WzG
+	JZY/J15D5N6bKEwmWccVTRq1Q62sbPhRgzkzgdNoFe+wCWrzk1lNezNUc9ls+eHZ0Wfx2dH6UjE+o
+	OI0HEE4wkF8GAkaBLFtg3fBptm9pQbadFZ3Q3duU/lXd9anrEcLae0AhVgh/5nRlxEDNYQE9swgM+
+	ouVqeoMm0YSGxKZ+E/pgY4YPhNoSpQrL4ZyQQ+gollfqWr7fBl/V5YCir8llwTE0L0VPjtaCZHmDy
+	TWEvdVQQ==;
+Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1slmG4-0006q3-GI; Wed, 04 Sep 2024 11:25:00 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: conor+dt@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>,
+	alexandre.belloni@bootlin.com
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: (subset) [PATCH v2 0/8] Add support Relfor Saib board which is based on Rockchip RV1109 SoC
+Date: Wed,  4 Sep 2024 11:24:58 +0200
+Message-ID: <172544170317.2587256.1675013741817340842.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240903105245.715899-1-karthikeyan@linumiz.com>
+References: <20240903105245.715899-1-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the extcon tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240904152421.4e0ad2b7@canb.auug.org.au>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240904152421.4e0ad2b7@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi all,
-
-On 9/4/24 7:24 AM, Stephen Rothwell wrote:
-> Hi all,
+On Tue, 3 Sep 2024 16:22:37 +0530, Karthikeyan Krishnasamy wrote:
+> Rockchip RV1109 is compatible with Rockchip RV1126.
+> In this series, adding required missing peripheral in
+> RV1126 and its pin mux.
 > 
-> After merging the extcon tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Relfor Saib board is equipped with 1GB of RAM and 4GB of eMMC
+> Pheripherals like Bluetooth 4.2, Wifi 5G, audio-codec,
+> ir transmitter and receiver, etc
 > 
-> drivers/extcon/extcon-lc824206xa.c:413:22: error: initialization of 'unsigned int' from 'const enum power_supply_usb_type *' makes integer from pointer without a cast [-Wint-conversion]
->   413 |         .usb_types = lc824206xa_psy_usb_types,
->       |                      ^~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/extcon/extcon-lc824206xa.c:413:22: note: (near initialization for 'lc824206xa_psy_desc.usb_types')
-> drivers/extcon/extcon-lc824206xa.c:413:22: error: initializer element is not computable at load time
-> drivers/extcon/extcon-lc824206xa.c:413:22: note: (near initialization for 'lc824206xa_psy_desc.usb_types')
-> drivers/extcon/extcon-lc824206xa.c:414:10: error: 'const struct power_supply_desc' has no member named 'num_usb_types'; did you mean 'usb_types'?
->   414 |         .num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->       |          ^~~~~~~~~~~~~
->       |          usb_types
-> In file included from include/linux/kernel.h:16,
->                  from include/linux/cpumask.h:11,
->                  from arch/x86/include/asm/paravirt.h:21,
->                  from arch/x86/include/asm/cpuid.h:62,
->                  from arch/x86/include/asm/processor.h:19,
->                  from include/linux/sched.h:13,
->                  from include/linux/delay.h:23,
->                  from drivers/extcon/extcon-lc824206xa.c:20:
-> include/linux/array_size.h:11:25: error: initialization of 'const enum power_supply_property *' from 'long unsigned int' makes pointer from integer without a cast [-Wint-conversion]
->    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->       |                         ^
-> drivers/extcon/extcon-lc824206xa.c:414:26: note: in expansion of macro 'ARRAY_SIZE'
->   414 |         .num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->       |                          ^~~~~~~~~~
-> include/linux/array_size.h:11:25: note: (near initialization for 'lc824206xa_psy_desc.properties')
->    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->       |                         ^
-> drivers/extcon/extcon-lc824206xa.c:414:26: note: in expansion of macro 'ARRAY_SIZE'
->   414 |         .num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
->       |                          ^~~~~~~~~~
-> 
-> Caused by commit
-> 
->   e508f2606c0b ("extcon: Add LC824206XA microUSB switch driver")
-> 
-> interatcing with commit
-> 
->   364ea7ccaef9 ("power: supply: Change usb_types from an array into a bitmask")
-> 
-> from the battery tree.
+> [...]
 
-Since I'm the author of both commits this is my bad, sorry.
+Applied, thanks!
 
-Stephen, thank you for fixing this in -next.
-
-Chanwoo, Sebastian send a pull-request for an immutable branch with
-these changes:
-
-https://lore.kernel.org/linux-pm/ez5ja55dl7w7ynq2wv4efsvvqtk4xyalf4k6agtsuhpgrtlpg3@d6ghlle4cu2q/
-
-Can you please merge the ib-psy-usb-types-signed tag into
-extcon.git/extcon-next and then apply Stephen's fix so that Linus
-does not get hit by this build error when he merges the extcon
-changes for 6.12 ?
-
-Regards,
-
-Hans
+[1/8] ARM: dts: rockchip: Add i2c3 node for RV1126
+      commit: 15db79e0bdcb883f0d7a678fe8701a270467a339
+[2/8] ARM: dts: rockchip: Add i2s0 node for RV1126
+      commit: 212cda94739b1644e38ef4f588bb580c12feb9a7
+[3/8] ARM: dts: rockchip: Add pwm node for RV1126
+      commit: 898eb75f443eaf6cb46facf52fc337fbdbdca079
 
 
+This means I applied a part of your series and you don't need to
+resubmit the patches mentioned above in a next submission.
 
 
-> I have applied the following merge fix patch.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 4 Sep 2024 15:19:19 +1000
-> Subject: [PATCH] fix up for "extcon: Add LC824206XA microUSB switch driver"
-> 
-> interacting with "power: supply: Change usb_types from an array into a
-> bitmask" from het battery tree.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/extcon/extcon-lc824206xa.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-lc824206xa.c b/drivers/extcon/extcon-lc824206xa.c
-> index d58a2c369018..56938748aea8 100644
-> --- a/drivers/extcon/extcon-lc824206xa.c
-> +++ b/drivers/extcon/extcon-lc824206xa.c
-> @@ -393,14 +393,6 @@ static int lc824206xa_psy_get_prop(struct power_supply *psy,
->  	return 0;
->  }
->  
-> -static const enum power_supply_usb_type lc824206xa_psy_usb_types[] = {
-> -	POWER_SUPPLY_USB_TYPE_SDP,
-> -	POWER_SUPPLY_USB_TYPE_CDP,
-> -	POWER_SUPPLY_USB_TYPE_DCP,
-> -	POWER_SUPPLY_USB_TYPE_ACA,
-> -	POWER_SUPPLY_USB_TYPE_UNKNOWN,
-> -};
-> -
+I re-sorted some properties and nodes according the alphabetical
+sorting we use. Please see 
 
->  static const enum power_supply_property lc824206xa_psy_props[] = {
->  	POWER_SUPPLY_PROP_ONLINE,
->  	POWER_SUPPLY_PROP_USB_TYPE,
-> @@ -410,8 +402,11 @@ static const enum power_supply_property lc824206xa_psy_props[] = {
->  static const struct power_supply_desc lc824206xa_psy_desc = {
->  	.name = "lc824206xa-charger-detect",
->  	.type = POWER_SUPPLY_TYPE_USB,
-> -	.usb_types = lc824206xa_psy_usb_types,
-> -	.num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
-> +	.usb_types = BIT(POWER_SUPPLY_USB_TYPE_SDP) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_CDP) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_DCP) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_ACA) |
-> +		     BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN),
->  	.properties = lc824206xa_psy_props,
->  	.num_properties = ARRAY_SIZE(lc824206xa_psy_props),
->  	.get_property = lc824206xa_psy_get_prop,
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst
 
+for the details.
+
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
