@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-315900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D7D96C855
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E456F96C859
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 577AFB22AC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999281F25DA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7841482F6;
-	Wed,  4 Sep 2024 20:24:58 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120661F19A;
+	Wed,  4 Sep 2024 20:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYOQtf2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB911448E4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 20:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F101EBFEC;
+	Wed,  4 Sep 2024 20:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725481498; cv=none; b=Ct/V1LHxQtPkpl60CxSZOr85TmIeIguEHM6XNDsLM7gVAWANnklNJ1/xFlxz/U74g8XYR9KImXa2AR9sIRTad5LvmqbuIQ+UfaX3sbHWpMwYGoA6JU5SFxTf0ZfFAOdVwT6YPfW91cttCoMJJ8uuaJ1KpbAiS4APfLGq3HYqzuk=
+	t=1725481528; cv=none; b=X7Sfqh7xNR2N325MQl5/JRMNDfV9umNjBwGUFjGMYQiLvRktZGM6Uz6+INpPYCWf4Hv0qwMWqA7msLaFVl6TniXTLA2cV1JY52G0PciCOpxXr6zjVj/UKrLfgzVK1nTd/qBMCwme0VZitRuPAX5mXAbszWaXh6dPAqCYKmOciuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725481498; c=relaxed/simple;
-	bh=iGneDPgEDlQeqkQPamzvDWY3vvyWNku/XjBXEJT2th8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRduZXfxtRsTqPifaAmXFEcWvd2P/qeHt5c710GLvGEtNF0cOjicdIuyhuIpd//BdkTqFTcBTp0jh6nwiqNjO3ozPNLom8YoQ87+TvCchsTFQRVtKQKJWRC+oFHUMAzseQX/II8v33ROC+62GymV9SZoHTc/fp2SJBDfbYCLeds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id be5d3e32-6afb-11ef-825d-005056bdfda7;
-	Wed, 04 Sep 2024 23:24:53 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 4 Sep 2024 23:24:53 +0300
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Philipp Stanner <pstanner@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fix devres regression in pci_intx()
-Message-ID: <ZtjCFR3kd5GfV_6m@surfacebook.localdomain>
-References: <20240725120729.59788-2-pstanner@redhat.com>
- <20240903094431.63551744.alex.williamson@redhat.com>
- <2887936e2d655834ea28e07957b1c1ccd9e68e27.camel@redhat.com>
- <24c1308a-a056-4b5b-aece-057d54262811@kernel.org>
- <dcbf9292616816bbce020994adb18e2c32597aeb.camel@redhat.com>
- <20240904120721.25626da9.alex.williamson@redhat.com>
+	s=arc-20240116; t=1725481528; c=relaxed/simple;
+	bh=43aHIKNm+uwD8JFpzzEm3c7p34nh/C+jP5YA/JV9aCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qO+6NyfThJCEVGGZi6B9SrTbDH5U4sXfUtwPSfRusIFUuax1YjmfMmwC8yx/tg4avYrDQDxXjSkIL5pQL4gwrN2+Y1nnaWPFIjGkTwGJ6K9wUHYT6xm6YiY6QiirSFK44r6epWzhhGAnEJ9xa0n6udfmMNQGXbjsoBPLVwMbNMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYOQtf2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32ECC4CEC2;
+	Wed,  4 Sep 2024 20:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725481528;
+	bh=43aHIKNm+uwD8JFpzzEm3c7p34nh/C+jP5YA/JV9aCQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lYOQtf2uu31gqEXgfXzlC2nCvn+zym3kL3RytM3AA4jUMEzTmlE+t7ndRmWsQ3nFW
+	 W1txZOKNLNO9gBQJzoiTKyj+wuFI/D2hGt5M1pzxeSpSTcrFCDXdp7S2sGqYjh14Og
+	 SzH7M4WX9gG5KIaVw2BwLJT+rVnVeWMtE4scSkupLK+98zLY9gD9Jz0Y/eRU2xzYdt
+	 cWcYaVRR/+bM9vaEm/f+KMIo+c0Jtk16m+5YSvgZTmKPx+TFy3LVekcOqIXox6nitt
+	 pfYIS5yG3vCj0XnLyFuoIt24oNXgNdhvX8sKYXO6sG7I+UgOpLlei77Mm191pbFpPP
+	 MIjqpJfl8LwxQ==
+Date: Wed, 4 Sep 2024 10:25:27 -1000
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com, peterz@infradead.org, mingo@redhat.com
+Cc: cgroups@vger.kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHSET v2 sched_ext/for-6.12] sched_ext: Add cgroup support
+Message-ID: <ZtjCN6p98-aVjHHh@slm.duckdns.org>
+References: <20240826225822.791578-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,42 +57,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904120721.25626da9.alex.williamson@redhat.com>
+In-Reply-To: <20240826225822.791578-1-tj@kernel.org>
 
-Wed, Sep 04, 2024 at 12:07:21PM -0600, Alex Williamson kirjoitti:
-> On Wed, 04 Sep 2024 15:37:25 +0200
-> Philipp Stanner <pstanner@redhat.com> wrote:
-> > On Wed, 2024-09-04 at 17:25 +0900, Damien Le Moal wrote:
-
-...
-
-> > If vfio-pci can get rid of pci_intx() alltogether, that might be a good
-> > thing. As far as I understood Andy Shevchenko, pci_intx() is outdated.
-> > There's only a hand full of users anyways.
+On Mon, Aug 26, 2024 at 12:57:38PM -1000, Tejun Heo wrote:
+> This is v2 of sched_ext cgroup support patchset. Changes from v1
+> (http://lkml.kernel.org/r/20240808002550.731248-1-tj@kernel.org) are:
 > 
-> What's the alternative?
+> - cgroup interface file visiblity toggling based on SCX_OPS flags is dropped
+>   as it caused more confusion than helping anything. sched_ext now just
+>   warns when unimplemented features are used.
+> 
+> This was originally taken from the cgroup integration part of the sched_ext
+> v6 patchset:
+> 
+>   http://lkml.kernel.org/r/20240501151312.635565-1-tj@kernel.org
+> 
+> This patchset is on top of sched_ext/for-6.12 (9ad2861b773d ("sched_ext:
+> Allow dequeue_task_scx to fail")) and contains the following patches:
+> 
+>  0001-sched-Expose-css_tg.patch
+>  0002-sched-Make-cpu_shares_read_u64-use-tg_weight.patch
+>  0003-sched-Introduce-CONFIG_GROUP_SCHED_WEIGHT.patch
+>  0004-sched_ext-Add-cgroup-support.patch
+>  0005-sched_ext-Add-a-cgroup-scheduler-which-uses-flattene.patch
 
-From API perspective the pci_alloc_irq_vectors() & Co should be used.
+Applied to sched_ext/for-6.12.
 
-> vfio-pci has a potentially unique requirement
-> here, we don't know how to handle the device interrupt, we only forward
-> it to the userspace driver.  As a level triggered interrupt, INTx will
-> continue to assert until that userspace driver handles the device.
-> That's obviously unacceptable from a host perspective, so INTx is
-> masked at the device via pci_intx() where available, or at the
-> interrupt controller otherwise.  The API with the userspace driver
-> requires that driver to unmask the interrupt, again resulting in a call
-> to pci_intx() or unmasking the interrupt controller, in order to receive
-> further interrupts from the device.  Thanks,
-
-I briefly read the discussion and if I understand it correctly the problem here
-is in the flow: when the above mentioned API is being called. Hence it's design
-(or architectural) level of issue and changing call from foo() to bar() won't
-magically make problem go away. But I might be mistaken.
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+tejun
 
