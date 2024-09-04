@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-315308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5623D96C0DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:37:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBB096C0EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893061C24AF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:37:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E20628225E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288F41DC052;
-	Wed,  4 Sep 2024 14:37:39 +0000 (UTC)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025191DB54A;
+	Wed,  4 Sep 2024 14:39:20 +0000 (UTC)
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F2B1DA61C;
-	Wed,  4 Sep 2024 14:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C9929402;
+	Wed,  4 Sep 2024 14:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725460658; cv=none; b=UOzb1Y9EPcbzcHoaPw+Drn3O1hKUX7pwiTezTsDj3sEbxUjqbXHqwX8ynPVvwhlt/KZQZMaOF6bxOv5M6JTOj9gqtdz7MrKYioGSQAkUtlVBgT3fSiSpkglYxKsJYx/c1+gv+8iL0qq8kpWTuk9Dm8OG2MqBEULUj+HbnukDeDo=
+	t=1725460759; cv=none; b=A7m0lSKhwvsRSwcqcARG4qbg12HHj2SjAiedmHFVqVodxFfjj5ReCPSqbhqGuPoCeGSZnpY1NUD5lC9vfs6oYpQxQwkDWw1iykl4GB9LdOasUa2gR+bZNRdL3EBLqz7F8owuviNDbYgCvJJAhdCmk9wIUYeWdo88ECTDJBg48hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725460658; c=relaxed/simple;
-	bh=8FBaJR3/i5iho+H6LO/jm9p/DpWHmVIC7QJH1el3y2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwSXqGUeCOet9R08gllCDHBzriZ/eQb9qInx5j+0yX1SjaplI+PY+Upn6xvx1NZYazOEAJgRH4ILaoCPEAgyTMpigF2ZMGRh/aMkttkWXnHBgiYA1SKdX3/apf2tEht8/cIMRce0g2d9QtEFyfHNenNBW5am+SF28GHfxmqFqpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1725460759; c=relaxed/simple;
+	bh=5quALXjRZwLUm7dAnwuV4FUF2d6AtY1LbRXAskSXcPA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=umGeN9zHR6pcUAgX2gnCReNYNEDiWdwzmVpqHZQsSazV9sPmsKGQ7RybNV0B1xGike1spYhV7iwPSVSoxZO9jnvgPJvg73G/pNUrTLXccWfMDu1O2Cp0sVHk9PHSoGfFXNNa4s3VUDznmE21JnIXaE3CCckKKNk5ScPqyXuoqUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cb3db0932cso5013844a12.1;
-        Wed, 04 Sep 2024 07:37:37 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-82a24dec9cbso29475839f.1;
+        Wed, 04 Sep 2024 07:39:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725460657; x=1726065457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XeTNdvUSWx7HJEOyqeFtoigbheBAm0ccbTjqgX0Hr8w=;
-        b=l8Pe/765z+pbH8NoRXbf2DA9X6A6sbz5pmwBtMu/8/gFq248DmVAmHqJeBVwnkco7Y
-         UO8JeyFhScwQLozP4Ye43ffbB4zvqWPppDhqdTwyg2gDeXINmRGo8AHsHHcGkdDw1pUA
-         yxcQBNCNTVu7RBwjY7l3yaiV4IIM336y96Tqzr+ML9eovVKm0l/VxtEw/+OGMFan0y5t
-         J4SSK/jQl1W6GRuZ1fWfDwMrcN/YCADhYkFQtGGdseoJiC4oEXCCBFHlS/74hFDb6ZdF
-         w86yaSGR65gK1GLlM8kRnkqmBemjweSn8Wxl4TOjXZHNPrLjfJ+nY0Vg9+mlttQx5xdX
-         rD4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUV/hjxxZLzhzUfr4oUOuxjOCwFYeEyzFvS5xhm/2m8MR8e8y2cnH1gcumKTGr87QASK1iEhPm/gmZ+Wkzf@vger.kernel.org, AJvYcCVYPaBH8bRslE57uY/HH+TgFxax5Oveiyeu1oxKLUQfSH1LBq9HKuRCpTX/xrmyIypWsHabtKTpa22KILxPE1rW2lM=@vger.kernel.org, AJvYcCWHmfnn59rvlsxTNq91fo2XuTImyYRX9MEb2VmnzUQ8YcFw9MLAw+fhPS5y452/4fvUYoNyvI3OicEG@vger.kernel.org, AJvYcCX0QN6McTMZ7WGaQBhQX9QpByJT7rV/B248xCWSPsTDqe6h5xehLNGN/VNbTROJy4laq3T+vn5VHNeC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgmVcbpYtyxcTrzAhb7XmScm2GNhVTehLOW+Oq+s42nVHQzq8R
-	fQGl8OFhISvwUypk3EZPecq7lFhSMDcJmbTL+iFaZNEmyb5G/oRD
-X-Google-Smtp-Source: AGHT+IGFm3a6nIytISSTxdeWLXJD9PZzc11mSxiB8yoFNa+9OMf68AqsNjBgX2pnazA24lTCn9MZ5g==
-X-Received: by 2002:a05:6a20:d80b:b0:1ca:ccd0:1bf6 with SMTP id adf61e73a8af0-1cce0ffe3cemr20844080637.8.1725460656582;
-        Wed, 04 Sep 2024 07:37:36 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8c61asm1526789a12.25.2024.09.04.07.37.35
+        d=1e100.net; s=20230601; t=1725460757; x=1726065557;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0kvnOjXzU3FwJLWDXcoK40WNU+7mM5+pyM0Rfyz7Dho=;
+        b=Zu8T3+vXfIjRtSMHWLbJy1lwZQmPq0lE9eonku71nLZAhFNp+Vl842XidKjgF9SDut
+         QJFG5dBRAFXxyrpVKlf8F4HsM0L67JlTpwrrfFFEnWiAuiF/yAIx2XNKqD0EPjcrdA4T
+         kUkw6VyRxASkKKasoZAHe7XDHoS4ffMwdquwk+zooOr/lpEoVlwkOBP5C533xoQSHvTv
+         JbgYYquCNGvv96YS1VVcJACnCf4J+BltbhTZuf7dsUlHUA7I+auB+nAh2BRnBkzsg9vj
+         Qye9qtv2itOZrqUIn3ewnf1L6Oo1X3pEYsSnMFMunxKnY4pYPU5Z4BlRMFeFAe37XOz+
+         A+eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ6qzuCg4zMzCrUwIOycBQWW+kZLbYNiuXzuVa4EBNsl5D8kFu0qHYDzs52GsKWTlEavxebUPq/DZA/Mg=@vger.kernel.org, AJvYcCXOv2n02N4iGy6lzkZ1lBahgRqaNMCpn3O1wKWmIRpLM+IT5yUWt1lH3wsY0hWwg7GxFlnfbkBrDGYm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjS7CMSrEEpiZPPCs4cKeriaTEYVArFAj7YiFfUupuVAXCMz0T
+	x599dBe2qlof1jXmUKcPZjm60hI/EGM59AW2FtmCnZGydKjVg6Q=
+X-Google-Smtp-Source: AGHT+IHs+kGc3Dt1q5uA8HC/zLD62drs9vIUHQQGPiLmP2kH7XWDuEOvltWaU6zXKTgCQg8hAEy9mQ==
+X-Received: by 2002:a05:6e02:1a65:b0:39f:558f:dd8b with SMTP id e9e14a558f8ab-39f797bd912mr17901175ab.12.1725460757099;
+        Wed, 04 Sep 2024 07:39:17 -0700 (PDT)
+Received: from [192.168.75.138] ([204.8.116.104])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e9632dsm3139181173.93.2024.09.04.07.39.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:37:35 -0700 (PDT)
-Date: Wed, 4 Sep 2024 23:37:34 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: hisilicon,kirin-pcie: add
- top-level constraints
-Message-ID: <20240904143734.GA3032973@rocinante>
-References: <20240818172843.121787-1-krzysztof.kozlowski@linaro.org>
+        Wed, 04 Sep 2024 07:39:16 -0700 (PDT)
+Message-ID: <8ee4ce7c4eb56ec80365492407b76ee3dc4b6347.camel@kernel.org>
+Subject: Re: [PATCH] nfs: fix memory leak in error path of nfs4_do_reclaim
+From: Trond Myklebust <trondmy@kernel.org>
+To: Li Lingfeng <lilingfeng3@huawei.com>, anna@kernel.org
+Cc: jlayton@kernel.org, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  yukuai1@huaweicloud.com, houtao1@huawei.com,
+ yi.zhang@huawei.com,  yangerkun@huawei.com, lilingfeng@huaweicloud.com
+Date: Wed, 04 Sep 2024 10:38:45 -0400
+In-Reply-To: <20240904123457.3027627-1-lilingfeng3@huawei.com>
+References: <20240904123457.3027627-1-lilingfeng3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818172843.121787-1-krzysztof.kozlowski@linaro.org>
 
-Hello,
+On Wed, 2024-09-04 at 20:34 +0800, Li Lingfeng wrote:
+> Commit c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
+> nfs4_do_reclaim()") separate out the freeing of the state owners from
+> nfs4_purge_state_owners() and finish it outside the rcu lock.
+> However, the error path is omitted. As a result, the state owners in
+> "freeme" will not be released.
+> Fix it by adding freeing in the error path.
+>=20
+> Fixes: c77e22834ae9 ("NFSv4: Fix a potential sleep while atomic in
+> nfs4_do_reclaim()")
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+> =C2=A0fs/nfs/nfs4state.c | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+> index 877f682b45f2..30aba1dedaba 100644
+> --- a/fs/nfs/nfs4state.c
+> +++ b/fs/nfs/nfs4state.c
+> @@ -1957,6 +1957,7 @@ static int nfs4_do_reclaim(struct nfs_client
+> *clp, const struct nfs4_state_recov
+> =C2=A0				set_bit(ops->owner_flag_bit, &sp-
+> >so_flags);
+> =C2=A0				nfs4_put_state_owner(sp);
+> =C2=A0				status =3D
+> nfs4_recovery_handle_error(clp, status);
+> +				nfs4_free_state_owners(&freeme);
+> =C2=A0				return (status !=3D 0) ? status : -
+> EAGAIN;
+> =C2=A0			}
+> =C2=A0
 
-> Properties with variable number of items per each device are expected to
-> have widest constraints in top-level "properties:" block and further
-> customized (narrowed) in "if:then:".  Add missing top-level constraints
-> for clock-names and reset-names.
+Nice catch! Yes, that leak has been there for quite a while. Thanks for
+finding it.
 
-Applied to dt-bindings, thank you!
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trond.myklebust@hammerspace.com
 
-[01/03] dt-bindings: PCI: hisilicon,kirin-pcie: Add top-level constraints
-        https://git.kernel.org/pci/pci/c/ac44be2155cd
 
-[02/03] dt-bindings: PCI: renesas,pci-rcar-gen2: Add top-level constraints
-        https://git.kernel.org/pci/pci/c/c62a0b8fe8bf
-
-[03/03] dt-bindings: PCI: socionext,uniphier-pcie-ep: Add top-level constraints
-        https://git.kernel.org/pci/pci/c/a5c1bf7e9a46
-
-	Krzysztof
 
