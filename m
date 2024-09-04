@@ -1,112 +1,161 @@
-Return-Path: <linux-kernel+bounces-315057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA34B96BD45
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:57:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14A996BD61
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185E91C2498D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B97282F21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95F1D9D89;
-	Wed,  4 Sep 2024 12:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9545C1DB551;
+	Wed,  4 Sep 2024 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4L4ihBc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O0QF9M3E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B0D1D04B8
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 12:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844C91D88CC;
+	Wed,  4 Sep 2024 12:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454597; cv=none; b=AhUPXVmUoEmlmr9yuvG34OvMpPx4Co7sSC/caa8xsmRswNPftg/gwhshSzq3tLsLIrM6js6/68Vb+Bv8hRsQHNoai9kJ43elquE3SQLXtU2t0f27nHv4yuuSpVLyWGEUfO6nUry8MDMGYF7TkMXk+QWpLalGx2AfBEPH3mww+LM=
+	t=1725454620; cv=none; b=WkH+tw2YC1cHOghKwUdgdSciMsVbpnOn+vL9M4DxM+DB+pidsIOr6yITmEbbdJr5NidJz5ZsU4u2xPVphDDvl3GiHTYIypV41T+S1CWQ3a1sAwX1YEsUOl0ayc1FEvppK5axgOuVztw44RfNtjmollg8KvQER45QX5Z/DUhqVCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454597; c=relaxed/simple;
-	bh=w12zITrlcS7mKMPlkOl2ZGejq1Eo5bn874xDYkUxjBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vq7n7qk2JW+Ax0Y1HjxFqzJI7m5G7F4hj7ctcChDIiwVWWLyEoMO+tGf5Vt1LRkRZEavBPiurHHWhwyYVHg6uV0ksz79zfktilqk4ZFBJ0uVW6VejE0lpzlLX3gARPRmodlEKE6464KT/R8L8xIyzaE02UOAWgybyy5HypdMII4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4L4ihBc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725454595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Y6zLyuFowAQXUpe4yq3nH5ym9sfNZkhp6uZ2OTgfrU=;
-	b=e4L4ihBckG7kmk6LdJq6dfsI7HzIIGI5j+1JUr0WoahKUdMdw7VA5kzUsUYmfdVdiXSpyO
-	nCo/m9T56R9ODS0Rxho8R7UxNgWvH90ZBrp9+cnkP/DKrp9UGAJc/X1KB9ljUn1GuG4LZv
-	5eel5AakyyAytjoI8eoKn9WofWeouCA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-3Cjfp9NyMZSq6G0H6OWfpw-1; Wed,
- 04 Sep 2024 08:56:31 -0400
-X-MC-Unique: 3Cjfp9NyMZSq6G0H6OWfpw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AEDDE1955DD2;
-	Wed,  4 Sep 2024 12:56:29 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.59])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F0E5195605A;
-	Wed,  4 Sep 2024 12:56:23 +0000 (UTC)
-Date: Wed, 4 Sep 2024 20:56:18 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Muchun Song <songmuchun@bytedance.com>
-Cc: axboe@kernel.dk, yukuai1@huaweicloud.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] block: fix ordering between checking
- QUEUE_FLAG_QUIESCED and adding requests
-Message-ID: <ZthY8prW0dZ0+Nco@fedora>
-References: <20240903081653.65613-1-songmuchun@bytedance.com>
- <20240903081653.65613-3-songmuchun@bytedance.com>
+	s=arc-20240116; t=1725454620; c=relaxed/simple;
+	bh=wMuz/yHSOeQnGRwmUte07k6KL4Jpdqqu0VGa+SJw7oE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DJ+VnPrPYbOOX76c+0G5RBLQnXECMYANjN+aaKG7miuPG5T/poPJjNG2NKnf4EuHfHfIyNLdFR9TrHoZFoBgVxctNqdc8bJhporQIDoU/KloFYdGtWNUxnmQ+rLZp2hG82dSS9W5vltxi7cuhW4VsxtdwqEaRVa8AugikaHzhqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O0QF9M3E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484B7eIB010562;
+	Wed, 4 Sep 2024 12:56:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lWsJOKrtYOtMLpjkVEgXvDSjNg2OYftc4eM9GT6EFA4=; b=O0QF9M3EzEzUZbiD
+	rTJNm4LIoyFbfqffGMGLp4bzgnpN+YpCj91Xlo4SX08yqB0Hg1Yy0V4WjRgQXIUV
+	4rqM5BKUe9toE0VC98jzD2NbjRXAsGj9xLhZAWFxDJsNKlbNj5geNPhDwejrSAMU
+	D6asEzx3erjLzvnG7cqYrjdodcF4v229a36moT2hZKFTQ+yHTDJJTPf01rjDo3GY
+	8pHItxVHkv/oXO+esnZl9Tc+QzJlMqqMVBFCj/kFhWvABEjQZpiCCtqJUgGlyPqf
+	t5XrzfapwOasIeNqsk84mXXxoyfOBOxzHZCkfIlNrf0ah4GqIg6UHbeVKNkIaIn/
+	WTVvMQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxfakpe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Sep 2024 12:56:29 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484CuSmB017921
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Sep 2024 12:56:28 GMT
+Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 05:56:24 -0700
+Message-ID: <634ab05e-3b8c-4cc1-bf23-0c68c1d28484@quicinc.com>
+Date: Wed, 4 Sep 2024 05:56:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903081653.65613-3-songmuchun@bytedance.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 17/21] dt-bindings: serial: document support for
+ SA8255p
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-18-quic_nkela@quicinc.com>
+ <db4cb31f-b219-4ee8-b519-fdec7f7b8760@kernel.org>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <db4cb31f-b219-4ee8-b519-fdec7f7b8760@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 56I2SLtd3gnT1WeUGucUYjLKMtSJHPRc
+X-Proofpoint-ORIG-GUID: 56I2SLtd3gnT1WeUGucUYjLKMtSJHPRc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ adultscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409040098
 
-On Tue, Sep 03, 2024 at 04:16:52PM +0800, Muchun Song wrote:
-> Supposing the following scenario.
-> 
-> CPU0                                        CPU1
-> 
-> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
-> blk_mq_run_hw_queue()                       blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
->     if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
->         return                                      blk_mq_run_hw_queue()
->     blk_mq_sched_dispatch_requests()                    if (!blk_mq_hctx_has_pending())     4) load
->                                                            return
-> 
-> The full memory barrier should be inserted between 1) and 2), as well as
-> between 3) and 4) to make sure that either CPU0 sees QUEUE_FLAG_QUIESCED is
-> cleared or CPU1 sees dispatch list or setting of bitmap of software queue.
-> Otherwise, either CPU will not re-run the hardware queue causing starvation.
-> 
-> So the first solution is to 1) add a pair of memory barrier to fix the
-> problem, another solution is to 2) use hctx->queue->queue_lock to synchronize
-> QUEUE_FLAG_QUIESCED. Here, we chose 2) to fix it since memory barrier is not
-> easy to be maintained.
-> 
-> Fixes: f4560ffe8cec1 ("blk-mq: use QUEUE_FLAG_QUIESCED to quiesce queue")
-> Cc: stable@vger.kernel.org
-> Cc: Muchun Song <muchun.song@linux.dev>
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+On 9/4/2024 12:47 AM, Krzysztof Kozlowski wrote:
+> On 04/09/2024 00:02, Nikunj Kela wrote:
+>> Add compatibles representing UART support on SA8255p.
+>>
+>> Clocks and interconnects are being configured in the firmware VM
+>> on SA8255p platform, therefore making them optional.
+>>
+>> CC: Praveen Talari <quic_ptalari@quicinc.com>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> ---
+>>  .../serial/qcom,serial-geni-qcom.yaml         | 53 ++++++++++++++++---
+>>  1 file changed, 47 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> index dd33794b3534..b63c984684f3 100644
+>> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> @@ -10,14 +10,13 @@ maintainers:
+>>    - Andy Gross <agross@kernel.org>
+>>    - Bjorn Andersson <bjorn.andersson@linaro.org>
+>>  
+>> -allOf:
+>> -  - $ref: /schemas/serial/serial.yaml#
+>> -
+>>  properties:
+>>    compatible:
+>>      enum:
+>>        - qcom,geni-uart
+>>        - qcom,geni-debug-uart
+>> +      - qcom,sa8255p-geni-uart
+>> +      - qcom,sa8255p-geni-debug-uart
+>
+> Anyway, the entire patchset is organized wrong. Or you sent only subset.
+>
+> Where is the driver change? This cannot work. To remind bindings go with
+> the driver (nothing new here).
+>
+> Best regards,
+> Krzysztof
 
+The driver changes will soon be posted. They are being reviewed
+internally. For a quick look on what is coming next, you can refer to
+CodeLinaro git repo[1]
 
-thanks,
-Ming
+[1]:
+https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/tree/nkela/sa8255p_v6_11_rc2?ref_type=heads
+
 
 
