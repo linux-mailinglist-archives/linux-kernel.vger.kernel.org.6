@@ -1,188 +1,95 @@
-Return-Path: <linux-kernel+bounces-315995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BDC96C991
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 576F496C993
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 23:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB931C21CB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:31:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C4F1C212B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 21:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7120F155A26;
-	Wed,  4 Sep 2024 21:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DC714F118;
+	Wed,  4 Sep 2024 21:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="ZRwoJ9tx"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2KC8rb4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECA613CFBD;
-	Wed,  4 Sep 2024 21:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ED45256;
+	Wed,  4 Sep 2024 21:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725485501; cv=none; b=DRTLaA3ful+lS/SGRAAsEv83Aat9Inhx/bFz/iA0t+yWCH0GIlt1AZvM3dYZ4r0t7RTKokxS0V3mBSwjyvHx+F3fXzmtPdBxMCol0Gyz5H60XpmSwGnGuzEBUnV8gKnuCe2d2UcycXgq0WPhYMRbrLFX67gsnR+11J5GfF+lh5o=
+	t=1725485550; cv=none; b=b/VV6Hk1tZO/gAFcTB3ELCCI6ClL43geho1XvQT9MZ4RL0Sl16GStAuvRjrOklcRV5PTKW+/V6Oqf3moeudTgvZNfQYH3yZTqGtsB2nqs8bup0TH4CF8HNwMvUT4pFCNJ8hjQ6D4KRVKZ7EnmE2m5Cu+oT5oRHoH+5zh2nWlCV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725485501; c=relaxed/simple;
-	bh=d3NsZoIxYVB0YgQKQudIzvQ3zMytbjN8hCyMoMOuoMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QxXliWPORN4ik59MkbWz7BmhkbIdvXRYWfHiCfExQ8llTpUDv0f4wZkte+e3/auw372nEuakfoSIs4aH/Fv7VoyQkJAqRzRBnNPfN4S1xJ9zFuQpL3OTUlkoGbQNzNNFX1rn4dP+d71Hd75V/fdLyuhLj96IyiX5dtFJqkelowQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=ZRwoJ9tx; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1725485490; x=1726090290; i=quwenruo.btrfs@gmx.com;
-	bh=pSCQ1776ISJNY2amuMhyPV3YJGwlGzO5rvznyDPvxFM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZRwoJ9tx13RxwZvF0MIegI9c1RPBbKJYOzFHiyu8F2QVc8WloWbCDsKRQgjRslc1
-	 qGzz8S/jiFa4w57UJWMuNb/SI1BJi+MAV83peJG0R6Tv8cJTsbCnK4+1XQWiZ6IbM
-	 aoVrhJaZuTSXalX7Qby4mPKOTJY/01qScpKrB2MSCvYOXpLFVRMJ/1EcBBd4vYDzJ
-	 RHgd4zQVx61J0o+mlm0Z+vYV5qkjL2onibqpTf6x2/B55nZkbQNYygTnGxkvEVOoe
-	 JW8cs7Cer7DTqe75x15xccFFuz1NKJNoICFJpZCdk1xIKJHCRsQSPd+W/+pLOJdsw
-	 no2EFyxhfSomvr+iQA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MeU4y-1sDjF73iOS-00kWOp; Wed, 04
- Sep 2024 23:31:30 +0200
-Message-ID: <a52ac518-27fc-4853-be01-fdb03e49e862@gmx.com>
-Date: Thu, 5 Sep 2024 07:01:25 +0930
+	s=arc-20240116; t=1725485550; c=relaxed/simple;
+	bh=SfW0zczg/wAmV5mEdCEyMhNAUhzt5Ogh9ULFBK4hnP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aViDb5X9S+7Gq33ZjfUo0VZ0RyCU1c8QKUf3kbYXH1xQvCHJ6CQN7ebnnpt7RhaQJNX8UBQss5s+gIdephukIY0dAXUBaIdIeGd7VSbiLozmyunreRi8LJ85J2QJJlVpf3slsPsKiMfTFlAQ7QXyKnCgHknmMgj/5RgQgtbNnUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2KC8rb4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD5FEC4CEC5;
+	Wed,  4 Sep 2024 21:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725485549;
+	bh=SfW0zczg/wAmV5mEdCEyMhNAUhzt5Ogh9ULFBK4hnP0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F2KC8rb4Pt5cS8jBJhGdl59Yfm7mZurvfFcyWIo6B5ttFbJLlFnCRAoNrEqMLwdYQ
+	 3NDqfT8FEc+nDFtdjlX4lh6Et18mQZ/2J6OKTipSAKtoh7BFjPTk7fg53+eTm5lQQs
+	 1nseQZztR6xnP8q3WqR25V82eQsFjgoSumBCrkZilideeKBpEF088aSvieZrTThxQM
+	 w5f8ecbEA6ZhdOjhFuChvBYrOC+1KVt/aBnB1p5hgObhMUtu62VSzzA6IWqhI6Kerj
+	 cZPDsRSf0sH7kp7eZhoboyelbCNHbxbr2yIcqKwhF4wPT7Lqas/U9HDsDm2By4mSqf
+	 DMCtybVi8dQDA==
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-82a20593ec1so618439f.2;
+        Wed, 04 Sep 2024 14:32:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVP6S6pkyOIZGS1jcy1gGXGDYeQjFmBSO46UVSf2r4sQKihHpHv9ndMcnql66QWqwSuXajqwXSi7oPvkns=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7wQYDF5dt8LBJ/R7eQTFvi5XK95Nrv6MlGg/hiRkRZRR7nmYU
+	HqdPeVGzyRNSaMhdvC9t4o8crRL2RlsKxYGJwOB5URjODbQ4ipBl9MSR2vzQpcoNtXukmdD+ElM
+	/QcfroO5JiQOrYAfnawwUpD8Gtxw=
+X-Google-Smtp-Source: AGHT+IFO63gxGBt6VRzQM9yIHjWofIauarhJ3Mzzmhpy8ciRy9py9ge1ZM5aTtv7JSq5cWtZCst3M1WbxU7TEmnY95w=
+X-Received: by 2002:a05:6e02:1706:b0:3a0:4569:db73 with SMTP id
+ e9e14a558f8ab-3a04569dd98mr21230775ab.28.1725485549115; Wed, 04 Sep 2024
+ 14:32:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: Added null check to extent_root variable
-To: dsterba@suse.cz
-Cc: Ghanshyam Agrawal <ghanshyam1898@gmail.com>, clm@fb.com,
- josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
-References: <20240904023721.8534-1-ghanshyam1898@gmail.com>
- <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
- <20240904174630.GP26776@twin.jikos.cz>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <20240904174630.GP26776@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <cover.1725334260.git.jpoimboe@kernel.org> <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
+ <20240904043034.jwy4v2y4wkinjqe4@treble> <CAPhsuW6+6S5qBGEvFfVh7M-_-FntL=Rk=OqZzvQjpZ6MyDhNuA@mail.gmail.com>
+ <20240904063736.c7ru2k5o7x35o2vy@treble> <20240904070952.kkafz2w5m7wnhblh@treble>
+ <CAPhsuW6gy-OzjYH2u7gPceuphybP8Q43J9YjeUpkWTh5DBFRSQ@mail.gmail.com> <20240904205949.2dfmw6f7tcnza3rw@treble>
+In-Reply-To: <20240904205949.2dfmw6f7tcnza3rw@treble>
+From: Song Liu <song@kernel.org>
+Date: Wed, 4 Sep 2024 14:32:17 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6MHSAg3WcikRCm79WQYB3331xd3+Afhwt_HfuUtCtkSw@mail.gmail.com>
+Message-ID: <CAPhsuW6MHSAg3WcikRCm79WQYB3331xd3+Afhwt_HfuUtCtkSw@mail.gmail.com>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, Jiri Kosina <jikos@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Marcos Paulo de Souza <mpdesouza@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2hjoBxVkF+13bHZICQz55dACE6B2sn3RvBX4pUo4qKCPVzDhAyx
- WOw8e+b9sGx4KVuU1N5tUiKhcpPRbxVUU5qT9pXfpsN4TW8AP2UbD0UF4ibon4iu299Z5Ir
- GwK/Bi8dzd0dPhL73X2VqE1TO+5yrso6cLCX3D3D3bi8COOe+yQ1nQ7gddhfYDIFR6tYCD+
- cGY/OcU8p/snzSvpSV8Eg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5lvh+j4PrKw=;pveEJPFrHy2lPddYF8RRSYn0TOO
- WkVN1BTW/w3s64pu+Hq1kEuWzYWTgcAr3j7zIRjs40P/MUAyVxZkQb5KwUtjCUN9vXkcDmaN8
- rgHzTDaxAAxjVirgDIGOvCcIsRS4ZjbNHkENfEpSGZQ9rD+3K5dOYL7l7hXluePRP6QCSYuT0
- HrK0t7BWuDZIhykCFaUGhEVXz7KAe5BAm8+Odzmst+BMPnAGLy14Ittq6/impTCI7JDNXYbJw
- gh/ZXMGB/XDEf7xKM7LFrGSwjmG+nFVy+aq2I0E1LiwLr5XOXwZiRYQT8zgK2RmSdB7owms4/
- 6POpCBfv1ESB1n/y3tnE5w72uO9ut5yUeTr+weVuWkr51pRRP0BVvxJg2CzLoTHP2Mnf+BEKV
- 2GwKYJ8cIeClEE7E/jsHdK5gyAfU4dx+C/A4mwZyBYr+ydYGRAl4lHHduGW9ovtykg7rCVnMV
- rw9O7cpkfZECOqA2N0nNPwdx4DNYFcAdWG/DeAEHKGYTMoDcrrZHAijY7ofghjfObtMtzstbg
- WDmBzsEzP2qhF7oIHrefmNqChsxOG+8OGlX1GphrDodi4T2QhajJBPG7HrSCm1MV8mNDnZZ+A
- vlEr4Pt/e7q+WiO5pQVBRnaB76IIOcdHV2DoLFT67kAMG5jb9oQDOtoTeGfbYuRUxMOLrn0ow
- aS+OxPSTNPpyiKHLP2Zf5l1AZ5WE4w2lS/PU58ztKZyJzfLzL1hSrTguM/UxNaQbaQgvASaSB
- Cm8opII+JKpDJqIUTiFqy44o4cx1Gu9eWcYt8bQZ02HrZyDAufkng0WHF7sl/QXFTEmTCPqf2
- oMYNw+s1VZhBX2ke7HyBje1A==
 
-
-
-=E5=9C=A8 2024/9/5 03:16, David Sterba =E5=86=99=E9=81=93:
-> On Wed, Sep 04, 2024 at 03:21:34PM +0930, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2024/9/4 12:07, Ghanshyam Agrawal =E5=86=99=E9=81=93:
->>> Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
->>> Closes:https://syzkaller.appspot.com/bug?extid=3D9c3e0cdfbfe351b0bc0e
->>> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
->>> ---
->>>    fs/btrfs/ref-verify.c | 3 +++
->>>    1 file changed, 3 insertions(+)
->>>
->>> diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
->>> index 9522a8b79d22..4e98ddf5e8df 100644
->>> --- a/fs/btrfs/ref-verify.c
->>> +++ b/fs/btrfs/ref-verify.c
->>> @@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *f=
-s_info)
->>>    		return -ENOMEM;
->>>
->>>    	extent_root =3D btrfs_extent_root(fs_info, 0);
->>> +	if (!extent_root)
->>> +		return -EIO;
->>> +
->>
->> Can you reproduce the original bug and are sure it's an NULL extent tre=
-e
->> causing the problem?
->>
->> At least a quick glance into the console output shows there is no
->> special handling like rescue=3Dibadroots to ignore extent root, nor any
->> obvious corruption in the extent tree.
->>
->> If extent root is really empty, we should error out way earlier.
->>
->> Mind to explain the crash with more details?
+On Wed, Sep 4, 2024 at 1:59=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org>=
+ wrote:
 >
-> In the stack trace it looks the ref-verify mount option is enabled, I
-> don't think we've tested that in combination with the rescue options as
-> ref-verify is a debugging tool, must be built in config (by default is
-> not and is not on distro configs).
+> On Wed, Sep 04, 2024 at 01:23:55PM -0700, Song Liu wrote:
+> > Hi Josh,
+> >
+> > Thanks for the fix! The gcc kernel now compiles.
+> >
+> > I am now testing with the attached config file (where I disabled
+> > CONFIG_DEBUG_INFO_BTF), with the attached patch.
 >
+> Probably a good idea to disable BTF as I think it's causing some
+> confusion.
 
-Indeed it is the rescue=3Dibadroots mount option.
-And unlike the regular mount options which all show a message line, none
-of the rescue mount options will output an error message.
-
-Thus that's why we're ignoring the missing extent root in
-btrfs_read_block_groups().
-
-In that case, yes the fix is correct.
-
-Just need a small description on the combination to trigger the bug:
-
-- Corrupted extent tree root
-
-- rescue=3Dibadroots mount option
-
-- Built-in ref-verify
+Agreed. We disabled BTF in kpatch-build, which works well so far.
 
 Thanks,
-Qu
-
-> We should fix the bug where it crashes when run in syzkaller so we can
-> allow it to continue coverage but otherwise I wouldn't put too much
-> effort into that. I.e. if we can do a simple fallback and exit gracefull=
-y
-> and not try to continue ref-verify + missint extent (or other trees).
->
+Song
 
