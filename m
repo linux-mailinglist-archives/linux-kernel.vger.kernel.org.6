@@ -1,88 +1,116 @@
-Return-Path: <linux-kernel+bounces-314037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338D696AE00
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE33F96AE04
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F43286ABE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665BE2867C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA668C8C0;
-	Wed,  4 Sep 2024 01:40:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE04BE40
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37207D528;
+	Wed,  4 Sep 2024 01:43:04 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F2310F9;
+	Wed,  4 Sep 2024 01:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725414004; cv=none; b=fRjUzRfgwVqKmZ4atAe3KljHcQd5SxtybRCdVmDtB52EiSpSyWCXEiI81cuEWnXBq9YKoUnHNTrA+d8RewnNMKvk4EEPv3ACWn+6AjjC1b7eZHjB9ifdkBG75xv7GPKNbDB3/V3DFZa3wwpRVsRoOQW0/ocOo4hEPeuxnjfDAak=
+	t=1725414183; cv=none; b=m/aPhR5Oew0I5+fdHYMiJo0K2wIwd6iMWzqoCE+bkjluxTnte3cEt5mrthIN/F303tf4EVRou45w4HqNcCgJIAuINN1C9je144XctE0i41H2lMUkzsol2rcyS4U2As/Pbd1/b0wEjm6pMiWxC4y5ccsBNi7Lg8NQPf2kR0R1ZuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725414004; c=relaxed/simple;
-	bh=LX6Nn2J7Gn6w2QsI6dfaOTd6ANUkwJAbXeg9dMrEg5I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DTKsDIXSODNqy9YM563KoS/YQivy3i1q/ojqslVlu1dMsAVcncNwM5Tu0i0TdWlYua+RlOuNyIsuJRH9fhYFANMbgychfvTx09HwCDuPEDr3SjjBTjnsTwBW9RMhwklLRRXy1nKktHoCEaWhSqrKWWkI0JHXvt9zqyhDuJCHeyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a338f090eso540570039f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 18:40:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725414002; x=1726018802;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P9b/9bPBq8CNIg4Rd0AYEmAEdGv0quvqp3NFZJqJL8w=;
-        b=f5aliiR05WP+eYguA2jWk/dnzbJw3ODjZD1AVqK172FClizCcR3YJieKJ1Q5xW0Ak3
-         c7guWBzdwHXVBhnS0D6o7WKe0+QmJrtTlEoVQqIMFGQGGbb4DVnJdrBxtcUYkyxvF+bx
-         hGsJeSjeb3OMqbBmCLd3Zt7tjvcDvUSln3MvmL3b2EQAjfNFWIM2JoyAklEONoh/THHo
-         Y8o0/g6dC2R8QNIHcwoKrcMhzV+Wy4iT1U8hT6oqnw/+nkWKXzmEfuIxPNbi+zPQ/sut
-         sozTu1a7vXxZUjxrB1DUUvTNgg8sFwBtJO4mY1CkeBftvx7DPWL8ktiBncQnihS4D6T0
-         4T/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXW0nXYMKfe+d2QNgRO9iZFj0bnqBFeCtePTqvWhquKOJvT9wQ4HcrqskfgFBt/J9elUVfRfA0u8fTOjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIb6zBlZ+aAPXCpPjaZIT1/T7pPJLLssUxFZjRwfl1tXir+/V3
-	lB35McnaZO5inbQ+dJRCQzkDXdFBE7v7AVtC0D5SpIm6sMnBXpl4kB+GFWdkANxnZQFyOf7ktYt
-	/rzjbpObKSHUScETG5tVJzmLpFsX7x36bv0nFmb7PdK3dqr5rNVsHuVs=
-X-Google-Smtp-Source: AGHT+IGVfXEspsI+w1ZMwbAhX1kWvSJiXOw3yxhUVlHinJVijRBXC009vTQfGjbFSyg9jQbgGIHm4f34B8T+wp/xwNGsMTcgZ82r
+	s=arc-20240116; t=1725414183; c=relaxed/simple;
+	bh=RnAmNjJ25oudecHmjW3/YgV5LxMV+dnwHeJoxUNDSKQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=baqFKwbh7vCRmso+OMYPg4Xl3qaGqoynv7e+c95dKti9oZOGvI2g0eKXstpdTo35jQOkaUcAuUJk3ufox/vw5UqHDTC0sD4b96pU5b4DCmhm1lP4o6ZHAm8TIRmGK89Jr2sen7QvWug1gjIcvBHHkaHkMYmFByUhwrVq0xlpwjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee966d7bb1ff1a-e5f1e;
+	Wed, 04 Sep 2024 09:42:55 +0800 (CST)
+X-RM-TRANSID:2ee966d7bb1ff1a-e5f1e
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.97])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee366d7bb1eede-0a786;
+	Wed, 04 Sep 2024 09:42:55 +0800 (CST)
+X-RM-TRANSID:2ee366d7bb1eede-0a786
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: andy.shevchenko@gmail.com
+Cc: wbg@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH v2] tools/counter: Close fd when exit
+Date: Wed,  4 Sep 2024 09:42:53 +0800
+Message-Id: <20240904014253.2435-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d82:b0:824:d6b8:8844 with SMTP id
- ca18e2360f4ac-82a262db7edmr77724639f.3.1725414002131; Tue, 03 Sep 2024
- 18:40:02 -0700 (PDT)
-Date: Tue, 03 Sep 2024 18:40:02 -0700
-In-Reply-To: <CAG-BmocK+_d1SA3Xkz0KJ+3wyD1YQNL-EQGwoDcSLvHkfMc7TQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b0195c06214140c7@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_root_node
-From: syzbot <syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com>
-To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Since fd is not used in the messaging it's better to 
+close it before printing anything. Ditto for other cases.
 
-failed to apply patch:
-checking file fs/btrfs/ref-verify.c
-patch: **** unexpected end of file in patch
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+v1->v2:
+	Close fd before fprintf.
+
+ tools/counter/counter_example.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tools/counter/counter_example.c b/tools/counter/counter_example.c
+index be55287b950f..37569208c235 100644
+--- a/tools/counter/counter_example.c
++++ b/tools/counter/counter_example.c
+@@ -57,12 +57,14 @@ int main(void)
+ 		if (ret == -1) {
++			close(fd);
+ 			fprintf(stderr, "Error adding watches[%d]: %s\n", i,
+ 				strerror(errno));
+ 			return 1;
+ 		}
+ 	}
+ 	ret = ioctl(fd, COUNTER_ENABLE_EVENTS_IOCTL);
+ 	if (ret == -1) {
++		close(fd);
+ 		perror("Error enabling events");
+ 		return 1;
+ 	}
+ 
+@@ -70,11 +72,13 @@ int main(void)
+ 		ret = read(fd, event_data, sizeof(event_data));
+ 		if (ret == -1) {
++			close(fd);
+ 			perror("Failed to read event data");
+ 			return 1;
+ 		}
+ 
+ 		if (ret != sizeof(event_data)) {
++			close(fd);
+ 			fprintf(stderr, "Failed to read event data\n");
+ 			return -EIO;
+ 		}
+ 
+@@ -88,5 +92,6 @@ int main(void)
+ 		       strerror(event_data[1].status));
+ 	}
+ 
++	close(fd);
+ 	return 0;
+ }
+-- 
+2.33.0
 
 
-
-Tested on:
-
-commit:         88fac175 Merge tag 'fuse-fixes-6.11-rc7' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c4531f980000
 
 
