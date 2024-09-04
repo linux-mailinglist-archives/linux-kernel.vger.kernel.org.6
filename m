@@ -1,199 +1,139 @@
-Return-Path: <linux-kernel+bounces-315131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E0A96BEBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:38:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEB296BE66
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ADC4B2D0F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:24:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C89E1C23801
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6D41DA31D;
-	Wed,  4 Sep 2024 13:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550931DA116;
+	Wed,  4 Sep 2024 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaZA3Zoc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E7+hnL2K"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4601441D;
-	Wed,  4 Sep 2024 13:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F57B1E884
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725456279; cv=none; b=TYiZEJgQbe8VKIBQ6JL3TyFvN7pWohxe3sDbUZEdgMLJC7MnLxdgWjp/W2qjacWtQDMVzFyNjLa408jwiknJZ+DDC7jEzpWtom6xsh8JemdYmxE5o/WNqQxvgDcNjbfRTkjwzyT5tV9Io5Xq0hZc8NrzCpAKh1NTtHy3yEvOCtc=
+	t=1725456316; cv=none; b=IYkHzxsg/q+U649vOfZS78raiw5S4cm81Pr7pRGEJlf9jjTNs2IVzGtLi6khJYAdIlmHxEt8VdN6jnJGGu41Rnc8iQv3KLlEBg/d2dQ2Lyr1MOovxOXMvJdAVvD2hATtoSq5WAEQHFQh5cCwK20W1h6STrlqsXnvURPFFkNYLKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725456279; c=relaxed/simple;
-	bh=VD4Uy7oAc+nT7ov65tbrV4jCOunVuSnuaZX67sZ/AD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m/k9WmPo6ukG+AyIYsZePL1fC2ZYXADdg9QaVGncD/XT68LmNvbF3TcOaVn1FjdMAujXRCXhL3gtPGnFbE1dE0q+5lGD3ADTX+/yCMhiSgeqLNDGh1evwEQoUIExOxkb7pWcY3XP5q47NirJvajzrD1SXvmhXzImeq+O3fekVxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaZA3Zoc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF76C4CEC2;
-	Wed,  4 Sep 2024 13:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725456279;
-	bh=VD4Uy7oAc+nT7ov65tbrV4jCOunVuSnuaZX67sZ/AD8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EaZA3ZocO9yeFcLWnQAMtGEkip86DBt1O5MM3Zi+MIiWlMApYGZLT71+bvGX4QX0s
-	 GzBGd9kEpW3E4pKUA6YDOPUgHm3Z81C/b18Nzgg4oT+G1LWPjiAYum78+jItZd72EO
-	 gj5xBz5Fk2ts+TNEta4t0cTkDj1paLqxjCXH040xSXtye+xXtm3faE8B8mXAIXeP0A
-	 FyKLBPpFTpPW1iJ5Ugh9taN9x2d9+U+iJNEx7VD+99J7IOCNCQLjofSBU7olyHNeaH
-	 QP+Z1eaYSJlC4gLKcNSgQB4hLoiQBfsDEE/jS43+FQ46wAXjppCl3vz+VpvLPmM3um
-	 ClLE8oJQvyGDA==
-Message-ID: <e352a836-82ef-4031-ac46-3ac7e0cb77ec@kernel.org>
-Date: Wed, 4 Sep 2024 15:24:18 +0200
+	s=arc-20240116; t=1725456316; c=relaxed/simple;
+	bh=MGzKiUuF6aRwv2FnLvUfpLtjHzOPaPEhLyKQGDj5NDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DEDk/CSwEXHY1LUvul41oeM8RLOpSXcXsmcW+FLFGjhOnHrGal91PEkYiaGCa34fCxk0eCke7Y1/AJs6kryusdvQYWd3piStE+nOHdVSPAWC/Unaacmdk2/twIN+i/8nflePS/7atKKy/envs823S7HnjqN588TQ2Pia4AbZxj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E7+hnL2K; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201d5af11a4so57398785ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725456314; x=1726061114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vez2uwjb3KfOIizr+O/VqkIHsnQ4z041y0eIN+7scOM=;
+        b=E7+hnL2K/kQSI2rzGuO3pybJZ4wFHkb7N9dxWUDvBxT78WxaYMycnufvIv9uXszpFu
+         Jk21uIAnipjm82oMudr0PDFbs3iS8UoYVgZMrWrBgeDCf3Mxud7uomcKt+aUnA9nsIYe
+         M1Cb6ny6Mm7Lo0EyXvRQiaJA6knMP+xFxuNvo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725456314; x=1726061114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vez2uwjb3KfOIizr+O/VqkIHsnQ4z041y0eIN+7scOM=;
+        b=u20uIN7iitHU+P41m2ClhT9EGORiVRGI62WWXV4xLJhIVeMp3LIdvSYlQrrnQwE7sC
+         wKAu6ijJ5ZNjoJDzCv0RZDgNW1RKfeNKM0nKRwcMJpBfNIJPcAwknuupHKzGmyt6MdeK
+         MgzlfnC9rcaKR7c8PQ9VEuKG+QHnHhA02F/xw2M8Tnv6uDILWzwHrpI4SzKv6dbUbj7z
+         lw+PeJxrY3EWrP0AfLzwqYiLzmqlDG0g9TcSSg4FQCuPzY77lbHOS0UBAyAuqvcpYiC4
+         I6WWpb+jxEIZCtzKNxi9t4rc3HoKWhwZJCekQA4jbznoMTz00rbxMHbf9oiHCkaWhMHr
+         hlQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpfTIDSqbtw6Vxd0Nm2V3/kMbeNWPGPUJqRuiOCqf3mTChKw3gGZPsOgXcElQ+8hfM7yxtiLa2en9fC1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlGts4U41aQU6IcOS2KR4KJOCwyKYpRcqCf7kHfe25P+mS1tiK
+	wwSHvWrldMdaY3uLoFqUxEFL+qcxtnrrFKxOHDOdASc7C8TybrqyTZ4OSJ84lusqEPMNOGY9pnO
+	eMg==
+X-Google-Smtp-Source: AGHT+IHQ4g4Mjzq1OK0YWp2/eDeBjiRseJd2eOQGRsJzJrb5nrIbO5aJyleq9KZO40CG+R+Vrw0KgA==
+X-Received: by 2002:a17:902:f547:b0:206:b618:1d7f with SMTP id d9443c01a7336-206b61824c9mr22864235ad.37.1725456314517;
+        Wed, 04 Sep 2024 06:25:14 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:4132:a2a2:35bc:acba])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea54e7bsm13479215ad.183.2024.09.04.06.25.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 06:25:14 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Richard Chang <richardycc@google.com>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [RFC PATCH 0/3] zram: post-processing target selection strategies
+Date: Wed,  4 Sep 2024 22:24:52 +0900
+Message-ID: <20240904132508.2000743-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/21] dt-bindings: serial: document support for
- SA8255p
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
- will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
- cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com,
- Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-18-quic_nkela@quicinc.com>
- <jzpx66l4tesnyszmpc3nt5h7mezbvdhtcbls5rbwlmpveb6d6y@i3jf7jsajjjd>
- <6fed4714-5239-473b-b4a0-886d83c459c3@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6fed4714-5239-473b-b4a0-886d83c459c3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/09/2024 14:54, Nikunj Kela wrote:
-> 
-> On 9/3/2024 11:36 PM, Krzysztof Kozlowski wrote:
->> On Tue, Sep 03, 2024 at 03:02:36PM -0700, Nikunj Kela wrote:
->>> Add compatibles representing UART support on SA8255p.
->>>
->>> Clocks and interconnects are being configured in the firmware VM
->>> on SA8255p platform, therefore making them optional.
->>>
->>> CC: Praveen Talari <quic_ptalari@quicinc.com>
->>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->>> ---
->>>  .../serial/qcom,serial-geni-qcom.yaml         | 53 ++++++++++++++++---
->>>  1 file changed, 47 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
->>> index dd33794b3534..b63c984684f3 100644
->>> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
->>> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
->>> @@ -10,14 +10,13 @@ maintainers:
->>>    - Andy Gross <agross@kernel.org>
->>>    - Bjorn Andersson <bjorn.andersson@linaro.org>
->>>  
->>> -allOf:
->>> -  - $ref: /schemas/serial/serial.yaml#
->>> -
->>>  properties:
->>>    compatible:
->>>      enum:
->>>        - qcom,geni-uart
->>>        - qcom,geni-debug-uart
->>> +      - qcom,sa8255p-geni-uart
->>> +      - qcom,sa8255p-geni-debug-uart
->> Why devices are not compatible? What changed in programming model?
-> 
-> The cover-letter explains what is changed for devices in this platform.
-> I will add the description in this patch too.
+Hello,
 
-Many of us do not read cover letters. They don't really matter,
-especially that serial tree will not include it. Each commit must stand
-on its own.
+	Very early RFC, literally started working on it several hours ago.
 
-> 
-> 
->>
->>>  
->>>    clocks:
->>>      maxItems: 1
->>> @@ -51,18 +50,49 @@ properties:
->>>        - const: sleep
->>>  
->>>    power-domains:
->>> -    maxItems: 1
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +
->>> +  power-domain-names:
->> This does not match power-domains anymore.
-> 
-> Single power domain doesn't need to use power-domain-names binding as it
-> is not needed however for multiple(in this case 2), you need to provide
-> names. I will add this property to if block and only keep maxItems here.
+Problem:
+--------
+Both recompression and writeback perform a very simple linear scan
+of all zram slots in search for post-processing (writeback or
+recompress) candidate slots.  This often means that we pick the
+worst candidate for pp (post-processing), e.g. a 48 bytes object for
+writeback, which is nearly useless, becuase it only releases 48 on
+zsmalloc side.
 
-The xxx and xxx-names properties always go in sync. Otherwise we do not
-really know what is the power domain for other variants.
+Solution:
+---------
+This patch reworks the way we select pp targets.  We, quite clearly,
+want to sort all the candidates and always pick the largest, be it
+recompression or writeback.  Especially for writeback, because the
+larger object we writeback the more memory we release.  This series
+introduces concept of pp groups and pp scan/selection.
 
-You are allowed to be unspecific about power domain (so maxItems: 1) if
-it is obvious. You now made it non-obvious, so above flexibility does
-not apply anymore.
+The scan step is a simple iteration over all zram->table entries,
+just like what we currently do, but we don't post-process a candidate
+slot immediately.  Instead we assign it to a pp group, we have 16 (in
+this patch) of them.  PP group is, basically, a list which holds
+pp candidate slots that belong to the same size class. 16 pp groups
+are 256 bytes apart from each other on a 4K system.
 
-Best regards,
-Krzysztof
+E.g.
+
+	pp group 16: holds candidates of sizes 3840-4096 bytes
+	pp group 15: holds candidates of sizes 3584-3840 bytes
+	and so on
+
+The select step simply iterates over pp groups from highest to lowest
+and picks all candidate slots a particular group contains.  So this
+gives us sorted candidates (in linear time) and allows us to select
+most optimal (largest) candidates for post-processing first.
+
+NOTE:
+The series is in very early stage, I basically just compile-tested
+it and ran some initial tests.  It needs more work, but I think this
+is the right direction and it all looks quite promising.
+
+Sergey Senozhatsky (3):
+  zram: introduce ZRAM_PP_SLOT flag
+  zram: rework recompress target selection logic
+  zram: rework writeback target selection logic
+
+ drivers/block/zram/zram_drv.c | 287 ++++++++++++++++++++++++++++------
+ drivers/block/zram/zram_drv.h |   1 +
+ 2 files changed, 243 insertions(+), 45 deletions(-)
+
+-- 
+2.46.0.469.g59c65b2a67-goog
 
 
