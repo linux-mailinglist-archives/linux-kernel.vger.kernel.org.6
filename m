@@ -1,147 +1,94 @@
-Return-Path: <linux-kernel+bounces-315017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0DE96BC90
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:39:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0211C96BC8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80D61F24952
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B275B2857D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 12:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1083F1D9D6D;
-	Wed,  4 Sep 2024 12:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiqVLHbS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C37F1D935D;
-	Wed,  4 Sep 2024 12:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453544; cv=none; b=FS+zmWZhNYpr1zHVhVxW+dSXQmr33A9x9w0dNsh25vz0RAcMTWRGsiCRdXNynJ3W8nWMYEw1S0jQUi/FHt+OZvt510iOhvwJVDwk+tkK0Y73rLq+3VlBICgBjpSEgvJMG9/Kzi7V3ezKYcYIudBiEHmZA0Q86eLVyw0FM0Lv6/s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453544; c=relaxed/simple;
-	bh=+Jr9s9B+xtckA4J4nfQj1cPdaXghEqXj3TPABoG+KGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F9HN9ZeddgS56O7eq1kj7xMRBZTvbO08gKQ+oLkvmrGrcJMoq2P+CH4cSpc0v7LGmG/qylQkWqD2mymUUJCJXltjoEq+2Dgsuc7KFB4LnWCq0V+Bxj3CgeDKjM61Z+tSwV4cB0yH7tp9X549TUBvrPPItwrBhmn3+AYoIKeD6Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiqVLHbS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEE2C4CEC2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263071D9340;
 	Wed,  4 Sep 2024 12:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725453544;
-	bh=+Jr9s9B+xtckA4J4nfQj1cPdaXghEqXj3TPABoG+KGg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NiqVLHbSMD2MIzszchmpc6rhR2fhp0GLyZTFuXmvUSiAKM7Y9UTO8nYHqsAHkMtY+
-	 nmdmxE2VQkAtJdXshmptwYH7tNf43gSzyrhhYS3JqHyRrmdiZJDbfpzfgibTiLV85S
-	 FX7qimyGCGi0Hiy4KbVnvNq/4Tv4aHFtLMqufeKMigOG+lsiN6t5WVqfXx+jt7K2Sv
-	 vn5CwPPU9iittVau1chuGCYgkEuQ6Az5uWA4s2ETruTak0Q84CzZok6klzrhHqnnGs
-	 ZiyriaUFtETWR4xhwhWICIY1S87EDnPtaHVCjJMzRBwciTNTQGINg18dsVrs7AqspD
-	 dA7iLa9McJIWA==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-277f19ee2a2so1719469fac.1;
-        Wed, 04 Sep 2024 05:39:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU31ZocLCtiCbv2FMln2IKtVmeEK+UDPDnLDGobDFf60lijVopn78X7b2KXfGTKtkvm70SiXr4BjHRNZTw=@vger.kernel.org, AJvYcCXC6AclNTycXOlvcDSZ/NYhljqa8ieWo8RxcW6sKEemgNfb5zMVV3+PMp6LYupawq0pDahj/BIQYD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs8HIj6sKmwxrg5KdRwnwxYg6e/jlRs7PeBr2jLwa0AtHwoRY8
-	2bgDg8ZLOeNk44vLBWx1F6qTwNSTsofp1FxIhX/w87vkspMljNWVNMWYLbKlBegrTq3n/e1SQ4N
-	wO6TwH+LO7+rxjAIv/qObbkCijcc=
-X-Google-Smtp-Source: AGHT+IFhGBnFxPcLvPZtSBwEOsfLlzoe0vk52Or7lW5q35KGkeYf6Lg9D+a9umxvopAzEQM12b7t7F8cT6gNu4/ro+U=
-X-Received: by 2002:a05:6871:8c15:b0:277:eb79:b4fb with SMTP id
- 586e51a60fabf-277eb79b8aamr8429970fac.1.1725453543333; Wed, 04 Sep 2024
- 05:39:03 -0700 (PDT)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FD71D86CF;
+	Wed,  4 Sep 2024 12:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725453542; cv=none; b=rxxSuA6F2YOegkhJzPGmtEJyySvKNieouqq7F8dAN9ctUmo4kOjDt2DwtvXZPCXzqX+FD5ViqIAMB6Fhl2GNGDxYI/nOyIs5guvibUwo8dqqjhREQ9CnuNXAzS6AIoZyAkFSEQuunaIabXC52Cj5t+AQHf437iQKaUp8Qm0vccY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725453542; c=relaxed/simple;
+	bh=XID3dQgcBE0cBiH/qg0Sw2vAwn3NoD4jAts+rjeKbWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BniSqidLGxZwCz4n7peopYpyRaJ0M+XY3F4OxFLmGb3a2nCufW0h6MW/zU40DbxNnmzKqiVx5kcszagSJDaA5URVIJ2Xj2h+z7oOcu6D4ZEiFpdyxgOZcoY3hnxMmS3UJcoDsDjsIhfwHIQU2ZG8nfB05s3SHOsnpEIfsqmw3i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 249A9FEC;
+	Wed,  4 Sep 2024 05:39:25 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C77FE3F73B;
+	Wed,  4 Sep 2024 05:38:57 -0700 (PDT)
+Date: Wed, 4 Sep 2024 13:38:55 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
+	cristian.marussi@arm.com, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH V2 1/2] firmware: arm_scmi: Ensure that the message-id
+ supports fastchannel
+Message-ID: <ZthU36Qkzwa5Ilrb@bogus>
+References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
+ <20240904031324.2901114-2-quic_sibis@quicinc.com>
+ <ZtgFj1y5ggipgEOS@hovoldconsulting.com>
+ <d482dca4-e61b-4a94-887b-d14422243929@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903172520.3568731-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240903172520.3568731-1-andriy.shevchenko@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 4 Sep 2024 14:38:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h20btyh41vHsXgMDhDrhPGL-CJJNUjzLhgj7Szj3y6Qg@mail.gmail.com>
-Message-ID: <CAJZ5v0h20btyh41vHsXgMDhDrhPGL-CJJNUjzLhgj7Szj3y6Qg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] Documentation: PM: Discourage use of deprecated macros
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d482dca4-e61b-4a94-887b-d14422243929@kernel.org>
 
-On Tue, Sep 3, 2024 at 7:25=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> The Documentation refers to some deprecated macros.
-> Update those parts accordingly.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  Documentation/power/pci.rst        | 11 +++++------
->  Documentation/power/runtime_pm.rst |  4 ++--
->  2 files changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/power/pci.rst b/Documentation/power/pci.rst
-> index e2c1fb8a569a..9ebecb7b00b2 100644
-> --- a/Documentation/power/pci.rst
-> +++ b/Documentation/power/pci.rst
-> @@ -979,18 +979,17 @@ subsections can be defined as a separate function, =
-it often is convenient to
->  point two or more members of struct dev_pm_ops to the same routine.  The=
-re are
->  a few convenience macros that can be used for this purpose.
->
-> -The SIMPLE_DEV_PM_OPS macro declares a struct dev_pm_ops object with one
-> +The DEFINE_SIMPLE_DEV_PM_OPS() declares a struct dev_pm_ops object with =
-one
->  suspend routine pointed to by the .suspend(), .freeze(), and .poweroff()
->  members and one resume routine pointed to by the .resume(), .thaw(), and
->  .restore() members.  The other function pointers in this struct dev_pm_o=
-ps are
->  unset.
->
-> -The UNIVERSAL_DEV_PM_OPS macro is similar to SIMPLE_DEV_PM_OPS, but it
-> -additionally sets the .runtime_resume() pointer to the same value as
-> -.resume() (and .thaw(), and .restore()) and the .runtime_suspend() point=
-er to
-> -the same value as .suspend() (and .freeze() and .poweroff()).
-> +The DEFINE_RUNTIME_DEV_PM_OPS() is similar to DEFINE_SIMPLE_DEV_PM_OPS()=
-, but it
-> +additionally sets the .runtime_resume() pointer to pm_runtime_force_resu=
-me()
-> +and the .runtime_suspend() pointer to pm_runtime_force_suspend().
->
-> -The SET_SYSTEM_SLEEP_PM_OPS can be used inside of a declaration of struc=
-t
-> +The SYSTEM_SLEEP_PM_OPS() can be used inside of a declaration of struct
->  dev_pm_ops to indicate that one suspend routine is to be pointed to by t=
-he
->  .suspend(), .freeze(), and .poweroff() members and one resume routine is=
- to
->  be pointed to by the .resume(), .thaw(), and .restore() members.
-> diff --git a/Documentation/power/runtime_pm.rst b/Documentation/power/run=
-time_pm.rst
-> index 5c4e730f38d0..53d1996460ab 100644
-> --- a/Documentation/power/runtime_pm.rst
-> +++ b/Documentation/power/runtime_pm.rst
-> @@ -811,8 +811,8 @@ subsystem-level dev_pm_ops structure.
->
->  Device drivers that wish to use the same function as a system suspend, f=
-reeze,
->  poweroff and runtime suspend callback, and similarly for system resume, =
-thaw,
-> -restore, and runtime resume, can achieve this with the help of the
-> -UNIVERSAL_DEV_PM_OPS macro defined in include/linux/pm.h (possibly setti=
-ng its
-> +restore, and runtime resume, can achieve similar behaviour with the help=
- of the
-> +DEFINE_RUNTIME_DEV_PM_OPS() defined in include/linux/pm_runtime.h (possi=
-bly setting its
->  last argument to NULL).
->
->  8. "No-Callback" Devices
-> --
+On Wed, Sep 04, 2024 at 01:29:29PM +0200, Konrad Dybcio wrote:
+> On 4.09.2024 9:00 AM, Johan Hovold wrote:
 
-Applied as 6.12 material, thanks!
+[...]
+
+> >
+> > Unfortunately, this patch breaks resume from suspend on the x1e80100 crd:
+> >
+> >         [   26.919676] CPU4: Booted secondary processor 0x0000010000 [0x511f0011]
+> >         [   26.960607] arm-scmi firmware:scmi: timed out in resp(caller: do_xfer+0x164/0x568)
+> >         [   26.987142] cpufreq: cpufreq_online: ->get() failed
+> >
+> > and then the machine hangs (mostly, I saw an nvme timeout message after a
+> > while).
+> >
+> > Make sure you test suspend as well as some of the warnings I reported
+> > only show up during suspend.
+>
+> Eh it looks like PERF_LEVEL_GET (msgid 8) requires the use of FC, but
+> the firmware fails to inform us about it through BIT(0) in attrs..
+>
+
+Just trying to understand things better here. So the firmware expects OSPM
+to just use FC only for PERF_LEVEL_GET and hence doesn't implement the
+default/normal channel for PERF_LEVEL_GET(I assume it returns error ?)
+but fails to set the attribute indicating FC is available for the domain.
+
+I am not sure if that is stupid choice or there is some cost benefit in
+not implementing PERF_LEVEL_GET via normal channel if that is a fact. I
+am very much interested to know the reason either way especially if it
+is latter.
+
+--
+Regards,
+Sudeep
 
