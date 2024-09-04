@@ -1,228 +1,240 @@
-Return-Path: <linux-kernel+bounces-314019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB5C96ADBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:19:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEA396ADC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 03:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC7CCB2458C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930831F24E5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E9D8C11;
-	Wed,  4 Sep 2024 01:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF9944E;
+	Wed,  4 Sep 2024 01:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tsAdRym/"
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gksduCcs"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010013.outbound.protection.outlook.com [52.101.69.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987CF28F1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 01:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725412735; cv=none; b=nAWj0Mr9dSAIfaFAOFrAmKfhnEoBd6HO3npPPQrwFAa+fjBecwF/X95COtUbEtkMXu7zvZRnVOwilcoaWqgDLjPZfZiOJR0MkML5SEkTU8Lk5LBeIbZ6zfRarJq/rKiRuvY7Xjtyc7NDOf7o474i0rVEZkutvX+xfOFiYC/4nkw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725412735; c=relaxed/simple;
-	bh=yNs/1T5HEKuYw3butknZxMSzlK71t80xJgmUI08RvpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iaQxvJqHUzCeaHZykfFAy9UoQrCwuLjRxtQH/v4/DaDvCRgUAHcln8c/PyCdwic6azwNQPBsbwEox38oSxtVwyWoucyahRdqRFbMT6JoxhaC7rL670CjBETWWTAa+B39i2yl6yXi83eEuxGkZa9dqFRH+bKUTWpICd6Bm0nQsfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tsAdRym/; arc=none smtp.client-ip=66.163.190.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725412727; bh=+F1gdXx2llHjfLSdb7DiIsvu2+e0ubmkCeOlGInmv24=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tsAdRym/Niytq25mpqJbWRVFIivtx4NF76stWbPB+KEZoHKM8zeXT1eZzorZULYvhW0dWOfq0rhXH11t8z/5Tc/dsfbcMyMoNs+yrv6/tEFNef4SFE1JXHuTl9rPMHopu8txtiRxKJiP0GVK+CXfigmEbrwyb9LkEcmIVi2iQ1LYjd07vE2Bcy9Tj/RTEqx1ku4+dWyYApa/uNIRdK1+8Ua8zxz3SuLW3441zenQ63EDg0CY4d4HtEJq9F9+ztPpB7JUKdX8Tm9Mn2LvD5tlnbDr/ctAlU/TJ5CcYkQqpinTTtsC2w09Qevr+hM3ngignSBhGQj7iJLldiARIxHtOA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725412727; bh=FMDCe7+1+swmeLJWcZd63dmuPT0xDVMwdUwCLUFUjSm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=MuRxmVIS+dbXVS65hWWXv733XYvL9gjJFpSDQmTcq7VkL0dZCDpTC1l2RQSnV8RTwl3h96lfnNRQNxGUYXIGrTVvG1N25nvJzcKOKJFacVpOyMbGQzT691lBcGx9E2QSfwNzsrRVo9K7YWovfDZN1dm0XhbrRP/8TfSB73XvDKYJk0oCOqfot06kJ51BJzQyMcOvKLInHcan4JIJTO9c/u/y+ObiqaHzId4ZZGz58bB5y69PdI+zySGDbmYjG467kGaIK6D+H3RcOn2SqbWN/tIfzn8krHEM6oNLSP/pkt88/sVty5IzVCbySyKDBfVnNudk6iYjqf8Bt3P2LBxdSg==
-X-YMail-OSG: sWivKUcVM1lE_IiAxBNJTIfcBPpURTyUAx5r5HCy2XL6T3cp8PvRtLxmjlgvrbH
- 27qXMjEMM1_8qSLNUOufF4seADeBsH7y3Vy76AJVVHqqRcRH0FqoGYj3ALgrV2I4OEPsA2COLRSj
- eZ4kzbqfmtKHQA65wwKIOszIvp_OQ9B4a.vRchCwzl_WcSgEJVF71i.R_Brs9PMpjAtub3m_p54Z
- ip61Or0HrH2Mv7D31q2NnczwMsMvuPz.N0ozIef6dLzOXJxi.vQj9b3hSJa5HCB8F9pz08eo09rk
- yZyy1yvC1Rwwpv0EmU8H1uYJbuolSHpwp.lpOpoZAvE73nkBIeRF7baKrM1ywxms_TpUAVOFkmKJ
- NjjfRqWtz6rSSe96.lx9x6TRvox7Vmu8debR0o6bIE0w7djc3oK3V8_2QQIaRE8Qc00Vb6i6ODfD
- HhL9qufPsmDdHQr2663FRWLY.ld_jLgl3Emsd5eu_KmknVWRDpS4c8JIwpi_FX.a8m.dS5dnWIrg
- 6s_1ds65n8IqUbwr1Iugj_24z6g2vwOmEpF9Pswz5rwHMZO4W3LIcaNYoQ2KWbNoF.e1AOQwR2rG
- i9K_R1K_fOjfDXFXEbeCCSKAEA75aDizdCK16Pn5OISI83SwOBfhsoQv1BltMIsj.9HS3WTMwNyc
- 481dQcU9AviRpVlq8rertIzoadtZkEgQk..I4GywYTWH7IpKKhu4oVS8NwhBkN9YIqSZ8FvTv1ZA
- 8tWjkJyXZ0HbHFY3Q2YbbWIauHob.Q0xpw1BZ0RTuMynfQVUkwTBKrf2zWSP34CGezn7cL7AKs1q
- XYypXWvMgZ_BtK0L9C02h.a9sZd9bKREjkQ.ASwCdix5ELstIOndvT9UTK8.w3xeFPQ1r6kjBFv4
- wdOdQOm24SXUFUR3hMUz97UzibFMGFzyeaIDIENHD7SOp3OT_aVkR.HEkTkdohEXV4mS3csQ93nE
- kanuHnSGiU8lEkfXUvR7cIauF5uPGwnIMnNGNVrykkmp.foRCUZLOZHR_IUE6Jg4UIdMqMi40Kcr
- MFTjeBhXzmoc.VgbZwqG.PU2HU49jGBYr3TKChr.8_WT_RusNxvkKhAiwUes0ACglOJVNAIX9dOl
- Exy0hoBZX1vUDfvq56GkLSl8cABD4Gnv2DfPI5lrEdN1_Uje9ILRtiEEzLW2q9rKsQDnUdyrtn1o
- GD.rbxfjXRGTD5P8pNsf7h9LWp9CfpkLQhkW6KYKV26yHZiDA1jFGiFGTdm4x5ocLNZ1us2HAijm
- ZhijTpHfWC83CfC7lncnEFfRRliw0gg35VLF64H9vvXCfjk2BU3nAA1PwOZ.F8lWZmjlqKSbIoqy
- nzvdeETIhtqN2FjSU92IXTXQKBsQ5e4SlHtOKituiHDE9mj2kYnmqCTuXVJFIZZUPmqWdRsZh5sj
- 7aGLsPum60exn9M4nrukQj2PQwkQN1hJTIsCAU1TDsmkQ8s1b3AjAK6OXco07MDPZ0HVEuUYoxYW
- 6MiDEC4yAPH83W5LbU0EIwzBknz5K.Y4dCvuTAfXTN9EQq8v2B9Muq8IaDmqJWu9OtQ0VH35v475
- YHFO.YEMaODkObFPMdcIvi6wwFKbjItzLtjDQmTuYK6a5eE.hHsRZe22v_y1Mwy7lCrJFwAShTPP
- 8tYYmhr_ymFVeda13VTDcKyl66xSlmGcklUJZUYPoil6DK0BsOAVq2nJqccH.cu5PuOKRAMxa2Gn
- LUbfI.67y_4W_uY0JBRQACifLMdC9DKNh0UCqzYd42jET7FQ1zST5EHGbwJ6K1G4dYgFTR8e_2ZZ
- PD3zWI69MD9NxDgPJfd0OQo2tWfqMQwfzVbpDyu_HCvPwv4DlKjEtgDqK6VLxdLxgxTGPXLnS_Sd
- QpSAsz9jaZHDiIPeEDkHMcZUZowSDmWKQ1a4cnuTONV5hFGOFmgmuN9gwAfJsnDT0Fs16FFTLSvG
- WxYlhclc8R8sz9DZQtjzLo0QdujbtKSC9jBM9fdoFxrcuWjPvsHF4NwnFxc6X_m4820tZV.BQzNb
- 3ndjIFEb0Ms0RBjvJZF.iWCNes.NHIh.oJc1NcU1BJ0zCiVqGJtNsIiAxZ9GDUjS6NF151TZwXeT
- TziS.rubW1qLrQAa6DEpG1UDXm4ObcgqbF0YBDjxeSzeFlIPAABLiqbd1phxirL5pWhx0C7eSEGz
- 3777ZdiFt7REkza49tnGpvQdMIL1_0cjwVgOEWVCAdWmdpzC_9qEVlEQJ5KMh1tj2.H59b_gKJqW
- MJTCMhht05qlaGi96tdSMw944YujSc6xr3rWWj16UoPNGO7dkErbHqASY65D8Zu19XK2WfrZtxn9
- GJsKM4Gf9Tw8DJpMj6tpBYB6mDh9A7qwO2ACaFw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 2a6852c9-3ea1-4fa7-9ffe-6faf840d5e4a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Sep 2024 01:18:47 +0000
-Received: by hermes--production-gq1-5d95dc458-4tw7n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aa61bd69138485d742123d35d89a14b4;
-          Wed, 04 Sep 2024 01:18:44 +0000 (UTC)
-Message-ID: <56cfa89c-1a62-4c48-a67a-186226de1843@schaufler-ca.com>
-Date: Tue, 3 Sep 2024 18:18:42 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D20D63C;
+	Wed,  4 Sep 2024 01:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725412813; cv=fail; b=ISFBMO9hr+jXPjAiUafVbQVkFbWyrMdyPRRMXkkuYkXVpBMFAKlWod1aUjCPoETJvWvmBlMKpMtZGXhyFYA/px2zrNOz3tpYMYpKjqpNxs8PUnAUBrMFxy2hfPqV0PGaYq044KDnN1TkZlGCiwhyaWmCLlqYX57pDBXpQI8yOxw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725412813; c=relaxed/simple;
+	bh=qKHM5wG3m+NFmaWe0997+y6d3Mx+LCtESt584/5zv+4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sLEm+sBf1oPu/SN+YW7kJqIq8sH7ejBmSZ479Et7H+yoJVEkTnHGHadXqsrtgz2tZB6x3Wd1RDUCUh0bZuflNShWKQnNmjIucFaCuU/6SFdiCaZC7oc7lv8Ksc75A6BC912dT5G2Hzjc+2cMnFkiUcjz1K+rdroJuWbtRmJjijs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gksduCcs; arc=fail smtp.client-ip=52.101.69.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T4IGs6p1GEobzibWdNwZTDb/GoNTJIoN00ceyl9mUJWEoJ/X9AX6ZL4mWMdLEsgcxKv23ksqP4BbQmu9Oc56GkS0j2U5Er6BPueExfRwY7QGItyddGordErcM7TtCTauDfnYaLqM3F5JC+olP93WPV6YfdU/AVaMk5Bdwlsw3riuO/ipSMZsf9FxAKmkUSK2zkqTEddNVCHUCQDRTgXLwXxh1qQrYubHPdSKRe1pgkwSn1KZm0szkHtJ6xkDnWDwgPAk5uUj9eoKdzKYNxn9bdkAwbJHXrRGyn1CaW9a5FOsp4iSidgSgrVhvTYnUg9NvrSF4Mz/ltb8PAxJVXyyaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U6iCso8Lk3sTeN9i3DXL2NpDCN+USFQvyHGuL9gEc48=;
+ b=Hv7raoqNL4cQ80F+jNobZK0jZL843ZU01+xD3XbyZmjFqLnjBozczudzesIapX+q12Gg0OfkAVPLik8VhicIT0kLVvMJeaji0eg8cTBzIRDqRqmpp8sCNAzFcbSnYjMvNCPk8wup9Dyas+Mnid0lksOnK/S4ZdN9YYjp6B/cRFwXCpd7/N7RaNm3vu7EFFuMsUGmBqakr1nn3aXfAreYV/SYCOvB+K+D+el5cQuYpvYqmoyfy3N6rE+UQIE3+nKMFP/7sthXI603uDN8TyDV9j7pZaxVKZxlic+HjRje62nJbcZnYicBhGVsVTHA3YyoDm3kUfCU50CFqZ6nCH9T4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U6iCso8Lk3sTeN9i3DXL2NpDCN+USFQvyHGuL9gEc48=;
+ b=gksduCcschUL4mQ8uZ5GKW6CI5M4RwnUjEZJz7z33k18sxV5hM4OaNSpbn++L3t4L1n185NDXMQTFZkJKrhMQ4V7+dD8dOoT5E/wMYeH7KC1OLPeRXTr+g83eZGQ2dil5n91m5LraZQykLzwouIG1goIv3jf07U3m+tdzHDbvassi0/5P4WMvRqZVxIblK8AFkzYxjRtIx9RhX4VplO41z5XZEr4W68vYhtIbUId+/Nj2JQ0e6a6NSmJ9Hy7ljposNzv/ocIoqNa5h6pNuoUPwVD4w3Jjia/KMqW3uJ9mFwoYcEMFo7LvzCiafACdldOicIymEq/0XIleUYmFV9X7Q==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM9PR04MB8399.eurprd04.prod.outlook.com (2603:10a6:20b:3e6::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
+ 2024 01:20:08 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%6]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 01:20:08 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "davem@davemloft.net" <davem@davemloft.net>, "pabeni@redhat.com"
+	<pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH net] dt-bindings: net: tja11xx: fix the broken binding
+Thread-Topic: [PATCH net] dt-bindings: net: tja11xx: fix the broken binding
+Thread-Index: AQHa/QQeMkPALeROtkyb2f+TdmVf0rJErgKAgACb3sCAAMHjAIAAyV/w
+Date: Wed, 4 Sep 2024 01:20:08 +0000
+Message-ID:
+ <PAXPR04MB8510155101205EAF77C233C7889C2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20240902063352.400251-1-wei.fang@nxp.com>
+ <8bd356c9-1cf4-4e79-81ba-582c270982e8@lunn.ch>
+ <PAXPR04MB85100D0AEC1F73214B2087CB88932@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <bc68a8c5-b3d7-4b87-a192-ba825bfafb50@lunn.ch>
+In-Reply-To: <bc68a8c5-b3d7-4b87-a192-ba825bfafb50@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AM9PR04MB8399:EE_
+x-ms-office365-filtering-correlation-id: c02e7bcd-ecfb-4a31-d37a-08dccc7fb705
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ezPaIXRLK96nuvyT84fWCRYFkWvuCqsyco1GR8QlOAZK0f9Wpgcqfu7/XIzI?=
+ =?us-ascii?Q?pVgOcaEmw+3lsHKt2nFCS7ngS3lQTQBtcEQqkHJyOvHARYMJVWVfqn0zfJFv?=
+ =?us-ascii?Q?WRe7LFlNy0qwvD2GuUYE5cbpCwcPTAAysRD9jwqksmzjXGOCUVniI5GJGd5n?=
+ =?us-ascii?Q?qEPGkW7PpuTlk0KCZoXWP+/uCHnbuV1PAxaujrUHJ3M31s+utQLwEKtoJZpz?=
+ =?us-ascii?Q?O09gsefGDdaMmbYFWQBBLg2h2jzKaFe05j+IU5DuE6EreAyWrBY2WORSKR6B?=
+ =?us-ascii?Q?MbyPuygLmQHeGTHQsqXou3mTZAqVYsMs4EwhPaYZ73+TJETBH0tTQNF5sDUz?=
+ =?us-ascii?Q?+CnH3lTmC8SQvI6G33r8UnYTGA9oF0XpnrShltEddWSwV/BxWkWTtPuIoFq2?=
+ =?us-ascii?Q?zK1nT7x7NGup93KD41/EdLwLHnaeB8ezg7fb/BarcmhTpXduL6jx4b+yX9s/?=
+ =?us-ascii?Q?KO6B4W8mUaH2hGoT2ge+2UNrL9EZR15y62wf96c1jaB6JZmALpU6CQ11fOx7?=
+ =?us-ascii?Q?fm3oiGG+63sZX+5c8U0/zvmBA4paIGVc0hJedC9IEJ+O9dI446iqWndjAyUf?=
+ =?us-ascii?Q?78zzf1Cgkx2oA1MjAeC45qjpfxhTa61On3cuQE9DpVZSBYk6LFVcvGQXjmRP?=
+ =?us-ascii?Q?uOryGt+lmZj/T00iQ00v75InpMrwFh3AMgyKWpuKNG+NAtEPac0PZJyBIBTD?=
+ =?us-ascii?Q?497TC/Xa3vejFr5zdAClgij4SQTCPSTSOF8KNOmsT0P/B+gDSV/XfvebkpFS?=
+ =?us-ascii?Q?7uAjsd0vOSaCi+p8P6y+hVVYwjFqSBqzTZjon2XbSLFnFi1K60JtFAXqXpv3?=
+ =?us-ascii?Q?a/LWxoTtXFoOonsQ8ApWGbNJ4oNMMJZp6jj47v9WQFchi0nezIpqA4CbyT0P?=
+ =?us-ascii?Q?de/iCKFvxQphXbalPCBFr1xT0zcGhhTU/zbfJzIAz9gs0zpFHzkhvsw5kzDZ?=
+ =?us-ascii?Q?f/qjZa0MUVGkUScgw24sitnLb45dEE8oLu/Ghm+tbxbmmMkbc6Px9bbc2WlS?=
+ =?us-ascii?Q?GVcIW7FXyQc6Lx3KcnqBYSlXUPUBxqGMxQCf86PLr11rNxwQgAof5tGDT/ko?=
+ =?us-ascii?Q?hpRqql0QTafB6e2wx9CBcDrIFZFKYqUGBc59A49pMxWR3JRU537+7+pTqr4z?=
+ =?us-ascii?Q?es84y/6terJjmlkSO7kO9N3HAQgR3KIsmCXRT2/O4YHWOVev8JtGd0Kep16j?=
+ =?us-ascii?Q?yH+lEEN+1UbzNY1WHV+2wOemLzd9apIeo6hw4qzTgdrR7Xe/O8Q10krKtkAs?=
+ =?us-ascii?Q?SL7qal0SLf3WbnezRjp0yEc06qM9kfTEWrMk7wajfmPBiaPaHZvCvb/KGlhn?=
+ =?us-ascii?Q?6bmB16fFO59GABY9EyA2LQxctl8PHkLcSt1J8N7/2D68OIIfbz/vNDeq97nU?=
+ =?us-ascii?Q?DvUUNBtj0R24XeC76ALpvJwBMf68WPBCVCCtu7qpwDkPqkGvhA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Ke3U5CWL1GxdtofYHSE+yYtzpOI5HYk5xGuF7wuEkPoY4Wjs/myQl+QeY6XX?=
+ =?us-ascii?Q?dP1gxRWiTzIcR20TD5cbizXodvIQZRZ8J1APwifaUCv7MH130fdKvtzDyz56?=
+ =?us-ascii?Q?KCzfjP0A5KivL7y+VSQKBGXa14XxGvoFOk7GDxMzB+LN59U/bQt5RIj8zCWh?=
+ =?us-ascii?Q?YdlODoDSUhtfNrdufzJKVE77lvdbfQc/O3Xjts832OMY/zkiJ5lvR/MQE4yV?=
+ =?us-ascii?Q?ROPQmc3g+pl5AyA/a0jler7484nn1XDLw7rr9HmidqiPrQGfWgBfYjEmXaKx?=
+ =?us-ascii?Q?uS/QQAze78Kbv1vp6uGySvWmMPz3oQFjPtyz52LUKeSI5qmjxi6ws23QR9pz?=
+ =?us-ascii?Q?9Vaff0l0lrPjVJjUuJl6YX0Qik/w/SjVBThhw8qdFCukC7CW1f8T9BHl3kKz?=
+ =?us-ascii?Q?GH9NG/RuBqIUmyjxTmXzn2YaQ+qzSLfvFaQKT29fyoSm6m7h+tSqZpi03HnF?=
+ =?us-ascii?Q?P4CoCI8sBDI6TbAmvhnRybdnyUFFPwBYC+V1VaGmeq6Bgh8147VCeZ75dvTD?=
+ =?us-ascii?Q?lcbunMnTJaLhuE+Vr+zewdlwgJ6mG8TLMF/nc+GNPBq2TaYxpYYA3pnZdvqz?=
+ =?us-ascii?Q?vd56K+VKgvwf3BMya0gTqE+TwbnYPbkWNhXwVzK3q/iGXqhyBYu6Ecmq5Ufk?=
+ =?us-ascii?Q?KgxrfAj8Of0+/+tbNDB4xLrgOcV44g2l2PfyOuRrA2d6bN1ztprdE+C28OLn?=
+ =?us-ascii?Q?CxNPyYoZDcBvEPjFDwSaXwwpHvsUyd+BrdSLQodk+SHE6GapyCRXwrGiU9eY?=
+ =?us-ascii?Q?jJf+HUQT4PjRzb8Ow/v0eUx+6PqzQ/qfcWXRKbzXixWRKe5FwZPkgLv0dR3+?=
+ =?us-ascii?Q?RzN7gqPo7wi/2Q5O8CnX0Yrks96fjW33x3VFsaTZk2k3mcZik+e475Thlnhi?=
+ =?us-ascii?Q?faYIwI8SCh2bbq5s7rU/1WV1dCmpPLRyh2vc24x5Hmu+yfoJbi2sWTgtC1Vp?=
+ =?us-ascii?Q?lkmZA5qmnLofpI36PNeL9xOe/uv9iJCK/06TOKnvlP1XLiLRMLBbGKBO+VxV?=
+ =?us-ascii?Q?K60OlhXKTcIXds/OROEIyQA442pfzrLfi5OPMa+TVwmrNySp/Vomq05REjDf?=
+ =?us-ascii?Q?GCEvKxjue/KoMfXken6riH5EwQ1L4HncUiQDTOBoCEUur68MJprlOQQsj6Hy?=
+ =?us-ascii?Q?7BRIfjKbj6/6ALwvBxZGb39pkw9fpg2Ey3HN0Hjhnjvdv5dyCsKhPobQrzDy?=
+ =?us-ascii?Q?n9cSTkqLy1whKpIbQHJR7buqriLFIrgiQQbwOGeZOxovmJxk88kh4FBev42G?=
+ =?us-ascii?Q?ICitDgGzClilyaQwG0vnx/88dTMeIDRzkVfucf9JHvkr+fG6rky/oTS1SjgV?=
+ =?us-ascii?Q?JqfXDeoW8xVAG/UTBXU2NSbtIdZDQJARoAiV6XWgfPEzBC7JQt9nKXv687mJ?=
+ =?us-ascii?Q?s9eb3vNdHAajvgZKifxi9DNgROJNgMdxr1Bt/KaaKe8ozjTH7UUR5O4AMZ8B?=
+ =?us-ascii?Q?Dpio19dfSwvcaim/xayPIVYWXuzXsHfw0pdcdsqTvKgmbDf1cDKydMrJdHsL?=
+ =?us-ascii?Q?f0RBVuU7n0woQpWi9TD7CJBWatcOq+vRXnP/oIk1ygR6IPG2rtuWXXH76O52?=
+ =?us-ascii?Q?d0zejHG3KialtQSzf1I=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/13] Audit: maintain an lsmblob in audit_context
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, mic@digikod.net,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240830003411.16818-5-casey@schaufler-ca.com>
- <9c8268660e3c07af7edab592e8249276@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <9c8268660e3c07af7edab592e8249276@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c02e7bcd-ecfb-4a31-d37a-08dccc7fb705
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2024 01:20:08.2841
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6f0mfGRouJN1OP3VKfjd3dmsjvM30Ny9rw6CEeNuxM843T6Kwh+sJ820zIZm9If+ZessRbb3UIbfzMkAgRwnLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8399
 
-On 9/3/2024 5:18 PM, Paul Moore wrote:
-> On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Replace the secid value stored in struct audit_context with a struct
->> lsmblob. Change the code that uses this value to accommodate the
->> change. security_audit_rule_match() expects a lsmblob, so existing
->> scaffolding can be removed. A call to security_secid_to_secctx()
->> is changed to security_lsmblob_to_secctx().  The call to
->> security_ipc_getsecid() is scaffolded.
->>
->> A new function lsmblob_is_set() is introduced to identify whether
->> an lsmblob contains a non-zero value.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  include/linux/security.h | 13 +++++++++++++
->>  kernel/audit.h           |  3 ++-
->>  kernel/auditsc.c         | 19 ++++++++-----------
->>  3 files changed, 23 insertions(+), 12 deletions(-)
->>
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index 457fafc32fb0..a0b23b6e8734 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -277,6 +277,19 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
->>  	return kernel_load_data_str[id];
->>  }
->>  
->> +/**
->> + * lsmblob_is_set - report if there is a value in the lsmblob
->> + * @blob: Pointer to the exported LSM data
->> + *
->> + * Returns true if there is a value set, false otherwise
->> + */
->> +static inline bool lsmblob_is_set(struct lsmblob *blob)
->> +{
->> +	const struct lsmblob empty = {};
->> +
->> +	return !!memcmp(blob, &empty, sizeof(*blob));
->> +}
->> +
->>  #ifdef CONFIG_SECURITY
-> We probably want a !CONFIG_SECURITY variant of this too.
-
-I'll check, but I expect you're right.
-
->
->>  int call_blocking_lsm_notifier(enum lsm_event event, void *data);
->> diff --git a/kernel/audit.h b/kernel/audit.h
->> index a60d2840559e..b1f2de4d4f1e 100644
->> --- a/kernel/audit.h
->> +++ b/kernel/audit.h
->> @@ -11,6 +11,7 @@
->>  
->>  #include <linux/fs.h>
->>  #include <linux/audit.h>
->> +#include <linux/security.h>
->>  #include <linux/skbuff.h>
->>  #include <uapi/linux/mqueue.h>
->>  #include <linux/tty.h>
->> @@ -160,7 +161,7 @@ struct audit_context {
->>  			kuid_t			uid;
->>  			kgid_t			gid;
->>  			umode_t			mode;
->> -			u32			osid;
->> +			struct lsmblob		oblob;
->>  			int			has_perm;
->>  			uid_t			perm_uid;
->>  			gid_t			perm_gid;
->> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->> index 23adb15cae43..84f6e9356b8f 100644
->> --- a/kernel/auditsc.c
->> +++ b/kernel/auditsc.c
->> @@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk,
->>  				/* Find ipc objects that match */
->>  				if (!ctx || ctx->type != AUDIT_IPC)
->>  					break;
->> -				/* scaffolding */
->> -				blob.scaffold.secid = ctx->ipc.osid;
->> -				if (security_audit_rule_match(&blob,
->> +				if (security_audit_rule_match(&ctx->ipc.oblob,
->>  							      f->type, f->op,
->>  							      f->lsm_rule))
->>  					++result;
->> @@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *context, int *call_panic)
->>  			audit_log_format(ab, " a%d=%lx", i,
->>  				context->socketcall.args[i]);
->>  		break; }
->> -	case AUDIT_IPC: {
->> -		u32 osid = context->ipc.osid;
->> -
->> +	case AUDIT_IPC:
->>  		audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
->>  				 from_kuid(&init_user_ns, context->ipc.uid),
->>  				 from_kgid(&init_user_ns, context->ipc.gid),
->>  				 context->ipc.mode);
->> -		if (osid) {
->> +		if (lsmblob_is_set(&context->ipc.oblob)) {
->>  			char *ctx = NULL;
->>  			u32 len;
->>  
->> -			if (security_secid_to_secctx(osid, &ctx, &len)) {
->> -				audit_log_format(ab, " osid=%u", osid);
->> +			if (security_lsmblob_to_secctx(&context->ipc.oblob,
->> +						       &ctx, &len)) {
->>  				*call_panic = 1;
->>  			} else {
->>  				audit_log_format(ab, " obj=%s", ctx);
->> @@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *context, int *call_panic)
->>  				context->ipc.perm_gid,
->>  				context->ipc.perm_mode);
->>  		}
->> -		break; }
->> +		break;
->>  	case AUDIT_MQ_OPEN:
->>  		audit_log_format(ab,
->>  			"oflag=0x%x mode=%#ho mq_flags=0x%lx mq_maxmsg=%ld "
->> @@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
->>  	context->ipc.gid = ipcp->gid;
->>  	context->ipc.mode = ipcp->mode;
->>  	context->ipc.has_perm = 0;
->> -	security_ipc_getsecid(ipcp, &context->ipc.osid);
->> +	/* scaffolding */
->> +	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
->>  	context->type = AUDIT_IPC;
->>  }
->>  
->> -- 
->> 2.46.0
-> --
-> paul-moore.com
->
+> On Tue, Sep 03, 2024 at 02:17:04AM +0000, Wei Fang wrote:
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - ethernet-phy-id0180.dc40
+> > > > +      - ethernet-phy-id0180.dd00
+> > > > +      - ethernet-phy-id0180.dc80
+> > > > +      - ethernet-phy-id001b.b010
+> > > > +      - ethernet-phy-id001b.b031
+> > >
+> > > This shows the issues with using a compatible. The driver has:
+> > >
+> > > #define PHY_ID_TJA_1120                 0x001BB031
+> > >
+> > >                 PHY_ID_MATCH_MODEL(PHY_ID_TJA_1120),
+> > >
+> > > which means the lowest nibble is ignored. The driver will quite
+> > > happy also probe for hardware using 001b.b030, 001b.b032, 001b.b033,
+> > > ... 001b.b03f
+> > >
+> > > Given you are inside NXP, do any of these exist? Was 001b.b030 too
+> > > broken it never left the QA lab? Are there any hardware issues which
+> > > might result in a new silicon stepping?
+> >
+> > Yes, some of the revisions do exist, but the driver should be
+> > compatible with these different revisions.
+> >
+> > For 001b.b030, I don't think it is broken, based on the latest data
+> > sheet of
+> > TJA1120 (Rev 0.6 26 January 2023), the PHY ID is 001b.b030. I don't
+> > know why it is defined as 001b.b031 in the driver, it may be a typo.
+>=20
+> More likely, the board Radu Pirea has does have a device with this ID.
+>=20
+> > >
+> > > Does ethernet-phy-id0180.dc41 exist? etc.
+> > I think other TJA PHYs should also have different revisions.
+> >
+> > Because the driver ignores the lowest nibble of the PHY ID, I think it
+> > is fine to define the lowest nibble of the PHY ID in these compatible
+> > strings as 0, and there is no need to list all revisions. And I don't
+> > know which revisions exist, because I haven't found or have no
+> > permission to download some PHY data sheets. I think what I can do is
+> > to modify "ethernet-phy-id001b.b031" to "ethernet-phy-id001b.b030".
+>=20
+> You have to be careful here. Stating a compatible forces the PHY ID. So i=
+f the
+> compatible is "ethernet-phy-id001b.b031", but the board actually has a
+> "ethernet-phy-id001b.b030". phydev->phy_id is going to be set to 0x001bb0=
+31.
+> Any behaviour in the driver which look at that revision nibble is then go=
+ing to be
+> wrong.
+>=20
+> Maybe, now, today, that does not matter, because the driver never looks a=
+t the
+> revision. But it does mean developers might put the wrong compatible in D=
+T.
+> And then when you do need to add code looking at the revision, it does no=
+t
+> always work, because there are some boards with the wrong compatible in D=
+T.
+>=20
+> Listing all possible compatibles suggests to developers they need to be c=
+areful
+> and use the correct value. Or add a comment in the DT bindings that not u=
+sing a
+> compatible is probably safer.
+>=20
+Thanks for the suggestion, I will try my best to check more data sheets and=
+ list all
+the PHY IDs I know. I can't guarantee that I can list all the PHY IDs, but =
+I will update
+it in the future when I get more information.
 
