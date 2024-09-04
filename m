@@ -1,194 +1,128 @@
-Return-Path: <linux-kernel+bounces-315676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE38796C5AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2464196C5B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 19:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4AD1C22569
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D3A1C223D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 17:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA091E1A08;
-	Wed,  4 Sep 2024 17:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFFE1DEFE7;
+	Wed,  4 Sep 2024 17:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="h4tHTXI8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XIDUJcOS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J5DtVrRa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QLe+ZCvL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZxuJeXDH"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC531DFE1A;
-	Wed,  4 Sep 2024 17:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9361E132C;
+	Wed,  4 Sep 2024 17:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725471999; cv=none; b=fp7pT4y7YWd3sk3ZdQlqsREnofl0X8gTAmqPGT6FuN2PBYoMwaBx7+7pbemODsdPSFdObXRWmP0fOcwVSJtiZT/tnRHcnPNt5dHk4IQkdHtqiNH8cbBJXRgqNP2P4V5t6TeQp9w1NWTz4Je8JO7rsyv+J6S0qMIOnOwCIzy+a9Q=
+	t=1725472051; cv=none; b=Lpj7nnTx3cXapowFbIkQyt8UnSlVp0KkM0NfGq6ukP5dz7HjjlOq8zuROmLAZGLXfMSsU34ey8wV8+dLP0x2cqRaAJ69EJb9x/W/mofrTJ/ZOAocexaMkW0cEnjOPunz5fqH/HF70W0hrlApUttFcAPxi0bXzE2Cw3qzxUI9xNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725471999; c=relaxed/simple;
-	bh=OLEa0qrKgCpqJxEBIBOa/IRqvVidi/D1LKVs6fG6eug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A36UAPEkmWZVbBQfs8Fid74Sb0nAw3yHVHkCv37EcO+LVm7DTd0bgeUWlQYV4RMNyo2i67Gvf98AfNjx6t2sGgBMoP+lcNeUguoGTL13qWWmFA31nr5WqIRcRm3s4bcQTrM5+bUqrg5Q8KmY8e8bfYBjSf6h5j4SuZMI7lbtZIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=h4tHTXI8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XIDUJcOS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J5DtVrRa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QLe+ZCvL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EEDEF21A34;
-	Wed,  4 Sep 2024 17:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725471996;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1725472051; c=relaxed/simple;
+	bh=psNQgG7k6QzVycEcqOGul+y9Q1/orlCLyOVGi7JufEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xc9UvY23EnBfA6prtFdHqmM3GpDPc+C5ya0bmgzzNhrEQX3P3ta2XIL8V1avAt+I3T/Mk1UHS7o8Laj4w29sMXIgq+BHQKW8sDgx+gvTpZXgbgy21qlbuB3rdwDbXQhTRL4fBr5A52COfLCa4wv7PO6EHC+4Vt3gogAnmr/aoUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZxuJeXDH; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 399DBFF803;
+	Wed,  4 Sep 2024 17:47:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725472041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
-	b=h4tHTXI8ABm5BtGNd7Nrmiz1zs+Mf6l7LPypYh1xmHhujzBqqXEBhynYyOAb/tNkgh8EaW
-	nUDqRoe1qd3fhw+VFyz0BUsjAhj8Wuc9zzyt7tRySR8930Qvsw20/SPHZkxagX1tw2RqTG
-	DnRWhR5i89IDE+nfeHm4q32EwuDh4Kw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725471996;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
-	b=XIDUJcOS97XA4FyQ6FcX9zJjKpaWH5c1gZIFuL1SOLy2c/rWEMT5a7J1hf1zCZMN2WSTJf
-	+ZzO5mj2vjNQh8Dw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=J5DtVrRa;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QLe+ZCvL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725471995;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
-	b=J5DtVrRaLArcF4ikE9hBT0RLGamqpKWnseTfD2Seoyn+TUWAOL/RrusUafnnVRYokzWkb1
-	Sp0DzVVe6Zk9nLFUVDAGz5hbKGO95V0OvMJpYu9rZDwNjryy7Te206AysOv12yBaDbd2rE
-	rTQxksroNRgD1nhhukig/cOih34KS+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725471995;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=56KFaELrTK1OiibukGva1dPNRnbkcmwTmcJziUt8hiI=;
-	b=QLe+ZCvLY6sBsbE3JR1t5xF1AZt3jKjkiy4vK2fMFKpBOnMzv/YRMqIwKjWONcOf9pnGZB
-	65MGfhKP61VQv2AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C83D6139E2;
-	Wed,  4 Sep 2024 17:46:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P6aiMPuc2GZwMgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 04 Sep 2024 17:46:35 +0000
-Date: Wed, 4 Sep 2024 19:46:30 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Ghanshyam Agrawal <ghanshyam1898@gmail.com>, clm@fb.com,
-	josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
-Subject: Re: [PATCH] btrfs: Added null check to extent_root variable
-Message-ID: <20240904174630.GP26776@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240904023721.8534-1-ghanshyam1898@gmail.com>
- <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
+	bh=5lrAIY666kuXUBCi+wo5/zYldvxY9h3q7HZm7kbftVA=;
+	b=ZxuJeXDHi359wklqIU/J/WmVpxaFuHD6eG7XzZrdZDJOXnAwfp8uHoXsFSauy2mWdqFZrC
+	+V3fF83Qo1UkmljlOLa5HGSTG1uSPZHv0LZASkIyTQ1t8ZCQ5gF2s3T9ATKfO1ji+zUcG0
+	wT4NOK9YJrh7hPsKcZsceuXZQYYm/zWFcQqHNAwkmn1G6agd5626GLhLkivPHvoJPFR6U7
+	B34NeuWmvCX5MHANfGxrbT5sZvbWMDP4aLsUoPuUaZRN2F3FH4vsb1hFs8f3p3pW61hq7J
+	d/wSdpKVTNiaU2UxLvRT0EkaCfzzKpVp/CW034Q4G+ClmLUyDnSPprUjEtcNOQ==
+Date: Wed, 4 Sep 2024 19:47:17 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Michal Kubecek <mkubecek@suse.cz>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jonathan Corbet
+ <corbet@lwn.net>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
+ Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH ethtool-next v2 3/3] ethtool: Introduce a command to
+ list PHYs
+Message-ID: <20240904194717.60ba4df6@fedora.home>
+In-Reply-To: <7fpbxztptolcuz4ppppkmpmblel7mv4nh4jgkjqbdedo4hrcjc@6oo6acqfejas>
+References: <20240828152511.194453-1-maxime.chevallier@bootlin.com>
+	<20240828152511.194453-4-maxime.chevallier@bootlin.com>
+	<7fpbxztptolcuz4ppppkmpmblel7mv4nh4jgkjqbdedo4hrcjc@6oo6acqfejas>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ee34826-259f-45a1-99d5-a21262489e49@gmx.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: EEDEF21A34
-X-Spam-Score: -2.71
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmx.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org,syzkaller.appspotmail.com];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[9c3e0cdfbfe351b0bc0e];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Sep 04, 2024 at 03:21:34PM +0930, Qu Wenruo wrote:
-> 
-> 
-> 在 2024/9/4 12:07, Ghanshyam Agrawal 写道:
-> > Reported-by: syzbot+9c3e0cdfbfe351b0bc0e@syzkaller.appspotmail.com
-> > Closes:https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
-> > Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-> > ---
-> >   fs/btrfs/ref-verify.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
-> > index 9522a8b79d22..4e98ddf5e8df 100644
-> > --- a/fs/btrfs/ref-verify.c
-> > +++ b/fs/btrfs/ref-verify.c
-> > @@ -1002,6 +1002,9 @@ int btrfs_build_ref_tree(struct btrfs_fs_info *fs_info)
-> >   		return -ENOMEM;
-> >
-> >   	extent_root = btrfs_extent_root(fs_info, 0);
-> > +	if (!extent_root)
-> > +		return -EIO;
-> > +
-> 
-> Can you reproduce the original bug and are sure it's an NULL extent tree
-> causing the problem?
-> 
-> At least a quick glance into the console output shows there is no
-> special handling like rescue=ibadroots to ignore extent root, nor any
-> obvious corruption in the extent tree.
-> 
-> If extent root is really empty, we should error out way earlier.
-> 
-> Mind to explain the crash with more details?
+Hello Michal,
 
-In the stack trace it looks the ref-verify mount option is enabled, I
-don't think we've tested that in combination with the rescue options as
-ref-verify is a debugging tool, must be built in config (by default is
-not and is not on distro configs).
+On Mon, 2 Sep 2024 00:07:56 +0200
+Michal Kubecek <mkubecek@suse.cz> wrote:
 
-We should fix the bug where it crashes when run in syzkaller so we can
-allow it to continue coverage but otherwise I wouldn't put too much
-effort into that. I.e. if we can do a simple fallback and exit gracefully
-and not try to continue ref-verify + missint extent (or other trees).
+> On Wed, Aug 28, 2024 at 05:25:10PM +0200, Maxime Chevallier wrote:
+> > It is now possible to list all Ethernet PHYs that are present behind a
+> > given interface, since the following linux commit :
+> > 63d5eaf35ac3 ("net: ethtool: Introduce a command to list PHYs on an interface")
+> > 
+> > This command relies on the netlink DUMP command to list them, by allowing to
+> > pass an interface name/id as a parameter in the DUMP request to only
+> > list PHYs on one interface.
+> > 
+> > Therefore, we introduce a new helper function to prepare a interface-filtered
+> > dump request (the filter can be empty, to perform an unfiltered dump),
+> > and then uses it to implement PHY enumeration through the --show-phys
+> > command.
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > ---  
+> [...]
+> > diff --git a/netlink/extapi.h b/netlink/extapi.h
+> > index c882295..fd99610 100644
+> > --- a/netlink/extapi.h
+> > +++ b/netlink/extapi.h
+> > @@ -56,6 +56,7 @@ int nl_set_mm(struct cmd_context *ctx);
+> >  int nl_gpse(struct cmd_context *ctx);
+> >  int nl_spse(struct cmd_context *ctx);
+> >  int nl_flash_module_fw(struct cmd_context *ctx);
+> > +int nl_get_phy(struct cmd_context *ctx);
+> >  
+> >  void nl_monitor_usage(void);
+> >    
+> 
+> Please add also a fallback to !ETHTOOL_ENABLE_NETLINK branch, similar
+> to other netlink handlers, so that a build with --disable-netlink does
+> not fail.
+
+You're right, I'll add a fallback for that. I actually just faced that
+exact issue trying to build this patchset using a fresh buildroot
+setup, having forgotten to add netlink libraries.
+
+Thanks for the reviews,
+
+Maxime
 
