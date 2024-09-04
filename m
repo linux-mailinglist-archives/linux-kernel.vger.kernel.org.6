@@ -1,173 +1,126 @@
-Return-Path: <linux-kernel+bounces-314950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7CE96BB5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:59:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5B096BB61
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A895A284E43
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:59:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31BBEB22D79
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436141D4600;
-	Wed,  4 Sep 2024 11:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F791D54EF;
+	Wed,  4 Sep 2024 11:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="axOBdmZ3"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SwWxXRw1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xGF5KwmN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA671D2225
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55211D2225;
+	Wed,  4 Sep 2024 11:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451135; cv=none; b=fUrRlRCFnOEaCmF2R1Kc49tsjSXyJtP9GFXClbcue95w/5UJL9RozJOziDfysgh9V3/saIbbaH1bMq8ScfgTX1G3+jKK7dgKoEkyhev2Twwflt00gdm0A9r90pJUEKJnuEHwJzGL/QhP48Hgjeg6upwBsYYYzEdbrxcUpRi66CQ=
+	t=1725451143; cv=none; b=Hds2WOVdqANfwg8CX/RCvRHA5Kpzu+a/lwBgdS09ZBDeubtycRRS/nHrltvrR9ot6lh33LbB5VGvtBOZmQbI0ps7vdGcSv7SkjuPQWr0XVsY2O8eoeiF/6UPE7JYPd2sEBjN+6BqjoKvMDUaOq0+vPkSiqH+VQNYrTIUzuK1eTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451135; c=relaxed/simple;
-	bh=oFpYFAwzQWlL+Kvgx4pEoCCAh+xehZKm3+5+PmwqUq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GF218mo/3YbAUE4K3wZb6ncdSjLA8lOoskdqWGVaGq9E5rDNPCYhHhOYIS56n8K06tYf1+txpiaTvMlM3/jv8lHzKiwOQvbBO0R1ayC+UnGcOoqmC1TN9Set7B4bXPzGTd1fOhJesR9mfQxrr2ELVIB5EO8M/yyNhx5QVdqLb7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=axOBdmZ3; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533de5a88f8so6663494e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 04:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725451132; x=1726055932; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VS61FUBAsfsMXwD3b/j+B3Cf4Nz46zKMjoAkgpr9Tb4=;
-        b=axOBdmZ3cZ0yA1EZq3ep+WTEIHt3rOocPgvtwU26V30u0VRMwA0REJ5thtQqNlORv1
-         WyrYeUu4DQ2D2S/MV7QltBbGhv0s1lx60JelgBYhVXMU2gP0+3o7To+FjgdOa08d2LTr
-         e3H/uZKklxJaoBhfHZ6WX8t0FBeoX5jXPdoQZCsOGWZS8OYNsdyolQ3NsSOcw2RREPbD
-         haI+53tqnngooa2XJDTflKHd6MAlRV5SkE3hdyPakBqnsFFBNQYu88GjgkOOviG6ct6Y
-         GA3o32imIQJd22ss2l9hf2GSyEHuS9UKFDNTjElhgA2CKKdDK/15m+MCRTnvX+Q7+fxk
-         VMyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725451132; x=1726055932;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VS61FUBAsfsMXwD3b/j+B3Cf4Nz46zKMjoAkgpr9Tb4=;
-        b=WTknSkzpuYAm7v7/kvLl1dDIaRrqdpzXArvLzMffoJQcxGypx3TPeJOUocyJT2urfq
-         Dt1DgA7DIZqpJJofiitXlhoWDt99J8yDz0nNSTB9ABIZszml+elGo0TsZHUTBw+SzGy2
-         TQ4q8M/cUIuDrBdzyEtkWeNcS/oQAE4bzwsdYikVwZHam6bM8e0LXX5HF7o6NoivTVSy
-         2jCbq48N8S+AEVLorFRl1mZbhywL/iBkBK4guiJZAtTG17+eXrzcVW62BgNoaSNKW4Y9
-         yh8O6nbdAZxyIcKO/8n/SHYTX/0vR1P1joo2rjKoNhguN2lz/8AMAMgefv0GOoyp7LGd
-         AcdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXT7rwe+v3wf2jBhXaEVhtsFhEB+CGO0P/2AeXI8qsi5Iu5UJJU5aUVnitIGWQXxGzOU6RZXCPgH0Iou4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJG2xc3zHv5+qoPwjYQn7Dr+HNaR5wUy7FSr1FpH76dFswwdWD
-	wJzjf1tPUruaQEQrw1mIphsm6/BEMqznfgj16VhEQqyIe3oQ08vwIVH/xBtEDxk=
-X-Google-Smtp-Source: AGHT+IHs1wIrBm6X/Hd9ZoeAvwI8G6avm2Xjtx4bTuDlmxGONjsMb86+mwA17/VyPvh0C5XM0JrLgA==
-X-Received: by 2002:a05:6512:1589:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-53546b32cacmr13503390e87.29.1725451130774;
-        Wed, 04 Sep 2024 04:58:50 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7332:ffbc:ffbc:9dd4:6902? ([2a10:bac0:b000:7332:ffbc:ffbc:9dd4:6902])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891daeb1sm800902266b.169.2024.09.04.04.58.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 04:58:50 -0700 (PDT)
-Message-ID: <caa4407a-b838-4e1b-bb3d-87518f3de66b@suse.com>
-Date: Wed, 4 Sep 2024 14:58:48 +0300
+	s=arc-20240116; t=1725451143; c=relaxed/simple;
+	bh=zgLkYgK2uP4vGHdwouDRLgVoXVSDjxswoWNw6/yVG2U=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=md8vEM1bDL+jbrY//lAF6uyv/Zql0OR4gKA3EVQd6iniUjgvwb3cU8o269YUYI7BRmwbYnzTPmy305/iSyXvvu4n1Dy03S/GaPnnuoqBk13wdZPY73PlaGRwp1ngyRKgFbOtocGXod+pBs3/WxXWHOET6U3XT2IGGHmMoBLzqOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SwWxXRw1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xGF5KwmN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 04 Sep 2024 11:58:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725451134;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qR3EzyFpoXlvskosvjp1zWZUd42OA7Td85q9X3bkRRM=;
+	b=SwWxXRw19Godg7ZhPwfsMW/UZ7lf/RcKkeIdYBSVqcxkllRwQSTscssV89dXJlQd1RDjXT
+	I9LWYg9uyT/1OPD+fbYfpiLvTbcz7jWfQwM79BVoUs5Me/muKecBnJLdi0BDCWDKLoDE8G
+	2U1LaKxs6kofS1xhNXjFLqp/AEbwg+/HGx3f2AVb79GMq4QIg7Zu7eYK3/fAku2EZ3zNa0
+	y7GkHdCVylvi9L2EzjoDbq2rgv+7Iniz4EcoIoovxoLnfxj7DBBSA7uNH/a7ZJNpJcInnp
+	cmWzIXJOWIjNo2+7xphHtlmuoDJ7FlGBodRYiPO70sMNCQlum3bV7NCmbkFOIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725451134;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qR3EzyFpoXlvskosvjp1zWZUd42OA7Td85q9X3bkRRM=;
+	b=xGF5KwmN23IeGS9Szc08Sf4bVVTAkmxCHoJ6V2IBYWPBjSzXdnxI3vUq8KB4V4D4ANmTKg
+	zw0Y01wQneZyZfAg==
+From: "tip-bot2 for Sven Schnelle" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] uprobes: Use kzalloc to allocate xol area
+Cc: Sven Schnelle <svens@linux.ibm.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240903102313.3402529-1-svens@linux.ibm.com>
+References: <20240903102313.3402529-1-svens@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
- when module setup
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org
-Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
- linux-kernel@vger.kernel.org
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-11-rick.p.edgecombe@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240812224820.34826-11-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <172545113382.2215.7451184896946009553.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the perf/urgent branch of tip:
 
+Commit-ID:     e240b0fde52f33670d1336697c22d90a4fe33c84
+Gitweb:        https://git.kernel.org/tip/e240b0fde52f33670d1336697c22d90a4fe33c84
+Author:        Sven Schnelle <svens@linux.ibm.com>
+AuthorDate:    Tue, 03 Sep 2024 12:23:12 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 03 Sep 2024 16:54:02 +02:00
 
-On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
-> From: Xiaoyao Li <xiaoyao.li@intel.com>
-> 
-> While TDX module reports a set of capabilities/features that it
-> supports, what KVM currently supports might be a subset of them.
-> E.g., DEBUG and PERFMON are supported by TDX module but currently not
-> supported by KVM.
-> 
-> Introduce a new struct kvm_tdx_caps to store KVM's capabilities of TDX.
-> supported_attrs and suppported_xfam are validated against fixed0/1
-> values enumerated by TDX module. Configurable CPUID bits derive from TDX
-> module plus applying KVM's capabilities (KVM_GET_SUPPORTED_CPUID),
-> i.e., mask off the bits that are configurable in the view of TDX module
-> but not supported by KVM yet.
-> 
-> KVM_TDX_CPUID_NO_SUBLEAF is the concept from TDX module, switch it to 0
-> and use KVM_CPUID_FLAG_SIGNIFCANT_INDEX, which are the concept of KVM.
-> 
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
-> uAPI breakout v1:
->   - Change setup_kvm_tdx_caps() to use the exported 'struct tdx_sysinfo'
->     pointer.
->   - Change how to copy 'kvm_tdx_cpuid_config' since 'struct tdx_sysinfo'
->     doesn't have 'kvm_tdx_cpuid_config'.
->   - Updates for uAPI changes
-> ---
->   arch/x86/include/uapi/asm/kvm.h |  2 -
->   arch/x86/kvm/vmx/tdx.c          | 81 +++++++++++++++++++++++++++++++++
->   2 files changed, 81 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index 47caf508cca7..c9eb2e2f5559 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -952,8 +952,6 @@ struct kvm_tdx_cmd {
->   	__u64 hw_error;
->   };
->   
-> -#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
-> -
->   struct kvm_tdx_cpuid_config {
->   	__u32 leaf;
->   	__u32 sub_leaf;
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 90b44ebaf864..d89973e554f6 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -31,6 +31,19 @@ static void __used tdx_guest_keyid_free(int keyid)
->   	ida_free(&tdx_guest_keyid_pool, keyid);
->   }
->   
-> +#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
-> +
-> +struct kvm_tdx_caps {
-> +	u64 supported_attrs;
-> +	u64 supported_xfam;
-> +
-> +	u16 num_cpuid_config;
-> +	/* This must the last member. */
-> +	DECLARE_FLEX_ARRAY(struct kvm_tdx_cpuid_config, cpuid_configs);
-> +};
-> +
-> +static struct kvm_tdx_caps *kvm_tdx_caps;
-> +
->   static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
->   {
->   	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
-> @@ -131,6 +144,68 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
->   	return r;
->   }
->   
-> +#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
+uprobes: Use kzalloc to allocate xol area
 
-Why isn't TDX_TD_ATTR_DEBUG added as well?
+To prevent unitialized members, use kzalloc to allocate
+the xol area.
 
-<snip>
+Fixes: b059a453b1cf1 ("x86/vdso: Add mremap hook to vm_special_mapping")
+Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Link: https://lore.kernel.org/r/20240903102313.3402529-1-svens@linux.ibm.com
+---
+ kernel/events/uprobes.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 73cc477..50d7949 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1489,7 +1489,7 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ 	struct xol_area *area;
+ 	void *insns;
+ 
+-	area = kmalloc(sizeof(*area), GFP_KERNEL);
++	area = kzalloc(sizeof(*area), GFP_KERNEL);
+ 	if (unlikely(!area))
+ 		goto out;
+ 
+@@ -1499,7 +1499,6 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ 		goto free_area;
+ 
+ 	area->xol_mapping.name = "[uprobes]";
+-	area->xol_mapping.fault = NULL;
+ 	area->xol_mapping.pages = area->pages;
+ 	area->pages[0] = alloc_page(GFP_HIGHUSER);
+ 	if (!area->pages[0])
 
