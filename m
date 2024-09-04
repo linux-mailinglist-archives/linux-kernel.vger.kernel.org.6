@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-315706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5815396C602
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFC596C60A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 20:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA971F2404F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A3FF281C19
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 18:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86801E1A3F;
-	Wed,  4 Sep 2024 18:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cjO2MaxK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3D71E1A2F;
+	Wed,  4 Sep 2024 18:11:00 +0000 (UTC)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440401E1A18;
-	Wed,  4 Sep 2024 18:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D3E6E619;
+	Wed,  4 Sep 2024 18:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725473342; cv=none; b=MAGAIKGHHsHOLxRGv1ZdUmp7fZf/mu9fz8IVF4B8gH7MF61vbhgDggLMQ94jbWzlZRY7QhmWtahvRsC9oAoRnJBMGNAZOpV4h5JlE0LEJ/iVQxrlJJS68FYlndfdShmFTddPWQwdkkevU7ihaTnRF8VYZQXwNEp0ga+GmnkM//0=
+	t=1725473459; cv=none; b=cKBsNaMhJTqQMVXEjinmZwbnekEkdD2uUJ8vUuXFcgDNdgsxp77lOT+rxC1H3KU9H6WAQoLoO9ENJnF26BPWHGPPQ/+IP145+kis9tlTKSbvMCI1yk/sDVcA7MhWrVpScnCtNAbTfSj8VK6GZIb00RUniWkPiVjk/vqt1sRThXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725473342; c=relaxed/simple;
-	bh=l0DM/F9pT9iRieeb6jTA/2NiCKWy8nvfiUH+NKPnzgs=;
+	s=arc-20240116; t=1725473459; c=relaxed/simple;
+	bh=stbnkD7vK3FsSw5kEiD4v0BYUrwnhSQLTeVEeLGw+d4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVAaW1T7uqZk5VKAHrYi5WozG3LOwFJ086vVWJLDhcNm9OEUMXkFBSOzQm3gmYYmyUPDXluIWpVFScCcNs1gnw/2nbIWFhEFesDdGnkT5ucJP1krYm2E3kUOk3687rO/Y66NSD1ROa3i70CF95snfjZRZ5R01GT1KGA6e/4+lKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cjO2MaxK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725473337;
-	bh=l0DM/F9pT9iRieeb6jTA/2NiCKWy8nvfiUH+NKPnzgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cjO2MaxKRwFea3okgn3X8h+EkZs/+TQRzli8vFDp60TZrqSZj6uu8UnJqHR/x8oOV
-	 TpQ+AEGw80k3VkUOKHvyRX7WQTbwj0Gs2vGwaNVXqRZedw8C2fmIfVrhaKvsbA/agt
-	 yjVnRhx/U90oUEo+OF+9pZcMecUQkjjJBjgkZe3FocKy3Y5C4rtJE7FvxvtDgP7mIr
-	 ptCMfJHQXfYKRNPdECfCX/2MgBfTe+j51wwi42euNB/q8x9YfO6N/WYB/wGF8d+cNl
-	 fdOIJlP+VUAP7VRrucD+1+yfk8WKXVKbk6QmlKYumj46zIENUbPxvOVXxOLjlvVSid
-	 SI7/mGORk72eA==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 622E817E35E0;
-	Wed,  4 Sep 2024 20:08:56 +0200 (CEST)
-Date: Wed, 4 Sep 2024 14:08:54 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] serial: qcom-geni: fix console corruption
-Message-ID: <c47714f0-045d-469a-9edf-e4e4cb5090dc@notapiano>
-References: <20240902152451.862-1-johan+linaro@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9654qnXCbBUBPb8VB5k4QBQj5q371OguPGYbOHU9tgILCNfy2KI6kuOhw2PShLBx/N4VBrDFsZgLAvvAKH0+mYIVMmh/aXJI/ZuiEmVz5vT3QPcRtcTnCp3thWxLLQ2eTMth+p/dldixo/4ETLlRZGue/J0UhMs8XBq1R/JxvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7d4fbe62bf5so952814a12.0;
+        Wed, 04 Sep 2024 11:10:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725473458; x=1726078258;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vaZn7t1f9p2C+9KGgClJBqRBfNG/EZMLVSixIkNLNy0=;
+        b=coUe9W/8fBOt/Iq+pwhlhS4aO+DaAgbw5VzWaCaebAV8BH9plfjCk4tiqtWp5VHoJd
+         PBBTRAamHhUL3TbFpy6x17RO50+D+865d09DuUIseEJtAtoUHOoRkQCBdR5wDZeCDeXe
+         w2CbLDrgLtFDvbwyD+gjeOR/ghVyb1zZFBUSld++UyGC7EV8qVhXZ920bspjxk/cFB9C
+         SPiW0Bel3Oj/V5lf6bgwHVAd4V7LkieyYJMB0qLOhfy6KhO7TrreLQpX7i1CvJQUYxvg
+         NkCccKADZ8shBaTvGMeGKniHQkTlTcSnvcLiwRJGyZPnmwz5WYz1lsyX6/V8TbXBBBvI
+         fI9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjasPB9RFgK9YdWDQN1vJNDxRsoMzlgCh0cU1c1a9Onf9YBA5nGw/S6Klqi1zqDzO/7zHyL7hg+Ktufcw=@vger.kernel.org, AJvYcCWw71NJjhf0X/ywKrYri6yj+YH1pCpvp4XjW7LwEXIlko+/xdP2nzb8QkbjwHH7XkbcAG85WoAGsjuC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7A5FIBLO3A4Dyfc5xGN3l25JRzjWGohKvYHPFNYOQXVlhg9fF
+	vnjSgGBXyL1lgGX65RPuFgXXSMl9otYPnBTATddLlC0ZMIzvlUBn
+X-Google-Smtp-Source: AGHT+IEL1SR5b0viGbzwKw6Mdv/n35g8dS9bGsmDdRkVV7XHmzsSthsikksdSKV4HccdbFQcdAx89g==
+X-Received: by 2002:a05:6a21:6b0c:b0:1c2:8d33:af69 with SMTP id adf61e73a8af0-1cece5d1678mr16248108637.41.1725473457520;
+        Wed, 04 Sep 2024 11:10:57 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177859a377sm1964498b3a.143.2024.09.04.11.10.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 11:10:56 -0700 (PDT)
+Date: Thu, 5 Sep 2024 03:10:55 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: florian.fainelli@broadcom.com
+Cc: Riyan Dhiman <riyandhiman14@gmail.com>, jim2101024@gmail.com,
+	nsaenz@kernel.org, lorian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, bhelgaas@google.com,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] PCI: brmstb: Fix type mismatch for num_inbound_wins
+ in brcm_pcie_setup()
+Message-ID: <20240904181055.GA20073@rocinante>
+References: <20240904161953.46790-2-riyandhiman14@gmail.com>
+ <159c5fcf-709d-42ba-8d45-a70b109fe261@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902152451.862-1-johan+linaro@kernel.org>
+In-Reply-To: <159c5fcf-709d-42ba-8d45-a70b109fe261@broadcom.com>
 
-On Mon, Sep 02, 2024 at 05:24:43PM +0200, Johan Hovold wrote:
-> This series is a follow-on series to the lockup fixes [1] that addresses
-> a number of issues in the Qualcomm GENI console code, including corrupt
-> console output during boot, which is a problem for automated CI testing.
-> 
-> Johan
-> 
-> [1] https://lore.kernel.org/lkml/20240704101805.30612-1-johan+linaro@kernel.org/
-> 
-> 
-> Douglas Anderson (3):
->   soc: qcom: geni-se: add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
->   serial: qcom-geni: fix arg types for qcom_geni_serial_poll_bit()
->   serial: qcom-geni: introduce qcom_geni_serial_poll_bitfield()
-> 
-> Johan Hovold (5):
->   serial: qcom-geni: fix fifo polling timeout
->   serial: qcom-geni: fix false console tx restart
->   serial: qcom-geni: fix console corruption
->   serial: qcom-geni: disable interrupts during console writes
->   serial: qcom-geni: fix polled console corruption
-> 
->  drivers/tty/serial/qcom_geni_serial.c | 133 +++++++++++++++-----------
->  include/linux/soc/qcom/geni-se.h      |   9 ++
->  2 files changed, 85 insertions(+), 57 deletions(-)
-> 
-> -- 
-> 2.44.2
-> 
+Hello,
 
-This series fixes the serial issues we're seeing on the sc7180 based
-(sc7180-trogdor-lazor-limozeen and sc7180-trogdor-kingoftown) boards that we
-have hooked up to KernelCI. Out of a 10-job batch of boot tests all succeeded
-after the patch, whereas before most failed (7/10), due to a missing message in
-the serial.
+> > Change num_inbound_wins from u8 to int in brcm_pcie_setup() function to correctly
+> > handle potential negative error codes returned by brcm_pcie_get_inbound_wins().
+> > The u8 type was inappropriate for capturing the function's return value,
+> > which can include error codes.
+[...]
+> This looks fine, however it seems like we could either:
+> 
+> - update brcm_pcie_get_inbound_wins() to take a reference to an u8 and
+> assign num_inbound_wins directly plus return a negative error code
+> 
+> or
+> 
+> - update brcm_pcie_get_inbound_wins() to return 0 when encountering an error
+> 
+> We should have at least 1 inbound window to operate this PCIe controller, so
+> if we get 0, nothing useful is going to happen.
+> 
+> Deferring to Jim as to whether he prefers to take your patch or fix it in a
+> different way. Thanks!
 
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+The former would be my preference.
 
-Looking forward to see this landed!
+As such, I can make the change on the branch directly, if needed.  To avoid
+reposting or sending a new patch.
 
-Thanks,
-Nícolas
+	Krzysztof
 
