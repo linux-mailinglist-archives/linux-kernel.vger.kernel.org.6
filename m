@@ -1,175 +1,266 @@
-Return-Path: <linux-kernel+bounces-315209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6401396BF36
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09ACB96BF3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 15:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8913F1C21CAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B39B02855CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FE31DA63C;
-	Wed,  4 Sep 2024 13:56:26 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAC41DA619;
+	Wed,  4 Sep 2024 13:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ssDyDsdT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B69B1D9D6B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7741C1DA303
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 13:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458185; cv=none; b=ZV9aNf3OQBQ7WiqnAoIvUr5en0977gUo0NjU+YlNxqQelLEqpkgI9tMHxrXwXpJ9dR6RuOWvqRjn04mXbc9BxNghavTMKOvFZNtU6D3NH0Y7LSwi+XnHQCKD4+p9iSZcq9vi1c6/32VUCLhOQazbnO0C1Y7//masEN14r7BbUHQ=
+	t=1725458209; cv=none; b=hJhdRVJ4E2eevD1GI2Y/jfzpjyAEIsopX6TRi+XPgqyXnpMnE6w9FGcvVyHrP5JPNh2FZoj8fMKXX+IjisJs9KkuZ9JqVuRABmStCQAr47Mf/dHsvUsPU8NPPrMNIqpRR10EoyZGaKlin1CzJZMTN2hAl7tLa8wUtQJEr46hp0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458185; c=relaxed/simple;
-	bh=GnJ3J4LB9h3i3mrMXvLyRaIBcF3AkHF0QK2TBpFXWbU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=raL7LuZ0rtkoB4wRnZItte/UczOLrVvW/dgzd1kj08UmpLXDP3Lla+ejWSvX1vXRqGIsoovODD2VlfJN8zHlTBmJIRUi17k3vBjWOjnVw1rBGpvZ0lY+qgQOMkXf5itMBG2eCac6+E3Phpxe2fbPRJF/2hH7CZc4nodA/Z6E3KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a1fbaba4aso106530839f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 06:56:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725458183; x=1726062983;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SrzSFGTCyr4+MMyyh7GqVNUCiLJr5fc0UW/sfiKd6Ek=;
-        b=SJPL/PPtSKc4fTRaQKgP73cRf183sgvptUAskdBdtPmSYUfy5q9iJ/4StONBoKbKCP
-         aEVShGA2JdDliXu935ZQKpZ+vOcx/QGEtrYNBBLBCw34VQq7ZGvsFkrzgH3HEuin/eCM
-         3NqEcrB2rpNYThF62I6c8MQQfQDQ1gzfsXKB+aoExVwJbOnbRd2wEr5Kf19w2VJr1XPA
-         6Za14zvKLRO3QGSAXxe6R/ZplrH6hDy3bKeIeaqyWQicZR1y0vv26vLoJbojU93f88vZ
-         E2Cxrj42psfH9amSnvJdrxLzklyfVQ18b/DF5IgdfYb1VKOVShzGzL/OUcT32eDcbqA6
-         nuFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZP+K4s3qxiIzk5S1ACtX9Lq233pgwAhMBSInV8YkEHMtC3oJnsVmdBz12urGISI7/1Hpg1VX2TgEdDzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNCB17jO2c9kmlvfaQxQgjhuBQUdohNkYopxxlhxUhfMHehg+V
-	JNkJGfE4xKxbu4sHz7pNh5P5OwMM1Xf9RGvz++CWeVbD4CgFlT3kQObTo8dheXZ+iCDH4AHlmqI
-	UdiO9CjPy2ZiQy7kVlBIiFttpM557d9BHHmuwK5CsshTbrHeRfJCtCCY=
-X-Google-Smtp-Source: AGHT+IGSyNQ8Rtx94SawzEyABtvJRvCxW1pAg//QKH+j9QjhQO9b+/yGXAYCwPX22wqil4YEJFRC6aAefEOcIxCBRrMlZdBKD1Gi
+	s=arc-20240116; t=1725458209; c=relaxed/simple;
+	bh=E0FsCaFyMhW52iOrP5SyPcoRqua6HK7yG5BBntvWWnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/ni5w3L/MZ2EH6gX4caFMwuhrZ5r8p5dt5BqRBtpzvB6u5FEqEforplqTUtHBNbbP0XR3gdDtu6AfiFVtk+xqzSdqZe7Th3isz3XhvDG1LhhU9iz0GIKG7qg3i38jphRlFLeYYK2ByLhKWtwQB/tNnnjNZziwmiK/MLK2UYv/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ssDyDsdT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=BNQC2oft7ujcNcjB+Mf1bIu6Q7qkj39qcMS6tmlwHIM=; b=ssDyDsdTF4MVfxkbgfBIIcR1BW
+	npKHaUyEjA2qBq/OxyeJJ0a/TVkyBoP1K8dndDmvtHY21C8nt4ypbb6fA6zzPWz/0EpScDNpp8Nou
+	W3LaRxB58Ts9h11XpSfXZn75RTb3dfohMF7OB0oBKMyhlbVrwJ6l/Dqd0aZCTirMfJwI6vun/+m5k
+	smqH57oNkuefMVGxBMluW/1gieDasBEe61sWt5KrObkths8ABZUgBWIphiuOS24UrdGE0vjabhwDc
+	UnFpzC9Qww90i6FKKsyB1JdaiNZyOnvDO+KL9xVXTCeLlGM/TolCjuqDDDrE9Qf4Y5fbVKNdQaTL/
+	6r/BR+tA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1slqUp-00000000wZM-2OEg;
+	Wed, 04 Sep 2024 13:56:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F0ACE300070; Wed,  4 Sep 2024 15:56:31 +0200 (CEST)
+Date: Wed, 4 Sep 2024 15:56:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: mingo@kernel.org, tj@kernel.org, void@manifault.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: Re: [PATCH 0/9] sched: Prepare for sched_ext
+Message-ID: <20240904135631.GJ4723@noisy.programming.kicks-ass.net>
+References: <20240813222548.049744955@infradead.org>
+ <CAJWu+oqUSOUrro-Rk-Bg7P6PyCWGKRZVT5i4Bi36XpRRFumL5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1491:b0:4ce:928f:ad9a with SMTP id
- 8926c6da1cb9f-4d0600aa00dmr109910173.1.1725458183431; Wed, 04 Sep 2024
- 06:56:23 -0700 (PDT)
-Date: Wed, 04 Sep 2024 06:56:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001934d306214b8aa9@google.com>
-Subject: [syzbot] [can?] WARNING in remove_proc_entry (6)
-From: syzbot <syzbot+0532ac7a06fb1a03187e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, kuniyu@amazon.com, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mkl@pengutronix.de, netdev@vger.kernel.org, 
-	pabeni@redhat.com, socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJWu+oqUSOUrro-Rk-Bg7P6PyCWGKRZVT5i4Bi36XpRRFumL5w@mail.gmail.com>
 
-Hello,
+On Wed, Aug 21, 2024 at 05:41:32PM -0400, Joel Fernandes wrote:
+> On Tue, Aug 13, 2024 at 6:50 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Hi,
+> >
+> > These patches apply on top of the EEVDF series (queue/sched/core), which
+> > re-arranges the fair pick_task() functions to make them state invariant such
+> > that they can easily be restarted upon picking (and dequeueing) a delayed task.
+> >
+> > This same is required to push (the final) put_prev_task() beyond pick_task(),
+> > like we do for sched_core already.
+> >
+> > This in turn is done to prepare for sched_ext, which wants a final callback to
+> > be in possesion of the next task, such that it can tell if the context switch
+> > will leave the sched_class.
+> >
+> > As such, this all re-arranges the current order of:
+> >
+> >   put_prev_task(rq, prev);
+> >   next = pick_next_task(rq); /* implies set_next_task(.first=true); */
+> >
+> > to sometihng like:
+> >
+> >   next = pick_task(rq)
+> >   if (next != prev) {
+> >     put_prev_task(rq, prev, next);
+> >     set_next_task(rq, next, true);
+> >   }
+> >
+> > The patches do a fair bit of cleaning up. Notably a bunch of sched_core stuff
+> > -- Joel, could you please test this stuff, because the self-tests we have are
+> > hardly adequate.
+> >
+> > The EEVDF stuff was supposed to be merged already, but since Valentin seems to
+> > be doing a read-through, I figured I'd give him a little extra time. A complete
+> > set can be found at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/prep
+> >
+> 
+> So I booted queue.git sched/core branch on a newish Chromebook (after
+> applying 700 patches for making it boot and spending 2 days on it
+> since we boot old kernels -- I wasn't joking when I said I would carve
+> some time up for you this week :P).
+> 
+> With sched/core , it boots fine with core scheduling disabled, but
+> when core scheduling is enabled I am getting hard hangs and
+> occasionally get to the login screen if I'm lucky. So there's
+> definitely something wonky in sched/core branch and core sched.
+> I could not get a trace or logs yet, since once it hangs I have to
+> hard power off.
+> 
+> I could bissect it tomorrow though since it looks like a manageable
+> set of patches on 6.11-rc1.  Or did you already figure out the issue?
 
-syzbot found the following issue on:
+Finally got around to poking sched_core with something sharp... the
+below patch (on top of tip/sched/core) boots for me with
+"sched_core_test".
 
-HEAD commit:    5517ae241919 Merge tag 'for-net-2024-08-30' of git://git.k..
-git tree:       net
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=111adcfb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=0532ac7a06fb1a03187e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138d43db980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11fe3d43980000
+I'm an idiot and the issue is very much the same as the one in:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ddded5c54678/disk-5517ae24.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ce0dfe9dbb55/vmlinux-5517ae24.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ca81d6e3361d/bzImage-5517ae24.xz
+  dfa0a574cbc4 ("sched/uclamg: Handle delayed dequeue")
 
-The issue was bisected to:
-
-commit 76fe372ccb81b0c89b6cd2fec26e2f38c958be85
-Author: Kuniyuki Iwashima <kuniyu@amazon.com>
-Date:   Mon Jul 22 19:28:42 2024 +0000
-
-    can: bcm: Remove proc entry when dev is unregistered.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=116f8e8f980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=136f8e8f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=156f8e8f980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0532ac7a06fb1a03187e@syzkaller.appspotmail.com
-Fixes: 76fe372ccb81 ("can: bcm: Remove proc entry when dev is unregistered.")
-
-------------[ cut here ]------------
-name '4986'
-WARNING: CPU: 0 PID: 5234 at fs/proc/generic.c:711 remove_proc_entry+0x2e7/0x5d0 fs/proc/generic.c:711
-Modules linked in:
-CPU: 0 UID: 0 PID: 5234 Comm: syz-executor606 Not tainted 6.11.0-rc5-syzkaller-00178-g5517ae241919 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:remove_proc_entry+0x2e7/0x5d0 fs/proc/generic.c:711
-Code: ff eb 05 e8 cb 1e 5e ff 48 8b 5c 24 10 48 c7 c7 e0 f7 aa 8e e8 2a 38 8e 09 90 48 c7 c7 60 3a 1b 8c 48 89 de e8 da 42 20 ff 90 <0f> 0b 90 90 48 8b 44 24 18 48 c7 44 24 40 0e 36 e0 45 49 c7 04 07
-RSP: 0018:ffffc9000345fa20 EFLAGS: 00010246
-RAX: 2a2d0aee2eb64600 RBX: ffff888032f1f548 RCX: ffff888029431e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000345fb08 R08: ffffffff8155b2f2 R09: 1ffff1101710519a
-R10: dffffc0000000000 R11: ffffed101710519b R12: ffff888011d38640
-R13: 0000000000000004 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fcfb52722f0 CR3: 000000000e734000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bcm_release+0x250/0x880 net/can/bcm.c:1578
- __sock_release net/socket.c:659 [inline]
- sock_close+0xbc/0x240 net/socket.c:1421
- __fput+0x24a/0x8a0 fs/file_table.c:422
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xa2f/0x27f0 kernel/exit.c:882
- do_group_exit+0x207/0x2c0 kernel/exit.c:1031
- __do_sys_exit_group kernel/exit.c:1042 [inline]
- __se_sys_exit_group kernel/exit.c:1040 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcfb51ee969
-Code: Unable to access opcode bytes at 0x7fcfb51ee93f.
-RSP: 002b:00007ffce0109ca8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fcfb51ee969
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
-RBP: 00007fcfb526f3b0 R08: ffffffffffffffb8 R09: 0000555500000000
-R10: 0000555500000000 R11: 0000000000000246 R12: 00007fcfb526f3b0
-R13: 0000000000000000 R14: 00007fcfb5271ee0 R15: 00007fcfb51bf160
- </TASK>
+I'll go write it up as a proper patch, but I'll probably also keep the
+sched_core_test thing, its a useful hack for someone that doesn't have
+suitable userspace (iow. me).
 
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/linux/sched.h     |  7 +++++--
+ kernel/fork.c             |  2 +-
+ kernel/sched/core.c       | 14 ++++++++++++++
+ kernel/sched/core_sched.c | 17 +++++++++++++++--
+ 4 files changed, 35 insertions(+), 5 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 57cf27a3045c..db03f22abfee 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2172,14 +2172,17 @@ unsigned long sched_cpu_util(int cpu);
+ #endif /* CONFIG_SMP */
+ 
+ #ifdef CONFIG_SCHED_CORE
++extern int sched_core_test;
++extern unsigned long sched_core_alloc_cookie(void);
+ extern void sched_core_free(struct task_struct *tsk);
+-extern void sched_core_fork(struct task_struct *p);
++extern void sched_core_fork(unsigned long clone_flags, struct task_struct *p);
+ extern int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
+ 				unsigned long uaddr);
+ extern int sched_core_idle_cpu(int cpu);
+ #else
++#define sched_core_test (0)
+ static inline void sched_core_free(struct task_struct *tsk) { }
+-static inline void sched_core_fork(struct task_struct *p) { }
++static inline void sched_core_fork(unsigned long clone_flags, struct task_struct *p) { }
+ static inline int sched_core_idle_cpu(int cpu) { return idle_cpu(cpu); }
+ #endif
+ 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index cc760491f201..064cd99db5b4 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2515,7 +2515,7 @@ __latent_entropy struct task_struct *copy_process(
+ 
+ 	klp_copy_process(p);
+ 
+-	sched_core_fork(p);
++	sched_core_fork(clone_flags, p);
+ 
+ 	spin_lock(&current->sighand->siglock);
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ffcd637dc8e4..49eb2e8ca64e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -259,6 +259,9 @@ static inline int rb_sched_core_cmp(const void *key, const struct rb_node *node)
+ 
+ void sched_core_enqueue(struct rq *rq, struct task_struct *p)
+ {
++	if (p->se.sched_delayed)
++		return;
++
+ 	rq->core->core_task_seq++;
+ 
+ 	if (!p->core_cookie)
+@@ -269,6 +272,9 @@ void sched_core_enqueue(struct rq *rq, struct task_struct *p)
+ 
+ void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
+ {
++	if (p->se.sched_delayed)
++		return;
++
+ 	rq->core->core_task_seq++;
+ 
+ 	if (sched_core_enqueued(p)) {
+@@ -4613,6 +4619,14 @@ late_initcall(sched_core_sysctl_init);
+ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ {
+ 	__sched_fork(clone_flags, p);
++
++#ifdef CONFIG_SCHED_CORE
++	if (sched_core_test && !(clone_flags & CLONE_THREAD)) {
++		p->core_cookie = sched_core_alloc_cookie();
++		if (!p->core_cookie)
++			return -ENOMEM;
++	}
++#endif
+ 	/*
+ 	 * We mark the process as NEW here. This guarantees that
+ 	 * nobody will actually run it, and a signal or other external
+diff --git a/kernel/sched/core_sched.c b/kernel/sched/core_sched.c
+index 1ef98a93eb1d..7cd40592e7b6 100644
+--- a/kernel/sched/core_sched.c
++++ b/kernel/sched/core_sched.c
+@@ -1,5 +1,14 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ 
++int sched_core_test;
++
++static int __init setup_sched_core_test(char *str)
++{
++	sched_core_test = 1;
++	return 0;
++}
++__setup("sched_core_test", setup_sched_core_test);
++
+ /*
+  * A simple wrapper around refcount. An allocated sched_core_cookie's
+  * address is used to compute the cookie of the task.
+@@ -8,7 +17,7 @@ struct sched_core_cookie {
+ 	refcount_t refcnt;
+ };
+ 
+-static unsigned long sched_core_alloc_cookie(void)
++unsigned long sched_core_alloc_cookie(void)
+ {
+ 	struct sched_core_cookie *ck = kmalloc(sizeof(*ck), GFP_KERNEL);
+ 	if (!ck)
+@@ -107,9 +116,13 @@ static unsigned long sched_core_clone_cookie(struct task_struct *p)
+ 	return cookie;
+ }
+ 
+-void sched_core_fork(struct task_struct *p)
++void sched_core_fork(unsigned long clone_flags, struct task_struct *p)
+ {
+ 	RB_CLEAR_NODE(&p->core_node);
++
++	if (sched_core_test && !(clone_flags & CLONE_THREAD))
++		return;
++
+ 	p->core_cookie = sched_core_clone_cookie(current);
+ }
+ 
 
