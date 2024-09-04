@@ -1,204 +1,173 @@
-Return-Path: <linux-kernel+bounces-314949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F93096BB56
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:57:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7CE96BB5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 13:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52AA5B230E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A895A284E43
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 11:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CF91D3184;
-	Wed,  4 Sep 2024 11:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436141D4600;
+	Wed,  4 Sep 2024 11:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nn/CohUF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="axOBdmZ3"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210F4188590;
-	Wed,  4 Sep 2024 11:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA671D2225
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2024 11:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725451044; cv=none; b=rZmwgCMpDYotqnEMGkoAn2NrsoMQJAYHjtmuILUdnADZoPm7nyvzTWvzBv5UW7QeAf+YR9XYrtKEZhLKgtAY0MLHMJUW2IpcjiUjYX1x+LjLN3ecfwLh0BskytOUa4gzu9BNsWG/OOjrvQncXIuJllWotkgwxgplPduP7N/6SHQ=
+	t=1725451135; cv=none; b=fUrRlRCFnOEaCmF2R1Kc49tsjSXyJtP9GFXClbcue95w/5UJL9RozJOziDfysgh9V3/saIbbaH1bMq8ScfgTX1G3+jKK7dgKoEkyhev2Twwflt00gdm0A9r90pJUEKJnuEHwJzGL/QhP48Hgjeg6upwBsYYYzEdbrxcUpRi66CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725451044; c=relaxed/simple;
-	bh=lNt5gOwS/0xQEALus/kYCZWiZkV73AMpxY2dBb/jQZI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HpvnNcG+mtehh65cu4B+W/NFUJ/gJWoeSDcyKTrktnXVLWyYlRIyTGUHTrq5yYBsDQ65lCrcU6LKDhEK5JmMDZfzfFs5EV0Vp+qVlEraefHxc6K6M/RHEelC8HDOuwbrnrmPzxsfAmGSQCrNTokBQC/8M9PVDyTVnJ87fSexK7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nn/CohUF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725451043; x=1756987043;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=lNt5gOwS/0xQEALus/kYCZWiZkV73AMpxY2dBb/jQZI=;
-  b=Nn/CohUF1yiafHcpYPVq89MatCkn/LWP1W7iG6LEc+JU7XXviYpZEWm8
-   pQLRiTDi6/fL00Fo7hYprAd040Z3QYVluHjnKF+F5Ix8vUn5nwdfVpq/y
-   IwhF+SOeSXlO5ANLdl5S6LDKAB1AbloxpBhnoA4GF9izWfKMHDpa4sFPa
-   o0SoMZPqZMlihQaIye/kBO9JaHDrV+lxICP5zR8OMJL48bV+B67rbntKv
-   YRhR8WHIn5UudUMT3iByNCSe9pM/wJfrc/1WrWHm+FzYJm8nWXxgNv8HP
-   PqbmV6347y4LLw2tE0qf4UfvNfV0+wqAc0BUELeQPHntPxiAxZyOsp115
-   A==;
-X-CSE-ConnectionGUID: pZHuf24MSvmbFJsut0Y3Pw==
-X-CSE-MsgGUID: XjsrvHmxRi6Qpe4iCx4CMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35466861"
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="35466861"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 04:57:21 -0700
-X-CSE-ConnectionGUID: KPMHL4eNReKpntN8gZoV1g==
-X-CSE-MsgGUID: HU3oowf5TH+Hwh0AAzYypA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,201,1719903600"; 
-   d="scan'208";a="95977133"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.156])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 04:57:18 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 4 Sep 2024 14:57:14 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] selftests/resctrl: Ensure measurements skip
- initialization of default benchmark
-In-Reply-To: <0ae6d28f-0646-48b2-a4e7-17e2d14f6dd5@intel.com>
-Message-ID: <85a11091-3c61-2d8b-28d4-2a251f3b8ffe@linux.intel.com>
-References: <cover.1724970211.git.reinette.chatre@intel.com> <a0fe2be86f3e868a5f908ac4f2c76e71b4d08d4f.1724970211.git.reinette.chatre@intel.com> <3add783b-74cf-23c0-a301-aa203efdd0f6@linux.intel.com> <0ae6d28f-0646-48b2-a4e7-17e2d14f6dd5@intel.com>
+	s=arc-20240116; t=1725451135; c=relaxed/simple;
+	bh=oFpYFAwzQWlL+Kvgx4pEoCCAh+xehZKm3+5+PmwqUq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GF218mo/3YbAUE4K3wZb6ncdSjLA8lOoskdqWGVaGq9E5rDNPCYhHhOYIS56n8K06tYf1+txpiaTvMlM3/jv8lHzKiwOQvbBO0R1ayC+UnGcOoqmC1TN9Set7B4bXPzGTd1fOhJesR9mfQxrr2ELVIB5EO8M/yyNhx5QVdqLb7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=axOBdmZ3; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533de5a88f8so6663494e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 04:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725451132; x=1726055932; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VS61FUBAsfsMXwD3b/j+B3Cf4Nz46zKMjoAkgpr9Tb4=;
+        b=axOBdmZ3cZ0yA1EZq3ep+WTEIHt3rOocPgvtwU26V30u0VRMwA0REJ5thtQqNlORv1
+         WyrYeUu4DQ2D2S/MV7QltBbGhv0s1lx60JelgBYhVXMU2gP0+3o7To+FjgdOa08d2LTr
+         e3H/uZKklxJaoBhfHZ6WX8t0FBeoX5jXPdoQZCsOGWZS8OYNsdyolQ3NsSOcw2RREPbD
+         haI+53tqnngooa2XJDTflKHd6MAlRV5SkE3hdyPakBqnsFFBNQYu88GjgkOOviG6ct6Y
+         GA3o32imIQJd22ss2l9hf2GSyEHuS9UKFDNTjElhgA2CKKdDK/15m+MCRTnvX+Q7+fxk
+         VMyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725451132; x=1726055932;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VS61FUBAsfsMXwD3b/j+B3Cf4Nz46zKMjoAkgpr9Tb4=;
+        b=WTknSkzpuYAm7v7/kvLl1dDIaRrqdpzXArvLzMffoJQcxGypx3TPeJOUocyJT2urfq
+         Dt1DgA7DIZqpJJofiitXlhoWDt99J8yDz0nNSTB9ABIZszml+elGo0TsZHUTBw+SzGy2
+         TQ4q8M/cUIuDrBdzyEtkWeNcS/oQAE4bzwsdYikVwZHam6bM8e0LXX5HF7o6NoivTVSy
+         2jCbq48N8S+AEVLorFRl1mZbhywL/iBkBK4guiJZAtTG17+eXrzcVW62BgNoaSNKW4Y9
+         yh8O6nbdAZxyIcKO/8n/SHYTX/0vR1P1joo2rjKoNhguN2lz/8AMAMgefv0GOoyp7LGd
+         AcdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXT7rwe+v3wf2jBhXaEVhtsFhEB+CGO0P/2AeXI8qsi5Iu5UJJU5aUVnitIGWQXxGzOU6RZXCPgH0Iou4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJG2xc3zHv5+qoPwjYQn7Dr+HNaR5wUy7FSr1FpH76dFswwdWD
+	wJzjf1tPUruaQEQrw1mIphsm6/BEMqznfgj16VhEQqyIe3oQ08vwIVH/xBtEDxk=
+X-Google-Smtp-Source: AGHT+IHs1wIrBm6X/Hd9ZoeAvwI8G6avm2Xjtx4bTuDlmxGONjsMb86+mwA17/VyPvh0C5XM0JrLgA==
+X-Received: by 2002:a05:6512:1589:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-53546b32cacmr13503390e87.29.1725451130774;
+        Wed, 04 Sep 2024 04:58:50 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7332:ffbc:ffbc:9dd4:6902? ([2a10:bac0:b000:7332:ffbc:ffbc:9dd4:6902])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891daeb1sm800902266b.169.2024.09.04.04.58.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 04:58:50 -0700 (PDT)
+Message-ID: <caa4407a-b838-4e1b-bb3d-87518f3de66b@suse.com>
+Date: Wed, 4 Sep 2024 14:58:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-81240387-1725450426=:1078"
-Content-ID: <6d68d189-778d-b1fc-2ec1-8e6b23bbf64b@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-81240387-1725450426=:1078
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <902070af-5bff-ad8e-0ef1-00b542291daf@linux.intel.com>
 
-On Fri, 30 Aug 2024, Reinette Chatre wrote:
->=20
-> Thank you for taking a look.
->=20
-> On 8/30/24 3:56 AM, Ilpo J=E4rvinen wrote:
-> > On Thu, 29 Aug 2024, Reinette Chatre wrote:
-> >=20
->=20
-> ...
->=20
-> > > @@ -684,11 +622,13 @@ int resctrl_val(const struct resctrl_test *test=
-,
-> > >   =09=09const char * const *benchmark_cmd,
-> > >   =09=09struct resctrl_val_param *param)
-> > >   {
-> > > -=09struct sigaction sigact;
-> > > -=09int ret =3D 0, pipefd[2];
-> > > -=09char pipe_message =3D 0;
-> > > -=09union sigval value;
-> > > -=09int domain_id;
-> > > +=09int domain_id, operation =3D 0, memflush =3D 1;
-> > > +=09size_t span =3D DEFAULT_SPAN;
-> > > +=09unsigned char *buf =3D NULL;
-> > > +=09cpu_set_t old_affinity;
-> > > +=09bool once =3D false;
-> > > +=09int ret =3D 0;
-> > > +=09pid_t ppid;
-> > >     =09if (strcmp(param->filename, "") =3D=3D 0)
-> > >   =09=09sprintf(param->filename, "stdio");
-> > > @@ -699,111 +639,80 @@ int resctrl_val(const struct resctrl_test *tes=
-t,
-> > >   =09=09return ret;
-> > >   =09}
-> > >   -=09/*
-> > > -=09 * If benchmark wasn't successfully started by child, then child
-> > > should
-> > > -=09 * kill parent, so save parent's pid
-> > > -=09 */
-> > >   =09ppid =3D getpid();
-> > >   -=09if (pipe(pipefd)) {
-> > > -=09=09ksft_perror("Unable to create pipe");
-> > > +=09/* Taskset test to specified CPU. */
-> > > +=09ret =3D taskset_benchmark(ppid, uparams->cpu, &old_affinity);
-> >=20
-> > Previously only CPU affinity for bm_pid was set but now it's set before
-> > fork(). Quickly checking the Internet, it seems that CPU affinity gets
-> > inherited on fork() so now both processes will have the same affinity
-> > which might make the other process to interfere with the measurement.
->=20
-> Setting the affinity is intended to ensure that the buffer preparation
-> occurs in the same topology as where the runtime portion will run.
-> This preparation is done before the work to be measured starts.
->=20
-> This does tie in with the association with the resctrl group and I
-> will elaborate more below ...
+On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+> From: Xiaoyao Li <xiaoyao.li@intel.com>
+> 
+> While TDX module reports a set of capabilities/features that it
+> supports, what KVM currently supports might be a subset of them.
+> E.g., DEBUG and PERFMON are supported by TDX module but currently not
+> supported by KVM.
+> 
+> Introduce a new struct kvm_tdx_caps to store KVM's capabilities of TDX.
+> supported_attrs and suppported_xfam are validated against fixed0/1
+> values enumerated by TDX module. Configurable CPUID bits derive from TDX
+> module plus applying KVM's capabilities (KVM_GET_SUPPORTED_CPUID),
+> i.e., mask off the bits that are configurable in the view of TDX module
+> but not supported by KVM yet.
+> 
+> KVM_TDX_CPUID_NO_SUBLEAF is the concept from TDX module, switch it to 0
+> and use KVM_CPUID_FLAG_SIGNIFCANT_INDEX, which are the concept of KVM.
+> 
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> uAPI breakout v1:
+>   - Change setup_kvm_tdx_caps() to use the exported 'struct tdx_sysinfo'
+>     pointer.
+>   - Change how to copy 'kvm_tdx_cpuid_config' since 'struct tdx_sysinfo'
+>     doesn't have 'kvm_tdx_cpuid_config'.
+>   - Updates for uAPI changes
+> ---
+>   arch/x86/include/uapi/asm/kvm.h |  2 -
+>   arch/x86/kvm/vmx/tdx.c          | 81 +++++++++++++++++++++++++++++++++
+>   2 files changed, 81 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index 47caf508cca7..c9eb2e2f5559 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -952,8 +952,6 @@ struct kvm_tdx_cmd {
+>   	__u64 hw_error;
+>   };
+>   
+> -#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
+> -
+>   struct kvm_tdx_cpuid_config {
+>   	__u32 leaf;
+>   	__u32 sub_leaf;
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 90b44ebaf864..d89973e554f6 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -31,6 +31,19 @@ static void __used tdx_guest_keyid_free(int keyid)
+>   	ida_free(&tdx_guest_keyid_pool, keyid);
+>   }
+>   
+> +#define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
+> +
+> +struct kvm_tdx_caps {
+> +	u64 supported_attrs;
+> +	u64 supported_xfam;
+> +
+> +	u16 num_cpuid_config;
+> +	/* This must the last member. */
+> +	DECLARE_FLEX_ARRAY(struct kvm_tdx_cpuid_config, cpuid_configs);
+> +};
+> +
+> +static struct kvm_tdx_caps *kvm_tdx_caps;
+> +
+>   static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+>   {
+>   	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
+> @@ -131,6 +144,68 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
+>   	return r;
+>   }
+>   
+> +#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
 
-Okay, that's useful to retain but thinking this further, now we're also=20
-going do non-trivial amount of work in between the setup and the test by=20
-forking. I guess that doesn't matter for memflush =3D true case but might b=
-e=20
-meaningful for the memflush =3D false case that seems to be there to allow=
-=20
-keeping caches hot (I personally haven't thought how to use "caches hot"=20
-test but we do have that capability by the fact that memflush paremeter=20
-exists).=20
+Why isn't TDX_TD_ATTR_DEBUG added as well?
 
-> > > +=09if (ret)
-> > > +=09=09return ret;
-> > >   -=09=09return -1;
-> > > +=09/* Write test to specified control & monitoring group in resctrl =
-FS.
-> > > */
-> > > +=09ret =3D write_bm_pid_to_resctrl(ppid, param->ctrlgrp, param->mong=
-rp);
-> >=20
-> > Previously, this was done for bm_pid but now it's done for the parent. =
-I'm
-> > not sure how inheritance goes with resctrl on fork(), will the forked P=
-ID
-> > get added to the list of PIDs or not? You probably know the answer :-).
->=20
-> Yes. A process fork()ed will land in the same resctrl group as its parent=
-=2E
->=20
-> > Neither behavior, however, seems to result in the intended behavior as =
-we
-> > either get interfering processes (if inherited) or no desired resctrl
-> > setup for the benchmark process.
->=20
-> There are two processes to consider in the resource group, the parent (th=
-at
-> sets up the buffer and does the measurements) and the child (that runs th=
-e
-> workload to be measured). Thanks to your commit da50de0a92f3
-> ("selftests/resctrl:
-> Calculate resctrl FS derived mem bw over sleep(1) only") the parent
-> will be sleeping while the child runs its workload and there is no
-> other interference I am aware of. The only additional measurements
-> that I can see would be the work needed to actually start and stop the
-> measurements and from what I can tell this falls into the noise.
->=20
-> Please do keep in mind that the performance counters used, iMC, cannot
-> actually
-> be bound to a single CPU since it is a per-socket PMU. The measurements h=
-ave
-> thus never been as fine grained as the code pretends it to be.
-
-I was thinking if I should note the amount of work is small. Maybe it's=20
-fine to leave that noise there and I'm just overly cautious :-), when I=20
-used to do networking research in the past life, I wanted to eliminate as
-much noise sources so I guess it comes from that background.
-
---=20
- i.
---8323328-81240387-1725450426=:1078--
+<snip>
 
