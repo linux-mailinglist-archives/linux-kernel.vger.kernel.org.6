@@ -1,55 +1,66 @@
-Return-Path: <linux-kernel+bounces-314298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-314301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE29696B17D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3620A96B18B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 08:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8601C20A5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DF11F26FAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 06:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6483012E1E9;
-	Wed,  4 Sep 2024 06:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E33E13A257;
+	Wed,  4 Sep 2024 06:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DttYROLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww6Hsuva"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF75581742;
-	Wed,  4 Sep 2024 06:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461A84E1E;
+	Wed,  4 Sep 2024 06:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725431073; cv=none; b=XL/kpkLINfwvvxT7z8KBSOK+LwJdcgV9AKJdYvM4Qx7H03gqgzBIaPG009hrGE8BYcfHARpy9ZtSDhnuzSjxUUtj7aRb798h44IfCGYCt29jl9m3oRmNLSU5yqD/OkRVzPFfvDOeK5lFppneJ0TRnn9MugNOj8cJasUasj2E9DA=
+	t=1725431213; cv=none; b=KFvOr4ioRlOjCZCXBaVgG7KY+8o9acCZlrZIa0tSlfjhbGrwlfVT/3g9m7lTv2NZzKX3/3vzHJrFIcnnEPImmkDLD32FrBZMShpBr0+E7YfF2IklrWMr34CfV5qnO0tm3bcODBHC2tbT1seDlWcnsDIj96oRT9TfaWF/cE+5Xsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725431073; c=relaxed/simple;
-	bh=buYlvEPomhrjjppJjFYn7cKL+9ZUeYHiDHtVHWJksc0=;
+	s=arc-20240116; t=1725431213; c=relaxed/simple;
+	bh=RmpdR+X9w1gzHbfsnASUbF/p7A/S9q/2q1c6kJFc5kk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5AzLKHh86qFXb46f01HQoNO5kTJ9g+XRxxwn93yNiulfFOagsF/8xq8cRe2AGFCoAYM206c2yZs/uLbYWEDi2Azbq0ft5abl13gcKogBfr7QzCMcEwitp5FPtQjrReZq82JxJhIEbVA9wbuqdmSnrgKUtypCLIqJgFAp/MP4iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DttYROLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4B3C4CEC2;
-	Wed,  4 Sep 2024 06:24:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ezXWZU1fVe9lywwBO/Q+p5tN0XibloMh9K1trS1Mtp+5bSBcQF5MDA8fKKrNSEh5mXPAr4ZkXwJ7isjLQQTVuJiBBqhIql/Wf4u618LbX4shmGCpSGdE29UjO1kL8f62R/maRD4cYZMb1bO5TDdRiBPiAfXDlRsKyH/0poMwSTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww6Hsuva; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D87EC4CEC2;
+	Wed,  4 Sep 2024 06:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725431073;
-	bh=buYlvEPomhrjjppJjFYn7cKL+9ZUeYHiDHtVHWJksc0=;
+	s=k20201202; t=1725431212;
+	bh=RmpdR+X9w1gzHbfsnASUbF/p7A/S9q/2q1c6kJFc5kk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DttYROLXZN6O6US6OIRlGB7HLEgQH8GA0UWV8KoAASk29DgZjW8HI4nmCCXi5HBC1
-	 iHtg29HEMoifugMxZ05e23jOPLLguFHpCiVxSOvsHWc8kpdrFicHnYgGQWoJZTmqww
-	 I37Y2Jw2sxVBoWw3XcxyZXEANp0b+3drHDYtLx8ZiiaGIAZlbuVTS2Q50QD77ZVlzk
-	 upDb2TRGZ2tO+Ok844XEpij+Gqn31Jne7RXQOLPaTLw1C3gYZJDnWiETPPDIaU6dni
-	 kyuLqJIV9tl7v6cIFbHUniyA362Sw1l/2304Nwo30d5ewZ5tUNDsSvvpGb+MjUIJcc
-	 3eGJ849nL5S9w==
-Date: Wed, 4 Sep 2024 08:24:29 +0200
+	b=Ww6HsuvaZwF5+UDueVf91esRUFcs9juXzsYObo34P8HmsLMIgT2ZPWtWcwBcHoCql
+	 r1lWz0hKIgmkub8U2E45Z/jskfNoElJ6MRRDNI8lKmVyE9/lByLMQNm+NzjRX4MFbY
+	 x8wx6W3ih5IiywjdxtlC+lN5X9kGvKMOy6Zpu8urWSOi2B0yZ4B3V1Mf+hxm0W1GW0
+	 u0Fb92KPzxzG+4VdhrNPtQplaMuXdFJxrrBppQ3JD+usnUToXjMTUZlzkMsfMeE+Bt
+	 0i6e5CCOhlpQGwsrIOZe91AmZHDjHgEDhBsoyq0RU+MQEyzwCmpgo0kTXB+NqPfDNM
+	 m/3b7Rx763+Xg==
+Date: Wed, 4 Sep 2024 08:26:49 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yu-Chun Lin <eleanor15x@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	broonie@kernel.org, angelogioacchino.delregno@collabora.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: Fix various typos
-Message-ID: <roke3xgy6axn5d3iwv5t7j57zktojygfkcax5ldvkixyok4v4i@2k557uh7rjpo>
-References: <20240903164242.2188895-1-eleanor15x@gmail.com>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
+	tglx@linutronix.de, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
+	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
+	thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com, 
+	rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org, linux@roeck-us.net, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com
+Subject: Re: [PATCH v2 14/21] dt-bindings: cpufreq: qcom-hw: document support
+ for SA8255p
+Message-ID: <odg5ssqu2soaqp6m4rambj7qhqiyp7othkvu4v6fu6xtuhbdho@vccya6qcwgoz>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-15-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,41 +69,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240903164242.2188895-1-eleanor15x@gmail.com>
+In-Reply-To: <20240903220240.2594102-15-quic_nkela@quicinc.com>
 
-On Wed, Sep 04, 2024 at 12:42:42AM +0800, Yu-Chun Lin wrote:
-> Corrected several typos in Documentatin/devicetree/bindings files.
+On Tue, Sep 03, 2024 at 03:02:33PM -0700, Nikunj Kela wrote:
+> Add compatible for the cpufreq engine representing support on SA8255p.
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-
-These tags do not apply anymore. Your patch changed significantly. Drop
-them or wait for re-confirming of tag.
-
-> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
 > ---
-> v1 -> v2
-> I took Krzysztof's advice to fix more typos.
+>  .../bindings/cpufreq/cpufreq-qcom-hw.yaml        | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> v1
-> Link: https://lore.kernel.org/lkml/ZtUTg0C81FwChfDh@visitorckw-System-Product-Name/T/
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
+> index 1e9797f96410..84865e553c8b 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
+> @@ -34,6 +34,7 @@ properties:
+>          items:
+>            - enum:
+>                - qcom,qdu1000-cpufreq-epss
+> +              - qcom,sa8255p-cpufreq-epss
+>                - qcom,sa8775p-cpufreq-epss
+>                - qcom,sc7280-cpufreq-epss
+>                - qcom,sc8280xp-cpufreq-epss
+> @@ -206,6 +207,21 @@ allOf:
+>          interrupt-names:
+>            minItems: 2
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sa8255p-cpufreq-epss
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+> +          maxItems: 2
+> +
+> +        reg-names:
+> +          minItems: 2
+> +          maxItems: 2
 
-...
-
-> diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> index 1978fbb77a6c..d5b930524b53 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> @@ -16,7 +16,7 @@ description:
->    can be connected to CMOS image sensors from various vendors, supporting both
->    MIPI CSI-2 and parallel interfaces. It can also output on either MIPI CSI-2
->    or parallel. The hardware is capable of transmitting and receiving MIPI
-> -  interlaved data strams with data types or multiple virtual channel
-> +  interlaved data streams with data types or multiple virtual channel
-
-interleaved
-
->    identifiers.
+What about interrupts? You need to constrain each of such lists.
 
 Best regards,
 Krzysztof
