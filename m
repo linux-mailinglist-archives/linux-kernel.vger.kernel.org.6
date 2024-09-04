@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-315274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-315275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4F396C047
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:25:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E7F96C049
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 16:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C028E8B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121B21F23F94
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 14:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EA41DB952;
-	Wed,  4 Sep 2024 14:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2C31DCB2C;
+	Wed,  4 Sep 2024 14:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpLZmGsI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJFZeYX1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2011DA2F1;
-	Wed,  4 Sep 2024 14:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1271DA635;
+	Wed,  4 Sep 2024 14:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459789; cv=none; b=Y5XJfRlCn+srk0xUh1fFCvW1CbRGyTf+XsaT3N/EMbPR0RdlFGNoNBuCNyMs8xMEvw2LRdP+4cCOe2b/MXzGEqN4q9E11fcm8I54/MenQ+4mTZKLMV5n5d6cqpXnlJrhxSthaX0smgsrYx/VjIfBwdS0ld2wQnMXpKGsC+6+JaM=
+	t=1725459794; cv=none; b=rs1wB+S23YDxUC74wksrS998eHbHAnIVQvLpPA0W3Z6IVh8jS5rBAvb1hV4z4P1JHzPXRtiJKQjt5h9YL25Y7Wu+xSZahdznDX39ODIHdnHcbAD9qBY3wqnlr+DzbxpDhG4afNwnD7VASRrJ4AY3n9neEs+a0E1/sbw6UhBqJcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459789; c=relaxed/simple;
-	bh=Km7Er5CuoLQVJvJnRyZ84Ji10/rmh0uRaNVOeng6nqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GP4FB6TxdV7Mg1rXHNxqXMFqH+jK19kJBhKRrV9Q37aY39bckCpnvQpYE4R1P6zhMfWmmv2fCYn0yD4rqiS625R012fOVAS93nQ2NVwDyQ2KWk7LsYb//xjZm46J5O7loUMjPaXioj/fhW9Hsl1hPS7EGMQY3tBl2gHf3gEe1DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpLZmGsI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97151C4CEC2;
-	Wed,  4 Sep 2024 14:23:08 +0000 (UTC)
+	s=arc-20240116; t=1725459794; c=relaxed/simple;
+	bh=CvbyeGCxrQiChryKz94sbVDhTQtEiCPezl0dW6mRsnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QuzvuHaa3eJny7rDAmqs7/hGMr/ihxL14I+yC8SYoDRX91OJbTzEc2MWrLE0nfvdTLcTtBY5h2yatvBoCxVVL/fVJZy6aorHagkRv6VJ5aUidqJy3jrVyCYyhck6Ktr1chtms3+FMdHFKwM2D/sjNt+hf8ezUXPuajr/sr+f7og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJFZeYX1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20BD5C4CEC2;
+	Wed,  4 Sep 2024 14:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725459789;
-	bh=Km7Er5CuoLQVJvJnRyZ84Ji10/rmh0uRaNVOeng6nqE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tpLZmGsIflHyNmyrPxkeYu8PRrBIaMNLuXVuG8Zt2oHACjwj4Qw5LtW5XsYGm5M5H
-	 qw8HrOKGfMkbG33kgoHGEW9z9IQiSHHvMcrmZ8tQZHyZT9SskR//EP+6pRgqTmKnmg
-	 hcmhfFrtnjHOp23Z0jT9/6eu4MYl973GvYh/khpQLxOi1gqK+yTOyL/B2SzZCOHL79
-	 tzN+v1uGtebmlysnXI6JeftqAwGNlRS037WSUf+7qvy9EF5zKHepiWYfreBifIG9Pp
-	 xDs1AX7cAr99FxbyToGOelMPTIvUB5u30X6OKZz+MrFAlYJ7+eerVOXJOnwY0S6f/4
-	 3WFKy3Xzmkw8w==
-Date: Wed, 4 Sep 2024 07:23:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Igal Liberman <igal.liberman@freescale.com>, Madalin Bucur
- <madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH net v3] fsl/fman: Validate cell-index value obtained
- from Device Tree
-Message-ID: <20240904072307.1b17227c@kernel.org>
-In-Reply-To: <20240904060920.9645-1-amishin@t-argos.ru>
-References: <20240904060920.9645-1-amishin@t-argos.ru>
+	s=k20201202; t=1725459794;
+	bh=CvbyeGCxrQiChryKz94sbVDhTQtEiCPezl0dW6mRsnM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=WJFZeYX1wffp3wp+R2cnMauFH179h3M1dOs6mJPpTaPirh3V8s4gf6jcr1JkUzy3U
+	 wW8uwvuezQmEUfAYzStLDQysadt5ZwCvqlEI9LV4/PWxYlcKvMX9Zz4RkZrrgKeY2e
+	 fsNjOdOFEsLqpdAdrRL35TLeP1QaEBuDtwqJVGNZP8lwWMLC3pSuj4JEVagKOZJ2A/
+	 t3CftXUxrzvp8/L+EV7lkOmtSZkGsiKZaVYdF0yfTXuLlUkMEkDyfuNDwsNsMqAHOe
+	 SOXrZ8rnrbeB0JxkW8eKeEJsVxP9XuzEJHYb+KqHhAtYGzPXfj2dn4+BTFx7KLvvae
+	 qIoLtQYLj56ng==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id BF1B2CE0B6A; Wed,  4 Sep 2024 07:23:13 -0700 (PDT)
+Date: Wed, 4 Sep 2024 07:23:13 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>, rcu <rcu@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	yangyun50@huawei.com, Zhen Lei <thunder.leizhen@huawei.com>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: next: rcu_preempt self-detected stall on CPU -
+ queued_spin_lock_slowpath
+Message-ID: <ef2fbd11-6f37-4484-93c4-6a84e63c3bce@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYv=v713xAFCKvkwr_0qyaQWkmfeDC2=bO7KKkui+p+ZeQ@mail.gmail.com>
+ <CAOssrKdc4rcjJOqBnhbRa=R5yQY1erh+KuXr_2-nGTQ-qk3vOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOssrKdc4rcjJOqBnhbRa=R5yQY1erh+KuXr_2-nGTQ-qk3vOg@mail.gmail.com>
 
-On Wed, 4 Sep 2024 09:09:20 +0300 Aleksandr Mishin wrote:
-> Cell-index value is obtained from Device Tree and then used to calculate
-> the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
-> In case of broken DT due to any error cell-index can contain any value
-> and it is possible to go beyond the array boundaries which can lead
-> at least to memory corruption.
+On Wed, Sep 04, 2024 at 04:19:39PM +0200, Miklos Szeredi wrote:
+> On Wed, Sep 4, 2024 at 2:06 PM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > The following kernel rcu info generated while running the test case
+> > selftests: memfd: run_fuse_test.sh on qemu-arm64 running Linux
+> > next-20240902. The qemu-arm64 did not recover.
+> >
+> > This build was created with kselftest merge configs.
+> >
+> > Anders bisected this to,
+> >   # first bad commit:
+> >     [5fb9c98e9d8ddf2abc645e2dcd9eb6703f77fdab]
+> >     fuse: add support for no forget requests
 > 
-> Validate cell-index value obtained from Device Tree.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> The bad commit was reverted from -next.
 
-coccicheck complains of_dev is not released, we should fix that first,
-before we add more returns here.
--- 
-pw-bot: cr
+A bit "Thank You!" to everyone involved!
+
+							Thanx, Paul
 
