@@ -1,175 +1,131 @@
-Return-Path: <linux-kernel+bounces-317547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE6996DFD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557AD96DFD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6CF1F24CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C1E28CF84
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573471A01D4;
-	Thu,  5 Sep 2024 16:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388861A08BA;
+	Thu,  5 Sep 2024 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r9RmLBap"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ip5oX0CT"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA14D3BBEA
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F351A0737
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553940; cv=none; b=ShF25YYB9o96BJgiCR1Y6R88sxQOkFClRfD9itV7Y53e1EspLiNdNAsB5n/8C22NRjYpUOg9xQy/6tu7OLGLVAfe84KPiivjYm1sGWfv1ygC348mrm9N3OeUfidZiucaWeZqhmtgugUg+e43wkauTc0iyI15MGyrlPe6yTThgBE=
+	t=1725553951; cv=none; b=d4/rc6wPkjsKl0nEPkrFcv4QPJvAH9p4mKmlmHIlHbWKW91cEDdb5/3RsEYcvZC6Z4EUSqU1Wji/CN1ixk9KPBEFNBinv45HNWrjR/Oh8r8H1tN1+hywqFXpGULdO5lZUCoqIuHj+YlwOfiK1X3UmRhMWVUqll40jpw8/0yqoBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553940; c=relaxed/simple;
-	bh=PhMfHsxsuV4e0GfUnbMSJQRxLiO8JgQ98/CnCKiEpV8=;
+	s=arc-20240116; t=1725553951; c=relaxed/simple;
+	bh=LJxf2I+qDEKWcF/MHgukLX50wTfnukOCB0ZkYL4/G7w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qD8xSYa7JA6Xa0fHY+g5wGTGBN9IOe8Q+G74HvuRtUrcczPVh7mQuf6433AiHHB5b2VJAZynPKkVmnq9Jqn69zvusg2NYuCXHW9UTNRUbg+xbiRPMp+IKdTyjcjmgpcSvvB9JcwYaubNJoYou1+zqhZa3eGn89oXu317z/kEXGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r9RmLBap; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ef1697a9-5f1b-459b-b3a1-32926fe2193f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725553935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bquw+gzeKG/uEvh1zvhW7asFOKanvNU5I6V4zRN6qGk=;
-	b=r9RmLBap1kqM9iSxRGsgxjl8dbkNLAVmVMvJ7DLz0sd6fbuKC18y93+G/qDfnYc+Q4QrA4
-	tJLpl30JteGssjePFxkxVaZmxrtVdt87Tz8H1PCCWsAP44csKoexg/PsjcQksObC6CLLIv
-	Omw3jhM6BR1BVFv072GG6YINJ7rUAFA=
-Date: Thu, 5 Sep 2024 12:32:04 -0400
+	 In-Reply-To:Content-Type; b=ZMMNy8ul2ECmtxweSFSOu4aerZRhfWnx0wqM82MCwiBKzCq+GGm+m9EBUSG6ph0FW+NjF4LTCj+9k+jWQCp5YtvmTFqCD0rhwZngdXkprF4SftJfbXM9wdvaSP7N83LTeL3YmMCFcnvEDMoLktApPIByBkM5siqgTRCYGYgLnwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ip5oX0CT; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-82a151ac96eso37787739f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 09:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725553948; x=1726158748; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LJxf2I+qDEKWcF/MHgukLX50wTfnukOCB0ZkYL4/G7w=;
+        b=ip5oX0CTQai1QHiEqVhFIdHFsZb6qf1FDLp9vEtJZziouIxA6LSUWMdQ3PwozvC8/x
+         Bljb2DcuHe/2AaR7UZClmu52ImTbAyWYYHgdMSeSSX+aHNjdPertdCQWOij3+jl7+bGm
+         abcftyfjdZ/D5aX7oiaSrS3agGXcsbSqklgQkPqESlIMXAZ8jUEWRFc0Igx5TsRBfoRy
+         8Y3WDP+SUR7OZQ8W8wBOcd2sd8apnw348Ru4zXaWpr0DJ9CURgNhjO3T7A/wVzFyU8cr
+         FAn6W8ieyaGQ+LQ7iCpmFDMFTODXmfQwU/MOI4RhvjUaAAIf+kWUBSg9YETScXnnJcBK
+         N3DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725553948; x=1726158748;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJxf2I+qDEKWcF/MHgukLX50wTfnukOCB0ZkYL4/G7w=;
+        b=FQO5EeuaAr+7McaylF9Sxs07+M2+pjG9iUUgbSfWMJ30w6D5iM42SfKVYmCDhiH7g+
+         nRtdWXBzsv3F1DxC5k4X9ZU4Q4JSda93Oq0BezbkwBYqa1P6EYQo16wubJ8iVWj/oxA6
+         MXdpgntPT+76wWeIe8Vjxjx/R58TXMexLrTwtRAeOTk6GChGSknboUKT8pxbN+lfwPQq
+         1bA0r7pP9M+y/um383EeVHV3LeEGIOqZl171lJfnAvanQ6o62TP7uk3HbaUWtJlt5gD1
+         53h+AoT/rGLE4Hg4wRnubUFJ2EtjCwg7C47Si8TlNxriuI1T6ShGPREJnwSIUXNFxH/u
+         DtTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8wh4wTbr+v3dMLFBkFCxSbN11JXkKMUhwKSBIxRLN78HwbNWR3ppdKozjv8QWNbTOUFaZ/VntrYJfNdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTlbx6wrkL/v4USymsJLJfksbkED1k41LEzbcobi7Hg1l3/b0B
+	jgAYrqCRF8nOwuzF/OSdIzS/oLopv8NCODL6Mx3yXG6IJhbV32Obi5losuSFuQ7JOSF1UpDZU+H
+	1kdk=
+X-Google-Smtp-Source: AGHT+IHLXHN533tm5TH7tUvxq+IeFjjRqnOq284J4kEiNtv3uK/fJkUwLvtz9f9jhxc51r33P1fF3A==
+X-Received: by 2002:a05:6602:1595:b0:82a:3dc3:cfc6 with SMTP id ca18e2360f4ac-82a88ca2f9bmr345501939f.8.1725553948029;
+        Thu, 05 Sep 2024 09:32:28 -0700 (PDT)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a42664esm411072739f.19.2024.09.05.09.32.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 09:32:27 -0700 (PDT)
+Message-ID: <37535a4e-e121-4824-aad6-f169b2442e0f@baylibre.com>
+Date: Thu, 5 Sep 2024 12:32:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] net: xilinx: axienet: Relax partial rx checksum
- checks
-To: Eric Dumazet <edumazet@google.com>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240903184334.4150843-1-sean.anderson@linux.dev>
- <20240903184334.4150843-4-sean.anderson@linux.dev>
- <CANn89iKJiU0DirRbpnMTPe0w_PZn9rf1_5=mAxhi3zbcoJR49A@mail.gmail.com>
- <156719f8-7ee8-4c81-97ba-5f87afb44fcf@linux.dev>
- <CANn89i+3kwiF0NESY7ReK=ZrNbhc7-q7QU2sZhsR9gtwVje2jA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] iio: adc: add new ad7625 driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Lechner <dlechner@baylibre.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240904-ad7625_r1-v4-0-78bc7dfb2b35@baylibre.com>
+ <123c8bff-6623-4a3b-a49e-69b3ab6f8ab5@baylibre.com>
+ <4d156c5a-daea-4e9a-8623-8042b5fe7911@kernel.org>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <CANn89i+3kwiF0NESY7ReK=ZrNbhc7-q7QU2sZhsR9gtwVje2jA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <4d156c5a-daea-4e9a-8623-8042b5fe7911@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/5/24 10:59, Eric Dumazet wrote:
-> On Thu, Sep 5, 2024 at 4:24 PM Sean Anderson <sean.anderson@linux.dev> wrote:
->>
->> On 9/4/24 12:30, Eric Dumazet wrote:
->> > On Tue, Sep 3, 2024 at 8:43 PM Sean Anderson <sean.anderson@linux.dev> wrote:
->> >>
->> >> The partial rx checksum feature computes a checksum over the entire
->> >> packet, regardless of the L3 protocol. Remove the check for IPv4.
->> >> Additionally, packets under 64 bytes should have been dropped by the
->> >> MAC, so we can remove the length check as well.
->> >
->> > Some packets have a smaller len (than 64).
->> >
->> > For instance, TCP pure ACK and no options over IPv4 would be 54 bytes long.
->> >
->> > Presumably they are not dropped by the MAC ?
->>
->> Ethernet frames have a minimum size on the wire of 64 bytes. From 802.3
->> section 4.2.4.2.2:
->>
->> | The shortest valid transmission in full duplex mode must be at least
->> | minFrameSize in length. While collisions do not occur in full duplex
->> | mode MACs, a full duplex MAC nevertheless discards received frames
->> | containing less than minFrameSize bits. The discarding of such a frame
->> | by a MAC is not reported as an error.
->>
->> where minFrameSize is 512 bits (64 bytes).
->>
->> On the transmit side, undersize frames are padded. From 802.3 section
->> 4.2.3.3:
->>
->> | The CSMA/CD Media Access mechanism requires that a minimum frame
->> | length of minFrameSize bits be transmitted. If frameSize is less than
->> | minFrameSize, then the CSMA/CD MAC sublayer shall append extra bits in
->> | units of octets (Pad), after the end of the MAC Client Data field but
->> | prior to calculating and appending the FCS (if not provided by the MAC
->> | client).
->>
->> That said, I could not find any mention of a minimum frame size
->> limitation for partial checksums in the AXI Ethernet documentation.
->> RX_CSRAW is calculated over the whole packet, so it's possible that this
->> check is trying to avoid passing it to the net subsystem when the frame
->> has been padded. However, skb->len is the length of the Ethernet packet,
->> so we can't tell how long the original packet was at this point. That
->> can only be determined from the L3 header, which isn't parsed yet. I
->> assume this is handled by the net subsystem.
->>
-> 
-> The fact there was a check in the driver hints about something.
-> 
-> It is possible the csum is incorrect if a 'padding' is added at the
-> receiver, if the padding has non zero bytes, and is not included in
-> the csum.
-> 
-> Look at this relevant patch :
-> 
-> Author: Saeed Mahameed <saeedm@mellanox.com>
-> Date:   Mon Feb 11 18:04:17 2019 +0200
-> 
->     net/mlx4_en: Force CHECKSUM_NONE for short ethernet frames
 
-Well, I tested UDP and it appears to be working fine. First I ran
-
-# nc -lu
-
-on the DUT. On the other host I used scapy to send a packet with some
-non-zero padding:
-
-  >>> port = RandShort()
-  >>> send(IP(dst="10.0.0.2")/UDP(sport=port, dport=4444)/Raw(b'data\r\n')/Padding(load=b'padding'))
-
-I verified that the packet was received correctly, both in netcat and
-with tcpdump:
-
-    # tcpdump -i net4 -xXn 
-    tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
-    listening on net4, link-type EN10MB (Ethernet), snapshot length 262144 bytes
-    16:07:45.083795 IP 10.0.0.1.27365 > 10.0.0.2.4444: UDP, length 6
-            0x0000:  4500 0022 0001 0000 4011 66c8 0a00 0001  E.."....@.f.....
-            0x0010:  0a00 0002 6ae5 115c 000e 0005 6461 7461  ....j..\....data
-            0x0020:  0d0a 7061 6464 696e 6700 0000 0000       ..padding.....
-
-and also checked for checksum errors:
-
-  # netstat -s | grep InCsumErrors
-      InCsumErrors: 0
-
-to verify that checksums were being checked properly, I also sent a
-packet with an invalid checksum:
-
-  >>> send(IP(dst="10.0.0.2")/UDP(sport=port, dport=4444, chksum=5)/Raw(b'data\r\n')/Padding(load=b'padding'))
-
-and confirmed that there was no output on netcat, and that I had gotten
-a UDP checksum error:
-
-  # netstat -s | grep InCsumErrors
-      InCsumErrors: 1
-
-I can try to test TCP as well, but it is a bit trickier due to the 3-way
-handshake. From the documentation, partial checksums should be agnostic
-to the L3 protocol, so I don't think there should be any difference.
-
---Sean
+On 2024-09-05 4:01 a.m., Krzysztof Kozlowski wrote:
+> On 04/09/2024 21:16, Trevor Gamblin wrote:
+>> On 2024-09-04 3:14 p.m., Trevor Gamblin wrote:
+>>> This series adds a new driver for the Analog Devices Inc. AD7625,
+>>> AD7626, AD7960, and AD7961. These chips are part of a family of
+>>> LVDS-based SAR ADCs. The initial driver implementation does not support
+>>> the devices' self-clocked mode, although that can be added later.
+>>>
+>>> The devices make use of two offset PWM signals, one to trigger
+>>> conversions and the other as a burst signal for transferring data to the
+>>> host. These rely on the new PWM waveform functionality being
+>>> reviewed in [1] and also available at [2].
+>>>
+>>> This work is being done by BayLibre and on behalf of Analog Devices
+>>> Inc., hence the maintainers are @analog.com.
+>>>
+>>> Special thanks to David Lechner for his guidance and reviews.
+>>>
+>>> [1]: https://lore.kernel.org/linux-pwm/cover.1722261050.git.u.kleine-koenig@baylibre.com
+>>> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git/log/?h=pwm/chardev
+>>>
+>>> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+>> Realizing that I forgot to pick up Conor's Reviewed-by on the v3 binding
+>> before sending. Can that be picked up?
+> Only you can run `b4 ty -u`. We cannot.
+My mistake. I'll make sure they're there for the next revision.
+>
+> Best regards,
+> Krzysztof
+>
 
