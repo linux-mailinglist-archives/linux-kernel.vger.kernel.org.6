@@ -1,167 +1,106 @@
-Return-Path: <linux-kernel+bounces-317819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0C996E419
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBEB96E3F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 915AD1F273C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18AC01F22D78
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1AD18C354;
-	Thu,  5 Sep 2024 20:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB4F1A01AD;
+	Thu,  5 Sep 2024 20:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DslEQ/Vj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJ34kv5Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD9513D638;
-	Thu,  5 Sep 2024 20:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EAED515;
+	Thu,  5 Sep 2024 20:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725568205; cv=none; b=aqpWNWRy4mxA3QNlgRMfNhANphVLPizIe7lHADo1ZdgbRq5Vq+WAkoxmDx10/wtIdFGt5SRelB1pqQ+CTeKC7ofPydTTTnn3vcvK9Vcy1OoXcDvsQwDFlqTJmVtNEg+Nv3vckrnqNBGXLkCDdYmKPMZBxSo3wBRE07L5zp96UH4=
+	t=1725567660; cv=none; b=lnJRwYE0j4DkInL6nkTyodT70kNEgjl/h+W/nebW//XoCn0xYEnvvJpmIuTADaHESRKMqvl4tFeICk9hZ4Vw9/15ttuKuJHaazykZbegqhMh3jwgejlZhIvDrr5DtmLqqle0Npicsm6MC9s83Sbmga2z1U5M/pk6GtMKHVjUjf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725568205; c=relaxed/simple;
-	bh=dOaaWXnpAep/fcrnY3blbZqV6QssNr8BcJX8tx4Sc8o=;
+	s=arc-20240116; t=1725567660; c=relaxed/simple;
+	bh=1lLjn97u5ozr3x2AENQrpqcvwTLIoF8oqz860FWuJxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2d0PnEeZe0D1TT0k9gKqRSNiDwN99Fri8y5rZsBiyoZNGdghybohfmKoxAAqCwiRNP1hKgGvj4Ei/3zR/jprvQYtcSv7OmXxfXuAhFQClCvqfvblzgtqtQCYAn4OKx9BHVIFqhzIcaOy0HJhcyhItqdmhSpHeX+Z4tOKGPtuhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DslEQ/Vj; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725568204; x=1757104204;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dOaaWXnpAep/fcrnY3blbZqV6QssNr8BcJX8tx4Sc8o=;
-  b=DslEQ/VjFldZg+xVkLZWksonU4iyZIV6iMVspUd/WPvP3LqJeVtRqacU
-   JSN8vTv/WsLlAPvJU4H5gt9EqkKfrAg8ckV8110aUEFSfq4HK9KDukdwR
-   9Quphq+By0v79lYM7GgyWrUaCgRvHZoLFt+A3YH91YtBWQBdKA/w4qwGl
-   hMNSMrwXZ0xvLLThKkgyDj5gA8UmulEqsItA7Ja40dypdy2uy14pHBEUD
-   WppDeumSG7FwsVI0f88YxntFl+vGsOKEvrCRbIuOvbnjND78mxCwKeA5i
-   tlvK2U6RHeGkQ3Eg6SAtnVo8R4P/bPaeeggsXplsjRBl+1TH2qktaH1ta
-   Q==;
-X-CSE-ConnectionGUID: UmvJs1vDQISQV2SO0kr/SA==
-X-CSE-MsgGUID: vR02LomEQdGA6j3SplRGxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24458455"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="24458455"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 13:21:13 -0700
-X-CSE-ConnectionGUID: RshIxymYTJC2+ySq2w1gfA==
-X-CSE-MsgGUID: VBrzC3xzROqAPfB0/CbGTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="65976414"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 05 Sep 2024 13:21:09 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smIyY-000AHf-3A;
-	Thu, 05 Sep 2024 20:21:06 +0000
-Date: Fri, 6 Sep 2024 04:20:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
-	cgroups@vger.kernel.org, yosryahmed@google.com,
-	shakeel.butt@linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, Jesper Dangaard Brouer <hawk@kernel.org>,
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
-	kernel-team@cloudflare.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-Message-ID: <202409060400.Z4B69Z8T-lkp@intel.com>
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhMAkUFzmZlAlvothMWz7w9IfBmFJqgsJBnL37sfwaYbk4x0pCfftLkVqZO70PBVn2krG0Es/c1lkmTlX2JFQCZaE+iRWgnYKt3MlHs5FQizU1fPfZn/2wjr9v1kManZibOYvMfe38Z/YgfnqEJ/mlsBwQC1XjfIMyXSCwOCt+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJ34kv5Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6731AC4CEC4;
+	Thu,  5 Sep 2024 20:20:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725567660;
+	bh=1lLjn97u5ozr3x2AENQrpqcvwTLIoF8oqz860FWuJxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BJ34kv5ZuKyapFcPxiGffv4WgAsKL5TgEhN+kToqlcoE0f9hJfzF/8V1z3FNycmwT
+	 vkIw+D9+Eo3yK828U5V64soeQk63yvcc6yNGXgD8X7iknlgm09SDB4GIVRE9HiwYq5
+	 cCm0HKzHdfmcfQlJKUHjYixqyMz5BWJYH62TCEIUA7LWPeKxWGbNeGFPd+0rdV9hlj
+	 3K29ikCWKLE912gE+KYsz2W7ZfKJAqOWex2HnW0xZWuWi98O0Vrseor4Gt4yJBH7MV
+	 FrE/tEAJwwQz+251cZmKpvXUeQ7x2ZeTJuqFs13dSQAteX6F4V9mAhi61grX8miuE4
+	 4m5chhZzuhlgw==
+Date: Thu, 5 Sep 2024 22:20:55 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Farouk Bouabid <farouk.bouabid@cherry.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v7 2/8] i2c: muxes: add support for tsd,mule-i2c
+ multiplexer
+Message-ID: <74anzbicky6zgccg7ao7l446fziwcmqcanycczl264neuts7ym@fyd4sdfyir6e>
+References: <20240902-dev-mule-i2c-mux-v7-0-bf7b8f5385ed@cherry.de>
+ <20240902-dev-mule-i2c-mux-v7-2-bf7b8f5385ed@cherry.de>
+ <fvk5u2j7wu7pjrlpbbnggp3vhopotctu2vr3fh77kl2icrvnyt@tukh2ytkiwdz>
+ <45c51083-ee63-45e7-b8d4-3822213530f4@cherry.de>
+ <4e4d7c65-3c3f-5208-ce08-b63ad39ab425@axentia.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <172547884995.206112.808619042206173396.stgit@firesoul>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e4d7c65-3c3f-5208-ce08-b63ad39ab425@axentia.se>
 
-Hi Jesper,
+Hi,
 
-kernel test robot noticed the following build warnings:
+On Wed, Sep 04, 2024 at 10:59:47AM GMT, Peter Rosin wrote:
+> 2024-09-04 at 10:35, Farouk Bouabid wrote:
+> > On 03.09.24 17:13, Andi Shyti wrote:
+> > 
+> > [...]
+> > 
+> >>> +        ret = i2c_mux_add_adapter(muxc, 0, reg);
+> >>> +        if (ret)
+> >>> +            return ret;
+> >> do we need to delete the adapters we added in previous cycles?
+> >>
+> > 
+> > We calldevm_action_or_reset() before the loop to add adapter-removal to the error path. I think that does the job
+> > 
+> > for us or am I missing something ?
+> 
+> I missed that too, but it LGTM. It's safe to call i2c_mux_del_adapters() as
+> soon the mux core has been allocated, so there is no risk it is called too
+> early or something.
 
-[auto build test WARNING on tj-cgroup/for-next]
-[also build test WARNING on axboe-block/for-next akpm-mm/mm-everything linus/master v6.11-rc6 next-20240905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Just a question, still: is it the same calling
+i2c_mux_add_adapter() and calling mux_remove()?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesper-Dangaard-Brouer/cgroup-rstat-Avoid-flushing-if-there-is-an-ongoing-root-flush/20240905-034221
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/172547884995.206112.808619042206173396.stgit%40firesoul
-patch subject: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing root flush
-config: parisc-defconfig (https://download.01.org/0day-ci/archive/20240906/202409060400.Z4B69Z8T-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240906/202409060400.Z4B69Z8T-lkp@intel.com/reproduce)
+Thanks,
+Andi
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409060400.Z4B69Z8T-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/cgroup/rstat.c:321: warning: Function parameter or struct member 'strict' not described in 'cgroup_rstat_trylock_flusher'
-
-
-vim +321 kernel/cgroup/rstat.c
-
-   308	
-   309	/**
-   310	 * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
-   311	 * @cgrp: target cgroup
-   312	 *
-   313	 * Function return value follow trylock semantics. Returning true when lock is
-   314	 * obtained. Returning false when not locked and it detected flushing can be
-   315	 * skipped as another ongoing flusher is taking care of the flush.
-   316	 *
-   317	 * For callers that depend on flush completing before returning a strict option
-   318	 * is provided.
-   319	 */
-   320	static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp, bool strict)
- > 321	{
-   322		struct cgroup *ongoing;
-   323	
-   324		if (strict)
-   325			goto lock;
-   326	
-   327		/*
-   328		 * Check if ongoing flusher is already taking care of this.  Descendant
-   329		 * check is necessary due to cgroup v1 supporting multiple root's.
-   330		 */
-   331		ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
-   332		if (ongoing && cgroup_is_descendant(cgrp, ongoing))
-   333			return false;
-   334	
-   335		/* Grab right to be ongoing flusher */
-   336		if (!ongoing && cgroup_is_root(cgrp)) {
-   337			struct cgroup *old;
-   338	
-   339			old = cmpxchg(&cgrp_rstat_ongoing_flusher, NULL, cgrp);
-   340			if (old) {
-   341				/* Lost race for being ongoing flusher */
-   342				if (cgroup_is_descendant(cgrp, old))
-   343					return false;
-   344			}
-   345			/* Due to lock yield combined with strict mode record ID */
-   346			WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, current);
-   347		}
-   348	lock:
-   349		__cgroup_rstat_lock(cgrp, -1);
-   350	
-   351		return true;
-   352	}
-   353	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> With that said, I agree with Andi on the naming and the
+> nitpicks.
+> 
+> Cheers,
+> Peter
 
