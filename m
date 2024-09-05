@@ -1,111 +1,169 @@
-Return-Path: <linux-kernel+bounces-317256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6B196DB8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:18:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E4596DB94
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E48F1C252B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:18:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D2E28C302
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5814719EEC4;
-	Thu,  5 Sep 2024 14:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E3419F479;
+	Thu,  5 Sep 2024 14:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="andDZzaP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYENXWRq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AB419E98F;
-	Thu,  5 Sep 2024 14:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D8319F123;
+	Thu,  5 Sep 2024 14:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545857; cv=none; b=V9GQ4Qi1GPVBbM5jFwSJHI/feKUheUNNpx9zbtaQu+P2AL6BpUSYtBiY2XEbyEQCLnC9dNnqvPTpu89JBpH7uD+IDbgroHtVFd78tInAIe9jXvX3vsIRaBcNlEAEtkM7ckFGSHjMFr/poXvfWUwm+kxATJ0lH347aOuzA3kC2QQ=
+	t=1725545865; cv=none; b=PyGvCD2/6e0l8IcKWv39dLzjlIWAL0Oobc0hVTVUCJBTj4IeQxtdTY5oqe4mg/puPJnd+thRic6+WKmtaLJMta2CWKzIdMFUs29fqunuYrEZwMFLGmNJGatIXmJjBJGiOgXwe3d0uPnKBT9PANb1wJMKgKRO6YOzX8seBZP8FFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545857; c=relaxed/simple;
-	bh=VqQy8KfKmVgPTGbG8DNpb8zbYk8Nc0D2lgFnKi69kn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9+h0aCzrdHtgEpaScJecTir0DD5nHNqsjrljUyuplw5YC8ovpOpoPn/6xj9WrZZcb4vTnc8e4Sa3C9D25qaQ4VUAqXQ/NwRg/7p3fjTsT+llvRPk84vArTu6RaXuQBP3hekP0n7/dgm7Yq/j3dAZYy70Nq7Z1DlXfXSfeyMk8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=andDZzaP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A541AC4CEC3;
-	Thu,  5 Sep 2024 14:17:32 +0000 (UTC)
+	s=arc-20240116; t=1725545865; c=relaxed/simple;
+	bh=9ObeGGmMmZUQNIKDyBpvXEWmJ0neSXU3BmU9ES+ry00=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=sYIlDBmVmcvBSP7OWqCyZEhY8QHcgsXb44AfpNG12K5ieyPUqXmGuwTm7k6csi+ZPLufUs3QthjjN37iyG3aUwEloeQlPdWAEapuxDTSNIjqyQ1NtbLuoPc6RhHERqNc6KtkUvEVYo+r+0PA/3xTX9LyE1uRBlMGDoCX2QgBCvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYENXWRq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F66CC4CEC3;
+	Thu,  5 Sep 2024 14:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725545857;
-	bh=VqQy8KfKmVgPTGbG8DNpb8zbYk8Nc0D2lgFnKi69kn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=andDZzaPhYZMZgV6Ut5i5Ns/LKGNLi/g7c0Ojq5UbJczxdxaq9euO+qT/qKkPg9PI
-	 5Q7JN9ERfhEAwiEnTLxOYYdapOFegv4+6hOlgMYYNE03nYfIWP4zyvVB/SsygAwgoh
-	 OyhO7Tp72ejapkrrhVTspxSs4mjaIqVlNxgNWE6FNvOPCq7L1bQlyQiqzTLBXURZia
-	 5tgem0TV6DR1XucnCmJK4KEptn+HnrM21FHLVbxpdRSKvpnUZ6IfnMB/d+1H7NBhGF
-	 KXxEwPniE54XJKJcpbjR3RUCe+xQQ0zp2uoWz8gLmR5ToYn3C+ORfLnAnh3xak1pU5
-	 /uJJyQFjNk67Q==
-Date: Thu, 5 Sep 2024 15:17:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 00/13] ALSA: update sample rate definitions
-Message-ID: <81e3d628-cfca-43b0-9af6-de2a3c606a39@sirena.org.uk>
-References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
+	s=k20201202; t=1725545864;
+	bh=9ObeGGmMmZUQNIKDyBpvXEWmJ0neSXU3BmU9ES+ry00=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jYENXWRq/s5piuSSClbLNfn9GFyK4cNTB1pV0h/NuSNrs5WGB/QZd94fU1antviwf
+	 aoUjZN+asVBX/qvzQfKFoQWXme7Z3PyBLR+1op7KQltt2sWvirJQksblrYbPCNpgY5
+	 kXYaFMy2m64KmCZIRGNuMFscNyQXoeciOoOTQQtnkWF5fU7WgQwNLk7Qe+ZZU2ZX0+
+	 i8qVFEBpXfTvhMFsPy4xrXlXAGXlCz25fW7aycdWn2N2dzY6EwRjxncUuFQQhzp+X7
+	 xfr1vTNQ8FW5YM1ih7KNGLzHa0gS3mbijcLxtm/Di4C6vb98WpFgMsOEQqYlf5Uca2
+	 ZF9PgrfFzBebQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uuNJXLNXUva0AK+X"
-Content-Disposition: inline
-In-Reply-To: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
-X-Cookie: The horror... the horror!
-
-
---uuNJXLNXUva0AK+X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 05 Sep 2024 17:17:41 +0300
+Message-Id: <D3YEYH69KMV4.13SX59Y2HT6D@kernel.org>
+Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+ <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
+ <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
+ <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+ <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
+ <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
+ <zhuo.song@linux.alibaba.com>
+Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Shuai Xue"
+ <xueshuai@linux.alibaba.com>, <bp@alien8.de>, <rafael@kernel.org>,
+ <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
+ <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
+ <gregkh@linuxfoundation.org>, <will@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240902030034.67152-2-xueshuai@linux.alibaba.com>
+ <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
+ <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
+ <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org>
+In-Reply-To: <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org>
 
-On Thu, Sep 05, 2024 at 04:12:51PM +0200, Jerome Brunet wrote:
-> This patchset adds rate definitions for 12kHz, 24kHz and 128kHz.
->=20
-> It is follow-up on the series/discussion [0] about adding 128kHz for
-> spdif/eARC support. The outcome was to add 12kHz and 24kHz as well and
-> clean up the drivers that no longer require custom rules to allow these
-> rates.
+On Thu Sep 5, 2024 at 5:14 PM EEST, Jarkko Sakkinen wrote:
+> On Thu Sep 5, 2024 at 6:04 AM EEST, Shuai Xue wrote:
+> >
+> >
+> > =E5=9C=A8 2024/9/4 00:09, Jarkko Sakkinen =E5=86=99=E9=81=93:
+> > > On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
+> > >> Synchronous error was detected as a result of user-space process acc=
+essing
+> > >> a 2-bit uncorrected error. The CPU will take a synchronous error exc=
+eption
+> > >> such as Synchronous External Abort (SEA) on Arm64. The kernel will q=
+ueue a
+> > >> memory_failure() work which poisons the related page, unmaps the pag=
+e, and
+> > >> then sends a SIGBUS to the process, so that a system wide panic can =
+be
+> > >> avoided.
+> > >>
+> > >> However, no memory_failure() work will be queued unless all bellow
+> > >> preconditions check passed:
+> > >>
+> > >> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_han=
+dle_memory_failure()
+> > >> - `if (flags =3D=3D -1)` in ghes_handle_memory_failure()
+> > >> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_mem=
+ory_failure()
+> > >> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` i=
+n ghes_do_memory_failure()
+> > >>
+> > >> In such case, the user-space process will trigger SEA again.  This l=
+oop
+> > >> can potentially exceed the platform firmware threshold or even trigg=
+er a
+> > >> kernel hard lockup, leading to a system reboot.
+> > >>
+> > >> Fix it by performing a force kill if no memory_failure() work is que=
+ued
+> > >> for synchronous errors.
+> > >>
+> > >> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> > >> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> > >>
+> > >> ---
+> > >>   drivers/acpi/apei/ghes.c | 10 ++++++++++
+> > >>   1 file changed, 10 insertions(+)
+> > >>
+> > >> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> > >> index 623cc0cb4a65..b0b20ee533d9 100644
+> > >> --- a/drivers/acpi/apei/ghes.c
+> > >> +++ b/drivers/acpi/apei/ghes.c
+> > >> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+> > >>   		}
+> > >>   	}
+> > >>  =20
+> > >> +	/*
+> > >> +	 * If no memory failure work is queued for abnormal synchronous
+> > >> +	 * errors, do a force kill.
+> > >> +	 */
+> > >> +	if (sync && !queued) {
+> > >> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption=
+\n",
+> > >> +			current->comm, task_pid_nr(current));
+> > >=20
+> > > Hmm... doest this need "hardware" or would "memory corruption" be
+> > > enough?
+> > >=20
+> > > Also, does this need to say that it is sending SIGBUS when the signal
+> > > itself tells that already?
+> > >=20
+> > > I.e. could "%s:%d has memory corruption" be enough information?
+> >
+> > Hi, Jarkko,
+> >
+> > Thank you for your suggestion. Maybe it could.
+> >
+> > There are some similar error info which use "hardware memory error", e.=
+g.
+>
+> By tweaking my original suggestion just a bit:
+>
+> "%s:%d: hardware memory corruption"
+>
+> Can't get clearer than that, right?
 
-Acked-by: Mark Brown <broonie@kernel.org>
+And obvious reason that shorter and more consistent klog message is easy
+to spot and grep. It is simply less convoluted.
 
---uuNJXLNXUva0AK+X
-Content-Type: application/pgp-signature; name="signature.asc"
+If you want also SIGBUS, I'd just put it as "%s:%d: hardware memory
+corruption (SIGBUS)"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbZvXkACgkQJNaLcl1U
-h9Dcdgf/ZQoGyidIWQUnoePm2VX00vw06P9W9aOo2sqjGlu4flrG6fH5N+tv92vc
-hX0ctx0G6C1f4iafWkIPCjHVecaWETi2yb/hpKpSPTy0nFrEBN06Zl02mDSa3jfs
-ngxTVhHYUMoS2ZMRR9dAy3XgnVgZS9Lccvvq52mEYaxh1G+hzi3HEDgM5oWZPEaI
-CcqzVwxRaRokIAZO3prOKdX4rMXG+Nz7kSFb/Hx9/K9H4jYwgwFyKJ2TV3H7fVYM
-767vMvyA1T3nKRZ1yiZfYWYYIf2rs0h7iQxgjH4Gzb9575MFPOiqAk4/pIYcvVKj
-hf1swcI9kcYqQrgoLzqE82HPkErNaQ==
-=WnP9
------END PGP SIGNATURE-----
-
---uuNJXLNXUva0AK+X--
+BR, Jarkko
 
