@@ -1,96 +1,85 @@
-Return-Path: <linux-kernel+bounces-316377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9813F96CEC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F98796CEC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0081C228D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA6351F27363
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0B8189518;
-	Thu,  5 Sep 2024 05:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482E7189537;
+	Thu,  5 Sep 2024 05:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Sv9qAjDH"
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCGqJ5DG"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B940414F9CF
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A4D189518
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515568; cv=none; b=aHMF+aeJeDiSJQteWBKLuCQG7nGsS+Bpv/eI3fv15oktAFtU5+ICDd/Y3a0Z5XU2EmJnHnFXykoOjXXDJWlmCUbITBwimgAFNWGypEsohPrDDkN9Ah6+GHRFYSkHFiUP+TDAFrYcHRRjYu5SMmDMmv6KiwDEiXu2xR6qNT74OWo=
+	t=1725515747; cv=none; b=FzU9BKdq1DGjBIcsBqrOkIIurfeBOmapxcmBM+nUIOWRUDNvHtTRnPBGuFh+jSExXSV1a4opgEUEseg3EdmOV3gc21CQdnUjtbr9aKmqEE3hPRWYv9iSFPdsLN6QX7D4+FM3agwt7N6bascoH9n2ysnItRmy/VoANFUnUpWKoho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515568; c=relaxed/simple;
-	bh=EJ14sOhLF8dqlqHR5/S5KsDVVFZ7Uf+ffgtsitGZDYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1SGclZZI2YOJqEXK/0sG3GhUYTLngfOE29cuW0nuNiqK+bibQpxznBo4CARS9GzqessVJTYwC7fqJFXdYkHUUwv1jq4pDC/0hwnESnKFPmQyzwPPZKmU6R3KBvQYq0rsYr7vsMgYNzvmfQ0XaSNWli3DnLKNaY6ox7JJxPfimA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Sv9qAjDH; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-374ca65cafdso148170f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 22:52:46 -0700 (PDT)
+	s=arc-20240116; t=1725515747; c=relaxed/simple;
+	bh=r+O25lbenDA4blhu0GCQw2Ny9QaC74UojDf5x2Y8a04=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l4K7yRfTF/kOiCY1i8R3kh4Kq+Kbw1zd2QqR7Lmfzrk36Z2c/mGDuRRqPvOC2SOJPNsSQkJEQjvfg+0QLxiF20mLTEqiOCayfg+8nRzSV5awgoz/aNmxaDam4XrUGQGUlMqASC8IPhxmULA6uwX/3nnXRdGl2N0v3+fXdlg+PBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nCGqJ5DG; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-70f6118f1b5so319752a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 22:55:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725515565; x=1726120365; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725515745; x=1726120545; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hjf8mtcnI/VkGNM4WcDRLxoMkosopxI2lQGXBy19+Pw=;
-        b=Sv9qAjDHFavdkYQMrMTKd+BAtcjRD23PHqNEyAxhSkqaqtMRKDir8zwREjr3qoj4lg
-         2RuuPaD6dWphNKZ5BwZhqezuMOoGhQ7LiWPCOxc5v/YI25GYoegDCCHuuBnAHiXb4QW1
-         4GIcDl5Mi1LqmMU/bOPSnm4Zdhe9ChbF9WdWBWntcXWOCcxigakc7GtgKT7wSuwJwZPh
-         q+ZIqat+0IhgFKBqghCBUNZu+Bpw+AVWKNJrr5mNxh32DjxJ57LgM19iwByAEDdI5nZC
-         i5iyIF/2O7KTNiIAUOeIChi+Z5MrjSeHODsGtI1Yg/whm7rpRrGEfMrEDgJf3CbbFsO4
-         th1g==
+        bh=pSftet0jyeDp3g0N3i1N82jvf3t0TCZia8ty4jrRx70=;
+        b=nCGqJ5DGofaJTIywJPxuh8BQn/eLJJrFZ5UCxovSUA9IoYPwrsg7v2OAi2q85xYxQT
+         09L/V1VaNuBtG2A/VkH/Zxyrf8OHJtPDXjrPy/mtohgQOPfAh4iAxqAxO6gEjWI87Cqg
+         WoNdYhEbx90lSg9ESuRiODRDoHaGUaMGB0cokBZ6/4ANb0MAUz7ktCVPfuU1glLQZ1nf
+         DtGTu/o3rrl9dA4fjSVDwgKK+3JBHp+DXvnPRzuwu+r4sObiZxlJpHaxa9+j6G9nSoJD
+         uf/lPHhjK/+dQSBF/M4nlT3P7v2zNpNwzLCQvvLf3yElaTlf9b5eQz56ju1sSJEHWs3J
+         K89g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725515565; x=1726120365;
+        d=1e100.net; s=20230601; t=1725515745; x=1726120545;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hjf8mtcnI/VkGNM4WcDRLxoMkosopxI2lQGXBy19+Pw=;
-        b=GgQnpM3+dIiTPJXOtq8eRle9iOwERKoam+3/8Y1wJ7KjGV6I+Ag+Iy5OB/bdMvdrDq
-         pIDlHSAIO5EwNwpE7XKg0WnidQcN2Wk59iWpNn84yokK51qmw4kmGv9snXDYIg5gdvZm
-         WyKBMyg8/iBlIQspur7ygpIXTo+2mEUkf6GWeiWKaMCHIlpLRWmGao2fsumDwTOAl1/S
-         xLmBFpqB2Za9uNiBleHAeyGiPFZl/74QOYBCF2tR0BpC8yb6sgjiWYo/zYQWkVXX7FMO
-         JDE9BFdIhFxrbwuj65Fh0ppxsM6BlhXTK/GBtf2Fn00R5XtFAIiuRZDIXBE+ir4AJljC
-         L+ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVOwpRhYRQM8L61NKSWO35dGmaoaeLQHXX7U5aGEM3w0Z6T/NGy+rjlmLf9KiQTtrH82c4xRPTA3k7OSp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ85cZsGld//Z6q/NWqQOh1NHYKvx2ApgR4X/rBC1/Z0JyBJwp
-	G2JME9vjtCLr50UF3taFEXtuNnVu5tbEVw9I+xwHGFv3rdrAay8EYatJrbxZ+Po=
-X-Google-Smtp-Source: AGHT+IG1SWr/hH8fDwc2lTHFSC7khyXM197qaW9qea5dTMGILPk5Z4cjIsiuD9Zgz8SQL2bOy/5LAg==
-X-Received: by 2002:a5d:46ca:0:b0:374:c95e:1636 with SMTP id ffacd0b85a97d-374c95e17a1mr7580681f8f.21.1725515564903;
-        Wed, 04 Sep 2024 22:52:44 -0700 (PDT)
-Received: from localhost (39-9-193-138.adsl.fetnet.net. [39.9.193.138])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e17636sm3413678173.74.2024.09.04.22.52.43
+        bh=pSftet0jyeDp3g0N3i1N82jvf3t0TCZia8ty4jrRx70=;
+        b=wU8Kc69Q5OzYLF1vMZlAyw0H9AIw96YhGs68wsCUsdHqs45WBw9clrsaygaclqyyDC
+         8bvjkO5tYmOh94aQgBDf1vtfMWh0hTYXRsYSjd7aIHd5uyCeC0IL1Vu8K6OLY6Or6xqE
+         adsHsE58eM20vinilpDnqrU61YsgyfhiYf4cfZS1jF4bc1uMnk6ez7OMRk8IUFQqDQVu
+         qZuKn6nMAAJjOVamBgMjUE7xXJXvSdxJHPe9TQHRAjDk08eW1akgeegVRMJdWFiOZssh
+         fH+el5K0F48sf5X3zyJmWYsAPqv7pLP1czu1z+WdPHrhjSMeQtl/ONX7taMnq5CPzqa3
+         kgKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOu0T3Hx/JHvBd8OA+z7bNp9Jh8aMCWpGSkpU8Xq8QyeFhy5W+YY8WcmlhHbt6VLOOk+ZcHFJKy3BfiR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJa/4xmFRG5E2aXkkMzkLMQCRBdlgAGRl5VVZ8wxCQX+7qTbyl
+	qJh2TbILW2pznG3WnEV1UdoKzNspDFmlxqtfXbbwm3Q1dNxBNAywI16bJA==
+X-Google-Smtp-Source: AGHT+IFgDBRriydFjCDDQs8m/0UwuGzvwBinkyFHX1pf+Jb6S39y4pyCR146A00VM4ENmIWb+n/slw==
+X-Received: by 2002:a05:6830:2906:b0:70f:6f81:d274 with SMTP id 46e09a7af769-710af72597dmr8262352a34.28.1725515745168;
+        Wed, 04 Sep 2024 22:55:45 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd85b36sm2564072a12.4.2024.09.04.22.55.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 22:52:44 -0700 (PDT)
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: Eduard Zingerman <eddyz87@gmail.com>,
-	bpf@vger.kernel.org
-Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Vernet <void@manifault.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH bpf-next] bpf: use type_may_be_null() helper for nullable-param check
-Date: Thu,  5 Sep 2024 13:52:32 +0800
-Message-ID: <20240905055233.70203-1-shung-hsi.yu@suse.com>
-X-Mailer: git-send-email 2.46.0
+        Wed, 04 Sep 2024 22:55:44 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id 23C30801B1;
+	Thu,  5 Sep 2024 14:04:09 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: miquel.raynal@bootlin.com,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: richard@nod.at,
+	alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH 0/2] mtd: spi-nand: Add support for read retry
+Date: Thu,  5 Sep 2024 13:53:31 +0800
+Message-Id: <20240905055333.2363358-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,80 +88,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 980ca8ceeae6 ("bpf: check bpf_dummy_struct_ops program params for
-test runs") does bitwise AND between reg_type and PTR_MAYBE_NULL, which
-is correct, but due to type difference the compiler complains:
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-  net/bpf/bpf_dummy_struct_ops.c:118:31: warning: bitwise operation between different enumeration types ('const enum bpf_reg_type' and 'enum bpf_type_flag') [-Wenum-enum-conversion]
-    118 |                 if (info && (info->reg_type & PTR_MAYBE_NULL))
-        |                              ~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~
+When the host ECC fails to correct the data error of NAND device,
+there's a special read for data recovery method which host executes
+the Special Read for Data Recovery operation and may recover the
+lost data by host ECC again.
 
-Workaround the warning by moving the type_may_be_null() helper from
-verifier.c into bpf_verifier.h, and reuse it here to check whether param
-is nullable.
+For more detailed information, please refer to page 27 in the link below:
+Link: https://www.macronix.com/Lists/Datasheet/Attachments/9034/MX35LF1G24AD,%203V,%201Gb,%20v1.4.pdf 
 
-Fixes: 980ca8ceeae6 ("bpf: check bpf_dummy_struct_ops program params for test runs")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202404241956.HEiRYwWq-lkp@intel.com/
-Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
----
-Due to kernel test bot not setting the correct email header
-(reported[1]) Eduard probably never saw the report about the warning
-(nor did it show up on Patchwork).
+Cheng Ming Lin (2):
+  mtd: spi-nand: Add fixups for read retry
+  mtd: spi-nand: Add read retry support
 
-1: https://github.com/intel/lkp-tests/issues/383
----
- include/linux/bpf_verifier.h   | 5 +++++
- kernel/bpf/verifier.c          | 5 -----
- net/bpf/bpf_dummy_struct_ops.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/mtd/nand/spi/core.c     | 33 +++++++++++++-
+ drivers/mtd/nand/spi/macronix.c | 79 ++++++++++++++++++++++++++-------
+ include/linux/mtd/spinand.h     | 17 +++++++
+ 3 files changed, 112 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-index 8458632824a4..4513372c5bc8 100644
---- a/include/linux/bpf_verifier.h
-+++ b/include/linux/bpf_verifier.h
-@@ -927,6 +927,11 @@ static inline bool type_is_sk_pointer(enum bpf_reg_type type)
- 		type == PTR_TO_XDP_SOCK;
- }
- 
-+static inline bool type_may_be_null(u32 type)
-+{
-+	return type & PTR_MAYBE_NULL;
-+}
-+
- static inline void mark_reg_scratched(struct bpf_verifier_env *env, u32 regno)
- {
- 	env->scratched_regs |= 1U << regno;
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index b806afeba212..53d0556fbbf3 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -383,11 +383,6 @@ static void verbose_invalid_scalar(struct bpf_verifier_env *env,
- 	verbose(env, " should have been in [%d, %d]\n", range.minval, range.maxval);
- }
- 
--static bool type_may_be_null(u32 type)
--{
--	return type & PTR_MAYBE_NULL;
--}
--
- static bool reg_not_null(const struct bpf_reg_state *reg)
- {
- 	enum bpf_reg_type type;
-diff --git a/net/bpf/bpf_dummy_struct_ops.c b/net/bpf/bpf_dummy_struct_ops.c
-index 3ea52b05adfb..f71f67c6896b 100644
---- a/net/bpf/bpf_dummy_struct_ops.c
-+++ b/net/bpf/bpf_dummy_struct_ops.c
-@@ -115,7 +115,7 @@ static int check_test_run_args(struct bpf_prog *prog, struct bpf_dummy_ops_test_
- 
- 		offset = btf_ctx_arg_offset(bpf_dummy_ops_btf, func_proto, arg_no);
- 		info = find_ctx_arg_info(prog->aux, offset);
--		if (info && (info->reg_type & PTR_MAYBE_NULL))
-+		if (info && type_may_be_null(info->reg_type))
- 			continue;
- 
- 		return -EINVAL;
 -- 
-2.46.0
+2.25.1
 
 
