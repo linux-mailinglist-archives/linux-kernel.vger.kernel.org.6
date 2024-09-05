@@ -1,110 +1,117 @@
-Return-Path: <linux-kernel+bounces-317189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAC796DAB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:47:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2652996DAB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1256FB20BE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:47:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4AB1C22D34
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E080219DF5B;
-	Thu,  5 Sep 2024 13:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C467E19DF5F;
+	Thu,  5 Sep 2024 13:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NeYeEDCb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XzdR8k34"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ic4Ek1ZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A1617C9AE;
-	Thu,  5 Sep 2024 13:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AA019D8B2;
+	Thu,  5 Sep 2024 13:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725544044; cv=none; b=tnUm7He9bD+obd7ZgBC5gnAkPvzyCyP6favUojyLJVyZjIZ5G/5HPAmJQ1u9E7zRjBwXs8ylTYyJ7ToUieMkORoulyd13v8G1FB9WwkZfp/jCEvV6FpKlwU7omC+vfJSMdsgkCq0w/YBAA1YTGmciPK4aG2ijnqz1vgsmCLSH5U=
+	t=1725544064; cv=none; b=OAoIUjFlDTshlmo3Te0WRJGzJLfQ8LiwSrB8pPkF69hAkqjsYCDhLrMwH6qJM/wk9HoW8ChkkSsbDqAtcpu0fhKSP8cfUVj35VkK0flvgJYwCpyunxI6QKde9SzuJkbr1VfOvlAYZ44Ibas0P5Oomz7/tgtqtqjR5n7OxYjfvGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725544044; c=relaxed/simple;
-	bh=AOn6Ll9ai4K/u6uf9vZ+jX0+M6RhyBBOqA4799es7aE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a5Uggr71AD7V8SnFZVzzKH9PBkrw1QngXfS2DLRcwcvk60HUBVqZMWrIJY/6Cu+ssXppKd3lSQSzlG/wU1xzFETkXK4QIbppCgPvKEVewajubF5JT2e3aBaoe49CpAI/7WX4+4e4xcNYqJ4kx2tWFy51Wslo9M3vtMnwCRgQsQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NeYeEDCb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XzdR8k34; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725544041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlP6kusqtPG5pPJZY/w1PqH3fKGrdHhT4n2wnmhWeF0=;
-	b=NeYeEDCbzT0P1OYbMjJHWVskJLk4BmvRZ60tzMCNWwNNZScyGGA69+qtp15gmB+OJntq7J
-	kjG35W9+Ws7z1mc2Z2PBcKmcAO2wbGRlISYmXnTNZxc9zFwUf9Qf6mNldoQKlTrnYvOqSY
-	HScPivxmP/H91fpWV03aeUubkn4htfghoNvcrYPll0YuYCHO4rLwnNjOmpegxNiL4eDxed
-	MvLM92vY8WjW3djdACW2qJytyKD5pBtg3oJMAAJZ2g62BoJUz05z/9FglFG/GUL1llomr7
-	M9cdOqiVZBfAc8g55xGUV4CNB+ah2FcMOPrnL450Xv0BVbIZPnzAZpKy2FpIXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725544041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlP6kusqtPG5pPJZY/w1PqH3fKGrdHhT4n2wnmhWeF0=;
-	b=XzdR8k34wZGMeFazggmgjYlFxCnm7Z4nx2H5h//zhSrPqt5uFQyMcaasZthP1pmAJFVx73
-	FkMaivFzpCV2TCBw==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: [PATCH next v1 2/2] serial: 8250: Revert "drop lockdep annotation from serial8250_clear_IER()"
-Date: Thu,  5 Sep 2024 15:53:19 +0206
-Message-Id: <20240905134719.142554-3-john.ogness@linutronix.de>
-In-Reply-To: <20240905134719.142554-1-john.ogness@linutronix.de>
-References: <20240905134719.142554-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1725544064; c=relaxed/simple;
+	bh=71k1Ochv2FC5okt+9RprHRdYfaZu9bLcTVyeNCoL8r0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KOoLhUkrH9YS4RQ9Z+xE3ZUQcP0JdJEf2YOTMMeJnqjiHXB6l5MmNPtGYz/BYVCWUQemepY2UA3wtHpxFai4Pu8XLUlPJrpLfb1pjfINTdjvzgBojffIwMY4vjXHmZpMIYisg/yBjBnmyUNP+bWkoGqicp+OLOAgvAjMod4MLUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ic4Ek1ZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A9B8C4CEC3;
+	Thu,  5 Sep 2024 13:47:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725544063;
+	bh=71k1Ochv2FC5okt+9RprHRdYfaZu9bLcTVyeNCoL8r0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Ic4Ek1ZWVl2lJ8st6GLtIkODrTBG+tf6NAuQKe0HntNEZtlPOU3NhnbxBEqQsxEeO
+	 lojnuwiLsh4fDvhuRdQ3RNPP9n0j1LUmqXE9Qa5p94Dl7aVI1DUSU/eb+VD2kiVKDR
+	 nqLceoTE0a2E4rrvsOVxdOF1xtjNfyAoYv2fQ5owncvVeq56Jyi50hLnUSBUkAb+8D
+	 9bJub1/7+0vLx17fpJxoJ2twc9u/YJ3tcXmpR1afOUaUni6SYKwcglEg9B6h+F/cVB
+	 lFKYgWngayZyCwCJzcHx+jea01T583hMuwAhVq4qsqkyCt9fHmnYmYZKZZpV26P54B
+	 sArasEpU95tMA==
+Message-ID: <bf114807-c56c-4209-ab26-9e90ac00cedf@kernel.org>
+Date: Thu, 5 Sep 2024 15:47:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 3/6] phy: qcom: Introduce PCIe UNIPHY 28LP driver
+To: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+ kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+ p.zabel@pengutronix.de, dmitry.baryshkov@linaro.org,
+ quic_nsekar@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ robimarko@gmail.com
+References: <20240830081132.4016860-1-quic_srichara@quicinc.com>
+ <20240830081132.4016860-4-quic_srichara@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240830081132.4016860-4-quic_srichara@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The 8250 driver no longer depends on @oops_in_progress and
-will no longer violate the port->lock locking constraints.
+On 30.08.2024 10:11 AM, Sricharan R wrote:
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> 
+> Add Qualcomm PCIe UNIPHY 28LP driver support present
+> in Qualcomm IPQ5018 SoC and the phy init sequence.
+> 
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> ---
 
-This reverts commit 3d9e6f556e235ddcdc9f73600fdd46fe1736b090.
+[...]
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- drivers/tty/serial/8250/8250_port.c | 3 +++
- 1 file changed, 3 insertions(+)
+> +static const struct qcom_uniphy_pcie_data ipq5018_2x1_data = {
+> +	.lanes		= 1,
+> +	.lane_offset	= 0x800,
+> +	.phy_type	= PHY_TYPE_PCIE_GEN2,
+> +	.init_seq	= ipq5018_regs,
+> +	.init_seq_num	= ARRAY_SIZE(ipq5018_regs),
+> +};
+> +
+> +static const struct qcom_uniphy_pcie_data ipq5018_2x2_data = {
+> +	.lanes		= 2,
+> +	.lane_offset	= 0x800,
+> +	.phy_type	= PHY_TYPE_PCIE_GEN2,
+> +	.init_seq	= ipq5018_regs,
+> +	.init_seq_num	= ARRAY_SIZE(ipq5018_regs),
+> +};
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index ce841c62900d..1b4524f6d9b9 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -712,6 +712,9 @@ static void __serial8250_clear_IER(struct uart_8250_port *up)
- 
- static inline void serial8250_clear_IER(struct uart_8250_port *up)
- {
-+	/* Port locked to synchronize UART_IER access against the console. */
-+	lockdep_assert_held_once(&up->port.lock);
-+
- 	__serial8250_clear_IER(up);
- }
- 
--- 
-2.39.2
+As krzk suggested, the difference is just num-lanes
 
+[...]
+
+> +static int qcom_uniphy_pcie_power_off(struct phy *x)
+> +{
+> +	struct qcom_uniphy_pcie *phy = phy_get_drvdata(x);
+> +	
+> +	reset_control_assert(phy->resets);
+
+Is the reset line supposed to be kept asserted?
+
+[...]
+
+> +MODULE_LICENSE("Dual BSD/GPL");
+
+Was that intended?
+
+Konrad
 
