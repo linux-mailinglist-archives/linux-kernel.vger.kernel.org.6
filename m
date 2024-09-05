@@ -1,245 +1,184 @@
-Return-Path: <linux-kernel+bounces-317314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0933896DC46
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:47:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD83596DC58
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EBFF1F24168
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:47:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEC0B22402
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C74D71B3A;
-	Thu,  5 Sep 2024 14:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE5081AD2;
+	Thu,  5 Sep 2024 14:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UzetKHg3"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2089.outbound.protection.outlook.com [40.107.236.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCgnBeg/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17569175A1;
-	Thu,  5 Sep 2024 14:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725547612; cv=fail; b=uKhe7jWLjM4ifD7c/69GBR0bc+7kCXDyrB+I/lM9Tl7uMi8vF75z2HYQ6NGWy/tmj0BTR5upbhSQLe314oLvbyT/xAgET6h/tZImY3HKeDavlz8CKsPLtCnZzJ+Gad65gbjM5qFQdFcW8KdhxfZGQ8+h/uj6rTfWBqPBNi93dNE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725547612; c=relaxed/simple;
-	bh=hedMh/mBXiJyFex9OQWPgz8rYMqBiZQ/Rt8WvoGBryc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XcBmaPoibhbcqBNNKENmWEtS/qrnKvUCapGsy2q91G9RyexJeEM3K3Ej7X19r/SSafn9Xzbm/nznTCCX/Ml/R0fZjxnvs/e7p0i2xCXjKD2wO9XjillfaaGoOWkdHYo/2Ob+tKZdD4lpSagHb2uhol0G8PBzoHWZW/Sv7q4LElw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UzetKHg3; arc=fail smtp.client-ip=40.107.236.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AG1/To1l92LF7V1UL7KF+7XUNFbmvn4nojU6goMdX1W7p3hsmbetPcwjV0cClWkg0FWiMYVVCR7y+wOBQMeatFSFqCrYaZbeDfCoSdM6DrKyNJXZU4+SISCQjjEOV+H1DOkOY8QKc9otqXQDQwE69KKQiNx7+5TSz3SLWsoiBtgP4hnBQIpEtG9UTwoZ1TchIF8bZRt//VLOUV2ANccaWxB6dfwMT8LXC/xS1IofNBP8wbq438YMRlduzgPatDfYPgpFD89ZBnwhEV/zRy5k3S3rMZ9ToC3dU10e3/BosEy3DYAx43d0UNCXYurE+GknzOZ/cYsKOADGWuSmgZPamQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QpT3lH8/BRnRidnJEDEerO8l3Jii5E9K9FhnOfZS1iI=;
- b=CCZvwLj2dDtG1B+HqNaLXXYMjvuS5LKAt1U3ZOxFo+4hPbcmWIPbbmEkvz0nf2z1TlgxV+7Nsqu1m0jdo1cfg+1Y8/pNFGcxrsoiXqrFsWg3gWSuN1TTzWmElie2rCZ2royrpK0AtyM+Oz6WSAXpzLRKcPdTufJCiUlR5OWIZZciEfCkcZvOWZsu3rSgAEXfFxZEqeG12IvJ0YTiWThMYzwB7+X5lpDh9faDkHt7sCmlh/mV0D6fB7XdKRURWtMIJUeqDEWy5j7ROHMFXqByStSafhT9KdRt4BUpU9nxBSnlEzcOkEuI7yOoxCHULZb7zShxmP6kI87dHTDiF4nKsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QpT3lH8/BRnRidnJEDEerO8l3Jii5E9K9FhnOfZS1iI=;
- b=UzetKHg3H2qiGwP8Z1lo5QdAv8/7x4tdk8H9IPC7boov8e7PRA1Vqa/d+wT29MXPUZTX4Zkbvxar4n24HVL7alP4YvLDrEXM4jdR5RjwE9VKX7Tr/mvTnQTY9E22HrZadbLuUX6eimDeHz5Xnf/fKmjSuXuUO7FFZfJudpKgRO4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com (2603:10b6:5:1bb::24)
- by SA1PR12MB7102.namprd12.prod.outlook.com (2603:10b6:806:29f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Thu, 5 Sep
- 2024 14:46:47 +0000
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475]) by DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475%5]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 14:46:47 +0000
-Message-ID: <50d9910b-dbd4-48d1-ad43-f298d14986fe@amd.com>
-Date: Thu, 5 Sep 2024 09:46:44 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 03/12] PCI/TPH: Add pcie_tph_modes() to query TPH modes
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, netdev@vger.kernel.org,
- Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com,
- ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
- andrew.gospodarek@broadcom.com, manoj.panicker2@amd.com,
- Eric.VanTassell@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
- bagasdotme@gmail.com, bhelgaas@google.com, lukas@wunner.de,
- paul.e.luse@intel.com, jing2.liu@intel.com
-References: <20240904194052.GA344429@bhelgaas>
-Content-Language: en-US
-From: Wei Huang <wei.huang2@amd.com>
-In-Reply-To: <20240904194052.GA344429@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR11CA0019.namprd11.prod.outlook.com
- (2603:10b6:806:6e::24) To DM6PR12MB4877.namprd12.prod.outlook.com
- (2603:10b6:5:1bb::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C343169;
+	Thu,  5 Sep 2024 14:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725547760; cv=none; b=q5U4jeY7p8tdYCLH5Jte20fC74SQZ4jitrqTqOv3qciVs2QqGD90k/w1mUqhE3TB3Z5dDCdKy1e7ofdTWyjPB2moq4NZxZVOFJ5aIYqCNLgyhY6FgieWe12Iloru/ORfQUfbMhE7a4LeokJMVoqlOMw/7cJAmnoUZFT0dcWmLQo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725547760; c=relaxed/simple;
+	bh=z9r0NxcFekK09jKFvUY4vj72duAS7qn2qglDPPI4PLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=loZTUiNWXSw7+rjaAoMRXg/YB9bytGQaCKJJUACdDiy3Xskm5WTYaPGyRYXxlu0D15gTlLvRokaXMwBDX18r8dSOCZ94FMNXcPTikpKr+4BCz3qQJTBZZYSSBimCZP4e3ruBex/JE35ixLplKXylPhaTm8qntSbln7A1DdZ7SfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCgnBeg/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D68AC4CEC3;
+	Thu,  5 Sep 2024 14:49:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725547759;
+	bh=z9r0NxcFekK09jKFvUY4vj72duAS7qn2qglDPPI4PLU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rCgnBeg/2QCYhFtf0Uy4Rf0QMQd2VIyVYz3/sRkVSci1e96UTATiMm/ws9WoKeynB
+	 T49qs+s6WuUW2mszeaD3bazikT8Dl2FI1Ku1sQvnfHfgF74rZymjC34+lis8nyGX0P
+	 ItehwgG2Ue7MlNlmLSi3UrAUEw2Sek90HQHhX4LrLAiUo7fLSwgyIbuXfVp7PCjhRz
+	 8YBBd1Q1rUwp8f5T14sECowNTvz8to0Q2Och1rd67oMEL0OY7BiFbYaxoQSuSc0vjh
+	 m0cgsleMCKGC/q58QJ1h3aBM9yI22Y4DUGedudgZb7cxBmOtGfUUoP3AmpAImLvEuP
+	 5mP7hTkF/SbgA==
+Message-ID: <a2c2e365-7e47-4ad1-87dc-b5603a927cc6@kernel.org>
+Date: Thu, 5 Sep 2024 16:49:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4877:EE_|SA1PR12MB7102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6cc51336-8ff6-43e3-7e09-08dccdb99167
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TXVXZnZhYzdMbHhTdlk3K3BhU2t0YzFPNFI5ZXA0Q2VibmFMcmlJekJJS0Fk?=
- =?utf-8?B?WEp6M0w3dmdaM21UV2xRTUFtM2JuamVmc2E2TkpyMDBnMjZkK2JKVk5teWVK?=
- =?utf-8?B?eXhQRDlPSDZKN0pXakxjSjhxV09FR2tBK3dWQWc5R3ZRZnIrQXg2bDcvc0RQ?=
- =?utf-8?B?S1V2LzA3c1JnZXRpdjN4SFVkR1o2ekFHdkZZZVpvdi9Ob1cwdVFmNThsdGRJ?=
- =?utf-8?B?OHJ6a01QQW12NjBtcHIydUZvVkZXUGdxcDJiYUlneFc2ZnhoL3IwVWdMeCsw?=
- =?utf-8?B?dVlPbDNlVGd0d0s2eWd4Y3A3dXhRK3d4cDZSNytnT0tXWFpQSjVEbjVCcExh?=
- =?utf-8?B?K2JETGxRN0MrRVJCOHRWMDN6M2JlQnYzeDZPbXh4UnZIbytWcmk3RWs1TDJU?=
- =?utf-8?B?NUlFRWZkNGZ3SlZjeFFTNm03V1VaY05pNXVsZjI5UHh0Mk9OK2s5anZTNTQ3?=
- =?utf-8?B?ZlhBWmtrZUY5bi9qK3BkaGZXd2VQNlp6Y1crTnlramlTaXkvR2JiOWJlQ2xp?=
- =?utf-8?B?TzBBaHhDcituSmhrbmdXbDZUU2pSTDZDdCt6NndjOVFWdy9hSHJ2dGdYUVZm?=
- =?utf-8?B?REVRSG84SEdmSGJjOU03UDFCdUhTK21YR1ZOdVd3QmJTdUFWR2ZZTFR2bTAr?=
- =?utf-8?B?U3F1bWh5bTM1VFVPYktDVTVDK0p5bVRsWnFteFJqb3pwR3pTSTVFcnBSRFky?=
- =?utf-8?B?dEtmZFgyWlkrNU5FdmV4MjlNdUlJT1dYZithQ01YWjJpUHJweUZhYkdaejAy?=
- =?utf-8?B?d0NDN05pZHRvUisreXUvRkhvNWxyYS9PZWxoQTFqZ2lOQUdjYzFHbThmQ1Zi?=
- =?utf-8?B?QnVBS3R4ZWh4cFN1bUZYZlcrT0NOc1Axayt2VEoyV3orUUcwSUlYSkFScjVD?=
- =?utf-8?B?MEFxMFpLazBiRTBBV3Baa0lSazJ2VUNBam5pZm0zR2U2RjEvOUNOTytFT2lU?=
- =?utf-8?B?b282d3F6eGxIV2Z4Yi9DOFpCVWJ6elp2QmZtTkxJN0RJbU5velVNQ0dubDRr?=
- =?utf-8?B?cG9hbG40UXMyMFBINGRISHB1OEgyVGVhNnQ2MVQzWks1a2k0NExlejBLY1Jv?=
- =?utf-8?B?dURQZXBmb2plTTl6dlFUK2xjdFVySFI0ck5LdXpXcjNaYTBFWEdJcU1YWnF1?=
- =?utf-8?B?UmFZcERuK1ZBdytHM3R2UlNTR1YxbkFxckpIL3ZGNWFEcmI3NUxTc2RFckI3?=
- =?utf-8?B?ZHREN29LbGROb0xNMXlrQjlWZmp2R0NHRnhlbXFueWlzM2Z6R1VmMXYvUUFE?=
- =?utf-8?B?WWIzdG9sQ0lOd2lPZG15Tk9wSS8yQVFSc0l0d0xOb3ptQmVOOTBIajAzTUVt?=
- =?utf-8?B?ME8xUzU4T3NBWk9ib2g2MGVpMmNEUGNScFRidVlYNVpVRGZFbTZGWVVhYWNW?=
- =?utf-8?B?SU9rczBVbVRBc0ZEeENla3B1RDMrYlJnY3JqaVlFUHNVR3FqeW9DdVUveWh3?=
- =?utf-8?B?dEdMdjRKdTJBQmUzb1UzNXd5dHpMTCtZZjFKek5nVXdxZjVZZDNwekNQVEZy?=
- =?utf-8?B?QkMwS0crV1BHRFkwSzVLMmdMR0grNU9RaUxTeXNCK2FSWlpCRG5KOWJMZDY2?=
- =?utf-8?B?UWthMkV2ZGhwOStFUFV0aU1pNjZoeDVCMnVMSjdKRFpTVmJzeUhJYnVWVTlt?=
- =?utf-8?B?TVdxVG8rekw5K25OR2IvaUl3Mi9jTEdJVDI4WFdPdUZUSEtIS2NXN3ZoRzd0?=
- =?utf-8?B?c1dxc0tLNmNQaUxkcUs5U0lDMGxTSHlzR0lFd0pLRWhnV2dxS3VydW50RWpM?=
- =?utf-8?B?Z3g0VVhPMGNyUU13Nnd1Yjg5Zjh2b3BJb3o4MDRIeWtEWnFYSU40aFh3UXZP?=
- =?utf-8?B?NytLcWZTc2FHeEJLZjhNQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4877.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RXM5R25tU3ozNmdDVDdwcGFoNFRjWWtZUldVVVIraC83SHNKSjFZVEkyVDRr?=
- =?utf-8?B?djJ6WkFlYUJUWkdFSnA5NEx1K1JtNDZodVFBMEIrTnNjRVJ0Wjdtc3c4Z0Zh?=
- =?utf-8?B?RU1GQ0ZOLy9DaVFWMmpkdG5ZekhtMWs2eklVc3FjLzFZQWJrTzRIcmJjMEFL?=
- =?utf-8?B?dlBRWUgzRy9JcUpCN2dieFdUblIzOXhQdHpMR2xCMk4vK3VWOWNNSUJOdUFU?=
- =?utf-8?B?c0VObVJMSUo0T05OSmdmcW5wWkFvQzlhMmFGVXhOVFdXMDdWQW5FNGFJSnIv?=
- =?utf-8?B?SUhDOG5kaGFBVUdXRVlXNEI4Sjh5WURMZmJVT3FlNVd4eURYYWplZ25TdnQx?=
- =?utf-8?B?dFh1bmllald0ZzFwN0g3Tnlnemh1RTUzUzRvM3hXaTRaS3pVRHRGaEpEVU5a?=
- =?utf-8?B?YTZSanErUlVYUzJ5UWxpSlkwMEtkdkM0cTBZVDZKSEtFdzBOdFlvaEllM25V?=
- =?utf-8?B?SXhwd1d0amorMVRBeDdoMVN2ZkpKM3IvcEtFT3BMRGdYTkx2Tjd4VGNIalAx?=
- =?utf-8?B?RUVsT0dwckRvdWs4bFBBUWtwaHlxYWR6cm41NmhlSThwRkh4aDhHc0Nod3Rm?=
- =?utf-8?B?cFdsbXdsZ1JockVGc0x6anZHa2xuMVpaQ3o1S1krUlFBMnJHc3pTT2tkeC9o?=
- =?utf-8?B?bjVDOWVwa1E0RTNHK04zTnVrRE1VanFubkVYb1FHeExvaC9FT0xTaDhHRWxU?=
- =?utf-8?B?MlFoUmVIUzRBSFBRazFrVUtLYUo3empOYlVvcTFjTzJYTjJyTlNFUURERnZE?=
- =?utf-8?B?Z1pRbWh1ZnM2V3RnUFN0cmFqc290Q2tFWUFCQlNNdG1QWUk5cDdSMGxUQzRy?=
- =?utf-8?B?ZW9QMDRGWGo4L1NIaHUyZ2VCTUphaVorazVseFFOQlliZm9BMWpnWGpLWmsr?=
- =?utf-8?B?bUpOd1o1STFWSVVJZXQrVitUWE5ZOE1qNWo1VDZxcXYzeVFsMW1kVjYvbUFy?=
- =?utf-8?B?RkUrdDhMWTE2Q3FhVy9Cc0prVVd6b28zWUN5bXpYNGFrKzZkUGh1dHJaeTdh?=
- =?utf-8?B?aUxWWjFQb2drYWcyKzhRc0pDeEdlQTRuUllyTjhxOXArMHJncmdGQXh2NFZX?=
- =?utf-8?B?Qnl0WDVyZGh6THVOYitROVRjUFVaZlIzU0Z4SWtkSUZUREFLb2pNRG5pUVk5?=
- =?utf-8?B?M0Q2RUh4MEdvUXAxQWpoSDJyNUtlakpzU2g3YjNZVnhrR1gydElNUEVWVlRY?=
- =?utf-8?B?TkJZb29MMVJWSEQ3czJxdmpjbkw0b0NxVi9vVGNuR2FVMVZwTkM5NlhLbm5r?=
- =?utf-8?B?bThKODErWDI0eS9SS2twTFYyQXpvTmhDU1BWSXhEZVhkMVVGNDZlSUM4eWIr?=
- =?utf-8?B?OXluWnRDMVdUUGduRnpsRFh2LzRuRm1WTjgyY0l6UXVlcFpDOEYyeTNBV2Fj?=
- =?utf-8?B?cW5oNjdKUmRVS21Fb3phT29mYXo2SjhDbUZRWndFQ25rdkpESmk5a2dIYTcr?=
- =?utf-8?B?Z00vYmQrMTU4VTc4Q1pGblhLdU9wZUxBWFhrb0tUb3RkNU9ZUThvdWJGWXlx?=
- =?utf-8?B?U0MwT2wwbnVXZjIxNXB2RlBqdEtzTFpEWEhPMGZNb0JHYjBXTFlsTmxBY1Rj?=
- =?utf-8?B?ZGpidVI2MFVjSVJaeXVEcGhoTHdBLy9TOG85c3ZFczI2THlYdm0xcUsrYWtx?=
- =?utf-8?B?ZG4vck41R3Z5NDBpeGlndStiNmNCM3NwdTh2TXJVNU5lVnRsc3Jzd21LYXgv?=
- =?utf-8?B?dkZad3p0U0pwaDl2ZE5vTHdQT2V2K1ZKdkJSbzNyUW0xSFcrcUJiUncvVmM0?=
- =?utf-8?B?eWttaVBIUHRMTXh3Vm10TXlxMi9JQmpKRzVQMitObFBZRzQ2dXlBSUNMUnA1?=
- =?utf-8?B?Mm9EcFIrU1Z3cXpQMThwR01VMWlULzVuRW0yVnZOOWh5L00vcHlNV2cwTlBn?=
- =?utf-8?B?RytVRjU4aFRwb0hDeWtnSFNvdGgwM09rTm9iY0w5djUvanFyMXZtK1g0cHpG?=
- =?utf-8?B?RkFqbWRwaGd0c0pENVlGb1RCTFR3cHBhVlhnYXlmdUhlWW8vZC82dHRDY00x?=
- =?utf-8?B?aWlpZlNnMS9neDZsQ2JWMHJKWU1CMFJLcDl4YmIyZCtmc3RCallMTE1XNzhv?=
- =?utf-8?B?WFpERzZMY3g3elFCbENlRG5wMXpkZjM3K2hvcDBXSlVma1dNOVc2aHVYM0xV?=
- =?utf-8?Q?y6pg=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6cc51336-8ff6-43e3-7e09-08dccdb99167
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4877.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 14:46:47.4316
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XOg2KEaZs3w9a6jKEzQF6zZoNgp+iF5lhoRGkfDtySXSRe51Rfei485NJqyTlQRw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7102
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
+To: Nikunj Kela <quic_nkela@quicinc.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
+ viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
+ will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+ jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
+ amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
+ cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+ wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ kernel@quicinc.com, quic_psodagud@quicinc.com,
+ Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-17-quic_nkela@quicinc.com>
+ <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+ <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
+ <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
+ <516f17e6-b4b4-4f88-a39f-cc47a507716a@quicinc.com>
+ <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
+ <204f5cfe-d1ed-40dc-9175-d45f72395361@quicinc.com>
+ <70c75241-b6f1-4e61-8451-26839ec71317@kernel.org>
+ <75768451-4c85-41fa-82b0-8847a118ea0a@quicinc.com>
+ <ce4d6ea9-0ba7-4587-b4a7-3dcb2d6bb1a6@kernel.org>
+ <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 9/4/24 14:40, Bjorn Helgaas wrote:
-> On Thu, Aug 22, 2024 at 03:41:11PM -0500, Wei Huang wrote:
->> Add pcie_tph_modes() to allow drivers to query the TPH modes supported
->> by an endpoint device, as reported in the TPH Requester Capability
->> register. The modes are reported as a bitmask and current supported
->> modes include:
+On 05/09/2024 16:15, Nikunj Kela wrote:
+> 
+> On 9/5/2024 7:09 AM, Krzysztof Kozlowski wrote:
+>> On 05/09/2024 16:03, Nikunj Kela wrote:
+>>> On 9/5/2024 1:04 AM, Krzysztof Kozlowski wrote:
+>>>> On 04/09/2024 23:06, Nikunj Kela wrote:
+>>>>> On 9/4/2024 9:58 AM, Andrew Lunn wrote:
+>>>>>>> Sorry, didn't realize SPI uses different subject format than other
+>>>>>>> subsystems. Will fix in v3. Thanks
+>>>>>> Each subsystem is free to use its own form. e.g for netdev you will
+>>>>>> want the prefix [PATCH net-next v42] net: stmmac: dwmac-qcom-ethqos:
+>>>>> of course they are! No one is disputing that.
+>>>>>> This is another reason why you should be splitting these patches per
+>>>>>> subsystem, and submitting both the DT bindings and the code changes as
+>>>>>> a two patch patchset. You can then learn how each subsystem names its
+>>>>>> patches.
+>>>>> Qualcomm QUPs chips have serial engines that can be configured as
+>>>>> UART/I2C/SPI so QUPs changes require to be pushed in one series for all
+>>>>> 3 subsystems as they all are dependent.
+>>>> No, they are not dependent. They have never been. Look how all other
+>>>> upstreaming process worked in the past.
+>>> Top level QUP node(patch#18) includes i2c,spi,uart nodes.
+>>> soc/qcom/qcom,geni-se.yaml validate those subnodes against respective
+>>> yaml. The example that is added in YAML file for QUP node will not find
+>>> sa8255p compatibles if all 4 yaml(qup, i2c, spi, serial nodes) are not
+>>> included in the same series.
+>>>
+>> So where is the dependency? I don't see it. 
+> 
+> Ok, what is your suggestion on dt-schema check failure in that case as I
+> mentioned above? Shall we remove examples from yaml that we added?
+> 
+> 
+>> Anyway, if you insist,
+>> provide reasons why this should be the only one patchset - from all
+>> SoCs, all companies, all developers - getting an exception from standard
+>> merging practice and from explicit rule about driver change. See
+>> submitting bindings.
 >>
->>  - PCI_TPH_CAP_NO_ST: NO ST Mode Supported
->>  - PCI_TPH_CAP_INT_VEC: Interrupt Vector Mode Supported
->>  - PCI_TPH_CAP_DEV_SPEC: Device Specific Mode Supported
-> 
->> + * pcie_tph_modes - Get the ST modes supported by device
->> + * @pdev: PCI device
->> + *
->> + * Returns a bitmask with all TPH modes supported by a device as shown in the
->> + * TPH capability register. Current supported modes include:
->> + *   PCI_TPH_CAP_NO_ST - NO ST Mode Supported
->> + *   PCI_TPH_CAP_INT_VEC - Interrupt Vector Mode Supported
->> + *   PCI_TPH_CAP_DEV_SPEC - Device Specific Mode Supported
->> + *
->> + * Return: 0 when TPH is not supported, otherwise bitmask of supported modes
->> + */
->> +int pcie_tph_modes(struct pci_dev *pdev)
->> +{
->> +	if (!pdev->tph_cap)
->> +		return 0;
->> +
->> +	return get_st_modes(pdev);
->> +}
->> +EXPORT_SYMBOL(pcie_tph_modes);
-> 
-> I'm not sure I see the need for pcie_tph_modes().  The new bnxt code
-> looks like this:
-> 
->   bnxt_request_irq
->     if (pcie_tph_modes(bp->pdev) & PCI_TPH_CAP_INT_VEC)
->       rc = pcie_enable_tph(bp->pdev, PCI_TPH_CAP_INT_VEC);
-> 
-> What is the advantage of this over just this?
-> 
->   bnxt_request_irq
->     rc = pcie_enable_tph(bp->pdev, PCI_TPH_CAP_INT_VEC);
-> 
-> It seems like drivers could just ask for what they want since
-> pcie_enable_tph() has to verify support for it anyway.  If that fails,
-> the driver can fall back to another mode.
+>> This was re-iterated over and over, but you keep claiming you need some
+>> sort of special treatment. If so, please provide arguments WHY this
+>> requires special treatment and *all* other contributions are fine with it.
 
-I can get rid of pcie_tph_modes() if unnecessary.
+You did not respond to above about explaining why this patchset needs
+special treatment, so I assume there is no exception here to be granted
+so any new version will follow standard process (see submitting bindings
+/ writing bindings).
 
-The design logic was that a driver can be used on various devices from
-the same company. Some of these devices might not be TPH capable. So
-instead of using trial-and-error (i.e. try INT_VEC ==> DEV_SPEC ==> give
-up), we provide a way for the driver to query the device TPH
-capabilities and pick a mode explicitly. IMO the code will be a bit cleaner.
+Best regards,
+Krzysztof
 
-> 
-> Returning a bitmask of supported modes might be useful if the driver
-> could combine them, but IIUC the modes are all mutually exclusive, so
-> the driver can't request a combination of them.
-
-In the real world cases I saw, this is true. In the spec I didn't find
-that these bits are mutually exclusive though.
-
-> 
-> Bjorn
 
