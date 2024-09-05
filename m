@@ -1,109 +1,146 @@
-Return-Path: <linux-kernel+bounces-316959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D407196D78E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:51:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9676996D73B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93593284862
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BBC91F240FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54C5199FCF;
-	Thu,  5 Sep 2024 11:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD584199E88;
+	Thu,  5 Sep 2024 11:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpe8ufD2"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtT6+K7P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052D0199E8F;
-	Thu,  5 Sep 2024 11:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB2A194A52;
+	Thu,  5 Sep 2024 11:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725537058; cv=none; b=SHzHJ8IvIcsxxzxxirDEPItWN30bh0cZtEbxh6L5y9CkinPlpaNgV3K5DkBc2m5cqEQ3Xhm32DZA/aC4qlfIREhn64eI/24YFxupCN0MjN5d3XihkWp0P2+Ng63g0ZraG/SKO+c+b6G79KLFJyJ2TaA0jlrFST9OV7k42OwMfAk=
+	t=1725536024; cv=none; b=H4p1HUeWNzkUeCAIgqgKH4Rl3xVkF6Kc/xPNfh5Pwqb19rB4z1PKNC340G1w/K4a7mJe21yUM8ZVbG6wjjfVoh0SgLkEIujjchzo2Ss5d5UVPH5+nvY+3awjAfw7OmLzpIu/KN4+v1iWes21aVhqvaREljuAYy3T39xBC1xXQXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725537058; c=relaxed/simple;
-	bh=wIvm975lkI6zYizk3o+d70RN/0ouhHAZ7kxJBQSU1lY=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=siifgTSpz5h5SfJCZXL1uYhMjy9R5Wqy1TkZpGfyPLXjdkDi4BvL5DkkrGk7KCAnLVRdtWIHArRiemFQiqZHCfcEsSWGMnTrMENsb5r0lIVo/Op37BRbTt4pSdk7ZnvNix4PWZytf1P+lQgism3qbGXKJzBU263YKtoY59YKqCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpe8ufD2; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-277c861d9f6so410244fac.2;
-        Thu, 05 Sep 2024 04:50:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725537055; x=1726141855; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eKXDBKqXxnvuGBRmPekTjD0zETdvpmLvKTHKmbd7YjI=;
-        b=fpe8ufD2JgaN5pO3Up5g9qH2MPRKOvcuCIricsmC/FFxOI7ZYyYkAIHtNSe+BEMpJN
-         SSm8/FO901teGvgJCWApfHUaxbQcA9fVNwi36lMJX69xrh/qcyNm5hkDQ9YbgvB7bg5q
-         VdlOSoumasuCbNn/xjtoxONFKE/lcWaDPVnlb5IQn3/Ht4dLi+iduPxqS0OKO4JtknvW
-         q6mq39jTkVv9BHnXPgmYi8n7f/8OrGj6cbnEdQcV631zeZ9On2p9HlEKS34dpmhWhN4P
-         RZBwnbFPravlF8HXm7YgOPF8PdqfjR3GbdkUpplwnTjalON/UVoBXBIQTUSReRITnfwp
-         sEjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725537055; x=1726141855;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eKXDBKqXxnvuGBRmPekTjD0zETdvpmLvKTHKmbd7YjI=;
-        b=F15UuTUE3FVHJxos4COU9I2cH8wccxx5VVQB5WfpXKp1YyZkXF4yt9I9lPc6dYUOrl
-         YAOJ5CWUrc3ImtZZJ8mNb99aZ4WTwUEY0mM4HbPXg7PZMBU/LQwQCXsKc2TgyULDRtwo
-         6IQjyN57D2U3+pbSTCpapNa5lenEHi+X9LndvxS8sJlEAiCFaxw0XOAl1YBGUMRS935Q
-         Uh+htJvtjH24DTXRHX7YqSPfo065eqLko4qJvdqwQNqc6Rf4JBi3U4szGelQBFILtDKC
-         cfeUOoRlSHn2pBgjQ1n29JRrchVcoK3PHkiKEPYv48uwY8c+cOiBy0nzagsxHqPkpDvl
-         afIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Mv1FU76z7bPc2Y6iHhl4FMnVhm6kZJexcqd9g3wJyVLx+CDEmRYzFl+Jg4FeyQgbT3FnBllgsQ4TOIkS@vger.kernel.org, AJvYcCUEIc4hZJAEL/qPil+kDacDZfdDWN2emci4Ee9Y0nY0XTBbQ6Ns6mVX74xZydgYtdINF3iZHta9uHB6etPQsQ==@vger.kernel.org, AJvYcCVCtmq/DuMi4VAUpgFOujHlFyK8pb26BZkd04O/Psllmy60FsUnmYaIgRvvrRMxWMeLOUiuPoWm14jC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqbvfmbEc0Mqekl7jxQD5lkhsDhs/OOsuvlaIGBLVwWnN6d7Vr
-	aw5PIKXs2q96qc294AjHVyE3xj1DVeKRW3uHFgJnM7E6R8dmDTnmtJs9Fg==
-X-Google-Smtp-Source: AGHT+IE3rwnK+RWahTYcsoWgBhuqjpTJynlW6DtaXhynzZ55bSr2PmL51H2kLKhzMqy8HY+tgEU4PQ==
-X-Received: by 2002:a05:6358:5927:b0:1ad:14ec:a002 with SMTP id e5c5f4694b2df-1b81180a790mr1068270355d.26.1725537055394;
-        Thu, 05 Sep 2024 04:50:55 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd93559sm3202523a12.54.2024.09.05.04.50.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 04:50:54 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>, "Darrick J . Wong" <djwong@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/9] ext4: Add direct-io atomic write support using fsawu
-In-Reply-To: <c6e22d5e-b8d1-44df-9e00-0a6b076e1804@oracle.com>
-Date: Thu, 05 Sep 2024 17:03:10 +0530
-Message-ID: <8734me2v49.fsf@gmail.com>
-References: <cover.1709356594.git.ritesh.list@gmail.com> <c6e22d5e-b8d1-44df-9e00-0a6b076e1804@oracle.com>
+	s=arc-20240116; t=1725536024; c=relaxed/simple;
+	bh=LXkNK7tbZpK9Bwrdl5kfMRV9eTB9+L844J1TGRnWWrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mHLc5zyLZ8mTTzbo1oRYxWm7RCeCQVWz6Rd5wIUY6118TcdGeUim9fawbVzALslxbf7BBOq/d77/+iKlq4RX3aSi/L6NLAFWYPOVjt3qc3ObRWkK8wpwqovZg3P0GDux3gLmKOAs/9w4l96BP+fvYylwj9vRPe5uwJDxbi5KgNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtT6+K7P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A25CC4CEC4;
+	Thu,  5 Sep 2024 11:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725536024;
+	bh=LXkNK7tbZpK9Bwrdl5kfMRV9eTB9+L844J1TGRnWWrc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KtT6+K7PIGT336TLuzd8AEw9SgB6Yk9RPpWk5wKPtuk2CNKfP3Sk2tPwKhojg0z+B
+	 655Qu7DlqaSi17ysvw2+xZlyDpLZ5roo85vMJ8DY1tWz9BGuubtIoxlTa3Ec6LKczS
+	 yYJgqvVZ2W9rOYHFrBBfyTbjnTGpJ+DtOm5kFRO71sJ60QfXvIsVUjo1BE0ch38mlU
+	 oFNd0prIr00Qi7Ae1MCsGhAu7roUpFCdZsdrit8Fi1XGQ+Uojh4XVO751Aei6rFLlN
+	 OZyTFVoLDdLRkszY1T13/RUOzjCm2LyaW3ngC8JGpEJgolFAP7HSn2AF2G1wIqBXOQ
+	 GTZRK6RRdp2Ug==
+Message-ID: <3878b8e1-00c5-4761-bb1f-c9aa853ec501@kernel.org>
+Date: Thu, 5 Sep 2024 13:33:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/19] Add initial support for QCS8300
+To: Jingyi Wang <quic_jingyw@quicinc.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Xin Liu <quic_liuxin@quicinc.com>,
+ Tingguo Cheng <quic_tingguoc@quicinc.com>,
+ Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+ Kyle Deng <quic_chunkaid@quicinc.com>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <fcfaeed3-8544-4e98-9f95-f43346dc83e8@kernel.org>
+ <3535a897-8708-463d-b931-fa344a967f18@kernel.org>
+ <aa74f55b-7e14-4ca4-bd79-2104d81a0660@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <aa74f55b-7e14-4ca4-bd79-2104d81a0660@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-John Garry <john.g.garry@oracle.com> writes:
+On 5.09.2024 7:08 AM, Jingyi Wang wrote:
+> Hi Krzysztof,
+> 
+> On 9/4/2024 6:19 PM, Krzysztof Kozlowski wrote:
+>> On 04/09/2024 11:34, Krzysztof Kozlowski wrote:
+>>> On 04/09/2024 10:33, Jingyi Wang wrote:
+>>>> Add initial support for QCS8300 SoC and QCS8300 RIDE board.
+>>>>
+>>>> This revision brings support for:
+>>>> - CPUs with cpu idle
+>>>> - interrupt-controller with PDC wakeup support
+>>>> - gcc
+>>>> - TLMM
+>>>> - interconnect
+>>>> - qup with uart
+>>>> - smmu
+>>>> - pmic
+>>>> - ufs
+>>>> - ipcc
+>>>> - sram
+>>>> - remoteprocs including ADSP,CDSP and GPDSP
+>>>>
+>>>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>>>> ---
+>>>> patch series organized as:
+>>>> - 1-2: remoteproc binding and driver
+>>>> - 3-5: ufs binding and driver
+>>>> - 6-7: rpmhpd binding and driver
+>>>> - 8-15: bindings for other components found on the SoC
+>>>
+>>> Limit your CC list. I found like 8 unnecessary addresses for already
+>>> huge Cc list. Or organize your patches per subsystem, as we usually expect.
+>>>
+>>>> - 16-19: changes to support the device tree
+>>>>
+>>>> dependencies:
+>>>> tlmm: https://lore.kernel.org/linux-arm-msm/20240819064933.1778204-1-quic_jingyw@quicinc.com/
+>>>> gcc: https://lore.kernel.org/all/20240820-qcs8300-gcc-v1-0-d81720517a82@quicinc.com/
+>>>> interconnect: https://lore.kernel.org/linux-arm-msm/20240827151622.305-1-quic_rlaggysh@quicinc.com/
+>>>
+>>> Why? UFS cannot depend on pinctrl for example.
+>>>
+>>> This blocks testing and merging.
+>>>
+>>> Please organize properly (so decouple) your patches, so that there is no
+>>> fake dependency.
+>>
+>> Let me also add here one more thought. That's like fourth or fifth
+>> QCS/SA patchset last two weeks from Qualcomm and they repeat the same
+>> mistakes. Not correctly organized, huge cc list, same problems with
+>> bindings or drivers.
+>>
+>> I am giving much more comments to fix than review/ack tags.
+>>
+>> I am not going to review this. I will also slow down with reviewing
+>> other Qualcomm patches. Why? Because you post simultaneously, apparently
+>> you do not learn from other review, so I have to keep repeating the same.
+>>
+>> I am overwhelmed with this, so please expect two week review time from me.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> The CC list is generated from B4 tool, however, thanks for your advice and we
+> will decouple the changes to avoid this. And could you please help us to confirm
+> the better way to handle binding changes which just add one compatible, should
+> it be submitted as a single patch or submmitted together with dts patch series?
 
-> On 02/03/2024 07:41, Ritesh Harjani (IBM) wrote:
->
-> Hi Ritesh,
->
->> Hello all,
->> 
->> This RFC series adds support for atomic writes to ext4 direct-io using
->> filesystem atomic write unit. It's built on top of John's "block atomic
->> write v5" series which adds RWF_ATOMIC flag interface to pwritev2() and enables
->> atomic write support in underlying device driver and block layer.
->
-> I am curious - do you have any plans to progress this work?
->
+The tool did its job here, it's just that this series is very long and a ton
+of people ended up being involved due to bindings oneliners
 
-Yes John. I have resumed my work on the interfaces changes for
-direct-io atomic write for ext4 (hence all the queries on the other
-email). We do intend to get this going.
-
-Meanwhile Ojaswin has been working on extsize feature for ext4 (similar
-to XFS). It uses some of our previous mballoc order-0 allocation work,
-to support aligned allocations.
-The patch series is almost in it's final stages. He will be soon be
-posting an initial RFC design of the same (hopefully by next week).
-
-Thanks again for your help!
-
--ritesh
+Konrad
 
