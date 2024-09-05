@@ -1,120 +1,251 @@
-Return-Path: <linux-kernel+bounces-317968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD4996E65D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:35:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B012196E665
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50371B23992
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD25C1C23094
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495881B5ED6;
-	Thu,  5 Sep 2024 23:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1jajGzU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46721B86D2;
+	Thu,  5 Sep 2024 23:39:11 +0000 (UTC)
+Received: from trager.us (trager.us [52.5.81.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4D254F87;
-	Thu,  5 Sep 2024 23:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720F65381B;
+	Thu,  5 Sep 2024 23:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725579343; cv=none; b=IPlnunm+2A24eGcsu5zF+a/6fKftA7p0e5XKn3UzFauj2Lp2VY0yRfX/HWesBuwRz+Meu1lHrYvJJJq3isQB/dY4p44MgDx8JeemQn+jAVJpSxAEfbroj2eCpek/OF2GseDNh1ykytcMnlQHWfTtQQijchhK6jTzt8MwJwuiujQ=
+	t=1725579551; cv=none; b=XaxDKm/Byf/W1bCt3B+WgjUq82+kgeNd8t70YtwkduLTGcQu9YegIlhhZGaILDq7kn9HiCRPMtRbpzOwGShTZ43R4SBmrCO4vGtt15J+eqH8LEPXzwZvRnRt20etBoap0hAyISKfNxcR5xUh+oLq/EnsrwjQvNcjf12mgZor/q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725579343; c=relaxed/simple;
-	bh=kdJBJm07vSWsMujAWNUkpnWYrq/ajC+MWp90UGPtRbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhR4+1na9d3O6CmLLwVwyXG/8tMDKLAgXP1pr46bwkB9XDLcgPCdXIMlu2Onl1eGnc8CiRUMwzzvXPucu15nIffBVyL2rNIC5DnyDuHCDZXw4HeaC8rh5B7pQ8Jkye91bcwRO1IJxRk0jp1J5RHRKSPv1KE8Lkg/T90JSkTUcEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1jajGzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FA6C4CEC3;
-	Thu,  5 Sep 2024 23:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725579343;
-	bh=kdJBJm07vSWsMujAWNUkpnWYrq/ajC+MWp90UGPtRbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U1jajGzUrXBq4LkcyHu9Gawoocw7falpk/v+3iLXUWwe0zfR6FB9ddMFQ5lHxbzVF
-	 NybCr2auPZbMJ6AjlNFbPuH4I3ustsyovf4+UZ3UAG9X9IDlYgdsDMfjYLcIeDTikx
-	 UVGePWLQ/7mJo7Yn8EVL6x0o7GEXLQ5/weIy4GYj4pLoAZEw9J0Bqc+mFKuKq2lAl2
-	 gwN3KPjfat0dhVFHYjpyMusXWkyxxwEsXjJG7cdCuC8hGG4lJZpSoJZHw6v8FQpPfQ
-	 uKgv07v5u1309uNVSwj6OJLDH0hBmcQt+VeofpTBj0l4uENtngmrt7fwBpheI3NQ5d
-	 17hw0avXtMsmQ==
-Date: Thu, 5 Sep 2024 19:35:41 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-	Alasdair Kergon <agk@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Sami Tolvanen <samitolvanen@google.com>, linux-nfs@vger.kernel.org
-Subject: sharing rescuer threads when WQ_MEM_RECLAIM needed? [was: Re: dm
- verity: don't use WQ_MEM_RECLAIM]
-Message-ID: <ZtpATbuopBFAzl89@kernel.org>
-References: <20240904040444.56070-1-ebiggers@kernel.org>
- <086a76c4-98da-d9d1-9f2f-6249c3d55fe9@redhat.com>
- <20240905223555.GA1512@sol.localdomain>
+	s=arc-20240116; t=1725579551; c=relaxed/simple;
+	bh=cQQmJ5AgekB3x6oTYMEqlDF58JG5FJt2/c46w/qfVsE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=stSRxcqex+VOUlv1GOIGfXUf4AwUR2twnxf/DLAMlBwTVL44Rogs4vx4sWphupVuOhPmHP4iZMd8an+wmBL4PYYDhJw6AHV+orgrDM1MWbJuLhYZgXSZArpe0q4m7ur6FlZ5tJbJUM6abrx0WNe0wrioL55gFEuo2kMpqMO5kTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
+Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=localhost)
+	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92.3)
+	(envelope-from <lee@trager.us>)
+	id 1smM44-00024n-O4; Thu, 05 Sep 2024 23:39:01 +0000
+From: Lee Trager <lee@trager.us>
+To: netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Alexander Duyck <alexanderduyck@fb.com>,
+	kernel-team@meta.com,
+	Shinas Rasheed <srasheed@marvell.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Phani Burra <phani.r.burra@intel.com>,
+	Lee Trager <lee@trager.us>,
+	Joshua Hay <joshua.a.hay@intel.com>,
+	Sanman Pradhan <sanmanpradhan@meta.com>
+Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Alan Brady <alan.brady@intel.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] eth: fbnic: Add devlink firmware version info
+Date: Thu,  5 Sep 2024 16:37:51 -0700
+Message-ID: <20240905233820.1713043-1-lee@trager.us>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905223555.GA1512@sol.localdomain>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 05, 2024 at 03:35:55PM -0700, Eric Biggers wrote:
-> On Thu, Sep 05, 2024 at 08:21:46PM +0200, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Tue, 3 Sep 2024, Eric Biggers wrote:
-> > 
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > Since dm-verity doesn't support writes, the kernel's memory reclaim code
-> > > will never wait on dm-verity work.  That makes the use of WQ_MEM_RECLAIM
-> > > in dm-verity unnecessary.  WQ_MEM_RECLAIM has been present from the
-> > > beginning of dm-verity, but I could not find a justification for it;
-> > > I suspect it was just copied from dm-crypt which does support writes.
-> > > 
-> > > Therefore, remove WQ_MEM_RECLAIM from dm-verity.  This eliminates the
-> > > creation of an unnecessary rescuer thread per dm-verity device.
-> > > 
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > 
-> > Hmm. I can think about a case where you have read-only dm-verity device, 
-> > on the top of that you have dm-snapshot device and on the top of that you 
-> > have a writable filesystem.
-> > 
-> > When the filesystem needs to write data, it submits some write bios. When 
-> > dm-snapshot receives these write bios, it will read from the dm-verity 
-> > device and write to the snapshot's exception store device. So, dm-verity 
-> > needs WQ_MEM_RECLAIM in this case.
-> > 
-> > Mikulas
-> > 
-> 
-> Yes, unfortunately that sounds correct.
-> 
-> This means that any workqueue involved in fulfilling block device I/O,
-> regardless of whether that I/O is read or write, has to use WQ_MEM_RECLAIM.
-> 
-> I wonder if there's any way to safely share the rescuer threads.
+This adds support to show firmware version information for both stored and
+running firmware versions. The version and commit is displayed separately
+to aid monitoring tools which only care about the version.
 
-Oh, I like that idea, yes please! (would be surprised if it exists,
-but I love being surprised!).  Like Mikulas pointed out, we have had
-to deal with fundamental deadlocks due to resource sharing in DM.
-Hence the need for guaranteed forward progress that only
-WQ_MEM_RECLAIM can provide.
+Example output:
+  # devlink dev info
+  pci/0000:01:00.0:
+    driver fbnic
+    serial_number 88-25-08-ff-ff-01-50-92
+    versions:
+        running:
+          fw 24.07.15-017
+          fw.commit h999784ae9df0
+          fw.bootloader 24.07.10-000
+          fw.bootloader.commit hfef3ac835ce7
+        stored:
+          fw 24.07.24-002
+          fw.commit hc9d14a68b3f2
+          fw.bootloader 24.07.22-000
+          fw.bootloader.commit h922f8493eb96
+          fw.undi 01.00.03-000
 
-All said, I'd like the same for NFS LOCALIO, we unfortunately have to
-enable WQ_MEM_RECLAIM for LOCALIO writes:
-https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/commit/?h=nfs-localio-for-next&id=85cdb98067c1c784c2744a6624608efea2b561e7
+Signed-off-by: Lee Trager <lee@trager.us>
+---
+ .../device_drivers/ethernet/index.rst         |  1 +
+ .../device_drivers/ethernet/meta/fbnic.rst    | 29 +++++++
+ MAINTAINERS                                   |  1 +
+ .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 75 +++++++++++++++++++
+ 4 files changed, 106 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
 
-But in general LOCALIO's write path is a prime candidate for further
-optimization -- I look forward to continue that line of development
-once LOCALIO lands upstream.
+diff --git a/Documentation/networking/device_drivers/ethernet/index.rst b/Documentation/networking/device_drivers/ethernet/index.rst
+index 6932d8c043c2..6fc1961492b7 100644
+--- a/Documentation/networking/device_drivers/ethernet/index.rst
++++ b/Documentation/networking/device_drivers/ethernet/index.rst
+@@ -44,6 +44,7 @@ Contents:
+    marvell/octeon_ep
+    marvell/octeon_ep_vf
+    mellanox/mlx5/index
++   meta/fbnic
+    microsoft/netvsc
+    neterion/s2io
+    netronome/nfp
+diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
+new file mode 100644
+index 000000000000..32ff114f5c26
+--- /dev/null
++++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
+@@ -0,0 +1,29 @@
++.. SPDX-License-Identifier: GPL-2.0+
++
++=====================================
++Meta Platforms Host Network Interface
++=====================================
++
++Firmware Versions
++-----------------
++
++fbnic has three components stored on the flash which are provided in one PLDM
++image:
++
++1. fw - The control firmware used to view and modify firmware settings, request
++   firmware actions, and retrieve firmware counters outside of the data path.
++   This is the firmware which fbnic_fw.c interacts with.
++2. bootloader - The firmware which validate firmware security and control basic
++   operations including loading and updating the firmware. This is also known
++   as the cmrt firmware.
++3. undi - This is the UEFI driver which is based on the Linux driver.
++
++fbnic stores two copies of these three components on flash. This allows fbnic
++to fall back to an older version of firmware automatically in case firmware
++fails to boot. Version information for both is provided as running and stored.
++The undi is only provided in stored as it is not actively running once the Linux
++driver takes over.
++
++devlink dev info provides version information for all three components. In
++addition to the version the hg commit hash of the build is included as a
++separate entry.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index baf88e74c907..fae13f784226 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14819,6 +14819,7 @@ M:	Alexander Duyck <alexanderduyck@fb.com>
+ M:	Jakub Kicinski <kuba@kernel.org>
+ R:	kernel-team@meta.com
+ S:	Supported
++F:	Documentation/networking/device_drivers/ethernet/meta/
+ F:	drivers/net/ethernet/meta/
 
-Mike
+ METHODE UDPU SUPPORT
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+index e87049dfd223..ef05ae8f5039 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+@@ -10,6 +10,56 @@
+
+ #define FBNIC_SN_STR_LEN	24
+
++static int fbnic_version_running_put(struct devlink_info_req *req,
++				     struct fbnic_fw_ver *fw_ver,
++				     char *ver_name)
++{
++	char running_ver[FBNIC_FW_VER_MAX_SIZE];
++	int err;
++
++	fbnic_mk_fw_ver_str(fw_ver->version, running_ver);
++	err = devlink_info_version_running_put(req, ver_name, running_ver);
++	if (err)
++		return err;
++
++	if (strlen(fw_ver->commit) > 0) {
++		char commit_name[FBNIC_SN_STR_LEN];
++
++		snprintf(commit_name, FBNIC_SN_STR_LEN, "%s.commit", ver_name);
++		err = devlink_info_version_running_put(req, commit_name,
++						       fw_ver->commit);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++static int fbnic_version_stored_put(struct devlink_info_req *req,
++				    struct fbnic_fw_ver *fw_ver,
++				    char *ver_name)
++{
++	char stored_ver[FBNIC_FW_VER_MAX_SIZE];
++	int err;
++
++	fbnic_mk_fw_ver_str(fw_ver->version, stored_ver);
++	err = devlink_info_version_stored_put(req, ver_name, stored_ver);
++	if (err)
++		return err;
++
++	if (strlen(fw_ver->commit) > 0) {
++		char commit_name[FBNIC_SN_STR_LEN];
++
++		snprintf(commit_name, FBNIC_SN_STR_LEN, "%s.commit", ver_name);
++		err = devlink_info_version_stored_put(req, commit_name,
++						      fw_ver->commit);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static int fbnic_devlink_info_get(struct devlink *devlink,
+ 				  struct devlink_info_req *req,
+ 				  struct netlink_ext_ack *extack)
+@@ -17,6 +67,31 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
+ 	struct fbnic_dev *fbd = devlink_priv(devlink);
+ 	int err;
+
++	err = fbnic_version_running_put(req, &fbd->fw_cap.running.mgmt,
++					DEVLINK_INFO_VERSION_GENERIC_FW);
++	if (err)
++		return err;
++
++	err = fbnic_version_running_put(req, &fbd->fw_cap.running.bootloader,
++					DEVLINK_INFO_VERSION_GENERIC_FW_BOOTLOADER);
++	if (err)
++		return err;
++
++	err = fbnic_version_stored_put(req, &fbd->fw_cap.stored.mgmt,
++				       DEVLINK_INFO_VERSION_GENERIC_FW);
++	if (err)
++		return err;
++
++	err = fbnic_version_stored_put(req, &fbd->fw_cap.stored.bootloader,
++				       DEVLINK_INFO_VERSION_GENERIC_FW_BOOTLOADER);
++	if (err)
++		return err;
++
++	err = fbnic_version_stored_put(req, &fbd->fw_cap.stored.undi,
++				       DEVLINK_INFO_VERSION_GENERIC_FW_UNDI);
++	if (err)
++		return err;
++
+ 	if (fbd->dsn) {
+ 		unsigned char serial[FBNIC_SN_STR_LEN];
+ 		u8 dsn[8];
+--
+2.43.5
 
