@@ -1,82 +1,65 @@
-Return-Path: <linux-kernel+bounces-316230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F9296CCDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2570B96CCE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27FB32820DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D802F283FF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3662E1494DB;
-	Thu,  5 Sep 2024 02:52:47 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081711494B0;
-	Thu,  5 Sep 2024 02:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115D913D53F;
+	Thu,  5 Sep 2024 02:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s4FqGviu"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC27277113
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725504766; cv=none; b=iSgICVe0vqvMkhCfkBnjYgrrOyqY1ze+CGzdh5r8pwZgqFMB+sGDZoJ8Kigr8WGYD26heJMTZ0joQTLpcN78ukp8quSu/j3YC017e4WHkNrHcQWZUMeeEx+Ymq9obvrKwCsJfQdi6VY08NK0I9HsEVooro1HkOzlk9eSMHGTOzw=
+	t=1725505106; cv=none; b=WLN8lWtKKyA7CA+l2fAEBeA43jkI6wlD40ltOK7SUp4xyHzAXX2o0BZo8JIUX6pzYH1CjHpZgjKKn2w/J8SlO9IQcvP4maFV2l7GIcsta7+hksG5FaCTx//TFsZVSSVbW+OIWRsvo8H23hDAbi+vsynvazmrlMSwg9fzrJapDho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725504766; c=relaxed/simple;
-	bh=ReNgNwxY9qc6uT/fthDCOkytxfhoQ7TBjs9e1gLc8g0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LGABmjUX2T86XYq36jZ3SxxckvBAJNJrHrjfv0qjVA8IFBR1aVqMP+TuLMF1EItAQE8T+OyqesDU3qfR+iqRZbFgsCkoqmlXCBrLU8v+s3RypvcA59BH+3tN2iuDCFS70XnFrx3Cs7b9Db6IdTtnMfjkOoUICHE3tPrlu8tcg/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: jgMBh4xERGKtJzGdjMw//g==
-X-CSE-MsgGUID: 4dDGwn+gS92XMASYPxWNVg==
-X-IronPort-AV: E=Sophos;i="6.10,203,1719849600"; 
-   d="scan'208";a="121173131"
-From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
-To: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
-CC: "bvanassche@acm.org" <bvanassche@acm.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Thread-Topic: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Thread-Index: AQHa/fgOh/cV01vbcESyzBPikRppQrJF0TIAgACy1ICAAXdCgA==
-Date: Thu, 5 Sep 2024 02:52:36 +0000
-Message-ID: <b89bd2e5-ff8d-4e29-b082-9129284a51cb@xiaomi.com>
-References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
- <dd859c1b-40d0-4a10-a6af-0d7fae28da41@kernel.dk>
- <ZtfiK1xg2RVzkXW9@infradead.org>
-In-Reply-To: <ZtfiK1xg2RVzkXW9@infradead.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2C8E53D17920864A821C97BEED253C01@xiaomi.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725505106; c=relaxed/simple;
+	bh=0vcnJvpd/gY/DR/ExUFwhFp+YngaXKdK9YOU7JWWiOk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=g5DClIDeHgZVQgCxOeJqn/lcW6qUhMzsf+jo+jubGi7Ir/tIUV7KjE5jiN4jxPOb21B/ZHbabN8czJrwo6DjNgcj5KXY08eF47hZ0GVeqlrxcytzZ4SFvO1Tmg2Ssv1e6YJCBW2UkRvHzuWg9/TabHdcZ61PEPavZKP/9La7SNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s4FqGviu; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725505101; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=0vcnJvpd/gY/DR/ExUFwhFp+YngaXKdK9YOU7JWWiOk=;
+	b=s4FqGviu5qEcv10minKnDOu8yx+g6ACpNTozFlGk7Rux4dR14jyOoWcxyIeLRdF40wFWSAbbR1iQY336696X+KVWtmAx4cQBeqYvVKFp+6adFe5Z4FGff9LZn1amqHn5qfmUu6HybG41cwNmb6Mx0qXJNHYMtcnJJEe/9+J66EM=
+Received: from 30.221.129.218(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEJYt6K_1725505100)
+          by smtp.aliyun-inc.com;
+          Thu, 05 Sep 2024 10:58:20 +0800
+Message-ID: <80045cd0-338d-43c5-bea7-378504032006@linux.alibaba.com>
+Date: Thu, 5 Sep 2024 10:58:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: Re: [syzbot] [erofs?] INFO: task hung in z_erofs_runqueue
+To: syzbot <syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com>,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, xiang@kernel.org
+References: <0000000000006d2b8f06204e76f8@google.com>
+In-Reply-To: <0000000000006d2b8f06204e76f8@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gMjAyNC85LzQgMTI6MjksIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBPbiBUdWUsIFNl
-cCAwMywgMjAyNCBhdCAxMTo0OToyOEFNIC0wNjAwLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPj4gVGhl
-IGVsZXBoYW50IGluIHRoZSByb29tIGhlcmUgaXMgd2h5IGFuIDgwTSBjb21wbGV0aW9uIHRha2Vz
-IDEwMCBtc2VjPw0KPj4gVGhhdCBzZWVtcy4uLiBpbnNhbmUuDQo+Pg0KPj4gVGhhdCBhc2lkZSwg
-ZG9pbmcgd3JpdGVzIHRoYXQgYmlnIGlzbid0IGdyZWF0IGZvciBsYXRlbmNpZXMgaW4gZ2VuZXJh
-bCwNCj4+IGV2ZW4gaWYgdGhleSBhcmUgb3JkZXJzIG9mIG1hZ25pdHVkZSBzbWFsbGVyIChhcyB0
-aGV5IHNob3VsZCBiZSkuIE1heWJlDQo+PiB0aGlzIGlzIHNvbHZhYmxlIGJ5IGp1c3QgbGltaXRp
-bmcgdGhlIHdyaXRlIHNpemUgaGVyZS4NCj4+DQo+PiBCdXQgaXQgcmVhbGx5IHNlZW1zIG91dCBv
-ZiBsaW5lIGZvciBhIHdyaXRlIHRoYXQgc2l6ZSB0byB0YWtlIDEwMCBtc2VjDQo+PiB0byBwcm9j
-ZXNzLg0KPiBwYWdlY2FjaGUgc3RhdGUgcHJvY2Vzc2luZyBpcyBxdWl0ZSBpbmVmZmljaWVudCwg
-d2UgaGFkIHRvIGxpbWl0DQo+IHRoZSBudW1iZXIgb2YgdGhlbSBmb3IgWEZTIHRvIGF2b2lkIGxh
-dGVuY3kgcHJvYmxlbXMgYSB3aGlsZSBhZ28uDQo+IE5vdGUgdGhhdCBtb3ZpbmcgdG8gZm9saW9z
-IG1lYW5zIHlvdSBjYW4gcHJvY2VzcyBhIGxvdCBtb3JlIGRhdGENCj4gd2l0aCB0aGUgc2FtZSBu
-dW1iZXIgb2YgY29tcGxldGlvbiBpdGVyYXRpb25zIGFzIHdlbGwuICBJJ2Qgc3VnZ2VzdA0KPiB0
-aGUgc3VibWl0dGVyIGxvb2tzIGludG8gdGhhdCBmb3Igd2hhdGV2ZXIgZmlsZSBzeXN0ZW0gdGhl
-eSBhcmUgdXNpbmcuDQo+DQpoaSBDaHJpc3RvcGgsDQoNClRoZSBGMkZTIGZpbGUgc3lzdGVtIGlz
-IHVzZWQgb24gdGhlIHNtYXJ0cGhvbmUsIGFuZCBlbmRfaW8gdXNlcyBwYWdlDQp0cmF2ZXJzYWwg
-aW5zdGVhZCBvZiBmb2xpbyB0cmF2ZXJzYWwuDQpJIHdpbGwgY29uZmlybSB0aGUgcGxhbiB0byBt
-aWdyYXRlIHRvIGZvbGlvLiBUaGFuayB5b3UhDQoNClRoYW5rcw0KWmhhbmcNCg0K
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
 
