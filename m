@@ -1,90 +1,134 @@
-Return-Path: <linux-kernel+bounces-316598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020C496D1C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2F996D1CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F491C22DF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81AE3283351
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1CB198A01;
-	Thu,  5 Sep 2024 08:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F649198E78;
+	Thu,  5 Sep 2024 08:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYz/qJMk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9F2LppP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312EC198850;
-	Thu,  5 Sep 2024 08:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE43D193093;
+	Thu,  5 Sep 2024 08:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524088; cv=none; b=jk2sZ9/M9750X0osrrBziSJWW0EH4k7JwX96qGOnbV3rIwCEf1wujZhD0dXqkntcRO9Ju/ZnFN2ZYKpBHOH5U1mgfOwBG6UJfvDkr7bIM1joKQX1/2gYc9DX/CE1DFFmDGwRBgSvCi562ohdCTBMsZ1qjT7ydUG73h7bC9PEP7k=
+	t=1725524122; cv=none; b=B/sS2r8vJKsjeA48NhGrcpIy+v3X9iGWZUCOKSfWuNJAweJ8GDtr0PAykhwELY4hYFZPB4A3vjJAUnYRtwZ+RmxsN1svUaYVFtyWcDnRCDYxeW2jXvGUc08qX2uhgvtjYk2qQ1+q0bnDCzyLSXJsY2mPOII6R8H1ZrG+7hFmO0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524088; c=relaxed/simple;
-	bh=kMuYCcP3OOiJ6HKzA2P8+5KuVjaUaOZuWeRck+McuWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M92Xaba2DetjHcyecvDioQ5ryz3pj5Y4JdoJiYZ11tTZ1jj8uVe7YP3mOyh803H7XuY7BSuC3ukcI/SA+4iEUf83yNudnexqpeVIZi8Ffe0iHKLRZkijcN/8M3yFCvpIp0wYomIxGX3SNxBodtkVy0Wwq4N42Si9T+3vPKHiu7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYz/qJMk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96921C4CEC3;
-	Thu,  5 Sep 2024 08:14:47 +0000 (UTC)
+	s=arc-20240116; t=1725524122; c=relaxed/simple;
+	bh=B9SgTLFQCzD/YjL//QQ6wmerqzGa3dydOcmfQmYFl2s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TWZ0vimo4bfa6oey/7QWIXP/N+9GkGKlUWTQEmSNgUyjzx3sVL704w3a6UpSK6tVJ2aGCUlnkWpxm8uWXol10dfBkb/9ix0DATNoODtiPZ8m8usCPBrKkC72ff6JAuxc8Wl/Q6Q4P2J/NXVx0IXqrjr5Vh+9eYUtPB1zwR6EmPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9F2LppP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7D9C4CEC3;
+	Thu,  5 Sep 2024 08:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725524087;
-	bh=kMuYCcP3OOiJ6HKzA2P8+5KuVjaUaOZuWeRck+McuWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QYz/qJMk2yaz7M+8IjykmEa2/8svN2quM2DXi+T3vl3/NQAgGOnVufXsZysqMUuD2
-	 iQRsHiXox3KaewwOeedFD0BGFvUwzJOneWmF+FEPyXkWU2aCv6cHpJyGWd/16praPs
-	 tNDRUVeT+DnnNEo+PklLDoP0QE6in99U9ZTj8+Yu74W06OmK8RNJtW3Z1q2ZSRVJHL
-	 UJyFQ4D40mcIMROWQ9TZwV30k/tgZqFdJhsIbOMgqZnQyQJPNDCzcug7i4vKMR1VoW
-	 8dR+xOgSiIqNxRXJT3XH9l1o1ssbqIhp4G52zE87zwRkCNxVErHjb25+oOKX3BZ8lO
-	 I26W6MtaGJipQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sm7dx-000000002Ot-0Cmx;
-	Thu, 05 Sep 2024 10:15:05 +0200
-Date: Thu, 5 Sep 2024 10:15:05 +0200
-From: Johan Hovold <johan@kernel.org>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] serial: qcom-geni: fix console corruption
-Message-ID: <Ztloibde6shReQP1@hovoldconsulting.com>
-References: <20240902152451.862-1-johan+linaro@kernel.org>
- <c47714f0-045d-469a-9edf-e4e4cb5090dc@notapiano>
+	s=k20201202; t=1725524121;
+	bh=B9SgTLFQCzD/YjL//QQ6wmerqzGa3dydOcmfQmYFl2s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e9F2LppPnPdncLz2j4rUdN9okulzJBIlKRVc/+kfoeLaujwCQ4SYoOZvH4FsZuQ6n
+	 DG+0169PqCI86N91sQLBruW98pytVVbRFD+5pEbJe35IJxdKdrU9hczSSsPQcEsqOk
+	 RsmosQ6rcsefwtiQHr0YWM4l9ZL2bqOgd57rJ64uhssDol32iBobcglgjyCq01tWrG
+	 xdLJyBbgWq0w3j2g0xZfluXO/3SOejQY2KCZAGtzjpeya5k9ragUVbuY+nP5rSs6IN
+	 LsQSmMTcXiSvESrOU0tTdUmZDcV0AXzdsc6BfYiBsoIHWA1oHxlCpOvwt9PZ2p1O6S
+	 03qtfOBh4E4ew==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sm7eB-009rkP-BK;
+	Thu, 05 Sep 2024 09:15:19 +0100
+Date: Thu, 05 Sep 2024 09:15:18 +0100
+Message-ID: <86le06v7mx.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoffer Dall <cdall@cs.columbia.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+In-Reply-To: <20240905160856.14e95d14@canb.auug.org.au>
+References: <20240905160856.14e95d14@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c47714f0-045d-469a-9edf-e4e4cb5090dc@notapiano>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, cdall@cs.columbia.edu, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Sep 04, 2024 at 02:08:54PM -0400, Nícolas F. R. A. Prado wrote:
-> On Mon, Sep 02, 2024 at 05:24:43PM +0200, Johan Hovold wrote:
-> > This series is a follow-on series to the lockup fixes [1] that addresses
-> > a number of issues in the Qualcomm GENI console code, including corrupt
-> > console output during boot, which is a problem for automated CI testing.
-
-> This series fixes the serial issues we're seeing on the sc7180 based
-> (sc7180-trogdor-lazor-limozeen and sc7180-trogdor-kingoftown) boards that we
-> have hooked up to KernelCI. Out of a 10-job batch of boot tests all succeeded
-> after the patch, whereas before most failed (7/10), due to a missing message in
-> the serial.
+On Thu, 05 Sep 2024 07:08:56 +0100,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Hi all,
+> 
+> Today's linux-next merge of the kvm-arm tree got a conflict in:
+> 
+>   arch/arm64/include/asm/kvm_host.h
+> 
+> between commit:
+> 
+>   b86c9bea6349 ("KVM: arm64: Save/restore POE registers")
+> 
+> from the arm64 tree and commits:
+> 
+>   b55688943597 ("KVM: arm64: Move SVCR into the sysreg array")
+>   7d9c1ed6f4bf ("KVM: arm64: Move FPMR into the sysreg array")
+> 
+> from the kvm-arm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc arch/arm64/include/asm/kvm_host.h
+> index d5857452a1ec,b9ca899041db..000000000000
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@@ -446,8 -446,10 +446,12 @@@ enum vcpu_sysreg 
+>   	GCR_EL1,	/* Tag Control Register */
+>   	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
+>   
+>  +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
+>  +
+> + 	/* FP/SIMD/SVE */
+> + 	SVCR,
+> + 	FPMR,
+> + 
+>   	/* 32bit specific registers. */
+>   	DACR32_EL2,	/* Domain Access Control Register */
+>   	IFSR32_EL2,	/* Instruction Fault Status Register */
 
-Thanks for testing!
+All good, thanks Stephen.
 
-Johan
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
