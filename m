@@ -1,123 +1,541 @@
-Return-Path: <linux-kernel+bounces-316675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB4896D2A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:59:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D9796D2AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A34EB250A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:59:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154951C22D28
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28861953A3;
-	Thu,  5 Sep 2024 08:59:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98462194ACB;
+	Thu,  5 Sep 2024 09:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qm1P07LC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A697194AD9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B9BBE4A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526744; cv=none; b=oWeWO3Y8k7WCD/ZIjzxOpY39c1biGcHeHs/eiFVdezbbfBGIz7qwlkzJJ57X9tnwmRJicYGpEGNMCUAHHqYkAdYTYHXKmSMWd/eBh+QDdrSP1KXharzmjT+XbwNP8a+ZYzZsm0EnrtzKUThjLikjLLnmy9l3nM5gAWgkQeVVLvU=
+	t=1725526887; cv=none; b=rM6OVl0VrJIpoebnRMZrYozJOEOBWXOdtlyZQ8GFP52FW6caiaqZWjnDeUtrraP9q3WcauoB4vWrifiwYEMIDzJmPfY1OjGkE6MNjmZ0kg2m5RHAKDuv7eNw5rgMp/rAme5VA3c0SZZc8qAak8fbIvuAxpN838vnMlGrShgms3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526744; c=relaxed/simple;
-	bh=l66u4E+lkBWOoNopOzdJgLyeEmtmPPebVNnzWNz4drA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hKXv9L2hw80zCD2jNDxe/4bGgXZ02Am0hOqwv1Wdy+7NWrZ5xeAOXvv6zRkinVFOBeyAwiNeVS3tDAmaPEU1iXPvrd3jEdqKrOq5KIZGyvO9rrh5ivGHIqH9XDhGz8r7Vh/pGkVhNPCrD8retP9kevsWHMtUrFqXIuEP6wr/dVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a045e7ed57so10319425ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:59:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725526742; x=1726131542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x7qskDsSLaJJiLOOgHZ+8hAGxQjTCnIvNsAeyHhTViA=;
-        b=sHp0Zln/JvwCg0xYurN7x2EySVx43NLvmmvSyHs+3uKP1h8OjXro+bglZG+cB2DDwI
-         AIIRCoCNzLjkVJgKJCpWzWIygXkjtcZ4w36QExnIL8DLAm356uSk5A4mTyqcetWpYgZc
-         mqpm++L4GtXXQ/mM5yhl14e4PifWyqI4lYTEG1lw/6rERdEEH1RWzdroex/ZIm2JnXjj
-         zfTd3WsPmqdea+fk4KzX700Jew3XGZEA/61ZhAUTAEMeEXva89EUg0cVG4gRsASdu5ki
-         /0yc/VeIN4X0HOnyT3AlTu8GJ1UuqNtHZXVk3HV02ojjQRohOCsveMTFLkEeGmxBocRZ
-         9gRA==
-X-Gm-Message-State: AOJu0Yxi6MzuFw+Tv6Obbm83hKZHWK3e4gMfyxkCbRzczhUZGaKX224w
-	WXBbPwqx22UhdQQcBk93MdASqnjVto3PQ+pppXdtUyTlZRzo8d1NdfBw4WABiKtF6D+yTJLzU39
-	NctP1UvL/u5MigodI7xTqhmaZkHmTpH04KFQs1DAi3zdw5iQ5gLOuP5c=
-X-Google-Smtp-Source: AGHT+IFAkdQK3XtbYLTtOLnYzXAKHxWmD+hxOgPSMU9sC8qlK/UrJigkRBPK+9LJzh2jfKBq8B3i95zsLgY+5inanGldJWE2TjjX
+	s=arc-20240116; t=1725526887; c=relaxed/simple;
+	bh=io03J9HF5slmNGxFUCZyAOMbUwNOpimVk1J7G5YoKhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nCmtT83Ui6bZeRwe5ffZk6y44+uMHWRQveXhdk3mxsnym21x7TMyaVi6S1Vy8b0tIXeNGP27i8UvtsYcCvaKiigsCWYXGxq9pGQfED3sfb3W+PAv2qnBS0t6/piB3j8io9C++5kglAQc+ZeNQlCpL7ip34sZywreQZ+cVSovvh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qm1P07LC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2906DC4CEC3;
+	Thu,  5 Sep 2024 09:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725526887;
+	bh=io03J9HF5slmNGxFUCZyAOMbUwNOpimVk1J7G5YoKhU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Qm1P07LC6xSoqWh1bDQuRaeMNHbEMQMP4XNV4053JXnWe8RuhWlZ9K5tbV/TcDy2o
+	 IKCA/yRbTtJJL8a7xvUNfP6vKcVz+r2Osy95AzI5443amiObmm2k2eTEbDqfWWYtWb
+	 H2PwytQp2IstWhTVGRbwmv0RQ9HX+v+AxDxS/bt+kIpOG3XIM7E5xJtgdO5TBokspA
+	 rRz+NuI9avGF2xQ+HbeNRFKZlMjlk/dY1ag3kzvlFDTqqtbp3bunNJ++ES3McbrRL0
+	 VhdUuHQda+I3/tsj2+3tgeOCT6HJbz960a/+WGfEfc0uEHQ8leIZ6wqJ7jFTEid6Wa
+	 OxsPcQQYT+T4A==
+Message-ID: <d095a86b-a1f4-4b31-8092-afa3ef1dfdb5@kernel.org>
+Date: Thu, 5 Sep 2024 17:01:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4a:0:b0:39f:5b92:15f8 with SMTP id
- e9e14a558f8ab-39f73bafccamr4566315ab.5.1725526742288; Thu, 05 Sep 2024
- 01:59:02 -0700 (PDT)
-Date: Thu, 05 Sep 2024 01:59:02 -0700
-In-Reply-To: <20240905082935.2536851-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000086587a06215b80e5@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] erofs: support unencoded inodes for fileio
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+ <20240830032840.3783206-2-hsiangkao@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240830032840.3783206-2-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2024/8/30 11:28, Gao Xiang wrote:
+> Since EROFS only needs to handle read requests in simple contexts,
+> Just directly use vfs_iocb_iter_read() for data I/Os.
+> 
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+> v2:
+>   - fix redundant refcount which cause hanging on chunked inodes.
+> 
+>   fs/erofs/Makefile   |   1 +
+>   fs/erofs/data.c     |  50 +++++++++++-
+>   fs/erofs/fileio.c   | 181 ++++++++++++++++++++++++++++++++++++++++++++
+>   fs/erofs/inode.c    |  17 +++--
+>   fs/erofs/internal.h |   7 +-
+>   fs/erofs/zdata.c    |  46 ++---------
+>   6 files changed, 251 insertions(+), 51 deletions(-)
+>   create mode 100644 fs/erofs/fileio.c
+> 
+> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+> index 097d672e6b14..4331d53c7109 100644
+> --- a/fs/erofs/Makefile
+> +++ b/fs/erofs/Makefile
+> @@ -7,4 +7,5 @@ erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
+>   erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
+>   erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
+>   erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
+> +erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
+>   erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index 0fb31c588ae0..b4c07ce7a294 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -132,7 +132,7 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
+>   	if (map->m_la >= inode->i_size) {
+>   		/* leave out-of-bound access unmapped */
+>   		map->m_flags = 0;
+> -		map->m_plen = 0;
+> +		map->m_plen = map->m_llen;
+>   		goto out;
+>   	}
+>   
+> @@ -197,8 +197,13 @@ static void erofs_fill_from_devinfo(struct erofs_map_dev *map,
+>   				    struct erofs_device_info *dif)
+>   {
+>   	map->m_bdev = NULL;
+> -	if (dif->file && S_ISBLK(file_inode(dif->file)->i_mode))
+> -		map->m_bdev = file_bdev(dif->file);
+> +	map->m_fp = NULL;
+> +	if (dif->file) {
+> +		if (S_ISBLK(file_inode(dif->file)->i_mode))
+> +			map->m_bdev = file_bdev(dif->file);
+> +		else
+> +			map->m_fp = dif->file;
+> +	}
+>   	map->m_daxdev = dif->dax_dev;
+>   	map->m_dax_part_off = dif->dax_part_off;
+>   	map->m_fscache = dif->fscache;
+> @@ -215,6 +220,7 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
+>   	map->m_daxdev = EROFS_SB(sb)->dax_dev;
+>   	map->m_dax_part_off = EROFS_SB(sb)->dax_part_off;
+>   	map->m_fscache = EROFS_SB(sb)->s_fscache;
+> +	map->m_fp = EROFS_SB(sb)->fdev;
+>   
+>   	if (map->m_deviceid) {
+>   		down_read(&devs->rwsem);
+> @@ -250,6 +256,42 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
+>   	return 0;
+>   }
+>   
+> +/*
+> + * bit 30: I/O error occurred on this folio
+> + * bit 0 - 29: remaining parts to complete this folio
+> + */
+> +#define EROFS_ONLINEFOLIO_EIO			(1 << 30)
+> +
+> +void erofs_onlinefolio_init(struct folio *folio)
+> +{
+> +	union {
+> +		atomic_t o;
+> +		void *v;
+> +	} u = { .o = ATOMIC_INIT(1) };
+> +
+> +	folio->private = u.v;	/* valid only if file-backed folio is locked */
+> +}
+> +
+> +void erofs_onlinefolio_split(struct folio *folio)
+> +{
+> +	atomic_inc((atomic_t *)&folio->private);
+> +}
+> +
+> +void erofs_onlinefolio_end(struct folio *folio, int err)
+> +{
+> +	int orig, v;
+> +
+> +	do {
+> +		orig = atomic_read((atomic_t *)&folio->private);
+> +		v = (orig - 1) | (err ? EROFS_ONLINEFOLIO_EIO : 0);
+> +	} while (atomic_cmpxchg((atomic_t *)&folio->private, orig, v) != orig);
+> +
+> +	if (v & ~EROFS_ONLINEFOLIO_EIO)
+> +		return;
+> +	folio->private = 0;
+> +	folio_end_read(folio, !(v & EROFS_ONLINEFOLIO_EIO));
+> +}
+> +
+>   static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
+>   {
+> @@ -399,7 +441,7 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   }
+>   
+>   /* for uncompressed (aligned) files and raw access for other files */
+> -const struct address_space_operations erofs_raw_access_aops = {
+> +const struct address_space_operations erofs_aops = {
+>   	.read_folio = erofs_read_folio,
+>   	.readahead = erofs_readahead,
+>   	.bmap = erofs_bmap,
+> diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+> new file mode 100644
+> index 000000000000..eab52b8abd0b
+> --- /dev/null
+> +++ b/fs/erofs/fileio.c
+> @@ -0,0 +1,181 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2024, Alibaba Cloud
+> + */
+> +#include "internal.h"
+> +#include <trace/events/erofs.h>
+> +
+> +struct erofs_fileio_rq {
+> +	struct bio_vec bvecs[BIO_MAX_VECS];
+> +	struct bio bio;
+> +	struct kiocb iocb;
+> +};
+> +
+> +struct erofs_fileio {
+> +	struct erofs_map_blocks map;
+> +	struct erofs_map_dev dev;
+> +	struct erofs_fileio_rq *rq;
+> +};
+> +
+> +static void erofs_fileio_ki_complete(struct kiocb *iocb, long ret)
+> +{
+> +	struct erofs_fileio_rq *rq =
+> +			container_of(iocb, struct erofs_fileio_rq, iocb);
+> +	struct folio_iter fi;
+> +
+> +	DBG_BUGON(rq->bio.bi_end_io);
+> +	if (ret > 0) {
+> +		if (ret != rq->bio.bi_iter.bi_size) {
+> +			bio_advance(&rq->bio, ret);
+> +			zero_fill_bio(&rq->bio);
+> +		}
+> +		ret = 0;
+> +	}
+> +	bio_for_each_folio_all(fi, &rq->bio) {
+> +		DBG_BUGON(folio_test_uptodate(fi.folio));
+> +		erofs_onlinefolio_end(fi.folio, ret);
+> +	}
+> +	kfree(rq);
+> +}
+> +
+> +static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
+> +{
+> +	struct iov_iter iter;
+> +	int ret;
+> +
+> +	if (!rq)
+> +		return;
+> +	rq->iocb.ki_pos = rq->bio.bi_iter.bi_sector << 9;
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: kernel-usb-infoleak in usbtmc_write
+Trivial cleanup,
 
-xf size: 3, count: 3, usbtmc_write
-=====================================================
-BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
- usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
- usbtmc_write+0xb26/0x1270 drivers/usb/class/usbtmc.c:1608
- vfs_write+0x493/0x1550 fs/read_write.c:588
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+rq->iocb.ki_pos = rq->bio.bi_iter.bi_sector << SECTOR_SHIFT;
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4188
- kmalloc_noprof include/linux/slab.h:681 [inline]
- usbtmc_create_urb drivers/usb/class/usbtmc.c:757 [inline]
- usbtmc_write+0x3d3/0x1270 drivers/usb/class/usbtmc.c:1547
- vfs_write+0x493/0x1550 fs/read_write.c:588
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> +	rq->iocb.ki_ioprio = get_current_ioprio();
+> +	rq->iocb.ki_complete = erofs_fileio_ki_complete;
+> +	rq->iocb.ki_flags = (rq->iocb.ki_filp->f_mode & FMODE_CAN_ODIRECT) ?
+> +				IOCB_DIRECT : 0;
+> +	iov_iter_bvec(&iter, ITER_DEST, rq->bvecs, rq->bio.bi_vcnt,
+> +		      rq->bio.bi_iter.bi_size);
+> +	ret = vfs_iocb_iter_read(rq->iocb.ki_filp, &rq->iocb, &iter);
+> +	if (ret != -EIOCBQUEUED)
+> +		erofs_fileio_ki_complete(&rq->iocb, ret);
 
-Byte 15 of 16 is uninitialized
-Memory access of size 16 starts at ffff888117169000
+Shouldn't we pass return value to caller?
 
-CPU: 0 UID: 0 PID: 6369 Comm: syz.1.63 Not tainted 6.11.0-rc6-syzkaller-00070-gc763c4339688-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
+Thanks,
 
-
-Tested on:
-
-commit:         c763c433 Merge tag 'bcachefs-2024-09-04' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=143420b3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1055bd97980000
+> +}
+> +
+> +static struct erofs_fileio_rq *erofs_fileio_rq_alloc(struct erofs_map_dev *mdev)
+> +{
+> +	struct erofs_fileio_rq *rq = kzalloc(sizeof(*rq), GFP_KERNEL);
+> +
+> +	if (!rq)
+> +		return NULL;
+> +	bio_init(&rq->bio, NULL, rq->bvecs, BIO_MAX_VECS, REQ_OP_READ);
+> +	rq->iocb.ki_filp = mdev->m_fp;
+> +	return rq;
+> +}
+> +
+> +static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+> +{
+> +	struct inode *inode = folio_inode(folio);
+> +	struct erofs_map_blocks *map = &io->map;
+> +	unsigned int cur = 0, end = folio_size(folio), len, attached = 0;
+> +	loff_t pos = folio_pos(folio), ofs;
+> +	struct iov_iter iter;
+> +	struct bio_vec bv;
+> +	int err = 0;
+> +
+> +	erofs_onlinefolio_init(folio);
+> +	while (cur < end) {
+> +		if (!in_range(pos + cur, map->m_la, map->m_llen)) {
+> +			map->m_la = pos + cur;
+> +			map->m_llen = end - cur;
+> +			err = erofs_map_blocks(inode, map);
+> +			if (err)
+> +				break;
+> +		}
+> +
+> +		ofs = folio_pos(folio) + cur - map->m_la;
+> +		len = min_t(loff_t, map->m_llen - ofs, end - cur);
+> +		if (map->m_flags & EROFS_MAP_META) {
+> +			struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+> +			void *src;
+> +
+> +			src = erofs_read_metabuf(&buf, inode->i_sb,
+> +						 map->m_pa + ofs, EROFS_KMAP);
+> +			if (IS_ERR(src)) {
+> +				err = PTR_ERR(src);
+> +				break;
+> +			}
+> +			bvec_set_folio(&bv, folio, len, cur);
+> +			iov_iter_bvec(&iter, ITER_DEST, &bv, 1, len);
+> +			if (copy_to_iter(src, len, &iter) != len) {
+> +				erofs_put_metabuf(&buf);
+> +				err = -EIO;
+> +				break;
+> +			}
+> +			erofs_put_metabuf(&buf);
+> +		} else if (!(map->m_flags & EROFS_MAP_MAPPED)) {
+> +			folio_zero_segment(folio, cur, cur + len);
+> +		} else {
+> +			if (io->rq && (map->m_pa + ofs != io->dev.m_pa ||
+> +				       map->m_deviceid != io->dev.m_deviceid)) {
+> +io_retry:
+> +				erofs_fileio_rq_submit(io->rq);
+> +				io->rq = NULL;
+> +			}
+> +
+> +			if (!io->rq) {
+> +				io->dev = (struct erofs_map_dev) {
+> +					.m_pa = io->map.m_pa + ofs,
+> +					.m_deviceid = io->map.m_deviceid,
+> +				};
+> +				err = erofs_map_dev(inode->i_sb, &io->dev);
+> +				if (err)
+> +					break;
+> +				io->rq = erofs_fileio_rq_alloc(&io->dev);
+> +				if (!io->rq) {
+> +					err = -ENOMEM;
+> +					break;
+> +				}
+> +				io->rq->bio.bi_iter.bi_sector = io->dev.m_pa >> 9;
+> +				attached = 0;
+> +			}
+> +			if (!attached++)
+> +				erofs_onlinefolio_split(folio);
+> +			if (!bio_add_folio(&io->rq->bio, folio, len, cur))
+> +				goto io_retry;
+> +			io->dev.m_pa += len;
+> +		}
+> +		cur += len;
+> +	}
+> +	erofs_onlinefolio_end(folio, err);
+> +	return err;
+> +}
+> +
+> +static int erofs_fileio_read_folio(struct file *file, struct folio *folio)
+> +{
+> +	struct erofs_fileio io = {};
+> +	int err;
+> +
+> +	trace_erofs_read_folio(folio, false);
+> +	err = erofs_fileio_scan_folio(&io, folio);
+> +	erofs_fileio_rq_submit(io.rq);
+> +	return err;
+> +}
+> +
+> +static void erofs_fileio_readahead(struct readahead_control *rac)
+> +{
+> +	struct inode *inode = rac->mapping->host;
+> +	struct erofs_fileio io = {};
+> +	struct folio *folio;
+> +	int err;
+> +
+> +	trace_erofs_readpages(inode, readahead_index(rac),
+> +			      readahead_count(rac), false);
+> +	while ((folio = readahead_folio(rac))) {
+> +		err = erofs_fileio_scan_folio(&io, folio);
+> +		if (err && err != -EINTR)
+> +			erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
+> +				  folio->index, EROFS_I(inode)->nid);
+> +	}
+> +	erofs_fileio_rq_submit(io.rq);
+> +}
+> +
+> +const struct address_space_operations erofs_fileio_aops = {
+> +	.read_folio = erofs_fileio_read_folio,
+> +	.readahead = erofs_fileio_readahead,
+> +};
+> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+> index d05b9e59f122..4a902e6e69a5 100644
+> --- a/fs/erofs/inode.c
+> +++ b/fs/erofs/inode.c
+> @@ -258,11 +258,14 @@ static int erofs_fill_inode(struct inode *inode)
+>   	}
+>   
+>   	mapping_set_large_folios(inode->i_mapping);
+> -	if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb))) {
+> -		/* XXX: data I/Os will be implemented in the following patches */
+> -		err = -EOPNOTSUPP;
+> -	} else if (erofs_inode_is_data_compressed(vi->datalayout)) {
+> +	if (erofs_inode_is_data_compressed(vi->datalayout)) {
+>   #ifdef CONFIG_EROFS_FS_ZIP
+> +#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
+> +		if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb))) {
+> +			err = -EOPNOTSUPP;
+> +			goto out_unlock;
+> +		}
+> +#endif
+>   		DO_ONCE_LITE_IF(inode->i_blkbits != PAGE_SHIFT,
+>   			  erofs_info, inode->i_sb,
+>   			  "EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!");
+> @@ -271,10 +274,14 @@ static int erofs_fill_inode(struct inode *inode)
+>   		err = -EOPNOTSUPP;
+>   #endif
+>   	} else {
+> -		inode->i_mapping->a_ops = &erofs_raw_access_aops;
+> +		inode->i_mapping->a_ops = &erofs_aops;
+>   #ifdef CONFIG_EROFS_FS_ONDEMAND
+>   		if (erofs_is_fscache_mode(inode->i_sb))
+>   			inode->i_mapping->a_ops = &erofs_fscache_access_aops;
+> +#endif
+> +#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
+> +		if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb)))
+> +			inode->i_mapping->a_ops = &erofs_fileio_aops;
+>   #endif
+>   	}
+>   out_unlock:
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 9bf4fb1cfa09..9bc4dcfd06d7 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -372,6 +372,7 @@ struct erofs_map_dev {
+>   	struct erofs_fscache *m_fscache;
+>   	struct block_device *m_bdev;
+>   	struct dax_device *m_daxdev;
+> +	struct file *m_fp;
+>   	u64 m_dax_part_off;
+>   
+>   	erofs_off_t m_pa;
+> @@ -380,7 +381,8 @@ struct erofs_map_dev {
+>   
+>   extern const struct super_operations erofs_sops;
+>   
+> -extern const struct address_space_operations erofs_raw_access_aops;
+> +extern const struct address_space_operations erofs_aops;
+> +extern const struct address_space_operations erofs_fileio_aops;
+>   extern const struct address_space_operations z_erofs_aops;
+>   extern const struct address_space_operations erofs_fscache_access_aops;
+>   
+> @@ -411,6 +413,9 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
+>   int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>   		 u64 start, u64 len);
+>   int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map);
+> +void erofs_onlinefolio_init(struct folio *folio);
+> +void erofs_onlinefolio_split(struct folio *folio);
+> +void erofs_onlinefolio_end(struct folio *folio, int err);
+>   struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid);
+>   int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
+>   		  struct kstat *stat, u32 request_mask,
+> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+> index 424f656cd765..350612f32ac6 100644
+> --- a/fs/erofs/zdata.c
+> +++ b/fs/erofs/zdata.c
+> @@ -122,42 +122,6 @@ static bool erofs_folio_is_managed(struct erofs_sb_info *sbi, struct folio *fo)
+>   	return fo->mapping == MNGD_MAPPING(sbi);
+>   }
+>   
+> -/*
+> - * bit 30: I/O error occurred on this folio
+> - * bit 0 - 29: remaining parts to complete this folio
+> - */
+> -#define Z_EROFS_FOLIO_EIO			(1 << 30)
+> -
+> -static void z_erofs_onlinefolio_init(struct folio *folio)
+> -{
+> -	union {
+> -		atomic_t o;
+> -		void *v;
+> -	} u = { .o = ATOMIC_INIT(1) };
+> -
+> -	folio->private = u.v;	/* valid only if file-backed folio is locked */
+> -}
+> -
+> -static void z_erofs_onlinefolio_split(struct folio *folio)
+> -{
+> -	atomic_inc((atomic_t *)&folio->private);
+> -}
+> -
+> -static void z_erofs_onlinefolio_end(struct folio *folio, int err)
+> -{
+> -	int orig, v;
+> -
+> -	do {
+> -		orig = atomic_read((atomic_t *)&folio->private);
+> -		v = (orig - 1) | (err ? Z_EROFS_FOLIO_EIO : 0);
+> -	} while (atomic_cmpxchg((atomic_t *)&folio->private, orig, v) != orig);
+> -
+> -	if (v & ~Z_EROFS_FOLIO_EIO)
+> -		return;
+> -	folio->private = 0;
+> -	folio_end_read(folio, !(v & Z_EROFS_FOLIO_EIO));
+> -}
+> -
+>   #define Z_EROFS_ONSTACK_PAGES		32
+>   
+>   /*
+> @@ -965,7 +929,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+>   	int err = 0;
+>   
+>   	tight = (bs == PAGE_SIZE);
+> -	z_erofs_onlinefolio_init(folio);
+> +	erofs_onlinefolio_init(folio);
+>   	do {
+>   		if (offset + end - 1 < map->m_la ||
+>   		    offset + end - 1 >= map->m_la + map->m_llen) {
+> @@ -1024,7 +988,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+>   			if (err)
+>   				break;
+>   
+> -			z_erofs_onlinefolio_split(folio);
+> +			erofs_onlinefolio_split(folio);
+>   			if (f->pcl->pageofs_out != (map->m_la & ~PAGE_MASK))
+>   				f->pcl->multibases = true;
+>   			if (f->pcl->length < offset + end - map->m_la) {
+> @@ -1044,7 +1008,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+>   			tight = (bs == PAGE_SIZE);
+>   		}
+>   	} while ((end = cur) > 0);
+> -	z_erofs_onlinefolio_end(folio, err);
+> +	erofs_onlinefolio_end(folio, err);
+>   	return err;
+>   }
+>   
+> @@ -1147,7 +1111,7 @@ static void z_erofs_fill_other_copies(struct z_erofs_decompress_backend *be,
+>   			cur += len;
+>   		}
+>   		kunmap_local(dst);
+> -		z_erofs_onlinefolio_end(page_folio(bvi->bvec.page), err);
+> +		erofs_onlinefolio_end(page_folio(bvi->bvec.page), err);
+>   		list_del(p);
+>   		kfree(bvi);
+>   	}
+> @@ -1302,7 +1266,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
+>   
+>   		DBG_BUGON(z_erofs_page_is_invalidated(page));
+>   		if (!z_erofs_is_shortlived_page(page)) {
+> -			z_erofs_onlinefolio_end(page_folio(page), err);
+> +			erofs_onlinefolio_end(page_folio(page), err);
+>   			continue;
+>   		}
+>   		if (pcl->algorithmformat != Z_EROFS_COMPRESSION_LZ4) {
 
 
