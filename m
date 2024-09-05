@@ -1,159 +1,554 @@
-Return-Path: <linux-kernel+bounces-317049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B353F96D89C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B2B96D89F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FAE2815F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC77D282D5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2767219AD8B;
-	Thu,  5 Sep 2024 12:33:22 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E714119AD8B;
+	Thu,  5 Sep 2024 12:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RH4Sn8KR"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4281A83CC1
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAF9198E74
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539601; cv=none; b=Z3ypqgVz5cL/pNHcLymgOPgrI5FEw8V3DQVaZMJPQ0+rLE93QJMpkJvUwTzsT+tD8cuijivSP+gG+6ClofZCGFIz5u6u/gcoLJquQa8PL2l7jYLdMB45RERUaXiFxEApCseuAeGAO2nRQ+srBI9Z+gn/e3rh+5/JCPc+NnTnoCU=
+	t=1725539607; cv=none; b=OS4ItcYK07WyYUVBJoX5CzPVeZxr41l/a4K4w/ngOEtwtGsGQac6d6S+aXL9C3MWzh6agPXokW18g2sEqShwBsXrTo2Q6AzYVPULOS7Ccy85Wb6TMyIUb8tT/5yGLceqkcnFpq1KyZQBqnHSvT+dyl+GqoO4P6u+UZ81sGJ0wMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539601; c=relaxed/simple;
-	bh=MecRGAENHhyfGFAz7r3MsJFRR01iHi9sdLn/98a3Ttk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8OjanUotoz++m/78Y5yAEclc9XEBvZ+QwPBoTUHIkT2n2Qhf5gUgcjA91mdV72dx0lt1Ga/oDdPDwdqUXCLheKXYZ0aQmwCeJ+hSdNWfQLwaXJjsfz9J08wUwsne50qYXowlrLCKvNlHLQExlnQ6UwUUI5uyudz/3oP4z5Gfp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: VO34fhYkRSeTbGMzg5Jisw==
-X-CSE-MsgGUID: njtI/mOrTW6PfeRpqaAnBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34918004"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="34918004"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:33:19 -0700
-X-CSE-ConnectionGUID: i1USyyJERJOLLlav3CIv2Q==
-X-CSE-MsgGUID: UxMegDvnRjq/rqUFRsCnag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="65299117"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:33:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1smBfm-00000005OQg-3VFI;
-	Thu, 05 Sep 2024 15:33:14 +0300
-Date: Thu, 5 Sep 2024 15:33:14 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Zhang Ning <zhangn1985@outlook.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
-	linux-kernel@vger.kernel.org, lee@kernel.org
-Subject: Re: mfd: intel_soc_pmic_bxtwc: irq 0 issue, tmu and typec components
- fail to probe.
-Message-ID: <ZtmlCh4NScc25tS2@smile.fi.intel.com>
-References: <TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <ZrYMne34hVa33qKf@smile.fi.intel.com>
- <TY2PR01MB33222D8BE4B1107EB3A1917FCDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <ZrYjLdPryElDubaM@smile.fi.intel.com>
- <TY2PR01MB33224CE088EF01D57DE1BABFCD9C2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <CAHp75VeMp9C04iDW5_c9owq3HP=5wvccoOuHwrSQ5SFeV+SRVA@mail.gmail.com>
- <TY2PR01MB3322699682DBE2F13F919F80CD9D2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1725539607; c=relaxed/simple;
+	bh=q/X4vPn9JKwgvbWAkqAlker9Z9kIOVlIGNm24N/4vJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t4JUCLPhm24q0mLbq0MOVWxKY1aE+dNUBVMW00ZYZ1x6vlTnprDvn9DcFmRqXlc/B5bZjU3P0NnsVAJmfcO7xuOrycboL9dhy/kA7IHhWYRBN4ZS7drOVs1xoaNS7efyRDJZTZHZ3JL4Kwt4MB66TJ3fe/y/2c9mag4C3u6KScE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RH4Sn8KR; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42bbe908380so5943945e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725539604; x=1726144404; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ACo5pyh8ZH0iApXWsTEGKO0W8zLiGjkvm+h5suFQZ3Q=;
+        b=RH4Sn8KRONinMT7bVTYpVGKjqHTaEAjrJmu5jvltzVDLhBtV0gaCeeRDDCs5MKWBpr
+         aqEYzNvq+LWvYEpMJbqWz5jheeKRNuBxRF1nnmz0yyzkqc8+6WT8axXjsVtuL2c5kRPh
+         oaolUYuBKmQ4QocPf7rMqvLqAZELmDiIENiep0lI0cAEWqtwQWv6GdsvZktPhG6h6plQ
+         cx747yHY/yV1GUGbLtRkBVRSkD5WdsBWzJuHj3Clt7l3S0Km3mcFIaBADUSzdcBrXXyu
+         8DrT/9DSeHWCMJH/vb4UW6JGov0lqJkK3EtRw18gNbolsl4NkwP7zPPb4pl4SJ1WZVwZ
+         ZIpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725539604; x=1726144404;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ACo5pyh8ZH0iApXWsTEGKO0W8zLiGjkvm+h5suFQZ3Q=;
+        b=CgFV9/DA/rIPfN3zPYdb1gsM0+h+YGmbEEQelg5Qkl6496WASfaCMTE3uumI9uelqw
+         9wOH864J9mtee5+d906p5JqmfdU6m5WZwkYJQCUn74Kovz3qSJLeygq8WwbHxHwHffS0
+         LUnBY/Sq7fDO7flvsWyThjiN5PlCCuiNdBNJAf04F1xyp/IpL6WdBJWKhYzts0R0hdL4
+         lrZ9/uGWDPn3sk0yg7SYIxa12i/lVqxDsHHS3eb8PXCkdZxg7+MgPvuQBlodFdMivqs3
+         nQVmmIXI8uxr3H6vkaKGeGxKLVH8nHcYGR/cLfzCtOMvTomFIrVWe1J35yhkkPFM8cPI
+         vHIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKHY0weZ6ToEvmWLWXD0k0PnBLyPyBcEcJyzWITUyejKsZxnUtjoUptj8rtsqDyvGqzjbVzQ5Hz516am8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6lz0kG9f+TSTiiMCfHQT8RLUXGuFy+vXoaBEqbuNJ3p3uDAMs
+	wwmQ3x/RatXmkPeFUqU2HGYPvonrLDkSFzy2Qpyq9AzmJJ0O1su+
+X-Google-Smtp-Source: AGHT+IGEJfGlrCY0E09RK32iwd4KyQUdAvEvG12UAWMSzQcn2nsrurMAndnd7hlMNDeFMZjFmG1aAg==
+X-Received: by 2002:a05:600c:5123:b0:426:6353:4b7c with SMTP id 5b1f17b1804b1-42bda2ce3a1mr124732025e9.8.1725539603194;
+        Thu, 05 Sep 2024 05:33:23 -0700 (PDT)
+Received: from fedora.. ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb273sm233181905e9.8.2024.09.05.05.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 05:33:22 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: airlied@gmail.com,
+	arthurgrillo@riseup.net,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mairacanal@riseup.net,
+	marcheu@google.com,
+	melissa.srw@gmail.com,
+	miquel.raynal@bootlin.com,
+	mripard@kernel.org,
+	nicolejadeyee@google.com,
+	rodrigosiqueiramelo@gmail.com,
+	seanpaul@google.com,
+	thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v3] drm/vkms: Add documentation
+Date: Thu,  5 Sep 2024 14:33:18 +0200
+Message-ID: <20240905123319.3035-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240829-google-clarifications-v3-1-f6604e2f6297@bootlin.com>
+References: <20240829-google-clarifications-v3-1-f6604e2f6297@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <TY2PR01MB3322699682DBE2F13F919F80CD9D2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 05, 2024 at 07:27:25PM +0800, Zhang Ning wrote:
-> On Wed, Sep 04, 2024 at 05:36:35PM +0300, Andy Shevchenko wrote:
-> > On Wed, Sep 4, 2024 at 5:29 PM Zhang Ning <zhangn1985@outlook.com> wrote:
-> > > On Fri, Aug 09, 2024 at 05:09:49PM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Aug 09, 2024 at 08:53:24PM +0800, Zhang Ning wrote:
-> > > > > On Fri, Aug 09, 2024 at 03:33:33PM +0300, Andy Shevchenko wrote:
-> > > > > > On Fri, Aug 09, 2024 at 08:02:43PM +0800, Zhang Ning wrote:
-> > > > > > > Hi, Greg & Rafael
-> > > > > > >
-> > > > > > > recently, when I try to enable mfd components for intel_soc_pmic_bxtwc
-> > > > > > > for debian kernel[0]. I find tmu and typec failed to probe.
-> > > > > > >
-> > > > > > > after check source code, I find irq for these two devices are 0, when
-> > > > > > > use platform_get_irq, it will alway fail.
-> > > > > > >
-> > > > > > >         if (WARN(!ret, "0 is an invalid IRQ number\n"))
-> > > > > > >                 return -EINVAL;
-> > > > > > >         return ret;
-> > > > > > >
-> > > > > > > My workaround for debian is to hardcode irq to 0, instead to use api.
-> > > > > > >
-> > > > > > > I don't know how to write a good solution, thus send an email to you.
-> > > > > >
-> > > > > > Hold on, how the heck you got 0 in the first place?A
-> > > > >
-> > > > > use tmu as an example
-> > > > >
-> > > > > enum bxtwc_irqs_tmu {
-> > > > >         BXTWC_TMU_IRQ = 0,
-> > > > > };
-> > > > >
-> > > > > static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
-> > > > >         REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, GENMASK(2, 1)),
-> > > > > };
-> > > > >
-> > > > > static const struct resource tmu_resources[] = {
-> > > > >         DEFINE_RES_IRQ_NAMED(BXTWC_TMU_IRQ, "TMU"),
-> > > > > };
-> > > > >
-> > > > >         {
-> > > > >                 .name = "bxt_wcove_tmu",
-> > > > >                 .num_resources = ARRAY_SIZE(tmu_resources),
-> > > > >                 .resources = tmu_resources,
-> > > > >         },
-> > > > >
-> > > > > this is why I got 0, and I don't do any hack.
-> > > >
-> > > > Thanks for elaboration, I will look at this a bit later (may be next or one
-> > > > after next week, just returned from vacations).
-> > 
-> > >    could you share the patch link to the fix? then I could port it to
-> > >    debian.
-> > 
-> > Sorry I was busy with other stuff (as well), I am still in the middle
-> > of debugging that.
-> > The issue is that the leaf drivers for some reason do not request
-> > proper vIRQ (that should come from the secondary IRQ chip). OTOH there
-> > is only one _similar_ design in the kernel besides this one. And when
-> > I tried to test the version where all this appears, I couldn't boot
-> > (yeah, I spent some time on bisecting things) the board I have (One of
-> > pre-production variants of Intel Joule SoM).
+Hi Louis,
+
+Thanks for appling the suggested changes.
+
+I added some minor style comments, but other than that patch looks
+good to me.
+
+> Add documentation around vkms_output and its initialization.
+> Add some documentation on pixel conversion functions.
+> Update of outdated comments for pixel_write functions.
 > 
-> Yes, me too. I'm trying to enable Joule on Debian. thus found this
-> issue. you can use debian sid with linux 6.11 to debug this issue.
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+With the suggested changes, feel free to add:
+Reviewed-by: José Expósito <jose.exposito89@gmail.com>
+
+> ---
+> This series does not introduce functionnal changes, only some
+> documentation and renaming to clarify the code.
+> ---
+> Changes in v3:
+> - Merged https://lore.kernel.org/all/20240802-yuv-v9-3-08a706669e16@bootlin.com/
+>   as it also add documentation
+> - Apply José's comments, sorry
+> - Replace =1 by =BIT(0) for possible_crtc value
+> - Link to v2: https://lore.kernel.org/r/20240826-google-clarifications-v2-1-2574655b0b91@bootlin.com
 > 
-> and another issue is Joule HDA pci id is removed from Linux kernel, thus
-> no sound, but I don't plan to submit an issue.
+> Changes in v2:
+> - Dropped already applied patches
+> - Dropped useless patch as its content is deleted later
+> - Remove dependency on previous series
+> - Apply Maíra's comments
+> - Link to v1: https://lore.kernel.org/r/20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com
+> ---
+>  drivers/gpu/drm/vkms/vkms_composer.c |   7 +++
+>  drivers/gpu/drm/vkms/vkms_drv.h      | 101 ++++++++++++++++++++++++++++++-----
+>  drivers/gpu/drm/vkms/vkms_formats.c  |  62 +++++++++++++++++----
+>  drivers/gpu/drm/vkms/vkms_output.c   |  14 ++++-
+>  4 files changed, 161 insertions(+), 23 deletions(-)
 > 
-> > Do you have any (most recent) kernel version that works as expected?
-> I don't try any old kernel, but from git log, I think bad commit is:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=57129044f5044dcd73c22d91491906104bd331fd`
+> 
+> ---
+> base-commit: 84addde447fd9d713e101437db0d4924855eff4f
+> change-id: 20240520-google-clarifications-dede8dcbe38a
+> 
+> Best regards,
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index e7441b227b3c..57a5769fc994 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -189,6 +189,13 @@ static void blend(struct vkms_writeback_job *wb,
+>  
+>  	size_t crtc_y_limit = crtc_state->base.crtc->mode.vdisplay;
+>  
+> +	/*
+> +	 * The planes are composed line-by-line to avoid heavy memory usage. It is a necessary
+> +	 * complexity to avoid poor blending performance.
+> +	 *
+> +	 * The function vkms_compose_row() is used to read a line, pixel-by-pixel, into the staging
+> +	 * buffer.
+> +	 */
+>  	for (size_t y = 0; y < crtc_y_limit; y++) {
+>  		fill_background(&background_color, output_buffer);
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 5e46ea5b96dc..12a11976f2fc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -25,6 +25,17 @@
+>  
+>  #define VKMS_LUT_SIZE 256
+>  
+> +/**
+> + * struct vkms_frame_info - Structure to store the state of a frame
+> + *
+> + * @fb: backing drm framebuffer
+> + * @src: source rectangle of this frame in the source framebuffer, stored in 16.16 fixed-point form
+> + * @dst: destination rectangle in the crtc buffer, stored in whole pixel units
+> + * @map: see drm_shadow_plane_state@data
 
-No, it does the right thing from architectural point of view. It might be that
-it was never tested or it was a regression somewhere. That's why I wanted to find
-the newest possible kernel that works on that machine.
+I think that the right format is "@drm_shadow_plane_state.data"?
+https://docs.kernel.org/doc-guide/kernel-doc.html#nested-structs-unions
 
-> > > > > > > [0]: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1156/diffs
+> + * @rotation: rotation applied to the source.
+> + *
+> + * @src and @dst should have the same size modulo the rotation.
+> + */
+>  struct vkms_frame_info {
+>  	struct drm_framebuffer *fb;
+>  	struct drm_rect src, dst;
+> @@ -52,9 +63,11 @@ struct vkms_writeback_job {
+>  };
+>  
+>  /**
+> - * vkms_plane_state - Driver specific plane state
+> + * struct vkms_plane_state - Driver specific plane state
+>   * @base: base plane state
+>   * @frame_info: data required for composing computation
+> + * @pixel_read: function to read a pixel in this plane. The creator of a struct vkms_plane_state
+> + *	        must ensure that this pointer is valid
+>   */
+>  struct vkms_plane_state {
+>  	struct drm_shadow_plane_state base;
+> @@ -73,29 +86,56 @@ struct vkms_color_lut {
+>  };
+>  
+>  /**
+> - * vkms_crtc_state - Driver specific CRTC state
+> + * struct vkms_crtc_state - Driver specific CRTC state
+> + *
+>   * @base: base CRTC state
+>   * @composer_work: work struct to compose and add CRC entries
+> - * @n_frame_start: start frame number for computed CRC
+> - * @n_frame_end: end frame number for computed CRC
+> + *
 
--- 
-With Best Regards,
-Andy Shevchenko
+Sorry I missed this extra empty line in my previous review.
+You can delete this extra "*".
 
+> + * @num_active_planes: Number of active planes
+> + * @active_planes: List containing all the active planes (counted by
+> + *  @num_active_planes). They should be stored in z-order.
+> + * @active_writeback: Current active writeback job
+> + * @gamma_lut: Look up table for gamma used in this CRTC
+> + * @crc_pending: Protected by @vkms_output.composer_lock, true when the frame CRC is not computed
+> + *		 yet. Used by vblank to detect if the composer is too slow.
+> + * @wb_pending: Protected by @vkms_output.composer_lock, true when a writeback frame is requested.
+> + * @frame_start: Protected by @vkms_output.composer_lock, saves the frame number before the start
+> + *		 of the composition process.
+> + * @frame_end: Protected by @vkms_output.composer_lock, saves the last requested frame number.
+> + *	       This is used to generate enough CRC entries when the composition worker is too slow.
+>   */
+>  struct vkms_crtc_state {
+>  	struct drm_crtc_state base;
+>  	struct work_struct composer_work;
+>  
+>  	int num_active_planes;
+> -	/* stack of active planes for crc computation, should be in z order */
+>  	struct vkms_plane_state **active_planes;
+>  	struct vkms_writeback_job *active_writeback;
+>  	struct vkms_color_lut gamma_lut;
+>  
+> -	/* below four are protected by vkms_output.composer_lock */
+>  	bool crc_pending;
+>  	bool wb_pending;
+>  	u64 frame_start;
+>  	u64 frame_end;
+>  };
+>  
+> +/**
+> + * struct vkms_output - Internal representation of all output components in VKMS
+> + *
+> + * @crtc: Base CRTC in DRM
+> + * @encoder: DRM encoder used for this output
+> + * @connector: DRM connector used for this output
+> + * @wb_connecter: DRM writeback connector used for this output
+> + * @vblank_hrtimer: Timer used to trigger the vblank
+> + * @period_ns: vblank period, in nanoseconds, used to configure @vblank_hrtimer and to compute
+> + *	       vblank timestamps
+> + * @composer_workq: Ordered workqueue for @composer_state.composer_work.
+> + * @lock: Lock used to protect concurrent access to the composer
+> + * @composer_enabled: Protected by @lock, true when the VKMS composer is active (crc needed or
+> + *		      writeback)
+> + * @composer_state: Protected by @lock, current state of this VKMS output
+> + * @composer_lock: Lock used internally to protect @composer_state members
+> + */
+>  struct vkms_output {
+>  	struct drm_crtc crtc;
+>  	struct drm_encoder encoder;
+> @@ -103,28 +143,38 @@ struct vkms_output {
+>  	struct drm_writeback_connector wb_connector;
+>  	struct hrtimer vblank_hrtimer;
+>  	ktime_t period_ns;
+> -	/* ordered wq for composer_work */
+>  	struct workqueue_struct *composer_workq;
+> -	/* protects concurrent access to composer */
+>  	spinlock_t lock;
+>  
+> -	/* protected by @lock */
+>  	bool composer_enabled;
+>  	struct vkms_crtc_state *composer_state;
+>  
+>  	spinlock_t composer_lock;
+>  };
+>  
+> -struct vkms_device;
+> -
+> +/**
+> + * struct vkms_config - General configuration for VKMS driver
+> + *
+> + * @writeback: If true, a writeback buffer can be attached to the CRTC
+> + * @cursor: If true, a cursor plane is created in the VKMS device
+> + * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
+> + * @dev: Used to store the current VKMS device. Only set when the device is instantiated.
+> + */
+>  struct vkms_config {
+>  	bool writeback;
+>  	bool cursor;
+>  	bool overlay;
+> -	/* only set when instantiated */
+>  	struct vkms_device *dev;
+>  };
+>  
+> +/**
+> + * struct vkms_device - Description of a VKMS device
+> + *
+> + * @drm - Base device in DRM
+> + * @platform - Associated platform device
+> + * @output - Configuration and sub-components of the VKMS device
+> + * @config: Configuration used in this VKMS device
+> + */
+>  struct vkms_device {
+>  	struct drm_device drm;
+>  	struct platform_device *platform;
+> @@ -132,6 +182,10 @@ struct vkms_device {
+>  	const struct vkms_config *config;
+>  };
+>  
+> +/*
+> + * The following helpers are used to convert a member of a struct into its parent.
+> + */
+> +
+>  #define drm_crtc_to_vkms_output(target) \
+>  	container_of(target, struct vkms_output, crtc)
+>  
+> @@ -144,12 +198,33 @@ struct vkms_device {
+>  #define to_vkms_plane_state(target)\
+>  	container_of(target, struct vkms_plane_state, base.base)
+>  
+> -/* CRTC */
+> +/**
+> + * vkms_crtc_init() - Initialize a CRTC for VKMS
+> + * @dev: DRM device associated with the VKMS buffer
+> + * @crtc: uninitialized CRTC device
+> + * @primary: primary plane to attach to the CRTC
+> + * @cursor plane to attach to the CRTC
 
+Missing ":" after "@cursor":
+
+ * @cursor: cursor plane to attach to the CRTC
+
+> + */
+>  int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+>  		   struct drm_plane *primary, struct drm_plane *cursor);
+>  
+> +/**
+> + * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
+> + *
+> + * @vkmsdev: VKMS device to initialize
+> + * @index: CRTC which can be attached to the planes. The caller must ensure that
+> + *	   @index is positive and less or equals to 31.
+> + */
+>  int vkms_output_init(struct vkms_device *vkmsdev, int index);
+>  
+> +/**
+> + * vkms_plane_init() - Initialize a plane
+> + *
+> + * @vkmsdev: VKMS device containing the plane
+> + * @type: type of plane to initialize
+> + * @possible_crtc_index: CRTC which can be attached to the plane. The caller must ensure that
+> + * possible_crtc_index is positive and less or equals to 31.
+
+Should read:
+
+ * @index: CRTC which can be attached to the plane. The caller must ensure that
+ *	   @index is positive and less or equals to 31.
+
+> + */
+>  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+>  				   enum drm_plane_type type, int index);
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index 040b7f113a3b..e8a5cc235ebb 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -9,24 +9,40 @@
+>  
+>  #include "vkms_formats.h"
+>  
+> +/**
+> + * pixel_offset() - Get the offset of the pixel at coordinates x/y in the first plane
+> + *
+> + * @frame_info: Buffer metadata
+> + * @x: The x coordinate of the wanted pixel in the buffer
+> + * @y: The y coordinate of the wanted pixel in the buffer
+> + *
+> + * The caller must ensure that the framebuffer associated with this request uses a pixel format
+> + * where block_h == block_w == 1.
+> + * If this requirement is not fulfilled, the resulting offset can point to an other pixel or
+> + * outside of the buffer.
+> + */
+>  static size_t pixel_offset(const struct vkms_frame_info *frame_info, int x, int y)
+>  {
+>  	return frame_info->offset + (y * frame_info->pitch)
+>  				  + (x * frame_info->cpp);
+>  }
+>  
+> -/*
+> - * packed_pixels_addr - Get the pointer to pixel of a given pair of coordinates
+> +/**
+> + * packed_pixels_addr() - Get the pointer to the block containing the pixel at the given
+> + * coordinates
+>   *
+>   * @frame_info: Buffer metadata
+> - * @x: The x(width) coordinate of the 2D buffer
+> - * @y: The y(Heigth) coordinate of the 2D buffer
+> + * @x: The x (width) coordinate inside the plane
+> + * @y: The y (height) coordinate inside the plane
+>   *
+>   * Takes the information stored in the frame_info, a pair of coordinates, and
+>   * returns the address of the first color channel.
+>   * This function assumes the channels are packed together, i.e. a color channel
+>   * comes immediately after another in the memory. And therefore, this function
+>   * doesn't work for YUV with chroma subsampling (e.g. YUV420 and NV21).
+> + *
+> + * The caller must ensure that the framebuffer associated with this request uses a pixel format
+> + * where block_h == block_w == 1, otherwise the returned pointer can be outside the buffer.
+>   */
+>  static void *packed_pixels_addr(const struct vkms_frame_info *frame_info,
+>  				int x, int y)
+> @@ -51,6 +67,13 @@ static int get_x_position(const struct vkms_frame_info *frame_info, int limit, i
+>  	return x;
+>  }
+>  
+> +/*
+> + * The following functions take pixel data from the buffer and convert them to the format
+> + * ARGB16161616 in @out_pixel.
+> + *
+> + * They are used in the vkms_compose_row() function to handle multiple formats.
+> + */
+> +
+>  static void ARGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>  {
+>  	/*
+> @@ -143,12 +166,11 @@ void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state
+>  }
+>  
+>  /*
+> - * The following  functions take an line of argb_u16 pixels from the
+> - * src_buffer, convert them to a specific format, and store them in the
+> - * destination.
+> + * The following functions take one &struct pixel_argb_u16 and convert it to a specific format.
+> + * The result is stored in @dst_pixels.
+>   *
+> - * They are used in the `compose_active_planes` to convert and store a line
+> - * from the src_buffer to the writeback buffer.
+> + * They are used in vkms_writeback_row() to convert and store a pixel from the src_buffer to
+> + * the writeback buffer.
+>   */
+>  static void argb_u16_to_ARGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>  {
+> @@ -214,6 +236,14 @@ static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>  	*pixels = cpu_to_le16(r << 11 | g << 5 | b);
+>  }
+>  
+> +/**
+> + * vkms_writeback_row() - Generic loop for all supported writeback format. It is executed just
+> + * after the blending to write a line in the writeback buffer.
+> + *
+> + * @wb: Job where to insert the final image
+> + * @src_buffer: Line to write
+> + * @y: Row to write in the writeback buffer
+> + */
+>  void vkms_writeback_row(struct vkms_writeback_job *wb,
+>  			const struct line_buffer *src_buffer, int y)
+>  {
+> @@ -227,6 +257,13 @@ void vkms_writeback_row(struct vkms_writeback_job *wb,
+>  		wb->pixel_write(dst_pixels, &in_pixels[x]);
+>  }
+>  
+> +/**
+> + * get_pixel_conversion_function() - Retrieve the correct read_pixel function for a specific
+> + * format. The returned pointer is NULL for unsupported pixel formats. The caller must ensure that
+> + * the pointer is valid before using it in a vkms_plane_state.
+> + *
+> + * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
+> + */
+>  void *get_pixel_conversion_function(u32 format)
+>  {
+>  	switch (format) {
+> @@ -245,6 +282,13 @@ void *get_pixel_conversion_function(u32 format)
+>  	}
+>  }
+>  
+> +/**
+> + * get_pixel_write_function() - Retrieve the correct write_pixel function for a specific format.
+> + * The returned pointer is NULL for unsupported pixel formats. The caller must ensure that the
+> + * pointer is valid before using it in a vkms_writeback_job.
+> + *
+> + * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
+> + */
+>  void *get_pixel_write_function(u32 format)
+>  {
+>  	switch (format) {
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 5ce70dd946aa..56801e914208 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -21,6 +21,7 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
+>  {
+>  	int count;
+>  
+> +	/* Use the default modes list from DRM */
+>  	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
+>  	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
+>  
+> @@ -58,6 +59,12 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  	int writeback;
+>  	unsigned int n;
+>  
+> +	/*
+> +	 * Initialize used plane. One primary plane is required to perform the composition.
+> +	 *
+> +	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
+> +	 * composition.
+> +	 */
+>  	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
+>  	if (IS_ERR(primary))
+>  		return PTR_ERR(primary);
+> @@ -76,6 +83,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  			return PTR_ERR(cursor);
+>  	}
+>  
+> +	/* [1]: Allocation of a CRTC, its index will be 1 */
+
+It'd be great to clarify that BIT(0) == 1. Maybe?
+
+  /* [1]: Allocation of a CRTC, its index will be BIT(0) = 1 */
+
+>  	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
+>  	if (ret)
+>  		return ret;
+> @@ -95,7 +103,11 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  		DRM_ERROR("Failed to init encoder\n");
+>  		goto err_encoder;
+>  	}
+> -	encoder->possible_crtcs = 1;
+> +	/*
+> +	 * This is a hardcoded value to select crtc for the encoder.
+> +	 * 1 here designate the first registered CRTC, the one allocated in [1]
+
+BIT(0) here designate the first...
+
+> +	 */
+> +	encoder->possible_crtcs = BIT(0);
+>  
+>  	ret = drm_connector_attach_encoder(connector, encoder);
+>  	if (ret) {
 
