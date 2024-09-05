@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-317340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D686C96DCB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A7496DCBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E2F287A3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F9C288189
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD9E194A61;
-	Thu,  5 Sep 2024 14:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B6D1A070D;
+	Thu,  5 Sep 2024 14:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="WgkyMrlI"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LUPKQ7Jm"
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEF01A00F7
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5751A0721
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548068; cv=none; b=nwnYxoZhl4RCePn4kOorM9O3o5F+GYcQOlhMoryHA79Ue2Tm0EobISPOsjXN43daJgQMj1XGzrH+8yOntUto6AqPmm8sEXFS2jVpDBFw/ZjJOluZihYo1xlVnqxxlaFtPRgGIAj0B1HLD2Hp+G5lOr6WuN4oVcI9cMibKJM0MZw=
+	t=1725548074; cv=none; b=JYkbsYadaT9h3AusQBL1ZxUas1Aqxht7rCGD92ex+tFg3jnhEuuAVYxaSUEhZvCmrbPGtK3FHbnF0o6T1iXlmRPqQr+uffVPoFvFnD8DZo/cKdThxPiJ7oVqcoARxRKZylUBMe3rZb4LoNqo8H2JbCT91GwKTukg1lmO0BbdKVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548068; c=relaxed/simple;
-	bh=Zs6fHYhHxtU3Mhv+52yP+Qf3schKL124pKVBoNo/XpE=;
+	s=arc-20240116; t=1725548074; c=relaxed/simple;
+	bh=V14CJcYvfPKl9Dyj1UEohkgVr1leB7mId7uDrVlxZ+M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MpZkcXuJbLNCmBGTNPKHAdiyGHys+CwqsneD1mpROPUjmXzxrBRWa+i8VsZQOnl/rho/CyNKqGzT/bJx8aPPe6MocGYg0mbpmiWU7hny36pMHuOLs1fWkpjKKQEghHpjF8z3CQ9mIvKVCdEbvMVPJn7oERIppv/w7KBjlfyj6a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=WgkyMrlI; arc=none smtp.client-ip=18.9.28.11
+	 MIME-Version:Content-Type; b=KVrzekgxvcb7tlXRRwkcDcIptDHlORlZkTC1ahw5N4aTZEHICkDaizC72HCkJYmrAGUWFEQl2bL3njp7gWBikH3fx8t10uo4Etf1Qbq1qkKfzBQS2GOojUZ4vPMm0wg6btHL4u7DPoKEgSUfya9X1hmUq5WFvU9BHoaLjCmR7VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LUPKQ7Jm; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 485ErwXe004711
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 485Erxhn004736
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 10:53:59 -0400
+	Thu, 5 Sep 2024 10:54:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1725548041; bh=KJdygHWncU3g/fYHse0ueuNCiTIZ9PgXATycU/SQZYo=;
+	t=1725548041; bh=pKlbDCE9K1sa7wnK0pbZ2MfXOKK0I1JnnQcWYxcFKjo=;
 	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=WgkyMrlIjOwRI97Tibi0702bshuBtEUNAGRhB9FVshHyuon/xPr7Oglq7SK6+s84a
-	 +ESQvRsGui0p6d44PCKwimBmcvDncVggFTfdNzltUGLJXfnAXB2IVo0cYjdU8LQCNH
-	 O9EYvH0pHVnG0sg6kmQozpHc8Tuepqc2MAemWBkD8O3FRtvT0MoVYNhQ8CTjgGXFYA
-	 L3J9JBMsM6UqkjF06TMsCS1hMS6Lzky6i5sqP2JMxPjTbEbYvpql2rmyjFbFKp/Gtj
-	 DSQt8PARaTCLQAuSlaLU6YIYOt7rkUt0N8whtmQoXsMg46jBXEhiA9gEfyzdJbpLwT
-	 oRYEgaAC3prrA==
+	b=LUPKQ7JmFyJ5kjiOplydNZOb5oUfbrfb+sZqHUkF9yB14PhxdHC79WG8hAsh5X1Ap
+	 PRok2NVp/4k7Q+lIIpKU4lg9MfZoe0V3Bhznw90cHMcssjmjyfd2KNQDCLz815nWnU
+	 pb8BpDXTG5nHDZwCaFK2qbmUTVdf/kIM+aqFC+SXTMvEAZlRj3JM2axm3ZSqfEToUk
+	 wi6NU9RdKEpcnZIXcnlBSAweYJGORfk+6efm4lpU6Co6ptF9YEGsiQL6zwKoU7CeTl
+	 yDDwtEBh+t90qXlIhf9j1q69Cbwxpd7IxY27GxtyRC5MnM3F+STT509k8z3cZh6n7u
+	 /dt6aR0AlHjpA==
 Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id E760315C1A13; Thu, 05 Sep 2024 10:53:54 -0400 (EDT)
+	id ED79E15C1D08; Thu, 05 Sep 2024 10:53:54 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: adilger.kernel@dilger.ca, jack@suse.com, ebiggers@kernel.org,
-        zhangshida <starzhangzsd@gmail.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
-Subject: Re: [PATCH v6 0/4] Fix an error caused by improperly dirtied buffer
-Date: Thu,  5 Sep 2024 10:53:46 -0400
-Message-ID: <172554793835.1268668.9241893620848455490.b4-ty@mit.edu>
+To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+        ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+        yukuai3@huawei.com
+Subject: Re: [PATCH v3 00/12] ext4: simplify the counting and management of delalloc reserved blocks
+Date: Thu,  5 Sep 2024 10:53:49 -0400
+Message-ID: <172554793830.1268668.9236864034882757675.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240830053739.3588573-1-zhangshida@kylinos.cn>
-References: <20240830053739.3588573-1-zhangshida@kylinos.cn>
+In-Reply-To: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
+References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,32 +69,45 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 30 Aug 2024 13:37:35 +0800, zhangshida wrote:
-> On an old kernel version(4.19, ext3, data=journal, pagesize=64k),
-> an assertion failure will occasionally be triggered by the line below:
-> ---------
-> jbd2_journal_commit_transaction
-> {
-> ...
-> J_ASSERT_BH(bh, !buffer_dirty(bh));
-> /*
-> * The buffer on BJ_Forget list and not jbddirty means
-> ...
-> }
-> ---------
+On Tue, 13 Aug 2024 20:34:40 +0800, Zhang Yi wrote:
+> Changes since v2:
+>  - In patch 3, update the chang log as Jan suggested.
+>  - In patch 5 and 6, when moving reserved blocks count updating to
+>    ext4_es_insert_extent(), chang the condition for determining quota
+>    claim by passing allocation information instead of counting used
+>    reserved blocks as Jan suggested.
+>  - Add patch 9, drop an unused helper ext4_es_store_status().
+>  - Add patch 10, make extent status type exclusive, add assertion and
+>    commtents as Jan suggested.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] ext4: persist the new uptodate buffers in ext4_journalled_zero_new_buffers
-      commit: 3910b513fcdf33030798755c722174ef4a827d2a
-[2/4] ext4: hoist ext4_block_write_begin and replace the __block_write_begin
-      commit: 6b730a405037501a260d6efd24782d2737e65d07
-[3/4] ext4: fix a potential assertion failure due to improperly dirtied buffer
-      commit: cb3de5fc876ee9ef2b830c9e6cdafac5c90903ef
-[4/4] ext4: remove the special buffer dirty handling in do_journal_get_write_access
-      commit: 183aa1d3baea18b199505455a0247b13de826e2f
+[01/12] ext4: factor out ext4_map_create_blocks() to allocate new blocks
+        commit: 130078d020e0214809f2e13cf4fb80c646020e94
+[02/12] ext4: optimize the EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
+        commit: 8b8252884f2ff4d28e3ce1a825057b3ad2900c35
+[03/12] ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
+        commit: eba8c368c8cb9ea05c08caf3dd1a0d0b87d614dc
+[04/12] ext4: let __revise_pending() return newly inserted pendings
+        commit: fccd632670408ab3066712aa90cc972b18d1b617
+[05/12] ext4: passing block allocation information to ext4_es_insert_extent()
+        commit: f3baf33b9cae0e00fe1870abca952d5dfea53dc6
+[06/12] ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
+        commit: c543e2429640293d9eda8c7841d4b5d5e8682826
+[07/12] ext4: drop ext4_es_delayed_clu()
+        commit: 6e124d5b4b02229f8aaa206b1952db31d1687523
+[08/12] ext4: use ext4_map_query_blocks() in ext4_map_blocks()
+        commit: 15996a848564e40a3d030ec7e4603dddb9f425b6
+[09/12] ext4: drop unused ext4_es_store_status()
+        commit: 3b4ba269ab6673d664d2522a0e76797a3550983f
+[10/12] ext4: make extent status types exclusive
+        commit: ce09036ea4f0a54e9dcd7ba644bb1db7cf2d95d4
+[11/12] ext4: drop ext4_es_is_delonly()
+        commit: b224b18497484eef9d2dbb3c803888a3f3a3475e
+[12/12] ext4: drop all delonly descriptions
+        commit: 2046657e64a11b61d5ed07e0d60befd86303125e
 
 Best regards,
 -- 
