@@ -1,176 +1,179 @@
-Return-Path: <linux-kernel+bounces-316453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F069C96CFCC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:54:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C5F96CFCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6B01F22990
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3BB1B221BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578B1192B95;
-	Thu,  5 Sep 2024 06:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48A119258C;
+	Thu,  5 Sep 2024 06:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdg/jNFY"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4bNhaju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CCD1925AB;
-	Thu,  5 Sep 2024 06:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C6B1922C7;
+	Thu,  5 Sep 2024 06:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725519242; cv=none; b=rdnN7f7Nos4gOVyO3q5iz3H0P3CnBOcM7dxAORl18gjLI44yAT6XN0Mw0H5uLqJVtI677/LUdZtHGBCyFpugsioPiwzBniDQ18j1fzaC9q3rCpr64y8YlTGqEJtWeHArKPjbJUBSHlfNkMLmrR0u/BlRSAK5jHQopANUdApj37s=
+	t=1725519234; cv=none; b=NBmkM5iO31KOKrr4ysHK8YgKo4JooV69bEGx2ZbGwrOWDx40Rhru4TCJsFE3sQ3TYx6HwymaF709ssfHUoz7fp73L7b8A914mnq2FNhtx/YBLi30Rqfvem1z6r+QteRod3fRvvUwk4IHZxAbPWnhJQbzyyzy3kjNPLx2qbBUw/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725519242; c=relaxed/simple;
-	bh=mZRLfsoTsU7RqYQ4BVH0C6KZId6ilapJ4zMKhdniZvg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZKlfiLa27kSTfspzuG5aXHrwaNHc24vxAzBMfTbchAkWFSjbFv3s/ztWfUNpwCckh4D8oSXfmgRlyS9eRuOzXP6qdgq1Qmm3Kvp0zFzktQYzYX85T5vNXIJRa1NIBC9NGqqV7KndlDxju60aJedJ50fOF5ofqo59ANm0Fw3PZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdg/jNFY; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374c7d14191so792543f8f.0;
-        Wed, 04 Sep 2024 23:54:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725519239; x=1726124039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WCjj1MmwVfCqD13mxvraZ2zXL+q3ngdxrGAIeYR3F0g=;
-        b=cdg/jNFYVw/M7AwblonFdAVT4VECpP+242YoNYYQ7jZj1gjsG6O4DdQZTXGFnIwP4O
-         55gsUkLvX+qMw8Kdj/Eq/q+vBb13CM6bVjgF5CUVomIEFf11QNQ1gNSJD0oo5GXuIx0L
-         rhiHxp5g5lKENxnzmr1OBReD03QBZaHM7nHZL+nkprwQ431iGvz9unP9yxWN3QVcaRNI
-         k5aybipoW1do8tuN0kuUJ2xSiKq9DobJaKjEPJr3RQFrbpYmoVjFTFZ72uPVrEMkHv/v
-         fAiYMwbBZUcZzTQSlgoHvHeM7dG1NsmGvT31NPLq92Ico4HiD5A/DqeWZaWOT0Af2j+X
-         HhQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725519239; x=1726124039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WCjj1MmwVfCqD13mxvraZ2zXL+q3ngdxrGAIeYR3F0g=;
-        b=aatyUhDdjR//D2p+w0pq+kuT1nQ7Ic6qCQVjVBbpp9hair8+K76ecEqhQei+btUH4E
-         At9Xjg0rt9/qgUvzQurov1F46ssyyXcZ+m4YO6pJ+6h7wre9gt2hEMCmgjcOXSZ1jCln
-         QqvLy+JwoUY2gBieEfp5oxwRfxdhL0lpL6Pv99w+c97XI+Bv5SytguhUsRRw0eS2bADy
-         41L7FufX2wAlJgvEL2z+x3QQpBT/fFWzUgkIDhS3m1cmUyleUQjluwPxUnoNHJHOLuDL
-         qixph4f3lBnSorl10nP9VsX3Dt/pS8iBFYzzwygT/ebWw03vtXWgeDivDwT5/0QaHICA
-         2myQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVd3WycqaI6O/ZyMvUs/Q0GTXkDmErqQ6c1VoC9cP2XdpZ8UNJaFwQPS4SYWYNyFIeuhiTM2GLvDhJDaks=@vger.kernel.org, AJvYcCXjfBbjMWivlFXbdXQr0EumBjMlt028LmRnfUMgXao6T8RPZ9AA+QZNurPDUgG+LU9PG9qf1sjDOofi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjR/RwyElojECChnnozTL+G3Pk6M9iq2BtPD6UireogR+eWs6e
-	i9ZaY24AiC3NumKplu1g7AwukBM3phKJuv7sjJoY5FFmKbhrlkil4p2Z2Wzn
-X-Google-Smtp-Source: AGHT+IErccV2CysyHRgiNDDFiw4dBuj9LX2wPliTjWA6NMRCisM65fOVBshxyzcs0/IgTdNcQU1Yrw==
-X-Received: by 2002:a5d:440e:0:b0:374:cd15:c46c with SMTP id ffacd0b85a97d-3779a6129b6mr2562748f8f.15.1725519238869;
-        Wed, 04 Sep 2024 23:53:58 -0700 (PDT)
-Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb14bfsm18421552f8f.104.2024.09.04.23.53.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 23:53:58 -0700 (PDT)
-From: Parth Pancholi <parth105105@gmail.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Parth Pancholi <parth.pancholi@toradex.com>
-Subject: [PATCH v2] usb: typec: tcpci: support edge irq
-Date: Thu,  5 Sep 2024 08:53:28 +0200
-Message-Id: <20240905065328.7116-1-parth105105@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725519234; c=relaxed/simple;
+	bh=QqSHyyS9BmFPghapVTq0H/VJnW+c8y5zT1ZtiXkce/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZfKke9mlTbYb88DMaBcwO13rW62ZnbBUx2xRTnkSWZ/IotRAZptTseOizJI9BWe4HJiCgmzn9SsQjPu4RkLv6HhSGLCC52L71G9zDcrkRfuNTvYS5Z9x29vgR/hdpXWVKbPdaErbOxo3jiMrSCiCNEqxKB9MqpNg711C6uhW68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4bNhaju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F689C4CEC5;
+	Thu,  5 Sep 2024 06:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725519233;
+	bh=QqSHyyS9BmFPghapVTq0H/VJnW+c8y5zT1ZtiXkce/4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P4bNhajueIlGef934tV5eusLGWWB1iUDYJ51r1o9SDQwcy7fLw1JThRXX3xo6BbNM
+	 cioC882O0uSsoywaRspyLryBUGVWXzvrcQuKikoomcL4CDl2ZzOUmiyxomYtVrJIrD
+	 L9NaiZ4i52Ho98p/z/gTSTDFB9mJLZ9XR+JMjXnMR1zOncIOR5ajsrSB4SYTRhjwLi
+	 kHNcJ0F4pmw/WvszDM1RANbmGi2sz8T+Wm37gLg0wGI+PnE+uVFyj+7EHDe7PbS8Pz
+	 50IvE8F5oHx7xyfueO3GlX/mh+E+/O85iNU41s/p1ka337GHOw7uKQuX+N0+OOCVfW
+	 i/TrOO+hl1FtQ==
+Message-ID: <669fa971-05f2-43f2-8c7b-d9de68d8910f@kernel.org>
+Date: Thu, 5 Sep 2024 08:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <cover.1725444016.git.jan.kiszka@siemens.com>
+ <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+ <t2mqfu62xx5uztlintofp4pquv6jalzace6w5jpymyyarb2wmn@vvo23e4cmu57>
+ <4fd1d6e8-8a66-4eff-a995-5f947a4b707d@siemens.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4fd1d6e8-8a66-4eff-a995-5f947a4b707d@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+On 05/09/2024 08:40, Jan Kiszka wrote:
+> On 05.09.24 08:32, Krzysztof Kozlowski wrote:
+>> On Wed, Sep 04, 2024 at 12:00:11PM +0200, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+>>> to specific regions of host memory. Add the optional property
+>>> "memory-regions" to point to such regions of memory when PVU is used.
+>>>
+>>> Since the PVU deals with system physical addresses, utilizing the PVU
+>>> with PCIe devices also requires setting up the VMAP registers to map the
+>>> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+>>> mapped to the system physical address. Hence, describe the VMAP
+>>> registers which are optionally unless the PVU shall used for PCIe.
+>>>
+>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>> ---
+>>> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>>> CC: "Krzysztof Wilczyński" <kw@linux.com>
+>>> CC: Bjorn Helgaas <bhelgaas@google.com>
+>>> CC: linux-pci@vger.kernel.org
+>>> ---
+>>>  .../bindings/pci/ti,am65-pci-host.yaml        | 52 ++++++++++++++-----
+>>>  1 file changed, 40 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> index 0a9d10532cc8..d8182bad92de 100644
+>>> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> @@ -19,16 +19,6 @@ properties:
+>>>        - ti,am654-pcie-rc
+>>>        - ti,keystone-pcie
+>>>  
+>>> -  reg:
+>>> -    maxItems: 4
+>>> -
+>>> -  reg-names:
+>>> -    items:
+>>> -      - const: app
+>>> -      - const: dbics
+>>> -      - const: config
+>>> -      - const: atu
+>>
+>>
+>> Nothing improved here.
+> 
+> Yes, explained the background to you. Sorry, if you do not address my
+> replies, I'm lost with your feedback.
 
-TCPCI USB PHY - PTN5110 could be used with SOCs that only support
-the edge-triggered GPIO interrupts such as TI's K3 device AM69.
-Move the interrupt configuration to the firmware which would
-allow to accommodate edge triggered interrupts for such SOCs.
-In order to support the edge interrupts, register irq line in advance
-and keep track of occurrence during port registering.
+My magic ball could not figure out the problem, so did not provide the
+answer.
 
-When the edge interrupts are used, it is observed that some of the
-interrupts are missed when tcpci_irq() is serving the current
-interrupt. Therefore, check the status register at the end of
-tcpci_irq() and re-run the function if the status is not clear
-i.e. pending interrupt.
+I gave you the exact code which illustrates how to do it. If you do it
+that way: it works. If you do it other way: it might not work. However
+without seeing anything, magic ball was silent, so I am not
+participating in game: would you be so kind to give more information so
+I won't waste my day in asking what is wrong.
 
-Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
----
-v2: Re-enable irq irrespective of tcpci_register_port() return status which was disabled before this call
----
- drivers/usb/typec/tcpm/tcpci.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-index a2651a2a7f2e..ed32583829be 100644
---- a/drivers/usb/typec/tcpm/tcpci.c
-+++ b/drivers/usb/typec/tcpm/tcpci.c
-@@ -707,10 +707,13 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
- {
- 	u16 status;
- 	int ret;
-+	int irq_ret;
- 	unsigned int raw;
- 
- 	tcpci_read16(tcpci, TCPC_ALERT, &status);
-+	irq_ret = status & tcpci->alert_mask;
- 
-+process_status:
- 	/*
- 	 * Clear alert status for everything except RX_STATUS, which shouldn't
- 	 * be cleared until we have successfully retrieved message.
-@@ -783,7 +786,12 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
- 	else if (status & TCPC_ALERT_TX_FAILED)
- 		tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
- 
--	return IRQ_RETVAL(status & tcpci->alert_mask);
-+	tcpci_read16(tcpci, TCPC_ALERT, &status);
-+
-+	if (status & tcpci->alert_mask)
-+		goto process_status;
-+
-+	return IRQ_RETVAL(irq_ret);
- }
- EXPORT_SYMBOL_GPL(tcpci_irq);
- 
-@@ -915,20 +923,22 @@ static int tcpci_probe(struct i2c_client *client)
- 
- 	chip->data.set_orientation = err;
- 
--	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
--	if (IS_ERR(chip->tcpci))
--		return PTR_ERR(chip->tcpci);
--
- 	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
- 					_tcpci_irq,
--					IRQF_SHARED | IRQF_ONESHOT | IRQF_TRIGGER_LOW,
-+					IRQF_SHARED | IRQF_ONESHOT,
- 					dev_name(&client->dev), chip);
--	if (err < 0) {
--		tcpci_unregister_port(chip->tcpci);
-+	if (err < 0)
- 		return err;
--	}
- 
--	return 0;
-+	/*
-+	 * Disable irq while registering port. If irq is configured as an edge
-+	 * irq this allow to keep track and process the irq as soon as it is enabled.
-+	 */
-+	disable_irq(client->irq);
-+	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
-+	enable_irq(client->irq);
-+
-+	return PTR_ERR_OR_ZERO(chip->tcpci);
- }
- 
- static void tcpci_remove(struct i2c_client *client)
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
