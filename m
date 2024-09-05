@@ -1,173 +1,84 @@
-Return-Path: <linux-kernel+bounces-317306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B0096DC24
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C482C96DC26
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0541C22485
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:41:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E6828A051
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208E1991A1;
-	Thu,  5 Sep 2024 14:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A2719DF7D;
+	Thu,  5 Sep 2024 14:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctAAP0P5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vwl/aVMT"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10CADF59;
-	Thu,  5 Sep 2024 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133DDD528
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725547202; cv=none; b=Qxu4FekcxJWPFuJMIvcVn57TzZTRAe+CJdw4Ug8BhABWCTR0slRdKtKUzPe7hWWS2m/x0VuUlekZFmHqklX0YIkjPwCgFZCdImM0R6BGPZmzujUqPlroBF0AxxEpv0WxS8eNYTMm3mkFCAIYxRqdum33zNzqHvnXWSIAnIFMUWk=
+	t=1725547212; cv=none; b=SJFBeP1zaT+5rHfSjQ60Ri8pg5UavBzvZExba9uJ4ZnCO7SbuFtmiWszvd/AsEQZDJnZRDaYfKoDJKUu5vBfLhkIP4m7oiiBb+tMR77HcC19oOqh9rrtcwCsB0JZ6XuxWCstcSR7dcacl604O7S0SOoXjpoFyMtvxcD9dSsKbHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725547202; c=relaxed/simple;
-	bh=ScsJ/sSZ8TsQkwyMo0M+FcEpfaUH5Q9oQFniQdLjNuc=;
+	s=arc-20240116; t=1725547212; c=relaxed/simple;
+	bh=9Qpz9IgPPPuZRjHfAi+JxFCA4a87umQJexHCAJwAffY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MRQ1vPzfVfxy8OWnqaea6lOFkrHgNUq+dD/i70Ntp8CWfEWp29gxYqqtuOvRm6Wv/lSSN2t/Gu0Ip6xx9G/pM7NePt5zgNu2PoCSxs69Qy5qWwz8IGEVRbi4lxzUGRSXrAr9UaKaIKTET2Wr5ccUVvBLpeaL42AuEhdmDtV4fps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctAAP0P5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60885C4CEC5;
-	Thu,  5 Sep 2024 14:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725547201;
-	bh=ScsJ/sSZ8TsQkwyMo0M+FcEpfaUH5Q9oQFniQdLjNuc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ctAAP0P5WPKg/SbrRbi13HN6rk8EOQS69N3Kw+76EslOsW7St7WHCBMHYbCheO5vS
-	 DCl+WnLDw09kynRiJDilAYWKPMl+Zjt51i2b8aH9ciMdTR0uL1mZbeGn59t7Q9THF2
-	 XGNQtoZgAF5a6dFHr8gWk1fkEwMatLspkatSelaVXI4xtubrFW7Ojy+PfL7Dk0A07j
-	 CPp+sPMq/uX2VEeVeucK8HWl+2HypEDlRPi8jDSlWCuH0M9YSNbWHvUjGlJwgDnu1G
-	 ZXOFhu3e9zikRTW/Aopgjv1dagPA46W6k4qHvXA8IEmGHpwabq/QnUWm4FxOqvviR1
-	 DXeGn0m2lFkoQ==
-Message-ID: <b1ad1c7a-0995-48e0-8ebc-46a39a5ef4b3@kernel.org>
-Date: Thu, 5 Sep 2024 16:39:50 +0200
+	 In-Reply-To:Content-Type; b=nwiwAjqdHoUgkvJODhRUhgH4tME0CN9Y7Jcvvsvsy/IcU5tX4J+EETwi69W3xngVIhNB7cbkuXi0EdJK28nqdiF5rpWU/k2mHoOe98i1ACnuxJYTfdM7zcQZ6G0SOCW7jZ/oZ6XOp1xNW14FYvZvJ0+6VDx0P1xCh2SI98BFMT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vwl/aVMT; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <096b8143-c6e5-4d64-9097-68d19ed514f3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725547209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rUB20QZ7/mXv4Zpypxa4c5I9430cCHuxhn0oS5odMik=;
+	b=vwl/aVMTlh2nw8sihlGN7W72bvHentKRdPP5Hou1LTLFeKNUW6CVfOsqrLJ8kg5INuTHL4
+	/z5FU7zZbJm9MHUeNtrePa8NRaRbBZPnIOSK519j2JhGkOPcQkqqcS4FhNJrZiZ+E6czf6
+	P1WplOKIp5JoOtejC7an/VSfmiq/khw=
+Date: Thu, 5 Sep 2024 10:40:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-To: Nikunj Kela <quic_nkela@quicinc.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
- will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
- cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com,
- Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-17-quic_nkela@quicinc.com>
- <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
- <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
- <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
- <516f17e6-b4b4-4f88-a39f-cc47a507716a@quicinc.com>
- <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
- <204f5cfe-d1ed-40dc-9175-d45f72395361@quicinc.com>
- <70c75241-b6f1-4e61-8451-26839ec71317@kernel.org>
- <75768451-4c85-41fa-82b0-8847a118ea0a@quicinc.com>
- <ce4d6ea9-0ba7-4587-b4a7-3dcb2d6bb1a6@kernel.org>
- <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net] net: xilinx: axienet: Fix packet counting
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Michal Simek <michal.simek@amd.com>, Andy Chiu <andy.chiu@sifive.com>,
+ Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org
+References: <20240903175619.4133633-1-sean.anderson@linux.dev>
+ <20240904170917.29692bcb@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240904170917.29692bcb@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 05/09/2024 16:15, Nikunj Kela wrote:
+On 9/4/24 20:09, Jakub Kicinski wrote:
+> On Tue,  3 Sep 2024 13:56:19 -0400 Sean Anderson wrote:
+>> axienet_free_tx_chain returns the number of DMA descriptors it's
+>> handled. However, axienet_tx_poll treats the return as the number of
+>> packets. When scatter-gather SKBs are enabled, a single packet may use
+>> multiple DMA descriptors, which causes incorrect packet counts. Fix this
+>> by explicitly keepting track of the number of packets processed as
+>> separate from the DMA descriptors.
 > 
-> On 9/5/2024 7:09 AM, Krzysztof Kozlowski wrote:
->> On 05/09/2024 16:03, Nikunj Kela wrote:
->>> On 9/5/2024 1:04 AM, Krzysztof Kozlowski wrote:
->>>> On 04/09/2024 23:06, Nikunj Kela wrote:
->>>>> On 9/4/2024 9:58 AM, Andrew Lunn wrote:
->>>>>>> Sorry, didn't realize SPI uses different subject format than other
->>>>>>> subsystems. Will fix in v3. Thanks
->>>>>> Each subsystem is free to use its own form. e.g for netdev you will
->>>>>> want the prefix [PATCH net-next v42] net: stmmac: dwmac-qcom-ethqos:
->>>>> of course they are! No one is disputing that.
->>>>>> This is another reason why you should be splitting these patches per
->>>>>> subsystem, and submitting both the DT bindings and the code changes as
->>>>>> a two patch patchset. You can then learn how each subsystem names its
->>>>>> patches.
->>>>> Qualcomm QUPs chips have serial engines that can be configured as
->>>>> UART/I2C/SPI so QUPs changes require to be pushed in one series for all
->>>>> 3 subsystems as they all are dependent.
->>>> No, they are not dependent. They have never been. Look how all other
->>>> upstreaming process worked in the past.
->>> Top level QUP node(patch#18) includes i2c,spi,uart nodes.
->>> soc/qcom/qcom,geni-se.yaml validate those subnodes against respective
->>> yaml. The example that is added in YAML file for QUP node will not find
->>> sa8255p compatibles if all 4 yaml(qup, i2c, spi, serial nodes) are not
->>> included in the same series.
->>>
->> So where is the dependency? I don't see it. 
-> 
-> Ok, what is your suggestion on dt-schema check failure in that case as I
-> mentioned above? Shall we remove examples from yaml that we added?
+> budget doubles up as a "are we really in NAPI" flag.
+> You can't pass non-zero budget to napi_consume_skb() if not in NAPI.
 
-I don't understand what sort of failure you want to fix and why examples
-have any problem here. I said it multiple times already but I think you
-never confirmed. Do you understand how patches are merged? That they go
-via different trees but everything must be 100% bisectable?
+Hm, maybe I should just determine this all from the "force" flag then.
 
-Best regards,
-Krzysztof
-
+--Sean
 
