@@ -1,223 +1,152 @@
-Return-Path: <linux-kernel+bounces-317254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825B196DB8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5414296DB91
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5B628B40C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E771F20222
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49719E7F6;
-	Thu,  5 Sep 2024 14:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96B219F110;
+	Thu,  5 Sep 2024 14:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFlSoz8r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8o6q1Ai"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F712FC0A;
-	Thu,  5 Sep 2024 14:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E5D19EED4;
+	Thu,  5 Sep 2024 14:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545845; cv=none; b=tJJLkgLyLpLO+OFLIShffs/u95gnNcjqA89ukedIUb8eRbi2rQ6YckKl+LGnri6h99StPYBt0jt+VNs2971iZd26Hc9yYKMEU0L+n80+rMOxuTt2gVVVBD/lGWFo7ZNJvfXXZPOERbMwrYl2M/BZGwPg/2r0mAur5uke96m1ZXg=
+	t=1725545864; cv=none; b=UPG2z/f/lFu469flh0DNrzTOlB6w9J8fkK5rxhBWbwNluOI5Ir8mQ5UMKam+xxoNzk1KW0ppTooG14AMBj10s8L1Uu+kYkBt2gvqwXoufIDbneTfzeBmxJD+XZidwAZFcOxMvgedrWibn3kMmCNE0pYOYsNknuFX3jTYLhrO1+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545845; c=relaxed/simple;
-	bh=VAsU1NPVx46+oHGO/6plAI5dIfBi0YcOt0DaaDbKjLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qpcI8brAgetiBJ9ER35l+Wkb1Cs6QC91PDLFK3YSigr0y5tU5kKI16dC58mQNec8KH6rD7uuEQpe/jf+SfEe9a12YJySHSgZCYjCGJyfrRnJgXQn6nmPZU+vaI+rlbTu9vAP7qSJlOyvVHGdouJNio3voUHNlmjebmTMuLp0aVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFlSoz8r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8CEC4CEC5;
-	Thu,  5 Sep 2024 14:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725545845;
-	bh=VAsU1NPVx46+oHGO/6plAI5dIfBi0YcOt0DaaDbKjLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dFlSoz8rkTTbo6bRypczPyDGNTAdcHGaNe4+ud1iEdvPScL5zsY6gXuQwI6CvpKrf
-	 kb4ihMVDldhscSSsfHbmhoH/PWpMTKph+bqm6rpV5JhbXLyJsaKdgKQ2SY6GOkOv+V
-	 jbhcXI0cJlzZlU930yYV0HyVmXnTQgBECu8rdgv1h1q1pENqG3MNrEk6YDvB8mzSOM
-	 o6wcO2ZrgYztEMzYZbC5na7z7I4/F+VeCGjxgN9Li2p7NzDtlgOZ5M1rr5RGK94SKB
-	 l2ETcB3SXFO01fzOF5U6dc9ITgDjmzWK9zC6yK8p1DOG30XqDsBBbrvDE4t9gCYr5F
-	 kHF1NRLmB71LA==
-Date: Thu, 5 Sep 2024 09:17:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	Dinh Nguyen <dinguyen@kernel.org>
-Subject: Re: [PATCH 04/15] kbuild: add generic support for built-in boot DTBs
-Message-ID: <20240905141723.GC1517132-robh@kernel.org>
-References: <20240904234803.698424-1-masahiroy@kernel.org>
- <20240904234803.698424-5-masahiroy@kernel.org>
+	s=arc-20240116; t=1725545864; c=relaxed/simple;
+	bh=h8zZ7hfh2rSqS2KNTIJtngjH3e5wPWm2Rh5d/8YY/1U=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=JxPoSabdv6Ji4AKOaNH9iBt3sZVZbXm9GHlzTFQuxBKctra9CdsqibjMDfmE3hzIFszKul17gQpz2IvO3pKjbvaoV4miQg/bm5I0EwFzdD3a6lKCZaENw7Z4mOGObxL9sS7Sy79VBdUI04nHiAuEdHSjp+ijLDoiRFJjsvG5M6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8o6q1Ai; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fee6435a34so8313565ad.0;
+        Thu, 05 Sep 2024 07:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725545862; x=1726150662; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h8zZ7hfh2rSqS2KNTIJtngjH3e5wPWm2Rh5d/8YY/1U=;
+        b=H8o6q1AilXYRVmmp98QGZE8SuujCkF7td6y97DtJKKTe9w3xtC+QR83i1WW09XiNo7
+         QBKWY2lLjNCkqA6aMEKCK8JFcUs20mksQDNi8yJsiSzdVj9wsF2gluh/hL3c9HQuf3VA
+         LRfvHo2A3DPvFlzFyK0zc0hHWh9CZGfWenaaMCGZ59DLsRo30tNly2pB05Qes78uBPZo
+         V2IDrMXIQLJIqgtMVDG2wxSX8plX6x0WcK5VPJsOEhgiLbT7s+cfRQ0Q2dQxo3KF4zXt
+         sSp0UzjpEhFA0v2pBOW/u2+dvHxohk1ie9nR32OBIXUotLKFgyslLsV18jqgxOtLsVBS
+         Am1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725545862; x=1726150662;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h8zZ7hfh2rSqS2KNTIJtngjH3e5wPWm2Rh5d/8YY/1U=;
+        b=ry3ZqkfpwPmrk4ChzE6NEjBZmk4K2bU9Ghb3lM7GWXIZYhlnJaGcB4L+zeMTKJxT2j
+         9Zn9ImX/AFl0lnbTwlLl8aKS4oxaA6xx7ZjBx5xs+6TP8YfVOwye9ULMKTK/04EDdILu
+         KXURB7I3SYnsERmSrY/BqlC71TXA9ZEkcpJ+xeo9qzrZSMDmbsFN1Ry8BCbvz86ITFoK
+         dAxx/z7LnC2BCtLo0GcyftbsEb6Frs/7Qf4rX+z9afZ7mPVYaAi8741dXsx/NrpVZr90
+         SK8lHfjinVW8r15kUieCPefUVOhi9th9+TpW8cg3MkOgP3KwVUoOvCLAtVzGjAzxfsfL
+         f3vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ9mxf4PndRkvoFFUDSt/ftKSh1xcYJJOWw1ZV3rrd8BRzR+0ahcLKK8nF64V+tx1lCax7fopWMgPVKEk=@vger.kernel.org, AJvYcCV6mBA4R+8sEfzlLLPEFKe1iwGrffx1zqcI0twZUfFoitFc3L7p9a/HYQA4FQxJE9jMvBpSBEP9HFVuuTC4Bg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ITo3af4NJm0MchI/bCVJmbEps0Afh8D6JNfKfF8HJ3N9YeR5
+	Adu6NeKWOH2cR3TO+6ZL2MaeG0Td9bUaNUloWrrrEI4RV99Nr2tY
+X-Google-Smtp-Source: AGHT+IFKnQTIIWx7RGO9WFKBUE+9gSzHiEQBgbPGNsfc255oRzzvwwvzbs8bxN2YycHoN5Gt+sVqng==
+X-Received: by 2002:a17:902:f693:b0:205:7b04:ddf2 with SMTP id d9443c01a7336-20699af10b2mr96356295ad.29.1725545861915;
+        Thu, 05 Sep 2024 07:17:41 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.178.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206bbc91323sm25023615ad.272.2024.09.05.07.17.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Sep 2024 07:17:41 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904234803.698424-5-masahiroy@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
+Date: Thu, 5 Sep 2024 22:17:26 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FF185094-10E0-4898-96C4-184F96D5B56C@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
+To: Miroslav Benes <mbenes@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Thu, Sep 05, 2024 at 08:47:40AM +0900, Masahiro Yamada wrote:
-> Some architectures embed boot DTBs in vmlinux. A potential issue for
-> these architectures is a race condition during parallel builds because
-> Kbuild descends into arch/*/boot/dts/ twice.
-> 
-> One build thread is initiated by the 'dtbs' target, which is a
-> prerequisite of the 'all' target in the top-level Makefile:
-> 
->   ifdef CONFIG_OF_EARLY_FLATTREE
->   all: dtbs
->   endif
-> 
-> For architectures that support the embedded boot dtb, arch/*/boot/dts/
-> is visited also during the ordinary directory traversal in order to
-> build obj-y objects that wrap DTBs.
-> 
-> Since these build threads are unaware of each other, they can run
-> simultaneously during parallel builds.
-> 
-> This commit introduces a generic build rule to scripts/Makefile.vmlinux
-> to support embedded boot DTBs in a race-free way. Architectures that
-> want to use this rule need to select CONFIG_GENERIC_BUILTIN_DTB.
-> 
-> After the migration, Makefiles under arch/*/boot/dts/ will be visited
-> only once to build only *.dtb files.
-> 
-> This change also aims to unify the CONFIG options used for embedded DTBs
-> support. Currently, different architectures use different CONFIG options
-> for the same purposes.
-> 
-> The CONFIG options are unified as follows:
-> 
->  - CONFIG_GENERIC_BUILTIN_DTB
-> 
->    This enables the generic rule for embedded boot DTBs. This will be
->    renamed to CONFIG_BUILTIN_DTB after all architectures migrate to the
->    generic rule.
-> 
->  - CONFIG_BUILTIN_DTB_NAME
-> 
->    This specifies the path to the embedded DTB.
->    (relative to arch/*/boot/dts/)
-> 
->  - CONFIG_BUILTIN_DTB_ALL
-> 
->    If this is enabled, all DTB files compiled under arch/*/boot/dts/ are
->    embedded into vmlinux. Only used by MIPS.
 
-I started to do this a long time ago, but then decided we didn't want to 
-encourage this feature. IMO it should only be for legacy bootloaders or 
-development/debug. And really, appended DTB is more flexible for the 
-legacy bootloader case.
+Hi Miroslav,
+>=20
+>=20
+> I am not a fan. Josh wrote most of my objections already so I will not=20=
 
-In hindsight, a common config would have been easier to limit new 
-arches...
+> repeat them. I understand that the attribute might be useful but the=20=
 
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  Makefile                 |  7 ++++++-
->  drivers/of/Kconfig       |  6 ++++++
->  scripts/Makefile.vmlinux | 44 ++++++++++++++++++++++++++++++++++++++++
->  scripts/link-vmlinux.sh  |  4 ++++
->  4 files changed, 60 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 145112bf281a..1c765c12ab9e 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1417,6 +1417,10 @@ ifdef CONFIG_OF_EARLY_FLATTREE
->  all: dtbs
->  endif
->  
-> +ifdef CONFIG_GENERIC_BUILTIN_DTB
-> +vmlinux: dtbs
-> +endif
-> +
->  endif
->  
->  PHONY += scripts_dtc
-> @@ -1483,7 +1487,8 @@ endif # CONFIG_MODULES
->  CLEAN_FILES += vmlinux.symvers modules-only.symvers \
->  	       modules.builtin modules.builtin.modinfo modules.nsdeps \
->  	       compile_commands.json rust/test \
-> -	       rust-project.json .vmlinux.objs .vmlinux.export.c
-> +	       rust-project.json .vmlinux.objs .vmlinux.export.c \
-> +               .builtin-dtbs-list .builtin-dtb.S
->  
->  # Directories & files removed with 'make mrproper'
->  MRPROPER_FILES += include/config include/generated          \
-> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-> index dd726c7056bf..5142e7d7fef8 100644
-> --- a/drivers/of/Kconfig
-> +++ b/drivers/of/Kconfig
-> @@ -2,6 +2,12 @@
->  config DTC
->  	bool
->  
-> +config GENERIC_BUILTIN_DTB
-> +	bool
+> amount of code it adds to sensitive functions like=20
+> klp_complete_transition() is no fun.
+>=20
+OK, the point I make changes to klp_complete_transition is that when a =
+transition is going to be complete, we can make sure the function state =
+can go to an end state (0 or 1), which is the most easy way to do =
+so...lol...
 
-So that we don't add new architectures to this, I would like something 
-like:
+> Would it be possible to just use klp_transition_patch and implement =
+the=20
+> logic just in using_show()? I have not thought through it completely =
+but=20
+> klp_transition_patch is also an indicator that there is a transition =
+going=20
+> on. It is set to NULL only after all func->transition are false. So if =
+you=20
+> check that, you can assign -1 in using_show() immediately and then =
+just=20
+> look at the top of func_stack.
+>=20
 
-# Do not add new architectures to this list
-depends on MIPS || RISCV || MICROBLAZE ...
+I will consider it later. If you have any suggestions or other =
+solutions, please let me know.
 
-Yes, it's kind of odd since the arch selects the option...
+> If possible (and there are corner cases everywhere. Just take a look =
+at=20
+> barriers in all those functions.) and the resulting code is much =
+simpler,=20
+> we might take it. But otherwise this should really be solved in =
+userspace=20
+> using some live patch management tool as Josh said. I mean generally=20=
 
-For sure, we don't want this option on arm64. For that, I can rely on 
-Will and Catalin rejecting a select, but on some new arch I can't.
+> because you have much more serious problems without it.
+>=20
 
-> +
-> +config BUILTIN_DTB_ALL
-> +	bool
+I replied to Josh to explain my reason of not using user space tools to =
+maintain livepatch information. Of cause, I put my patch here and tell =
+you the problem I am facing, maybe there some people may face the same =
+problem as me...hah...
 
-Can this be limited to MIPS?
+We can discuss it, if you have a better idea for that patch, please fell =
+free to tell me.
 
-> +
->  menuconfig OF
->  	bool "Device Tree and Open Firmware support"
->  	help
-> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> index 5ceecbed31eb..4626b472da49 100644
-> --- a/scripts/Makefile.vmlinux
-> +++ b/scripts/Makefile.vmlinux
-> @@ -17,6 +17,50 @@ quiet_cmd_cc_o_c = CC      $@
->  %.o: %.c FORCE
->  	$(call if_changed_dep,cc_o_c)
->  
-> +quiet_cmd_as_o_S = AS      $@
-> +      cmd_as_o_S = $(CC) $(a_flags) -c -o $@ $<
-> +
-> +%.o: %.S FORCE
-> +	$(call if_changed_dep,as_o_S)
-> +
-> +# Built-in dtb
-> +# ---------------------------------------------------------------------------
-> +
-> +quiet_cmd_wrap_dtbs = WRAP    $@
-> +      cmd_wrap_dtbs = {							\
-> +	echo '\#include <asm-generic/vmlinux.lds.h>';			\
-> +	echo '.section .dtb.init.rodata,"a"';				\
-> +	while read dtb; do						\
-> +		symbase=__dtb_$$(basename -s .dtb "$${dtb}" | tr - _);	\
-> +		echo '.balign STRUCT_ALIGNMENT';			\
+Also, I forgot to sign at the end of the email I sent Josh, I'm sorry...
 
-Is this always guaranteed to be at least 8 bytes? That's the required 
-alignment for dtbs and assumed by libfdt.
+Thanks.
+Wardenjohn.
 
-> +		echo ".global $${symbase}_begin";			\
-> +		echo "$${symbase}_begin:";				\
-> +		echo '.incbin "'$$dtb'" ';				\
-> +		echo ".global $${symbase}_end";				\
-> +		echo "$${symbase}_end:";				\
-> +	done < $<;							\
-> +	} > $@
 
