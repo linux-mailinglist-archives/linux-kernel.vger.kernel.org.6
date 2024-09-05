@@ -1,87 +1,140 @@
-Return-Path: <linux-kernel+bounces-316715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765BD96D307
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:23:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E6296D309
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96961C22F4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:23:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6C61F24DCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB67B19755A;
-	Thu,  5 Sep 2024 09:22:59 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1665192B94
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E3919580A;
+	Thu,  5 Sep 2024 09:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BkwxLa2W";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mc/5r8qk"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DFF192B94
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528179; cv=none; b=UZfuOlfV6TpprZnWqlrNDGXxH/Yc1yaobCm8rh+Jxc9XpXvQfP6hnJ9cvG3LCnaJn6FXqz2yeBbrpvEJwuhnSaZDm43B+ZI6RMDDzj0KCBmr++jZYyE+ZYmasL3l4PjAI/iHUjIyrA8ohR5twavlipQNfb/P5uQP3D8BvxAtsOI=
+	t=1725528216; cv=none; b=RJRBXu7UbZHAbuU0BtlCMIZCJo6VbqKYGiJvhlHs3RR+qlHLwMQEt3A0NDt2KQtnoFJiMpI52hPpbOkO6hZdDcpyQOXL8YN3Dumr4KIK46TrFtb30d/UX0mBXp9Gm6u+JWUxVnlbG7DqA5P3IGTAhYXV+v7Gc8sCjVrawoDYaZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528179; c=relaxed/simple;
-	bh=N4iC40EzEPc13bQ576OAMKyjKURS6QAGYI+Q/cUFnok=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=s303dZZIS6jorsccoELEI/FSD8HQNK+x/09rlJDyAV8I4rUbxQhArbNplpOlQqXTxri1us7m2bC7JgLLHR0XsJl3Lt/PUpIJTP+G7m1QoWpAvktVk0RYGxAj6bp/AMQkxR4gG98G/aREHRR9Zv/76B8q1Um19cwtKtZdFrnTcHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 5F88392009C; Thu,  5 Sep 2024 11:22:49 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 58DAA92009B;
-	Thu,  5 Sep 2024 10:22:49 +0100 (BST)
-Date: Thu, 5 Sep 2024 10:22:49 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: kernel test robot <lkp@intel.com>
-cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, oe-kbuild-all@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: Re: error: ABI 'o32' is not supported on CPU 'mips64'
-In-Reply-To: <202408310705.y2OPq3Xs-lkp@intel.com>
-Message-ID: <alpine.DEB.2.21.2409051011570.1802@angie.orcam.me.uk>
-References: <202408310705.y2OPq3Xs-lkp@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1725528216; c=relaxed/simple;
+	bh=wzoRBG1p6hUEbyngwLEFQbkeO/qVa0XWEzA3ZW6L6z8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=cvIMpW9Qgp6/l4An4MCCeM7qvjDFpZSxB8RLTVYnqgBpfhIvpg99HQGkP4z0EHld9bAgcUIRq01v88OCWRRtPojqKQH/NBLRhvcMgsRG15nQ669EnqCe5lbTJpPcO+sSIZ1MxfyT8ui/AHj8anH0KT+GZCkTP0cwuvXAFN7H5oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BkwxLa2W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mc/5r8qk; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 75D99114012C;
+	Thu,  5 Sep 2024 05:23:32 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Thu, 05 Sep 2024 05:23:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725528212;
+	 x=1725614612; bh=/kd72puemH7HG5k90wuxIWlVONqVTbIySxjDZBLyORg=; b=
+	BkwxLa2WEoy8SOhL4ZQfEBGnMx9iUu4JMtVeQtWn8xwCPMDarpkqPPLbGHlxCuId
+	v0Sh0g3opi/cbrUcFgD8lentdBESbNyTZjLAEsoj7qJ6JVaHKikyuOo0f7ceOpca
+	XvwOqM/C1iNrdz5b0w58Jwo0jifr6UtKmRuVMpB1AGleMf8eC2MkpCNS0URKTLFQ
+	oCaRr+r1egywwKu9crfzlMtE5ki+iW/a4yx9cZdk60A1E+WzOPWuaIDARChrOtgz
+	/NZLHcWuAdLnv/IKukNseXfhiVCs52Rk+BYxwuDa0zIirzPW+H4xfMNxxrZzEks1
+	+2kYyknF70Tnn/uhAslWBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725528212; x=
+	1725614612; bh=/kd72puemH7HG5k90wuxIWlVONqVTbIySxjDZBLyORg=; b=m
+	c/5r8qk0GYWh2cw3TsbKB3aNZIXLr8CTLhciWmeQNmT0jvyYD8Wxm8tToAU4OR9H
+	06s5dLq3S3826SHP8k53hfasyJLnHdFFZ+akMJ/ngg7bGcpuaNqH7W5HgOGmvoE4
+	Z6OvYCoukTgaiDWeA7ZUi1mXMusqXSREpwIwT2h1Pg93KKWqPWOhyUj9i05Ps3s2
+	tHGEI7ZaaWI0ccJnILAEW18kPSSkHsMOksWMnp5C3lfE+Y/1RUbTGAAD3NmdkgYP
+	T08qFnPDq7lJmwlplrRmkpcMe8xj1e1ob0OLwpq5KPwtythqcxOtRzylsx5p5U4K
+	u1ivnMlQgNWYvgnCixvXA==
+X-ME-Sender: <xms:lHjZZlQQ2Qw3yVmlRqsbAFDjpai9VPp69EbjE71ej2RDlSQapf0pGg>
+    <xme:lHjZZuyHfapqOLfVsJkivhV8EB6ik-GlVcrqSeoSaowd6IEB6oAKO7xzqe3L2ycz6
+    Z9-QT78PIbG8aS9c3E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepkedvuefhiedtueeijeevtdeiieejfeelvefffeel
+    keeiteejffdvkefgteeuhffgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
+    nhgusgdruggvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprhgtphhtthho
+    pehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtth
+    hopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthht
+    oheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvg
+    hrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhn
+    uhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtohepqh
+    hirghnghdriihhrghosehngihprdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:lHjZZq0_gUxdYs52_lYFfs3Gcxe_laL-EPCwRgcl5860KAfu4aUH8g>
+    <xmx:lHjZZtD2nLCV2YRN4VsCWKoFP28K-xSwNB1y5UG9WINURKSJo5OySA>
+    <xmx:lHjZZui6l1yvfHJMIJpoeezgW0M48_GP4OGXTmsByBywf97izulwBw>
+    <xmx:lHjZZhqhTb3ztlLlAaU5MQciyiTve5aBAPO2hIR1dDi8M7J60cY-nQ>
+    <xmx:lHjZZijlSE6Ptrs17NVCvIjDgdPUK0t3wyiXfewthpeyB9d73kfRJNpq>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2A2312220071; Thu,  5 Sep 2024 05:23:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 05 Sep 2024 09:23:10 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Herve Codina" <herve.codina@bootlin.com>, "Qiang Zhao" <qiang.zhao@nxp.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ "kernel test robot" <lkp@intel.com>
+Message-Id: <24dd3479-6fef-43ec-bcec-e70474128e53@app.fastmail.com>
+In-Reply-To: <7091c023-c7e6-4b3a-b306-12d73b8f6698@csgroup.eu>
+References: <20240905072215.337010-1-herve.codina@bootlin.com>
+ <7091c023-c7e6-4b3a-b306-12d73b8f6698@csgroup.eu>
+Subject: Re: [PATCH] soc: fsl: qe: ucc: Export ucc_mux_set_grant_tsa_bkpt
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 31 Aug 2024, kernel test robot wrote:
+On Thu, Sep 5, 2024, at 07:31, Christophe Leroy wrote:
+> Le 05/09/2024 =C3=A0 09:22, Herve Codina a =C3=A9crit=C2=A0:
+>> When TSA is compiled as module the following error is reported:
+>>    "ucc_mux_set_grant_tsa_bkpt" [drivers/soc/fsl/qe/tsa.ko] undefined!
+>>=20
+>> Indeed, the ucc_mux_set_grant_tsa_bkpt symbol is not exported.
+>>=20
+>> Simply export ucc_mux_set_grant_tsa_bkpt.
+>>=20
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202409051409.fszn8rEo-l=
+kp@intel.com/
+>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+>
+> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>
+> Arnd, it is ok for you to take this patch directly ?
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   fb24560f31f9dff2c97707cfed6029bfebebaf1c
-> commit: 2326c8f2022636a1e47402ffd09a3b28f737275f MIPS: Fix fallback march for SB1
-> date:   7 weeks ago
-> config: mips-randconfig-r121-20240830 (https://download.01.org/0day-ci/archive/20240831/202408310705.y2OPq3Xs-lkp@intel.com/config)
-> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-> reproduce: (https://download.01.org/0day-ci/archive/20240831/202408310705.y2OPq3Xs-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408310705.y2OPq3Xs-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> error: ABI 'o32' is not supported on CPU 'mips64'
-> >> error: error: ABI 'o32' is not supported on CPU 'mips64'
->    ABI 'o32' is not supported on CPU 'mips64'
->    make[3]: *** [scripts/Makefile.build:117: scripts/mod/devicetable-offsets.s] Error 1
->    make[3]: *** [scripts/Makefile.build:244: scripts/mod/empty.o] Error 1
->    make[3]: Target 'scripts/mod/' not remade because of errors.
->    make[2]: *** [Makefile:1207: prepare0] Error 2
->    make[2]: Target 'prepare' not remade because of errors.
->    make[1]: *** [Makefile:240: __sub-make] Error 2
->    make[1]: Target 'prepare' not remade because of errors.
->    make: *** [Makefile:240: __sub-make] Error 2
->    make: Target 'prepare' not remade because of errors.
+I've applied this one directly, but I'm not always paying attention
+to patches flying by, so if you have more fixes like this in the future,
+I recommend that you forward those to soc@kernel.org, either as a patch
+or a pull request.
 
- This is a compiler bug.  The MIPS64 ISA does certainly support the o32 
-ABI, so they need to fix their "CPU 'mips64'" definition.
+That way, I see them in patchwork and will apply them from there.
 
-  Maciej
+      Arnd
 
