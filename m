@@ -1,199 +1,259 @@
-Return-Path: <linux-kernel+bounces-317132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A54096D9A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8212D96D9A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD17B1C22D3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A38F31C22C01
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5A319992C;
-	Thu,  5 Sep 2024 13:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="EdBfqLfJ"
-Received: from ci74p00im-qukt09090102.me.com (ci74p00im-qukt09090102.me.com [17.57.156.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8A5199240
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.156.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBC519AD71;
+	Thu,  5 Sep 2024 13:02:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04249198E84
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725541390; cv=none; b=JXT4l48pRCcI//S/CzwsO1rz9Y3Bb7VM6TFMo4guu3iE+dludz3Ssk/RfTwY+ZLf4SCQY0TFluKJrG7ceI4Ytv07K+1Yk83/TiStkBetteOUEMOTs6NOq02EhroitorM81/x4K73bK1k4h39bczcfC5CGEuAIKlvFrcYScuExBI=
+	t=1725541372; cv=none; b=XlZ0u+Y/68khhkevfbOyHsbGSd5QhCZmh0DABuY0lbe+7BpBQSCTswGZHKzqQMzQ7jGlVj3KMxBddZUcH+u+mQSa5eyP4JcoAOURDVVEvlj9NjO4luSnbng+ecIV8NuIOe9U/KuNSS9DpwzqMkPjdo6jgFF6c7n7WQYUbACfKHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725541390; c=relaxed/simple;
-	bh=Gy5mWK6LxwI/0NuTLhsqYHhodN9ViqHz2JElQa0aLvw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=stv7lpe1xG4Qx802bYtwG7qRRyEL3FJZ0kwnNEnngbNStJzM9DBGq0jhTtwGk/N8pCjQGlkc2ztypnoqVxQC8lsbQoe9tVCs83cp+Y1RCtMp5lpWEKCuUXBfSmxA16dJ5jVjdMsaiLpZiOdBNUn4WEdi1BEexLLpSIkGnYdbpqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=EdBfqLfJ; arc=none smtp.client-ip=17.57.156.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725541388;
-	bh=bnoOmXI6avdPPfQGkv4d4OEelImbpwyUa/01maOEGrM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=EdBfqLfJDL/kB4k/t/HptlQdVZBgOM3oGW1YVVvvLhgkxGhtj1REsdr0NRaSUAKXd
-	 GxWLulyMYM1q+Mtajp8WgNTczyJzBqG6OO7CYezoBg+OX4ELROWQIv6PkSu6epVwTa
-	 cunfnb4J8ArtJgVUpQoXj7mMfcYK91RR9s5spzMSC4H3PGcbkQUgseIpQabyrxuvlg
-	 +rQnNUPGsQxahFSo+EEPYTaUKmYHGjrBwn8oCmKfg9AbWQECNy9XHjbuCgNmkTM6it
-	 JT2X3ybQ9GNg0+qGoxmSZdZnNKr/+JMX+X83cmJz9ppY3g1f1/c3sKdgKdnL0uHL3f
-	 vfRt2RhJZHK3w==
-Received: from [192.168.1.26] (ci77p00im-dlb-asmtp-mailmevip.me.com [17.57.156.26])
-	by ci74p00im-qukt09090102.me.com (Postfix) with ESMTPSA id AFAE13C00487;
-	Thu,  5 Sep 2024 13:03:01 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 05 Sep 2024 21:02:27 +0800
-Subject: [PATCH v2] cxl/region: Fix bad logic for finding a free switch cxl
- decoder
+	s=arc-20240116; t=1725541372; c=relaxed/simple;
+	bh=yYZkt3edU0NNOuvBYF/n57PexRLn23QqcUY+uCNNhDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ea+ncHhgVe4wXdGW0mKNRZ857b6iISu/0OUKdA9Au9BQDa9r/kqgyrC4ZX72bFfEmbCFL4ze1E9tdc0pFVsBjaUlRh1RJ0pCaRsa37efHYqKfdhCqqqrayU2BY/iVTLSHuNwtCE/oGvklaaGPhCxc0qHCU/eYtI+Jd8bYswDR8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 127791063;
+	Thu,  5 Sep 2024 06:03:17 -0700 (PDT)
+Received: from [192.168.178.115] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A6353F73F;
+	Thu,  5 Sep 2024 06:02:48 -0700 (PDT)
+Message-ID: <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
+Date: Thu, 5 Sep 2024 15:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+To: Hongyan Xia <hongyan.xia2@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Luis Machado <luis.machado@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+ juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ kprateek.nayak@amd.com, wuyun.abel@bytedance.com, youssefesmat@chromium.org,
+ tglx@linutronix.de, efault@gmx.de
+References: <20240727102732.960974693@infradead.org>
+ <20240727105029.315205425@infradead.org>
+ <6f39e567-fd9a-4157-949d-7a9ccd9c3592@arm.com>
+ <CAKfTPtAS0eSqf5Qoq_rpQC7DbyyGX=GACsB7OPdhi8=HEciPUQ@mail.gmail.com>
+ <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com>
+ <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
+ <83a20d85-de7a-4fe6-8cd8-5a96d822eb6b@arm.com>
+ <629937b1-6f97-41d1-aa4f-7349c2ffa29d@arm.com>
+ <CAKfTPtBPK8ovttHDQjfuwve63PK_pNH4WMznEHWoXQ=2vGhKQQ@mail.gmail.com>
+ <CAKfTPtDO3n-4mcr2Sk-uu0ZS5xQnagdicQmaBh-CyrndPLM8eQ@mail.gmail.com>
+ <aa81d37e-ad9c-42c6-a104-fe8496c5d907@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <aa81d37e-ad9c-42c6-a104-fe8496c5d907@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-fix_cxld-v2-1-51a520a709e4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOKr2WYC/22MQQ7CIBBFr9LMWgxgS8WV9zCNwenUTqJUQUlNw
- 93Frl2+/1/eApECU4RDtUCgxJEnX0BvKsDR+SsJ7guDlrqWVu7EwPMZ51sv6sE0beOsNMpC0R+
- ByremTl3hkeNrCp+1nNRv/RNJSihhlMOLa5XdOzo+34zscYvTHbqc8xdaVL+WogAAAA==
-To: Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Dan Williams <dan.j.williams@intel.com>, Ben Widawsky <bwidawsk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Zijun Hu <zijun_hu@icloud.com>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-cxl@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: 9Lw1bpLcfH68NP7i-aWjwUNHGk-gs2Gr
-X-Proofpoint-GUID: 9Lw1bpLcfH68NP7i-aWjwUNHGk-gs2Gr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_08,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 mlxscore=0 bulkscore=0 malwarescore=0
- phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409050096
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 29/08/2024 17:42, Hongyan Xia wrote:
+> On 22/08/2024 15:58, Vincent Guittot wrote:
+>> On Thu, 22 Aug 2024 at 14:10, Vincent Guittot
+>> <vincent.guittot@linaro.org> wrote:
+>>>
+>>> On Thu, 22 Aug 2024 at 14:08, Luis Machado <luis.machado@arm.com> wrote:
+>>>>
+>>>> Vincent,
+>>>>
+>>>> On 8/22/24 11:28, Luis Machado wrote:
+>>>>> On 8/22/24 10:53, Vincent Guittot wrote:
+>>>>>> On Thu, 22 Aug 2024 at 11:22, Luis Machado <luis.machado@arm.com>
+>>>>>> wrote:
+>>>>>>>
+>>>>>>> On 8/22/24 09:19, Vincent Guittot wrote:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> On Wed, 21 Aug 2024 at 15:34, Hongyan Xia <hongyan.xia2@arm.com>
+>>>>>>>> wrote:
+>>>>>>>>>
+>>>>>>>>> Hi Peter,
+>>>>>>>>>
+>>>>>>>>> Sorry for bombarding this thread in the last couple of days.
+>>>>>>>>> I'm seeing
+>>>>>>>>> several issues in the latest tip/sched/core after these patches
+>>>>>>>>> landed.
+>>>>>>>>>
+>>>>>>>>> What I'm now seeing seems to be an unbalanced call of util_est.
+>>>>>>>>> First, I applied
+>>>>>>>>
+>>>>>>>> I also see a remaining util_est for idle rq because of an unbalance
+>>>>>>>> call of util_est_enqueue|dequeue
+>>>>>>>>
+>>>>>>>
+>>>>>>> I can confirm issues with the utilization values and frequencies
+>>>>>>> being driven
+>>>>>>> seemingly incorrectly, in particular for little cores.
+>>>>>>>
+>>>>>>> What I'm seeing with the stock series is high utilization values
+>>>>>>> for some tasks
+>>>>>>> and little cores having their frequencies maxed out for extended
+>>>>>>> periods of
+>>>>>>> time. Sometimes for 5+ or 10+ seconds, which is excessive as the
+>>>>>>> cores are mostly
+>>>>>>> idle. But whenever certain tasks get scheduled there, they have a
+>>>>>>> very high util
+>>>>>>> level and so the frequency is kept at max.
+>>>>>>>
+>>>>>>> As a consequence this drives up power usage.
+>>>>>>>
+>>>>>>> I gave Hongyan's draft fix a try and observed a much more
+>>>>>>> reasonable behavior for
+>>>>>>> the util numbers and frequencies being used for the little cores.
+>>>>>>> With his fix,
+>>>>>>> I can also see lower energy use for my specific benchmark.
+>>>>>>
+>>>>>> The main problem is that the util_est of a delayed dequeued task
+>>>>>> remains on the rq and keeps the rq utilization high and as a result
+>>>>>> the frequency higher than needed.
+>>>>>>
+>>>>>> The below seems to works for me and keep sync the enqueue/dequeue of
+>>>>>> uti_test with the enqueue/dequeue of the task as if de dequeue was
+>>>>>> not
+>>>>>> delayed
+>>>>>>
+>>>>>> Another interest is that we will not try to migrate a delayed dequeue
+>>>>>> sleeping task that doesn't actually impact the current load of the
+>>>>>> cpu
+>>>>>> and as a result will not help in the load balance. I haven't yet
+>>>>>> fully
+>>>>>> checked what would happen with hotplug
+>>>>>
+>>>>> Thanks. Those are good points. Let me go and try your patch.
+>>>>
+>>>> I gave your fix a try, but it seems to make things worse. It is
+>>>> comparable
+>>>> to the behavior we had before Peter added the uclamp imbalance fix,
+>>>> so I
+>>>> believe there is something incorrect there.
+>>>
+>>> we need to filter case where task are enqueued/dequeued several
+>>> consecutive times. That's what I'm look now
+>>
+>> I just realize before that It's not only util_est but the h_nr_running
+>> that keeps delayed tasks as well so all stats of the rq are biased:
+>> h_nr_running, util_est, runnable avg and load_avg.
+> 
+> After staring at the code even more, I think the situation is worse.
+> 
+> First thing is that uclamp might also want to be part of these stats
+> (h_nr_running, util_est, runnable_avg, load_avg) that do not follow
+> delayed dequeue which needs to be specially handled in the same way. The
+> current way of handling uclamp in core.c misses the frequency update,
+> like I commented before.
+> 
+> Second, there is also an out-of-sync issue in update_load_avg(). We only
+> update the task-level se in delayed dequeue and requeue, but we return
+> early and the upper levels are completely skipped, as if the delayed
+> task is still on rq. This de-sync is wrong.
 
-It is bad for current match_free_decoder()'s logic to find a free switch
-cxl decoder as explained below:
+I had a look at the util_est issue.
 
- - If all child decoders are sorted by ID in ascending order, then
-   current logic can be simplified as below one:
+This keeps rq->cfs.avg.util_avg sane for me with
+SCHED_FEAT(DELAY_DEQUEUE, true):
 
-   static int match_free_decoder(struct device *dev, void *data)
-   {
-	struct cxl_decoder *cxld;
+-->8--
 
-	if (!is_switch_decoder(dev))
-		return 0;
+From 0d7e8d057f49a47e0f3f484ac7d41e047dccec38 Mon Sep 17 00:00:00 2001
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Date: Thu, 5 Sep 2024 00:05:23 +0200
+Subject: [PATCH] kernel/sched: Fix util_est accounting for DELAY_DEQUEUE
 
-	cxld = to_cxl_decoder(dev);
-	return cxld->region ? 0 : 1;
-   }
-   dev = device_find_child(&port->dev, NULL, match_free_decoder);
+Remove delayed tasks from util_est even they are runnable.
 
-   which does not also need to modify device_find_child()'s match data.
+Exclude delayed task which are (a) migrating between rq's or (b) in a
+SAVE/RESTORE dequeue/enqueue.
 
- - If all child decoders are NOT sorted by ID in ascending order, then
-   current logic are wrong as explained below:
-
-   F: free, (cxld->region == NULL)    B: busy, (cxld->region != NULL)
-   S(n)F : State of switch cxl_decoder with ID n is Free
-   S(n)B : State of switch cxl_decoder with ID n is Busy
-
-   Provided there are 2 child decoders: S(1)F -> S(0)B, then current logic
-   will fail to find a free decoder even if there are a free one with ID 1
-
-Anyway, current logic is not good, fixed by finding a free switch cxl
-decoder with minimal ID.
-
-Fixes: 384e624bb211 ("cxl/region: Attach endpoint decoders")
-Closes: https://lore.kernel.org/all/cdfc6f98-1aa0-4cb5-bd7d-93256552c39b@icloud.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
-Changes in v2:
-- Correct title and commit message
-- Link to v1: https://lore.kernel.org/r/20240903-fix_cxld-v1-1-61acba7198ae@quicinc.com
----
- drivers/cxl/core/region.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ kernel/sched/fair.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 21ad5f242875..b9607b4fc40b 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -797,21 +797,26 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
- static int match_free_decoder(struct device *dev, void *data)
- {
- 	struct cxl_decoder *cxld;
--	int *id = data;
-+	struct cxl_decoder *target_cxld;
-+	struct device **target_device = data;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1e693ca8ebd6..5c32cc26d6c2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6948,18 +6948,19 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	int rq_h_nr_running = rq->cfs.h_nr_running;
+ 	u64 slice = 0;
  
- 	if (!is_switch_decoder(dev))
- 		return 0;
- 
- 	cxld = to_cxl_decoder(dev);
+-	if (flags & ENQUEUE_DELAYED) {
+-		requeue_delayed_entity(se);
+-		return;
+-	}
 -
--	/* enforce ordered allocation */
--	if (cxld->id != *id)
-+	if (cxld->region)
- 		return 0;
- 
--	if (!cxld->region)
--		return 1;
--
--	(*id)++;
-+	if (!*target_device) {
-+		*target_device = get_device(dev);
-+		return 0;
-+	}
-+	/* enforce ordered allocation */
-+	target_cxld = to_cxl_decoder(*target_device);
-+	if (cxld->id < target_cxld->id) {
-+		put_device(*target_device);
-+		*target_device = get_device(dev);
-+	}
- 
- 	return 0;
- }
-@@ -839,8 +844,7 @@ cxl_region_find_decoder(struct cxl_port *port,
- 			struct cxl_endpoint_decoder *cxled,
- 			struct cxl_region *cxlr)
- {
--	struct device *dev;
--	int id = 0;
-+	struct device *dev = NULL;
- 
- 	if (port == cxled_to_port(cxled))
- 		return &cxled->cxld;
-@@ -849,7 +853,8 @@ cxl_region_find_decoder(struct cxl_port *port,
- 		dev = device_find_child(&port->dev, &cxlr->params,
- 					match_auto_decoder);
- 	else
--		dev = device_find_child(&port->dev, &id, match_free_decoder);
-+		/* Need to put_device(@dev) after use */
-+		device_for_each_child(&port->dev, &dev, match_free_decoder);
- 	if (!dev)
- 		return NULL;
  	/*
-
----
-base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
-change-id: 20240903-fix_cxld-4f6575a90619
-
-Best regards,
+ 	 * The code below (indirectly) updates schedutil which looks at
+ 	 * the cfs_rq utilization to select a frequency.
+ 	 * Let's add the task's estimated utilization to the cfs_rq's
+ 	 * estimated utilization, before we update schedutil.
+ 	 */
+-	util_est_enqueue(&rq->cfs, p);
++	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
++		util_est_enqueue(&rq->cfs, p);
++
++	if (flags & ENQUEUE_DELAYED) {
++		requeue_delayed_entity(se);
++		return;
++	}
+ 
+ 	/*
+ 	 * If in_iowait is set, the code below may not trigger any cpufreq
+@@ -7177,7 +7178,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+  */
+ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	util_est_dequeue(&rq->cfs, p);
++	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
++		util_est_dequeue(&rq->cfs, p);
+ 
+ 	if (dequeue_entities(rq, &p->se, flags) < 0) {
+ 		if (!rq->cfs.h_nr_running)
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+2.34.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
