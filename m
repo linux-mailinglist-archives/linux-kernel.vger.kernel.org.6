@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-316909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07DA96D6CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:12:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCAA96D6D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC7F1C20BE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48354284594
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28D819924A;
-	Thu,  5 Sep 2024 11:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4F119995D;
+	Thu,  5 Sep 2024 11:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rx4FtIHZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="a2kUXhMM"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F76194A61;
-	Thu,  5 Sep 2024 11:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534719; cv=none; b=fPWbaPcrd8J/FycsaJpDyg+CjL4JWv07zz+B6adrMcIlaCzsevYHKHzeLLokXzR61DJs0+Lsr29WDd90UhdQ0irKL+n4K6JWJ/wKuL9JIifZdTnljvRgKabGP2FDhGqb5cVHzosC7YWDfNj+UdPOsgkz6YASf7kDTvgWm71F2zg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534719; c=relaxed/simple;
-	bh=IcY+P+y/j/IEo8kvhtDOZN3wwwCRu9Vys1CDWZHyjpU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=XX0O35ALYCQOKMgpUqR+vesw06OgKzlfXGRlmuR+iwcznq2PaqiR4RB3D9dKhm8FFs4zp8Pz64f89raC47jzyku9OY4d8WZ1MF/FndZxMjEPyQfreTIMiYD3yvopD2bMryiqUz4W4W4DDTIwEtjY7q5VZXz6BGU/3xmX+zhCS4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rx4FtIHZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 722E5C4CEC3;
-	Thu,  5 Sep 2024 11:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725534718;
-	bh=IcY+P+y/j/IEo8kvhtDOZN3wwwCRu9Vys1CDWZHyjpU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=rx4FtIHZicQKBHi8Hm/kS6CHF8bbUNcL9MvT70avHxczrIMJb0myRsT7J4EddEaBo
-	 lwfrG6LPK2FxvqPIX9KDgYdikmr4V4g4JPJt7/ie/x2v6mm+ztf1y5zZ9frJ3WaNM2
-	 EbJQ8jzV/8GP3yDhoGH0feTTiq8UveX7eK/nKMFwfMTGRrbTfjXA20hBAAXOmsPgrs
-	 qVd9JdLw1Sb4n8wZqF0p3dc8QbXJZMeSeA2dAL4WCUiSTjSF1Zzsonjiu/SgBT6UU8
-	 1keQgUyczgZKu4kTo+Y2mwVLsEkQ+eDAnQtTxfqPO3vweSvjkc/u0KwG+T1qJx5OtU
-	 3ICz93ge8d+4Q==
-Date: Thu, 05 Sep 2024 06:11:57 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB98194A61
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725534842; cv=pass; b=enkcSwsgmqLM0NIdjsL16pJmav4SInUMhCljav2TGh3JVKoB4z2gBx7vxGYVdnyMIGGxcS653FPb/2oUCEmU0cKby91eh7P56VYhjrSHoUjqqg0iFM3xFVcGuFLv2MvZpFhwVLaZitEEGktntmN/2EpJHtxdj6sG93ejDI73kkQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725534842; c=relaxed/simple;
+	bh=eLEKl96BFrGuna6PMoNoK14KCaUNqA2U9Aud/MfBf9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lFjzu3+o2vEmVbzuQDcuyxI55GcRVMBKXYvUFcylcaZpL8iKkwVpS+KiYZq9nFi6dvCqKXVzZUBA8UYos0EzVegij3PUeX27AU1Ryu/L1xVKG59R7wSO1F9FTzE7gxiYLlz5DTDYT7ZDNncgGShlmhduMbcqb9vRMmG02A4kNrg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=a2kUXhMM; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: boris.brezillon@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725534835; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ko+ssTjfuzPSoVr5DCixIvL3qEV+P46vAy/qfUPUYEMINkqFX6b+LgLp05dF178JwOBoCJCY6RsZDC+JzuHkYZ4DXMKI64wAYYM7i0uXOwZzIRMXVpeJFi9cNzlx1pTz/r3LR1NB4LA4E3GyqEPkMlF2dIDRWQeyr4kUvY6oUbY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725534835; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zYO5M+XyjUp7mPx9nd9oE8rcz7ltsIbCI/ZCic2x2mA=; 
+	b=jiW9jWOLQDgsiUlR6U7m+ORi0LdrGwbIzGTRulyHt8ifuvJSg1tebKS3CJo4VW5YaLydYbdemYNVANEro+4i9lcSyY/vF5FiJxFr155rSsjSmbHhAjEFm6p1kUI3VHaRRcBwDf8nPf00AH+G4Lr0YUD4ZqXkM/tuezG3DPcanL8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
+	dmarc=pass header.from=<mary.guillemard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725534835;
+	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=zYO5M+XyjUp7mPx9nd9oE8rcz7ltsIbCI/ZCic2x2mA=;
+	b=a2kUXhMMBjaPKLip3MF83DxcNCQEwhiDizIplRF43//Jm7JjnnPgZWhZRICO1bxF
+	finMm+AFTsJF9/Sb2WuJ8hFDYHQINfRl4TFo5q1kHWC2JlMf8rA6V+uHZ4aCG3yABWj
+	QbVz1dFCwQmdvdkFS9Otg3nkp3Uqa+22mFmE+Qkg=
+Received: by mx.zohomail.com with SMTPS id 1725534833685272.4438221352942;
+	Thu, 5 Sep 2024 04:13:53 -0700 (PDT)
+From: Mary Guillemard <mary.guillemard@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Christopher Healy <healych@amazon.com>,
+	kernel@collabora.com,
+	Mary Guillemard <mary.guillemard@collabora.com>
+Subject: [PATCH 0/2] drm/panthor: Expose realtime group priority and allowed priorites to userspace
+Date: Thu,  5 Sep 2024 13:13:36 +0200
+Message-ID: <20240905111338.95714-1-mary.guillemard@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Emil Gedenryd <emil.gedenryd@axis.com>
-Cc: linux-iio@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@axis.com, 
- Andreas Dannenberg <dannenberg@ti.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>
-In-Reply-To: <20240905-add_opt3002-v1-3-a5ae21b924fb@axis.com>
-References: <20240905-add_opt3002-v1-0-a5ae21b924fb@axis.com>
- <20240905-add_opt3002-v1-3-a5ae21b924fb@axis.com>
-Message-Id: <172553471735.1030504.6260506598710907447.robh@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: iio: light: opt3001: add compatible
- for opt3002
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+This patch series adds support for realtime group priority and exposes
+allowed priorities info with a new dev query.
 
-On Thu, 05 Sep 2024 12:20:47 +0200, Emil Gedenryd wrote:
-> OPT3002 is a Light-to-Digital Sensor by TI with support for wide-range
-> spectrum light.
-> Add the compatible string of opt3002 to the existing list.
-> 
-> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
-> ---
->  Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Those changes are required to implement EGL_IMG_context_priority and
+EGL_NV_context_priority_realtime extensions properly.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+This patch series assumes that [1] is applied. (found in drm-misc-fixes)
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml:19:5: [error] duplication of key "const" in mapping (key-duplicates)
+The Mesa MR using this series is available here [2].
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml:19:5: found duplicate key "const" with value "ti,opt3002" (original value: "ti,opt3001")
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/iio/light/ti,opt3001.example.dts'
-Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml:19:5: found duplicate key "const" with value "ti,opt3002" (original value: "ti,opt3001")
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/iio/light/ti,opt3001.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+[1]https://lore.kernel.org/all/20240903144955.144278-2-mary.guillemard@collabora.com/
+[2]https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30991
 
-doc reference errors (make refcheckdocs):
+Mary Guillemard (2):
+  drm/panthor: Add PANTHOR_GROUP_PRIORITY_REALTIME group priority
+  drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO dev query
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240905-add_opt3002-v1-3-a5ae21b924fb@axis.com
+ drivers/gpu/drm/panthor/panthor_drv.c   | 61 +++++++++++++++++--------
+ drivers/gpu/drm/panthor/panthor_sched.c |  2 -
+ include/uapi/drm/panthor_drm.h          | 45 ++++++++++++++++++
+ 3 files changed, 87 insertions(+), 21 deletions(-)
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.46.0
 
 
