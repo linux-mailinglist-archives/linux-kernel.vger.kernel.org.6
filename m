@@ -1,74 +1,130 @@
-Return-Path: <linux-kernel+bounces-317877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C0A96E4FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2FA96E4FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD26E1F244BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35991F238CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDC91AB6D9;
-	Thu,  5 Sep 2024 21:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C381A4E6F;
+	Thu,  5 Sep 2024 21:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BGRLeVc7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yu75ecSn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52949443;
-	Thu,  5 Sep 2024 21:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B158C9443;
+	Thu,  5 Sep 2024 21:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725571295; cv=none; b=Fq9ZPhZWPj2F5+8r+SJ/02ta+o0JBf35bA+U99InfDeMBuvtc9xqyNaAANs1ZoiG+b3MbXH3wx3hmuN3eTYE3ZM4An2xA8ThkFmpoPnY0KDRSwKAIgdY9tgCRJ5KO7th/vqPjQpnL6nC3wcO2lEpa0yK/S4IhrCrX39xy1NW0Kc=
+	t=1725571341; cv=none; b=qgvBYLGvQPqgC4QXhv5Yn5Lz44L53c9lN8doIqPXayDMgBwZWjSHAUmN8VBqWsGgSWvcPSi6XXdFTdzILCPILy6zb3nOuzUVUG1+LYiatgeUQaHCDuBohC1pCWCNNQjJnLc+4nM+N3/vYa9tMbLp0gRMhmnAMp4M5Lj5RhmqSYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725571295; c=relaxed/simple;
-	bh=4IVvOel3qLlOXXGj8gmLQKzUAMETbKPhpfvxnd5qrg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4FZ6GkI9CfuAyZTvPJt2lXt8AwxlCXAbA8Mn0uvQB59/ZFsMg+h7aLT0974QncS73SuVYSxjCkFXqj3XPxjiz3adnNVJ07p1aCO/FWVWeEEe42idPs5+fs7bzlBQf4r58NOyMQWDbFQsm2Yv9irMIPjBlWBID3qy3HKt3VysGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BGRLeVc7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ULTDaU0ouby3tbdV1HfboMY1hzhW1DRiJvo6QZ7BPfI=; b=BGRLeVc7s6dC9FKCXVPuFY/AQs
-	JjO+zEGaWl06FSh+m0Kl5gtmJ0Rf4xYATFJk2EF1ROSf3IqmYfCMdRkOq3iCG7XDBVPBu15UVnJO6
-	0E8N9wkpmVgOxyhamteinofEF2Q8TP79ar+g2UEKgP1bqjlUzJ4I7JC2w5Ory68i5f+Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smJux-006iuJ-Ss; Thu, 05 Sep 2024 23:21:27 +0200
-Date: Thu, 5 Sep 2024 23:21:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net,
-	chunkeey@gmail.com
-Subject: Re: [PATCHv3 net-next 6/9] net: ibm: emac: use netdev's phydev
- directly
-Message-ID: <f05b16ed-751c-461c-b18c-ba859492a99e@lunn.ch>
-References: <20240905201506.12679-1-rosenp@gmail.com>
- <20240905201506.12679-7-rosenp@gmail.com>
+	s=arc-20240116; t=1725571341; c=relaxed/simple;
+	bh=35+rbCTS0v4jRIIZob1qp95Mxqaaa5dUxQDMzEaSLO4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YF4SpDJxaV05ddzkkGb+py+g6YIlwCcJOAVniubVPGs+HkyNy8kkmsEzuIuMTdhzJwUnIQhN1DLafH+ejLTOxrlrlP6zhr+KQX23VamowbfDwdsS3QrrsKwGJ9M3qBp9nKCm45sSbZtF3t1Hi/UPjaJ/tUHMmU1TUwfCNL4l970=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yu75ecSn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5D6C4CEC3;
+	Thu,  5 Sep 2024 21:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725571341;
+	bh=35+rbCTS0v4jRIIZob1qp95Mxqaaa5dUxQDMzEaSLO4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yu75ecSn8OPOSeRomyMimNPAqqR2n92JVElp0CvhV5p7QsEJT+t2CHpcJFWFsfsFR
+	 yLY+AzhiKv6UD83cp7bo68IFNV8MEQEVBY/ECOgNpfj3d+fC+7cMtyx/HdGzpp9a9X
+	 PIOlZYJRqUpNROZCg/p/Npk5/+oOOyUZb1GqGnN4=
+Date: Thu, 5 Sep 2024 14:22:20 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>
+Subject: Re: [PATCH v1 1/1] mm/page_alloc: Mark has_unaccepted_memory() with
+ __maybe_unused
+Message-Id: <20240905142220.49d93337a0abce5690e515d9@linux-foundation.org>
+In-Reply-To: <20240905171553.275054-1-andriy.shevchenko@linux.intel.com>
+References: <20240905171553.275054-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905201506.12679-7-rosenp@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05, 2024 at 01:15:03PM -0700, Rosen Penev wrote:
-> Avoids having to use own struct member.
+On Thu,  5 Sep 2024 20:15:53 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> When has_unaccepted_memory() is unused, it prevents kernel builds
+> with clang, `make W=1` and CONFIG_WERROR=y:
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> mm/page_alloc.c:7036:20: error: unused function 'has_unaccepted_memory' [-Werror,-Wunused-function]
+>  7036 | static inline bool has_unaccepted_memory(void)
+>       |                    ^~~~~~~~~~~~~~~~~~~~~
+> 
+> Fix this by marking it with __maybe_unused (all cases for the sake of
+> symmetry).
+> 
+> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> inline functions for W=1 build").
+> 
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+has_unaccepted_memory() has no callers if CONFIG_UNACCEPTED_MEMORY=n. 
+Can't we do this better thing?
 
-    Andrew
+
+--- a/mm/page_alloc.c~a
++++ a/mm/page_alloc.c
+@@ -288,7 +288,6 @@ EXPORT_SYMBOL(nr_online_nodes);
+ static bool page_contains_unaccepted(struct page *page, unsigned int order);
+ static void accept_page(struct page *page, unsigned int order);
+ static bool cond_accept_memory(struct zone *zone, unsigned int order);
+-static inline bool has_unaccepted_memory(void);
+ static bool __free_unaccepted(struct page *page);
+ 
+ int page_group_by_mobility_disabled __read_mostly;
+@@ -6963,6 +6962,11 @@ static bool try_to_accept_memory_one(str
+ 	return true;
+ }
+ 
++static inline bool has_unaccepted_memory(void)
++{
++	return static_branch_unlikely(&zones_with_unaccepted_pages);
++}
++
+ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+ {
+ 	long to_accept;
+@@ -6990,11 +6994,6 @@ static bool cond_accept_memory(struct zo
+ 	return ret;
+ }
+ 
+-static inline bool has_unaccepted_memory(void)
+-{
+-	return static_branch_unlikely(&zones_with_unaccepted_pages);
+-}
+-
+ static bool __free_unaccepted(struct page *page)
+ {
+ 	struct zone *zone = page_zone(page);
+@@ -7032,11 +7031,6 @@ static bool cond_accept_memory(struct zo
+ {
+ 	return false;
+ }
+-
+-static inline bool has_unaccepted_memory(void)
+-{
+-	return false;
+-}
+ 
+ static bool __free_unaccepted(struct page *page)
+ {
+_
+
 
