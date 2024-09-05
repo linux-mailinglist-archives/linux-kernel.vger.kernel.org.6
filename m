@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-316243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1225396CD01
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C7696CCFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C134B286429
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:08:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19EAC1F28DF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CB01494B5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E25B1487F4;
 	Thu,  5 Sep 2024 03:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HO0RoLPt"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aBYe0GCo"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6DA13B293;
-	Thu,  5 Sep 2024 03:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E9C140E30
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505708; cv=none; b=q/zhph9bMXZZ1eAIsr1dhUkCYFr+b3T1KPdNSM/22i/ES9rPW2HtLOUrSsOoMc3FP9zchRMCqNyItZAIrTTaZNS+pZqftuB45h7grUwCvrjLQCQ/cwVmq9TIvUZEQkMGX/aApfBPPPsFEF8cY3hOrzFvs/iGXt8NfIXCj762T50=
+	t=1725505708; cv=none; b=k7SRC7ZByH3qPAY4e/ig3dCD3D0i4zy00aWp713bOiX625gtYJTltbhf3CYPi+k3/0D8/VX6rrXTTttsNCyrGdZPgajDbljtPuH7K/rWzNQRjh2OExVRs0W3o/ZLwaCCiahREOSMrEEtl4h0qD4/LMzdL2g4D/m82o5OoMR3PoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725505708; c=relaxed/simple;
-	bh=4WJBHv2JKuBgtkRGcG2/w3ZQhO5vK8S09DHEyQPXGiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DogQjhTVnaubDHBmsrF9FBXW1aHWRVZfCqSkl2jiaENzXFR2hKcKUTNlwW+OFJHIw24Q79H6z1ki4pF2UDEKiLo32FEtIFYFQI6U600H0etN1Dy5QFOV2al/NS/WH1XxeTbi/aIQhxhET8ilmclHMzmFeWWigIfBloocee7RRG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HO0RoLPt; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725505704; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=jV2+cn/4uNfPspURtuX++pQoMUnXb+at2wi4UK8kjLc=;
-	b=HO0RoLPtq1OPCGowW32Xc6MlKKCesvHDPhWKVImWE+7yjrDUzrPFdhQoQVxN5YnFF+szf69QTUN5VhC5eeLo3nXCNfBqlD8ZL7l7FTshxqMzocJph4CCysmNWnhd1PhI8q2b1IdrqSMmhEEyK7qN7ff/q8vpQppXHi0ebfklu5A=
-Received: from 30.246.162.144(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WEJd1a5_1725505701)
-          by smtp.aliyun-inc.com;
-          Thu, 05 Sep 2024 11:08:22 +0800
-Message-ID: <b255fe54-4595-487c-b516-d812798e4838@linux.alibaba.com>
-Date: Thu, 5 Sep 2024 11:08:20 +0800
+	bh=/uc/spJSdC+Q0uOvIRVDDGVfhgEPfChpAlvRBCMAkJQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jZAUkRwYACRvgpfpDs3AUrSj/sMuk4fAom89CYwkha+oaQFp9AkgiOLRxegd5L845mYviSmHL9NWFDFbEjJS4CcRimcwtNxazvGRmBj+qeyLPfqidFqpdusA8VijLQIK5iFxx/X6NHDq5BGykTumOLdJOqNxWtlfbvoLuKjXpfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aBYe0GCo; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53653ee23adso3924e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725505705; x=1726110505; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aCUd9z1LcLMx6hSjP2k+xgb3eFs9dKtX8QI9QhSVFF0=;
+        b=aBYe0GCo7NICxWqfVblVqsbMYUI9GOMQzTwz+trBlzc1OK4z+skkAtcVyei33UEuqW
+         PYxV7/FyR8h4QIXN2xdPHVQZE8t9O/bPv2HugXPw0mUwdhVSG/dIUXbOoZNeQjG8XszH
+         kWHTyTG23HeZSjDG4XXjj1+TS7tYKalRum4AA4/R8aftFM6oTzN6cUIxwjAvsDJ0JZwb
+         MLEuW7AFCuydRR2+RpId/8HsiBIlxb3+OYYwYOyAzZDy78ttTgULIhi7q4Hbp2g7OmqS
+         7XTQBu/tBiU/1X85fHgwZftcwZ7aUkZFECfzHktLqhpiq+syDEp5NVEpX1/U+0+kww2r
+         ViFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725505705; x=1726110505;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCUd9z1LcLMx6hSjP2k+xgb3eFs9dKtX8QI9QhSVFF0=;
+        b=HM+6+2ia9TXOFsXyi+lttdI7gW0uQC+XqhO3C2UBEKtKnGvathO2BRzK57NqkzC/Nd
+         8sTxXbO8nYYEon4l4kJD8bYqofNOUyxTEA2no3iEErRw51XW+TRH8pu6A71BG4Jd3Pck
+         aNEslPzhCRrhwjBVDmClMTnAcuXf9bBj0i8IxYOKZGlYNoMZ5AnyB+xTFiJeDRqlXMWV
+         Cbu5cEUlpWyx+fEPbTaKRkI2y6hc0VFEKte1JdGZap/FiWH4KQ3fm40EV5uPKvzrRCpC
+         bKEEE4Acy7V+a8HdGMKA3BMU18JxiqI1cGQjwwLuntHbPlLSMbL+XAZSithsGhdH6ehx
+         AQ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2s2vHK5v9Tm2cyd86qP4BqvyNwzEzrTqPu5K6LmfWfEpOaGChSu/LfonLjJPlkWENiiSgSX5ItYZMxMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA/f/9HcwAcvL6o1rdfU95VmtaZiuRr+OWZQIM0luvDvfIYHS5
+	zbn5PxuQICEyBoQae+pxJ8ygsR6oJN5Zs7o+skPfIs6tFnv881N+VeK+uYRfKc0=
+X-Google-Smtp-Source: AGHT+IE/2jE3CvFlvvIXHzJupYuHbi2/1IhdOJoiEbZkzmE63Jt8Mh6dMcluwOLczC02VOgLi+O/ew==
+X-Received: by 2002:a05:6512:b82:b0:530:ae22:a6ea with SMTP id 2adb3069b0e04-53546b91ef2mr14631592e87.40.1725505704199;
+        Wed, 04 Sep 2024 20:08:24 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac190sm2485277e87.96.2024.09.04.20.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 20:08:23 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 05 Sep 2024 06:08:21 +0300
+Subject: [PATCH 1/2] drm/xe: select DRM_DISPLAY_DSC_HELPER
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/3] mm: memory-failure: move return value
- documentation to function declaration
-To: Jarkko Sakkinen <jarkko@kernel.org>, bp@alien8.de, rafael@kernel.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
- james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
- will@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240902030034.67152-3-xueshuai@linux.alibaba.com>
- <D3WS3TK054QR.580Q46WYCDEZ@kernel.org>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <D3WS3TK054QR.580Q46WYCDEZ@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240905-fix-dsc-helpers-v1-1-3ae4b5900f89@linaro.org>
+References: <20240905-fix-dsc-helpers-v1-0-3ae4b5900f89@linaro.org>
+In-Reply-To: <20240905-fix-dsc-helpers-v1-0-3ae4b5900f89@linaro.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1005;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=/uc/spJSdC+Q0uOvIRVDDGVfhgEPfChpAlvRBCMAkJQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm2SClH3jAjsQwXueRbupby/Qyxo1pNCBRE+FYy
+ TrQumjDJhWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtkgpQAKCRCLPIo+Aiko
+ 1WUdB/4mLKT7toID+4EsvnWOp5TQO7a7GiChrUuI653sWs0XNN89QO+aQlpsdo+wgVvTcrvWvBO
+ C6i8x2AwjrHm9cSIn5uu66DDhCRRCiCelWh8vwvtQNgwDP30tOt38PSkFuLdZhEQfeJZvBPBC/u
+ JS/Y5Npl49z2KqrYk9QbimEg9oy0KI9Aj0nva6UW5rNWFw0ZBy1d2taaUr/KBPdp1F2VkUtoWtx
+ ecBErdsaSdt5CHrTfB4FXFE8eVr083nB6qqd2UQNsHA2SdUD3IFLJCk0zqUkbyZ0UCXzgizmuf7
+ vixPcb25txPAUaZD+YKZIsHQ2gGnzMPV7x1YmszSmdjXVpUA
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+The Xe driver shares display code with the i915 driver, pulling in the
+dependency on the DSC helpers this way. However when working on
+separating DRM_DISPLAY_DSC_HELPER this was left unnoticed. Add missing
+dependency.
 
+Fixes: ca097d4d94d8 ("drm/display: split DSC helpers from DP helpers")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409032226.x6f4SWQl-lkp@intel.com/
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/xe/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-在 2024/9/4 00:10, Jarkko Sakkinen 写道:
-> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
->> Part of return value comments for memory_failure() were originally
->> documented at the call site. Move those comments to the function
->> declaration to improve code readability and to provide developers with
->> immediate access to function usage and return information.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> ---
->>   arch/x86/kernel/cpu/mce/core.c | 7 -------
->>   mm/memory-failure.c            | 9 ++++++---
->>   2 files changed, 6 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
->> index b85ec7a4ec9e..66693b6dd1cd 100644
->> --- a/arch/x86/kernel/cpu/mce/core.c
->> +++ b/arch/x86/kernel/cpu/mce/core.c
->> @@ -1361,13 +1361,6 @@ static void kill_me_maybe(struct callback_head *cb)
->>   		return;
->>   	}
->>   
->> -	/*
->> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
->> -	 * to the current process with the proper error info,
->> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
->> -	 *
->> -	 * In both cases, no further processing is required.
->> -	 */
->>   	if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
->>   		return;
->>   
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index 7066fc84f351..df26e2ff5e06 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -2199,9 +2199,12 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
->>    * Must run in process context (e.g. a work queue) with interrupts
->>    * enabled and no spinlocks held.
->>    *
->> - * Return: 0 for successfully handled the memory error,
->> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
->> - *         < 0(except -EOPNOTSUPP) on failure.
->> + * Return values:
-> 
-> s/Return values/Return:/
-> 
-> https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-> 
+diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+index 7bbe46a98ff1..ebd0879e04d4 100644
+--- a/drivers/gpu/drm/xe/Kconfig
++++ b/drivers/gpu/drm/xe/Kconfig
+@@ -14,6 +14,7 @@ config DRM_XE
+ 	select DRM_PANEL
+ 	select DRM_SUBALLOC_HELPER
+ 	select DRM_DISPLAY_DP_HELPER
++	select DRM_DISPLAY_DSC_HELPER
+ 	select DRM_DISPLAY_HDCP_HELPER
+ 	select DRM_DISPLAY_HDMI_HELPER
+ 	select DRM_DISPLAY_HELPER
 
-Hi, Jarkko,
-
-Thank you for the reminder. Will fix it in next version.
-
-Best Regards,
-Shuai
+-- 
+2.39.2
 
 
