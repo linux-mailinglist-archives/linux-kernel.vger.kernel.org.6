@@ -1,204 +1,106 @@
-Return-Path: <linux-kernel+bounces-317781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6362096E3BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C746196E3BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B395281BAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD0E1F22E6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3447E19D897;
-	Thu,  5 Sep 2024 20:10:31 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73FA1A38C8;
+	Thu,  5 Sep 2024 20:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqegCMrb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DED18E772
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 20:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70919EEA0;
+	Thu,  5 Sep 2024 20:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725567030; cv=none; b=tt+hT1eTS8IkW4FSPoSytTwSQFcfusc1t9AK9U1mC2zGs5wcIFJxcQIupv/aFB4SHXiDWmE3sCfr6uriYtpW28OuExRTMFhidVOdHXrv+uZez13Tpcu1f7s4pIDb6mcXusIypHeZpW8wCtCM6sjZ8NvUzi+kMIfsasDldK+9Y+M=
+	t=1725567034; cv=none; b=VydAFQrF208U4XN+N+6K5OJ905Bq0ZF5cPbDFNIQvVRgOKEnXA3ZjisZxYq+NwwrEDscgyX9wscB7F2P1SkuZLZpFymBu9Rr1+qHxNgOArGcIpWyRO9+gU5g+7fLOfskcSLzmRm8lTM0OSUGifAWcrh0wo2qPT5JNX2q5cx2iSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725567030; c=relaxed/simple;
-	bh=pivsRGJp8NKBwxppttHmzAWJCGdoSIRe71JGCEgDemI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BYqsC6hCS/GG3qvfnu1uhmT5KQvYGlpJurXA1bs+ZkC0cRnakb+dD8AEo57I3GsGptSn+PwCqfwcNzqzVzXuDuYxE4xtHKdS3H2p9xjwoM1y7CYzylHEBGmynRkZ0A1mntZNcGpP95Ee+dyFQPf9vHfh5fgGvYRPq49xMO8ZOGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0459a8a46so34147375ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 13:10:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725567028; x=1726171828;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XiCTBlmXz66mBJxcne8N9WTdQpBfvB23eK91fk59/Tg=;
-        b=JJa7iYb5Ns68JPTXRBLwg48N5pyU2GAwCbosRsSQBeRyC6wEfLA79IWvs6o4jo0xSU
-         ku81gbCLNUisJRBQdVzfNRWkYyXbmVekGxVEZC7ABELNFJwfZKoSuiwuwRoxuWS8bily
-         htYSDSu81FysP4IbXX4Y74iGQWR/JG9WYBIQtsYTGKQ9PWZjcN2zTwBhOVhYhj8yyHLr
-         brG/DjdS1vipP/OD4f6LYDKBnuDxN5DYF2ktoOEBFeU2kMEQRrB5tkY7n2IMvArYE1TE
-         9zYWWYrf6sY5HQNNXWAvqEqN4Y8Tj0d2Kec+chezl+9VQM3GqOc8XBgpXn/JAKvtDF/V
-         MAwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDL18Ka6/DZ2dTkiPiK9mBx2w5h6ahi4UbMZoWy4Ls6xWSNb4KUzRmptDEWJs23vjPob5nfLlxwcYf4A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLVQ1TdcWDVPX9CxnC+rAegZiKH1Tfmt+J00INaY08eeKVDtb9
-	US4B+2fIl+g36mvQzlXoft+692kmDqdvBrsJy/zV8k4VTCWn1DY8/23lYbO8ioD8laXtSWt/Yqi
-	M4hobP84QIY2SWpX/zcNrRkGiFNmKyhRKT3TaooeQxDvoa7rECrzwWH0=
-X-Google-Smtp-Source: AGHT+IGfch4QU4MPs73g55BhStEJMfxAbGwRgv9k7ov46PkNs5HaMGp/B40y2AJ6GYdRdXbU1SEWR9EAfA1f3IG2+Q0kmKa4q3b2
+	s=arc-20240116; t=1725567034; c=relaxed/simple;
+	bh=F8McJ2Dh7rdF2JqMNEo2h3wzSea22lzOfgbFTJCTRF0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cCyaTOS1rMgHfxvREmuH6e3t3d7VKxffOHw69f4v+iWOXYgd3+/tUJ64sBvu65FHYJki1UH5Z7fXMBaRPZTi6VRPM2VB3/X/D1Dn3kHzsUv7NEWUJ7UJedfpc67UgHH58pQhcK+Mo6GSdx5/G1F1zExsadhMPdtPJscQcoZyJaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqegCMrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90E7C4CEC3;
+	Thu,  5 Sep 2024 20:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725567033;
+	bh=F8McJ2Dh7rdF2JqMNEo2h3wzSea22lzOfgbFTJCTRF0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=IqegCMrb0TLt1ukjzsgoqck1syin6Z6Dc3JqVDGk16E1z+sndyun2wwUyR/L2SW30
+	 cCrTWF6mQgafBVkj3hsLQmzr5MusZLRLZUFmvYxRhCU0QF8wAJeR4qCo7w+tnewWSI
+	 VfG6CymdoMoysPatB65Swfdl7OEP+I0CQRJNnZAs3T9CnWFNXpg794XfaNJko0Zdaq
+	 MVZJcPXCqVsxijjBpzWQCZFz8DgmcgDJK4vUKiNqL6Pacg/X30LrFboitbMcy1vJM+
+	 IHLtFLSxwbr+RA4mAUd4gdAYBopC4zaYUCuhKMPLK5ZjlqJ8H8fGtbDWK8TitXTy8g
+	 Z2eAs0YNJQHLA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1AA3806651;
+	Thu,  5 Sep 2024 20:10:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca8:b0:39f:bac6:c31c with SMTP id
- e9e14a558f8ab-3a04f068709mr36355ab.1.1725567028271; Thu, 05 Sep 2024 13:10:28
- -0700 (PDT)
-Date: Thu, 05 Sep 2024 13:10:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c1ae9e062164e101@google.com>
-Subject: [syzbot] [wireless?] possible deadlock in ieee80211_remove_interfaces
-From: syzbot <syzbot+5b9196ecf74447172a9a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v1 1/3] selftests/bpf: fix some typos in selftests
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172556703454.1814248.16375163338702525261.git-patchwork-notify@kernel.org>
+Date: Thu, 05 Sep 2024 20:10:34 +0000
+References: <20240905110354.3274546-1-yikai.lin@vivo.com>
+In-Reply-To: <20240905110354.3274546-1-yikai.lin@vivo.com>
+To: Lin Yikai <yikai.lin@vivo.com>
+Cc: bpf@vger.kernel.org, opensource.kernel@vivo.com, qmo@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
+ morbo@google.com, justinstitt@google.com, rameezrehman408@hotmail.com,
+ thinker.li@gmail.com, alan.maguire@oracle.com, yuran.pereira@hotmail.com,
+ linux@jordanrome.com, zhouchuyi@bytedance.com, davemarchevsky@fb.com,
+ menglong8.dong@gmail.com, tony.ambardar@gmail.com, razor@blackwall.org,
+ geliang@kernel.org, quic_abchauha@quicinc.com, houtao1@huawei.com,
+ iii@linux.ibm.com, jose.marchesi@oracle.com, shung-hsi.yu@suse.com,
+ void@manifault.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
 
-Hello,
+Hello:
 
-syzbot found the following issue on:
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-HEAD commit:    431c1646e1f8 Linux 6.11-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=144a43db980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=931962fa28089080
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b9196ecf74447172a9a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+On Thu,  5 Sep 2024 19:03:05 +0800 you wrote:
+> Hi, fix some spelling errors in selftest, the details are as follows:
+> 
+> -in the codes:
+> 	test_bpf_sk_stoarge_map_iter_fd(void)
+> 		->test_bpf_sk_storage_map_iter_fd(void)
+> 	load BTF from btf_data.o->load BTF from btf_data.bpf.o
+> 
+> [...]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Here is the summary with links:
+  - [bpf-next,v1,1/3] selftests/bpf: fix some typos in selftests
+    https://git.kernel.org/bpf/bpf-next/c/5db0ba6766f8
+  - [bpf-next,v1,2/3] bpftool: fix some typos in bpftool
+    https://git.kernel.org/bpf/bpf-next/c/a86857d2546c
+  - [bpf-next,v1,3/3] libbpf: fix some typos in libbpf
+    https://git.kernel.org/bpf/bpf-next/c/bd4d67f8ae55
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-431c1646.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/01c0dadd39ff/vmlinux-431c1646.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9e2259e440f7/bzImage-431c1646.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b9196ecf74447172a9a@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc6-syzkaller #0 Not tainted
-------------------------------------------------------
-kworker/u32:7/1108 is trying to acquire lock:
-but task is already holding lock:
-ffff888055278768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:6014 [inline]
-ffff888055278768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: ieee80211_remove_interfaces+0xfe/0x760 net/mac80211/iface.c:2262
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
--> #1 (&rdev->wiphy.mtx){+.+.}-{3:3}:
-       dev_open net/core/dev.c:1510 [inline]
-       dev_open+0xf4/0x160 net/core/dev.c:1503
-       do_setlink+0xd24/0x4190 net/core/rtnetlink.c:2907
-       __rtnl_newlink+0xc35/0x1920 net/core/rtnetlink.c:3696
-       rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
-       rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
-       netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
-       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-       netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
-       netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (team->team_lock_key#10){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
-       lock_acquire kernel/locking/lockdep.c:5759 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       team_del_slave+0x31/0x1b0 drivers/net/team/team_core.c:1990
-       team_device_event+0xd0/0x770 drivers/net/team/team_core.c:2984
-       notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
-       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
-       call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
-       call_netdevice_notifiers net/core/dev.c:2046 [inline]
-       unregister_netdevice_many_notify+0x8bb/0x1e40 net/core/dev.c:11352
-       mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5625 [inline]
-       hwsim_exit_net+0x3ad/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6505
-       ops_exit_list+0xb0/0x180 net/core/net_namespace.c:173
-       cleanup_net+0x5b7/0xbb0 net/core/net_namespace.c:640
-       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-       process_scheduled_works kernel/workqueue.c:3312 [inline]
-       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-other info that might help us debug this:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-       ----                    ----
-                               lock(&rdev->wiphy.mtx);
-  lock(team->team_lock_key#10);
-
- *** DEADLOCK ***
-
-5 locks held by kworker/u32:7/1108:
- #0: ffff88801baf4948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3206
-stack backtrace:
-CPU: 2 UID: 0 PID: 1108 Comm: kworker/u32:7 Not tainted 6.11.0-rc6-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- unregister_netdevice_many_notify+0x8bb/0x1e40 net/core/dev.c:11352
- unregister_netdevice_many net/core/dev.c:11414 [inline]
- unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11289
- unregister_netdevice include/linux/netdevice.h:3129 [inline]
- _cfg80211_unregister_wdev+0x624/0x7f0 net/wireless/core.c:1211
- ieee80211_remove_interfaces+0x36d/0x760 net/mac80211/iface.c:2287
- ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1669
- mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5625 [inline]
- hwsim_exit_net+0x3ad/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6505
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
