@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-316389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2979F96CED3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:59:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A96996CED8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98152B25926
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031B61F21C0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF941714A8;
-	Thu,  5 Sep 2024 05:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E9E155C9E;
+	Thu,  5 Sep 2024 06:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="iO8XDvAe"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rwHzKx2M"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217314F11E
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F28338B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515964; cv=none; b=ascoo0OvCQlQa5tdmwqbCZOSGBjw4K7eMlrwr1qn4OB5BkBpeQcg9XRz5/T1ZoQ9lgYjILboRH10EINA2ngoZsR2jgFvtALhtt2U21N2xg5EZ52bRfznxy2RybE2tY5sGZca9Kw3F+p7WMQWzkVRUaceeT5/jGPiUCsQjbMSbXk=
+	t=1725516040; cv=none; b=PsawPRD7TOD0zgo+JRDWruBRmgkzZOPaVBK3+RQvhJbq9gCPRh6oYuK/1Vl58LnvsSDqdUeIdXCrZZHQyRKpOOIa/WmuDl2qDA1kH3uAz0vjx8cLXB+D01sDj2ClZbFhbAj7x6dbdRZvpLiT/LFlX6ftUzx9OZdsfpqCkkr4rxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515964; c=relaxed/simple;
-	bh=2GGQXqn6Bwow+Tl8FfMGEd/u2fuNzbAxofi8uuBriKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g5NsG4NqgzksXz4g07e1bP3Akzr6SzURW6MaaQyJMZ+HgqBYBhz09vPfX7KGCJIOlKQLPOBbEA/Q20aSrS3iAct0EnoltnpYaGtxcmocgWki8iqQacgI56ueNmSBTPSqhoFnsnqpbpIzRFP9SbCNpst0uL3ZUbMMQS31TWepK28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=iO8XDvAe; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725515954;
-	bh=2GGQXqn6Bwow+Tl8FfMGEd/u2fuNzbAxofi8uuBriKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iO8XDvAeGcDJ8BTA0NQxT/igRftjWK/ojTZS8d8lgGUCB66Grxy66uT2W3ZAei7oD
-	 xO+MZBcbvg/f7RkABfxhjwjkwhkPKW5enCaWd1OyUo9n2t9/oCvy/H5HWLAiYa0uUh
-	 /iUg9eHLgP4hG8ayG2couNcQSSGkSFBhQBJnBrCs=
-Date: Thu, 5 Sep 2024 07:59:13 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Willy Tarreau <w@1wt.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc for 6.12-rc1
-Message-ID: <e594db6c-5795-4038-bcb2-1dc3290bfb27@t-8ch.de>
-References: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
- <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
- <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
- <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
- <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
+	s=arc-20240116; t=1725516040; c=relaxed/simple;
+	bh=4g5kMerys2sTSQDIJ5+U/3yJ8VXd2R2vjl68tQymULQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DURn3Q28udJDnwiTWg+jfMJn1lsQv4o513ZStCwck0Y2Hv1p4U6FwUWrYw+wVoLO0xhe/GL+0QiLm7VOcUgr22A94XnBQ9JFf5+R99h8ZkjAw35g+WPXmjRfjYmBcxX61f6Mcufas32TJpoezyND7aZkkeBltmvDGEeJnmbAeSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rwHzKx2M; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e163641feb9so1153122276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725516038; x=1726120838; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+FW4uWV3KsYQNjcmHOkTPMyGoi7nb0utfin/jBmQE9I=;
+        b=rwHzKx2MZS0KznkV5q5BpCvr68upVoyGvIzou/DGVZsMxGETiAhZoze3XGy5Q3v1yx
+         DRT3tcxqEnZ04lftXig5AT6iqOaEym09ctvd3XTeH+ju8VEMbBnFJtrsmj1leS6H/jRa
+         CfaCGbTTKG9zc6Lftv2tb4J90S4KLVBmTlwEzLEWxFoIcRVYs3TAXAycIzUe95UGzDFH
+         RmCppIhUyoMqUoaWszff+q13XvZ7qrOF4oMUxGo/X+psbrE4LMEpn0wzX0NA1h6kO4fs
+         qAnlECWe9S5wefOiLbQ/jUJxDVaE4jYZqx/lZCKfnJG3yeF8g8dsYe5kQ2iWtupx1Iw3
+         +DAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725516038; x=1726120838;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+FW4uWV3KsYQNjcmHOkTPMyGoi7nb0utfin/jBmQE9I=;
+        b=dZITaf2wAp08ByBoxaSwrBzeavuaW82avq6GSgErx/fdU5FXLmkeuDWxMKd8hUBCNp
+         wtctPhyvQ1LLN7ZnlbPWW6LxtRejC3ws6zos9egUzYa/gIDWCnwYEcq2+kRdcrarzmy6
+         CjS7X1zM4AMDqowsLpwxd720uNUooBkbrTPww1+KpKDlc4y9AjWoKTwlWXCPNX+U+sph
+         KaHe8cn6KQvUBqCc/aAy86GUwenSx+9SgD4mfZgBQHQizT2loJsi5RcsgVqvySF5k3uz
+         fVZHzc5a+5WNvFfT7SFJxJpsfGASTC/ZYgKvjyY47ThvDsF1d70Za7GK4T+3uNPUrAdO
+         Zr2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUySt0/jnkKMrZocd7AWN7+n8krcPWfSo1ektCH9YKwrMmqy3XG36Hwk9Q5AYcWy4MXDbLlxl2UMlSvDks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRf3QWTbYPUTbPtnHnHBhJZ1XQCpMIRRMkIuo07SWa+H4Nb2OL
+	Tc5gCUuulTyCGhZEpOpyJZY5TkXSJRiqX8JEgUVSjCocww2rn+x4osXsFN6SWy1x81Lf/7/2qzE
+	28fI95w==
+X-Google-Smtp-Source: AGHT+IE6/jdtxwjYePtJa/mQtCjuubAXd488dazZCbWcyNhof90+G/ZC+ClSd80iROQFjFPidRmr5wz9iYxQ
+X-Received: from dhavale-desktop.mtv.corp.google.com ([2620:15c:211:201:8304:75e2:42b7:538d])
+ (user=dhavale job=sendgmr) by 2002:a25:83d0:0:b0:e1a:7eff:f66b with SMTP id
+ 3f1490d57ef6-e1d108a6462mr49795276.5.1725516038160; Wed, 04 Sep 2024 23:00:38
+ -0700 (PDT)
+Date: Wed,  4 Sep 2024 23:00:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240905060027.2388893-1-dhavale@google.com>
+Subject: [PATCH v3] erofs: fix error handling in z_erofs_init_decompressor
+From: Sandeep Dhavale <dhavale@google.com>
+To: linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
+	Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>
+Cc: hsiangkao@linux.alibaba.com, kernel-team@android.com, 
+	liujinbao1 <liujinbao1@xiaomi.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-09-04 15:19:42+0000, Shuah Khan wrote:
-> On 9/4/24 15:13, Thomas Weißschuh wrote:
-> > On 2024-09-04 15:04:35+0000, Shuah Khan wrote:
-> > > On 8/27/24 06:56, Shuah Khan wrote:
-> > > > On 8/24/24 12:53, Thomas Weißschuh wrote:
-> > > > > Hi Shuah,
-> > > > > 
-> > > > > The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-> > > > > 
-> > > > >     Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-> > > > > 
-> > > > > are available in the Git repository at:
-> > > > > 
-> > > > >     https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git nolibc-20240824-for-6.12-1
-> > > > > 
-> > > > > for you to fetch changes up to 25fb329a23c78d59a055a7b1329d18f30a2be92d:
-> > > > > 
-> > > > >     tools/nolibc: x86_64: use local label in memcpy/memmove (2024-08-16 17:23:13 +0200)
-> > > > > 
-> > > > > ----------------------------------------------------------------
-> > > > > nolibc changes for 6.12
-> > > > > 
-> > > > > Highlights
-> > > > > ----------
-> > > > > 
-> > > > > * Clang support (including LTO)
-> > > > > 
-> > > > > Other Changes
-> > > > > -------------
-> > > > > 
-> > > > > * stdbool.h support
-> > > > > * argc/argv/envp arguments for constructors
-> > > > > * Small #include ordering fix
-> > > > > 
-> > > > 
-> > > > Thank you Thomas.
-> > > > 
-> > > > Pulled and pushed to linux-kselftest nolibc branch for Linux 6.12-rc1
-> > > > 
-> > > 
-> > > I am running sanity tests and getting this message:
-> > > 
-> > > $HOME/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
-> > 
-> > This indicates you are using 'run-tests.sh'.
-> > Pass "-p" to let it download the toolchain automatically.
-> > 
-> > > I tried setting TOOLCHAIN_BASE to the directory I installed gcc-13.2.0-nolibc
-> > 
-> > Not sure where this variable comes from, but I have never seen it.
-> 
-> This is from the notes I got from Willy.
+If we get a failure at the first decompressor init (i = 0),
+the clean up while loop could enter infinite loop due to wrong while
+check. Check the value of i now to see if we need any clean up at all.
 
-Could you forward those to me?
+Fixes: 5a7cce827ee9 ("erofs: refine z_erofs_{init,exit}_subsystem()")
+Reported-by: liujinbao1 <liujinbao1@xiaomi.com>
+Signed-off-by: Sandeep Dhavale <dhavale@google.com>
+---
+v2: https://lore.kernel.org/linux-erofs/20240829122342.309611-1-jinbaoliu365@gmail.com/
+v1: https://lore.kernel.org/linux-erofs/20240822062749.4012080-1-jinbaoliu365@gmail.com/
 
-> > > Something changed since the last time I did the pull request handling.
-> > 
-> > In the test setup not much has changed.
-> > Maybe you cleaned out your ~/.cache?
-> 
-> Not intentionally ...
-> Guess I just have to do run download.sh again.
+ fs/erofs/decompressor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I guess download.sh also comes from Willy?
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index c2253b6a5416..eb318c7ddd80 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -539,7 +539,7 @@ int __init z_erofs_init_decompressor(void)
+ 	for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
+ 		err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
+ 		if (err) {
+-			while (--i)
++			while (i--)
+ 				if (z_erofs_decomp[i])
+ 					z_erofs_decomp[i]->exit();
+ 			return err;
+-- 
+2.46.0.469.g59c65b2a67-goog
 
-> > Or it's the first PR with run-tests.sh?
-> 
-> I have been running the following successfully in the past:
-> 
-> From tools/testing/selftests/nolibc
-> make run
-> make run-user
-> 
-> ./run-tests.sh -m user
-> ./run-tests.sh -m system
-
-Ack.
-
-Could you provide a transcript of the commands you are running and their
-outputs, including the failing command?
-From the error it looks like run-tests.sh is the one failing, but that
-script was written completely oblivious to download.sh and
-TOOLCHAIN_BASE, so those probably won't help solving the issue.
-
-The following command should automatically download the toolchains into
-the location from the error message:
-
-./run-tests.sh -p -m user
-
-These toolchains can then also be used for direct "make" invocations
-through CROSS_COMPILE.
-
-
-As Willy said, thanks for the report!
-
-Thomas
 
