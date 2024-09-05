@@ -1,204 +1,166 @@
-Return-Path: <linux-kernel+bounces-317346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8C796DCCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:58:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DC596DC4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA911F246C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72A528A37F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAD817B514;
-	Thu,  5 Sep 2024 14:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6A66E614;
+	Thu,  5 Sep 2024 14:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="HDTI48gy"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="w/b4diqw"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E9873466;
-	Thu,  5 Sep 2024 14:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13808179BF;
+	Thu,  5 Sep 2024 14:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548225; cv=none; b=WvC80snb38uGU1jC/XPUUMj+l13Sd0c5cGUcuV6Nz4uIhwxJxi5ZZbrupg2uTWq5apQua6O9Nwm6XH/aSXLH8SAhYJm6Krdu86wbyfRoLQcDqgbq4SgESVDrKn7yYUUCHn329XbPKya6mVAP8GIU1kudKsZEbWfumxq3CwwtMIU=
+	t=1725547725; cv=none; b=dO8ul8/V6RZJOasWSvWJBgwC2d4VEDvSY/IBwFhoVoCWcjmLfVoGii5/SyLfmOURN3iMgCnHXMOP32XySpUTlVjb4jrofVlzIW0PsQ/OyzpPdtZYjPRTIzXEA0carIfO+LsagFcvEZB3db+E1EtcmEm9PlhPIxnnotShVgDV+EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548225; c=relaxed/simple;
-	bh=v+YLUxqSFxm+ib/oj+ESGH40/CNmBAMNdcwsjIGjz6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ldTMWwPiNT6AClvekCWgwQxObHt9KMXZUDZgMJ6rJQrlFr5GNipcMW8nJPTS8vshzcfxUltJF4OLetj9ojfs37n9mc4Ikf0TVmeJO6+oC67M0U/N4QY0oSzSKXeEEPVak8y5WbmfxGixOHIMbHAvlVpuQLzDNS/tHeXUqBt0Ve4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=HDTI48gy; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 463063DD1;
-	Thu,  5 Sep 2024 16:50:22 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 463063DD1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1725547822; bh=Ye4UIgaGYG9sddgPGETiBoCD7uB2XyXKCKHqUtRsfCQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HDTI48gyNg/5KFcapBmSQlcApsyukN+aDB37PVExNCUnWRKcSTrNzxfMVOlmzbltI
-	 useZBXrXSWe1Cp767YmD4alOKMZMynx0IAF9RVAYDtWYxDz16Zrqkqd9gdA2ptpVnA
-	 2ufYMxl+Lixzk+pFcTX21PSLJb1mR/NyHyfgKUZA=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Thu,  5 Sep 2024 16:49:58 +0200 (CEST)
-Message-ID: <2858578e-cdf9-4a85-a751-0fd64c2d5d39@perex.cz>
-Date: Thu, 5 Sep 2024 16:49:56 +0200
+	s=arc-20240116; t=1725547725; c=relaxed/simple;
+	bh=0ommqQRWmdehvN0o6pbfhCcsZNj04TF1UHTEwGE5yDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j3ez7wsb/1ApqH+94ZSJ7MpY+Wc6GIDtaLnrHA8LZz9w+6e4pt28cDZRanlykN7wNXiJAEVkBkjK7KE3f/S91Rpm7MmJ25tyAudcwEFZGnh2IiEExlwT/z4SY4NNMlDZMVjCZIULEuKh784ioAnCevBXw5eyZwzNBYdEltIykDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=w/b4diqw; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Z9IgYD/2bP3HwiWDe9m6U4cOpfzwTsOumgc5N6zAYJA=; b=w/b4diqw5J8ZIWZLi5djL0KZax
+	oYskcatg6UJKVdLpBuSCCoPxb857ufeJN9eshcmsi68J/7ptbzWk043BsCHcRZ+oXflAwquP5rcoA
+	MV40is1liBi9d8axQSJHuIhypek6r9Lvz4WU8t+VItpygoIB3Qrdq4VKamWkE7HBi7vMET96xV0oC
+	yyF4mAvu0ThWEjYfLULsTtkVHc3A6s7wx5yRnUz9WjN0FdjUpRdKbQ0bD/gnSFwMp9guoDc2fL3HW
+	4iE5WgDR4IijnID5sLC2t6JfrtyLyvB2hFOMLYI26aTLd/qZk5RdFq5LFYVTydBQ05sXM6fHcZQsu
+	0P35Q/gw==;
+Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1smDmd-0002HD-Hx; Thu, 05 Sep 2024 16:48:27 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Lee Jones <lee@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+ pavel@ucw.cz, ukleinek@debian.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 3/7] leds: add driver for LEDs from qnap-mcu devices
+Date: Thu, 05 Sep 2024 16:50:22 +0200
+Message-ID: <3627679.ZzFAyJQhcr@diego>
+In-Reply-To: <20240829162705.GR6858@google.com>
+References:
+ <20240825203235.1122198-1-heiko@sntech.de>
+ <20240825203235.1122198-4-heiko@sntech.de> <20240829162705.GR6858@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/13] ALSA: update sample rate definitions
-To: Jerome Brunet <jbrunet@baylibre.com>, Takashi Iwai <tiwai@suse.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
-From: Jaroslav Kysela <perex@perex.cz>
-Content-Language: en-US
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 05. 09. 24 16:12, Jerome Brunet wrote:
-> This patchset adds rate definitions for 12kHz, 24kHz and 128kHz.
+Am Donnerstag, 29. August 2024, 18:27:05 CEST schrieben Sie:
+> On Sun, 25 Aug 2024, Heiko Stuebner wrote:
 > 
-> It is follow-up on the series/discussion [0] about adding 128kHz for
-> spdif/eARC support. The outcome was to add 12kHz and 24kHz as well and
-> clean up the drivers that no longer require custom rules to allow these
-> rates.
-> 
-> Identifying these drivers is not straight forward, I tried my best but I
-> may have missed some. Those will continue to work anyway so it is not
-> critical. Some drivers using these rates have not been changed on
-> purpose. The reason for this may be:
-> * The driver used other uncommon rates that still don't have a definition
->    so a custom rule is still required.
-> * The constraint structure is used in some other way by the driver and
->    removing it would not help the readability or maintainability. This is
->    the case the freescale asrc drivers for example.
-> 
-> There is one change per driver so, if there is a problem later on, it will
-> easier to properly add Fixes tag.
-> 
-> The series has been tested with
-> * ARM64 defconfig - spdif 128kHz at runtime.
-> * x86_64 allmodconfig - compile test only
-> 
-> Last, the change adding IEC958 definitions has been dropped for this
-> patchset and will be resent separately
-> 
-> [0]: https://lore.kernel.org/all/20240628122429.2018059-1-jbrunet@baylibre.com/
-> 
-> ---
-> Jerome Brunet (13):
->        ALSA: pcm: add more sample rate definitions
->        ALSA: cmipci: drop SNDRV_PCM_RATE_KNOT
->        ALSA: emu10k1: drop SNDRV_PCM_RATE_KNOT
->        ALSA: hdsp: drop SNDRV_PCM_RATE_KNOT
->        ALSA: hdspm: drop SNDRV_PCM_RATE_KNOT
->        ASoC: cs35l36: drop SNDRV_PCM_RATE_KNOT
->        ASoC: cs35l41: drop SNDRV_PCM_RATE_KNOT
->        ASoC: cs53l30: drop SNDRV_PCM_RATE_KNOT
->        ASoC: Intel: avs: drop SNDRV_PCM_RATE_KNOT
->        ASoC: qcom: q6asm-dai: drop SNDRV_PCM_RATE_KNOT
->        ASoC: sunxi: sun4i-codec: drop SNDRV_PCM_RATE_KNOT
->        ASoC: cs35l34: drop useless rate contraint
->        ASoC: spdif: extend supported rates to 768kHz
-> 
->   include/sound/pcm.h                  | 31 +++++++++++++++++--------------
->   sound/core/pcm_native.c              |  6 +++---
->   sound/pci/cmipci.c                   | 32 +++++++++-----------------------
->   sound/pci/emu10k1/emupcm.c           | 31 +++++--------------------------
->   sound/pci/rme9652/hdsp.c             | 18 ++++++------------
->   sound/pci/rme9652/hdspm.c            | 16 +---------------
->   sound/soc/codecs/cs35l34.c           | 21 ---------------------
->   sound/soc/codecs/cs35l36.c           | 34 ++++++++++++----------------------
->   sound/soc/codecs/cs35l41.c           | 34 +++++++++++-----------------------
->   sound/soc/codecs/cs53l30.c           | 24 +++---------------------
->   sound/soc/codecs/spdif_receiver.c    |  3 ++-
->   sound/soc/codecs/spdif_transmitter.c |  3 ++-
->   sound/soc/intel/avs/pcm.c            | 22 ++++++----------------
->   sound/soc/qcom/qdsp6/q6asm-dai.c     | 31 ++++++++++---------------------
->   sound/soc/sunxi/sun4i-codec.c        | 28 +++++++++-------------------
->   15 files changed, 96 insertions(+), 238 deletions(-)
-> ---
-> base-commit: 785f4052380684dbcc156203c537c799e2f4be09
-> change-id: 20240905-alsa-12-24-128-8edab4c08dd4
-> 
-> Best regards,
+> > This adds a driver that connects to the qnap-mcu mfd driver and provides
+> > access to the LEDs on it.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-Thanks,
+[...]
 
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
+> > +{
+> > +	struct qnap_mcu_err_led *err_led = cdev_to_qnap_mcu_err_led(led_cdev);
+> > +	u8 cmd[] = { 0x40, 0x52, 0x30 + err_led->num, 0x30 };
+> 
+> Really not fan of these magic values being used raw like this.
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+Me neither, I tried my luck with QNAP support to get some sort of
+documentation on what these magic characters mean, and it did
+even get up to some "product team" but ultimately they decided
+against providing any help.
+
+But ok, if it makes you feel more at ease, I'll switch to at least
+replaying ascii-values where possible :-) .
+
+
+> > +static int qnap_mcu_err_led_blink_set(struct led_classdev *led_cdev,
+> > +				      unsigned long *delay_on,
+> > +				      unsigned long *delay_off)
+> > +{
+> > +	struct qnap_mcu_err_led *err_led = cdev_to_qnap_mcu_err_led(led_cdev);
+> > +	u8 cmd[] = { 0x40, 0x52, 0x30 + err_led->num, 0x30 };
+> > +
+> > +	/* LED is off, nothing to do */
+> > +	if (err_led->mode == QNAP_MCU_ERR_LED_OFF)
+> > +		return 0;
+> > +
+> > +	if (*delay_on < 500) {
+> 
+> Setting delay_on based on the current value of delay_on sounds sketchy.
+
+As far as I understood the API, the parameter should indicated the wanted
+blink time, while the function then should set in those variables the delay
+the driver actually set.
+
+So if the delay_on is < 500, select the fast blink mode, which is this
+100/100 variant and for everything >= 500 the slow blink mode.
+
+I.e. you set the trigger to "timer" and this creates the delay_on and
+delay_off sysfs files, where you put you wish into and can read the
+actually set delays out of.
+
+
+> > +		*delay_on = 100;
+> > +		*delay_off = 100;
+> > +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_FAST;
+> > +	} else {
+> > +		*delay_on = 500;
+> > +		*delay_off = 500;
+> > +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_SLOW;
+> > +	}
+> 
+> How do you change from a fast to a slow blinking LED and back again?
+
+echo timer > /sys/class/leds/hdd4:red:status/trigger
+## creates delay_on + delay_off sysfs files
+
+echo 150 > /sys/class/leds/hdd4:red:status/delay_on
+cat /sys/class/leds/hdd4:red:status/delay_on --> 100
+
+echo 250 > /sys/class/leds/hdd4:red:status/delay_on
+cat /sys/class/leds/hdd4:red:status/delay_on --> 100
+
+## switch to slow blink
+
+echo 500 > /sys/class/leds/hdd4:red:status/delay_on
+cat /sys/class/leds/hdd4:red:status/delay_on --> 500
+
+echo 600 > /sys/class/leds/hdd4:red:status/delay_on
+cat /sys/class/leds/hdd4:red:status/delay_on --> 500
+
+## switch to fast blink again
+
+echo 150 > /sys/class/leds/hdd4:red:status/delay_on
+cat /sys/class/leds/hdd4:red:status/delay_on --> 100
+
+echo heartbeat > /sys/class/leds/hdd4:red:status/trigger
+## removes the delay_on + delay_off files again
+
+
+Heiko
+
 
 
