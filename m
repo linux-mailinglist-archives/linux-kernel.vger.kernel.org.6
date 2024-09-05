@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-316674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19BC96D29E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB4896D2A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC611B220D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:58:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A34EB250A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613C41953A3;
-	Thu,  5 Sep 2024 08:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FdUPKyIj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28861953A3;
+	Thu,  5 Sep 2024 08:59:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DC7194AE8;
-	Thu,  5 Sep 2024 08:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A697194AD9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526706; cv=none; b=gwhgijZ3rLfa2iYgCefOX4dqwsILssBXov5pgMIzdODybVUx69c5ksEC0wxj88Ww2uXEYYJa0qMOsWNp4/1qtl4WEht4VIMBo0pY73kjFK51JcgApVgwzFf26LHfZ5lKPOwkXJHO2NxTLFp+rhU5j7P98f+/6Of2wFPRl+YAZKw=
+	t=1725526744; cv=none; b=oWeWO3Y8k7WCD/ZIjzxOpY39c1biGcHeHs/eiFVdezbbfBGIz7qwlkzJJ57X9tnwmRJicYGpEGNMCUAHHqYkAdYTYHXKmSMWd/eBh+QDdrSP1KXharzmjT+XbwNP8a+ZYzZsm0EnrtzKUThjLikjLLnmy9l3nM5gAWgkQeVVLvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526706; c=relaxed/simple;
-	bh=gtASPCCOLpt9xwZw3BP2/0cX0MaF3P8nY6xQev3A9po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZgVejHS+ibJ2wbK68ZGhlF+0rAENL2xqf71Gayqa6V1pmBl4OYxQ7aLBadSzoxkcfDAuhkjRpGvG5L9vVj9R6MbmJWNEI8cVG1XhXiiUH8Me2iWklrwm9KSPRVh2otYueNxy6OmFjbgpXIeN1ZvRr7WVqavFbC48w/UOEhGau8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FdUPKyIj; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725526704; x=1757062704;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gtASPCCOLpt9xwZw3BP2/0cX0MaF3P8nY6xQev3A9po=;
-  b=FdUPKyIjk4U3PIzCOp9mIRiSGsb+hT6AQq0lFnHB3M53tiUhZP9uFgvY
-   e8erTMfzOhK2oHhdZTqeAJU13/u59Ti8R47KxM7J7CjMYq4h9CZGudws0
-   hh1Rdlu7UtE5DuUQ4tFongHKjsWxp+tGrhLVhmhVMRpzAWoF0yDupdzLM
-   qbAOIQqraRdSHBLirGOv7HWa8HlietAjRe2RL28cJLnXYbj41AAUG1YYy
-   N18dg4odO1mlSqvNjEot+G4WRlhrF42VeoXIiuZcA0Al+Bfw8836FIeiq
-   kktFGZD42i3aPQ2A/209WRT+9CTGwhBJSGDp7e/EBN964YyDl401nEfa5
-   A==;
-X-CSE-ConnectionGUID: tQmTW5B4S0CZ6Ls5aPEngw==
-X-CSE-MsgGUID: RvFeA7GwQZCLMsgt2UYD+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="13383345"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="13383345"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:58:24 -0700
-X-CSE-ConnectionGUID: NH9v33D9RO65q6VCwKNZFw==
-X-CSE-MsgGUID: BJo+7ka/QKCFaF62TQOahQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70356682"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 05 Sep 2024 01:58:19 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sm8Jl-00098x-2K;
-	Thu, 05 Sep 2024 08:58:17 +0000
-Date: Thu, 5 Sep 2024 16:58:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sven Schnelle <svens@linux.ibm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] x86/tracing: pass ftrace_regs to
- function_graph_enter()
-Message-ID: <202409051620.5YBbYREt-lkp@intel.com>
-References: <20240904065908.1009086-3-svens@linux.ibm.com>
+	s=arc-20240116; t=1725526744; c=relaxed/simple;
+	bh=l66u4E+lkBWOoNopOzdJgLyeEmtmPPebVNnzWNz4drA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hKXv9L2hw80zCD2jNDxe/4bGgXZ02Am0hOqwv1Wdy+7NWrZ5xeAOXvv6zRkinVFOBeyAwiNeVS3tDAmaPEU1iXPvrd3jEdqKrOq5KIZGyvO9rrh5ivGHIqH9XDhGz8r7Vh/pGkVhNPCrD8retP9kevsWHMtUrFqXIuEP6wr/dVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a045e7ed57so10319425ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:59:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725526742; x=1726131542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7qskDsSLaJJiLOOgHZ+8hAGxQjTCnIvNsAeyHhTViA=;
+        b=sHp0Zln/JvwCg0xYurN7x2EySVx43NLvmmvSyHs+3uKP1h8OjXro+bglZG+cB2DDwI
+         AIIRCoCNzLjkVJgKJCpWzWIygXkjtcZ4w36QExnIL8DLAm356uSk5A4mTyqcetWpYgZc
+         mqpm++L4GtXXQ/mM5yhl14e4PifWyqI4lYTEG1lw/6rERdEEH1RWzdroex/ZIm2JnXjj
+         zfTd3WsPmqdea+fk4KzX700Jew3XGZEA/61ZhAUTAEMeEXva89EUg0cVG4gRsASdu5ki
+         /0yc/VeIN4X0HOnyT3AlTu8GJ1UuqNtHZXVk3HV02ojjQRohOCsveMTFLkEeGmxBocRZ
+         9gRA==
+X-Gm-Message-State: AOJu0Yxi6MzuFw+Tv6Obbm83hKZHWK3e4gMfyxkCbRzczhUZGaKX224w
+	WXBbPwqx22UhdQQcBk93MdASqnjVto3PQ+pppXdtUyTlZRzo8d1NdfBw4WABiKtF6D+yTJLzU39
+	NctP1UvL/u5MigodI7xTqhmaZkHmTpH04KFQs1DAi3zdw5iQ5gLOuP5c=
+X-Google-Smtp-Source: AGHT+IFAkdQK3XtbYLTtOLnYzXAKHxWmD+hxOgPSMU9sC8qlK/UrJigkRBPK+9LJzh2jfKBq8B3i95zsLgY+5inanGldJWE2TjjX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904065908.1009086-3-svens@linux.ibm.com>
+X-Received: by 2002:a92:ca4a:0:b0:39f:5b92:15f8 with SMTP id
+ e9e14a558f8ab-39f73bafccamr4566315ab.5.1725526742288; Thu, 05 Sep 2024
+ 01:59:02 -0700 (PDT)
+Date: Thu, 05 Sep 2024 01:59:02 -0700
+In-Reply-To: <20240905082935.2536851-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000086587a06215b80e5@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sven,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: kernel-usb-infoleak in usbtmc_write
 
-[auto build test WARNING on s390/features]
-[also build test WARNING on tip/x86/core linus/master v6.11-rc6 next-20240904]
-[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+xf size: 3, count: 3, usbtmc_write
+=====================================================
+BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
+ usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
+ usbtmc_write+0xb26/0x1270 drivers/usb/class/usbtmc.c:1608
+ vfs_write+0x493/0x1550 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+ x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sven-Schnelle/tracing-add-ftrace_regs-to-function_graph_enter/20240904-150232
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
-patch link:    https://lore.kernel.org/r/20240904065908.1009086-3-svens%40linux.ibm.com
-patch subject: [PATCH 2/7] x86/tracing: pass ftrace_regs to function_graph_enter()
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240905/202409051620.5YBbYREt-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051620.5YBbYREt-lkp@intel.com/reproduce)
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3998 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4188
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ usbtmc_create_urb drivers/usb/class/usbtmc.c:757 [inline]
+ usbtmc_write+0x3d3/0x1270 drivers/usb/class/usbtmc.c:1547
+ vfs_write+0x493/0x1550 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+ x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409051620.5YBbYREt-lkp@intel.com/
+Byte 15 of 16 is uninitialized
+Memory access of size 16 starts at ffff888117169000
 
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/ftrace.h:23,
-                    from include/linux/kprobes.h:28,
-                    from arch/x86/kernel/process_64.c:35:
->> arch/x86/include/asm/ftrace.h:108:64: warning: 'struct ftrace_regs' declared inside parameter list will not be visible outside of this definition or declaration
-     108 |                            unsigned long frame_pointer, struct ftrace_regs *regs);
-         |                                                                ^~~~~~~~~~~
+CPU: 0 UID: 0 PID: 6369 Comm: syz.1.63 Not tainted 6.11.0-rc6-syzkaller-00070-gc763c4339688-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
 
-vim +108 arch/x86/include/asm/ftrace.h
+Tested on:
 
-   106	
-   107	void prepare_ftrace_return(unsigned long ip, unsigned long *parent,
- > 108				   unsigned long frame_pointer, struct ftrace_regs *regs);
-   109	
+commit:         c763c433 Merge tag 'bcachefs-2024-09-04' of git://evil..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=143420b3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1055bd97980000
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
