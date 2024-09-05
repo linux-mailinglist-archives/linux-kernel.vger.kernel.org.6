@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-317230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A5596DB30
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E16196DB33
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759821F27DCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77BB1F284A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A26319DFB9;
-	Thu,  5 Sep 2024 14:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7405419E7E4;
+	Thu,  5 Sep 2024 14:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TtfVPB/r"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g0VohcB+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B0F19DF4D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76819DF4D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545349; cv=none; b=tPO/jW9Gpud8J8OBFCu1dI9QN/Axd04rVcnazYWTAPc3lcEPEgHCOH2qe8dCBHUjVsJ/vZQWEwm9Cmrp/a8A4SOGMMoeyaumY+pYkVyo8kbBQcuDBFoW3nyy/mJBIkgdeBBWwtiVPEEfteEV5MBQVCqklVsas7b0+3nOz3+/Oxo=
+	t=1725545361; cv=none; b=nhQXetNYi+hVk90fw2+DrT7t1EP4tTuEOFxZsf6xuYfFvgfITmfwu0wCGjd1VX8bahXvErnE0xvZO60mAUBwyNxR3YgBMiT5lFC5Asu6/fJpSjtdw2EkHg6206H8wNUteD+FWa0QfATAp+c+Lcy9GrkQzXkMumMqoXc09plZMCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545349; c=relaxed/simple;
-	bh=hFvMxZCQz/tWSset+2x3kNBjfNOP5shqepNlxBFkZac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XrsSo3HmLxkWTOASJ7b/DOliAZhmf0hG7tuTcoYOO/FhtIQzJRz7Sjcsgw86ErjffCHQuHUNnRgvLOnev16jb6F5BTUPfSBhH2B2voW0jJ5qaYbhxDYEfzpCqUkIAj4cg/QTv/ZCoTAH6Hjr8Yfz+y1hmorWuc7dO6d3I/qD1Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TtfVPB/r; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5dfad5a9c21so508156eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 07:09:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725545346; x=1726150146; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7GIQ46mGPoVEaUozNTovEf5oq81WmVNnl7zcm9ZEhzU=;
-        b=TtfVPB/reU8FpDvkIHPSZjbpsqVurZ5CSMoyj3j2W7mxVmW4+vezmtYw8TGWWGHQi0
-         yAd5ahoE0mqn7Ot+dVzU3LVsIlXKwpKwTL1phCw4MJxPxY9tMDbtBSASd7f94OcrFCqY
-         At3JG3HnDAbITsiU4toTX7oU0OpzuUx94HCsoMFeLB7R3XYHkT8zXEM59SMvPILuZ5dc
-         ulm5fRXT4ubKjtqFnytH/bPN1P371PlnRkw6+lqnSawK1cRZDXQQYaPQgAw8cef48EXB
-         I81+aa2AVTQP2AHWJYciOVjXktZVN4x5oBN8BrV5NFQfPCQ7XFBV5BDSrQh30Pmq+pkS
-         L0rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725545346; x=1726150146;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7GIQ46mGPoVEaUozNTovEf5oq81WmVNnl7zcm9ZEhzU=;
-        b=COshCgc+DCpYubfKlOjGFALFLuKUcfqK8SbXT0RbxRKzFgBkGgjYxpHAUu8kkKIQz8
-         ZmxfJvShDqq4x1+SL3spmf294WHqoeV//h+IpzZIliEA0+YSEMia8GhwSlkX4yBMjBxP
-         esUwCFbR9S3h4IHHWforipQSzPSxq1ooiCzafNxxvc0TwuFMe3Ip67N6vMw7D+C7TmIE
-         1NDgTSJrF8MTewfItOa3m9JIUMC1I+TWzctsjEdj3yicmXKbYEdzNKBBRARgsZRvWAwP
-         /zIQec4d9o0P21+p68N4GcJWV3X03dxNSADe8NlyL1kAWf56DkWdapB/3HO7SwRHaYc8
-         TOSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaMgU+Pt/5/QgGjXCvFccB96RidvME3JBp9QRYC9tx6u+K2Bn9G+U3WMKAl45eyMMTZp0LHPHBgmNfLTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcS11eYtpVDikEpgtGDAvgpz7KtOy01PFmdgQiB/tYtaKmtkDj
-	hikpio8h3iGojPZ/CNV+5NMpp4Gacb4Pe5qVs+VvQVDUat11W3VtNJemeqHBqHFoEQX69NOst5u
-	3TItReOEjv/VDY9EjYQ12WGcPBXCCar/ATmHJBg==
-X-Google-Smtp-Source: AGHT+IEeD6bM1S0y5bTDpYm6UGEe0nFuVGedJfI98Z9M4R/H0XdQi2pU0eCPaMGAiK6Jh+t3PwlhHpYhET8BikNE/1I=
-X-Received: by 2002:a05:6870:724a:b0:270:1498:6a36 with SMTP id
- 586e51a60fabf-27790167a0emr26390991fac.29.1725545346287; Thu, 05 Sep 2024
- 07:09:06 -0700 (PDT)
+	s=arc-20240116; t=1725545361; c=relaxed/simple;
+	bh=Q6nWeBU37wmAot8cg7kzJQLhx6z2mRPUaLYCXMXaBvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLsBtYjZmTC8pST+dmuRL3Tkfi58KtCP+KPCeb4kTJ5OC5g6iHMRZIS0F+xaD1K55EtfTIvc872mpFNrYhsOVEfnwowpnGrWYrQbgcqsk4MGCb+RnxmguvGlpko5zZiCKDLMDjild7QvhUDqoFz9UfHDvo6cY2Sa97J7JFCfhVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g0VohcB+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725545359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L3nlL5tWICWxYZUircz1H/qUNW2To9dsWCu6HNAp6L0=;
+	b=g0VohcB+oU6F12vV5t5voIJS9dSlVbFJ2LqI3/Fw4OPycWipMxoZ3+ZoNIUq5UqMAwwbRj
+	ywCl0oYDMf0e48MVMo+7oPerTMi9a8G+ez1D7qxo/MUvMrD6BA/Q7m5OFuIOJY3hUPwtgW
+	YaGVJnqcJm2leHq6Xr/vjEFU/yUgqD4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-UrvdJzZhMY2MfE9mywBzNw-1; Thu,
+ 05 Sep 2024 10:09:17 -0400
+X-MC-Unique: UrvdJzZhMY2MfE9mywBzNw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D2C21956057;
+	Thu,  5 Sep 2024 14:09:14 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.39.195.29])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2A0119560AA;
+	Thu,  5 Sep 2024 14:09:06 +0000 (UTC)
+Date: Thu, 5 Sep 2024 10:09:02 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com
+Subject: Re: [RFC PATCH] sched: Do not copy user_cpus_ptr when parent is
+ reset_on_fork
+Message-ID: <20240905140902.GB179482@pauld.westford.csb>
+References: <20240905090458.1173-1-xuewen.yan@unisoc.com>
+ <a645086d-bffb-41b0-bd70-1ef5edb128f9@redhat.com>
+ <20240905131244.GA179482@pauld.westford.csb>
+ <66d8a8c9-f03b-49de-b67f-0623a796191e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f8c12aed-b5d1-4522-bf95-622b8569706d@stanley.mountain>
-In-Reply-To: <f8c12aed-b5d1-4522-bf95-622b8569706d@stanley.mountain>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 5 Sep 2024 16:08:54 +0200
-Message-ID: <CAHUa44H4XHOxn_=TxTUM=S6oqUNL6-kVVU2=jFPZyobzmtbQPg@mail.gmail.com>
-Subject: Re: [PATCH next] optee: Fix a NULL vs IS_ERR() check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sumit Garg <sumit.garg@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <66d8a8c9-f03b-49de-b67f-0623a796191e@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Sep 5, 2024 at 3:17=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> The tee_shm_get_va() function never returns NULL, it returns error
-> pointers.  Update the check to match.
->
-> Fixes: f0c8431568ee ("optee: probe RPMB device using RPMB subsystem")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/tee/optee/rpc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
-> index a4b49fd1d46d..ebbbd42b0e3e 100644
-> --- a/drivers/tee/optee/rpc.c
-> +++ b/drivers/tee/optee/rpc.c
-> @@ -332,7 +332,7 @@ static void handle_rpc_func_rpmb_probe_next(struct te=
-e_context *ctx,
->         }
->         buf =3D tee_shm_get_va(params[1].u.memref.shm,
->                              params[1].u.memref.shm_offs);
-> -       if (!buf) {
-> +       if (IS_ERR(buf)) {
->                 arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
->                 return;
->         }
-> --
-> 2.45.2
+On Thu, Sep 05, 2024 at 10:00:36AM -0400 Waiman Long wrote:
+> 
+> On 9/5/24 09:12, Phil Auld wrote:
+> > On Thu, Sep 05, 2024 at 08:42:33AM -0400 Waiman Long wrote:
+> > > On 9/5/24 05:04, Xuewen Yan wrote:
+> > > > Now, the task's user_cpus_ptr would dup from parent's user_cpus_ptr.
+> > > > It is better reset the user_cpus_ptr when parent's reset_on_fork
+> > > > is set.
+> > > According to sched(7):
+> > > 
+> > >         Each thread has a reset-on-fork scheduling flag.  When this flag
+> > >         is set, children created by fork(2) do not inherit privileged
+> > >         scheduling policies.
+> > > 
+> > > It can be argued what are considered privileged scheduling policies. AFAICS,
+> > > a restricted affinity doesn't seem to be a "privileged" scheduling policy.
+> > > That is my own opinion strictly from the definition point of view, I will
+> > > let others weigh in on that and I am OK to go either way.
+> > > 
+> > I think that one could argue that clearing a restricted affinity is
+> > increasing the privilege and not preventing inheritence of same.
+> > i.e. it would be the opposite of what reset-on-fork means.
+> > 
+> > I'd say NAK to this one if I had that power.
+> 
+> Maybe I am not clear enough in my previous mail. My position is the same as
+> yours. I think this patch is not necessary. More reasons should be provided
+> as to why it is right to not inherited the restricted affinity when
+> reset-on-fork flag is reset.
 >
 
-Good catch.
-Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+No, you were clear. I was just providing my opinion, weighing in :)  
 
-Ulf, this is a fix for a patch in your next tree so if you could pick
-up this patch, please.
+Cheers,
+Phil
 
-Thanks,
-Jens
+> Cheers,
+> Longman
+> 
+
+-- 
+
 
