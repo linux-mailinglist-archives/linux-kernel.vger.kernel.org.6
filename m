@@ -1,259 +1,165 @@
-Return-Path: <linux-kernel+bounces-317059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A38F96D8B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0946696D8B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE031C2362A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FD328729E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87DF19C541;
-	Thu,  5 Sep 2024 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03E719AD8C;
+	Thu,  5 Sep 2024 12:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="brn/mRag"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="swrOoSqv"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EFF19CC01
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E43176AD7;
+	Thu,  5 Sep 2024 12:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539694; cv=none; b=HqyxCnzIO9G5nkFgSz3WTmqn+sScwuKqNVXOri3Zy4dNHryv0GDOgOSmZXC3N3JOtNTmJh/ajss+su9ROM4gRUBGBoQddF5bbKhKEklATtbORSJWqmnkiSGGz8D9PcmGxwy8YQtMi1crv9YPGB0MAcmhWoO32cEHpDX971DWBVI=
+	t=1725539730; cv=none; b=FMTKYpJLQmqBqhHKLHV+hLrVEWOMUdpE9txqZ5Hhh7ard7Hz8Vc0oUDu3gMzOmGvXxl6JAwRbL6EVj2h5GrZ0NRWrmqUjpv8AaHR2A9vsfJB9ss2WpjZ5zPk0UcfCnPSrfDnvhVipPq1LhYypW/g5+WEFul5yfZPQ2Mm4W0Z83w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539694; c=relaxed/simple;
-	bh=o1BYVeXYd+Exw1Pko8Ju87ReVDQeiUoI/T/lA26YbDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SBjWZ67Ll8bYJV80pd03IZZ78w5sWn6V6A4zvC4taL98mLCImvByJ88gMduyyaH5muOGdOUv5W357YFcC5lLx4rVh1hrEyMWfKz9l0Vl3rLzx4Wl0FPEdCbTTFWCSY2H3NsN1uC9xMjNFPZPay3HZSvmemAPEb36+KHtaoUQnoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=brn/mRag; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so102503666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725539690; x=1726144490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZYteC50roaclv1enHFvpxn794KpAlBuHzUkfSWTmPbA=;
-        b=brn/mRagZITICxL/Hdsg8PXX/d31jYg/rL0GB0igbSDoA41IUoPr6rFci+BrxbYF36
-         57eVejQH+ljl6wsxCcKUPyxZs3yq7Hlh5ZCjOXY9EvzLDFktF8P6adWSGSbkJO+sOUj8
-         KI8RN0nlDTGbhSnd6hUwzqwf5kO1f+Pp9i6mwUB36dMCwF72e9Ke+g5wX+RCtXAZHzd6
-         U1q3+STjJyi6Nughjnrd+uTU5GUwDlI0140b0Njo8rzeqG1G4MMPDkFAYITiJj3tb+el
-         VuOIT8X+57ZypeFn6FKa3G4LTYmFkCg8b+fc5ZvJnlmngUZxEWkPsPa8L50Kzn99X615
-         LqLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725539690; x=1726144490;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZYteC50roaclv1enHFvpxn794KpAlBuHzUkfSWTmPbA=;
-        b=r+ym2eiq8Y88xNaL1yR9HmhwzWA49bYE7DZMz2ERHeATSuiOD6h1KDU72l48lf38Se
-         qAymzjrAMRzp77QwssZf3/LIhCxRjIPkjd3bmGhJPYSM1eMMRKQ053NdHrfPmmExpQBZ
-         UuaSCruuzpM7IjtZu+QecpQCA4Q2i5/pB5hRR8hrEmLpMIh8n5DV689l/ft+uhk+GJKl
-         AekbkI3hiHA8uUMkuISTnUXAY7G33jRf/d5N/C6kLhcLngbWQ3PPJJKDk8RczkuEPcCN
-         /QMTJ3yXKeakQCQzTvCYQVaDRf9LqrYDDwTHkLgNE1tcDTBQXV65JRAHorDkxP+zK5qH
-         mvYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGd3O0WLo9rx6cCUjR+f0d6z46Zf0H50MrhCNm5O1uY03EvhSjj4JCEgh+9T8zLSt0sjYk+m3m68U5MDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmmM0DISFgAOzYgfn3QG72juk5oIemEDYLr4Cwzch1UM+fUYqs
-	R0miQthDbiN7AK+2gxMvPp7nxaBHl8oKmqD1c91PTGq6kEOMwAu86/VFpugbNTiCvowGJTqdJxO
-	U
-X-Google-Smtp-Source: AGHT+IGpUC3PlcHdPXyRu7Bo/T/CFmwmTWaQN26GGApAbAiz6u4OpkNRyvIBnPIWXzM5OIpJsvajVg==
-X-Received: by 2002:a17:907:e20b:b0:a77:db36:1ccf with SMTP id a640c23a62f3a-a8a3f49a1c4mr514691966b.42.1725539689941;
-        Thu, 05 Sep 2024 05:34:49 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6204793asm131915866b.84.2024.09.05.05.34.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 05:34:49 -0700 (PDT)
-Message-ID: <3b578b1b-53d5-4f2d-a2b8-8483a4051a24@linaro.org>
-Date: Thu, 5 Sep 2024 13:34:48 +0100
+	s=arc-20240116; t=1725539730; c=relaxed/simple;
+	bh=eWXnFcXSlzMYQpZW8Hy8qFqCdpL0PX9kvItTRaNmrFg=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=lsVW9mLAVd8sIo9E7X+rc6r7A2ICQArbJJ/96Q3uIZqwm8RZRuggWTUqrWwfLWJbb1lCTvBKHOtA9alYrdkaDWMaPfgOYLRBUg2fZOfIeGz5j9Jh1Hzl/tls3kaVeky4qOsIXk2WfMnlVI6F1xxnEZ72UzwgMj3lGSTai40PTX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=swrOoSqv; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725539723; bh=FYqDZVG9wIGuqWD1evRlumoDPPlBGI6xaAt0w2ApOKI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=swrOoSqvVYYpveRg3nka4qO3brIdY+TbrR7AiG6ozWQv2E08f34fIaPCbzzJL7Hol
+	 CIXMM9IYm9VlcSLfABEZPHnBmOMX/bdMY0hTmjqIA5hMmhQoZ0L0aODfUmmRwN14VA
+	 1VMJ+ZxfBOawcBI/w7kiIkuL7HQ6neXlQe9oTCfQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 8D2B8AF4; Thu, 05 Sep 2024 20:35:18 +0800
+X-QQ-mid: xmsmtpt1725539718tebrv7rw3
+Message-ID: <tencent_3FBF36AE969036864BB0748977C9669E3D09@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmaj0aSd45lpCIQQB/+lGDZ2eDgjriY7MWap0RDnHx+QehVevXjl0
+	 Of8aphvnf6o3YDhbDoc3p4yEsgL0Z2fDmlexQYXrx7gLLdpTLHK52vn/uFiKsphh59ce7iD4b2ws
+	 O7XxZXV1Jho2F9pteCXHH8+vHog5l0ioy7tk7QXSPiIIYU5bE9BKYDXUVS1a5RFZKCBCyc4OZbJK
+	 dnNX7mLstjyuVyxNP5qI3POAXUbkYO7knr4BUeJRWbFY65lPloWqFGH7M7w6fFrwvBRCE/oLxUqX
+	 Lulo0fR4DiGbU5R0cQBdvVqGvzPuyDC8smoUBn4gAQEitZbFCtXIJF7h7iQYnASXJHBTTXPmUY+8
+	 wDhfQjNc1TzQh5N4RwXfOdtDxvj7lwGNlAnpRHLvjMlN2uGTDMzK0mxElsjcr5wWEKA5PP/0j3rw
+	 VzIUn52zfBWZdxY3POeaymJ55M+KW/QAOHCoR+bDwo030/gbv3MHYkjBYREA8pyy9Udy4tA1HJA7
+	 wnZMtQKcY4SdjFs7mNlxnN8p7uz+2lhh5VO+dLkzgoWLFY83WEuxL4hUyUEOrQCstnKz+4y3ZDCG
+	 7S0mCNaHPG68pFZp3a6p3D3PzOhJVenaJteANLLSgId7uoqqeKxtPhR40izo1L7xWljQMZ9mMtXs
+	 mCI5T++YYroviruLcH8sz9tCtqz1Tvn7b1sFRGOmZHnaTzvOvDdqoIOGVz7GMjmvM7yTKm/yE1GG
+	 X94gRs2O0f8uDoEKxZ+2voMTYAib9j6nAAiYAp0J3PLKmCRlFlX1a8SDIjMdDLixMV1jxhTAt8Pk
+	 Mwj4lUuM3aSeJ+amOEiQDYLcofNKrPJhVH+3QKsUHRHTv1yFGklVXGL2zJyUYf4DNZTUemcqzc24
+	 dAShELWjMHpQKON/+zChxkrCV1G1kctvoiIN6m4Se7b9+DhrNmOf9Zg3UZ5FPBDWwKFeMR3rIzvF
+	 mHn6FrkFBFI3pYiro21+LAD3o7vhmjtO7kuVghG4k=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: matttbe@kernel.org
+Cc: davem@davemloft.net,
+	eadavis@qq.com,
+	edumazet@google.com,
+	geliang@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martineau@kernel.org,
+	mptcp@lists.linux.dev,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] mptcp: pm: Fix uaf in __timer_delete_sync
+Date: Thu,  5 Sep 2024 20:35:19 +0800
+X-OQ-MSGID: <20240905123518.101921-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <e4a13002-f471-4951-9180-14f0f8b30bd2@kernel.org>
+References: <e4a13002-f471-4951-9180-14f0f8b30bd2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/29] media: iris: implement boot sequence of the
- firmware
-To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-8-c5fdbbe65e70@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240827-iris_v3-v3-8-c5fdbbe65e70@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
-> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> 
-> Set memory region to firmware and implement boot sequence.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->   drivers/media/platform/qcom/iris/Makefile          |  1 +
->   drivers/media/platform/qcom/iris/iris_core.c       |  7 ++
->   .../platform/qcom/iris/iris_platform_common.h      |  1 +
->   .../platform/qcom/iris/iris_platform_sm8550.c      |  3 +
->   drivers/media/platform/qcom/iris/iris_vpu_common.c | 87 ++++++++++++++++++++++
->   drivers/media/platform/qcom/iris/iris_vpu_common.h | 13 ++++
->   6 files changed, 112 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-> index ddd4c994a0b9..95f4e92fe085 100644
-> --- a/drivers/media/platform/qcom/iris/Makefile
-> +++ b/drivers/media/platform/qcom/iris/Makefile
-> @@ -8,5 +8,6 @@ iris-objs += iris_core.o \
->                iris_probe.o \
->                iris_resources.o \
->                iris_vidc.o \
-> +             iris_vpu_common.o \
->   
->   obj-$(CONFIG_VIDEO_QCOM_IRIS) += iris.o
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.c b/drivers/media/platform/qcom/iris/iris_core.c
-> index 8c7d53c57086..5ad66ac113ae 100644
-> --- a/drivers/media/platform/qcom/iris/iris_core.c
-> +++ b/drivers/media/platform/qcom/iris/iris_core.c
-> @@ -6,6 +6,7 @@
->   #include "iris_core.h"
->   #include "iris_firmware.h"
->   #include "iris_state.h"
-> +#include "iris_vpu_common.h"
->   
->   void iris_core_deinit(struct iris_core *core)
->   {
-> @@ -39,10 +40,16 @@ int iris_core_init(struct iris_core *core)
->   	if (ret)
->   		goto error_queue_deinit;
->   
-> +	ret = iris_vpu_boot_firmware(core);
-> +	if (ret)
-> +		goto error_unload_fw;
-> +
->   	mutex_unlock(&core->lock);
->   
->   	return 0;
->   
-> +error_unload_fw:
-> +	iris_fw_unload(core);
->   error_queue_deinit:
->   	iris_hfi_queues_deinit(core);
->   error:
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 9c919367f9d7..47fdebd8135c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -45,6 +45,7 @@ struct iris_platform_data {
->   	const char *fwname;
->   	u32 pas_id;
->   	struct tz_cp_config *tz_cp_config_data;
-> +	u32 core_arch;
->   };
->   
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> index 1bb34c3e6e18..a559e095fefc 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> @@ -8,6 +8,8 @@
->   #include "iris_platform_common.h"
->   #include "iris_resources.h"
->   
-> +#define VIDEO_ARCH_LX 1
-> +
->   static const struct icc_info sm8550_icc_table[] = {
->   	{ "cpu-cfg",    1000, 1000     },
->   	{ "video-mem",  1000, 15000000 },
-> @@ -48,4 +50,5 @@ struct iris_platform_data sm8550_data = {
->   	.fwname = "qcom/vpu/vpu30_p4.mbn",
->   	.pas_id = IRIS_PAS_ID,
->   	.tz_cp_config_data = &tz_cp_config_sm8550,
-> +	.core_arch = VIDEO_ARCH_LX,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> new file mode 100644
-> index 000000000000..df87b1b719a9
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -0,0 +1,87 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/iopoll.h>
-> +
-> +#include "iris_core.h"
-> +#include "iris_vpu_common.h"
-> +
-> +#define CPU_BASE_OFFS				0x000A0000
-> +
-> +#define CPU_CS_BASE_OFFS			(CPU_BASE_OFFS)
-> +
-> +#define CTRL_INIT				(CPU_CS_BASE_OFFS + 0x48)
-> +#define CTRL_STATUS				(CPU_CS_BASE_OFFS + 0x4C)
-> +
-> +#define CTRL_ERROR_STATUS__M			0xfe
-> +
-> +#define QTBL_INFO				(CPU_CS_BASE_OFFS + 0x50)
-> +#define QTBL_ADDR				(CPU_CS_BASE_OFFS + 0x54)
-> +#define CPU_CS_SCIACMDARG3			(CPU_CS_BASE_OFFS + 0x58)
-> +#define SFR_ADDR				(CPU_CS_BASE_OFFS + 0x5C)
-> +#define UC_REGION_ADDR				(CPU_CS_BASE_OFFS + 0x64)
-> +#define UC_REGION_SIZE				(CPU_CS_BASE_OFFS + 0x68)
-> +
-> +#define CPU_CS_H2XSOFTINTEN			(CPU_CS_BASE_OFFS + 0x148)
-> +#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
-> +
-> +static void iris_vpu_setup_ucregion_memory_map(struct iris_core *core)
-> +{
-> +	u32 queue_size, value;
-> +
-> +	/* Iris hardware requires 4K queue alignment */
-> +	queue_size = ALIGN(sizeof(struct iris_hfi_queue_table_header) +
-> +		(IFACEQ_QUEUE_SIZE * IFACEQ_NUMQ), SZ_4K);
-> +
-> +	value = (u32)core->iface_q_table_daddr;
-> +	writel(value, core->reg_base + UC_REGION_ADDR);
-> +
-> +	/* Iris hardware requires 1M queue alignment */
-> +	value = ALIGN(SFR_SIZE + queue_size, SZ_1M);
-> +	writel(value, core->reg_base + UC_REGION_SIZE);
-> +
-> +	value = (u32)core->iface_q_table_daddr;
-> +	writel(value, core->reg_base + QTBL_ADDR);
-> +
-> +	writel(0x01, core->reg_base + QTBL_INFO);
+On Wed, 4 Sep 2024 22:39:10 +0200, Matthieu Baerts wrote:
+>On 04/09/2024 03:01, Edward Adam Davis wrote:
+>> There are two paths to access mptcp_pm_del_add_timer, result in a race
+>> condition:
+>>
+>>      CPU1				CPU2
+>>      ====                               ====
+>>      net_rx_action
+>>      napi_poll                          netlink_sendmsg
+>>      __napi_poll                        netlink_unicast
+>>      process_backlog                    netlink_unicast_kernel
+>>      __netif_receive_skb                genl_rcv
+>>      __netif_receive_skb_one_core       netlink_rcv_skb
+>>      NF_HOOK                            genl_rcv_msg
+>>      ip_local_deliver_finish            genl_family_rcv_msg
+>>      ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
+>>      tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
+>>      tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
+>>      tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
+>>      tcp_data_queue                     remove_anno_list_by_saddr
+>>      mptcp_incoming_options             mptcp_pm_del_add_timer
+>>      mptcp_pm_del_add_timer             kfree(entry)
+>>
+>> In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
+>> zone protected by "pm.lock", the entry will be released, which leads to the
+>> occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
+>>
+>> Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
+>
+>Please add a Fixes tag and Cc stable.
+>
+>And add 'net' after PATCH in the subject:
+Got it, I have added them in V3 patch.
+>
+>  [PATCH net v3]
+>
+>> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+>> ---
+>>  net/mptcp/pm_netlink.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+>> index 3e4ad801786f..d4cbf7dcf983 100644
+>> --- a/net/mptcp/pm_netlink.c
+>> +++ b/net/mptcp/pm_netlink.c
+>> @@ -1430,8 +1430,10 @@ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
+>>
+>>  	entry = mptcp_pm_del_add_timer(msk, addr, false);
+>>  	if (entry) {
+>> +		spin_lock_bh(&msk->pm.lock);
+>>  		list_del(&entry->list);
+>>  		kfree(entry);
+>> +		spin_unlock_bh(&msk->pm.lock);
+>
+>Mmh, I can understand it would help to reduce issues here, but I don't
+>think that's enough: in mptcp_pm_del_add_timer(), CPU1 can get the entry
+>from the list under the lock, then immediately after, the free can
+>happen on CPU2, while CPU1 is trying to access entry->add_timer outside
+>the lock, no? Something like this:
+>
+>  CPU1              CPU2
+>  ====              ====
+>  entry = (...)
+>                    kfree(entry)
+>  entry->add_timer
+>
+>
+>What about keeping a reference to add_timer inside the lock, and calling
+>sk_stop_timer_sync() with this reference, instead of "entry->add_timer"?
+>I'm thinking about something like that to be applied *on top* of your
+>patch, WDYT?
+I strongly agree. This can avoid accessing the entry outside the lock.
+I have integrated your code to my patch.
 
-A general comment I have is instead of writing hard-coded values to 
-registers we should define at a minimum the bit-fields we use if not the 
-entire set of bits-fields for the register.
+BR,
+Edward
 
-The only exception to this is when we don't know what those values are - 
-for example receiving a magic write sequence for a camera sensor.
-
-In this case though we have full access to enumerate the register 
-bit-fields.
-
-Without looking at the register descriptions I guess this bit is an 
-enable or a startup bit =>
-
-#define QTBL_INFO_EN BIT(0)
-
-I'll not go through this series reiterating this comment but, it 
-certainly applies to any bit-field/register in the same => please define 
-at least the bits used if not the full set of bits for register writes 
-instead of using magic numbers.
-
----
-bod
 
