@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-317492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C51096DF0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A285F96DF0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839A7B23629
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E671F2553D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D6B1A01C9;
-	Thu,  5 Sep 2024 16:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AEA19F479;
+	Thu,  5 Sep 2024 16:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="czpFNO26"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hoomji14"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE8619E82C;
-	Thu,  5 Sep 2024 16:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCE619E82C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552066; cv=none; b=fyjtuoluB0JFr4up2WwITSjFB/VEb3VAL2QrR6dO+Ibz+LJQ0tNMRMEm+e70petWE1wDBc7HK3W47L/Vy2SkQBAxEdl/1WJQjHG0muZYE0GJbUOvMIiW2FiyauHkyx9ZzZq+y0nZC0GoKl+pLYi8wGFjpPeggfL9i/P/9X594wE=
+	t=1725552061; cv=none; b=WMp3pcSIyqCiLhwXbXfKCbr1goRqDkibe9QfxvLAWoIAy9ich7rbvJiVMD/5x+TeXeASUqmKqzqkhxewxg8MZY+KzMdfZeyVCxbqxJRtDdH1UpoY4yhZC5Zbn4soI1hz0mIuHdIIkbc74G9/x1JgyX38w18Co7pxu3zY7iO7uAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552066; c=relaxed/simple;
-	bh=4lPMovijD49Zq4+o748R/nLVvhvNDXYslSK8l4YkqQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=INMXYc6lnwD8IdHu1vjK8KjzRxB+KxCgs3Z0BtpOKELD/EEdxPV4VP5NCtzu/soIK3n8SNordBCEzftB4yE1TJMTphrpD/P6qcgUZ2IhHYcPQDgXW/mzroEjEjKILhtSpKMth5xAbLKl8RrV6MZQXQR4o3SW+qNv4F1ceeILtGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=czpFNO26; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1725552054; x=1726156854; i=wahrenst@gmx.net;
-	bh=YYBJzQseASq4Pn+YxR4dTa4N1Kq79T6A7aBvavcJLVU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=czpFNO26SXbc0U3rZZT9vb/fy2Z05cIZjcANIbWMCe2sFhvgvhw3utKjKtnHVM1n
-	 TwdsGkApha0uc4StdrhoN5Fh24fDJ6srpktHl2PyPJeOKN37uxPgu4eoORhESGDuX
-	 ZKNmC+KdsRNtx4PJoFX5jJOXr6JvRYRcNJYd7fEOhn8gCKdcitTyrLIft7l9wPnFg
-	 ESYvfbWTzodmRBQbI7WDEhZXotlJ6sqEOd5xQQnEegg6yMgaCEGvWjmdP9W/iUQ+3
-	 JLZ1xb7VNX4niff6vAQCHTNWQYuYweR7iFSK7gGblUZDCWNj4KN5NdN3O4oREOckp
-	 POFsmiIgJ70Ljd0m1g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ml6qC-1sKdr81TkS-00ZVHz; Thu, 05
- Sep 2024 18:00:54 +0200
-Message-ID: <54d7a5c6-caee-4d96-9943-fe34599eaceb@gmx.net>
-Date: Thu, 5 Sep 2024 18:00:53 +0200
+	s=arc-20240116; t=1725552061; c=relaxed/simple;
+	bh=Sf2H0pfrE9E267/+P/2+hCZdeQu4EoaUhRD5j7PnoGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmQ/czh3HVxJZA5GHorOBG3aBWUqnXJJn5faTW9pP/DlXjLHWjL5XrL1W7ytdRls0wYbr6E4Y5KQTW8s4D27hFZpFhtR7Bmnqo6i5C8Rds10hYzTChQ6a2OM/gOQQdNEa5+Bawx82tHqLrdm3JK21LEEOhhpAM00kcbd/tsSuNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hoomji14; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725552059; x=1757088059;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Sf2H0pfrE9E267/+P/2+hCZdeQu4EoaUhRD5j7PnoGo=;
+  b=hoomji14eohQFA64yvc5pAXvO0QkutjtpJWrHBaQSjTblAYYBLLdhpzB
+   CBOflq+nmm4w940LGh9wcmW9/M7oDiPaItjUAtmGI/ATrWXECj9jbbd8H
+   50VWw61VRKbFkYDdVTlJiTaci3VtwyFecLO4vTLJyzi0E0xwMV8Vp5Wvv
+   HJ4yo0+RcR62wE+5Op21lVy3W6G1QwxDr/TDLW5NV2UoLxnuym0DGmJ7H
+   UennIpKt5CmjCF6hd8L1x+Zq+TBOE5O+hrX/Tt6bmM4kCglryOSa5OKyt
+   Ld6STVAbUamIyx0LJwIW1IO9APen4fMF2ye3Uk5zJG4Mu4cQYOIxNlS5d
+   w==;
+X-CSE-ConnectionGUID: xlHzhciBT8S7FN7MMpMS+w==
+X-CSE-MsgGUID: HlC3hUQWQy+INQydtcbmsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35666013"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="35666013"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:59 -0700
+X-CSE-ConnectionGUID: gl709AT7S6GaieBeYcgDhQ==
+X-CSE-MsgGUID: a7rQtfz4RNOAedfdHDtXow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="69816301"
+Received: from bllerma-mobl2.amr.corp.intel.com (HELO desk) ([10.125.147.102])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:59 -0700
+Date: Thu, 5 Sep 2024 09:00:57 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com
+Subject: [PATCH v6 3/3] x86/bugs: Use stack segment selector for VERW operand
+Message-ID: <20240905-fix-dosemu-vm86-v6-3-7aff8e53cbbf@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] MAINTAINERS: SPI: Add mailing list
- imx@lists.linux.dev for nxp spi drivers
-To: Frank Li <Frank.Li@nxp.com>, broonie@kernel.org
-Cc: carlos.song@nxp.com, festevam@gmail.com, imx@lists.linux.dev,
- kernel@pengutronix.de, linux-spi@vger.kernel.org, s.hauer@pengutronix.de,
- shawnguo@kernel.org, linux-kernel@vger.kernel.org
-References: <20240905155230.1901787-1-Frank.Li@nxp.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240905155230.1901787-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BxbXa4uzCsEspAuqJbQaSPwkzrAeA2+cWSKhxsIKpx+xXj9FaTE
- zmjnPgYbbDA6eBC266ZUDgwGf5pLeBKglkuSB/mz9v+OPXvZ0XzAJsKa4ydri0BPIKhzFKW
- BO2vbXW72cCe3bypqlmBif5MQM5zh1ymnNWwbjszLwbtXyUSb6izlFZ+v8CJDQZ+7qgRzEc
- rWs+F9VOsadIxRtp4alcQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aOBrPQXgmtw=;zjLeUPqcWcssS8VYMHDn0gODPxa
- siCTLBga/IRWdMCK0nOTjV/8LsyglC7+1T3DUp8eJTHRD43ijkyIMW4BAUnbeZMQjfsAao3Ak
- Ybgegq5FX7axF36+6EfXxxkFzKgRjIa5xEo0oFgotuCWJlOe3KjHeOXWUIxwrtvhm6t3ihipF
- 2vL6OWX4IWuqfZCCBGWD0lGCbu3e/EvsTpe3CbmdPydC0SJQjt8agerJ8TPw6YVn16m/C4CXA
- e1O9efnZVaDI2QVYiPArL/me8OFIpm4V1PtAaKjE/l1IZTnNThH3ZmYewKqaRLyZ3CFWOJLIk
- N5f9U17vOPdZc/eji1m/An4F4bTu42gbNqs5hANTNWo/4NqXhl0KeXzZf5Ap08UdsLGdKJLpb
- e7y7bXEmi7hBG202ioNk2acTgF5WOb9Q0H932UoRBsnPQKH9WE05VVXTqgq6GdMcD8XFyc/Wv
- f/ZTkPtVP5GkY13IRWq/OxX+yDx+AKCudjYyUZ1wpvFVrrJ89nJrENI6lmJA75yTxeSfwN8+H
- PEzgQFs79QVPiMGz7u9ikxCmEpNl/fHD/JETtfsvsAEWX52wZD0uhHtDJyXaPMMpUQPl7eTz9
- 3WnBTVroOu4dur8OGzSWvC8RwW7NjicOmfpD1K+/wviWismA/N4MUzJDXoDPMhau2kFaPO0Wh
- uI7eoUEEUcf6pt25Yh4cCYT2+cTONFst+zKZA+uWqEABF+VAGPVcvFd/2mn5zmwDvlrrzn9Ao
- b944hsRMoMUcTAi5n0eiz3CjQ2KJK+EdET3V4wxYPk6X6Y5aHJ515QEnoFmx6JVZBkal7oNRl
- mFrYrxxdyadoDqNMkhP6EzGA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
 
-Am 05.09.24 um 17:52 schrieb Frank Li:
-> Add mailing list imx@lists.linux.dev for nxp spi drivers(qspi, fspi and
-> dspi).
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
-> ---
->   MAINTAINERS | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 59eb18b0261fd..8900c53ae66ed 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8958,6 +8958,7 @@ F:	drivers/dma/fsldma.*
->   FREESCALE DSPI DRIVER
->   M:	Vladimir Oltean <olteanv@gmail.com>
->   L:	linux-spi@vger.kernel.org
-> +L:	imx@lists.linux.dev
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/spi/fsl,dspi*.yaml
->   F:	drivers/spi/spi-fsl-dspi.c
-> @@ -9086,6 +9087,7 @@ F:	include/linux/fsl/ptp_qoriq.h
->   FREESCALE QUAD SPI DRIVER
->   M:	Han Xu <han.xu@nxp.com>
->   L:	linux-spi@vger.kernel.org
-> +L:	imx@lists.linux.dev
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
->   F:	drivers/spi/spi-fsl-qspi.c
-> @@ -16562,6 +16564,7 @@ M:	Han Xu <han.xu@nxp.com>
->   M:	Haibo Chen <haibo.chen@nxp.com>
->   R:	Yogesh Gaur <yogeshgaur.83@gmail.com>
->   L:	linux-spi@vger.kernel.org
-> +L:	imx@lists.linux.dev
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/spi/spi-nxp-fspi.yaml
->   F:	drivers/spi/spi-nxp-fspi.c
+Robert Gill reported below #GP in 32-bit mode when dosemu software was
+executing vm86() system call:
+
+  general protection fault: 0000 [#1] PREEMPT SMP
+  CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+  Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+  EIP: restore_all_switch_stack+0xbe/0xcf
+  EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+  ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+  DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+  CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+  Call Trace:
+   show_regs+0x70/0x78
+   die_addr+0x29/0x70
+   exc_general_protection+0x13c/0x348
+   exc_bounds+0x98/0x98
+   handle_exception+0x14d/0x14d
+   exc_bounds+0x98/0x98
+   restore_all_switch_stack+0xbe/0xcf
+   exc_bounds+0x98/0x98
+   restore_all_switch_stack+0xbe/0xcf
+
+This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
+are enabled. This is because segment registers with an arbitrary user value
+can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+following behavior for VERW instruction:
+
+  #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+	   FS, or GS segment limit.
+
+CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+space. Use %ss selector to reference VERW operand. This ensures VERW will
+not #GP for an arbitrary user %ds.
+
+Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+Cc: stable@vger.kernel.org # 5.10+
+Reported-by: Robert Gill <rtgill82@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Suggested-by: Brian Gerst <brgerst@gmail.com> # Use %ss
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/include/asm/nospec-branch.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index ff5f1ecc7d1e..aa5ed1a59cde 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -318,12 +318,14 @@
+ /*
+  * Macro to execute VERW instruction that mitigate transient data sampling
+  * attacks such as MDS. On affected systems a microcode update overloaded VERW
+- * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
++ * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %ss
++ * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
++ * 32-bit mode.
+  *
+  * Note: Only the memory operand variant of VERW clears the CPU buffers.
+  */
+ .macro CLEAR_CPU_BUFFERS
+-	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
++	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+ .endm
+ 
+ #ifdef CONFIG_X86_64
+
+-- 
+2.34.1
+
 
 
