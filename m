@@ -1,204 +1,147 @@
-Return-Path: <linux-kernel+bounces-317765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF51B96E37D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D147496E38B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7351F27581
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D0A1F26D90
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452701A42C7;
-	Thu,  5 Sep 2024 19:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FB919340C;
+	Thu,  5 Sep 2024 19:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMNGR/Wv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EuSIksoS"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F4E1A2566;
-	Thu,  5 Sep 2024 19:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF1B18BC10
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 19:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565785; cv=none; b=EPG5Q5GM2Us0wZoRNHqT6XXaYNzfuLQdwIogZSBx44C49yHPxq/Ya4Mv3WSCeJ7O5IKrte6c7CkwqqUkUEzwS7UNXId6wdxbD/SE6PvzV/duJkit0NYre8Gg+pVbFFOjU4pfekmOplxlsVDcm9eZq4w/Y4ZiroIiCoDxsqKxfgs=
+	t=1725565903; cv=none; b=CvdB7EZKxGKk9iQcTd+W6J0yX26nGQ1iIfi2JVDRrCh2zTbWCDN3ALIj0jo9Cd+4IeQhAbh2yKv2niDXZQToT4kJBt0L60pXNLl54kaRzhuodvm4fU2BaWB1KSybd1Jp5qTtDBG0VAa2SD2AcKH0XaR752zXrqIsHw62ChDYUzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565785; c=relaxed/simple;
-	bh=g++tlSmFgkUcGXn5wSV2RC0cbFRDfnVvSQTJtE59uHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9xtWb+MBCPLVY59xRad+qNsS6OjuYe4Z+8oXCIUfSSq5/Go5ytg42IV7TCj/eCiuR41qgiFTnRLSEVSXUqq95skCTtwTypuWtdGdI4KIx09m4epfzRIJAR1AS3aMqkmgFYlUYuw0RXZpx++Bd9Jk9ayd8VBCXyUdVtzrKMWwHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMNGR/Wv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B1FC4CEC3;
-	Thu,  5 Sep 2024 19:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725565785;
-	bh=g++tlSmFgkUcGXn5wSV2RC0cbFRDfnVvSQTJtE59uHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VMNGR/Wveojllz63Q9LpvBEiR2sC5FqSAVMQtKrvZenAbpZe/7blxQ1NacbgW4y/n
-	 bS880vKyuqmDQQmQP8fhMUQU8uXvJFQi+GJOeOFyT5PsVOFRBf/XaQnx5uvnLd8kBn
-	 aVybT00ru55mwTs5JbkXiGHqt9i59jHHUvPGQnR0g5BTbi9z42T3Pju+cNUP4QelY8
-	 foW6442Nnz9LedUu7koNSp7E+wKRgj27S7Vts/4PxEcO9F8lk48maDMOLDDAlm/sbM
-	 R6TuFfXZ2C+eGEG2nxxCffMpF05o+H21cdgOkMSrVJKntV6Y4j9jGnl96ISsbIN8wt
-	 xmnO17SjdSfiQ==
-Date: Thu, 5 Sep 2024 21:49:42 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: kimriver liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
-	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabledg
-Message-ID: <yc43jizchnn4johokgc2xyr2g4yyxf4strt6vvtzye6zzor46r@dvgqo4k6q437>
-References: <20240905074211.2278-1-kimriver.liu@siengine.com>
+	s=arc-20240116; t=1725565903; c=relaxed/simple;
+	bh=joL4c8PPhFiyZ5UnUOFkLdz0LK5dkMuMxewXUdcQ7bM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aqOZLmJGZqrnPgExXZJQRsYTW5diWBhlOuSSOGzJZI5lqNgrEyHNU9gimnFd3S2VjmsuLSe9C21ryKkSCuAcbj0WkANH23CMo8z9vQv+twC9nFW6VvttVVSBRz2mIO3qLiVIN2JAEyd3vSEI0OcPH1QEL4fGQyRa+Y9B3o7AOpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EuSIksoS; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3df0f0b8111so813405b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 12:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725565900; x=1726170700; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QLVeWx7E0txqyzsiOnnF/sbVg1ehRT/HOucMT+CgFps=;
+        b=EuSIksoSRjuCol+jcxA1bD4ARWT9BS5NsC0niheXc+UFowaEnP1BmfKqwIwMf7fD5u
+         6IqOcEI2c/HVY++pZ4MtGkFZ6NChvvyLgPU25QrkzhlBxpHJBDg5oLhlj5lPIxcrbuku
+         SMmbWBG8fYqfaDKTZ0V2staGfK+VkA6u8iC6mdNEINELDrPIDjm8dai8JNaeIZ4D8Eg0
+         YZKKmvDjyzS34MCHDCFiNFkdftULMbCEOavLUBaWW2XznF+/yCp14Af7T+4sItMUr0LN
+         SIyj5ualQwN0rPqWn4B+ZTmU6t2wckZkRBxlnxjoeSfnXFfLKibt6Plk4277QmrmrpeJ
+         ARlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725565900; x=1726170700;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QLVeWx7E0txqyzsiOnnF/sbVg1ehRT/HOucMT+CgFps=;
+        b=FNFQx1kCmSp6w/z98R04z4PV39z5V2g7sjayTEz1wWa8Ove5WhplWZJ8R6q1jtBlqf
+         fcbiot3OEELGztoFbnvFIZAB2Y29A/oExLw0XwmGDfub6shaXRNdADFNKlK8cdU8z53m
+         achrqw/tY2lwHgbqlaMXdZUrSIbUhA3ADyjqXcL9G89Z2yk7z+wGNRIvxUJEujok/2hv
+         HdeOurDd0WKVtdgkXlGff8ig7Jqj/kQmZkKZAWEZmSeRCgWzR53xWUzNMVKeJZAXwUw+
+         k1kCKMg7Bonxfr3CeHlfW1rtTRutdjShfSOdiYi8+S6Er9Sb8VBuHqNujFI38q2udbjF
+         4vzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDH9R1kSHhsj66K1BsZI7nRZ51bWxwt2TxOIfSKneUdXxaIx6oX1nbXiEtpB5iJnRMK59iFFtBOIaYJQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsr2iAnafQecW/0HMMQPyZvwALi8s8h+v7UmmrMjXnsfXRWZPl
+	C8vDK+H9v37gp4nUZL8e/P14yur1KE0W9gEd9md9LxHDbTa8GT+6A9sMPO5voa0=
+X-Google-Smtp-Source: AGHT+IH0q4/DKIs2Ct4Tvlg85A4eLDSf9cTxJ5giyUiMImKA1aAHf3bK94hxvew+0DR/TDUVZjfWNw==
+X-Received: by 2002:a05:6808:1709:b0:3df:144f:9ef9 with SMTP id 5614622812f47-3e02a02d73cmr494020b6e.41.1725565900650;
+        Thu, 05 Sep 2024 12:51:40 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3df117c1548sm3326464b6e.14.2024.09.05.12.51.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 12:51:40 -0700 (PDT)
+Message-ID: <c8c23ed5-6f80-49b8-97c3-3f1dc36013c4@baylibre.com>
+Date: Thu, 5 Sep 2024 14:51:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240905074211.2278-1-kimriver.liu@siengine.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
+ property
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ linux-kernel@vger.kernel.org,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+ <172555368556.2000291.1962340187875764544.robh@kernel.org>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <172555368556.2000291.1962340187875764544.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Kimriver,
-
-On Thu, Sep 05, 2024 at 03:42:11PM GMT, kimriver liu wrote:
-> From: "kimriver.liu" <kimriver.liu@siengine.com>
-
-Is there any reason to have "kimriver.liu" instead of "Kimriver
-Liu"?
-
-> Failure in normal Stop operational path
+On 9/5/24 11:28 AM, Rob Herring (Arm) wrote:
 > 
-> This failure happens rarely and is hard to reproduce. Debug trace
-> showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-> immediately disable ENABLE bit that can result in
-> IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
+> On Thu, 05 Sep 2024 17:17:31 +0200, Angelo Dureghello wrote:
+>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>
+>> There is a version AXI DAC IP block (for FPGAs) that provides
+>> a physical bus for AD3552R and similar chips. This can be used
+>> instead of a typical SPI controller to be able to use the chip
+>> in ways that typical SPI controllers are not capable of.
+>>
+>> The binding is modified so that either the device is a SPI
+>> peripheral or it uses an io-backend.
+>>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>> ---
+>>  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++--
+>>  1 file changed, 40 insertions(+), 2 deletions(-)
+>>
 > 
-> Failure in ENABLE bit is disabled path
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> It was observed that master is holding SCL low and the IC_ENABLE is
-> already disabled, Enable ABORT bit and ENABLE bit simultaneously
-> cannot take effect.
+> yamllint warnings/errors:
 > 
-> Check if the master is holding SCL low after ENABLE bit is already
-> disabled. If SCL is held low, The software can set this ABORT bit only
-> when ENABLE is already set，otherwise,
-> the controller ignores any write to ABORT bit. When the abort is done,
-> then proceed with disabling the controller.
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb: /example-1/axi_dac@44a70000: failed to match any schema with compatible: ['adi,axi-dac-ad3552r']
+
+
+I think this can be fixed by putting commit "dt-bindings: iio: dac: add ad3552r axi-dac compatible"
+first in the series before commit "dt-bindings: iio: dac: ad3552r: add io-backend property".
+
 > 
-> These kernel logs show up whenever an I2C transaction is attempted
-> after this failure.
-> i2c_designware e95e0000.i2c: timeout in disabling adapter
-> i2c_designware e95e0000.i2c: timeout waiting for bus ready
+> doc reference errors (make refcheckdocs):
 > 
-> The patch can be fix the controller cannot be disabled while SCL is
-> held low in ENABLE bit is already disabled.
-
-I'm sorry, but this commit log is difficult to understand. Could
-you please polish it, fix the grammar and the punctuation and
-make it more understandable?
-
-> Signed-off-by: kimriver.liu <kimriver.liu@siengine.com>
-
-As I said above, would be nicer to have "Kimriver Liu" rather
-than "kimriver.liu".
-
-I'm wondering if we need the Fixes: tag here. If this is not a
-frequent issue then we can probably omit it.
-
-> ---
-
-Andy already pointed out that you are missing versioning (is this
-v2? v3?) and changelog.
-
->  drivers/i2c/busses/i2c-designware-common.c | 12 +++++++++++
->  drivers/i2c/busses/i2c-designware-master.c | 23 +++++++++++++++++++++-
->  2 files changed, 34 insertions(+), 1 deletion(-)
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com
 > 
-> diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-> index e8a688d04aee..54acf8554582 100644
-> --- a/drivers/i2c/busses/i2c-designware-common.c
-> +++ b/drivers/i2c/busses/i2c-designware-common.c
-> @@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
->  
->  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
->  	if (abort_needed) {
-> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
-> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-> +			enable |= DW_IC_ENABLE_ENABLE;
-> +
-> +			/*
-> +			 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
-> +			 * is already set by the driver (for 400KHz this is 25us)
-> +			 * as described in the DesignWare I2C databook.
-> +			 */
-> +			fsleep(25);
-> +		}
-> +
->  		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
->  		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
->  					       !(enable & DW_IC_ENABLE_ABORT), 10,
-> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-> index c7e56002809a..aba0b8fdfe9a 100644
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -253,6 +253,26 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
->  	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
->  }
->  
-> +static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
-> +{
-> +	u32 status;
-> +	int ret;
-> +
-> +	regmap_read(dev->map, DW_IC_STATUS, &status);
-> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-> +		return true;
-> +
-> +	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-> +			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-> +			1100, 20000);
-> +	if (ret) {
-> +		dev_err(dev->dev, "i2c master controller not idle %d\n", ret);
-
-Please be a bit more descriptive. It's not an error for the i2c
-master not to be idle, it is if you try to disable the adapter.
-
-Besides, it makes sense to me that this print is done in the
-i2c_dw_xfer function rather than here. The task of this function
-is only to check whether the controller is idling or active.
-
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
->  {
->  	u32 val;
-> @@ -796,7 +816,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
->  	 * additional interrupts are a hardware bug or this driver doesn't
->  	 * handle them correctly yet.
->  	 */
-
-Please update the comment according to your change.
-
-> -	__i2c_dw_disable_nowait(dev);
-> +	if (i2c_dw_is_master_idling(dev))
-
-Please print the error message here.
-
-Thanks for your patch,
-Andi
-
-> +		__i2c_dw_disable_nowait(dev);
->  
->  	if (dev->msg_err) {
->  		ret = dev->msg_err;
-> -- 
-> 2.17.1
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
 > 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
+
 
