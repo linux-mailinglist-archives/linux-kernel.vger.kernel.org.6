@@ -1,105 +1,90 @@
-Return-Path: <linux-kernel+bounces-316348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D25396CE4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D5D96CE48
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A4D1F26B52
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A3E1C20C9C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A641156665;
-	Thu,  5 Sep 2024 05:03:16 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id F2DBA2746A;
-	Thu,  5 Sep 2024 05:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C28154439;
+	Thu,  5 Sep 2024 05:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lmUuJyPK"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77030149013;
+	Thu,  5 Sep 2024 05:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725512596; cv=none; b=H8PUYWBqDg7dQ31egHkj83X6JM5xYXJVZHiFgM3DiqkqcKesUcr/jQcCQi2sGtiqj/QYadXDfjTyIJf4Jm2EuNrR4F+p70ubtGRwrFR1iXJkT0fYGiayRSYqDJJiIffIti8RlXpi65lAqSYRR0gKI1eM/dA0s5n+fusWGkELuW4=
+	t=1725512581; cv=none; b=NtwTv9VEgkNqxuuZ0ZAzDRoxZTPMPMeX5SSGrcV96YS75bZDxq7MGDmYJRmAshlVrYfTS0N4SVObNAuJM4qcpkiD/iFfHWczgYfaI7m+GPEXClexoiX2II3GQd+rsFYV16JSmhRxDwNSNsuj1qMvEKo4vu2C2kYa0zeBpVhETrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725512596; c=relaxed/simple;
-	bh=1OVdmWxQnf2gL69JNspl8eWwRpgkMv2erIHv+Q/JQ7A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U/uc7O3BEFvWmyYfil/VLrOg81Jbu/UZYdvADWrkncn5usGUEAw0cWzMi0LJA2KDAhOZONpkbNjftqAWqiJ0OC6teseoSb5ifk6stB/bZHlvkZmkZUoNbJM/KjyTR6WrTC1Ds8JrcP8eebAwZAceEJxLgesDuZY1JM8h5WzWI5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 03187604FCB3F;
-	Thu,  5 Sep 2024 13:02:53 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: njavali@marvell.com,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	JBottomley@Parallels.com,
-	saurav.kashyap@qlogic.com,
-	atul.deshmukh@qlogic.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: qla2xxx: avoid possible garbage in qla8044_rd_reg_indirect()
-Date: Thu,  5 Sep 2024 13:02:28 +0800
-Message-Id: <20240905050226.1959592-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1725512581; c=relaxed/simple;
+	bh=L3qUMwvA3KWGAqDnm6wh0SHRRBa8vXjJemfzc6fNwdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJribz3UCg2f5f1ck5NeQ2RV62IUo5qqTczF/sMm3kp+teuLOuHOKOldVDQA+DuMODcx6ZLLdRAG8OT1jZGPScmV9On9bXA2OSJukcK3nNT65IDOxXp9Jz/Tmm8m9rUX2gk/WnTO8S9vD4sPPweXkJIC07iB3koO9r50VAFjk7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lmUuJyPK; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id DED8B20B740D; Wed,  4 Sep 2024 22:02:53 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DED8B20B740D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1725512573;
+	bh=ach9qMfKtP33v/w5Spjx/P7JOXueUpTltpnyDAzTFk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lmUuJyPKu1VM1DWAPiRNjlFEZhsXmGx/V9apFBjEI9N+ExvDCvH1TxYlFsHqbuikG
+	 qZ3wpFAEXc0kw0SZ5BbInkrvk/BJJuCCwk7BSjuAxsTCf0+AkI0Vuxwsg/6bBtjFA7
+	 eoDbgLiRFpTNgzLqQqvW++b6/VrXdBvBRWrRr7rM=
+Date: Wed, 4 Sep 2024 22:02:53 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: hv: rm .*.cmd when make clean
+Message-ID: <20240905050253.GA29491@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Clang static checker (scan-build) warning:
-drivers/scsi/qla2xxx/qla_nx2.c:line 2542, column 16:
-Assigned value is garbage or undefined.
+On Mon, Sep 02, 2024 at 12:21:03PM +0800, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> rm .*.cmd when make clean
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>  tools/hv/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+> index 2e60e2c212cd..34ffcec264ab 100644
+> --- a/tools/hv/Makefile
+> +++ b/tools/hv/Makefile
+> @@ -52,7 +52,7 @@ $(OUTPUT)hv_fcopy_uio_daemon: $(HV_FCOPY_UIO_DAEMON_IN)
+>  
+>  clean:
+>  	rm -f $(ALL_PROGRAMS)
+> -	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
+> +	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete -o -name '\.*.cmd' -delete
+>  
+>  install: $(ALL_PROGRAMS)
+>  	install -d -m 755 $(DESTDIR)$(sbindir); \
+> -- 
+> 2.33.0
+> 
+> 
 
-In qla8044_minidump_process_l1cache(), there is a garbage value
-problem as follows.
-
-'r_value' is garbage when qla8044_rd_reg_indirect() failed, so
-'*data_ptr++ = r_value' assigned  garbage value to 'data_ptr'.
-There are many others examples like this which using
-qla8044_rd_reg_indirect() but not checking the return value.
-When qla8044_rd_reg_indirect() failed, let 'r_value = 0' to avoid these
-garbage values.
-
-Fixes: 7ec0effd30bb ("[SCSI] qla2xxx: Add support for ISP8044.")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/scsi/qla2xxx/qla_nx2.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_nx2.c b/drivers/scsi/qla2xxx/qla_nx2.c
-index 41ff6fbdb933..97fd1c7833b4 100644
---- a/drivers/scsi/qla2xxx/qla_nx2.c
-+++ b/drivers/scsi/qla2xxx/qla_nx2.c
-@@ -92,11 +92,13 @@ qla8044_rd_reg_indirect(scsi_qla_host_t *vha, uint32_t addr, uint32_t *data)
- 	struct qla_hw_data *ha = vha->hw;
- 
- 	ret_val = qla8044_set_win_base(vha, addr);
--	if (!ret_val)
-+	if (!ret_val) {
- 		*data = qla8044_rd_reg(ha, QLA8044_WILDCARD);
--	else
-+	} else {
-+		*data = 0;
- 		ql_log(ql_log_warn, vha, 0xb088,
- 		    "%s: failed read of addr 0x%x!\n", __func__, addr);
-+	}
- 	return ret_val;
- }
- 
--- 
-2.30.2
-
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com> 
 
