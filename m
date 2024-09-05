@@ -1,104 +1,240 @@
-Return-Path: <linux-kernel+bounces-317473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F7B96DED2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:48:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B434596DED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545B91F24A06
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87481C23CA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BDD1A072F;
-	Thu,  5 Sep 2024 15:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD9B19DFA4;
+	Thu,  5 Sep 2024 15:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOXtCC74"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hFslVvBP"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B773D1A01D0;
-	Thu,  5 Sep 2024 15:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621754AEF5;
+	Thu,  5 Sep 2024 15:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725551234; cv=none; b=BaaGUbHLHpcTRicGWw958VF87tk4yxArG2H59KY2FbRkaujjXS1FLCIrIFYIzcWivox7OkzFjhPwodka8plhrpyADr0BGN/MoF2wRoxDsu0UpCIwzhd/ElyjrO5YqRYGuXM2Lf+F24m4YPIkgH2V1QpGIDGjnvJZu9sggxDydzA=
+	t=1725551327; cv=none; b=Yft+qYX1WWoPYbk0bDc2P3sPbTNMCdT9LMHPm2TUfoyYKE1bxH28liA+yNx6o/L+exqeF1czPlVdACPdtxyOq7lNAj9hK11fWdk56y2lyr3EYjDGcPraHH3kukMyKH8xmOaxQw58crKT5Ikh5Kg7aR74LRCWRRbwo8mVNmT2jMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725551234; c=relaxed/simple;
-	bh=EAnWPkg+5+GfGadRDWc4j55kZwjPEaiqdZ04TSPhyos=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=jZoyPH1e5WG1/4fCojL2T+j0bcxNEMIrL/+isbC8LHownDWg0Kr9sCUwpWrZfnGRTdG0tjIdOEKu2TWHKyqKC1g1wnl8XsnFYSm0t0pTwgPTHSmv8k6/1CMjtgb0Xg3sAMpjqPMfOld/x0xnW/xuTLWG8h/D5fXvUvZbkA3fmlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOXtCC74; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165F8C4CEC3;
-	Thu,  5 Sep 2024 15:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725551234;
-	bh=EAnWPkg+5+GfGadRDWc4j55kZwjPEaiqdZ04TSPhyos=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=HOXtCC74HGrL730QZmOaBJtnFJEObt0esD22qKWieMiWmCIZv1EIusQv3CuAdLftm
-	 FfM5xsYk7cxqk0TR3X0VVe0JOv63+s3k65JqPegMz0YeBbYesr64f7gNLSH3V+lXVM
-	 ZlXLV3FXD4A/kB2ZP4YhthlwH7MFA3YHqZlbQrMySYOopoaHxFlIRHy32c9Tc9sGoQ
-	 xyuoV0j//LEbTfOtYSFItG247fuA9/Ay2Kvo+fEERs/w/GHRPk/qb68QVM9EjyrPT0
-	 L+sXiWp1PRjS4U7RvUoB43gxKTwDaKzVkJUAir0YbTs9RMQtsFT7T1ulEPtzK1skHL
-	 0Vc1C7ncqcXhQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "David S . Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
- <pabeni@redhat.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Jeff Johnson
- <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
-  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
-  ath11k@lists.infradead.org,  linux-kernel@vger.kernel.org,  Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the
- inputs of the ath11k on WCN6855
-References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org>
-	<CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
-Date: Thu, 05 Sep 2024 18:47:09 +0300
-In-Reply-To: <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
-	(Bartosz Golaszewski's message of "Fri, 16 Aug 2024 11:10:00 +0200")
-Message-ID: <87y146ayrm.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1725551327; c=relaxed/simple;
+	bh=iuKUSIwsvffLBaB2DJcbfk/Du2YlTt1aynhuNujcksg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XR1G8b98Pv5T5j+PgpUazXjrBs7/tdzwTdZpDTO77HfIkVXJRG8s1tfMZW9oWqg2gXayLLOfbUHgNrJfcAQIjt1WrDPvPWSP4f+M0fbTL7c0EJo48zXps2q1O1uWjaiMHAwUGB7kxeAxCp8qAIz8TtN06OmUYj2UFjdCWP2Gu00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hFslVvBP; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725551321;
+	bh=iuKUSIwsvffLBaB2DJcbfk/Du2YlTt1aynhuNujcksg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=hFslVvBP6Sz5eRJ+LY4mMdGyrdUPlJ+TGtK91HHEqHNwoM4ghm1yLxr1A+qvnEqbZ
+	 DNMpwt7m2vVmQeV0tQyPsgwek2B5FO3bmGZnl+ToQZXe3/1oiaqmX//1m2RcC1yS0g
+	 fVIx860E1QKXd/h/hrxyONd07fJqsS+q5CR3Ogv0=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Thu, 05 Sep 2024 17:48:38 +0200
+Subject: [PATCH v2] HID: lg: constify fixed up report descriptor
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240905-hid-const-fixup-2-v2-1-70915e0cc1c7@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIANXS2WYC/23OPRKDIBAF4Ks41CHDj6JY5R4ZC8FNoEEDSJJxv
+ HtQixRJ+XZnv30LCuAtBNQWC/KQbLCjy4GdCqRN7+6A7ZAzYoSVpCEcGztgPboQ8c2+5gkzXGt
+ Bel0xWXGK8t3kIa9289od2cNjznQ8hl85P9rcmpMft1GEajX0VJWyTQxtkrEhjv69l010p45er
+ PnTK1FMsBBcSUYJKCEvT7AhBG1mc3YQUbeu6wdo6GPEAQEAAA==
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725551321; l=6779;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=iuKUSIwsvffLBaB2DJcbfk/Du2YlTt1aynhuNujcksg=;
+ b=di8TajzkNUrNNge0GOnmzULcI+a+fExo9r429erKwQsW3gWR+z/611AluL6Y0kPRhMe+SvmD9
+ XBY6GKyLkZABUFGVfinizsNm7U0EQR2FuSaUJQ/i0GT16rljTM0RIL9
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Bartosz Golaszewski <brgl@bgdev.pl> writes:
+Now that the HID core can handle const report descriptors,
+constify them where possible.
 
->> > +  - if:
->> > +      properties:
->> > +        compatible:
->> > +          contains:
->> > +            const: pci17cb,1103
->> > +    then:
->> > +      required:
->> > +        - vddrfacmn-supply
->> > +        - vddaon-supply
->> > +        - vddwlcx-supply
->> > +        - vddwlmx-supply
->> > +        - vddrfa0p8-supply
->> > +        - vddrfa1p2-supply
->> > +        - vddrfa1p8-supply
->> > +        - vddpcie0p9-supply
->> > +        - vddpcie1p8-supply
->>
->> Like we discussed before, shouldn't these supplies be optional as not
->> all modules need them?
->>
->
-> The answer is still the same: the ATH11K inside a WCN6855 does - in
-> fact - always need them. The fact that the X13s doesn't define them is
-> bad representation of HW and I'm fixing it in a subsequent DTS patch.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Now that the HID core can handle const report descriptors,
+constify them where possible.
 
-But, like we discussed earlier, M.2 boards don't need these so I think
-this should be optional.
+This is based upon hid/for-6.12/constify-rdesc.
+---
+Changes in v2:
+- Drop all already applied patches
+- Rework return logic in hid-lg.c
+- Link to v1: https://lore.kernel.org/r/20240828-hid-const-fixup-2-v1-0-663b9210eb69@weissschuh.net
+---
+ drivers/hid/hid-lg.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/hid/hid-lg.c b/drivers/hid/hid-lg.c
+index a9be918e2b5c..9a2cfa018bd3 100644
+--- a/drivers/hid/hid-lg.c
++++ b/drivers/hid/hid-lg.c
+@@ -58,7 +58,7 @@
+  * These descriptors remove the combined Y axis and instead report
+  * separate throttle (Y) and brake (RZ).
+  */
+-static __u8 df_rdesc_fixed[] = {
++static const __u8 df_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),                   */
+ 0x09, 0x04,         /*  Usage (Joystick),                       */
+ 0xA1, 0x01,         /*  Collection (Application),               */
+@@ -124,7 +124,7 @@ static __u8 df_rdesc_fixed[] = {
+ 0xC0                /*  End Collection                          */
+ };
+ 
+-static __u8 dfp_rdesc_fixed[] = {
++static const __u8 dfp_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),                   */
+ 0x09, 0x04,         /*  Usage (Joystick),                       */
+ 0xA1, 0x01,         /*  Collection (Application),               */
+@@ -172,7 +172,7 @@ static __u8 dfp_rdesc_fixed[] = {
+ 0xC0                /*  End Collection                          */
+ };
+ 
+-static __u8 fv_rdesc_fixed[] = {
++static const __u8 fv_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),                   */
+ 0x09, 0x04,         /*  Usage (Joystick),                       */
+ 0xA1, 0x01,         /*  Collection (Application),               */
+@@ -239,7 +239,7 @@ static __u8 fv_rdesc_fixed[] = {
+ 0xC0                /*  End Collection                          */
+ };
+ 
+-static __u8 momo_rdesc_fixed[] = {
++static const __u8 momo_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),               */
+ 0x09, 0x04,         /*  Usage (Joystick),                   */
+ 0xA1, 0x01,         /*  Collection (Application),           */
+@@ -285,7 +285,7 @@ static __u8 momo_rdesc_fixed[] = {
+ 0xC0                /*  End Collection                      */
+ };
+ 
+-static __u8 momo2_rdesc_fixed[] = {
++static const __u8 momo2_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),               */
+ 0x09, 0x04,         /*  Usage (Joystick),                   */
+ 0xA1, 0x01,         /*  Collection (Application),           */
+@@ -333,7 +333,7 @@ static __u8 momo2_rdesc_fixed[] = {
+ 0xC0                /*  End Collection                      */
+ };
+ 
+-static __u8 ffg_rdesc_fixed[] = {
++static const __u8 ffg_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),               */
+ 0x09, 0x04,         /*  Usage (Joystik),                    */
+ 0xA1, 0x01,         /*  Collection (Application),           */
+@@ -379,7 +379,7 @@ static __u8 ffg_rdesc_fixed[] = {
+ 0xC0                /*  End Collection                      */
+ };
+ 
+-static __u8 fg_rdesc_fixed[] = {
++static const __u8 fg_rdesc_fixed[] = {
+ 0x05, 0x01,         /*  Usage Page (Desktop),               */
+ 0x09, 0x04,         /*  Usage (Joystik),                    */
+ 0xA1, 0x01,         /*  Collection (Application),           */
+@@ -453,8 +453,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == FG_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Wingman Formula GP report descriptor\n");
+-			rdesc = fg_rdesc_fixed;
+ 			*rsize = sizeof(fg_rdesc_fixed);
++			return fg_rdesc_fixed;
+ 		} else {
+ 			hid_info(hdev,
+ 				"rdesc size test failed for formula gp\n");
+@@ -466,8 +466,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == FFG_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Wingman Formula Force GP report descriptor\n");
+-			rdesc = ffg_rdesc_fixed;
+ 			*rsize = sizeof(ffg_rdesc_fixed);
++			return ffg_rdesc_fixed;
+ 		}
+ 		break;
+ 
+@@ -476,8 +476,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == DF_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Driving Force report descriptor\n");
+-			rdesc = df_rdesc_fixed;
+ 			*rsize = sizeof(df_rdesc_fixed);
++			return df_rdesc_fixed;
+ 		}
+ 		break;
+ 
+@@ -485,8 +485,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == MOMO_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Momo Force (Red) report descriptor\n");
+-			rdesc = momo_rdesc_fixed;
+ 			*rsize = sizeof(momo_rdesc_fixed);
++			return momo_rdesc_fixed;
+ 		}
+ 		break;
+ 
+@@ -494,8 +494,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == MOMO2_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Momo Racing Force (Black) report descriptor\n");
+-			rdesc = momo2_rdesc_fixed;
+ 			*rsize = sizeof(momo2_rdesc_fixed);
++			return momo2_rdesc_fixed;
+ 		}
+ 		break;
+ 
+@@ -503,8 +503,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == FV_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Formula Vibration report descriptor\n");
+-			rdesc = fv_rdesc_fixed;
+ 			*rsize = sizeof(fv_rdesc_fixed);
++			return fv_rdesc_fixed;
+ 		}
+ 		break;
+ 
+@@ -512,8 +512,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 		if (*rsize == DFP_RDESC_ORIG_SIZE) {
+ 			hid_info(hdev,
+ 				"fixing up Logitech Driving Force Pro report descriptor\n");
+-			rdesc = dfp_rdesc_fixed;
+ 			*rsize = sizeof(dfp_rdesc_fixed);
++			return dfp_rdesc_fixed;
+ 		}
+ 		break;
+ 
+
+---
+base-commit: 03f8dc1d0a3823229a761f202bc1a6e63d5b4ba0
+change-id: 20240803-hid-const-fixup-2-7c60ac529531
+prerequisite-change-id: 20240730-hid-const-fixup-8b01cbda1b49:v2
+prerequisite-patch-id: 92216ced5d79ee5578fbe1c24c994b6fd550d1fb
+prerequisite-patch-id: 4dd3e0fa6b0387f2a722c2bb924fc9c3b784f49d
+prerequisite-patch-id: 7a5b42060b989b053d2bc71d52e0281815da542d
+prerequisite-patch-id: 15809fd82225c2d44cdbed2d570d621ba7378cec
+prerequisite-patch-id: baba272935e0f16c67170413cadb682b535b3a6d
+prerequisite-patch-id: 4e6017ca6b8df87fe8270fffd43a585eddba88c7
+prerequisite-patch-id: 06023fde4515232fdcc4044b252aa42ed9a47885
+
+Best regards,
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Thomas Weißschuh <linux@weissschuh.net>
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
