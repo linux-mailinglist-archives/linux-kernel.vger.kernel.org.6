@@ -1,120 +1,165 @@
-Return-Path: <linux-kernel+bounces-316884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290B796D680
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C2F96D67F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B29E4B233AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:56:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17FA3B233BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26561991CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6F61990CE;
 	Thu,  5 Sep 2024 10:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RgFM7ggN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lTOykkDp"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE73198E77;
-	Thu,  5 Sep 2024 10:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332D9198E9B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725533783; cv=none; b=k/uHDwWof2r009Hu6kz6ibgByS7rlsw0cIBx+LH5dv/5eW3DygVz1MgQKSHR4qJNJnks2cTWyrVyfBrPlSkVSmfQXK1gFiKUHTy9jj200TMM/7Dj02tpp5pLlf8+sKgJMp/Hdh/LbhUuDGbOx1HQ6CGU00iLLcfzC7qPkWYXQgk=
+	t=1725533783; cv=none; b=BBN0ZDPy4ey+/fPLrSa00h+ql1oumMvmycQ9xTM9+t9g4ZB1SSOjOBak2C7JLi2h6yKbn4yAGDQXdri2AQ5wg7yerRlHbscf2e5qL/ReaSLIilf1ftBqe0N05+aVONSRiyyjOwmkDmxlx7jdLxKyjOkVSybviSEi2jwiME9l4eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725533783; c=relaxed/simple;
-	bh=Wk1LIKQbYQFhOY73fCkbnAsWD2OyDkMfbFjwDTD6xHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eg7ZY7pEswEIdlR72xWtoE9376AqXWakh0stjWcdUVqQFGYS7ashe/PnqV9JvVmTkanulRBztSLFpVVwkX3CK823rG8GvueyZRW6nwVX6dc5I6tjA7GftriWnof9fYG4DEVQ3DMsEVZ1QYGqABCEv0sitJt0ZKlxLwWmimFtl94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RgFM7ggN; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725533781; x=1757069781;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Wk1LIKQbYQFhOY73fCkbnAsWD2OyDkMfbFjwDTD6xHs=;
-  b=RgFM7ggNDFXX7vx3NJVa5LqkCCQPyhLmiJf2yO/KrQI+GDzJ8kcespW4
-   oTfONVThJVuh36LWKuqVIIXXDHsYkuK1svgDKUWmp2w4zf9cxOF/TyCWA
-   gnYp/nO0Gop7ShZUCG27xzsOLtyNAW1GttHEBRghh0ONPYTpxSJVAqqNU
-   B4AzMNQe4RwOsrBaYY0Ao9pKoM+H6Skzqp/VVmloMld90djnrBQXFuEEw
-   wfmOBROo598DKoYsSnO3WNgrOgReAjEEsSRts1THqamZU/cfEImAWupB+
-   m2DADveUyRt0xpVsEzDpeMn1dY985vZO+eNKamNuMENZoFiUxeWIzr62p
-   A==;
-X-CSE-ConnectionGUID: xb3eh98FTHeSGVarVBUUVA==
-X-CSE-MsgGUID: YdkC7FzbScaFrGu2mkvdeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="23800210"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="23800210"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 03:56:20 -0700
-X-CSE-ConnectionGUID: U+51NrYkTdW4nYruBTQgKA==
-X-CSE-MsgGUID: ZvBcwRMNQhaVASWjD1CDDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70180004"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 03:56:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smA9t-00000005Mov-31NN;
-	Thu, 05 Sep 2024 13:56:13 +0300
-Date: Thu, 5 Sep 2024 13:56:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
-Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
-Message-ID: <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
-References: <20240819023413.1109779-1-ying.huang@intel.com>
- <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
- <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+	bh=JQVHGS+/u4y5usFp3Q4hM7h7PUsjd09BzTFUGJkjqJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PTsc2tpbJds1vlvAkscvPslyEzg2FoxGNt3zsblupKFqE4KcefWhBp0BZtPxuIOsHnZxJr98KDd5E//zmbeiHwrCykiHiJqfMt57e07xAZwW5yvLDxDsprmOA5FCw/n90Xa1nRHhPXGNXzyE0L57yOkToGR+QL3gZ3i15b0H/Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lTOykkDp; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d86f713557so405192a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1725533780; x=1726138580; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4DJPppfvsq3bVrU8OAZnr57xaqKDJESryIS8WamVFSc=;
+        b=lTOykkDpUSpOcaPpyneEEZCGE4pQLMBdyWu3lRyXcnWnVZKIdiGoZgACvY+9cvMLpW
+         jgw1sacc8rNSGWUysZg/brBrVeX/7/d+Mio8kIWbUpgDDY9Zn0xz4tEVwkWv5YIGgzHr
+         TlX9OBw+t9DDXm/SsNYXboMrLw1edp6luRZttJYX+o2Q7a9DS8XkoOvWwDKvoLQ3wDeb
+         jVfPN15Jtz9l24IyqNT8vUdLE+qeewrZKX2Xak9bzOCuYF5JMk9UDHtUPlqGFfM0Vg9e
+         kereiEJw9/MEAx4VnkMHDa+TH5/RTxWzr/mWOIozKFF5yjnPUZujvoO4/YaU++WwMCDo
+         t80Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725533780; x=1726138580;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4DJPppfvsq3bVrU8OAZnr57xaqKDJESryIS8WamVFSc=;
+        b=xUWYjfoDQUFPOM4z+aoXM4ZOh4C9WhQoErkK2GU9LVCoQZ0+78JLL/xEKelCmztiXY
+         jdgTVFvXOsY7ieqWrMtmZ7vEGvkrqKn39KgCeUvXiSdG0/36vTzyKpW9xpz1zc43ExJN
+         vkqZT6tn663CacPFOg2NT+lfh8wCENNKnRaoO8LE5PTtblezY6MxaSKkWuqgsDD3lKUI
+         YUe5GEXX6KsnL3QNyJAxi1MutRvL0I9h7LuC1yf/qzs/SCb5gcTK7sBsueojLz9pOy7t
+         3pjdAmSMaY7qWbhgAlcuFSMFBB9P8ZlPOKowJ21GQHD1tvoEmYNspYFiCvetPw/Av/1p
+         5L0g==
+X-Gm-Message-State: AOJu0Yxe5hgBM/8ye3opeIlprirCeVY7/etMx64Hfq4m0KBd7Ak7VNl/
+	iyd8XRdshmY1x7n7hvM9a6blYbEtRr6vm9+0jp3q3hbkzNWWyWv4UavSIj8+lFc=
+X-Google-Smtp-Source: AGHT+IHilYsBgfadCapwrPljiidrpCa41K0Hyb98p/0x3xNpGLLwKBsqtfV83jJC0DRLwz+P6VWrRQ==
+X-Received: by 2002:a17:90a:de8c:b0:2d8:7307:3f73 with SMTP id 98e67ed59e1d1-2d8906204f6mr17130275a91.39.1725533780409;
+        Thu, 05 Sep 2024 03:56:20 -0700 (PDT)
+Received: from [10.4.59.158] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b8fe1f68sm9312094a91.31.2024.09.05.03.56.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 03:56:20 -0700 (PDT)
+Message-ID: <cccc16ad-21fb-4c99-8c49-91ee15c202cc@bytedance.com>
+Date: Thu, 5 Sep 2024 18:56:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/14] mm: mremap: move_ptes() use
+ pte_offset_map_rw_nolock()
+Content-Language: en-US
+To: Muchun Song <muchun.song@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
+References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
+ <20240904084022.32728-10-zhengqi.arch@bytedance.com>
+ <1b03a7de-1278-4e36-8068-885dd1c29742@linux.dev>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <1b03a7de-1278-4e36-8068-885dd1c29742@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
-> Huang, Ying wrote:
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-[..]
 
-> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
-> > > message.
-> > 
-> > Emm... It appears that it's a common practice to include "Cc" in the
-> > commit log.
+On 2024/9/5 17:25, Muchun Song wrote:
 > 
-> Yes, just ignore this feedback, it goes against common practice. Cc list
-> as is looks sane to me.
+> 
+> On 2024/9/4 16:40, Qi Zheng wrote:
+>> In move_ptes(), we may modify the new_pte after acquiring the new_ptl, so
+>> convert it to using pte_offset_map_rw_nolock(). Since we may free the PTE
+>> page in retract_page_tables() without holding the read lock of mmap_lock,
+>> so we still need to do a pmd_same() check after holding the PTL.
+> 
+> retract_page_tables() and move_ptes() are synchronized with
+> i_mmap_lock, right?
 
-It seems nobody can give technical arguments why it's better than just keeping
-them outside of the commit message. Mantra "common practice" nowadays is
-questionable.
+Right, will remove the pmd_same() check in v4. Thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> 
+> Muchun,
+> Thanks.
+> 
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   mm/mremap.c | 20 ++++++++++++++++++--
+>>   1 file changed, 18 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/mremap.c b/mm/mremap.c
+>> index 24712f8dbb6b5..16e54151395ad 100644
+>> --- a/mm/mremap.c
+>> +++ b/mm/mremap.c
+>> @@ -143,6 +143,7 @@ static int move_ptes(struct vm_area_struct *vma, 
+>> pmd_t *old_pmd,
+>>       spinlock_t *old_ptl, *new_ptl;
+>>       bool force_flush = false;
+>>       unsigned long len = old_end - old_addr;
+>> +    pmd_t pmdval;
+>>       int err = 0;
+>>       /*
+>> @@ -175,14 +176,29 @@ static int move_ptes(struct vm_area_struct *vma, 
+>> pmd_t *old_pmd,
+>>           err = -EAGAIN;
+>>           goto out;
+>>       }
+>> -    new_pte = pte_offset_map_nolock(mm, new_pmd, new_addr, &new_ptl);
+>> +    /*
+>> +     * Since we may free the PTE page in retract_page_tables() without
+>> +     * holding the read lock of mmap_lock, so we still need to do a
+>> +     * pmd_same() check after holding the PTL.
+>> +     */
+>> +    new_pte = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &pmdval,
+>> +                       &new_ptl);
+>>       if (!new_pte) {
+>>           pte_unmap_unlock(old_pte, old_ptl);
+>>           err = -EAGAIN;
+>>           goto out;
+>>       }
+>> -    if (new_ptl != old_ptl)
+>> +    if (new_ptl != old_ptl) {
+>>           spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+>> +
+>> +        if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(new_pmd)))) {
+>> +            pte_unmap_unlock(new_pte, new_ptl);
+>> +            pte_unmap_unlock(old_pte, old_ptl);
+>> +            err = -EAGAIN;
+>> +            goto out;
+>> +        }
+>> +    }
+>> +
+>>       flush_tlb_batched_pending(vma->vm_mm);
+>>       arch_enter_lazy_mmu_mode();
+> 
 
