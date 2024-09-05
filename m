@@ -1,149 +1,157 @@
-Return-Path: <linux-kernel+bounces-316276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7719396CD66
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C5896CD63
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1196EB255AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1260C1C22096
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6380114D2B3;
-	Thu,  5 Sep 2024 03:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25831442E8;
+	Thu,  5 Sep 2024 03:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q+fIlPF1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="UsDe89tB"
+Received: from serval.cherry.relay.mailchannels.net (serval.cherry.relay.mailchannels.net [23.83.223.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201AC1494B5;
-	Thu,  5 Sep 2024 03:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725507335; cv=none; b=FbjjvY4wAzrhNuu6SY28t5lf8deOPXVUikitqEdjCs2SctjKMyVawdwy1SaREniZJquvbigIfl4WXq4eC9C7Ix6epusCJZhznwt1MHVp4w5JMu24CSNOOJqPLNjlvxpJdbRqhEOyzWuXYnjI3rFvnIxRvghwdcOT8fScWG4AVNg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725507335; c=relaxed/simple;
-	bh=71BZXfdBCTsAyrqUDA4M3Xj0hkLE7+Dkt0m6fJL0whI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jng0T3OeRh4fSCHHxCGnXN6L2o+yhSsDMwDC3gU7r017nhTUvKxo6OdKW42dLeMuDOkjCSNjIaUHAWNnPo5BOH+gzlEF/Ao6dlWWr/tnlc/12NK26Z7jxDs9VFVlKS2vUYu3WQKDgWTfv1St6KBQqvZKLXmTSsbmYlbWeD/vyto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q+fIlPF1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484MSBZn032349;
-	Thu, 5 Sep 2024 03:35:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=QJf3w+JkFSAhj424/ky9GdSZ
-	1Wc02Dx4ry4NpAboNqg=; b=Q+fIlPF1v62A9lMaLW9mBzKiHcS93QXL+rEuBE60
-	NdCb0e25PTSR8y7uBvhxVB3tWkC7zca2UBdru3Mx3orKI5Yi+JyFdIo5jblG1ACg
-	8MtYNSU077Lg41y70+JXOdSXwfxyamYzRJsikNzCxk1ehHb8JidW/6TYHTmyYCKn
-	Uo346DHmViO49wNc4D+7jWRFlnOoo/ivVFdLrcfgW5WfNEuATHGwnQMqvEKjLvRt
-	IEXid3roEK1DWrxBCXTJvKAyk/V4iFIDbgfZsI0lahnI+3xu0cD67QWeoy/DEFGR
-	rz5Sl4wTSEK0Uh9S+RKGE1O8L05ItsrPRwm/9vB0iuj9gg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe6x4v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 03:35:29 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4853ZS4U021328
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 03:35:28 GMT
-Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Sep 2024 20:35:24 -0700
-Date: Thu, 5 Sep 2024 11:35:20 +0800
-From: JieGan <quic_jiegan@quicinc.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        Yushan Li <quic_yushli@quicinc.com>
-Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
- x1e80100
-Message-ID: <Ztkm+IOzEtvvD4Vf@jiegan-gv.ap.qualcomm.com>
-References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
- <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
- <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
- <1be14849-ba98-432a-9686-e0189c9c7ffd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806B5143759
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.163
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725507329; cv=pass; b=VCAYz38cKY+z8eLdjBdr87EwVJlfi9/XD6H5PjEFj0z439J3I8eIKFIh6WpZiPHODDJACFtvHI8zzlN3dNX8iGFg75BkWMCnnsPakj/Fs5lxkSqsrOZYzaeOOIpPuvuU/Pk6xbylIazrs9PwEt9n2muEYTX1HdjH1P27ffXmAT8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725507329; c=relaxed/simple;
+	bh=qtqGJKmeGYjAmolO6g//CYy841MhMDCQ5pY+e3IYnTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCV2a4wPIkf9BsGQBCqDopwaskjFaER7O+FSjJLCJ3wXZXxmaAwRfNygpp0gevZOYHJb3lrCdnCzTVwwSVpBgb1vreCwmnZboDZOapV5gKpkhnCtJ3zxrXubhGF6LLZ3Luclpi8I5Fi39xW0CSRZ4PWDJcXwSivllNSeVfMPJto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=UsDe89tB; arc=pass smtp.client-ip=23.83.223.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id D6EB72C6F27;
+	Thu,  5 Sep 2024 03:35:26 +0000 (UTC)
+Received: from pdx1-sub0-mail-a262.dreamhost.com (unknown [127.0.0.6])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 6C4692C6DA2;
+	Thu,  5 Sep 2024 03:35:26 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1725507326; a=rsa-sha256;
+	cv=none;
+	b=Trz7bC3h4Yky6kz33kOgYl0pzPL911I87IwVZNyUReddSV0yENtO3PIVnKfAFMiZTcRnK8
+	ocEJONF5dM1tB5Nh7zZnr8RbtV00/ScB5GbklLJfsFYHv+3zV6xCfkgSfqtpWdsb3p3hdF
+	UDPx/8iAMMIV1punbZTXLLdQlmuaUCcbiGl7s6U+UXLxau8MNhCLlhi6jYV2wjJF0V75Vt
+	pkJ+bsPiSu+obEPBo2la0cruFxNvEmMQqXHhm/I3PW1r4nakxfLT8InGqUdUWNzix1o4Z3
+	ac8O+q/vok/S/jzOFUZXsZsaInr0Pxx66sRjXrOjZyNQl+oRI+6xJVIB9vagEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1725507326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=sqv0e0qkAp5wHmZcV7cPBzn1r7u2Pw6TA23Yco90OIs=;
+	b=SjdMY07rbVcTZbkGMdqY6lhcJLUPcJ+q5BWwhvEBHddL+Q34T/7PLRe3HVWQu8uOg5/FQV
+	fSpdP/z1gDbQxRWoArRwz5GFI8o2HX/+m5qh/IOj3dOA+1AfrrrxwnyWxuo5M7XZZF44ZI
+	rQOgAic6MV3kd35/A4npPBmqL3G58xBqseegVo8DOPTg+MtmKU1V4akjMspvJ9wGBdHsvV
+	YG9BgDblT+ggBOn2YSoJiszBqquW/SVrtLP6z3pN3TQfbZWiU6SCxa9vlcGkvWoaEvzOI8
+	D4iEHFn2ZjLpTiQg71XiB/JwIpj9htjJX/zT/PQrWFI3LJfIAMY2pgTi5ahwkQ==
+ARC-Authentication-Results: i=1;
+	rspamd-6bf87dd45-4wmp5;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Rock-Reaction: 5bd992fb6fd8a490_1725507326763_2866573522
+X-MC-Loop-Signature: 1725507326763:1884108718
+X-MC-Ingress-Time: 1725507326763
+Received: from pdx1-sub0-mail-a262.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.99.23.7 (trex/7.0.2);
+	Thu, 05 Sep 2024 03:35:26 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a262.dreamhost.com (Postfix) with ESMTPSA id 4WzlP94QRXz75;
+	Wed,  4 Sep 2024 20:35:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1725507326;
+	bh=sqv0e0qkAp5wHmZcV7cPBzn1r7u2Pw6TA23Yco90OIs=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=UsDe89tBIYADnq175TNv41WyX2G/T2Tg4gDQM8Q6VMskZGZjnPVj1NkelevY+11CY
+	 WbuuCVctBRH1fypGmYzaPjRIpR51dJn0g2DjRzfQB0na89FYF8jEgwc6GC0MThG+Kc
+	 i0wm4gwrj5JABnhoumT3MgXet4lvFpGV4xgklSjiVCXbZ0gik8jpL4Ekk2rl87bwHV
+	 SZcN1Ljsi1PrMyJUzpdEpIovYJJZOoxMRGUskb/o3zA1NOtDI7+GdLoMKarK9SluW8
+	 kR3sUURMqZbRrp0fNCp2YRtL2ay865jt3piUcW3DWPmI9zh6Hca1x5H1bmBrW36RW5
+	 M8eSpFAp4XJDg==
+Date: Wed, 4 Sep 2024 20:35:22 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, mhocko@kernel.org, rientjes@google.com, 
+	yosryahmed@google.com, hannes@cmpxchg.org, almasrymina@google.com, 
+	roman.gushchin@linux.dev, gthelen@google.com, dseo3@uci.edu, a.manzanares@samsung.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
+Message-ID: <a2fdrnaagcgp4hllalttaxs7ckc6w5bt2j7fg4upagqhfvoc3b@jsmugftxvyyz>
+Mail-Followup-To: Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm@kvack.org, mhocko@kernel.org, rientjes@google.com, yosryahmed@google.com, 
+	hannes@cmpxchg.org, almasrymina@google.com, roman.gushchin@linux.dev, 
+	gthelen@google.com, dseo3@uci.edu, a.manzanares@samsung.com, 
+	linux-kernel@vger.kernel.org
+References: <20240904162740.1043168-1-dave@stgolabs.net>
+ <20240904131811.234e005307f249ef07670c20@linux-foundation.org>
+ <nwutv6cuuyajmakiiznb3hoao6jfhrs2clpqi76xomqbc6yymg@n7inzwjcskhf>
+ <20240904181543.02de2242490cf233c7879697@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1be14849-ba98-432a-9686-e0189c9c7ffd@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W9U-EYGwk8c3Vb1SwrfVHq0UDzKx4fDU
-X-Proofpoint-ORIG-GUID: W9U-EYGwk8c3Vb1SwrfVHq0UDzKx4fDU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_02,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 spamscore=0 mlxlogscore=649 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409050024
+In-Reply-To: <20240904181543.02de2242490cf233c7879697@linux-foundation.org>
+User-Agent: NeoMutt/20240425
 
-On Wed, Sep 04, 2024 at 12:24:19PM +0200, Konrad Dybcio wrote:
-> On 3.09.2024 3:30 AM, JieGan wrote:
-> > On Mon, Sep 02, 2024 at 05:27:32PM +0200, Konrad Dybcio wrote:
-> >> On 27.08.2024 9:27 AM, Jie Gan wrote:
-> >>> Add coresight components for x1e80100. This change includes CTI,
-> >>> dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
-> >>>
-> >>> Change in V1:
-> >>> Check the dtb with dtbs_check W=1, and fix the warnings for
-> >>> the change.
-> >>>
-> >>
-> >> Applying this series and enabling CORESIGHT=m (along with all the options
-> >> in menuconfig) breaks booting on my X1E Surface Laptop 7
-> >>
-> >> Konrad
-> > 
-> > Did not observe any booting issues with our devices. Any relevant log to share?
-> > This patch also tested by my colleague.
-> 
-> Sorry, it crashes too early and my device doesn't seem to have an
-> easily accessible serial port. Does any of the functionality
-> described here require an unsecured device?
-> 
-I just checked the devices we used to test, they are all unsecured devices.
-I also checked the dts, there are two components(known issue internally)
-will fail the booting of the secure device.
+On Wed, 04 Sep 2024, Andrew Morton wrote:\n
+>On Wed, 4 Sep 2024 18:08:05 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+>
+>> On Wed, 04 Sep 2024, Andrew Morton wrote:\n
+>> >On Wed,  4 Sep 2024 09:27:40 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+>> >
+>> >> This adds support for allowing proactive reclaim in general on a
+>> >> NUMA system. A per-node interface extends support for beyond a
+>> >> memcg-specific interface, respecting the current semantics of
+>> >> memory.reclaim: respecting aging LRU and not supporting
+>> >> artificially triggering eviction on nodes belonging to non-bottom
+>> >> tiers.
+>> >>
+>> >> This patch allows userspace to do:
+>> >>
+>> >>      echo 512M swappiness=10 > /sys/devices/system/node/nodeX/reclaim
+>> >
+>> >One value per sysfs file is a rule.
+>>
+>> I wasn't aware of it as a rule - is this documented somewhere?
+>
+>Documentation/filesystems/sysfs.rst, line 62.  Also lots of gregkh
+>grumpygrams :)
+>
+>> I ask because I see some others are using space-separated parameters, ie:
+>>
+>> /sys/bus/usb/drivers/foo/new_id
+>>
+>> ... or colons. What would be acceptable? echo "512M:10" > ... ?
+>
+>Kinda cheating.  But the rule gets violated a lot.
 
-I will disable those two components in next version. You can test it
-with next patch.
-
-Thanks for testing.
-
-> What tag did you test this patch against?
-
-next-20240820
-
-> 
-> > 
-> > Can you successfully boot without the patch?
-> 
-> Yes.
-> 
-> Konrad
-
-Thanks,
-Jie
+The only other alternative I can think of is to have a separate file
+for swappiness, which of course sucks. So I will go with the colon
+approach unless somebody shouts - I still prefer it as is in this patch,
+if we are going to violate the rule altogether...
 
