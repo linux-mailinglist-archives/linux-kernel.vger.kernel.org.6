@@ -1,72 +1,150 @@
-Return-Path: <linux-kernel+bounces-316766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4761896D3F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:47:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BEE96D40C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06ED4289843
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:47:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71330B274D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2A199223;
-	Thu,  5 Sep 2024 09:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC2C198A16;
+	Thu,  5 Sep 2024 09:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQ8MjYSN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ecjbbmdf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="inonchWK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFE71991D9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B000C47796;
+	Thu,  5 Sep 2024 09:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529608; cv=none; b=lxor4IRtUVhrGfp0NqyWN805U6csI7pN0HLdVHfoheVHxUzfsr/v0oUyn8zB/40uosS5pVZqKoJUUdQc33aFiVDRbZ13+2BTqk8FxXLUj/HnL9170Lf/r0Nh3wH1ooaMnohdQmkimHpTA6/jCDvYb4XwbkSo5q58nxmvER0iXdY=
+	t=1725529663; cv=none; b=eAkkqCExeorieNbh1Qqy3jcd4lBUGGcZUh3hZWuSleWe1JaziGbec3KvEDm83M956FC6nLlkvdar6PZNJxpAyVu803DuyEMx5BvnBtnkJpFZdRj4SAjZJObJCyNJ0TVYjFGfiARk/OxDg/VqN+tVXJ289av2x6W1e1qkw0jE9vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529608; c=relaxed/simple;
-	bh=YEneNQaX0gxRmH24YN6kZK5p+5+wcuX0UjfdhlRhrPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QDy6zWoLRC6jnedvYzsmZa0OkPg+LTFVv97yNhJT3zq7+ONMRMahPszXLJ5Of0UxCcYdQp0RZK77aiUcHVFE3gTJdZlXQwCt//1Sdy+ttgy082KWpEk1rZ2eF5vUwIUmPw8rNeD8a1ugxsu6eoDlLpU5JANg143AdY4/3Acgbk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQ8MjYSN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0826C4CECB;
-	Thu,  5 Sep 2024 09:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725529607;
-	bh=YEneNQaX0gxRmH24YN6kZK5p+5+wcuX0UjfdhlRhrPI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VQ8MjYSN23iF0GjoNHIf2lG7dxiaT/6deL90C9964Gz0ggxZKeymMpPHPfvhHgplp
-	 Vr69oPsuYg9KrnOCkgm+qoD13wR3MQKcoddgA2CK4p/fK+HPJc9CC5ulkzwREayOvz
-	 AhxudPRD4tNGOf/EEvyVpAqwEngP1PUh2lzrC5ev/8LVFkCa8ogzujwu5j+PbhZweZ
-	 WJyRu6d2fQfSb/uKl6Yn3QZvd9fmQ9kz5xWEKXHfBzK5RAYbnPN/rZFNDcJIf7cWxE
-	 H3+jY/xKvmyvOEwUAWTX6xiB8w6hvshZvCUiP8L1OrgWR1STggKTrqD5WMvP1bhMyM
-	 7ucZD4bEzypBg==
-Message-ID: <eed65184-aeb3-44e9-841a-3d5415e82a63@kernel.org>
-Date: Thu, 5 Sep 2024 17:46:44 +0800
+	s=arc-20240116; t=1725529663; c=relaxed/simple;
+	bh=xMzNaWyGUWpvjW9EV6HlXMME3B51Ls+X/dfJ8kjXxhM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ZZIZcQ3DfHqcE+srft45i9kPEDfoSkvR7dLBhtUa5RgbH7a+GL9JJR8TrBmtxkI2phzNSBYmmsdMTjZ8WyCQvLJfIMJtZtN6+fnMaTj/kYawjw/dsMM2v6sAiDrs5dLJJioCidflPemYQVDh+oG9iBBQLQR7Ye8SACyUD/lhPxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ecjbbmdf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=inonchWK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 05 Sep 2024 09:47:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725529659;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HyRCT1hnfWSq9RQNa238X5cw7dy/AXs7k5VYwEFO0dQ=;
+	b=ecjbbmdfUVhrmoGly/ygbBLj4eDovbLp6MJLh2abiwD+VnsNS9fF7iwO/bClio1HseVV75
+	KeemMpdt8+vjGhxxIgwgVfD4T/GeHb9xzDZEZ5Q4ApFaxvvvMmMKwzIKUMwXlTgIC1P5J8
+	yC8H6KnJYI3LoEn5LqI42RNCAwph3Bv+1JtMjqr0iqDm4Yjd3CKLdpddDFE+vIhr79i8uW
+	/i3dNT56QOWnIk7BeK06XkTUbSUeeYUtGbUUM7sDiDAuf1foWuuc3Rk2nqRH3rPQpTmC4u
+	deY5ML8aMBr3IuM3cr8S1xGUPs8LTeekC0GsM+i7bvQg0zR2j4IU2wVIHX9YRw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725529659;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HyRCT1hnfWSq9RQNa238X5cw7dy/AXs7k5VYwEFO0dQ=;
+	b=inonchWKC2gIIC6R+7UAYlSgma4up7VX+bFwEKI+LBnaCSpHfS5UsLhLz0dMaeptf+BoxP
+	30SiGJPrwpPXuOCg==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/bugs] x86/bugs: Fix handling when SRSO mitigation is disabled
+Cc: David Kaplan <david.kaplan@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240904150711.193022-1-david.kaplan@amd.com>
+References: <20240904150711.193022-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] erofs: support compressed inodes for fileio
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
- <20240830032840.3783206-3-hsiangkao@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240830032840.3783206-3-hsiangkao@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172552965872.2215.17085347492363546574.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 2024/8/30 11:28, Gao Xiang wrote:
-> Use pseudo bios just like the previous fscache approach since
-> merged bio_vecs can be filled properly with unique interfaces.
-> 
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+The following commit has been merged into the x86/bugs branch of tip:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Commit-ID:     1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d
+Gitweb:        https://git.kernel.org/tip/1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Wed, 04 Sep 2024 10:07:11 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 05 Sep 2024 11:20:50 +02:00
 
-Thanks,
+x86/bugs: Fix handling when SRSO mitigation is disabled
+
+When the SRSO mitigation is disabled, either via mitigations=off or
+spec_rstack_overflow=off, the warning about the lack of IBPB-enhancing
+microcode is printed anyway.
+
+This is unnecessary since the user has turned off the mitigation.
+
+  [ bp: Massage, drop SBPB rationale as it doesn't matter because when
+    mitigations are disabled x86_pred_cmd is not being used anyway. ]
+
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Link: https://lore.kernel.org/r/20240904150711.193022-1-david.kaplan@amd.com
+---
+ arch/x86/kernel/cpu/bugs.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 189840d..d191542 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -2557,10 +2557,9 @@ static void __init srso_select_mitigation(void)
+ {
+ 	bool has_microcode = boot_cpu_has(X86_FEATURE_IBPB_BRTYPE);
+ 
+-	if (cpu_mitigations_off())
+-		return;
+-
+-	if (!boot_cpu_has_bug(X86_BUG_SRSO)) {
++	if (!boot_cpu_has_bug(X86_BUG_SRSO) ||
++	    cpu_mitigations_off() ||
++	    srso_cmd == SRSO_CMD_OFF) {
+ 		if (boot_cpu_has(X86_FEATURE_SBPB))
+ 			x86_pred_cmd = PRED_CMD_SBPB;
+ 		return;
+@@ -2591,11 +2590,6 @@ static void __init srso_select_mitigation(void)
+ 	}
+ 
+ 	switch (srso_cmd) {
+-	case SRSO_CMD_OFF:
+-		if (boot_cpu_has(X86_FEATURE_SBPB))
+-			x86_pred_cmd = PRED_CMD_SBPB;
+-		return;
+-
+ 	case SRSO_CMD_MICROCODE:
+ 		if (has_microcode) {
+ 			srso_mitigation = SRSO_MITIGATION_MICROCODE;
+@@ -2649,6 +2643,8 @@ static void __init srso_select_mitigation(void)
+ 			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
+                 }
+ 		break;
++	default:
++		break;
+ 	}
+ 
+ out:
 
