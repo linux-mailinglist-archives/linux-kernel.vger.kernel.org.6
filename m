@@ -1,155 +1,129 @@
-Return-Path: <linux-kernel+bounces-316375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E3396CEBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:48:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD5796CEBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8A91F26DCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:48:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D6BB246BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D72189522;
-	Thu,  5 Sep 2024 05:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F66188A26;
+	Thu,  5 Sep 2024 05:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="psqQq3ku"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ORluSlYh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4C7621;
-	Thu,  5 Sep 2024 05:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55ADF621
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515293; cv=none; b=pL2/4zHIqGXxqSTBdM+f+EAi6cDD/erPhtVsUtC7HmM1/xr3pE3IaWj8wG2c7mniqgOcC45V7wDRSgroqTMkMIeNwXmJeQx2FvlAXSEZR+AWThKLBAU4HvD7zqy0j976fgRTMU6f8oUDs5QHPaUKfiDXxTFLWzFr+FiXdfozOiY=
+	t=1725515449; cv=none; b=goy4NbymMT8yTIExaelu2XgBUfbQ2ywhswjgFH12CAmzIBnD+UE3MQCfX9r3tzr5YSc4aNn8mvZlLqk25Ow/efMARr+o42i2SmN9+ZPjbN9JyShHQjbTieh3ViCb7rSmlbjn5F1I+eSqumsVPviSCba+0lu9Bn7nTphgNCmwDH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515293; c=relaxed/simple;
-	bh=5zTPWjKAM7d+wRqP8nC+qU/IRqwRn348++OHKbUOlcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=axdroXQBtK0prLRkurvQZmSDWRJbmwXqOAnXYeiwjwAut5SfQSSQcUWBAgTUcsemrZ2SNDy4TVVEMNv75ebR/gS8Dcbf+uX3LzFOoYv3cwg6++rkfdc+EdnaylE/UtAmchK4ZYoQb8S9GmJ75zLocQlwbL1YGlxiqRTbBUrbaM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=psqQq3ku; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1725515449; c=relaxed/simple;
+	bh=5dxzGSTAslaJGmPXTzAzswelDdMwpyIDnw0rq3NilxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Pm19ma7x7/4cV6qZRn+hrYNC7McI/kO0l5CGiB4pGc1UuQCLQYLUfEyohC+sMaaSrtzNEDrPoldIemJFj3XITUlVwcp4bGz5xhvqqSEnVbocMFA0uTVJ+ijYkf2wbK8IiqYcHUoniIMI8iiy0aXauJDZW/5Oo26oMa7+ev5LPcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ORluSlYh; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484L488H024309;
-	Thu, 5 Sep 2024 05:48:04 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484FxEPf020925;
+	Thu, 5 Sep 2024 05:50:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vxoU3VAhg+dJLVK8CVBfig5iLDsWG2NthGmgKGRMOjA=; b=psqQq3kuT9sf9boL
-	LKKtqT0aJoVjZDMFzGHp/1CaNU92s252BBrvw9eRBI4ibezT2RT5uQIDroA8CRAB
-	wd14pjeHOnnolbcyIUUL5Goy+jgTiqlpiqMqKN+Izjs9kPwmWNHBcYooZf03kHJK
-	pvHRLDm5dWm92qRxSVyPPnvoMrIEfvcXtRa+YxEeLkPqB143osQeZb5Uezq/pHak
-	JIf8H5I2oMVQdZoUZ3LhxCHFDPkpf2YkoBYlKeCx1s0u8r+NTW+8JjUFBo4sxqA1
-	GBLsb1Z4PIXWFuAe243sxbGRyMSpDgcKEJ6NZ+oLl83b15asoftVn91vns1pAdKg
-	6RRwyQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41btrxvvuh-1
+	77SH1uvNfWLkio+SufQcVBbFIq8m2g0KthoEkMukAU0=; b=ORluSlYhqChwmtPW
+	9p4a6YMFpOY6UEz0oHZK/6Tfu5C4TDU22ps+eOF3ZwK6Ucco/HCTz/vb/QjA7M3E
+	U46M8YeppE4GbNtE09RdR5XrGeEh+9et9G2yZrdzLvyMwT++TYUJha4cLOPdapQ0
+	ySlFpfLWiX+xKuAxwXvNpYbM8+ngv2OyhYipws717Kp1qt+C7V7a/3XS23eVfJ+E
+	Q5Et7ZnWZ0kiwi88cB0ZIUWvUIljDDzN+Stir3FVMTzVxdAC1wRkwSeimP1M4vY4
+	V56X5T1OP8FmcAfqNFRnUkYN5zA6Dj7FAjp2W0jiTraLR+1He//pJtqTx9Nn0rK9
+	t6RtzA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dxy26asb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 05:48:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4855m3qT012633
+	Thu, 05 Sep 2024 05:50:34 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4855oYFS002282
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 05:48:03 GMT
-Received: from [10.216.46.64] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 5 Sep 2024 05:50:34 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 22:47:58 -0700
-Message-ID: <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com>
-Date: Thu, 5 Sep 2024 11:17:55 +0530
+ 22:50:32 -0700
+Message-ID: <cc94e66f-6fa0-4499-a851-bac90533eeca@quicinc.com>
+Date: Thu, 5 Sep 2024 11:20:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 02/29] media: MAINTAINERS: Add Qualcomm Iris video
- accelerator driver
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] i3c/master: cmd_v1: Fix the rule for getting i3c mode
+To: Billy Tsai <billy_tsai@aspeedtech.com>,
+        "alexandre.belloni@bootlin.com"
+	<alexandre.belloni@bootlin.com>,
+        "jarkko.nikula@linux.intel.com"
+	<jarkko.nikula@linux.intel.com>,
+        "linux-i3c@lists.infradead.org"
+	<linux-i3c@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+References: <20240826033821.175591-1-billy_tsai@aspeedtech.com>
+ <OSQPR06MB7252463A7C81BF18811DB6EC8B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-2-c5fdbbe65e70@quicinc.com>
- <afba364d-8299-49b6-9848-ed1660f86327@kernel.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <afba364d-8299-49b6-9848-ed1660f86327@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <OSQPR06MB7252463A7C81BF18811DB6EC8B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Znh6gIFAnIYYoXUm3QexFk5APCe6sGaG
-X-Proofpoint-ORIG-GUID: Znh6gIFAnIYYoXUm3QexFk5APCe6sGaG
+X-Proofpoint-GUID: -fLAWtVrUT3z_pMbs6UmvaSq9103PQoa
+X-Proofpoint-ORIG-GUID: -fLAWtVrUT3z_pMbs6UmvaSq9103PQoa
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 suspectscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=976 spamscore=0
- lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2409050040
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=939 spamscore=0 clxscore=1011
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050041
 
 
+Hi Billy,
 
-On 8/27/2024 4:12 PM, Krzysztof Kozlowski wrote:
-> On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
->> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>
->> Add an entry for Iris video decoder accelerator driver.
->>
->> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>  MAINTAINERS | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 8766f3e5e87e..105e67fca308 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -18898,6 +18898,17 @@ S:	Maintained
->>  F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
->>  F:	drivers/regulator/vqmmc-ipq4019-regulator.c
->>  
->> +QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
->> +M:	Vikash Garodia <quic_vgarodia@quicinc.com>
->> +M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
->> +R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
->> +L:	linux-media@vger.kernel.org
->> +L:	linux-arm-msm@vger.kernel.org
->> +S:	Maintained
->> +T:	git git://linuxtv.org/media_tree.git
+On 8/26/2024 9:32 AM, Billy Tsai wrote:
+>> Based on the I3C TCRI specification, the rules for determining the I3C
+>> mode are as follows:
+>> I3C SCL rate > 8MHz: use SDR0, with a maximum data rate of 8MHz
+>> I3C SCL rate > 6MHz: use SDR1, with a maximum data rate of 6MHz
+>> I3C SCL rate > 4MHz: use SDR2, with a maximum data rate of 4MHz
+>> I3C SCL rate > 2MHz: use SDR3, with a maximum data rate of 2MHz
+>> Otherwise, use SDR4
 > 
-> Drop, you do not maintain that Git tree.
-Sure, will remove
-> 
->> +F:	Documentation/devicetree/bindings/media/qcom,*-iris.yaml
->> +F:	drivers/media/platform/qcom/iris/
-> 
-> Drop, does not exist. Or fix your patch order.
-Are you suggesting to add this patch as the last patch of the series?
-or remove just below entry and add one more patch at the end to update
-MAINTAINERS file with the same?
-+F:	drivers/media/platform/qcom/iris/
+> Sorry, the description of the commit message is wrong.
+> I will change it to
+> I3C SCL rate > 8MHz: use SDR0, as SDR1 has a maximum data rate of 8MHz
+> I3C SCL rate > 6MHz: use SDR1, as SDR2 has a maximum data rate of 8MHz
+> I3C SCL rate > 4MHz: use SDR2, as SDR3 has a maximum data rate of 8MHz
+> I3C SCL rate > 2MHz: use SDR3, as SDR4 has a maximum data rate of 8MHz
+> I3C SCL rate <= 2MHz: use SDR4
+> and send the v2 patch
+Seems some typo errors, you mentioned all the modes having maximum data 
+rate of 8MHz. "has a maximum data rate of 8MHz"
 
-Thanks,
-Dikshita
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+I3C TCRI Specification (in [MIPI06] Section 7.1.1.1) :
+MODE 	Listed Speed 	Maximum Sustainable Data Rate
+0x0 	I3C SDR0 	12.5 MHz, Standard SDR Speed, fSCL Max
+0x1 	I3C SDR1 	8 MHz
+0x2 	I3C SDR2 	6 MHz
+0x3 	I3C SDR3 	4 MHz
+0x4 	I3C SDR4 	2 MHz
 
