@@ -1,206 +1,144 @@
-Return-Path: <linux-kernel+bounces-316548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E03C96D116
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7837896D117
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B431F24EC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:59:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0311C22EA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C45194AFE;
-	Thu,  5 Sep 2024 07:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE0E1940A9;
+	Thu,  5 Sep 2024 07:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqJLTrmj"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5Pp0/fth"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2061.outbound.protection.outlook.com [40.107.220.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F9E194AEB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523147; cv=none; b=t4bOHaVJoNQHgCKPzCafFo+TGm33QPyHjW8SfYp3+Imuua5QeXm+B226MLhIxyn2u3i1lJXerkiBKE5h8bxOka74UgnotOaIj5GhktFoySZuQt8qnhsSbnHv68BJpMwFoTYWa3eAj+OXZHLTXP25mzS7fXh8gi6v4qu2eWX09vk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523147; c=relaxed/simple;
-	bh=xdhnztTPxQGFqumFULWSCVPSD+7WCW1uNXGmA9Q+MJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sh/BOBLf0Vosb7GWBL/QrJET4vfOtL/RBHfoFkgeCb8er32fYA6bPvuzOWXhVmHy2IpkgjSNve2Pmdvf5NvsK7IVsqkLLCvi25DfCtdrgH3P1fsSwNNM+ld8hgIj4e369y/uJNhhBihR9RnBQTHMVOr+AlhkKCQkc0pvpOvuTWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqJLTrmj; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7093ba310b0so243575a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725523145; x=1726127945; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jqRnqe/PwJnjoCIcJEvnwvB4C1NjsE9+IflmvTs+MtE=;
-        b=lqJLTrmjqmCNNQR1/4P8CtLEp3Kml5bKt3wbPqi2paDCwDmp6h2sIru8rUJbGmrUdg
-         Q9VUqyM/rM+dZSiva4tKDdDkye77SmcFIFTvbDyEzLeb0FT1vawGyPvfitAeJd1DX8YF
-         S1so7vMHVimvaVjpPnh1xdM+tzn4ErXGXIXjHL0IfLEwt5cV4sBCgE9O3iA/IfLpJdpB
-         cUbIQb28iEQTHQ7vekZl1ZYLaiinQf/zRIIbBpvTxNnaXRhTc21GUDECWAgxlS83ebv5
-         18XpUweGrjKsojeuMEWVmViSEFzQF0U0cJDuvJcFaqAvrfeOHRimvfRa7Lsu2y/S6Tb1
-         XBuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523145; x=1726127945;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jqRnqe/PwJnjoCIcJEvnwvB4C1NjsE9+IflmvTs+MtE=;
-        b=HhImlocu5kaN/FXv+0E9qCDVGwa/BajdD6oYPrqn1b9xYMkQflS4XDwuvab5Nlq46Z
-         Np1/ysRrSNMkdVQyLuHVCNf1sa0hvotg3UzhGQGDendbsXzajPagR8H8SqcQfqpRMuJ5
-         sjPmvG6xzs+xSH48UsUEB/DYvVNTQbH6PRgmiTB3CvCVz4PLpjrV+5/6noilTO7dH8Jc
-         yf2hsGVZWRkNuqURPAbVMwZJwhpcNjJL0NPfCX6EsDPxGSvZUCcSXCopyuRYYkPpBVsM
-         Tyqc5uenaCO4cJB0oBUCO+BzrYfRZCDSzG0CDJDMpPRnEjnrOH/lOL6nSSc69cNhulVO
-         vbhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAigUTK5ILAS1mHX9vQ4CgkO15s0ZtgR/4Z/ySQmKv35yV77/Lr9+nI8/JdBcS8I6CEnnp7RonJa91MMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUbnDyaaQd2hnPXegfDzcP5/7pfSpQIJHpMh2WfxuytrnCWwM3
-	DlwWnJ/kkPQMnUp1gKRyRzIPO+VKpdrtvRpbuxBrYRWPi1h9S2PdvCzz1xhw1w==
-X-Google-Smtp-Source: AGHT+IHZ5p615JCGrxO+kj7BETsjcRtqwBMTcKwF5GhK6YPRwEiF5dxe6YNR6DMaUH9B/CHkjVlbrw==
-X-Received: by 2002:a05:6359:1b05:b0:1b8:1fd9:8481 with SMTP id e5c5f4694b2df-1b81fd985abmr390333855d.8.1725523144794;
-        Thu, 05 Sep 2024 00:59:04 -0700 (PDT)
-Received: from thinkpad ([120.60.128.165])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbda8762sm2744422a12.69.2024.09.05.00.59.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 00:59:04 -0700 (PDT)
-Date: Thu, 5 Sep 2024 13:28:54 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Rajendra Nayak <quic_rjendra@quicinc.com>, bp@alien8.de,
-	tony.luck@intel.com, mchehab@kernel.org, rric@kernel.org,
-	konradybcio@kernel.org, quic_sibis@quicinc.com,
-	abel.vesa@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] EDAC/qcom: Make irq configuration optional
-Message-ID: <20240905075854.e2almocmqdbm7etn@thinkpad>
-References: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
- <3rcpcypiv2cr3s66tz56lui57f7turqriwku3tvukwcejr6kh4@fkk5tyk3qgta>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48807193070
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725523195; cv=fail; b=bhRgK5bL3rVG9efZh5kWpz5+Psz8H2FGOGwxlAL+B2USX18vyz37O9ub3LdeAf4S95xc8YX5aueaMaLLiAv2t4ufCq7I7bxAEf+2OCdvOOZ10zJXFZHBwXFb38Kku7CRndBlbE/IYwPBHIYB83KdyuYgyMbJWGoUMBFcy25dM8Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725523195; c=relaxed/simple;
+	bh=AZRn8mRDG06PJy0QlhmOaIwpRpWXUhDTTrVjXo5JwuQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dZ0iiIih6FbwAKpM/MMVBnGTnobgOZ9GLtvd593yiHpkO41dCRngBN/96pXN0PYDBbnqd7zvvsa0enzVKSvfiF/hfLpiNhSEqqnyzHvakoClc2FP1zVypyy6QeuNWJhnVtEepyD8u9KeFnM/4MltUo2wZYgKcbXAF9P8tqP1NaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5Pp0/fth; arc=fail smtp.client-ip=40.107.220.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PixtSipiuFhqA77AOeJAznUqqK6/6nYpNm9alAQk6XqqrQH7KQJmhf/XG30atVV9mKg6iiXsVM00+lVTTYGsauvz1xv+HUfnLlE8WJ3rHXwVH8hQj/sz+/++czxLpbEU8zhay9rAPUmVsmQztRk6733fpRvEzyLJ/Z6hIX7gb7uCU0JmdSj285OVFZ4fpgHrBCBTIFPUfh4U+ixee995YXouQkB2Y+2yvamQ3kWNVIeE36+RRtZwNva0B134Hhg9EB9DK389QvOkURGRF7XQmtjRlHyffpevu9euzhQuxgXuqCnomnVfEzWFLsI/7k/1Z4B8IOIYyta1aEwI/zUI0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CZkmkoKZ3OBzfv5dEhDiTD1FpxS3rAd6lqYiWTTa+J8=;
+ b=TFP/oAsOE88nFEiN1zMsPh80b8N+lTHlm0qGDmED0F6bhCLhKJgG1sinGp7zObnEH4JzyBRbmxJlXv4GDD/zl05tAT2TiSQxYw/+MyJ5vUxYqrYv9QSsSPKVoidodB6IBjc9lf+Un9A0RSzJ8NTQUHyxg+TYQleJQc7Av5Pg8OV9r4GJ1ek1/AHV5alFJgqZp6c4s+KjePDDm+DZbJ80iK6GDg6kTlPXFA0CfB0VItLk9598oaY7TyhZ456nFJo9vz8MxO8MYcsYejUWlOTn0y/3Dhs1NUECQGLk1mZOAt/i4XWNTturJzRslLToKoWNaLkzxCaPBKIwD7yW738Pug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CZkmkoKZ3OBzfv5dEhDiTD1FpxS3rAd6lqYiWTTa+J8=;
+ b=5Pp0/fth8tvt0H2iIl5HkLpU+nlK5Xh9bX7AGvCsyEKpycQ3RYrUFcJ+MYdMo1nrD8BgYVir2oHq727V9/wQq/S8XQoA51p88hGWt/qe8hG7XEeUAU2DNAoj20VDdsmehpRumGfVEYnizbaS+zFG0PgsEeajQBvQ3bFyBbfLlfM=
+Received: from BYAPR02CA0064.namprd02.prod.outlook.com (2603:10b6:a03:54::41)
+ by PH8PR12MB7207.namprd12.prod.outlook.com (2603:10b6:510:225::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Thu, 5 Sep
+ 2024 07:59:51 +0000
+Received: from SJ1PEPF00002322.namprd03.prod.outlook.com
+ (2603:10b6:a03:54:cafe::fa) by BYAPR02CA0064.outlook.office365.com
+ (2603:10b6:a03:54::41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.14 via Frontend
+ Transport; Thu, 5 Sep 2024 07:59:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ1PEPF00002322.mail.protection.outlook.com (10.167.242.84) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Thu, 5 Sep 2024 07:59:51 +0000
+Received: from sh-genoa-67ff.amd.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Sep
+ 2024 02:59:48 -0500
+From: Zhu Qiyu <qiyuzhu2@amd.com>
+To: <paulmck@kernel.org>
+CC: <leobras@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<neeraj.upadhyay@kernel.org>, <qiyuzhu2@amd.com>, <riel@surriel.com>,
+	<tglx@linutronix.de>, <thorsten.blum@toblux.com>
+Subject: Re: [PATCH] locking/csd_lock: fix csd_lock_wait_toolong() error warning
+Date: Thu, 5 Sep 2024 07:59:30 +0000
+Message-ID: <20240905075930.234337-1-qiyuzhu2@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ba64c1a2-c334-4e04-8641-7a7d2abaee5c@paulmck-laptop>
+References: <ba64c1a2-c334-4e04-8641-7a7d2abaee5c@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3rcpcypiv2cr3s66tz56lui57f7turqriwku3tvukwcejr6kh4@fkk5tyk3qgta>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB03.amd.com
+ (10.181.40.144)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002322:EE_|PH8PR12MB7207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89b9e28d-9f6e-40ac-28a8-08dccd80b863
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Jp0IiA07ffdMHoW8Xf1gAXgzFS+3d8DaKVq8OBMwYSMz954R6a3gvwEWwYJr?=
+ =?us-ascii?Q?Zl3KtNgKhvsCykmKJOcZK6ac8loMHECN3B9PMXssr1Jjl52hXNgCrCGqCKPc?=
+ =?us-ascii?Q?O9PP/Yqz3NAKbfW4BEOAq/GSe2nukxRsnYCdt+Bkf0TbeXFTR0K/1189hxVr?=
+ =?us-ascii?Q?7qJqSMQeIQADKxG1MZfC9azUhFKrRqXhZEo5Nl+zhGRjnTe9Y6Ie4NqKlNmC?=
+ =?us-ascii?Q?d64pDXTmG3crfq4ka5sL/tyU7Kq1piS8cxgogteB856ivg7wiD7gCsHdK1vL?=
+ =?us-ascii?Q?p/sr1xiEg25Sc8xMcVoD+kvlQjJTcb/DBcNFkrHj9njdRnV2NXKZxXmyd8dH?=
+ =?us-ascii?Q?mR+wVive/ABv/JlakL0G0Yp5xDerpqy1d4h4i54aMzhlUKLthLxB+q7FfyOC?=
+ =?us-ascii?Q?5J99DZqGLYQiiRAFpeKqwucjeSPquybFAr0uNqCPMQnuT7Boptxe90TnFMsL?=
+ =?us-ascii?Q?d0klMjd/66UFGkGAuhxnGZqdbmGlfzsjXKeNBVTOvMoWk7IihrsMY3Au4GwH?=
+ =?us-ascii?Q?Aj8bk5l/+OPqguke07HHYmI9vUuVWrVuxpOqgbTiDxO6IUqjvP2FlWRVtIeQ?=
+ =?us-ascii?Q?bJ6TeREpNj7nNZ5fLduPylLhtcW/043O17DSfqYZ0OkYJUsDi5JIbHOLGTw+?=
+ =?us-ascii?Q?T7KB4jAvh7T39dkYNAlwD061ZHhU0EadavaS1dRGjzMU/daRqGegohnWqslo?=
+ =?us-ascii?Q?NbFt/l5dat0LEkS7R+sHctJHNhrjRpmTScL/qWQXwbleXFsH76cTywb/rOMc?=
+ =?us-ascii?Q?BQz3BfSx6sPbMl+Oj4tXSs2M3pKng5bBmFhlvsZAMO/4wyqe2wHi95fkidsH?=
+ =?us-ascii?Q?1ArZUllWwQNive6aiyb06MFJ9LZnMgH+G1pHt+5eSFO5+jp17YIQycVApHnH?=
+ =?us-ascii?Q?ITL5oTBrpDOUbJTnHpK4NlcYvM94LpM1MUplKFtDzIBicxHlSY2koYjL2ciQ?=
+ =?us-ascii?Q?9UOOepH29My6x74ZyexL400/BTYcHP2IxJTFwe9X2iPITOkHfqoQ++VypPzs?=
+ =?us-ascii?Q?7lWt26j5HWbxCX2bL4an2d9506vvnMvQgYxzzlEvoXybeUBNeGu/0Q6ntOUB?=
+ =?us-ascii?Q?otT/B3T9L7AW4nR8yVP7G5KPMMitKTAVePRXD4DVe5u6qt/kpESGqkFZu9QJ?=
+ =?us-ascii?Q?mfFQRJThAtc/6XS0FwNBcV+WS6o39gkNDXu1H111BaV8seFOTDTNgUZ7tKXQ?=
+ =?us-ascii?Q?EyVrLLxyBU+QP8hpGVJGOspU+lAXgNBpEIFMEKpxyT6+p1E8H1bYRbHLTVHc?=
+ =?us-ascii?Q?jxH35dJtdkI0GQCcTlDGib+oe7AC1trNYYpPdC+CGJvTqR1UTc8H49xNvpw2?=
+ =?us-ascii?Q?383+E5AfZaJQlLcfezAsb9Bvyi3Nu216AVETAExWm2a2XZbSuN1g8o6M7pyE?=
+ =?us-ascii?Q?aKgpmjPu/Jpt0yDnBFFpIIjKu2LWyIrgjY4pAdLjkznO6yaBa359gUmhavC9?=
+ =?us-ascii?Q?uk4WjkbOKJ++DhOTxxfthe8wpyX8F4+D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 07:59:51.0125
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89b9e28d-9f6e-40ac-28a8-08dccd80b863
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002322.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7207
 
-On Wed, Sep 04, 2024 at 03:56:47PM -0500, Bjorn Andersson wrote:
-> On Tue, Sep 03, 2024 at 03:45:10PM GMT, Rajendra Nayak wrote:
-> > On most modern qualcomm SoCs, the configuration necessary to enable the
-> > Tag/Data RAM related irqs being propagated to the SoC irq controller is
-> > already done in firmware (in DSF or 'DDR System Firmware')
-> > 
-> > On some like the x1e80100, these registers aren't even accesible to the
-> > kernel causing a crash when edac device is probed.
-> > 
-> > Hence, make the irq configuration optional in the driver and mark x1e80100
-> > as the SoC on which this should be avoided.
-> > 
-> > Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
-> > Reported-by: Bjorn Andersson <andersson@kernel.org>
-> > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Mani, would you like me to pick this through the qcom tree?
-> 
+  I planned to wait for the test results before reply. After discussing with neeraj, I believe that there will be a positive experimental result after applying this patch, and if there are any experimental results, I will update further. For now, I agree with this patch.
 
-You can. Previously, qcom_edac patches with LLCC dependency were merged through
-qcom tree. Since the EDAC change is pretty trivial, I think you don't need to
-wait for an Ack from the EDAC maintainers.
-
-EDAC maintainers: Feel free to yell at me if you feel like I'm stepping onto
-your shoes.
-
-- Mani
-
-> Regards,
-> Bjorn
-> 
-> > ---
-> > v2: 
-> > Minor typo fixed in changelog
-> > 
-> >  drivers/edac/qcom_edac.c           | 8 +++++---
-> >  drivers/soc/qcom/llcc-qcom.c       | 3 +++
-> >  include/linux/soc/qcom/llcc-qcom.h | 2 ++
-> >  3 files changed, 10 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
-> > index d3cd4cc54ace..96611ca09ac5 100644
-> > --- a/drivers/edac/qcom_edac.c
-> > +++ b/drivers/edac/qcom_edac.c
-> > @@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
-> >  	int ecc_irq;
-> >  	int rc;
-> >  
-> > -	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
-> > -	if (rc)
-> > -		return rc;
-> > +	if (!llcc_driv_data->ecc_irq_configured) {
-> > +		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
-> > +		if (rc)
-> > +			return rc;
-> > +	}
-> >  
-> >  	/* Allocate edac control info */
-> >  	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
-> > diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-> > index 8fa4ffd3a9b5..b1c0ae9991d6 100644
-> > --- a/drivers/soc/qcom/llcc-qcom.c
-> > +++ b/drivers/soc/qcom/llcc-qcom.c
-> > @@ -139,6 +139,7 @@ struct qcom_llcc_config {
-> >  	int size;
-> >  	bool need_llcc_cfg;
-> >  	bool no_edac;
-> > +	bool irq_configured;
-> >  };
-> >  
-> >  struct qcom_sct_config {
-> > @@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
-> >  		.need_llcc_cfg	= true,
-> >  		.reg_offset	= llcc_v2_1_reg_offset,
-> >  		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-> > +		.irq_configured = true,
-> >  	},
-> >  };
-> >  
-> > @@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
-> >  	drv_data->cfg = llcc_cfg;
-> >  	drv_data->cfg_size = sz;
-> >  	drv_data->edac_reg_offset = cfg->edac_reg_offset;
-> > +	drv_data->ecc_irq_configured = cfg->irq_configured;
-> >  	mutex_init(&drv_data->lock);
-> >  	platform_set_drvdata(pdev, drv_data);
-> >  
-> > diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-> > index 9e9f528b1370..acad1f4cf854 100644
-> > --- a/include/linux/soc/qcom/llcc-qcom.h
-> > +++ b/include/linux/soc/qcom/llcc-qcom.h
-> > @@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
-> >   * @num_banks: Number of llcc banks
-> >   * @bitmap: Bit map to track the active slice ids
-> >   * @ecc_irq: interrupt for llcc cache error detection and reporting
-> > + * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
-> >   * @version: Indicates the LLCC version
-> >   */
-> >  struct llcc_drv_data {
-> > @@ -139,6 +140,7 @@ struct llcc_drv_data {
-> >  	u32 num_banks;
-> >  	unsigned long *bitmap;
-> >  	int ecc_irq;
-> > +	bool ecc_irq_configured;
-> >  	u32 version;
-> >  };
-> >  
-> > -- 
-> > 2.34.1
-> > 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Zhu Qiyu
 
