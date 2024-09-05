@@ -1,99 +1,177 @@
-Return-Path: <linux-kernel+bounces-316941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A9996D74D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:36:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609BA96D74B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CE9287ECF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB14281A81
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50E2199FD2;
-	Thu,  5 Sep 2024 11:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34482199E9E;
+	Thu,  5 Sep 2024 11:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzZztii4"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n62G6JuP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C25199FC5
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7F719342A;
+	Thu,  5 Sep 2024 11:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725536171; cv=none; b=UFT5EtcQGeNEDLZ2ydSGn9tgTKycjkMJZYB4TyZg0LhTI7bebLxzJf4L2sdq2VS0XdGuLplDFySlS5zWM/7trBVn9+CAQwlHHpBjlA1VASwMICVuZLbmpkKUgpb6f+WqgEYs1/hYi1dLHhlBk+J23nG1tAOo+3N8t7nkXl7QUnY=
+	t=1725536166; cv=none; b=lWq+2iv7QyEDAqNcP80iOko3+PcRiAGLoBDQupa/oAVM6C9KLsZvMr1k5gw+TvPj9CbAevysQLjmKidQR+bvV1K25Yhbi6FJHRw3xrMU2/uBUxq126jeHKkocUm7fjOQlC7212yX+HfmfNELT3Pld8Ij/LalX6Qo1QdBvA6yf8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725536171; c=relaxed/simple;
-	bh=NqeRDA78MQ3vDbts7pFKQh7mMRZQyPlxwYc8d3EH1Jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cgBk4kE4Ko+q1oGAtoXxzMD3Nd4j2E4QUDPvvpo8VDnphK494MCKgNjS9HZ7tnZ8xcuIF1pMWnATvQ/UauiGK5oyOJzj+o/8p0WpW5j+ZKtLblQFYTxSlWwDMa6OmDJp43gz8yo+aVQuhismu9M6UYWBjY65rl1L4wgK73Wbwr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LzZztii4; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53436e04447so587635e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 04:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725536167; x=1726140967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NqeRDA78MQ3vDbts7pFKQh7mMRZQyPlxwYc8d3EH1Jw=;
-        b=LzZztii4Inen9KQe2sPVFZHoGMFK5CwZ4gLyZkum8HoS/EYvYcngwkle+RAll3iBLb
-         PcJmUXLsoPhV+XIDJpoV0wuELaVFRkLLBMluFx5Rh3hmH3quy8vNN0sp5/C9ykhtocW8
-         mtVyma8urQMODwzs/n/v4ULPAIMN+nb4tHqXKLrCl6olmKbX44AVIGn+ymN6NFzeAB/D
-         BRWRaHgIy1sjixE5We2l1F+4Cf1mOSngX+Lg+Eik7KnsReIgDZlzH8LLovPM/t3Y5uHA
-         ptxHSaLIS/YaF+0LbBXzk0YAPJraK/UbUlozTtUSjohGzTDYhxFo0KreFe3ffyjB2r5T
-         KbpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725536167; x=1726140967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NqeRDA78MQ3vDbts7pFKQh7mMRZQyPlxwYc8d3EH1Jw=;
-        b=ayxCYZm+6IrmJSZxcx+YlptJn2QWA6AxtkMEJ6OVG0lKIIjN3Xe6FLZ3vbkvEZB4Ic
-         d9mxx81c8F/l81iRlegU4OdmWQfQRRcDcBPaaFtp7Jvu97PStPZLkCPPH9a/7k2nGVMG
-         I+MP7yEc9xqqsboXKDqMug6L/IanlQ4ee/HC5M12FF7lPWe0XWE1oSOAfyaxu2ikvkVz
-         tjTAKduwuvX4PRLpPibjdGJa8zGJXKZnmK9XY0hhWJ4XuTO8Et9Agj0Pv5C9DWF+EMD2
-         H2Xu5vH0YGkTDYYU5kFihH9k8nR8S7kg3/3XkDfTgZeVtD/AmabvguWX3Dva/cEZgDAG
-         jKrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGxhZZD+0xalj/8+JaPk8upKHPT3ef5kFqb+ZyHioBeqQw968k40xCuN8CSnxuRZfX819UQB6cWWBU7iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg5ipuw+yIwfp/JkAJ2Ma5fuxdLb4bb8+NV9a7JvF0LjLGKDgf
-	oGu90gWHjGXkOUUAxrFUUNVPu/YF+uztcVWafLLrzboYOa11Jj1jn+dPBCCrsclZp/kb3OI7o4W
-	mRXFfyzxcehFu0C91J4SbwZAVGppw8/C4+NXFM0p6gZHy+FoLh/Y=
-X-Google-Smtp-Source: AGHT+IH6BAyVUQLsDBUDRzOGArnxNvle63qAlyD9+MRHG/ncJc96g6GOqqfS74OGvIepzVBwxVMAFqSF0JP9xCZokxI=
-X-Received: by 2002:a05:6512:33d0:b0:52b:aae0:2d41 with SMTP id
- 2adb3069b0e04-53567798531mr1471780e87.28.1725536167312; Thu, 05 Sep 2024
- 04:36:07 -0700 (PDT)
+	s=arc-20240116; t=1725536166; c=relaxed/simple;
+	bh=T+4ZZIcX79/JHfYELeyG3pX+pz0BFgc2EUGDMCkbgis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R4SdpLv/rToRz+jp/KpiCm9dO3MJAJ+Whm9mumnnsZbgG070J+zxR8XaQg3Sdlt7ktjBBuONklOJfrPaNNsY3tr5CjYaGyCjwri6DlP0ot1PwQWpfGBrEWQOsp/2H7t/FrnUlrZ2ZXWyiL/ulfBtDFQv5HS0RaIHYjnEBoonacc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n62G6JuP; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725536165; x=1757072165;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T+4ZZIcX79/JHfYELeyG3pX+pz0BFgc2EUGDMCkbgis=;
+  b=n62G6JuPCvun4LbIDxAzM7rBlxw63OUaJarCCXsqsfHFHrEDfPxy59dK
+   iNyF6Y2UGOumjlNA0uR8f52PMV5yxbKJwc0q6P/JNLjG6tDX2L3s8eQ+P
+   NYn0FRv+DehNt7aEq1JdMZXo8kgUlliqMEDtwLFicOUFE4Ojpyxlg0cNC
+   mT0xAyk/wpHne/w3YnTArv5VJ5qTzMll/Xkd5qKDnFIic094EawArOSM2
+   LGEMMngmcl3oqJAqTbFjxjgXc0tCYhKTn+8V/HUWqQRRozU1Tyy4jgjin
+   y+HlY69jfkQSa4ug7Ng4nhyaOKXASZbX3qS15fuQRnWk+c54LXa5shxgo
+   w==;
+X-CSE-ConnectionGUID: EIN7+d2aSNq1OUp9Jno7aw==
+X-CSE-MsgGUID: mgUuiLwUS0KBPUakOPSMQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24362395"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="24362395"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 04:36:04 -0700
+X-CSE-ConnectionGUID: yqeSQoKbSVmLnyW3gb00bg==
+X-CSE-MsgGUID: SaU0FK/HSCKxfm+mSXleAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="66117639"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa007.jf.intel.com with SMTP; 05 Sep 2024 04:36:01 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 05 Sep 2024 14:36:00 +0300
+Date: Thu, 5 Sep 2024 14:36:00 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Parth Pancholi <parth105105@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Parth Pancholi <parth.pancholi@toradex.com>
+Subject: Re: [PATCH v2] usb: typec: tcpci: support edge irq
+Message-ID: <ZtmXoG1t2SZLDug2@kuha.fi.intel.com>
+References: <20240905065328.7116-1-parth105105@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902133148.2569486-1-andriy.shevchenko@linux.intel.com> <20240902133148.2569486-6-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240902133148.2569486-6-andriy.shevchenko@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 5 Sep 2024 13:35:55 +0200
-Message-ID: <CACRpkdZWhWHjghg4NP2O0Jh6=gh30yt6EL9fz2nkCuHSQ+A8eg@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] gpio: stmpe: Sort headers
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905065328.7116-1-parth105105@gmail.com>
 
-On Mon, Sep 2, 2024 at 3:32=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Thu, Sep 05, 2024 at 08:53:28AM +0200, Parth Pancholi wrote:
+> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> 
+> TCPCI USB PHY - PTN5110 could be used with SOCs that only support
+> the edge-triggered GPIO interrupts such as TI's K3 device AM69.
+> Move the interrupt configuration to the firmware which would
+> allow to accommodate edge triggered interrupts for such SOCs.
+> In order to support the edge interrupts, register irq line in advance
+> and keep track of occurrence during port registering.
+> 
+> When the edge interrupts are used, it is observed that some of the
+> interrupts are missed when tcpci_irq() is serving the current
+> interrupt. Therefore, check the status register at the end of
+> tcpci_irq() and re-run the function if the status is not clear
+> i.e. pending interrupt.
+> 
+> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
 
-> Sort the headers in alphabetic order in order to ease
-> the maintenance for this part.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> v2: Re-enable irq irrespective of tcpci_register_port() return status which was disabled before this call
+> ---
+>  drivers/usb/typec/tcpm/tcpci.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index a2651a2a7f2e..ed32583829be 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -707,10 +707,13 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
+>  {
+>  	u16 status;
+>  	int ret;
+> +	int irq_ret;
+>  	unsigned int raw;
+>  
+>  	tcpci_read16(tcpci, TCPC_ALERT, &status);
+> +	irq_ret = status & tcpci->alert_mask;
+>  
+> +process_status:
+>  	/*
+>  	 * Clear alert status for everything except RX_STATUS, which shouldn't
+>  	 * be cleared until we have successfully retrieved message.
+> @@ -783,7 +786,12 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
+>  	else if (status & TCPC_ALERT_TX_FAILED)
+>  		tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
+>  
+> -	return IRQ_RETVAL(status & tcpci->alert_mask);
+> +	tcpci_read16(tcpci, TCPC_ALERT, &status);
+> +
+> +	if (status & tcpci->alert_mask)
+> +		goto process_status;
+> +
+> +	return IRQ_RETVAL(irq_ret);
+>  }
+>  EXPORT_SYMBOL_GPL(tcpci_irq);
+>  
+> @@ -915,20 +923,22 @@ static int tcpci_probe(struct i2c_client *client)
+>  
+>  	chip->data.set_orientation = err;
+>  
+> -	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
+> -	if (IS_ERR(chip->tcpci))
+> -		return PTR_ERR(chip->tcpci);
+> -
+>  	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+>  					_tcpci_irq,
+> -					IRQF_SHARED | IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+> +					IRQF_SHARED | IRQF_ONESHOT,
+>  					dev_name(&client->dev), chip);
+> -	if (err < 0) {
+> -		tcpci_unregister_port(chip->tcpci);
+> +	if (err < 0)
+>  		return err;
+> -	}
+>  
+> -	return 0;
+> +	/*
+> +	 * Disable irq while registering port. If irq is configured as an edge
+> +	 * irq this allow to keep track and process the irq as soon as it is enabled.
+> +	 */
+> +	disable_irq(client->irq);
+> +	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
+> +	enable_irq(client->irq);
+> +
+> +	return PTR_ERR_OR_ZERO(chip->tcpci);
+>  }
+>  
+>  static void tcpci_remove(struct i2c_client *client)
+> -- 
+> 2.34.1
 
-Yours,
-Linus Walleij
+-- 
+heikki
 
