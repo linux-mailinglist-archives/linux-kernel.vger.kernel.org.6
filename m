@@ -1,129 +1,108 @@
-Return-Path: <linux-kernel+bounces-316368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C07396CE7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:36:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A460B96CE7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11D1289DD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 263F8B2189F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39922189529;
-	Thu,  5 Sep 2024 05:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F813188A37;
+	Thu,  5 Sep 2024 05:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lsputVf4"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C1F189503;
-	Thu,  5 Sep 2024 05:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="BEpbo9Gx"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D16A79F5;
+	Thu,  5 Sep 2024 05:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725514566; cv=none; b=YuLgsLvx69alCCDHB2RKnxFIuWcY9Or7Jt4vsLz+DsCwrzw1fAVLmqwmHDCT6jV3zigSK4G2woSATNw99p4Ti6dIHvw71TpkKB4+5Ma77QNBHwRumgZ2YTqPFBhSia43FIldB8UluguU22qyK3JVo5h7XnK6HrSDZqOnKaMuM3s=
+	t=1725514559; cv=none; b=ouE53cA8i5SOUIRmEJjklgqUzpUQiA+a4SvIyXwbHbmMfCUFWi1LzW7oKKz+QwY/JS8eC53zrhC6J5/zj3Pn1rl+/o+/Oh71yUWsSZLyx9rKdR2BzFMbmBrJCD3Kj/RAcNeRUkLr3XG0ffasa4z7KU7vvBMo0Qvay5MGKkKp9so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725514566; c=relaxed/simple;
-	bh=6NInI3x4I1NLHgn/boYgF5cpXDU3fmABu5sSEdo6u+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hLGrllgubsiE+2ydyWXngI38gRl6ugQ9tesbpQhfb2JiFOeKSXT7iINVCb64RX8C6WeybL1RNc64X6W3HP2l7zItBe9uKz4X3j5BXkyGABdVstLCfISu1ezKN9mqrFu4BFzB5R1iFOVau6WXg9+Cu6G+XqvDvaup9nIRIev1IG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lsputVf4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725514559;
-	bh=cM0S2UeW4mh7gMtac8o5JhDGyQIAuwWJBrJWnjvmC5g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lsputVf4MsBTwRldlsTOxtUT/Rr76VKAB2Cze2csWYx0mZergBHQ4LkVtxMw6ZgFf
-	 nCNOIfu0x7g2iD1y9k4aKnf1WBUwoqLTBRKNQ+ytGEcIeByno7NFOTPXVs0lRO7frq
-	 C8XpXB7ihN6+7HxD3WCpeY8w0Mgvv77U3JBvspRo+g5oLp8aAv5WSE4MLRbeh4bT0G
-	 M37Dg8pBJejm2rkkSdILkl1TvYl+bji1g3VsWxI2ud7izRwcNTIRt06HTviP0/qj6N
-	 YBzWpmQqE9EnAgZIzrVvoyZOhjhUopRKU1JznsEccZs0FVxkEN9eKMW6jsDnNehRN9
-	 KkPpGQTMNJbBQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wzp4G418bz4w2R;
-	Thu,  5 Sep 2024 15:35:58 +1000 (AEST)
-Date: Thu, 5 Sep 2024 15:35:57 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Sven Schnelle
- <svens@linux.ibm.com>
-Subject: linux-next: manual merge of the tip tree with the mm tree
-Message-ID: <20240905153557.3b0f8db5@canb.auug.org.au>
+	s=arc-20240116; t=1725514559; c=relaxed/simple;
+	bh=osc/smiOWFFNrU4OiWoZZ3YpfJzqbUUrBExgfChP/RE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=dboa5yiNrODzylbMPciWNs5QOdeExAvJP2yFIHQIRY8+zkTNE+/XNIpIB+FFaNV8pUcKEOrVQ+LTceN4IIhC79R16TqZw30P5ilsfh+xFhh/wLWl+iQxbbwti2sv9aByT5CFUKq5cxwrpXYnJPtGIVnBH01m5G530CdKguxmVTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=BEpbo9Gx; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.155.100.110])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 9BB38789E6;
+	Thu,  5 Sep 2024 13:35:51 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 9BB38789E6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1725514552;
+	bh=Hyq7RqSAoGC1rJ0dAnU4OWaWJgGE8rjFiQIsdvKZxrE=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=BEpbo9Gxr0f/JzpbESCFyy+vrgyiztBYy3YF9ldf8uy/I7cfJRoPr/SQ4Y0I+lPva
+	 dF2Gl8+FxzzowZOAGFiQ/h6WCyKA7TJaI8UylOzC82VVCzZZXksxxBbDRaoGhVX0Ei
+	 4COSwaqLPQHkTp7A8dOz/olPzxiwDB7pDCimUlaE=
+Message-ID: <f8a5018f-113d-4d9d-9223-954d054796a6@classfun.cn>
+Date: Thu, 5 Sep 2024 13:37:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9j7a7_aMrsEXjdsdieip6+K";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add support for Ariaboard Photonicat RK3568
+To: "Rob Herring (Arm)" <robh@kernel.org>
+References: <20240904111456.87089-1-bigfoot@classfun.cn>
+ <172545685977.2410524.10394848640957143488.robh@kernel.org>
+Content-Language: en-US
+From: Junhao Xie <bigfoot@classfun.cn>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
+ FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <172545685977.2410524.10394848640957143488.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/9j7a7_aMrsEXjdsdieip6+K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/9/4 21:36, Rob Herring (Arm) wrote> On Wed, 04 Sep 2024 19:14:53 +0800, Junhao Xie wrote:
+>> Add dts for Ariaboard Photonicat RK3568.
+>>
+[...]
+> 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>   pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y rockchip/rk3568-ariaboard-photonicat.dtb' for 20240904111456.87089-1-bigfoot@classfun.cn:
+> 
+> arch/arm64/boot/dts/rockchip/rk3568-ariaboard-photonicat.dtb: phy@fe8c0000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/phy/rockchip,pcie3-phy.yaml#
 
-Hi all,
+I will remove it in PATCH v2
 
-Today's linux-next merge of the tip tree got a conflict in:
+> arch/arm64/boot/dts/rockchip/rk3568-ariaboard-photonicat.dtb: rfkill-modem: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/net/rfkill-gpio.yaml#
 
-  kernel/events/uprobes.c
+The modem in Photonicat must have a reset signal to work properly.
+I can find reset-gpios in net/rfkill/rfkill-gpio.c, but it is not in the schema.
+Maybe reset-gpios is missing in rfkill-gpio.yaml? or this property cannot be used in dts?
 
-between commit:
+> 
 
-  c67907222c56 ("uprobes: use vm_special_mapping close() functionality")
+Thanks for your reply, I will fix them in PATCH v2.
 
-from the mm-unstable branch of the mm tree and commit:
-
-  e240b0fde52f ("uprobes: Use kzalloc to allocate xol area")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/events/uprobes.c
-index 6eddf4352ebb,cac45ea4c284..000000000000
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@@ -1518,8 -1480,6 +1499,7 @@@ static struct xol_area *__create_xol_ar
-  		goto free_area;
- =20
-  	area->xol_mapping.name =3D "[uprobes]";
-- 	area->xol_mapping.fault =3D NULL;
- +	area->xol_mapping.close =3D uprobe_clear_state;
-  	area->xol_mapping.pages =3D area->pages;
-  	area->pages[0] =3D alloc_page(GFP_HIGHUSER);
-  	if (!area->pages[0])
-
---Sig_/9j7a7_aMrsEXjdsdieip6+K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbZQz0ACgkQAVBC80lX
-0GyWTQf/QdFEi2sP0Oq/2G0tiKpPa1pIO3ZghQfVWS5dxUkpxpIQa36DMeNrZFzc
-QjVsP2RrAowe8rPinoDRmjLbFl3+Zt7Fx8t+P9NLeN+0/q/7Pj03/ypOSJFUVdiF
-JNzCiZbrsQ9zOnaV0+ct1XwV9cw3w8rtQ3qLQL/tNrxQ3A3C/lqDba3h6j5zpvSl
-RzGXxTmTIWXAlTacItHHrwIv/v9++hS2v+aUEF3xPDMFSFCVar+ak25jOT70fXQ2
-cnJsHIjD/W6YOvqMjlLl7CzY0UJE47NiDDY3MGlSwfPoIfiekBlwyIkSVgIIqmiF
-XX1RsnyVirS6hT91VMjkDgGFLUmxkA==
-=PGn0
------END PGP SIGNATURE-----
-
---Sig_/9j7a7_aMrsEXjdsdieip6+K--
+Best regards,
+Junhao
 
