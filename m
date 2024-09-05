@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-317757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D038F96E36C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D6596E36D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 341EFB213BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:47:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BCFB22B2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D916190049;
-	Thu,  5 Sep 2024 19:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF65190049;
+	Thu,  5 Sep 2024 19:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JZPtTjIT"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzTUukA+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2F615AAD9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 19:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A7C168DC;
+	Thu,  5 Sep 2024 19:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565617; cv=none; b=Ag4iZROsgVXA+9mREYCZzLGJxV/6/tf4600U+CYykJCt7GXy+xJ+hr+r3e0fqr0jV+Tjz4ziOZVh5fgXu+NvGesODN5ozAg4QIzZ/xKW6s+cSyO7EUB9G5HHKjr6kCBESpmhaw+FS8jgXQzbLFOytYF8y47iHvNi5NKJgExHTQU=
+	t=1725565629; cv=none; b=mGzTJjkZoqqd3e3gfo1LHhmDayuCSXRv2BGtSJQ2nUCG+g3CJG1grnh5dpt6TAKmsF7hlS45B6SEFdMCZihFdANEc+mvU4lOvNOKK2c0CSCXhS6AHQ3/cARmwT1zMmzwEmaS+qCkibgkTqjMf18pM4Ls998igbJZchi8GDSRAEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565617; c=relaxed/simple;
-	bh=Rj9EBbv8T82SbHtDUYf48lO4jfistsnG+jbe1pq8Yh0=;
+	s=arc-20240116; t=1725565629; c=relaxed/simple;
+	bh=7PaorVyI9z9vGDIV3LGafZMUw8ytPx+Vm2CmLQB5q7k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ar8uwo9ZD1lqfUIoIasLNVrOjZMtUjV/SlyPH4wX4882UnJ9LQt5PFcBem27cBgrfzd6rKxvi2l5X3hilcXcGq8CVNm3ZF1aLeIq430+E+4VlaIHbdIUgKcZ05ua9A3ZbQTy+br+06S3FSMnqaMkXPQHwS0zHBEX8atcTq6wjio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JZPtTjIT; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-70f645a30dcso929442a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 12:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725565615; x=1726170415; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SZL8vVvQXcg/nFczvtC9w0usBRA91vb3WVnfhcCu7W8=;
-        b=JZPtTjITbQ2LmnSAqatyWf2OTCVJskO7AYo1ZeW68OSqDgdQmvWN7KREUOpjVFECYY
-         odsUb7lyQwKY6VtIf1jPq+5rVUm+5Hv0GCK8GuL9QdpQlSuzGmwyM4NfFSmMGI9qBfFi
-         1qwBfZFLF0VZ9tYqoDfYa5RD/gQ0G6XT4oa98i7ftWW7Ih0DRGjEQ1Z/r9nXya58WzfD
-         LH2NWCVFAfOUy2+gXxJb95M8r5aq1JMzZ4BygHi8wXLkJZjv7BbOy2Rn1vTEgZnM+sQA
-         LTBnPu5CfXLEbQoyLvztZT3UTtxyVrCPS5aU3G/1htZVeSVE+GUCz1qw3c0XiIBo3z0+
-         liLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725565615; x=1726170415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZL8vVvQXcg/nFczvtC9w0usBRA91vb3WVnfhcCu7W8=;
-        b=tvQVSOzMDFZ98JX7XblHCD05ESYBNGoU3c8DahmKzFkGaiWwKNy9jIfknOEfwnV5tU
-         RER5V5VuplrO6tnoYDZAAW6xCGUuTpKpX+lnP40XP7zBoFGvJoIVOwstlGjwXOSZJvrv
-         mRX1PpbnjSavp8nOvj0+PEwStWmxribFlHfP3XYJZwoUBHCQQEUHZMrb+d8kYun5JFCR
-         TZ+Tf125YjBuykqxRMtrazg5E6GaRAQLVRhF1bdYPrqfquLYNPy/t85xKjAp02xE4EhF
-         XU/SQi541NHQURxzfiePCWyl667DAh8lVJbNmUTqPOaniCQvXg4iu3B5ON/6vqtREYg9
-         chtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl9Bu2q4W//XbysWs+MXGJVgBpM3vBWY9rp6Rcfic6KCzyXFpipcKENMKr4LsEIC40G5w7+LWU4P7Aviw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybnFRakpbL5jfvmfARib5FdkDucBn+gtUMfGB2r1/GV5Zlve3p
-	n/O4FmjMKoWuK8cjujOXe+rD/63VlD/QR3BBvPeDHRrQ9yKiLxi7dhedtMRQGFA=
-X-Google-Smtp-Source: AGHT+IEHPlIovYEH27hEkBbb+vjFH3QYPh/IbNkdMwHYBPqS+CTAHK+w94F+Gf/vMRtIbUsPJ+Zu+Q==
-X-Received: by 2002:a05:6830:6718:b0:709:46ca:665c with SMTP id 46e09a7af769-710cc217cd7mr243472a34.1.1725565614803;
-        Thu, 05 Sep 2024 12:46:54 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f67142890sm3356143a34.12.2024.09.05.12.46.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 12:46:54 -0700 (PDT)
-Message-ID: <dc0e45c4-3876-4d45-b5dd-60f89c9d09e1@baylibre.com>
-Date: Thu, 5 Sep 2024 14:46:53 -0500
+	 In-Reply-To:Content-Type; b=VOC7Brt8kyEFpiD5I437JvOOilKQh0U2FUATyyNYMYzisE2mZIcLkNFQGj3LhiIeIbdDJu8D57ieeUG7F6e8TTpsHSNNZBFObqnPZF3W3R+FfwKHpcsjdkK73si/gTo7nC4fw0ffYAZxue5cQ3I1d00icjPc1+D1ZiN2rrboSpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzTUukA+; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725565627; x=1757101627;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7PaorVyI9z9vGDIV3LGafZMUw8ytPx+Vm2CmLQB5q7k=;
+  b=HzTUukA+5jTyXXhJgzAA8SWKoP1UkEOlDUOxgzXSvxacvgig7AUwi0iL
+   a8UvFEAuLlXT/zXeScGdfbXfQXMjrgfuzEhW5gyjCvibjXZQLKj3pODk4
+   agrZWUS+UD9qCawp80P5rh+R1QdPkJ96GhHDF+ZPQKw3F6F1IHB1F2uX3
+   VvDYOF+9EBF3qVQ2MELOYZQ4KiOslBLfItexN4ug/u0BkgI5688C8o804
+   UvSW/3M76od0LPEngt06/eyjM6OJAB6XX1rj8m6aRRopGcYMms0qqy9qx
+   /OcLaf2xxni+o0A+NsdNzXdZcObzkib0v/p6hzJ6Fusiytodu/adzT4jp
+   w==;
+X-CSE-ConnectionGUID: Q+QnAE3YTOiSJqiSW1uQqQ==
+X-CSE-MsgGUID: Ioc6KedcRzStZ0NWIfbvXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24452678"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="24452678"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:47:06 -0700
+X-CSE-ConnectionGUID: C+VKV89bQyirmUHTvyi1BA==
+X-CSE-MsgGUID: IsZR9TTaQlKnMA2hcEXYJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="65550174"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:47:06 -0700
+Received: from [10.212.68.73] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 8997220B5782;
+	Thu,  5 Sep 2024 12:47:04 -0700 (PDT)
+Message-ID: <1a339858-74a3-414a-9fc1-bef47c513728@linux.intel.com>
+Date: Thu, 5 Sep 2024 15:47:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,59 +72,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] iio: add support for the ad3552r AXI DAC IP
-To: Angelo Dureghello <adureghello@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH 2/3] perf mem: Fix missed p-core mem events on ADL and RPL
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
+ adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+References: <20240905170737.4070743-1-kan.liang@linux.intel.com>
+ <20240905170737.4070743-2-kan.liang@linux.intel.com> <ZtoHgMqNhnDdvAIi@x1>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <ZtoHgMqNhnDdvAIi@x1>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 9/5/24 10:17 AM, Angelo Dureghello wrote:
-> The serie comes from the previously discussed RFC, that i
-> converted to a normal patch from this v2.
-> 
-> Purpose is to add ad3552r AXI DAC (fpga-based) support.
-> 
-> The fpga DAC IP has been created to reach the maximum speed
-> (33MUPS) supported from the ad3552r. To obtain the maximum
-> transfer rate, the custom module has been implemented using
-> the QSPI lines in DDR mode, using a dma buffer.
-> 
-> The design is actually using the DAC backend since the register
-> map is the same of the generic DAC IP, except for some customized
-> bitfields. For this reason, a new "compatible" has been added
-> in adi-axi-dac.c.
-> 
-> Also, backend has been extended with all the needed functions
-> needed for this use case, keeping the names gneric.
-> 
-> Note: the following patch is actually for linux-iio/testing
-> ---
-> Changes in v2: 
-> - use unsigned int on bus_reg_read/write
-> - add a compatible in axi-dac backend for the ad3552r DAC IP
-> - minor code alignment fixes
-> - fix a return value not checked
-> - change devicetree structure setting ad3552r-axi as a backend
->   subnode
-> - add synchronous_mode_available in the ABI doc
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> Co-developed-by: David Lechner <dlechner@baylibre.com>
-> Co-developed-by: Nuno Sá <nuno.sa@analog.com>
-> 
-We didn't actually write any of the code, so I don't think
-Co-developed-by: is the right way to give us credit. But we
-can give our Reviewed-by: tags when this is ready to be merged.
 
+
+On 2024-09-05 3:33 p.m., Arnaldo Carvalho de Melo wrote:
+> On Thu, Sep 05, 2024 at 10:07:36AM -0700, kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> The p-core mem events are missed when launching perf mem record on ADL
+>> and RPL.
+>>
+>> root@number:~# perf mem record sleep 1
+>> Memory events are enabled on a subset of CPUs: 16-27
+>> [ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.032 MB perf.data ]
+>> root@number:~# perf evlist
+>> cpu_atom/mem-loads,ldlat=30/P
+>> cpu_atom/mem-stores/P
+>> dummy:u
+>>
+>> A variable 'record' in the struct perf_mem_event is to indicate whether
+>> a mem event in a mem_events[] should be recorded. The current code only
+>> configure the variable for the first eligible PMU. It's good enough for
+>> a non-hybrid machine or a hybrid machine which has the same
+>> mem_events[]. However, if a different mem_events[] is used for different
+>> PMUs on a hybrid machine, e.g., ADL or RPL, the 'record' for the second
+>> PMU never get a chance to be set. The mem_events[] of the second PMU
+>> are always ignored.
+>>
+>> Perf mem doesn't support the per-PMU configuration now. A
+>> per-PMU mem_events[] 'record' variable doesn't make sense. Make it
+>> global. That could also avoid searching for the per-PMU mem_events[]
+>> via perf_pmu__mem_events_ptr every time.
+>>
+>> Fixes: abbdd79b786e ("perf mem: Clean up perf_mem_events__name()")
+>> Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+>> Closes: https://lore.kernel.org/lkml/Zthu81fA3kLC2CS2@x1/
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Looks better:
+> 
+> root@number:~# perf report --header-only | grep 'cmdline\|event'
+> # cmdline : /home/acme/bin/perf mem record ls 
+> # event : name = cpu_atom/mem-loads,ldlat=30/P, , id = { 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511 }, type = 10 (cpu_atom), size = 136, config = 0x5d0 (mem-loads), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1, { bp_addr, config1 } = 0x1f
+> # event : name = cpu_atom/mem-stores/P, , id = { 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523 }, type = 10 (cpu_atom), size = 136, config = 0x6d0 (mem-stores), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1
+> # event : name = cpu_core/mem-loads-aux/, , id = { 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539 }, type = 4 (cpu_core), size = 136, config = 0x8203 (mem-loads-aux), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1
+> # event : name = cpu_core/mem-loads,ldlat=30/, , id = { 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556 }, type = 4 (cpu_core), size = 136, config = 0x1cd (mem-loads), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, inherit = 1, freq = 1, precise_ip = 2, sample_id_all = 1, exclude_guest = 1, { bp_addr, config1 } = 0x1f
+> # event : name = cpu_core/mem-stores/P, , id = { 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572 }, type = 4 (cpu_core), size = 136, config = 0x2cd (mem-stores), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1
+> # event : name = dummy:u, , id = { 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600 }, type = 1 (software), size = 136, config = 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq } = 1, sample_type = IP|TID|TIME|ADDR|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, inherit = 1, exclude_kernel = 1, exclude_hv = 1, mmap = 1, comm = 1, task = 1, mmap_data = 1, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1
+> # intel_pt pmu capabilities: topa_multiple_entries=1, psb_cyc=1, single_range_output=1, mtc_periods=249, ip_filtering=1, output_subsys=0, cr3_filtering=1, psb_periods=3f, event_trace=0, cycle_thresholds=3f, power_event_trace=0, mtc=1, payloads_lip=0, ptwrite=1, num_address_ranges=2, max_subleaf=1, topa_output=1, tnt_disable=0
+> root@number:~# perf evlist
+> cpu_atom/mem-loads,ldlat=30/P
+> cpu_atom/mem-stores/P
+> cpu_core/mem-loads-aux/
+> cpu_core/mem-loads,ldlat=30/
+> cpu_core/mem-stores/P
+> dummy:u
+> root@number:~#
+> 
+> But can we reconstruct the events relationship (group, :S, etc) from
+> what we have in the perf.data header?
+> 
+
+Do you mean show the group relation in the perf evlist?
+
+$perf mem record sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.027 MB perf.data (10 samples) ]
+
+$perf evlist -g
+cpu_atom/mem-loads,ldlat=30/P
+cpu_atom/mem-stores/P
+{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+cpu_core/mem-stores/P
+dummy:u
+
+The -g option already did it, although the group modifier looks lost.
+
+Thanks,
+Kan
 
