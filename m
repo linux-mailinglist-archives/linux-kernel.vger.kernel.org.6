@@ -1,183 +1,218 @@
-Return-Path: <linux-kernel+bounces-316732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA79596D33C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0332296D343
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957351F27513
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E281F2795D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A32198A3E;
-	Thu,  5 Sep 2024 09:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3D9194AD9;
+	Thu,  5 Sep 2024 09:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iny2K5Cm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jU8T5RN6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31A4197A9E;
-	Thu,  5 Sep 2024 09:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BBA198833;
+	Thu,  5 Sep 2024 09:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528487; cv=none; b=SKSp71WiGqgCN5p54FjUTRw1qDoe4MirF+1GtA98BRJ7jv1Wcvqc7yGBzUBjJjkje/vUV+V6KNCQzT82qyT82jcetL9Tg2NEDqwQ52ZRlWVoWCNJXCHt8YyFZ0PfCRDI33yilH3nETdLWvR6TqDRGjgm+1sCQDF0g0tH534up/Q=
+	t=1725528532; cv=none; b=TixZHj29LsFb6af91/NlP9CrWpRmLbp5eKWR4V7xlQgeiZEIN6dBlhhTRb0ENLVSHxeQfVaSAGLNXfZi1p5xjNrwpXeTS3SqgeaGsT1gt5ZbbayNyjz2HXEpwr/0hRyLWYGuCQeGeE9Dv6Q79hiSkLopMwOAohHgIuaKNp9Rx80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528487; c=relaxed/simple;
-	bh=WC+VXLzSBwluv2vPpjWrFh6Amvrc4jdoGupj0JdnJTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCWt/P7klphEyWe7xZQhr8IlCE+N1z7DBiwVIernl4c2V5HM/bzWLwcEp4yuEw/MNFWVeisr70M8cQuou4WE2uM715D1tJZnJCyH7X2i195pSJZQtkl7hNRK5XBIzmkCxZ+0aGdetN0LOSnGe24O4SJn4kbjahQiwoQSNJQhiGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iny2K5Cm; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725528486; x=1757064486;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=WC+VXLzSBwluv2vPpjWrFh6Amvrc4jdoGupj0JdnJTo=;
-  b=iny2K5CmnGrHHCdsTTIJElB/jCuT1VtjSIpQQjYdimv0DCiXHUqE6s9A
-   3iZI9sN1jgcuDPTJXeTeZiNy6Gl2o8UymbesgnHygrcaCB2JMWDOi+RaM
-   xaMFv4voybLBcbglYKWRMjznfI8kM0hqq4JJIN/w1OKOG9e/3A5TbWqbz
-   wgJbuoLKamnQNN79GwhAaDSdB28cd/CUMn9Wc5COtJ62V3fGcMTS9jjKZ
-   YYk58NpDKX7y6blYdrBMKXGST8YcSPQKebpXf4ykL9DVUDAk4z+E4qYjJ
-   mHtb+g+Y0HBnFFZu85htO5DXzGCl1PJDdkbqAWztUM/5BjBTusQTEqVI0
-   g==;
-X-CSE-ConnectionGUID: Z/f4YeeXT02/OacsghMd0A==
-X-CSE-MsgGUID: 77dr74DVRRm4rviRGtKVXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27986166"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="27986166"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 02:28:05 -0700
-X-CSE-ConnectionGUID: AOegvW/lSgC4gU3ZGC1TlQ==
-X-CSE-MsgGUID: c0Bg2dRhSWKoHRtJJjX1DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70167636"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.103])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 02:28:00 -0700
-Date: Thu, 5 Sep 2024 12:27:54 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 14/25] KVM: TDX: initialize VM with TDX specific
- parameters
-Message-ID: <Ztl5muQNXr7eGLWU@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-15-rick.p.edgecombe@intel.com>
- <ZtAU7FIV2Xkw+L3O@yzhao56-desk.sh.intel.com>
- <ZtWUATuc5wim02rN@tlindgre-MOBL1>
- <ZtlWzUO+VGzt7Z89@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1725528532; c=relaxed/simple;
+	bh=KASvv5EJk6ENn/zXqEeW2Meq5eFj1vfZnBX0Dvggu34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S6Wp/Vhli1zbp6nnhqrNEkHkLheEdsNTHZchN+pgxXSRrJUN4Z9/D2Ko6uuBKFc741WD+xABu596PME1mQv7MmcFRe69vS+fohKPT+QGhe8navpIN3GkJo5NbMZHe1JQomhsrCIstsLtiF1p9Ykqmv4Q3N4O0F5VF3ehzSX9gyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jU8T5RN6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48597AK9013888;
+	Thu, 5 Sep 2024 09:28:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Xcem/9jVFFQ6WbYt1SjQooWq7e6410xcUHJH4f85asQ=; b=jU8T5RN6vTEPgRPB
+	GJEhNg/TPJHJDgSwY66AyWScSA244jr43nN1a4w+mnei0P81ClWLWePOOC0STg7D
+	Q7adt+V5Hk/r661gYlRMi09SmwVwRdZumnjdyHvPhf7Sf0zaKpxBsYes+ae9GjEE
+	cqWh7Um+/k4wXic/bXbRcIEukOr75xlIJioNxzk0nvjWh72I8FZqAz5HwBE4bOzO
+	tPy5U6K/yFyQdklo80FRNyUChKsa4w6GiLy11FUm6z2vpMfSGSzNgDWzpfFIuaKZ
+	GLtQsPeighFKQife7C4XSekY8pYC5NEMpnnaPLLgNHwfku0IGbd/5GgFj/IKbRya
+	9Y54qg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dt69fktd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 09:28:45 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4859SiF0018456
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 09:28:44 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 02:28:41 -0700
+Message-ID: <2e46be46-a029-4b2c-9608-95cb3e18294f@quicinc.com>
+Date: Thu, 5 Sep 2024 14:58:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/4] Enable shared SE support over I2C
+To: <neil.armstrong@linaro.org>, <konrad.dybcio@linaro.org>,
+        <andersson@kernel.org>, <andi.shyti@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+CC: <quic_vdadhani@quicinc.com>
+References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
+ <d1ceab6e-907a-4939-8be4-6b460d6c594f@linaro.org>
+ <f70baa0a-f897-42af-931f-082e8c5c12b6@quicinc.com>
+ <169e9428-e328-4c2a-b54c-c49852016a81@linaro.org>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <169e9428-e328-4c2a-b54c-c49852016a81@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtlWzUO+VGzt7Z89@yzhao56-desk.sh.intel.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kNPff3_51mZDtKhl5mlw6P1_HWOffFlV
+X-Proofpoint-ORIG-GUID: kNPff3_51mZDtKhl5mlw6P1_HWOffFlV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050069
 
-On Thu, Sep 05, 2024 at 02:59:25PM +0800, Yan Zhao wrote:
-> On Mon, Sep 02, 2024 at 01:31:29PM +0300, Tony Lindgren wrote:
-> > On Thu, Aug 29, 2024 at 02:27:56PM +0800, Yan Zhao wrote:
-> > > On Mon, Aug 12, 2024 at 03:48:09PM -0700, Rick Edgecombe wrote:
-> > > > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > > > 
-> > > ...
-> > > > +static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
-> > > > +{
-> > ...
-> > 
-> > > > +	kvm_tdx->tsc_offset = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_OFFSET);
-> > > > +	kvm_tdx->attributes = td_params->attributes;
-> > > > +	kvm_tdx->xfam = td_params->xfam;
-> > > > +
-> > > > +	if (td_params->exec_controls & TDX_EXEC_CONTROL_MAX_GPAW)
-> > > > +		kvm->arch.gfn_direct_bits = gpa_to_gfn(BIT_ULL(51));
-> > > > +	else
-> > > > +		kvm->arch.gfn_direct_bits = gpa_to_gfn(BIT_ULL(47));
-> > > > +
-> > > Could we introduce a initialized field in struct kvm_tdx and set it true
-> > > here? e.g
-> > > +       kvm_tdx->initialized = true;
-> > > 
-> > > Then reject vCPU creation in tdx_vcpu_create() before KVM_TDX_INIT_VM is
-> > > executed successfully? e.g.
-> > > 
-> > > @@ -584,6 +589,9 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
-> > >         struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
-> > >         struct vcpu_tdx *tdx = to_tdx(vcpu);
-> > > 
-> > > +       if (!kvm_tdx->initialized)
-> > > +               return -EIO;
-> > > +
-> > >         /* TDX only supports x2APIC, which requires an in-kernel local APIC. */
-> > >         if (!vcpu->arch.apic)
-> > >                 return -EINVAL;
-> > > 
-> > > Allowing vCPU creation only after TD is initialized can prevent unexpected
-> > > userspace access to uninitialized TD primitives.
-> > 
-> > Makes sense to check for initialized TD before allowing other calls. Maybe
-> > the check is needed in other places too in additoin to the tdx_vcpu_create().
-> Do you mean in places checking is_hkid_assigned()?
+Thanks Neil !
 
-Sounds like the state needs to be checked in multiple places to handle
-out-of-order ioctls to that's not enough.
-
-> > How about just a function to check for one or more of the already existing
-> > initialized struct kvm_tdx values?
-> Instead of checking multiple individual fields in kvm_tdx or vcpu_tdx, could we
-> introduce a single state field in the two strutures and utilize a state machine
-> for check (as Chao Gao pointed out at [1]) ?
-
-OK
-
-> e.g.
-> Now TD can have 5 states: (1)created, (2)initialized, (3)finalized,
->                           (4)destroyed, (5)freed.
-> Each vCPU has 3 states: (1) created, (2) initialized, (3)freed
+On 9/5/2024 12:39 PM, neil.armstrong@linaro.org wrote:
+> Hi,
 > 
-> All the states are updated by a user operation (e.g. KVM_TDX_INIT_VM,
-> KVM_TDX_FINALIZE_VM, KVM_TDX_INIT_VCPU) or a x86 op (e.g. vm_init, vm_destroy,
-> vm_free, vcpu_create, vcpu_free).
+> On 04/09/2024 20:07, Mukesh Kumar Savaliya wrote:
+>> Thanks Neil !
+>>
+>> On 8/30/2024 1:17 PM, neil.armstrong@linaro.org wrote:
+>>> Hi,
+>>>
+>>> On 29/08/2024 11:24, Mukesh Kumar Savaliya wrote:
+>>>> This Series adds support to share QUP based I2C SE between subsystems.
+>>>> Each subsystem should have its own GPII which interacts between SE and
+>>>> GSI DMA HW engine.
+>>>>
+>>>> Subsystem must acquire Lock over the SE on GPII channel so that it
+>>>> gets uninterrupted control till it unlocks the SE. It also makes sure
+>>>> the commonly shared TLMM GPIOs are not touched which can impact other
+>>>> subsystem or cause any interruption. Generally, GPIOs are being
+>>>> unconfigured during suspend time.
+>>>>
+>>>> GSI DMA engine is capable to perform requested transfer operations
+>>>> from any of the SE in a seamless way and its transparent to the
+>>>> subsystems. Make sure to enable â€œqcom,shared-seâ€ flag only while
+>>>> enabling this feature. I2C client should add in its respective parent
+>>>> node.
+>>>>
+>>>> ---
+>>>> Mukesh Kumar Savaliya (4):
+>>>> Â Â  dt-bindindgs: i2c: qcom,i2c-geni: Document shared flag
+>>>> Â Â  dma: gpi: Add Lock and Unlock TRE support to access SE exclusively
+>>>> Â Â  soc: qcom: geni-se: Export function geni_se_clks_off()
+>>>> Â Â  i2c: i2c-qcom-geni: Enable i2c controller sharing between two
+>>>> Â Â Â Â  subsystems
+>>>>
+>>>> Â  .../bindings/i2c/qcom,i2c-geni-qcom.yamlÂ Â Â Â Â  |Â  4 ++
+>>>> Â  drivers/dma/qcom/gpi.cÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  | 37 
+>>>> ++++++++++++++++++-
+>>>> Â  drivers/i2c/busses/i2c-qcom-geni.cÂ Â Â Â Â Â Â Â Â Â Â  | 29 +++++++++++----
+>>>> Â  drivers/soc/qcom/qcom-geni-se.cÂ Â Â Â Â Â Â Â Â Â Â Â Â Â  |Â  4 +-
+>>>> Â  include/linux/dma/qcom-gpi-dma.hÂ Â Â Â Â Â Â Â Â Â Â Â Â  |Â  6 +++
+>>>> Â  include/linux/soc/qcom/geni-se.hÂ Â Â Â Â Â Â Â Â Â Â Â Â  |Â  3 ++
+>>>> Â  6 files changed, 74 insertions(+), 9 deletions(-)
+>>>>
+>>>
+>>> I see in downstream that this flag is used on the SM8650 qupv3_se6_i2c,
+>>> and that on the SM8650-HDK this i2c is shared between the aDSP 
+>>> battmgr and
+>>> the linux to access the HDMI controller.
+>>>
+>>> Is this is the target use-case ?
+>> Not exactly that usecase. Here making it generic in a way to transfer 
+>> data which is pushed from two subsystems independently. Consider for 
+>> example one is ADSP i2c client and another is Linux i2c client. Not 
+>> sure in what manner battmgr and HDMI sends traffic. we can debug it 
+>> separately over that email.
 > 
+> Considering battmgr runs in ADSP, it matches this use-case, no ?
 > 
->      TD                                   vCPU
-> (1) created(set in op vm_init)
-> (2) initialized
-> (indicate tdr_pa != 0 && HKID assigned)
+is your issue 100% ? I have received your email, so will debug over that 
+email.
+>>>
+>>> We have some issues on this platform that crashes the system when Linux
+>>> does some I2C transfers while battmgr does some access at the same time,
+>>> the problem is that on the Linux side the i2c uses the SE DMA and not 
+>>> GPI
+>>> because fifo_disable=0 so by default this bypasses GPI.
+>>>
+>>> A temporary fix has been merged:
+>>> https://lore.kernel.org/all/20240605-topic-sm8650-upstream-hdk-iommu-fix-v1-1-9fd7233725fa@linaro.org/
+>>> but it's clearly not a real solution
+>>>
+>> Seems you have added SID for the GPII being used from linux side. Need 
+>> to know why you have added it and is it helping ? I have sent an email 
+>> to know more about this issue before 2 weeks.
 > 
->                                           (1) created (set in op vcpu_create)
+> I've added this because it actually avoids crashing when doing I2C6 
+> transactions over SE DMA, now we need to understand why.
 > 
->                                           (2) initialized
+Seems stream IS (SID) is corrected and points to the potential wrong 
+device tree configuration. Its required for DMA transactions.
+>>
+>>> What would be the solution to use the shared i2c with on one side 
+>>> battmgr
+>>> using GPI and the kernel using SE DMA ?
+>>>
+>> I have already sent an email on this issue, please respond on it. We 
+>> shall debug it separately since this feature about sharing is still 
+>> under implementation as you know about this patch series.
 > 
->                                     (can call INIT_MEM_REGION, GET_CPUID here)
+> Sorry for the delay, I was technically unable to answer, let me resume 
+> it now that I'm able again.
 > 
+Sure, lets discuss there.
+> Thanks,
+> Neil
 > 
-> (3) finalized
+>>
+>>> In this case, shouldn't we force using GPI on linux with:
+>>> ==============><=====================================================================
+>>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c 
+>>> b/drivers/i2c/busses/i2c-qcom-geni.c
+>>> index ee2e431601a6..a15825ea56de 100644
+>>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+>>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+>>> @@ -885,7 +885,7 @@ static int geni_i2c_probe(struct platform_device 
+>>> *pdev)
+>>> Â Â Â Â Â Â Â Â  else
+>>> Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  fifo_disable = readl_relaxed(gi2c->se.base + 
+>>> GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
+>>>
+>>> -Â Â Â Â Â Â  if (fifo_disable) {
+>>> +Â Â Â Â Â Â  if (gi2c->is_shared || fifo_disable) {
+>>> Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  /* FIFO is disabled, so we can only use GPI DMA */
+>>> Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  gi2c->gpi_mode = true;
+>>> Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  ret = setup_gpi_dma(gi2c);
+>>> ==============><=====================================================================
+>>>
+>>> Neil
 > 
->                                  (tdx_vcpu_run(), tdx_handle_exit() can be here)
-> 
-> 
-> (4) destroyed (indicate HKID released)
-> 
->                                          (3) freed
-> 
-> (5) freed
-
-So an enum for the TD state, and also for the vCPU state?
-
-Regards,
-
-Tony
- 
-> [1] https://lore.kernel.org/kvm/ZfvI8t7SlfIsxbmT@chao-email/#t
 
