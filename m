@@ -1,232 +1,102 @@
-Return-Path: <linux-kernel+bounces-316974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43AC96D7BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:57:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47E696D7C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C742C1C22D54
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78D251F22536
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6745D19AA5F;
-	Thu,  5 Sep 2024 11:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8541719A2AE;
+	Thu,  5 Sep 2024 11:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFw8Gkhj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="IXy7wIWH"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914EA199225;
-	Thu,  5 Sep 2024 11:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE5219A29A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725537450; cv=none; b=fQMPLmfULHHU19WEPDQropaLDn9FPOyOizrlDEfooQgXOG4yzBjvNLNgJxKxfk/SFUB3f/8slCRlg5SO1+yW2jf1s9Kqp2/iL4Aq2Q4pyJVp1paCTIcTqfq8wNqlcs8a/hUzjHbXqhWpAOJhA+BUV0txTyDw6jP+2zeKOPrqmNI=
+	t=1725537507; cv=none; b=IGMQ7I60nO3MqPcnDIrtl5jMOZ0RXKjpncwnNByZ2HBRHww99SzOPBKT5UROO/+yG7rONHUQ8m8BbYt9JKVuqRFo8BY4QRyC4qqm6Cr9GV5xTboBFX62x18BJo7Zzx5a2whhRUf43dtYSPq8STGoADz4x9iLzLaqYhKfkwQCIsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725537450; c=relaxed/simple;
-	bh=QpfQqHC2bzP8XQjOSvJ/i6DCvNFydK+5BnFr8/38Ftg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ViD8ap08j9H2GJ95EbRUG+HxwFa20Lk+t8mSXvk8hQa40QFPwgsDWx61MEhSSbVxck+70j41NCqBM2Q0H7L9cdDZvuX3lBPIHBOoVcl0JcixZhKCb8OtTgDHxRsIdVclXum7AZrA+wJ/2mrfiD1jamD6M0lHn9pfHahJkyeQVbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFw8Gkhj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A6AC4CEC7;
-	Thu,  5 Sep 2024 11:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725537450;
-	bh=QpfQqHC2bzP8XQjOSvJ/i6DCvNFydK+5BnFr8/38Ftg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FFw8GkhjHMZsjZKHYxTjYptCY6MH7QZOBddLzg+ZHJxUQaqc+0HOdFz6WDHOoUxe6
-	 kIN0W66bGfo9vQ4gK4vn+Vd70xuldqiXo6xHi1eQFeqQrpqc9WxgIpJz+Ltqh68K6s
-	 OaTK5pgbHclL3uMaOrMfF83zqZDOvcuRhpLMweICM5cIDetfmkkf/7IsBcL1Q9LKOf
-	 g5kvNp98jZ3aZAQ44Xgs+cGkoEhTWe/R2c8Wh6Ko6jokHXWZ1kNgnzhF3iP78kl28v
-	 ua+tPI16hLcdn7MPw++GN5Yju5N9yytV4TPMUCvY2DSlnI69EK5o9ZV0CagqqYTIdh
-	 SLnFLg5SV66QA==
-Message-ID: <76ffb882-10f9-4737-afa2-9bb60248835d@kernel.org>
-Date: Thu, 5 Sep 2024 13:57:23 +0200
+	s=arc-20240116; t=1725537507; c=relaxed/simple;
+	bh=kmr5yy9YSuUtuLhcf9OBcpncEHbeAkDasfnmS6ddvbQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QQ03Wi8aWJqGlOuWfuKG2x1wqhyhBPOI37L1ziN+rSDqY8SfGmr/XJBXyjhjH7TYZ219SLxmyRiRHbBglEmDYCC5nY7KU7KHxMWeYNhDa65VN5E82WLNtd7AIVQ/WDzwKF1YPd8p57+POnVLCd1dm3ZFEs2wE/Pf3iqlB1hS/Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=IXy7wIWH; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1725537500;
+	bh=kmr5yy9YSuUtuLhcf9OBcpncEHbeAkDasfnmS6ddvbQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=IXy7wIWH9zZbJrxhNebrTcFJs2SAYE676n1Vm66hIXGyyuI4lP4KzTGgAtUBovi5O
+	 e5c5iDJlADDp15FRzf3+ZTT2R9BmFMoxQ4YJcJwQBu3J4r7Aas8twHEPReXu9g+pSH
+	 /b5YLXwb+kYR+zoi/SQRzCw13tdv0W4zue0c3/kE=
+Received: from [192.168.124.11] (unknown [113.200.174.101])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 945F56762D;
+	Thu,  5 Sep 2024 07:58:18 -0400 (EDT)
+Message-ID: <c6c7ddb2730611e5877240de033f5af3263fae0b.camel@xry111.site>
+Subject: Re: [PATCH v3] LoongArch/percpu: Simplify _percpu_read() and
+ _percpu_write()
+From: Xi Ruoyao <xry111@xry111.site>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, WANG Xuerui <kernel@xen0n.name>, Thomas
+ Gleixner <tglx@linutronix.de>
+Date: Thu, 05 Sep 2024 19:58:15 +0800
+In-Reply-To: <CAAhV-H7LtPja5K6ZoEbNTgjwjEL_uj-V11Y6Vq9HqTu1+2YMHw@mail.gmail.com>
+References: <20240905065438.802898-1-ubizjak@gmail.com>
+	 <CAAhV-H7LtPja5K6ZoEbNTgjwjEL_uj-V11Y6Vq9HqTu1+2YMHw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/29] media: iris: initialize power resources
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
- <81fd218f-aa0f-4710-b832-cab927bfab9d@kernel.org>
- <ba747923-38de-5c05-9220-762c5272ec74@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ba747923-38de-5c05-9220-762c5272ec74@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 05/09/2024 13:53, Dikshita Agarwal wrote:
-> 
-> 
-> On 8/27/2024 4:21 PM, Krzysztof Kozlowski wrote:
->> On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
->>> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>>
->>> Add support for initializing Iris "resources", which are clocks,
->>> interconnects, power domains, reset clocks, and clock frequencies
->>> used for iris hardware.
->>>
->>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>> ---
->>
->> ...
->>
->>> +struct iris_platform_data sm8550_data = {
->>> +	.icc_tbl = sm8550_icc_table,
->>> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
->>> +	.clk_rst_tbl = sm8550_clk_reset_table,
->>> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8550_clk_reset_table),
->>> +	.pmdomain_tbl = sm8550_pmdomain_table,
->>> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
->>> +	.opp_pd_tbl = sm8550_opp_pd_table,
->>> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->>> +	.clk_tbl = sm8550_clk_table,
->>> +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
->>> +};
->>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
->>> index 0a54fdaa1ab5..2616a31224f9 100644
->>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
->>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
->>> @@ -69,6 +69,19 @@ static int iris_probe(struct platform_device *pdev)
->>>  	if (core->irq < 0)
->>>  		return core->irq;
->>>  
->>> +	core->iris_platform_data = of_device_get_match_data(core->dev);
->>> +	if (!core->iris_platform_data) {
->>> +		ret = -ENODEV;
->>> +		dev_err_probe(core->dev, ret, "init platform failed\n");
->>
->> That's not even possible. I would suggest dropping entire if. But if yoi
->> insist, then without this weird redundant code. return -EINVAL.
->>
-> Its possible if platform data is not initialized and this is only place we
-> check it, there is no further NULL check for the same.
-
-It is possible? Then point me to the code line. Or present some code
-flow leading to it.
-
->>> +		return ret;
->>> +	}
->>> +
->>> +	ret = iris_init_resources(core);
->>> +	if (ret) {
->>> +		dev_err_probe(core->dev, ret, "init resource failed\n");
->>> +		return ret;
->>
->> How many same errors are you printing? Not mentioning that syntax of
->> dev_errp_rpboe is different...
-> We have these errors at multiple points to know at what point the probe
-> failed which is useful while debugging probe failures.
-
-Duplicating is not helpful.
-
-> But Sure we will revisit this code and fix the syntax of dev_err_probe.
-
->>
->>
->>> +	}
->>> +
->>>  	ret = v4l2_device_register(dev, &core->v4l2_dev);
->>>  	if (ret)
->>>  		return ret;
->>> @@ -88,8 +101,14 @@ static int iris_probe(struct platform_device *pdev)
->>>  }
->>>  
->>>  static const struct of_device_id iris_dt_match[] = {
->>> -	{ .compatible = "qcom,sm8550-iris", },
->>> -	{ .compatible = "qcom,sm8250-venus", },
->>> +	{
->>> +		.compatible = "qcom,sm8550-iris",
->>> +		.data = &sm8550_data,
->>> +	},
->>> +	{
->>> +		.compatible = "qcom,sm8250-venus",
->>> +		.data = &sm8250_data,
->>
->> You just added this. No, please do not add code which is immediatly
->> incorrect.
-> It's not incorrect, in earlier patch we only added the compatible strings
-> and with this patch introducing the platform data and APIs to get it.
-
-It is incorrect to immediately remove it. You keep arguing on basic
-stuff. Sorry, but that is not how it works. If you add code and
-IMMEDIATELY remove it, then it means the code was not needed. Or was not
-correct. Choose one.
-
-...
-
->>
->> This should be just part of of main unit file, next to probe. It is
->> unusual to see probe parts not next to probe. Sorry, that's wrong.
->>
-> All the APIs handling(init/enable/disable) the different resources (PM
-> domains, OPP, clocks, buses) are kept in this iris_resource.c file hence
-> this API to init all those resources is kept here to not load iris_probe.c
-> file.
-
-You introduce your own coding style and as an argument you use just "I
-do this".
-
-The expected is to see resource initialization next to probe. Repeating
-what your code does, is not helping me to understand your design choice.
-
-Best regards,
-Krzysztof
+T24gVGh1LCAyMDI0LTA5LTA1IGF0IDE5OjQ3ICswODAwLCBIdWFjYWkgQ2hlbiB3cm90ZToKPiA+
+ICsjZGVmaW5lIF9wZXJjcHVfd3JpdGUoc2l6ZSwgX3BjcCwgX3ZhbCnCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgXAo+ID4gK2RvIHvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gK8KgwqDCoMKgwqDCoCB1
+bnNpZ25lZCBsb25nIF9fcGNwX3ZhbCA9IF9fcGNwdV9jYXN0XyMjc2l6ZShfdmFsKTvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFwKPiA+
+ICvCoMKgwqDCoMKgwqAgaWYgKDApIHvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB0
+eXBlb2YoX3BjcCkgcHRvX3RtcF9fO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgcHRvX3RtcF9fID0gKF92YWwpO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAodm9pZClwdG9fdG1wX187wqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIFwKPiA+ICvCoMKgwqDCoMKgwqAgfcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+IEVtbW0sIGluIFYyIEkganVz
+dCBjb25maXJtIHRoYXQgd2hldGhlciBpdCBpcyB3b3J0aCB0byB1c2UgbWFjcm8KPiBpbnN0ZWFk
+IG9mIGlubGluZSBmdW5jdGlvbnMsIEkgdGhpbmsgd2UgZG9uJ3QgcmVhbGx5IG5lZWQgc3VjaCBh
+Cj4gY2hlY2tpbmcgaGVyZS4gOikKCkl0J3Mgc3RpbGwgKHNsaWdobHkpIGJldHRlciAoanVzdCBm
+cm9tIGFlc3RoZXRpY3MgdmlldykgdG8gdXNlIGlubGluZQpmdW5jdGlvbiBpbnN0ZWFkIG9mIG1h
+Y3JvLiAgSXMgaXQgcG9zc2libGUgdG8gY2xlYXIgdGhlIGhlYWRlcgpkZXBlbmRlbmN5IGFuZCBi
+cmVhayB0aGUgY2lyY2xlIHNvIHdlIGNhbiBzdGlsbCB1c2UgX19wZXJjcHUgaW4gYXJjaApwZXJj
+cHUuaCBpbnN0ZWFkPwoKKFNpbXBseSByZW1vdmluZyBfX3BlcmNwdSBmcm9tIHRoZSBmdW5jdGlv
+biBwYXJhbWV0ZXIgbGlzdCBjYXVzZXMgbWFueQp3YXJuaW5ncyB3aXRoIG1ha2UgQz0xLikKCi0t
+IApYaSBSdW95YW8gPHhyeTExMUB4cnkxMTEuc2l0ZT4KU2Nob29sIG9mIEFlcm9zcGFjZSBTY2ll
+bmNlIGFuZCBUZWNobm9sb2d5LCBYaWRpYW4gVW5pdmVyc2l0eQo=
 
 
