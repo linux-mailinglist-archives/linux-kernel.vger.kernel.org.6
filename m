@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-316250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D121896CD10
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3B396CD11
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889471F2996E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:11:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D53A11F298CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B77152787;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CCF153BED;
 	Thu,  5 Sep 2024 03:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hB1IBoEz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mD7dO11t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7703149E0E;
-	Thu,  5 Sep 2024 03:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AE014D29B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505831; cv=none; b=RKkseVY+5nXFmTVnNTp1Yfe+QiJXWCqjR6Hfdn14MbyOEEUEr6g0P01ECwLhJq178zZLRblIAgzuy1WOvnLvvTA5gY0YgQEJD0cDx9hPhqwa02WRNMwMeLzq2ycaKqh0raanEYV5OuB/LIGyGsqSgtmi1ROAjDmxHhOdsCdiDh0=
+	t=1725505832; cv=none; b=aILGHug+4JhWtTfYHvE3w5FKfKoFx9No9mePMCrJcEyJKP8JvE5ks4PXkwHn6qDXrzTFzvUMen3Sd9ThxmaYA73bScsHXuHCnI/ApYAPQGhbK0/jQxQKfg4ORiioP6BcqzrFdaHMrHssKY6w21d9PGj/AFgQ5kuOXZ44f/1A7R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725505831; c=relaxed/simple;
-	bh=uqzF4+T6nDeU2anut/u2vTsVtQcSdsdNORWq/SfW8kU=;
+	s=arc-20240116; t=1725505832; c=relaxed/simple;
+	bh=aziyQ829/wguwAKETpVg+pRPOujyMEAw4EHfDvYu2+A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nxlbQbRyeKFTd/tRKdwtYtiXQMIUWV34H6mhn1QO7PUXA7gPty4LEVY3kGHi9Pir0QzUQKSsd3etmmps8Jxw0Xbf2GMztGIf8s9nXbPjrUcKv2EBnKE+E7XIMudL/Mkr9uRCJ9BVjHBNxmvdCoitN/kcyMxcQbh1lo8vf4TbG48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hB1IBoEz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA106C4CEC9;
-	Thu,  5 Sep 2024 03:10:29 +0000 (UTC)
+	 MIME-Version; b=EEdRiDg4ybPWqy29iZ65txJ3MC7fjO6BA+IQaW0lJEho/jMqADw1dk9RXBBbLuMYsXOOSpwScDTKp5W9vnbf77PmxR8/LBPvwllCzm01zEYt6ppJgqqGik8gCEQZZi7e8lJcQA0mek3Jv5UhPm6w6LNPACUm5rF8fPpffSRfa1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mD7dO11t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A766C4CEC2;
+	Thu,  5 Sep 2024 03:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1725505830;
-	bh=uqzF4+T6nDeU2anut/u2vTsVtQcSdsdNORWq/SfW8kU=;
+	bh=aziyQ829/wguwAKETpVg+pRPOujyMEAw4EHfDvYu2+A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hB1IBoEzok+S2QmTY6Q7m3Yukj2kUxViVsaPCsxC4VtET2+3WHhAD3gs13HmjhPJs
-	 KU1BjmW8ISgESz0te7/Ec1wjcALuSQBA1dXJTLZwYfODYPjZN2soesDVrwl+aqtGqq
-	 3+5F1o+Lw3/1+xjTnNsz6sGFbEIwkzLIRqCn1OU4FHbuFtZj3+xw/EIUSyB009RVUW
-	 77TiRbznY3/1UcaOrz6zMqu5TLxBr/DkdZL6sKeouO4xEaADwAoWNhqylxbniLAc63
-	 7JUuvL1kg/v4hKT59iyHz75RMNj96bGKDj0i4ojFmXWVCk2pwusfclNjKPUDAMsgWN
-	 C0taGYIFltZ1w==
+	b=mD7dO11tKbOKYa8rLno4b/Crd5G/0t/zA0m4V1HbuuyqSnJjEHaj432FJyQzSl4Th
+	 XlJvlSa/eHf7EWGOJ05u9teTfKfNVRjVKrSYlpRmMbDFRqW2LninIBueVH4liyHXNA
+	 +afXGYrBbO/gIlL9QoN163JckmbxYZu9pIyNopNKDTFHxPMOqwwy63NkF2G6R+bPvZ
+	 9yl5sM0AtaLm9hIGQQqQSblCri+P2KLA7GPiFxGs6123EpPo8c0wUGuC85PYsJlxtS
+	 BLPU76BDrJhhVUakoOoJap2YCvl1Ttm1wYDrg9/A+ltybTgdWssj2Ug4lpXiNlOem6
+	 4n+Yl1JbGTyXA==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@kernel.org>
@@ -50,14 +50,16 @@ Cc: Kan Liang <kan.liang@linux.intel.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Stephane Eranian <eranian@google.com>,
 	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kyle Huey <me@kylehuey.com>,
-	bpf@vger.kernel.org
-Subject: [PATCH 3/5] perf/core: Account dropped samples from BPF
-Date: Wed,  4 Sep 2024 20:10:25 -0700
-Message-ID: <20240905031027.2567913-4-namhyung@kernel.org>
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 4/5] perf/powerpc: Count dropped samples in core-book3s PMU
+Date: Wed,  4 Sep 2024 20:10:26 -0700
+Message-ID: <20240905031027.2567913-5-namhyung@kernel.org>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 In-Reply-To: <20240905031027.2567913-1-namhyung@kernel.org>
 References: <20240905031027.2567913-1-namhyung@kernel.org>
@@ -69,35 +71,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Like in the software events, the BPF overflow handler can drop samples
-by returning 0.  Let's count the dropped samples here too.
+Due to the hardware limitation, sometimes it could sample kernel address
+while attr.exclude_kernel is set.  In that case it silently drops the
+sample.  Let's count that case in the new dropped_samples counter.
 
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Song Liu <song@kernel.org>
-Cc: Kyle Huey <me@kylehuey.com>
-Cc: bpf@vger.kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: Kajol Jain <kjain@linux.ibm.com>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- kernel/events/core.c | 4 +++-
+ arch/powerpc/perf/core-book3s.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8250e76f63358689..ba1f6b51ea26db5b 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9808,8 +9808,10 @@ static int __perf_event_overflow(struct perf_event *event,
- 
- 	ret = __perf_event_account_interrupt(event, throttle);
- 
--	if (event->prog && !bpf_overflow_handler(event, data, regs))
-+	if (event->prog && !bpf_overflow_handler(event, data, regs)) {
+diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
+index 42867469752d73cf..553e288b9f113836 100644
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -2287,8 +2287,10 @@ static void record_and_restart(struct perf_event *event, unsigned long val,
+ 	 */
+ 	if (event->attr.exclude_kernel &&
+ 	    (event->attr.sample_type & PERF_SAMPLE_IP) &&
+-	    is_kernel_addr(mfspr(SPRN_SIAR)))
++	    is_kernel_addr(mfspr(SPRN_SIAR))) {
 +		atomic64_inc(&event->dropped_samples);
- 		return ret;
+ 		record = 0;
 +	}
  
  	/*
- 	 * XXX event_limit might not quite work as expected on inherited
+ 	 * Finally record data if requested.
 -- 
 2.46.0.469.g59c65b2a67-goog
 
