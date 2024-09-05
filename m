@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-317095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274D696D923
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:47:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E6196D928
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07CC1F2BA02
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:47:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4451F280FE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D05319D084;
-	Thu,  5 Sep 2024 12:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMn9uM0j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A2519D07F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB0D83CC1;
+	Thu,  5 Sep 2024 12:43:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A05199FDC;
+	Thu,  5 Sep 2024 12:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540166; cv=none; b=n+Tuy8rsPqHdPyuEuHynDW7T61cJpJnSE9MZ0DqiUhdI0XPuVIrxPS+4gUZc0G32galOju/0vGLQbG/LLJYUtteL9p2jttddWHW4MvN5Xi4c8jHvmVpiaYPrmZW/izXCaJjINAlLyNTdxHh0B7Vqv/qPLc+fO97E31OFNCe3qeI=
+	t=1725540180; cv=none; b=h/gTyG5DPMfqpVpP3WsPdtW9bt9j2Com+1f6vHSbRG6vATnF1BsJfZbztZncMqeof8nUWEcsZNsDzF9XyIkbPJZ35hGSr8MCFaOb9LyXj+6Oit0JVFrKVbW2L0z9t1oe+Qjlf8Dn9kHMsZioIqMc99jTAcIQNnMiLmEiGhuucs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540166; c=relaxed/simple;
-	bh=2eVd9ovXzBAuAw2MuqoGdP8bS4RExH8qUH3TW2uw5Ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vAFR9qBx0scCrrT8hvYzsbn7ALO3TehUFz0jJmoYXCvs/MpCJ4DI+dm6cUoweg+zbzrhc5hb2hMdgrV5cTh2Z3JTrtI+ka2mFLFOivymGrtjv1J5TiYJ0yKufAsc3XDBw3rbtNqNSToJbVRAtKvhbrWajyMMHdtPOxG4qZLty+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EMn9uM0j; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725540163;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tECcz7e0PZh0vVfImS/s6U6CWZOaYBfSv1YMpOXyntg=;
-	b=EMn9uM0j2eVtuHaEF/rnDQChtZJoP1tWzzcvWijf4hIY2PAHMjOc0A1FoqQJPHgysgQECV
-	zY3IKpAKU/ybEiV8Dl/METinhC9l+mw9atdkXC3wfzztLJVDGwA9XsPNEPmxtHG3Sbgjwl
-	Aox3TB6s26xv2DrAx2cvpPJdJsY1kVw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-15-gGyrXoxAPASE6ukqBPXE4g-1; Thu,
- 05 Sep 2024 08:42:40 -0400
-X-MC-Unique: gGyrXoxAPASE6ukqBPXE4g-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E61C71955F0D;
-	Thu,  5 Sep 2024 12:42:37 +0000 (UTC)
-Received: from [10.2.16.62] (unknown [10.2.16.62])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6CF5F1955D45;
-	Thu,  5 Sep 2024 12:42:34 +0000 (UTC)
-Message-ID: <a645086d-bffb-41b0-bd70-1ef5edb128f9@redhat.com>
-Date: Thu, 5 Sep 2024 08:42:33 -0400
+	s=arc-20240116; t=1725540180; c=relaxed/simple;
+	bh=uHJ4CVK0M79YQsCQMD0Q281L0veqUxMJ55zxfk7CVNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fP1pvuuhJQ+XwXUDO/6t9CSe83UUtRFkKCD5R5p8Pjq4erIIbT5U3XgzCnOwGOk5fKdanJnDwkHpjsGIorVgKPTIWTCPdYVDSYnqh5DmSqXVhB5m+oBZMFC+WHj31daPCngBKG20FiAX1mxRKOgcmNPEzb2q4Lg92zQvMs0yopc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACB2CFEC;
+	Thu,  5 Sep 2024 05:43:25 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50EEC3F73B;
+	Thu,  5 Sep 2024 05:42:57 -0700 (PDT)
+Date: Thu, 5 Sep 2024 13:42:54 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
+ jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC
+ dtsi file
+Message-ID: <20240905134254.6e15a1e5@donnerap.manchester.arm.com>
+In-Reply-To: <b07f1365a6f942297f7a3308fa628187@manjaro.org>
+References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
+	<CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
+	<21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
+	<20240815181508.6800e205@donnerap.manchester.arm.com>
+	<06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
+	<0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
+	<CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+	<20240905133412.6ba050de@donnerap.manchester.arm.com>
+	<b07f1365a6f942297f7a3308fa628187@manjaro.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sched: Do not copy user_cpus_ptr when parent is
- reset_on_fork
-To: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
- ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com
-References: <20240905090458.1173-1-xuewen.yan@unisoc.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240905090458.1173-1-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/5/24 05:04, Xuewen Yan wrote:
-> Now, the task's user_cpus_ptr would dup from parent's user_cpus_ptr.
-> It is better reset the user_cpus_ptr when parent's reset_on_fork
-> is set.
+On Thu, 05 Sep 2024 14:38:53 +0200
+Dragan Simic <dsimic@manjaro.org> wrote:
 
-According to sched(7):
+> Hello Andre,
+>=20
+> On 2024-09-05 14:34, Andre Przywara wrote:
+> > On Thu, 5 Sep 2024 20:26:15 +0800
+> > Chen-Yu Tsai <wens@csie.org> wrote:
+> >  =20
+> >> Hi,
+> >>=20
+> >> On Thu, Sep 5, 2024 at 8:17=E2=80=AFPM Dragan Simic <dsimic@manjaro.or=
+g>=20
+> >> wrote: =20
+> >> >
+> >> > Hello,
+> >> >
+> >> > Just checking, any further thoughts about this patch? =20
+> >>=20
+> >> Sorry, but I feel like it's not really worth the churn. There's not
+> >> really a problem to be solved here. What you are arguing for is more
+> >> about aesthetics, and we could argue that having them separate makes
+> >> it easier to read and turn on/off. =20
+> >=20
+> > Yeah, I agree. If a board wants to support OPPs, they just have to=20
+> > include
+> > a single file and define the CPU regulator, and that's a nice opt-in,
+> > IMHO.
+> > But having this patch would make it quite hard to opt out, I believe.=20
+> > For
+> > Linux there are probably ways to disable DVFS nevertheless, but I am=20
+> > not
+> > sure this is true in an OS agnostic pure-DT-only way. =20
+>=20
+> Thanks for your response.  The only thing that still makes me wonder
+> is why would a board want to opt out of DVFS?  Frankly, I'd consider
+> the design of the boards that must keep DVFS disabled broken.
 
-        Each thread has a reset-on-fork scheduling flag.  When this flag
-        is set, children created by fork(2) do not inherit privileged
-        scheduling policies.
-
-It can be argued what are considered privileged scheduling policies. 
-AFAICS, a restricted affinity doesn't seem to be a "privileged" 
-scheduling policy. That is my own opinion strictly from the definition 
-point of view, I will let others weigh in on that and I am OK to go 
-either way.
+Yes! Among the boards using Allwinner SoCs there are some, say less-optimal
+designs ;-)
 
 Cheers,
-Longman
+Andre
 
->
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->   kernel/sched/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index f3951e4a55e5..2fbae00cd1dc 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2666,7 +2666,7 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
->   	 * do_set_cpus_allowed().
->   	 */
->   	raw_spin_lock_irqsave(&src->pi_lock, flags);
-> -	if (src->user_cpus_ptr) {
-> +	if (src->user_cpus_ptr && !src->sched_reset_on_fork) {
->   		swap(dst->user_cpus_ptr, user_mask);
->   		cpumask_copy(dst->user_cpus_ptr, src->user_cpus_ptr);
->   	}
+> > This could probably be solved, but same as Chen-Yu I don't see any good
+> > enough reason for this patch in the first place.
+> >  =20
+> >> And even though the GPU OPPs are in the dtsi, it's just one OPP acting
+> >> as a default clock rate. =20
 
 
