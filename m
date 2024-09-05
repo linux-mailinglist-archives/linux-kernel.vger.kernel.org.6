@@ -1,123 +1,255 @@
-Return-Path: <linux-kernel+bounces-316484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6EE96D02D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:15:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462B396D029
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5735FB24178
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA77282E09
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFE7193074;
-	Thu,  5 Sep 2024 07:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA61192D96;
+	Thu,  5 Sep 2024 07:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="biNVtvUZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/9MeWZN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADA31925AB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0F415B541;
+	Thu,  5 Sep 2024 07:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725520508; cv=none; b=nZJG4KN0rk2YgqbUURzeYOBQQ+m66bX9hmB1IfI8/iJPCGHHBDYlSOBMiHrQblwDxTFzkKSv0pw3D2rHss20k76p9uWKZr8VkIaXWSoRRI+RsbHP+9Esx7R3J2rM/tUpMkdp+cTYXrIj7U0iNK0p+uiwLVEF266Zbd3hd7J1+fo=
+	t=1725520455; cv=none; b=FfGemoEfdXD/eZIpMR1DoT+awZ0QYIvtvnkRFshNN/8s8h1d1FF5xWyVj6vjbvd8CCcXsmfABdhIzcPGGJ7XwcCL1vPhuMvVnbCe7LmWLlSfDjnDNWMowTCo4bbsLA3eQxdmL2DwSfOhRpHeFbN8k8jmh8n8HFoBqbiHNkIrLgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725520508; c=relaxed/simple;
-	bh=u/YelIEUUNe6qXoY7aOUePv/qteUXwtt7gdYajzcxoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Pwz8Rk/wuEjKe7vm45Wv1Lc9ddqVE20hELYDJTck00jx4zcvRAKLUmmQ7qbilRCiCQguIRgUd34yabEP50EF+mwCX0+vYel5j/Um1p+KWV5EXUu0m3JG5Nk1ImBrBqPJagcJ4gOTJHRIMzA2o1SAoQaxAYj+Trgulj8WPEj8Ljs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=biNVtvUZ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725520507; x=1757056507;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=u/YelIEUUNe6qXoY7aOUePv/qteUXwtt7gdYajzcxoo=;
-  b=biNVtvUZB5umajRb1B4bNjfcQ9lJ8sG9Jk3MWIchZzuOrEwL13JM87Aw
-   e5DMsIH24UN+q+n2EU8HZvcPAfyhz84QWqmib7HB466sU/4GObe/nj3Sj
-   bwira4GpwvcjjENoyrvat0qGosLiME5ccK4Lo9M3baa6OsIBaMJ0ojQ9/
-   ZCTxPcJglzQzEe/1kSgUjmYWBkgepNgv0xX0DkY8eAE1ElhNshkPqCQPS
-   qQ9nK+E/MikFt2xp9hJi6bf/ku/AGQl53J2KOsV+2DnI+VGvLzcIN+Aeh
-   SngByhWW6buukms1pqsEh9PKmne5aeQ6tns7SQ01KJ6jlygeMzCosjBEI
-   Q==;
-X-CSE-ConnectionGUID: AXftJBMZTumy+PiA8NTycw==
-X-CSE-MsgGUID: hd2aAOKmTzqtplLAIzrr0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="23726549"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="23726549"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 00:15:06 -0700
-X-CSE-ConnectionGUID: PRSp9CsuR2qwNnZtBReOiQ==
-X-CSE-MsgGUID: 36LQNsDMSdOHz3MCBrFRcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="96263966"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 05 Sep 2024 00:15:04 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sm6hq-00093D-05;
-	Thu, 05 Sep 2024 07:15:02 +0000
-Date: Thu, 5 Sep 2024 15:14:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wende Tan <twd2.me@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: ld.lld: error: Function Import: link error: linking module flags
- 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)'
- and 'vmlinux.a(target_core_transport.o at 1174232)'
-Message-ID: <202409051523.ucZvHv7v-lkp@intel.com>
+	s=arc-20240116; t=1725520455; c=relaxed/simple;
+	bh=tu9tbaEU4ijWM0enZT92UQ4CLRzHDPCr/gNb6HsSjkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EJCKAilM66ynODr8FDmnSaxDqtNQO1c/dETM/mONm4ooeZRS1C8QjnE79BT21xgIIHGv5AecZZUlEjIMvGAAQCbrRBVIPQZVq5JfUBTkx56nROgLZsR+3l6K5034wrLAZ2L1N/KGozo855cqRRBKHjIOR3OE5Mop3IaF80WNue0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/9MeWZN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6774AC4CEC4;
+	Thu,  5 Sep 2024 07:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725520454;
+	bh=tu9tbaEU4ijWM0enZT92UQ4CLRzHDPCr/gNb6HsSjkg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=L/9MeWZNavHbMSBFbd5n1/9QcgbGq8fQ+1c+6Hy8/egjAepKq3s6/fxynaJnhQWnA
+	 hD5U0xsox8h9NchTUbPwR8Dprs3S2A0NOUOtdh3lRGPKD+N5LfsooFPWxk7PV2H4gw
+	 83iir5l91URXhFrvyw+Hm+ss2MYrHkdAK030561B45akpVtnmFQuDbOumeUSgi2MvD
+	 aSRRmAf0fcf3Du3uns6ODcgR90VWyvd0oh2qNbMcwN3Q5K0qUHbJlcp3XmY3654ipl
+	 GPAtlRoAIFkFKLAqZwyaRrLMwAjLm03G8prPPqquM+JxlJNT6be5M/ATCAAeCHB8Ud
+	 y4rRnOaOaJHNQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>
+Subject: [PATCH] dma-mapping: Use IOMMU DMA calls for common alloc/free page calls
+Date: Thu,  5 Sep 2024 10:14:05 +0300
+Message-ID: <62ce544e41d233eb6f591514a53f2eaabf488a7b.1725519850.git.leonro@nvidia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c763c43396883456ef57e5e78b64d3c259c4babc
-commit: 021d23428bdbae032294e8f4a29cb53cb50ae71c RISC-V: build: Allow LTO to be selected
-date:   8 months ago
-config: riscv-randconfig-002-20240905 (https://download.01.org/0day-ci/archive/20240905/202409051523.ucZvHv7v-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 05f5a91d00b02f4369f46d076411c700755ae041)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051523.ucZvHv7v-lkp@intel.com/reproduce)
+From: Leon Romanovsky <leonro@nvidia.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409051523.ucZvHv7v-lkp@intel.com/
+Common alloca and free pages routines are called when IOMMU DMA is used,
+and internally it calls to DMA ops structure which is not available for
+default IOMMU. This patch adds necessary if checks to call IOMMU DMA.
 
-All errors (new ones prefixed by >>):
+It fixes the following crash:
 
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(smartpqi_init.o at 1171352)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(slub.o at 1089332)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(trace.o at 1082912)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(mballoc.o at 1101512)'
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(target_core_transport.o at 1174232)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(skbuff.o at 1212272)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(tcp.o at 1217312)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(memcontrol.o at 1089572)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(raid5.o at 1203572)'
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(mpt3sas_base.o at 1171772)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(e1000_main.o at 1180292)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(be_main.o at 1172612)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(segment.o at 1119272)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(hpsa.o at 1171292)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(volumes.o at 1114712)'
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(forcedeth.o at 1184252)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(bnx2.o at 1179752)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(md.o at 1203752)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(super.o at 1113572)'
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(core.o at 1086812)'
-   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+ Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
+ Mem abort info:
+   ESR = 0x0000000096000006
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x06: level 2 translation fault
+ Data abort info:
+   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+ user pgtable: 4k pages, 48-bit VAs, pgdp=00000000d20bb000
+ [0000000000000040] pgd=08000000d20c1003
+ , p4d=08000000d20c1003
+ , pud=08000000d20c2003, pmd=0000000000000000
+ Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+ Modules linked in: ipv6 hci_uart venus_core btqca
+v4l2_mem2mem btrtl qcom_spmi_adc5 sbs_battery btbcm qcom_vadc_common
+cros_ec_typec videobuf2_v4l2 leds_cros_ec cros_kbd_led_backlight
+cros_ec_chardev videodev elan_i2c
+videobuf2_common qcom_stats mc bluetooth coresight_stm stm_core
+ecdh_generic ecc pwrseq_core panel_edp icc_bwmon ath10k_snoc ath10k_core
+ath mac80211 phy_qcom_qmp_combo aux_bridge libarc4 coresight_replicator
+coresight_etm4x coresight_tmc
+coresight_funnel cfg80211 rfkill coresight qcom_wdt cbmem ramoops
+reed_solomon pwm_bl coreboot_table backlight crct10dif_ce
+ CPU: 7 UID: 0 PID: 70 Comm: kworker/u32:4 Not tainted 6.11.0-rc6-next-20240903-00003-gdfc6015d0711 #660
+ Hardware name: Google Lazor Limozeen without Touchscreen (rev5 - rev8) (DT)
+ Workqueue: events_unbound deferred_probe_work_func
+ hub 2-1:1.0: 4 ports detected
 
+ pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : dma_common_alloc_pages+0x54/0x1b4
+ lr : dma_common_alloc_pages+0x4c/0x1b4
+ sp : ffff8000807d3730
+ x29: ffff8000807d3730 x28: ffff02a7d312f880 x27: 0000000000000001
+ x26: 000000000000c000 x25: 0000000000000000 x24: 0000000000000001
+ x23: ffff02a7d23b6898 x22: 0000000000006cc0 x21: 000000000000c000
+ x20: ffff02a7858bf410 x19: fffffe0a60006000 x18: 0000000000000001
+ x17: 00000000000000d5 x16: 1fffe054f0bcc261 x15: 0000000000000001
+ x14: ffff02a7844dc680 x13: 0000000000100180 x12: dead000000000100
+ x11: dead000000000122 x10: 00000000001001ff x9 : ffff02a87f7b7b00
+ x8 : ffff02a87f7b7b00 x7 : ffff405977d6b000 x6 : ffff8000807d3310
+ x5 : ffff02a87f6b6398 x4 : 0000000000000001 x3 : ffff405977d6b000
+ x2 : ffff02a7844dc600 x1 : 0000000100000000 x0 : fffffe0a60006000
+ Call trace:
+  dma_common_alloc_pages+0x54/0x1b4
+  __dma_alloc_pages+0x68/0x90
+  dma_alloc_pages+0x10/0x1c
+  snd_dma_noncoherent_alloc+0x28/0x8c
+  __snd_dma_alloc_pages+0x30/0x50
+  snd_dma_alloc_dir_pages+0x40/0x80
+  do_alloc_pages+0xb8/0x13c
+  preallocate_pcm_pages+0x6c/0xf8
+  preallocate_pages+0x160/0x1a4
+  snd_pcm_set_managed_buffer_all+0x64/0xb0
+  lpass_platform_pcm_new+0xc0/0xe8
+  snd_soc_pcm_component_new+0x3c/0xc8
+  soc_new_pcm+0x4fc/0x668
+  snd_soc_bind_card+0xabc/0xbac
+  snd_soc_register_card+0xf0/0x108
+  devm_snd_soc_register_card+0x4c/0xa4
+  sc7180_snd_platform_probe+0x180/0x224
+  platform_probe+0x68/0xc0
+  really_probe+0xbc/0x298
+  __driver_probe_device+0x78/0x12c
+  driver_probe_device+0x3c/0x15c
+  __device_attach_driver+0xb8/0x134
+  bus_for_each_drv+0x84/0xe0
+  __device_attach+0x9c/0x188
+  device_initial_probe+0x14/0x20
+  bus_probe_device+0xac/0xb0
+  deferred_probe_work_func+0x88/0xc0
+  process_one_work+0x14c/0x28c
+  worker_thread+0x2cc/0x3d4
+  kthread+0x114/0x118
+  ret_from_fork+0x10/0x20
+ Code: f9411c19 940000c9 aa0003f3 b4000460 (f9402326)
+ ---[ end trace 0000000000000000 ]---
+
+Fixes: b5c58b2fdc42 ("dma-mapping: direct calls for dma-iommu")
+Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+Closes: https://lore.kernel.org/all/10431dfd-ce04-4e0f-973b-c78477303c18@notapiano
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+---
+ include/linux/iommu-dma.h |  8 ++++++++
+ kernel/dma/mapping.c      | 12 ------------
+ kernel/dma/ops_helpers.c  | 14 +++++++++++---
+ 3 files changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/iommu-dma.h b/include/linux/iommu-dma.h
+index 011e5453d56b..561d81b12d9c 100644
+--- a/include/linux/iommu-dma.h
++++ b/include/linux/iommu-dma.h
+@@ -10,6 +10,10 @@
+ #include <linux/dma-mapping.h>
+ 
+ #ifdef CONFIG_IOMMU_DMA
++static inline bool use_dma_iommu(struct device *dev)
++{
++	return dev->dma_iommu;
++}
+ dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+ 			      unsigned long offset, size_t size,
+ 			      enum dma_data_direction dir, unsigned long attrs);
+@@ -65,6 +69,10 @@ void iommu_dma_unlink_range(struct device *dev, dma_addr_t start, size_t size,
+ bool iommu_can_use_iova(struct device *dev, struct page *page, size_t size,
+ 			enum dma_data_direction dir);
+ #else
++static inline bool use_dma_iommu(struct device *dev)
++{
++	return false;
++}
+ static inline dma_addr_t iommu_dma_map_page(struct device *dev,
+ 					    struct page *page,
+ 					    unsigned long offset, size_t size,
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index 9ce34bd4d407..7ec3deb7630d 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -117,18 +117,6 @@ void *dmam_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ }
+ EXPORT_SYMBOL(dmam_alloc_attrs);
+ 
+-#ifdef CONFIG_IOMMU_DMA
+-static bool use_dma_iommu(struct device *dev)
+-{
+-	return dev->dma_iommu;
+-}
+-#else
+-static bool use_dma_iommu(struct device *dev)
+-{
+-	return false;
+-}
+-#endif
+-
+ static bool dma_go_direct(struct device *dev, dma_addr_t mask,
+ 		const struct dma_map_ops *ops)
+ {
+diff --git a/kernel/dma/ops_helpers.c b/kernel/dma/ops_helpers.c
+index af4a6ef48ce0..9afd569eadb9 100644
+--- a/kernel/dma/ops_helpers.c
++++ b/kernel/dma/ops_helpers.c
+@@ -4,6 +4,7 @@
+  * the allocated memory contains normal pages in the direct kernel mapping.
+  */
+ #include <linux/dma-map-ops.h>
++#include <linux/iommu-dma.h>
+ 
+ static struct page *dma_common_vaddr_to_page(void *cpu_addr)
+ {
+@@ -70,8 +71,12 @@ struct page *dma_common_alloc_pages(struct device *dev, size_t size,
+ 	if (!page)
+ 		return NULL;
+ 
+-	*dma_handle = ops->map_page(dev, page, 0, size, dir,
+-				    DMA_ATTR_SKIP_CPU_SYNC);
++	if (use_dma_iommu(dev))
++		*dma_handle = iommu_dma_map_page(dev, page, 0, size, dir,
++						 DMA_ATTR_SKIP_CPU_SYNC);
++	else
++		*dma_handle = ops->map_page(dev, page, 0, size, dir,
++					    DMA_ATTR_SKIP_CPU_SYNC);
+ 	if (*dma_handle == DMA_MAPPING_ERROR) {
+ 		dma_free_contiguous(dev, page, size);
+ 		return NULL;
+@@ -86,7 +91,10 @@ void dma_common_free_pages(struct device *dev, size_t size, struct page *page,
+ {
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 
+-	if (ops->unmap_page)
++	if (use_dma_iommu(dev))
++		iommu_dma_unmap_page(dev, dma_handle, size, dir,
++				     DMA_ATTR_SKIP_CPU_SYNC);
++	else if (ops->unmap_page)
+ 		ops->unmap_page(dev, dma_handle, size, dir,
+ 				DMA_ATTR_SKIP_CPU_SYNC);
+ 	dma_free_contiguous(dev, page, size);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
