@@ -1,81 +1,148 @@
-Return-Path: <linux-kernel+bounces-316998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B4F96D816
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4853796D819
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842702897F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A67B1C222E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196DA19AA68;
-	Thu,  5 Sep 2024 12:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C31F19ADA2;
+	Thu,  5 Sep 2024 12:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EJjRNT5f"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y8tlkCrC"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2731817A5BE;
-	Thu,  5 Sep 2024 12:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DDA1993BB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538535; cv=none; b=MAsKOiEy9epUJIcFsEhpPbMTrylE+VByU7XcmbbZEzPJqIlXmsN0u7br++4UeERuVbJs04xrYNJt2iaQSj55f9RY3vWbj/GNkHOuC3H+ancbDCJTeSM8kXm1V2K/BcoS5TF6L8bWsgNHvLce3D5uLX4pgKnjSt4fVzmQ5tW/lhA=
+	t=1725538553; cv=none; b=KKtmaXvl+3fUEKwBiqiRxSsWVbm4Pu3njRIwObF6vaDNt6i0nqQKGBI3od2xM5YoI8F1gZrsihsGIxVlk8iDUfqQ9OX7GFAeYS69e5Ur00VWgrnE3SGUH08Dzqbh+zSz98BNdnVJbppmPnVRDh6nR8i1352Q9om6tcwnq9RPre0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538535; c=relaxed/simple;
-	bh=pC39DuleXS5eAwA8Ai7YKU41xH+Q1f5Bx+df3gm3M2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/sPN8RhluBAwTkNbpoNVk7tI4aYGjYLqvoG4Omwxpcu1/xOOD+xcnVY+g6m8gJauXj+gy3xfv1OuSRSh3ZOtkoDcsH5ba5Yc8XSsfBFjM0UmE+pQaLSuHVhB8y9zAK8GVQGrAPsIkzF+kISgERMnrgpkmrXVwf7Bdcuqu5HDjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EJjRNT5f; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=nsDzzFVaGhdfFbiYiFsD3EV3I4ftpm5RMfAi2OZ5GCs=; b=EJjRNT5fZuU/YIB/5v/eLeU6F9
-	b/a2Kc9XwqNlzbP7uwiNbivlKp8oWpJOcgwCbCyq22nKFU4olFJ/IHCI0YDlbT8Rbm4XxRz34BkYc
-	qA1NOPsIfNddvanFJwNX8A7DoRKE1JxmJ5SdHp+cjVjzybndbpuKlvkFz95g3lhbgq20=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smBOQ-006fmz-6k; Thu, 05 Sep 2024 14:15:18 +0200
-Date: Thu, 5 Sep 2024 14:15:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
-	xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com,
-	jie.han@motor-comm.com
-Subject: Re: [PATCH net-next v5 2/2] net: phy: Add driver for Motorcomm
- yt8821 2.5G ethernet phy
-Message-ID: <0ecef9f4-61b6-4bef-b9d8-ff6e2fd4c7db@lunn.ch>
-References: <20240901083526.163784-1-Frank.Sae@motor-comm.com>
- <20240901083526.163784-3-Frank.Sae@motor-comm.com>
+	s=arc-20240116; t=1725538553; c=relaxed/simple;
+	bh=mUZECu3XD23oLtyR4TiJ+f4tm2Ge2L2URhkjRFEzffs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lmqDzpewR9jqsNa9Vt49zEiBWXlTAqM+nwcrIEdWdtqAJuJwTpZ90YEVBJQ4tgoiCE80iKoaZmEwjgn4/u1ksrkWv3pdxOG7sp//k5r8SZAVcHDK/lxgcZ03usPBrEPjtHq2Wj6mqenxDsRX3zmSQcWK6yVRY7ptODi2Ems8/i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y8tlkCrC; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-501213e5ad4so277310e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725538551; x=1726143351; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Qnz+skM7CpabV9IsCJlSuO/xZoEhUXery/iq6oi7kw=;
+        b=Y8tlkCrCMs6h2kEYRuundpwZBY4HlSygy+5++zcdw8l1m6twHBC+pfssfLUlnFzXjd
+         63op31FHFdsrjOVh02YITNvPQAhqgcdRNmqYKIeO69fkDb0c0wJX0uf6m1o5ejGEP81r
+         CpLhOeJ3+xztNzWofbSqjeIPLJsYkRuu3zG5xDiXlfsqjXfpgSG9KWwvFGjVtf+VDu1w
+         LLoT6htCIsZDYdAU56oMq4Ng4W8kU/vIWZpYnbH38rVhRWrEAnHXoiYM2L5hW0Pk0kJh
+         ZqAnJW27gQS6+nBd+WWwnv3E6sROWaufFebreH/zfXZ6ADDeM3hjcZ2VGiDAqcNJeRc/
+         aRHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725538551; x=1726143351;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3Qnz+skM7CpabV9IsCJlSuO/xZoEhUXery/iq6oi7kw=;
+        b=aEmQIPejWMJHxF39Wg/y/eBxNgFVNksKejQ2/i0Oh9SlvB8Z4IOeo4Nanqpn1nGwpV
+         bHjJZgPu5rJHuXiGWjeaIDS3qza98w10+jS940aFGuwoANfe7QRV1fLrmyRikXYp9Has
+         v+a4UJLFD+5anynvp2cXVSBWIqp/6aeJfFDjZzQ8VsEDoC3z4FNzyV9qgrhWccuZQkzo
+         zVZLpLnwnrtcsygI/orzbPFjf9BWOya8NNMpfKK67tlBoM+FhlfRQn9tjRYhFfkWNJCg
+         /xF/u35Nx38ICijzohz5+QfgOhH/UY4HjAPSDXwXnGtEvPeR+y++fLpG741c2ABAAX94
+         MqZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpchIf8HDWeavE3Lwj/9pTnVOkjftmEh76/Lq2N5uA5zYKUL+ijAwKm8Mc2+LR4IrKOAcZOiWZXAmbp0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMNPa+axvZ+jY/2NrBljlG3G3yR43eymswcXExN6lwJAroBL79
+	anE5kDv5bhPBh6JsR67AfH22ZanjSG8YRyUJqlSGZJcaPmdaUByRrOm/ylQ9OWOThsj5cXw+Tes
+	7VYDKdt4Pqaqrq5CbKgNqwrbvFB4K2bydhpu8Ww==
+X-Google-Smtp-Source: AGHT+IHNYqKainf94hj2ADROXtyYoaLPTdE2ATA2hVcEBZwn4nrhEx7B/lOd2f8OVgUdvkWrxNqMZsa4q+oGwgZSxhM=
+X-Received: by 2002:a05:6122:3b11:b0:501:1aec:d2c4 with SMTP id
+ 71dfb90a1353d-5011aecd469mr685166e0c.2.1725538550826; Thu, 05 Sep 2024
+ 05:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901083526.163784-3-Frank.Sae@motor-comm.com>
+References: <20240905093722.230767298@linuxfoundation.org>
+In-Reply-To: <20240905093722.230767298@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 5 Sep 2024 17:45:39 +0530
+Message-ID: <CA+G9fYtziUjN_J4fdwDH4Sf0RguW4h3X9OEO=ZvJzt3dh9hnaw@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/132] 6.6.50-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 01, 2024 at 01:35:26AM -0700, Frank Sae wrote:
-> Add a driver for the motorcomm yt8821 2.5G ethernet phy. Verified the
-> driver on BPI-R3(with MediaTek MT7986(Filogic 830) SoC) development board,
-> which is developed by Guangdong Bipai Technology Co., Ltd..
-> 
-> yt8821 2.5G ethernet phy works in AUTO_BX2500_SGMII or FORCE_BX2500
-> interface, supports 2.5G/1000M/100M/10M speeds, and wol(magic package).
-> 
-> Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
+On Thu, 5 Sept 2024 at 15:23, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.50 release.
+> There are 132 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 07 Sep 2024 09:36:50 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.50-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+The following build errors noticed while building arm64 defconfigs with
+toolchains gcc-13 and clang-19 on stable-rc linux-6.6.y and linux-6.10.y
 
-    Andrew
+First seen on today builds v6.6.49-133-g18327dd4281a
+
+  GOOD: 8723d70ba720be0b854d252a378ac45c0a6db8a7
+  BAD:  18327dd4281aaea9d7639a33a52a7ec57c97f942
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build errors:
+-------
+drivers/ufs/host/ufs-qcom.c: In function 'ufs_qcom_advertise_quirks':
+drivers/ufs/host/ufs-qcom.c:1043:32: error:
+'UFSHCD_QUIRK_BROKEN_LSDBS_CAP' undeclared (first use in this
+function); did you mean 'UFSHCD_QUIRK_BROKEN_UIC_CMD'?
+ 1043 |                 hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                UFSHCD_QUIRK_BROKEN_UIC_CMD
+
+Build log link,
+---------
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.49-133-g18327dd4281a/testrun/25035737/suite/build/test/gcc-13-defconfig/log
+
+metadata:
+------
+  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2leCGwTPT1TApOAJ20gB0VL84XW/config
+  download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2leCGwTPT1TApOAJ20gB0VL84XW/
+  git_describe: v6.6.49-133-g18327dd4281a
+  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git_sha: 18327dd4281aaea9d7639a33a52a7ec57c97f942
+  arch: arm64
+  config: defconfig
+  toolchain: gcc-13 and clang-19
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
