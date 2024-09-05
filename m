@@ -1,168 +1,224 @@
-Return-Path: <linux-kernel+bounces-316859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E110396D649
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC3096D64B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD941C24C29
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7801F2359F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2569D198E89;
-	Thu,  5 Sep 2024 10:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494B01990A3;
+	Thu,  5 Sep 2024 10:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJMWl+38"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSDgUgE5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB79155730;
-	Thu,  5 Sep 2024 10:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D733155730;
+	Thu,  5 Sep 2024 10:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725532831; cv=none; b=pPEsGKVKRMtP+T1NKrvWJjkZveCtyUX7BW3+ltHQ4TjwHaWIjLEfY4ZniVs668+mlNKrbC4Rrv2IdFo6uZkgFkWm+yL4kkWZ6Fw8j1sCfeF9bC3KrtQU9Fr+RWSNj8UZanPTnS+hZC9T0HAqzx8pKJM+VeJtpmbzFHHzVC67svE=
+	t=1725532872; cv=none; b=Fu0V4bWUppv7cS4t3t6s8YipZ9N8e0UMxR2NUJ27wB0qEcwHsJf21KUR5uBtDiVZ4ZrqF1VFvsp/o17sx3hVjpxO8xtMphOn7ES1SwqtdtSu6hIl+4NCibbSvHSQiv01KVww4uzOb1/fqPUZm+3e6QCxpeXiwd8gpXV7geHDbhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725532831; c=relaxed/simple;
-	bh=vYakvufT4aNJnUe6D0Gqkc+bmULuI+Q45BIR6PeNra8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HREZamoeb1bp2Ovo6bsfnTcHRJgLMDdgaP0Rn9GhC2I8UU28A+7xTVfwAQArFYd8Z0FwgwM5zVOYWE8+H/4mM23+vMQmg2V0nUrH66bD819iVvmAITB0tHy2r83a0RhSAu7yLNOI15KdXyWz6wNkgWfZhOfYoYoAMdtqmTxGu4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJMWl+38; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089D2C4CEC7;
-	Thu,  5 Sep 2024 10:40:31 +0000 (UTC)
+	s=arc-20240116; t=1725532872; c=relaxed/simple;
+	bh=VwqjhTFamD1UEZ9T0X9amiMc03UaGZ0yAGoJ+AKCMOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EIUXIqPx6stpQbzpSUleBt8l6mdkTVbKn2s7c03VykOU8t4TJfpIQ4j2SQdSS9T8OMKErZXLA29PjMAngJMD0jsUlJm8K4Ks7zN7Vi5xK+zch+ddyMuowIaLhT+IoJ7s5jS5xckmQTkVlh91jtb7xNVwbqo6xqrhrqk0SoutRts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSDgUgE5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C245C4CEC3;
+	Thu,  5 Sep 2024 10:41:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725532831;
-	bh=vYakvufT4aNJnUe6D0Gqkc+bmULuI+Q45BIR6PeNra8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DJMWl+38lEAVgkt6XXTANQ+5mPEORW5+R+YxT/iAZdz9977EM3t8h9LuC5mDGQK0+
-	 iKZtFakct6pTFNUoEjMnP1eHtTH6ENN9JS6vhW5vI3wfdL1Qw8KIGIz1iAiqxa7Xjd
-	 qYwEbopZOP/4h71SSd2oQLPTuW5R3DVCTVy22uplBarpbGkfwVUHNAPUPDEMTSrXlo
-	 5+PoIgoRE8uUZ9tWNcUGohmaJnVIG9I1XoTL/2BtLgOIIRsIeH7s/ngntqO28zwtW4
-	 g2osTpOoHflPEa5jLhEyM5VhhY+Vj3hNSBnCE0oLx4vyGWtA439qIWlqQdQvrKr20O
-	 P9VY41iKA5Rkw==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5da686531d3so375582eaf.3;
-        Thu, 05 Sep 2024 03:40:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8KUb2gMj75FAj5EnCTimjDp/mGUW9yp+9rCNm4NTZsmEZOKmKgfZQ/QBDpulpK/0k/dnwzNtQihg=@vger.kernel.org, AJvYcCXBkvm0uoyndmwHhZg2nLkAkTsxs4JBSy9hcG+eE5aPvePCLEuauPrx2Tz7duLmJOoY+sGUhTPLoj0AtF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ipJ6hwfqsKyjy0NWizKw/0HDqMmGCAyHrVOe/HzgWqkwkAZU
-	NJM15noY73pyY6bXfXZY/KUfDsAfB/6V0AZPLbVzdgqvaxk34cv7mhkUaM47bsc+ajT4baJib6r
-	L/4DMpnuVoRLbwYxRGRM2y02xLi4=
-X-Google-Smtp-Source: AGHT+IHyw57L92V2eyHjVvhlY0AKXh5wfMRHz7eeJt99hsvIrMZ6VrRjCY/0EQMQXJkfiFIBdNzouG5Q5lL5oWEYDjM=
-X-Received: by 2002:a05:6820:1ca4:b0:5da:a26b:ce6e with SMTP id
- 006d021491bc7-5dfacf20303mr21434605eaf.3.1725532830320; Thu, 05 Sep 2024
- 03:40:30 -0700 (PDT)
+	s=k20201202; t=1725532872;
+	bh=VwqjhTFamD1UEZ9T0X9amiMc03UaGZ0yAGoJ+AKCMOo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JSDgUgE50lJPD3JLi05/R3kAF9utWjXOkiA7VGO4RavnYku7Cy2i4NAFZVm2oJ7QQ
+	 V9A6MPbvwFY1zilp0kFwyLS122kvsVpEebHkAL7513br4+wPlEE/qjLkjrOAMe1dpG
+	 iY7CX61npJyUNBhLPglK3FZiTdyhrKLAm83KFf81eNzfHsQa/WrpfB+oVBe1kOJwiv
+	 poqbDIyWeL8ozDueQTOZdpRWy1qZ8VodNjLnOMlVY1+MHmlM6v2xoS6OA2vTzk8FLZ
+	 t0CCvJwC2XqhUzxmHYHElEh3Qm55/T+TpV3GEPmtfDKLQxkkeiqE72CcTZ/x+bZYQT
+	 rIML/UKeuUjIw==
+Message-ID: <58f5f778-9f0a-4a05-8c33-949f3b3d1f49@kernel.org>
+Date: Thu, 5 Sep 2024 12:41:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819154259.215504-1-axboe@kernel.dk> <20240904142841.GL4723@noisy.programming.kicks-ass.net>
- <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
- <CAJZ5v0hVghgKgv0zqabL1m2FT6wou8-tW_9Mm-_9=0-3yhMb3A@mail.gmail.com> <0e37c349-7076-4a02-bfbc-577e50090172@arm.com>
-In-Reply-To: <0e37c349-7076-4a02-bfbc-577e50090172@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 5 Sep 2024 12:40:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ga0FJtgQhEWzq6qYDjDz=TjiAzr4ApPAT7U_GosG3m9w@mail.gmail.com>
-Message-ID: <CAJZ5v0ga0FJtgQhEWzq6qYDjDz=TjiAzr4ApPAT7U_GosG3m9w@mail.gmail.com>
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
-	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: ti, sci: Add property for
+ partial-io-wakeup-sources
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+ Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729080101.3859701-1-msp@baylibre.com>
+ <20240729080101.3859701-2-msp@baylibre.com>
+ <f0f60af7-8561-433a-a027-811015fc5e16@kernel.org>
+ <ti4ffymrixcpptlrn3o5bytoyc4w5oovdrzgu442ychai2fjet@wtdhrmwrozee>
+ <44feed5a-95a7-4baa-b17e-514c0f50dae6@kernel.org>
+ <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
+ <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
+ <fa11631e-48f9-4e95-95c4-20b77cb0a1be@kernel.org>
+ <h4kapqs5vpparh5b3tter54fbnxubq6gpnb4yrqjdio66tj37w@l3xzum2bq5sz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <h4kapqs5vpparh5b3tter54fbnxubq6gpnb4yrqjdio66tj37w@l3xzum2bq5sz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 5, 2024 at 11:29=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 9/4/24 16:18, Rafael J. Wysocki wrote:
-> > On Wed, Sep 4, 2024 at 4:42=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
-.org> wrote:
-> >>
-> >> On Wed, Sep 4, 2024 at 4:28=E2=80=AFPM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> >>>
-> >>> On Mon, Aug 19, 2024 at 09:39:45AM -0600, Jens Axboe wrote:
-> >>>> Hi,
-> >>>>
-> >>>> This is v6 of the patchset where the current in_iowait state is spli=
-t
-> >>>> into two parts:
-> >>>>
-> >>>> 1) The "task is sleeping waiting on IO", and would like cpufreq good=
-ness
-> >>>>    in terms of sleep and wakeup latencies.
-> >>>> 2) The above, and also accounted as such in the iowait stats.
-> >>>>
-> >>>> The current ->in_iowait covers both, this series splits it into two =
-types
-> >>>> of state so that each can be controlled seperately.
-> >>>
-> >>> Yeah, but *WHY* !?!? I have some vague memories from last time around=
-,
-> >>> but patches should really keep this information.
-> >>>
-> >>>> Patches 1..3 are prep patches, changing the type of
-> >>>> task_struct->nr_iowait and adding helpers to manipulate the iowait c=
-ounts.
-> >>>>
-> >>>> Patch 4 does the actual splitting.
-> >>>>
-> >>>> This has been sitting for a while, would be nice to get this queued =
-up
-> >>>> for 6.12. Comments welcome!
-> >>>
-> >>> Ufff, and all this because menu-governor does something insane :-(
-> >>>
-> >>> Rafael, why can't we simply remove this from menu?
-> >>
-> >> Same reason as before: people use it and refuse to stop.
-> >>
-> >> But this is mostly about the schedutil cpufreq governor that uses
-> >> iowait boosting.
-> >
-> > To be more precise, there are two different uses of "iowait" in PM.
-> >
-> > One is the nr_iowait_cpu() call in menu_select() and the result of it
-> > is used for two purposes: (1) select different sets of statistics
-> > depending on whether or not this number is zero and (2) set a limit
-> > for the idle state's exit latency that depends on this number (but
-> > note that it only takes effect when the "iowait" statistics are used
-> > in the first place).  Both of these are arguably questionable and it
-> > is unclear to me whether or not they actually help and how much.
->
-> So from my perspective it doesn't, not significantly to justify it's
-> existence anyway. Either it doesn't actually matter for menu, or teo
-> is able to compete / outperform without relying on it.
+On 05/09/2024 11:49, Markus Schneider-Pargmann wrote:
+> On Thu, Sep 05, 2024 at 11:25:48AM GMT, Krzysztof Kozlowski wrote:
+>> On 05/09/2024 11:15, Krzysztof Kozlowski wrote:
+>>> On 05/09/2024 11:08, Markus Schneider-Pargmann wrote:
+>>>> On Tue, Aug 06, 2024 at 10:03:00AM GMT, Krzysztof Kozlowski wrote:
+>>>>> On 06/08/2024 09:11, Markus Schneider-Pargmann wrote:
+>>>>>> Hi Krzysztof,
+>>>>>>
+>>>>>> On Tue, Aug 06, 2024 at 08:18:01AM GMT, Krzysztof Kozlowski wrote:
+>>>>>>> On 29/07/2024 10:00, Markus Schneider-Pargmann wrote:
+>>>>>>>> Partial-IO is a very low power mode in which nearly everything is
+>>>>>>>> powered off. Only pins of a few hardware units are kept sensitive and
+>>>>>>>> are capable to wakeup the SoC. The device nodes are marked as
+>>>>>>>> 'wakeup-source' but so are a lot of other device nodes as well that are
+>>>>>>>> not able to do a wakeup from Partial-IO. This creates the need to
+>>>>>>>> describe the device nodes that are capable of wakeup from Partial-IO.
+>>>>>>>>
+>>>>>>>> This patch adds a property with a list of these nodes defining which
+>>>>>>>> devices can be used as wakeup sources in Partial-IO.
+>>>>>>>>
+>>>>>>>
+>>>>>>> <form letter>
+>>>>>>> This is a friendly reminder during the review process.
+>>>>>>>
+>>>>>>> It seems my or other reviewer's previous comments were not fully
+>>>>>>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>>>>>>> just forgot to apply it. Please go back to the previous discussion and
+>>>>>>> either implement all requested changes or keep discussing them.
+>>>>>>>
+>>>>>>> Thank you.
+>>>>>>> </form letter>
+>>>>>>
+>>>>>> I tried to address your comment from last version by explaining more
+>>>>>> thoroughly what the binding is for as it seemed that my previous
+>>>>>> explanation wasn't really good.
+>>>>>>
+>>>>>> You are suggesting to use 'wakeup-source' exclusively. Unfortunately
+>>>>>> wakeup-source is a boolean property which covers two states. I have at
+>>>>>> least three states I need to describe:
+>>>>>>
+>>>>>>  - wakeup-source for suspend to memory and other low power modes
+>>>>>>  - wakeup-source for Partial-IO
+>>>>>>  - no wakeup-source
+>>>>>
+>>>>> Maybe we need generic property or maybe custom TI would be fine, but in
+>>>>> any case - whether device is wakeup and what sort of wakeup it is, is a
+>>>>> property of the device.
+>>>>
+>>>> To continue on this, I currently only know of this Partial-IO mode that
+>>>> would require a special flag like this. So I think a custom TI property
+>>>> would work. For example a bool property like
+>>>>
+>>>>   ti,partial-io-wakeup-source;
+>>>>
+>>>> in the device nodes for which it is relevant? This would be in addition
+>>>> to the 'wakeup-source' property.
+>>>
+>>> Rather oneOf. I don't think having two properties in a node brings any
+>>> more information.
+>>>
+>>> I would suggest finding one more user of this and making the
+>>> wakeup-source an enum - either string or integer with defines in a header.
+>>
+>> I am going through this thread again to write something in DT BoF but
+>> this is confusing:
+>>
+>> "Partial-IO is a very low power mode"
+>> "not able to do a wakeup from Partial-IO."
+>> "wakeup-source for Partial-IO"
+>>
+>> Are you waking up from Partial-IO or are you waking up into Partial-IO?
+>>
+>> And why the devices which are configured as wakeup-source cannot wake up
+>> from or for Partial-IO?
+> 
+> Sorry if this is confusing. Let me try again.
+> 
+> Partial-IO is a very low power mode. Only a small IO unit is switched on
+> to be sensitive on a small set of pins for any IO activity. The rest of
+> the SoC is powered off, including DDR. Any activity on these pins
+> switches on the power for the remaining SoC. This leads to a fresh boot,
+> not a resume of any kind. On am62 the pins that are sensitive and
+> therefore wakeup-source from this Partial-IO mode, are the pins of a few
+> CAN and UARTs from the MCU and Wkup section of the SoC.
+> 
+> These CAN and UART wakeup-sources are also wakeup-sources for other low
+> power suspend to ram modes. But wakeup-sources for suspend to ram modes
+> are typically not a wakeup-source for Partial-IO as they are not powered
+> in Partial-IO.
+> 
+> I hope this explains it better.
 
-Thanks for this feedback!
+Yeah, it's kind of obvious now that just use wakeup-source. Your
+hardware does not have two different methods of waking up. System is
+sleeping - either S2R or partial-IO or whatever - and you want it to be
+woken up.
 
-I'm actually going to try to remove that stuff from menu and see if
-anyone cries bloody murder.
+Entire property is unnecessary... and as I said before - you added it
+only for your driver. If same feedback is repeated and repeated, there
+is something in it...
 
-> Some caution is advised though this really depends on:
-> - Which idle states are available for the kernel to select.
-> - How accurate the kernel's view of the idle states is.
->
-> Both varies wildly.
+Best regards,
+Krzysztof
 
-True, but let's see what the feedback is.
-
-> > The other use is boosting CPU frequency in schedutil and intel_pstate
-> > if SCHED_CPUFREQ_IOWAIT is passed to them which in turn depends on the
-> > p->in_iowait value in enqueue_task_fair().
-> >
-> > AFAICS, the latter makes a major difference.
->
->
-> Indeed, fortunately the impact is quite limited here.
-> But please, Rafael, Jens and Peter, feel free to share your comments
-> over here too:
->
-> https://lore.kernel.org/lkml/20240905092645.2885200-1-christian.loehle@ar=
-m.com/
-
-I will.
-
-Thanks!
 
