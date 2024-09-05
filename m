@@ -1,227 +1,427 @@
-Return-Path: <linux-kernel+bounces-316640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36D096D241
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BED996D252
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 016B31C24C8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE7E2866DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964FD194ACB;
-	Thu,  5 Sep 2024 08:35:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D92194A49
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFAC196D90;
+	Thu,  5 Sep 2024 08:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kwB2fso+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F422A1898E4;
+	Thu,  5 Sep 2024 08:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525310; cv=none; b=HrqWvwYWpH/Ni9Iw8L1luG25rhxubsaXJdtPELwKC+odF1u6Xga7l8Ne/kIukfylbcXGFuNWhsToCB2QzhGy/xcG3LQ6ukG85YuXP8RBksV0nlwI+0IkBHef5d5uOfLvU0IAo5qTL6Lp0EBVVaa0Me2wIdvHnEZLQSuELy5Pm68=
+	t=1725525442; cv=none; b=GCK0pXGRHIZvMQsscMiRxHhgYNckjEmEUyf95UYFQEIElF7XcqIu/6hj5Vo8TFrJRhqJrikQXSCXzpwg+KiGPtppsJNj0HeCXHJ2BGjLaIpsvQgdEwJ1FNLbFiyYcx881559AgU/LA2YG3XWNqGO/BrRZAMcUB3rmuB62DiXqvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525310; c=relaxed/simple;
-	bh=oCG1FQU0YWBlgb8qgRkyA1fvCArrt+AJpjmWVtsPmRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qrbSEaLo/QMuLXDJ2Zu+gQfxiZlEfY1kbHom0IblU19Ao2k3ECPIeL8daYwc9wKWRvboBgF5fxsZAQqFOmUmxnb2H5GUD/pipK6b05LKHynkcqb3bfh+x1rOfWgjrd8Z4nb9GW7jTH1IRS0advQUO1ie+kk0UY9h9HwtJeqjF+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3AD9FEC;
-	Thu,  5 Sep 2024 01:35:33 -0700 (PDT)
-Received: from [10.57.71.124] (unknown [10.57.71.124])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8F703F66E;
-	Thu,  5 Sep 2024 01:35:02 -0700 (PDT)
-Message-ID: <277bd093-422b-4301-92a3-d0a58eb41af5@arm.com>
-Date: Thu, 5 Sep 2024 10:34:57 +0200
+	s=arc-20240116; t=1725525442; c=relaxed/simple;
+	bh=xMktYis9zEZJj72s8BcTgIrJWtYI6M9EkqQ5b1RTzls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YG8b6SQVA9qox9TEA/sSjFENiW1MghU/7taN/QiRyutNwAIyJ3iwFaJj/1OZHCdvaKl+IHHIj2vccMHcXwydBdMeleQ+/lAQ6pdhXunpK5RRuxYm21kg4rFSQUM1gzArugaqHvTm8/5cn6dgBVLE8v2WG3jb71Yg9rZyyXhVMTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kwB2fso+; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725525440; x=1757061440;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xMktYis9zEZJj72s8BcTgIrJWtYI6M9EkqQ5b1RTzls=;
+  b=kwB2fso+9MxXYvjz0QICYO16YSxA1bHIijDpDjGsLu8qVm8OT6Hk95A1
+   xRHmK6pV6X5oQ93OGBASQK71IAQQ9KJ1GMKZrJNrtPt7XGneEA3I59BDH
+   WwGfBJXlGJuVaHO+XyDkm2OZy8wWpQS2Xun+x1WonMFM22d0B5BA2Ztik
+   a6+oQd4iTASBtWm/D4Ok8Yzi0zRnDiCnYfdpnseIO+kCK4nkkQ9lb6Fkk
+   vHA2UkTqniyshSKo9Ae1jxAFzNHcbVCYIQ/fwAeiU+EmBIrPyGQylMdFq
+   Y0ivpFpS8N371jMlYGbwsSxzLRZtazm0RgfngIS8abk3TXFSEH7+mtCn+
+   g==;
+X-CSE-ConnectionGUID: 65mE/m9BQO2nTO0WASMNzg==
+X-CSE-MsgGUID: qNZl0DvwRR6xjMofy0rPgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="49634159"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="49634159"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:37:19 -0700
+X-CSE-ConnectionGUID: b4+uL1FIQzSN/x5S34jICw==
+X-CSE-MsgGUID: 6QGEPvlASY2pTtm6Low+vQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="65204673"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 05 Sep 2024 01:37:17 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sm7zO-00097b-0z;
+	Thu, 05 Sep 2024 08:37:14 +0000
+Date: Thu, 5 Sep 2024 16:36:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sven Schnelle <svens@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH 6/7] tracing: add support for function argument to graph
+ tracer
+Message-ID: <202409051644.nZ4Nj2uc-lkp@intel.com>
+References: <20240904065908.1009086-7-svens@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] arm64: topology: Support SMT control on ACPI based
- system
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: yangyicong@hisilicon.com, linuxppc-dev@lists.ozlabs.org, bp@alien8.de,
- dave.hansen@linux.intel.com, mingo@redhat.com,
- linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
- peterz@infradead.org, tglx@linutronix.de, sudeep.holla@arm.com,
- will@kernel.org, catalin.marinas@arm.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
- gregkh@linuxfoundation.org, rafael@kernel.org, jonathan.cameron@huawei.com,
- prime.zeng@hisilicon.com, linuxarm@huawei.com, xuwei5@huawei.com,
- guohanjun@huawei.com
-References: <20240806085320.63514-1-yangyicong@huawei.com>
- <20240806085320.63514-4-yangyicong@huawei.com>
- <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
- <00e6110a-462a-c117-0292-e88b57d27a05@huawei.com>
- <3947cb79-3199-4cd6-b784-51a245084581@arm.com>
- <1a7b5ac7-f040-672f-07a0-d7f3dc170c88@huawei.com>
- <6c05e39c-41f3-451c-b119-7b8662c1ceee@arm.com>
- <7f722af2-2969-aae5-1fb5-68d353eb95b9@huawei.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <7f722af2-2969-aae5-1fb5-68d353eb95b9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904065908.1009086-7-svens@linux.ibm.com>
 
-Hello Yicong,
+Hi Sven,
 
->>> Wondering if we can avoid this 2nd loop. Greg express the worries of looping twice on large scale
->>> system in v1. Maybe we could use the hetero_id and get the necessary information in one loop, I need
->>> further think.
->>
->> I found this comments (not sure this is what you are refering to):
->> - https://lore.kernel.org/linux-arm-kernel/20231011103303.00002d8f@Huawei.com/
->> - https://lore.kernel.org/all/20230921150333.c2zqigs3xxwcg4ln@bogus/T/#m406c4c16871ca7ae431beb20feccfb5e14498452
->>
->> I don't see another way to do it right now. Also, I thing the complexity is in
->> O(2n), which should be better than the original O(n**2),
->>
-> 
-> yes it's less complex. I'm wondering build up the xarray in another way then we can avoid the
-> long loops. What about below:
+kernel test robot noticed the following build errors:
 
-I tried the patch on a ThunderX2 with 4 threads per CPU. PPTT topology describes
-2 clusters of 128 cores each. Each cluster is described as independent (i.e. there
-is no root node in the PPTT). The PPTT is of revision 1, so the IDENTICAL
-flag is not available on the platform.
+[auto build test ERROR on s390/features]
+[also build test ERROR on tip/x86/core linus/master v6.11-rc6]
+[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent next-20240904]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I also tried it on a faked SMT asymmetric platform and there might be a small
-correction required.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sven-Schnelle/tracing-add-ftrace_regs-to-function_graph_enter/20240904-150232
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+patch link:    https://lore.kernel.org/r/20240904065908.1009086-7-svens%40linux.ibm.com
+patch subject: [PATCH 6/7] tracing: add support for function argument to graph tracer
+config: um-allnoconfig (https://download.01.org/0day-ci/archive/20240905/202409051644.nZ4Nj2uc-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051644.nZ4Nj2uc-lkp@intel.com/reproduce)
 
-> 
->  From 5ff5d0100435982764cd85566a6fe006e60ee98e Mon Sep 17 00:00:00 2001
-> From: Yicong Yang <yangyicong@hisilicon.com>
-> Date: Fri, 20 Oct 2023 15:38:38 +0800
-> Subject: [PATCH] arm64: topology: Support SMT control on ACPI based system
-> 
-> For ACPI we'll build the topology from PPTT and we cannot directly
-> get the SMT number of each core. Instead using a temporary xarray
-> to record the heterogeneous information (from ACPI_PPTT_ACPI_IDENTICAL)
-> and SMT information of the first core in its heterogeneous CPU cluster
-> when building the topology. Then we can know the largest SMT number
-> in the system. Warn if heterogeneous SMT topology exists (multiple
-> heterogeneous CPU clusters with different SMT thread number) since the
-> SMT control cannot handle this well. Then enable the support of SMT
-> control.
-> 
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
->   arch/arm64/kernel/topology.c | 60 ++++++++++++++++++++++++++++++++++++
->   1 file changed, 60 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 1a2c72f3e7f8..f6ec30fae70e 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -15,8 +15,10 @@
->   #include <linux/arch_topology.h>
->   #include <linux/cacheinfo.h>
->   #include <linux/cpufreq.h>
-> +#include <linux/cpu_smt.h>
->   #include <linux/init.h>
->   #include <linux/percpu.h>
-> +#include <linux/xarray.h>
-> 
->   #include <asm/cpu.h>
->   #include <asm/cputype.h>
-> @@ -37,17 +39,29 @@ static bool __init acpi_cpu_is_threaded(int cpu)
->   	return !!is_threaded;
->   }
-> 
-> +struct cpu_smt_info {
-> +	int thread_num;
-> +	int core_id;
-> +	int cpu;
-> +};
-> +
->   /*
->    * Propagate the topology information of the processor_topology_node tree to the
->    * cpu_topology array.
->    */
->   int __init parse_acpi_topology(void)
->   {
-> +	int max_smt_thread_num = 1;
-> +	struct cpu_smt_info *entry;
-> +	struct xarray hetero_cpu;
-> +	unsigned long hetero_id;
->   	int cpu, topology_id;
-> 
->   	if (acpi_disabled)
->   		return 0;
-> 
-> +	xa_init(&hetero_cpu);
-> +
->   	for_each_possible_cpu(cpu) {
->   		topology_id = find_acpi_cpu_topology(cpu, 0);
->   		if (topology_id < 0)
-> @@ -57,6 +71,30 @@ int __init parse_acpi_topology(void)
->   			cpu_topology[cpu].thread_id = topology_id;
->   			topology_id = find_acpi_cpu_topology(cpu, 1);
->   			cpu_topology[cpu].core_id   = topology_id;
-> +
-> +			/*
-> +			 * Build up the XArray using the heterogeneous ID of
-> +			 * the CPU cluster. Store the CPU and SMT information
-> +			 * of the first appeared CPU in the CPU cluster of this
-> +			 * heterogeneous ID since the SMT information should be
-> +			 * the same in this CPU cluster. Then we can know the
-> +			 * SMT information of each heterogeneous CPUs in the
-> +			 * system.
-> +			 */
-> +			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
-> +			entry = (struct cpu_smt_info *)xa_load(&hetero_cpu, hetero_id);
-> +			if (!entry) {
-> +				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +				WARN_ON(!entry);
-> +
-> +				entry->cpu = cpu;
-> +				entry->core_id = topology_id;
-> +				entry->thread_num = 1;
-> +				xa_store(&hetero_cpu, hetero_id,
-> +					 entry, GFP_KERNEL);
-> +			} else if (entry->core_id == topology_id) {
-> +				entry->thread_num++;
-> +			}
->   		} else {
->   			cpu_topology[cpu].thread_id  = -1;
->   			cpu_topology[cpu].core_id    = topology_id;
-> @@ -67,6 +105,28 @@ int __init parse_acpi_topology(void)
->   		cpu_topology[cpu].package_id = topology_id;
->   	}
-> 
-> +	/*
-> +	 * This should be a short loop depending on the number of heterogeneous
-> +	 * CPU clusters. Typically on a homogeneous system there's only one
-> +	 * entry in the XArray.
-> +	 */
-> +	xa_for_each(&hetero_cpu, hetero_id, entry) {
-> +		if (entry->thread_num == 1)
-> +			continue;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409051644.nZ4Nj2uc-lkp@intel.com/
 
-If a platform has CPUs with:
-- 1 thread
-- X (!= 1) threads
-Then I think that the asymmetry is not detected
+All errors (new ones prefixed by >>):
 
-> +
-> +		if (entry->thread_num != max_smt_thread_num &&
-> +		    max_smt_thread_num != 1)
-> +			pr_warn("Heterogeneous SMT topology not handled");
-> +
-> +		if (entry->thread_num > max_smt_thread_num)
-> +			max_smt_thread_num = entry->thread_num;
-> +
-> +		xa_erase(&hetero_cpu, hetero_id);
-> +		kfree(entry);
-> +	}
-> +
-> +	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-> +	xa_destroy(&hetero_cpu);
->   	return 0;
->   }
->   #endif
+   In file included from kernel/fork.c:34:
+   In file included from include/linux/mempolicy.h:15:
+   In file included from include/linux/pagemap.h:11:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from kernel/fork.c:34:
+   In file included from include/linux/mempolicy.h:15:
+   In file included from include/linux/pagemap.h:11:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from kernel/fork.c:34:
+   In file included from include/linux/mempolicy.h:15:
+   In file included from include/linux/pagemap.h:11:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from kernel/fork.c:56:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:52:
+>> include/linux/ftrace.h:1013:21: error: field has incomplete type 'struct ftrace_regs'
+    1013 |         struct ftrace_regs regs;
+         |                            ^
+   include/linux/ftrace.h:41:8: note: forward declaration of 'struct ftrace_regs'
+      41 | struct ftrace_regs;
+         |        ^
+   12 warnings and 1 error generated.
+--
+   In file included from kernel/signal.c:27:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from kernel/signal.c:27:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from kernel/signal.c:27:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from kernel/signal.c:31:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:52:
+>> include/linux/ftrace.h:1013:21: error: field has incomplete type 'struct ftrace_regs'
+    1013 |         struct ftrace_regs regs;
+         |                            ^
+   include/linux/ftrace.h:41:8: note: forward declaration of 'struct ftrace_regs'
+      41 | struct ftrace_regs;
+         |        ^
+   kernel/signal.c:140:37: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     140 |         case 4: ready  = signal->sig[3] &~ blocked->sig[3];
+         |                                            ^            ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   kernel/signal.c:140:19: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     140 |         case 4: ready  = signal->sig[3] &~ blocked->sig[3];
+         |                          ^           ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   kernel/signal.c:141:30: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     141 |                 ready |= signal->sig[2] &~ blocked->sig[2];
+         |                                            ^            ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   kernel/signal.c:141:12: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     141 |                 ready |= signal->sig[2] &~ blocked->sig[2];
+         |                          ^           ~
+   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
+      24 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   16 warnings and 1 error generated.
+--
+   In file included from kernel/time/hrtimer.c:30:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:9:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from kernel/time/hrtimer.c:30:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:9:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from kernel/time/hrtimer.c:30:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:9:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from kernel/time/hrtimer.c:30:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:52:
+>> include/linux/ftrace.h:1013:21: error: field has incomplete type 'struct ftrace_regs'
+    1013 |         struct ftrace_regs regs;
+         |                            ^
+   include/linux/ftrace.h:41:8: note: forward declaration of 'struct ftrace_regs'
+      41 | struct ftrace_regs;
+         |        ^
+   kernel/time/hrtimer.c:121:21: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     121 |         [CLOCK_REALTIME]        = HRTIMER_BASE_REALTIME,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:119:27: note: previous initialization is here
+     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:122:22: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     122 |         [CLOCK_MONOTONIC]       = HRTIMER_BASE_MONOTONIC,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:119:27: note: previous initialization is here
+     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:123:21: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     123 |         [CLOCK_BOOTTIME]        = HRTIMER_BASE_BOOTTIME,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:119:27: note: previous initialization is here
+     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:124:17: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
+     124 |         [CLOCK_TAI]             = HRTIMER_BASE_TAI,
+         |                                   ^~~~~~~~~~~~~~~~
+   kernel/time/hrtimer.c:119:27: note: previous initialization is here
+     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
+   16 warnings and 1 error generated.
+
+
+vim +1013 include/linux/ftrace.h
+
+  1006	
+  1007	/*
+  1008	 * Structure that defines an entry function trace.
+  1009	 * It's already packed but the attribute "packed" is needed
+  1010	 * to remove extra padding at the end.
+  1011	 */
+  1012	struct ftrace_graph_ent {
+> 1013		struct ftrace_regs regs;
+  1014		unsigned long func; /* Current function */
+  1015		int depth;
+  1016	} __packed;
+  1017	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
