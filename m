@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-316285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14E196CD7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:49:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65C496CD80
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D64C288E35
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:49:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F941F270E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB19143C7E;
-	Thu,  5 Sep 2024 03:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84B5131E38;
+	Thu,  5 Sep 2024 03:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQ0BFTJb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RFQew6v2"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C133910E9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD849138490
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725508177; cv=none; b=JMjSxPm8b0BwKBFOwGcrh+Kgw6TIr9zOFK0gwe3e3dOlUnNEeOj2Vmkmb6JjcinUp5K2kU3lTI6rmMR42iDkndgQ2w9CiSAX1MYYHG8rCCYpCM6mPTKL995C+/LkIfdmMaIpq4ACGjv9oUGPHCqBA3Bk4HMzSV+9KONa1enyCOs=
+	t=1725508367; cv=none; b=c46urrloXfaHpW4EoTrbQMy9N58aPf+UeLjsx4qbqfvPbl1cIjwwFTWP6271cgDWY/XcqSnHYEkCo+kSxlawvD3MOAYMhyy3fG3oIBzkU1/tq4INIKn8hHkA/FQtiSzlzYvTz1kZXo/usKxDEjVGL2BoK86zluow1Z8Fthkkd2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725508177; c=relaxed/simple;
-	bh=Gz3VSqSsT06o5tY54H4HaqFIbT5TGYwyyqU0Y/L5U0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHtItmu/78DNNKz8lS/GHjh0FvhhtsxHsH+N/fiOwjNXqQXY/K06kpkJF4ASeBkgFQgMhP4lCdQj6ErGAzKUDOp3YlJO7gQIJfWlcQLL3/1cl72hcMN58XWP9TW/bp/WLbiKAD3GKU6U2a8YZaD9ee7p+z/qhh3J0aGTGYjqZ9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQ0BFTJb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725508174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g+OtgIy/BJMXLC4HkMF7qZ6LVOdsNKLpuOpjRAQZMR0=;
-	b=bQ0BFTJb81uevdv8g8lGtHR+wXANlFfUJkup4A9wmV5MsNgeC56nzpLMl8Gfnl5UN4aNoY
-	xOF5qtat1uKP1gx3AQt+l+81fDEkfLwlv/Wk380QFvWHvoC357Kn41qUoMjkM0H121uEiB
-	NNViEKA7WYv6VZpSVvHY/Wo1wqBDsOU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-64-UUpzQNCFM--xsxsgz3kyxw-1; Wed,
- 04 Sep 2024 23:49:33 -0400
-X-MC-Unique: UUpzQNCFM--xsxsgz3kyxw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 33DCA19560B5;
-	Thu,  5 Sep 2024 03:49:31 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.49])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 664A51956086;
-	Thu,  5 Sep 2024 03:49:24 +0000 (UTC)
-Date: Thu, 5 Sep 2024 11:49:19 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
-Cc: "axboe@kernel.dk" <axboe@kernel.dk>,
-	"bvanassche@acm.org" <bvanassche@acm.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?5pa557+U?= <fangxiang@xiaomi.com>,
-	Hui117 Wang =?utf-8?B?546L6L6J?= <wanghui117@xiaomi.com>,
-	ming.lei@redhat.com
-Subject: Re: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Message-ID: <ZtkqPxgC3tsRdDcz@fedora>
-References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
- <ZtgT4HhEsyRJMoQH@fedora>
- <1641f51b-34f1-47c9-bd69-e56b036fc0f4@xiaomi.com>
+	s=arc-20240116; t=1725508367; c=relaxed/simple;
+	bh=su/8gj6ks5K85/I3PIYZHz4bzmuYkE7mRyHvpRMnZhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PUwS3+/7h3MoYpcb+eb83i0p5jgqDWGeFZn+41eu713j3CXmM1ByJyJZnsdKFUdKc3U4CyBh81h0W13VmE4kYmwqaGi9nSzgV3KVZbpm1zO8EG4r2ZrwiCvtZ+HorVN8co71G8kesHXvHFzxiX/yRwYW33iTsw03UzFwAjx6TMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RFQew6v2; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5334a8a1b07so211672e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725508364; x=1726113164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QRIIgJ7S3hsBk6289/S+wOJS+zjzXBK17nuyOQXg1gQ=;
+        b=RFQew6v2H2RSVsC5zXcTD6NPoVUP8rC4ngRO26FnEtEXE33zWqplCFXsAojoxCDk9w
+         3jKXMjTvIWiDfBjZwGOtERjZmGe79jhk4jXmbQ1YGWP3zUHPs8ABv0uqZSY67QOYzk/B
+         GUUu82pqiF1qtQbMBvsiHC9N7CNp/owZhwEqY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725508364; x=1726113164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QRIIgJ7S3hsBk6289/S+wOJS+zjzXBK17nuyOQXg1gQ=;
+        b=aqKkDFjMwk8N6NInZiQqxE4+N7V3nYLx69XJKIoVMkho0IiVNBlkW4oHHZ268wuvkC
+         GQ/KOMFD0OzQWYbVIhJQs9SFDgslN24Bmgr5V7jxuEIwYxVe1tvlWdbAgzdP8c8oBqPt
+         i8vADqrMAKa+f4YCGkPp/mVweY79CS2/YWVDHZ/iUNNtqz2L5HyEtZgskFbf6mQkXDm4
+         uZLEApP9eHmB23QtHhdZyZSjTC3jKG1EKt6laGZf2a3sXRC9GGHQAhdzsZmqxS8ulTnq
+         CwKFbAoRwATLYZJPyt3VPWLO5cv5OWJfXCf7DKRSOR85vjasHMPLyQcAg1R/wtcUoTk+
+         Iyxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWOI3YxhlioNq4ZO/94VsAbBZEu7sPtkBSFGm29TCDBDy1sTPp+T6BQS4+vyFTZzWScYjEWV0zeT63tHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHxs036vUqIFOGaig2bvZvOozqZN6TIpbiVQvgHXoLmYrBS0g5
+	roFtBzv+AILAHMZWx2ILyLctK05iB2m0yf8/mvFMUATVJHTyyo8H2o/qHs9j7d0wMNyFFgvB9zk
+	Fy4cQqP/Pmmd0VhJAqUH4+z51UrUEo9UjAByA
+X-Google-Smtp-Source: AGHT+IFf4LunjDbLMZ4JbahUyowVfro0pxQijuaHaPzJX7btNK9HgFjL//PjfHIonl230ee/BtNVKcZVy4RESHnFt3A=
+X-Received: by 2002:a05:6512:350e:b0:535:66ff:c681 with SMTP id
+ 2adb3069b0e04-53566ffc733mr2025998e87.48.1725508363601; Wed, 04 Sep 2024
+ 20:52:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1641f51b-34f1-47c9-bd69-e56b036fc0f4@xiaomi.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240904090016.2841572-1-wenst@chromium.org> <20240904090016.2841572-12-wenst@chromium.org>
+ <Ztgxlmhnkn7NVC81@google.com>
+In-Reply-To: <Ztgxlmhnkn7NVC81@google.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 5 Sep 2024 11:52:32 +0800
+Message-ID: <CAGXv+5GpKu-b4_dbRcuSG4NxQi_FKh9p7iMh6DfgavkLFdLLdQ@mail.gmail.com>
+Subject: Re: [PATCH v6 11/12] platform/chrome: Introduce device tree hardware prober
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Mark Brown <broonie@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, chrome-platform@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2024 at 02:46:39AM +0000, 章辉 wrote:
-> On 2024/9/4 16:01, Ming Lei wrote:
-> > On Tue, Sep 03, 2024 at 07:54:37PM +0800, ZhangHui wrote:
-> >> From: zhanghui <zhanghui31@xiaomi.com>
-> >>
-> >> Currently, for a controller that supports multiple queues, like UFS4.0,
-> >> the mq_ops->complete is executed in the interrupt top-half. Therefore,
-> >> the file system's end io is executed during the request completion process,
-> >> such as f2fs_write_end_io on smartphone.
-> >>
-> >> However, we found that the execution time of the file system end io
-> >> is strongly related to the size of the bio and the processing speed
-> >> of the CPU. Because the file system's end io will traverse every page
-> >> in bio, this is a very time-consuming operation.
-> >>
-> >> We measured that the 80M bio write operation on the little CPU will
-> > What is 80M bio?
-> >
-> > It is one known issue that soft lockup may be triggered in case of N:M
-> > blk-mq mapping, but not sure if that is the case.
-> >
-> > What is nr_hw_queues(blk_mq) and nr_cpus in your system?
-> >
-> >> cause the execution time of the top-half to be greater than 100ms.
-> >> The CPU tick on a smartphone is only 4ms, which will undoubtedly affect
-> >> scheduling efficiency.
-> > schedule is off too in softirq(bottom-half).
-> >
-> >> Let's fixed this issue by moved non sync request completion flow to
-> >> softirq, and keep the sync request completion in the top-half.
-> > If you do care interrupt-off or schedule-off latency, you may have to move
-> > the IO handling into thread context in the driver.
-> >
-> > BTW, threaded irq can't help you too.
-> >
-> >
-> > Thanks,
-> > Ming
-> >
-> hi Ming,
-> 
-> Very good reminder, thank you.
-> 
-> On smartphones, nr_hw_queues and nr_cpus are 1:1, I am more concerned
-> about the interrupt-off latency, which is more obvious on little cores.
+On Wed, Sep 4, 2024 at 6:08=E2=80=AFPM Tzung-Bi Shih <tzungbi@kernel.org> w=
+rote:
+>
+> On Wed, Sep 04, 2024 at 05:00:13PM +0800, Chen-Yu Tsai wrote:
+> > diff --git a/drivers/platform/chrome/chromeos_of_hw_prober.c b/drivers/=
+platform/chrome/chromeos_of_hw_prober.c
+> [...]
+> > +static int chromeos_of_hw_prober_probe(struct platform_device *pdev)
+> > +{
+> > +     for (size_t i =3D 0; i < ARRAY_SIZE(hw_prober_platforms); i++) {
+> > +             int ret;
+> > +
+> > +             if (!of_machine_is_compatible(hw_prober_platforms[i].comp=
+atible))
+> > +                     continue;
+> > +
+> > +             ret =3D hw_prober_platforms[i].prober(&pdev->dev, hw_prob=
+er_platforms[i].data);
+> > +             /* Ignore unrecoverable errors and keep going through oth=
+er probers */
+> > +             if (ret =3D=3D -EPROBE_DEFER)
+> > +                     return ret;
+>
+> Is it harmless if some of the components get probed multiple times?  E.g.=
+:
+> comp1 probed -> comp2 probed -> comp3 returned -EPROBE_DEFER -> some time
+> later, chromeos_of_hw_prober_probe() gets called again.
 
-So you submits 80M bytes from one CPU, and almost all these bios are completed
-in single interrupt, which looks very impossible, except that your
-UFS controller is far faster than the CPU.
+Yes it is harmless. Components already enabled will not get disabled
+in the error path. And the prober that enabled that component will see
+that a component was enabled, and skip doing the whole process again.
 
-> 
-> Moving time-consuming work to the bottom half may not help with schedule
-> latency, but it is may helpful for interrupt response latency of other
-> modules in the system?
+So something like:
 
-scheduling response latency is system-wide too.
+    comp1 probed -> comp2 probed -> comp3 -EPROBE_DEFER ->
+        comp1 skip -> comp2 skip -> comp3 probed
 
-Then please document the interrupt latency improvement instead of
-scheduling in your commit log, otherwise it is just misleading.
 
-```
-The CPU tick on a smartphone is only 4ms, which will undoubtedly affect
-scheduling efficiency.
-```
-
-Thanks,
-Ming
-
+ChenYu
 
