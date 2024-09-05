@@ -1,146 +1,368 @@
-Return-Path: <linux-kernel+bounces-316993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A74296D808
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:12:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D7A96D80E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9152289BB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC746B24BA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212CE19ADA4;
-	Thu,  5 Sep 2024 12:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLuInnLe"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC01A19AD81;
+	Thu,  5 Sep 2024 12:13:21 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA7219AA5D;
-	Thu,  5 Sep 2024 12:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966CC179654;
+	Thu,  5 Sep 2024 12:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538347; cv=none; b=DDXlcKxr83lGAKZkYPKY7JaCI3sTCc+bYRNX+xQQ6zfKa9NOnEYRwLS59aDHSLm7kaYlRfue+mlztuUBeqVmcI7Ytm2Frry0nI/ZFDgsUMcVTf7OX/AeZ9Z1OhVIIrQnz1cOk8jeLG9wevTa/358i1/vlzRjzU3ZZdiTA6bR7Vk=
+	t=1725538401; cv=none; b=glHJKVZFymIsxx1QsLNmbDfhkjOy6lkemZoArfY4oVbSUxQFBRABeLhLeMQPw8lJhYeG9bOd10x6LmGNiStI0ne2Ht2syfSzN2b2+vjJILc/CKVPKtu+2LbscsJN+8Jt082d8sCDrAapYJPsO87Zk0YCzxRFwPIy7Me5XKAC7u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538347; c=relaxed/simple;
-	bh=FONOtkrHn9wffb60g9bCFmD5Ce6Mpzm24koAoepUZFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fUECrZRafxLwprvJ1GUdXM/RxVyGiIsGFuapYPbd2PuxN6NEr+I3MwXUuF3za0VxZBQpWH+2RWaQEcnD2LsfENC/4JjYV02VPMer+tx0X+kvasdXEpJ4BWwOV3zbiKoyA5eKnrx56KIdc0TP9+jHpG9vqCT/LcVE8rPTYhnx44k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLuInnLe; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-501274e2c29so10878e0c.3;
-        Thu, 05 Sep 2024 05:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725538345; x=1726143145; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gZAyTtY3aoGNNDzIbl+ioueHhEM4J2F6ba4GcLwUm8=;
-        b=CLuInnLegHd+XHPSVPghafie3UQqCrew+zqk0jBidVXsiJWTlSRxxdHf3u/3wOT5dP
-         DU/IV5j4AP8rQKqeJOEyO1bUiX70hPNpDsd//gajwRYph0pQCMovSgxX4NzLTCnWJHXG
-         SgsfLC/7ODYsYrVIEav8G48iHKbmsS4r4I45w27Pa1hYuZDVqxsW86gVLP7gd4ni2aox
-         pvy8Q0RCOMJnM9mc7KGUmOemJURBq4XgMCIHWoU50TcwhKmQGTZgyfBabfMygmnSR52e
-         cV/01Sx9MseL0bIhAVo3vGtuWgBfRUgaGFQSQve22OZ/US/AeGgakV0vn+wT5d3kLrld
-         xZOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725538345; x=1726143145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9gZAyTtY3aoGNNDzIbl+ioueHhEM4J2F6ba4GcLwUm8=;
-        b=vN5p5r7jhdMk5fYx1cc+DG1kuMzNeBaEpKhKlaL1YjPWgE0wL7uhfIqrhvRzblSrpu
-         LJj6wlJ2KHkP6Mj9sOp1NIHWmsrW5yMJtiDmWVb2u9xnewb3vJScqrnjZ07ooAklT9BA
-         3rjPV9w57lurVPdYLGSbU+zVawEyZhBGRq/sPl9qsTmwBzStW4VMcUfE1WWsq6uPrjxR
-         DiFL8vYGFSZID9C/HniE8UC9E1U/z9neyXO1Tmrr2DG/Fy9TbIrr5yV21NydeDdM2VjN
-         dGaIY2Uqd6RiOKhSYbQ2HihxcDIhhnsXl64KdxAbrwZgQja4w8B/mHqhOK/2BVf3V966
-         w9eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0SOatdL9lwsYOtMrDx8f2VqVGKFCwyBhdBRhaAJfulErAhyRPXD7ZW9x2ghMtcbQKxBz5/1hoNlPAVVxIxB4=@vger.kernel.org, AJvYcCUIyS2LrF4ZRM87PVA50vgfzUVq6RGhGP36mkaD7nyszIidtXVyr89nG2dsgpHbNzHIaTJTiTb8lh4BB0UUzLSsmzU=@vger.kernel.org, AJvYcCVngW5Pc/z4y++SYszOywSS2BpCvQK7Rc4pBm9AHIY1ltRA1KXhfvgMdCR2iUlcX+FXmze5koUTRVjQRnqf@vger.kernel.org, AJvYcCXnJgbLGA9cNl9rD5mbpovVj7NVH5V8WOUHankVSOL261M4mb5rvyCkl7wU8ee1t+81Nb1D075jquMh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfuY4KgeTMBzNKH+3n7bPeYqoKsHnnv89d7Pclg8OGt83l3mTK
-	qPUr+6VakIRDlg/qf6MPMAFrYu2zBCnfqOVtBrdHG7puKQdkHo+8FvihAIE9Zm5qR8YG1BQJWZr
-	zdRibrzcpOsrZ0ANZrOePAauu4M+Vf7zH/P8=
-X-Google-Smtp-Source: AGHT+IHXyw2RxkWhPsZxpmqiSi/213b8QWfi+5HjtH7I9tuPHtt3kLBnh3OYZTkw1Y8/ZGUBwriigeoD0h16GDmtUJg=
-X-Received: by 2002:a05:6122:2a05:b0:4f6:a7f7:164d with SMTP id
- 71dfb90a1353d-5009ac7a8a8mr21097634e0c.8.1725538344968; Thu, 05 Sep 2024
- 05:12:24 -0700 (PDT)
+	s=arc-20240116; t=1725538401; c=relaxed/simple;
+	bh=LiroZjAhJDa4RLzEQMesHLxlmeApIdE0IUNZrI4IrcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tzO2MSEGRmBPOB+yEElW5t+C7AHZ5PQ1innS0VtKKne6rBebc/fy71ZQBJt7gnneo8Tz62KK9w0jdI/oiQpgFvZ7UBKPDzJKSJyg8HcIxk73/PYZAgMfjXrurhU3NNiBQgn9Hdx0JpVUQx+Y3fYx3sL0VDUnJKC7/M/F9ssQz3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WzysV5RSTz1P7SQ;
+	Thu,  5 Sep 2024 20:12:14 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8B655140109;
+	Thu,  5 Sep 2024 20:13:13 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 5 Sep 2024 20:13:13 +0800
+Message-ID: <2cf46afa-9e80-4f34-a734-22009e277cc2@huawei.com>
+Date: Thu, 5 Sep 2024 20:13:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829193831.80768-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240829193831.80768-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 5 Sep 2024 13:11:58 +0100
-Message-ID: <CA+V-a8tzZPkdxiivuRvOQoo8ayFttzXBWGoMufDXtdGg9477Yw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add Watchdog Timer driver for Renesas RZ/V2H(P) SoC
-To: Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v17 06/14] mm: page_frag: reuse existing space
+ for 'size' and 'pfmemalloc'
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240902120314.508180-1-linyunsheng@huawei.com>
+ <20240902120314.508180-7-linyunsheng@huawei.com>
+ <CAKgT0UeYy_tpbRx9C1oDNY+G9fKzsh1eoHfVg6GmFD7z-LziBw@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0UeYy_tpbRx9C1oDNY+G9fKzsh1eoHfVg6GmFD7z-LziBw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi Wim,
+On 2024/9/5 0:14, Alexander Duyck wrote:
+> On Mon, Sep 2, 2024 at 5:09 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> Currently there is one 'struct page_frag' for every 'struct
+>> sock' and 'struct task_struct', we are about to replace the
+>> 'struct page_frag' with 'struct page_frag_cache' for them.
+>> Before begin the replacing, we need to ensure the size of
+>> 'struct page_frag_cache' is not bigger than the size of
+>> 'struct page_frag', as there may be tens of thousands of
+>> 'struct sock' and 'struct task_struct' instances in the
+>> system.
+>>
+>> By or'ing the page order & pfmemalloc with lower bits of
+>> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
+>> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
+>> And page address & pfmemalloc & order is unchanged for the
+>> same page in the same 'page_frag_cache' instance, it makes
+>> sense to fit them together.
+>>
+>> After this patch, the size of 'struct page_frag_cache' should be
+>> the same as the size of 'struct page_frag'.
+>>
+>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> ---
+>>  include/linux/mm_types_task.h   | 19 +++++-----
+>>  include/linux/page_frag_cache.h | 47 ++++++++++++++++++++++--
+>>  mm/page_frag_cache.c            | 63 +++++++++++++++++++++------------
+>>  3 files changed, 96 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
+>> index cdc1e3696439..73a574a0e8f9 100644
+>> --- a/include/linux/mm_types_task.h
+>> +++ b/include/linux/mm_types_task.h
+>> @@ -50,18 +50,21 @@ struct page_frag {
+>>  #define PAGE_FRAG_CACHE_MAX_SIZE       __ALIGN_MASK(32768, ~PAGE_MASK)
+>>  #define PAGE_FRAG_CACHE_MAX_ORDER      get_order(PAGE_FRAG_CACHE_MAX_SIZE)
+>>  struct page_frag_cache {
+>> -       void *va;
+>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>> +       /* encoded_page consists of the virtual address, pfmemalloc bit and
+>> +        * order of a page.
+>> +        */
+>> +       unsigned long encoded_page;
+>> +
+>> +       /* we maintain a pagecount bias, so that we dont dirty cache line
+>> +        * containing page->_refcount every time we allocate a fragment.
+>> +        */
+>> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
+>>         __u16 offset;
+>> -       __u16 size;
+>> +       __u16 pagecnt_bias;
+>>  #else
+>>         __u32 offset;
+>> +       __u32 pagecnt_bias;
+>>  #endif
+>> -       /* we maintain a pagecount bias, so that we dont dirty cache line
+>> -        * containing page->_refcount every time we allocate a fragment.
+>> -        */
+>> -       unsigned int            pagecnt_bias;
+>> -       bool pfmemalloc;
+>>  };
+>>
+>>  /* Track pages that require TLB flushes */
+>> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
+>> index 0a52f7a179c8..cb89cd792fcc 100644
+>> --- a/include/linux/page_frag_cache.h
+>> +++ b/include/linux/page_frag_cache.h
+>> @@ -3,18 +3,61 @@
+>>  #ifndef _LINUX_PAGE_FRAG_CACHE_H
+>>  #define _LINUX_PAGE_FRAG_CACHE_H
+>>
+>> +#include <linux/bits.h>
+>>  #include <linux/log2.h>
+>> +#include <linux/mm.h>
+>>  #include <linux/mm_types_task.h>
+>>  #include <linux/types.h>
+>>
+>> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>> +/* Use a full byte here to enable assembler optimization as the shift
+>> + * operation is usually expecting a byte.
+>> + */
+>> +#define PAGE_FRAG_CACHE_ORDER_MASK             GENMASK(7, 0)
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       8
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT)
+>> +#else
+>> +/* Compiler should be able to figure out we don't read things as any value
+>> + * ANDed with 0 is 0.
+>> + */
+>> +#define PAGE_FRAG_CACHE_ORDER_MASK             0
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       0
+>> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT)
+>> +#endif
+>> +
+>> +static inline unsigned long page_frag_encoded_page_order(unsigned long encoded_page)
+>> +{
+>> +       return encoded_page & PAGE_FRAG_CACHE_ORDER_MASK;
+>> +}
+>> +
+>> +static inline bool page_frag_encoded_page_pfmemalloc(unsigned long encoded_page)
+>> +{
+>> +       return !!(encoded_page & PAGE_FRAG_CACHE_PFMEMALLOC_BIT);
+>> +}
+>> +
+>> +static inline void *page_frag_encoded_page_address(unsigned long encoded_page)
+>> +{
+>> +       return (void *)(encoded_page & PAGE_MASK);
+>> +}
+>> +
+>> +static inline struct page *page_frag_encoded_page_ptr(unsigned long encoded_page)
+>> +{
+>> +       return virt_to_page((void *)encoded_page);
+>> +}
+>> +
+>>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
+>>  {
+>> -       nc->va = NULL;
+>> +       nc->encoded_page = 0;
+>>  }
+>>
+>>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
+>>  {
+>> -       return !!nc->pfmemalloc;
+>> +       return page_frag_encoded_page_pfmemalloc(nc->encoded_page);
+>> +}
+>> +
+>> +static inline unsigned int page_frag_cache_page_size(unsigned long encoded_page)
+>> +{
+>> +       return PAGE_SIZE << page_frag_encoded_page_order(encoded_page);
+>>  }
+>>
+>>  void page_frag_cache_drain(struct page_frag_cache *nc);
+> 
+> Still not a huge fan of adding all these functions that expose the
+> internals. It might be better to just place them in page_frag_cache.c
+> and pull them out to the .h file as needed.
 
-On Thu, Aug 29, 2024 at 8:38=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Hi All,
->
-> This patch series aims to add WDT support to Renesas RZ/V2H(P) SoC.
->
-> v4->v5
-> - Updated commit description for patch 1/2
-> - Collated RB tags from Geert and Guenter
->
-> v3->v4
-> - Simplified calculation of max_hw_heartbeat_ms
-> - Turn on the clocks first before reset operation in start & restart
->   callbacks
-> - Added checks in restart callback before turning ON clocks/resets
-> - Dropped udelay after every ping operation
-> - Added comments
->
-> v2->v3
-> - Fixed dependency, ARCH_R9A09G011->ARCH_R9A09G057
-> - Added dependency for PM
-> - Added delay after de-assert operation as clks are halted temporarily
->   after de-assert operation
-> - Clearing WDTSR register
->
-> v1->v2
-> - Included RB tag for binding patch
-> - Fixed review comments from Claudiu
-> - Stopped using PM runtime calls in restart handler
-> - Dropped rstc deassert from probe
->
-> Cheers,
-> Prabhakar
->
-> Lad Prabhakar (2):
->   dt-bindings: watchdog: renesas,wdt: Document RZ/V2H(P) SoC
->   watchdog: Add Watchdog Timer driver for RZ/V2H(P)
->
->  .../bindings/watchdog/renesas,wdt.yaml        |  17 +-
->  drivers/watchdog/Kconfig                      |   9 +
->  drivers/watchdog/Makefile                     |   1 +
->  drivers/watchdog/rzv2h_wdt.c                  | 272 ++++++++++++++++++
->  4 files changed, 298 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/watchdog/rzv2h_wdt.c
->
-Gentle ping.
+Are you suggesting to move the above to page_frag_cache.c, and move
+it back to page_frag_cache.h if needed in the following patch of the
+same patchset?
 
-Cheers,
-Prabhakar
+Or are you really preferring not to expose any internals over the
+performance here and thinking the moving them back to .h file is
+unneeded?
+
+> 
+>> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+>> index 4c8e04379cb3..a5c5373cb70e 100644
+>> --- a/mm/page_frag_cache.c
+>> +++ b/mm/page_frag_cache.c
+>> @@ -12,16 +12,28 @@
+>>   * be used in the "frags" portion of skb_shared_info.
+>>   */
+>>
+>> +#include <linux/build_bug.h>
+>>  #include <linux/export.h>
+>>  #include <linux/gfp_types.h>
+>>  #include <linux/init.h>
+>> -#include <linux/mm.h>
+>>  #include <linux/page_frag_cache.h>
+>>  #include "internal.h"
+>>
+>> +static unsigned long page_frag_encode_page(struct page *page, unsigned int order,
+>> +                                          bool pfmemalloc)
+>> +{
+>> +       BUILD_BUG_ON(PAGE_FRAG_CACHE_MAX_ORDER > PAGE_FRAG_CACHE_ORDER_MASK);
+>> +       BUILD_BUG_ON(PAGE_FRAG_CACHE_PFMEMALLOC_BIT >= PAGE_SIZE);
+>> +
+>> +       return (unsigned long)page_address(page) |
+>> +               (order & PAGE_FRAG_CACHE_ORDER_MASK) |
+>> +               ((unsigned long)pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT);
+>> +}
+>> +
+>>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>                                              gfp_t gfp_mask)
+>>  {
+>> +       unsigned long order = PAGE_FRAG_CACHE_MAX_ORDER;
+>>         struct page *page = NULL;
+>>         gfp_t gfp = gfp_mask;
+>>
+>> @@ -30,23 +42,31 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>                    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+>>         page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
+>>                                 PAGE_FRAG_CACHE_MAX_ORDER);
+>> -       nc->size = page ? PAGE_FRAG_CACHE_MAX_SIZE : PAGE_SIZE;
+>>  #endif
+>> -       if (unlikely(!page))
+>> +       if (unlikely(!page)) {
+>>                 page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
+>> +               if (unlikely(!page)) {
+>> +                       nc->encoded_page = 0;
+>> +                       return NULL;
+>> +               }
+> 
+> I would recommend just skipping the conditional here. No need to do
+> that. You can basically just not encode the page below if you failed
+> to allocate it.
+> 
+>> +
+>> +               order = 0;
+>> +       }
+>>
+>> -       nc->va = page ? page_address(page) : NULL;
+>> +       nc->encoded_page = page_frag_encode_page(page, order,
+>> +                                                page_is_pfmemalloc(page));
+> 
+> I would just follow the same logic with the ternary operator here. If
+> page is set then encode the page, else just set it to 0.
+
+I am assuming you meant somethig like below, right?
+
+static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+					     gfp_t gfp_mask)
+{
+	unsigned long order = PAGE_FRAG_CACHE_MAX_ORDER;
+	struct page *page = NULL;
+	gfp_t gfp = gfp_mask;
+
+#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+	gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
+		    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+	page = __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
+			     numa_mem_id(), NULL);
+#endif
+	if (unlikely(!page)) {
+		page = __alloc_pages(gfp, 0, numa_mem_id(), NULL);
+		order = 0;
+	}
+
+	nc->encoded_page = page ?
+		page_frag_encode_page(page, order, page_is_pfmemalloc(page)) : 0;
+
+        return page;
+}
+
+> 
+>>
+>>         return page;
+>>  }
+>>
+>>  void page_frag_cache_drain(struct page_frag_cache *nc)
+>>  {
+>> -       if (!nc->va)
+>> +       if (!nc->encoded_page)
+>>                 return;
+>>
+>> -       __page_frag_cache_drain(virt_to_head_page(nc->va), nc->pagecnt_bias);
+>> -       nc->va = NULL;
+>> +       __page_frag_cache_drain(page_frag_encoded_page_ptr(nc->encoded_page),
+>> +                               nc->pagecnt_bias);
+>> +       nc->encoded_page = 0;
+>>  }
+>>  EXPORT_SYMBOL(page_frag_cache_drain);
+>>
+>> @@ -63,31 +83,27 @@ void *__page_frag_alloc_align(struct page_frag_cache *nc,
+>>                               unsigned int fragsz, gfp_t gfp_mask,
+>>                               unsigned int align_mask)
+>>  {
+>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>> -       unsigned int size = nc->size;
+>> -#else
+>> -       unsigned int size = PAGE_SIZE;
+>> -#endif
+>> -       unsigned int offset;
+>> +       unsigned long encoded_page = nc->encoded_page;
+>> +       unsigned int size, offset;
+>>         struct page *page;
+>>
+>> -       if (unlikely(!nc->va)) {
+>> +       size = page_frag_cache_page_size(encoded_page);
+>> +
+>> +       if (unlikely(!encoded_page)) {
+>>  refill:
+>>                 page = __page_frag_cache_refill(nc, gfp_mask);
+>>                 if (!page)
+>>                         return NULL;
+>>
+>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>> -               /* if size can vary use size else just use PAGE_SIZE */
+>> -               size = nc->size;
+>> -#endif
+>> +               encoded_page = nc->encoded_page;
+>> +               size = page_frag_cache_page_size(encoded_page);
+>> +
+>>                 /* Even if we own the page, we do not use atomic_set().
+>>                  * This would break get_page_unless_zero() users.
+>>                  */
+>>                 page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+>>
+>>                 /* reset page count bias and offset to start of new frag */
+>> -               nc->pfmemalloc = page_is_pfmemalloc(page);
+>>                 nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>>                 nc->offset = 0;
+>>         }
+> 
+> It would probably make sense to move the getting of the size to just
+> after this if statement since you are doing it in two different paths
+> and I don't think you use size at all in the
+> "if(unlikely(!encoded_page))" path otherwise.
+
+Ack.
 
