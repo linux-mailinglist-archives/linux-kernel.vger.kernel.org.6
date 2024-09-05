@@ -1,298 +1,654 @@
-Return-Path: <linux-kernel+bounces-317177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A224B96DA70
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B13196DA73
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2451A1F242BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06D91C23097
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9401E19D8AC;
-	Thu,  5 Sep 2024 13:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A308B19CCEC;
+	Thu,  5 Sep 2024 13:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pk+2BkTA"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ygMpv68A"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2920C19CCE2
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B96E19CD19
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725543234; cv=none; b=TTMDs784h313friahVYefsadLquHMQLKIc0yIwsFTn9scK31PFm2iWng3TlA44PQyy68F7hqmk08i6tUVKuxlKWskoQ6XxA9roSYw8nfPdrh0qlm4jlqzy+zqZP3QGuUqUa2AfdoxM4jDg4kqK9f3LUWVRLzqeImluo1+EJGCVA=
+	t=1725543235; cv=none; b=kzIOVeZzzAyBSHcQQN6OHgxfiq1m5/Hg5JjNoRfIUBAB9Lf4PatSZFQf4vFYLiZQCNYMHwX9gvLYhgFn0nlcOZAwOOGWHbHt6ErgvqVZuIUFaalUmmtwNs7IgLkjCVAw+9aPtfB5cnxclbNt00b87WM0nVolZjM0mkTddFBTd3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725543234; c=relaxed/simple;
-	bh=YkQEO1wMvd7q6NK8pJQ8yw8I727ntMDCG24DrHabbeI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ka7+Ej8/2aUSkjFkgVi9lMteMNZMF51o9Y8b65SGKfy1usRfzUI7JHbs/dHrjDccMYgVkCpLcF1Gu96xD9OIx/FjMY+rdrqR2it7dTjSiQzjabgBeriu/V6YCGEvPQ1N8cDcGypicC7fmkO57cKz1MH890WQM//9kw62eIb/zAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pk+2BkTA; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1725543235; c=relaxed/simple;
+	bh=S7qtaq6/z53wH1nxOmASZXHiQysK1+AvLzQi0Fea+AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QwZkTpknKUhvlun8nSG9PAfoXZBoh/DTFXZYetS8i6n/Hf+9croXLIOTgVg0lb7AKmUmJCuf4aRk+hbryxL0KFDmGi3DpN8HtsxlvDcEs7maEqPF3n6XaLRcpVaPhZroziaakRolA36UJICx1kA0JU9XJ6VoLO1xDGDfyVQPR74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ygMpv68A; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso708543a12.2
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso929192e87.2
         for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 06:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725543232; x=1726148032; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IfvmcKFg6Fj0YKAq/WfJsPKdkVZtnDTZ/TfUJlo8saI=;
-        b=Pk+2BkTAJZK4HDYyxLGJzUChg8l/D60Fd3Fucng9ypv60vb4NkV3CYN4EHoL+D+rlj
-         Kt7ES1GNPA18jP/kvmU636IgKivUBU+5g5m1oSAni5tH8UivP2RT74qeZh0WnY2eAK81
-         ANmbB8hLgJ+1XaR/Rgyi9ihEcD2phPpoh3p+UoxUzrwoH8gWRULQ/1B88E3FSl0kuz3q
-         6Nn6mkOrmLMfx3OT/wq/wsQGQj0yRhv19RF0Rftg8FNZQIatApDh/V3whkqyP/xOfzYi
-         N2YpHizmm4coS5ToM5u4WxGEuNhPOuitRyWcTHoM3LLCHBe8e9K0S4E9H1es+DyMrfpt
-         /21Q==
+        d=linaro.org; s=google; t=1725543231; x=1726148031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fQJPfi0Wh2Io+0o0IYUBFYdp9QWUTF9dW8Pyx0M1VL4=;
+        b=ygMpv68A5zpUk/bVUlBH8/ZrkLNVUtkPUYGJxYVKLjQt1Ydok/PqXOzcDyaiA52WQ9
+         ViEQC9FbIs+bRjofiGLIp3kfEJMOIsROwc12cg7j1xA9NcWPBpMxEogyUu2yv7nf9z0U
+         oR9gFeJ0dT/4/tnv/FdQXnN+LHlzo/6S4OA2Z2nTja4yWWXKyMNqL72OU+2MEAkZfdO4
+         nEqrxqE2UdB+gd/aEJUyHcJwiDMMM1mnlA+7D1QtH8zruKVpS0avWDlXH4tFNV08xmJB
+         va3onXb+hBONOcZMX36ZM8kE8lzx5CFAUNer0iypwQyidkuUXLOBciXGmbFQkcdB0eJ3
+         ryew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725543232; x=1726148032;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IfvmcKFg6Fj0YKAq/WfJsPKdkVZtnDTZ/TfUJlo8saI=;
-        b=ffY6P32E1kuf4p6G+mKUMKW5gL4MLaZ2+0NrwHd6/WKtdrpRL0/Zj1ooVYYT2wmVq2
-         uBpIz19qZ1BCxBXtmCqsaZicIUUztptZYmAfD9in7EwTG7S06idcDflcb8IlKqFoUljO
-         1v1PB7C5ONpSdg1/LqPpAX0Z5dhVbBoB9dmfbBH07EJvDrjqCDA5BjJzQzbjp4WZGFCL
-         RB2mJXOyRVOeEA+BaDExWORxbLy0+tiyP8vY4k37k+tsXnF7DJZk4xCJaOZNtdsa3fQ7
-         hYFLO3fV0YBb0j6r2orzbnbX+7nHU5+JGcJVSgJ6ILD3MjP/t2Z1kI+8Y+CVqQaH+zEB
-         5r3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVURb0wMR1LqqgKm0D5BOfTiRfOTmE17KbzBSPI78Xntj/FPMFjoD+1g5FCUYiHUlPhZouuS9UNkpQ95kA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEc20U+YSE4oH0AYyKkKaXoEy5cO665x/joYD7S8mwOyj1Nyuu
-	LtfOKGzkNEGEZq3IyLfeeZ69nNnUB7WSdztB4dIScEbbC40r7WtQqN5q0lQAuDyBulxqudUowrq
-	kJmCR3nJHfhZcOK6LK9Z0xdq6D9LC0qmuf+AAqw==
-X-Google-Smtp-Source: AGHT+IEbdAaF/S349FwhT1ajllrEB43/lA/KsZFEjJ3xG1z/uF8wUnknCP15JQnesNs68wlM7IyvJP8JIsvzQJJfHzg=
-X-Received: by 2002:a05:6a21:3a93:b0:1cc:c202:b289 with SMTP id
- adf61e73a8af0-1cece2d1d10mr20439140637.0.1725543232314; Thu, 05 Sep 2024
- 06:33:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725543231; x=1726148031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fQJPfi0Wh2Io+0o0IYUBFYdp9QWUTF9dW8Pyx0M1VL4=;
+        b=mHJY3ullx1S5d/IpPJq1UcDOgpKTNdidtqpfBGh7pePMCiO9r0IqMnRCaeXYyN8tlL
+         2qreXNiVsnp008aJancobCDJ/L69hHhj4dhbVU66NyNBnV2TuBhYp4wyybJyWEa22W51
+         biHrLP77TB87JVbUjDKIrsFLmUYNpGS+lo3DlcE3zs3CcDr7IoSUR9JT7J2sQCBSJoUA
+         IzwK1W6ahf4R9Zct3rFln3uBFPbH8jS1hdCXhVf0wmNTjSoO7+dHasGpEStuHdMbc1uA
+         hs8amVq+zQkSwrMg04llLd/c+n0YLVsBUzfYL9pJxeZz/wL3nCT6PDR4QWtUAiWcWphM
+         flhw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0L0hW8D9LxfRR2X7H1gFFoorD/91tTbpc9xqbcNECiA4hDaupEXbAfppIHFN9vrH2mT3vXzMoVcqwDP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHCEmuSN3qllOL/NXMZKOqT9QTxQivORfCzHpUNvlNCssIptEb
+	ZZo7auSzB/mXwCiChgpjtC9/L9mdCehFFz17u5t7+eMI9lbmXuErQwJvqRpClfw=
+X-Google-Smtp-Source: AGHT+IEiduL9zN28vCoINNVnT6AswQ/sFJPqrAcmtcaqXKaMp2l4Do9mDayY9B6pEfod1Bn+teKNoQ==
+X-Received: by 2002:a05:6512:2285:b0:535:63a3:c7d1 with SMTP id 2adb3069b0e04-53563a3c9d2mr5460921e87.48.1725543230385;
+        Thu, 05 Sep 2024 06:33:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540853630sm2633522e87.290.2024.09.05.06.33.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 06:33:49 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:33:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andersson@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: drop sm8250 lpass gfm driver
+Message-ID: <u56bph63zl5bu7qrkuwg5gocb3ht56mnbqaa45fl3tnjrvwnl2@gkzarffyucmj>
+References: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727102732.960974693@infradead.org> <20240727105029.315205425@infradead.org>
- <6f39e567-fd9a-4157-949d-7a9ccd9c3592@arm.com> <CAKfTPtAS0eSqf5Qoq_rpQC7DbyyGX=GACsB7OPdhi8=HEciPUQ@mail.gmail.com>
- <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com> <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
- <83a20d85-de7a-4fe6-8cd8-5a96d822eb6b@arm.com> <629937b1-6f97-41d1-aa4f-7349c2ffa29d@arm.com>
- <CAKfTPtBPK8ovttHDQjfuwve63PK_pNH4WMznEHWoXQ=2vGhKQQ@mail.gmail.com>
- <CAKfTPtDO3n-4mcr2Sk-uu0ZS5xQnagdicQmaBh-CyrndPLM8eQ@mail.gmail.com>
- <aa81d37e-ad9c-42c6-a104-fe8496c5d907@arm.com> <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
-In-Reply-To: <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 5 Sep 2024 15:33:41 +0200
-Message-ID: <CAKfTPtCNUvWE_GX5LyvTF-WdxUT=ZgvZZv-4t=eWntg5uOFqiQ@mail.gmail.com>
-Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Hongyan Xia <hongyan.xia2@arm.com>, Luis Machado <luis.machado@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, juri.lelli@redhat.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
-	efault@gmx.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902145203.72628-1-srinivas.kandagatla@linaro.org>
 
-On Thu, 5 Sept 2024 at 15:02, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> On 29/08/2024 17:42, Hongyan Xia wrote:
-> > On 22/08/2024 15:58, Vincent Guittot wrote:
-> >> On Thu, 22 Aug 2024 at 14:10, Vincent Guittot
-> >> <vincent.guittot@linaro.org> wrote:
-> >>>
-> >>> On Thu, 22 Aug 2024 at 14:08, Luis Machado <luis.machado@arm.com> wrote:
-> >>>>
-> >>>> Vincent,
-> >>>>
-> >>>> On 8/22/24 11:28, Luis Machado wrote:
-> >>>>> On 8/22/24 10:53, Vincent Guittot wrote:
-> >>>>>> On Thu, 22 Aug 2024 at 11:22, Luis Machado <luis.machado@arm.com>
-> >>>>>> wrote:
-> >>>>>>>
-> >>>>>>> On 8/22/24 09:19, Vincent Guittot wrote:
-> >>>>>>>> Hi,
-> >>>>>>>>
-> >>>>>>>> On Wed, 21 Aug 2024 at 15:34, Hongyan Xia <hongyan.xia2@arm.com>
-> >>>>>>>> wrote:
-> >>>>>>>>>
-> >>>>>>>>> Hi Peter,
-> >>>>>>>>>
-> >>>>>>>>> Sorry for bombarding this thread in the last couple of days.
-> >>>>>>>>> I'm seeing
-> >>>>>>>>> several issues in the latest tip/sched/core after these patches
-> >>>>>>>>> landed.
-> >>>>>>>>>
-> >>>>>>>>> What I'm now seeing seems to be an unbalanced call of util_est.
-> >>>>>>>>> First, I applied
-> >>>>>>>>
-> >>>>>>>> I also see a remaining util_est for idle rq because of an unbalance
-> >>>>>>>> call of util_est_enqueue|dequeue
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> I can confirm issues with the utilization values and frequencies
-> >>>>>>> being driven
-> >>>>>>> seemingly incorrectly, in particular for little cores.
-> >>>>>>>
-> >>>>>>> What I'm seeing with the stock series is high utilization values
-> >>>>>>> for some tasks
-> >>>>>>> and little cores having their frequencies maxed out for extended
-> >>>>>>> periods of
-> >>>>>>> time. Sometimes for 5+ or 10+ seconds, which is excessive as the
-> >>>>>>> cores are mostly
-> >>>>>>> idle. But whenever certain tasks get scheduled there, they have a
-> >>>>>>> very high util
-> >>>>>>> level and so the frequency is kept at max.
-> >>>>>>>
-> >>>>>>> As a consequence this drives up power usage.
-> >>>>>>>
-> >>>>>>> I gave Hongyan's draft fix a try and observed a much more
-> >>>>>>> reasonable behavior for
-> >>>>>>> the util numbers and frequencies being used for the little cores.
-> >>>>>>> With his fix,
-> >>>>>>> I can also see lower energy use for my specific benchmark.
-> >>>>>>
-> >>>>>> The main problem is that the util_est of a delayed dequeued task
-> >>>>>> remains on the rq and keeps the rq utilization high and as a result
-> >>>>>> the frequency higher than needed.
-> >>>>>>
-> >>>>>> The below seems to works for me and keep sync the enqueue/dequeue of
-> >>>>>> uti_test with the enqueue/dequeue of the task as if de dequeue was
-> >>>>>> not
-> >>>>>> delayed
-> >>>>>>
-> >>>>>> Another interest is that we will not try to migrate a delayed dequeue
-> >>>>>> sleeping task that doesn't actually impact the current load of the
-> >>>>>> cpu
-> >>>>>> and as a result will not help in the load balance. I haven't yet
-> >>>>>> fully
-> >>>>>> checked what would happen with hotplug
-> >>>>>
-> >>>>> Thanks. Those are good points. Let me go and try your patch.
-> >>>>
-> >>>> I gave your fix a try, but it seems to make things worse. It is
-> >>>> comparable
-> >>>> to the behavior we had before Peter added the uclamp imbalance fix,
-> >>>> so I
-> >>>> believe there is something incorrect there.
-> >>>
-> >>> we need to filter case where task are enqueued/dequeued several
-> >>> consecutive times. That's what I'm look now
-> >>
-> >> I just realize before that It's not only util_est but the h_nr_running
-> >> that keeps delayed tasks as well so all stats of the rq are biased:
-> >> h_nr_running, util_est, runnable avg and load_avg.
-> >
-> > After staring at the code even more, I think the situation is worse.
-> >
-> > First thing is that uclamp might also want to be part of these stats
-> > (h_nr_running, util_est, runnable_avg, load_avg) that do not follow
-> > delayed dequeue which needs to be specially handled in the same way. The
-> > current way of handling uclamp in core.c misses the frequency update,
-> > like I commented before.
-> >
-> > Second, there is also an out-of-sync issue in update_load_avg(). We only
-> > update the task-level se in delayed dequeue and requeue, but we return
-> > early and the upper levels are completely skipped, as if the delayed
-> > task is still on rq. This de-sync is wrong.
->
-> I had a look at the util_est issue.
->
-> This keeps rq->cfs.avg.util_avg sane for me with
-> SCHED_FEAT(DELAY_DEQUEUE, true):
->
-> -->8--
->
-> From 0d7e8d057f49a47e0f3f484ac7d41e047dccec38 Mon Sep 17 00:00:00 2001
-> From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Date: Thu, 5 Sep 2024 00:05:23 +0200
-> Subject: [PATCH] kernel/sched: Fix util_est accounting for DELAY_DEQUEUE
->
-> Remove delayed tasks from util_est even they are runnable.
+On Mon, Sep 02, 2024 at 03:52:03PM GMT, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> There is no real use for this driver on this platform for below reasons.
+> 
+> - codec drivers can directly use dsp clocks using the static mux setting.
+> - none of the consumers really switch parents and do not handle low power usecases.
+> - all users of this drivers are now removed in next
 
-Unfortunately, this is not only about util_est
+This means that we are going to break compatibility with existing DT
+files, which can be deployed or handled in other ways.
 
-cfs_rq's runnable_avg is also wrong  because we normally have :
-cfs_rq's runnable_avg == /Sum se's runnable_avg
-but cfs_rq's runnable_avg uses cfs_rq's h_nr_running but delayed
-entities are still accounted in h_nr_running
+We _can_ _not_ drop support for existing compatibles. At least give
+a grace time of one LTS release.
 
-That also means that cfs_rq's h_nr_running is not accurate anymore
-because it includes delayed dequeue
-
-and cfs_rq load_avg is kept artificially high which biases
-load_balance and cgroup's shares
-
->
-> Exclude delayed task which are (a) migrating between rq's or (b) in a
-> SAVE/RESTORE dequeue/enqueue.
->
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> 
+> Remove this driver and associated device tree bindings to aviod any
+> confusion.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  kernel/sched/fair.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 1e693ca8ebd6..5c32cc26d6c2 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6948,18 +6948,19 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->         int rq_h_nr_running = rq->cfs.h_nr_running;
->         u64 slice = 0;
->
-> -       if (flags & ENQUEUE_DELAYED) {
-> -               requeue_delayed_entity(se);
-> -               return;
-> -       }
+>  .../bindings/clock/qcom,aoncc-sm8250.yaml     |  61 ----
+>  .../bindings/clock/qcom,audiocc-sm8250.yaml   |  61 ----
+>  drivers/clk/qcom/Kconfig                      |   7 -
+>  drivers/clk/qcom/Makefile                     |   1 -
+>  drivers/clk/qcom/lpass-gfm-sm8250.c           | 318 ------------------
+>  .../clock/qcom,sm8250-lpass-aoncc.h           |  11 -
+>  .../clock/qcom,sm8250-lpass-audiocc.h         |  13 -
+>  7 files changed, 472 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+>  delete mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
+>  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+>  delete mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+> deleted file mode 100644
+> index 8b8932bd5a92..000000000000
+> --- a/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+> +++ /dev/null
+> @@ -1,61 +0,0 @@
+> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> -%YAML 1.2
+> ----
+> -$id: http://devicetree.org/schemas/clock/qcom,aoncc-sm8250.yaml#
+> -$schema: http://devicetree.org/meta-schemas/core.yaml#
 > -
->         /*
->          * The code below (indirectly) updates schedutil which looks at
->          * the cfs_rq utilization to select a frequency.
->          * Let's add the task's estimated utilization to the cfs_rq's
->          * estimated utilization, before we update schedutil.
->          */
-> -       util_est_enqueue(&rq->cfs, p);
-> +       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
-> +               util_est_enqueue(&rq->cfs, p);
-> +
-> +       if (flags & ENQUEUE_DELAYED) {
-> +               requeue_delayed_entity(se);
-> +               return;
-> +       }
->
->         /*
->          * If in_iowait is set, the code below may not trigger any cpufreq
-> @@ -7177,7 +7178,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->   */
->  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  {
-> -       util_est_dequeue(&rq->cfs, p);
-> +       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
-> +               util_est_dequeue(&rq->cfs, p);
->
->         if (dequeue_entities(rq, &p->se, flags) < 0) {
->                 if (!rq->cfs.h_nr_running)
-> --
-> 2.34.1
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
+> -title: LPASS Always ON Clock Controller on SM8250 SoCs
+> -
+> -maintainers:
+> -  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> -
+> -description: |
+> -  The clock consumer should specify the desired clock by having the clock
+> -  ID in its "clocks" phandle cell.
+> -  See include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h for the full list
+> -  of Audio Clock controller clock IDs.
+> -
+> -properties:
+> -  compatible:
+> -    const: qcom,sm8250-lpass-aoncc
+> -
+> -  reg:
+> -    maxItems: 1
+> -
+> -  '#clock-cells':
+> -    const: 1
+> -
+> -  clocks:
+> -    items:
+> -      - description: LPASS Core voting clock
+> -      - description: LPASS Audio codec voting clock
+> -      - description: Glitch Free Mux register clock
+> -
+> -  clock-names:
+> -    items:
+> -      - const: core
+> -      - const: audio
+> -      - const: bus
+> -
+> -required:
+> -  - compatible
+> -  - reg
+> -  - '#clock-cells'
+> -  - clocks
+> -  - clock-names
+> -
+> -additionalProperties: false
+> -
+> -examples:
+> -  - |
+> -    #include <dt-bindings/clock/qcom,sm8250-lpass-aoncc.h>
+> -    #include <dt-bindings/sound/qcom,q6afe.h>
+> -    clock-controller@3800000 {
+> -      #clock-cells = <1>;
+> -      compatible = "qcom,sm8250-lpass-aoncc";
+> -      reg = <0x03380000 0x40000>;
+> -      clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+> -      clock-names = "core", "audio", "bus";
+> -    };
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+> deleted file mode 100644
+> index cfca888f6014..000000000000
+> --- a/Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+> +++ /dev/null
+> @@ -1,61 +0,0 @@
+> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> -%YAML 1.2
+> ----
+> -$id: http://devicetree.org/schemas/clock/qcom,audiocc-sm8250.yaml#
+> -$schema: http://devicetree.org/meta-schemas/core.yaml#
+> -
+> -title: LPASS Audio Clock Controller on SM8250 SoCs
+> -
+> -maintainers:
+> -  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> -
+> -description: |
+> -  The clock consumer should specify the desired clock by having the clock
+> -  ID in its "clocks" phandle cell.
+> -  See include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h for the full list
+> -  of Audio Clock controller clock IDs.
+> -
+> -properties:
+> -  compatible:
+> -    const: qcom,sm8250-lpass-audiocc
+> -
+> -  reg:
+> -    maxItems: 1
+> -
+> -  '#clock-cells':
+> -    const: 1
+> -
+> -  clocks:
+> -    items:
+> -      - description: LPASS Core voting clock
+> -      - description: LPASS Audio codec voting clock
+> -      - description: Glitch Free Mux register clock
+> -
+> -  clock-names:
+> -    items:
+> -      - const: core
+> -      - const: audio
+> -      - const: bus
+> -
+> -required:
+> -  - compatible
+> -  - reg
+> -  - '#clock-cells'
+> -  - clocks
+> -  - clock-names
+> -
+> -additionalProperties: false
+> -
+> -examples:
+> -  - |
+> -    #include <dt-bindings/clock/qcom,sm8250-lpass-audiocc.h>
+> -    #include <dt-bindings/sound/qcom,q6afe.h>
+> -    clock-controller@3300000 {
+> -      #clock-cells = <1>;
+> -      compatible = "qcom,sm8250-lpass-audiocc";
+> -      reg = <0x03300000 0x30000>;
+> -      clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> -               <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+> -      clock-names = "core", "audio", "bus";
+> -    };
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index a3e2a09e2105..ce970fe5cf0b 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -1269,13 +1269,6 @@ config KRAITCC
+>  	  Support for the Krait CPU clocks on Qualcomm devices.
+>  	  Say Y if you want to support CPU frequency scaling.
+>  
+> -config CLK_GFM_LPASS_SM8250
+> -	tristate "SM8250 GFM LPASS Clocks"
+> -	depends on ARM64 || COMPILE_TEST
+> -	help
+> -	  Support for the Glitch Free Mux (GFM) Low power audio
+> -          subsystem (LPASS) clocks found on SM8250 SoCs.
+> -
+>  config SM_VIDEOCC_8450
+>  	tristate "SM8450 Video Clock Controller"
+>  	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 2b378667a63f..a4751f6dd3b0 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -20,7 +20,6 @@ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+>  # Keep alphabetically sorted by config
+>  obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
+>  obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
+> -obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
+>  obj-$(CONFIG_CLK_X1E80100_CAMCC) += camcc-x1e80100.o
+>  obj-$(CONFIG_CLK_X1E80100_DISPCC) += dispcc-x1e80100.o
+>  obj-$(CONFIG_CLK_X1E80100_GCC) += gcc-x1e80100.o
+> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
+> deleted file mode 100644
+> index 65d380e30eed..000000000000
+> --- a/drivers/clk/qcom/lpass-gfm-sm8250.c
+> +++ /dev/null
+> @@ -1,318 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/*
+> - * LPASS Audio CC and Always ON CC Glitch Free Mux clock driver
+> - *
+> - * Copyright (c) 2020 Linaro Ltd.
+> - * Author: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> - */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/clk-provider.h>
+> -#include <linux/io.h>
+> -#include <linux/slab.h>
+> -#include <linux/err.h>
+> -#include <linux/pm_clock.h>
+> -#include <linux/pm_runtime.h>
+> -#include <linux/device.h>
+> -#include <linux/of.h>
+> -#include <linux/platform_device.h>
+> -#include <dt-bindings/clock/qcom,sm8250-lpass-audiocc.h>
+> -#include <dt-bindings/clock/qcom,sm8250-lpass-aoncc.h>
+> -
+> -struct lpass_gfm {
+> -	struct device *dev;
+> -	void __iomem *base;
+> -};
+> -
+> -struct clk_gfm {
+> -	unsigned int mux_reg;
+> -	unsigned int mux_mask;
+> -	struct clk_hw	hw;
+> -	struct lpass_gfm *priv;
+> -	void __iomem *gfm_mux;
+> -};
+> -
+> -#define to_clk_gfm(_hw) container_of(_hw, struct clk_gfm, hw)
+> -
+> -static u8 clk_gfm_get_parent(struct clk_hw *hw)
+> -{
+> -	struct clk_gfm *clk = to_clk_gfm(hw);
+> -
+> -	return readl(clk->gfm_mux) & clk->mux_mask;
+> -}
+> -
+> -static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
+> -{
+> -	struct clk_gfm *clk = to_clk_gfm(hw);
+> -	unsigned int val;
+> -
+> -	val = readl(clk->gfm_mux);
+> -
+> -	if (index)
+> -		val |= clk->mux_mask;
+> -	else
+> -		val &= ~clk->mux_mask;
+> -
+> -
+> -	writel(val, clk->gfm_mux);
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct clk_ops clk_gfm_ops = {
+> -	.get_parent = clk_gfm_get_parent,
+> -	.set_parent = clk_gfm_set_parent,
+> -	.determine_rate = __clk_mux_determine_rate,
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_va_mclk = {
+> -	.mux_reg = 0x20000,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "VA_MCLK",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.num_parents = 2,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_VA_CORE_MCLK",
+> -			},
+> -		},
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_tx_npl = {
+> -	.mux_reg = 0x20000,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "TX_NPL",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_VA_CORE_2X_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_wsa_mclk = {
+> -	.mux_reg = 0x220d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "WSA_MCLK",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_WSA_CORE_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_wsa_npl = {
+> -	.mux_reg = 0x220d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "WSA_NPL",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_WSA_CORE_NPL_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_rx_mclk_mclk2 = {
+> -	.mux_reg = 0x240d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "RX_MCLK_MCLK2",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_RX_CORE_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm lpass_gfm_rx_npl = {
+> -	.mux_reg = 0x240d8,
+> -	.mux_mask = BIT(0),
+> -	.hw.init = &(struct clk_init_data) {
+> -		.name = "RX_NPL",
+> -		.ops = &clk_gfm_ops,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+> -		.parent_data = (const struct clk_parent_data[]){
+> -			{
+> -				.index = 0,
+> -				.fw_name = "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+> -			}, {
+> -				.index = 1,
+> -				.fw_name = "LPASS_CLK_ID_RX_CORE_NPL_MCLK",
+> -			},
+> -		},
+> -		.num_parents = 2,
+> -	},
+> -};
+> -
+> -static struct clk_gfm *aoncc_gfm_clks[] = {
+> -	[LPASS_CDC_VA_MCLK]		= &lpass_gfm_va_mclk,
+> -	[LPASS_CDC_TX_NPL]		= &lpass_gfm_tx_npl,
+> -};
+> -
+> -static struct clk_hw_onecell_data aoncc_hw_onecell_data = {
+> -	.hws = {
+> -		[LPASS_CDC_VA_MCLK]	= &lpass_gfm_va_mclk.hw,
+> -		[LPASS_CDC_TX_NPL]	= &lpass_gfm_tx_npl.hw,
+> -	},
+> -	.num = ARRAY_SIZE(aoncc_gfm_clks),
+> -};
+> -
+> -static struct clk_gfm *audiocc_gfm_clks[] = {
+> -	[LPASS_CDC_WSA_NPL]		= &lpass_gfm_wsa_npl,
+> -	[LPASS_CDC_WSA_MCLK]		= &lpass_gfm_wsa_mclk,
+> -	[LPASS_CDC_RX_NPL]		= &lpass_gfm_rx_npl,
+> -	[LPASS_CDC_RX_MCLK_MCLK2]	= &lpass_gfm_rx_mclk_mclk2,
+> -};
+> -
+> -static struct clk_hw_onecell_data audiocc_hw_onecell_data = {
+> -	.hws = {
+> -		[LPASS_CDC_WSA_NPL]	= &lpass_gfm_wsa_npl.hw,
+> -		[LPASS_CDC_WSA_MCLK]	= &lpass_gfm_wsa_mclk.hw,
+> -		[LPASS_CDC_RX_NPL]	= &lpass_gfm_rx_npl.hw,
+> -		[LPASS_CDC_RX_MCLK_MCLK2] = &lpass_gfm_rx_mclk_mclk2.hw,
+> -	},
+> -	.num = ARRAY_SIZE(audiocc_gfm_clks),
+> -};
+> -
+> -struct lpass_gfm_data {
+> -	struct clk_hw_onecell_data *onecell_data;
+> -	struct clk_gfm **gfm_clks;
+> -};
+> -
+> -static struct lpass_gfm_data audiocc_data = {
+> -	.onecell_data = &audiocc_hw_onecell_data,
+> -	.gfm_clks = audiocc_gfm_clks,
+> -};
+> -
+> -static struct lpass_gfm_data aoncc_data = {
+> -	.onecell_data = &aoncc_hw_onecell_data,
+> -	.gfm_clks = aoncc_gfm_clks,
+> -};
+> -
+> -static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
+> -{
+> -	const struct lpass_gfm_data *data;
+> -	struct device *dev = &pdev->dev;
+> -	struct clk_gfm *gfm;
+> -	struct lpass_gfm *cc;
+> -	int err, i;
+> -
+> -	data = of_device_get_match_data(dev);
+> -	if (!data)
+> -		return -EINVAL;
+> -
+> -	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+> -	if (!cc)
+> -		return -ENOMEM;
+> -
+> -	cc->base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(cc->base))
+> -		return PTR_ERR(cc->base);
+> -
+> -	err = devm_pm_runtime_enable(dev);
+> -	if (err)
+> -		return err;
+> -
+> -	err = devm_pm_clk_create(dev);
+> -	if (err)
+> -		return err;
+> -
+> -	err = of_pm_clk_add_clks(dev);
+> -	if (err < 0) {
+> -		dev_dbg(dev, "Failed to get lpass core voting clocks\n");
+> -		return err;
+> -	}
+> -
+> -	for (i = 0; i < data->onecell_data->num; i++) {
+> -		if (!data->gfm_clks[i])
+> -			continue;
+> -
+> -		gfm = data->gfm_clks[i];
+> -		gfm->priv = cc;
+> -		gfm->gfm_mux = cc->base;
+> -		gfm->gfm_mux = gfm->gfm_mux + data->gfm_clks[i]->mux_reg;
+> -
+> -		err = devm_clk_hw_register(dev, &data->gfm_clks[i]->hw);
+> -		if (err)
+> -			return err;
+> -
+> -	}
+> -
+> -	err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> -					  data->onecell_data);
+> -	if (err)
+> -		return err;
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct of_device_id lpass_gfm_clk_match_table[] = {
+> -	{
+> -		.compatible = "qcom,sm8250-lpass-aoncc",
+> -		.data = &aoncc_data,
+> -	},
+> -	{
+> -		.compatible = "qcom,sm8250-lpass-audiocc",
+> -		.data = &audiocc_data,
+> -	},
+> -	{ }
+> -};
+> -MODULE_DEVICE_TABLE(of, lpass_gfm_clk_match_table);
+> -
+> -static const struct dev_pm_ops lpass_gfm_pm_ops = {
+> -	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+> -};
+> -
+> -static struct platform_driver lpass_gfm_clk_driver = {
+> -	.probe		= lpass_gfm_clk_driver_probe,
+> -	.driver		= {
+> -		.name	= "lpass-gfm-clk",
+> -		.of_match_table = lpass_gfm_clk_match_table,
+> -		.pm = &lpass_gfm_pm_ops,
+> -	},
+> -};
+> -module_platform_driver(lpass_gfm_clk_driver);
+> -MODULE_LICENSE("GPL v2");
+> -MODULE_DESCRIPTION("QTI SM8250 LPASS Glitch Free Mux clock driver");
+> diff --git a/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h b/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+> deleted file mode 100644
+> index f5a1cfac8612..000000000000
+> --- a/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+> +++ /dev/null
+> @@ -1,11 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -
+> -#ifndef _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H
+> -#define _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H
+> -
+> -/* from AOCC */
+> -#define LPASS_CDC_VA_MCLK				0
+> -#define LPASS_CDC_TX_NPL				1
+> -#define LPASS_CDC_TX_MCLK				2
+> -
+> -#endif /* _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H */
+> diff --git a/include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h b/include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> deleted file mode 100644
+> index a1aa6cb5d840..000000000000
+> --- a/include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> +++ /dev/null
+> @@ -1,13 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -
+> -#ifndef _DT_BINDINGS_CLK_LPASS_AUDIOCC_SM8250_H
+> -#define _DT_BINDINGS_CLK_LPASS_AUDIOCC_SM8250_H
+> -
+> -/* From AudioCC */
+> -#define LPASS_CDC_WSA_NPL				0
+> -#define LPASS_CDC_WSA_MCLK				1
+> -#define LPASS_CDC_RX_MCLK				2
+> -#define LPASS_CDC_RX_NPL				3
+> -#define LPASS_CDC_RX_MCLK_MCLK2				4
+> -
+> -#endif /* _DT_BINDINGS_CLK_LPASS_AUDIOCC_SM8250_H */
+> -- 
+> 2.25.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
