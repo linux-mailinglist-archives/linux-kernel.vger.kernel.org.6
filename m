@@ -1,206 +1,115 @@
-Return-Path: <linux-kernel+bounces-316434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA2096CF8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:42:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA1496CF8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE611F25BCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:42:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15F9289A5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A79118D64C;
-	Thu,  5 Sep 2024 06:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D20918C345;
+	Thu,  5 Sep 2024 06:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="AoY7GNRq"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f89lTJeW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA653612D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C4418950D;
+	Thu,  5 Sep 2024 06:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725518515; cv=none; b=b1QBDdP6aje/doFf2JP9t2872TidDOOksONszCiSwLYtJeitpIKDkxIWPB8v/qSBJShP7NDlAG1Q33Z1Q00XWBGYSnhtMqBLPoo1NHhnwZW7ONb+OZQnXbbHZ0noYadcKBQCs3RN6JUDCG9hbv6v3hNPn1DQvJ8pka4/y5er5E8=
+	t=1725518514; cv=none; b=GIk5hLgJAbk1u2wfHQ6b+kx4LOd7U2h3fNdm25y4+7hwrbkeEGiUmANL5jYsNscKiykkjqXYDZAK/+Ln3g1cW2Mr92LUfj4d7TdA23jPVeF9yBhNw3TvI3IMxuzyZrpmJsti0uycUwrA2bL0RX4XXpUyPdBdEXprww9P0Zdy3nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725518515; c=relaxed/simple;
-	bh=lG7n72LVe0AL4lEfxJYgPmV2DYOoI4Yma3rYRIkIClk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WxOgB1V/ZSwevB09zIHI3An+uR8Wc9RzOO6KUpWscWE3PGg+ljXJqunCpDlGBPD/4PU40eo5MQ0bRYVL8hfoIm11EZJHF5ARH/6Pqkwyyn2PIhtBViqdCqMOoCK+mKxRgSmQigCYNe/wZSKh6GgoqjJf5sY1GtIE9w85kXn7ci8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=AoY7GNRq; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2021c08b95cso12738725ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1725518513; x=1726123313; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WamOeSbvE69odMjKoDapuHUBM0CdYmc1m7bY1qxzMEU=;
-        b=AoY7GNRqYjY/EJRToVgncMHUh3BNVhP4Gkq4uUi0BeI/OeXdVWTsUSX7dry39LuKXW
-         c//t+gI++Sx/3YR9E2VdRYT99hNiu2rRfCrLa2BGSfU819vLJobykjE06yrl4i9ldNXA
-         1mgcxhJ80HjUwOCisNjT8JirzlEg7XdeQONQCAqdvFkyou3xvChfShY5XT8phHPdChfd
-         wLDWJf+q5dX8TP2k+rll0NiMEVbrZkqmu792OLJcGKYiGOAgpcdckRfKCi1J9Ws6Hk+T
-         xXBnOvCVUR1Cuvaaj6zD8RfUt4SjMkJ5TgQAwrtn1Fd+JQYc+gDv5Uo3Nz0y38qgPXJR
-         /5kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725518513; x=1726123313;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WamOeSbvE69odMjKoDapuHUBM0CdYmc1m7bY1qxzMEU=;
-        b=g5n1/AQF+A6NfnOjrglQdJ/3n7HPGyyr3q6CvQCU9clBBMoN9Y1djEIMbTC9qxicLF
-         6Za/yWJU9KZJTzlR3Q9TUmtzHOeE4lU8hwGwW7n1MO1Lzy0Bd7GywSLYM2qYNzD4Evet
-         TE46QJT6WFydRPZrLxvcS9zO62qgS5jeoMvX64VjC5NlFKwkDzIVKA3cZhDb53s0XVLC
-         p5nRNwpxm75ar0Ma4Ddb1WMx9HHRFqrQJ3aHKodo93NGHxdwmfMDgaX1L5FyiEL4hpr8
-         ytncRG4SwECHeBPqWNtn2dWYTYd1W91oTFMq94CzrWQKaynHWwwlG0UhT3eP3dLNJ74A
-         ErNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNtukvc+OyZp5v82QdO1Q8nV0Zah+EGpnYOg61ZhUEyy6DDRnrcWV0wm+NVT4U6JeI9BKzrTGwRrRQrHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJWFOLW7HOKUAUeLuzbfj+VMhWzDS9uvruqH6qs8pV5DorsqE+
-	370kb1A/crapu4IyQfubXe5vqh1zABg6qTTiR3dIYJ5WmVOg/iWsecMGW9W0x8U=
-X-Google-Smtp-Source: AGHT+IHktKrTh8PvuJAL8kCtov7hkYGbJWjTkWNvKOOeXCvnLHj3NgWJCdo2tCrZ/l2NqbI1yVxHFQ==
-X-Received: by 2002:a17:903:41ca:b0:205:9112:6c2d with SMTP id d9443c01a7336-206b7d0021cmr84941475ad.5.1725518512930;
-        Wed, 04 Sep 2024 23:41:52 -0700 (PDT)
-Received: from [10.4.59.158] ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea37cc2sm22663425ad.160.2024.09.04.23.41.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 23:41:52 -0700 (PDT)
-Message-ID: <7f22c46c-2119-4de6-9d58-efcab05b5751@bytedance.com>
-Date: Thu, 5 Sep 2024 14:41:43 +0800
+	s=arc-20240116; t=1725518514; c=relaxed/simple;
+	bh=GyWi3SHv7+gICo/vkZSaYtwIGxkwHjXVRugMXx0AV/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CoyXEyw3jfVhdQ5PxO+aMMxgMNgybl7eaUG32uoPivucojRRKFtz2XNhsQ45U1U8PHwnw/t2qj1oOvfX9D1nBZAd2JMiv2D2s+e3kUMKjqg6I4JJme3HneEgxRM5p449MLlGcUPwVZ/FV/vYKxaGnMZpUQHcx1mK9RS1PvL99cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f89lTJeW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F087CC4CEC4;
+	Thu,  5 Sep 2024 06:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725518514;
+	bh=GyWi3SHv7+gICo/vkZSaYtwIGxkwHjXVRugMXx0AV/4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f89lTJeW+jL7WscKtMeXpedOjIJ6CMHOrjzWvqoNk3e/bbTBBjXzS+w9d2iwFjOe+
+	 WYhjHKOaebLkj/WmMjyovl+XM4BcsNCTrrEtjp9urrlM2U9vE/3FAXsqS02Yq7tDN3
+	 fRSJqIRL9GFHJ0UkwUKI5NR/MW6jMcBtCAW7P02kgfF0GsYK07dWxpoQ4j0wCIgFyg
+	 5v4uVdmeUMZ5slpXfT31i+QlmqSHeyCy6XLQ3GaNYmFTN7aHU0A4d1qthHmFhqXBKh
+	 FKOgouNoN3FEOZp5ZIucCO6dG5vcuctDXwC8qUEYiqvTa9AczhjM0/LxnrnU9wzvA2
+	 W6/UjJm7Uq5Rw==
+Date: Thu, 5 Sep 2024 08:41:50 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylvain Petinot <sylvain.petinot@foss.st.com>
+Cc: benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tomm.merciai@gmail.com, laurent.pinchart@ideasonboard.com
+Subject: Re: [PATCH v3 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
+Message-ID: <64mhzrr4c33uzqacbai2x2c3dekbomezenbmjowwtdtiqt43ad@d6bhvpwabimq>
+References: <20240904145238.21099-1-sylvain.petinot@foss.st.com>
+ <20240904145238.21099-2-sylvain.petinot@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/14] mm: khugepaged: collapse_pte_mapped_thp() use
- pte_offset_map_rw_nolock()
-Content-Language: en-US
-To: Muchun Song <muchun.song@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
- Vishal Moola <vishal.moola@gmail.com>, Peter Xu <peterx@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, christophe.leroy2@cs-soprasteria.com,
- LKML <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <c377dab2bf55950e6155ea051aba3887ed5a2773.1724310149.git.zhengqi.arch@bytedance.com>
- <24be821f-a95f-47f1-879a-c392a79072cc@linux.dev>
- <cd137540-ae01-46a1-93d2-062bc21b827c@bytedance.com>
- <05955456-8743-448A-B7A4-BC45FABEA628@linux.dev>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <05955456-8743-448A-B7A4-BC45FABEA628@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904145238.21099-2-sylvain.petinot@foss.st.com>
 
-
-
-On 2024/9/5 14:32, Muchun Song wrote:
+On Wed, Sep 04, 2024 at 04:52:37PM +0200, Sylvain Petinot wrote:
+> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
+> sensors. Update MAINTAINERS file.
 > 
-> 
->> On Aug 30, 2024, at 14:54, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->>
->>
->>
->> On 2024/8/29 16:10, Muchun Song wrote:
->>> On 2024/8/22 15:13, Qi Zheng wrote:
->>>> In collapse_pte_mapped_thp(), we may modify the pte and pmd entry after
->>>> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). At
->>>> this time, the write lock of mmap_lock is not held, and the pte_same()
->>>> check is not performed after the PTL held. So we should get pgt_pmd and do
->>>> pmd_same() check after the ptl held.
->>>>
->>>> For the case where the ptl is released first and then the pml is acquired,
->>>> the PTE page may have been freed, so we must do pmd_same() check before
->>>> reacquiring the ptl.
->>>>
->>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->>>> ---
->>>>   mm/khugepaged.c | 16 +++++++++++++++-
->>>>   1 file changed, 15 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>>> index 53bfa7f4b7f82..15d3f7f3c65f2 100644
->>>> --- a/mm/khugepaged.c
->>>> +++ b/mm/khugepaged.c
->>>> @@ -1604,7 +1604,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
->>>>       if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
->>>>           pml = pmd_lock(mm, pmd);
->>>> -    start_pte = pte_offset_map_nolock(mm, pmd, haddr, &ptl);
->>>> +    start_pte = pte_offset_map_rw_nolock(mm, pmd, haddr, &pgt_pmd, &ptl);
->>>>       if (!start_pte)        /* mmap_lock + page lock should prevent this */
->>>>           goto abort;
->>>>       if (!pml)
->>>> @@ -1612,6 +1612,9 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
->>>>       else if (ptl != pml)
->>>>           spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>>> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
->>>> +        goto abort;
->>>> +
->>>>       /* step 2: clear page table and adjust rmap */
->>>>       for (i = 0, addr = haddr, pte = start_pte;
->>>>            i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE, pte++) {
->>>> @@ -1657,6 +1660,16 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
->>>>       /* step 4: remove empty page table */
->>>>       if (!pml) {
->>>>           pml = pmd_lock(mm, pmd);
->>>> +        /*
->>>> +         * We called pte_unmap() and release the ptl before acquiring
->>>> +         * the pml, which means we left the RCU critical section, so the
->>>> +         * PTE page may have been freed, so we must do pmd_same() check
->>>> +         * before reacquiring the ptl.
->>>> +         */
->>>> +        if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
->>>> +            spin_unlock(pml);
->>>> +            goto pmd_change;
->>> Seems we forget to flush TLB since we've cleared some pte entry?
->>
->> See comment above the ptep_clear():
->>
->> /*
->> * Must clear entry, or a racing truncate may re-remove it.
->> * TLB flush can be left until pmdp_collapse_flush() does it.
->> * PTE dirty? Shmem page is already dirty; file is read-only.
->> */
->>
->> The TLB flush was handed over to pmdp_collapse_flush(). If a
-> 
-> But you skipped pmdp_collapse_flush().
 
-I skip it only in !pmd_same() case, at which time it must be cleared
-by other thread, which will be responsible for flushing TLB:
+> +            port {
+> +                endpoint {
+> +                    data-lanes = <1 2>;
+> +                    link-frequencies = /bits/ 64 <402000000>;
+> +                    remote-endpoint = <&csiphy0_ep>;
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e6d77bea5db5..e58deb5b3047 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21561,6 +21561,14 @@ S:	Maintained
+>  F:	Documentation/hwmon/stpddc60.rst
+>  F:	drivers/hwmon/pmbus/stpddc60.c
+>  
+> +ST VD56G3 IMAGE SENSOR DRIVER
+> +M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> +M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml
+> +F:	drivers/media/i2c/vd56g3.c
 
-CPU 0				CPU 1
-				pmd_clear
-				spin_unlock
-				flushing tlb
-spin_lock
-if (!pmd_same)	
-	goto pmd_change;
-pmdp_collapse_flush
+There is no such file.
 
-Did I miss something?
 
-> 
->> concurrent thread free the PTE page at this time, the TLB will
->> also be flushed after pmd_clear().
->>
->>>> +        }
->>>>           if (ptl != pml)
->>>>               spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>>>       }
->>>> @@ -1688,6 +1701,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
->>>>           pte_unmap_unlock(start_pte, ptl);
->>>>       if (pml && pml != ptl)
->>>>           spin_unlock(pml);
->>>> +pmd_change:
->>>>       if (notified)
->>>>           mmu_notifier_invalidate_range_end(&range);
->>>>   drop_folio:
-> 
+> +
+>  ST VGXY61 DRIVER
+>  M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+>  M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
+> @@ -23947,6 +23955,7 @@ F:	drivers/media/i2c/mt*
+>  F:	drivers/media/i2c/og*
+>  F:	drivers/media/i2c/ov*
+>  F:	drivers/media/i2c/s5*
+> +F:	drivers/media/i2c/vd56g3.c
+
+Neither this one.
+
+After fixing the paths:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
