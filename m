@@ -1,131 +1,332 @@
-Return-Path: <linux-kernel+bounces-317946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B9E96E5D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDA596E5D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01ED1F24A20
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244962871C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6CB1AE861;
-	Thu,  5 Sep 2024 22:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D881AD267;
+	Thu,  5 Sep 2024 22:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SH+sXFum"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRPpZ0rI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850A21917D9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 22:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4494114F121;
+	Thu,  5 Sep 2024 22:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725576288; cv=none; b=PVOPp/hTviqXsgMZIxzkkEkc5mrqO6XrGilNhoTvMBxvtOYGjxFqIQCP46JbaiF5ySZAHsE7+BKTKb8RAa77YMb2ofz1yMAwAwWCB44aow6dRQ38t3Vj4XbCCjGjyBwrXcIdHX6jjHJO/h9WJzJXKuRUyYKGQy2J3UQVwbQkkG4=
+	t=1725576339; cv=none; b=cX+9v9WWyBA3eLwiuLTf3kbQ49a8ZX77semunXa5E0MOxtZM93Y40i+iES4g/0BzLU2nr0hpYWoy2tO/Yi5AsKvderKGnvsXLby1hR8MK22D6U7IF6HPCyZIvzrCU4K4/MzGGgl0+veK0WW+LSraxMJAjUZoz8hPO1Rh/ijMFbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725576288; c=relaxed/simple;
-	bh=HxMXdIDgyZWWmaSLqm2XBtDbr44V1UizUHThWmxVRU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Umm0ykrpSdWjS3ju1wVcPnHu/GsJFwD3+12hbE2Vc2iOQ2osYglVcrbe9jDB/FpGn8RcLR/nUosq+hYFATWkfTT21X2VSAUQRvlyBnrGoBuYDwIHT6ywlvTI/HBWC7qVKv0L/oYviYJu8UBuQc6v19I9VVGAbNh0OwScKeo03sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SH+sXFum; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2056aa5cefcso34865ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 15:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725576287; x=1726181087; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=msUAnaP1lwyW1gCpV+BMOp+iO1+Mv6Zf+wIAvUJML+w=;
-        b=SH+sXFum01GKpQFZlvcnz6+0EB/RIVLejflKA7arT/yVTLhrT0QHKBbGgH4GgwxdSZ
-         sNCUL1Rjz7nM/20c1eShXU+c5yC7+JLJqUsY7uDDgvrgzCBXA5AFLsF0qH9bRr7Hoxmw
-         E9j/67V269vDDakArxyRGH4UR80DMpeDUeEx9HBUNASq4AOybtCkBIXFo+eyPyrg0z/N
-         hScWFf2INGz3yUk1Z8/WfrXCIb2exReOpS1T96Hw+bO4qWRJw9IHKGHBOxx56KUiFG3g
-         7Bk676KVN78If8XHiIOphNahfv5B9bU3rPZIIKRKtKzWeq8mdErMc1hq4vMaJJO1Bcdh
-         41Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725576287; x=1726181087;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=msUAnaP1lwyW1gCpV+BMOp+iO1+Mv6Zf+wIAvUJML+w=;
-        b=eCjEtr0nrOdSglhC+NjfLHQp+AcBq7SRWP0x/a3QM+SnhnYvsY1draMPAz8X2ToKZa
-         GvpR+4LrWRZZe0i1LuvG4ZnbGxTVYNdCJ1CECALOUTM2vCGP/64EO8oeE4yB2Sgdu/VT
-         XSnXIjNVwSEvx8YmBf6PW/iq6BbGlKMrUA3YfUZ8ghd/Ns23kIYBJD3PKZhNUZXGkDHi
-         som7FeeebvlpUSpjdzSxFDIEUZTGxUqGdR+FuiML0aaQJF7Jem7PVy8V375riEYWIFI+
-         9WhldBkp5FqC+zsdNbuVQqb4MkiDuzLQ0oZYmxeTax+9Hx1LE8sR0SgSaLEkIRrFmxJF
-         eQyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVL85b8y/UGnVl5HLxiNmb2ukuL53soFaW9YBIipdq3NfBuYIgOj6uCLemCfsJH2k2rrle21aVtv7pDPt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2eOJWKJiAjukkvI/KaRaL3k+HY/A1WxwD3+cNYeRjzYu3Q3D0
-	rL55GxEP3O7pu/1clhbI8CBgQh6apc5EdBxE6TbHGOc5TBOqGIABRsW11eBhqbArqAi1D4j2UUO
-	osA==
-X-Google-Smtp-Source: AGHT+IGu7boh7WxthvJLltmFfWHDlLO/mD5TiFLsFZqNCvxBIBv30uTWifEdd4AmhEE8IIP1O9B11g==
-X-Received: by 2002:a17:902:fac3:b0:201:daee:6fac with SMTP id d9443c01a7336-206f2b447e5mr173105ad.16.1725576286313;
-        Thu, 05 Sep 2024 15:44:46 -0700 (PDT)
-Received: from google.com (55.212.185.35.bc.googleusercontent.com. [35.185.212.55])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc12bcd5sm43724a91.53.2024.09.05.15.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 15:44:45 -0700 (PDT)
-Date: Thu, 5 Sep 2024 22:44:41 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Ba Jing <bajing@cmss.chinamobile.com>
-Cc: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-	surenb@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] binder: modify the comment for binder_proc_unlock
-Message-ID: <Zto0WT8biWkrv-43@google.com>
-References: <20240902052330.3115-1-bajing@cmss.chinamobile.com>
+	s=arc-20240116; t=1725576339; c=relaxed/simple;
+	bh=+VQpzNPKWK9Gs6pPPjuKIh62rHIX/AnfYSyWJgGlf8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XACq0odyQoRMBtALhKMnSGIIG9yi7pePqxEVPg4xB/LouNBu7YYLERutfwNtiKR888bSOJmhrzdpphDH1+1jcdIijcSYQfZeazyEL52ARTiRcODIX2zLpEHGWEhjKdWsFaUcKw6S9Nm5km+LhoELeeSogLGZr1KKlRg/4IhVhFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRPpZ0rI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 606A6C4CEC3;
+	Thu,  5 Sep 2024 22:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725576338;
+	bh=+VQpzNPKWK9Gs6pPPjuKIh62rHIX/AnfYSyWJgGlf8o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bRPpZ0rIthZ9UAu5TNdXSfqF9Sy/SynP3IiAg1cTCwO0oGpO2qy7mRxrhMmoGLmCF
+	 6+StOZOrmLXJvnG/+iNMcchiqkwk5IuWmCnqUvHhNH27Ku4aAB/duqe1tz/cW6ab+t
+	 SKBHbhbdP+S7+o/GM3csS3E9CFGU/9xoxJKKo+GzC7stII/VJd4pVONC2YH2o0YePa
+	 V7sQJYRWZeNGz9rR6EVoaeZTCvUDhSpUpUgdd4BuqkKX/67PAHPirSKzpJeYL4UxVw
+	 NjXJIYlMxStKWlHaEYG9aOs1qE95V3Mb6OzlCoVRgh3osPKXljPbViWQ6tvgsgjVTg
+	 DbbvPA5EfxMSQ==
+From: Jakub Kicinski <kuba@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pabeni@redhat.com
+Subject: [GIT PULL] Networking for v6.11-rc7
+Date: Thu,  5 Sep 2024 15:45:37 -0700
+Message-ID: <20240905224537.2051389-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902052330.3115-1-bajing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 01:23:30PM +0800, Ba Jing wrote:
-> Modify the comment for binder_proc_unlock() to clearly indicate which 
-> spinlock it releases and to better match the acquire comment block 
-> in binder_proc_lock().
-> 
-> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
-> ---
-> Notes:
-> v1: https://lore.kernel.org/all/20240830073743.2052-1-bajing@cmss.chinamobile.com/
-> 
-> v2: Reword commit log per suggestions from cmllamas@
-> https://lore.kernel.org/all/20240902013636.1739-1-bajing@cmss.chinamobile.com/
-> 
-> v3: Wrap commit message. Add version history.
-> https://lore.kernel.org/all/20240902025720.2334-1-bajing@cmss.chinamobile.com/
-> 
-> v4: Modify the commit information.
-> https://lore.kernel.org/all/20240902033754.2708-1-bajing@cmss.chinamobile.com/
-> 
-> v5: Change the format and wrap the changelog text at 72 columns.
-> 
->  drivers/android/binder.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index fc55b5d0e4f3..578861d57045 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -277,7 +277,7 @@ _binder_proc_lock(struct binder_proc *proc, int line)
->  }
->  
->  /**
-> - * binder_proc_unlock() - Release spinlock for given binder_proc
-> + * binder_proc_unlock() - Release outer lock for given binder_proc
->   * @proc:                struct binder_proc to acquire
->   *
->   * Release lock acquired via binder_proc_lock()
-> -- 
-> 2.33.0
+Hi Linus!
 
-Thanks,
+The following changes since commit 0dd5dd63ba91d7bee9d0fbc2a6dc73e595391b4c:
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
+  Merge tag 'net-6.11-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-08-30 06:14:39 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.11-rc7
+
+for you to fetch changes up to 031ae72825cef43e4650140b800ad58bf7a6a466:
+
+  ila: call nf_unregister_net_hooks() sooner (2024-09-05 14:57:12 -0700)
+
+----------------------------------------------------------------
+Including fixes from can, bluetooth and wireless.
+
+No known regressions at this point. Another calm week, but chances are
+that has more to do with vacation season than the quality of our work.
+
+Current release - new code bugs:
+
+ - smc: prevent NULL pointer dereference in txopt_get
+
+ - eth: ti: am65-cpsw: number of XDP-related fixes
+
+Previous releases - regressions:
+
+ - Revert "Bluetooth: MGMT/SMP: Fix address type when using SMP over
+   BREDR/LE", it breaks existing user space
+
+ - Bluetooth: qca: if memdump doesn't work, re-enable IBS to avoid
+   later problems with suspend
+
+ - can: mcp251x: fix deadlock if an interrupt occurs during mcp251x_open
+
+ - eth: r8152: fix the firmware communication error due to use
+   of bulk write
+
+ - ptp: ocp: fix serial port information export
+
+ - eth: igb: fix not clearing TimeSync interrupts for 82580
+
+ - Revert "wifi: ath11k: support hibernation", fix suspend on Lenovo
+
+Previous releases - always broken:
+
+ - eth: intel: fix crashes and bugs when reconfiguration and resets
+   happening in parallel
+
+ - wifi: ath11k: fix NULL dereference in ath11k_mac_get_eirp_power()
+
+Misc:
+
+ - docs: netdev: document guidance on cleanup.h
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+
+----------------------------------------------------------------
+Arkadiusz Kubalewski (1):
+      tools/net/ynl: fix cli.py --subscribe feature
+
+Baochen Qiang (3):
+      wifi: ath11k: fix NULL pointer dereference in ath11k_mac_get_eirp_power()
+      Revert "wifi: ath11k: restore country code during resume"
+      Revert "wifi: ath11k: support hibernation"
+
+Breno Leitao (1):
+      net: dqs: Do not use extern for unused dql_group
+
+Cong Wang (1):
+      tcp_bpf: fix return value of tcp_bpf_sendmsg()
+
+Daiwei Li (1):
+      igb: Fix not clearing TimeSync interrupts for 82580
+
+Dan Carpenter (1):
+      igc: Unlock on error in igc_io_resume()
+
+David S. Miller (1):
+      Merge branch 'mctp-serial-tx-escapes'
+
+Dawid Osuchowski (1):
+      ice: Add netif_device_attach/detach into PF reset flow
+
+Douglas Anderson (1):
+      Bluetooth: qca: If memdump doesn't work, re-enable IBS
+
+Eric Dumazet (1):
+      ila: call nf_unregister_net_hooks() sooner
+
+Guillaume Nault (1):
+      bareudp: Fix device stats updates.
+
+Hayes Wang (1):
+      r8152: fix the firmware doesn't work
+
+Jakub Kicinski (7):
+      MAINTAINERS: exclude bluetooth and wireless DT bindings from netdev ML
+      Merge branch '1GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+      Merge tag 'linux-can-fixes-for-6.11-20240830' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
+      Merge tag 'for-net-2024-08-30' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+      Merge tag 'wireless-2024-09-04' of git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
+      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+      docs: netdev: document guidance on cleanup.h
+
+Jamie Bainbridge (1):
+      selftests: net: enable bind tests
+
+Jens Emil Schulz Østergaard (1):
+      net: microchip: vcap: Fix use-after-free error in kunit test
+
+Jeongjun Park (1):
+      net/smc: prevent NULL pointer dereference in txopt_get
+
+Jinjie Ruan (1):
+      net: phy: Fix missing of_node_put() for leds
+
+Jonas Gorski (1):
+      net: bridge: br_fdb_external_learn_add(): always set EXT_LEARN
+
+Kalle Valo (1):
+      Merge tag 'ath-current-20240903' of git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath
+
+Kuniyuki Iwashima (2):
+      can: bcm: Remove proc entry when dev is unregistered.
+      fou: Fix null-ptr-deref in GRO.
+
+Larysa Zaremba (6):
+      ice: move netif_queue_set_napi to rtnl-protected sections
+      ice: protect XDP configuration with a mutex
+      ice: check for XDP rings instead of bpf program when unconfiguring
+      ice: check ICE_VSI_DOWN under rtnl_lock when preparing for reset
+      ice: remove ICE_CFG_BUSY locking from AF_XDP code
+      ice: do not bring the VSI up, if it was down before the XDP setup
+
+Luiz Augusto von Dentz (4):
+      Bluetooth: hci_sync: Introduce hci_cmd_sync_run/hci_cmd_sync_run_once
+      Bluetooth: MGMT: Fix not generating command complete for MGMT_OP_DISCONNECT
+      Revert "Bluetooth: MGMT/SMP: Fix address type when using SMP over BREDR/LE"
+      Bluetooth: MGMT: Ignore keys being loaded with invalid type
+
+Marc Kleine-Budde (4):
+      Merge patch series "can: m_can: Fix polling and other issues"
+      can: mcp251xfd: fix ring configuration when switching from CAN-CC to CAN-FD mode
+      can: mcp251xfd: mcp251xfd_ring_init(): check TX-coalescing configuration
+      Merge patch series "can: mcp251xfd: fix ring/coalescing configuration"
+
+Markus Schneider-Pargmann (7):
+      can: m_can: Reset coalescing during suspend/resume
+      can: m_can: Remove coalesing disable in isr during suspend
+      can: m_can: Remove m_can_rx_peripheral indirection
+      can: m_can: Do not cancel timer from within timer
+      can: m_can: disable_all_interrupts, not clear active_interrupts
+      can: m_can: Reset cached active_interrupts on start
+      can: m_can: Limit coalescing to peripheral instances
+
+Martin Jocic (1):
+      can: kvaser_pciefd: Use a single write when releasing RX buffers
+
+Matt Johnston (2):
+      net: mctp-serial: Add kunit test for next_chunk_len()
+      net: mctp-serial: Fix missing escapes on transmit
+
+Oliver Neukum (1):
+      usbnet: modern method to get random MAC
+
+Paolo Abeni (2):
+      Merge branch 'net-ethernet-ti-am65-cpsw-fix-xdp-implementation'
+      Merge branch 'ptp-ocp-fix-serial-port-information-export'
+
+Pawel Dembicki (1):
+      net: dsa: vsc73xx: fix possible subblocks range of CAPT block
+
+Roger Quadros (3):
+      net: ethernet: ti: am65-cpsw: fix XDP_DROP, XDP_TX and XDP_REDIRECT
+      net: ethernet: ti: am65-cpsw: Fix NULL dereference on XDP_TX
+      net: ethernet: ti: am65-cpsw: Fix RX statistics for XDP_TX and XDP_REDIRECT
+
+Sean Anderson (1):
+      net: xilinx: axienet: Fix race in axienet_stop
+
+Simon Arlott (1):
+      can: mcp251x: fix deadlock if an interrupt occurs during mcp251x_open
+
+Simon Horman (2):
+      can: m_can: Release irq on error in m_can_open
+      MAINTAINERS: wifi: cw1200: add net-cw1200.h
+
+Souradeep Chakrabarti (1):
+      net: mana: Fix error handling in mana_create_txq/rxq's NAPI cleanup
+
+Stephen Hemminger (1):
+      sch/netem: fix use after free in netem_dequeue
+
+Toke Høiland-Jørgensen (1):
+      sched: sch_cake: fix bulk flow accounting logic for host fairness
+
+Tze-nan Wu (1):
+      bpf, net: Fix a potential race in do_sock_getsockopt()
+
+Vadim Fedorenko (4):
+      ptp: ocp: convert serial ports to array
+      ptp: ocp: adjust sysfs entries to expose tty information
+      docs: ABI: update OCP TimeCard sysfs entries
+      MAINTAINERS: fix ptp ocp driver maintainers address
+
+ Documentation/ABI/testing/sysfs-timecard           |  33 ++--
+ Documentation/process/maintainer-netdev.rst        |  16 ++
+ MAINTAINERS                                        |   5 +-
+ drivers/bluetooth/hci_qca.c                        |   1 +
+ drivers/net/bareudp.c                              |  22 +--
+ drivers/net/can/kvaser_pciefd.c                    |  18 +-
+ drivers/net/can/m_can/m_can.c                      | 116 +++++++-----
+ drivers/net/can/spi/mcp251x.c                      |   2 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-ram.c      |  11 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c     |  34 +++-
+ drivers/net/dsa/vitesse-vsc73xx-core.c             |  10 +-
+ drivers/net/ethernet/intel/ice/ice.h               |   2 +
+ drivers/net/ethernet/intel/ice/ice_base.c          |  11 +-
+ drivers/net/ethernet/intel/ice/ice_lib.c           | 201 ++++++++-------------
+ drivers/net/ethernet/intel/ice/ice_lib.h           |  10 +-
+ drivers/net/ethernet/intel/ice/ice_main.c          |  54 ++++--
+ drivers/net/ethernet/intel/ice/ice_xsk.c           |  18 +-
+ drivers/net/ethernet/intel/igb/igb_main.c          |  10 +
+ drivers/net/ethernet/intel/igc/igc_main.c          |   1 +
+ .../net/ethernet/microchip/vcap/vcap_api_kunit.c   |  14 +-
+ drivers/net/ethernet/microsoft/mana/mana_en.c      |  22 ++-
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c           |  82 +++++----
+ drivers/net/ethernet/xilinx/xilinx_axienet.h       |   3 +
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c  |   8 +
+ drivers/net/mctp/Kconfig                           |   5 +
+ drivers/net/mctp/mctp-serial.c                     | 113 +++++++++++-
+ drivers/net/phy/phy_device.c                       |   2 +
+ drivers/net/usb/r8152.c                            |  17 +-
+ drivers/net/usb/usbnet.c                           |  11 +-
+ drivers/net/wireless/ath/ath11k/ahb.c              |   4 +-
+ drivers/net/wireless/ath/ath11k/core.c             | 119 ++++--------
+ drivers/net/wireless/ath/ath11k/core.h             |   4 -
+ drivers/net/wireless/ath/ath11k/hif.h              |  12 +-
+ drivers/net/wireless/ath/ath11k/mac.c              |   1 +
+ drivers/net/wireless/ath/ath11k/mhi.c              |  12 +-
+ drivers/net/wireless/ath/ath11k/mhi.h              |   3 +-
+ drivers/net/wireless/ath/ath11k/pci.c              |  44 +----
+ drivers/net/wireless/ath/ath11k/qmi.c              |   2 +-
+ drivers/ptp/ptp_ocp.c                              | 168 ++++++++++-------
+ include/linux/bpf-cgroup.h                         |   9 -
+ include/net/bluetooth/hci_core.h                   |   5 -
+ include/net/bluetooth/hci_sync.h                   |   4 +
+ include/net/mana/mana.h                            |   2 +
+ net/bluetooth/hci_conn.c                           |   6 +-
+ net/bluetooth/hci_sync.c                           |  42 ++++-
+ net/bluetooth/mgmt.c                               | 144 +++++++--------
+ net/bluetooth/smp.c                                |   7 -
+ net/bridge/br_fdb.c                                |   6 +-
+ net/can/bcm.c                                      |   4 +
+ net/core/net-sysfs.c                               |   2 +-
+ net/ipv4/fou_core.c                                |  29 ++-
+ net/ipv4/tcp_bpf.c                                 |   2 +-
+ net/ipv6/ila/ila.h                                 |   1 +
+ net/ipv6/ila/ila_main.c                            |   6 +
+ net/ipv6/ila/ila_xlat.c                            |  13 +-
+ net/sched/sch_cake.c                               |  11 +-
+ net/sched/sch_netem.c                              |   9 +-
+ net/smc/smc.h                                      |   3 +
+ net/smc/smc_inet.c                                 |   8 +-
+ net/socket.c                                       |   4 +-
+ tools/net/ynl/lib/ynl.py                           |   7 +-
+ tools/testing/selftests/net/Makefile               |   3 +-
+ 62 files changed, 867 insertions(+), 681 deletions(-)
 
