@@ -1,117 +1,191 @@
-Return-Path: <linux-kernel+bounces-316600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CBC96D1CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 271BC96D1D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3087328242C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD9A281DE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724251990CE;
-	Thu,  5 Sep 2024 08:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878921946C2;
+	Thu,  5 Sep 2024 08:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RpxZhktJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gJ+cdTu7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ki1ZTvxK"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A211A198E9F;
-	Thu,  5 Sep 2024 08:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3D41991C8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524147; cv=none; b=qG3neMjfMFXyHfmRbLq5WPuGIdzZoN0lqTOMl8KziBFlwp19PsaOq2163GJSz3Lo4W5OKjOg4OTWwCxn3b8/vzTUysL55vOsZ8deUpobZPEABSaUe8yBX0H8GhNsFnO8JOSWLclIk4h+IQmiwlFFu+JNE1FzplmFgb/mJBBsQWY=
+	t=1725524160; cv=none; b=XUwJTbvJ6KpHlnG8nzHfJ2112e0nW8Cd/T9tRXoatTzW86WZTofSuzrT8aqg29igIjQBBYjYl1UQrms1SP/HpItR05JBXiRe5jcyuRKYwwA/n/4YKPpk3bSwoN05ZtdpZWJmR13+/fmZZQBAI1ayTmhzRynXTUjj0vh7cgsyZBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524147; c=relaxed/simple;
-	bh=IGpqu0AbEfFcQHlaTnL8FB0oZgedhXai5ctdiIf//jQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NHBUtSz7YM62WWOxrbhTlLB+Sktzv035iJ8mWOM3iYiySqa39lr9MB9MBXXmyyV3Hc5XL3D8PJodcN5fr5p5ViGdGtiobDqGe/MW9boIQu9cFIayjMbyP4uDxlt/CSv/b2CknDTXXn5hLiexz65r53fifOondba4e31naB5xTWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RpxZhktJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gJ+cdTu7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725524142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zj6M6KVALb8ItmdIZXewANkqyGRtAWppUkT1S7x+yxo=;
-	b=RpxZhktJFaMziweFeqWFY2ODP3AELVAapvPbAS32isz7DMRXQqqnfCnAXIG/vo+VVM5lqz
-	Bk07pz2LTDwxIF+lCqZa2EAvM8gQwSKbpnhs6Yr+pzEpKE1rQIceApTWy2xjZeJXxh13gI
-	tBhSQTp8ddqd3XfBuptTKhV1P8vJuEg+fYF2kMCEBXgbfWK+reBrmECSl8HT+tsfqFSO1j
-	NGAPMTWLEAijIjdIaswglTcpK4wmajtio4YZyJaOumZu1fQVLuYtaniJYrVzt3ifqQZn4W
-	0BBvJXXDdO4+SesppsBktnYamqG7T3a/XJ9sfQpFvP0z0AVensFF9+GeXGGclA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725524142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zj6M6KVALb8ItmdIZXewANkqyGRtAWppUkT1S7x+yxo=;
-	b=gJ+cdTu79Soa0DwW49qt4TU7i4Dk579rmL2O7XO7J6D42aGnObjvdAMzpxjs3nwR2mDmB2
-	F9Xe4RoO0QR2EeDQ==
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- netdev@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 12/15] iopoll/regmap/phy/snd: Fix comment referencing
- outdated timer documentation
-In-Reply-To: <a269cf5e-2ba0-40c3-a7f2-9afa0e8c6926@lunn.ch>
-References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
- <20240904-devel-anna-maria-b4-timers-flseep-v1-12-e98760256370@linutronix.de>
- <a269cf5e-2ba0-40c3-a7f2-9afa0e8c6926@lunn.ch>
-Date: Thu, 05 Sep 2024 10:15:42 +0200
-Message-ID: <87y1464itt.fsf@somnus>
+	s=arc-20240116; t=1725524160; c=relaxed/simple;
+	bh=icEa2sW0vAQa973BQSvnfSg86nhC1mMPXtOnkbj4Kvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NolXbnndNCGXSMO5b7oL1m3KuG2X8PolrUlvVum99DqN59bmOi5OB/gkdkztBcSI465xu10nstlLZ6JYJAQ7Z6Cnvqb/A5EJ8UjMUoiEbnTeDonKUQNDAYj/CyV/wPFBGZ5x3rY8vJFxMNVu+cpZt8+kHJFPuKa1GOZAK2BRV00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ki1ZTvxK; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-846bd770d9cso309420241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:15:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725524156; x=1726128956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k0rSmKjg6Zyu63XwLKpT0uVVvkdtwY/RJAX7lMT3kHE=;
+        b=ki1ZTvxKRrHDThv+Qayzt4FxsgYe4eCp6kB1FCJEiNFJMt88/yxwRi+xSZ1NQNHZck
+         RrDhkrTn/jVYDKVARD4rFhEObPzry5IpIIkKZf7HOu3KL4n2yxhP10zm6ja5Xohqsu3t
+         qX+gRjgJN7cnhVLBGAf8de7YxtylnktLVCuCL2inxtUfgy1Dl+ZH1OtGvMiIYNY/D52Y
+         SYuOQTUtSvGp0ciT0vxSjmRd1pDHG2SZ/INapLIL9BWesIXj81mfFhOjiyggaXunrqyS
+         XglU3Os55yXGRfQ8cUDthjmhbjnQfWZHZCOe3oVHVqSiiQKp0vKlwybhUOQNN0TG9WPw
+         BZiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725524156; x=1726128956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k0rSmKjg6Zyu63XwLKpT0uVVvkdtwY/RJAX7lMT3kHE=;
+        b=TLwcfK4U9plmmg2zbk3IQfAmlmUNNpEi5gjqoywiUFouuDvUVMMDU1oi1Mf6JwrW3Q
+         xkxHgbURMGzLQQlQfMCb9sv8eCdp/9miYE5/BXiUMADDfDDSihhU4a+tJqWqoMgU3aVd
+         yxY674BQSPO/RapbXFL76g/5xzZKkm6HpsgG1GqtZt/jG+XAQy1q4UTTVhJNRJbhfZqt
+         7tPJhwdWAWxJDRQ2J4U5HkADdlwwjmS1ce8cNppde5zIsHIFf5ktUrzynzAoVvcE6xVj
+         +gc00Q+nlZ6rjSln+PPag5Ai2hjPoFBTO2CZnLfoi7zNAldf0QkpAruPqsoVBH6pZ6Mu
+         cQVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSATuvaSgX3z+OeZWf0BbvzULqHpUqyYkabJtCn/rvU73M7YivpKezFApV70LcFstF2YGk/4Uo3vFXAnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxou5nCwpowbfb8SXdP2sZX6jQ9aJay8dW1nKwhKoOWFyLp8ib7
+	07qob2YyfKVhtCWQxlFNmfLcFW4gSl2nPZFNn7N5CyNk3ECVmJFCJmFIrXUSyTqL/0T4JUa8icN
+	KotVPBX2J7SxBoENI6voy+MbzaFoHJ1gtKXRHuQ==
+X-Google-Smtp-Source: AGHT+IFEH+lyNDFzGtkVSG1R/MllAqnAbnshuBp7OLXzYpkWk9kP5U+zafpVUGNBEIuYZPwN0AjC2CdInBVcFvp2Bi0=
+X-Received: by 2002:a05:6102:c4c:b0:497:921:b799 with SMTP id
+ ada2fe7eead31-49bba766182mr3164053137.11.1725524155939; Thu, 05 Sep 2024
+ 01:15:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240904072718.1143440-1-aardelean@baylibre.com>
+ <20240904072718.1143440-8-aardelean@baylibre.com> <tpl7wufkyog2bvnhg36keczeokadxkqkcoiy5qjscsoosxsiql@6a3ghbo4pc7f>
+In-Reply-To: <tpl7wufkyog2bvnhg36keczeokadxkqkcoiy5qjscsoosxsiql@6a3ghbo4pc7f>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Thu, 5 Sep 2024 11:15:44 +0300
+Message-ID: <CA+GgBR-oER6S3iqJR_T781fT-qxH2awPwdD7ubKxTZsC_RWn0g@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
+ compatible strings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andrew Lunn <andrew@lunn.ch> writes:
-
->> diff --git a/include/linux/phy.h b/include/linux/phy.h
->> index 6b7d40d49129..b09490e08365 100644
->> --- a/include/linux/phy.h
->> +++ b/include/linux/phy.h
->> @@ -1374,11 +1374,12 @@ int phy_read_mmd(struct phy_device *phydev, int devad, u32 regnum);
->>   * @regnum: The register on the MMD to read
->>   * @val: Variable to read the register into
->>   * @cond: Break condition (usually involving @val)
->> - * @sleep_us: Maximum time to sleep between reads in us (0
->> - *            tight-loops).  Should be less than ~20ms since usleep_range
->> - *            is used (see Documentation/timers/timers-howto.rst).
->> + * @sleep_us: Maximum time to sleep between reads in us (0 tight-loops). Please
->> + *            read usleep_range() function description for details and
->> + *            limitations.
->>   * @timeout_us: Timeout in us, 0 means never timeout
->>   * @sleep_before_read: if it is true, sleep @sleep_us before read.
->> + *
->>   * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
+On Thu, Sep 5, 2024 at 9:39=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
 >
-> I know it is not in scope for what you are trying to fix, but there
-> should be a : after Returns
+> On Wed, Sep 04, 2024 at 10:27:15AM +0300, Alexandru Ardelean wrote:
+> > @@ -114,6 +124,45 @@ properties:
+> >        assumed that the pins are hardwired to VDD.
+> >      type: boolean
+> >
+> > +patternProperties:
+> > +  "^channel@([1-8])$":
 >
-> * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
-
-I have to do a v2 of the series anyway. So if it helps, I can add the
-missing colon after "Returns" in all those function descriptions I touch
-and expand the commit message by:
-
-  While at it fix missing colon after "Returns" in function description
-  as well.
-
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Drop ()
 >
->     Andrew
+> > +    type: object
+> > +    $ref: adc.yaml
+> > +    unevaluatedProperties: false
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description:
+> > +          The channel number, as specified in the datasheet (from 1 to=
+ 8).
+> > +        minimum: 1
+> > +        maximum: 8
+> > +
+> > +      diff-channels:
+> > +        description:
+> > +          Each channel can be configured as a differential bipolar cha=
+nnel.
+> > +          The ADC uses the same positive and negative inputs for this.
+> > +          This property must be specified as 'reg' (or the channel num=
+ber) for
+> > +          both positive and negative inputs (i.e. diff-channels =3D <r=
+eg reg>).
+> > +        items:
+> > +          minimum: 1
+> > +          maximum: 8
+> > +
+> > +      bipolar:
+> > +        description:
+> > +          Each channel can be configured as a unipolar or bipolar sing=
+le-ended.
+> > +          When this property is not specified, it's unipolar, so the A=
+DC will
+> > +          have only the positive input wired.
+> > +          For this ADC the 'diff-channels' & 'bipolar' properties are =
+mutually
+> > +          exclusive.
+> > +
+> > +    oneOf:
+> > +      - required:
+> > +          - reg
+> > +          - diff-channels
+> > +      - required:
+> > +          - reg
+> > +          - bipolar
+>
+> rather:
+>
+> required:
+>   - reg
+>
+> oneOf:
+>  - required:
+>      - diff-channels
+>  - required:
+>     - bipolar
 
-Thanks,
+Ack
 
-        Anna-Maria
+>
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -170,6 +219,17 @@ allOf:
+> >          adi,conversion-start-gpios:
+> >            maxItems: 1
+> >
+> > +  - if:
+> > +      not:
+> > +        properties:
+> > +          compatible:
+> > +            enum:
+> > +              - adi,ad7606c-16
+> > +              - adi,ad7606c-18
+> > +    then:
+> > +      patternProperties:
+> > +        "^channel@[1-8]+$": false
+>
+>
+> You have two different patterns here and in top-level. Please keep one:
+> ^channel@[1-8]$
+
+Ah.
+Good point.
+
+>
+>
+> Best regards,
+> Krzysztof
+>
 
