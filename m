@@ -1,113 +1,88 @@
-Return-Path: <linux-kernel+bounces-316683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9EA96D2B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:03:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC8A96D2BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88967B264F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCD01F22EA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E083195FE3;
-	Thu,  5 Sep 2024 09:03:32 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA437195B37;
+	Thu,  5 Sep 2024 09:05:41 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDF6194A48;
-	Thu,  5 Sep 2024 09:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF2E194ACB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725527011; cv=none; b=ddaalKyz1nZWiFz/dDJgwSVTzmCj6LJzS2MCVeFH7Y21eH2LZa0Cwi3ktjVj4LETp4cEBA5qILRNvjmrNHUm1ZutJL5JlkqM/3DuWgvTLXuut4N02B9yl03T7R8eZfwBqXvsXwpyHQKFvqGfmUGj7/5slsO71l3/9/KhE3Upwpo=
+	t=1725527141; cv=none; b=K64ups1wDw/FR1055+trLITRJxddSSwkLIaw8ijnz+yh4jK/5UbvT5IMOztuneWec9zDC7KtXRXjgNYTUwlkbw+RlPU8HPc9R7L/knwp1MWZT0eih3V+KmKDXLU0gjCo4TIRG6bOUenY+zljDLygnJriEoaat/SoWctXtWEET0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725527011; c=relaxed/simple;
-	bh=h5agUITKl/cgeeW4DQgsZL5oeRnclrtv/Skmb+M64no=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odi6kdbVRM5/S6L6DUwSH0LO5aWO34a1g7GEIkGf9y3clhj6T2p5wubxIvOoGAwm9P4H5iIACPcKjxUTqi7dNW4WvSFHrpQUyjA9knZoa64Jtq67/jgIB9+2UDRNCMnefxPS2TJJzctqiEY2EI7N8WgZPUb4OK4qn8XrW1DZmO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso671593a12.1;
-        Thu, 05 Sep 2024 02:03:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725527008; x=1726131808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8aILp+FUNY89ZcVUn5gP5CXyAWZIDPOfD7aHJXZkQOc=;
-        b=iJTxhDXDsJbuTvkiWIsUJCdX258xO3YWAYjATT46+ErQqVTN23xng2sE6atRvsOemP
-         CI89gWqljqNT2StnheMiHv/PCj73e0kAkRdowx/3fNB9KhZ3Fq6SP12YUxl6VHQyLTk0
-         ajL/XeBi/kAStiOZb8ofWOIwhqtg0wKRBtgX3qLDlPdJtMsjUX2t7xanLZGvZvdreZP5
-         n+xlnHdTM6yfRMJ45JULXBCf3lg0nRyC6XYSxtddVFU6zVNlSvxtGZWxxrBOVMZ688wK
-         fEzP1+IKFu6vdoW1ZUXS3Il4T2ZJqLt7OSj8mBMQign5o3nmuh1vPf9SwG0jNqccQoEC
-         CUOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVH4Ns3ldqPP948rsxHURyDieHgDPmr24Ia0CUM0Ub8Y0QHJORmFzV0yfCMOXqNS9JlyfEjTlIWZvzcDB0=@vger.kernel.org, AJvYcCXniA+eDL5MyZL4zohBqA4QclcLhDmrhedMNksZjNQeyezH7jwAZ/X3LweSKNEwc0iCFBeob8xD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQnD7rk5gCFvyuk5L5issjtcVwuTNbAYK+Vy5tHTzWSASKIx28
-	8II1x+HRvckCwYF2ZV0vsXhZXvc2Tg1kE/RisyEIUkN97kp9Z3nK
-X-Google-Smtp-Source: AGHT+IEtWO6srusMymzDIGFokmJ8brm6cWt1HRzsrksU5NF9IzLD4bD5OMrwEbqRdmyo0ze0Ti7teQ==
-X-Received: by 2002:a05:6402:26d1:b0:5c2:5f0a:4a45 with SMTP id 4fb4d7f45d1cf-5c25f0a4c3emr7211261a12.31.1725527007435;
-        Thu, 05 Sep 2024 02:03:27 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-010.fbsv.net. [2a03:2880:30ff:a::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc529241sm960676a12.11.2024.09.05.02.03.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 02:03:26 -0700 (PDT)
-Date: Thu, 5 Sep 2024 02:03:21 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	rbc@meta.com, horms@kernel.org,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
-Message-ID: <20240905-sassy-aboriginal-crocodile-cfadde@devvm32600>
-References: <20240712115325.54175-1-leitao@debian.org>
- <20240714033803-mutt-send-email-mst@kernel.org>
- <ZpUHEszCj16rNoGy@gmail.com>
- <Ztc5QllkqaKZsaoN@LeoBras>
+	s=arc-20240116; t=1725527141; c=relaxed/simple;
+	bh=fou1ky3YJ3LdwC1iJq51HNSAs17I74x2iOFBBPnmKnM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X7fPQziovbkQTnMhc1SPeVX7ylaH1+XaxsxYPkGJeJDsycvoW3qA7CGrSdAlygSuy/MrLJB7f9I/X+1mgt9CPIAmhItigWzB43ODACc6843pH7HNP+gnJiKcU4mgag4hyqcUzj3zViyjj6rHhlJNmo1iBYleqCkUXzx3xY/Q/Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 48595GVo077613;
+	Thu, 5 Sep 2024 17:05:16 +0800 (+08)
+	(envelope-from Xuewen.Yan@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WztYc23KYz2PMKkv;
+	Thu,  5 Sep 2024 16:58:12 +0800 (CST)
+Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Thu, 5 Sep 2024 17:05:14 +0800
+From: Xuewen Yan <xuewen.yan@unisoc.com>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <longman@redhat.com>
+CC: <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+        <mgorman@suse.de>, <vschneid@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <ke.wang@unisoc.com>,
+        <di.shen@unisoc.com>, <xuewen.yan94@gmail.com>
+Subject: [RFC PATCH] sched: Do not copy user_cpus_ptr when parent is reset_on_fork
+Date: Thu, 5 Sep 2024 17:04:58 +0800
+Message-ID: <20240905090458.1173-1-xuewen.yan@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ztc5QllkqaKZsaoN@LeoBras>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 48595GVo077613
 
-Hello Leonardo, good to see you here,
+Now, the task's user_cpus_ptr would dup from parent's user_cpus_ptr.
+It is better reset the user_cpus_ptr when parent's reset_on_fork
+is set.
 
-On Tue, Sep 03, 2024 at 01:28:50PM -0300, Leonardo Bras wrote:
-> Please help me check if the following is correct:
-> ###
-> Any tree which includes df133f3f9625 ("virtio_net: bulk free tx skbs") 
-> should also include your patch, since it fixes stuff in there.
-> 
-> The fact that the warning was only made visible in 
-> bdacf3e34945 ("net: Use nested-BH locking for napi_alloc_cache.")
-> does not change the fact that it was already present before.
-> 
-> Also, having bdacf3e34945 is not necessary for the backport, since
-> it only made the bug visible.
-> ###
-> 
-> Are above statements right?
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+---
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That is exactly correct.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f3951e4a55e5..2fbae00cd1dc 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2666,7 +2666,7 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
+ 	 * do_set_cpus_allowed().
+ 	 */
+ 	raw_spin_lock_irqsave(&src->pi_lock, flags);
+-	if (src->user_cpus_ptr) {
++	if (src->user_cpus_ptr && !src->sched_reset_on_fork) {
+ 		swap(dst->user_cpus_ptr, user_mask);
+ 		cpumask_copy(dst->user_cpus_ptr, src->user_cpus_ptr);
+ 	}
+-- 
+2.25.1
 
-The bug was introduced by df133f3f9625 ("virtio_net: bulk free tx
-skbs"), but it was not visible until bdacf3e34945 ("net: Use nested-BH
-locking for napi_alloc_cache.") landed.
-
-You don't need bdacf3e34945 ("net: Use nested-BH locking for
-napi_alloc_cache.") patch backported if you don't want to.
-
-I hope it helps,
---breno
 
