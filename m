@@ -1,268 +1,217 @@
-Return-Path: <linux-kernel+bounces-316624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3907C96D20F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438C996D217
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94B8EB221F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6DC21F22BE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF301925BB;
-	Thu,  5 Sep 2024 08:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85BC194AE2;
+	Thu,  5 Sep 2024 08:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjgIlVHQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c8qPTTUn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F49B17BEC3
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5860919340B;
+	Thu,  5 Sep 2024 08:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524826; cv=none; b=sChucwuWFJ/7V+B1qnkNjor6sdwmtmUAM45CfmEwlCdHWypRQN6mfCpKnjxA+ELkBs6v2zIywHqZGzR/1UIpj4T30EYiDI4PwnbRF6f47VsvP1CzEe6row3d+s1/yKkEUmlBMK+jBHprnurX9XbV7H9BD1zHQ095lw4uDwJmyPg=
+	t=1725524858; cv=none; b=SFi9CtlzI8plH5RE6Kjpbqx0bsjqkgmLcufKJf+nk9tZ6VTAEBkJgl/89a+Sx0L3AEBg95vc3eLgyPmpF4y5EDDU0itifyaJAFhHcxKoqX+XBVw5GV+8DgzX+UE+/oyueiP0lC9ppRzPuMK9nUltpy1+0GieDdv9xlMKSxDsO8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524826; c=relaxed/simple;
-	bh=cWqX3P2HgWhytDM9e9SLDbRtnf5sTKbiTntuLnerQXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Keu8lpBuB9BqYIFrLMXEH1cHWWIBwSJJyL2IxJB5uAvnY7MqtLj/9DmkTnIJb4o9RrH8GfJ/x41EcuhMW7PfTgSbdLVXufDUbqxmJdGfCIiY+AQZOvSXlrxnfzaQKMJtIGAPEaBLi38rYp9ENhobZJTflcQmhrrl16JLqwwUTEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjgIlVHQ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725524825; x=1757060825;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cWqX3P2HgWhytDM9e9SLDbRtnf5sTKbiTntuLnerQXo=;
-  b=gjgIlVHQvpr76+T/IfQoZmkzqWf7nB/Wen3/XpIgAqRLyuGVB4nry0O4
-   4DKCWLZdK61CDeU8yVKXQJy42efSauvhv9IX0/GsSv2A98i6SOgrBZb7U
-   IDfqk0HBlL9n4tO64mQcMvMe65QLKKQzjdu+65lvjb5UZbaVlyzueFkMk
-   YKaUmWikVJSycCuLU6tZnKj6ugdSeI1cKugEPIBGpChHKft5eEXVwID7e
-   +ZebSoNMmOcVYLshNSbGgatpyb+59c/v3NKVYlJICwuF3rfouiPEO9qt9
-   3Tv5YxsgsmRLmvBbhyVO1uGmw1YkKpTwLjUtvAstz/TfaTtFPMeAb4U1n
-   g==;
-X-CSE-ConnectionGUID: 7w6QaYfATO6edfnd6llyJQ==
-X-CSE-MsgGUID: l4hyQjnoQPKOorRh8QLnug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34892181"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="34892181"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:27:04 -0700
-X-CSE-ConnectionGUID: H1JBgFeRTautrJ7WXgGTsQ==
-X-CSE-MsgGUID: uYqtI4AMS0Wu1KGWS/QiXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="96294676"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 05 Sep 2024 01:26:57 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 541B4179; Thu, 05 Sep 2024 11:26:56 +0300 (EEST)
-Date: Thu, 5 Sep 2024 11:26:56 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org, 
-	ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
-	cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, 
-	dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org, jack@suse.cz, 
-	mark.rutland@arm.com, hughd@google.com, aneesh.kumar@kernel.org, 
-	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com, jglisse@google.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
-Message-ID: <xs7lw544kk6ftxlg6lbjicxnu5mdn666ivld5kzznm7fkoaf2x@4jowgzwfzcof>
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-3-dev.jain@arm.com>
+	s=arc-20240116; t=1725524858; c=relaxed/simple;
+	bh=6s3w/mr4RjQUeqVw1fQYw4YYZolhNZf51Eo2auGCCk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oXXWZtSV4LGAAM9i/oSVlRFfYLfIPsS1jhE+IiIYA3bdEQ+ueqL3/UQGVbip5aoP3wV1Pm6c7Wspbzfh17WIfkXDYZpdr2XL9AeSggB7RS9zekHwckO5XdAHyZCdi4JFi39bdphaaWiokkDTybCp95cHQtSGJ42Yl7LMswvGh4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c8qPTTUn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4857FQpR020041;
+	Thu, 5 Sep 2024 08:27:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gIh9O+9aJqZrfUs1Te0ir77tDja9hjeRzImtRg1v2IQ=; b=c8qPTTUn7aSNdE4s
+	gcxK4cKVy4H3h7vzbdcybMSqy882HTxwZcMyhForRstCh0qsomJ92/donG7Oot0u
+	OFxolAr2VNUfN4CBEPQG0JhapRerK59CL2gInwdtPBwr6pBntOHEegpIwFxv2exk
+	/sCaKRCs92KzY/GMEt9ObKbIFjsopd6ZQNh7+TugrzyyrDKR7+LdgrNfkfZfWHVW
+	3tvReYicu5SdcPh0x2AzJGKit/pp6b9u+IjEPYO0cbOM3NctGE5sIkkNIQIeHNMV
+	cH/x3vxC1Kkov5m003P/iXsQHJMGIGUe7hEKfYmDWlJMlCQheMomTHDC+or2TZGU
+	AtOCeg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dxy26px9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 08:27:22 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4858RLPQ024530
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 08:27:21 GMT
+Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 01:27:14 -0700
+Message-ID: <b2ffd1ec-2168-4e58-8aee-b43f1231d4ac@quicinc.com>
+Date: Thu, 5 Sep 2024 13:57:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904100923.290042-3-dev.jain@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: dwc3: gadget: Refine the logic for resizing Tx
+ FIFOs
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jing Leng
+	<jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
+        Jack Pham
+	<quic_jackp@quicinc.com>,
+        "kernel@quicinc.com" <kernel@quicinc.com>,
+        "Wesley
+ Cheng" <quic_wcheng@quicinc.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>,
+        Vijayavardhan Vennapusa
+	<quic_vvreddy@quicinc.com>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240903132917.603-1-quic_akakum@quicinc.com>
+ <20240903221055.s4gu6actfbrkonmr@synopsys.com>
+ <b016abbb-7214-4892-b1d2-1bf3ba1b7560@quicinc.com>
+ <20240904220632.35b4nvhmngt6akl6@synopsys.com>
+Content-Language: en-US
+From: AKASH KUMAR <quic_akakum@quicinc.com>
+In-Reply-To: <20240904220632.35b4nvhmngt6akl6@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hLy_BZn3uW2-HeXq4If8xwnz9n0RI-7a
+X-Proofpoint-ORIG-GUID: hLy_BZn3uW2-HeXq4If8xwnz9n0RI-7a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050061
 
-On Wed, Sep 04, 2024 at 03:39:23PM +0530, Dev Jain wrote:
-> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-> replace it with a PMD-mapped THP. Change the helpers introduced in the
-> previous patch to flush TLB entry corresponding to the hugezeropage,
-> and preserve PMD uffd-wp marker. In case of failure, fallback to
-> splitting the PMD.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->  include/linux/huge_mm.h |  6 ++++
->  mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
->  mm/memory.c             |  5 +--
->  3 files changed, 78 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index e25d9ebfdf89..fdd2cf473a3c 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -9,6 +9,12 @@
->  #include <linux/kobject.h>
->  
->  vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
-> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-> +			   unsigned long haddr, struct folio **foliop,
-> +			   unsigned long addr);
-> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-> +		 struct vm_area_struct *vma, unsigned long haddr,
-> +		 pgtable_t pgtable);
+Hi Thinh,
 
-Why? I don't see users outside huge_memory.c.
+On 9/5/2024 3:36 AM, Thinh Nguyen wrote:
+> On Wed, Sep 04, 2024, AKASH KUMAR wrote:
+>> Hi Thinh,
+>>
+>> On 9/4/2024 3:41 AM, Thinh Nguyen wrote:
+>>> On Tue, Sep 03, 2024, Akash Kumar wrote:
+>>>> The current logic is rigid, setting num_fifos to fixed values:
+>>>>
+>>>> 3 for any maxburst greater than 1.
+>>>> tx_fifo_resize_max_num for maxburst greater than 6.
+>>>> Additionally, it did not differentiate much between bulk and
+>>>> isochronous transfers, applying similar logic to both.
+>>>>
+>>>> The new logic is more dynamic and tailored to the specific needs of
+>>>> bulk and isochronous transfers:
+>>>>
+>>>> Bulk Transfers: Ensures that num_fifos is optimized by considering
+>>>> both the maxburst value and the maximum allowed number of FIFOs.
+>>>>
+>>>> Isochronous Transfers: Ensures that num_fifos is sufficient by
+>>>> considering the maxburst value and the maximum packet multiplier.
+>>>>
+>>>> This change aims to optimize the allocation of Tx FIFOs for both bulk
+>>>> and isochronous endpoints, potentially improving data transfer
+>>>> efficiency and overall performance.
+>>>> It also enhances support for all use cases, which can be tweaked
+>>>> with DT parameters and the endpoint’s maxburst and maxpacket.
+>>>>
+>>>> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+>>>> ---
+>>>> Changes for v2:
+>>>> Redefine logic for resizing tx fifos.
+>>>>
+>>>> Changes for v1:
+>>>> Added additional condition to allocate tx fifo for hs isoc eps,
+>>>> keeping the other resize logic same.
+>>>> ---
+>>>>    drivers/usb/dwc3/gadget.c | 15 ++++++---------
+>>>>    1 file changed, 6 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>>>> index 89fc690fdf34..49809a931104 100644
+>>>> --- a/drivers/usb/dwc3/gadget.c
+>>>> +++ b/drivers/usb/dwc3/gadget.c
+>>>> @@ -778,15 +778,12 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+>>>>    	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
+>>>> -	if ((dep->endpoint.maxburst > 1 &&
+>>>> -	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
+>>>> -	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
+>>>> -		num_fifos = 3;
+>>>> -
+>>>> -	if (dep->endpoint.maxburst > 6 &&
+>>>> -	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
+>>>> -	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
+>>>> -		num_fifos = dwc->tx_fifo_resize_max_num;
+>>>> +	if (usb_endpoint_xfer_bulk(dep->endpoint.desc))
+>>>> +		num_fifos = min_t(unsigned int, dep->endpoint.maxburst + 1,
+>>>> +				  dwc->tx_fifo_resize_max_num);
+>>>> +	if (usb_endpoint_xfer_isoc(dep->endpoint.desc))
+>>>> +		num_fifos = max_t(unsigned int, dep->endpoint.maxburst,
+>>>> +				  usb_endpoint_maxp_mult(dep->endpoint.desc));
+>>> No. Don't mix usb_endpoint_maxp_mult with maxburst like this. Check base
+>>> on operating speed. Also, now you're ignoring tx_fifo_resize_max_num for
+>>> isoc.
+>> Sure will add separate check based on speed.
+>>
+>> We have to support three versions of CAM support through same dt and image
+>> SS/SS+ capable cam which needs 10k fifo
+>> HS cams which needs 3K
+>> multi UVC cams which needs 1k and 2k fifo
+>>
+>> Putting any dependency with tx_fifo_resize_max_num, we can't achieve 1k and
+>> 10K,
+> That doesn't make sense. The tx_fifo_resize_max_num is a configurable
+> constraint through devicetree property. How can it not work?
+i have tested and i don't have any problem in adding constraint with HS 
+but for SS
+i need to set fifo size of 1K for 1 cam and 10k for other.
+if i add any boundary with tx_fifo_resize_max_num (either max or min ) 
+one of tx fifo size
+either 1k or 10K i won't be able to set. So i request you allow to for 
+ >=SS , to decide fifo
+size based on maxburst only. i will be pusing patchset3 with that. 
+please approve consideration this.
+>> it has to be decided by maxbursts itself which user can configure.
+>> All uvc gadget applications supports configurable maxburst which they use
+>> while opening,
+>> so it should be better for isoc eps to decide fifo based on maxbursts.
+>>
+> We should not just look at maxburst. It's only applicable to usb3
+> speeds. How the function driver configures maxp_mult* vs maxbursts is
+> independent. So let's keep the check separate base on speed for isoc.
+>
+> Thanks,
+> Thinh
+>
+> [*] Let's refer the mouthful "additional transaction opportunities" as
+> maxp_mult.
 
->  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->  		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
->  		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 58125fbcc532..150163ad77d3 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
->  }
->  EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->  
-> -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-> -				  unsigned long haddr, struct folio **foliop,
-> -				  unsigned long addr)
-> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-> +			   unsigned long haddr, struct folio **foliop,
-> +			   unsigned long addr)
->  {
->  	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->  
-> @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
->  	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->  }
->  
-> -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-> -			struct vm_area_struct *vma, unsigned long haddr,
-> -			pgtable_t pgtable)
-> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-> +		 struct vm_area_struct *vma, unsigned long haddr,
-> +		 pgtable_t pgtable)
->  {
-> -	pmd_t entry;
-> +	pmd_t entry, old_pmd;
-> +	bool is_pmd_none = pmd_none(*vmf->pmd);
->  
->  	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
->  	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->  	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->  	folio_add_lru_vma(folio, vma);
-> -	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
-> +	if (!is_pmd_none) {
-> +		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
-> +		if (pmd_uffd_wp(old_pmd))
-> +			entry = pmd_mkuffd_wp(entry);
-> +	}
-> +	if (pgtable)
-> +		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->  	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->  	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->  	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-> -	mm_inc_nr_ptes(vma->vm_mm);
-> +	if (is_pmd_none)
-> +		mm_inc_nr_ptes(vma->vm_mm);
->  }
->  
->  static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
-> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
->  	spin_unlock(vmf->ptl);
->  }
->  
-> +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
-> +					     unsigned long haddr,
-> +					     struct folio *folio)
+yes of course i will add separate check for maxp_mult in patchset3 for 
+<=HS speed devices.
 
-Why the helper is needed? Cannot it be just opencodded in
-do_huge_zero_wp_pmd()?
-
-> +{
-> +	struct vm_area_struct *vma = vmf->vma;
-> +	vm_fault_t ret = 0;
-> +
-> +	ret = check_stable_address_space(vma->vm_mm);
-> +	if (ret)
-> +		goto out;
-> +	map_pmd_thp(folio, vmf, vma, haddr, NULL);
-> +out:
-> +	return ret;
-> +}
-> +
-> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
-> +{
-> +	struct vm_area_struct *vma = vmf->vma;
-> +	gfp_t gfp = vma_thp_gfp_mask(vma);
-> +	struct mmu_notifier_range range;
-> +	struct folio *folio = NULL;
-> +	vm_fault_t ret = 0;
-> +
-> +	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
-> +			      vmf->address);
-> +	if (ret)
-> +		goto out;
-> +
-> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
-> +				haddr + HPAGE_PMD_SIZE);
-> +	mmu_notifier_invalidate_range_start(&range);
-> +	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-> +	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
-> +		goto unlock;
-> +	ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
-> +	if (!ret)
-> +		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
-> +unlock:
-> +	spin_unlock(vmf->ptl);
-> +	mmu_notifier_invalidate_range_end(&range);
-> +out:
-> +	return ret;
-> +}
-> +
->  vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->  {
->  	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
-> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->  	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
->  	VM_BUG_ON_VMA(!vma->anon_vma, vma);
->  
-> -	if (is_huge_zero_pmd(orig_pmd))
-> +	if (is_huge_zero_pmd(orig_pmd)) {
-> +		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
-> +
-> +		if (!(ret & VM_FAULT_FALLBACK))
-> +			return ret;
-> +
-> +		/* Fallback to splitting PMD if THP cannot be allocated */
->  		goto fallback;
-> +	}
->  
->  	spin_lock(vmf->ptl);
->  
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 3c01d68065be..c081a25f5173 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
->  	if (vma_is_anonymous(vma)) {
->  		if (likely(!unshare) &&
->  		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
-> -			if (userfaultfd_wp_async(vmf->vma))
-> +			if (!userfaultfd_wp_async(vmf->vma))
-> +				return handle_userfault(vmf, VM_UFFD_WP);
-> +			if (!is_huge_zero_pmd(vmf->orig_pmd))
->  				goto split;
-> -			return handle_userfault(vmf, VM_UFFD_WP);
->  		}
->  		return do_huge_pmd_wp_page(vmf);
->  	}
-> -- 
-> 2.30.2
-> 
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Thanks,
+Akash
 
