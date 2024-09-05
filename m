@@ -1,362 +1,126 @@
-Return-Path: <linux-kernel+bounces-316441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389EC96CF9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:45:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5C696CFA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D583E28A941
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29DDD1C228CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E326C191F78;
-	Thu,  5 Sep 2024 06:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD77191F60;
+	Thu,  5 Sep 2024 06:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHlzyYfE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLAgHg4r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF8C1922FD;
-	Thu,  5 Sep 2024 06:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EE84400;
+	Thu,  5 Sep 2024 06:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725518706; cv=none; b=WK1PK0GzmoTUMmyBO7KMJiLMWu+Gapq1lir34kfLODlyOaXJOt/5bAQYuZVbvU6KfDo4LdhKKNFkLqoRSG+nv7rbZsB9Ph/0oDvGeuoJVomu8hSBEVBJKpMsgw+/fecQ+WR75wVNaKXGkBMPsJptk2WpZ8X9H78sR8nkQAPzA2Y=
+	t=1725518722; cv=none; b=GHHM7LMR6mm4VSoVMnI/WWCeFTXU6xxykgOrIsvE9HqTWbfNH/rJ06rhWbn0sVjutyEOkt7TgpnbYdW6JhG0+l1L7pmckgi4XElSN0pNl6+tSE0+COd26adGHDCUyEHGvnM44XxahQ6b5/qFw3/m5pMS8bi9Q4AooCN6NjpmsRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725518706; c=relaxed/simple;
-	bh=LCGL7vwew473xxNLZVNKy/1l+M8TqmCJBI5QzXlv0tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HlgTb4xHLQweq9U0+DKufmouyrmQYs5EKzw034v3SAlcQM2vQOA+7q2DDzHgdeTvP9uU/+roUD/n8VfB/YCuMnSEeH2D2RDqdHoNAHvEkhwC5i6Vgcl7XZvCq4estsIx45JrdU4YsYG1h5QHmaDws5fGaFU621LmRbP7TBGq+bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHlzyYfE; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725518703; x=1757054703;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=LCGL7vwew473xxNLZVNKy/1l+M8TqmCJBI5QzXlv0tk=;
-  b=hHlzyYfE9Fm058r3rb96qNWWXyHBMy8I4GPB+E+phVvY2Mn/7Eyg77b1
-   6uWd8kW3geCHH6GIgbjJMyo8+nKqszmqnUBedofID8blO2JtevkfUSL/h
-   cvwRC0knhhAM47ikyA1ikZJNQomrQIWnkNtAF1LJxqQ1SSRE/8ub70Fba
-   aRI6Yp3l2jbG2A0L9guUS/D1Ut62eH4RYgZkUMgNdq9AzG6LN3ooOlBMB
-   KbZzXP4HHAc2+VZ4E/SAKeM40oUqt5EZ2hYVjpS8oRSu/QUPAyhd7u8jg
-   lR9kIlGbGN3XiJP666dMvjb69SjzNEC89IQw2t/0lFSwz6+w3TA1x9u2o
-   A==;
-X-CSE-ConnectionGUID: DUMno9ZsSZu185m+ZndhWQ==
-X-CSE-MsgGUID: +FdqnukURLeop/hJJzQetw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="41719145"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="41719145"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 23:45:01 -0700
-X-CSE-ConnectionGUID: CL8d2KbuT/iD/DTtOcgAYA==
-X-CSE-MsgGUID: /iV5Z3DbQAinTbGpYKJW/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70325566"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.96.163])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 23:44:56 -0700
-Message-ID: <81e3ef63-06d5-492a-8c82-da941d014ffb@intel.com>
-Date: Thu, 5 Sep 2024 09:44:51 +0300
+	s=arc-20240116; t=1725518722; c=relaxed/simple;
+	bh=pwkWnjC+Q1NqaXK6JlAyfabTkTo0JS4rxXogOThDdac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnsuKXVpvjyKf7f2NtDKpTE6aIBdksCWFKtPC976S6z5TyHiDWagPzbs5unze0DN4IX6IXp04zVhz5oOec9jBObJI7FDuc42YPRUvuVK9MR0ZszpxoV9kBnJ83ZGoAV/v9W9zRezYQLu0AcCid44VuZ9rxOsAoVeQi0MUxl0a+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLAgHg4r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B1EC4CEC4;
+	Thu,  5 Sep 2024 06:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725518721;
+	bh=pwkWnjC+Q1NqaXK6JlAyfabTkTo0JS4rxXogOThDdac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QLAgHg4raavHGx9ezW/P9yna3hyJgw6SY+qG+4eCnu+2qT3zUt0b0fPsaJX0WAkRr
+	 b9cDKSCmOjvrTllVynwEXb3enBl+fSuzgT8hcBIruZ1ep0mGnWnVs4eifKMzJLsXgD
+	 35jjwGbavg8yMkh4NuEm3LKrA4x/PiKW9Ths/TrPgN0knM+hXgOmtuzIsjGCLGx80j
+	 z/MZF/3Spt7uR/u6V7jXGZQ69+qZxu9fqwCjKpnn8ybA6s1e5TAsV2Q3+PArjZM+Vb
+	 AOHDiGufvBkKqM3fG7dHqhwMeJTdNSxlKnbaolpRKwMhvrtoM2mQb+ukgwSk+Zdewl
+	 ds5+/dbcHItmw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sm6FO-000000001Hc-2EOT;
+	Thu, 05 Sep 2024 08:45:38 +0200
+Date: Thu, 5 Sep 2024 08:45:38 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org, johan+linaro@kernel.org,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Subject: Re: [PATCH v6 2/4] PCI: dwc: Always cache the maximum link speed
+ value in dw_pcie::max_link_speed
+Message-ID: <ZtlTkjIky3X2fBQc@hovoldconsulting.com>
+References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
+ <20240904-pci-qcom-gen4-stability-v6-2-ec39f7ae3f62@linaro.org>
+ <ZtgooHdex5gXh0tP@hovoldconsulting.com>
+ <20240904154944.w4bujfmhy5uhzkld@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/8] perf auxtrace: Introduce
- auxtrace_record__validate_events()
-To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
-References: <20240823113306.2310957-1-leo.yan@arm.com>
- <20240823113306.2310957-5-leo.yan@arm.com>
- <3f03541e-6dab-472f-bad9-4cdc0c0dc061@intel.com>
- <a25103a1-47e3-472a-bfa8-abdfbc843cd3@arm.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <a25103a1-47e3-472a-bfa8-abdfbc843cd3@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904154944.w4bujfmhy5uhzkld@thinkpad>
 
-On 5/09/24 00:13, Leo Yan wrote:
-> On 9/3/2024 4:26 PM, Adrian Hunter wrote:
->> On 23/08/24 14:33, Leo Yan wrote:
->>> A prerequisite for multiple AUX events is that the AUX events cannot
->>> overlap CPU maps. The reason is that every CPU has only one AUX trace
->>> buffer and maps it to an unique buffer index for CPU and system tracing
->>> mode.
->>>
->>> To prevent the case of CPU maps overlapping occurring within multiple
->>> AUX events, the auxtrace_record__validate_events() function is
->>> introduced. It iterates through all AUX events and returns failure if
->>> it detects CPU maps overlapping.
->>>
->>> Signed-off-by: Leo Yan <leo.yan@arm.com>
->>> ---
->>>  tools/perf/builtin-record.c |  4 +++
->>>  tools/perf/util/auxtrace.c  | 64 +++++++++++++++++++++++++++++++++++++
->>>  tools/perf/util/auxtrace.h  |  7 ++++
->>>  3 files changed, 75 insertions(+)
->>>
->>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
->>> index adbaf80b398c..2c618efba97d 100644
->>> --- a/tools/perf/builtin-record.c
->>> +++ b/tools/perf/builtin-record.c
->>> @@ -862,6 +862,10 @@ static int record__auxtrace_init(struct record *rec)
->>>
->>>       auxtrace_regroup_aux_output(rec->evlist);
->>>
->>> +     err = auxtrace_validate_events(rec->evlist);
->>> +     if (err)
->>> +             return err;
->>> +
->>>       return auxtrace_parse_filters(rec->evlist);
->>>  }
->>>
->>> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
->>> index ca8682966fae..87e4f21b6edf 100644
->>> --- a/tools/perf/util/auxtrace.c
->>> +++ b/tools/perf/util/auxtrace.c
->>> @@ -2828,6 +2828,70 @@ int auxtrace_parse_filters(struct evlist *evlist)
->>>       return 0;
->>>  }
->>>
->>> +int auxtrace_validate_events(struct evlist *evlist)
->>
->> 'auxtrace_validate_aux_events' would better indicate that it is
->> looking only at AUX area events.
-> 
-> Will fix.
-> 
->>> +{
->>> +     struct evsel *evsel;
->>> +     struct perf_cpu_map *cpu_map = NULL;
->>> +     struct perf_cpu_map *cpu_map_intersect = NULL;
->>> +     struct perf_cpu_map *cpu_map_merged = NULL;
->>> +     int ret = 0;
->>> +
->>> +     if (!evlist)
->>> +             return 0;
->>
->> Elsewhere we assume it is not NULL, might as well here too.
-> 
-> Sure, will drop this checking.
-> 
->>> +
->>> +     /*
->>> +      * Currently the tool only supports multiple AUX events without
->>> +      * overlapping CPU maps and every CPU has its unique AUX buffer
->>> +      * for CPU or system mode tracing.
->>> +      *
->>> +      * Returns failure if detects CPU maps overlapping.
->>> +      */
->>> +     evlist__for_each_entry(evlist, evsel) {
->>> +             if (!evsel__is_aux_event(evsel))
->>> +                     continue;
->>> +
->>> +             if (perf_cpu_map__is_empty(evsel->pmu->cpus))
->>> +                     continue;
->>
->> Unless perf_cpu_map__intersect() is broken, the empty check
->> should not be needed.
-> 
-> Perf's CPU map implementation is tricky. IIRC, if without this checking, it
-> will break the tool.
-> 
-> In below code, we invokes perf_cpu_map__merge() for merging maps. It does
-> _not_ always allocate a new map for merging. Based on testing, it only
-> allocates a new map if two passed map pointers are not NULL. If a passed CPU
-> map pointer is NULL, then it will directly return the another map's pointer.
-> 
-> This leads the difficulty for releasing the merged map. If the returned merged
-> map is a new allocated one, it is safe us to release it. Otherwise, we might
-> release a CPU map unexpectedly - though it is returned by
-> perf_cpu_map__merge(), but the CPU map comes from a PMU and should not be
-> released.
+On Wed, Sep 04, 2024 at 09:19:44PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Sep 04, 2024 at 11:30:08AM +0200, Johan Hovold wrote:
+> > On Wed, Sep 04, 2024 at 12:41:58PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-If it returns a different map, it adjusts the reference counts
-accordingly.  perf_cpu_map__merge() is still a problem though.
-See below.
+> > > +	/*
+> > > +	 * Even if the platform doesn't want to limit the maximum link speed,
+> > > +	 * just cache the hardware default value so that the vendor drivers can
+> > > +	 * use it to do any link specific configuration.
+> > > +	 */
+> > > +	if (pci->max_link_speed < 0) {
+> > 
+> > This should be 
+> > 
+> > 	if (pci->max_link_speed < 1) {
+> > 
+> 
+> Well I was trying to catch the error value here because if neither driver nor
+> platform limits the max link speed, this would have -EINVAL (returned by
+> of_pci_get_max_link_speed()).
 
-> 
-> Anyway, I will remove the empty check and see if fix the perf CPU map issue.
-> 
->> Shouldn't we be looking at evsel->cpus ?
-> 
-> I don't find the field `evsel->cpus`, I assume you are referring to
-> evsel__cpus(evsel)?  If so, I will change to use the CPU map from evsel.
-> 
->> Possibly need to consider the perf_cpu_map__has_any_cpu() case?
->> e.g.
->>                 if (cpu_map && (perf_cpu_map__has_any_cpu(evsel->cpus) ||
->>                                 perf_cpu_map__has_any_cpu(cpu_map)) {
->>                         ret = -EINVAL;
->>                         break;
->>                 }
-> 
-> Will add.
-> 
->>> +
->>> +             cpu_map_intersect = perf_cpu_map__intersect(cpu_map, evsel->pmu->cpus);
->>> +             if (cpu_map_intersect) {
->>> +                     perf_cpu_map__put(cpu_map_intersect);
->>> +                     pr_err("Doesn't support AUX events with overlapping CPU masks\n");
->>> +                     ret = -EINVAL;
->>> +                     break;
->>> +             }
->>> +             perf_cpu_map__put(cpu_map_intersect);
->>
->> Maybe add a helper:
->>
->> static bool perf_cpu_map__do_maps_intersect(struct perf_cpu_map *a, struct perf_cpu_map *b)
->> {
->>         struct perf_cpu_map *intersection = perf_cpu_map__intersect(a, b);
->>         bool ret = !perf_cpu_map__is_empty(intersection);
->>
->>         perf_cpu_map__put(intersection);
->>
->>         return ret;
->> }
-> 
-> Will do.
-> 
->>> +
->>> +             cpu_map_merged = perf_cpu_map__merge(cpu_map, evsel->pmu->cpus);
->>> +             if (!cpu_map_merged) {
->>> +                     ret = -ENOMEM;
->>> +                     break;
->>> +             }
->>> +
->>> +             /* Update the CPU maps after merging */
->>> +             perf_cpu_map__put(cpu_map);
->>> +             cpu_map = cpu_map_merged;
->>
->> perf_cpu_map__merge() is a bit tricky - see its comments.  This
->> should probably all just be:
->>
->>                 cpu_map = perf_cpu_map__merge(cpu_map, evsel->pmu->cpus);
-> 
-> This might lead to memory leak for the 'old' cpu_map after merging.
-> 
-> We cannot assume the `cpu_map` variable is extended from its old value, a new
-> CPU map is allocated during the merging. This is why the patch always release
-> the old cpu_map (perf_cpu_map__put(cpu_map)) and then assign the new merged
-> CPU map.
+Indeed, I thought I'd traced it do be zero here, but I must have made a
+mistake. The old code did check for 0 before calling this function,
+though (e.g. in case max_link_speed was never initialised as intended).
 
-I agree, perf_cpu_map__merge() is a bit broken.  Maybe add
-another helper like:
-
-static int perf_cpu_map__merge_in(struct perf_cpu_map **orig, struct perf_cpu_map *other)
-{
-	struct perf_cpu_map *merged;
-
-	/* Avoid being unable to tell if perf_cpu_map__merge() failed */
-	if (perf_cpu_map__is_empty(*orig) && perf_cpu_map__is_empty(other))
-		return 0;
-
-	merged = perf_cpu_map__merge(*orig, other);
-	if (!merged)
-		return -ENOMEM;
-
-	*orig = merged;
-
-	return 0;
-}
-
-Then it can be:
-
-	ret = perf_cpu_map__merge_in(&cpu_map, evsel__cpus(evsel));
-	if (ret)
-		break;
-
+> But logically it makes sense to use 'pci->max_link_speed < 1' since anything
+> below value 1 is an invalid value.
 > 
->>> +     }
->>> +
->>> +     if (!ret)
->>> +             goto out;
->>
->> Could we put the error path last i.e.
->>
->>         perf_cpu_map__put(cpu_map);
->>
->>         if (ret)
->>                 goto out_err;
->>
->>         return 0;
->>
->> out_err:
-> 
-> Makes sense. Will fix.
-> 
->>> +
->>> +     /* If fails, dump CPU maps for debugging */
->>> +     evlist__for_each_entry(evlist, evsel) {
->>> +             char buf[200];
->>> +
->>> +             if (!evsel__is_aux_event(evsel))
->>> +                     continue;
->>> +
->>> +             cpu_map__snprint(evsel->pmu->cpus, buf, sizeof(buf));
->>> +             pr_debug("AUX event [%s]'s cpu map is: %s\n", evsel->pmu->name, buf);
->>
->> Could probably use cpu_map__fprintf(pmu->cpus, debug_file()) and
->> not need buf.
-> 
-> Will do.
-> 
-> Thanks for suggestions!
-> 
-> Leo
-> 
->>> +     }
->>> +
->>> +out:
->>> +     perf_cpu_map__put(cpu_map);
->>> +     return ret;
->>> +}
->>> +
->>>  int auxtrace__process_event(struct perf_session *session, union perf_event *event,
->>>                           struct perf_sample *sample, const struct perf_tool *tool)
->>>  {
->>> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
->>> index a1895a4f530b..67a74ad0c383 100644
->>> --- a/tools/perf/util/auxtrace.h
->>> +++ b/tools/perf/util/auxtrace.h
->>> @@ -636,6 +636,7 @@ void addr_filters__exit(struct addr_filters *filts);
->>>  int addr_filters__parse_bare_filter(struct addr_filters *filts,
->>>                                   const char *filter);
->>>  int auxtrace_parse_filters(struct evlist *evlist);
->>> +int auxtrace_validate_events(struct evlist *evlist);
->>>
->>>  int auxtrace__process_event(struct perf_session *session, union perf_event *event,
->>>                           struct perf_sample *sample, const struct perf_tool *tool);
->>> @@ -875,6 +876,12 @@ int auxtrace_parse_filters(struct evlist *evlist __maybe_unused)
->>>       return 0;
->>>  }
->>>
->>> +static inline
->>> +int auxtrace_validate_events(struct evlist *evlist __maybe_unused)
->>> +{
->>> +     return 0;
->>> +}
->>> +
->>>  int auxtrace_mmap__mmap(struct auxtrace_mmap *mm,
->>>                       struct auxtrace_mmap_params *mp,
->>>                       void *userpg, int fd);
->>
+> Will change it.
 
+Sounds good.
+
+> > > @@ -1058,8 +1069,7 @@ void dw_pcie_setup(struct dw_pcie *pci)
+> > >  {
+> > >  	u32 val;
+> > >  
+> > > -	if (pci->max_link_speed > 0)
+> > > -		dw_pcie_link_set_max_speed(pci, pci->max_link_speed);
+> > > +	dw_pcie_link_set_max_speed(pci);
+
+Johan
 
