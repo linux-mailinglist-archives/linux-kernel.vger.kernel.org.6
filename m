@@ -1,150 +1,191 @@
-Return-Path: <linux-kernel+bounces-316768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BEE96D40C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:48:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337DA96D433
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71330B274D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E053B284066
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC2C198A16;
-	Thu,  5 Sep 2024 09:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF43F194A45;
+	Thu,  5 Sep 2024 09:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ecjbbmdf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="inonchWK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hitbfVy8"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B000C47796;
-	Thu,  5 Sep 2024 09:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF42194A64
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529663; cv=none; b=eAkkqCExeorieNbh1Qqy3jcd4lBUGGcZUh3hZWuSleWe1JaziGbec3KvEDm83M956FC6nLlkvdar6PZNJxpAyVu803DuyEMx5BvnBtnkJpFZdRj4SAjZJObJCyNJ0TVYjFGfiARk/OxDg/VqN+tVXJ289av2x6W1e1qkw0jE9vQ=
+	t=1725529770; cv=none; b=HQobax4KiyLACv/p/RHEWHeXzyx+7d3/0/cmItY2EBtBokXHgGIQQ8smWxWN3iNrROf99gcMwgwCIPLCrIORk0m+wJxwkcqehC3UYppXc5MuGWKA+LYC1dRgLeCEFJSafJitIdqXx6VHt7zIIXk/NfQQhLyLSX9FoLcc1T7RcKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529663; c=relaxed/simple;
-	bh=xMzNaWyGUWpvjW9EV6HlXMME3B51Ls+X/dfJ8kjXxhM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ZZIZcQ3DfHqcE+srft45i9kPEDfoSkvR7dLBhtUa5RgbH7a+GL9JJR8TrBmtxkI2phzNSBYmmsdMTjZ8WyCQvLJfIMJtZtN6+fnMaTj/kYawjw/dsMM2v6sAiDrs5dLJJioCidflPemYQVDh+oG9iBBQLQR7Ye8SACyUD/lhPxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ecjbbmdf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=inonchWK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 05 Sep 2024 09:47:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725529659;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HyRCT1hnfWSq9RQNa238X5cw7dy/AXs7k5VYwEFO0dQ=;
-	b=ecjbbmdfUVhrmoGly/ygbBLj4eDovbLp6MJLh2abiwD+VnsNS9fF7iwO/bClio1HseVV75
-	KeemMpdt8+vjGhxxIgwgVfD4T/GeHb9xzDZEZ5Q4ApFaxvvvMmMKwzIKUMwXlTgIC1P5J8
-	yC8H6KnJYI3LoEn5LqI42RNCAwph3Bv+1JtMjqr0iqDm4Yjd3CKLdpddDFE+vIhr79i8uW
-	/i3dNT56QOWnIk7BeK06XkTUbSUeeYUtGbUUM7sDiDAuf1foWuuc3Rk2nqRH3rPQpTmC4u
-	deY5ML8aMBr3IuM3cr8S1xGUPs8LTeekC0GsM+i7bvQg0zR2j4IU2wVIHX9YRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725529659;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HyRCT1hnfWSq9RQNa238X5cw7dy/AXs7k5VYwEFO0dQ=;
-	b=inonchWKC2gIIC6R+7UAYlSgma4up7VX+bFwEKI+LBnaCSpHfS5UsLhLz0dMaeptf+BoxP
-	30SiGJPrwpPXuOCg==
-From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/bugs] x86/bugs: Fix handling when SRSO mitigation is disabled
-Cc: David Kaplan <david.kaplan@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240904150711.193022-1-david.kaplan@amd.com>
-References: <20240904150711.193022-1-david.kaplan@amd.com>
+	s=arc-20240116; t=1725529770; c=relaxed/simple;
+	bh=nH8Atn3L+aPW8XuxA02/FDlH3BF6dLRVbi4LLnqDeFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pR3GL5xFlG01Y12NMxN17WjQ0Oc05bazXK9M6RLz6CQG1TJImO6Pnguu+CmOun8PWkRJ2fMw8r111NgsLMDc0ihlZ0no3GUy4cf1Dfu2+y1J0RtF2vUZuKCbbKhOSbS0r4N9nsAzbJ9dZHIIivYgicRiMhp1Uc8xIasevPfguXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hitbfVy8; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3787f30d892so320320f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 02:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725529765; x=1726134565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ajsi2J0ggLeyG252quBxawrZ5p8Nah60ezK6XPT3tHQ=;
+        b=hitbfVy8oUXqFGq8GNyZj2lhha2aUl6SA6C+cCspCIPUzEOe+zNXXw1NkUu3LeVnYN
+         8mWfTwmQm98dVS0cHAwQBbx4yXR7rK/JaVbdAB/+BH6/gGe98SAGSMXcqqSBH9GI43uc
+         fI+Mi3BkQIx8SJMTRkSGRJhh///og+ob5xf4XszgwZD0GleC/RsrVVbASfhSHGVhtPt2
+         NMxhnPB6+MERi1UhybSSOmm1jFoRoAafOgKRJuybY7J5WGAf54LTTDRwZ054dOW0Q25s
+         jmD/vJvzYuULKCxwG+u5bOaTbBviFKdfqkhCZQEUiT7pQK6e27kZ5TR4j2e/MSDFKNPh
+         vnCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725529765; x=1726134565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ajsi2J0ggLeyG252quBxawrZ5p8Nah60ezK6XPT3tHQ=;
+        b=icWLmwW4gHHXJ6JY/mPS6aVxrurdr5y/bFHPTYWrsO0Z+iDMJdU+dzWZcCd480eRws
+         +DOF8hcgBdTz5tVq/r8Z5cKKTzWiZITBsK7NIM9qivCV7JTifnbvsaU46hFWjLpXekCG
+         xHr9tw21NOaxIZpw9ptU8opcER76o/r5H8jp1iZK1zCzh5pTP1L4XnrETngzffiEVAvJ
+         zk9FdzwB6DVMQ6CBe2hnlOdaa3Scw2WfS5IZJZumnHe5gwc5zZToSIty0kaIj1fgi4Vn
+         jjSlgXmI8y2+VTzZmFEiHuKtcwdEZQoM8Ods5AJZVzPkzcP8MNZ1+UJFfu2kWRcI3xTT
+         ORag==
+X-Forwarded-Encrypted: i=1; AJvYcCUfDk0dfjCktv2AQtZb5V8LVrXO1K+tv0HsY1c/DsIQoYvb6pxTJDso0e1mkYOX0aqhhVR53HzvaNEVcrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkOGET9mX2tlukP4eLuhcZwLzjYpav78/lmMMBupiE0CfNxfc4
+	n7x93+OeRAQq9+6QehD92t424ea1NTCzbGZckDbe/KyS8K5tLFndgP8Q+wV6Y54=
+X-Google-Smtp-Source: AGHT+IHDFmIV1wFMjjwEtr/Qx3K4SulTMcfQCQfKJ/zC+fCZq/1r6s2lg+nXTHZKCRKIlMAyyclWcw==
+X-Received: by 2002:adf:f98a:0:b0:36b:bb84:33e2 with SMTP id ffacd0b85a97d-374bf184398mr11819525f8f.37.1725529764578;
+        Thu, 05 Sep 2024 02:49:24 -0700 (PDT)
+Received: from blmsp ([2001:4091:a247:83d8:caa7:e645:3612:56b6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4ddc8sm18872157f8f.21.2024.09.05.02.49.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:49:23 -0700 (PDT)
+Date: Thu, 5 Sep 2024 11:49:22 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: ti, sci: Add property for
+ partial-io-wakeup-sources
+Message-ID: <h4kapqs5vpparh5b3tter54fbnxubq6gpnb4yrqjdio66tj37w@l3xzum2bq5sz>
+References: <20240729080101.3859701-1-msp@baylibre.com>
+ <20240729080101.3859701-2-msp@baylibre.com>
+ <f0f60af7-8561-433a-a027-811015fc5e16@kernel.org>
+ <ti4ffymrixcpptlrn3o5bytoyc4w5oovdrzgu442ychai2fjet@wtdhrmwrozee>
+ <44feed5a-95a7-4baa-b17e-514c0f50dae6@kernel.org>
+ <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
+ <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
+ <fa11631e-48f9-4e95-95c4-20b77cb0a1be@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172552965872.2215.17085347492363546574.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fa11631e-48f9-4e95-95c4-20b77cb0a1be@kernel.org>
 
-The following commit has been merged into the x86/bugs branch of tip:
+On Thu, Sep 05, 2024 at 11:25:48AM GMT, Krzysztof Kozlowski wrote:
+> On 05/09/2024 11:15, Krzysztof Kozlowski wrote:
+> > On 05/09/2024 11:08, Markus Schneider-Pargmann wrote:
+> >> On Tue, Aug 06, 2024 at 10:03:00AM GMT, Krzysztof Kozlowski wrote:
+> >>> On 06/08/2024 09:11, Markus Schneider-Pargmann wrote:
+> >>>> Hi Krzysztof,
+> >>>>
+> >>>> On Tue, Aug 06, 2024 at 08:18:01AM GMT, Krzysztof Kozlowski wrote:
+> >>>>> On 29/07/2024 10:00, Markus Schneider-Pargmann wrote:
+> >>>>>> Partial-IO is a very low power mode in which nearly everything is
+> >>>>>> powered off. Only pins of a few hardware units are kept sensitive and
+> >>>>>> are capable to wakeup the SoC. The device nodes are marked as
+> >>>>>> 'wakeup-source' but so are a lot of other device nodes as well that are
+> >>>>>> not able to do a wakeup from Partial-IO. This creates the need to
+> >>>>>> describe the device nodes that are capable of wakeup from Partial-IO.
+> >>>>>>
+> >>>>>> This patch adds a property with a list of these nodes defining which
+> >>>>>> devices can be used as wakeup sources in Partial-IO.
+> >>>>>>
+> >>>>>
+> >>>>> <form letter>
+> >>>>> This is a friendly reminder during the review process.
+> >>>>>
+> >>>>> It seems my or other reviewer's previous comments were not fully
+> >>>>> addressed. Maybe the feedback got lost between the quotes, maybe you
+> >>>>> just forgot to apply it. Please go back to the previous discussion and
+> >>>>> either implement all requested changes or keep discussing them.
+> >>>>>
+> >>>>> Thank you.
+> >>>>> </form letter>
+> >>>>
+> >>>> I tried to address your comment from last version by explaining more
+> >>>> thoroughly what the binding is for as it seemed that my previous
+> >>>> explanation wasn't really good.
+> >>>>
+> >>>> You are suggesting to use 'wakeup-source' exclusively. Unfortunately
+> >>>> wakeup-source is a boolean property which covers two states. I have at
+> >>>> least three states I need to describe:
+> >>>>
+> >>>>  - wakeup-source for suspend to memory and other low power modes
+> >>>>  - wakeup-source for Partial-IO
+> >>>>  - no wakeup-source
+> >>>
+> >>> Maybe we need generic property or maybe custom TI would be fine, but in
+> >>> any case - whether device is wakeup and what sort of wakeup it is, is a
+> >>> property of the device.
+> >>
+> >> To continue on this, I currently only know of this Partial-IO mode that
+> >> would require a special flag like this. So I think a custom TI property
+> >> would work. For example a bool property like
+> >>
+> >>   ti,partial-io-wakeup-source;
+> >>
+> >> in the device nodes for which it is relevant? This would be in addition
+> >> to the 'wakeup-source' property.
+> > 
+> > Rather oneOf. I don't think having two properties in a node brings any
+> > more information.
+> > 
+> > I would suggest finding one more user of this and making the
+> > wakeup-source an enum - either string or integer with defines in a header.
+> 
+> I am going through this thread again to write something in DT BoF but
+> this is confusing:
+> 
+> "Partial-IO is a very low power mode"
+> "not able to do a wakeup from Partial-IO."
+> "wakeup-source for Partial-IO"
+> 
+> Are you waking up from Partial-IO or are you waking up into Partial-IO?
+> 
+> And why the devices which are configured as wakeup-source cannot wake up
+> from or for Partial-IO?
 
-Commit-ID:     1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d
-Gitweb:        https://git.kernel.org/tip/1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d
-Author:        David Kaplan <david.kaplan@amd.com>
-AuthorDate:    Wed, 04 Sep 2024 10:07:11 -05:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 05 Sep 2024 11:20:50 +02:00
+Sorry if this is confusing. Let me try again.
 
-x86/bugs: Fix handling when SRSO mitigation is disabled
+Partial-IO is a very low power mode. Only a small IO unit is switched on
+to be sensitive on a small set of pins for any IO activity. The rest of
+the SoC is powered off, including DDR. Any activity on these pins
+switches on the power for the remaining SoC. This leads to a fresh boot,
+not a resume of any kind. On am62 the pins that are sensitive and
+therefore wakeup-source from this Partial-IO mode, are the pins of a few
+CAN and UARTs from the MCU and Wkup section of the SoC.
 
-When the SRSO mitigation is disabled, either via mitigations=off or
-spec_rstack_overflow=off, the warning about the lack of IBPB-enhancing
-microcode is printed anyway.
+These CAN and UART wakeup-sources are also wakeup-sources for other low
+power suspend to ram modes. But wakeup-sources for suspend to ram modes
+are typically not a wakeup-source for Partial-IO as they are not powered
+in Partial-IO.
 
-This is unnecessary since the user has turned off the mitigation.
+I hope this explains it better.
 
-  [ bp: Massage, drop SBPB rationale as it doesn't matter because when
-    mitigations are disabled x86_pred_cmd is not being used anyway. ]
-
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Link: https://lore.kernel.org/r/20240904150711.193022-1-david.kaplan@amd.com
----
- arch/x86/kernel/cpu/bugs.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 189840d..d191542 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2557,10 +2557,9 @@ static void __init srso_select_mitigation(void)
- {
- 	bool has_microcode = boot_cpu_has(X86_FEATURE_IBPB_BRTYPE);
- 
--	if (cpu_mitigations_off())
--		return;
--
--	if (!boot_cpu_has_bug(X86_BUG_SRSO)) {
-+	if (!boot_cpu_has_bug(X86_BUG_SRSO) ||
-+	    cpu_mitigations_off() ||
-+	    srso_cmd == SRSO_CMD_OFF) {
- 		if (boot_cpu_has(X86_FEATURE_SBPB))
- 			x86_pred_cmd = PRED_CMD_SBPB;
- 		return;
-@@ -2591,11 +2590,6 @@ static void __init srso_select_mitigation(void)
- 	}
- 
- 	switch (srso_cmd) {
--	case SRSO_CMD_OFF:
--		if (boot_cpu_has(X86_FEATURE_SBPB))
--			x86_pred_cmd = PRED_CMD_SBPB;
--		return;
--
- 	case SRSO_CMD_MICROCODE:
- 		if (has_microcode) {
- 			srso_mitigation = SRSO_MITIGATION_MICROCODE;
-@@ -2649,6 +2643,8 @@ static void __init srso_select_mitigation(void)
- 			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
-                 }
- 		break;
-+	default:
-+		break;
- 	}
- 
- out:
+Best
+Markus
 
