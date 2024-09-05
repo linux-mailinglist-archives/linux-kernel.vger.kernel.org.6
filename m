@@ -1,261 +1,203 @@
-Return-Path: <linux-kernel+bounces-317703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E69196E284
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D261796E286
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7332B26F1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86673289989
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D83E1A255F;
-	Thu,  5 Sep 2024 18:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB3E188A2F;
+	Thu,  5 Sep 2024 18:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bppyafcJ"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="jes/yyjZ"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447AC18E058
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114C518593C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725562457; cv=none; b=jLpjkYX4OrEhnozMPL2e/aOJhJNhlwcR2ZZ9Uj0khOWrJZrL9l97uMV/RBe2bUgks8ZhH4Z2mtfq6GSVophoUDJJzpQTjHt+H4zburfwX7TYa3/I+r2pNzpkQUkIvxZv0nsmHdG+hG86fKJQlcFeyk8lDFXNEGzaUxadVBTcGsY=
+	t=1725562616; cv=none; b=hVEA+Sy6M56vtZekb3w/6m7uGKhNS6Ra/+F8Q89T9XF2+jYTYUhG3YfcFtKO0milnrAYeLptwluNwsfTSikj6q+ob8t5ZnTc/UHPuHoraUPGigD5XmpxtnqRBViP4gWlzr60NdWraACKBOwzuOlVl3l2H1PR9WfoEnxsxTrmhWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725562457; c=relaxed/simple;
-	bh=+X3EGBbsnfThSA6bfkbEMEawCDcd9CImfSQq8Sv6HaI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeI9IMe1e7jQISz+0iHB2geYraHihgfq/+2Lx0h4ET8aIuH0leVY76NhEjbVBqq/e9eZgcf1/+w9rmBVWjRA9ilM6KURWPACWCyK7d+TD1aE6xFYmY+4HcGplaFuQKFi1hbhz4akYxZg8pbmICvwu1tv2eNlXiAQo/Ij2gNdmB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bppyafcJ; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so1318203a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 11:54:15 -0700 (PDT)
+	s=arc-20240116; t=1725562616; c=relaxed/simple;
+	bh=5Kl2tZr706GSf18Hbk3w3yTELR9WRKf0WWMV0a8g2Vg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NPVVgyFRNsbdyVWptpwZbhiYqlka+qD3nhUeB56H6Gd7i5yUt5aTtNvMYG/FehyRdHSLwYG15zJC6ViXBhnpZZ/pRgJAnHD84fCWA8+jNv8QQ6h6TS1pylU4jDzir2K+J8pJy3SxmaaiAIfN7neVFs+MH80MmMtLW5zycJpEG28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=jes/yyjZ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a86859e2fc0so157402666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 11:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725562454; x=1726167254; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RxABoZy7M/TZG8opuKEUGg9PIAepW4IWO/Hnr8c+uSo=;
-        b=bppyafcJoWlFgS8M2UEohwoJYcIWa32E1DW48VgOBaEV/dvI4G0dIdbhmRkujthpK/
-         XivKiGFCzh37sUL3g5wMcIK5RYUNXcSoDxSIYJpbW16wBkOUN9eT+9MDETM8yeZOLzhx
-         7bOL4qh4ZD9+M+XXikQI0pLTZbH3EO8wHRL5f1D5wEq2K3Meh3ZYbOhBMxw2ioIeb/wU
-         aaiAHgns6/6NQockmvPY4ZiaMfpitnOxDjaKsMo0VcghnTsI16h3hXg9FlLmwcwXrJN1
-         debI9J+wlOAeXnn6EaqSRyTvuNzO9zcQBKN3xe9VculiteYxvcIMweeueic6SIVQtlb8
-         h0cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725562454; x=1726167254;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gateworks.com; s=google; t=1725562613; x=1726167413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RxABoZy7M/TZG8opuKEUGg9PIAepW4IWO/Hnr8c+uSo=;
-        b=dm499TU89zucBig1GvZoMA5DQiCzpHpo/jzy6EM87ALDqDFJu18mxfO6eUXRnIYCfY
-         qvdF1MzXxftcVTvtsT+5AhUe5A7OoC8xbImEOvTvETXnELwvVpG66mZwUmbmkLdNdQWv
-         fMNzoHFDnAVEqgI/x9oBr5ehnddU9q1n7FY/e2JRumeewpkEWVr/+b+jKmtGWC8O+z0k
-         YZynwxKGTmnG4m/n6Un+JNY1M4H2D8y8l3xo/2BUdN/JtVL2yIb8JAR9VyihI0BIazv3
-         6et9PqPcRHOmR/kIPLAQ0+nsP4oYHMPd9T/CIoskBTe/63iYRXjzQCdv608CAM48LK9M
-         Jg6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWwLhLVNNBpozIJSeQauKVtNBPazHurIDsgSCBsTnNq6E+/KqzrT14l2pSQJiBrA+kEhFkVB5wFFgBdF4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxgOkB4ddt0OkM7cQ+Z76KsPFWU8XGm5kDJuZTDO/ja9cWnQvc
-	rBzBkroEIIJhRK+NWNiUGRrZk8+johKudhFG6sJDoQvu1hqPBuKFyNg+fD51DiY=
-X-Google-Smtp-Source: AGHT+IFjEgRGyH+GaPbngGsdDcuBB5u6KOKaz4oCTouY+y9qZ4ACBcA78wca7rCiKJ55uLq+Ab/vJw==
-X-Received: by 2002:a17:907:9486:b0:a86:b042:585a with SMTP id a640c23a62f3a-a897fad5108mr2030528766b.57.1725562452809;
-        Thu, 05 Sep 2024 11:54:12 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a62038d8bsm168982266b.64.2024.09.05.11.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 11:54:12 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 5 Sep 2024 20:54:20 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Ztn-XOvtk_d3U6XJ@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
- <ZtHN0B8VEGZFXs95@apocalypse>
- <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
- <ZtcoFmK6NPLcIwVt@apocalypse>
- <39735704-ae94-4ff8-bf4d-d2638b046c8e@kernel.org>
- <ZtndaYh2Faf6t3fC@apocalypse>
- <f39edf3d-aa9e-43a0-8997-762d76c9c248@kernel.org>
+        bh=7AimnlZvO4vX1o0LABlUFzAbcpYQGtu+zhlXenwh5uE=;
+        b=jes/yyjZansc89GH8X8Lw1V1MtwB7mpZMxA+igfDhW9Un3ssExfbOtUr3sXepUhIQY
+         dndyXhzHvstvEv5ISq32QTdI9V+EhypXHm8N1SHM33HqiPYMv3Pdwc4cFFVO7UCMhUqM
+         b7KmguXkDt9XNYOpboWN4p6wrUizZQKUfmExLotD6VglXs9hXGrw4Dk7vs6pNP0o2IwY
+         cfTtIJVcPAUvwov55LcZDZr8nfCSl1yk7tPTr6p5iyvbO9vigkdPNE0cuGgI1kVmcKjb
+         rxOReW1TagrwcXw4b7YUGp1g9G+0Ugz8NRv1TEHenaSzs3ME2E4YnDwqUR7cFKcuWMdA
+         QZSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725562613; x=1726167413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7AimnlZvO4vX1o0LABlUFzAbcpYQGtu+zhlXenwh5uE=;
+        b=rTWR8lgMm1R/6hfnUdHpZrQ4eWkke+PLrGtTW+ln2YK9hudZbs1PgC3kFs0PZPlaBZ
+         drsphIuXaWD7OqqRkvA2MSE/s027r2xFgNChHFmahPxnXeujHQq056ea4omuO62w6iuF
+         61pr22c2snRXkKH8cxKChYtkF858EXUny4c5AJS9RjQeymTLVif1auS21FEe6TMJvqfQ
+         joU2mab98tcbJpqJjoknLI4I3uyfKMOGOL3BqQtJkExc2h3tgHw8CQr/V6L+96xrTfr+
+         ZCDYZXzKntqzNdsYAa6x6CNRMCGqboarndeO4eb9EvQbBCD0ZZh99Nj1A2sx+XsHe/EY
+         jVMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4fIt85YL5G/L0QuBfO0xDfdTv82cUwrA4F4jzsUfuYZrHlkC56a399o9wKtqkbHq3wP8GdlPdM6FHzFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyif2MqPSx2Dbbuk5qkfydQgdaaP7eBF+XHa5FT67eTx4EZgFZE
+	iBw98O27mjDSmcfvogoxmzrQhUx5yGsyEiWYO+L3L9IqOfxXsjdji5A3cRrE/FdT5BHpnE5YwJq
+	V35MBUJ4G1skOsMQWqlT/Y7fTa6RctV5qoFZIfQ==
+X-Google-Smtp-Source: AGHT+IGdoYNXI+zkFvkIv/Pf0iKRQ0TdFYopTZLghqtcSzK7K7EJ5wlRtOTdvPGPRBWz6UTGgTXgE416ziaIjjvKK9Y=
+X-Received: by 2002:a17:907:2da5:b0:a86:9cff:6798 with SMTP id
+ a640c23a62f3a-a8a32ed4b43mr754624966b.30.1725562612865; Thu, 05 Sep 2024
+ 11:56:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f39edf3d-aa9e-43a0-8997-762d76c9c248@kernel.org>
+References: <20240807-fsl_dts_warning-v2-0-89e08c38831a@nxp.com> <20240807-fsl_dts_warning-v2-3-89e08c38831a@nxp.com>
+In-Reply-To: <20240807-fsl_dts_warning-v2-3-89e08c38831a@nxp.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Thu, 5 Sep 2024 11:56:41 -0700
+Message-ID: <CAJ+vNU3ZsJG-eoqf3JcHTyDwjp4uOW1XiEhnOfWZ1FJ-q1Y9Hw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: imx8mm-venice-gw7901: add
+ #address(size)-cells for gsc@20
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Wed, Aug 7, 2024 at 7:54=E2=80=AFAM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> Add #address-cells and #size-cells for gsc@20 to fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dtb: gsc@20: '#address=
+-cells' is a required propert
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts b/arc=
+h/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts
+> index 136cb30df03a6..35ae0faa815bc 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts
+> @@ -364,6 +364,8 @@ gsc: gsc@20 {
+>                 interrupts =3D <16 IRQ_TYPE_EDGE_FALLING>;
+>                 interrupt-controller;
+>                 #interrupt-cells =3D <1>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+>
+>                 adc {
+>                         compatible =3D "gw,gsc-adc";
+>
+> --
+> 2.34.1
+>
+>
 
-On 18:52 Thu 05 Sep     , Krzysztof Kozlowski wrote:
-> On 05/09/2024 18:33, Andrea della Porta wrote:
-> > Hi Krzysztof,
-> > 
-> > On 20:27 Tue 03 Sep     , Krzysztof Kozlowski wrote:
-> >> On 03/09/2024 17:15, Andrea della Porta wrote:
-> >>>>>>> +
-> >>>>>>> +				rp1_clocks: clocks@c040018000 {
-> >>>>>>
-> >>>>>> Why do you mix MMIO with non-MMIO nodes? This really does not look
-> >>>>>> correct.
-> >>>>>>
-> >>>>>
-> >>>>> Right. This is already under discussion here:
-> >>>>> https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
-> >>>>>
-> >>>>> IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
-> >>>>> using CLK_OF_DECLARE.
-> >>>>
-> >>>> Depends. Where are these clocks? Naming suggests they might not be even
-> >>>> part of this device. But if these are part of the device, then why this
-> >>>> is not a clock controller (if they are controllable) or even removed
-> >>>> (because we do not represent internal clock tree in DTS).
-> >>>
-> >>> xosc is a crystal connected to the oscillator input of the RP1, so I would
-> >>> consider it an external fixed-clock. If we were in the entire dts, I would have
-> >>> put it in root under /clocks node, but here we're in the dtbo so I'm not sure
-> >>> where else should I put it.
-> >>
-> >> But physically, on which PCB, where is this clock located?
-> > 
-> > xosc is a crystal, feeding the reference clock oscillator input pins of the RP1,
-> > please see page 12 of the following document:
-> > https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> 
-> That's not the answer. Where is it physically located?
+Hi Frank,
 
-Please see below.
+I just noticed this patch (along with a few others to
+imx8m*venice*dts* which undoes what was done in commit 3343ab4cc698
+"arm64: dts: freescale: imx8m*-venice-*: fix gw,gsc dt-schema
+warnings" which my commit message states: Fix the dt-schema warnings
+due to #address-cells/#size-cells being unnecessary when there are no
+children with reg cells.
 
-> 
-> > On Rpi5, the PCB is the very same as the one on which the BCM2712 (SoC) and RP1
-> > are soldered. Would you consider it external (since the crystal is outside the RP1)
-> > or internal (since the oscillator feeded by the crystal is inside the RP1)?
-> 
-> So it is on RPi 5 board? Just like every other SoC and every other
-> vendor? Then just like every other SoC and every other vendor it is in
-> board DTS file.
+With your patch applied I now see warnings again:
+$ touch arch/arm64/boot/dts/freescale/imx8m*venice*.dts*; make dtbs W=3D1
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw71xx-0x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw75xx-0x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dtb
+arch/arm64/boot/dts/freescale/imx8mm-venice-gw7901.dts:361.14-467.4:
+Warning (avoid_unnecessary_addr_size): /soc@0/bus@30800000/i2c@3
+0a20000/gsc@20: unnecessary #address-cells/#size-cells without
+"ranges", "dma-ranges" or child "reg" property
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dtb
+arch/arm64/boot/dts/freescale/imx8mm-venice-gw7902.dts:311.14-418.4:
+Warning (avoid_unnecessary_addr_size): /soc@0/bus@30800000/i2c@3
+0a20000/gsc@20: unnecessary #address-cells/#size-cells without
+"ranges", "dma-ranges" or child "reg" property
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dtb
+arch/arm64/boot/dts/freescale/imx8mm-venice-gw7903.dts:277.14-364.4:
+Warning (avoid_unnecessary_addr_size): /soc@0/bus@30800000/i2c@3
+0a20000/gsc@20: unnecessary #address-cells/#size-cells without
+"ranges", "dma-ranges" or child "reg" property
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dtb
+arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts:330.14-411.4:
+Warning (avoid_unnecessary_addr_size): /soc@0/bus@30800000/i2c@3
+0a20000/gsc@20: unnecessary #address-cells/#size-cells without
+"ranges", "dma-ranges" or child "reg" property
+  DTC     arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dtb
+arch/arm64/boot/dts/freescale/imx8mn-venice-gw7902.dts:309.14-416.4:
+Warning (avoid_unnecessary_addr_size): /soc@0/bus@30800000/i2c@3
+0a20000/gsc@20: unnecessary #address-cells/#size-cells without
+"ranges", "dma-ranges" or child "reg" property
+arch/arm64/boot/dts/freescale/imx8mn.dtsi:1128.11-1138.7: Warning
+(graph_child_address): /soc@0/bus@32c00000/isi@32e20000/ports: grap
+h node has single child node 'port@0', #address-cells/#size-cells are
+not necessary
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx-2x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx-2x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw73xx-2x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw75xx-2x.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-imx219.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-imx219.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rpidsi.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rpidsi.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.d=
+tbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.d=
+tb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs422.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs422.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs485.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs485.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-imx219.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-imx219.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rpidsi.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rpidsi.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs232-rts.d=
+tbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs232-rts.d=
+tb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs422.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs422.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs485.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs485.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx-imx219.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx-imx219.dtb
+  DTC     arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx-rpidsi.dtbo
+  DTOVL   arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx-rpidsi.dtb
 
-Yes it's on the Rpi5 board. These are two separate thing, though: one is where
-to put it (DTS, DTSO) and another is in what target path relative to root. I
-was trying to understand the latter.
-The clock node should be put in the DTBO since we are loading this driver at
-runtime and we probably don't want to depend on some specific node name to be
-present in the DTS. This is also true because this driver should possibly work
-also on ACPI system and on hypothetical PCI card on which the RP1 could be mounted
-in the future, and in that case a DTS could be not even there. 
-After all, those clocks must be in the immediate proximity to the RP1, and on the
-same board, which may or may not be the main board as the Rpi5 case.
-I think that, since this application is a little bit peculiar, maybe some
-compromises could be legit.
+Is this some case of dueling dt-schema checks for dtb checks?
 
-> 
-> > 
-> >>
-> >>>
-> >>> Regarding pclk and hclk, I'm still trying to understand where they come from.
-> >>> If they are external clocks (since they are fixed-clock too), they should be
-> >>> in the same node as xosc. CLK_OF_DECLARE does not seem to fit here because
-> >>
-> >> There is no such node as "/clocks" so do not focus on that. That's just
-> >> placeholder but useless and it is inconsistent with other cases (e.g.
-> >> regulators).
-> > 
-> > Fine, I beleve that the root node would be okay then, or some other carefully named
-> > node in root, if the clock is not internal to any chip.
-> > 
-> >>
-> >> If this is external oscillator then it is not part of RP1 and you cannot
-> >> put it inside just to satisfy your drivers.
-> > 
-> > Ack.
-> > 
-> >>
-> >>> there's no special management of these clocks, so no new clock definition is
-> >>> needed.
-> >>
-> >>> If they are internal tree, I cannot simply get rid of them because rp1_eth node
-> >>> references these two clocks (see clocks property), so they must be decalred 
-> >>> somewhere. Any hint about this?.
-> >>>
-> >>
-> >> Describe the hardware. Show the diagram or schematics where is which device.
-> > 
-> > Unfortunately I don't have the documentation (schematics or other info) about
-> > how these two clocks (pclk and hclk) are arranged, but I'm trying to get
-> > some insight about that from various sources. While we're waiting for some
-> > (hopefully) more certain info, I'd like to speculate a bit. I would say that
-> > they both probably be either external (just like xosc), or generated internally
-> > to the RP1:
-> > 
-> > If externals, I would place them in the same position as xosc, so root node
-> > or some other node under root (eg.: /rp1-clocks)
-> 
-> Just like /clocks, /rp1-clocks is not better. Neither /rp1-foo-clocks.
+Best Regards,
 
-Right. So in this case, since xosc seems to be on the same level and on the same
-board of the RP1 and the SoC, and it's also external to the RP1, can I assume that
-placing xosc node in root is ok?
-
-> 
-> I think there is some sort of big misunderstanding here. Is this RP1
-> co-processor on the RP board, connected over PCI to Broadcom SoC?
-
-Yes. 
-
- ---------------Rpi5 board---------------------
- |                                            |
- |    SoC ==pci bus==> RP1 <== xosc crystal   |
- |                                            |
- ----------------------------------------------
-
-> 
-> > 
-> > If internals, I would leave them just where they are, i.e. inside the rp1 node
-> > 
-> > Does it make sense?
-> 
-> No, because you do not have xosc there, according to my knowledge.
-
-Hmmm sorry, not sure what this negation was referring to... I was talking about
-hclk and pclk, not xosc here. Could you please add some details?
-
-Many thanks,
-Andrea
-
-> 
-> Best regards,
-> Krzysztof
-> 
+Tim
 
