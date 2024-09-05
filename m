@@ -1,83 +1,175 @@
-Return-Path: <linux-kernel+bounces-316518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CAA796D09C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:40:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5F096D0AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D3C282CC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:40:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7586A1F264AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492E8193411;
-	Thu,  5 Sep 2024 07:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wY1BaZq7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9258C156C49;
+	Thu,  5 Sep 2024 07:45:15 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A26218A94F;
-	Thu,  5 Sep 2024 07:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB768F66;
+	Thu,  5 Sep 2024 07:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725522033; cv=none; b=EFyKcsi2Yj1j0d7K1vE1Zh0bdMWji/8Db+QA59pa+agH4/9HH4MGeJUQX4DIBF3D0MV+Fnb5YhIr9z9IXrIgEWiujvRe0pJyBHX4LStLx2j1aFTQ2CO/ezn03tTb3IItsxPt762nWB7ycSVPhi2myHjlQXycyX3E/D/55st/A/A=
+	t=1725522315; cv=none; b=jUwbtGuew0bKSAxkJov7DcPLXGt58nVWeb6dTjD26fHydtD43laAjLqXaw8p9BuzpIrbhUq7Sys+l07zd8zdARSJkpYPG6pZxmJGQnDXuwyOl/ewaOQb40gwfHBd0WAqvP4Ci0E8qau6piSdrLpeaM1uRihxCq5oIn46m0sRQf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725522033; c=relaxed/simple;
-	bh=PZJmqlHpJ1uU+ASFJIpncqC9uV3uvVokLmZ+DOZ31vY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odtJp9TU5gKFXwiK+TIW3lrDxWSGesJpRlJiCDd+uDRqXTScvrwXFpGOpFnQ0tksAnH5XrHjxLyDKAdJIekCOraRKMIyS2qcaOVgBjOyFfJxTkNv28d5sdsv38juHdgDOVzM1utuCH1BX0AuUPJy8U9UBtx2sAzMdVJ/0Zk75Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wY1BaZq7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C745C4CEC4;
-	Thu,  5 Sep 2024 07:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725522033;
-	bh=PZJmqlHpJ1uU+ASFJIpncqC9uV3uvVokLmZ+DOZ31vY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wY1BaZq7EaV2nxp/Ky4u1EjnAofwymLmYwxfNFMzbKe0jbHCKfdS8gsQnzSNvxLBw
-	 PumHeZzyspeIqGIDgjb4BCQ/0o2i9Hx1hQmo8m8P4UXCskEjO3NFFDypxbP6bOCSaO
-	 tx5sTpSbitonzYibe/kA3nVEGUcVkW8snJjYW0Ms=
-Date: Thu, 5 Sep 2024 09:40:30 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: sikkamukul <mukul.sikka@broadcom.com>
-Cc: stable@vger.kernel.org, evan.quan@amd.com, alexander.deucher@amd.com,
-	christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-	Jun.Ma2@amd.com, kevinyang.wang@amd.com, sashal@kernel.org,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
-	Bob Zhou <bob.zhou@amd.com>, Tim Huang <Tim.Huang@amd.com>
-Subject: Re: [PATCH v5.15-v5.10] drm/amd/pm: Fix the null pointer dereference
- for vega10_hwmgr
-Message-ID: <2024090523-collide-colonize-d914@gregkh>
-References: <20240903045809.5025-1-mukul.sikka@broadcom.com>
+	s=arc-20240116; t=1725522315; c=relaxed/simple;
+	bh=h0OTqGfhNCXvfaFbeXGSSplXcyXSTKxgIxAK76gFYZI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWknOtdlZJDbcbmqENH3WJHXkSxMG97lx0swGY6dM/L38ED+xmL54yGzu7AbvDuORVz0xe8ADcXv/70ltEblTIpFgYqWqP7DyGzqJA67iJUorYtoiScAKceflkILm5U+gKvyXvdxw7vRAtOl4LjvhylBORerCEWr4IMegK1eM8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 4857iRWZ035132
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 5 Sep 2024 15:44:27 +0800 (+08)
+	(envelope-from hongchi.peng@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4WzrwV4lC1z7ZMhp;
+	Thu,  5 Sep 2024 15:44:26 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Thu, 5 Sep 2024 15:44:26 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 15:44:26 +0800
+Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
+ (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
+ Transport; Thu, 5 Sep 2024 15:44:26 +0800
+From: kimriver liu <kimriver.liu@siengine.com>
+To: <jarkko.nikula@linux.intel.com>
+CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
+        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kimriver.liu@siengine.com>
+Subject: [PATCH] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
+Date: Thu, 5 Sep 2024 15:42:11 +0800
+Message-ID: <20240905074211.2278-1-kimriver.liu@siengine.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903045809.5025-1-mukul.sikka@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 4857iRWZ035132
 
-On Tue, Sep 03, 2024 at 04:58:09AM +0000, sikkamukul wrote:
-> From: Bob Zhou <bob.zhou@amd.com>
-> 
-> [ Upstream commit 50151b7f1c79a09117837eb95b76c2de76841dab ]
-> 
-> Check return value and conduct null pointer handling to avoid null pointer dereference.
-> 
-> Signed-off-by: Bob Zhou <bob.zhou@amd.com>
-> Reviewed-by: Tim Huang <Tim.Huang@amd.com>
-> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> Signed-off-by: Mukul Sikka <mukul.sikka@broadcom.com>
-> ---
->  .../drm/amd/pm/powerplay/hwmgr/vega10_hwmgr.c | 30 ++++++++++++++++---
->  1 file changed, 26 insertions(+), 4 deletions(-)
+From: "kimriver.liu" <kimriver.liu@siengine.com>
 
-Now queued up, thanks.
+Failure in normal Stop operational path
 
-greg k-h
+This failure happens rarely and is hard to reproduce. Debug trace
+showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
+immediately disable ENABLE bit that can result in
+IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
+
+Failure in ENABLE bit is disabled path
+
+It was observed that master is holding SCL low and the IC_ENABLE is
+already disabled, Enable ABORT bit and ENABLE bit simultaneously
+cannot take effect.
+
+Check if the master is holding SCL low after ENABLE bit is already
+disabled. If SCL is held low, The software can set this ABORT bit only
+when ENABLE is already set，otherwise,
+the controller ignores any write to ABORT bit. When the abort is done,
+then proceed with disabling the controller.
+
+These kernel logs show up whenever an I2C transaction is attempted
+after this failure.
+i2c_designware e95e0000.i2c: timeout in disabling adapter
+i2c_designware e95e0000.i2c: timeout waiting for bus ready
+
+The patch can be fix the controller cannot be disabled while SCL is
+held low in ENABLE bit is already disabled.
+
+Signed-off-by: kimriver.liu <kimriver.liu@siengine.com>
+---
+ drivers/i2c/busses/i2c-designware-common.c | 12 +++++++++++
+ drivers/i2c/busses/i2c-designware-master.c | 23 +++++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index e8a688d04aee..54acf8554582 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 
+ 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+ 	if (abort_needed) {
++		if (!(enable & DW_IC_ENABLE_ENABLE)) {
++			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
++			enable |= DW_IC_ENABLE_ENABLE;
++
++			/*
++			 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
++			 * is already set by the driver (for 400KHz this is 25us)
++			 * as described in the DesignWare I2C databook.
++			 */
++			fsleep(25);
++		}
++
+ 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+ 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+ 					       !(enable & DW_IC_ENABLE_ABORT), 10,
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index c7e56002809a..aba0b8fdfe9a 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -253,6 +253,26 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
+ 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
+ }
+ 
++static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
++{
++	u32 status;
++	int ret;
++
++	regmap_read(dev->map, DW_IC_STATUS, &status);
++	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
++		return true;
++
++	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
++			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
++			1100, 20000);
++	if (ret) {
++		dev_err(dev->dev, "i2c master controller not idle %d\n", ret);
++		return false;
++	}
++
++	return true;
++}
++
+ static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
+ {
+ 	u32 val;
+@@ -796,7 +816,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 	 * additional interrupts are a hardware bug or this driver doesn't
+ 	 * handle them correctly yet.
+ 	 */
+-	__i2c_dw_disable_nowait(dev);
++	if (i2c_dw_is_master_idling(dev))
++		__i2c_dw_disable_nowait(dev);
+ 
+ 	if (dev->msg_err) {
+ 		ret = dev->msg_err;
+-- 
+2.17.1
+
 
