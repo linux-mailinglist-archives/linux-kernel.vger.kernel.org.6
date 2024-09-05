@@ -1,194 +1,197 @@
-Return-Path: <linux-kernel+bounces-316717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0100796D30D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:26:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2254A96D30F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF37E2841B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7D01F24F4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1041F197A7A;
-	Thu,  5 Sep 2024 09:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A767198850;
+	Thu,  5 Sep 2024 09:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQsfoCCS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5wx49LL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5332F195803;
-	Thu,  5 Sep 2024 09:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85B6195803;
+	Thu,  5 Sep 2024 09:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528356; cv=none; b=OWsRwLgXy+IwO+iQmPqGNqwOgyiwHuG1siTPChoMc0QHbTOPc3YY5PQTNEcK69NL9neHlQCGggCkHDwyguT2Iwi1SLe3GgGC8WeYr7WfLRcDChflYnMPnvHChQCHd5alfnqaikyo3AMO5uRT64y0Yy8G9RshIuPS8fPMaEV1Ezs=
+	t=1725528360; cv=none; b=Qh0nBa6TR9Wmw83Kdfy5GXjZEGUy+vh0bfWOAEr9sz6fYhAatCJgpN9ffrBFq83bwop8djpB9vIFEKACX8m+oe+nIfzCZqHICBq+ueqlZKXeFqHTECrgVZ/bximF3MknqcXxORs78UMFZWTABgA8LP5/9p8yuqxflWXHzwCan5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528356; c=relaxed/simple;
-	bh=S3hBFml/rGa81thzGNM4AN2SWCtaRe/D7OE5yRnkjQs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UaSSiDz+w+6JbCcXe5BbxkZGGpvYf5ngF2TSJnZ9cAxotjT9GqvX339UksUPsd09b3eMX5rpDx+Mh2FgmWilDhUzcffIskqUuwwUNwT8vUYpXWOXQUA2U9P/S+f30uRRByHXO+TJmNBe9NWiN+eHSRbuUUSyA3kg2iPs+eMn0t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQsfoCCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A14C4CEC4;
-	Thu,  5 Sep 2024 09:25:50 +0000 (UTC)
+	s=arc-20240116; t=1725528360; c=relaxed/simple;
+	bh=ICkek0DcVkkKx78wOg605n+MZx7jsTDeHkHJAKMsUME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puyupJcSMLbU0JBGvTBHvj6EUidEimvXihLWqq2ibqOmqp5UmLV2mG7KzLb1barUa+dr4oRIX8gHr0Ob3IDPFfNUZouYz8IIrmRdv/DUyOpjIEUYQQRKGMeQhUR8vtnsjCFNtcWnUCBPVhk1ONU5FmlC/IJ/q6S+KvAbxl7VcB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5wx49LL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4FACC4CEC3;
+	Thu,  5 Sep 2024 09:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725528355;
-	bh=S3hBFml/rGa81thzGNM4AN2SWCtaRe/D7OE5yRnkjQs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=dQsfoCCSfCLppT0QCh4Kul2CjXMUnKIzVmCFYoeJD/Bj1y+gaMY60BvP0vqjY++qV
-	 BPmrVzF/6bgg5W8EgR6kzq2+SzUt22bJ+tdOtUDHa9UzuiBVxlb0TAs5Q6A4ATBYgh
-	 n4XorVvu1v3Mk9mmiBxqlwvv4KjliQZpzSI2mnB++Xta+eONnQu6NzbIwj7w2IZ8e6
-	 /DH7E7xyfXO+iFmT2LmXVZwOmbeDxIlL+i3xEk3WF2Uf33jU+7tO67bIBjB3u0JNZN
-	 dJxM3mMooG0U9nKAf7DajotyNPyGHFGH+3I33B4XBcxDZDSrM3k7BBPdrt2A5wI+yJ
-	 bRp4rmUzrntvQ==
-Message-ID: <fa11631e-48f9-4e95-95c4-20b77cb0a1be@kernel.org>
-Date: Thu, 5 Sep 2024 11:25:48 +0200
+	s=k20201202; t=1725528360;
+	bh=ICkek0DcVkkKx78wOg605n+MZx7jsTDeHkHJAKMsUME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A5wx49LLPUcyurOBwBrkVoH4BH7EYFTpdyYe2sOXFr7VbZ0b4Cci1PMkdElW9Jhwg
+	 F5SKvkgREsFvVMYrPyTf3mU5kH96FeHTgnVXhXXdEhFFCkuIBm+pmrZWMs2vVAZ0IU
+	 w4T7udwvPFfjUbqgkV/I9JgSnlXptODTFi1XJPOi31Q14CKrW6KE6qCfHTRUi2DPuW
+	 DjSMlK3mTk+IJ4hLlvSGSaO03b3ZE3uPDVFMM8zyBLEISBLffx0NQW2u4ejRibo+OH
+	 wNUnCrlbaoGUos43V1pCd2ud607MjhDdp+s50OVK8jHWZfJz8qD+TsLYKYDWJGBhcJ
+	 CTzZFsQTmxjCQ==
+Date: Thu, 5 Sep 2024 11:25:55 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: libata-eh: Clear scsicmd->result when setting
+ SAM_STAT_CHECK_CONDITION
+Message-ID: <Ztl5I1Kz53MOEtF4@ryzen.lan>
+References: <20240904223727.1149294-1-ipylypiv@google.com>
+ <Ztls4mim6Jky7E0S@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: ti, sci: Add property for
- partial-io-wakeup-sources
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
- Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
- Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729080101.3859701-1-msp@baylibre.com>
- <20240729080101.3859701-2-msp@baylibre.com>
- <f0f60af7-8561-433a-a027-811015fc5e16@kernel.org>
- <ti4ffymrixcpptlrn3o5bytoyc4w5oovdrzgu442ychai2fjet@wtdhrmwrozee>
- <44feed5a-95a7-4baa-b17e-514c0f50dae6@kernel.org>
- <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
- <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ztls4mim6Jky7E0S@ryzen.lan>
 
-On 05/09/2024 11:15, Krzysztof Kozlowski wrote:
-> On 05/09/2024 11:08, Markus Schneider-Pargmann wrote:
->> On Tue, Aug 06, 2024 at 10:03:00AM GMT, Krzysztof Kozlowski wrote:
->>> On 06/08/2024 09:11, Markus Schneider-Pargmann wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On Tue, Aug 06, 2024 at 08:18:01AM GMT, Krzysztof Kozlowski wrote:
->>>>> On 29/07/2024 10:00, Markus Schneider-Pargmann wrote:
->>>>>> Partial-IO is a very low power mode in which nearly everything is
->>>>>> powered off. Only pins of a few hardware units are kept sensitive and
->>>>>> are capable to wakeup the SoC. The device nodes are marked as
->>>>>> 'wakeup-source' but so are a lot of other device nodes as well that are
->>>>>> not able to do a wakeup from Partial-IO. This creates the need to
->>>>>> describe the device nodes that are capable of wakeup from Partial-IO.
->>>>>>
->>>>>> This patch adds a property with a list of these nodes defining which
->>>>>> devices can be used as wakeup sources in Partial-IO.
->>>>>>
->>>>>
->>>>> <form letter>
->>>>> This is a friendly reminder during the review process.
->>>>>
->>>>> It seems my or other reviewer's previous comments were not fully
->>>>> addressed. Maybe the feedback got lost between the quotes, maybe you
->>>>> just forgot to apply it. Please go back to the previous discussion and
->>>>> either implement all requested changes or keep discussing them.
->>>>>
->>>>> Thank you.
->>>>> </form letter>
->>>>
->>>> I tried to address your comment from last version by explaining more
->>>> thoroughly what the binding is for as it seemed that my previous
->>>> explanation wasn't really good.
->>>>
->>>> You are suggesting to use 'wakeup-source' exclusively. Unfortunately
->>>> wakeup-source is a boolean property which covers two states. I have at
->>>> least three states I need to describe:
->>>>
->>>>  - wakeup-source for suspend to memory and other low power modes
->>>>  - wakeup-source for Partial-IO
->>>>  - no wakeup-source
->>>
->>> Maybe we need generic property or maybe custom TI would be fine, but in
->>> any case - whether device is wakeup and what sort of wakeup it is, is a
->>> property of the device.
->>
->> To continue on this, I currently only know of this Partial-IO mode that
->> would require a special flag like this. So I think a custom TI property
->> would work. For example a bool property like
->>
->>   ti,partial-io-wakeup-source;
->>
->> in the device nodes for which it is relevant? This would be in addition
->> to the 'wakeup-source' property.
-> 
-> Rather oneOf. I don't think having two properties in a node brings any
-> more information.
-> 
-> I would suggest finding one more user of this and making the
-> wakeup-source an enum - either string or integer with defines in a header.
+On Thu, Sep 05, 2024 at 10:33:38AM +0200, Niklas Cassel wrote:
+> There are many different paths a QC can take via EH, e.g. policy 0xD NCQ
+> commands will not fetch sense data via ata_eh_request_sense(), so clearing
+> the host byte in ata_scsi_qc_complete() should be fine, otherwise we need
+> to do a similar change to yours in all the different code paths that sets
+> sense data ...which might actually be something that makes sense, but then
+> I would expect a patch series that changes all the locations where we set
+> sense data, not just in ata_eh_analyze_tf(), and then drops the clearing in
+> ata_scsi_qc_complete() (which was introduced in commit 7574a8377c7a ("ata:
+> libata-scsi: do not overwrite SCSI ML and status bytes")).
 
-I am going through this thread again to write something in DT BoF but
-this is confusing:
+I tried to implement the suggestion above, it looks like this:
 
-"Partial-IO is a very low power mode"
-"not able to do a wakeup from Partial-IO."
-"wakeup-source for Partial-IO"
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index e4023fc288ac..ff4945a8f647 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4824,6 +4824,14 @@ void ata_qc_free(struct ata_queued_cmd *qc)
+ 		qc->tag = ATA_TAG_POISON;
+ }
+ 
++void ata_qc_set_sense_valid_flag(struct ata_queued_cmd *qc)
++{
++	qc->flags |= ATA_QCFLAG_SENSE_VALID;
++
++	/* Keep the SCSI ML and status byte, clear host byte. */
++	qc->scsicmd->result &= 0x0000ffff;
++}
++
+ void __ata_qc_complete(struct ata_queued_cmd *qc)
+ {
+ 	struct ata_port *ap;
+diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+index 7de97ee8e78b..df83251601dc 100644
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -1482,7 +1482,8 @@ static bool ata_eh_request_sense(struct ata_queued_cmd *qc)
+ 			scsi_build_sense_buffer(dev->flags & ATA_DFLAG_D_SENSE,
+ 						cmd->sense_buffer, tf.lbah,
+ 						tf.lbam, tf.lbal);
+-			qc->flags |= ATA_QCFLAG_SENSE_VALID;
++			ata_qc_set_sense_valid_flag(qc);
++
+ 			return true;
+ 		}
+ 	} else {
+@@ -1657,7 +1658,7 @@ static unsigned int ata_eh_analyze_tf(struct ata_queued_cmd *qc)
+ 						qc->scsicmd->sense_buffer,
+ 						qc->result_tf.error >> 4);
+ 			if (!tmp)
+-				qc->flags |= ATA_QCFLAG_SENSE_VALID;
++				ata_qc_set_sense_valid_flag(qc);
+ 			else
+ 				qc->err_mask |= tmp;
+ 		}
+@@ -2049,7 +2050,7 @@ static void ata_eh_get_success_sense(struct ata_link *link)
+ 
+ 		/* This success command had sense data, but we failed to get. */
+ 		ata_scsi_set_sense(dev, qc->scsicmd, ABORTED_COMMAND, 0, 0);
+-		qc->flags |= ATA_QCFLAG_SENSE_VALID;
++		ata_qc_set_sense_valid_flag(qc);
+ 	}
+ 	ata_eh_done(link, dev, ATA_EH_GET_SUCCESS_SENSE);
+ }
+diff --git a/drivers/ata/libata-sata.c b/drivers/ata/libata-sata.c
+index ea6126c139af..c3bbe8877376 100644
+--- a/drivers/ata/libata-sata.c
++++ b/drivers/ata/libata-sata.c
+@@ -1452,7 +1452,7 @@ int ata_eh_read_sense_success_ncq_log(struct ata_link *link)
+ 		scsi_build_sense_buffer(dev->flags & ATA_DFLAG_D_SENSE,
+ 					qc->scsicmd->sense_buffer, sk,
+ 					asc, ascq);
+-		qc->flags |= ATA_QCFLAG_SENSE_VALID;
++		ata_qc_set_sense_valid_flag(qc);
+ 
+ 		/*
+ 		 * No point in checking the return value, since the command has
+@@ -1539,7 +1539,7 @@ void ata_eh_analyze_ncq_error(struct ata_link *link)
+ 					   ascq);
+ 			ata_scsi_set_sense_information(dev, qc->scsicmd,
+ 						       &qc->result_tf);
+-			qc->flags |= ATA_QCFLAG_SENSE_VALID;
++			ata_qc_set_sense_valid_flag(qc);
+ 		}
+ 	}
+ 
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 3a442f564b0d..6a90062c8b55 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -1680,9 +1680,6 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+ 			set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
+ 	} else if (is_error && !have_sense) {
+ 		ata_gen_ata_sense(qc);
+-	} else {
+-		/* Keep the SCSI ML and status byte, clear host byte. */
+-		cmd->result &= 0x0000ffff;
+ 	}
+ 
+ 	ata_qc_done(qc);
+diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
+index ab4bd44ba17c..85d19d6edcea 100644
+--- a/drivers/ata/libata.h
++++ b/drivers/ata/libata.h
+@@ -70,6 +70,7 @@ extern int ata_down_xfermask_limit(struct ata_device *dev, unsigned int sel);
+ extern unsigned int ata_dev_set_feature(struct ata_device *dev,
+ 					u8 subcmd, u8 action);
+ extern void ata_qc_free(struct ata_queued_cmd *qc);
++extern void ata_qc_set_sense_valid_flag(struct ata_queued_cmd *qc);
+ extern void ata_qc_issue(struct ata_queued_cmd *qc);
+ extern void __ata_qc_complete(struct ata_queued_cmd *qc);
+ extern int atapi_check_dma(struct ata_queued_cmd *qc);
 
-Are you waking up from Partial-IO or are you waking up into Partial-IO?
 
-And why the devices which are configured as wakeup-source cannot wake up
-from or for Partial-IO?
 
-Best regards,
-Krzysztof
+I guess the obvious advantage that I can see is that we would do the
+right thing regardless of qc->complete_fn.
 
+qc->complete_fn can be any of:
+ata_qc_complete_internal()
+ata_scsi_qc_complete()
+atapi_qc_complete()
+ata_scsi_report_zones_complete()
+
+Instead of only doing the right thing if:
+qc->complete_fn == ata_scsi_qc_complete().
+
+Thoughts?
+
+
+Kind regards,
+Niklas
 
