@@ -1,114 +1,80 @@
-Return-Path: <linux-kernel+bounces-317662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B808F96E1A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:10:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7091496E1A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA22A1C23E15
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED3C28B89C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8350417BEC1;
-	Thu,  5 Sep 2024 18:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31D517BEC2;
+	Thu,  5 Sep 2024 18:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgwqGNo7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKR11tVw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96971C2E;
-	Thu,  5 Sep 2024 18:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0021C2E;
+	Thu,  5 Sep 2024 18:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725559805; cv=none; b=tn9YC28/gCWjKhU7wCdeVx09se2njBihJHOwqxoPuPP+PZQnKNHsHlOQ/1USS/3KSSpONZm6O4rQmfYbhZ1QT+oe6zO9FrErNIxD2n1BixBbweDWhSduk5QwLAYzAC2ml3xsvP1aLEeAt6sshxwtmkiqDbrpKxutzJVF2PbTwB0=
+	t=1725559795; cv=none; b=Xr18FvXjTNR/LfSXmUlkMIEhJzfFUTwWaAli3JLtuZ8H7Z2IbqWCPW1EWYBSRQjeUE8ucY/pL6bufVDUp3oDiDguMlydiFe1l+rsAMkL/SYlqYOahtXKogxIxSYT0R+RROmePbp79UjCvH9/R+H/R2hHYm7rYVzvE4tg2cVaeNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725559805; c=relaxed/simple;
-	bh=u8nKmNx9UeqvI8DbS4RLTw4lZnLX0PsOy6Bt6p6ccYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c1hH+VxfATQwLn+WVocz+lSRzrhAILElvvNCyLh+lMiKliXuLsmsH1uqtS+VhPP02rB8ThZfzhRIR2hnsV0Q2Ff7TiVzSwXcwxQJZuz/Fhs/Ey0obEobruqFxJl8sgEGfjlykjr+gRoiU4Mhd0kiXjZ2jhk9V+5PgY+aABhx+dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgwqGNo7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582FEC4CEC3;
-	Thu,  5 Sep 2024 18:10:03 +0000 (UTC)
+	s=arc-20240116; t=1725559795; c=relaxed/simple;
+	bh=2Kr5c7ACVjf3HcGMzj4Ae2HcwBKC3Tm5MDry+iTMW38=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ncsa0QWPhGIojKTQTXaTwPsWrSmjatGxWjafnwzmP0bdHgoUlKbmlkwhJoOmk1pTOK3ZuRFbp6blaqrPoRTNblkMxT0bsOwsQ8W3Dr1jehpya6hrhHICj/GN1JJX1E8Nf3CCHltJZDmyUmG3Yskc2Ja/ZuHHc8k8Lkc5e1Y0ud4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKR11tVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BC0C4CEC3;
+	Thu,  5 Sep 2024 18:09:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725559804;
-	bh=u8nKmNx9UeqvI8DbS4RLTw4lZnLX0PsOy6Bt6p6ccYg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PgwqGNo7dnG3LvlwzFk49NWeQQCsRqr7SELJibe4/uwfHd5iepMZJDgY4FiHE346D
-	 IgDoqYXlOVCRlzwoZc59YYOU7bK0ocD1LkoeKD1LUvPgTbZ4bdVhu2YVzpwMASSU4U
-	 xaHnYIGXlpFwIF3kGYc+ptaf5/4V6DTybqU01rnHiwWR8hbAYb6NOTp4t81mK5m+ZJ
-	 xxWANAYCMp9s11UzMI3Fz8C1/V1zzb/oTOG/dAbL3eJnoV6MMtOHxYvMoW5nxR446A
-	 ilVxN5c4pHZ9D5vkW1FOWszReiGw5tojue9KaVMGwvVIE6Zy4hAcT7VXt7rtvgyYAZ
-	 gajtaLAeoO9XA==
-From: cel@kernel.org
-To: Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Tom Haynes <loghyr@gmail.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 00/11] nfsd: implement the "delstid" draft
-Date: Thu,  5 Sep 2024 14:09:43 -0400
-Message-ID: <172555970052.5799.3415374189768431807.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
-References: <20240905-delstid-v4-0-d3e5fd34d107@kernel.org>
+	s=k20201202; t=1725559795;
+	bh=2Kr5c7ACVjf3HcGMzj4Ae2HcwBKC3Tm5MDry+iTMW38=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=UKR11tVwN3Zct+7Kpwpg3CyRWI5i1xe8rko66a7OD+OeS8dNzNoXqQraqnH7UkXON
+	 llTaJnxjE8a7pHBO+qymvjgm8Qf0li/2UOlE9tL8+2SZaKzZzGJFTpP2BJrlN4sydQ
+	 t9Dce5y+RNcRXHEXUKxeMMjM34TlxUw6X5DrSo/3OJ6NNJqs8Pfb/woYdq7Rm4KJix
+	 3VBGG2KdTl+laUl3dWgKr0nUrJTtMliwTTdMW9ac6HHXqgHe7ZqLdxbORgW/fPtFv/
+	 aFdOVk7aM9P0q8d63lNxngpAVozVVjcP72O/9PW+F0qchbCNeuHYu5p828OviQo4HK
+	 bbGPFUPpAAHxA==
+Message-ID: <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com> <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Thu, 05 Sep 2024 11:09:52 -0700
+User-Agent: alot/0.10
 
-From: Chuck Lever <chuck.lever@oracle.com>
+Quoting claudiu beznea (2024-09-04 05:17:30)
+> On 03.09.2024 22:48, Stephen Boyd wrote:
+> >=20
+> > The node name should be something like clock-<frequency> but if the
+> > frequency is different per-board then I don't know what should happen
+> > here.
+>=20
+> The frequency should be always around 32768 Hz but not necessarily exactly
+> 32768 Hz. It depends on what is installed on the board, indeed. RTC can do
+> time error adjustments based on the variations around 32768 Hz.
+>=20
+> > Can you leave the vbattb_xtal phandle up above and then require
+> > the node to be defined in the board with the proper frequency after the
+> > dash?
+>=20
+> Is it OK for you something like this (applied on top of this series)?
 
-On Thu, 05 Sep 2024 08:41:44 -0400, Jeff Layton wrote:                                              
-> Sorry this has taken me a bit to re-post. I've been working on some
-> pynfs testcases for CB_GETATTR, and have found more bugs in our
-> implementation.
-> 
-> This repost is based on top of Chuck's nfsd-next branch. The first two
-> patches fix a couple of different bugs in how we handle the change attr.
-> 
-> [...]                                                                        
-
-Dropped 9/11, applied the rest to nfsd-next for v6.12, thanks!                                                                
-
-[01/11] nfsd: fix initial getattr on write delegation
-        commit: 51158790589f1ed3a98f2d590b071ea76bd0b19d
-[02/11] nfsd: drop the ncf_cb_bmap field
-        commit: 95cc4b27389630394dd42a5d7e12dfc92e82e49d
-[03/11] nfsd: don't request change attr in CB_GETATTR once file is modified
-        commit: 4374695a6b0ffdce0c9dce1d7833f87d5cc622b4
-[04/11] nfsd: drop the nfsd4_fattr_args "size" field
-        commit: 6cb6bcdbdf416ad24dcf430f8b88d7c38810efc2
-[05/11] nfsd: have nfsd4_deleg_getattr_conflict pass back write deleg pointer
-        commit: eecc86f5e5390c64e5f85241b8872f081dd7c520
-[06/11] nfs_common: make include/linux/nfs4.h include generated nfs4.h
-        commit: 4443c4f509e74bb91e059123eb8b42ad6fd666fd
-[07/11] nfsd: add support for FATTR4_OPEN_ARGUMENTS
-        commit: 9d0b846784f084479c5beeb61458f0d38ac16f1e
-[08/11] nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
-        commit: 91556251507771f943c2f04b2ffbf517908bbb48
-[09/11] fs: handle delegated timestamps in setattr_copy_mgtime
-        (no commit info)
-[10/11] nfsd: add support for delegated timestamps
-        commit: 921347aabef19b4df68d25d4327091b4a0554bac
-[11/11] nfsd: handle delegated timestamps in SETATTR
-        commit: 8dd7cf087ba772634cba60ab922febae0b756271                                                                      
-
---                                                                              
-Chuck Lever
-
+Yes, it's too bad we can't append to a property in DT, or somehow leave
+alone certain cells and only modify one of them.
 
