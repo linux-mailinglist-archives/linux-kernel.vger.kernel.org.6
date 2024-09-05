@@ -1,74 +1,96 @@
-Return-Path: <linux-kernel+bounces-316168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E9396CC22
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:15:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC4496CC24
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85DDC281915
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987B62890FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BB2C133;
-	Thu,  5 Sep 2024 01:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487A4B661;
+	Thu,  5 Sep 2024 01:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5SKK1ae"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FM7LPDXG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AEC9454
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AADA9463
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725498904; cv=none; b=tehxeesm4hCU8t21M9ZK1up2o2SixFhxND7GX3+poZAoJ029Qrcu29wdcQqtVQxBXjSgPLeFson2t+Ag34Chy0KldcW+oOEGv/cq/6u/SJ2+Av3U0in02/Wl8sX6m/Xw39zOtj1Rx1fmJze0vM0PYBEcli7OhbBA41yumL2iw14=
+	t=1725498944; cv=none; b=eH0TK7YHtK2ohajB//dZ16Bv8FILBaTT3K5l3Yyma9qaUMPp1vdgjr3u+5scmjzLhLFRTQev4FSU/qRWyApl6kblg2DpIsPMuUPvYhaUFa99h+duIa2tGI69ZVhPWuD/ZvvnLdm3mt9d46DRpPA0iawkCk6hYymKQdACEaUxgUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725498904; c=relaxed/simple;
-	bh=3fWJeDzfvSnisSK5HoEs4qKH4+GRMvygpcT7XlA/xvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CUj1bjaxQzQdHVmHYH8lQ7why2TkGspJNQXTKTUIs4gYi5f+1HnXyfQ8Cj9w09PQJfG+LkG7zpEYV+9Fsln/ynJ54mi+crQvCwSWWDGoKSVzp6lXJfPFiiJc0UBSlujns6xpBImCw5TwzGlmrRIr3jOjCpvENyiUXdrpQ26I/0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5SKK1ae; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86156C4CEC8;
-	Thu,  5 Sep 2024 01:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725498903;
-	bh=3fWJeDzfvSnisSK5HoEs4qKH4+GRMvygpcT7XlA/xvo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h5SKK1ae0STWk1Orez3ypAbXneFv0yqmIvUux0O2WwHcbKoo4FK5+/TMORIxxmg+u
-	 +iwdlIkECnL4dDlmijBSor/XWbxmG6VgMVpZLZRniUiH9FnZx6dxAKut3wWIrdrt1n
-	 7Kl63t5viX5JO45I3XsbFrk0GofOoWOEqLBDYyW43V0XBKgScrNAPJ3keUAGGffMI3
-	 yjQSoMlp5AdEVKUqK8PiIj7zAmTHNizJMkgIS/MsAS0poju7jv0ytT0nRBdgVbH3U1
-	 FWRTOZMWuupizkurgJVUYnE6wWqNUSOB7o4LZpu53eIdC6titZJgjZxHIYDc+x6yFa
-	 wxOqaGxW9rPog==
-Message-ID: <f31dec2f-01c4-40e5-bc0d-06eb921392b8@kernel.org>
-Date: Thu, 5 Sep 2024 09:14:59 +0800
+	s=arc-20240116; t=1725498944; c=relaxed/simple;
+	bh=6fs2uhR2bK8qEvj+bOCFzAA4wSbevoeGQovZS7jGau4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nl7ELxsBg1Dwm+cwIXonJu5Kwq6EBL1Hxle5rX3Fa/ALXTty6eQqVJ7VNPoAC2o6ZQadj72+X+2eAvysWFIRuqe+fNM6QWSvhuJpBN1H+p+7DQdoPzFaiunMfD0Lf4CZlC2kuf7D8bbqN0/uHkhQgJsZ4+Kl806MdZsNFMG30U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FM7LPDXG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD508C4CEC2;
+	Thu,  5 Sep 2024 01:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725498944;
+	bh=6fs2uhR2bK8qEvj+bOCFzAA4wSbevoeGQovZS7jGau4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FM7LPDXGo3+mIpdiRM7RMOVO+rQSob05rZyd1LmwtgUqeQkcdMIMmT3lNs766bu3i
+	 VMW/2e8PYfDx2scbOm8yh9p2w8ZgZnm2OYJSuMUWTkPDFby+RHbDM8ZiEbGxkDVAMp
+	 aFzOAL+fH+oE9WTvZnNoEMZPMiXBLNJt64grnTP0=
+Date: Wed, 4 Sep 2024 18:15:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-mm@kvack.org, mhocko@kernel.org, rientjes@google.com,
+ yosryahmed@google.com, hannes@cmpxchg.org, almasrymina@google.com,
+ roman.gushchin@linux.dev, gthelen@google.com, dseo3@uci.edu,
+ a.manzanares@samsung.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim
+ interface
+Message-Id: <20240904181543.02de2242490cf233c7879697@linux-foundation.org>
+In-Reply-To: <nwutv6cuuyajmakiiznb3hoao6jfhrs2clpqi76xomqbc6yymg@n7inzwjcskhf>
+References: <20240904162740.1043168-1-dave@stgolabs.net>
+	<20240904131811.234e005307f249ef07670c20@linux-foundation.org>
+	<nwutv6cuuyajmakiiznb3hoao6jfhrs2clpqi76xomqbc6yymg@n7inzwjcskhf>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH] mkfs.f2fs: use correct endian conversion for
- writing lpf inode
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-References: <20240903173157.602995-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240903173157.602995-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024/9/4 1:31, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> The conversion between cpu and little endian is incorrect.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+On Wed, 4 Sep 2024 18:08:05 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> On Wed, 04 Sep 2024, Andrew Morton wrote:\n
+> >On Wed,  4 Sep 2024 09:27:40 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+> >
+> >> This adds support for allowing proactive reclaim in general on a
+> >> NUMA system. A per-node interface extends support for beyond a
+> >> memcg-specific interface, respecting the current semantics of
+> >> memory.reclaim: respecting aging LRU and not supporting
+> >> artificially triggering eviction on nodes belonging to non-bottom
+> >> tiers.
+> >>
+> >> This patch allows userspace to do:
+> >>
+> >>      echo 512M swappiness=10 > /sys/devices/system/node/nodeX/reclaim
+> >
+> >One value per sysfs file is a rule.
+> 
+> I wasn't aware of it as a rule - is this documented somewhere?
 
-Thanks,
+Documentation/filesystems/sysfs.rst, line 62.  Also lots of gregkh
+grumpygrams :)
+
+> I ask because I see some others are using space-separated parameters, ie:
+> 
+> /sys/bus/usb/drivers/foo/new_id
+> 
+> ... or colons. What would be acceptable? echo "512M:10" > ... ?
+
+Kinda cheating.  But the rule gets violated a lot.
+
+
 
