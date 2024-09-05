@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-317955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4679D96E605
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:02:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F53996E607
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05DEA285BF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:02:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA33285A29
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979481B3B1F;
-	Thu,  5 Sep 2024 23:02:04 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB121B1D54;
+	Thu,  5 Sep 2024 23:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ivl1jJdY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBB4153838;
-	Thu,  5 Sep 2024 23:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968EB199229;
+	Thu,  5 Sep 2024 23:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725577324; cv=none; b=Kpowg77lxpMm2SKu2Z8gXkA21CsFiN/bv5Qwens7XS/hgpLeMYF2SCU9QAEh9B4Qyv79SkJ5ns0jC05yx4T7QrrS3YKAP3RqRiTfqreoEw+uSxW2f7LNO3ML6oD98rwu06FgUHw+ytcn/TohgfVqtxUrDIK3YcaYwHgkT0lK1mU=
+	t=1725577342; cv=none; b=lp7xQK24HFgrqSZivfe37rQqShE8trZo1iO2KVP8xluKtYoo0MsS9wiCD2EZ+CRLxpQXcFWlMmiAuyXuW6XdB0sYUiuaF998uytVVg+qB82bDyWypY4q2x4y0jyosBGjGPrQR2chLW0A1W8ocuo/+dHQE3VL6VubbaABr2p529o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725577324; c=relaxed/simple;
-	bh=RNL6LHz2DxOzk/csE9S0QFF8BOlAyPNbBvo+l4Mnnmg=;
+	s=arc-20240116; t=1725577342; c=relaxed/simple;
+	bh=NofaqeoRom0dHbUXnel/afTNRYESUn/WozUBe1MJ9Vo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4dLE0brWfDIzqHfHO3F6rlkwkHYupz9BXTwgtxKu40vKvj41tgPMavcVzaOFH7RLt5JTza34qWgJ5RfPdAHW63fOuWc+XugDOEelcpE81MANElttsuQXfFH6CklG2N2VCCnlRHv/VgILvHvYW41P1V9LDcEVYlteSdRg7Tn09I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [31.221.194.34] (port=25764 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1smLU4-00EAIh-88; Fri, 06 Sep 2024 01:01:50 +0200
-Date: Fri, 6 Sep 2024 01:01:46 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, Jozsef Kadlecsik <kadlec@netfilter.org>,
-	David Ahern <dsahern@kernel.org>, rbc@meta.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	"open list:NETFILTER" <coreteam@netfilter.org>
-Subject: Re: [PATCH nf-next v4 1/2] netfilter: Make IP6_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <Zto4WmXldf6KzeQO@calendula>
-References: <20240829161656.832208-1-leitao@debian.org>
- <20240829161656.832208-2-leitao@debian.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jEAMDqY7XNnCdyjzoTOgUBCHVdaAd8MGJXDwTcdA34+fKcslQw0u+Dyh7iltgG1Cf7yqyq1BDoD7orBGKaXAc7YsuEkYFrXndegWpe7R1jawLfTYUVI4tVB+qT5GlcUNNb/6WdCWIJlOIAmiX2PbKxYQq7eObK7km1VtHtRv0pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ivl1jJdY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2D0C4CEC3;
+	Thu,  5 Sep 2024 23:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725577341;
+	bh=NofaqeoRom0dHbUXnel/afTNRYESUn/WozUBe1MJ9Vo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ivl1jJdYhiMBDScp+ZqsnFDL7HdXk5cs4fzubg6/l83XregWP+B9w7N97c/DocVyh
+	 tuAvTmPYJDoQ4NxyZspDsa43GSB5Dad/2/LC7vusw/KQbyQZSKqK9GP6knU99wTq8o
+	 3pvXePfvDQkpF9UaeEUfC8no6zbN8Q05ni3/V8mkFS9gerhpO6Dj4e5vLqd/qbeCjx
+	 IjlQCoFYvlPxZMrn3qEDDj/LjJHPQ8B/40IcB8nuCsk7JlL8NfaIpklinW57PLQBlt
+	 /1khPbnlrXD0J2UDtQYvZlfOLkssDflgW2+AldPQFEk7CBz0ltF1mRoC/I2D0DiCHy
+	 bToRg6dKlNvrA==
+Date: Thu, 5 Sep 2024 16:02:19 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org
+Subject: Re: [PATCH 06/18] fscrypt: Include <linux/prandom.h> instead of
+ <linux/random.h>
+Message-ID: <20240905230219.GB1512@sol.localdomain>
+References: <20240905122020.872466-1-ubizjak@gmail.com>
+ <20240905122020.872466-7-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829161656.832208-2-leitao@debian.org>
-X-Spam-Score: -1.9 (-)
+In-Reply-To: <20240905122020.872466-7-ubizjak@gmail.com>
 
-Hi,
-
-On Thu, Aug 29, 2024 at 09:16:54AM -0700, Breno Leitao wrote:
-> This option makes IP6_NF_IPTABLES_LEGACY user selectable, giving
-> users the option to configure iptables without enabling any other
-> config.
-
-IUC this is to allow to compile iptables core built-in while allowing
-extensions to be compiled as module? What is exactly the combination
-you are trying to achieve which is not possible with the current
-toggle?
-
-Florian's motivation to add this knob is to allow to compile kernels
-without iptables-legacy support.
-
-One more comment below.
-
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+On Thu, Sep 05, 2024 at 02:17:14PM +0200, Uros Bizjak wrote:
+> Usage of pseudo-random functions requires inclusion of
+> <linux/prandom.h> header instead of <linux/random.h>.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc. linux-fscrypt@vger.kernel.org
 > ---
->  net/ipv6/netfilter/Kconfig | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  fs/crypto/keyring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-> index f3c8e2d918e1..cbe88cc5b897 100644
-> --- a/net/ipv6/netfilter/Kconfig
-> +++ b/net/ipv6/netfilter/Kconfig
-> @@ -8,7 +8,13 @@ menu "IPv6: Netfilter Configuration"
+> diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
+> index 6681a71625f0..e2c10b3b960b 100644
+> --- a/fs/crypto/keyring.c
+> +++ b/fs/crypto/keyring.c
+> @@ -21,7 +21,7 @@
+>  #include <asm/unaligned.h>
+>  #include <crypto/skcipher.h>
+>  #include <linux/key-type.h>
+> -#include <linux/random.h>
+> +#include <linux/prandom.h>
+>  #include <linux/seq_file.h>
 >  
->  # old sockopt interface and eval loop
->  config IP6_NF_IPTABLES_LEGACY
-> -	tristate
-> +	tristate "Legacy IP6 tables support"
-> +	depends on INET && IPV6
-> +	select NETFILTER_XTABLES
-> +	default n
-> +	help
-> +	  ip6tables is a general, extensible packet identification legacy framework.
 
-"packet classification" is generally the more appropriate and widely
-used term for firewalls.
+1. linux-fscrypt wasn't actually Cc'ed on this patch, due to the typo of
+   "Cc." instead of "Cc:".
 
-Maybe simply reword this description to ...
+2. Currently <linux/random.h> includes <linux/prandom.h>, so the issue described
+   in the commit message does not exist.  I assume this in changing in a later
+   patch that was not sent to me.  The commit message should be rephrased to
+   clarify that this change is needed because of header refactoring, as
+   otherwise it sounds like a bug fix.
 
-	  ip6tables is a legacy packet classification.
+3. The proposed change does not make sense, because fs/crypto/keyring.c does not
+   use any "pseudo-random functions".  It does use get_random_once(), which is
+   defined in <linux/once.h>.  Currently <linux/random.h> includes
+   <linux/prandom.h> which includes <linux/once.h>.  If the inclusion of
+   prandom.h by random.h is going away, then perhaps random.h should include
+   once.h directly so that get_random_once() continues to work?  If not, then
+   this file should include once.h.  Either way it should not include prandom.h.
 
-> +	  This is not needed if you are using iptables over nftables (iptables-nft).
->  
->  config NF_SOCKET_IPV6
->  	tristate "IPv6 socket lookup support"
-> -- 
-> 2.43.5
-> 
+- Eric
 
