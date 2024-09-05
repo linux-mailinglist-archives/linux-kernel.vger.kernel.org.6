@@ -1,324 +1,206 @@
-Return-Path: <linux-kernel+bounces-316432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BB596CF87
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:41:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA2096CF8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8C121C21A37
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE611F25BCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD1418BC2D;
-	Thu,  5 Sep 2024 06:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A79118D64C;
+	Thu,  5 Sep 2024 06:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="tR+plKwD"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="AoY7GNRq"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D543612D;
-	Thu,  5 Sep 2024 06:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725518463; cv=fail; b=YAyhw2yd1QdHuGvCmSipI9pKfUHdZormAaKHsbLorHxZtArfsBwGpRkuAkBPPAuKtqLoYavAoIyQJrf555Xf9VJS6Xy/oh6Op2nrrSgm97X+vbpbTi0dVC/QCEAXZly7ayyVW+gJnpXHmBb8Jt4toMjgAJztlIXjAePhmVIRyBY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725518463; c=relaxed/simple;
-	bh=Zs/RBkV5xf3KXeMOv/HLRE60iDL3Wmg59KuPkoL6iI0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZwAMz6CqPPrc0D1IhQ9CQVB6pYYRzqGWODpM88bbevaBdiwDpRjRxpNBavrJcpW9X+1GY8/CRB2PKgEep1V4lfV55OZqfDDPNTcBlBer9v/jLXAGjuh+FLj8LA1kxL2ooXEuL9K2roz5NBCVI8lrn5GCYp0lVGbTR2Px1O4ZMY0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=tR+plKwD; arc=fail smtp.client-ip=40.107.21.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YWGMVTWeSOOmo2zMqv3DvFXpoy4RSjXjtGKHPw3YO9Jir9b+ucjxSeBjLUKXxbGcu2kQgjSliLoXEi5JrWc7edFMQyggx5vH99/ZVyl546tvbcat7rN/wLsAir8VckoWe06LZ/1Jb06lkusRQtN/m36cJio2T+4Kht/R26DWGh2utyJ0kzeEZ9m7AQMk8IXLBJ5HSOytHH/sxt0aGoJRr/x1Kp1/qcirYySI+wXDa+iOqsFrVXO0JhK/tvsCDJWAIYJaKOJkgk0S8OQhjlvwkqdhZqGC98/5LaxYDfakDveqEXRaCcEvKcQ2Aw/NlK+80fCEUi0PUbpbGiIcdaAzSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gFVY/WwhL7Z5ZTBX4MvnKvl8GQg+AtaWeThpkcDrTHw=;
- b=myAqIeeRdj9k8fEb25Qr8zT9jZ7JSRVeadtU1WZ0g3Cama1xbfO1ULZRSu163Orvcq1RQJvl4AncerTxwIYck4/gDaPLUL5S7hwCRzclXyRWKNBMlwYeO6swnAG+vqm23ADNx1tIYgJc2E6ebiDbfmSwGQTM8iZHyub4uQQI3IK7OvdyALQJymJUkOajl0zseWdW4p8/LYi0eIrowD2zMHVquUBir7CizunjZIwcEMcqI5ExCx5yatEsqV/k1ibjll/iSXI1sVsZhamKG0zhPLds+Q2zMmzZotUrnImV1QKXvFY0vDmXuTImJAxBAEmST3WAha9dl+QLRA8ROaTARg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gFVY/WwhL7Z5ZTBX4MvnKvl8GQg+AtaWeThpkcDrTHw=;
- b=tR+plKwDurZ6Vp8ZQLOUw1q/yDyf34o8fEQ1M8JHrMELo0uiqRk4q6kR2HcF4s0t8cZO7G9562ImkJhR4cAuoFePMBmwDZLLfY82gohX4xIg0P7q+riGWA9kJRLRhYPJ8adIQQ8D6pTKFtgjR7xOqcxBH28od7cHQa4BEdB7YjM6iCVg8h6rPQA9IA3BzFkqFVRqlL8LEs4n/JmGKnAWeM1/DGYMeuCNxLq+vfPJdetCRZ15FtrOZOrsSDHq3gpqH1PnlPEp5X55mqyR3b0fW3GWqeAqpbIQY8pk8k6lM7nog3KR7cuu0Hen7s61Rb5apjyHlXVWkg8DjsCq9Cey+A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA1PR10MB9102.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:446::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Thu, 5 Sep
- 2024 06:40:57 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 06:40:57 +0000
-Message-ID: <4fd1d6e8-8a66-4eff-a995-5f947a4b707d@siemens.com>
-Date: Thu, 5 Sep 2024 08:40:55 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
- <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-References: <cover.1725444016.git.jan.kiszka@siemens.com>
- <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
- <t2mqfu62xx5uztlintofp4pquv6jalzace6w5jpymyyarb2wmn@vvo23e4cmu57>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <t2mqfu62xx5uztlintofp4pquv6jalzace6w5jpymyyarb2wmn@vvo23e4cmu57>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR0P281CA0258.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b5::10) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA653612D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725518515; cv=none; b=b1QBDdP6aje/doFf2JP9t2872TidDOOksONszCiSwLYtJeitpIKDkxIWPB8v/qSBJShP7NDlAG1Q33Z1Q00XWBGYSnhtMqBLPoo1NHhnwZW7ONb+OZQnXbbHZ0noYadcKBQCs3RN6JUDCG9hbv6v3hNPn1DQvJ8pka4/y5er5E8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725518515; c=relaxed/simple;
+	bh=lG7n72LVe0AL4lEfxJYgPmV2DYOoI4Yma3rYRIkIClk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WxOgB1V/ZSwevB09zIHI3An+uR8Wc9RzOO6KUpWscWE3PGg+ljXJqunCpDlGBPD/4PU40eo5MQ0bRYVL8hfoIm11EZJHF5ARH/6Pqkwyyn2PIhtBViqdCqMOoCK+mKxRgSmQigCYNe/wZSKh6GgoqjJf5sY1GtIE9w85kXn7ci8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=AoY7GNRq; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2021c08b95cso12738725ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1725518513; x=1726123313; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WamOeSbvE69odMjKoDapuHUBM0CdYmc1m7bY1qxzMEU=;
+        b=AoY7GNRqYjY/EJRToVgncMHUh3BNVhP4Gkq4uUi0BeI/OeXdVWTsUSX7dry39LuKXW
+         c//t+gI++Sx/3YR9E2VdRYT99hNiu2rRfCrLa2BGSfU819vLJobykjE06yrl4i9ldNXA
+         1mgcxhJ80HjUwOCisNjT8JirzlEg7XdeQONQCAqdvFkyou3xvChfShY5XT8phHPdChfd
+         wLDWJf+q5dX8TP2k+rll0NiMEVbrZkqmu792OLJcGKYiGOAgpcdckRfKCi1J9Ws6Hk+T
+         xXBnOvCVUR1Cuvaaj6zD8RfUt4SjMkJ5TgQAwrtn1Fd+JQYc+gDv5Uo3Nz0y38qgPXJR
+         /5kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725518513; x=1726123313;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WamOeSbvE69odMjKoDapuHUBM0CdYmc1m7bY1qxzMEU=;
+        b=g5n1/AQF+A6NfnOjrglQdJ/3n7HPGyyr3q6CvQCU9clBBMoN9Y1djEIMbTC9qxicLF
+         6Za/yWJU9KZJTzlR3Q9TUmtzHOeE4lU8hwGwW7n1MO1Lzy0Bd7GywSLYM2qYNzD4Evet
+         TE46QJT6WFydRPZrLxvcS9zO62qgS5jeoMvX64VjC5NlFKwkDzIVKA3cZhDb53s0XVLC
+         p5nRNwpxm75ar0Ma4Ddb1WMx9HHRFqrQJ3aHKodo93NGHxdwmfMDgaX1L5FyiEL4hpr8
+         ytncRG4SwECHeBPqWNtn2dWYTYd1W91oTFMq94CzrWQKaynHWwwlG0UhT3eP3dLNJ74A
+         ErNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNtukvc+OyZp5v82QdO1Q8nV0Zah+EGpnYOg61ZhUEyy6DDRnrcWV0wm+NVT4U6JeI9BKzrTGwRrRQrHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJWFOLW7HOKUAUeLuzbfj+VMhWzDS9uvruqH6qs8pV5DorsqE+
+	370kb1A/crapu4IyQfubXe5vqh1zABg6qTTiR3dIYJ5WmVOg/iWsecMGW9W0x8U=
+X-Google-Smtp-Source: AGHT+IHktKrTh8PvuJAL8kCtov7hkYGbJWjTkWNvKOOeXCvnLHj3NgWJCdo2tCrZ/l2NqbI1yVxHFQ==
+X-Received: by 2002:a17:903:41ca:b0:205:9112:6c2d with SMTP id d9443c01a7336-206b7d0021cmr84941475ad.5.1725518512930;
+        Wed, 04 Sep 2024 23:41:52 -0700 (PDT)
+Received: from [10.4.59.158] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea37cc2sm22663425ad.160.2024.09.04.23.41.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 23:41:52 -0700 (PDT)
+Message-ID: <7f22c46c-2119-4de6-9d58-efcab05b5751@bytedance.com>
+Date: Thu, 5 Sep 2024 14:41:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA1PR10MB9102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d0b811b-0ed5-4896-6576-08dccd75b2f4
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MjV3WWZLZUM1cGl5cmdzT2E1NjBxbk1SWXRrUmJhT2MvbldUWk9uVnljWEdG?=
- =?utf-8?B?U014dGhEVDFYb21ueGQxS3AyUTQ0bG8wbmkvMWJyWFFBZEdZakdNMUV3R2NB?=
- =?utf-8?B?TXh6aUwyVGliUDNvWURucDRjMnBIek1aT0NNc3ZJSG9Kc2NITTcydTk1YndC?=
- =?utf-8?B?cVl3R1huNDJyTlhaV2VrbjhLQzkyMnQvcTJhdzFramZNNllONlFmNk1TZ28w?=
- =?utf-8?B?dVdHSE84bDJtSzdONDNkTTdqbnpsbEtFTDl1a2t6K3dqMmVNZ3RuRjZjZ1JK?=
- =?utf-8?B?WDlmbHI2cDgwbnc4WkIrUDlnVUp6NWdCd0lsYnVVNmhZbjIvWVNkd1pkc2dI?=
- =?utf-8?B?Vkh6V1JKVjUrbmhXM29tT1VOZEdiQkNTWTRUNmNyNmFxR0owdXNac2prNmxX?=
- =?utf-8?B?N0F5VEdEYjZzQkh0Z2t0L2gyMXpESW9kWkp1WXp6bktkQzdNWDJSWEdiT2Rt?=
- =?utf-8?B?QlRhNUlNTnJUZi9FTGFMWnlYRTZqc2M4aW1YODhQOVkrdjhJbGRmWEtXQlVM?=
- =?utf-8?B?Ti8rck1zUnhLYnNjSndoa0VyYlduRUJWR1Z0UXdQZWRVbHp6bXZtblZUZlV2?=
- =?utf-8?B?ODZ5THhpaWFaTnlady9JUGZiNkwya1FUMFNEUXZHWERSMHhFQkNNQjk0VWpI?=
- =?utf-8?B?QkZIWENpZm5ieDV2WFRzQ2RLTmN6QlpORk8zWVZDRHdReHNGRXJad25Yc1o0?=
- =?utf-8?B?SC9VRHRvRTFTZUhQSnNtZjdwQmZ3dmdjaUo5bExxam9remczWFhsV1pWU20y?=
- =?utf-8?B?SXhaMTN6elR0VUVDTWdHVFowZk1XTk0ra015aCtrL2Nxem5TVlRROFVwbXZx?=
- =?utf-8?B?eHNReEdRZDlTbkp0VFdHRFdwRE5weXpGN0VpWVgyMWE2Z2FSTnBVNHpYNURL?=
- =?utf-8?B?SjJBaVBHNjB3Z0ZZQ1gvbzRwV08xcnQ5WW1WbmcvSmh3dlRNVEszSmxJMHBN?=
- =?utf-8?B?VEdOVmFIemUxLzhjb0VwWENlMGxSaExKQnNiSitTcmM5QTdBMDRjeE50dWUz?=
- =?utf-8?B?WnVabGkyQ3VBU1VBYytudUtVb2xTWnF4aGJYbHJDbkJOeDhiVms0WlJtakUw?=
- =?utf-8?B?aUFhbjZGV0J2U1paUnVnaU8yeThOY0srYTV3TjJjU0hYYzEzTmlxS1haa2lu?=
- =?utf-8?B?clBtTVVlTVQ2dXFwSFlOZGFmbFF1L0ZhV0QrbHdDdmN4b2I5NkNEaEUvaExo?=
- =?utf-8?B?OHNIcXBKRUJ0bzRVNzl5cm8rMUJLWUYxVTVNN2drcm1Lc2ludUJ6QXk5NWJ1?=
- =?utf-8?B?eWRPM2tYSThyOVVZT2RjSGt3M1ZMWms1VmpaSzByTlVIQWlnNnYvNGRPOVdS?=
- =?utf-8?B?VVJtU1g5bGVOcWo2azIwSVpVN1VzYjlZS2xISTBNbDhhcXM0VlhVbVJVOC94?=
- =?utf-8?B?UmVxVTlEWk8zNThWWlJiNGVEdGdoWXI4NC9pek9WR0R3aHVtRDRVL3BaM1F0?=
- =?utf-8?B?L21qWDNjVGZRTDlQOHAzQVNDeEZ0TmxGTThyTUJWSXdFdkx2UDl0eHFGSHJ3?=
- =?utf-8?B?OThmQzNhdEdLQ1MwWS9oSmh6bXMwa2lpaER4K1drU2xwUHl3VEUyWVY4RUp4?=
- =?utf-8?B?UCtrc3lQcmZTYTBYeTYyVm5sNmlQWll3Rys4RHhISkVnYzUxRE81d0JFRHJP?=
- =?utf-8?B?L09uZkhFejAyTzQxK1ZIdTNIQ0QrT2hpOEEzWk03RXpyNitNNGg3ZkdDL3N3?=
- =?utf-8?B?aE8wN2dpV2FMSktUZnpHMHNBME42VVNuTWZrUlNlcnFYNGJRTTA4dDRKdk1D?=
- =?utf-8?B?c25sSHdDWGUrUG9xNXRsYWhsUVhnZENycmdzOCs5dTI4a2JoT3loMnRpL3NQ?=
- =?utf-8?B?VU0zY3ZXMUVWeDZaM3p5QT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TXdqcXMvbUVKbEs5MWJTOGlDYUdHZ3U4RmtMNTZ4NGdqOFlNcUlsUm9HbWVt?=
- =?utf-8?B?cEQ1MGNhOXBTSEFlWCt6YXNjcXE1eENTbW1yNmx5THVMd0dmVS9TL2Q0cU83?=
- =?utf-8?B?d3RWNEtBVVZ3TVZWb2liMGlWZHBIcTZHaldqSEFpRGh0V2ZzbjlRT2JGNFBL?=
- =?utf-8?B?THk1bHBBbEtsc0dFU0FNay9naFBLdThxeUZRNUNadlJUR043V2laMzNxNExv?=
- =?utf-8?B?Q2gxbjV5QWFkWThkQ3pxSGxoNGlTODV3VVVtUUl5MUpnaXlxcnhzbHNTNzhE?=
- =?utf-8?B?Y1gwRENsRzNMVDA0YllwMzV0M2Y3NUc4Y0tDY3hkR3h5ZXRVY1FQWDVyWWlj?=
- =?utf-8?B?QmJ4N1IyYkVNU2xYS21YSEpVZG1kSzNhMjJqNTRwSXRQK0I5VExQZ2prSWtx?=
- =?utf-8?B?bnFjYXRkTzdpdFhHSlU1YTd1Ujd3SkorVVRTa3ZaNFVTVGlaWnViSE9xUlR2?=
- =?utf-8?B?dlJ3ZU1yY2JEZGdkSldWWXpKcmI1WFI0SHo1d0FocXZqR0QrVllWTm9NdVF1?=
- =?utf-8?B?WlMzNU9naEw1MHpzeWFyMG5DcnVKcWdQUUhlQzhGTlV6bkN6MjZKbHM5WGhF?=
- =?utf-8?B?OWJnYmt1QnYyV0xTZUJ2Mlk0cU4vdVlnOFBzcHE1dFM0WXkvQ2dGaytWZnpv?=
- =?utf-8?B?bUo2UWNVSjVoT3RWZ0FlZmNqRWZpWkdkR0NlRG9ud1pBbXhkejQ3S3ZZa0x2?=
- =?utf-8?B?K2l6c2RNTjBRZXZaMEM3emg3dm41WmpkODFaVGlSYnVLT0U5UG83OURHa0FJ?=
- =?utf-8?B?T2pmVE41N25WaG5lbTN4aVpsY0lmN2lFdDZhaTY1UFh6MjhPVzh6WU1xRll1?=
- =?utf-8?B?VkVOeWdQL21Ycm05NGNETlRXNG9IbVJiOEtFVDE1emZHbXBiUk00SGJ0VlpW?=
- =?utf-8?B?bEptdkViMkN4dDJGOXZYM0FDbzlJZ05zbUJCcDhVazMyRGR6c1lGSmtKdzBJ?=
- =?utf-8?B?b1NxZGJZT04xTWU0QVB3aU4vdFAySFRHZlVJVlhIb1ZqQ0p0eXRueHF2TkRH?=
- =?utf-8?B?aGRDVkFOdnJIbWhWS2dXLzNDdURGMFFNRHJldEhBSWtUV1FISnhEMzBQN3Jw?=
- =?utf-8?B?cXhBSEZVRGRPTFBOMzI5cjE2WWg5SUoyaVIwdGlTT1Z5dnYzVkhZN2pLb09R?=
- =?utf-8?B?MGN1MEIxM0JGRkRDUWxjTWxaazNlMTdkMGk3TjJ6QXpGbzF3VjdSTUNaSVM5?=
- =?utf-8?B?a2swNEdTdFhpQi9yTGRkTEM2TXNGVjFvbXBSem9RRHNxSjVXNUJBSEpxZHgr?=
- =?utf-8?B?Q3loRWFEWEhDbTgrQWp0RFlaS1VkeHM2TmZ4VlBQZHF4VlF0RVFybGlhZ2xE?=
- =?utf-8?B?MWxNWjhjaVN4U3pjK29obGpnZGZ3TjlqWWdnWmZiaW5ZaVlSN2lheitHVmpC?=
- =?utf-8?B?Tm1sa3hteTVrQ0hOczZGK01ZY3NoRmhvOHFSQ1ExdnNTMUp0MUZwdVNQZTFw?=
- =?utf-8?B?YnEyV0YrMWFnaENjMGZPVjVZNmlVb2d0WitPVTBYb3J4c0syUkZzVjdncExt?=
- =?utf-8?B?b05iUjE5U0J2NUozaGVYLzNSb1hOeERFVUw3a3h5bi9SSW9KT1NQeTdUK213?=
- =?utf-8?B?bG8xTy9DS2lCcFp5cHd5di9nemZjc3ZBbzltdWdRYzlRVlIxNVRqTTVjSjN4?=
- =?utf-8?B?MmtEb0lweGFaZ2xOZzRabHRCZE4xREhQUThSSi8yTG84NUt4K0crZEc1Vm5u?=
- =?utf-8?B?QnBrZk05NzIwYmM5TjdFeWZmYVRiR0VKdUZMdWowWmFMRGMySmE5eUlnWjJJ?=
- =?utf-8?B?N2wyVEdsMFFtczZGcDMrRDlEQkQxaUU2cnhHQWVEUDZTRGJaRnpMT3habnFG?=
- =?utf-8?B?OFA0OUtYRUlNUStLcFpURHN5VWtKTWxYdzBNNHU5ak5CM2lRbXVzV3ZTc3dw?=
- =?utf-8?B?L29iZ2N5UjEzZG9kSHJOb2craStmQjNPb3VpMXV4cEdsVTdldGswRUJSVy9w?=
- =?utf-8?B?cjZtZEt6Q0pPaHhESENjeDRzQ2J3Q3ZwMGtBTkxjNXM4ejllYzMzK0VmdE51?=
- =?utf-8?B?dndiaFR2QnZHM1RqUHpMU29wL2ZSeGV6UFBEM0hkWHJZZzJjRUVtc2JabHRL?=
- =?utf-8?B?a3g4akFXNGlLZ0ErQzdudmJ5ZHJIRmhmZUVTN0d2Ym5TZlJFRWlHb3A2VElz?=
- =?utf-8?Q?tmZT/+7gn19OrdIkBvTas/4du?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d0b811b-0ed5-4896-6576-08dccd75b2f4
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 06:40:57.7805
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: adHjD5vcLBNcKZAKupWIYh5i/WkxV0d4GiIiuCvZ1MSMw52d2weGkF5mnoAoTREdoczwKyoAClPLVwMqY7OVqA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB9102
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/14] mm: khugepaged: collapse_pte_mapped_thp() use
+ pte_offset_map_rw_nolock()
+Content-Language: en-US
+To: Muchun Song <muchun.song@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>,
+ Vishal Moola <vishal.moola@gmail.com>, Peter Xu <peterx@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, christophe.leroy2@cs-soprasteria.com,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+ <c377dab2bf55950e6155ea051aba3887ed5a2773.1724310149.git.zhengqi.arch@bytedance.com>
+ <24be821f-a95f-47f1-879a-c392a79072cc@linux.dev>
+ <cd137540-ae01-46a1-93d2-062bc21b827c@bytedance.com>
+ <05955456-8743-448A-B7A4-BC45FABEA628@linux.dev>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <05955456-8743-448A-B7A4-BC45FABEA628@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 05.09.24 08:32, Krzysztof Kozlowski wrote:
-> On Wed, Sep 04, 2024 at 12:00:11PM +0200, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
+
+
+On 2024/9/5 14:32, Muchun Song wrote:
+> 
+> 
+>> On Aug 30, 2024, at 14:54, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 >>
->> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
->> to specific regions of host memory. Add the optional property
->> "memory-regions" to point to such regions of memory when PVU is used.
 >>
->> Since the PVU deals with system physical addresses, utilizing the PVU
->> with PCIe devices also requires setting up the VMAP registers to map the
->> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
->> mapped to the system physical address. Hence, describe the VMAP
->> registers which are optionally unless the PVU shall used for PCIe.
 >>
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->> ---
->> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> CC: "Krzysztof Wilczyński" <kw@linux.com>
->> CC: Bjorn Helgaas <bhelgaas@google.com>
->> CC: linux-pci@vger.kernel.org
->> ---
->>  .../bindings/pci/ti,am65-pci-host.yaml        | 52 ++++++++++++++-----
->>  1 file changed, 40 insertions(+), 12 deletions(-)
+>> On 2024/8/29 16:10, Muchun Song wrote:
+>>> On 2024/8/22 15:13, Qi Zheng wrote:
+>>>> In collapse_pte_mapped_thp(), we may modify the pte and pmd entry after
+>>>> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). At
+>>>> this time, the write lock of mmap_lock is not held, and the pte_same()
+>>>> check is not performed after the PTL held. So we should get pgt_pmd and do
+>>>> pmd_same() check after the ptl held.
+>>>>
+>>>> For the case where the ptl is released first and then the pml is acquired,
+>>>> the PTE page may have been freed, so we must do pmd_same() check before
+>>>> reacquiring the ptl.
+>>>>
+>>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>>>> ---
+>>>>   mm/khugepaged.c | 16 +++++++++++++++-
+>>>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>>> index 53bfa7f4b7f82..15d3f7f3c65f2 100644
+>>>> --- a/mm/khugepaged.c
+>>>> +++ b/mm/khugepaged.c
+>>>> @@ -1604,7 +1604,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+>>>>       if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
+>>>>           pml = pmd_lock(mm, pmd);
+>>>> -    start_pte = pte_offset_map_nolock(mm, pmd, haddr, &ptl);
+>>>> +    start_pte = pte_offset_map_rw_nolock(mm, pmd, haddr, &pgt_pmd, &ptl);
+>>>>       if (!start_pte)        /* mmap_lock + page lock should prevent this */
+>>>>           goto abort;
+>>>>       if (!pml)
+>>>> @@ -1612,6 +1612,9 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+>>>>       else if (ptl != pml)
+>>>>           spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>>>> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
+>>>> +        goto abort;
+>>>> +
+>>>>       /* step 2: clear page table and adjust rmap */
+>>>>       for (i = 0, addr = haddr, pte = start_pte;
+>>>>            i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE, pte++) {
+>>>> @@ -1657,6 +1660,16 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+>>>>       /* step 4: remove empty page table */
+>>>>       if (!pml) {
+>>>>           pml = pmd_lock(mm, pmd);
+>>>> +        /*
+>>>> +         * We called pte_unmap() and release the ptl before acquiring
+>>>> +         * the pml, which means we left the RCU critical section, so the
+>>>> +         * PTE page may have been freed, so we must do pmd_same() check
+>>>> +         * before reacquiring the ptl.
+>>>> +         */
+>>>> +        if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
+>>>> +            spin_unlock(pml);
+>>>> +            goto pmd_change;
+>>> Seems we forget to flush TLB since we've cleared some pte entry?
 >>
->> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
->> index 0a9d10532cc8..d8182bad92de 100644
->> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
->> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
->> @@ -19,16 +19,6 @@ properties:
->>        - ti,am654-pcie-rc
->>        - ti,keystone-pcie
->>  
->> -  reg:
->> -    maxItems: 4
->> -
->> -  reg-names:
->> -    items:
->> -      - const: app
->> -      - const: dbics
->> -      - const: config
->> -      - const: atu
+>> See comment above the ptep_clear():
+>>
+>> /*
+>> * Must clear entry, or a racing truncate may re-remove it.
+>> * TLB flush can be left until pmdp_collapse_flush() does it.
+>> * PTE dirty? Shmem page is already dirty; file is read-only.
+>> */
+>>
+>> The TLB flush was handed over to pmdp_collapse_flush(). If a
 > 
-> 
-> Nothing improved here.
+> But you skipped pmdp_collapse_flush().
 
-Yes, explained the background to you. Sorry, if you do not address my
-replies, I'm lost with your feedback.
+I skip it only in !pmd_same() case, at which time it must be cleared
+by other thread, which will be responsible for flushing TLB:
 
-> 
->> -
->>    interrupts:
->>      maxItems: 1
->>  
->> @@ -84,12 +74,48 @@ if:
->>        enum:
->>          - ti,am654-pcie-rc
->>  then:
->> +  properties:
->> +    reg:
->> +      minItems: 4
->> +      maxItems: 6
->> +
->> +    reg-names:
->> +      minItems: 4
->> +      items:
->> +        - const: app
->> +        - const: dbics
->> +        - const: config
->> +        - const: atu
->> +        - const: vmap_lp
->> +        - const: vmap_hp
->> +
->> +    memory-region:
->> +      minItems: 1
-> 
-> Missing maxItems
+CPU 0				CPU 1
+				pmd_clear
+				spin_unlock
+				flushing tlb
+spin_lock
+if (!pmd_same)	
+	goto pmd_change;
+pmdp_collapse_flush
 
-Same as above. Please address my answers.
+Did I miss something?
 
 > 
->> +      description: |
->> +        phandle to one or more restricted DMA pools to be used for all devices
->> +        behind this controller. The regions should be defined according to
->> +        reserved-memory/shared-dma-pool.yaml.
->> +      items:
->> +        maxItems: 1
+>> concurrent thread free the PTE page at this time, the TLB will
+>> also be flushed after pmd_clear().
+>>
+>>>> +        }
+>>>>           if (ptl != pml)
+>>>>               spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>>>>       }
+>>>> @@ -1688,6 +1701,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+>>>>           pte_unmap_unlock(start_pte, ptl);
+>>>>       if (pml && pml != ptl)
+>>>>           spin_unlock(pml);
+>>>> +pmd_change:
+>>>>       if (notified)
+>>>>           mmu_notifier_invalidate_range_end(&range);
+>>>>   drop_folio:
 > 
-> And this feels redundant.
-
-I can drop that if it's not needed. Unfortunately, schemas are far from
-being intuitive to me.
-
-Jan
-
--- 
-Siemens AG, Technology
-Linux Expert Center
-
 
