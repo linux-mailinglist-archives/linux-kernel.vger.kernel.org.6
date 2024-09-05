@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-317929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23ABC96E5A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8B996E5AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A059B2192A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:10:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7987B21AB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB891AD9FA;
-	Thu,  5 Sep 2024 22:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826E61B4C51;
+	Thu,  5 Sep 2024 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlaAuTt/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEtlwGH/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA818F54;
-	Thu,  5 Sep 2024 22:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0C019EEC8;
+	Thu,  5 Sep 2024 22:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725574232; cv=none; b=Tu3K/xoBd8rKda4x2BK191dMy5PxghQKAigZCWsH1a4z+jqqOV1X9pIEddvoMqomnapDdOi9QQj0jsgOxKBed761XsSWCw6Jh9PXhVE+un7cs8QyPiynWxz7GPmeGxvC8zCRIWNWorF8VJi1nLEyjwuzsTyIOQZSZLTQe4B7zpM=
+	t=1725574237; cv=none; b=qG/y6+aCbDFIlodnqBA6zoZ0r0dMgdwaefw4tJaMPrg+yMsN3j3c/BTZdJdz6Wqr2mAr5s8Ody27YpidQhg1jtGmssan6LOuJ9/Mv7y6V+npPY4xxPYRDwKUMB5Mb6wdaBFMeukPEa/EgJeM/OD45xffpWMO5NxneOLLv0xj29M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725574232; c=relaxed/simple;
-	bh=5WeUaool5XelhNtSrzbPgfN+tE2/bfbks0TdybwodkI=;
+	s=arc-20240116; t=1725574237; c=relaxed/simple;
+	bh=p5VMs64NJzqCs9tiHDeAgq9x7XJTzxC7nHOkCZ5q1u8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WsfZvnGc4kOpqE4cuH0/394T9S9hK7vZJF9Zl+84jGUNcoEPJI7DI84HGeefX7ijyII4USi1/h9QHeBQstPjX54uOrHGc8XtYTBcrDHrX5KkcPyga1/ncumMTLHDRD5IoWUYxqQzh+2xRVZTmrA6hlF9pWVuPCO6+ehaVufknqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlaAuTt/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DABC4CEC3;
-	Thu,  5 Sep 2024 22:10:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=WO1Jt6yPUlB/grux4Y0YmMTgO+/6yqRFxlPOZo2JX0uo3aNOo3y/Q3yIbyGkLYhg6J7NomOy3lnZbu+8zonmxdEc715lUs/dd2tBEpUcnUNlPNlNSXPVf8gRcTWx0XW1CvIBr9FUGkPwLlBAfuaNFxMxnv09JOyUO8nf7jnIBHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEtlwGH/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2F3C4CEC7;
+	Thu,  5 Sep 2024 22:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725574232;
-	bh=5WeUaool5XelhNtSrzbPgfN+tE2/bfbks0TdybwodkI=;
+	s=k20201202; t=1725574236;
+	bh=p5VMs64NJzqCs9tiHDeAgq9x7XJTzxC7nHOkCZ5q1u8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WlaAuTt/RJxbMF7lcDMZ4yIWtjT8LiCzXCuxpMqVK9ynk5KtdpDaG6WXyNfNoYVA+
-	 YT7rOlfnOSFwPWfQuXDwCwqM3Y05lKfV5l77eQ9MtRGK3ma/5RmQSq2KzVRglDkdkM
-	 2bFOY0Jne/2TxsI5/HFFDkB1wQBsQXgMWrMX8Gl7wR/HpWTEejYTCOV+6A/DKG+OhZ
-	 dM/OZkExk8awf0rtToM38p3sU5rKMC1lxING48S50CEZLaN1QCEO5GhRl2sFA7oZqa
-	 LYF5NBFqU2X9Dil8uOfNSSyMJHY+xie2rY9Jysiy/EK00AY6Q4EfIdsbJRWeEGLGK0
-	 YzSg5Tod4J8Cw==
+	b=FEtlwGH/ceZt2U4TtpoTHhrd3h/DFtmxG77DkzG00yCOB/R2dAp2cKIqEASw9iNvx
+	 04N6hLJl/mNxQ2Izkfu+BpMPU2OxzyqhSLXWVN3bzKhmBsUWM3XvlLVQQ49A3N4CDt
+	 oY2s37V55jy2x/X4xJf0JlroPtdWYC+gFQFzLHw5KVv1tJeN9n/eVy7jLZWBUD3JaY
+	 BbhlM5D9GVGz8O5byfUH9inkL6ZlHra9DOp6ZQ61VHRlapp31LqtGAcynVG63pXUnQ
+	 2jJXIhylSnvzBJcQ9TpHmU9k/J0kYFN262ORD4fRi1XUP9nA8/ad2D4VczvV9SDZYt
+	 1rV7GnVmYnj/w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D6D3806654;
-	Thu,  5 Sep 2024 22:10:34 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E8F3806654;
+	Thu,  5 Sep 2024 22:10:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] tools/net/ynl: fix cli.py --subscribe feature
+Subject: Re: [PATCH net] selftests: net: enable bind tests
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172557423298.1859883.15275534702846034273.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Sep 2024 22:10:32 +0000
-References: <20240904135034.316033-1-arkadiusz.kubalewski@intel.com>
-In-Reply-To: <20240904135034.316033-1-arkadiusz.kubalewski@intel.com>
-To: Kubalewski@codeaurora.org,
-	Arkadiusz <arkadiusz.kubalewski@intel.com>
-Cc: netdev@vger.kernel.org, donald.hunter@gmail.com, kuba@kernel.org,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- jiri@resnulli.us, jacob.e.keller@intel.com, liuhangbin@gmail.com,
- linux-kernel@vger.kernel.org
+ <172557423699.1859883.10700910912228977828.git-patchwork-notify@kernel.org>
+Date: Thu, 05 Sep 2024 22:10:36 +0000
+References: <5a009b26cf5fb1ad1512d89c61b37e2fac702323.1725430322.git.jamie.bainbridge@gmail.com>
+In-Reply-To: <5a009b26cf5fb1ad1512d89c61b37e2fac702323.1725430322.git.jamie.bainbridge@gmail.com>
+To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, shuah@kernel.org, kuniyu@amazon.com,
+ joannelkoong@gmail.com, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed,  4 Sep 2024 15:50:34 +0200 you wrote:
-> Execution of command:
-> ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml /
-> 	--subscribe "monitor" --sleep 10
-> fails with:
->   File "/repo/./tools/net/ynl/cli.py", line 109, in main
->     ynl.check_ntf()
->   File "/repo/tools/net/ynl/lib/ynl.py", line 924, in check_ntf
->     op = self.rsp_by_value[nl_msg.cmd()]
-> KeyError: 19
+On Wed,  4 Sep 2024 16:12:26 +1000 you wrote:
+> bind_wildcard is compiled but not run, bind_timewait is not compiled.
+> 
+> These two tests complete in a very short time, use the test harness
+> properly, and seem reasonable to enable.
+> 
+> The author of the tests confirmed via email that these were
+> intended to be run.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] tools/net/ynl: fix cli.py --subscribe feature
-    https://git.kernel.org/netdev/net/c/6fda63c45fe8
+  - [net] selftests: net: enable bind tests
+    https://git.kernel.org/netdev/net/c/e4af74a53b7a
 
 You are awesome, thank you!
 -- 
