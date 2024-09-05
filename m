@@ -1,290 +1,176 @@
-Return-Path: <linux-kernel+bounces-316454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FE696CFCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:54:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE1496CFD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E742C1F229DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9622842FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591591925A4;
-	Thu,  5 Sep 2024 06:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C831925B5;
+	Thu,  5 Sep 2024 06:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7c+iywC"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adnmBx+k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB7A15624C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713A31922C9;
+	Thu,  5 Sep 2024 06:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725519286; cv=none; b=jOznFE2x6sE6RV8IbNX+70qQzWK7IO90G4jqA0FbGELPQNENu+1ZC+ygPQzDFM7rO4CSXVNvIEIr+0eN3nI3xboFAXNFdOdkWsW7g/OpgU3cb2mfKmzyJ7Jmhx77aB7Xg2WZIwrxHH37manewCXACgS6TGScy8TMrOL4r8r3Xsk=
+	t=1725519309; cv=none; b=hnduvNDpk5tburCbhWmrFomP8RBOXYt83iYqgRVyJQ60lHF1b1Jsx+O80iyD+gTnHBEBKuaSIk9Dvb0PaxOG38otGc6ob/f9UnM2sxeRoU1y7F9mhS530Bxv02Ap7Aik7/WLFB76JFn2MsNYLW1IBw8hpMFse6u1LTmDCf3z4fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725519286; c=relaxed/simple;
-	bh=QDgXDBvyQJOMWeoFGPVE0g8L+AOYRGndhi4MRkAUOHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X8DfifGAUEDzamGXRjqYLi13IClOM5L9Nakqq2ueaLR5W6im4c76uGnbxD6+DycC+Qiu1hpneRuECXMy+JXTIijbl6jmOreq4qbZkpPAEy4OMqI3A+FOjyWK0/8rYvwPVvzdbVOuTcZMTAapcdS203f6BWSlOdVOFPT29VMFXTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7c+iywC; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c94eb9822so2555675e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725519283; x=1726124083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qyslWu7uboUrkYXcGmXap3x8F7eNeExx5bL2W+WbMOw=;
-        b=X7c+iywCsYw9udGEN+EH3QszIxlKFkqEM/yUE/r1LOXpT2wjvLjDW/aSi5PfBW4ARx
-         UsdpMkktkwom2vIpKf4eMpLZaBcTEhZ91xjTnMSLFIPX7vP81JfTHNldEvnoFgXhAhwf
-         TJctC4W6uBRtteTM+gurzVRTFenii4b0bHah3RFU6IqMayrEowlYqrKqBFUXOx0SHWFK
-         yPJ+c8L2JrgRLp0VJs96JyHS4TxAeLRl4ynx070DwlU7TUpP3WhTnaZCmYgkz4pBQJjQ
-         1/8hhre2tuFE6xThJoD7nQVSbQ3aKuXVJsftBuEGtwpT3Olx+6BQJKgTGmXg5p6slVmc
-         6o6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725519283; x=1726124083;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qyslWu7uboUrkYXcGmXap3x8F7eNeExx5bL2W+WbMOw=;
-        b=rWq5eac/DTRvoA5nxFz2gEXInxthK3166IT1/DOt1TqePUXqcFSuvaLV/hLVaQXXjB
-         gdpsj4dIwN/Sj1Rue0EgUGGgf5tYDrJCYkOspP8EmpwsiasJrzHQes3tOuAqtHcPR4AY
-         SI907tdSXtoPpFf4FsryUZso5Bsogx8yYaNPo5YcxQB7pFZtBLEsj7fRHVrjHETCfmhm
-         8YB6rxrExGRlAaibzCxI6sMRvR2NleYBoEVkjZs9SZiw599moe8tpXElL+l58fCZoRKM
-         4uNbv0kI9lNL2umQqn+BgdzKZKa9eu/0ye0kfK4nQZ52YRbffGB7AN4gxQROTWBpf41+
-         G3Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrjFOY1ZqgQXktrEUXEenTeETp6rxsDoO7YFuIgVcuB/RqjVyUntfHNpRQZ2OaBaMJRQR/qQncW/nlKTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSxOuBoFE3gi79L11t5Ei5mIs/BR19wxtLzT2b6Ejkk/TTsU7c
-	M23EyW1umz4VLF7HeqqtVlkk9TbHl7J5b4nfxocQcAsoZQLCj5T2
-X-Google-Smtp-Source: AGHT+IE/TXG3fOuCpU+RcDGLzyLz2FXHj81+VC9o1W4DUSuoU3W7IrdcOroIDd+Il9dmAqWXd9KTUQ==
-X-Received: by 2002:a05:600c:5122:b0:428:1d27:f3db with SMTP id 5b1f17b1804b1-42c7b5f0fe4mr94861595e9.35.1725519282410;
-        Wed, 04 Sep 2024 23:54:42 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bba57bb20sm201169855e9.4.2024.09.04.23.54.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 23:54:42 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v3] LoongArch/percpu: Simplify _percpu_read() and _percpu_write()
-Date: Thu,  5 Sep 2024 08:54:07 +0200
-Message-ID: <20240905065438.802898-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725519309; c=relaxed/simple;
+	bh=lVgP28DcjexPVeyCbnZvnGShmNHWiLDpVoP7F4Ubixc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=syRvvPNi9iLbVvHCIsxSB+ysoO8RMFT/SAVS4//isgNUBiEBYArVWbZmzek4UtamxpTBS5qK/BWLU2MR+31vWNvTxAe50I+90kJrJmq3mKG1gEPhKr3uPmJxvH7Ccb0KOJiESvqaLiVOuqxTyPpP6mybkjN0H0TTSgAE8v9VjKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adnmBx+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B769AC4CEC4;
+	Thu,  5 Sep 2024 06:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725519309;
+	bh=lVgP28DcjexPVeyCbnZvnGShmNHWiLDpVoP7F4Ubixc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=adnmBx+kFZhIe+lprfEvIIeoBD8tz8nJx2HRk1zKej41TGb+lMWLXdpKfVea9jJIR
+	 Kv/dbqUifm0KNsIGRIomDu/qwNzJJ534iypuJYkgS3nD7io4lB40kJVpsAof9VMhnD
+	 dRUfCi9HCmHqF7NnXuvPA/dVBtQJVF1eSzwp2pO2TW1GeDbIzT/+tnesw9yfTCtR8S
+	 hNGQdyr5vJjvRgjLVcGrfWk8Q1cJnmQnaNINvlzDP3qDydS7oopy7jSzsMCSjoC++N
+	 Dj/Efr8bMtjht6LzXCK9bW5+G1+to1wMLDBalTu/JBYjGuux/GqPFTh0zM+vhmuXlp
+	 Wrn++6xq0qrtg==
+Message-ID: <59810081-5d76-4a41-8089-728ed03bf90b@kernel.org>
+Date: Thu, 5 Sep 2024 08:54:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <cover.1724868080.git.jan.kiszka@siemens.com>
+ <752fb193661bb5e60e5aae6f87704784cbad145d.1724868080.git.jan.kiszka@siemens.com>
+ <2tc4eistthjifxsedwux3x7c52xlhkt5d3h2pcbe3glzzga6pg@bvbbsghc57zu>
+ <df7d3134-302d-45ed-ba72-b5473ac5e3aa@siemens.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <df7d3134-302d-45ed-ba72-b5473ac5e3aa@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-_percpu_read() and _percpu_write() macros call __percpu_read()
-and __percpu_write() static inline functions that result in a single
-assembly instruction. Percpu infrastructure expects its leaf
-definitions to encode the size of their percpu variable, so the patch
-merges asm clauses from the static inline function into the
-corresponding leaf macros.
+On 29/08/2024 09:38, Jan Kiszka wrote:
+> On 29.08.24 08:14, Krzysztof Kozlowski wrote:
+>> On Wed, Aug 28, 2024 at 08:01:15PM +0200, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+>>> to specific regions of host memory. Add the optional property
+>>> "memory-regions" to point to such regions of memory when PVU is used.
+>>>
+>>> Since the PVU deals with system physical addresses, utilizing the PVU
+>>> with PCIe devices also requires setting up the VMAP registers to map the
+>>> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+>>> mapped to the system physical address. Hence, describe the VMAP
+>>> registers which are optionally unless the PVU shall used for PCIe.
+>>>
+>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>> ---
+>>> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>>> CC: "Krzysztof Wilczyński" <kw@linux.com>
+>>> CC: Bjorn Helgaas <bhelgaas@google.com>
+>>> CC: linux-pci@vger.kernel.org
+>>> ---
+>>>  .../bindings/pci/ti,am65-pci-host.yaml        | 52 ++++++++++++++-----
+>>>  1 file changed, 40 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> index 0a9d10532cc8..d8182bad92de 100644
+>>> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>> @@ -19,16 +19,6 @@ properties:
+>>>        - ti,am654-pcie-rc
+>>>        - ti,keystone-pcie
+>>>  
+>>> -  reg:
+>>> -    maxItems: 4
+>>> -
+>>> -  reg-names:
+>>> -    items:
+>>> -      - const: app
+>>> -      - const: dbics
+>>> -      - const: config
+>>> -      - const: atu
+>>> -
+>>
+>> Properties must be defined in top-level.
+>>
+>> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+>>
+> 
+> Tried that already, moving the else: part to top-level, but dtschema
+> (2024.5) checks fail then. Could you explain why?
 
-The secondary effect of this change is to avoid explicit __percpu
-function arguments. Currently, __percpu macro is defined in
-include/linux/compiler_types.h, but with proposed patch [1],
-__percpu definition will need macros from include/asm-generic/percpu.h,
-creating forward dependency loop.
+The example does not "move the else to top-level", so why would you do
+it? I gave you the code to copy&paste. I don't know how to write it simpler.
 
-The proposed solution is the same as x86 architecture uses.
-
-Patch is compile tested only.
-
-[1] https://lore.kernel.org/lkml/20240812115945.484051-4-ubizjak@gmail.com/
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>
-Cc: Xi Ruoyao <xry111@xry111.site>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
-v2: Add a missing cast and a missing coma in the asm template,
-    reported by kernel test robot. Some formatting changes.
-v3: Check the type of _val in _percpu_write().
----
- arch/loongarch/include/asm/percpu.h | 135 ++++++++++------------------
- 1 file changed, 46 insertions(+), 89 deletions(-)
-
-diff --git a/arch/loongarch/include/asm/percpu.h b/arch/loongarch/include/asm/percpu.h
-index 8f290e5546cf..90ece62ec24c 100644
---- a/arch/loongarch/include/asm/percpu.h
-+++ b/arch/loongarch/include/asm/percpu.h
-@@ -68,75 +68,6 @@ PERCPU_OP(and, and, &)
- PERCPU_OP(or, or, |)
- #undef PERCPU_OP
- 
--static __always_inline unsigned long __percpu_read(void __percpu *ptr, int size)
--{
--	unsigned long ret;
--
--	switch (size) {
--	case 1:
--		__asm__ __volatile__ ("ldx.b %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	case 2:
--		__asm__ __volatile__ ("ldx.h %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	case 4:
--		__asm__ __volatile__ ("ldx.w %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	case 8:
--		__asm__ __volatile__ ("ldx.d %[ret], $r21, %[ptr]	\n"
--		: [ret] "=&r"(ret)
--		: [ptr] "r"(ptr)
--		: "memory");
--		break;
--	default:
--		ret = 0;
--		BUILD_BUG();
--	}
--
--	return ret;
--}
--
--static __always_inline void __percpu_write(void __percpu *ptr, unsigned long val, int size)
--{
--	switch (size) {
--	case 1:
--		__asm__ __volatile__("stx.b %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	case 2:
--		__asm__ __volatile__("stx.h %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	case 4:
--		__asm__ __volatile__("stx.w %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	case 8:
--		__asm__ __volatile__("stx.d %[val], $r21, %[ptr]	\n"
--		:
--		: [val] "r" (val), [ptr] "r" (ptr)
--		: "memory");
--		break;
--	default:
--		BUILD_BUG();
--	}
--}
--
- static __always_inline unsigned long __percpu_xchg(void *ptr, unsigned long val, int size)
- {
- 	switch (size) {
-@@ -157,6 +88,44 @@ static __always_inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 	return 0;
- }
- 
-+#define __pcpu_op_1(op)		op ".b "
-+#define __pcpu_op_2(op)		op ".h "
-+#define __pcpu_op_4(op)		op ".w "
-+#define __pcpu_op_8(op)		op ".d "
-+
-+#define _percpu_read(size, _pcp)					\
-+({									\
-+	unsigned long __pcp_ret;					\
-+									\
-+	__asm__ __volatile__(						\
-+		__pcpu_op_##size("ldx") "%[ret], $r21, %[ptr]	\n"	\
-+		: [ret] "=&r"(__pcp_ret)				\
-+		: [ptr] "r"(&(_pcp))					\
-+		: "memory");						\
-+	(typeof(_pcp))__pcp_ret;					\
-+})
-+
-+#define __pcpu_cast_1(val)	(((unsigned long) val) & 0xff)
-+#define __pcpu_cast_2(val)	(((unsigned long) val) & 0xffff)
-+#define __pcpu_cast_4(val)	(((unsigned long) val) & 0xffffffff)
-+#define __pcpu_cast_8(val)	((unsigned long) val)
-+
-+#define _percpu_write(size, _pcp, _val)					\
-+do {									\
-+	unsigned long __pcp_val = __pcpu_cast_##size(_val);		\
-+									\
-+	if (0) {		                                        \
-+		typeof(_pcp) pto_tmp__;					\
-+		pto_tmp__ = (_val);					\
-+		(void)pto_tmp__;					\
-+	}								\
-+	__asm__ __volatile__(						\
-+		__pcpu_op_##size("stx") "%[val], $r21, %[ptr]	\n"	\
-+		:							\
-+		: [val] "r"(__pcp_val), [ptr] "r"(&(_pcp))		\
-+		: "memory");						\
-+} while (0)
-+
- /* this_cpu_cmpxchg */
- #define _protect_cmpxchg_local(pcp, o, n)			\
- ({								\
-@@ -167,18 +136,6 @@ static __always_inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 	__ret;							\
- })
- 
--#define _percpu_read(pcp)						\
--({									\
--	typeof(pcp) __retval;						\
--	__retval = (typeof(pcp))__percpu_read(&(pcp), sizeof(pcp));	\
--	__retval;							\
--})
--
--#define _percpu_write(pcp, val)						\
--do {									\
--	__percpu_write(&(pcp), (unsigned long)(val), sizeof(pcp));	\
--} while (0)								\
--
- #define _pcp_protect(operation, pcp, val)			\
- ({								\
- 	typeof(pcp) __retval;					\
-@@ -215,15 +172,15 @@ do {									\
- #define this_cpu_or_4(pcp, val) _percpu_or(pcp, val)
- #define this_cpu_or_8(pcp, val) _percpu_or(pcp, val)
- 
--#define this_cpu_read_1(pcp) _percpu_read(pcp)
--#define this_cpu_read_2(pcp) _percpu_read(pcp)
--#define this_cpu_read_4(pcp) _percpu_read(pcp)
--#define this_cpu_read_8(pcp) _percpu_read(pcp)
-+#define this_cpu_read_1(pcp) _percpu_read(1, pcp)
-+#define this_cpu_read_2(pcp) _percpu_read(2, pcp)
-+#define this_cpu_read_4(pcp) _percpu_read(4, pcp)
-+#define this_cpu_read_8(pcp) _percpu_read(8, pcp)
- 
--#define this_cpu_write_1(pcp, val) _percpu_write(pcp, val)
--#define this_cpu_write_2(pcp, val) _percpu_write(pcp, val)
--#define this_cpu_write_4(pcp, val) _percpu_write(pcp, val)
--#define this_cpu_write_8(pcp, val) _percpu_write(pcp, val)
-+#define this_cpu_write_1(pcp, val) _percpu_write(1, pcp, val)
-+#define this_cpu_write_2(pcp, val) _percpu_write(2, pcp, val)
-+#define this_cpu_write_4(pcp, val) _percpu_write(4, pcp, val)
-+#define this_cpu_write_8(pcp, val) _percpu_write(8, pcp, val)
- 
- #define this_cpu_xchg_1(pcp, val) _percpu_xchg(pcp, val)
- #define this_cpu_xchg_2(pcp, val) _percpu_xchg(pcp, val)
--- 
-2.46.0
+Best regards,
+Krzysztof
 
 
