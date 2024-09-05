@@ -1,146 +1,129 @@
-Return-Path: <linux-kernel+bounces-316366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EDF96CE79
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:33:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C07396CE7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63618B24BCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:33:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11D1289DD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089C9188CA5;
-	Thu,  5 Sep 2024 05:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39922189529;
+	Thu,  5 Sep 2024 05:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TnLmjDpp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lsputVf4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6155279E1;
-	Thu,  5 Sep 2024 05:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C1F189503;
+	Thu,  5 Sep 2024 05:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725514424; cv=none; b=oMhs3r/LXmkY28qTEbv9y5+ZD/xvpEsafm8N1964hA0mm0BHnaVPDZQApzCH4caMNTn2/Mlae0Wi1YG37oM3hQfmI/Izx0EFEnQi7RCSITiCc0O8T/fVBToiARMoEdszztF9bab0Kaln/Lm+0z77PD3aNqqScBO0HAi0Ap84bw4=
+	t=1725514566; cv=none; b=YuLgsLvx69alCCDHB2RKnxFIuWcY9Or7Jt4vsLz+DsCwrzw1fAVLmqwmHDCT6jV3zigSK4G2woSATNw99p4Ti6dIHvw71TpkKB4+5Ma77QNBHwRumgZ2YTqPFBhSia43FIldB8UluguU22qyK3JVo5h7XnK6HrSDZqOnKaMuM3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725514424; c=relaxed/simple;
-	bh=CsWHcRdoYmg6aLV3Ma31jANgcplCQs4Q7lj5zKp/Rcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlyEhKFZhUWLc610LF89zEQvmEpRhmYWa98wBPWzYY+S5zKiW4zfv3roee410syOTCGiXlRLRKnXfJ8k5yg5pBYcGCPKJq0NjkGctD3t8JxvB1NI2UUkRWQyfYGgeAeLZeBPgjvRNvybnNIypB2imSmlN1CuhfeHsJKqv7piMRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TnLmjDpp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A01CC4CEC4;
-	Thu,  5 Sep 2024 05:33:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725514424;
-	bh=CsWHcRdoYmg6aLV3Ma31jANgcplCQs4Q7lj5zKp/Rcs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TnLmjDpp5o8PIdqKiUEkd3nxhkzswsmlv6EyhDnkR5R8t55yta2eiTCDMb82/lmwT
-	 l0luclt5//WiiD48r4k9K43VXGMNxM8pqX92X4gKQrB2xJFNPruwF1Ma9hawDU0nSL
-	 oILipcCCgH+08f5Iu3J2sNYzuPdCUOeRgT25N6jw=
-Date: Thu, 5 Sep 2024 07:33:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Timur Tabi <timur@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v4 2/2] net: qcom/emac: Find sgmii_ops by
- device_for_each_child()
-Message-ID: <2024090548-riverbank-resemble-6590@gregkh>
-References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
- <20240905-const_dfc_prepare-v4-2-4180e1d5a244@quicinc.com>
- <2024090521-finch-skinny-69bc@gregkh>
+	s=arc-20240116; t=1725514566; c=relaxed/simple;
+	bh=6NInI3x4I1NLHgn/boYgF5cpXDU3fmABu5sSEdo6u+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hLGrllgubsiE+2ydyWXngI38gRl6ugQ9tesbpQhfb2JiFOeKSXT7iINVCb64RX8C6WeybL1RNc64X6W3HP2l7zItBe9uKz4X3j5BXkyGABdVstLCfISu1ezKN9mqrFu4BFzB5R1iFOVau6WXg9+Cu6G+XqvDvaup9nIRIev1IG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lsputVf4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725514559;
+	bh=cM0S2UeW4mh7gMtac8o5JhDGyQIAuwWJBrJWnjvmC5g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lsputVf4MsBTwRldlsTOxtUT/Rr76VKAB2Cze2csWYx0mZergBHQ4LkVtxMw6ZgFf
+	 nCNOIfu0x7g2iD1y9k4aKnf1WBUwoqLTBRKNQ+ytGEcIeByno7NFOTPXVs0lRO7frq
+	 C8XpXB7ihN6+7HxD3WCpeY8w0Mgvv77U3JBvspRo+g5oLp8aAv5WSE4MLRbeh4bT0G
+	 M37Dg8pBJejm2rkkSdILkl1TvYl+bji1g3VsWxI2ud7izRwcNTIRt06HTviP0/qj6N
+	 YBzWpmQqE9EnAgZIzrVvoyZOhjhUopRKU1JznsEccZs0FVxkEN9eKMW6jsDnNehRN9
+	 KkPpGQTMNJbBQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wzp4G418bz4w2R;
+	Thu,  5 Sep 2024 15:35:58 +1000 (AEST)
+Date: Thu, 5 Sep 2024 15:35:57 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Sven Schnelle
+ <svens@linux.ibm.com>
+Subject: linux-next: manual merge of the tip tree with the mm tree
+Message-ID: <20240905153557.3b0f8db5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024090521-finch-skinny-69bc@gregkh>
+Content-Type: multipart/signed; boundary="Sig_/9j7a7_aMrsEXjdsdieip6+K";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Sep 05, 2024 at 07:29:10AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Sep 05, 2024 at 08:36:10AM +0800, Zijun Hu wrote:
-> > From: Zijun Hu <quic_zijuhu@quicinc.com>
-> > 
-> > To prepare for constifying the following old driver core API:
-> > 
-> > struct device *device_find_child(struct device *dev, void *data,
-> > 		int (*match)(struct device *dev, void *data));
-> > to new:
-> > struct device *device_find_child(struct device *dev, const void *data,
-> > 		int (*match)(struct device *dev, const void *data));
-> > 
-> > The new API does not allow its match function (*match)() to modify
-> > caller's match data @*data, but emac_sgmii_acpi_match() as the old
-> > API's match function indeed modifies relevant match data, so it is not
-> > suitable for the new API any more, solved by using device_for_each_child()
-> > to implement relevant finding sgmii_ops function.
-> > 
-> > By the way, this commit does not change any existing logic.
-> > 
-> > Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> > ---
-> >  drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 22 +++++++++++++++++-----
-> >  1 file changed, 17 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-> > index e4bc18009d08..29392c63d115 100644
-> > --- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-> > +++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-> > @@ -293,6 +293,11 @@ static struct sgmii_ops qdf2400_ops = {
-> >  };
-> >  #endif
-> >  
-> > +struct emac_match_data {
-> > +	struct sgmii_ops **sgmii_ops;
-> > +	struct device *target_device;
-> > +};
-> > +
-> >  static int emac_sgmii_acpi_match(struct device *dev, void *data)
-> >  {
-> >  #ifdef CONFIG_ACPI
-> > @@ -303,7 +308,7 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
-> >  		{}
-> >  	};
-> >  	const struct acpi_device_id *id = acpi_match_device(match_table, dev);
-> > -	struct sgmii_ops **ops = data;
-> > +	struct emac_match_data *match_data = data;
-> >  
-> >  	if (id) {
-> >  		acpi_handle handle = ACPI_HANDLE(dev);
-> > @@ -324,10 +329,12 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
-> >  
-> >  		switch (hrv) {
-> >  		case 1:
-> > -			*ops = &qdf2432_ops;
-> > +			*match_data->sgmii_ops = &qdf2432_ops;
-> > +			match_data->target_device = get_device(dev);
-> >  			return 1;
-> >  		case 2:
-> > -			*ops = &qdf2400_ops;
-> > +			*match_data->sgmii_ops = &qdf2400_ops;
-> > +			match_data->target_device = get_device(dev);
-> 
-> Where is put_device() now called?
+--Sig_/9j7a7_aMrsEXjdsdieip6+K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Nevermind, I see it now.
+Hi all,
 
-That being said, this feels wrong still, why not just do this "set up
-the ops" logic _after_ you find the device and not here in the match
-function?
+Today's linux-next merge of the tip tree got a conflict in:
 
-thanks,
+  kernel/events/uprobes.c
 
-greg k-h
+between commit:
+
+  c67907222c56 ("uprobes: use vm_special_mapping close() functionality")
+
+from the mm-unstable branch of the mm tree and commit:
+
+  e240b0fde52f ("uprobes: Use kzalloc to allocate xol area")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/events/uprobes.c
+index 6eddf4352ebb,cac45ea4c284..000000000000
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@@ -1518,8 -1480,6 +1499,7 @@@ static struct xol_area *__create_xol_ar
+  		goto free_area;
+ =20
+  	area->xol_mapping.name =3D "[uprobes]";
+- 	area->xol_mapping.fault =3D NULL;
+ +	area->xol_mapping.close =3D uprobe_clear_state;
+  	area->xol_mapping.pages =3D area->pages;
+  	area->pages[0] =3D alloc_page(GFP_HIGHUSER);
+  	if (!area->pages[0])
+
+--Sig_/9j7a7_aMrsEXjdsdieip6+K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbZQz0ACgkQAVBC80lX
+0GyWTQf/QdFEi2sP0Oq/2G0tiKpPa1pIO3ZghQfVWS5dxUkpxpIQa36DMeNrZFzc
+QjVsP2RrAowe8rPinoDRmjLbFl3+Zt7Fx8t+P9NLeN+0/q/7Pj03/ypOSJFUVdiF
+JNzCiZbrsQ9zOnaV0+ct1XwV9cw3w8rtQ3qLQL/tNrxQ3A3C/lqDba3h6j5zpvSl
+RzGXxTmTIWXAlTacItHHrwIv/v9++hS2v+aUEF3xPDMFSFCVar+ak25jOT70fXQ2
+cnJsHIjD/W6YOvqMjlLl7CzY0UJE47NiDDY3MGlSwfPoIfiekBlwyIkSVgIIqmiF
+XX1RsnyVirS6hT91VMjkDgGFLUmxkA==
+=PGn0
+-----END PGP SIGNATURE-----
+
+--Sig_/9j7a7_aMrsEXjdsdieip6+K--
 
