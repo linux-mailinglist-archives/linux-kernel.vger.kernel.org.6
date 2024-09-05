@@ -1,120 +1,82 @@
-Return-Path: <linux-kernel+bounces-316504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D2D96D075
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50BD96D07A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7CE1F24680
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81C61C23246
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB03919307F;
-	Thu,  5 Sep 2024 07:33:37 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B426E158D9C;
-	Thu,  5 Sep 2024 07:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EBD19309A;
+	Thu,  5 Sep 2024 07:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="InOrPXga"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2B01925B5;
+	Thu,  5 Sep 2024 07:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725521617; cv=none; b=NuDBwuVxWZzft3PXs6I2hVBUGk3MspPYSQLLcruP5Lp40Gb6eRtXnVTEplcTh3aMsOaQjJ5W6/Ji/55SI6D0HQBVB6TauW3I8laLxYjFYwTAD0dSE371RO7IKfKODfd9Fw2QPyAqpw/afhAdIc+TQVpVerfoglg91RZ/1w6yP7c=
+	t=1725521656; cv=none; b=ksmgO6MPZBxEyXyT/+wyTLoa4w8J9Z0KXoLeU2JTezx1Z/VJyyecUI5asLn8kClpskDDKRN39MQv83X+8Q4cOlZqvzBoFRRY8DesCPA/hBuwXYJZZsB2j2gs8g8dfpkGTLBNk8qPQ+Tpz1zQRvZa/XIospK2hxBUHbSMNwwYMnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725521617; c=relaxed/simple;
-	bh=97jQbhASEYG0hRESEWRHpQrm7iMLYDbkF9AgdD7u4ds=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=c/SxzVwv5rQUu3WlXbUoiVl6rnYuINkiYgsd3Cn/xB++wgitF9xOUXWBUmPgKM+gh23+beMOPXE5pauCrTkqjSJaMFDgE2uEaM+pVU7bK5DWU1AxCZUw0rM/UHdABC+Qys2HcualCbuZkZQNHW8uFGk2xHXwqed6l5wl2H8hlWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: HFlxwGecRk6pP0k3uVyLyw==
-X-CSE-MsgGUID: ZT7nvTLrQvmXQ1+mUCnY3A==
-X-IronPort-AV: E=Sophos;i="6.10,204,1719849600"; 
-   d="scan'208";a="121203028"
-From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
-To: Ming Lei <ming.lei@redhat.com>
-CC: "axboe@kernel.dk" <axboe@kernel.dk>, "bvanassche@acm.org"
-	<bvanassche@acm.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, =?utf-8?B?5pa557+U?= <fangxiang@xiaomi.com>,
-	=?utf-8?B?546L6L6J?= <wanghui33@xiaomi.com>
-Subject: Re: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Thread-Topic: [External Mail]Re: [PATCH v3] block: move non sync requests
- complete flow to softirq
-Thread-Index: AQHa/fgOh/cV01vbcESyzBPikRppQrJGv0cAgAE6VwCAABGBgIAAPqMA
-Date: Thu, 5 Sep 2024 07:33:29 +0000
-Message-ID: <a257ff06-ed02-46a2-81fc-caa351a379fd@xiaomi.com>
-References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
- <ZtgT4HhEsyRJMoQH@fedora> <1641f51b-34f1-47c9-bd69-e56b036fc0f4@xiaomi.com>
- <ZtkqPxgC3tsRdDcz@fedora>
-In-Reply-To: <ZtkqPxgC3tsRdDcz@fedora>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A990E78F5636E643885B37D21C4E81D9@xiaomi.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725521656; c=relaxed/simple;
+	bh=uT59ImFqQ7Y96gL4d4c3hTv8eaLL9DUqJoKAMu6eqI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+umsMa/hKeeTTRJLipD80DLpLvh+kh1Jr2QP+xxxfCJPStx+fWfB9XdyW8JGYob+AyjXiizHRFlSOiHvYv9snEB34tcGL/cajbLpB5uk6OJAxuqVD+7fcS2hD5APWXNR0wyJpEKFhfmFbf50+P394FkBlAwlXPLp3+508NNaHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=InOrPXga; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe1f47.dip0.t-ipconnect.de [79.254.31.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 8FAB4288172;
+	Thu,  5 Sep 2024 09:34:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1725521653;
+	bh=uT59ImFqQ7Y96gL4d4c3hTv8eaLL9DUqJoKAMu6eqI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=InOrPXgaqOYMZ4M+9WDKSXIJ+7PJrmOiDd3Dx6Hs8ChjHklkHFFtGw0LDEqYuN07X
+	 HCI1lpN7JmuO+DdForvhgk9AOMPteUWvPFhwMbwGzXqbK1PU57naZ9gfyExGLol+pp
+	 OBBpPxKz0iuDyApjYiaFse0CPyrdwWDefqXuYHP3DCrKTUt48q0E0/orEnWrZsC89J
+	 wU/5b1bns3MZWV2ACy3UX5LkIb0N8qYdmqzDZ6V3WTQAQ0f6NXGF7i3nqyGo819IY0
+	 2ZIq+cwbnLCcf8C60Pa1uFzcw8fzeDyaqpkJkZhudyBr2BQntmI7SNrNbFM5ygy3nK
+	 K85r0NuDkw+dw==
+Date: Thu, 5 Sep 2024 09:34:07 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-doc@vger.kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH] iommu/amd: Add kernel parameters to limit V1 page-sizes
+Message-ID: <Ztle72HfrjBjlJGa@8bytes.org>
+References: <20240905072240.253313-1-joro@8bytes.org>
+ <45a3ae40-6e59-43b4-ae57-d159bd2b54df@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45a3ae40-6e59-43b4-ae57-d159bd2b54df@linux.intel.com>
 
-T24gMjAyNC85LzUgMTE6NDksIE1pbmcgTGVpIHdyb3RlOg0KPiBPbiBUaHUsIFNlcCAwNSwgMjAy
-NCBhdCAwMjo0NjozOUFNICswMDAwLCDnq6Dovokgd3JvdGU6DQo+PiBPbiAyMDI0LzkvNCAxNjow
-MSwgTWluZyBMZWkgd3JvdGU6DQo+Pj4gT24gVHVlLCBTZXAgMDMsIDIwMjQgYXQgMDc6NTQ6MzdQ
-TSArMDgwMCwgWmhhbmdIdWkgd3JvdGU6DQo+Pj4+IEZyb206IHpoYW5naHVpIDx6aGFuZ2h1aTMx
-QHhpYW9taS5jb20+DQo+Pj4+DQo+Pj4+IEN1cnJlbnRseSwgZm9yIGEgY29udHJvbGxlciB0aGF0
-IHN1cHBvcnRzIG11bHRpcGxlIHF1ZXVlcywgbGlrZSBVRlM0LjAsDQo+Pj4+IHRoZSBtcV9vcHMt
-PmNvbXBsZXRlIGlzIGV4ZWN1dGVkIGluIHRoZSBpbnRlcnJ1cHQgdG9wLWhhbGYuIFRoZXJlZm9y
-ZSwNCj4+Pj4gdGhlIGZpbGUgc3lzdGVtJ3MgZW5kIGlvIGlzIGV4ZWN1dGVkIGR1cmluZyB0aGUg
-cmVxdWVzdCBjb21wbGV0aW9uIHByb2Nlc3MsDQo+Pj4+IHN1Y2ggYXMgZjJmc193cml0ZV9lbmRf
-aW8gb24gc21hcnRwaG9uZS4NCj4+Pj4NCj4+Pj4gSG93ZXZlciwgd2UgZm91bmQgdGhhdCB0aGUg
-ZXhlY3V0aW9uIHRpbWUgb2YgdGhlIGZpbGUgc3lzdGVtIGVuZCBpbw0KPj4+PiBpcyBzdHJvbmds
-eSByZWxhdGVkIHRvIHRoZSBzaXplIG9mIHRoZSBiaW8gYW5kIHRoZSBwcm9jZXNzaW5nIHNwZWVk
-DQo+Pj4+IG9mIHRoZSBDUFUuIEJlY2F1c2UgdGhlIGZpbGUgc3lzdGVtJ3MgZW5kIGlvIHdpbGwg
-dHJhdmVyc2UgZXZlcnkgcGFnZQ0KPj4+PiBpbiBiaW8sIHRoaXMgaXMgYSB2ZXJ5IHRpbWUtY29u
-c3VtaW5nIG9wZXJhdGlvbi4NCj4+Pj4NCj4+Pj4gV2UgbWVhc3VyZWQgdGhhdCB0aGUgODBNIGJp
-byB3cml0ZSBvcGVyYXRpb24gb24gdGhlIGxpdHRsZSBDUFUgd2lsbA0KPj4+IFdoYXQgaXMgODBN
-IGJpbz8NCj4+Pg0KPj4+IEl0IGlzIG9uZSBrbm93biBpc3N1ZSB0aGF0IHNvZnQgbG9ja3VwIG1h
-eSBiZSB0cmlnZ2VyZWQgaW4gY2FzZSBvZiBOOk0NCj4+PiBibGstbXEgbWFwcGluZywgYnV0IG5v
-dCBzdXJlIGlmIHRoYXQgaXMgdGhlIGNhc2UuDQo+Pj4NCj4+PiBXaGF0IGlzIG5yX2h3X3F1ZXVl
-cyhibGtfbXEpIGFuZCBucl9jcHVzIGluIHlvdXIgc3lzdGVtPw0KPj4+DQo+Pj4+IGNhdXNlIHRo
-ZSBleGVjdXRpb24gdGltZSBvZiB0aGUgdG9wLWhhbGYgdG8gYmUgZ3JlYXRlciB0aGFuIDEwMG1z
-Lg0KPj4+PiBUaGUgQ1BVIHRpY2sgb24gYSBzbWFydHBob25lIGlzIG9ubHkgNG1zLCB3aGljaCB3
-aWxsIHVuZG91YnRlZGx5IGFmZmVjdA0KPj4+PiBzY2hlZHVsaW5nIGVmZmljaWVuY3kuDQo+Pj4g
-c2NoZWR1bGUgaXMgb2ZmIHRvbyBpbiBzb2Z0aXJxKGJvdHRvbS1oYWxmKS4NCj4+Pg0KPj4+PiBM
-ZXQncyBmaXhlZCB0aGlzIGlzc3VlIGJ5IG1vdmVkIG5vbiBzeW5jIHJlcXVlc3QgY29tcGxldGlv
-biBmbG93IHRvDQo+Pj4+IHNvZnRpcnEsIGFuZCBrZWVwIHRoZSBzeW5jIHJlcXVlc3QgY29tcGxl
-dGlvbiBpbiB0aGUgdG9wLWhhbGYuDQo+Pj4gSWYgeW91IGRvIGNhcmUgaW50ZXJydXB0LW9mZiBv
-ciBzY2hlZHVsZS1vZmYgbGF0ZW5jeSwgeW91IG1heSBoYXZlIHRvIG1vdmUNCj4+PiB0aGUgSU8g
-aGFuZGxpbmcgaW50byB0aHJlYWQgY29udGV4dCBpbiB0aGUgZHJpdmVyLg0KPj4+DQo+Pj4gQlRX
-LCB0aHJlYWRlZCBpcnEgY2FuJ3QgaGVscCB5b3UgdG9vLg0KPj4+DQo+Pj4NCj4+PiBUaGFua3Ms
-DQo+Pj4gTWluZw0KPj4+DQo+PiBoaSBNaW5nLA0KPj4NCj4+IFZlcnkgZ29vZCByZW1pbmRlciwg
-dGhhbmsgeW91Lg0KPj4NCj4+IE9uIHNtYXJ0cGhvbmVzLCBucl9od19xdWV1ZXMgYW5kIG5yX2Nw
-dXMgYXJlIDE6MSwgSSBhbSBtb3JlIGNvbmNlcm5lZA0KPj4gYWJvdXQgdGhlIGludGVycnVwdC1v
-ZmYgbGF0ZW5jeSwgd2hpY2ggaXMgbW9yZSBvYnZpb3VzIG9uIGxpdHRsZSBjb3Jlcy4NCj4gU28g
-eW91IHN1Ym1pdHMgODBNIGJ5dGVzIGZyb20gb25lIENQVSwgYW5kIGFsbW9zdCBhbGwgdGhlc2Ug
-YmlvcyBhcmUgY29tcGxldGVkDQo+IGluIHNpbmdsZSBpbnRlcnJ1cHQsIHdoaWNoIGxvb2tzIHZl
-cnkgaW1wb3NzaWJsZSwgZXhjZXB0IHRoYXQgeW91cg0KPiBVRlMgY29udHJvbGxlciBpcyBmYXIg
-ZmFzdGVyIHRoYW4gdGhlIENQVS4NCg0KVGhlIDgwTSBiaW8gYmlvIHJlZmVycyB0byB0aGUgYmlv
-IHNlbnQgYnkgdGhlIGZpbGUgc3lzdGVtLiBBdCB0aGUgYmxvY2sNCmxheWVyLCBpdCB3aWxsIGJl
-IHNwbGl0IGludG8gbWFueSBiaW9zIGFuZCBmb3JtIGEgYmlvIGNoYWluLiBUaGUNCnRpbWUtY29u
-c3VtaW5nIHBhcnQgaXMgZW5kX2lvIG9mIGZpbGVzeXN0ZW0gcHJvY2Vzc2luZyBhbGwgcGFnZSBz
-dGF0ZS4NCkl0IHdpbGwgb25seSBiZSBhY3R1YWxseSBjYWxsZWQgYWZ0ZXIgYWxsIHRoZSA4ME0g
-QklPcyBpbiB0aGUgYmlvIGNoYWluDQphcmUgY29tcGxldGVkLg0KDQo+PiBNb3ZpbmcgdGltZS1j
-b25zdW1pbmcgd29yayB0byB0aGUgYm90dG9tIGhhbGYgbWF5IG5vdCBoZWxwIHdpdGggc2NoZWR1
-bGUNCj4+IGxhdGVuY3ksIGJ1dCBpdCBpcyBtYXkgaGVscGZ1bCBmb3IgaW50ZXJydXB0IHJlc3Bv
-bnNlIGxhdGVuY3kgb2Ygb3RoZXINCj4+IG1vZHVsZXMgaW4gdGhlIHN5c3RlbT8NCj4gc2NoZWR1
-bGluZyByZXNwb25zZSBsYXRlbmN5IGlzIHN5c3RlbS13aWRlIHRvby4NCj4NCj4gVGhlbiBwbGVh
-c2UgZG9jdW1lbnQgdGhlIGludGVycnVwdCBsYXRlbmN5IGltcHJvdmVtZW50IGluc3RlYWQgb2YN
-Cj4gc2NoZWR1bGluZyBpbiB5b3VyIGNvbW1pdCBsb2csIG90aGVyd2lzZSBpdCBpcyBqdXN0IG1p
-c2xlYWRpbmcuDQo+DQo+IGBgYA0KPiBUaGUgQ1BVIHRpY2sgb24gYSBzbWFydHBob25lIGlzIG9u
-bHkgNG1zLCB3aGljaCB3aWxsIHVuZG91YnRlZGx5IGFmZmVjdA0KPiBzY2hlZHVsaW5nIGVmZmlj
-aWVuY3kuDQo+IGBgYA0KPg0KPiBUaGFua3MsDQo+IE1pbmcNCg0KaGkgTWluZywNCg0KT0ssIEkg
-d2lsbCB1cGRhdGUgcGF0Y2ggVjQgbGF0ZXIgZm9yIGNvbW1lbnQgdXBkYXRlLg0KVGhhbmsgeW91
-IGZvciB5b3VyIHN1Z2dlc3Rpb24hDQpCZXNpZGVzIHRoaXMsZG8geW91IGhhdmUgYW55IG90aGVy
-IGNvbmNlcm4/DQoNClRoYW5rcw0KWmhhbmcNCg0K
+On Thu, Sep 05, 2024 at 03:31:08PM +0800, Baolu Lu wrote:
+> Is it possible to consolidate these two into a single
+> "iommu.nohugepages=1"?
+
+Generally yes, but that requires to touch all drivers to make the
+behavior consistent. We can start this effort on-top of this change, if
+desired.
+
+Regards,
+
+	Joerg
+
 
