@@ -1,168 +1,133 @@
-Return-Path: <linux-kernel+bounces-317833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E623196E448
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:42:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEFC96E44A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B4DB265DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0B01F27386
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60C91A76AF;
-	Thu,  5 Sep 2024 20:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDEF1A42C8;
+	Thu,  5 Sep 2024 20:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vmhr4xm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="FhkJ0oa/"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D024A1A3BB9;
-	Thu,  5 Sep 2024 20:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAB78F54;
+	Thu,  5 Sep 2024 20:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725568909; cv=none; b=qCaQkczc8dLk7XAiLFbV90s8/8Xx2M3kKWQc+AFrtnBLDdlumIvQ0YWLllGAul258iuiVQCd5t68Ap4y7FJpCT3/KATXmdTiAEw+9j2S5aaZOwu2uc7rpZLm363shHjbaE8LgeCqCT5vDKp/PSwIyjbEalA8oyS6+X6RvfuALQo=
+	t=1725568995; cv=none; b=FyRPj7dzwtUfuwDbD5soqUhKHkfa7lL6OJWmGwxHWdaN8URNZNkxbzOOyF3385yYk4XeJHA5lbXFW+IDXRp+/Uf+dI6eX+k8naFly1TftghZ60iqtTtANBfBO+mC5xfoych82HW596EOQWU76noZyKJN4CK6HWngSpMf9EgggDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725568909; c=relaxed/simple;
-	bh=1pTKkK+g3LwaTtJ584c38j5d6WNE2g/owBxKg20Z/ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZSKdCkfOWoYR+LV2AP2Al3M++Ij2ln0XHwZ0TTJt7QspiFhWN/1b47S8r06OgXO1X2stTG+oxD8iLDQ2QMdo86EYPupFyrzoY5D4IW9z1qx9v3B95OcD0InISzZLYCtNw+B9HHO/rbRcXqxMhjr4+MHb5DdepuKin62dDbnktk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Vmhr4xm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398A0C4CEC3;
-	Thu,  5 Sep 2024 20:41:46 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vmhr4xm1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725568904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IeN0hion7E5T8bnC9bEQSPstkGSkSwCA9M/4YZOxoLs=;
-	b=Vmhr4xm1Wp03ugcdrYba3ciO2c/OQp0oQM3tMCUeyv/y6IZN4vNwmCaOuwFQTFlZjTxzGh
-	vyDmKYOWlgz6gVR/SY11McK85Ld05NIERlGr0h62hGj7fSc/8dsPEgJIDmwgO9QkzhtMl2
-	G9lC+jvPOPB9VCi02VaBflNkREEbT7Y=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 48b42c3c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 5 Sep 2024 20:41:44 +0000 (UTC)
-Date: Thu, 5 Sep 2024 22:41:40 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v5 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on VDSO32
-Message-ID: <ZtoXhGYflBNR74g0@zx2c4.com>
-References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
- <1f49c2ce009f8b007ab0676fb41187b2d54f28b2.1725304404.git.christophe.leroy@csgroup.eu>
- <ZtnYqZI-nrsNslwy@zx2c4.com>
+	s=arc-20240116; t=1725568995; c=relaxed/simple;
+	bh=867Pu2jXRcvxlrESkOhUiIRb/+a03q8oL66iWCoFTQQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q0b9mPEWc/vq6+Hf3glOO3ZQ8WV4qSomXdzM8hGTamOyZeWeAUXkAZJOi0J3feYIatmMWjBLiEcXlD0qhhcQrgugn40lrgnR3SUbT0fW7/Ov0hZCyuIn4JBUZGC+Av7FxQaCaB6uA+o+Qluya/1+gzqOXQ5a7KXCQxnYzughSGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=FhkJ0oa/; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1725568990; x=1757104990;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=nQOYS+xy0MsFUUO8PkTI2H4FmEcKVBnFPMsC62Zqgkg=;
+  b=FhkJ0oa/qSs7YL/KBGhg2unHr+s8UlYcPClUXj8X7QNxrzN8tO1HYvir
+   FYiZ7iPyYp9ijqLGQZdcJ6FXfufvqQxWe1dwsEe3XCiod9leD+8yM8NOx
+   y7WMKddwq4xNqlMFc/bVM/G8gUWqFpSTYA3jiNZeHRzcJLRYMbMwxD5DV
+   4=;
+X-IronPort-AV: E=Sophos;i="6.10,205,1719878400"; 
+   d="scan'208";a="421937967"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 20:43:06 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:62873]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.30.196:2525] with esmtp (Farcaster)
+ id 9402953f-6d42-4540-8675-40ca75e960f3; Thu, 5 Sep 2024 20:43:01 +0000 (UTC)
+X-Farcaster-Flow-ID: 9402953f-6d42-4540-8675-40ca75e960f3
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 5 Sep 2024 20:43:01 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.100.51) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 5 Sep 2024 20:42:58 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Thu, 5 Sep 2024 13:42:49 -0700
+Message-ID: <20240905204249.27077-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <68873c3c-d1ec-4041-96d8-e6921be13de5@oracle.com>
+References: <68873c3c-d1ec-4041-96d8-e6921be13de5@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtnYqZI-nrsNslwy@zx2c4.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Thu, Sep 05, 2024 at 06:13:29PM +0200, Jason A. Donenfeld wrote:
-> > +/*
-> > + * The macro sets two stack frames, one for the caller and one for the callee
-> > + * because there are no requirement for the caller to set a stack frame when
-> > + * calling VDSO so it may have omitted to set one, especially on PPC64
-> > + */
-> > +
-> > +.macro cvdso_call funct
-> > +  .cfi_startproc
-> > +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
-> > +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
-> > +	mflr		r0
-> > +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
-> > +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
-> > +	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> > +  .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
-> > +	get_datapage	r8
-> > +	addi		r8, r8, VDSO_RNG_DATA_OFFSET
-> > +	bl		CFUNC(DOTSYM(\funct))
-> > +	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> > +	cmpwi		r3, 0
-> > +	mtlr		r0
-> > +	addi		r1, r1, 2 * PPC_MIN_STKFRM
-> > +  .cfi_restore lr
-> > +  .cfi_def_cfa_offset 0
-> > +	crclr		so
-> > +	bgelr+
-> > +	crset		so
-> > +	neg		r3, r3
-> > +	blr
-> > +  .cfi_endproc
-> > +.endm
-> 
-> Can you figure out what's going on and send a fix, which I'll squash
-> into this commit?
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Thu, 5 Sep 2024 13:37:06 -0700
+> On 9/5/2024 1:15 PM, Shoaib Rao wrote:
+> >
+> > On 9/5/2024 12:46 PM, Kuniyuki Iwashima wrote:
+> >> From: Shoaib Rao <rao.shoaib@oracle.com>
+> >> Date: Thu, 5 Sep 2024 00:35:35 -0700
+> >>> Hi All,
+> >>>
+> >>> I am not able to reproduce the issue. I have run the C program at least
+> >>> 100 times in a loop. In the I do get an EFAULT, not sure if that is
+> >>> intentional or not but no panic. Should I be doing something
+> >>> differently? The kernel version I am using is
+> >>> v6.11-rc6-70-gc763c4339688. Later I can try with the exact version.
+> >> The -EFAULT is the bug meaning that we were trying to read an 
+> >> consumed skb.
+> >>
+> >> But the first bug is in recvfrom() that shouldn't be able to read OOB 
+> >> skb
+> >> without MSG_OOB, which doesn't clear unix_sk(sk)->oob_skb, and later
+> >> something bad happens.
+> >>
+> >>    socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
+> >>    sendmsg(4, {msg_name=NULL, msg_namelen=0, 
+> >> msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, 
+> >> msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT) = 1
+> >>    recvmsg(3, {msg_name=NULL, msg_namelen=0, msg_iov=NULL, 
+> >> msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, 
+> >> MSG_OOB|MSG_WAITFORONE) = 1
+> >>    sendmsg(4, {msg_name=NULL, msg_namelen=0, 
+> >> msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, 
+> >> msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE) = 1
+> >>> recvfrom(3, "\21", 125, MSG_DONTROUTE|MSG_TRUNC|MSG_DONTWAIT, NULL, 
+> >>> NULL) = 1
+> >>    recvmsg(3, {msg_namelen=0}, MSG_OOB|MSG_ERRQUEUE) = -1 EFAULT (Bad 
+> >> address)
+> >>
+> >> I posted a fix officially:
+> >> https://urldefense.com/v3/__https://lore.kernel.org/netdev/20240905193240.17565-5-kuniyu@amazon.com/__;!!ACWV5N9M2RV99hQ!IJeFvLdaXIRN2ABsMFVaKOEjI3oZb2kUr6ld6ZRJCPAVum4vuyyYwUP6_5ZH9mGZiJDn6vrbxBAOqYI$ 
+> >>
+> >
+> > Thanks that is great. Isn't EFAULT,  normally indicative of an issue 
+> > with the user provided address of the buffer, not the kernel buffer.
+> >
+> > Shoaib
+> >
+> Can you provide the full test case that you used to reproduce the issue.
 
-This doesn't work, but I wonder if something like it is what we want. I
-need to head out for the day, but here's what I've got. It's all wrong
-but might be of interest.
-
-diff --git a/arch/powerpc/include/asm/vdso/getrandom.h b/arch/powerpc/include/asm/vdso/getrandom.h
-index 501d6bb14e8a..acb271709d30 100644
---- a/arch/powerpc/include/asm/vdso/getrandom.h
-+++ b/arch/powerpc/include/asm/vdso/getrandom.h
-@@ -47,7 +47,8 @@ static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
- }
-
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
--			     size_t opaque_len, const struct vdso_rng_data *vd);
-+			     size_t opaque_len, const struct vdso_data *vd,
-+			     const struct vdso_rng_data *vrd);
-
- #endif /* !__ASSEMBLY__ */
-
-diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
-index a957cd2b2b03..bc49eb87cfd1 100644
---- a/arch/powerpc/kernel/vdso/getrandom.S
-+++ b/arch/powerpc/kernel/vdso/getrandom.S
-@@ -32,7 +32,7 @@
-   .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
- #endif
- 	get_datapage	r8
--	addi		r8, r8, VDSO_RNG_DATA_OFFSET
-+	addi		r9, r8, VDSO_RNG_DATA_OFFSET
- 	bl		CFUNC(DOTSYM(\funct))
- 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
- #ifdef __powerpc64__
-diff --git a/arch/powerpc/kernel/vdso/vgetrandom.c b/arch/powerpc/kernel/vdso/vgetrandom.c
-index 5f855d45fb7b..408c76036868 100644
---- a/arch/powerpc/kernel/vdso/vgetrandom.c
-+++ b/arch/powerpc/kernel/vdso/vgetrandom.c
-@@ -8,7 +8,10 @@
- #include <linux/types.h>
-
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
--			     size_t opaque_len, const struct vdso_rng_data *vd)
-+			     size_t opaque_len, const struct vdso_data *vd,
-+			     const struct vdso_rng_data *vrd)
- {
--	return __cvdso_getrandom_data(vd, buffer, len, flags, opaque_state, opaque_len);
-+	if (IS_ENABLED(CONFIG_TIME_NS) && vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
-+		vrd = (void *)vrd + (1UL << CONFIG_PAGE_SHIFT);
-+	return __cvdso_getrandom_data(vrd, buffer, len, flags, opaque_state, opaque_len);
- }
-
+I used the syzbot's repro, but you can check a new test case added
+in my patch.
 
