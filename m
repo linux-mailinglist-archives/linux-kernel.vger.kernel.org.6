@@ -1,181 +1,196 @@
-Return-Path: <linux-kernel+bounces-317172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F5296DA5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:33:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1BB96DA61
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B721F23BED
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CB951C2340A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309D819D077;
-	Thu,  5 Sep 2024 13:32:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF83A19AD87;
-	Thu,  5 Sep 2024 13:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A8019D885;
+	Thu,  5 Sep 2024 13:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="PdMvnsb/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y+Nnp21a"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74401E487;
+	Thu,  5 Sep 2024 13:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725543175; cv=none; b=R06ZKIitpHvkhLywBiN4eovxNkXXPMa7P6iLCr5SAubNK3v0IiChJR95Bo9s3skHaIst7xxJBRD2Z1KyJlKrGoTveDGmtSHEaJdEUXoR968P2irl8SWRW+zXNw81oWu/oh02aUSw37xBo2pWzFw7NFMASXBghXxNJNdYu32yKt4=
+	t=1725543200; cv=none; b=NHLsZwaaytB2I8WrETETQSrO8mOuS6vU2tp9TWqTq0pzg5S2HS87xmYz+x+SCqq7DsH98kPTto9hkd6QMgg8DLpjueLWh/f+cPAkF7o7EUGNaRGkVmVhJnjPKyh9Hj0sj56vEaa98eHIka1fBmfUQ4uIlgbdDseUz0jAmlDjbD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725543175; c=relaxed/simple;
-	bh=6uIbs86F54uf9SJF0bivP3K+HBLliXcO+eqlV/YxSdI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=K8zPruDHOpvqnkiO2ANq+ykM3ps9k3P0JsiCBIIMxYFGmUMZzZL5IQAY6MIm4Zjv7Io7Gas2tPgp4jAkUTAoVxk+cT9yaQz/CKn1CPphBdkG6Cbn1l7mCDCxz1iy5X7dqMtw7BYagfJMUnXEhlEUi2nb27zhqZL/SntR6IODzGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8953FEC;
-	Thu,  5 Sep 2024 06:33:18 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48C453F73F;
-	Thu,  5 Sep 2024 06:32:50 -0700 (PDT)
-Message-ID: <4dbdd1ee-fedd-4b97-86ba-ffe6af8d0473@arm.com>
-Date: Thu, 5 Sep 2024 14:32:46 +0100
+	s=arc-20240116; t=1725543200; c=relaxed/simple;
+	bh=qjUaAPTaliz5J4cRsvrBexPWV1blwkxxWIdH50rGLzI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ts073V3bY3U9ZKOq2H+2lQVa3ZeTdEummacPpWiHnHxPUKPcXTHANsaMGmyn6LFg5wg9G+qyUw3emnneCgt3iZjF0YppTWsYM+aR53VrXNoomnqA8qdup45tyuZayVhflIElgYXi9/jPmOmv5jUhjEVh4x02CO+VFapdkJFrR6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=PdMvnsb/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y+Nnp21a; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id EB1F31140263;
+	Thu,  5 Sep 2024 09:33:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 05 Sep 2024 09:33:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1725543197; x=1725629597; bh=0L
+	6FxNpj/PudHapXC4OU2emJoWIjVzEfXLmyz4x/E4E=; b=PdMvnsb/OntTB8LKjc
+	4FMd2sBTGmsLLu7Qc6v5dKt9ugU47ve2tbKW8tRsjwTvSOpa7BFJ0APLPQlLss7m
+	304fSR9XiLY6NlDBY7eVdXG0kX9uPdhd9IJiK5ZD4dgzi17d54p3+tCAnIank3fw
+	610VKgvDZDpuCLRwLK0UlC84k5BYptDelvRbuqCNiGobkfDgUN0Mjmo6w9+N3oyf
+	sNI9SCjfGckTG8tLsCX/avX1T+SCE3oUuolSbW1DCbBdszdSr0PMnaPmwKb8NdYi
+	HcUZxqr29LMq/cxocz4vlmj2AY2ufhPdWBkYUpff33U6V7C+TaL2RVoTQjJzeDHf
+	76JQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1725543197; x=1725629597; bh=0L6FxNpj/PudH
+	apXC4OU2emJoWIjVzEfXLmyz4x/E4E=; b=Y+Nnp21aOOWlw1BXngSS0dK3Oq92o
+	KQ5ffLqsYD+FSSZmFj5MID8NjE4uHa8QyOLkcI2U8v4Jr9gXcUa6qBAIFdVL8tGv
+	sg1e1/w6q0M7cVrNgrdhOkQXmKMF9HQygSZSHd3dew5Hc3kWSUrTeO/0r7uZGDxv
+	+Yrla2VmFJIXWiWqN8TIvXkTq21kb+atxoGVcqd+OJ5qcHODTUCi5UFG4E9MqDRV
+	GWn2dW0cEumSKmBoymeXWZeJqibVzLkXkYnms3BUDwtzfh7HJKbg+RNO93cx9JvZ
+	NRa6dhPtGQE9bXVY/hByM9O4KT5Bz6HvsE2qcM5DiL1m+/CsRApzVdB6Q==
+X-ME-Sender: <xms:G7PZZmnLsLylXlG6CQGcPrlbeUbLhLJ2zr3dfhFTXOofyhf78O45MA>
+    <xme:G7PZZt0NyQjzXWRGWkZWn_HzrTqE5Z8Af29Nh_g-lriJz7k7nnS-gzs_Cc0VqiIPV
+    TTHYWk44hc8-W_hR80>
+X-ME-Received: <xmr:G7PZZkrNK8WgPaP8q-p8iZyBsyn8bVgW4tRzsqvlm24rtEH7JJ_V6_iznrNJo_juhA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgieehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecu
+    hfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgoh
+    grthdrtghomheqnecuggftrfgrthhtvghrnhepgfevffejteegjeeflefgkeetleekhfeu
+    gfegvdeuueejkeejteekkedvfffffedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
+    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhopeegtddpmh
+    houggvpehsmhhtphhouhhtpdhrtghpthhtohepnhguvghsrghulhhnihgvrhhssehgohho
+    ghhlvgdrtghomhdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtph
+    htthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepmhhhihhr
+    rghmrghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrdhhihhnuggsohhrghessh
+    grmhhsuhhnghdrtghomhdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhm
+    rghilhdrtghomhdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopeifvggushhonhgrfhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhm
+    ihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:G7PZZqlQMv-YYB0XC88UY0jLTGZdF5L2Q-PtRXFzE349eMlE-oSi1A>
+    <xmx:G7PZZk3y8wLJx7CTmrlsU_VCnz_yRFWNLstW-KImm0MMNawWM81JNg>
+    <xmx:G7PZZhv1cRNHSfodrQXmL5dPrHRxtuJzSQr8sthoPTKc8j7PaViZFw>
+    <xmx:G7PZZgUwPXtfzod7pnnUm_Ui6vsW6b5N_qtKmbHHY0F7BgVG7kM-FQ>
+    <xmx:HbPZZtoSbg8Issh36bt-E_kNQL2RrHmisjXXArIsRPGKKIQsrMcS9Ym->
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Sep 2024 09:33:11 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v2 0/3] rust: Initial MIPS support
+Date: Thu, 05 Sep 2024 14:33:04 +0100
+Message-Id: <20240905-mips-rust-v2-0-409d66819418@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Optimise non-coherent
- unmap"
-From: Robin Murphy <robin.murphy@arm.com>
-To: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Ashish Mhetre <amhetre@nvidia.com>, Rob Clark <robdclark@chromium.org>,
- Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240905124956.84932-1-robdclark@gmail.com>
- <fb54ef8d-f769-47d5-8a9d-aa93f96d5c41@arm.com>
-Content-Language: en-GB
-In-Reply-To: <fb54ef8d-f769-47d5-8a9d-aa93f96d5c41@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABCz2WYC/23MQQ6CMBCF4auQWVtTipriinsYFrWdgUmEkrYSC
+ endraxd/i8v3w4RA2OEe7VDwJUj+7mEOlVgRzMPKNiVBiXVRbayERMvUYR3TIKMRnK6uVlsofy
+ XgMSfw3r0pUeOyYftoNf6t/5T1lpIIcmRfCpyV00dvbbBm3S2foI+5/wFnrA6GaQAAAA=
+To: Masahiro Yamada <masahiroy@kernel.org>,
+  Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>,  Richard Weinberger <richard@nod.at>,
+  Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+  Johannes Berg <johannes@sipsolutions.net>,
+  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+  Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,  x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,  Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+  Wedson Almeida Filho <wedsonaf@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+  =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+  Benno Lossin <benno.lossin@proton.me>,
+  Andreas Hindborg <a.hindborg@samsung.com>,
+  Alice Ryhl <aliceryhl@google.com>,
+  Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+  Steven Rostedt <rostedt@goodmis.org>,
+  Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,  Jonathan Corbet <corbet@lwn.net>,
+ Alex Shi <alexs@kernel.org>,  Yanteng Si <siyanteng@loongson.cn>,
+  Nick Desaulniers <ndesaulniers@google.com>,
+  Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-um@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, llvm@lists.linux.dev, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1974;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=qjUaAPTaliz5J4cRsvrBexPWV1blwkxxWIdH50rGLzI=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrSbm8WDZl+5WGVsyf1um8wVFU1W6U2W0X3qSl9Ppe27O
+ eUcK4d1RykLgxgXg6yYIkuIgFLfhsaLC64/yPoDM4eVCWQIAxenAEzk+S+G/3GGcy7/1rDjUWn5
+ 7r3Wwaiz+uCjNbYZWflG/gv/562f/Izhf1HrrqVry4N7Pys8+F3ncCC266zR/9i8mc2+weJhCeV
+ zuAA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On 05/09/2024 2:24 pm, Robin Murphy wrote:
-> On 05/09/2024 1:49 pm, Rob Clark wrote:
->> From: Rob Clark <robdclark@chromium.org>
->>
->> This reverts commit 85b715a334583488ad7fbd3001fe6fd617b7d4c0.
->>
->> It was causing gpu smmu faults on x1e80100.
->>
->> I _think_ what is causing this is the change in ordering of
->> __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
->> memory) and io_pgtable_tlb_flush_walk().
-> 
-> As I just commented, how do you believe the order of operations between:
+Hi Folks,
 
-...or at least I *thought* I'd just commented, but Thunderbird is now 
-denying any knowledge of the reply to your other mail I swore I sent a 
-couple of hours ago :/
+This series added MIPS arch support to rust for linux,
+hopefully MIPS is not too late to the party :-)
 
-Apologies for any confusion,
-Robin.
+Sample rust module tested on R4000(el),mips32,mips32r2el,mips64,
+mips64r2el,mips64r6el.
 
-> 
->      __arm_lpae_clear_pte();
->       if (!iopte_leaf()) {
->           io_pgtable_tlb_flush_walk();
-> 
-> and:
-> 
->       if (!iopte_leaf()) {
->          __arm_lpae_clear_pte();
->           io_pgtable_tlb_flush_walk();
-> 
-> fundamentally differs?
-> 
-> I'm not saying there couldn't be some subtle bug in the implementation 
-> which we've all missed, but I still can't see an issue with the intended 
-> logic.
-> 
->>  I'm not entirely sure how
->> this patch is supposed to work correctly in the face of other
->> concurrent translations (to buffers unrelated to the one being
->> unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
->> stale data read back into the tlb.
-> 
-> Read back from where? The ex-table PTE which was already set to zero 
-> before tlb_flush_walk was called?
-> 
-> And isn't the hilariously overcomplicated TBU driver supposed to be 
-> telling you exactly what happened here? Otherwise I'm going to continue 
-> to seriously question the purpose of shoehorning that upstream at all...
-> 
-> Thanks,
-> Robin.
-> 
->> Signed-off-by: Rob Clark <robdclark@chromium.org>
->> ---
->>   drivers/iommu/io-pgtable-arm.c | 31 ++++++++++++++-----------------
->>   1 file changed, 14 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/iommu/io-pgtable-arm.c 
->> b/drivers/iommu/io-pgtable-arm.c
->> index 16e51528772d..85261baa3a04 100644
->> --- a/drivers/iommu/io-pgtable-arm.c
->> +++ b/drivers/iommu/io-pgtable-arm.c
->> @@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte 
->> *ptep, int num_entries,
->>                      sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
->>   }
->> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
->> io_pgtable_cfg *cfg, int num_entries)
->> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
->> io_pgtable_cfg *cfg)
->>   {
->> -    for (int i = 0; i < num_entries; i++)
->> -        ptep[i] = 0;
->> -    if (!cfg->coherent_walk && num_entries)
->> -        __arm_lpae_sync_pte(ptep, num_entries, cfg);
->> +    *ptep = 0;
->> +
->> +    if (!cfg->coherent_walk)
->> +        __arm_lpae_sync_pte(ptep, 1, cfg);
->>   }
->>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->> @@ -653,28 +653,25 @@ static size_t __arm_lpae_unmap(struct 
->> arm_lpae_io_pgtable *data,
->>           max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
->>           num_entries = min_t(int, pgcount, max_entries);
->> -        /* Find and handle non-leaf entries */
->> -        for (i = 0; i < num_entries; i++) {
->> -            pte = READ_ONCE(ptep[i]);
->> +        while (i < num_entries) {
->> +            pte = READ_ONCE(*ptep);
->>               if (WARN_ON(!pte))
->>                   break;
->> -            if (!iopte_leaf(pte, lvl, iop->fmt)) {
->> -                __arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
->> +            __arm_lpae_clear_pte(ptep, &iop->cfg);
->> +            if (!iopte_leaf(pte, lvl, iop->fmt)) {
->>                   /* Also flush any partial walks */
->>                   io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
->>                                 ARM_LPAE_GRANULE(data));
->>                   __arm_lpae_free_pgtable(data, lvl + 1, 
->> iopte_deref(pte, data));
->> +            } else if (!iommu_iotlb_gather_queued(gather)) {
->> +                io_pgtable_tlb_add_page(iop, gather, iova + i * size, 
->> size);
->>               }
->> -        }
->> -        /* Clear the remaining entries */
->> -        __arm_lpae_clear_pte(ptep, &iop->cfg, i);
->> -
->> -        if (gather && !iommu_iotlb_gather_queued(gather))
->> -            for (int j = 0; j < i; j++)
->> -                io_pgtable_tlb_add_page(iop, gather, iova + j * size, 
->> size);
->> +            ptep++;
->> +            i++;
->> +        }
->>           return i * size;
->>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
-> 
+Please review.
+
+Thanks
+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Changes in v2:
+- Address review comments on wording & style (See individual commit messages)
+- Add microMIPS support
+- Link to v1: https://lore.kernel.org/r/20240903-mips-rust-v1-0-0fdf0b2fd58f@flygoat.com
+
+---
+Jiaxun Yang (3):
+      rust: Introduce HAVE_GENERATE_RUST_TARGET config option
+      MIPS: Rename mips_instruction type to workaround bindgen issue
+      rust: Enable for MIPS
+
+ Documentation/rust/arch-support.rst                |  1 +
+ .../translations/zh_CN/rust/arch-support.rst       |  1 +
+ Makefile                                           |  3 +
+ arch/Kconfig                                       |  8 +++
+ arch/mips/Kconfig                                  |  2 +
+ arch/mips/include/asm/dsemul.h                     |  2 +-
+ arch/mips/include/asm/inst.h                       |  6 +-
+ arch/mips/kernel/ftrace.c                          |  2 +-
+ arch/mips/kernel/kprobes.c                         |  2 +-
+ arch/mips/math-emu/cp1emu.c                        | 18 +++---
+ arch/mips/math-emu/dsemul.c                        |  8 +--
+ arch/um/Kconfig                                    |  1 +
+ arch/x86/Makefile                                  |  1 -
+ arch/x86/Makefile.um                               |  1 -
+ rust/Makefile                                      |  2 +-
+ scripts/Makefile                                   |  4 +-
+ scripts/generate_rust_target.rs                    | 68 ++++++++++++++++++++++
+ 17 files changed, 105 insertions(+), 25 deletions(-)
+---
+base-commit: 469f1bad3c1c6e268059f78c0eec7e9552b3894c
+change-id: 20240903-mips-rust-fa8efd836ce9
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+
 
