@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-317485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4EB96DEFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:56:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C772C96DF00
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EFE11C219D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:56:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46DA01F23F56
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863AD19E80F;
-	Thu,  5 Sep 2024 15:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDB719DFB4;
+	Thu,  5 Sep 2024 15:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGQUZ47q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="OGIs3/nf"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CAF39FC5;
-	Thu,  5 Sep 2024 15:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DCE39FC5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725551793; cv=none; b=IqIav5pWa7uXAcJfmcf2newbCM3pP3T54nLrbpeuDk87CEXnyOenJx0oGCHudUpuMrhnwc/Gh0ku0RwynzoEfynaRqqvxRl2WSDNQyM+hk0gjofRJmrekHDedNDEjD4QmdbcKGKvURvah2uWocZnmNOXXCQJvqtEbi7MyUKViUU=
+	t=1725551848; cv=none; b=hW7AJ/Y2GuppICEXIs37D835Q8FIMQES3wjcAucy9JtT3RDg7r0ui8br98BU2Da3HgaxV/jhhlf0nbirqawMeLP6nPYiz6wpYiUFeDGeTAbY6be/elgHNDpdiv6sAOD7uLD9C3OXrr3+qk8UOvpaQQhvhWM+um2OzEBmKXNi8cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725551793; c=relaxed/simple;
-	bh=SbiTllZxgjb4Z1LIvyrQY8muQQ4twsbvg/wM/LIgpFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LG8hQlUdjAT0wKD76bpEbXs5t3jEhh+UhoKtDye/hUJSN7aRO42L1Ak2mEAVoW4KWTz/r/PU+EP0CmHf3/XlQq6KJkSWynEgxHBijl899RIzTiSumlGvAy2iSN/O2+rdi/KZ+iebNtLNUC+Pdf1Vyw5O06xuCtXaLZsAEoHByLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGQUZ47q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3910CC4CEC3;
-	Thu,  5 Sep 2024 15:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725551791;
-	bh=SbiTllZxgjb4Z1LIvyrQY8muQQ4twsbvg/wM/LIgpFA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=PGQUZ47qOlkivM3ccuS+8SWeD5qbn9BbY+rd3e0/I8zh9E6QuDm97fyLOEntEp8v5
-	 agrNCunp5cXCKs+3qJ/BJJHWNzieyJtIvqvVB2mkbrIjwb9WR9k4BA1uY3yvI0DtIQ
-	 d6CPoeY565B6eMnx8OPGQV7eoQRTjGs+7PI6Bm8g65QS9Hfj35yaLxB/bkFQNbRxo3
-	 Hgh2e037JwEvcipMqA7efA0ZJqUHx9CxdisiZtbSsBh1Jk3ErfqCYLysYpq3nWo0yc
-	 HRwpfHAsSyMB8oXi8HLEyOqUcyEb7m9rpuPz34H629j7JWlhamoDe4HA+S8T9+nqpg
-	 bQTmWM8O7oSNA==
-Date: Thu, 5 Sep 2024 10:56:29 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-Cc: Tony Hutter <hutter2@llnl.gov>, bhelgaas@google.com, minyard@acm.org,
-	linux-pci@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: Introduce Cray ClusterStor E1000 NVMe slot LED
- driver
-Message-ID: <20240905155629.GA389032@bhelgaas>
+	s=arc-20240116; t=1725551848; c=relaxed/simple;
+	bh=dzmgB04Y1V6xRQ37bcHxi9Bcf35Xbz42lSlqS3FVzPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+g+yQDr1EnP5b8OyQwk7AStwX6+SjpPvQh4ozi0uUj1J0N9BNmkQNhJePtwwGEOLWCUfbKH1KFsNYiQ3uaZpZFYNO9E9pCD8N/csQR64MEecNhudFc7bzoYY1KALOXT4RC+wznjmI5TSeQF2R+mpIwGDt4EYbF2ADFbvZUW9zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=OGIs3/nf; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725551842;
+	bh=dzmgB04Y1V6xRQ37bcHxi9Bcf35Xbz42lSlqS3FVzPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OGIs3/nfT/sxEt/h1TusJVDdFu/H3edxfUR385+vJyVc0vMpuZZ5feJwefI10U691
+	 3THZZKpB82FfZ/Zb6nusbHnjjmbNblMWG+ZLBi94UjLDOrBJGnv1fsMjaO7QWrAMhn
+	 GOs/Nrm4uoHXKvz2bYwHibrz/53xMGMR5iXE+070=
+Date: Thu, 5 Sep 2024 17:57:22 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc for 6.12-rc1
+Message-ID: <bcdba244-aaf9-4a06-a4a6-c521d4cfa97e@t-8ch.de>
+References: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
+ <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
+ <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
+ <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
+ <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
+ <e594db6c-5795-4038-bcb2-1dc3290bfb27@t-8ch.de>
+ <ZtlOGkADy7OkXY9u@1wt.eu>
+ <ZtlQbpgpn9OQOPyI@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,44 +60,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905081925.00001d14@linux.intel.com>
+In-Reply-To: <ZtlQbpgpn9OQOPyI@1wt.eu>
 
-On Thu, Sep 05, 2024 at 08:19:25AM +0200, Mariusz Tkaczyk wrote:
-> On Tue, 3 Sep 2024 17:18:20 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> > On Tue, Aug 27, 2024 at 02:03:48PM -0700, Tony Hutter wrote:
-> > > Add driver to control the NVMe slot LEDs on the Cray ClusterStor E1000.
-> > > The driver provides hotplug attention status callbacks for the 24 NVMe
-> > > slots on the E1000.  This allows users to access the E1000's locate and
-> > > fault LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs
-> > > entries.  This driver uses IPMI to communicate with the E1000 controller to
-> > > toggle the LEDs.  
+On 2024-09-05 08:32:14+0000, Willy Tarreau wrote:
+> On Thu, Sep 05, 2024 at 08:22:18AM +0200, Willy Tarreau wrote:
+> > > 
+> > > ./run-tests.sh -p -m user
+> > > 
+> > > These toolchains can then also be used for direct "make" invocations
+> > > through CROSS_COMPILE.
 > > 
-> > I hope/assume the interface is the same as one of the others, i.e.,
-> > the existing one added for NVMe behind VMD by
-> > https://git.kernel.org/linus/576243b3f9ea ("PCI: pciehp: Allow
-> > exclusive userspace control of indicators") or the new one for NPEM
-> > and the _DSM at
-> > https://lore.kernel.org/linux-pci/20240814122900.13525-3-mariusz.tkaczyk@linux.intel.com/
-> > 
-> > I suppose we intend that the ledmon utility will be able to drive
-> > these LEDs?  Whatever the user, we should try to minimize the number
-> > of different interfaces for this functionality.
+> > I really suspect an empty CC variable somewhere that could explain why
+> > only CROSS_COMPILE is used. I'll try to find time today to give it a
+> > try here as well, just in case I can reproduce the same issue.
 > 
-> Ledmon won't support it, at least not in current form. Ledmon
-> support for pciehp attention is limited to VMD, i.e. first we must
-> find VMD driver then we are looking for slot/attention.  I'm not
-> familiar with any attempt to add support for this in ledmon.
+> In fact I'm getting it without any options:
 > 
-> From the end user perspective, I don't like pciehp/attention because
-> we are refereeing to pciehp driver not pcieport and to determine
-> proper slot we need to do additional matching by slot/address. I
-> would be simpler.
-> https://github.com/intel/ledmon/blob/main/src/lib/vmdssd.c#L100
+>   $ ./run-tests.sh
+>   realpath: /home/willy/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
+> 
+> It comes from here in test_arch():
+> 
+>         cross_compile=$(realpath "${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}/bin/${ct_arch}-${ct_abi}-")
+> 
+> Thus it's indeed related to the absence of the toolchain there. It's
+> just that the way the error is reported (due to set -e) is a bit harsh.
 
-All I'm trying to say is that NPEM, the related _DSM, and the VMD
-special case are all ways to control NVMe slot IDs.  This Cray thing
-is another.  We already have two user interfaces (the NPEM/_DSM one
-and the VMD one), and I'd like to avoid adding a third.
+Ack. It should not occur with "-p" though.
+
+> What about this ?
+> 
+>   $ ./run-tests.sh 
+>   No toolchain found in /home/willy/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux.
+>   Did you install the toolchains or set the correct arch ? Rerun with -h for help.
+>   Aborting...
+> 
+> or anything similar, achieved by this patch (warning copy-paste, mangled
+> indents):
+> 
+> diff --git a/tools/testing/selftests/nolibc/run-tests.sh b/tools/testing/selftests/nolibc/run-tests.sh
+> index e7ecda4ae796..0f67e80051dc 100755
+> --- a/tools/testing/selftests/nolibc/run-tests.sh
+> +++ b/tools/testing/selftests/nolibc/run-tests.sh
+> @@ -143,6 +143,13 @@ test_arch() {
+>         arch=$1
+>         ct_arch=$(crosstool_arch "$arch")
+>         ct_abi=$(crosstool_abi "$1")
+> +
+> +       if [ ! -d "${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}/bin/." ]; then
+> +               echo "No toolchain found in ${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}."
+> +               echo "Did you install the toolchains or set the correct arch ? Rerun with -h for help."
+> +               return 1
+> +       fi
+> +
+>         cross_compile=$(realpath "${download_location}gcc-${crosstool_version}-nolibc/${ct_arch}-${ct_abi}/bin/${ct_arch}-${ct_abi}-")
+>         build_dir="${build_location}/${arch}"
+>         if [ "$werror" -ne 0 ]; then
+
+Looks good.
 
