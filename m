@@ -1,140 +1,257 @@
-Return-Path: <linux-kernel+bounces-316846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8119796D615
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B15A96D616
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D941F2216A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:30:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1631C255DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B709198E83;
-	Thu,  5 Sep 2024 10:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08356198E9B;
+	Thu,  5 Sep 2024 10:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HGfcqMNW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZMuz79D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDD419415D;
-	Thu,  5 Sep 2024 10:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D2F198845;
+	Thu,  5 Sep 2024 10:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725532183; cv=none; b=q2yVGwByaVP5WPbbR5UKfe2GLwmPRBAOhvAd7eVI2uVnu1PfceP8uby2iK1yNMDbvq53OZDuXYGjlEBh0AyWX5lu2mb1rGsxts5f1fQniZV1aevcfRFEsVwJcjY6451m+3MvQN01VFnlzBSPshB8Pivais2T+orqEoJpWBGqT5M=
+	t=1725532231; cv=none; b=dqHOI049jJ26HW14KcozsEtHAfCORDM9lfiqpcxGPn2V2rt4lFTwI8D1sXzJz5k/CSgXquwa9w7K6woqMNZIZKQgDKprCYwqIU74TomgyNBGdYboVDrUtW3FvbQ2nqgRYtcQNsecR/JibOxLW2k0b4rLCsoa52xiusW1a74mefE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725532183; c=relaxed/simple;
-	bh=YpBcUX+3RuIZIuZg05hsVGdqPPMg1tTxC1ZG56Aov3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dUMxS+knymZBFv9HJ6DwvwsQPVaxcesenXvwoEuewCr4xqKJUKiXNu6BxcPy/9VBRxW0R0/bAwR7UdbH1uVWOzDaqnoXVqNOjO5DIjHUVexaPfzNrQQQVi1o9D+04RsVFifsD5jhME7GN5MS3SLw1v9Rxt2q7Rz1K0B3U6VYJ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HGfcqMNW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 96458AD0;
-	Thu,  5 Sep 2024 12:28:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725532106;
-	bh=YpBcUX+3RuIZIuZg05hsVGdqPPMg1tTxC1ZG56Aov3A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HGfcqMNWis0YRXKvxNTCqXZtAIaj5oo9v6Gs3pUKJpcno31mn0s+tj6Em65KBP3VW
-	 Mfx5zJ36nccUNAN01obAyT9X/BSK0+h1a3OBc6AEE46cm4ctwVMCPGP65zWVhJ22NP
-	 5KPjnOqKS/ZK/KyEWt8+/6arJACLPk3CDTFYldds=
-Message-ID: <c928e09a-751e-45af-8e57-f105b41df2be@ideasonboard.com>
-Date: Thu, 5 Sep 2024 13:29:35 +0300
+	s=arc-20240116; t=1725532231; c=relaxed/simple;
+	bh=GM6trB8qqYdQ/Ed3/cfE8iPX9QWQHUFk57sGbyXrPPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8fcApoZ7yx2+KwobfwtGoeueIUTgLFuj2PxkB2Wc3ckxp6hc3P+uxSacCtdNedWSNbRkWdQV7QEJAxxnGzCIFLKVBxXg984iWqShj8efLqE7scdV00WmkDrMI/5R5usPG4DEofSun7lrOGiSJCjgoNl5GLNHxKiuEHL0HRaZLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZMuz79D; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725532229; x=1757068229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GM6trB8qqYdQ/Ed3/cfE8iPX9QWQHUFk57sGbyXrPPg=;
+  b=XZMuz79Dr/BKnWn5JVAHv/LDnqjbhNzwx4Nf4e7uiv3rNprbuftiXcFP
+   MXSoXPIR0ugXwPf6Ls61VBqRa4UL4TqtzfanH8LHdPxOyIsTJ+nHHRJ7b
+   S+PL6/v6ZWyTyK7Ld3z2pqAY2Y1780UsxPU9oijcqHO2wyXOiVKCcdmGd
+   kTp2Mh9T1aKfIaOTOtArGxIWNr73Gq6yFXCtFEug4ifM5vKZLQx/YNRsQ
+   a8payl27eVFfjEnIzb6ncksnuVHGZNtrCGZ+uQwUJ3IXcH/7YrmzSS/q2
+   sANA9yY26pHgzag55BTRbLzmVbn4jcCXBN6HQECbJ4RQvB6xZt5bAv51r
+   g==;
+X-CSE-ConnectionGUID: P/wmimskRF6eHIkpL0DIqg==
+X-CSE-MsgGUID: fPP3r8E5QDe6O/NXVHxkhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="28128280"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="28128280"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 03:30:28 -0700
+X-CSE-ConnectionGUID: 73TzvbwMTiWyYJScluHwVg==
+X-CSE-MsgGUID: 5S3Ka0+CS0aqsY2DBbGsLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="96323927"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa002.jf.intel.com with SMTP; 05 Sep 2024 03:30:25 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 05 Sep 2024 13:30:23 +0300
+Date: Thu, 5 Sep 2024 13:30:23 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: "Christian A. Ehrhardt" <lk@c--e.de>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Anurag Bijea <icaliberdev@gmail.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jameson Thies <jthies@google.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Subject: Re: [PATCH v3] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
+Message-ID: <ZtmIP1iTz+XnUD4o@kuha.fi.intel.com>
+References: <20240903181917.617400-1-lk@c--e.de>
+ <ZthNkY4MEpUgw3We@kuha.fi.intel.com>
+ <ZthnbdKig//kPKgF@cae.in-ulm.de>
+ <Zth0pbxJnKYKn8u2@kuha.fi.intel.com>
+ <ZtixzrzsA9bluuL7@cae.in-ulm.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/12] media: ov5645: Add support for streams
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240904210719.52466-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <3eeae62a-e22b-443a-aad4-f1a384c0a3f7@ideasonboard.com>
- <514490a2-181a-42ac-bc54-7a700e8d1bb9@ideasonboard.com>
- <CA+V-a8v0s8Unk3pNhR1wgBk_wqkua__Dumq3KT=n-cXUwq=6Bw@mail.gmail.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CA+V-a8v0s8Unk3pNhR1wgBk_wqkua__Dumq3KT=n-cXUwq=6Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtixzrzsA9bluuL7@cae.in-ulm.de>
 
-On 05/09/2024 13:27, Lad, Prabhakar wrote:
-> Hi Tomi,
+Hi,
+
+On Wed, Sep 04, 2024 at 09:15:26PM +0200, Christian A. Ehrhardt wrote:
 > 
-> On Thu, Sep 5, 2024 at 10:11 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->>
-> <snip>
->>> I think you actually want 1/0->0/0 routing. The error says that the sink
->>> side device has routing which does not have a stream at stream ID 1, or
->>> no routing support at all, which implies a single stream at stream ID 0.
->>
->> Looking at patch 12, there's something wrong with the approach here. Are
->> you perhaps trying to define the CSI-2 VC with the streams?
->>
-> Yes, based on the previous feedback received, I am implementing
-> virtual channels as streams. If this isn't the correct approach can
-> you please guide me on what we should be using to support virtual
-> channels?
+> Hi Heikki,
+> 
+> On Wed, Sep 04, 2024 at 05:54:29PM +0300, Heikki Krogerus wrote:
+> > On Wed, Sep 04, 2024 at 03:58:05PM +0200, Christian A. Ehrhardt wrote:
+> > > 
+> > > Hi Heikki,
+> > > 
+> > > On Wed, Sep 04, 2024 at 03:07:45PM +0300, Heikki Krogerus wrote:
+> > > > On Tue, Sep 03, 2024 at 08:19:17PM +0200, Christian A. Ehrhardt wrote:
+> > > > > If the busy indicator is set, all other fields in CCI should be
+> > > > > clear according to the spec. However, some UCSI implementations do
+> > > > > not follow this rule and report bogus data in CCI along with the
+> > > > > busy indicator. Ignore the contents of CCI if the busy indicator is
+> > > > > set.
+> > > > > 
+> > > > > If a command timeout is hit it is possible that the EVENT_PENDING
+> > > > > bit is cleared while connector work is still scheduled which can
+> > > > > cause the EVENT_PENDING bit to go out of sync with scheduled connector
+> > > > > work. Check and set the EVENT_PENDING bit on entry to
+> > > > > ucsi_handle_connector_change() to fix this.
+> > > > > 
+> > > > > Reported-by: Anurag Bijea <icaliberdev@gmail.com>
+> > > > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
+> > > > > Bisected-by: Christian Heusel <christian@heusel.eu>
+> > > > > Tested-by: Anurag Bijea <icaliberdev@gmail.com>
+> > > > > Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+> > > > > ---
+> > > > >  drivers/usb/typec/ucsi/ucsi.c | 8 ++++++++
+> > > > >  1 file changed, 8 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> > > > > index 4039851551c1..540cb1d2822c 100644
+> > > > > --- a/drivers/usb/typec/ucsi/ucsi.c
+> > > > > +++ b/drivers/usb/typec/ucsi/ucsi.c
+> > > > > @@ -38,6 +38,10 @@
+> > > > >  
+> > > > >  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
+> > > > >  {
+> > > > > +	/* Ignore bogus data in CCI if busy indicator is set. */
+> > > > > +	if (cci & UCSI_CCI_BUSY)
+> > > > > +		return;
+> > > > 
+> > > > I started testing this and it looks like the commands never get
+> > > > cancelled when the BUSY bit is set. I don't think this patch is the
+> > > > problem, though. I think the BUSY handling broke earlier, probable in
+> > > > 5e9c1662a89b ("usb: typec: ucsi: rework command execution functions").
+> > > > 
+> > > > I need to look at this a bit more carefully, but in the meantime, can
+> > > > you try this:
+> > > > 
+> > > > 	if (cci & UCSI_CCI_BUSY) {
+> > > > 		complete(&ucsi->complete);
+> > > >		return;
+> > > >         }
+> > > 
+> > > I really don't think this is the correct thing to do and it will
+> > > likely make things worse.
+> > 
+> > That was the behaviour before all that command execution refactoring
+> > this summer. I'm not saying that it's right, but that's how it was.
+> 
+> The code to do that is still there but does not get called because
+> the ETIMEDOUT error is checked for CCI in ucsi_run_command.
+> I guess something like this (only compile tested) would fix it:
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index 540cb1d2822c..d6d61606bbcf 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -111,15 +111,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
+>  		size = clamp(size, 0, 16);
+>  
+>  	ret = ucsi->ops->sync_control(ucsi, command);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = ucsi->ops->read_cci(ucsi, cci);
+> -	if (ret)
+> -		return ret;
+> +	if (ucsi->ops->read_cci(ucsi, cci))
+> +		return -EIO;
+>  
+>  	if (*cci & UCSI_CCI_BUSY)
+>  		return -EBUSY;
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
+>  		return -EIO;
+> 
 
-Can you describe what kind of hardware you have and how the VCs are 
-supposed to be configured and used there?
+Yes, that looks good.
 
-  Tomi
+> > > A notification with the UCSI_CCI_BUSY bit does _not_ mean that
+> > > the controller is busy doing other things and cannot complete the
+> > > command.
+> > > 
+> > > Instead it is an indication that the controller _is_ working to
+> > > complete our command but will take somewhat longer:
+> > > 
+> > > Citing:
+> > > | Note: If a command takes longer than MIN_TIME_TO_RESPOND_WITH_BUSY ms
+> > > |       for the PPM (excluding PPM to OPM communication latency) to complete,
+> > > |       then the PPM shall respond to the command by setting the CCI Busy
+> > > |       Indicator and notify the OPM.
+> > > |       Subsequently, when the PPM actually completes the command, the
+> > > |       PPM shall notify the OPM of the outcome of the command via an
+> > > |       asynchronous notification associated with that command.
+> > > 
+> > > Unless I misunderstand what you are trying to do your change would
+> > > cause us to needlessly abort/cancel every command that takes more than
+> > > MIN_TIME_TO_RESPOND_WITH_BUSY to complete.
+> > > 
+> > > What am I missing?
+> > 
+> > The decision to Cancel was made to work around buggy EC firmwares that
+> > reported BUSY, and then never completed the command. So without that
+> > Cancel hack, the PPM was stuck on those systems.
+> 
+> Yes fine. But the cancel should be done _after_ the command times
+> out normally, I guess. Otherwise conforming systems will get there
+> commands terminated/aborted for no good reason. And this is what
+> the current code tries to do.
+> 
+> > I don't know what we should do about that hack. We probable could just
+> > ignore those old systems, and then add quirks for them as needed. But
+> > I also don't really like what you are proposing in this patch, that we
+> > basically ignore the BUSY bit completely.
+> 
+> See above. I think that solves both cases nicely.
 
+Agreed. Can you incorporate that into this patch?
+
+> > Right now I was hoping that we return the behaviour of the driver to
+> > a point where everything worked as before, and after that start
+> > improving the driver. That's why I was hoping to hear does the problem
+> > that you are seeing go away with that approach.
+> > 
+> > With which command do you guys get the busy notification?
+> 
+> It happens for all types of commands. I will append debug output where
+> all commands sent and all CCI values read are printed.
+> 
+> Unfortunately, I don't have direct access to the affected hardware.
+> I'm just looking into this because one of my changes from earlier
+> this year caused a regression on that machine. Is this sufficient to
+> show what's going on?
+
+Yes it's fine. I was mostly interested.
+
+> > In any case, I don't think all those ucsi_*_common() functions give us
+> > enough room to move here. I feel that the command execution needs to
+> > be refactored somehow again.
+> 
+> That's your call to make but personally, I like the recent changes
+> to the interface between ucsi.c and the backend drivers.
+
+Just to clarify here, I did no have anything that drastic in mind.
+
+Thanks Christian,
+
+-- 
+heikki
 
