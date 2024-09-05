@@ -1,164 +1,163 @@
-Return-Path: <linux-kernel+bounces-316161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9796C96CBF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3674796CC03
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CADA81C24225
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CA4285983
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E1B747F;
-	Thu,  5 Sep 2024 00:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023AF9463;
+	Thu,  5 Sep 2024 01:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="owcTiT5W"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="I1LE+zDb"
+Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73183624;
-	Thu,  5 Sep 2024 00:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725497952; cv=none; b=uh3/4bBS8WqkXP9IDDgDuahlAt3gEUZfRiNm0bq/zmEKRQeftJ/msbEVFgWwUoAc3tguld8yFkLyYznNPm7FFUMIjsmHnD4nr3SmAaAqVkBo5bbCHESg9tMmUaYQvB2JKsewQ8K0jNJNlJLMegL2zQT52Vskq4M/k6QkbAahxcQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725497952; c=relaxed/simple;
-	bh=aziCVaD/Y6XIrJq9QRJmVBR5Gq+7J7xl3MRy5nTT5jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nh7PTSkm1vEikc3RuMCv16KjaX+62MNwpWrQ2qx0yF+t9ZMljSpv+EHkDIey5/ECgQ10OZW8aU1iZDzhE1Q6U8rKiFnnbk13B9YRSh3oJVcZSKxJb8T/oi6TIpcmwzvwwZFdMsuLqL3iKuqHdLvrGNC1UslhP8mYSeP9VeUUT/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=owcTiT5W; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725497947;
-	bh=zF0b4z/ll/74yRUk9lTlAYXkg6Y/LXY2t3U+Zxx98I8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=owcTiT5W68tiswMd8691nYR0CfHNi4tsY/2VsfWxoZ47/dnSNG2qHa06GfIH5bBcu
-	 eOnBhXV0CrT5TYVFDlkhDi4i8hWT9OUBIqtcnFfaAz47fxoO9zpld+GywkNu8Yoqdk
-	 SVCdKc22VYfE31rZ9hvmdqu+5/F//l13pFdY4FsCScb2V+4+v2DtAdF42X4tFeMWVj
-	 sTB4i8WS0gkLjTG2C9aYKUaXZksxqzTr5PRSieRhqzqoROsgW1b3iOqQlhBkLG1im6
-	 6BrDC62D8hKnrupDiZSyVsq92nGD8oB47ny7FI/jSDRyDWcQRMhYkiXPfO0F0s84Gn
-	 wjdYs+mr/6kFQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wzgwq2HX7z4wc3;
-	Thu,  5 Sep 2024 10:59:07 +1000 (AEST)
-Date: Thu, 5 Sep 2024 10:58:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Aleksa Sarai <cyphar@cyphar.com>, Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240905105809.6585eec2@canb.auug.org.au>
-In-Reply-To: <20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
-References: <20240903092745.370fc0c6@canb.auug.org.au>
-	<20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4048D747F;
+	Thu,  5 Sep 2024 01:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725498208; cv=pass; b=O6JQFjsizKPNKB44ETJ3Zpfki8R2G1KcFZEGpeBS4c7Y8H31aftosSxOfFqaOwMD+KpsCtJUUUK5d0NK4m7kIBvCkucm000tBMAZVqR+kvYlNcV3M9niuzc/08KCZUnkK8VdzG2mgNa7h+cCwIjlktbD7udmBOpIYnVzFi1pB0s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725498208; c=relaxed/simple;
+	bh=xvwm9ULyMATN4LUA3hXl7b+4PDyb925p3YwCKiJ8Ud8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nWtZmMLJsfax72NqysVLJCIjEwfLuSwah1B9ndnMDRNNfk3Pm7IsWmgUucncmYmg9LZ5rDZqtitMDeDaRZFtj/EPu0d5T0EAZ7YviMzRTC9mGlid5WqMV1SK0voTMEshpOUImOxYrjYAzgfUpfR7mw+1qzMc+QuTfJZl1CV1JZQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=I1LE+zDb; arc=pass smtp.client-ip=136.143.188.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725498125; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=n1GwapKlqf/G11f9bXZyxIoD7k1R7NbcQOIf95YR2qUGUiwderqOqQrraRlVfwxxRmR7Re8k3NeGCmtIy2TiXvQ+zKn62wu26gh7hkiumSYANKK1u21gQgWZHbpTZl0/cgMaDaT0S7xvzFbJUhmcuijt+lurWYeobverSdHkkmQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725498125; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MHhhgvQoIAOSgBKwKAFzW1nw5ZFZN5DJupDzq3j2bCE=; 
+	b=GnTIR0gSukchwjgWOItZ87i59diBhrbv1skYdEbrSqqZAONm+7S3KqrsBqEsYyOOqZj8dHTuDwBXLot2xYpClR5gjGUVW/mbeADllJ80vbvfFg9TMghEUFFa7W15JVS6l4pm9kzZrI1x9hxlHRE+UVUVGbgQPzjUxuGIRicNjXo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725498125;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=MHhhgvQoIAOSgBKwKAFzW1nw5ZFZN5DJupDzq3j2bCE=;
+	b=I1LE+zDbqGpOlfJl+BMuEOWTcR58dv4I/SqGYrYELweuXSrWu940A6fkSzqPXilW
+	JjrMes/NSWEf39/p6FkNSCnlDXf1zVEviNihPq/lT6Tz6DsS6XbwKS/d2sp56PINbGM
+	b/FYT7akWAq84UiE+6YlPxp0pbVAFdENRxnGF+OA=
+Received: by mx.zohomail.com with SMTPS id 1725498123590524.2720733626318;
+	Wed, 4 Sep 2024 18:02:03 -0700 (PDT)
+Message-ID: <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+Date: Wed, 4 Sep 2024 21:01:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IAZJ=U3z_OEBnTstU_q1leB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: Andy Lutomirski <luto@amacapital.net>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, nivedita@alum.mit.edu,
+ herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+ dwmw2@infradead.org, baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+ andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+ <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+Content-Language: en-US
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+In-Reply-To: <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
---Sig_/IAZJ=U3z_OEBnTstU_q1leB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Luto.
 
-Hi all,
+On 8/28/24 23:17, Andy Lutomirski wrote:
+> On Thu, Aug 15, 2024 at 12:10 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>
+>> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+>>> On 5/31/24 09:54, Eric W. Biederman wrote:
+>>>> Eric Biggers <ebiggers@kernel.org> writes:
+>>>>> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
+>>>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
+>>>>> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
+>>>>> but why would you not at least *prefer* SHA-256?
+>>>>
+>>>> Yes.  Please prefer to use SHA-256.
+>>>>
+>>>> Have you considered implementing I think it is SHA1-DC (as git has) that
+>>>> is compatible with SHA1 but blocks the known class of attacks where
+>>>> sha1 is actively broken at this point?
+>>>
+>>> We are using the kernel's implementation, addressing what the kernel
+>>> provides is beyond our efforts. Perhaps someone who is interested in
+>>> improving the kernel's SHA1 could submit a patch implementing/replacing
+>>> it with SHA1-DC, as I am sure the maintainers would welcome the help.
+>>
+>> Well, someone who is interested to get his "secure" code merged should
+>> have a vested interested to have a non-broken SHA1 implementation if
+>> there is a sensible requirement to use SHA1 in that new "secure" code,
+>> no?
+>>
+>> Just for the record. The related maintainers can rightfully decide to
+>> reject known broken "secure" code on a purely technical argument.
+>>
+> 
+> Wait, hold on a second.
+> 
+> SHA1-DC isn't SHA1.  It's a different hash function that is mostly
+> compatible with SHA1, is different on some inputs, and is maybe more
+> secure.  But the _whole point_ of using SHA1 in the TPM code (well,
+> this really should be the whole point for new applications) is to
+> correctly cap the SHA1 PCRs so we can correctly _turn them off_ in the
+> best way without breaking compatibility with everything that might
+> read the event log.  I think that anyone suggesting using SHA1-DC for
+> this purpose should give some actual analysis as to why they think
+> it's an improvement, let alone even valid.
 
-On Tue, 3 Sep 2024 12:41:08 +1000 Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> On 2024-09-03, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >=20
-> > After merging the vfs-brauner tree, today's linux-next build (native pe=
-rf)
-> > failed like this:
-> >=20
-> > In file included from trace/beauty/fs_at_flags.c:21:
-> > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: error: initializ=
-ed field overwritten [-Werror=3Doverride-init]
-> >    10 |         [ilog2(0x0001) + 1] =3D "RENAME_NOREPLACE",
-> >       |                               ^~~~~~~~~~~~~~~~~~
-> > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: note: (near init=
-ialization for 'fs_at_flags[1]')
-> > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: error: initializ=
-ed field overwritten [-Werror=3Doverride-init]
-> >    14 |         [ilog2(0x200) + 1] =3D "HANDLE_FID",
-> >       |                              ^~~~~~~~~~~~
-> > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: note: (near init=
-ialization for 'fs_at_flags[10]')
-> > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: error: initializ=
-ed field overwritten [-Werror=3Doverride-init]
-> >    15 |         [ilog2(0x001) + 1] =3D "HANDLE_MNT_ID_UNIQUE",
-> >       |                              ^~~~~~~~~~~~~~~~~~~~~~
-> > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: note: (near init=
-ialization for 'fs_at_flags[1]')
-> >=20
-> > Caused by commit
-> >=20
-> >   34cf40849654 ("uapi: explain how per-syscall AT_* flags should be all=
-ocated")
-> >=20
-> > I have used the vfs-brauner tree from next-20240902 for today. =20
->=20
-> Ah okay, the overlapping flag definitions in the copied over fcntl.h are
-> causing issues. We could just drop that part of the patch, or (since the
-> new flags aren't handled by perf/trace/beauty) we could just do
-> something simple like:
->=20
-> diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/be=
-auty/fs_at_flags.sh
-> index 456f59addf74..930384029599 100755
-> --- a/tools/perf/trace/beauty/fs_at_flags.sh
-> +++ b/tools/perf/trace/beauty/fs_at_flags.sh
-> @@ -13,9 +13,13 @@ printf "static const char *fs_at_flags[] =3D {\n"
->  regex=3D'^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum:]=
-_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
->  # AT_EACCESS is only meaningful to faccessat, so we will special case it=
- there...
->  # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT, =
-AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
-> +# AT_RENAME_* flags are just aliases of RENAME_* flags and we don't need=
- to include them.
-> +# AT_HANDLE_* flags are only meaningful for name_to_handle_at, which we =
-don't support.
->  grep -E $regex ${linux_fcntl} | \
->         grep -v AT_EACCESS | \
->         grep -v AT_STATX_SYNC_TYPE | \
-> +       grep -Ev "AT_RENAME_(NOREPLACE|EXCHANGE|WHITEOUT)" | \
-> +       grep -Ev "AT_HANDLE_(FID|MNT_ID_UNIQUE)" | \
->         sed -r "s/$regex/\2 \1/g"       | \
->         xargs printf "\t[ilog2(%s) + 1] =3D \"%s\",\n"
->  printf "};\n"
+I would say at a minimum it is to provide a means to cap the PCRs. 
+Devices with TPM1.2 are still prevalent in the wild for which members of 
+the TrenchBoot community support, and there are still valid (and secure) 
+verification uses for SHA1 that I outlined in my previous response.
 
-I have applied that by hand for today.  Please submit it and get it
-applied.
+> Ross et al, can you confirm that your code actually, at least by
+> default and with a monstrous warning to anyone who tries to change the
+> default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
+> all stop hassling the people trying to develop this series about the
+> fact that they're doing their best with the obnoxious system that the
+> TPM designers gave them?
 
---=20
-Cheers,
-Stephen Rothwell
+Our goal is to keep control in the hands of the user, not making 
+unilateral decisions on their behalf. In the currently deployed 
+solutions it is left to the initrd (user) to cap the PCRs. After some 
+thinking, we can still ensure user control and give an option to cap the 
+PCRs earlier. We hope to post a v11 later this week or early next week 
+that introduces a new policy field to the existing measurement policy 
+framework. Will add/update the kernel docs with respect to the policy 
+expansion. We are also looking the best way we might add a warning to 
+the kernel log if the SHA1 bank is used beyond capping the PCRs.
 
---Sig_/IAZJ=U3z_OEBnTstU_q1leB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Hopefully this answers the outstanding comments on the SHA1 thread.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbZAiEACgkQAVBC80lX
-0Gx3lAf+N7/+gZu6rn4lZRz+ANHkjL0BzPtqTCa0y8J8ELQzmfaMfeZigJhOWQh5
-u3PtsRrW72n7dU+PJebV2XNIR4n4Uyw/m5TmgcL/UXlh9HTTqC5lUVNOmFVaEbOY
-J8tquQdiPzZ2t/q1SNwORDaNygWkdlPEhwJ5ArwYLdTlOs7b2yRqjFfnQj6sH2Ag
-BF4DQqNppN/eeCpZxC/1g/k8lJPqZPn2OJkVWLMPEVlWeDBjO7x4COWa1DTiffhT
-fVIFuGPI32cTOTfHr0Ul1PU8topvODwTPhX4zRTb3c0LZAXzQrl238qKxYYw09R5
-EKLCBX41wB16BqCAIHBTLtKzaxG3nQ==
-=Qcfh
------END PGP SIGNATURE-----
-
---Sig_/IAZJ=U3z_OEBnTstU_q1leB--
+v/r,
+dps
 
