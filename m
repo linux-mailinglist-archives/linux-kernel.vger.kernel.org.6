@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-316525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8508596D0B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844A496D0B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5131C22F35
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4401D287D88
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB0C194090;
-	Thu,  5 Sep 2024 07:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35955193411;
+	Thu,  5 Sep 2024 07:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBCdrPM3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vExL71mT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1EC193422
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88038189506;
+	Thu,  5 Sep 2024 07:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725522434; cv=none; b=ENEN9gS0iyHle9olcV8zY9imtk5fbvCNVGsptV2PXqK6jeze7nFAC/7O+ZqO8ZXjat2OJrvBhHJKhVHRe4EOdCOQ7W4vSVA13JL+ttpXgirZVrwJt6b/haCY5fdOnnh6JpDcvgvTghMtEo8Jp7MGilHoQN1iliTFxMKZlrDiZNQ=
+	t=1725522479; cv=none; b=XGHExHIHnm/wTghWTGQY1ApiwNMnTFdYniVOpeP13tHqfGUpNVPnkvwbzCZkvjSCJ494UbWfeJJWEsvuSXTutxqQ6wFEFSEk6ggPnuT8fUM5R6pjkBvAk6CBJhc618x6B5h01K0QVrz3RhB4M7i6+f575ihwjnr0YWS+SV8OUss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725522434; c=relaxed/simple;
-	bh=R4geDy0qg5CNt1ZRUWzFP5pZjthysIlhRdPRx3tF/+M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YiHyictrmSChqtJL9wcouQGVNSbytWSxOznHJvyNW6O1BRJROOuISeygW0cwRUDABBGpt5LodbedpOvVUxXswwp65fMEFZyN3fxll8C2HMRc5JihymgaHr82c/cXFsqSkD7DtwKfhu6ZM3DTOoWctxSKrpKBwbniV04IZYsB/I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBCdrPM3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE594C4CEC4;
-	Thu,  5 Sep 2024 07:47:13 +0000 (UTC)
+	s=arc-20240116; t=1725522479; c=relaxed/simple;
+	bh=k1A18bSItXyIZjz9DAyh4l9IJuamFYFuOFgUucR/180=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LFnmaUOglUNPbYemvN4aC6fhkXfeHUIQ4DiDGau9zH+IkXmnX3+3X2/EYLHHbzfK8Hq1oVfFmSVXsKYvXQih1WAoOV7qEFwHZ6fGivINktexQsz+GRJTDggqhXGchsExjLcwDgfZfD0ecbOXic5k7+BNlukXuf5mXZQzYnLURXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vExL71mT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17337C4CEC6;
+	Thu,  5 Sep 2024 07:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725522433;
-	bh=R4geDy0qg5CNt1ZRUWzFP5pZjthysIlhRdPRx3tF/+M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cBCdrPM3KpO1Rn3M6EvsRhFspoKzUJ/zjav0dN8BcGmrdfRYLLTjrsoAlPkNL+s7A
-	 FOFjXE5MDM4455jRPJUpQ7AZvYInpteYm4gsCa3M3rG/rbiBCfcEROVwsuJO9FcX5i
-	 943HmoRKTFk9eJknvVvd9iuxXVp1uHxdR/mtXRMIi/vf9n0Lda/lccX9c0tACRXZHG
-	 B6woTN3xJRUPcQhUOHN0W64exhinK+pWUzKuQLcWpIKxCel4ZerGr76Vj6I0ZtxSR3
-	 kS1RYrGvSJhro/h/a4h4qSZmi51+bai8Z/f0vpldm3qfy6RhmVVhfAGGIWY4QSTWZY
-	 fdPw4AD6KUqXQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sm7Cx-009r8s-Nz;
-	Thu, 05 Sep 2024 08:47:11 +0100
-Date: Thu, 05 Sep 2024 08:47:11 +0100
-Message-ID: <86o752v8xs.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>, Thomas Gleixner <tglx@linutronix.de>
-Cc: 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in gic_ipi_send_mask()
-In-Reply-To: <87cyli5zj7.ffs@tglx>
-References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
-	<87cyli5zj7.ffs@tglx>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1725522479;
+	bh=k1A18bSItXyIZjz9DAyh4l9IJuamFYFuOFgUucR/180=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=vExL71mTerT7I7xz/5v1SVflbH9olWp560pi+0+leE5p1zeFtilW/1CEsEiY1mCXr
+	 5d399itNVtNKNziG/70I46CgyQUHc22/VfaVcDubaodmlIDnSXyAyKQoj/naVwvDt3
+	 YE9qPUB0uoKDC/7X5/oSIIEOdEIfhNHEhSfFcZpZi9LbgQMu/u/6tabY+19gFQDtUP
+	 WM8auwPCk1kXVwCmuZAmzG7AxF1CJtiUJoS4KcqiKy0RE4TverJG52yCDG3MJK1Ssy
+	 DM0ItZ4aZ0iGLMrjAKHyT8H8ItFCfVFR4/rYruOXTA52UE02PTZ/jgBPrlUrIuGcqB
+	 ImBO+hCBhC5HQ==
+From: Maxime Ripard <mripard@kernel.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 0/2] drm: add two missing DRM_DISPLAY_DSC_HELPER selects
+Date: Thu,  5 Sep 2024 09:47:55 +0200
+Message-ID: <172552245933.2905944.14392896379200688443.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240905-fix-dsc-helpers-v1-0-3ae4b5900f89@linaro.org>
+References: <20240905-fix-dsc-helpers-v1-0-3ae4b5900f89@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: s.shtylyov@omp.ru, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 05 Sep 2024 08:29:32 +0100,
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On Thu, 05 Sep 2024 06:08:20 +0300, Dmitry Baryshkov wrote:
+> Add two selects for DRM_DISPLAY_DSC_HELPER which got missed in the
+> original commit ca097d4d94d8 ("drm/display: split DSC helpers from DP
+> helpers") and were later reported by LKP.
 > 
-> On Wed, Sep 04 2024 at 23:23, Sergey Shtylyov wrote:
-> > ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
-> > looking at the GIC driver's irq_set_affinity() method, it seems that the
-> > passed CPU mask may contain the logical CPU #s beyond 8, and that method
-> > filters them out before reading gic_cpu_map[], bailing out with
-> > -EINVAL.
 > 
-> The reasoning is correct in theory, but in reality it's a non problem.
-> 
-> Simply because processors which use this GIC version cannot have more
-> than 8 cores.
-> 
-> That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
-> bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
 
-That.
+Applied to misc/kernel.git (drm-misc-next).
 
-The irq_set_affinity() check exists because the affinity can be
-provided by userspace, and used to be be *anything*. Since
-33de0aa4bae98, the affinity that the driver gets is narrowed to what
-is actually *online*.
-
-So we could actually relax the check in the driver (not that it really
-matters).
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks!
+Maxime
 
