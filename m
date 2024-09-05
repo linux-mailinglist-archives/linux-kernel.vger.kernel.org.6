@@ -1,105 +1,192 @@
-Return-Path: <linux-kernel+bounces-317927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F7196E5A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:09:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4639296E5A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 401E1B2269F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:09:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A568FB2229B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF831A726E;
-	Thu,  5 Sep 2024 22:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8081AD5D7;
+	Thu,  5 Sep 2024 22:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV7XQ44L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhW8F7vN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2759414B95F;
-	Thu,  5 Sep 2024 22:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CE414B95F;
+	Thu,  5 Sep 2024 22:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725574188; cv=none; b=VLmiNuDvr6xsVF7jKT6Ncd44yu08F7uOhI6KjCrbs4aN6qPB46r7xUrejpCXwslabQKG5c0geWDjxGCQHmx9gIwUeSnJpE3IC/4Rab4phxn9qMfAlWgTlcVRCWQZGNWeRTWrI8ydbPsyHzJXmc7ozwGCW0/f24KtjF+ke3fa2tA=
+	t=1725574201; cv=none; b=sGnigD4OBdBSTtvXYX/W+SUZMnIBvFl3CGhwwwZjgzgP/R5S+ne5hB/omGEafbO/mumWiLe8r3yYEH5VYnFhpDP1KEAYEnb1/C8VFmDVgN7y7a8IGwAmgxLIt9TKsT0tUQBa7bbY46gdlm6cSO4/hwHtXw6OLtDf2kt+AMkR0/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725574188; c=relaxed/simple;
-	bh=W7RYC1UyTeShUPnorjAlQ0QxnVv33EgdClbd0o4c4cM=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=I5hq4c4EPZVkszazHYLxEBsxosLFmGBvUYhfGo2buq5dXAZ0hGi7GBClBbxPzO8iJZvIXK2+VIYoLAgJjxTcAW6KoAz/uf6lMez9dTV6jRt8A8wgw6OUg3a0PfgRnUXFw53FyoV8hOC/R4etuNFuPmcW14zwSg0phasygprB1n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV7XQ44L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F78C4CEC3;
-	Thu,  5 Sep 2024 22:09:46 +0000 (UTC)
+	s=arc-20240116; t=1725574201; c=relaxed/simple;
+	bh=vHaiXF8jFJgRzwoyRWonjyeyJm3/gmc7FeB29SMdR7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxW3Ue4k3NPrktcH54l8sSIswWldoAoYw3CuXp4jKt6B5CcaFimU5Ir+avjQonZrxkLbgWFXhATGrfopXyLvF0SQIzgwYpMPXPBiWYmjuUvS+BswAKOsen3e+0eNKO6djm0hXxDE1mxgEeN1cnZTnAmbrv0DpoC0OYU/48H9io8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhW8F7vN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C27C0C4CEC3;
+	Thu,  5 Sep 2024 22:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725574187;
-	bh=W7RYC1UyTeShUPnorjAlQ0QxnVv33EgdClbd0o4c4cM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pV7XQ44L7t36TyEhhrQVxT1myuRoT4DSkjG4E+HETDBv/V0f6IsvGCEeyf8xpYLTS
-	 Ap04fdumIPuDvJpV77c7ROzSRbqYu+No1hlndHQa72UPZ0egVWvQJQZ33+pI7C1ZBP
-	 vDD8OyrFc67xFCyK5elvlg/B6V4uEncfKcWOwbgKe8f/7pXtE3CLY9w4PwahofgsGW
-	 U/Asolrr/GJDVeIxd+53HDUgeaTuLx2dfUNaSp6Q4G4moMM4c2CYazbWwEFnzmDtI/
-	 8PJ4gYII/0dYCSnPskKtsoZZsKNkBSxPJSxnTvVZ3TkyrDU1SRAPf4qnc2uscB7y24
-	 lYPODypRxkg0w==
-Message-ID: <7f8f5f4771bfeba33bb62b2f6b60c254.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.11-rc6
-Date: Thu, 05 Sep 2024 23:09:39 +0100
+	s=k20201202; t=1725574200;
+	bh=vHaiXF8jFJgRzwoyRWonjyeyJm3/gmc7FeB29SMdR7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AhW8F7vNyvRDrKI/dAIAIoBP1jOvx4sViDSPJogt8bsc/Ji/rY1ABi+nFaLXcXO1G
+	 sIntLcRMsSDqj6iBxEKBLhy7wWqcZj26TDBIH+z9iMAQ+dtzh5IGngCN84bYJeiHI5
+	 hlqIRbEjLOWYYDMhxwuHXskEk8EBq6v4WjzfGkZlzeLY5JPNE4tJxaNCRpRGzSa1hC
+	 VP9GrGlavPYAyO/MY4TAPACnsSNLI6r43igZ8BR/MEdjEghXPpCNEBESwxZr/c1Ot5
+	 i5vpO9vpJ0RO9ZbXjFq+C3Cn3sYb8/57qqi28yC8zRNGH9OAS3CyxL47e3K96l9QDZ
+	 GAvesbmXO1hoA==
+Date: Fri, 6 Sep 2024 00:09:56 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: carlos.song@nxp.com
+Cc: aisheng.dong@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, linux-i2c@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] i2c: imx-lpi2c: add target mode support
+Message-ID: <qcoguhxtkwn2aowtccfybutn6xgzrqvhdob4tzericerpfntfh@q6f5upgegba7>
+References: <20240829105444.2885653-1-carlos.song@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829105444.2885653-1-carlos.song@nxp.com>
 
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+Hi Carlos,
 
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+Looks good, just few little comments.
 
-are available in the Git repository at:
+On Thu, Aug 29, 2024 at 06:54:44PM GMT, carlos.song@nxp.com wrote:
+> From: Carlos Song <carlos.song@nxp.com>
+> 
+> Add target mode support for LPI2C.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.11-rc6
+Can you please be a bit more descriptive? What is this mode
+doing, how it works, what are you adding, etc. etc. etc.
 
-for you to fetch changes up to c9ca76e8239810ccb08825a7b847c39d367410a6:
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> ---
+> Change for V2:
+> - remove unused variable ‘lpi2c_imx’ in lpi2c_suspend_noirq.
 
-  MAINTAINERS: SPI: Add mailing list imx@lists.linux.dev for nxp spi drivers (2024-09-05 19:15:45 +0100)
+this was part of a 5 patches series. Is that series superseded?
 
-----------------------------------------------------------------
-spi: Fixes for v6.11
+(please, next time when you send a series with more than one
+patch, include a cover letter).
 
-A few small driver specific fixes (including some of the widespread work
-on fixing missing ID tables for module autoloading and the revert of
-some problematic PM work in spi-rockchip), some improvements to the
-MAINTAINERS information for the NXP drivers and the addition of a new
-device ID to spidev.
+...
 
-----------------------------------------------------------------
-Brian Norris (1):
-      spi: rockchip: Resolve unbalanced runtime PM / system PM handling
+> +#define SCR_SEN		BIT(0)
+> +#define SCR_RST		BIT(1)
+> +#define SCR_FILTEN	BIT(4)
+> +#define SCR_RTF		BIT(8)
+> +#define SCR_RRF		BIT(9)
+> +#define SCFGR1_RXSTALL	BIT(1)
+> +#define SCFGR1_TXDSTALL	BIT(2)
+> +#define SCFGR2_FILTSDA_SHIFT	24
+> +#define SCFGR2_FILTSCL_SHIFT	16
+> +#define SCFGR2_CLKHOLD(x)	(x)
+> +#define SCFGR2_FILTSDA(x)	((x) << SCFGR2_FILTSDA_SHIFT)
+> +#define SCFGR2_FILTSCL(x)	((x) << SCFGR2_FILTSCL_SHIFT)
+> +#define SSR_TDF		BIT(0)
+> +#define SSR_RDF		BIT(1)
+> +#define SSR_AVF		BIT(2)
+> +#define SSR_TAF		BIT(3)
+> +#define SSR_RSF		BIT(8)
+> +#define SSR_SDF		BIT(9)
+> +#define SSR_BEF		BIT(10)
+> +#define SSR_FEF		BIT(11)
+> +#define SSR_SBF		BIT(24)
+> +#define SSR_BBF		BIT(25)
+> +#define SSR_CLEAR_BITS	(SSR_RSF | SSR_SDF | SSR_BEF | SSR_FEF)
+> +#define SIER_TDIE	BIT(0)
+> +#define SIER_RDIE	BIT(1)
+> +#define SIER_AVIE	BIT(2)
+> +#define SIER_TAIE	BIT(3)
+> +#define SIER_RSIE	BIT(8)
+> +#define SIER_SDIE	BIT(9)
+> +#define SIER_BEIE	BIT(10)
+> +#define SIER_FEIE	BIT(11)
+> +#define SIER_AM0F	BIT(12)
+> +#define SASR_READ_REQ	0x1
+> +#define SLAVE_INT_FLAG	(SIER_TDIE | SIER_RDIE | SIER_AVIE | \
+> +						SIER_SDIE | SIER_BEIE)
 
-Charles Han (1):
-      spi: intel: Add check devm_kasprintf() returned value
+I'm not happy about the alignment here, can we have the columns
+well aligned, please?
 
-Fabio Estevam (1):
-      spi: spidev: Add an entry for elgin,jg10309-01
+> +
+>  #define I2C_CLK_RATIO	2
+>  #define CHUNK_DATA	256
 
-Frank Li (2):
-      MAINTAINERS: SPI: Add freescale lpspi maintainer information
-      MAINTAINERS: SPI: Add mailing list imx@lists.linux.dev for nxp spi drivers
+...
 
-Geert Uytterhoeven (1):
-      spi: spidev: Add missing spi_device_id for jg10309-01
+> +	if (sier_filter & SSR_SDF) {
+> +		/* STOP */
+> +		i2c_slave_event(lpi2c_imx->target, I2C_SLAVE_STOP, &value);
+> +	}
 
-Liao Chen (1):
-      spi: bcm63xx: Enable module autoloading
+nit: no need for brackets here.
 
-Stefan Wahren (1):
-      spi: spi-fsl-lpspi: Fix off-by-one in prescale max
+...
 
- MAINTAINERS                 | 11 +++++++++++
- drivers/spi/spi-bcm63xx.c   |  1 +
- drivers/spi/spi-fsl-lpspi.c |  4 ++--
- drivers/spi/spi-intel.c     |  3 +++
- drivers/spi/spi-rockchip.c  | 23 +++++++----------------
- drivers/spi/spidev.c        |  2 ++
- 6 files changed, 26 insertions(+), 18 deletions(-)
+> +static irqreturn_t lpi2c_imx_isr(int irq, void *dev_id)
+> +{
+> +	struct lpi2c_imx_struct *lpi2c_imx = dev_id;
+> +	u32 ssr, sier_filter;
+> +	unsigned int scr;
+
+why is ssr unsigned int and not u32?
+
+Can we define ssr, sier_filter and scr in the innermost section?
+i.e. inside the "if () { ... }"
+
+> +
+> +	if (lpi2c_imx->target) {
+> +		scr = readl(lpi2c_imx->base + LPI2C_SCR);
+> +		ssr = readl(lpi2c_imx->base + LPI2C_SSR);
+> +		sier_filter = ssr & readl(lpi2c_imx->base + LPI2C_SIER);
+> +		if ((scr & SCR_SEN) && sier_filter)
+> +			return lpi2c_imx_target_isr(lpi2c_imx, ssr, sier_filter);
+> +		else
+> +			return lpi2c_imx_master_isr(lpi2c_imx);
+> +	} else {
+> +		return lpi2c_imx_master_isr(lpi2c_imx);
+> +	}
+
+this can be simplified a bit:
+
+	if (...) {
+		scr = ...
+		ssr = ...
+		sier_filter = ...
+
+		/* a nice comment */
+		if (...)
+			return lpi2c_imx_target_isr(...)
+	}
+
+	return lpi2c_imx_master_isr(lpi2c_imx);
+
+Not a binding comment. Your choice.
+
+> +}
+> +
+> +static void lpi2c_imx_target_init(struct lpi2c_imx_struct *lpi2c_imx)
+> +{
+> +	int temp;
+
+u32?
+
+Thanks,
+Andi
 
