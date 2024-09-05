@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-316803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E22A96D5AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:19:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CDB96D5B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3701C2306F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85241285284
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554CB1957F8;
-	Thu,  5 Sep 2024 10:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524CE198A3E;
+	Thu,  5 Sep 2024 10:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkQvnH6a"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="moRzNiKh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD40198A1B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B8818787B;
+	Thu,  5 Sep 2024 10:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725531545; cv=none; b=nv7HdXFzUb94tG23saUaRm1HAiS23vrsR64P03b5XzKzyOmwVRQDeUlMCJEOiBxrqDQed7z27j0vaU6biwOFphkcIEHRLa5+I72+DDcyPnZEmGo3hCiDKfFYv0sEwI1nywLJMaYG4Ji/0DAjYVXyB8Ie1QIrLTflFv12mInob6U=
+	t=1725531578; cv=none; b=D6i2+rmMiUHUYKI3w79cEYLfp6f0uYDfeQUWd5/GU8Akq9KM1PKXnpE2nM5z5HqHeOx3WX5fv8uK+1POWB5C5tUDzt5sein+WCuW91upDU2HRjy9aa/JUYoxVVNsDXol0rlybtS5MEw/zTy22eJhTXbOaB5Jts33+cvz9x/Dv4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725531545; c=relaxed/simple;
-	bh=N5GZ6QaGpaG9BOOZe8Qz5x7aSLENpOxDadCaaNOcHSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHMtwbZJO3DaU5reY3lE8V9Sj6u+1n7jscZNh4AbyhGxRaP2pF+Ia+/c+Vg2WAgr0FhmjqVd8R0+OLXCu88mDBhGFqY2SqezHOQHrvWxuexjeyCO/zWY3Edo68qNg0XglbmjivJA6d89QmUZlXb4aaK2bfQKp1z4jioiCp0WB8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UkQvnH6a; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so693493276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725531543; x=1726136343; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TbvNzEhcUc2/e6npSPa/SUaLRFH3LWeQVUSLoJZyzEA=;
-        b=UkQvnH6aI8Ixws4yVjH6aPFhAfs2u57fNBIg4e7czby/ooCZeirQE1JOGCy5Jn5iw3
-         MKcor4WraYEC7VygGMlgYaRlbF026Mw+CboIHN/1qaguwQTXNVDyFMo5/Yodl2TOrYlv
-         FcUcJ8n+9/mTVhw7MtCUl4tqSLzAbrQkmSEyDsdFwal1eSKWCM5Py0xCeMMBicRYHXsS
-         spo5T294LZVDsY5K8AAv4ZGVaA3SXGAamUgSXDzfVXNoJP/MDh/OUrp/10hhqnnbjebP
-         kcMG6dH0KJSgC32E/2043dvCmWCw39eelSRe5BwMu+gBAcEAJ8fVP8Fm1vZPq9BT3KHy
-         vGpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725531543; x=1726136343;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TbvNzEhcUc2/e6npSPa/SUaLRFH3LWeQVUSLoJZyzEA=;
-        b=LSKtfWhcwgYcKn7Rk23vZd9zRWtpJTu3G0pl1zW9dc5hXjUG5mOy/7vLJiNZpfaCBz
-         eulQ2CDXHJrYJW+Ts97jcaiiWBxyEeXLInf8S4vP9pkttENUg05rSeUHKk9XU3Bk3Jmd
-         bI6qLJj5LuxsRPFsC1z2XoD9SsvxA+AS5o3aezasHeN8LHQT/Jfe9nbZgCNdvHiK7J7P
-         cH/KS8PF/bdC9DLTlXGEnIAd/i26zW0oEKzu9A1qBgk31Un6M9sTGpvyb/Xi8lpBR3ln
-         C06CdBlCH4ePohDpQ7k1vPTgLpXyYd6fVDtQyxiE4Z1Fza/E8ywbXUAWwdux6OLB9Rlc
-         RPgw==
-X-Gm-Message-State: AOJu0YxF9/LXXITEyorJ2WDnD2riSB/q6KNqfgnmN9dedqENrq8v37n0
-	muH6+2f2LTUYRRFXYorO5WmvXXbVXYeS+LxsGniwfK1NN7gQWhaqUUUWhnvyAeJOxMra8OQrA6f
-	NQZA53Oe/aktTLPpFBYaq+3psdsyOmBgouUa/ag==
-X-Google-Smtp-Source: AGHT+IEfkmXdZbiQFZA2SCdDFNC5ZztKbmifchwoAz1t7Bhire9A/0dhUzANW4hoWsdcwjCWYY1qjZMm+Dtgf/DNne4=
-X-Received: by 2002:a05:6902:2406:b0:e1a:b361:4d9b with SMTP id
- 3f1490d57ef6-e1ab36153f7mr14748193276.24.1725531543111; Thu, 05 Sep 2024
- 03:19:03 -0700 (PDT)
+	s=arc-20240116; t=1725531578; c=relaxed/simple;
+	bh=6iVM9Y97nu47n39p6wpiD+nmIXSp4d+7TjnZZZn2A20=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZjDgt+G0swIVheyni4mo4fPsgV9yjnCKmaUdYmNqSti7Bld4tcgzwP4F32cDv5YGe1B610nbjXvAqPfvYSJ9x8uOuj+KQ1zwqRwJvHdUpxsCsSbJD+5i1IhLZGBWN3XHz9uMSU1LJk/fQq14Vy7GeMX+Rmy8ouWMMiwgAGLGKQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=moRzNiKh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725531571;
+	bh=Mt17omemxf9c/ZHNQnSYsI5tREC66n85dGpIjNS5K84=;
+	h=Date:From:To:Cc:Subject:From;
+	b=moRzNiKhLIdi0wFTSnulccAM8+kqf6PvkHGntUhBrxUqIapob+llq8zk5AMaNKzjp
+	 Qygi3TwuPOxtOGa1a6SR5nJ2CW6+d0hRg3j2LW+wp0HrzTRBswyWH6AGW9jBDotGxO
+	 WAQNKrbK+udIk7Mu8spbxUNQiUc4Vc7M/Z09UnAvrYx5W1LeNk82ioEEClMXxYQK9g
+	 4FQGVxiLLsVA28n3UxiVBoPRnY3XiFvGsjs6Jc12i/8eioi1i36IHkfTMv8z9aK6+K
+	 +fjFIKkWHLp7rEqx8fJOIUFOQdjnzL6qd7RxXQlqhcnmvvM1zIyTsW4xBLTKwuIbDi
+	 MHqWEnHLDV+GA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WzwMR10hCz4wcL;
+	Thu,  5 Sep 2024 20:19:31 +1000 (AEST)
+Date: Thu, 5 Sep 2024 20:19:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the random tree
+Message-ID: <20240905201930.417e7596@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904203154.253655-1-detlev.casanova@collabora.com> <20240904203154.253655-2-detlev.casanova@collabora.com>
-In-Reply-To: <20240904203154.253655-2-detlev.casanova@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 5 Sep 2024 12:18:26 +0200
-Message-ID: <CAPDyKFp1iOUdp=pL_xpP0DNu24Z-wC5SYhwzNy5CcEkz3XWWyA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] dt-bindings: mmc: Add support for rk3576 eMMC
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/OkRmJQcX9sUdvpCUgLw13X5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, 4 Sept 2024 at 22:32, Detlev Casanova
-<detlev.casanova@collabora.com> wrote:
->
-> The device is compatible with rk3588, so add an entry for the 2
-> compatibles together.
->
-> The rk3576 device has a power-domain that needs to be on for the eMMC to
-> be used. Add it as a requirement.
->
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+--Sig_/OkRmJQcX9sUdvpCUgLw13X5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied for next, thanks!
+Hi all,
 
-Kind regards
-Uffe
+After merging the random tree, today's linux-next build (arm64 defconfig)
+failed like this:
 
+In file included from arch/arm64/include/asm/vdso/getrandom.h:8,
+                 from lib/vdso/getrandom.c:11,
+                 from <command-line>:
+arch/arm64/include/asm/vdso.h:25:10: fatal error: generated/vdso-offsets.h:=
+ No such file or directory
+   25 | #include <generated/vdso-offsets.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
 
-> ---
->  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 37 +++++++++++++++----
->  1 file changed, 29 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> index 80d50178d2e3..c3d5e0230af1 100644
-> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> @@ -12,14 +12,18 @@ maintainers:
->
->  properties:
->    compatible:
-> -    enum:
-> -      - rockchip,rk3568-dwcmshc
-> -      - rockchip,rk3588-dwcmshc
-> -      - snps,dwcmshc-sdhci
-> -      - sophgo,cv1800b-dwcmshc
-> -      - sophgo,sg2002-dwcmshc
-> -      - sophgo,sg2042-dwcmshc
-> -      - thead,th1520-dwcmshc
-> +    oneOf:
-> +      - items:
-> +          - const: rockchip,rk3576-dwcmshc
-> +          - const: rockchip,rk3588-dwcmshc
-> +      - enum:
-> +          - rockchip,rk3568-dwcmshc
-> +          - rockchip,rk3588-dwcmshc
-> +          - snps,dwcmshc-sdhci
-> +          - sophgo,cv1800b-dwcmshc
-> +          - sophgo,sg2002-dwcmshc
-> +          - sophgo,sg2042-dwcmshc
-> +          - thead,th1520-dwcmshc
->
->    reg:
->      maxItems: 1
-> @@ -35,6 +39,9 @@ properties:
->      minItems: 1
->      maxItems: 5
->
-> +  power-domains:
-> +    maxItems: 1
-> +
->    resets:
->      maxItems: 5
->
-> @@ -97,6 +104,20 @@ allOf:
->              - const: block
->              - const: timer
->
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: rockchip,rk3576-dwcmshc
-> +
-> +    then:
-> +      required:
-> +        - power-domains
-> +
-> +    else:
-> +      properties:
-> +        power-domains: false
-> +
->  unevaluatedProperties: false
->
->  examples:
-> --
-> 2.46.0
->
+Presumably caused by commit
+
+  88272e1f28dc ("arm64: vDSO: Wire up getrandom() vDSO implementation")
+
+I have used the ramdon tree from next-20240904 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OkRmJQcX9sUdvpCUgLw13X5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbZhbIACgkQAVBC80lX
+0GzLGQf/VHaJddojUkxS1E2mDmWj5jVVLECMoJhJmVJvMTKKMi141g8hK3nEOQvF
+OukyW0VpqVxMdhBK96fryoswSR0APq4MU/0bgModDC9rOPGvuz7Rwa009/de6VAc
+EdjCv2xQYEWuDJmRPg2ZUcJ96ibcSB2kFU+Q+cXKUYjMk2eLx5sLcxwnHkzKJb2j
+DjCQN3uMdk32/IW+eHpCNg1KbIZN5pAeZ15rF2iZIXmvf6jZMBSTHZkIRY9w22lp
+viC0lQVA/YjKDVXPusSF/TKjQ29fbZU/WSlPZK8qQ3wnJokPgX5eEnMuO5Hzwn4E
+IdtI8Lf/pVdReSv2uc3GIhXEBLucDA==
+=8a/T
+-----END PGP SIGNATURE-----
+
+--Sig_/OkRmJQcX9sUdvpCUgLw13X5--
 
