@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-316139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2C996CBB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:20:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A642B96CBBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181B41C226AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534EE1F28436
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045AC1FAA;
-	Thu,  5 Sep 2024 00:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778A3101DE;
+	Thu,  5 Sep 2024 00:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J50iUNCx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBiaPZb5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610C5184;
-	Thu,  5 Sep 2024 00:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6395DDD2;
+	Thu,  5 Sep 2024 00:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725495629; cv=none; b=C9xU/wPfLDpr/+dmfVrIpkk0b582F3AcjdxNzbwB/uMriiHqPPR3Jp/Vk8XdRl9XKqjmEMP0uSVPxJVQnUheEmE17TfzhVqA5uwq2KH3yvrC+WtwngfcggQ6c22xGF7psAzIrbEKX7XENfI6Y2xLxeA2wlS5vYGlC8vFOFooiuc=
+	t=1725495633; cv=none; b=gVkvwH81BAsWQxr/FoWsiL/gt5YDyJDoQ54kr9BZf0qEFvULfd5Sq9nwg5Du4u4jPTnjKccbB3zIvbRcm0cN4+GdKELHI/ymtWVwk0ihLSAl48dHd4YZ5SfXRNBxC7fBqPpyxgvld9hqhWL3PLgHwlBG0KJ8vBO7rMCvS2sc98c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725495629; c=relaxed/simple;
-	bh=BhPxPusIchmaxWsSUetl+q/0fS/XhTFEWH9Q9mNyWKQ=;
+	s=arc-20240116; t=1725495633; c=relaxed/simple;
+	bh=TevuT01BbunlpjDk4Ntbhq5bux9u273/gOsv6IKPO38=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YPDsqBxKCv10QIa6anScPVpchEH3dijO7TiqzpkzrL4oifWIihGTGlwOuHbkalPufUjGOJBLdWWKB8qUXvO5oILjcdeCsMz5n+tZSgwwHQ4JPw+L07H4cF9+FUkWAH+ohVzMhImOist++5EEeqYL+aH08UvMMIVmAyzDkrP266Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J50iUNCx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C47C4CEC2;
-	Thu,  5 Sep 2024 00:20:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=c31eJlrdKkzrEGnESF4TCix02SUWozKLXiEphnlKi7/p0B3IfN9PK3Ft3Nik3ZN68icLULy7247LOmcnuZhBcKhRyfB3kEURqQ4BQ/ZXIj7mKsNXWreycd9D3OPZL63sjzmMm9zCx/zhNXvGxeetOZZwA5XQH9PEm8zn2dd1zP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBiaPZb5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA437C4CEC2;
+	Thu,  5 Sep 2024 00:20:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725495628;
-	bh=BhPxPusIchmaxWsSUetl+q/0fS/XhTFEWH9Q9mNyWKQ=;
+	s=k20201202; t=1725495633;
+	bh=TevuT01BbunlpjDk4Ntbhq5bux9u273/gOsv6IKPO38=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=J50iUNCxRzEtOB+/Kh4w6HRWjVO0dCYHeW2g4mejRC8l4hZg5Wl98EcYX+ciq4Mn4
-	 jwOSqMI3+gz2LkL9PkLkAWVHk/iwpGvVONzenASe4vcybNxwpjHXyksIoGPGRDulMc
-	 u6iBERtF6kkYBC9f8aAxfSWcejPahwAs5foGDdbsfI0aE+rPzqDEy1y58N2CXH3U2f
-	 3hKBLpOSFrHSimGxbk4i5bmBmyRQaWv9uAZMNu0zD5lFHOYKsfFHVCisiRySQ1qe6d
-	 bZINDj6aAGNOcHOIHbKrSP4vpvgvtU2ovY8emm97cw6HNqmPzto5CMqrjeEMztgwee
-	 qvPbzJOJeL6nA==
+	b=LBiaPZb50jOZXwUtglJRcFDErpyfe7Jbjso5crhW1wM4fSvBqq5TgeJVCOifsOHMP
+	 XrlPyaKnyiS118M38Sg9AjTu2I+w/2yb04eNtVm11oVkuCp75CMT08xIcHmHW3ntqa
+	 C+PkhyDj32wArYTcVRNfhxVFV2yKl1nk+VvCoZtvEkW7bUEw7YwIW81coKp75/RMyv
+	 cIV+Jo+OUzx8RKVsJE/zHumih9EUT8QQc+4AtIRh+wyYVBQOXMKYuAXqow6Ms7F2Oq
+	 4STPp6hFv9bD8zSCaM85DvIoEc2ENvTc6Y0ves6uJG7gLNHjY9Eg6B/FTERIzb0SXG
+	 snBVaL92CJyAA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2373822D30;
-	Thu,  5 Sep 2024 00:20:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD1B3822D30;
+	Thu,  5 Sep 2024 00:20:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,47 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: xilinx: axienet: Fix race in axienet_stop
+Subject: Re: [PATCH net-next] net: cadence: macb: Enable software IRQ coalescing
+ by default
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172549562978.1208771.14261588078199879784.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Sep 2024 00:20:29 +0000
-References: <20240903175141.4132898-1-sean.anderson@linux.dev>
-In-Reply-To: <20240903175141.4132898-1-sean.anderson@linux.dev>
+ <172549563449.1208771.15485016023468889956.git-patchwork-notify@kernel.org>
+Date: Thu, 05 Sep 2024 00:20:34 +0000
+References: <20240903184912.4151926-1-sean.anderson@linux.dev>
+In-Reply-To: <20240903184912.4151926-1-sean.anderson@linux.dev>
 To: Sean Anderson <sean.anderson@linux.dev>
-Cc: radhey.shyam.pandey@amd.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, michal.simek@amd.com,
- linux-arm-kernel@lists.infradead.org, daniel@iogearbox.net,
- andy.chiu@sifive.com, ariane.keller@tik.ee.ethz.ch
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, michal.simek@amd.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue,  3 Sep 2024 13:51:41 -0400 you wrote:
-> axienet_dma_err_handler can race with axienet_stop in the following
-> manner:
-> 
-> CPU 1                       CPU 2
-> ======================      ==================
-> axienet_stop()
->     napi_disable()
->     axienet_dma_stop()
->                             axienet_dma_err_handler()
->                                 napi_disable()
->                                 axienet_dma_stop()
->                                 axienet_dma_start()
->                                 napi_enable()
->     cancel_work_sync()
->     free_irq()
+On Tue,  3 Sep 2024 14:49:12 -0400 you wrote:
+> This NIC doesn't have hardware IRQ coalescing. Under high load,
+> interrupts can adversely affect performance. To mitigate this, enable
+> software IRQ coalescing by default. On my system this increases receive
+> throughput with iperf3 from 853 MBit/sec to 934 MBit/s, decreases
+> interrupts from 69489/sec to 2016/sec, and decreases CPU utilization
+> from 27% (4x Cortex-A53) to 14%. Latency is not affected (as far as I
+> can tell).
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: xilinx: axienet: Fix race in axienet_stop
-    https://git.kernel.org/netdev/net/c/858430db28a5
+  - [net-next] net: cadence: macb: Enable software IRQ coalescing by default
+    https://git.kernel.org/netdev/net-next/c/d57f7b45945a
 
 You are awesome, thank you!
 -- 
