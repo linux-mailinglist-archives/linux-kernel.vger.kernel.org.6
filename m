@@ -1,61 +1,70 @@
-Return-Path: <linux-kernel+bounces-317379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAAB96DD48
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C1296DD4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6891F22313
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002B21C2166E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952D019ADB9;
-	Thu,  5 Sep 2024 15:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZ7RVCKh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C219DFAE;
+	Thu,  5 Sep 2024 15:06:36 +0000 (UTC)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E438443169;
-	Thu,  5 Sep 2024 15:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0844CC8FE;
+	Thu,  5 Sep 2024 15:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548767; cv=none; b=UM3bR+D3fNeJXj2L1pO7/P1niwxFKTmLov7HAWoEflcpBWTjpP5TReCY2gqf82GXMCQ1kDFN9r1rE+y+mQ0BGfUCuwcO2triaXj1PEolDAtohzcF+VvCu9m3fZ4zZFk5bs3TGR3WKvEwEAaTSkvGV0OA9wQ15Sc7MnYMtQkavho=
+	t=1725548796; cv=none; b=SsmybU/kj51xf2TcWnGuhNWzQbiuiz5iYqaXM625tU2sG7TAlAti+D1GhVHrvraRYruRX4Bm2yFjrYZuzKQaZ+VMYlQam26iNA/gT3bi9haM8ehlN6RdA5QXm2/uZw3iB45VrGB4Gue4sxFhgOhVZRF7haopCo8ekqztHaj0O2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548767; c=relaxed/simple;
-	bh=wKMrcMC+PizjREdK8NWSLgrBh6C8Cak5TkypWtYvC1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tLhdOLdHayg1GTJPJbtydLWqTNpM8rf7Kye3xkPgapDn46pJsNJAFOIcUkeCf7GOOqZxPf+B1tlJc9cVISAHad+O69LFEim1FgFx38efOqEtM97CoXYnOzliiOl9f440Zia7ysyaXCyFdyqVUlEhBN7Zgy/68fgPwVXzimsjc80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZ7RVCKh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70837C4CEC3;
-	Thu,  5 Sep 2024 15:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725548766;
-	bh=wKMrcMC+PizjREdK8NWSLgrBh6C8Cak5TkypWtYvC1M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eZ7RVCKh6TicVGC73Kha7CA5VSvBAEbtxH1eGCsoexkmCtBlNAnfVWBcP16bLZX3u
-	 iqdG9h1Or6J2oTIf32AZNjJe21mRc4Hgrlt6J/1/WzoWcc0tRzRiNm6ffDhFGB2JMg
-	 K9HSn6lLt76WyvyEg+2YcWSJgXgdBYn9XdKQFPIe6Jqi5cUNW8XNXa2Tsrq7pWSlWF
-	 zYXCZWN6e3VKyHMwXhNZCGLgpVHGwcNYQpkVWLAV3o+r+D/PyG+/w+w5/bJtoOgwi4
-	 yMNWnSDhKYyXe2RosSmAh41itKL2CtaAu0Fq1OcSxa/nTaJktmGX8ub88P59gvgqz/
-	 yb1xlWEg7VTEw==
-Date: Thu, 5 Sep 2024 10:06:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V4 11/12] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20240905150604.GA387441@bhelgaas>
+	s=arc-20240116; t=1725548796; c=relaxed/simple;
+	bh=Ufnv4NuUXMedjDhPVeDGTu0Wit6DOd9oyIjF1G9jxxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nzx2xJDC+HsyRNzANwD5+Rxv0LbGpS/2tVnABb6Cz1TZP59unKXlJlr7XtuDgFHRzGlWsjUAWiNsbSTzciY/XJfWsWaa9U1jw4wBfUzIRMFEXZng9EbaEtl/f3UUCf2GpvcJ7u6E/lKRMs201WPqxZvTYXO+2I0Z7dc+M/qnd38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2059112f0a7so8929725ad.3;
+        Thu, 05 Sep 2024 08:06:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725548794; x=1726153594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j7TTRuuU4nlji66HB0wIsokyLV65QcKx5Ad6l4uBmgg=;
+        b=wIPvDMa5JeIwGni8ZcIMNYFi0Dctm9UrMXI5rvCkKQfVuhDBFmPw8DK91XTcnXeHns
+         08W65kyfiqpByJD6tNKmzdM4+mmHyUGM0qz0VE7Nguup36Y5alXHJCiLzpXspMuUzmh6
+         ZicCAhpRE55MApXzIl71dnIM6rqCOp6EJDyhFWrWgYw9hRpOMlKfa0V0DLARlI+7/8j/
+         E1SNuFAaehWBRdWVdTfwm7ci/+KWSUKDFamdvHjHzZY7+OJpQwELA03+Qx9TSglC1C3v
+         GEym+oZAmsPR1ChKPR/xkKJ9i6zrjnpFhRA1/UCfpj233p/i8X3rnjJXDhDdcdJzYu4K
+         zlpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlnxItqBd7qh7pKaWUWf1eR+XnR4lonuo6We7mbuSzjDVYsWgTcp1aGlhc7tDuIBrLc3NDlF+tSSKxjAf5@vger.kernel.org, AJvYcCVaa6uXJ6KY5vPBiqy6EON5WnpX30/2MAGgf8sNwuxyA4xu0n8q0ai4otG4IZ2YHO0MwMEvWO9YnX1j2qGY@vger.kernel.org, AJvYcCXheWIC3VlC2N/6x81PdA6jT8UctJ29f2kOkToiAx4J0K/Vp7xIalmpu6Zi8HwSzaURv4hARKw2E/dbJA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYrFEnRCAcsiv36lozz9bm6xgsUlgp5RHe3lw5GU0YO7ryB4MI
+	2SAAX21gy4QnXJItJeq92l9GWWy4BRRnLPT2yt8eemIz4KopsH+g
+X-Google-Smtp-Source: AGHT+IGStXj7Q9ESrdDcPCzdegEEQ6geuDnclkkUo7eimkLKqJZy6a3xGuNcr2bAYNITzcnTIAKDTQ==
+X-Received: by 2002:a17:903:3586:b0:205:8a25:c11 with SMTP id d9443c01a7336-2058a250d9dmr147178855ad.45.1725548794015;
+        Thu, 05 Sep 2024 08:06:34 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea5832dsm29588925ad.237.2024.09.05.08.06.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 08:06:33 -0700 (PDT)
+Date: Thu, 5 Sep 2024 15:06:18 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Helge Deller <deller@gmx.de>
+Cc: Wei Liu <wei.liu@kernel.org>, Chen Ni <nichen@iscas.ac.cn>,
+	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
+	gpiccoli@igalia.com, mikelley@microsoft.com,
+	linux-hyperv@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fbdev/hyperv_fb: Convert comma to semicolon
+Message-ID: <ZtnI6uWpRVf1Bvx8@liuwe-devbox-debian-v2>
+References: <20240902074402.3824431-1-nichen@iscas.ac.cn>
+ <Ztlc52c6fIz3azbn@liuwe-devbox-debian-v2>
+ <5f6ce496-15cc-45d1-b3d0-10e362543a3c@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,16 +73,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822204120.3634-12-wei.huang2@amd.com>
+In-Reply-To: <5f6ce496-15cc-45d1-b3d0-10e362543a3c@gmx.de>
 
-On Thu, Aug 22, 2024 at 03:41:19PM -0500, Wei Huang wrote:
-> From: Manoj Panicker <manoj.panicker2@amd.com>
+On Thu, Sep 05, 2024 at 10:30:56AM +0200, Helge Deller wrote:
+> On 9/5/24 09:25, Wei Liu wrote:
+> > On Mon, Sep 02, 2024 at 03:44:02PM +0800, Chen Ni wrote:
+> > > Replace a comma between expression statements by a semicolon.
+> > > 
+> > > Fixes: d786e00d19f9 ("drivers: hv, hyperv_fb: Untangle and refactor Hyper-V panic notifiers")
+> > > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> > 
+> > Applied to hyperv-fixes, thanks!
 > 
-> Implement TPH support in Broadcom BNXT device driver. The driver uses
-> TPH functions to retrieve and configure the device's Steering Tags when
-> its interrupt affinity is being changed.
+> I added it to the fbdev git tree 3 days ago.
+> 
+> Either you or me should drop it from our trees.
+> Please let me know what you prefer.
 
-> +	/* Register IRQ affinility notifier */
+Thanks for picking it up. I'll drop it from my tree.
 
-s/affinility/affinity/
+Thanks,
+Wei.
+
+> 
+> Helge
+> 
 
