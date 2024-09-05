@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-317412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF09296DDC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:19:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8751496DDCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505441F22F11
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:19:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3C7B24400
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B169419E7EF;
-	Thu,  5 Sep 2024 15:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B548C19EEB8;
+	Thu,  5 Sep 2024 15:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JlQcpuWZ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K0hnjoBb"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B3B1990BA
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D0319DF4C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725549536; cv=none; b=Z0UyKC0rTYD0NSlZWggyWIgsr2Ay7ATvaJThv2qhxwQQjCgzvx3guIa/4/Gyif+BhkqhyFAHvwpsborMZI4vE5js+kZ1Hv5xgrJVZ0JEFNdxL/CIhjCtxqx4OFvTxKXmGvSqEf8221AmqbrsxbBCAJIHIC9UsQXS0yDEBzPwwiA=
+	t=1725549538; cv=none; b=TuNvP+EWn2sNV0FYdTiOp7/bZq19OIZAuNIU0y128SZ/SBPeQhS6+0J7Xt3hV6I9/BqDClEN7rL+pje7AbAdV2Y0ti7Vib+Le7JR0TC07Dy4bL+CmJfLP6XeQ2mKSbsx4gjVvtiiyzrqHF2Ij6c5X+n2TlAIioiCVfs2e2wTbv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725549536; c=relaxed/simple;
-	bh=7mDmujuW9L23gvDEPfcAQPH04sCLGsDLCdPBzT9HWoA=;
+	s=arc-20240116; t=1725549538; c=relaxed/simple;
+	bh=zqR8Ma3kQq7AIwQIpNx2PJFyFY9OTdv+a2GS2Z1e4G0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GQaSxLix/cLS9yguDow9X5e7nKKDZwT3sh5A4KBCuaf+WaCIOcX0wFX/a8b2SBl81qZUM1He7BGlUejAr+aQLS9+WMH7WD+EBJjDQVaSLp+zvNYklK4CQaJ/aCr/UWJmQil3V2KPQMyIlTlpiCF0PQqnD0LI9XhV1tFQNlJPs5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JlQcpuWZ; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:To:Cc; b=NiiwfjP3mHcs6ckLSlOS4OQOFpp4YkqVTiagKBuUKcTHazpSuePgOyVRIEcmEkQAKxnrEt3uVlodXrqt2ouoYGkosv/qYKtKEkXTfxGifJ07gHHcN/2Z+CeGTwU6dr9wHGcyVFlmpd7ul55c03/+Tg4iP7EICPxFuAKDCouh1j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K0hnjoBb; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-374c5bab490so1306013f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:18:54 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bb81e795bso7464885e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:18:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725549533; x=1726154333; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725549535; x=1726154335; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kAGC06t4jFVXSncjE9DHaxIHM4cxIKLmC+jNq9K1LOE=;
-        b=JlQcpuWZKBO6oDCRyVleW83Uzrgb+pgUsMHpJUgZda6rpQVYt523pes+pq6C2X7Cba
-         pXscfz6DWlZ02ao5D76gGP+XZhaB6nEcpSeoqAlnrzrSuHci+YcB3tj3NNq1Aly40odd
-         8WRoAHDHQ9eyr6hHk0DRQ7C72dA2FJpsEzWTkbvWGIq3OpXTpEnIw6Wm435bnhBTg3R4
-         7puNVYbSPbWRGqiYCEOcm9zQ1UU3c9jM0PhsChg7VZ2RbUmjOaC9w2068SUayW1zjY0/
-         zgXAZUglcGypU1FvBXhoI3y2kbi6I3JnDDTkUbiiqejKueyTNQax1VrmSF9Cw+67U/pX
-         9p3Q==
+        bh=rZWIl1ehBhaIBfAagiEJ5QO2cnvkrw2A+Y1bB2atjQg=;
+        b=K0hnjoBboJvUBQAtSk8q3E2JYWvum5tTPMfRhd9BVoW0RCyfZQMnvuI2w8T2noNMLi
+         2g8TTr5Y4tO53CNqIJc5VdrDovVjly9CqHpGY/0IEX4+JMgfWctAfF8z6MVCnDyS1L3T
+         Tz/1Jb5IBrEVUcV4SnOWIr3BNNhoGQ3IvYr/94ZTUxwKIEgvTn9wGZIVWhzqeDmmzpz2
+         BktJNOpU3aOl/ak563b59SQMSqNWK/bcxIlZfjrUkNhhVSs152SU88L4H62C0GVEHsip
+         QE5+Hffy85qIzo9OBFti48S23iGTHtgbjkiVg1j6LHChE+DP4C3DqTGs+xup0S+3mmnk
+         XirQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725549533; x=1726154333;
+        d=1e100.net; s=20230601; t=1725549535; x=1726154335;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kAGC06t4jFVXSncjE9DHaxIHM4cxIKLmC+jNq9K1LOE=;
-        b=Bi3pM0V4RYTkC7RSTeRw85Fo/lC/BVVTFFsseir4/Ai7/aTILyetNXilVjjcoyCQbU
-         1szNQ4TYySGE+hnJsA297oZiFW8t4+ftwOfDD4umxZ0OouW25ZcBq7UI9nK1Qx7AK/K7
-         xqgR7kIqzbBUnrQwHX7Qm+9l3lKgy1qoGllgzZ7AXc0V/FtrHO93GWjOo5P19MS17rlj
-         D1hw0hRzpLCr1RzNHpa6f8L/TGr/VFAvIEw+r0iRhY2BYxgpBwnJBHhSb8ecAxLvLSEN
-         lDxDa/FgpuMuPg2UMr+qvT9X7EhAKCMcB2W2gYPCaqVyqcHEEgzPH/BDHT+yQrEx5/KX
-         zMSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVr3Vo2FGt+Tsc4CLFNULIsPnTL2rGnyXi461Ds/PK7krJQ/sugtIyPqkaQn1wG9EgyL4xu4b7KU7IDzlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb+XZdwwkw6COP0XxNE217Tic7suP51pHsmxlUMP9H0ht0j17U
-	eMXCJv7gBuSkivv7Sx0Jb3molF66kV8o7LNnjZFFFzOoCuNR6Q7tPcmIz7+isUU=
-X-Google-Smtp-Source: AGHT+IEj0EPzxJ72BXRwSGmQVESxYruu+cPifDeDKcs58e/d2y2rA/DPkYkIDxDAURV3CSqEkg/WYw==
-X-Received: by 2002:a5d:55ca:0:b0:371:8685:84c with SMTP id ffacd0b85a97d-3779a70775amr3826341f8f.15.1725549532900;
-        Thu, 05 Sep 2024 08:18:52 -0700 (PDT)
+        bh=rZWIl1ehBhaIBfAagiEJ5QO2cnvkrw2A+Y1bB2atjQg=;
+        b=vtrcnfTSPlEsLeh8PjYrupM/ZI0MOZhLz5TmhBb7ZezDO6jttSf/x39rK6xWn+/DYs
+         mcNGKDkOe6ycgiwDvrIMU88YGU5EVtQatkbbzX1ysXqgOsVWX9woHiHfbfIwPLPbwvWD
+         z42PkYNsuq08SyxElPEzGk0s9kWX67+TTTsEBofkqa7EDaurKtdkWxubdnG4Nw+ttn5E
+         FTk0VeSds13bwoUJJQ6hCIlKRFZ5Dg6D3rAQs5r/30k2yXuqocwkXdZs+xn95hVHMhsQ
+         OWv6rPIp8MYe7Hv1h7Y8wFIa+31/dtW6Cm2ZfStvx+0TiUwad9ouJNEJ+H8Xd0u+NnZ2
+         hViw==
+X-Forwarded-Encrypted: i=1; AJvYcCWns9H+GOp9hHFWKO2tPZrori96APFAoKNw5n7fgJRUQp5xeMeSoPIqjtZryeFWerrbSojpYyOoIdesap0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5SgVyrFJyFuS++CsE59pyVQRbstxrTTFgon0pxmezEveoWsTu
+	LZ5Z24/BtKBok31jIDBK1LwHbNu1Sh6BwZGMaVK5udkGzziQ5zrJo0UhwLuVYIM=
+X-Google-Smtp-Source: AGHT+IFfv6NcUGX8vOG3/4+6e/vDUUbSoXMb7KdUiar5eVs0/9ZUn5U0xFyGbxxUh5XllqbeOb6wdw==
+X-Received: by 2002:a05:600c:34c3:b0:426:5fe1:ec7a with SMTP id 5b1f17b1804b1-42bbb440201mr145238975e9.31.1725549534679;
+        Thu, 05 Sep 2024 08:18:54 -0700 (PDT)
 Received: from [127.0.1.1] (host-95-233-232-76.retail.telecomitalia.it. [95.233.232.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c1de81b2sm14031076f8f.30.2024.09.05.08.18.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c1de81b2sm14031076f8f.30.2024.09.05.08.18.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 08:18:51 -0700 (PDT)
+        Thu, 05 Sep 2024 08:18:54 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Thu, 05 Sep 2024 17:17:32 +0200
-Subject: [PATCH v2 2/9] iio: backend: extend features
+Date: Thu, 05 Sep 2024 17:17:33 +0200
+Subject: [PATCH v2 3/9] iio: backend adi-axi-dac: extend features
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,8 +77,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-2-87d669674c00@baylibre.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-3-87d669674c00@baylibre.com>
 References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
 In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -95,283 +95,382 @@ X-Mailer: b4 0.14.1
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-Extend backend features with new calls needed later on this
-patchset from axi version of ad3552r.
+Extend DAC backend with new features required for the AXI driver
+version for the ad3552r DAC. Mainly, a new compatible string has
+been added to support a DAC IP very similar to the generic DAC IP
+but with some customizations to work with the ad3552r.
 
-A bus type property has been added to the devicetree to
-inform the backend about the type of bus (interface) in use
-bu the IP.
-
-The follwoing calls are added:
-
-iio_backend_ext_sync_enable
-	enable synchronize channels on external trigger
-iio_backend_ext_sync_disable
-	disable synchronize channels on external trigger
-iio_backend_ddr_enable
-	enable ddr bus transfer
-iio_backend_ddr_disable
-	disable ddr bus transfer
-iio_backend_set_bus_mode
-	select the type of bus, so that specific read / write
-	operations are performed accordingly
-iio_backend_buffer_enable
-	enable buffer
-iio_backend_buffer_disable
-	disable buffer
-iio_backend_data_transfer_addr
-	define the target register address where the DAC sample
-	will be written.
-iio_backend_bus_reg_read
-	generic bus read, bus-type dependent
-iio_backend_bus_read_write
-	generic bus write, bus-type dependent
+Then, a serie of generic functions has been added to match with
+ad3552r needs. Function names has been kept generic as much as
+possible, to allow re-utilization from other frontend drivers.
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+Co-developed-by: David Lechner <dlechner@baylibre.com>
+Co-developed-by: Nuno Sá <nuno.sa@analog.com>
 ---
- drivers/iio/industrialio-backend.c | 157 +++++++++++++++++++++++++++++++++++++
- include/linux/iio/backend.h        |  33 ++++++++
- 2 files changed, 190 insertions(+)
+ drivers/iio/dac/adi-axi-dac.c | 267 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 257 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-index 20b3b5212da7..231bef4b560e 100644
---- a/drivers/iio/industrialio-backend.c
-+++ b/drivers/iio/industrialio-backend.c
-@@ -718,6 +718,163 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
+diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
+index 0cb00f3bec04..cc31e1dcd1df 100644
+--- a/drivers/iio/dac/adi-axi-dac.c
++++ b/drivers/iio/dac/adi-axi-dac.c
+@@ -44,11 +44,34 @@
+ #define   AXI_DAC_RSTN_MMCM_RSTN	BIT(1)
+ #define   AXI_DAC_RSTN_RSTN		BIT(0)
+ #define AXI_DAC_REG_CNTRL_1		0x0044
++#define   AXI_DAC_EXT_SYNC_ARM		BIT(1)
++#define   AXI_DAC_EXT_SYNC_DISARM	BIT(2)
+ #define   AXI_DAC_SYNC			BIT(0)
+ #define AXI_DAC_REG_CNTRL_2		0x0048
+-#define	  ADI_DAC_R1_MODE		BIT(4)
++#define   AXI_DAC_SDR_DDR_N		BIT(16)
++#define   AXI_DAC_SYMB_8B		BIT(14)
++#define	  ADI_DAC_R1_MODE		BIT(5)
++#define   AXI_DAC_UNSIGNED_DATA		BIT(4)
++#define AXI_DAC_REG_STATUS_1		0x54
++#define AXI_DAC_REG_STATUS_2		0x58
+ #define AXI_DAC_DRP_STATUS		0x0074
+ #define   AXI_DAC_DRP_LOCKED		BIT(17)
++#define AXI_DAC_CNTRL_DATA_RD		0x0080
++#define   AXI_DAC_DATA_RD_8		GENMASK(7, 0)
++#define   AXI_DAC_DATA_RD_16		GENMASK(15, 0)
++#define AXI_DAC_CNTRL_DATA_WR		0x0084
++#define   AXI_DAC_DATA_WR_8		GENMASK(23, 16)
++#define   AXI_DAC_DATA_WR_16		GENMASK(23, 8)
++#define AXI_DAC_UI_STATUS		0x0088
++#define   AXI_DAC_BUSY			BIT(4)
++#define AXI_DAC_REG_CUSTOM_CTRL		0x008C
++#define   AXI_DAC_ADDRESS		GENMASK(31, 24)
++#define   AXI_DAC_SYNCED_TRANSFER	BIT(2)
++#define   AXI_DAC_STREAM		BIT(1)
++#define   AXI_DAC_TRANSFER_DATA		BIT(0)
++
++#define AXI_DAC_STREAM_ENABLE		(AXI_DAC_TRANSFER_DATA | AXI_DAC_STREAM)
++
+ /* DAC Channel controls */
+ #define AXI_DAC_REG_CHAN_CNTRL_1(c)	(0x0400 + (c) * 0x40)
+ #define AXI_DAC_REG_CHAN_CNTRL_3(c)	(0x0408 + (c) * 0x40)
+@@ -62,11 +85,25 @@
+ #define AXI_DAC_REG_CHAN_CNTRL_7(c)	(0x0418 + (c) * 0x40)
+ #define   AXI_DAC_DATA_SEL		GENMASK(3, 0)
+ 
++#define AXI_DAC_RD_ADDR(x)		(BIT(7) | (x))
++
+ /* 360 degrees in rad */
+ #define AXI_DAC_2_PI_MEGA		6283190
++
+ enum {
+ 	AXI_DAC_DATA_INTERNAL_TONE,
+ 	AXI_DAC_DATA_DMA = 2,
++	AXI_DAC_DATA_INTERNAL_RAMP_16 = 11,
++};
++
++enum {
++	AXI_DAC_BUS_TYPE_NONE,
++	AXI_DAC_BUS_TYPE_DDR_QSPI,
++};
++
++struct axi_dac_info {
++	unsigned int version;
++	int bus_type;
+ };
+ 
+ struct axi_dac_state {
+@@ -77,6 +114,7 @@ struct axi_dac_state {
+ 	 * data/variables.
+ 	 */
+ 	struct mutex lock;
++	const struct axi_dac_info *info;
+ 	u64 dac_clk;
+ 	u32 reg_config;
+ 	bool int_tone;
+@@ -461,6 +499,11 @@ static int axi_dac_data_source_set(struct iio_backend *back, unsigned int chan,
+ 		return regmap_update_bits(st->regmap,
+ 					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
+ 					  AXI_DAC_DATA_SEL, AXI_DAC_DATA_DMA);
++	case IIO_BACKEND_INTERNAL_RAMP_16:
++		return regmap_update_bits(st->regmap,
++					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
++					  AXI_DAC_DATA_SEL,
++					  AXI_DAC_DATA_INTERNAL_RAMP_16);
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -518,9 +561,192 @@ static int axi_dac_reg_access(struct iio_backend *back, unsigned int reg,
+ 	return regmap_write(st->regmap, reg, writeval);
+ }
+ 
++static int axi_dac_ext_sync_enable(struct iio_backend *back)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	return regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_1,
++			       AXI_DAC_EXT_SYNC_ARM);
++}
++
++static int axi_dac_ext_sync_disable(struct iio_backend *back)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	return regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_1,
++				 AXI_DAC_EXT_SYNC_DISARM);
++}
++
++static int axi_dac_ddr_enable(struct iio_backend *back)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	return regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
++				 AXI_DAC_SDR_DDR_N);
++}
++
++static int axi_dac_ddr_disable(struct iio_backend *back)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	return regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
++			       AXI_DAC_SDR_DDR_N);
++}
++
++static int axi_dac_buffer_enable(struct iio_backend *back)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	return regmap_set_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
++			       AXI_DAC_STREAM_ENABLE);
++}
++
++static int axi_dac_buffer_disable(struct iio_backend *back)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	return regmap_clear_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
++				 AXI_DAC_STREAM_ENABLE);
++}
++
++static int axi_dac_data_transfer_addr(struct iio_backend *back, u32 address)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	/*
++	 * Sample register address, when the DAC is configured, or stream
++	 * start address when the FSM is in stream state.
++	 */
++	return regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
++				  AXI_DAC_ADDRESS,
++				  FIELD_PREP(AXI_DAC_ADDRESS, address));
++}
++
++static int axi_dac_data_format_set(struct iio_backend *back, unsigned int ch,
++				   const struct iio_backend_data_fmt *data)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	if (data->type == IIO_BACKEND_DATA_UNSIGNED)
++		return regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
++					 AXI_DAC_UNSIGNED_DATA);
++
++	return -EINVAL;
++}
++
++static int axi_dac_read_raw(struct iio_backend *back,
++			    struct iio_chan_spec const *chan,
++			    int *val, int *val2, long mask)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_FREQUENCY:
++		*val = clk_get_rate(devm_clk_get(st->dev, 0));
++
++		return IIO_VAL_INT;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int axi_dac_bus_reg_write(struct iio_backend *back, u32 reg,
++				 unsigned int val, size_t data_size)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	switch (st->info->bus_type) {
++	case AXI_DAC_BUS_TYPE_DDR_QSPI: {
++		int ret;
++		u32 ival;
++
++		if (data_size == 2)
++			ival = FIELD_PREP(AXI_DAC_DATA_WR_16, val);
++		else
++			ival = FIELD_PREP(AXI_DAC_DATA_WR_8, val);
++
++		ret = regmap_write(st->regmap, AXI_DAC_CNTRL_DATA_WR, ival);
++		if (ret)
++			return ret;
++
++		/*
++		 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
++		 * the data size. So keeping data size control here only,
++		 * since data size is mandatory for to the current transfer.
++		 * DDR state handled separately by specific backend calls,
++		 * generally all raw register writes are SDR.
++		 */
++		if (data_size == 1)
++			ret = regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
++					      AXI_DAC_SYMB_8B);
++		else
++			ret = regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
++						AXI_DAC_SYMB_8B);
++		if (ret)
++			return ret;
++
++		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
++					 AXI_DAC_ADDRESS,
++					 FIELD_PREP(AXI_DAC_ADDRESS, reg));
++		if (ret)
++			return ret;
++
++		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
++					 AXI_DAC_TRANSFER_DATA,
++					 AXI_DAC_TRANSFER_DATA);
++		if (ret)
++			return ret;
++
++		ret = regmap_read_poll_timeout(st->regmap,
++					       AXI_DAC_REG_CUSTOM_CTRL, ival,
++					       ival & AXI_DAC_TRANSFER_DATA,
++					       10, 100 * KILO);
++		if (ret)
++			return ret;
++
++		return regmap_clear_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
++					  AXI_DAC_TRANSFER_DATA);
++		}
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int axi_dac_bus_reg_read(struct iio_backend *back, u32 reg,
++				unsigned int *val, size_t data_size)
++{
++	struct axi_dac_state *st = iio_backend_get_priv(back);
++
++	switch (st->info->bus_type) {
++	case AXI_DAC_BUS_TYPE_DDR_QSPI: {
++		int ret;
++		u32 bval;
++
++		bval = 0;
++		ret = axi_dac_bus_reg_write(back, AXI_DAC_RD_ADDR(reg), 0,
++					    data_size);
++		if (ret)
++			return ret;
++
++		ret = regmap_read_poll_timeout(st->regmap, AXI_DAC_UI_STATUS,
++					       bval, bval != AXI_DAC_BUSY,
++					       10, 100);
++		if (ret)
++			return ret;
++
++		return regmap_read(st->regmap, AXI_DAC_CNTRL_DATA_RD, val);
++		}
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ static const struct iio_backend_ops axi_dac_generic_ops = {
+ 	.enable = axi_dac_enable,
+ 	.disable = axi_dac_disable,
++	.read_raw = axi_dac_read_raw,
+ 	.request_buffer = axi_dac_request_buffer,
+ 	.free_buffer = axi_dac_free_buffer,
+ 	.extend_chan_spec = axi_dac_extend_chan,
+@@ -528,6 +754,16 @@ static const struct iio_backend_ops axi_dac_generic_ops = {
+ 	.ext_info_get = axi_dac_ext_info_get,
+ 	.data_source_set = axi_dac_data_source_set,
+ 	.set_sample_rate = axi_dac_set_sample_rate,
++	.ext_sync_enable = axi_dac_ext_sync_enable,
++	.ext_sync_disable = axi_dac_ext_sync_disable,
++	.ddr_enable = axi_dac_ddr_enable,
++	.ddr_disable = axi_dac_ddr_disable,
++	.buffer_enable = axi_dac_buffer_enable,
++	.buffer_disable = axi_dac_buffer_disable,
++	.data_format_set = axi_dac_data_format_set,
++	.data_transfer_addr = axi_dac_data_transfer_addr,
++	.bus_reg_read = axi_dac_bus_reg_read,
++	.bus_reg_write = axi_dac_bus_reg_write,
+ 	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_dac_reg_access),
+ };
+ 
+@@ -545,8 +781,8 @@ static const struct regmap_config axi_dac_regmap_config = {
+ 
+ static int axi_dac_probe(struct platform_device *pdev)
+ {
+-	const unsigned int *expected_ver;
+ 	struct axi_dac_state *st;
++	const struct axi_dac_info *info;
+ 	void __iomem *base;
+ 	unsigned int ver;
+ 	struct clk *clk;
+@@ -556,10 +792,12 @@ static int axi_dac_probe(struct platform_device *pdev)
+ 	if (!st)
+ 		return -ENOMEM;
+ 
+-	expected_ver = device_get_match_data(&pdev->dev);
+-	if (!expected_ver)
++	info = device_get_match_data(&pdev->dev);
++	if (!info)
+ 		return -ENODEV;
+ 
++	st->info = info;
++
+ 	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(clk),
+@@ -588,12 +826,13 @@ static int axi_dac_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (ADI_AXI_PCORE_VER_MAJOR(ver) != ADI_AXI_PCORE_VER_MAJOR(*expected_ver)) {
++	if (ADI_AXI_PCORE_VER_MAJOR(ver) !=
++		ADI_AXI_PCORE_VER_MAJOR(st->info->version)) {
+ 		dev_err(&pdev->dev,
+ 			"Major version mismatch. Expected %d.%.2d.%c, Reported %d.%.2d.%c\n",
+-			ADI_AXI_PCORE_VER_MAJOR(*expected_ver),
+-			ADI_AXI_PCORE_VER_MINOR(*expected_ver),
+-			ADI_AXI_PCORE_VER_PATCH(*expected_ver),
++			ADI_AXI_PCORE_VER_MAJOR(st->info->version),
++			ADI_AXI_PCORE_VER_MINOR(st->info->version),
++			ADI_AXI_PCORE_VER_PATCH(st->info->version),
+ 			ADI_AXI_PCORE_VER_MAJOR(ver),
+ 			ADI_AXI_PCORE_VER_MINOR(ver),
+ 			ADI_AXI_PCORE_VER_PATCH(ver));
+@@ -631,10 +870,18 @@ static int axi_dac_probe(struct platform_device *pdev)
  	return 0;
  }
  
-+/**
-+ * iio_backend_ext_sync_enable - Enable external synchronization
-+ * @back: Backend device
-+ *
-+ * Enable synchronization by external signal.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_ext_sync_enable(struct iio_backend *back)
-+{
-+	return iio_backend_op_call(back, ext_sync_enable);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_enable, IIO_BACKEND);
+-static unsigned int axi_dac_9_1_b_info = ADI_AXI_PCORE_VER(9, 1, 'b');
++static const struct axi_dac_info dac_generic = {
++	.version = ADI_AXI_PCORE_VER(9, 1, 'b'),
++};
 +
-+/**
-+ * iio_backend_ext_sync_disable - Disable external synchronization
-+ * @back: Backend device
-+ *
-+ * Disable synchronization by external signal.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_ext_sync_disable(struct iio_backend *back)
-+{
-+	return iio_backend_op_call(back, ext_sync_disable);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_disable, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
-+ * @back: Backend device
-+ *
-+ * Enabling DDR, data is generated by the IP at each front
-+ * (raising and falling) of the bus clock signal.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_ddr_enable(struct iio_backend *back)
-+{
-+	return iio_backend_op_call(back, ddr_enable);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
-+ * @back: Backend device
-+ *
-+ * Disabling DDR data is generated byt the IP at rising or falling front
-+ * of the interface clock signal (SDR, Single Data Rate).
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_ddr_disable(struct iio_backend *back)
-+{
-+	return iio_backend_op_call(back, ddr_disable);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_buffer_enable - Enable iio buffering
-+ * @back: Backend device
-+ *
-+ * Enabling the buffer, buffer data is processed and sent out from the
-+ * bus interface.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_buffer_enable(struct iio_backend *back)
-+{
-+	return iio_backend_op_call(back, buffer_enable);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_buffer_disable - Disable iio buffering
-+ * @back: Backend device
-+ *
-+ * Disabling the buffer, buffer data transfer on the bus interface
-+ * is stopped.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_buffer_disable(struct iio_backend *back)
-+{
-+	return iio_backend_op_call(back, buffer_disable);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_disable, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_data_transfer_addr - Set data address.
-+ * @back: Backend device
-+ * @address: Data register address
-+ *
-+ * Some devices may need to inform the backend about an address
-+ * where to read or write the data.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address)
-+{
-+	return iio_backend_op_call(back, data_transfer_addr, address);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_data_transfer_addr, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_bus_reg_read - Read from the interface bus
-+ * @back: Backend device
-+ * @reg: Register valule
-+ * @val: Pointer to register value
-+ * @data_size: Transfer data size in bytes
-+ *
-+ * A backend may operate on a specific interface with a related bus.
-+ * Read from the interface bus.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_bus_reg_read(struct iio_backend *back, u32 reg,
-+			     unsigned int *val, size_t data_size)
-+{
-+	if (!data_size)
-+		return -EINVAL;
-+
-+	return iio_backend_op_call(back, bus_reg_read, reg, val, data_size);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_bus_reg_read, IIO_BACKEND);
-+
-+/**
-+ * iio_backend_bus_reg_write - Write on the interface bus
-+ * @back: Backend device
-+ * @reg: Register value
-+ * @val: Register Value
-+ * @data_size: Transfer data size in bytes
-+ *
-+ * A backend may operate on a specific interface with a related bus.
-+ * Write to the interface bus.
-+ *
-+ * RETURNS:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_bus_reg_write(struct iio_backend *back, u32 reg,
-+			      unsigned int val, size_t data_size)
-+{
-+	if (!data_size)
-+		return -EINVAL;
-+
-+	return iio_backend_op_call(back, bus_reg_write, reg, val, data_size);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_bus_reg_write, IIO_BACKEND);
-+
- static struct iio_backend *__devm_iio_backend_fwnode_get(struct device *dev, const char *name,
- 							 struct fwnode_handle *fwnode)
- {
-diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-index 37d56914d485..eb8c5bb74bb5 100644
---- a/include/linux/iio/backend.h
-+++ b/include/linux/iio/backend.h
-@@ -14,12 +14,14 @@ struct iio_dev;
- enum iio_backend_data_type {
- 	IIO_BACKEND_TWOS_COMPLEMENT,
- 	IIO_BACKEND_OFFSET_BINARY,
-+	IIO_BACKEND_DATA_UNSIGNED,
- 	IIO_BACKEND_DATA_TYPE_MAX
- };
++static const struct axi_dac_info dac_ad3552r = {
++	.version = ADI_AXI_PCORE_VER(9, 1, 'b'),
++	.bus_type = AXI_DAC_BUS_TYPE_DDR_QSPI,
++};
  
- enum iio_backend_data_source {
- 	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
- 	IIO_BACKEND_EXTERNAL,
-+	IIO_BACKEND_INTERNAL_RAMP_16,
- 	IIO_BACKEND_DATA_SOURCE_MAX
+ static const struct of_device_id axi_dac_of_match[] = {
+-	{ .compatible = "adi,axi-dac-9.1.b", .data = &axi_dac_9_1_b_info },
++	{ .compatible = "adi,axi-dac-9.1.b", .data = &dac_generic },
++	{ .compatible = "adi,axi-dac-ad3552r", .data = &dac_ad3552r },
+ 	{}
  };
- 
-@@ -89,6 +91,15 @@ enum iio_backend_sample_trigger {
-  * @read_raw: Read a channel attribute from a backend device
-  * @debugfs_print_chan_status: Print channel status into a buffer.
-  * @debugfs_reg_access: Read or write register value of backend.
-+ * @ext_sync_enable: Enable external synchronization.
-+ * @ext_sync_disable: Disable external synchronization.
-+ * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
-+ * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
-+ * @buffer_enable: Enable data buffer.
-+ * @buffer_disable: Disable data buffer.
-+ * @data_transfer_addr: Set data address.
-+ * @bus_reg_read: Read from the interface bus.
-+ * @bus_reg_write: Write on the interface bus.
-  **/
- struct iio_backend_ops {
- 	int (*enable)(struct iio_backend *back);
-@@ -129,6 +140,17 @@ struct iio_backend_ops {
- 					 size_t len);
- 	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int reg,
- 				  unsigned int writeval, unsigned int *readval);
-+	int (*ext_sync_enable)(struct iio_backend *back);
-+	int (*ext_sync_disable)(struct iio_backend *back);
-+	int (*ddr_enable)(struct iio_backend *back);
-+	int (*ddr_disable)(struct iio_backend *back);
-+	int (*buffer_enable)(struct iio_backend *back);
-+	int (*buffer_disable)(struct iio_backend *back);
-+	int (*data_transfer_addr)(struct iio_backend *back, u32 address);
-+	int (*bus_reg_read)(struct iio_backend *back, u32 reg,
-+			    unsigned int *val, size_t data_size);
-+	int (*bus_reg_write)(struct iio_backend *back, u32 reg,
-+			     unsigned int val, size_t data_size);
- };
- 
- /**
-@@ -164,6 +186,17 @@ int iio_backend_data_sample_trigger(struct iio_backend *back,
- int devm_iio_backend_request_buffer(struct device *dev,
- 				    struct iio_backend *back,
- 				    struct iio_dev *indio_dev);
-+int iio_backend_ext_sync_enable(struct iio_backend *back);
-+int iio_backend_ext_sync_disable(struct iio_backend *back);
-+int iio_backend_ddr_enable(struct iio_backend *back);
-+int iio_backend_ddr_disable(struct iio_backend *back);
-+int iio_backend_buffer_enable(struct iio_backend *back);
-+int iio_backend_buffer_disable(struct iio_backend *back);
-+int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address);
-+int iio_backend_bus_reg_read(struct iio_backend *back, u32 reg,
-+			     unsigned int *val, size_t data_size);
-+int iio_backend_bus_reg_write(struct iio_backend *back, u32 reg,
-+			      unsigned int val, size_t data_size);
- ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr_t private,
- 				 const struct iio_chan_spec *chan,
- 				 const char *buf, size_t len);
+ MODULE_DEVICE_TABLE(of, axi_dac_of_match);
 
 -- 
 2.45.0.rc1
