@@ -1,171 +1,187 @@
-Return-Path: <linux-kernel+bounces-316207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B301996CC94
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5728896CC96
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4F351C22B61
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736F61C22D40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C852131E38;
-	Thu,  5 Sep 2024 02:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55C131E38;
+	Thu,  5 Sep 2024 02:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="gE7XxYl3";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="oKSu0/Wc"
-Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D+EpqoZN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0098EF9D4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E25D138490
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725503006; cv=none; b=Q4eNpmF9CHVJESrDvgml2rkpUS6eaKLpToTLJ6rxOgYNcqUbtK2hfu+hr6Rj15BabpGvPdi4bE44v7//8WGpwQcWbvNx4JyKtM/sWdaabjNJIYJUiIc9rKyaonZthRpm6CfthzgO6qetpVKHWa5+DXEXt4u7khYLzIBVfjdq9xM=
+	t=1725503041; cv=none; b=DGq3B/mLsEwxAtxVgJ/8zsD6SFrtgF+osZpOD4jPFLxukBG8Yq9eJv89oM+4tiuQYqMdaI0cZ7KpG+6i9JFJ8K9gYjuceKYTPK/KAJCwaRznW4hUjyHLGCXpVavusu1y/LrwSxzxzECq8ylfG4qa8pE9DqUUIqbEYQ4tmAOozPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725503006; c=relaxed/simple;
-	bh=lhw3OBQuK7/2O1QLDwTTdW8+9of6164bBZpADs1sncY=;
+	s=arc-20240116; t=1725503041; c=relaxed/simple;
+	bh=a6s7qQ3k+HcZs8eL+uK/csotPie51XK3iW4gPhvjzLs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cSL/lz2PtQGpb8hIk1YoT3iQFFNaGaMDZYqAeo65XCqj66zIg2fRckblqDrJijm4IZ+zaqFnG3kxmmENMQOgplLr74M3pmEzUNdBAYK9MCchqsMj58BHNF7F3n7/Yrg+QDTjmc7qJaafjk0Vavh2oiviRoKXEeH0w99pHmqcYzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=gE7XxYl3; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=oKSu0/Wc; arc=none smtp.client-ip=169.235.156.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1725503005; x=1757039005;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:references:in-reply-to:
-   from:date:message-id:subject:to:cc:content-type:
-   content-transfer-encoding:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=lhw3OBQuK7/2O1QLDwTTdW8+9of6164bBZpADs1sncY=;
-  b=gE7XxYl3Kfj7LOy/Sa+8MTvyE3kCZ3TFhdLmW5zqW0W/T5MYUvGqcfTG
-   zC6e8d6lV4NG+ytgegbywMBBSc01mB9P6nNddakDZYsYntWcFrXnI/oj0
-   ouGpL1roGkhbe+k/VGNb60YMYwME2jhFX3ZD70dwiUyJJqYj+fv4d2QZX
-   5i+7q/yalvANnuKW8ubkXIBeUs//b6NbWG0f88SngY4n33t7iX2McbrVD
-   4O2h3oBaVrKNz1aVrdIxqVPj1s9bzLJrnPD3anTpxSJKuaF69hkIiCuWW
-   NaCGAGoIjFmASBfojqFDAIfDfMFOaqR+HQc9Vu7G2nr2BDIJG19syivwg
-   g==;
-X-CSE-ConnectionGUID: 1dhjRRVmQ06mdCDCdus9Eg==
-X-CSE-MsgGUID: Q7GtxrSmQQ611dD3tCReUA==
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 04 Sep 2024 19:23:18 -0700
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7d50ac2e42dso204088a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1725502997; x=1726107797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYDHcfMjZvkDiDOXakZvxVe+vma0YTXAPDxxJz3Bl3o=;
-        b=oKSu0/Wc2OuvYB++yXFEYEMiL1GyiLPQdpUzmmpfxmk+Wx1B3ZW6RCKOHzmiwumUiO
-         YZZChimUIjAQ+UU7LAl81frXRpGRptz2rgyjaIUQPE1e5cgU94/5REfa5jEJp5P+cqug
-         RX4QxgfUWRh9uLxPGPsFaRncIa3K/1UKs9Bts=
+	 To:Cc:Content-Type; b=rtsY+LqMR5pxD49F89lz0Ejy4CTey7x4Nvj+9TO80TLicbAXlW7itEs/LwIKajVynK5QrQwz1slQSHfk4F7rsw7Ca11491aMB81JUSMNMiDAM798XPW/FdRJEPfonONgcdUApVpMv2XnkPcLzw5/BJsofVNZKw2lftSkpsT7i00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D+EpqoZN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725503037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a6s7qQ3k+HcZs8eL+uK/csotPie51XK3iW4gPhvjzLs=;
+	b=D+EpqoZNhv+CMaoTAdfo5Cu3qaEN4+XBBdBymOkz7jwLN0ELNpw+vpymeEOjtfdMvvut4z
+	Z7ozYRMVQMIKNb8+XFvVy2l+NdeX13PtgrRl9n7sY021sko4grJ2WJK7Fz4BFLn2UwZzpD
+	3SB+VvzYZzrIjYYoYHZZkr8NSoUNnHM=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-mniIG-CbPEWQHy2GqLdlDQ-1; Wed, 04 Sep 2024 22:23:56 -0400
+X-MC-Unique: mniIG-CbPEWQHy2GqLdlDQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d876431c4aso274324a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:23:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725502997; x=1726107797;
+        d=1e100.net; s=20230601; t=1725503035; x=1726107835;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hYDHcfMjZvkDiDOXakZvxVe+vma0YTXAPDxxJz3Bl3o=;
-        b=c1pqHvN5Bxhz+vdwqg4n4+YWsLWHua455UZUnsLLzl9DGCcUMeqMHUfTunn/h9pUUZ
-         VzAgzqqdQr2cAF5/B04wDqT0pbfcuTWW6sdYfAR1XZIqG7NHX1wx+V7ubRl62D/FE/kg
-         7xUu9SlPZfkwaCyoYYhYAJnMzOdZFF0PGv9bNn3B6rwLwyYQJIZBPW0pk4mIxzzyNxfj
-         NSNvojVRpBVotUsl9AAaP/ylbYU+zzbt1bZvtsrIIeCV5CMx1kYUHHt375sMPcZHWp8U
-         RAf4KcQz1Pm7MbmKNj/CIl/5M97zRDcojHnHNtmcwuQi58IxxBnet4QYHQrom34Ks5mW
-         //Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqWVoDPi7nvACNUa+bwgoM79ICHxj7QYPxcWFFtyWHULoKnO7ouLUGOPxUpr0C+yn32emfl9AQzkAorQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmdBwKrkPb5nWf1cLLOpXP2OufA2kshWkFczQkUMyjkMNW9qW5
-	S9LOmD+9CIOPNt1X59NwKHbXa+eGU3plmLd4dcK00S3/f92XbXP7oD3tz2YW9fgQzqDlJBVmPD1
-	bGXJ3PqKEXnhwpUaJW7XUw3nbI9UxZcleHqky9GEex+NmbFxBHdzOBp/orUpLPzbN/ocjr/F+YF
-	5aU1CjeV5MLetSf5U/7rZsoKlz6hi4zAC36y7Y7A==
-X-Received: by 2002:a05:6a21:3213:b0:1ce:d9a2:66ed with SMTP id adf61e73a8af0-1ced9a26870mr14829837637.48.1725502997471;
-        Wed, 04 Sep 2024 19:23:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEU8EZ271k5Z+ERiwyouSa4tPgCyjiar3qkx+0DIkWhii/uNad7/cCyb/VjsF4omGSKnp7GAtYK9v4CGZR3FAE=
-X-Received: by 2002:a05:6a21:3213:b0:1ce:d9a2:66ed with SMTP id
- adf61e73a8af0-1ced9a26870mr14829823637.48.1725502997040; Wed, 04 Sep 2024
- 19:23:17 -0700 (PDT)
+        bh=a6s7qQ3k+HcZs8eL+uK/csotPie51XK3iW4gPhvjzLs=;
+        b=CdkmLHJrY+zGK4rbPNwzcHKu80TPIi0HhUvaq5ZmJJxc3r8evpGoYuiNJvhgIOvqCk
+         AwTIKO9LOfKZMl+TMZ+2/JiM7rQvtqKsMLjLSlpfLj5Kmw7wF63TizUWMcwWoBMSiw+M
+         FIu80pytZ3yQ7YQD5EyEH7Klml5/6NDdRRvGWAc5f9Ph9eYAmcDRk00BOC2cZIR91rHq
+         0TFwnnMvMmPyv+SFmyjxYhz/MxTDvoQtU5xZc3CWCj3RS8z0OfcWfDC83h9Mhr44klVs
+         oc3RQb2L6+mMhgqqYv4HJ/Va3v9vmZ362354SQOCF1iDTM0AcjQuPaNzhTq65e2EP4il
+         IfZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwrDg0X7UhJ5bw+taRNgEZICBjoNHcIy7XotBBFoRcCENmMVwaTcUs2MGob0CGkVwpMP670jlXeOQogbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCRu9Nce9oHO2b+TD8Ju2d1xdAySuGczwWBcAQmXPGgx5CLycZ
+	ZRj6cBhyFhbqgp1dZdh1VQE80cGGyzO/pSXvYPkWsGurxOXXPBDJRL8/2MgQqeYsifmsBUt37XA
+	+mEdx0PC46r2a/R0fe4JCUrUhpQf1D1x2tCEwXSBCdFEQ59NLHmZOf6MuPRfoyARNBh11NcpAKF
+	ty5SkM2la9pzgXf4TwSnScSvkOSFJk6mJ+QOCB
+X-Received: by 2002:a17:90a:fd8b:b0:2c5:10a6:e989 with SMTP id 98e67ed59e1d1-2da6344ce5bmr7804066a91.35.1725503035425;
+        Wed, 04 Sep 2024 19:23:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG23zHXhEHTjyKBW3CywgbRBX6O92NrUsGkTQ5WvgrENGy5961jGcrmiJ4JtIcJZJk6DZcvqrJ35iW8k8+jExs=
+X-Received: by 2002:a17:90a:fd8b:b0:2c5:10a6:e989 with SMTP id
+ 98e67ed59e1d1-2da6344ce5bmr7804048a91.35.1725503034966; Wed, 04 Sep 2024
+ 19:23:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
- <ZtAunXBPC4WElcez@pc636> <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
- <ZtieQFsSiALVVGld@pc636>
-In-Reply-To: <ZtieQFsSiALVVGld@pc636>
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 4 Sep 2024 19:23:04 -0700
-Message-ID: <CALAgD-7WAY6FwTNGdt0BQ2S99Nr+yJ5XyWhA_L_SsbkKsHBrFw@mail.gmail.com>
-Subject: Re: BUG: WARNING in kvfree_rcu_bulk
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, 
-	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com, 
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, 
-	qiang.zhang1211@gmail.com, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yu Hao <yhao016@ucr.edu>
+References: <20240903171514.201569-1-carlos.bilbao.osdev@gmail.com>
+ <20240903171514.201569-3-carlos.bilbao.osdev@gmail.com> <CACGkMEvHU0VnOEZbVnEr1SvmOF5PhMtKk=M2o7Wwq-DUO9p7Uw@mail.gmail.com>
+ <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com> <CACGkMEtZHnkBj2JKaEp=7xURtkUFy=vFQEO8LZ7z7hoFafDMVg@mail.gmail.com>
+ <ea0010cc-1028-4fe6-9f95-26677142fe42@nvidia.com>
+In-Reply-To: <ea0010cc-1028-4fe6-9f95-26677142fe42@nvidia.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 5 Sep 2024 10:23:43 +0800
+Message-ID: <CACGkMEvfdUYLjx-Z+oB11XW-54ErJsQMKcnu2p=dsj5N_BiEKw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com, shannon.nelson@amd.com, 
+	sashal@kernel.org, alvaro.karsz@solid-run.com, christophe.jaillet@wanadoo.fr, 
+	steven.sistare@oracle.com, bilbao@vt.edu, xuanzhuo@linux.alibaba.com, 
+	johnah.palmer@oracle.com, eperezma@redhat.com, cratiu@nvidia.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Carlos Bilbao <cbilbao@digitalocean.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Here is to set up the reproducing environment:
-https://github.com/TomAPU/Linux610BugReort
-We tested it, and it can reproduce.
-
-On Wed, Sep 4, 2024 at 10:52=E2=80=AFAM Uladzislau Rezki <urezki@gmail.com>=
+On Thu, Sep 5, 2024 at 1:48=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com>=
  wrote:
 >
-> Hello!
 >
+>
+> On 04.09.24 08:34, Jason Wang wrote:
+> > On Wed, Sep 4, 2024 at 1:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.=
+com> wrote:
+> >>
+> >>
+> >>
+> >> On 04.09.24 05:38, Jason Wang wrote:
+> >>> On Wed, Sep 4, 2024 at 1:15=E2=80=AFAM Carlos Bilbao
+> >>> <carlos.bilbao.osdev@gmail.com> wrote:
+> >>>>
+> >>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
+> >>>>
+> >>>> Remove invalid ioctl VHOST_VDPA_SET_CONFIG and all its implementatio=
+ns
+> >>>> with vdpa_config_ops->set_config(). This is needed per virtio spec
+> >>>> requirements; virtio-spec v3.1 Sec 5.1.4 states that "All of the dev=
+ice
+> >>>> configuration fields are read-only for the driver."
+> >>>>
+> >>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+> >>>
+> >>> Note that only the config space of the modern device is read only. So
+> >>> it should be fine to remove vp_vdpa which only works for modern
+> >>> devices.
+> >> Just out of curiosity: how will this work for devices that are not
+> >> v1.3 compliant but are v1.2 compliant?
 > >
-> > Here is the config file:
-> > https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
+> > Devices don't know the version of the spec, it works with features.
+> > For example, most devices mandate ACCESS_PLATFORM which implies a
+> > mandatory VERSION_1. So they are modern devices.
 > >
-> Thank you. I was not able to boot my box using your config file. But i
-> enabled all needed configs in to run your reproduce so it does not
-> complain on below warnings:
->
-> <snip>
-> urezki@pc638:~$ sudo ./a.out
-> the reproducer may not work as expected: USB injection setup failed: fail=
-ed to chmod /dev/raw-gadget
-> the reproducer may not work as expected: 802154 injection setup failed: n=
-etlink_query_family_id failed
-> <snip>
->
-> sudo modprobe raw_gadget
-> sudo modprobe ieee802154
-> sudo modprobe ieee802154_socket
-> sudo modprobe hci
-> sudo modprobe hci_vhci
-> sudo modprobe mac802154
-> sudo modprobe ieee802154
-> sudo modprobe ieee802154_socket
-> sudo modprobe mac802154_hwsim
-> sudo modprobe adf7242
-> sudo modprobe atusb
-> sudo modprobe at86rf230
-> sudo modprobe fakelb
-> sudo modprobe mrf24j40
-> sudo modprobe cc2520
->
-> and even after that i am not able to get any "WARNING in kvfree_rcu_bulk"=
-.
->
-> urezki@pc638:~$ uname -a
-> Linux pc638 6.11.0-rc2+ #3827 SMP PREEMPT_DYNAMIC Wed Sep  4 19:37:22 CES=
-T 2024 x86_64 GNU/Linux
-> urezki@pc638:~$
->
-> is it easy to reproduce? Am i missing something in my setup?
->
-> --
-> Uladzislau Rezki
+> And modern devices should not write to the device config space.
 
+It depends on the type of the device.
 
+For example, for blocking device, write_back could be modified by
+guest if VIRTIO_BLK_F_CONFIG_WCE is neogitated:
 
---=20
-Yours sincerely,
-Xingyu
+"""
+If the VIRTIO_BLK_F_CONFIG_WCE feature is negotiated, the cache mode
+can be read or set through the writeback field. 0 corresponds to a
+writethrough cache, 1 to a writeback cache13. The cache mode after
+reset can be either writeback or writethrough. The actual mode can be
+determined by reading writeback after feature negotiation.
+"""
+
+> This
+> was discouraged in v1.x until v1.3 which now prohibits it. Did I get
+> this right?
+
+It really depends on the semantics of the field. My understanding is
+that, from 1.0 to 1.3 there's no writable fields defined in the spec.
+But it doesn't mean we can't have one in the future.
+
+Thanks
+
+>
+> Thanks,
+> Dragos
+>
+> >> Or is this true of all devices
+> >> except eni?
+> >
+> > ENI depends on the virtio-pci legacy library, so we know it's a legacy
+> > device implementation which allows mac address setting via config
+> > space.
+> >
+> > Thanks
+> >
+> >>
+> >> Thanks,
+> >> Dragos
+> >>>
+> >>> And for eni, it is a legacy only device, so we should not move the
+> >>> set_config there.
+> >>>
+> >>> For the rest, we need the acks for those maintainers.
+> >>>
+> >>> Thanks
+> >>>
+> >>
+> >
+>
+
 
