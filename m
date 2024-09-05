@@ -1,115 +1,209 @@
-Return-Path: <linux-kernel+bounces-317666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D2296E1CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15DC96E1CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652B92890EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5AFA1C24D69
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A8E17BEB7;
-	Thu,  5 Sep 2024 18:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B2717C991;
+	Thu,  5 Sep 2024 18:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rw1yGOFT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bvRB4Yxq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB1B14F125;
-	Thu,  5 Sep 2024 18:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE6A14F125;
+	Thu,  5 Sep 2024 18:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725560430; cv=none; b=pZLYu4q0qrYHF8iIpeULASD/K00NUXxMxb1Ra+qWfV4p2o/jjBlIxjg7z+oxj/9D7Ib1Y3j0iA+ra/5JpvWrV5HS+z2lt/pqWoA4/y/+CpUQjbpOrlFTBCtL2nAJ5EP6sbwez//Kdt7PUSSXdApRKHdMcSoBRqH6bW7KUrFO7xM=
+	t=1725560461; cv=none; b=gfgNFLmZGF+P2ah6gBlBrTCc0e+ei4IBpyuc0cTACWhvsJrQHjbvnvGQLR410nnZ/TQZQ2a8NquNHPUmf6MNiBYMT4jXm2svz+6mFjJr1WRbmzI/YUHheoRXEBKjen6E/2oMf9iZ/V6aDuEkvFgLnnkG8fg/B1/CdaukKF3OtJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725560430; c=relaxed/simple;
-	bh=eYDL/kpipnRxEEdIRfMrtMtgh+v5Hdg5X2Ofbi4YqDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RD4OmqrP5Ktss4Vj7r6frfMWmGMlx68Xz8qgQFTQ8cGhT+9BmAJ6dozMChTrqHH7uQZDj3a3moZgtBc0UqwKBsQWHhLRmtVfQr0MLg8XxwELGgbyK6I20WXNM8nfQ/PurcFhMRBia51zQrN1P62AyrYPU6eq9QTcpUlBoAKDrtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rw1yGOFT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=WYk12iEsbdnlW331g4DNApKiQCHyaZpFj0H6XOnYFho=; b=Rw1yGOFTRlHggJlQrMRp8CtgMF
-	kDHVEeMezbUMAT11yNSIyaVD1FdupgVQ31ZQxBJQ+uX1Br5NtwbsTrfgNvHpgaLSU0MZ7d/7t8+Sq
-	fRxQeJVdJf4mzFs7qIGI8viq0bQpnJNPJxaGLdwyK3zuKiw4lWNUIGca9HN4jCylIN0E=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smH5T-006i0Z-B1; Thu, 05 Sep 2024 20:20:07 +0200
-Date: Thu, 5 Sep 2024 20:20:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Junhao Xie <bigfoot@classfun.cn>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>, FUKAUMI Naoki <naoki@radxa.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: add dts for Ariaboard
- Photonicat RK3568
-Message-ID: <668ac08e-5bba-43cc-82ec-12af1848d528@lunn.ch>
-References: <20240904111456.87089-1-bigfoot@classfun.cn>
- <20240904111456.87089-4-bigfoot@classfun.cn>
- <6030542f-070d-4d76-9a5a-fbfc6bd433e6@lunn.ch>
- <1e189c70-e677-453d-9e31-6637196c2b5c@classfun.cn>
- <3f5bcc6c-5ee0-4fef-bb58-f7acf9551fc1@lunn.ch>
- <fd4fc7a0-7def-4f91-a64c-71689ff71d1c@classfun.cn>
+	s=arc-20240116; t=1725560461; c=relaxed/simple;
+	bh=sAaNMpjYEVtaipe7cxOC1fk/2BscWhTf7K/dUab3xZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTisLqSf9qfR+k10Y1SYiGvnawgra9Ez/gwDTdR9OypJaXjUtmtgp+3v3XHBcwqirPy5oWDaR/TB5QkvTVyen2r8tNPEByCTqzTs+qZeWLM7y9hlckfiDqzAof4MHBUamu58w9a0JXPI1aFzVku/SGumwcKOPIK7TPzDOp693ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bvRB4Yxq; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725560459; x=1757096459;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sAaNMpjYEVtaipe7cxOC1fk/2BscWhTf7K/dUab3xZA=;
+  b=bvRB4YxqdJLB2gNA16Diw5+6FuYMxhfIzuXb6vIE9wnLwKpQbgrz64Qb
+   Uaml7MZKKGaySYLk52lCNMOPmHwIzN8zlFhq7vlatWBjlYryxCTFKYPLh
+   T50u6kAWNOjcDgyP8l7qAYWefcCsQlKB1tohCawZWX1JU87OxYDucC0lv
+   pqrPswd02XrA6XdswlcbDQfUXPjYRyLJfSj/fct9OTUhV+k6SsOfaD+P0
+   6t3t9XeqFM3EowBSDrMCu1MRdAdoI1tVfAOW87E5zB63o1HLrAHN7I7aM
+   qlBt5j5A7hkMfVqRCdcm7ZgihblmXvxMp1/XfCv7dfUySnQpHgWDSyquu
+   g==;
+X-CSE-ConnectionGUID: ogZ8+25tR1+74k9bE40aPA==
+X-CSE-MsgGUID: jk2HOrMQRAipaaL8M2RJpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24462457"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="24462457"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 11:20:58 -0700
+X-CSE-ConnectionGUID: ccz7nhLrTcWKBer3/jrz9Q==
+X-CSE-MsgGUID: G3hfyiG+S7S7AVc+XMMWcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="70511047"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 11:20:58 -0700
+Received: from [10.212.68.73] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 1BADA20B5782;
+	Thu,  5 Sep 2024 11:20:55 -0700 (PDT)
+Message-ID: <8133d432-7674-4d07-bbb5-4131fe5d474e@linux.intel.com>
+Date: Thu, 5 Sep 2024 14:20:54 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd4fc7a0-7def-4f91-a64c-71689ff71d1c@classfun.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] Event parsing fixes
+To: James Clark <james.clark@linaro.org>, irogers@google.com,
+ linux-perf-users@vger.kernel.org, ak@linux.intel.com, namhyung@kernel.org
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Weilin Wang <weilin.wang@intel.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Yang Jihong <yangjihong@bytedance.com>,
+ Colin Ian King <colin.i.king@gmail.com>, Howard Chu <howardchu95@gmail.com>,
+ Ze Gao <zegao2021@gmail.com>, Jing Zhang <renyu.zj@linux.alibaba.com>,
+ Sun Haiyong <sunhaiyong@loongson.cn>, Yicong Yang
+ <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240903102005.78049-1-james.clark@linaro.org>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240903102005.78049-1-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> arch/riscv/boot/dts/starfive/jh7100-starfive-visionfive-v1.dts also
-> uses YT8521. I added rx-internal-delay-ps and tx-internal-delay-ps
-> to rgmii_phy1 of mdio1 according to the prompts, and it now works
-> well using rgmii-id!
+
+
+On 2024-09-03 6:19 a.m., James Clark wrote:
+> I rebased this one and made some other fixes so that I could test it,
+> so I thought I'd repost it here in case it's helpful. I also added a
+> new test.
 > 
-> &mdio1 {
-> 	rgmii_phy1: ethernet-phy@0 {
-> 		compatible = "ethernet-phy-ieee802.3-c22";
-> 		reg = <0x0>;
-> 		rx-internal-delay-ps = <1500>;
-> 		tx-internal-delay-ps = <1500>;
-> 	};
-> };
+> But for the testing it all looks ok.
 > 
-> &gmac1 {
-> 	[...]
-> 	phy-mode = "rgmii-id";
-> 	[...]
-> 	tx_delay = <0x0>;
-> 	rx_delay = <0x0>;
-> 	status = "okay";
-> 	/* Motorcomm YT8521SC WAN port */
-> };
+> There is one small difference where it now hides _all_ default
+> <not supported> events, when previously it would only hide some
+> selected subset of events like "stalled-cycles-frontend". I think
+> this is now more consistent across platforms because, for example,
+> Apple M only has cycles and instructions, and the rest of the
+> default events would always show as <not supported> there.
+> 
+> Tested on Raptor Lake, Kaby Lake, Juno, N1, Ampere (with the DSU
+> cycles PMU) and I also faked an Apple M on Juno. 
+>
 
-That looks O.K.
+The tui mode in perf report is broken on Intel hybrid machine.
 
-The YT8521SC seems to have issues with delays.
-jh7100-starfive-visionfive-v1.dts says
+$perf record -e cycles,instructions sleep 1
+$perf report
 
-/*
- * The board uses a Motorcomm YT8521 PHY supporting RGMII-ID, but requires
- * manual adjustment of the RX internal delay to work properly.  The default
- * RX delay provided by the driver (1.95ns) is too high, but applying a 50%
- * reduction seems to mitigate the issue.
- *
- * It is worth noting the adjustment is not necessary on BeagleV Starlight SBC,
- * which uses a Microchip PHY.  Hence, most likely the Motorcomm PHY is the one
- * responsible for the misbehaviour, not the GMAC.
- */
+Without the patch set, in the tui mode,
+Available samples
+7 cpu_atom/cycles/
+                                     ◆
+0 cpu_core/cycles/
+                                     ▒
+7 cpu_atom/instructions/
+                                     ▒
+0 cpu_core/instructions/
+                                     ▒
+0 dummy:u
 
-	Andrew
+After applying the patch set,
+Available samples
+7 /cycles/
+                                     ◆
+0 /cycles/
+                                     ▒
+7 /instructions/
+                                     ▒
+0 /instructions/
+                                     ▒
+0 dummy:u
+
+
+It looks something wrong with the uniquify_event_name().
+
+Thanks,
+Kan
+
+
+> Changes since v5:
+>   * Test on x86 non hybrid
+>   * Assume 1 PMU in the test when no PMUs expose /cpus file
+> 
+> Changes since v4:
+> 
+>   * Hide all <not supported> default events when not verbose
+>   * Remove previous note about <not supported> behavior from the cover
+>     letter and replace it with a new note about the new behavior
+>  
+> Changes since v3:
+> 
+>   * Rebase onto perf-tools-next 6236ebe07
+>   * Fix Intel TPEBS counting mode test
+>   * Fix arm-spe build
+>   * Add support for DT devices in stat test
+>   * Add a new test for hybrid perf stat default arguments
+> 
+> Ian Rogers (5):
+>   perf evsel: Add alternate_hw_config and use in evsel__match
+>   perf stat: Uniquify event name improvements
+>   perf stat: Remove evlist__add_default_attrs use strings
+>   perf evsel x86: Make evsel__has_perf_metrics work for legacy events
+>   perf evsel: Remove pmu_name
+> 
+> James Clark (2):
+>   perf test: Make stat test work on DT devices
+>   perf test: Add a test for default perf stat command
+> 
+>  tools/perf/arch/arm64/util/arm-spe.c          |   4 +-
+>  tools/perf/arch/x86/util/evlist.c             |  74 +----
+>  tools/perf/arch/x86/util/evsel.c              |  35 ++-
+>  tools/perf/builtin-diff.c                     |   6 +-
+>  tools/perf/builtin-stat.c                     | 291 +++++++-----------
+>  tools/perf/tests/parse-events.c               |   2 +-
+>  tools/perf/tests/shell/stat.sh                |  37 ++-
+>  .../perf/tests/shell/test_stat_intel_tpebs.sh |  11 +-
+>  tools/perf/util/evlist.c                      |  46 +--
+>  tools/perf/util/evlist.h                      |  12 -
+>  tools/perf/util/evsel.c                       |  28 +-
+>  tools/perf/util/evsel.h                       |  22 +-
+>  tools/perf/util/metricgroup.c                 |   4 +-
+>  tools/perf/util/parse-events.c                |  58 ++--
+>  tools/perf/util/parse-events.h                |   8 +-
+>  tools/perf/util/parse-events.y                |   2 +-
+>  tools/perf/util/pmu.c                         |   6 +-
+>  tools/perf/util/pmu.h                         |   2 +-
+>  tools/perf/util/stat-display.c                | 109 +++++--
+>  tools/perf/util/stat-shadow.c                 |  14 +-
+>  tools/perf/util/stat.c                        |   2 +-
+>  21 files changed, 360 insertions(+), 413 deletions(-)
+> 
 
