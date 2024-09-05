@@ -1,199 +1,98 @@
-Return-Path: <linux-kernel+bounces-317512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEB696DF5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E0396DF5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBD0287EE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53287282F08
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41467DA92;
-	Thu,  5 Sep 2024 16:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BE91A00CE;
+	Thu,  5 Sep 2024 16:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wwMRaXp3"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxxCkMjS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EEA77F10
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C247F69;
+	Thu,  5 Sep 2024 16:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552998; cv=none; b=l6q0+oa4PlRbAtpGLmZd6QTFmF4rVbkj/SsgxV6L0bEwaFHe0cXtwfyaPq7OEif/b98DDOLq7N1JhrlR9xSzkNHigFrY7prF92TlD3U0X1u/2718dOfZbQSlsddmzwOOganOhGmRV+/G1FEWKj/zET4b2fMqpqQOrNJbAlSwUs4=
+	t=1725553105; cv=none; b=Ky8mkp5F1UR8I1PI4ZUFDtlp+XebTNuEK2PAKgVdcEadBghsExkZemIKD+Utp63KV4TuP4lKy6IhC1Aq6M6uLpK83WgPSstGIgZjOse8Nxbiunz1m+C6Jl9s4AFqIX2xE1e51i4zEHadFQ25bEHv6liFd+v7AeMnDLxmzzewXL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552998; c=relaxed/simple;
-	bh=XbT1YCH8SqWz/eTmMsIAXlLpeVmIpBn9oe+hrkLvpv4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SFQeViYonMbCtfb+SLPshoLqrHEUdUiwktX3cJMiswuojbvUshzahWkgg+VDcCw/TusmIz6kWlBIm4M8ydZz7KMPZncBLoZb+2s15YZpSErRN4nQ00HqIX/QbpArfEHiBCbS0isrs/Mk7QJoDX86kHlxW1zxj2cVtGRGoRsKehU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wwMRaXp3; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db2a9da800so12143767b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 09:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725552995; x=1726157795; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PjXtA67NkTqAhDw+xk2sd8wVjIX4v9yriXRxfqRD17k=;
-        b=wwMRaXp3D0pfhxs6kI06VCpVnTjEHBNSheaRD4QaVBteBSHAzbUGezoU3PTC0P+fd8
-         b9y2FJujU2DXRy7rkj6+EraD74exe5k50Cxv+A9qVA8r6S2m8NWKQUC1RebEc2oHgt4m
-         6bH0afomWlz1+oOkrCwslPV30OTFy/yS7LfL3sA2Um88eONH6a8kIhPX11UYCg88YXZj
-         YXyKP6Sn+RGbquCvWl8oJDd0Uf1IMsQS7XadKPcd9xJJbdj5KBpYK3LVO5d24vtPivcr
-         gOZDr/A4VZuz0s3HmtYx0Od2mmhtP5faPbHGQF06v0GPFV8E3iM9TO3yf9XWH6P1LjEc
-         1I+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725552995; x=1726157795;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PjXtA67NkTqAhDw+xk2sd8wVjIX4v9yriXRxfqRD17k=;
-        b=B4DIWQ4FYjFLkyFkWFUuRe9kYVbGXzlKq8C2xzlLMbjzX0uIesJ39wrcCnoM5Mo/2c
-         JSKiMjjO++cSJ6TrY8udYcXd9rNDaEd0/Yq1da8yWVbkcnUW6K3AdMJYq3jBPubX1Iqy
-         tBplC4WDZWbRDbzJt3tMtYfdWpijoGOJqNHJ+SROsW1QKgsF7DEY0nIICiPWDRnN/MkR
-         UobHa0Xy8yrFBeny2rUtxilG5BI6vbkuiIeWKlyZlNthTCTS9ADELuViqFzdBG9O8rj8
-         7R3azGvnGg7jVgmtHO5+Q2mTyZ9clMn0iQVQCXvcOlnS7j35gwwxLXEEs7DR8eo0zoQg
-         3BFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpWakcf4ajBQGpx7hKFScFYG65XyiNSemRQeNlmozLut0m9KwJyVYk3eC6+NKsmULNwU3PTLsb2wSiNUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdLedYMi8dht3E34kaVvnJxrcGEONYIJwWhphcLBiNj5owqrwq
-	wneLBeAbkeBd1odzbA8T3hiv1hyJb7sclmX4ee4G4PNkK3aoaU+eQEIa5JYqbykoOG1b6oAk/1/
-	JI0S5C1b4EmVLc8i32dUuKbJEhqNRpa9gvyJSSA==
-X-Google-Smtp-Source: AGHT+IHF4JIHvjV5ZU5Sri1yZmo/2IQpX2mnsVMjFO6aJcUWOMDD1IaSX23mBNNsT/EI52Q3fe8hXyMFeVoPQnvlm3E=
-X-Received: by 2002:a05:690c:fc2:b0:666:f7f:a05b with SMTP id
- 00721157ae682-6db2583e3cemr61709927b3.0.1725552995374; Thu, 05 Sep 2024
- 09:16:35 -0700 (PDT)
+	s=arc-20240116; t=1725553105; c=relaxed/simple;
+	bh=9j4vb6M9tnkcgKnPlGRTlGRdfbJ5Vi4j0Kv0XOqxlKM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qvxV9Fy2BGA67pbX8ORLXxFlXRRof5/3LGvjL6FYOfk8NkcGNcEooYByDqiSa0eE7mO1zA26neDkEMlqgcI1XVH6f8UlPJ6lWBpMphNqhhpUKR1aZdicrD6XrfOEVuAcB4Wj9+lGHXkzrCy/Xu6rLLlJzvPC4gldNHL+1XCXNAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxxCkMjS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84382C4CEC5;
+	Thu,  5 Sep 2024 16:18:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725553105;
+	bh=9j4vb6M9tnkcgKnPlGRTlGRdfbJ5Vi4j0Kv0XOqxlKM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hxxCkMjSxsknNWpIYoc5w9V1IyID4BW18taQ3DjCNrzrwzHklhvL/cxlgu10P9QMO
+	 1L4TMhuiIsT5jsuYXPco5o+2jxoRYHJ/ZOo6MZFJoO3QIughD7FmMTU0JYBY5Q6YwB
+	 FsEGz8KWWsIT0M7j/TcpaMkvth4RK5cW/v9T9tLx9HxaJS5zeVPiYw+9R9TTzH8i6m
+	 DWqbi1WkbQqyBewMmVkXABgV7Yj+cRccnTjI2HE/cr361GMxgLtukdKkPy/og6wGth
+	 7zbD0WxKKJyfBZWsJaI7MOWnxA12D4m3soLKZ7mSdDXdgQf6951d6jNXC8LnRM7I5G
+	 H6WqCG3sKZJ0Q==
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	thierry.reding@gmail.com,
+	vdumpa@nvidia.com,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	jonathanh@nvidia.com,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	mochs@nvidia.com,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH next 0/2] iommu/tegra241-cmdqv: Fix two bugs in __tegra241_cmdqv_probe
+Date: Thu,  5 Sep 2024 17:18:18 +0100
+Message-Id: <172554885936.3732078.16345874292461720632.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1725503154.git.nicolinc@nvidia.com>
+References: <cover.1725503154.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823095319.3917639-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20240823095319.3917639-1-peng.fan@oss.nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 5 Sep 2024 18:15:58 +0200
-Message-ID: <CAPDyKFpYgZwNvVnpS0fjmhcEq+yiBizxDTw9nJEyQF287miFJA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: imx: imx93-blk-ctrl: fix power up domain fail
- during early noriq resume
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, victor.liu@nxp.com, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 23 Aug 2024 at 11:44, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Dong Aisheng <aisheng.dong@nxp.com>
->
-> After disabling PXP and having no displays connected, we met the following
-> suspend/resume hang issue on MX93 EVK board.
->
->  Enabling non-boot CPUs ...
->  Detected VIPT I-cache on CPU1
->  GICv3: CPU1: found redistributor 100 region 0:0x0000000048060000
->  CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
->  CPU1 is up
->  imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
->  imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
->  imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
-> ...
->
-> The issue was introduced since the commit c24efa673278
-> ("PM: runtime: Capture device status before disabling runtime PM")
-> which will also check the power.last_status must be RPM_ACTIVE before
-> pm_runtime_get_sync() can return 1 (means already active) even pm_runtime
-> is disabled during no_irq resume stage.
->
-> However, the pm_runtime_set_active() we called ahead of
-> pm_runtime_get_sync() will not update power.last_status which probably like
-> a upstream kernel issue. But that's another issue which may worth an
-> extra fix.
+On Wed, 04 Sep 2024 19:40:41 -0700, Nicolin Chen wrote:
+> Found two more bugs today. And here are the fixes.
+> 
+> Based on Will's for-joerg/arm-smmu/updates branch.
+> 
+> Available on Github:
+> https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-fix
+> 
+> [...]
 
-I think this is confusing, I don't see any calls to
-pm_runtime_set_active() anywhere? Are you referring to some old code?
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
->
-> This patch refers to the solution in the exist similar imx8m blkctrl
-> driver[1] that it will power up upstream domains during blkctl suspend
-> first in order to make sure the power.last_status to be RPM_ACTIVE. Then we
-> can support calling pm_runtime_get_sync in noirq resume stage.
->
-> After fixing, no need extra calling of pm_runtime_set_active() ahead.
->
-> 1. drivers/pmdomain/imx/imx8m-blk-ctrl.c
->
-> Fixes: e9aa77d413c9 ("soc: imx: add i.MX93 media blk ctrl driver")
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/pmdomain/imx/imx93-blk-ctrl.c | 29 +++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->
-> diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> index 904ffa55b8f4..34ac7b722b90 100644
-> --- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> +++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> @@ -424,6 +424,34 @@ static const struct imx93_blk_ctrl_data imx93_media_blk_ctl_dev_data = {
->         .reg_access_table = &imx93_media_blk_ctl_access_table,
->  };
->
-> +static int imx93_blk_ctrl_suspend(struct device *dev)
-> +{
-> +       struct imx93_blk_ctrl *bc = dev_get_drvdata(dev);
-> +
-> +       /*
-> +        * This may look strange, but is done so the generic PM_SLEEP code
-> +        * can power down our domains and more importantly power them up again
-> +        * after resume, without tripping over our usage of runtime PM to
-> +        * control the upstream GPC domains. Things happen in the right order
-> +        * in the system suspend/resume paths due to the device parent/child
-> +        * hierarchy.
-> +        */
-> +       return pm_runtime_resume_and_get(bc->dev);
+[1/2] iommu/tegra241-cmdqv: Drop static at local variable
+      https://git.kernel.org/will/c/2408b81f817b
+[2/2] iommu/tegra241-cmdqv: Do not allocate vcmdq until dma_set_mask_and_coherent
+      https://git.kernel.org/will/c/483e0bd8883a
 
-The reason why we *don't* use a regular parent/child setup of the PM
-domains (genpds) to control power-on/off, is because there seems to be
-a specific sequence that needs to be followed. So, instead we are
-using runtime PM to control the power for the parent PM domain.  See
-the comment in imx93_blk_ctrl_probe().
+Cheers,
+-- 
+Will
 
-I have to admit, it all looks strange to me and seems also very fragile.
-
-That said, why doesn't the sequence matter any longer during system
-suspend/resume. Or maybe the sequence doesn't really matter after all?
-
-> +}
-> +
-> +static int imx93_blk_ctrl_resume(struct device *dev)
-> +{
-> +       struct imx93_blk_ctrl *bc = dev_get_drvdata(dev);
-> +
-> +       pm_runtime_put(bc->dev);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct dev_pm_ops imx93_blk_ctrl_pm_ops = {
-> +       SYSTEM_SLEEP_PM_OPS(imx93_blk_ctrl_suspend, imx93_blk_ctrl_resume)
-> +};
-> +
->  static const struct of_device_id imx93_blk_ctrl_of_match[] = {
->         {
->                 .compatible = "fsl,imx93-media-blk-ctrl",
-> @@ -439,6 +467,7 @@ static struct platform_driver imx93_blk_ctrl_driver = {
->         .remove_new = imx93_blk_ctrl_remove,
->         .driver = {
->                 .name = "imx93-blk-ctrl",
-> +               .pm = pm_sleep_ptr(&imx93_blk_ctrl_pm_ops),
->                 .of_match_table = imx93_blk_ctrl_of_match,
->         },
->  };
-> --
-> 2.37.1
->
-
-Kind regards
-Uffe
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
