@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-317565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CAB96E029
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:46:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8E796DFFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0EBDB2717B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAD42891EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975921A08A9;
-	Thu,  5 Sep 2024 16:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142A51A01CD;
+	Thu,  5 Sep 2024 16:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nerlkPCY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkESTD/C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4556D6F066;
-	Thu,  5 Sep 2024 16:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411A19DF4F;
+	Thu,  5 Sep 2024 16:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725554744; cv=none; b=vC49n5m/ZQQ6sA/0xXtFWdBq6GuuFvxis53CwPXyU/BvLViJ5b97lZED1b0DAG5fpnXUncazQJHMxWiOfqPF7kE/16ohWMKgTkDQeaZqBhPcTaF1YwriWPZqnb5nsGPCqsIN24jzZCG2EXU1xESvRK9zZ/GdomS/DMM570xA9zc=
+	t=1725554490; cv=none; b=i6IFwEjNW1qF2KdrW8t3Sd/jYtMxcBHbJQFSp/MxmyWOt6Ps+Pa606DLHP/crS+clj7/DXQSVrZyn0un2DwEde0rnr/gT+ZtS8HGuwjS6kHvnoLJiyTabRacfSIT0uTkoqh3qqnjELHP1583NcP6ap8j8ndPo2LCguDJ9dsm9gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725554744; c=relaxed/simple;
-	bh=YWwbPzF+sNkt5ZpTARioh/0x0WR47L48CO6YcSiPyKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SguRQPD3A9szuH/qs0sFX6lwU3hvb1uxR6Y6JBgQrX1aP1aMsrZRxw4ALTA0+KyLwY+f90vVEkgYL/Xp3fe3OVgHjwT0KCaAnYArILJRmtIAFeJmZXftLXLNIUJGdqi5U+bU67tgER0cH0FS83/+igSElYhn553tiLSDPTvdVgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nerlkPCY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485974JZ016158;
-	Thu, 5 Sep 2024 16:40:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gH2m8z07VyC9Rs4uG0Uvl0zZaPASslF/e9Q/tX9hoOk=; b=nerlkPCYZhbbBpBr
-	NSScHB2ruGVyMU95nTcKEy0ov3a15xf+EL/4EkQVy2x2jk6QiHENXdA3nRD8sM2g
-	t8LR2skwquCdUa8Wcmy6aApm20yGV0zO7V7NEUVKiyUKQjKjyqxNFfjNu6fdBXC4
-	yc+nNrkQN5ErZhn8q7JWuScM0KiAP2JM+SDJtkaiKrZYx6DkkeZ7HOYPxL8B5PCn
-	XTivXST2ASE0Eb4RfwykgJk6eTUEZolAQ5OHpi6dglMdc5u+2CUS8SnxoyMWc7xc
-	KxqLtZeX+V1pbKCEYC6iW/oKwWiM/fvwlMqeg3LLwpJkuMIKFDlp+h3U7KTb/N21
-	PVEkHw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41egmrn4rf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 16:39:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485GdwfI007444
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 16:39:58 GMT
-Received: from [10.110.102.234] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
- 09:39:55 -0700
-Message-ID: <63f988eb-e638-48fa-b566-3df39588bf7c@quicinc.com>
-Date: Thu, 5 Sep 2024 09:39:54 -0700
+	s=arc-20240116; t=1725554490; c=relaxed/simple;
+	bh=t81NYhEdgyeGvQV8hXjxb4ycQfRyFlKdKW21pIiInew=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HuP62XDFxYVO2oZOVCAWOKMdREFI99jnZN5E9Bja/DxdW+J3E3mhQDt1IrN9ZEMzMmUv7YuwrA7xAG6ubdaVtDeYmU6AyxBFeuqrhr29TJXUH2NGOMpWIdnk2QlDLzLYSKfkswGTVpQZhU6Dua3l/UWjal2OSq2hTxUILbKCquw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkESTD/C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AFFC4CEC3;
+	Thu,  5 Sep 2024 16:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725554489;
+	bh=t81NYhEdgyeGvQV8hXjxb4ycQfRyFlKdKW21pIiInew=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IkESTD/CsIlgw1ao2GOpqDx/htfJLjnYtVBmVpX5Flh/zO2e6iP32Ta6a0/La0PMy
+	 mDQeTXhaXVXtvk+4AK8n9UZ/7QbQLH8K2sXrhwaMxl36EYUNBUr6xrT6olaQ2z8piZ
+	 +g2IpnZSHVAKV3hxyxBGVu2nTJn4sbkivWE+goUl0YCelK9NT6W6YHPJFVtln6iJYL
+	 ELZ2dhy2LqEgsV0UIHKe7aF7rZvdSF2aLv23aezagM2n5wxsqRjxVPmQx9EWv+Y98Z
+	 MjOQhKQDXYB9hrIoBTu80ZykEhDdmJRg1Fpg4/8d7JtsKICQnrM+2+XWeomIByT4MQ
+	 gNxWEZYMncWlA==
+Date: Thu, 5 Sep 2024 11:41:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Wei Huang <wei.huang2@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
+	jing2.liu@intel.com
+Subject: Re: [PATCH V4 02/12] PCI: Add TPH related register definition
+Message-ID: <20240905164128.GA391042@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <sudeep.holla@arm.com>, <andi.shyti@kernel.org>, <tglx@linutronix.de>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>,
-        Praveen Talari
-	<quic_ptalari@quicinc.com>
-References: <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
- <516f17e6-b4b4-4f88-a39f-cc47a507716a@quicinc.com>
- <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
- <204f5cfe-d1ed-40dc-9175-d45f72395361@quicinc.com>
- <70c75241-b6f1-4e61-8451-26839ec71317@kernel.org>
- <75768451-4c85-41fa-82b0-8847a118ea0a@quicinc.com>
- <ce4d6ea9-0ba7-4587-b4a7-3dcb2d6bb1a6@kernel.org>
- <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
- <b1ad1c7a-0995-48e0-8ebc-46a39a5ef4b3@kernel.org>
- <515a2837-69c3-47b2-978b-68ad3f6ad0fc@quicinc.com>
- <0ba03b8e-4dd5-4234-823e-db4c457fa292@lunn.ch>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <0ba03b8e-4dd5-4234-823e-db4c457fa292@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l_oq1IAyrxiZBlBS8JOfAaNdh9tdibTi
-X-Proofpoint-ORIG-GUID: l_oq1IAyrxiZBlBS8JOfAaNdh9tdibTi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_12,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
- spamscore=0 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91a05b5b-a642-4cef-9c81-cba246435aa9@amd.com>
 
+On Thu, Sep 05, 2024 at 10:08:33AM -0500, Wei Huang wrote:
+> On 9/4/24 14:52, Bjorn Helgaas wrote:
+> >> -#define PCI_TPH_CAP_ST_MASK	0x07FF0000	/* ST table mask */
+> >> -#define PCI_TPH_CAP_ST_SHIFT	16	/* ST table shift */
+> >> -#define PCI_TPH_BASE_SIZEOF	0xc	/* size with no ST table */
+> >> +#define  PCI_TPH_CAP_NO_ST	0x00000001 /* No ST Mode Supported */
+> >> +#define  PCI_TPH_CAP_INT_VEC	0x00000002 /* Interrupt Vector Mode Supported */
+> >> +#define  PCI_TPH_CAP_DEV_SPEC	0x00000004 /* Device Specific Mode Supported */
+> > 
+> > I think these modes should all include "ST" to clearly delineate
+> > Steering Tags from the Processing Hints.  E.g.,
+> > 
+> >   PCI_TPH_CAP_ST_NO_ST       or maybe PCI_TPH_CAP_ST_NONE
+> 
+> Can I keep "NO_ST" instead of switching over to "ST_NONE"? First, it
+> matches with PCIe spec. Secondly, IMO "ST_NONE" implies no ST support at
+> all.
 
-On 9/5/2024 9:23 AM, Andrew Lunn wrote:
->> If the QUPs yaml changes are not included in the same series with
->> i2c,serial yaml changes, you see these errors:
->>
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.example.dtb: geniqup@9c0000: serial@990000:compatible:0: 'qcom,sa8255p-geni-uart' is not one of ['qcom,geni-uart', 'qcom,geni-debug-uart']
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.example.dtb: geniqup@9c0000: i2c@984000:compatible:0: 'qcom,sa8255p-geni-i2c' is not one of ['qcom,geni-i2c', 'qcom,geni-i2c-master-hub']
-> So you have a couple of options:
->
-> 1) It sounds like you should get the QUP changes merged first. Then
->    submit the i2c,serial changes. Is there a reason you cannot do
->    this? Is there a mutual dependency between these two series, or
->    just a one way dependency?
+Sure.  Does PCI_TPH_CAP_ST_NO_ST work for you?  That follows the same
+PCI_TPH_CAP_ST_* pattern as below.
 
-The ask in this thread is to create new yaml files since existing one is
-using generic compatibles. With new yaml, we would need to provide
-example and can't avoid it. If we have to provide example of QUP node,
-IMO, we should provide a few subnodes as well since just QUP node
-without subnodes(i2c/serial/spi)  will not be very useful.
+> >   PCI_TPH_CAP_ST_INT_VEC
+> >   PCI_TPH_CAP_ST_DEV_SPEC
+> 
+> Will change
 
-We can possibly skip all 3 subnode and only keep one subsystem(e.g.
-serial) so QUP and UART yaml can go together(still need two subsystems)
-while SPI and I2C can go independently after QUP series is accepted. Not
-sure if that is acceptable to maintainers though. QUP node in actual DT
-will have all 3 types of subnodes(i2c,spi, serial) so example in this
-case won't be complete.
+> >> +#define  PCI_TPH_CAP_ST_MASK	0x07FF0000 /* ST Table Size */
+> >> +#define  PCI_TPH_CAP_ST_SHIFT	16	/* ST Table Size shift */
+> >> +#define PCI_TPH_BASE_SIZEOF	0xc	/* Size with no ST table */
+> >> +
+> >> +#define PCI_TPH_CTRL		8	/* control register */
+> >> +#define  PCI_TPH_CTRL_MODE_SEL_MASK	0x00000007 /* ST Mode Select */
+> >> +#define   PCI_TPH_NO_ST_MODE		0x0 /* No ST Mode */
+> >> +#define   PCI_TPH_INT_VEC_MODE		0x1 /* Interrupt Vector Mode */
+> >> +#define   PCI_TPH_DEV_SPEC_MODE		0x2 /* Device Specific Mode */
+> > 
+> > These are also internal, but they're new and I think they should also
+> > include "ST" to match the CAP #defines.
+> > 
+> > Even better, maybe we only add these and use them for both CAP and
+> > CTRL since they're defined with identical values.
+> 
+> Can you elaborate here? In CTRL register, "ST Mode Select" is defined as
+> a 2-bit field. The possible values are 0, 1, 2. But in CAP register, the
+> modes are individual bit masked. So I cannot use CTRL definitions in CAP
+> register directly unless I do shifting.
 
->
-> 2) Explain in the commit message that following errors are expected
->    because ... And explain in detail why the dependency cannot be
->    broken to avoid the errors.
->
-> Andrew
+Oops, sorry, I thought they were the same values, but they're not, so
+ignore this comment.
 
