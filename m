@@ -1,175 +1,159 @@
-Return-Path: <linux-kernel+bounces-316388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318DC96CED2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:58:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2979F96CED3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F08B21F5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:58:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98152B25926
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20BB1891B9;
-	Thu,  5 Sep 2024 05:58:46 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF941714A8;
+	Thu,  5 Sep 2024 05:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="iO8XDvAe"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E02314F11E;
-	Thu,  5 Sep 2024 05:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217314F11E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515926; cv=none; b=ZecxuwfgMC9lgDwvk3cuBqJjwwfUp8PznkNFeOEe0iMgIzlWDmrtB7aL5EUFrVNDRTshucgvyg7hEggf7Pp/fj0Z24xmojSoT04fDnvbbVwt20ckZG7CC0U5mFM09Vt+t5DUfObg00mV4RLALs3T5tP3NbWgGZh6kMWLCMl7HFc=
+	t=1725515964; cv=none; b=ascoo0OvCQlQa5tdmwqbCZOSGBjw4K7eMlrwr1qn4OB5BkBpeQcg9XRz5/T1ZoQ9lgYjILboRH10EINA2ngoZsR2jgFvtALhtt2U21N2xg5EZ52bRfznxy2RybE2tY5sGZca9Kw3F+p7WMQWzkVRUaceeT5/jGPiUCsQjbMSbXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515926; c=relaxed/simple;
-	bh=Xk3h1utae7k0bsWwl81h57s5ztIBgN6khBzBEac2O5Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IqsUmdaTTcAgfPW7/u4v+XvrLNPd7EUSy5Bk+EZvfTuXIx7/tTuDXF2g0CLlKNfvmMP8kg11BfcaSy9gyxCm25OgrESjHfigLB8K9UfdS293wmvrSNzO5ueo3P7CzkdPohRro1KCNHiKEQpFIY4vjiPcV8EEyPZQTEGYSUBJUEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 4855vwXo021357
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 5 Sep 2024 13:57:58 +0800 (+08)
-	(envelope-from hongchi.peng@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4WzpYd0dBCz7ZMhp;
-	Thu,  5 Sep 2024 13:57:57 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 5 Sep 2024 13:57:57 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 13:57:57 +0800
-Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
- (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
- Transport; Thu, 5 Sep 2024 13:57:56 +0800
-From: kimriver liu <kimriver.liu@siengine.com>
-To: <jarkko.nikula@linux.intel.com>
-CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
-        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kimriver.liu@siengine.com>
-Subject: [PATCH] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
-Date: Thu, 5 Sep 2024 13:57:53 +0800
-Message-ID: <20240905055753.2276-1-kimriver.liu@siengine.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725515964; c=relaxed/simple;
+	bh=2GGQXqn6Bwow+Tl8FfMGEd/u2fuNzbAxofi8uuBriKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g5NsG4NqgzksXz4g07e1bP3Akzr6SzURW6MaaQyJMZ+HgqBYBhz09vPfX7KGCJIOlKQLPOBbEA/Q20aSrS3iAct0EnoltnpYaGtxcmocgWki8iqQacgI56ueNmSBTPSqhoFnsnqpbpIzRFP9SbCNpst0uL3ZUbMMQS31TWepK28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=iO8XDvAe; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725515954;
+	bh=2GGQXqn6Bwow+Tl8FfMGEd/u2fuNzbAxofi8uuBriKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iO8XDvAeGcDJ8BTA0NQxT/igRftjWK/ojTZS8d8lgGUCB66Grxy66uT2W3ZAei7oD
+	 xO+MZBcbvg/f7RkABfxhjwjkwhkPKW5enCaWd1OyUo9n2t9/oCvy/H5HWLAiYa0uUh
+	 /iUg9eHLgP4hG8ayG2couNcQSSGkSFBhQBJnBrCs=
+Date: Thu, 5 Sep 2024 07:59:13 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Willy Tarreau <w@1wt.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc for 6.12-rc1
+Message-ID: <e594db6c-5795-4038-bcb2-1dc3290bfb27@t-8ch.de>
+References: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
+ <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
+ <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
+ <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
+ <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 4855vwXo021357
+In-Reply-To: <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
 
-From: "kimriver.liu" <kimriver.liu@siengine.com>
+On 2024-09-04 15:19:42+0000, Shuah Khan wrote:
+> On 9/4/24 15:13, Thomas Weißschuh wrote:
+> > On 2024-09-04 15:04:35+0000, Shuah Khan wrote:
+> > > On 8/27/24 06:56, Shuah Khan wrote:
+> > > > On 8/24/24 12:53, Thomas Weißschuh wrote:
+> > > > > Hi Shuah,
+> > > > > 
+> > > > > The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+> > > > > 
+> > > > >     Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+> > > > > 
+> > > > > are available in the Git repository at:
+> > > > > 
+> > > > >     https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git nolibc-20240824-for-6.12-1
+> > > > > 
+> > > > > for you to fetch changes up to 25fb329a23c78d59a055a7b1329d18f30a2be92d:
+> > > > > 
+> > > > >     tools/nolibc: x86_64: use local label in memcpy/memmove (2024-08-16 17:23:13 +0200)
+> > > > > 
+> > > > > ----------------------------------------------------------------
+> > > > > nolibc changes for 6.12
+> > > > > 
+> > > > > Highlights
+> > > > > ----------
+> > > > > 
+> > > > > * Clang support (including LTO)
+> > > > > 
+> > > > > Other Changes
+> > > > > -------------
+> > > > > 
+> > > > > * stdbool.h support
+> > > > > * argc/argv/envp arguments for constructors
+> > > > > * Small #include ordering fix
+> > > > > 
+> > > > 
+> > > > Thank you Thomas.
+> > > > 
+> > > > Pulled and pushed to linux-kselftest nolibc branch for Linux 6.12-rc1
+> > > > 
+> > > 
+> > > I am running sanity tests and getting this message:
+> > > 
+> > > $HOME/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
+> > 
+> > This indicates you are using 'run-tests.sh'.
+> > Pass "-p" to let it download the toolchain automatically.
+> > 
+> > > I tried setting TOOLCHAIN_BASE to the directory I installed gcc-13.2.0-nolibc
+> > 
+> > Not sure where this variable comes from, but I have never seen it.
+> 
+> This is from the notes I got from Willy.
 
-Failure in normal Stop operational path
+Could you forward those to me?
 
-This failure happens rarely and is hard to reproduce. Debug trace
-showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-immediately disable ENABLE bit that can result in
-IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
+> > > Something changed since the last time I did the pull request handling.
+> > 
+> > In the test setup not much has changed.
+> > Maybe you cleaned out your ~/.cache?
+> 
+> Not intentionally ...
+> Guess I just have to do run download.sh again.
 
-Failure in ENABLE bit is disabled path
+I guess download.sh also comes from Willy?
 
-It was observed that master is holding SCL low and the IC_ENABLE is
-already disabled, Enable ABORT bit and ENABLE bit simultaneously
-cannot take effect.
+> > Or it's the first PR with run-tests.sh?
+> 
+> I have been running the following successfully in the past:
+> 
+> From tools/testing/selftests/nolibc
+> make run
+> make run-user
+> 
+> ./run-tests.sh -m user
+> ./run-tests.sh -m system
 
-Check if the master is holding SCL low after ENABLE bit is already
-disabled. If SCL is held low, The software can set this ABORT bit only
-when ENABLE is already set，otherwise,
-the controller ignores any write to ABORT bit. When the abort is done,
-then proceed with disabling the controller.
+Ack.
 
-These kernel logs show up whenever an I2C transaction is attempted
-after this failure.
-i2c_designware e95e0000.i2c: timeout in disabling adapter
-i2c_designware e95e0000.i2c: timeout waiting for bus ready
+Could you provide a transcript of the commands you are running and their
+outputs, including the failing command?
+From the error it looks like run-tests.sh is the one failing, but that
+script was written completely oblivious to download.sh and
+TOOLCHAIN_BASE, so those probably won't help solving the issue.
 
-The patch can be fix the controller cannot be disabled while SCL is
-held low in ENABLE bit is already disabled.
+The following command should automatically download the toolchains into
+the location from the error message:
 
-Signed-off-by: kimriver.liu <kimriver.liu@siengine.com>
----
- drivers/i2c/busses/i2c-designware-common.c | 12 +++++++++++
- drivers/i2c/busses/i2c-designware-master.c | 23 +++++++++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+./run-tests.sh -p -m user
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index e8a688d04aee..74cefbb62bcd 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 
- 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
- 	if (abort_needed) {
-+		if (!enable) {
-+			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-+			enable |= DW_IC_ENABLE_ENABLE;
-+
-+			/*
-+			 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
-+			 * is already set by the driver (for 400KHz this is 25us)
-+			 * as described in the DesignWare I2C databook.
-+			 */
-+			fsleep(25);
-+		}
-+
- 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
- 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
- 					       !(enable & DW_IC_ENABLE_ABORT), 10,
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index c7e56002809a..aba0b8fdfe9a 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -253,6 +253,26 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
- 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
- }
- 
-+static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
-+{
-+	u32 status;
-+	int ret;
-+
-+	regmap_read(dev->map, DW_IC_STATUS, &status);
-+	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-+		return true;
-+
-+	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-+			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-+			1100, 20000);
-+	if (ret) {
-+		dev_err(dev->dev, "i2c master controller not idle %d\n", ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
- {
- 	u32 val;
-@@ -796,7 +816,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	 * additional interrupts are a hardware bug or this driver doesn't
- 	 * handle them correctly yet.
- 	 */
--	__i2c_dw_disable_nowait(dev);
-+	if (i2c_dw_is_master_idling(dev))
-+		__i2c_dw_disable_nowait(dev);
- 
- 	if (dev->msg_err) {
- 		ret = dev->msg_err;
--- 
-2.17.1
+These toolchains can then also be used for direct "make" invocations
+through CROSS_COMPILE.
 
+
+As Willy said, thanks for the report!
+
+Thomas
 
