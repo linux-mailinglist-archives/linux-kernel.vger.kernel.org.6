@@ -1,101 +1,167 @@
-Return-Path: <linux-kernel+bounces-316299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989E696CDA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:16:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B707696CDA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496641F23119
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:16:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB2F31C22474
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026EA14E2E6;
-	Thu,  5 Sep 2024 04:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7C42F44;
+	Thu,  5 Sep 2024 04:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lhyu2Jpy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCcuerbz"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FACD48CCC;
-	Thu,  5 Sep 2024 04:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A3C126C1C;
+	Thu,  5 Sep 2024 04:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725509757; cv=none; b=EtHEpfx+Z9GklMg1LQ21xKfbctz6faTq+7SQAR1m1YV00L3Bdqf0QjMeyUsx9A2SddN5QsjaZxuOq86RgZ7b9SlNeNTdIOFj3EkPexvt0lfBUOb/Mc2p1nstf4MFPotrrgDb9c7mH8HVcoi9p/u+leTedyo4VLgBjUYGZ3Whng8=
+	t=1725509865; cv=none; b=rYXBwAdZJUtAdo8xtqn4Rn6SalLFZBELt4vNNcWfCJBF6vdpoQGKpFmbSnKa6aLHXUDSPbiLCMlTPAs1DwtuSZmCuLmaNXfUgUnJybfhk3w8MZ53K+082LrDGzRZBGzfkFYTgJ8ZHT3dF5OqGdjGtBCRGfz9ewLVGlEeaabqLpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725509757; c=relaxed/simple;
-	bh=M8O3DlEL6KSiYNC/41n757CTw1sOYdlTtRJSAmeCOr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WULyJmUHaglVygKsrzGiCrA2MpM44qcZuSK36F7IqjDkRq8//kdGd1rIsBkD4j2CE2M2DXoegGu+U9qwUKpgU3dqLNa7PWF5AzvnOHpit36bEWyArNwHc4Y+4P89yBqs6uITojunoLYLODX1Cgm8cy2yet/6HhLuRky8hMMzXp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lhyu2Jpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E5EC4CEC4;
-	Thu,  5 Sep 2024 04:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725509756;
-	bh=M8O3DlEL6KSiYNC/41n757CTw1sOYdlTtRJSAmeCOr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lhyu2JpykeFVgbhx+aFZ+bnE/ktyEb12NJWDHgL/TqtbLoQJRl3N0uNFNyqBjm7BQ
-	 oBPlH878XnH8te+CPixOxz3adbVdpZwqBxVNQYhM5iM2yoz2PTuOgyhJ8CBz6Lc1rx
-	 ovnF3DDr46noa4miZ8xI+M20KFDRI2+J9lFpzHLSHT3crlFJMqdqhFtHncsu9Y/F6T
-	 IzGdWed/NTSA/UxAncxuxGc/+eU47Vzkn2uNK2fL2sz17cUsBwD05Qyq6BMK4QZ4yK
-	 upAK1cpM3Yk/fSg6YzGvEysJxqidfKjytmtTGHL+Ymz9EY0+YNEDjnsIrE6Nu+OeCf
-	 PT4D3Noyur1tg==
-Date: Wed, 4 Sep 2024 21:15:54 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 31/31] objtool, livepatch: Livepatch module generation
-Message-ID: <20240905041554.2kgnwuiketn2rrdw@treble>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <9ceb13e03c3af0b4823ec53a97f2a2d82c0328b3.1725334260.git.jpoimboe@kernel.org>
- <f23503e2-7c2d-40a3-be09-f6577b334fad@quicinc.com>
+	s=arc-20240116; t=1725509865; c=relaxed/simple;
+	bh=8cHGr+GH14IwDdxFnQ/5Ipz4yJW72zoitNYtP9WhIjQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YCc8Aq/EUUoJCEH04rXupwPc4ZaMbc3Wf555Ao/3PQcbDiMFiu1G5+HQpI9vJe3kelMq7LVBPc4VXR8t+OySSVt7GDfGu2j8GZnMPejqfemqNyaQ0iuODcVyCiTLwYNSJFx0MQQsBx3e299fUHq2jf/+3Pby+k14VRVv76uozt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KCcuerbz; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5dc93fa5639so212534eaf.1;
+        Wed, 04 Sep 2024 21:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725509863; x=1726114663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K4M9q+kN73VYSDW6L8zxKtLlMvaCoXBGrFd+VEAeAfA=;
+        b=KCcuerbzLH/pqN1eBTAZMOxqR0LiDKdB69BSMXbAFfjtCGkKdLsZ7QrPWKQaTnhH8i
+         5BNc7eTwPgKAo6RmXwYrgoWOHiuucPwM/MNzJzIJFt7vYIs7PECFFM9ArKjrHmrU174k
+         4ngrZHXQ/d/mk8q55TumYXzlqRkGEHqzQ+/n/iao3YBh8CXy5PaFXFflJStbdmgOBdGh
+         fUTzcm4OQqCSxnPkDtSbNJt6qnt/GsPWaEYavi0MJLRs+eZVnDiqNBc2hUiiPE627bc8
+         ulu1sD7BXLUrGrRrA7wDHG6HSCvVmOWDAd615NNR3Z3N6XT+fIVarz/uA+jPlXO0mybz
+         lm9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725509863; x=1726114663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K4M9q+kN73VYSDW6L8zxKtLlMvaCoXBGrFd+VEAeAfA=;
+        b=FQDd8IIfElWIC6Y/YEksXAXUJ8+19xrsgRbRvTkZ8icFNz12lbiKlTvi192wrJ7ugP
+         08o6FiI5ihd5rcKlq1dsWLyJF5HsGj8k9nRRqnHxTbU0tEWraAgf3lr/JD0rC5xVIjzJ
+         du1yVuylWX/g2WcujeqwPFo/bkuBdiJOVVskq7rA9/xtL32y/L9PU09guSi8mTjlGipA
+         838NOqNhJCHKG+c3jwiWSF0GrvGerC9+qKq/bTAkiSdUZvDoc6SjDlzCCA3HU/JKTMKq
+         OVkpVMzBWUefB0qdfOvYxqv6P4kXxThkjeqzy7TGz6tc26SMqym3M7jIcUFgLV4fi9Qk
+         9PBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcTLjAEjZDWoO6mvnqtKrogJmJqi7xwJT3tXcG/9cOzGkZMwdxnMLJwClT33nuiaYKmIJwjsUDVmI3nwLQ@vger.kernel.org, AJvYcCWOVD4DpJMAwlp06GnfTX60vYhbYSDXOtEZHeU+EYJWkwKMOlrTu/WZgbR0YeWgmcZeuTCj0Xh3W4b/gmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi71ovY7pfBqGirtKG9b5ul7wCgSV29uXqu20u+OWOe66bbOpI
+	U6VbbhpyqBR9zVzHewqNOmTPNhVpNIE2b//DS2mUyNDZAepiwFOULB04Ew==
+X-Google-Smtp-Source: AGHT+IE346rXlPlagQTZcOHpZl4+DAe05+tRp5bqoGWXkgCQc9psXkFiWkYrSTnLTh/SBEscY60t2g==
+X-Received: by 2002:a05:6871:3a28:b0:251:2755:5a33 with SMTP id 586e51a60fabf-277d05f9b26mr18381175fac.39.1725509862578;
+        Wed, 04 Sep 2024 21:17:42 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:13bd:b4e:4c0f:4c37])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8d52esm2450216a12.32.2024.09.04.21.17.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 21:17:42 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Lyude Paul <thatslyude@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH 00/24] Convert serio-related drivers to use new cleanup facilities
+Date: Wed,  4 Sep 2024 21:17:05 -0700
+Message-ID: <20240905041732.2034348-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f23503e2-7c2d-40a3-be09-f6577b334fad@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 02:38:14PM -0700, Jeff Johnson wrote:
-> On 9/2/24 21:00, Josh Poimboeuf wrote:
-> ...
-> > diff --git a/scripts/livepatch/module.c b/scripts/livepatch/module.c
-> > new file mode 100644
-> > index 000000000000..101cabf6b2f1
-> > --- /dev/null
-> > +++ b/scripts/livepatch/module.c
-> > @@ -0,0 +1,120 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Base module code for a livepatch kernel module
-> > + *
-> > + * Copyright (C) 2024 Josh Poimboeuf <jpoimboe@kernel.org>
-> > + */
-> ...
-> > +module_init(livepatch_mod_init);
-> > +module_exit(livepatch_mod_exit);
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_INFO(livepatch, "Y");
-> 
-> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-> description is missing"), a module without a MODULE_DESCRIPTION() will
-> result in a warning when built with make W=1. Recently, multiple
-> developers have been eradicating these warnings treewide, and very few
-> are left. Not sure if this would introduce a new one, so just want to
-> flag it so that you can check and fix if necessary.
+Hi,
 
-I'll fix that, thanks!
+This series converts drivers found in drivers/input/serio as well as a
+few of input drivers using serio to use new __free() and guard() cleanup
+facilities that simplify the code and ensure that all resources are
+released appropriately.
+
+First patch introduces serio_pause_rx guard that pauses delivery of
+interrupts/data for a given serio port by calling serio_pause_rx()
+helper and automatically resumes it by calling serio_resume_rx() when
+needed.
+
+The following 8 patches make use if this new guard.
+
+The rest of the patches switch serio drivers to use guard(mutex),
+guard(spinlock*) and other cleanup functions to simplify the code.
+
+Thanks!
+
+Dmitry Torokhov (24):
+  Input: serio - define serio_pause_rx guard to pause and resume serio ports
+  Input: libps2 - use guard notation when temporarily pausing serio ports
+  Input: alps - use guard notation when pausing serio port
+  Input: byd - use guard notation when pausing serio port
+  Input: synaptics - use guard notation when pausing serio port
+  Input: atkbd - use guard notation when pausing serio port
+  Input: sunkbd - use guard notation when pausing serio port
+  Input: synaptics-rmi4 - use guard notation when pausing serio port in F03
+  Input: elo - use guard notation when pausing serio port
+  Input: gscps2 - use guard notation when acquiring spinlock
+  Input: hyperv-keyboard - use guard notation when acquiring spinlock
+  Input: i8042 - tease apart interrupt handler
+  Input: i8042 - use guard notation when acquiring spinlock
+  Input: ps2-gpio - use guard notation when acquiring mutex
+  Input: ps2mult - use guard notation when acquiring spinlock
+  Input: q40kbd - use guard notation when acquiring spinlock
+  Input: sa1111ps2 - use guard notation when acquiring spinlock
+  Input: serport - use guard notation when acquiring spinlock
+  Input: serio - use guard notation when acquiring mutexes and spinlocks
+  Input: serio_raw - use guard notation for locks and other resources
+  Input: serio-raw - fix potential serio port name truncation
+  Input: sun4i-ps2 - use guard notation when acquiring spinlock
+  Input: userio - switch to using cleanup functions
+  Input: xilinx_ps2 - use guard notation when acquiring spinlock
+
+ drivers/input/keyboard/atkbd.c        |   8 +-
+ drivers/input/keyboard/sunkbd.c       |   5 +-
+ drivers/input/mouse/alps.c            |   4 +-
+ drivers/input/mouse/byd.c             |   5 +-
+ drivers/input/mouse/synaptics.c       |   6 +-
+ drivers/input/rmi4/rmi_f03.c          |   4 +-
+ drivers/input/serio/gscps2.c          | 114 +++++----
+ drivers/input/serio/hyperv-keyboard.c |  38 ++-
+ drivers/input/serio/i8042.c           | 327 +++++++++++++-------------
+ drivers/input/serio/libps2.c          |  28 ++-
+ drivers/input/serio/ps2-gpio.c        |   4 +-
+ drivers/input/serio/ps2mult.c         |  25 +-
+ drivers/input/serio/q40kbd.c          |  10 +-
+ drivers/input/serio/sa1111ps2.c       |   8 +-
+ drivers/input/serio/serio.c           | 164 +++++--------
+ drivers/input/serio/serio_raw.c       | 125 ++++------
+ drivers/input/serio/serport.c         |  27 +--
+ drivers/input/serio/sun4i-ps2.c       |   8 +-
+ drivers/input/serio/userio.c          | 141 ++++++-----
+ drivers/input/serio/xilinx_ps2.c      |  15 +-
+ drivers/input/touchscreen/elo.c       |   8 +-
+ include/linux/serio.h                 |   3 +
+ 22 files changed, 487 insertions(+), 590 deletions(-)
 
 -- 
-Josh
+Dmitry
+
 
