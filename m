@@ -1,227 +1,124 @@
-Return-Path: <linux-kernel+bounces-317398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F3796DD9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:13:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EC996DDA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C545828B49B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37EBC1F215B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D04019D89E;
-	Thu,  5 Sep 2024 15:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4D919E83E;
+	Thu,  5 Sep 2024 15:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="irx+YzsE"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esv+yTeJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5BD17ADFF
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2AA19E7F0;
+	Thu,  5 Sep 2024 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725549050; cv=none; b=Euga5dqXMnar7jev+IepMmmoVkKwDX3StuYSxm1Dazs/Lzn3vbnWy1H5C1WnJADK2A92DZxZYd8SLtG5XoJ1mkv6ioraTEp7yIF6ityQ9yXRf3fFWUsoXLzYR+PG6jypsz2kojGaKSg5n1lVSzid6T+sGEivPXnsprB76o1XFtg=
+	t=1725549089; cv=none; b=QY9jAKHQag6PbGHK1LcSJ1H1dOYM0aQ7os8NehY/ezYvsMdN07RKDnmLWVGq1uUuEo1S/2H633llF/8RM+YYHtQCz+fSHjMCgcbSfoejLAeH4K2tCy1yJDtJZu+564VISmuaOAY3qpj/7zQ7FKEvUuzeUPxguTFws5G5b6eVY8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725549050; c=relaxed/simple;
-	bh=Jg419JiaVpr39nxDzhXqFqCEex8GnrqdC99ZhI00XOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DqsYMUgKpVazqsJHkYPa8tQD9jPTALMmkOJ5PHsiPrut+27reT7izN+gLnNQ6SxEIaVQ8gMyynSn25ZEOmhHtHi3/NNbVgJ18AbBV2wbIPPRDjRimevJq1dafJKCZp1tO5Kq+UA0MqxlF66Yd+JJZ5EKkVwSLbRSzes/vW+bxm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=irx+YzsE; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f66423686bso9241851fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725549047; x=1726153847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lbZG96yCjg3dP1dRLPb67mYWLsYBymVv/aX2fCRRjEc=;
-        b=irx+YzsEk/aIPL7RCnfn9yvgdduNyYInq+jtgInIwpoH4G51G0Z0aNztvxfLqZ93jx
-         +k9hwFBZtcXRt98dzBfXiQ9fO5P/tFVnH9yQ0P/gOGVGeGgItvEiikCqx67sst//nSDH
-         hPNwydwMfHYqGT3P0JcYVgHvGDAtywkbUCmiM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725549047; x=1726153847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lbZG96yCjg3dP1dRLPb67mYWLsYBymVv/aX2fCRRjEc=;
-        b=f20UqFaPkKMfx8i6PZEov9DLtVLn4iK9Xo/dXWkdU2z9+SCSJ6kjVjeYehuUGHIS3W
-         rXMsQjbj/PjNi7T4rsUex9efY/TNvuix3i25I8AIIX8XsvPS8bgRkE9qXQmyRxxVu2UX
-         uGWCa0Uv57PU4kChuSLrkkOXV3qvVfEfQJ1YkSyMM7Uc5EMr8oi0H7hBkuja8lKk3wW+
-         r46iA6zrjAwSMLPTMDEDEJuhJyW+JwxeKeHE+ghNZAr7/AkDHhmorLQ5nWIplw0V3Emo
-         wUnHf3iWvhTY+PHjZJFXG64QtqKIkQeks/pxg4eFPOvdFIgV6dwMORXFXF5bR+7Q9rh9
-         J41w==
-X-Forwarded-Encrypted: i=1; AJvYcCWYTzjHJEk7xOHK1Br838nndG18DqfH9jAtFLLKmOwMe3+TDdGixMuyyB0cilooWVXGEc/08YT6SskI8Rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdJfnuzWPpnBYibFsCnfXLIi0BT4U8keM+HLuXeLp1aeDrsoo1
-	yMEv5RXtb/ZCgDds0i0wYFZioY6LjZGTaEVRRjiktYcpSGFwfCOYFHN97J8uMl9iuVziNcfnFVK
-	4DaHMqHgsdd4qL6F1DGIU5xaHKkGS46yEtoZQ
-X-Google-Smtp-Source: AGHT+IEoyY9FAQCs2QvyohjteVuKx8qEJUbTxgD4g5/TL4wAkdAbEbByYe9g569nCl27ndm/hY5F+Ctp+XibXgbNBjM=
-X-Received: by 2002:a2e:f1a:0:b0:2f6:5f7b:e5e0 with SMTP id
- 38308e7fff4ca-2f65f7be680mr30625541fa.21.1725549046375; Thu, 05 Sep 2024
- 08:10:46 -0700 (PDT)
+	s=arc-20240116; t=1725549089; c=relaxed/simple;
+	bh=+Y94aJbrJdD5TlvV3AaONKscPppVhnDQVzMYJeVKXI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GjToQ3KT3I8uzISroKR0rq4KuJxy3kJZ4S/fvMsL3MrIhqsfgxpHzdndMg3gHuO6j5tfu7750mA9cSQ/pABWUYmtw22Z6dfjiBX4nnJoqkbochA17JIP4e6ePekOVPt9gAUDFTiwhu8fBKrhXZugTb036wgFH+mFy0yeWUOvVyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esv+yTeJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A44C4CEC3;
+	Thu,  5 Sep 2024 15:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725549089;
+	bh=+Y94aJbrJdD5TlvV3AaONKscPppVhnDQVzMYJeVKXI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=esv+yTeJgiHHveUrVLepL69Y2eW44Asf64fEZ5MgzCl2ZtOYSCZ/mQbqNR6W73ryz
+	 15y+No8y8K+lwYEqtNckFlPnaGWj2wtqOlt7Q2JQN1F6F4KqatwoQ1znXO9UfSjwMK
+	 LxyuYZadG8TrdThPdA0p/sp5u1GUlWel/B5i97m01xWMX6iTj0FcnnZgn5pNEMFt8J
+	 kPROxQVk8Uv/NBQT5H8UMkwI6RxJ0MHmEnA7XhtqGwS7xuuuhLgEaGmb1//pW2zYJV
+	 WWXpnyolrT+fuboiLH0R0bgXgsfdUYNJeSwS86PvRuvS/GsdFnVxFGMeLXqRpstUfs
+	 C5frHn8zAUjCA==
+Date: Thu, 5 Sep 2024 12:11:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Xu Yang <xu.yang_2@nxp.com>, Thomas Richter <tmricht@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v1] perf jevents: Ignore sys when determining a model
+ directory
+Message-ID: <ZtnKHsXiZDGbz6l8@x1>
+References: <20240904211705.915101-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904090016.2841572-1-wenst@chromium.org> <20240904090016.2841572-10-wenst@chromium.org>
- <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 5 Sep 2024 23:10:34 +0800
-Message-ID: <CAGXv+5F27K76t=ht5v75jKsNF-J+C0r5+m=czHz6PtV3t5DxcQ@mail.gmail.com>
-Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904211705.915101-1-irogers@google.com>
 
-On Thu, Sep 5, 2024 at 6:57=E2=80=AFAM Doug Anderson <dianders@chromium.org=
-> wrote:
->
-> Hi,
->
-> On Wed, Sep 4, 2024 at 2:01=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> =
-wrote:
-> >
-> > This adds regulator management to the I2C OF component prober.
-> > Components that the prober intends to probe likely require their
-> > regulator supplies be enabled, and GPIOs be toggled to enable them or
-> > bring them out of reset before they will respond to probe attempts.
-> > GPIOs will be handled in the next patch.
-> >
-> > Without specific knowledge of each component's resource names or
-> > power sequencing requirements, the prober can only enable the
-> > regulator supplies all at once, and toggle the GPIOs all at once.
-> > Luckily, reset pins tend to be active low, while enable pins tend to
-> > be active high, so setting the raw status of all GPIO pins to high
-> > should work. The wait time before and after resources are enabled
-> > are collected from existing drivers and device trees.
-> >
-> > The prober collects resources from all possible components and enables
-> > them together, instead of enabling resources and probing each component
-> > one by one. The latter approach does not provide any boot time benefits
-> > over simply enabling each component and letting each driver probe
-> > sequentially.
-> >
-> > The prober will also deduplicate the resources, since on a component
-> > swap out or co-layout design, the resources are always the same.
-> > While duplicate regulator supplies won't cause much issue, shared
-> > GPIOs don't work reliably, especially with other drivers. For the
-> > same reason, the prober will release the GPIOs before the successfully
-> > probed component is actually enabled.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> > Changes since v5:
-> > - Split of_regulator_bulk_get_all() return value check and explain
-> >   "ret =3D=3D 0" case
-> > - Switched to of_get_next_child_with_prefix_scoped() where applicable
-> > - Used krealloc_array() instead of directly calculating size
-> > - copy whole regulator array in one memcpy() call
-> > - Drop "0" from struct zeroing initializer
-> > - Split out regulator helper from i2c_of_probe_enable_res() to keep
-> >   code cleaner when combined with the next patch
-> > - Added options for customizing power sequencing delay
-> > - Rename i2c_of_probe_get_regulator() to i2c_of_probe_get_regulators()
-> > - Add i2c_of_probe_free_regulator() helper
-> >
-> > Changes since v4:
-> > - Split out GPIO handling to separate patch
-> > - Rewrote using of_regulator_bulk_get_all()
-> > - Replaced "regulators" with "regulator supplies" in debug messages
-> >
-> > Changes since v3:
-> > - New patch
-> >
-> > This change is kept as a separate patch for now since the changes are
-> > quite numerous.
-> > ---
-> >  drivers/i2c/i2c-core-of-prober.c | 154 +++++++++++++++++++++++++++++--
-> >  include/linux/i2c.h              |  10 +-
-> >  2 files changed, 155 insertions(+), 9 deletions(-)
->
-> I never jumped back into looking at this since you started sending new
-> versions last month (sorry), but I finally did...
->
-> At a high level, I have to say I'm not really a fan of the "reach into
-> all of the devices, jam their regulators on, force their GPIOs high,
-> and hope for the best" approach. It just feels like it's going to
-> break at the first bit of slightly different hardware and cause power
-> sequence violations left and right. If nothing else, regulators often
-> need delays between when one regulator is enabled and the next. There
-> may also be complex relationships between regulators and GPIOs, GPIOs,
-> GPIOs that need to be low, or even GPIO "toggle sequences" (power on
-> rail 1, wait 1 ms, assert reset, wait 10 ms, deassert reset, power on
-> rail 2).
->
-> IMO the only way to make this reliable is to have this stuff be much
-> less automatic and much more driven by the board.
->
-> I think that, in general, before the board prober checks i2c address
-> then the prober should be in charge of setting up pinctrl and turning
-> on regulators / GPIOs. Given that the same regulator(s) and GPIO(s)
-> may be specified by different children, the prober will just have to
-> pick one child to find those resources. It should have enough
-> board-specific knowledge to make this choice. Then the prober should
-> turn them on via a board-specific power-on sequence that's known to
-> work for all the children. Then it should start probing.
->
-> I think there can still be plenty of common helper functions that the
-> board-specific prober can leverage, but overall I'd expect the actual
-> power-on and power-off code to be board-specific.
->
-> If many boards have in common that we need to turn on exactly one
-> regulator + one GPIO, or just one regulator, or whatever then having a
-> helper function that handles these cases is fine. ...but it should be
-> one of many choices that a board proper could use and not the only
-> one.
+On Wed, Sep 04, 2024 at 02:17:05PM -0700, Ian Rogers wrote:
+> Existing sys directories aren't placed under a model directory like
+> skylake. Placing a sys directory there causes the `is_leaf_dir` test
+> to fail and consequently no events or metrics are generated for the
+> model. Ignore sys directories in this case and update the comments to
+> reflect why.
+> 
+> This change has no affect, but when testing with a sys directory for a
+> model people have reported running into the no event/metric issue.
 
-IIUC we could have the "options" data structure have much more board
-specific information:
+Thanks, applied, if Stephan is satisfied with the fix and have tested
+it, please consider providing a Tested-by,
 
-  - name of node to fetch resources (regulator supplies and GPIOs) from
-  - names of the resources for the node given from the previous item
-  - delay time after each resource is toggled
-  - polarity in the case of GPIOs
-  - prober callback to do power sequencing
+Thanks,
 
-The "resource collection" step would use the first two items to retrieve
-the regulator supplies and GPIOS instead of the bulk APIs used right now.
-
-The power sequencing callback would use the resources combined with the
-given delays to enable the supplies and toggle the GPIOs.
-
-For now I would probably only implement a generic one regulator supply
-plus one GPIO helper. That is the common case for touchscreens and
-trackpads connected over a ribbon cable.
-
-Does that sound like what you have in mind?
-
-
-This next item would be a later enhancement (which isn't implemented in
-this series anyway):
-
-  - optional prober callback that does actual probing
-
-In our case it would only be used for cases where an HID-over-I2C
-component shares the same address as a non-HID one, and some extra
-work is needed to determine which type it is. I still need to think
-about the structure of this.
-
-
-Thanks
-ChenYu
+- Arnaldo
+ 
+> Reported-by: Stephane Eranian <eranian@google.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/pmu-events/jevents.py | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
+> index 1d96b2204e52..bb0a5d92df4a 100755
+> --- a/tools/perf/pmu-events/jevents.py
+> +++ b/tools/perf/pmu-events/jevents.py
+> @@ -635,14 +635,17 @@ def preprocess_one_file(parents: Sequence[str], item: os.DirEntry) -> None:
+>  
+>  def process_one_file(parents: Sequence[str], item: os.DirEntry) -> None:
+>    """Process a JSON file during the main walk."""
+> -  def is_leaf_dir(path: str) -> bool:
+> +  def is_leaf_dir_ignoring_sys(path: str) -> bool:
+>      for item in os.scandir(path):
+> -      if item.is_dir():
+> +      if item.is_dir() and item.name != 'sys':
+>          return False
+>      return True
+>  
+> -  # model directory, reset topic
+> -  if item.is_dir() and is_leaf_dir(item.path):
+> +  # Model directories are leaves (ignoring possible sys
+> +  # directories). The FTW will walk into the directory next. Flush
+> +  # pending events and metrics and update the table names for the new
+> +  # model directory.
+> +  if item.is_dir() and is_leaf_dir_ignoring_sys(item.path):
+>      print_pending_events()
+>      print_pending_metrics()
+>  
+> -- 
+> 2.46.0.469.g59c65b2a67-goog
 
