@@ -1,134 +1,130 @@
-Return-Path: <linux-kernel+bounces-317490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB23B96DF0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C51096DF0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5D9285CC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839A7B23629
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1973A19EEB1;
-	Thu,  5 Sep 2024 16:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D6B1A01C9;
+	Thu,  5 Sep 2024 16:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bTFLpjdM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="czpFNO26"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AFA19E82C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE8619E82C;
+	Thu,  5 Sep 2024 16:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552055; cv=none; b=ELpe61mkzNLG6SZ8xMV7/qnmf4fzBfygo6CPUqygDzaP94KLIUdSEVOU4NIQ/jPZpFjOwZzPCmCkx/AS4lXASQQUIh26Qsg+l3s8oRtxhZJPO6OTYQGLeejDgDmpO+hrVGs7CUJjzJkQUv8Hgnn83ht+J54FSejAqO/UNJPQFYM=
+	t=1725552066; cv=none; b=fyjtuoluB0JFr4up2WwITSjFB/VEb3VAL2QrR6dO+Ibz+LJQ0tNMRMEm+e70petWE1wDBc7HK3W47L/Vy2SkQBAxEdl/1WJQjHG0muZYE0GJbUOvMIiW2FiyauHkyx9ZzZq+y0nZC0GoKl+pLYi8wGFjpPeggfL9i/P/9X594wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552055; c=relaxed/simple;
-	bh=7XNLoPjMi2p0yPNBVBbQHtFB3VyLvnKB24qCJaKJbNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/KUY1zbrv7LaHmuIj/HmFZbWIWfyuR1qtEHBz1XC8TWIAP91+J4BW9EeE04uadWUz778b4O7YBxCA5a+yBME0/D+ZWl5MFBdqa2VkKbK/egbu6lg+ZGOtv9K6sDPbvp+YZCZLwTQOnCcDdwnmNqSoYdaTpgC8LvFO3vj1wwD00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bTFLpjdM; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725552054; x=1757088054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7XNLoPjMi2p0yPNBVBbQHtFB3VyLvnKB24qCJaKJbNM=;
-  b=bTFLpjdMaAgbP4ScvYv0bNlsdZQT9QHBp8VlE1NPTgtbJG4Og6S/M1CW
-   T+fSyHvS1GZGEc0XncQhhmjMWl8uN3w1j81Geg6xu0zyJdUHCkjPFgtpl
-   SU8d/dTqB9Mhe5YR/gSSE2KB0mNW6+jMBqtSDOALRsIJkd93/3oLGYtTT
-   v460qCfgwKejDNuGRgCUl4/V+suo7wSCuQtQmoBfkZ445ENkE1YenJakr
-   Z0OQp1+j6uCR23dDDKVWDNlD1OT7dd6RXhWP/U6gmY1NoE9YqTNo3E7dz
-   6y/OmcK+1sPgAPLUAJRFxZEdArzPA59ws8qkDp7m8A4IyeEPHSyCQQAvW
-   g==;
-X-CSE-ConnectionGUID: z2qDCLQHRUq3eBBZPTk1lA==
-X-CSE-MsgGUID: EglFYrGHSm+j9VvMVfdf7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35665992"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="35665992"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:53 -0700
-X-CSE-ConnectionGUID: jnljNIoWQdu3jDy0bQ/NsA==
-X-CSE-MsgGUID: U13ZolXrRVG4RY8Hr6TrHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="69816294"
-Received: from bllerma-mobl2.amr.corp.intel.com (HELO desk) ([10.125.147.102])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:53 -0700
-Date: Thu, 5 Sep 2024 09:00:51 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com
-Subject: [PATCH v6 2/3] x86/entry_32: Clear CPU buffers after register
- restore in NMI return
-Message-ID: <20240905-fix-dosemu-vm86-v6-2-7aff8e53cbbf@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
+	s=arc-20240116; t=1725552066; c=relaxed/simple;
+	bh=4lPMovijD49Zq4+o748R/nLVvhvNDXYslSK8l4YkqQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=INMXYc6lnwD8IdHu1vjK8KjzRxB+KxCgs3Z0BtpOKELD/EEdxPV4VP5NCtzu/soIK3n8SNordBCEzftB4yE1TJMTphrpD/P6qcgUZ2IhHYcPQDgXW/mzroEjEjKILhtSpKMth5xAbLKl8RrV6MZQXQR4o3SW+qNv4F1ceeILtGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=czpFNO26; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1725552054; x=1726156854; i=wahrenst@gmx.net;
+	bh=YYBJzQseASq4Pn+YxR4dTa4N1Kq79T6A7aBvavcJLVU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=czpFNO26SXbc0U3rZZT9vb/fy2Z05cIZjcANIbWMCe2sFhvgvhw3utKjKtnHVM1n
+	 TwdsGkApha0uc4StdrhoN5Fh24fDJ6srpktHl2PyPJeOKN37uxPgu4eoORhESGDuX
+	 ZKNmC+KdsRNtx4PJoFX5jJOXr6JvRYRcNJYd7fEOhn8gCKdcitTyrLIft7l9wPnFg
+	 ESYvfbWTzodmRBQbI7WDEhZXotlJ6sqEOd5xQQnEegg6yMgaCEGvWjmdP9W/iUQ+3
+	 JLZ1xb7VNX4niff6vAQCHTNWQYuYweR7iFSK7gGblUZDCWNj4KN5NdN3O4oREOckp
+	 POFsmiIgJ70Ljd0m1g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ml6qC-1sKdr81TkS-00ZVHz; Thu, 05
+ Sep 2024 18:00:54 +0200
+Message-ID: <54d7a5c6-caee-4d96-9943-fe34599eaceb@gmx.net>
+Date: Thu, 5 Sep 2024 18:00:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] MAINTAINERS: SPI: Add mailing list
+ imx@lists.linux.dev for nxp spi drivers
+To: Frank Li <Frank.Li@nxp.com>, broonie@kernel.org
+Cc: carlos.song@nxp.com, festevam@gmail.com, imx@lists.linux.dev,
+ kernel@pengutronix.de, linux-spi@vger.kernel.org, s.hauer@pengutronix.de,
+ shawnguo@kernel.org, linux-kernel@vger.kernel.org
+References: <20240905155230.1901787-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240905155230.1901787-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:BxbXa4uzCsEspAuqJbQaSPwkzrAeA2+cWSKhxsIKpx+xXj9FaTE
+ zmjnPgYbbDA6eBC266ZUDgwGf5pLeBKglkuSB/mz9v+OPXvZ0XzAJsKa4ydri0BPIKhzFKW
+ BO2vbXW72cCe3bypqlmBif5MQM5zh1ymnNWwbjszLwbtXyUSb6izlFZ+v8CJDQZ+7qgRzEc
+ rWs+F9VOsadIxRtp4alcQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aOBrPQXgmtw=;zjLeUPqcWcssS8VYMHDn0gODPxa
+ siCTLBga/IRWdMCK0nOTjV/8LsyglC7+1T3DUp8eJTHRD43ijkyIMW4BAUnbeZMQjfsAao3Ak
+ Ybgegq5FX7axF36+6EfXxxkFzKgRjIa5xEo0oFgotuCWJlOe3KjHeOXWUIxwrtvhm6t3ihipF
+ 2vL6OWX4IWuqfZCCBGWD0lGCbu3e/EvsTpe3CbmdPydC0SJQjt8agerJ8TPw6YVn16m/C4CXA
+ e1O9efnZVaDI2QVYiPArL/me8OFIpm4V1PtAaKjE/l1IZTnNThH3ZmYewKqaRLyZ3CFWOJLIk
+ N5f9U17vOPdZc/eji1m/An4F4bTu42gbNqs5hANTNWo/4NqXhl0KeXzZf5Ap08UdsLGdKJLpb
+ e7y7bXEmi7hBG202ioNk2acTgF5WOb9Q0H932UoRBsnPQKH9WE05VVXTqgq6GdMcD8XFyc/Wv
+ f/ZTkPtVP5GkY13IRWq/OxX+yDx+AKCudjYyUZ1wpvFVrrJ89nJrENI6lmJA75yTxeSfwN8+H
+ PEzgQFs79QVPiMGz7u9ikxCmEpNl/fHD/JETtfsvsAEWX52wZD0uhHtDJyXaPMMpUQPl7eTz9
+ 3WnBTVroOu4dur8OGzSWvC8RwW7NjicOmfpD1K+/wviWismA/N4MUzJDXoDPMhau2kFaPO0Wh
+ uI7eoUEEUcf6pt25Yh4cCYT2+cTONFst+zKZA+uWqEABF+VAGPVcvFd/2mn5zmwDvlrrzn9Ao
+ b944hsRMoMUcTAi5n0eiz3CjQ2KJK+EdET3V4wxYPk6X6Y5aHJ515QEnoFmx6JVZBkal7oNRl
+ mFrYrxxdyadoDqNMkhP6EzGA==
 
-CPU buffers are currently cleared after call to exc_nmi, but before
-register state is restored. This may be okay for MDS mitigation but not for
-RDFS. Because RDFS mitigation requires CPU buffers to be cleared when
-registers don't have any sensitive data.
-
-Move CLEAR_CPU_BUFFERS after RESTORE_ALL_NMI.
-
-Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-Cc: stable@vger.kernel.org # 5.10+
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- arch/x86/entry/entry_32.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 9ad6cd89b7ac..20be5758c2d2 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1145,7 +1145,6 @@ SYM_CODE_START(asm_exc_nmi)
- 
- 	/* Not on SYSENTER stack. */
- 	call	exc_nmi
--	CLEAR_CPU_BUFFERS
- 	jmp	.Lnmi_return
- 
- .Lnmi_from_sysenter_stack:
-@@ -1166,6 +1165,7 @@ SYM_CODE_START(asm_exc_nmi)
- 
- 	CHECK_AND_APPLY_ESPFIX
- 	RESTORE_ALL_NMI cr3_reg=%edi pop=4
-+	CLEAR_CPU_BUFFERS
- 	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
-@@ -1207,6 +1207,7 @@ SYM_CODE_START(asm_exc_nmi)
- 	 *  1 - orig_ax
- 	 */
- 	lss	(1+5+6)*4(%esp), %esp			# back to espfix stack
-+	CLEAR_CPU_BUFFERS
- 	jmp	.Lirq_return
- #endif
- SYM_CODE_END(asm_exc_nmi)
-
--- 
-2.34.1
-
+Am 05.09.24 um 17:52 schrieb Frank Li:
+> Add mailing list imx@lists.linux.dev for nxp spi drivers(qspi, fspi and
+> dspi).
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+> ---
+>   MAINTAINERS | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 59eb18b0261fd..8900c53ae66ed 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8958,6 +8958,7 @@ F:	drivers/dma/fsldma.*
+>   FREESCALE DSPI DRIVER
+>   M:	Vladimir Oltean <olteanv@gmail.com>
+>   L:	linux-spi@vger.kernel.org
+> +L:	imx@lists.linux.dev
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/spi/fsl,dspi*.yaml
+>   F:	drivers/spi/spi-fsl-dspi.c
+> @@ -9086,6 +9087,7 @@ F:	include/linux/fsl/ptp_qoriq.h
+>   FREESCALE QUAD SPI DRIVER
+>   M:	Han Xu <han.xu@nxp.com>
+>   L:	linux-spi@vger.kernel.org
+> +L:	imx@lists.linux.dev
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>   F:	drivers/spi/spi-fsl-qspi.c
+> @@ -16562,6 +16564,7 @@ M:	Han Xu <han.xu@nxp.com>
+>   M:	Haibo Chen <haibo.chen@nxp.com>
+>   R:	Yogesh Gaur <yogeshgaur.83@gmail.com>
+>   L:	linux-spi@vger.kernel.org
+> +L:	imx@lists.linux.dev
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/spi/spi-nxp-fspi.yaml
+>   F:	drivers/spi/spi-nxp-fspi.c
 
 
