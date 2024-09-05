@@ -1,158 +1,111 @@
-Return-Path: <linux-kernel+bounces-317335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD2D96DCA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC41196DCAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 703E71F246C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF0491C217BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C78219E7D0;
-	Thu,  5 Sep 2024 14:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8045719F487;
+	Thu,  5 Sep 2024 14:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gR9bcvWG"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZsoqf4y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CD76E614
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D644619F469;
+	Thu,  5 Sep 2024 14:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548054; cv=none; b=JMuo1nofzYd5AJg41QY4dowbyyCr1jgDsJyprft1ED1iN9AxmV+l2jLWpJMyqR9uCpaq0Eoez30YrpJVCD+Dr0a8krh8W+6nswSdvAIQ0FVyFgaSRwd5ispkVpycZ9XJr1w07cuKnCorZPPrefRZjd2SxzvxIYEQ3ULEtdu3hy8=
+	t=1725548061; cv=none; b=Tm0yVFf+anp8B9WjDSLtlZovMJnaKI2AAZa3p47T7HHUQBFPapSriVmekUJ78TD1673YVrxTeNUm3/TuXJE7uc4KpvJvyR6c0cynI7p9AbR4KhFIC+qYsD080ULJtH5aCV50Zsw4PgHXp07xP5D53Jrv6Q1ylvk5+YWaxZC82Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548054; c=relaxed/simple;
-	bh=QITvcxupEaJRmjBvAUQYWATD8JWquvWC4j/tYXl3El4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=np2JDk3IdFkeCBlRz8ECYmtrAE2Dm5Un5W1DVXPQFrLTR+x5m2vFFjBiFXp1gnW6LSPSbFZkMH7vb98Gc4FO/bQJeZY2PygHhuHzKhSYy1lLGJksNdrb7Si/lHyz9Y2IwUtPG58cc2aA9YalC4wC63VoG0f/UDh0zJ2aO+B9Sj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gR9bcvWG; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Udk+uEfHxTbOF+jAUIi5L/lDLCyIKseLghSVqL0zesY=; b=gR9bcvWGrTyDVg0SEbfXvfE4eU
-	LXHGZBRz6OMRLX+f93skm+dbOIHBTbpy9+secqM/QhvuLAG+7a/00k8YZz2jEqCFseqGgkrl+LPW8
-	0vP8pwFDhgLzhixopvDb3p5mVkRJwahPpVGbKjUkYNM1oPCZTS7mXehS0B+tck1d8tnnqUBylhaYx
-	Ejn86ifUECS4vYKYAvbnDv07hPNTYod5h3dsU0OrPGqPgWJR/IzuzQa4F9qvHjAU6N96IaPmJ8gG/
-	SFvCO9Wq2PYcOGVxAqE0VLmQVimSbBKTuaMkfQ2cUcNJ1rrcangfc9fUApd15P+vJyrpQcQmEXDT4
-	fU5pmpDg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1smDrv-00000000V9u-1jmg;
-	Thu, 05 Sep 2024 14:53:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C75C5300599; Thu,  5 Sep 2024 16:53:54 +0200 (CEST)
-Date: Thu, 5 Sep 2024 16:53:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	Luis Machado <luis.machado@arm.com>, mingo@redhat.com,
-	juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
-Message-ID: <20240905145354.GP4723@noisy.programming.kicks-ass.net>
-References: <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com>
- <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
- <83a20d85-de7a-4fe6-8cd8-5a96d822eb6b@arm.com>
- <629937b1-6f97-41d1-aa4f-7349c2ffa29d@arm.com>
- <CAKfTPtBPK8ovttHDQjfuwve63PK_pNH4WMznEHWoXQ=2vGhKQQ@mail.gmail.com>
- <CAKfTPtDO3n-4mcr2Sk-uu0ZS5xQnagdicQmaBh-CyrndPLM8eQ@mail.gmail.com>
- <aa81d37e-ad9c-42c6-a104-fe8496c5d907@arm.com>
- <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
- <CAKfTPtCNUvWE_GX5LyvTF-WdxUT=ZgvZZv-4t=eWntg5uOFqiQ@mail.gmail.com>
- <a9a45193-d0c6-4ba2-a822-464ad30b550e@arm.com>
+	s=arc-20240116; t=1725548061; c=relaxed/simple;
+	bh=UUHnewB4h6BjmuvU1iEeBkQiipuPVS6T5jBbdXQDBYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cuQZP2Vr+PKOioJ3BW+eAdWsJdmTQ9FYDHWZ8IHjzx+xeE1g8TRxL/hIakqNCzi4u51lOKAvYRoMQBemm01KgNtb3x5Q/kMaG5Rt8QLAnh7xcPuuh8ZhRtXTvb1JWZTZAcKlwjmHe6jtRfFcGyAjI/eHYk8H1onRDc5ahzvHT14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZsoqf4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78527C4CEC9;
+	Thu,  5 Sep 2024 14:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725548061;
+	bh=UUHnewB4h6BjmuvU1iEeBkQiipuPVS6T5jBbdXQDBYo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GZsoqf4yr7M8DNN/H/mRUifQnEWOrUoFXE5sat8Gtxp5sqKHS4aR9ERPuXdjUhCNt
+	 BwDF9YI7241GkzPCLKSSA5OFTXPlrUYxmEEH0JPAe05kbZ7Lt+uB2ATRdThvINa4tT
+	 TIf6GibIdS3azAhohptf2Jd/itIzz6jMDuNWzniOQcVcrH9YMbJWbPlr+o3oYgSdi6
+	 SMpn6ZyzhKlAkQA3hDvspANz9QyYu522oUYZqZ052YAcdr/S7znaaNyp2/mNfAhPYO
+	 b0i0jizyrxIaWfpGj5+X1Ju2DaxzFjrLo3iyczRTTvqg3qX5qHjII7leXn3OEAejJu
+	 /NsCRG0FH2GJQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5356bb55224so1106513e87.0;
+        Thu, 05 Sep 2024 07:54:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUn5PlQMt9HByYYGZPqrIbxADcpGlCIbtnU3CzPubhjjo+n25YDPV7F5wvs/79gpqkDwj/anEl69+LjraDa@vger.kernel.org, AJvYcCX58aon35Bd5GgaVYJma1z5jvtDheE15XlAY/J6wQDcYu8CsLQ6fQPXp7SMIdjjHWOI0PmMDc+3dNns@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8EFE0HqFV1ZzNlpzi92NE1nrDoijdy4Nm1um+i2MZitJkZ4uM
+	3ga2K43tAy7DDsYqsuj5OBNVR3k6xr1RUEx7OIUeGvIfx+qsP0dvTJgZEmNFqZWaZ4hpB/f/J+0
+	0dg8UE53urC+UV7ub9LzsWT+nww==
+X-Google-Smtp-Source: AGHT+IFlSeFYMNSm1QKxRra9izZe4ohmwyETHeZy0yKrKZnqSLZ2jfK2gIAtZdWXH8SqtlzBvOVv3uuWe3uVZdR03Ts=
+X-Received: by 2002:a05:6512:3d27:b0:52f:288:5664 with SMTP id
+ 2adb3069b0e04-53546bc399cmr14867395e87.51.1725548059816; Thu, 05 Sep 2024
+ 07:54:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9a45193-d0c6-4ba2-a822-464ad30b550e@arm.com>
+References: <20240905-of-resource-overflow-v1-1-0cd8bb92cc1f@linutronix.de>
+ <CAL_JsqJ=7kX6DL_HBJMrWuhjZEmPUL++BvJ9tg3BDD9-e+b6Xw@mail.gmail.com> <20240905153318-ef305b5f-7987-410b-8256-aa6d01574fc9@linutronix.de>
+In-Reply-To: <20240905153318-ef305b5f-7987-410b-8256-aa6d01574fc9@linutronix.de>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 5 Sep 2024 09:54:07 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKu2yC_xaq6SY472XRxJr-pMp8msFQ2HeqppZ-16yhRzw@mail.gmail.com>
+Message-ID: <CAL_JsqKu2yC_xaq6SY472XRxJr-pMp8msFQ2HeqppZ-16yhRzw@mail.gmail.com>
+Subject: Re: [PATCH] of: address: Report error on resource bounds overflow
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2024 at 04:07:01PM +0200, Dietmar Eggemann wrote:
+On Thu, Sep 5, 2024 at 8:41=E2=80=AFAM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> On Thu, Sep 05, 2024 at 08:15:40AM GMT, Rob Herring wrote:
+> > On Thu, Sep 5, 2024 at 2:46=E2=80=AFAM Thomas Wei=C3=9Fschuh
+> > <thomas.weissschuh@linutronix.de> wrote:
+> > >
+> > > The members "start" and "end" of struct resource are of type
+> > > "resource_size_t" which can be 32bit wide.
+> > > Values read from OF however are always 64bit wide.
+> > > Avoid silently truncating the value and instead return an error value=
+.
+> > >
+> > > This can happen on real systems when the DT was created for a
+> > > PAE-enabled kernel and a non-PAE kernel is actually running.
+> > > For example with an arm defconfig and "qemu-system-arm -M virt".
+> >
+> > A nice follow-up would be to make of_pci_range_to_resource() use
+> > overflows_type() as well instead of open coding it.
+>
+> Good catch.
+>
+> There are some differences though, it
+> * returns -EINVAL on overflow instead of -EOVERFLOW
 
-> > Unfortunately, this is not only about util_est
-> > 
-> > cfs_rq's runnable_avg is also wrong  because we normally have :
-> > cfs_rq's runnable_avg == /Sum se's runnable_avg
-> > but cfs_rq's runnable_avg uses cfs_rq's h_nr_running but delayed
-> > entities are still accounted in h_nr_running
-> 
-> Yes, I agree.
-> 
-> se's runnable_avg should be fine already since:
-> 
-> se_runnable()
-> 
->   if (se->sched_delayed)
->     return false
-> 
-> But then, like you said, __update_load_avg_cfs_rq() needs correct
-> cfs_rq->h_nr_running.
+I think that is safe to change. I don't see any cases looking at the
+specific errno. Note that of_range_to_resource() kerneldoc would need
+updating too.
 
-Uff. So yes __update_load_avg_cfs_rq() needs a different number, but
-I'll contest that h_nr_running is in fact correct, albeit no longer
-suitable for this purpose.
+> * sets ->start and ->end to OF_BAD_ADDR on overflow
 
-We can track h_nr_delayed I suppose, and subtract that.
+Don't need to do that. No user accesses the resource on error.
 
-> And I guess we need something like:
-> 
-> se_on_rq()
-> 
->   if (se->sched_delayed)
->     return false
-> 
-> for
-> 
-> __update_load_avg_se()
-> 
-> - if (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
-> + if (___update_load_sum(now, &se->avg, se_on_rq(se), se_runnable(se),
-> 
-> 
-> My hope was we can fix util_est independently since it drives CPU
-> frequency. Whereas PELT load_avg and runnable_avg are "only" used for
-> load balancing. But I agree, it has to be fixed as well.
-> 
-> > That also means that cfs_rq's h_nr_running is not accurate anymore
-> > because it includes delayed dequeue
-> 
-> +1
-> 
-> > and cfs_rq load_avg is kept artificially high which biases
-> > load_balance and cgroup's shares
-> 
-> +1
+> * does not check ->end for overflow
 
-Again, fundamentally the delayed tasks are delayed because they need to
-remain part of the competition in order to 'earn' time. It really is
-fully on_rq, and should be for the purpose of load and load-balancing.
+Obviously we want to do that.
 
-It is only special in that it will never run again (until it gets
-woken).
-
-Consider (2 CPUs, 4 tasks):
-
-  CPU1		CPU2
-   A		 D
-   B (delayed)
-   C
-
-Then migrating any one of the tasks on CPU1 to CPU2 will make them all
-earn time at 1/2 instead of 1/3 vs 1/1. More fair etc.
-
-Yes, I realize this might seem weird, but we're going to be getting a
-ton more of this weirdness once proxy execution lands, then we'll be
-having the entire block chain still on the runqueue (and actually
-consuming time).
+Rob
 
