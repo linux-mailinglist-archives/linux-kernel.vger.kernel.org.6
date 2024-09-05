@@ -1,214 +1,321 @@
-Return-Path: <linux-kernel+bounces-317657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61F796E188
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:07:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF2496E18D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E191AB22D21
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:07:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01527B22931
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD9317B4FA;
-	Thu,  5 Sep 2024 18:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0483017BEA4;
+	Thu,  5 Sep 2024 18:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VS1rjWxh"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=illinois-edu.20230601.gappssmtp.com header.i=@illinois-edu.20230601.gappssmtp.com header.b="XRn3JJ/w"
+Received: from mail-oo1-f65.google.com (mail-oo1-f65.google.com [209.85.161.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BD117BA7
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AED1C2E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725559611; cv=none; b=mn+OmV5oqntl5XdBI6GsXyHoZeZCiz0NzvDEiYHgf99elLXpi5/NSA2GIYAmyNnNW09ZGyQzl5VZcIwkBPKAKlMZHEIkP99j8kD5Sdj7Pb0DF6Ll0zg+Vb4jZK3HwvONu/9QEKgoyVese6PWRBs6ApxorKCiZZVoMzi+GrxCykA=
+	t=1725559708; cv=none; b=Q7s+Y87FdkU/O0ztTJcLlbVVHgqwxnVsUSEY1N94evGNgsDLH5UsmJUiHNCNmyk1RZ5IMxEvWXfcHyd1onOFDJeLOthut8bZR0rX5YXOAGsmbJU9UQd8L+u12HGMJH4WcC1R6sKl1E+2SG6tOZ24YOT2GTIxLMg1cFcrxvM4Z3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725559611; c=relaxed/simple;
-	bh=jr/TuNoxjf8E90u+hMbdStpxIpjykTzcEnkOAwaTGYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uyhj1iCYrzhPMbIhB054RskrK2R+eh+HW67drLimgxpZ7YhECHId9FPuM/B002g3JEfphjslXUXQH7oi1XsYaeUbATr044V+LTLV0x06O6ubhJ942mwgRXAgY/8RGouIBoOK8jdBSTkWlSDXqA90lWL5iczcQHaQd22/DaJugHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VS1rjWxh; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a3acaa1bbso39743739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 11:06:49 -0700 (PDT)
+	s=arc-20240116; t=1725559708; c=relaxed/simple;
+	bh=yTjFB74aYheCz0jzkiyD05MEqttD3cBEB16TrrKu6ME=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JTzZmeFFy/ZgbB/o5q6fvrJgC0kFlnF/UIqWZrRS+8bhXzarpmC6dEuI6wEELF3WxwjFAWavwiMUukELIetBvkX0VYi/NEetZKwSeHK8WaXuPtuq56eoOVowyqJy/DbpRI+l2MLzkY/1shkKw0BX1YxK9/ZDoKfeSrZa3ulN7lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois-edu.20230601.gappssmtp.com header.i=@illinois-edu.20230601.gappssmtp.com header.b=XRn3JJ/w; arc=none smtp.client-ip=209.85.161.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
+Received: by mail-oo1-f65.google.com with SMTP id 006d021491bc7-5e172cc6d66so675411eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 11:08:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725559609; x=1726164409; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zcyGNCRPFzfZIrApFPczHK3nKz5gOIlO6ExrEkXod08=;
-        b=VS1rjWxhGvG3Ux074Vbk476kUdendNK0XCxCkFv7slSLkCH2k5RyzMeVW+v58papqE
-         XJ9w8IgjNSrwcrRfuwagr5plFjgheD/ivOjQM1aMki/h9cxIcvVgs3pDnNziMnj5rYCZ
-         0tfzBFObyOai+6tgDQ8OcMRoOEWPJ2JeYRvhg=
+        d=illinois-edu.20230601.gappssmtp.com; s=20230601; t=1725559705; x=1726164505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iaax2KMv1pfmqcinOyW9AJBjnAW5CoEYUzGnm6PN3kM=;
+        b=XRn3JJ/wxpgAJg5u1rMyafvgZEmDo7OAiVDkihVTT8nRzySm3XGHQa8dTttx8Q2mrz
+         zrBiTyglFkD23YNZrK7UI6JzGwg4C8YDuiI9YZN0FKILglmGUNagWAOUtgdOOFyN9ofn
+         mhG3t9/zkXZIsjgOi8Ubh/IVnm8FBr0afGdu/wjWDYAwgd5KImf+oYh87z6Cb3uPigAw
+         p054fXDJTZ3cWXcOSRHN/7nNaTGD9G9QzdpzN58nGiorqQCfcTL2nqiNZ2uQ4r1fGbXh
+         x1XsxCtjB/hzs3JkmPFA9mG1c+ikwNxJIEguHghXfvCNaL4SAVgPOpisq8YUcz/GiPg7
+         xfKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725559609; x=1726164409;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zcyGNCRPFzfZIrApFPczHK3nKz5gOIlO6ExrEkXod08=;
-        b=W68BT9D2AG3goh0OHXG/+udkJy6LM2RK66TSmCzsVUJJ8SH4yBc4WtHtIpbgTUeYi6
-         FUgqsgbVawlTLy9mVwNiEWA73hONu+UaGIQslrajKAhYMVGJLl7hhVu/i9kNYPN5Ualy
-         t9UF3LWbJDp9zyCfzhdB5zCIy4z9s9Ku84lgpSDif4hCnbbx+KgaQFGQMvW/hDM91H3h
-         D6BcAoPGCOWy/STSL+PUffn5z5qXGqcwMfY79LT7ghyHX2KVsxSPiGyLJOsIyMFkRiWh
-         /pZEGwDYULD8uKyXh+rZQ45cos4yFs1ZzmeV8/84RsP+WqSfg716zS5BdWk4KeXBcbDy
-         WRaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXVX3/zxvU1Rpm+wvZ2FQuZu0JeSF8wB+uu/y0tfCtgIHW6t/sQXfCRcvvDlgBtObbzAA11/+PIy0UrF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4TTxcEApA9zXmiTkc3xEo8YOAN/R6rMUVNDFOjZcu5KYBAtWI
-	zIupTDjfFyMo+vfiAH2N3EMpY29zUBYpI23YzFszQ3MFKuvrDaNoJEd/gNf++aY=
-X-Google-Smtp-Source: AGHT+IFYb2H7I+Fm5f41GXCnjWtRvinZelqwmrZeSDKCjld2tXbxa9Wl+ZeRwMYp1rfSByF3y1Q3dQ==
-X-Received: by 2002:a05:6602:2d8e:b0:82a:4480:badc with SMTP id ca18e2360f4ac-82a4480bcc7mr1988924939f.10.1725559608677;
-        Thu, 05 Sep 2024 11:06:48 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a4990a6sm429977339f.43.2024.09.05.11.06.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 11:06:48 -0700 (PDT)
-Message-ID: <f65237fe-a1b9-4d63-9a06-dd7a49765c9f@linuxfoundation.org>
-Date: Thu, 5 Sep 2024 12:06:47 -0600
+        d=1e100.net; s=20230601; t=1725559705; x=1726164505;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iaax2KMv1pfmqcinOyW9AJBjnAW5CoEYUzGnm6PN3kM=;
+        b=YJPbaCGEgkX1WGD+QrE+8tZoBNGpvu+BVSomWU5PtqqZu6pwG3JqbnrhTkt8MOX7te
+         qwIXtPkdvmAPXJjFeRdIHXKMHjSJDx3w6TDpWd1mGxxWksjHXTrTg8FmEJwZ66zk60qV
+         YSsT2FMetYmPxLcEfa6uxssgCEDaOSh22/1WcYKJiq2lSkkPKP+YO7tg28/tKEuj5t58
+         Q75H0x5jB5AZpO7NR25h1mWaxqQ/DEFdZF0VhfjGDG9ZGss+UUVHi2yXU+pUeNzu/Yrt
+         yHSpTtV6uqyy6r89USJvz0OsuWoJjQyTbxP+LuEMtsuEPdsXtUdFgyZvu9r5xMhNNnEP
+         93Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNi+7c83ufMKT+VF7V4kM05xb74uHMBseMUywKXKVGoJAEKPhj6HC9Kndpp25g3dBtFIqW1UVNDtstsHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx8qv2xDQc7FvyoCu0EJrcFBuW9Jc5WquZYGF2WtdWRocEcQX2
+	DlEHH8hsIykKbbzUJAXhfah986h5RHzFbp1cYGSQI5i79sY+Oold86Pf//Sebg==
+X-Google-Smtp-Source: AGHT+IElODMM0rQh4mddrzv/F5ovRuzJwZcdSq8FKd1lAPOBIO5XJpe1dPGMgoqhRfT//mb9dwT12Q==
+X-Received: by 2002:a05:6358:3123:b0:1b5:fc87:f033 with SMTP id e5c5f4694b2df-1b8385d965amr10429755d.11.1725559704945;
+        Thu, 05 Sep 2024 11:08:24 -0700 (PDT)
+Received: from node0.kernel3.linux-mcdc-pg0.utah.cloudlab.us ([128.110.218.246])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c5201e43dasm9566796d6.46.2024.09.05.11.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 11:08:24 -0700 (PDT)
+From: Wentao Zhang <wentaoz5@illinois.edu>
+To: peterz@infradead.org
+Cc: Matt.Kelly2@boeing.com,
+	akpm@linux-foundation.org,
+	andrew.j.oppelt@boeing.com,
+	anton.ivanov@cambridgegreys.com,
+	ardb@kernel.org,
+	arnd@arndb.de,
+	bhelgaas@google.com,
+	bp@alien8.de,
+	chuck.wolber@boeing.com,
+	dave.hansen@linux.intel.com,
+	dvyukov@google.com,
+	hpa@zytor.com,
+	jinghao7@illinois.edu,
+	johannes@sipsolutions.net,
+	jpoimboe@kernel.org,
+	justinstitt@google.com,
+	kees@kernel.org,
+	kent.overstreet@linux.dev,
+	linux-arch@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	llvm@lists.linux.dev,
+	luto@kernel.org,
+	marinov@illinois.edu,
+	masahiroy@kernel.org,
+	maskray@google.com,
+	mathieu.desnoyers@efficios.com,
+	matthew.l.weber3@boeing.com,
+	mhiramat@kernel.org,
+	mingo@redhat.com,
+	morbo@google.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	oberpar@linux.ibm.com,
+	paulmck@kernel.org,
+	richard@nod.at,
+	rostedt@goodmis.org,
+	samitolvanen@google.com,
+	samuel.sarkisian@boeing.com,
+	steven.h.vanderleest@boeing.com,
+	tglx@linutronix.de,
+	tingxur@illinois.edu,
+	tyxu@illinois.edu,
+	wentaoz5@illinois.edu,
+	x86@kernel.org
+Subject: Re: [PATCH v2 0/4] Enable measuring the kernel's Source-based Code Coverage and MC/DC with Clang
+Date: Thu,  5 Sep 2024 13:07:58 -0500
+Message-ID: <20240905180758.1396234-1-wentaoz5@illinois.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240905114140.GN4723@noisy.programming.kicks-ass.net>
+References: <20240905114140.GN4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] selftests: Fix cpuid / vendor checking build
- issues
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>,
- linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Fenghua Yu
- <fenghua.yu@intel.com>,
- =?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240903144528.46811-1-ilpo.jarvinen@linux.intel.com>
- <eadb7bc7-a093-4229-90f0-88b730087666@linuxfoundation.org>
- <d2a4ca5c-3352-e570-687c-9d7ec90dbe33@linux.intel.com>
- <b4b7147f-64cf-4244-a896-07a88f08d0f1@linuxfoundation.org>
- <d8ffc136-876b-db3f-fc87-a1442e53a451@linux.intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <d8ffc136-876b-db3f-fc87-a1442e53a451@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/4/24 06:54, Ilpo Järvinen wrote:
-> On Wed, 4 Sep 2024, Shuah Khan wrote:
-> 
->> On 9/4/24 06:18, Ilpo Järvinen wrote:
->>> On Tue, 3 Sep 2024, Shuah Khan wrote:
->>>
->>>> On 9/3/24 08:45, Ilpo Järvinen wrote:
->>>>> This series first generalizes resctrl selftest non-contiguous CAT check
->>>>> to not assume non-AMD vendor implies Intel. Second, it improves
->>>>> selftests such that the use of __cpuid_count() does not lead into a
->>>>> build failure (happens at least on ARM).
->>>>>
->>>>> While ARM does not currently support resctrl features, there's an
->>>>> ongoing work to enable resctrl support also for it on the kernel side.
->>>>> In any case, a common header such as kselftest.h should have a proper
->>>>> fallback in place for what it provides, thus it seems justified to fix
->>>>> this common level problem on the common level rather than e.g.
->>>>> disabling build for resctrl selftest for archs lacking resctrl support.
->>>>>
->>>>> I've dropped reviewed and tested by tags from the last patch in v3 due
->>>>> to major changes into the makefile logic. So it would be helpful if
->>>>> Muhammad could retest with this version.
->>>>>
->>>>> Acquiring ARCH in lib.mk will likely allow some cleanup into some
->>>>> subdirectory makefiles but that is left as future work because this
->>>>> series focuses in fixing cpuid/build.
->>>>
->>>>>
->>>>> v4:
->>>>> - New patch to reorder x86 selftest makefile to avoid clobbering CFLAGS
->>>>>      (would cause __cpuid_count() related build fail otherwise)
->>>>>
->>>> I don't like the way this patch series is mushrooming. I am not
->>>> convinced that changes to lib.mk and x86 Makefile are necessary.
->>>
->>> I didn't like it either what I found from the various makefiles. I think
->>> there are many things done which conflict with what lib.mk seems to try to
->>> do.
->>>
+On 2024-09-05 06:41, Peter Zijlstra wrote:
+> On Wed, Sep 04, 2024 at 11:32:41PM -0500, Wentao Zhang wrote:
+>> From: Wentao Zhang <zhangwt1997@gmail.com>
 >>
->> Some of it by desig. lib.mk offers framework for common things. There
->> are provisions to override like in the case of x86, powerpc. lib.mk
->> tries to be flexible as well.
+>> This series adds support for building x86-64 kernels with Clang's Source-
+>> based Code Coverage[1] in order to facilitate Modified Condition/Decision
+>> Coverage (MC/DC)[2] that provably correlates to source code for all levels
+>> of compiler optimization.
 >>
->>> I tried to ask in the first submission what test I should use in the
->>> header file as I'm not very familiar with how arch specific is done in
->>> userspace in the first place nor how it should be done within kselftest
->>> framework.
->>>
+>> The newly added kernel/llvm-cov/ directory complements the existing gcov
+>> implementation. Gcov works at the object code level which may better
+>> reflect actual execution. However, Gcov lacks the necessary information to
+>> correlate coverage measurement with source code location when compiler
+>> optimization level is non-zero (which is the default when building the
+>> kernel). In addition, gcov reports are occasionally ambiguous when
+>> attempting to compare with source code level developer intent.
 >>
->> Thoughts on cpuid:
+>> In the following gcov example from drivers/firmware/dmi_scan.c, an
+>> expression with four conditions is reported to have six branch outcomes,
+>> which is not ideally informative in many safety related use cases, such as
+>> automotive, medical, and aerospace.
 >>
->> - It is x86 specific. Moving this to kselftest.h was done to avoid
->>    duplicate. However now we are running into arm64/arm compile
->>    errors due to this which need addressing one way or the other.
+>>          5: 1068:	if (s == e || *e != '/' || !month || month > 12) {
+>> branch  0 taken 5 (fallthrough)
+>> branch  1 taken 0
+>> branch  2 taken 5 (fallthrough)
+>> branch  3 taken 0
+>> branch  4 taken 0 (fallthrough)
+>> branch  5 taken 5
 >>
->> I have some ideas on how to solve this - but I need answers to
->> the following questions.
+>> On the other hand, Clang's Source-based Code Coverage instruments at the
+>> compiler frontend which maintains an accurate mapping from coverage
+>> measurement to source code location. Coverage reports reflect exactly how
+>> the code is written regardless of optimization and can present advanced
+>> metrics like branch coverage and MC/DC in a clearer way. Coverage report
+>> for the same snippet by llvm-cov would look as follows:
 >>
->> This is a question for you and Usama.
+>>   1068|      5|	if (s == e || *e != '/' || !month || month > 12) {
+>>    ------------------
+>>    |  Branch (1068:6): [True: 0, False: 5]
+>>    |  Branch (1068:16): [True: 0, False: 5]
+>>    |  Branch (1068:29): [True: 0, False: 5]
+>>    |  Branch (1068:39): [True: 0, False: 5]
+>>    ------------------
 >>
->> - Does resctrl run on arm64/arm and what's the output?
->> - Can all other tests in resctrl other tests except
->>    noncont_cat_run_test?
->> - If so send me the output.
+>> Clang has added MC/DC support as of its 18.1.0 release. MC/DC is a fine-
+>> grained coverage metric required by many automotive and aviation industrial
+>> standards for certifying mission-critical software [3].
+>>
+>> In the following example from arch/x86/events/probe.c, llvm-cov gives the
+>> MC/DC measurement for the compound logic decision at line 43.
+>>
+>>     43|     12|			if (msr[bit].test && !msr[bit].test(bit, data))
+>>    ------------------
+>>    |---> MC/DC Decision Region (43:8) to (43:50)
+>>    |
+>>    |  Number of Conditions: 2
+>>    |     Condition C1 --> (43:8)
+>>    |     Condition C2 --> (43:25)
+>>    |
+>>    |  Executed MC/DC Test Vectors:
+>>    |
+>>    |     C1, C2    Result
+>>    |  1 { T,  F  = F      }
+>>    |  2 { T,  T  = T      }
+>>    |
+>>    |  C1-Pair: not covered
+>>    |  C2-Pair: covered: (1,2)
+>>    |  MC/DC Coverage for Decision: 50.00%
+>>    |
+>>    ------------------
+>>     44|      5|				continue;
+>>
+>> As the results suggest, during the span of measurement, only condition C2
+>> (!msr[bit].test(bit, data)) is covered. That means C2 was evaluated to both
+>> true and false, and in those test vectors C2 affected the decision outcome
+>> independently. Therefore MC/DC for this decision is 1 out of 2 (50.00%).
+>>
+>> To do a full kernel measurement, instrument the kernel with
+>> LLVM_COV_KERNEL_MCDC enabled, and optionally set a
+>> LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS value (the default is six). Run the
+>> testsuites, and collect the raw profile data under
+>> /sys/kernel/debug/llvm-cov/profraw. Such raw profile data can be merged and
+>> indexed, and used for generating coverage reports in various formats.
+>>
+>>    $ cp /sys/kernel/debug/llvm-cov/profraw vmlinux.profraw
+>>    $ llvm-profdata merge vmlinux.profraw -o vmlinux.profdata
+>>    $ llvm-cov show --show-mcdc --show-mcdc-summary                         \
+>>               --format=text --use-color=false -output-dir=coverage_reports \
+>>               -instr-profile vmlinux.profdata vmlinux
+>>
+>> The first two patches enable the llvm-cov infrastructure, where the first
+>> enables source based code coverage and the second adds MC/DC support. The
+>> next patch disables instrumentation for curve25519-x86_64.c for the same
+>> reason as gcov. The final patch enables coverage for x86-64.
+>>
+>> The choice to use a new Makefile variable LLVM_COV_PROFILE, instead of
+>> reusing GCOV_PROFILE, was deliberate. More work needs to be done to
+>> determine if it is appropriate to reuse the same flag. In addition, given
+>> the fundamentally different approaches to instrumentation and the resulting
+>> variation in coverage reports, there is a strong likelihood that coverage
+>> type will need to be managed separately.
+>>
+>> This work reuses code from a previous effort by Sami Tolvanen et al. [4].
+>> Our aim is for source-based *code coverage* required for high assurance
+>> (MC/DC) while [4] focused more on performance optimization.
+>>
+>> This initial submission is restricted to x86-64. Support for other
+>> architectures would need a bit more Makefile & linker script modification.
+>> Informally we've confirmed that arm64 works and more are being tested.
+>>
+>> Note that Source-based Code Coverage is Clang-specific and isn't compatible
+>> with Clang's gcov support in kernel/gcov/. Currently, kernel/gcov/ is not
+>> able to measure MC/DC without modifying CFLAGS_GCOV and it would face the
+>> same issues in terms of source correlation as gcov in general does.
+>>
+>> Some demo and results can be found in [5]. We will talk about this patch
+>> series in the Refereed Track at LPC 2024 [6].
+>>
+>> Known Limitations:
+>>
+>> Kernel code with logical expressions exceeding
+>> LVM_COV_KERNEL_MCDC_MAX_CONDITIONS will produce a compiler warning.
+>> Expressions with up to 47 conditions are found in the Linux kernel source
+>> tree (as of v6.11), but 46 seems to be the max value before the build fails
+>> due to kernel size. As of LLVM 19 the max number of conditions possible is
+>> 32767.
+>>
+>> As of LLVM 19, certain expressions are still not covered, and will produce
+>> build warnings when they are encountered:
+>>
+>> "[...] if a boolean expression is embedded in the nest of another boolean
+>>   expression but separated by a non-logical operator, this is also not
+>>   supported. For example, in x = (a && b && c && func(d && f)), the d && f
+>>   case starts a new boolean expression that is separated from the other
+>>   conditions by the operator func(). When this is encountered, a warning
+>>   will be generated and the boolean expression will not be
+>>   instrumented." [7]
+>>
 > 
-> Hi Shuah,
+> What does this actually look like in the generated code?
 > 
-> As mentioned in my coverletter above, resctrl does not currently support
-> arm but there's an ongoing work to add arm support. On kernel side it
-> requires major refactoring to move non-arch specific stuff out from
-> arch/x86 so has (predictably) taken long time.
-> 
-> The resctrl selftests are mostly written in arch independent way (*) but
-> there's also a way to limit a test only to CPUs from a particular vendor.
-> And now this noncont_cat_run_test needs to use cpuid only on Intel CPUs
-> (to read the supported flag), it's not needed even on AMD CPUs as they
-> always support non-contiguous CAT bitmask.
-> 
-> So to summarize, it would be possible to disable resctrl test for non-x86
-> but it does not address the underlying problem with cpuid which will just
-> come back later I think.
-> 
-> Alternatively, if there's some a good way in C code to do ifdeffery around
-> that cpuid call, I could make that too, but I need to know which symbol to
-> use for that ifdef.
-> 
-> (*) The cache topology may make some selftest unusable on new archs but
-> not the selftest code itself.
+
+Example 1: https://godbolt.org/z/PT6ssxdv1 (Taken from Message-ID:
+<20210614153545.GA68749@worktop.programming.kicks-ass.net>) where counter
+updates look like "inc qword ptr [rip + .L__profc_instr(int)]".
+
+Example 2 with MC/DC: https://godbolt.org/z/ronMc578z where bitmap updates
+look like "or byte ptr [rip + .L__profbm_instr(int)], 8".
+
+> Where is the modification to noinstr ?
+>
+
+In both two examples the compiler is respecting
+"__no_profile_instrument_function__" attribute, which is part of
+"__no_profile" macro, which is in turn part of "noinstr" macro.
+
+> What is the impact on certification of not covering the noinstr code.
 > 
 > 
 
-I agree that suppressing resctrl build is not a solution. The real problem
-is is in defining __cpuid_count() in common code path.
+Allow me to reformat Steve's <steven.h.vanderleest@boeing.com> reply below:
 
-I fixed it and send patch in. As I was testing I noticed the following on
-AMD platform:
+  -------------------------------------------------------------------------
+  I'll answer Peter's last question: "What is the impact on certification
+  of not covering the noinstr code."
+ 
+  Any code in the target image that is not executed by a test (and thus not
+  covered) must be analyzed and justified as an exception. For example,
+  defensive code is often impossible to exercise by test, but can be
+  included in the image with a justification to the regulatory authority
+  such as the Federal Aviation Administration (FAA). In practice, this
+  means the number of unique instances of non-instrumented code needs to be
+  manageable.  I say "unique instances" because there may be many instances
+  of a particular category, but justified by the same analysis/rationale.
+  Where we specifically mark a section of code with noinstr, it is
+  typically because the instrumentation would change the behavior of the
+  code, perturbing the test results. With some analysis for each distinct
+  category of this issue, we could then write justification(s) to show
+  the overall coverage is sufficient.
+ 
+  Regards,
+  Steve
+  -------------------------------------------------------------------------
 
-- it ran the L3_NONCONT_CAT test which is expected.
+Thanks,
+Wentao
 
-# # Starting L3_NONCONT_CAT test ...
-# # Mounting resctrl to "/sys/fs/resctrl"
-# ARCH_AMD - supports non-contiguous CBM
-# # Write schema "L3:0=ff" to resctrl FS
-# # Write schema "L3:0=fc3f" to resctrl FS
-# ok 5 L3_NONCONT_CAT: test
-
-- It went on to run L2_NONCONT_CAT - failed
-
-# ok 6 # SKIP Hardware does not support L2_NONCONT_CAT or L2_NONCONT_CAT is disabled
-
-Does it make sense to run both L3_NONCONT_CAT and L2_NONCONT_CAT
-on AMD? Maybe it is? resctrl checks L3 or L2 support on Intel.
-
-Anyway - the problem is fixed now. Please review and test.
-
-thanks,
--- Shuah
 
