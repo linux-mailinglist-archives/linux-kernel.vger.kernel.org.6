@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-317068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBB096D8CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4175096D8C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A7F28A6C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A552888CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F1D19CD11;
-	Thu,  5 Sep 2024 12:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4B119B3D7;
+	Thu,  5 Sep 2024 12:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1a+VgIF1"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="kB85xrYt"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909FB19B3E4;
-	Thu,  5 Sep 2024 12:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88AD83CC1;
+	Thu,  5 Sep 2024 12:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539945; cv=none; b=QiEw6LgLZEINYgv8pgBfxH6DlkMI5jsAKUzuWuAEMAtC2jk1cY3m1QBH6x/itEJFNkpMFfCl876AOD1krv4m6uCiwrFS9334u1GKY8/SrOk5yIaJNsvmy7EeF3mFAlhdh47PyEKFujP6B6wHJ1jYpc68g9GNHTcXCDNR0xstGvw=
+	t=1725539938; cv=none; b=rt3GwtSzlcEqVhqWAviuSoDCfvuyGjsB1ov1PDLIwD1Aod5pomqpgHsBIdwDW6RRtRh8WV3MlBfHGbovMlBjCjnKp6TO8JkbQgbpKxcvFMit/wa+rkZnJOf2NT540TqqWo4CAQEdqVdfHbug+HSvRwkFvgNCIQ5D8Pz8jeEYPe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539945; c=relaxed/simple;
-	bh=HIGsIXeugJQTCWAVm8XzbJYQEWiE/wuX3YHavCWJfXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5EnaDoTgzVUWnDqsC8ktXwSnSC0+JOSxqfDwZbu0Ri52W1mYwn0dYITC050BAjKybJeEdhtJjvKYlpk6YBLxuKrwuUC7Mj/wrJBVnembncjc49KNdPFmzNR3bl3aZBxU2k0xJWaGUOLYmBtmKaFD/jWbrrAPLdUQTIvvVPVnzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1a+VgIF1; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Nbszc8u1ehabZGC5jnFsbhiRNH6rI1/BMSG1Fv5VDc8=; b=1a+VgIF1rva6uLAA0BUgoKxB1V
-	8usNVlYzuZ1eTqiFuG6aMnQx62LA0WjIZv8sSOSV2XtFC6ub3bPPlyC4J54+o2PcTPEp/G3Q0T0Uz
-	5OGj2GGz23FSJoHe1D4ZuKM/PvLvaK6rCH8f36eU8YUmzTp/0aIqsuSBVdmjV+kmJD1U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smBlE-006fzA-UR; Thu, 05 Sep 2024 14:38:52 +0200
-Date: Thu, 5 Sep 2024 14:38:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tarun Alle <tarun.alle@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: microchip_t1: SQI support for LAN887x
-Message-ID: <dba796b1-bb59-4d90-b592-1d56e3fba758@lunn.ch>
-References: <20240904102606.136874-1-tarun.alle@microchip.com>
+	s=arc-20240116; t=1725539938; c=relaxed/simple;
+	bh=1TRvvmWO0MW5CntQv7pLz+ViK7vl3Ios2JulN/xl4Vc=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=AAACSxdOzQbDJpzu4DcuP504pAWiKTpiXBracGTol3XYfdEh855J0kvXN7a0MZKGn0rQeO3ApL545xngzLBk4hklycSxfpvY6QsHovRojT6WMUSg5b/Jb34vJHFAPcGioCBBK4iaR9YLN8crzGSZc5Aeq3hQhYO7ym3RMLRxMVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=kB85xrYt; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904102606.136874-1-tarun.alle@microchip.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1725539934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0dWXQ8uXxTsUng+Z7yBJoOLelaxiBjqcire+DINUVv0=;
+	b=kB85xrYtcoKUq0Q/7bpKO+BjGGnitX3Efdr7ChhAAZpyKGmftoeVDX33yKz3AICZh08fXV
+	JCbdZc57RWlndM49YrTu37cR7Cv8mQiezZ733I6bIXRNcDXBD8G0cLMqBt3g4eFKN/HOep
+	kh7mG1eE23T2kHdcJbLnsI4XeCfVPowsSCNU2fysTbH6hTwXYFy1HO0i8AXsmGlK36kCUS
+	aNFJ5E/RZjLGg2PYwmJtxGXiIsdVzQ3cVaEEVGzEmOHViirdhgTZfPl4RtnMKsy+wIXYjV
+	pehUwep/sBi/3L+lfRuZ1n7AjwUTJ5S6I8tDtYrPx2MUnv9sqUGoHNGI4TomcA==
+Date: Thu, 05 Sep 2024 14:38:53 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
+ jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi
+ file
+In-Reply-To: <20240905133412.6ba050de@donnerap.manchester.arm.com>
+References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
+ <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
+ <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
+ <20240815181508.6800e205@donnerap.manchester.arm.com>
+ <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
+ <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
+ <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+ <20240905133412.6ba050de@donnerap.manchester.arm.com>
+Message-ID: <b07f1365a6f942297f7a3308fa628187@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-> +	/* Get 200 SQI raw readings */
-> +	for (int i = 0; i < 200; i++) {
+Hello Andre,
 
-Please replace all the hard coded 200 with ARRAY_SIZE(rawtable). That
-makes it easier to tune the size of the table without causing buffer
-overrun bugs.
+On 2024-09-05 14:34, Andre Przywara wrote:
+> On Thu, 5 Sep 2024 20:26:15 +0800
+> Chen-Yu Tsai <wens@csie.org> wrote:
+> 
+>> Hi,
+>> 
+>> On Thu, Sep 5, 2024 at 8:17 PM Dragan Simic <dsimic@manjaro.org> 
+>> wrote:
+>> >
+>> > Hello,
+>> >
+>> > Just checking, any further thoughts about this patch?
+>> 
+>> Sorry, but I feel like it's not really worth the churn. There's not
+>> really a problem to be solved here. What you are arguing for is more
+>> about aesthetics, and we could argue that having them separate makes
+>> it easier to read and turn on/off.
+> 
+> Yeah, I agree. If a board wants to support OPPs, they just have to 
+> include
+> a single file and define the CPU regulator, and that's a nice opt-in,
+> IMHO.
+> But having this patch would make it quite hard to opt out, I believe. 
+> For
+> Linux there are probably ways to disable DVFS nevertheless, but I am 
+> not
+> sure this is true in an OS agnostic pure-DT-only way.
 
-> +		rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
-> +				   LAN887X_POKE_PEEK_100,
-> +				   LAN887X_POKE_PEEK_100_EN);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1,
-> +				  LAN887X_SQI_MSE_100);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		rawtable[i] = rc;
-> +		rc = genphy_c45_read_link(phydev);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		if (!phydev->link)
-> +			return -ENETDOWN;
-> +	}
+Thanks for your response.  The only thing that still makes me wonder
+is why would a board want to opt out of DVFS?  Frankly, I'd consider
+the design of the boards that must keep DVFS disabled broken.
 
-How long does this take?
-
-genphy_c45_read_link() takes a few MDIO transaction, plus the two you
-see here. So maybe 1000 MDIO bus transactions? Which could be
-3000-4000 if it needs to use C45 over C22.
-
-Do you have any data on the accuracy, with say 10, 20, 40, 80, 160
-samples?
-
-Can the genphy_c45_read_link() be moved out of the loop? If the link
-is lost, is the sample totally random, or does it have a well defined
-value? Looking at the link status every iteration, rather than before
-and after collecting the samples, you are trying to protect against
-the link going down and back up again. If it is taking a couple of
-seconds to collect all the samples, i suppose that is possible, but if
-its 50ms, do you really have to worry?
-
-> +static int lan887x_get_sqi(struct phy_device *phydev)
-> +{
-> +	int rc, val;
-> +
-> +	if (phydev->speed != SPEED_1000 &&
-> +	    phydev->speed != SPEED_100) {
-> +		return -EINVAL;
-> +	}
-
-Can that happen? Does the PHY support SPEED_10? Or are you trying to
-protect against SPEED_UNKOWN because the link is down? ENETDOWN might
-be more appropriate that EINVAL.
-
-	Andrew
+> This could probably be solved, but same as Chen-Yu I don't see any good
+> enough reason for this patch in the first place.
+> 
+>> And even though the GPU OPPs are in the dtsi, it's just one OPP acting
+>> as a default clock rate.
 
