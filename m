@@ -1,59 +1,97 @@
-Return-Path: <linux-kernel+bounces-317745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A1F96E32F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:28:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF54596E339
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F003D1C23BDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC64E1C23C6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB7618E772;
-	Thu,  5 Sep 2024 19:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051A218F2FF;
+	Thu,  5 Sep 2024 19:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vl/erQi1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEPogOrr"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188C13D638;
-	Thu,  5 Sep 2024 19:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B0442C0B;
+	Thu,  5 Sep 2024 19:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564521; cv=none; b=on5DCKV8YtbUQzRXIzCh0vOJhQv1KRM1eUSURBCOwNpGTivHo5Iybyi6gMHM+s1wa2iNH3gADrxpqUo31yGATZ7JlTMOhDtgV0EtAJQgRxbQKqeb177U4JhFWYaXQ2c4IMHNkjwgiZ5iNB8CUNP/7CruzR3JqWoL0tNOJ2mpJUQ=
+	t=1725564639; cv=none; b=L0vYvkF8zW21hbvjAmxw9tPgdH4o6czYmf0imVn3/dHir/qcSiYRRyOAw2CLeGhQ/FFxEsRRNx31EMtTFtLJwYyAGERSdQ//TA6aUG3y02R/0FzlDP/WNgjp+VY0FSp9I/W2GKw/zzKi54dQMqFSSl0nzbmSuWJG9e5tjlaYjlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564521; c=relaxed/simple;
-	bh=xSCNcyZPAD7C2Zf/moV/PmenKrSqHCwAipxM+ngnN60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NE+bHCi0nr2dCSxQ/Gb4y3lqM8nW2nEsAzzz/+WlMC9s0tfYuyAq4i3J1zfEPCWo+YlgJ27MhFquzesx+WXOt+IfmDv35YD7EN5SJtFWGEf6ujGOi24vIu0U2HDAV+RdsXRT9EpLx1wd06zjkStuh9vNO6GiKyZsWxfJ/VIAjkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vl/erQi1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273E5C4CEC3;
-	Thu,  5 Sep 2024 19:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725564518;
-	bh=xSCNcyZPAD7C2Zf/moV/PmenKrSqHCwAipxM+ngnN60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vl/erQi1rk5yk7gH3N27H1rDqGA2UA4gSe4LCir9XZc2fGvbWMuIRoigfPPvyDObT
-	 HZ1ESxLaFbrEHA7aLp4zfU54ro6RZD/w351OBuOAGQ2uuzKV+zmT3dT5K7+1s1597r
-	 rmIK42612TxgaFSC8Ek+v9rgdmz9K7sVqudUY0IVpNCwMyARjwmazsU/kAYl+vheWc
-	 CdHEfBfy/PsbfFPnFIsAH48QJs/2hTpGYhRc+brihP9Os8WSYbQ8O6cTAMwZBk9ym8
-	 3a2LawmKhv74OHCWST1iJkPEhwBsWipd3Ug9SGwz4rncZF2oSfNttAyZy2c8hge0Nx
-	 sFylnzxsCeZqw==
-Date: Thu, 5 Sep 2024 21:28:34 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: libata-eh: Clear scsicmd->result when setting
- SAM_STAT_CHECK_CONDITION
-Message-ID: <ZtoGYshL26jTuTOj@ryzen.lan>
-References: <20240904223727.1149294-1-ipylypiv@google.com>
- <Ztls4mim6Jky7E0S@ryzen.lan>
- <Ztl5I1Kz53MOEtF4@ryzen.lan>
- <ZtmmvNYxkQGZwVwy@ryzen.lan>
+	s=arc-20240116; t=1725564639; c=relaxed/simple;
+	bh=edz1Y8cPH7nK/wkJBWl60AZ/9Ibna25B5YaZsnfzETQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDaRZt9A6igEOQjD6Zc1ei7IwpSpUZp51o4AIu/SdKiBDI9w6kxcXpiQjHmWFqFb1asezRmW5N4WhDjTdfzwwYEF7dj6lSnGwO7jslSPFGaBwMCWKBE4D5xnOaWOjQcUJfANqExJCJhqum+4WVdyU7VjVXrhE/uUL8bYQPSDk2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEPogOrr; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-205722ba00cso11659955ad.0;
+        Thu, 05 Sep 2024 12:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725564637; x=1726169437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MbrEFO3D2q7bIKaAwLKYWbNKa6L/7Ep2zWdh3jV7Rr4=;
+        b=nEPogOrrrL877llBwbpI1R4EA8/g5PL3ghN5BnLBPNx8QlGyVM/f8f4FFbtoBmqddh
+         VffcwxjPMvRqJ5/lpcyGd0SSq/6jLExBp0/DvSCe3M09a5Hrm+SqdU0lI8G4zHb6u6xR
+         E6R0b+094PMbAUAuUn3+EK52Q3b4qUuPeeN8zeusylWFgEm8lmjmSrgq6frbRwLHaraw
+         BwTI+pecEwOIxKVfzzSIMQLQ/UyReV08nGJ7gCpretBLlEGXQH6x7/NiU2//KtOlRjbk
+         y8q9/PDmAugAqyfrxuJ4Sc6Sgf4VXPIitFPkbSYbCzpVVyfQib1xQGfnpZf/mqDtg0GN
+         OwVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725564637; x=1726169437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MbrEFO3D2q7bIKaAwLKYWbNKa6L/7Ep2zWdh3jV7Rr4=;
+        b=QcvRxw1sMd9WBu44/KifVGQi61mZJ7yHe1xP3ROyY2UU5FluVdzZzXX+Sy6WGGxzAg
+         RWTUDHyB9Vq9JzWXKFoxmXlpvd9dIvZXKdeu4xmaIKYLazN6g9DKsSOUQsTRmEezxZqv
+         7Wq2FTa0HOWR+Tb1aXCTq3MCOon+bYbqcXw6mODH4gDHiO7UPEVLr4y2zk0Evyn3GoXp
+         nXgz2v4U02CTBHsVTWVUi5n6KQ9SyRMPC51EGnZ9zFHnzG/PW2VsTwNC9WvwA49gFDqp
+         fPqDAeOkZbk9OSpROwrUKG9iynMkBuaC5uGfoHHslCTU9EjU8KDs7+5lxmTfNp21UR9w
+         zT8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwHlpW8vKCM5aM6yuTcoW90s12E8adX8AquRDySobcQX3vzc+lQVwZnKErfF76R1i/QGjIxLkMrWPA@vger.kernel.org, AJvYcCV2/5TZrQclhdLqwyhG1EVuxIbIjVvuF8Xipioj/97I3usZPLGwH2TvI0mR08nU1PmxqL83o3EQnmzM@vger.kernel.org, AJvYcCVVPYBCq4mEAuGcGfzOjgP8jvIx4mp5SESQEpjrigZRZQw+TNHArvrYgn28uYj2m90/q5ka5hUugtFn5VHt@vger.kernel.org, AJvYcCWVNwR0CTnUzzno7Y7+RO5AciUZnvq+wWxGS+808EreyXypkPeGJKOkca+yftstKHU7BQYbooQlODGnIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrS7YXAlS+pX28WQAch/+GrIwDfG2MltZKEcBKbpwA/gw041Dm
+	ZSqWoep66PPfzXQ0eFaWCvFj1lxx+oNzysNxEzOGuhYFYWS0GcOu
+X-Google-Smtp-Source: AGHT+IEXZGO8hCMMHsv0PnNONyTrag4Qx3WBh3WvRsXRhE+inBwlwGH8ekc0KBbwTXHDLfyibHm8iQ==
+X-Received: by 2002:a17:902:cec9:b0:206:8c37:bcd0 with SMTP id d9443c01a7336-206f052e090mr1367825ad.27.1725564636900;
+        Thu, 05 Sep 2024 12:30:36 -0700 (PDT)
+Received: from leg ([2601:646:8f03:9fee:1d73:7db5:2b4a:dfdd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae952bd4sm31818995ad.113.2024.09.05.12.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 12:30:35 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Thu, 5 Sep 2024 12:30:20 -0700
+To: ira.weiny@intel.com
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v3 18/25] cxl/extent: Process DCD events and realize
+ region extents
+Message-ID: <ZtoGzNhrCOPvrnGV@leg>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,103 +100,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtmmvNYxkQGZwVwy@ryzen.lan>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
 
-On Thu, Sep 05, 2024 at 02:40:28PM +0200, Niklas Cassel wrote:
-> Anyway, I think I came up with an even nicer patch to clear the driver byte.
+On Fri, Aug 16, 2024 at 09:44:26AM -0500, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
 > 
-> Change ata_scsi_set_sense():
-> -to set SENSE_DATA_VALID
-> -to clear driver byte (if scsicmd)
+> A dynamic capacity device (DCD) sends events to signal the host for
+> changes in the availability of Dynamic Capacity (DC) memory.  These
+> events contain extents describing a DPA range and meta data for memory
+> to be added or removed.  Events may be sent from the device at any time.
 > 
-> For the cases that calls:
-> -scsi_build_sense_buffer()
-> (because they don't want to set the SAM_STAT_CHECK_CONDITION)
-> or
-> -scsi_build_sense()
-> without using ata_scsi_set_sense():
-> create a new function/functions (e.g. ata_build_sense_keep_status())
-> -sets SENSE_DATA_VALID
-> -clears driver byte (if scsicmd)
+> Three types of events can be signaled, Add, Release, and Force Release.
 > 
-> Will send a PATCH/RFC series today or tomorrow.
+> On add, the host may accept or reject the memory being offered.  If no
+> region exists, or the extent is invalid, the extent should be rejected.
+> Add extent events may be grouped by a 'more' bit which indicates those
+> extents should be processed as a group.
+> 
+> On remove, the host can delay the response until the host is safely not
+> using the memory.  If no region exists the release can be sent
+> immediately.  The host may also release extents (or partial extents) at
+> any time.  Thus the 'more' bit grouping of release events is of less
+> value and can be ignored in favor of sending multiple release capacity
+> responses for groups of release events.
+> 
+> Force removal is intended as a mechanism between the FM and the device
+> and intended only when the host is unresponsive, out of sync, or
+> otherwise broken.  Purposely ignore force removal events.
+> 
+> Regions are made up of one or more devices which may be surfacing memory
+> to the host.  Once all devices in a region have surfaced an extent the
+> region can expose a corresponding extent for the user to consume.
+> Without interleaving a device extent forms a 1:1 relationship with the
+> region extent.  Immediately surface a region extent upon getting a
+> device extent.
+> 
+> Per the specification the device is allowed to offer or remove extents
+> at any time.  However, anticipated use cases can expect extents to be
+> offered, accepted, and removed in well defined chunks.
+> 
+> Simplify extent tracking with the following restrictions.
+> 
+> 	1) Flag for removal any extent which overlaps a requested
+> 	   release range.
+> 	2) Refuse the offer of extents which overlap already accepted
+> 	   memory ranges.
+> 	3) Accept again a range which has already been accepted by the
+> 	   host.  (It is likely the device has an error because it
+> 	   should already know that this range was accepted.  But from
+> 	   the host point of view it is safe to acknowledge that
+> 	   acceptance again.)
+> 
+> Management of the region extent devices must be synchronized with
+> potential uses of the memory within the DAX layer.  Create region extent
+> devices as children of the cxl_dax_region device such that the DAX
+> region driver can co-drive them and synchronize with the DAX layer.
+> Synchronization and management is handled in a subsequent patch.
+> 
+> Process DCD events and create region devices.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+One more minor inline.
+> +static int cxl_validate_extent(struct cxl_memdev_state *mds,
+> +			       struct cxl_extent *extent)
+> +{
+> +	u64 start = le64_to_cpu(extent->start_dpa);
+> +	u64 length = le64_to_cpu(extent->length);
+> +	struct device *dev = mds->cxlds.dev;
+> +
+> +	struct range ext_range = (struct range){
+> +		.start = start,
+> +		.end = start + length - 1,
+> +	};
+> +
+> +	if (le16_to_cpu(extent->shared_extn_seq) != 0) {
+> +		dev_err_ratelimited(dev,
+> +				    "DC extent DPA %par (%*phC) can not be shared\n",
+> +				    &ext_range.start, CXL_EXTENT_TAG_LEN,
+> +				    extent->tag);
+> +		return -ENXIO;
+> +	}
+> +
+> +	/* Extents must not cross DC region boundary's */
+> +	for (int i = 0; i < mds->nr_dc_region; i++) {
+> +		struct cxl_dc_region_info *dcr = &mds->dc_region[i];
+> +		struct range region_range = (struct range) {
+> +			.start = dcr->base,
+> +			.end = dcr->base + dcr->decode_len - 1,
+> +		};
+> +
+> +		if (range_contains(&region_range, &ext_range)) {
+> +			dev_dbg(dev, "DC extent DPA %par (DCR:%d:%#llx)(%*phC)\n",
+> +				&ext_range, i, start - dcr->base,
+> +				CXL_EXTENT_TAG_LEN, extent->tag);
+> +			return 0;
+> +		}
+> +	}
 
-Thinking even more about this:
+For extent validation, we may need to ensure its size is not 0 based on the spec.
+Noted that during testing, do not see issue for the case as 0-sized
+extents will be rejected when trying to add even though it passes the
+validation.
 
-ata_qc_schedule_eh() will have called scsi_timeout(), which sets
-DID_TIME_OUT, since libata does not have an abort handler.
-
-Thus, the command when first entering EH will have DID_TIME_OUT set.
-Right now, we clear it as the final thing in ata_scsi_qc_complete().
-You are suggesting that we clear it when storing sense data.
-
-However:
-There can always be commands that was sent via EH, that will not
-have added sense data, e.g. for CDL policy 0xD commands that were
-completed in the same IRQ (where some commands might have sense
-data, but not all), same with NCQ error, one command will be the
-one that triggered the NCQ error, rest will not have sense data.
-Thus we will always need to clear the DID_TIME_OUT bit for commands
-that were sent via EH...
-
-I think what we could do, is to clear it when first entering EH,
-instead of at the end of EH. This is probably the best solution,
-because then we can remove the:
-cmd->result &= 0x0000ffff;
-from ata_scsi_qc_complete(), which is executed both for commands
-that went via EH and command that did not go via EH.
-
-And instead clear it in the beginning of EH, so DID_TIME_OUT will
-only get cleared for commands that went via EH. (Because only
-commands that went via EH will have DID_TIME_OUT set in the first
-place.)
-
-
-
-So my proposal is simply this:
-
-diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
-index 7de97ee8e78b..450e9bd96c97 100644
---- a/drivers/ata/libata-eh.c
-+++ b/drivers/ata/libata-eh.c
-@@ -630,6 +630,15 @@ void ata_scsi_cmd_error_handler(struct Scsi_Host *host, struct ata_port *ap,
-        list_for_each_entry_safe(scmd, tmp, eh_work_q, eh_entry) {
-                struct ata_queued_cmd *qc;
+Fan
  
-+               /*
-+                * If the scmd was added to EH, via ata_qc_schedule_eh() ->
-+                * scsi_timeout() -> scsi_eh_scmd_add(), scsi_timeout() will
-+                * have set DID_TIME_OUT (since libata does not have an abort
-+                * handler). Thus to clear the DID_TIME_OUT, we clear the host
-+                * byte (but keep the SCSI ML and status byte).
-+                */
-+               scmd->result &= 0x0000ffff;
-+
-                ata_qc_for_each_raw(ap, qc, i) {
-                        if (qc->flags & ATA_QCFLAG_ACTIVE &&
-                            qc->scsicmd == scmd)
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 3a442f564b0d..6a90062c8b55 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -1680,9 +1680,6 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
-                        set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
-        } else if (is_error && !have_sense) {
-                ata_gen_ata_sense(qc);
--       } else {
--               /* Keep the SCSI ML and status byte, clear host byte. */
--               cmd->result &= 0x0000ffff;
-        }
- 
-        ata_qc_done(qc);
-
-
-
-Testing is appreciated :)
-
-Thoughts?
-
-
-Kind regards,
-Niklas
 
