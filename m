@@ -1,128 +1,242 @@
-Return-Path: <linux-kernel+bounces-317043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A4896D88B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:29:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B52C96D88F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F2821F271EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:29:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86762B23FD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916CB1925BD;
-	Thu,  5 Sep 2024 12:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B4F19AD8C;
+	Thu,  5 Sep 2024 12:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PCtmJgo7"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="GDdNwnAm"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872A81991D9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF52A1925BD;
+	Thu,  5 Sep 2024 12:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539382; cv=none; b=Mdk1oXs+tlaf6XBfOWbsHvy2ZVlLpFZTDSCz1ZO8SrmLVKZxfB83fyo8JD7gUqMzNNY37n+hK8raCL4IAKqe6stFMm7ML3t0lYrfx5xZ3bag4/zhaFPCfQ32VRf/K0SQ+bzcB+18qZBVEFAM2H4twnpQ7I7AOQzJ8arkSaPbHQs=
+	t=1725539392; cv=none; b=MlYjAlC9ot84IriKZeiitJl4nht53piDnKSfXZNQlWFBoNr4gpu4ZNl0B7BIl2DoMml3tqajl/Df6HE4mABXvJIZLgBts9MpngwGy1bFScQCTkWMlN/t0b+Woo7eiuft7h4DmOVstWhDY6rVR1In6YQ0WH6NuQwvYXruLqHJLR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539382; c=relaxed/simple;
-	bh=jovfnA/sLiRs7oZPBOhlwuC/A7Xo/vsKuc6XF/CfEsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJrMELaMKHupCeHDIpoC5Et9o3irFAfV7gv7wPFUXzp0+Qzg+OiiyjGwqNj/pmG/W4N9DjZIwcatDQjgVLosNC6G79yP63UsrEFWCJbet/lxIUdXyJYwYaS6mWnpZ7tlFn1r6Dp2y4oVvh2W+c6ai+JhtxwJwX0kYhQSGVBCvjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PCtmJgo7; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5344ab30508so1696012e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725539379; x=1726144179; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fK76HDEi4aX/89LJo8UpuFQxmvfmza86TzqdAoWDznE=;
-        b=PCtmJgo71PzEX/hckEYV+KVeb7AYpEs74r2eDuoMtt6f8D6jNhnXtcTzIvbqrvvlKA
-         P3DLwK7eBlf67HE/hP2gORs33luZdcfKRP+sFbCq1tTk0sZC4JE8rjSvRC9t59R5dmY/
-         5OqOebSxPGIqhPJQP56xGuV473TV35un6euJ65/HF4jyIJT60r1sHAti0HSem+OvlRBR
-         ID4F8QVsSTfD4w0uQ6lJ6MR4okWsvrVt0OeQvZINBE997p7nKBNdeJLjtXqtlh8GXGIz
-         NrSOVmjr6dV3L/dxn8qg40BqR5rZrcRLoprQ9izSZh+b9WRPVu/CzTqtUHs2Sia+Sw6w
-         OAjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725539379; x=1726144179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fK76HDEi4aX/89LJo8UpuFQxmvfmza86TzqdAoWDznE=;
-        b=e4ix77RctAxYxJdbY26hoXbNKu1eEFexyTD69+ry9cDwzRsJ/Y9lcE1jTpIulexTAe
-         nkU+f/8TATGBiC+ssr3vN2ZWwzsSD1sC6ILzZ4vthR4Tqc7HBxGOEVkC3IPX2ghQvqop
-         GiM310jvZEb0ls5CxYfKmCGc+0SQphSJBOzSGUDV9rjmz0QxSCEZ5ohPSVgz8gO2Ks+X
-         AzTqYnBmpEg5QqLGuRhaeLk7rNOCiDr2IS4AFXqrXdLR02xQRsDfadsVCBAaVFywUiIE
-         iVBSHTAhz44bXhLNnLyjJYVF2uoucQCMSKaGnG5IpOVucCsFFb2K+vFikVSeGtafDK+8
-         zgrA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4OhQPO4ICBCDhHeiThcgimw2/HwD1/CdHdVJhFMGB+Exlj/7UKto30eyLlHPbgwA7MrekOzFNXlTJLCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX48uT9NTYjgMW9DnIl9arihJdqmNx94EUL5NF6g51AXlWCG9/
-	kQtzdR6X9DZGGWVPChFV+pg8WuHb9marAUqFvskx4JmvyeMks/aKaBmYrMPQgS1WsxkaH4wlrwy
-	I56FK98zQaN+95CKeUaJ34yz1RWv+0ZFE9Rp9Hg==
-X-Google-Smtp-Source: AGHT+IFlwyf2AQmKglWdLPgpR7ABMAwdEChx44kvPSTZUPxSNTNFWAxUZMKqkmDV46ZT+VfT36PQ4GQgXUyrMg+rgJs=
-X-Received: by 2002:a05:6512:2309:b0:534:53ce:54a8 with SMTP id
- 2adb3069b0e04-5356779ac83mr1653495e87.30.1725539377827; Thu, 05 Sep 2024
- 05:29:37 -0700 (PDT)
+	s=arc-20240116; t=1725539392; c=relaxed/simple;
+	bh=14MIEGOCtz/10JlhbBiflIQgkVzb0dyS/Kn3Kdmj1K4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=R1yVltlsUmeP4bGkTOOi2nGtM6QtycAei8UuL8KvABGB/6vOtJaIjPPG/JAKNVnQqtUyndXe7bMI/2h+4vWiq4KBAfFjOqOAya8v/ciX/nn8Yd+eUYscQKYlwwx7UlJ0z8wqNDDYU27456XJN0Mmt7jCCag7oxyiVm16njnH39M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=GDdNwnAm; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905122023.47251-1-brgl@bgdev.pl> <20240905122023.47251-4-brgl@bgdev.pl>
- <CAA8EJpo2-P8N92XFRYszbZwo1gDbRPe+O=THafxWSbk1ZH-BoQ@mail.gmail.com>
-In-Reply-To: <CAA8EJpo2-P8N92XFRYszbZwo1gDbRPe+O=THafxWSbk1ZH-BoQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Sep 2024 14:29:27 +0200
-Message-ID: <CAMRc=MfcRXW51_xPYXesJctzo6-U3gm0fjJpG=-zAJewVnc7YQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sc8280xp-x13s: model the PMU of
- the on-board wcn6855
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Steev Klimaszewski <steev@kali.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1725539388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pcIg9aZgeBTSSImKsZL/JCCaARaF7G8ZPmkIlXT3URU=;
+	b=GDdNwnAmqU69jkjpbeM2mhK9/fAB9Nk2Amq7RAE6U5QLrn+XzjHMw6heeCiPHwfTdrNw7V
+	ZX7Yk6wSUzNx+RSOAQn6OTD4+sc1aWS6Ss5gXWiu2jYv0delZnkFhmdn/Q4YASKrGoawX9
+	MqnHOAC07O95fsjJxGBPeA/Cx0iYddubPFmFopNAMX3KxLYP3z06+xZ0RhQ8KGsoEB5pNd
+	Mzkk0eD3J/rkxM2lAxPuGpDQ+ZdujooUpM2JnjkPFyetIv1HbBgRwU56WEPfG58lwKdQb0
+	+lKqatEDuBh7fXCNLmyhveAi3lo3DX5jtNTEbkWhOUd9GRHSoHYFMA9ubsF5Qw==
+Date: Thu, 05 Sep 2024 14:29:47 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: wens@csie.org
+Cc: Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev,
+ jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi
+ file
+In-Reply-To: <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
+ <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
+ <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
+ <20240815181508.6800e205@donnerap.manchester.arm.com>
+ <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
+ <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
+ <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+Message-ID: <3e0d4e26d724d7496cb5f570e1813433@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, Sep 5, 2024 at 2:27=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Thu, 5 Sept 2024 at 15:20, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Add a node for the PMU of the WCN6855 and rework the inputs of the wifi
-> > and bluetooth nodes to consume the PMU's outputs.
-> >
-> > Tested-by: Steev Klimaszewski <steev@kali.org> # Thinkpad X13s
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 98 ++++++++++++++++---
-> >  1 file changed, 86 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts=
- b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > index 6a28cab97189..88b31550f9df 100644
-> > --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > @@ -400,6 +400,67 @@ usb1_sbu_mux: endpoint {
-> >                         };
-> >                 };
-> >         };
-> > +
-> > +       wcn6855-pmu {
-> > +               compatible =3D "qcom,wcn6855-pmu";
-> > +
-> > +               pinctrl-0 =3D <&wlan_en>;
->
-> pinctrl for the bt-enable pin?
+Hello Chen-Yu,
 
-Ah dammit. :(
+On 2024-09-05 14:26, Chen-Yu Tsai wrote:
+> Hi,
+> 
+> On Thu, Sep 5, 2024 at 8:17 PM Dragan Simic <dsimic@manjaro.org> wrote:
+>> 
+>> Hello,
+>> 
+>> Just checking, any further thoughts about this patch?
+> 
+> Sorry, but I feel like it's not really worth the churn. There's not
+> really a problem to be solved here. What you are arguing for is more
+> about aesthetics, and we could argue that having them separate makes
+> it easier to read and turn on/off.
+> 
+> And even though the GPU OPPs are in the dtsi, it's just one OPP acting
+> as a default clock rate.
 
-I'll resend tomorrow to avoid spamming the list. Thanks.
+Thanks for your response, I understand why it isn't acceptable.
 
-Bart
+
+>> On 2024-08-17 06:25, Dragan Simic wrote:
+>> > Hello Andre,
+>> >
+>> > On 2024-08-15 19:15, Andre Przywara wrote:
+>> >> On Thu, 15 Aug 2024 18:34:58 +0200
+>> >> Dragan Simic <dsimic@manjaro.org> wrote:
+>> >>> On 2024-08-14 18:11, Chen-Yu Tsai wrote:
+>> >>> > On Wed, Aug 14, 2024 at 1:52 PM Dragan Simic <dsimic@manjaro.org>
+>> >>> > wrote:
+>> >>> >>
+>> >>> >> Move the Allwinner A64 CPU OPPs to the A64 SoC dtsi file and,
+>> >>> >> consequently,
+>> >>> >> adjust the contents of the affected board dts(i) files appropriately,
+>> >>> >> to
+>> >>> >> "encapsulate" the CPU OPPs into the SoC dtsi file.
+>> >>> >>
+>> >>> >> Moving the CPU OPPs to the SoC dtsi file, instead of requiring the
+>> >>> >> board
+>> >>> >> dts(i) files to include both the SoC dtsi file and the CPU OPP dtsi
+>> >>> >> file,
+>> >>> >> reduces the possibility for incomplete SoC data inclusion and improves
+>> >>> >> the
+>> >>> >> overall hierarchical representation of data.  Moreover, the CPU OPPs
+>> >>> >> are
+>> >>> >> not used anywhere but together with the SoC dtsi file, which
+>> >>> >> additionally
+>> >>> >> justifies the folding of the CPU OPPs into the SoC dtsi file.
+>> >>> >>
+>> >>> >> No functional changes are introduced, which was validated by
+>> >>> >> decompiling and
+>> >>> >> comparing all affected board dtb files before and after these changes.
+>> >>> >>  When
+>> >>> >> compared with the decompiled original dtb files, the updated dtb files
+>> >>> >> have
+>> >>> >> some of their blocks shuffled around a bit and some of their phandles
+>> >>> >> have
+>> >>> >> different values, as a result of the changes to the order in which the
+>> >>> >> building blocks from the parent dtsi files are included into them, but
+>> >>> >> they
+>> >>> >> still effectively remain the same as the originals.
+>> >>> >
+>> >>> > IIRC, this was a conscious decision requiring board dts files to set
+>> >>> > their
+>> >>> > CPU supply before OPPs are given. The bootloader does not boot the SoC
+>> >>> > at the highest possible OPP / regulator voltage, so if the OPPs are
+>> >>> > given
+>> >>> > but the supply is not, the kernel will attempt to raise the frequency
+>> >>> > beyond what the current voltage can supply, causing it to hang.
+>> >>
+>> >> Yes, this is what I remember as well: this forces boards to opt in to
+>> >> DVFS, otherwise they get a fixed 816 MHz. Since there is only one OPP
+>> >> table for all boards with that SoC, I think it's reasonable to ask for
+>> >> this, since the cooling could not be adequate for higher frequencies
+>> >> in
+>> >> the first place, or the power supply is not up to par.
+>> >
+>> > If the cooling isn't capable enough to dissipate the additional heat
+>> > generated at higher frequencies, the thermal governor is there to
+>> > handle
+>> > that by lowering the operating frequency.  If the PSU isn't capable to
+>> > provide an additional watt or two, I think a better PSU is needed. :)
+>> > No reasonably sized PSU should work at ~100% of its power output.
+>> >
+>> > On top of that, all currently supported A64-based boards have the CPU
+>> > OPPs defined and CPU DVFS enabled, so no such issues are possible
+>> > there.
+>> > Though, there could be some issues with new A64-based boards, which is
+>> > discussed further below.
+>> >
+>> >>> > Now that all existing boards have it properly enabled, there should be
+>> >>> > no
+>> >>> > need for this. However I would appreciate a second opinion.
+>> >>
+>> >> Well, since there is no way to opt *out* now, I am somewhat reluctant
+>> >> to
+>> >> just have this. What is the actual problem we are solving here? After
+>> >> all
+>> >> there is just one OPP table for all A64 boards, so there is less
+>> >> confusion
+>> >> about what to include in each board file. Which IIUC is a more
+>> >> complicated
+>> >> situation on the Rockchip side.
+>> >
+>> > Well, this patch doesn't solve some real problem, but it makes the
+>> > things
+>> > neater and a bit more clean.  The things are more complicated with
+>> > Rockchip
+>> > SoCs, but following the concept of "encapsulating" the CPU OPPs into
+>> > the
+>> > A64 SoC dtsi makes things neater.  Moreover, the A64 GPU OPPs are
+>> > already
+>> > in the A64 SoC dtsi, so we could also say that folding the A64 CPU OPPs
+>> > into the SoC dtsi follows the A64 GPU OPPs.
+>> >
+>> >> I still have to try "operating-points-v2", but at least on the H616
+>> >> side
+>> >> putting a 'status = "disabled";' into the OPP node didn't prevent it
+>> >> from
+>> >> probing. Otherwise this would have been a nice compromise, I think.
+>> >>
+>> >>> Good point, thanks for the clarification.  This is quite similar to
+>> >>> how
+>> >>> board dts(i) files for Rockchip SoCs need to enable the SoC's
+>> >>> built-in
+>> >>> TSADC for temperature sensing, before the CPU thermal throttling can
+>> >>> actually work and prevent the SoC from overheating, etc.
+>> >>>
+>> >>> The consensus for Rockchip boards is that it's up to the authors and
+>> >>> reviewers of the board dts(i) files to make sure that the built-in
+>> >>> TSADC
+>> >>> is enabled, etc.  With that approach in mind, and knowing that all
+>> >>> Allwinner
+>> >>> A64 board dts(i) files are in good shape when it comes to the
+>> >>> associated
+>> >>> voltage regulators, I think it's fine to follow the same approach of
+>> >>> "encapsulating" the CPU OPPs into the A64 SoC dtsi file.
+>> >>
+>> >> As mentioned above, I am not so sure about this. With this patch here,
+>> >> *every* board gets DVFS. And while this seems to be fine when looking
+>> >> at
+>> >> the current DTs in the tree (which have it anyway), it creates a
+>> >> potentially dangerous situation for new boards.
+>> >>
+>> >> So pragmatically speaking, this patch would be fine, but it leaves me
+>> >> a
+>> >> bit uneasy about future or downstream boards.
+>> >
+>> > Frankly, I wouldn't be worried about that.  When a new A64-based board
+>> > is added, it should be verified that CPU DVFS works as expected, etc.,
+>> > before the new board dts file is accepted upstream.
+>> >
+>> > Maybe we could take into account some possible issues when someone
+>> > starts
+>> > putting together a new A64-based board dts file, but there are already
+>> > many dangerous things that someone can do in the process, such as
+>> > messing
+>> > up various regulators and voltages unrelated to the CPU DVFS, so
+>> > everyone
+>> > putting a new board dts file together simply have to know what are they
+>> > doing.  I see no way for escaping from that need.
+>> >
+> 
+> [...]
 
