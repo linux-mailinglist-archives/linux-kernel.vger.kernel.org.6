@@ -1,276 +1,184 @@
-Return-Path: <linux-kernel+bounces-316913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7EB596D6D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E29D996D6DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444B11F23C51
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CFD1F21F40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF44E199E9B;
-	Thu,  5 Sep 2024 11:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3AC199E93;
+	Thu,  5 Sep 2024 11:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="Ym9zbzFz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OLUIcOJj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC511993B2
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534857; cv=pass; b=uBxd6JPJh3ZWIuMNz9TDu6jKvmpzVjAcsgrOUKkLxSxx0LAFPwszl+cLg1tI8ijL1vPiNePNsScudIc/hKa4SofWyQwaM+2ZcLqUkLHDIW0YjDzquFBcT9vEGzIwcgcjyzyHY9OiVco0xX3HUV/myv8gaUaYbzoZ/y/T69BkgFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534857; c=relaxed/simple;
-	bh=TUA1QQf1tXwmOwcOSOhVY2Y3OJLWEmYL0k/hRQKNyhA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aPm6TvZLEhbCNEBatJH11Vw9uhbbLxzySmo44xDwqgHPv8lguF74JvMLscGe9HF12XuXzXeIFmEOL31ugjiuxW35dcV/Rd/fF3StBmL9RoyA1Di+KbxiXfzWMF02rMtRjT0CsrDplZwF6Y8eM/OpGluFeeFVqQUjIVshTLuld6o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=Ym9zbzFz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: boris.brezillon@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725534841; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LwMdIyFw98pkF8PckExUs/RxaClSNRPk8OwYaEfQsbA/Lfvd53FhF9VjMZP5ix2anux679DW8Bg3COwTX43TuoHxSJlj50gEKTmACfY210+PfKhXBalf4p5GtcdIEMMG5y7nV9T64Jhp9uFXj1CrtfseJLhHwBaPWiV99a7d5do=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725534841; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NBGO/wd9GUl4PZyD8FAxAuruxJAxsPb2IZdrKettOI4=; 
-	b=T8bDlogkFPYi+IN2ObW7QgxZuQeJ4B4+dQk5le/OGv67Y45zV/WFaWmJe/dElogpDVitrlYjlTFHsszvdIjMnackQx6FXeecYFfG2IYV4+J6wQscaqHp7J8q4/Dmdn9ZkT1yaRLPRjXEqt8OovTs65q7vPJXxk9JcnWpgetZrDo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
-	dmarc=pass header.from=<mary.guillemard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725534841;
-	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=NBGO/wd9GUl4PZyD8FAxAuruxJAxsPb2IZdrKettOI4=;
-	b=Ym9zbzFzGM1IBFI4y8q3fsMjmXOYljhZmN6yI7oIg/isbATbJ90TnR6BM8S+NvJX
-	gcbwqIH7z5lMmH3CK+RwxyimvgctPHe+bswXpzciFSpth9I9KA5UY12K5K+3hCpDWDc
-	DG2CbU48bOEZ5JjNPxFfcjod9vxsL/xZazryuAQw=
-Received: by mx.zohomail.com with SMTPS id 1725534840278552.1455558587656;
-	Thu, 5 Sep 2024 04:14:00 -0700 (PDT)
-From: Mary Guillemard <mary.guillemard@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Christopher Healy <healych@amazon.com>,
-	kernel@collabora.com,
-	Mary Guillemard <mary.guillemard@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 2/2] drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO dev query
-Date: Thu,  5 Sep 2024 13:13:38 +0200
-Message-ID: <20240905111338.95714-3-mary.guillemard@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240905111338.95714-1-mary.guillemard@collabora.com>
-References: <20240905111338.95714-1-mary.guillemard@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621DE199247;
+	Thu,  5 Sep 2024 11:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725534869; cv=none; b=piggBMXvKlyQuEgtFbCAq/LHnlaimB1tsT6XOwRwaNLbF0AIlOFKeQ40IN/hASciFf7by0sl2R108Bd+xrFVakE7ToQh9Ve8at399jmxzueWuvLiA1SJjIbn7JyRGMK7FfClIi2IvnzBFrp5fbBXJw26zHKzIrmX+5EtCf99cb4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725534869; c=relaxed/simple;
+	bh=/Hki5a1bsehYW9KnV/KZCdaEfDYBT+eF2SQREZTYE4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=phf84z6dYeiRu2vU7/xVhN+mVWLtZw2egLzVk4mbEBnOwZaD7BHebG/D4MY5RjEwczQQlljZhUHGB1HyAssKwuCHiw2W5anZQKxESGKH6lpv3xCThh6II3VuS9kv8B9x8bB+RUm3QDalTWXBBchp8xo01bBfo4qMvzFR6Gz+7HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OLUIcOJj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48597206025917;
+	Thu, 5 Sep 2024 11:14:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	H/onZTNapTZoV/5wqwqOKg44uzr8+SRWVEiUw2X6/ak=; b=OLUIcOJjAqsdcCE4
+	x2eoWKZv08AsDGyCxrW2LeptCw4crLpayv91BjwYF92+1yx8EXruduqQUQ+VJKVG
+	O3UIuGBvmFpGSdpcqQnw20nxjMHq0SwzVkvjF84L3xi82hqCNsLHGKnN90fTgTk3
+	d/Flydwn2AiVTftRqUxfqiL6ave8f3wF2QjbdIG+iCtRSfgWqX7iuMXyQF/nEcpJ
+	z7llA/clxpgrCDvOkK4vbK52Lw6UEWpM/KqOhDKY7cSH4TBwS7rFgbXqybx830na
+	JXP1+/FvZdE5y9YMnKwS2a8VwL/MM6IDc2W50idw7spfiVuN9wrkbjS8EJUtkZ/M
+	4gdV/w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe81tc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 11:14:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485BEKuM032089
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 11:14:20 GMT
+Received: from [10.216.46.64] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 04:14:16 -0700
+Message-ID: <2a7ab8f7-44af-c994-953b-813b7aaa68e7@quicinc.com>
+Date: Thu, 5 Sep 2024 16:44:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 02/29] media: MAINTAINERS: Add Qualcomm Iris video
+ accelerator driver
+Content-Language: en-US
+To: Dmitry Baryshkov <dbaryshkov@gmail.com>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-2-c5fdbbe65e70@quicinc.com>
+ <afba364d-8299-49b6-9848-ed1660f86327@kernel.org>
+ <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com>
+ <tdvofocpygklipddgf7gbpttxdnmhe33krziwkzh2czpf4uiao@htiismc4dekz>
+ <2108cb24-0e1b-c804-eb0d-397cefa0fc32@quicinc.com>
+ <CALT56yMni-p3XSj=pa4yU7GtgKqXW2wXVfAvwAXjAjxRdQdJRA@mail.gmail.com>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <CALT56yMni-p3XSj=pa4yU7GtgKqXW2wXVfAvwAXjAjxRdQdJRA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7oZflV2TwLMC0JM_-EOjsUvrt1RQMRmd
+X-Proofpoint-ORIG-GUID: 7oZflV2TwLMC0JM_-EOjsUvrt1RQMRmd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_06,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409050082
 
-Expose allowed group priorities with a new device query.
 
-This new uAPI will be used in Mesa to properly report what priorities a
-user can use for EGL_IMG_context_priority.
 
-Since this extends the uAPI and because userland needs a way to
-advertise priorities accordingly, this also bumps the driver minor
-version.
-
-Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c | 61 ++++++++++++++++++---------
- include/uapi/drm/panthor_drm.h        | 38 +++++++++++++++++
- 2 files changed, 80 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 7b1db2adcb4c..f85aa2d99f09 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -170,6 +170,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_group_priorities_info, pad), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
-@@ -777,11 +778,41 @@ static int panthor_query_timestamp_info(struct panthor_device *ptdev,
- 	return 0;
- }
- 
-+static int group_priority_permit(struct drm_file *file,
-+				 u8 priority)
-+{
-+	/* Ensure that priority is valid */
-+	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
-+		return -EINVAL;
-+
-+	/* Medium priority and below are always allowed */
-+	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
-+		return 0;
-+
-+	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
-+	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+		return 0;
-+
-+	return -EACCES;
-+}
-+
-+static void panthor_query_group_priorities_info(struct drm_file *file,
-+						struct drm_panthor_group_priorities_info *arg)
-+{
-+	int prio;
-+
-+	for (prio = PANTHOR_GROUP_PRIORITY_REALTIME; prio >= 0; prio--) {
-+		if (!group_priority_permit(file, prio))
-+			arg->allowed_mask |= 1 << prio;
-+	}
-+}
-+
- static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
- {
- 	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
- 	struct drm_panthor_dev_query *args = data;
- 	struct drm_panthor_timestamp_info timestamp_info;
-+	struct drm_panthor_group_priorities_info priorities_info;
- 	int ret;
- 
- 	if (!args->pointer) {
-@@ -798,6 +829,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
- 			args->size = sizeof(timestamp_info);
- 			return 0;
- 
-+		case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
-+			args->size = sizeof(priorities_info);
-+			return 0;
-+
- 		default:
- 			return -EINVAL;
- 		}
-@@ -818,6 +853,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
- 
- 		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
- 
-+	case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
-+		panthor_query_group_priorities_info(file, &priorities_info);
-+		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1037,24 +1076,6 @@ static int panthor_ioctl_group_destroy(struct drm_device *ddev, void *data,
- 	return panthor_group_destroy(pfile, args->group_handle);
- }
- 
--static int group_priority_permit(struct drm_file *file,
--				 u8 priority)
--{
--	/* Ensure that priority is valid */
--	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
--		return -EINVAL;
--
--	/* Medium priority and below are always allowed */
--	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
--		return 0;
--
--	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
--	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
--		return 0;
--
--	return -EACCES;
--}
--
- static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
- 				      struct drm_file *file)
- {
-@@ -1436,6 +1457,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
-  * PanCSF driver version:
-  * - 1.0 - initial interface
-  * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
-+ * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
-+ *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
-  */
- static const struct drm_driver panthor_drm_driver = {
- 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-@@ -1449,7 +1472,7 @@ static const struct drm_driver panthor_drm_driver = {
- 	.desc = "Panthor DRM driver",
- 	.date = "20230801",
- 	.major = 1,
--	.minor = 1,
-+	.minor = 2,
- 
- 	.gem_create_object = panthor_gem_create_object,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index 011a555e4674..520c467f946d 100644
---- a/include/uapi/drm/panthor_drm.h
-+++ b/include/uapi/drm/panthor_drm.h
-@@ -263,6 +263,11 @@ enum drm_panthor_dev_query_type {
- 
- 	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
- 	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
-+
-+	/**
-+	 * @DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO: Query allowed group priorities information.
-+	 */
-+	DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO,
- };
- 
- /**
-@@ -399,6 +404,39 @@ struct drm_panthor_timestamp_info {
- 	__u64 timestamp_offset;
- };
- 
-+/**
-+ * enum drm_panthor_allowed_group_priority - Allowed group priority flags
-+ */
-+enum drm_panthor_group_allow_priority_flags {
-+	/** @PANTHOR_GROUP_ALLOW_PRIORITY_LOW: Allow low priority group. */
-+	PANTHOR_GROUP_ALLOW_PRIORITY_LOW = 1 << 0,
-+
-+	/** @PANTHOR_GROUP_ALLOW_PRIORITY_MEDIUM: Allow medium priority group. */
-+	PANTHOR_GROUP_ALLOW_PRIORITY_MEDIUM = 1 << 1,
-+
-+	/** @PANTHOR_GROUP_ALLOW_PRIORITY_HIGH: Allow high priority group. */
-+	PANTHOR_GROUP_ALLOW_PRIORITY_HIGH = 1 << 2,
-+
-+	/** @PANTHOR_GROUP_ALLOW_PRIORITY_REALTIME: Allow realtime priority group. */
-+	PANTHOR_GROUP_ALLOW_PRIORITY_REALTIME = 1 << 3,
-+};
-+
-+/**
-+ * struct drm_panthor_group_priorities_info - Group priorities information
-+ *
-+ * Structure grouping all queryable information relating to the allowed group priorities.
-+ */
-+struct drm_panthor_group_priorities_info {
-+	/**
-+	 * @allowed_mask: A mask of drm_panthor_group_allow_priority_flags flags containing the
-+	 * allowed group priorities.
-+	 */
-+	__u8 allowed_mask;
-+
-+	/** @pad: Padding fields, MBZ. */
-+	__u8 pad[3];
-+};
-+
- /**
-  * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
-  */
--- 
-2.46.0
-
+On 9/5/2024 4:32 PM, Dmitry Baryshkov wrote:
+> On Thu, 5 Sept 2024 at 14:02, Dikshita Agarwal
+> <quic_dikshita@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 9/5/2024 3:40 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Sep 05, 2024 at 11:17:55AM GMT, Dikshita Agarwal wrote:
+>>>>
+>>>>
+>>>> On 8/27/2024 4:12 PM, Krzysztof Kozlowski wrote:
+>>>>> On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
+>>>>>> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>>>
+>>>>>> Add an entry for Iris video decoder accelerator driver.
+>>>>>>
+>>>>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>>>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>>> ---
+>>>>>>  MAINTAINERS | 11 +++++++++++
+>>>>>>  1 file changed, 11 insertions(+)
+>>>>>>
+>>>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>>>> index 8766f3e5e87e..105e67fca308 100644
+>>>>>> --- a/MAINTAINERS
+>>>>>> +++ b/MAINTAINERS
+>>>>>> @@ -18898,6 +18898,17 @@ S:        Maintained
+>>>>>>  F:        Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
+>>>>>>  F:        drivers/regulator/vqmmc-ipq4019-regulator.c
+>>>>>>
+>>>>>> +QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
+>>>>>> +M:        Vikash Garodia <quic_vgarodia@quicinc.com>
+>>>>>> +M:        Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>>> +R:        Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>>>> +L:        linux-media@vger.kernel.org
+>>>>>> +L:        linux-arm-msm@vger.kernel.org
+>>>>>> +S:        Maintained
+>>>>>> +T:        git git://linuxtv.org/media_tree.git
+>>>>>
+>>>>> Drop, you do not maintain that Git tree.
+>>>> Sure, will remove
+>>>>>
+>>>>>> +F:        Documentation/devicetree/bindings/media/qcom,*-iris.yaml
+>>>>>> +F:        drivers/media/platform/qcom/iris/
+>>>>>
+>>>>> Drop, does not exist. Or fix your patch order.
+>>>> Are you suggesting to add this patch as the last patch of the series?
+>>>> or remove just below entry and add one more patch at the end to update
+>>>> MAINTAINERS file with the same?
+>>>
+>>> Adding it after the patch that adds the driver should be fine. Likewise
+>>> adding it at the end is also fine.
+>>>
+>> sure, so should I add the whole patch once driver is introduced or have a
+>> separate patch for just below?
+> 
+> I'd say a single patch is better.
+Noted.
+> 
+>>>> +F:  drivers/media/platform/qcom/iris/
+>>>>
+>>>> Thanks,
+>>>> Dikshita
+>>>>>
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>>
+>>>>>
+>>>
+> 
+> 
+> 
 
