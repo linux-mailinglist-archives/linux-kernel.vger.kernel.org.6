@@ -1,76 +1,111 @@
-Return-Path: <linux-kernel+bounces-316449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01FC96CFC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C5896CFC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC2F2892F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:50:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EE9288A53
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4438A42C0B;
-	Thu,  5 Sep 2024 06:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA37B192B63;
+	Thu,  5 Sep 2024 06:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1hPa81X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6FStA63"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F58C191F79;
-	Thu,  5 Sep 2024 06:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EA5191F6B;
+	Thu,  5 Sep 2024 06:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725519010; cv=none; b=Gr1lZKIg2XvmMnoaW2IHArxhOzd8BloyZiF/q+lOdki4yxUQtyeWW6/3Di65nPusyWXuOknfEQNFdrusR1wkZ8Avzj0iIHwuWy+43Mg+nXTIIAjZ3LdUAFHcB5qeWVoY5E5tc/C0Ts3zQXTRJ5AAEBkBTpVBf0/TBplNHbsofCQ=
+	t=1725519018; cv=none; b=IIt3AgizOiVTre4APkPgdG8yfBjqA9ob5rJLnad/ZGzoAnM2PIc0jqBzLtd9h9sgE891Ej5d7u8jRamHuBxtW9f4f/kxBknGVptiP7VzT8PaLsyA5K3lm2ae0yM38kEwrFn/kUNXBQBHnyHPCiTyKNKp8j/paykfxnR/0L74h8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725519010; c=relaxed/simple;
-	bh=x+NxVdAMdu6LVDj01TH+tZKYV4CGqjlkMgUaqOir44w=;
+	s=arc-20240116; t=1725519018; c=relaxed/simple;
+	bh=EGQxqnD+kJTdbSpDiqWezPqJO4plr2uZvSabvaxYSOI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z++R9MIabi6E5ZKaiYhOrV88UJ7vwwrg/aRGgSlmlaEzQvlzy8dUXOdE6YtOuLeoiIbvyWWcFy50e7FTeH0okmzI4DjcpP8k8snEsZoOVk5hPLAwI1dLncoOTGhXhFBnMwEq+KqvCNHL1alswzIvydKDiqXhSznqtQKYLcE+B4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1hPa81X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A8EC4CEC4;
-	Thu,  5 Sep 2024 06:50:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvR4HGZHYFkwswyDUi9kTLNuvsbmGtIKdvQwIItzWjTQt+l1isMGj+lZHx1xHc84yXQ3yTloYtr8mHs70KPH8M82LbwNRX8vIlPJkrizdZiUdkBJhenuey/CnRrF7N/HkD/Q6b64O03TIMljTCgMVCzqgcNSGvQJSECS6Y4psos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6FStA63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94AEFC4CEC4;
+	Thu,  5 Sep 2024 06:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725519010;
-	bh=x+NxVdAMdu6LVDj01TH+tZKYV4CGqjlkMgUaqOir44w=;
+	s=k20201202; t=1725519017;
+	bh=EGQxqnD+kJTdbSpDiqWezPqJO4plr2uZvSabvaxYSOI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q1hPa81XeUSrGVlvKHbi0BNDsi7o38g+a3VXwQNEsdKeZQXFpOtYl7NOdwSmMg2l3
-	 LgVgwvZwAGDRvS/s0RRb0lgIQCbcZ67UlirkVxKj4AS8OHuWMTmUAPZ1eLGPeSP5I1
-	 PmH6+QipbLDJKFGqbdJqM1o4+Tsoj/ivuIn3ZTs5PkLAeREEAr0lxYZLYTjZZ9ZmfY
-	 5bzxcHCClnxLeazFvCF875NzeF6kFnSDtcdKzU2ghmoZ5Ti3Qz7wp9x5PhazlafENO
-	 3cCVgR7Xlfn/2VyrNUQGTqYRvXHzs+HUOCpOd/sV3inkREt00K75s63/IARhlunWfx
-	 kawnGa+HeRYsw==
-Date: Thu, 5 Sep 2024 08:50:06 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: incomplete-devices: And another batch of
- compatibles
-Message-ID: <o4uoinuuj33d5w342ex27aoofjobtsq6m75u67ufyxrmlzyplp@mjwcreewfpiu>
-References: <20240904200253.3112699-1-robh@kernel.org>
+	b=k6FStA63hzOsr16OqGVMLzQIX3CqKwHZn87UzgA0l/RYmuNvEpHhxiqKpgFUe0ENW
+	 d9JFokRO/q/UJpjckbVXfaEunkJuqL1G8wHwwXX5o7Yi5tsm6FlxPdLdLzRgFrzn3l
+	 VtCGqy240WtYMHxbaaeU4jpGW88PJHFWUGVkLU6xehFdB7T66Drr+1ZVA8BTKVfRK2
+	 F6s1VdEUtOOsHL4HfrC+BNsj76QBcx8uP7K2zXT7Bu7r2bNFgi+qSDy88VZez+bwf5
+	 yjh7FySKpXZfngB8qWKH9hljPIkVigcd7AUvNb0TB0vIPYH1deXhbsJm3lrOoRups9
+	 TlsDQIRHRrmqw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sm6KB-000000001Md-17n0;
+	Thu, 05 Sep 2024 08:50:35 +0200
+Date: Thu, 5 Sep 2024 08:50:35 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	abel.vesa@linaro.org, johan+linaro@kernel.org
+Subject: Re: [PATCH v6 3/4] PCI: qcom: Add equalization settings for 16.0 GT/s
+Message-ID: <ZtlUu3uwl06E7LJF@hovoldconsulting.com>
+References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
+ <20240904-pci-qcom-gen4-stability-v6-3-ec39f7ae3f62@linaro.org>
+ <ZtgqvXGgp2sWNg5O@hovoldconsulting.com>
+ <20240904155233.zm3m6x3wvco35g6t@thinkpad>
+ <941d1bfb-965e-43e4-9f34-edaf2de5d661@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904200253.3112699-1-robh@kernel.org>
+In-Reply-To: <941d1bfb-965e-43e4-9f34-edaf2de5d661@quicinc.com>
 
-On Wed, Sep 04, 2024 at 03:02:52PM -0500, Rob Herring (Arm) wrote:
-> Another batch of compatibles unlikely to ever be documented. It's
-> mostly old PowerMAC stuff found in DT compatible API calls.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/incomplete-devices.yaml          | 101 ++++++++++++++++++
->  1 file changed, 101 insertions(+)
+On Wed, Sep 04, 2024 at 01:46:09PM -0700, Shashank Babu Chinta Venkata wrote:
+> On 9/4/24 08:52, Manivannan Sadhasivam wrote:
+> > On Wed, Sep 04, 2024 at 11:39:09AM +0200, Johan Hovold wrote:
+> >> On Wed, Sep 04, 2024 at 12:41:59PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> >>> From: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>> +	/*
+> >>> +	 * GEN3_RELATED_OFF register is repurposed to apply equalization
+> >>> +	 * settings at various data transmission rates through registers namely
+> >>> +	 * GEN3_EQ_*. RATE_SHADOW_SEL bit field of GEN3_RELATED_OFF determines
+> >>> +	 * data rate for which this equalization settings are applied.
 
-Best regards,
-Krzysztof
+> >>> +	reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0x1);
+> >>
+> >> How does 0x1 map to gen4/16 GT?
 
+> GEN3_RELATED_OFF has been repurposed to use with multiple data rates.
+> RATE_SHADOW_SEL_MASK on GEN3_RELATED_OFF value decides the data rate
+> of shadow registers namely GEN3_EQ_* registers. Per documentation 0x0
+> maps to 8 GT/s, 0x1 maps to 16 GT/s and 0x2 maps to 32 GT/s. 
+
+Thanks for clarifying. Perhaps these should become defines eventually
+(or the comment could be extended). There are a lot of "magic" constants
+in here.
+
+Johan
 
