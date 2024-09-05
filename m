@@ -1,187 +1,291 @@
-Return-Path: <linux-kernel+bounces-316208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5728896CC96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:24:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1740F96CC99
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736F61C22D40
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:24:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47FB2B2456C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55C131E38;
-	Thu,  5 Sep 2024 02:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAAB12FF71;
+	Thu,  5 Sep 2024 02:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D+EpqoZN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="kxmkcneg";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="T6D9okBm"
+Received: from mx2.ucr.edu (mx.ucr.edu [138.23.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E25D138490
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8557E12F38B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725503041; cv=none; b=DGq3B/mLsEwxAtxVgJ/8zsD6SFrtgF+osZpOD4jPFLxukBG8Yq9eJv89oM+4tiuQYqMdaI0cZ7KpG+6i9JFJ8K9gYjuceKYTPK/KAJCwaRznW4hUjyHLGCXpVavusu1y/LrwSxzxzECq8ylfG4qa8pE9DqUUIqbEYQ4tmAOozPo=
+	t=1725503050; cv=none; b=SZXDPQlKDqckvwnsHC43XzTYsyhDAIKRS2WbMiIk93UYF/mp3BR9IfhOxqBx6GUCUYpRw7+9nrJaWK84qf8Oo7xQ76A2GO2st6vLsGrBxKWuAf0ufd5U6ouyCLdmUMUVcsnuqsku7e4ToKlFzI3vAR7yoXdAbatNueNskV6dEA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725503041; c=relaxed/simple;
-	bh=a6s7qQ3k+HcZs8eL+uK/csotPie51XK3iW4gPhvjzLs=;
+	s=arc-20240116; t=1725503050; c=relaxed/simple;
+	bh=295VJDDIx0k3aqcgTI2v6fmbPOKY7bSVOov0KJ8yeWc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rtsY+LqMR5pxD49F89lz0Ejy4CTey7x4Nvj+9TO80TLicbAXlW7itEs/LwIKajVynK5QrQwz1slQSHfk4F7rsw7Ca11491aMB81JUSMNMiDAM798XPW/FdRJEPfonONgcdUApVpMv2XnkPcLzw5/BJsofVNZKw2lftSkpsT7i00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D+EpqoZN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725503037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a6s7qQ3k+HcZs8eL+uK/csotPie51XK3iW4gPhvjzLs=;
-	b=D+EpqoZNhv+CMaoTAdfo5Cu3qaEN4+XBBdBymOkz7jwLN0ELNpw+vpymeEOjtfdMvvut4z
-	Z7ozYRMVQMIKNb8+XFvVy2l+NdeX13PtgrRl9n7sY021sko4grJ2WJK7Fz4BFLn2UwZzpD
-	3SB+VvzYZzrIjYYoYHZZkr8NSoUNnHM=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-114-mniIG-CbPEWQHy2GqLdlDQ-1; Wed, 04 Sep 2024 22:23:56 -0400
-X-MC-Unique: mniIG-CbPEWQHy2GqLdlDQ-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d876431c4aso274324a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:23:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=tdTyTol6dpU7Z8f3f8qkSBym5tjaiFPt90R7eU8GYCcsLvDPynkJJLtcfxKa1x0aaVT3T9dXGgx04CwH5jjCVncLQ7d6BP+/mAXl/FB75WbxPprSA8pvghb4kSR015ng7xxKim66HGIb9Z+rwuKBSrF3ROjnLrGkbG6zxYgudgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=kxmkcneg; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=T6D9okBm; arc=none smtp.client-ip=138.23.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1725503049; x=1757039049;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:references:in-reply-to:
+   from:date:message-id:subject:to:cc:content-type:
+   content-transfer-encoding:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=295VJDDIx0k3aqcgTI2v6fmbPOKY7bSVOov0KJ8yeWc=;
+  b=kxmkcnegVSwcHJS3Nn/h01YtSmP4yQ3gMme7tzMXaHHZuCObkQM092YF
+   oxnKOvmWah0dZzZ/eYrP3ALzMvfJZwnvRdTilJ3VmN9xllHa8uBwgikQ7
+   I5N7AAwqzio9C2i+04u994BjKQycV/RtBfFj60AEnIl0eEKRta6jhL/NZ
+   LTEh9XHFm0vKFRVa8crH2NkNYs2jrYvXM9SCE91wvYcgyouETELVXD+5s
+   TmRVnzp6m1DbQC4y4Bl8duYYplD3ZXy7UNB8CNeFYxu92YzfkF8vYtOO9
+   LF8lmhB6fV8E4q2bDikegwQbkaWRwNlbxKzjVzTLvjX/YCZK2+ZFsSHU7
+   A==;
+X-CSE-ConnectionGUID: zHf8FCwkT/KczRA2YMRccw==
+X-CSE-MsgGUID: r/ttb+vXSaeapWEdcUiPFg==
+Received: from mail-il1-f198.google.com ([209.85.166.198])
+  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 04 Sep 2024 19:24:02 -0700
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d2dbd9bebso4569425ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1725503041; x=1726107841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DPgu7Fm8H6SKVI7ap9QRsrXTQgW0CU8PM935vq88hkQ=;
+        b=T6D9okBmiE85p/g5wMWORf38SdNCgEcY19jGrYrs3heZH4IWX8/JKjc8QgSo5xq45+
+         G11N/E2TWiPdjdqLWBTK9rOIUGvzWwDXI/W5hoRVdxI6lR5ZW7tUhWmi3GCfYVXn7kZ3
+         6TDBNsGaT+PcdTsOHoFHYgaVxB/mDsKn0sx74=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725503035; x=1726107835;
+        d=1e100.net; s=20230601; t=1725503041; x=1726107841;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a6s7qQ3k+HcZs8eL+uK/csotPie51XK3iW4gPhvjzLs=;
-        b=CdkmLHJrY+zGK4rbPNwzcHKu80TPIi0HhUvaq5ZmJJxc3r8evpGoYuiNJvhgIOvqCk
-         AwTIKO9LOfKZMl+TMZ+2/JiM7rQvtqKsMLjLSlpfLj5Kmw7wF63TizUWMcwWoBMSiw+M
-         FIu80pytZ3yQ7YQD5EyEH7Klml5/6NDdRRvGWAc5f9Ph9eYAmcDRk00BOC2cZIR91rHq
-         0TFwnnMvMmPyv+SFmyjxYhz/MxTDvoQtU5xZc3CWCj3RS8z0OfcWfDC83h9Mhr44klVs
-         oc3RQb2L6+mMhgqqYv4HJ/Va3v9vmZ362354SQOCF1iDTM0AcjQuPaNzhTq65e2EP4il
-         IfZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwrDg0X7UhJ5bw+taRNgEZICBjoNHcIy7XotBBFoRcCENmMVwaTcUs2MGob0CGkVwpMP670jlXeOQogbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCRu9Nce9oHO2b+TD8Ju2d1xdAySuGczwWBcAQmXPGgx5CLycZ
-	ZRj6cBhyFhbqgp1dZdh1VQE80cGGyzO/pSXvYPkWsGurxOXXPBDJRL8/2MgQqeYsifmsBUt37XA
-	+mEdx0PC46r2a/R0fe4JCUrUhpQf1D1x2tCEwXSBCdFEQ59NLHmZOf6MuPRfoyARNBh11NcpAKF
-	ty5SkM2la9pzgXf4TwSnScSvkOSFJk6mJ+QOCB
-X-Received: by 2002:a17:90a:fd8b:b0:2c5:10a6:e989 with SMTP id 98e67ed59e1d1-2da6344ce5bmr7804066a91.35.1725503035425;
-        Wed, 04 Sep 2024 19:23:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG23zHXhEHTjyKBW3CywgbRBX6O92NrUsGkTQ5WvgrENGy5961jGcrmiJ4JtIcJZJk6DZcvqrJ35iW8k8+jExs=
-X-Received: by 2002:a17:90a:fd8b:b0:2c5:10a6:e989 with SMTP id
- 98e67ed59e1d1-2da6344ce5bmr7804048a91.35.1725503034966; Wed, 04 Sep 2024
- 19:23:54 -0700 (PDT)
+        bh=DPgu7Fm8H6SKVI7ap9QRsrXTQgW0CU8PM935vq88hkQ=;
+        b=QMe43DqOiI/cVkvUnO7EX6v07WUncmgL2wDBfjJqU6vHEpiZRMC/UIhyqzng7Oi9xw
+         vGr4nm/HQRvWyyHsfrwOcA2b+fEci4LFxmAdKf+zZl1YYZfrpDn9Uq9bbPfLmjlbzi4f
+         xFD7YmVn9MaPXTbq8kQ+Ng+LHOY1rXPT6JpZsMRuVinotpv6EZrRPQge8Wl/KY64OnXy
+         +wuwjIT3ScwP3zcNi/VHsPscsQyel3bnGHfg6C96FTCKIcsCs3g5ZSliiNu/iwSgdjgU
+         nDLvamSdVkQ7KgSjkhGofz6cyTf+dNU/u46rL1DWEYG8+cO90cRIdaITai6RaQILF23e
+         jx/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXoQRj7dFsR/+I9awRLIqtL5wNuCzUOJz1tp7DKodnHaLEjjeQ6kiiau6fU5TSBQyXBeGxsNeU3v6d5dak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWtNORcR9ITUlESiGTVJprNYKyXUl3UoITJhyZjeULmMiIPboQ
+	oj59aoXhFlYa1jFieuGopcoAchqcmq/ydlWfKMrCk5s7zqzmY+XWG33hjj7KDh9LLwwk6h+zf/B
+	rqtRApSom9b0u8dzeWLzoNqy0uAP9ltRCxXJiXb8kJ9uz98lZr4cl5/HlnreJ1OgiUHFxiX9FbV
+	noBuB4fBhflVU96sj3mEQabFvIbYFTIvLbrLWM/A==
+X-Received: by 2002:a05:6e02:1a05:b0:39d:637f:97bc with SMTP id e9e14a558f8ab-39f4993f80emr202306335ab.0.1725503041137;
+        Wed, 04 Sep 2024 19:24:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXRPYKbdt/Emh/HdShuuWr7cY95B3ldxQIfIHk/fIROIZMliUkkhh5VnEAeAr7sT+xXXhmcVQKS5BBwccCy7o=
+X-Received: by 2002:a05:6e02:1a05:b0:39d:637f:97bc with SMTP id
+ e9e14a558f8ab-39f4993f80emr202306155ab.0.1725503040735; Wed, 04 Sep 2024
+ 19:24:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903171514.201569-1-carlos.bilbao.osdev@gmail.com>
- <20240903171514.201569-3-carlos.bilbao.osdev@gmail.com> <CACGkMEvHU0VnOEZbVnEr1SvmOF5PhMtKk=M2o7Wwq-DUO9p7Uw@mail.gmail.com>
- <faafc28a-23a9-4dff-8223-1c72acb42443@nvidia.com> <CACGkMEtZHnkBj2JKaEp=7xURtkUFy=vFQEO8LZ7z7hoFafDMVg@mail.gmail.com>
- <ea0010cc-1028-4fe6-9f95-26677142fe42@nvidia.com>
-In-Reply-To: <ea0010cc-1028-4fe6-9f95-26677142fe42@nvidia.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 5 Sep 2024 10:23:43 +0800
-Message-ID: <CACGkMEvfdUYLjx-Z+oB11XW-54ErJsQMKcnu2p=dsj5N_BiEKw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com, shannon.nelson@amd.com, 
-	sashal@kernel.org, alvaro.karsz@solid-run.com, christophe.jaillet@wanadoo.fr, 
-	steven.sistare@oracle.com, bilbao@vt.edu, xuanzhuo@linux.alibaba.com, 
-	johnah.palmer@oracle.com, eperezma@redhat.com, cratiu@nvidia.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Carlos Bilbao <cbilbao@digitalocean.com>
+References: <CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com>
+ <CALAgD-7JpFBhb1L+NXL9WoQP4hWbmfwsnWmePsER4SCud-BE9A@mail.gmail.com>
+ <3fbe1092-d0be-4e30-96a7-4ec72d65b013@huaweicloud.com> <CALAgD-47U+dZuVxoq9pSSpYk=Y6H6yTwmpe6iBmFBk-xCADW_w@mail.gmail.com>
+ <70a434e017d75a94b5e246ad7a678b752fe97d30.camel@huaweicloud.com>
+In-Reply-To: <70a434e017d75a94b5e246ad7a678b752fe97d30.camel@huaweicloud.com>
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 4 Sep 2024 19:23:48 -0700
+Message-ID: <CALAgD-6Q6rVARhuuj_6o=7sBXiaVWRmCrToHCRVffLrZmvZq2A@mail.gmail.com>
+Subject: Re: WARNING in process_measurement
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yu Hao <yhao016@ucr.edu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 1:48=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com>=
+Here is to set up the reproducing environment:
+https://github.com/TomAPU/Linux610BugReort
+It can reproduce on our end.
+
+On Tue, Sep 3, 2024 at 2:06=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On Thu, 2024-08-29 at 16:28 -0700, Xingyu Li wrote:
+> > Here is the config file:
+> > https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
+>
+> Thanks, still cannot reproduce:
+>
+> 13151 ioctl(5, SIOCGIFINDEX, {ifr_name=3D"wpan0", ifr_ifindex=3D11}) =3D =
+0
+> 13151 close(5)                          =3D 0
+> 13151 sendto(4, [{nlmsg_len=3D36, nlmsg_type=3Dnl802154, nlmsg_flags=3DNL=
+M_F_REQUEST|NLM_F_ACK, nlmsg_seq=3D0, nlmsg_pid=3D0}, "\x0b\x00\x00\x00\x08=
+\x00\x03\x00\x0b\x00\x00\x00\x06\x00\x0a\x00\xa0\xaa\x00\x00"], 36, 0, {sa_=
+family=3DAF_NETLINK, nl_pid=3D0, nl_groups=3D00000000}, 12) =3D 36
+> 13151 recvfrom(4, [{nlmsg_len=3D56, nlmsg_type=3DNLMSG_ERROR, nlmsg_flags=
+=3D0, nlmsg_seq=3D0, nlmsg_pid=3D13151}, {error=3D-EBUSY, msg=3D[{nlmsg_len=
+=3D36, nlmsg_type=3Dnl802154, nlmsg_flags=3DNLM_F_REQUEST|NLM_F_ACK, nlmsg_=
+seq=3D0, nlmsg_pid=3D0}, "\x0b\x00\x00\x00\x08\x00\x03\x00\x0b\x00\x00\x00\=
+x06\x00\x0a\x00\xa0\xaa\x00\x00"]}], 4096, 0, NULL, NULL) =3D 56
+>
+> I also get:
+>
+> [  824.654761] ieee802154 phy0 wpan0: encryption failed: -22
+> [  824.655606] ieee802154 phy1 wpan1: encryption failed: -22
+>
+> Roberto
+>
+> > On Thu, Aug 29, 2024 at 5:56=E2=80=AFAM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > >
+> > > On 8/29/2024 12:53 PM, Xingyu Li wrote:
+> > > > The above syzkaller reproducer needs additional support. And here i=
+s
+> > > > the C reproducer:
+> > > > https://gist.github.com/freexxxyyy/c3d1ccb8104af6b0d51ed50c29b363d3
+> > >
+> > > Hi Xingyu
+> > >
+> > > do you have a .config for testing?
+> > >
+> > > Thanks
+> > >
+> > > Roberto
+> > >
+> > > > On Sat, Aug 24, 2024 at 10:23=E2=80=AFPM Xingyu Li <xli399@ucr.edu>=
  wrote:
->
->
->
-> On 04.09.24 08:34, Jason Wang wrote:
-> > On Wed, Sep 4, 2024 at 1:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.=
-com> wrote:
-> >>
-> >>
-> >>
-> >> On 04.09.24 05:38, Jason Wang wrote:
-> >>> On Wed, Sep 4, 2024 at 1:15=E2=80=AFAM Carlos Bilbao
-> >>> <carlos.bilbao.osdev@gmail.com> wrote:
-> >>>>
-> >>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
-> >>>>
-> >>>> Remove invalid ioctl VHOST_VDPA_SET_CONFIG and all its implementatio=
-ns
-> >>>> with vdpa_config_ops->set_config(). This is needed per virtio spec
-> >>>> requirements; virtio-spec v3.1 Sec 5.1.4 states that "All of the dev=
-ice
-> >>>> configuration fields are read-only for the driver."
-> >>>>
-> >>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-> >>>
-> >>> Note that only the config space of the modern device is read only. So
-> >>> it should be fine to remove vp_vdpa which only works for modern
-> >>> devices.
-> >> Just out of curiosity: how will this work for devices that are not
-> >> v1.3 compliant but are v1.2 compliant?
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > We found a bug in Linux 6.10. This is likely a mutex corruption b=
+ug,
+> > > > > where the mutex's internal state has been compromised, leading to=
+ an
+> > > > > integrity check failure. The bug occurs in
+> > > > > https://elixir.bootlin.com/linux/v6.10/source/security/integrity/=
+ima/ima_main.c#L269.
+> > > > >
+> > > > > The bug report and syzkaller reproducer are as follows:
+> > > > >
+> > > > > Bug report:
+> > > > >
+> > > > > DEBUG_LOCKS_WARN_ON(lock->magic !=3D lock)
+> > > > > WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
+> > > > > __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+> > > > > WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
+> > > > > __mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
+> > > > > Modules linked in:
+> > > > > CPU: 0 PID: 8057 Comm: cron Not tainted 6.10.0 #13
+> > > > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.=
+0-1 04/01/2014
+> > > > > RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
+> > > > > RIP: 0010:__mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
+> > > > > Code: 04 20 84 c0 0f 85 13 01 00 00 83 3d fc e5 23 04 00 0f 85 e9=
+ f4
+> > > > > ff ff 48 c7 c7 60 70 4c 8b 48 c7 c6 e0 70 4c 8b e8 83 f4 54 f6 <0=
+f> 0b
+> > > > > e9 cf f4 ff ff 0f 0b e9 dc f8 ff ff 0f 0b e9 5b f5 ff ff 48
+> > > > > RSP: 0018:ffffc9000aa77380 EFLAGS: 00010246
+> > > > > RAX: 26a6b2d2d0cdac00 RBX: 0000000000000000 RCX: ffff8880241e5a00
+> > > > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > > RBP: ffffc9000aa774d0 R08: ffffffff8155a25a R09: 1ffff1100c74519a
+> > > > > R10: dffffc0000000000 R11: ffffed100c74519b R12: dffffc0000000000
+> > > > > R13: ffff888020efc330 R14: 0000000000000000 R15: 1ffff9200154eeb8
+> > > > > FS:  00007f902ffb1840(0000) GS:ffff888063a00000(0000) knlGS:00000=
+00000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 00007f902fb7e06a CR3: 0000000018c3c000 CR4: 0000000000350ef0
+> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > > Call Trace:
+> > > > >   <TASK>
+> > > > >   process_measurement+0x536/0x1ff0 security/integrity/ima/ima_mai=
+n.c:269
+> > > > >   ima_file_check+0xec/0x170 security/integrity/ima/ima_main.c:572
+> > > > >   security_file_post_open+0x51/0xb0 security/security.c:2982
+> > > > >   do_open fs/namei.c:3656 [inline]
+> > > > >   path_openat+0x2c0b/0x3580 fs/namei.c:3813
+> > > > >   do_filp_open+0x22d/0x480 fs/namei.c:3840
+> > > > >   do_sys_openat2+0x13a/0x1c0 fs/open.c:1413
+> > > > >   do_sys_open fs/open.c:1428 [inline]
+> > > > >   __do_sys_openat fs/open.c:1444 [inline]
+> > > > >   __se_sys_openat fs/open.c:1439 [inline]
+> > > > >   __x64_sys_openat+0x243/0x290 fs/open.c:1439
+> > > > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > >   do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+> > > > >   entry_SYSCALL_64_after_hwframe+0x67/0x6f
+> > > > > RIP: 0033:0x7f903019a167
+> > > > > Code: 25 00 00 41 00 3d 00 00 41 00 74 47 64 8b 04 25 18 00 00 00=
+ 85
+> > > > > c0 75 6b 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <4=
+8> 3d
+> > > > > 00 f0 ff ff 0f 87 95 00 00 00 48 8b 4c 24 28 64 48 2b 0c 25
+> > > > > RSP: 002b:00007fff194600a0 EFLAGS: 00000246 ORIG_RAX: 00000000000=
+00101
+> > > > > RAX: ffffffffffffffda RBX: 0000564dd2fb9cf0 RCX: 00007f903019a167
+> > > > > RDX: 0000000000000000 RSI: 00007f902fb7e103 RDI: 00000000ffffff9c
+> > > > > RBP: 00007f902fb7e103 R08: 0000000000000008 R09: 0000000000000001
+> > > > > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > > > > R13: 0000564dd2fb9cf0 R14: 0000000000000001 R15: 0000000000000000
+> > > > >   </TASK>
+> > > > >
+> > > > >
+> > > > > Syzkaller reproducer:
+> > > > > # {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
+> > > > > Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:fa=
+lse
+> > > > > NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
+> > > > > KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:=
+false
+> > > > > Wifi:false IEEE802154:true Sysctl:true Swap:false UseTmpDir:true
+> > > > > HandleSegv:true Trace:false LegacyOptions:{Collide:false Fault:fa=
+lse
+> > > > > FaultCall:0 FaultNth:0}}
+> > > > > r0 =3D openat$ptmx(0xffffffffffffff9c, 0x0, 0x141040, 0x0)
+> > > > > ioctl$TIOCSETD(r0, 0x5423, 0x0)
+> > > > > mmap$IORING_OFF_CQ_RING(&(0x7f0000ffc000/0x4000)=3Dnil, 0x4000, 0=
+x2,
+> > > > > 0x20031, 0xffffffffffffffff, 0x8000000)
+> > > > > mmap$IORING_OFF_SQ_RING(&(0x7f0000ff4000/0xc000)=3Dnil, 0xc000, 0=
+xe,
+> > > > > 0x12, 0xffffffffffffffff, 0x0)
+> > > > > openat$sndseq(0xffffffffffffff9c, 0x0, 0x902)
+> > > > > write$syz_spec_18446744072532934322_80(0xffffffffffffffff,
+> > > > > &(0x7f0000000000)=3D"2b952480c7ca55097d1707935ba64b20f3026c03d658=
+026b81bf264340512b3cb4e01afda2de754299ea7a113343ab7b9bda2fc0a2e2cdbfecbca02=
+33a0772b12ebde5d98a1203cb871672dff7e4c86ec1dccef0a76312fbe8d45dc2bd0f8fc2eb=
+eb2a6be6a300916c5281da2c1ef64d66267091b82429976c019da3645557ed1d439c5a637f6=
+bf58c53bc414539dd87c69098d671402586b631f9ac5c2fe9cedc281a6f005b5c4d1dd5ed9b=
+e400",
+> > > > > 0xb4)
+> > > > > r1 =3D syz_open_dev$sg(&(0x7f00000003c0), 0x0, 0x8000)
+> > > > > ioctl$syz_spec_1724254976_2866(r1, 0x1, &(0x7f0000000080)=3D{0x0,=
+ 0x2,
+> > > > > [0x85, 0x8, 0x15, 0xd]})
+> > > > > ioctl$KDGKBDIACR(0xffffffffffffffff, 0x4bfa, 0x0)
+> > > > >
+> > > > >
+> > > > > --
+> > > > > Yours sincerely,
+> > > > > Xingyu
+> > > >
+> > > >
+> > > >
+> > >
 > >
-> > Devices don't know the version of the spec, it works with features.
-> > For example, most devices mandate ACCESS_PLATFORM which implies a
-> > mandatory VERSION_1. So they are modern devices.
-> >
-> And modern devices should not write to the device config space.
-
-It depends on the type of the device.
-
-For example, for blocking device, write_back could be modified by
-guest if VIRTIO_BLK_F_CONFIG_WCE is neogitated:
-
-"""
-If the VIRTIO_BLK_F_CONFIG_WCE feature is negotiated, the cache mode
-can be read or set through the writeback field. 0 corresponds to a
-writethrough cache, 1 to a writeback cache13. The cache mode after
-reset can be either writeback or writethrough. The actual mode can be
-determined by reading writeback after feature negotiation.
-"""
-
-> This
-> was discouraged in v1.x until v1.3 which now prohibits it. Did I get
-> this right?
-
-It really depends on the semantics of the field. My understanding is
-that, from 1.0 to 1.3 there's no writable fields defined in the spec.
-But it doesn't mean we can't have one in the future.
-
-Thanks
-
->
-> Thanks,
-> Dragos
->
-> >> Or is this true of all devices
-> >> except eni?
-> >
-> > ENI depends on the virtio-pci legacy library, so we know it's a legacy
-> > device implementation which allows mac address setting via config
-> > space.
-> >
-> > Thanks
-> >
-> >>
-> >> Thanks,
-> >> Dragos
-> >>>
-> >>> And for eni, it is a legacy only device, so we should not move the
-> >>> set_config there.
-> >>>
-> >>> For the rest, we need the acks for those maintainers.
-> >>>
-> >>> Thanks
-> >>>
-> >>
 > >
 >
 
+
+--=20
+Yours sincerely,
+Xingyu
 
