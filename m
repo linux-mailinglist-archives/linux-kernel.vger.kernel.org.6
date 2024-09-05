@@ -1,217 +1,203 @@
-Return-Path: <linux-kernel+bounces-316282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0EA96CD74
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:41:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7846896CD77
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E661C1C22021
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034AA1F270F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0001494B0;
-	Thu,  5 Sep 2024 03:41:21 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB274138490;
+	Thu,  5 Sep 2024 03:45:13 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41449539A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407822BAF9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725507681; cv=none; b=BxDV4WyqxEoQvwBkLY5CArEvp4KGcLV8fv8Oz0q20l+fqqrVcfYE0HHn9aNCB/tn37WNfiqxyKnm9nuPfrPfrlMsEjluLAMvFDwlFrCWM4vY65y7CohthCBABT665SORGO2VAoXxns0uzg4SuwhyQt8jZYqFMkeQ5zXM2OIHHDc=
+	t=1725507913; cv=none; b=m4nDCp/2LGqS4zwNZcOJuBhQxkKfkYJ3RPnFjPp6EzkPV13Axr3pyeWcjuTEyJGEpN6yW9XDomu/mE8Seu64xoHlkuXSt8YkurvkJ20epHul3yP1+xSZ5mtqIDy/zzcRZ5DG6g5TUyUGdCcsUiGh7PMMiWaCESvkP69BoI5ELYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725507681; c=relaxed/simple;
-	bh=yesN/07Bs+fSMZgCuDMW8EC47sPEzYC1CsLb8zdAEHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kEOWW9PgQU5hnF/9NClxWIKbqi94LsE4DyRiDbHXZRUcLjGvZUwCJzyCLnul6MdeEbWfXJ7VwSxfTm9mC7SQrYaXiKbQWx37sr+XtlNTBMQGDnlmeFMXHvkgLJjor2WlDafzv+bmqZjtkxcdk1bPFlDO6aAg4vvXcF3MphjXBFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	s=arc-20240116; t=1725507913; c=relaxed/simple;
+	bh=C/qlmZ6+W5XHlRHlajuOu1MxPgi1tcEmYOGBIRSBdkY=;
+	h=Subject:From:To:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=gZoqB6yjR/TezCYY0NBcf8B/UvkH0Y888/QqzAR5bWiDHS0LkWDLYxwDfHXth/jDijF8v30beYOz2h8SN7pTw3l9nQPRUT4UN4Dd8yVgVUHJjnK+Je7pxRvyLblqA3bLd/JdZN78zTzjA5bxuvPbYX2ovesjGteKwFTczUfFqD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WzlWV1FW7z1j88L;
-	Thu,  5 Sep 2024 11:40:54 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3A3791A0188;
-	Thu,  5 Sep 2024 11:41:15 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WzlZ82zZkzpSvv;
+	Thu,  5 Sep 2024 11:43:12 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 279DD180100;
+	Thu,  5 Sep 2024 11:45:06 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 5 Sep 2024 11:41:14 +0800
-Message-ID: <3780a622-03f2-4cfe-5705-0e9d0be61d57@huawei.com>
-Date: Thu, 5 Sep 2024 11:41:13 +0800
+ 15.2.1544.11; Thu, 5 Sep 2024 11:45:05 +0800
+Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
+ remaining nodes locally
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
+	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
+ <20240904133944.2124-5-thunder.leizhen@huawei.com>
+ <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
+Message-ID: <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com>
+Date: Thu, 5 Sep 2024 11:45:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/3] mm/slub: Fix memory leak of kobj->name in
- sysfs_slab_add()
+In-Reply-To: <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-To: Liu Shixin <liushixin2@huawei.com>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin
-	<roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20221112114602.1268989-1-liushixin2@huawei.com>
- <20221112114602.1268989-4-liushixin2@huawei.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20221112114602.1268989-4-liushixin2@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
 
 
-On 2022/11/12 19:46, Liu Shixin wrote:
-> There is a memory leak of kobj->name in sysfs_slab_add():
+On 2024/9/5 11:11, Leizhen (ThunderTown) wrote:
 > 
->  unreferenced object 0xffff88817e446440 (size 32):
->    comm "insmod", pid 4085, jiffies 4296564501 (age 126.272s)
->    hex dump (first 32 bytes):
->      75 62 69 66 73 5f 69 6e 6f 64 65 5f 73 6c 61 62  ubifs_inode_slab
->      00 65 44 7e 81 88 ff ff 00 00 00 00 00 00 00 00  .eD~............
->    backtrace:
->      [<000000005b30fbbd>] __kmalloc_node_track_caller+0x4e/0x150
->      [<000000002f70da0c>] kstrdup_const+0x4b/0x80
->      [<00000000c6712c61>] kobject_set_name_vargs+0x2f/0xb0
->      [<00000000b151218e>] kobject_init_and_add+0xb0/0x120
->      [<00000000e56a4cf5>] sysfs_slab_add+0x17d/0x220
->      [<000000009326fd57>] __kmem_cache_create+0x406/0x590
->      [<00000000dde33cff>] kmem_cache_create_usercopy+0x1fc/0x300
->      [<00000000fe90cedb>] kmem_cache_create+0x12/0x20
->      [<000000007a6531c8>] 0xffffffffa02d802d
->      [<000000000e3b13c7>] do_one_initcall+0x87/0x2a0
->      [<00000000995ecdcf>] do_init_module+0xdf/0x320
->      [<000000008821941f>] load_module+0x2f98/0x3330
->      [<00000000ef51efa4>] __do_sys_finit_module+0x113/0x1b0
->      [<000000009339fbce>] do_syscall_64+0x35/0x80
->      [<000000006b7f2033>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> 
+> On 2024/9/4 21:39, Zhen Lei wrote:
+>> If the conditions for starting fill are met, it means that all cores that
+>> call fill() later are blocked until the first core completes the fill
+>> operation. But obviously, for a core that has free nodes locally, it does
+>> not need to be blocked(see below for why). This is good in stress
+>> situations.
+>>
+>> 1. In the case of no nesting, a core uses only one node at a time. As long
+>>    as there is a local node, there is no need to use the free node in
+>>    obj_pool.
+>> 2. In the case of nesting depth is one, nodes in obj_pool need to be used
+>>    only when there is only one local node.
+>>    #define ODEBUG_POOL_PERCPU_SIZE      64
+>>    #define ODEBUG_BATCH_SIZE            16
+>>    Assume that when nested, the probability of percpu_obj_pool having each
+>>    number of nodes is the same. The probability of only one node is less
+>>    than 1/17=6%. Assuming the probability of nesting is 5%, that's a
+>>    pretty high estimate. Then the probability of using obj_pool is
+>>    6% * 5% = 0.3%. In other words, a 333-core environment produces only
+>>    one core to compete for obj_pool.
+>>    #define ODEBUG_POOL_MIN_LEVEL        256
+>>    #define ODEBUG_BATCH_SIZE            16
+>>    But we can tolerate "256 / (16 + 1)" = 15 cores competing at the same
+>>    time.
+> 
+> One detail is omitted. In function debug_objects_mem_init(), an extra batch
+> is reserved for each core.
+> 	extras = num_possible_cpus() * ODEBUG_BATCH_SIZE;
+> 	debug_objects_pool_min_level += extras;
+> 
+> In addition, above method of calculating probabilities is wrong. The correct
+> calculation method is as follows:
+> When the number of local nodes is 0, fill is performed. When the number of
+> local nodes is 1 and nested, 16 nodes are moved from obj_pool to obj_pool.
+> As a result, the obj_pool resource pool keeps decreasing. When this happens
+> continuously(The number of local nodes equal 0 is not met), the resource
+> pool will eventually be exhausted. The error probability is:
+> (1/2)^((256+16^ncpus)/17) * (5% + 5%^2 + ... + 5%^N) * 2/17 < 1e-7 (ncpus=1).
+
+Should be:
+==> (1/2)^((256+16^ncpus)/17) * 5% * 2/17 < 9e-8 (ncpus=1).
+
+> 1/2 ==> denominator sequence: 0,1; numerator sequence: 1
+> (5% + 5%^2 + ... + 5%^N) < 5% + (5%^2) * 2 = 0.055
+> 17 = ODEBUG_BATCH_SIZ + 1, amount moved from obj_pool when the number of local nodes is 0.
+> 2/17 ==> denominator sequence: 0-16; numerator sequence: 0,1
+> The more cores, the lower the probability of exhaustion.
+> 
+> If obj_pool is not filled only when there are more than two local nodes,
+> the probability of exhaustion is:
+> (1/3)^((256+16^ncpus)/17) * (5% + 5%^2 + ... + 5%^N) * 3/17 < < 2.3e-10
+
+Should be:
+==> (1/3)^((256+16^ncpus)/17) * (5%^2) * 3/17 < 1.03e-11 (ncpus=1).
+
+> 1/3 ==> denominator sequence: 0,1,2; numerator sequence: 2
+> 3/17 ==> denominator sequence: 0-16; numerator sequence: 0,1,2
+
+Hi, Thomas Gleixner:
+  Seems to need to add an additional patch as follows to be foolproof.
+I'll prepare it.
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index e175cc74f7b7899..d3f8cc7dc1c9291 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -245,6 +245,21 @@ alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *d
+
+        raw_spin_lock(&pool_lock);
+        obj = __alloc_object(&obj_pool);
++       if (!obj) {
++               raw_spin_unlock(&pool_lock);
++               obj = kmem_cache_zalloc(obj_cache, __GFP_HIGH | GFP_NOWAIT);
++               if (!obj)
++                       return NULL;
++
++               raw_spin_lock(&pool_lock);
++               debug_objects_allocated++;
++
++               /*
++                * It can be understood that obj is allocated immediately after
++                * being added to obj_pool.
++                */
++               obj_pool_used++;
++       }
+        if (obj) {
+                int cnt = 0;
 
 
-Hi，every one,
-
-I found the same problem and it solve this problem with the patch, is
-there any plan to update the patch and solve it.
 
 > 
-> Following the rules stated in the comment for kobject_init_and_add():
->  If this function returns an error, kobject_put() must be called to
->  properly clean up the memory associated with the object.
+>> 3. In the case of nesting depth more than one, the probability is lower
+>>    and negligible.
+>>    Nesting Depth=2: "2/17 * 5% * 5%" = 0.03%
+>>    Nesting Depth=3: "3/17 * 5% * 5% * 5%" = 0.002%
+>>
+>> However, to ensure sufficient reliability, obj_pool is not filled only
+>> when there are more than two local nodes, reduce the probability of
+>> problems to the impossible.
+>>
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>  lib/debugobjects.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+>> index 7a8ccc94cb037ba..4f64b5d4329c27d 100644
+>> --- a/lib/debugobjects.c
+>> +++ b/lib/debugobjects.c
+>> @@ -131,6 +131,16 @@ static void fill_pool(void)
+>>  	struct debug_obj *obj;
+>>  	unsigned long flags;
+>>  
+>> +	/*
+>> +	 * The upper-layer function uses only one node at a time. If there are
+>> +	 * more than two local nodes, it means that even if nesting occurs, it
+>> +	 * doesn't matter. The probability of nesting depth >= 2 is extremely
+>> +	 * low, and the number of global free nodes guarded by
+>> +	 * debug_objects_pool_min_level is adequate.
+>> +	 */
+>> +	if (likely(obj_cache) && this_cpu_read(percpu_obj_pool.obj_free) >= 2)
+>> +		return;
+>> +
+>>  	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+>>  		return;
+>>  
+>>
 > 
-> kobject_put() is more appropriate for error handling after kobject_init().
-> And we can use this function to solve this problem.
-> 
-> For the cache created early, the related sysfs_slab_add() is called in
-> slab_sysfs_init(). Skip free these kmem_cache since they are important
-> for system. Keep them working without sysfs.
-> 
-> Fixes: 80da026a8e5d ("mm/slub: fix slab double-free in case of duplicate sysfs filename")
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> ---
->  include/linux/slub_def.h |  4 ++--
->  mm/slab_common.c         |  6 ++----
->  mm/slub.c                | 21 +++++++++++++++++----
->  3 files changed, 21 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-> index 26d56c4c74d1..90c3e06b77b1 100644
-> --- a/include/linux/slub_def.h
-> +++ b/include/linux/slub_def.h
-> @@ -144,11 +144,11 @@ struct kmem_cache {
->  
->  #ifdef CONFIG_SYSFS
->  #define SLAB_SUPPORTS_SYSFS
-> -int sysfs_slab_add(struct kmem_cache *);
-> +int sysfs_slab_add(struct kmem_cache *, bool);
->  void sysfs_slab_unlink(struct kmem_cache *);
->  void sysfs_slab_release(struct kmem_cache *);
->  #else
-> -static inline int sysfs_slab_add(struct kmem_cache *s)
-> +static inline int sysfs_slab_add(struct kmem_cache *s, bool free_slab)
->  {
->  	return 0;
->  }
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 55e2cf064dfe..30808a1d1b32 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -237,11 +237,9 @@ static struct kmem_cache *create_cache(const char *name,
->  #ifdef SLAB_SUPPORTS_SYSFS
->  	/* Mutex is not taken during early boot */
->  	if (slab_state >= FULL) {
-> -		err = sysfs_slab_add(s);
-> -		if (err) {
-> -			slab_kmem_cache_release(s);
-> +		err = sysfs_slab_add(s, true);
-> +		if (err)
->  			return ERR_PTR(err);
-> -		}
->  		debugfs_slab_add(s);
->  	}
->  #endif
-> diff --git a/mm/slub.c b/mm/slub.c
-> index a1ad759753ce..25575bce0c3c 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -5881,7 +5881,7 @@ static char *create_unique_id(struct kmem_cache *s)
->  	return name;
->  }
->  
-> -int sysfs_slab_add(struct kmem_cache *s)
-> +int sysfs_slab_add(struct kmem_cache *s, bool free_slab)
->  {
->  	int err;
->  	const char *name;
-> @@ -5911,14 +5911,17 @@ int sysfs_slab_add(struct kmem_cache *s)
->  		 * for the symlinks.
->  		 */
->  		name = create_unique_id(s);
-> -		if (IS_ERR(name))
-> +		if (IS_ERR(name)) {
-> +			if (free_slab)
-> +				slab_kmem_cache_release(s);
->  			return PTR_ERR(name);
-> +		}
->  	}
->  
->  	s->kobj.kset = kset;
->  	err = kobject_init_and_add(&s->kobj, &slab_ktype, NULL, "%s", name);
->  	if (err)
-> -		goto out;
-> +		goto out_put_kobj;
->  
->  	err = sysfs_create_group(&s->kobj, &slab_attr_group);
->  	if (err)
-> @@ -5934,6 +5937,16 @@ int sysfs_slab_add(struct kmem_cache *s)
->  	return err;
->  out_del_kobj:
->  	kobject_del(&s->kobj);
-> +out_put_kobj:
-> +	/*
-> +	 * Skip free kmem_cache that create early since they are important
-> +	 * for system. Keep them working without sysfs. Only free the name
-> +	 * for early allocated kmem_cache.
-> +	 */
-> +	if (free_slab)
-> +		kobject_put(&s->kobj);
-> +	else
-> +		kfree_const(s->kobj.name);
->  	goto out;
->  }
->  
-> @@ -6002,7 +6015,7 @@ static int __init slab_sysfs_init(void)
->  	slab_state = FULL;
->  
->  	list_for_each_entry(s, &slab_caches, list) {
-> -		err = sysfs_slab_add(s);
-> +		err = sysfs_slab_add(s, false);
->  		if (err)
->  			pr_err("SLUB: Unable to add boot slab %s to sysfs\n",
->  			       s->name);
+
+-- 
+Regards,
+  Zhen Lei
 
