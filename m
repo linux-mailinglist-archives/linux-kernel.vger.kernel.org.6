@@ -1,107 +1,161 @@
-Return-Path: <linux-kernel+bounces-316234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BF296CCE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:04:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4B396CCE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45F4D1F240F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44161F25977
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C8413E043;
-	Thu,  5 Sep 2024 03:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53038145B27;
+	Thu,  5 Sep 2024 03:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvq9r3Wa"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RmrAbVvA"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B7F25634;
-	Thu,  5 Sep 2024 03:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254B41448C7;
+	Thu,  5 Sep 2024 03:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505442; cv=none; b=WZC/O5mZQRuHBf82poSfrbMkG1887+tDGQ+RsuFvkLN4mD06ePo+pXRRKI8Dz2YBuDIwuEQLm5lfkdobPjp6pX/Ul+sgFTHj0FayNf9v60qbb360U4JFH/jNESHfpXDD+Artm/bo8vuS8KsijVdPUyjeaTPwRtn21FwepB4Z3iY=
+	t=1725505459; cv=none; b=cdN8qM3iaEz9vwLxdqMl8xEfbhsHR59cL4vle2KfYFU7ffZfNEEfFCMkyo8KYms7V8xWnlkDK56aXc7B6GK8f0jXrtA7k2bfuTDC0rR3nzJD6VtxaTAASvjPY0adA8172KVHuLqkRH1t2nPe2K7ypvDmOOElHGrouHicTgObEV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725505442; c=relaxed/simple;
-	bh=/11NuV3J13AVBCNEHJBd61OCL7273nbkmFMzpmsJ/3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FC3OY8dQCHt7e2QqZ0qKDtxCSBIzcdYGf8qK5PSvLzcRxP4hNMW7g4LhI/tf1TtoEBlFBs4skZdOQHDCNf9djvX3eStm1ttYn4XseEPgVPPLy53qFNFgrCHOb8wZOnEcwU24gwP48hPuPQMu4JWeBpo5QO3lBiqEYWolcTMIB78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvq9r3Wa; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f50966c478so2895161fa.1;
-        Wed, 04 Sep 2024 20:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725505439; x=1726110239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/11NuV3J13AVBCNEHJBd61OCL7273nbkmFMzpmsJ/3M=;
-        b=lvq9r3WacqscNpeOUd84ooGy6VX4SaMtVLXQxJpRnGkZO/z82wg/EJnzp0zPfaDu3k
-         /CKUPNltrCQGKB3Bg2eAS1TfJh06d6/nKUeSnVVq5OM8+voRFdtyyJpAGL1GcSVeR7rA
-         3o7uyi5qte7CLUs4hn5Lo9HW41cNavq1SE+5BbYahNjYDW42rex7TaRtrbdxqfzEFB++
-         +JgHET6Iq3Xr40xv0b1m3bqMEsLsbLiW6v7iUi+jpqJpLTnkxI7wATJXxaNOWZjlncsx
-         Y0Ak62xIx4+RnLYONz05/VUn6FMLdQ3E6Pm+f71xrX9MaBCClebGkkLEeVFTF5sXjI1k
-         RhmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725505439; x=1726110239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/11NuV3J13AVBCNEHJBd61OCL7273nbkmFMzpmsJ/3M=;
-        b=b0Z9gMGceSzV/RBi8PS8FH7gtzCAuyW6B1R+GCgh2/GiveBbkcRtV7CxPkr8zcEoBZ
-         qH2NBgSIKCJt0eQe8uxA5mygl8Hz5JAQ5W0R6iYnwhLmAlQ9GtIeO9Br/5NC8daWZMYM
-         +qjZK3abvK6TwAi8kNJ0NVyetcSsQq/mWtCiq27AbdvlhbyQC84fTO+2Snd30w9WbLdL
-         DJW5jV3MnJ+ISdjttoOta47GHEmKlqzgdrexnZEKnloQHvCMPJnXpXgctezjciitKGUj
-         z9WFND+hRkNV/stfasNWzAL/v1+1cZUZEADF8cgnrhG3Eq6+vEilkRRznJAoXtTn2Nwo
-         iszg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0mv0Mgaw5MJqSoiJzhQpZERGIMlfzm+wyYHqlA11fyy5ald+7QC51KD4kfO3xh0UQ4Vp2sBRQ+IRXPvpg@vger.kernel.org, AJvYcCUrcI+1d6i6rJOVW0hWNonpozsh/I1o5NX6TOXoh4q2mt5kDw7N7/bgP3a6xF3aNwExf7YzdZ/nzQqB@vger.kernel.org, AJvYcCWnbgmhOy8LWg+h2eYkSVCD3t1uwUUymz9Te7r2nxSNy9klPMMIAmDm7wp7uwkta7OiQcxBfwR9iu8Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN42U+qEMNLVWJid9OerXtq2rxF1z3MWeUcduZDWhkWBkP6CYL
-	9U+2RqnZvOVAJObLj409FD0EeImB9TniyXw6KJ/vQI2FzOkYGtvFdSJ/VIiQ3bamxSNY9Ecg86q
-	FfQiECH0OZ+BtY9sqDXmh8ASA9kE=
-X-Google-Smtp-Source: AGHT+IFKoW5NyQxeBL8rXaoBWYykLj0w4swcnGUHWTlZ90Pbf5D/BbEifa8Bhjzs4iwGhbX2BuMSl4V40wWz0QQoSEY=
-X-Received: by 2002:a05:651c:198c:b0:2f3:d560:ed9f with SMTP id
- 38308e7fff4ca-2f61e025823mr141143101fa.5.1725505438583; Wed, 04 Sep 2024
- 20:03:58 -0700 (PDT)
+	s=arc-20240116; t=1725505459; c=relaxed/simple;
+	bh=7GdYfRNzrCCZuilokKtXRCmGGQXdXKTLbn56/sVnFFo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CZ3AbOqoGAsAL28OdO6bb3yIJmn7fhxVyOrqQ85byqDCiNB0YHdbosFsyTerYDFaxfvchavtHcPhmgXmbeCvKA0jYvINXUBc0RhbL4pLbE4gDiYoaPtVmzsRagGwU4O8fCuSBE794T9GK+aow5seOgkeSulcfNRm/HDhu0PUR0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RmrAbVvA; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725505449; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=GDVRuhXoCkztJWuUnUtFfnUSjUnxHDl6SdZdNPHpDvI=;
+	b=RmrAbVvAsKRpX3PwvsUZ09TXaKrc7esqwkpG3puATjoSAeYWRUMbQ1YKEFyWRdr29yNuVgnVceKKJfiNRZoqQh75pt7VlNoD1U/cs9nIR3NHEtk41DwoPIq6bijkeeYGhIHV4YFoEqKMSx5b68JoYOZ/2XllsmqQypUrPUkd0LQ=
+Received: from 30.246.162.144(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WEJd.uX_1725505445)
+          by smtp.aliyun-inc.com;
+          Thu, 05 Sep 2024 11:04:07 +0800
+Message-ID: <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
+Date: Thu, 5 Sep 2024 11:04:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905012617.1864997-1-haibo.chen@nxp.com> <20240905012617.1864997-3-haibo.chen@nxp.com>
- <CAOMZO5ALKfz-w3taJBwCLu+pAnrcGaa-9=EtLH6FFJWBkq=t2g@mail.gmail.com> <DU0PR04MB9496D185069B3F9D3422BDAE909D2@DU0PR04MB9496.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9496D185069B3F9D3422BDAE909D2@DU0PR04MB9496.eurprd04.prod.outlook.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 5 Sep 2024 00:03:46 -0300
-Message-ID: <CAOMZO5CCP9urCFixBtF17DaQ2mpno43mprj8hXP70R3-1MvU5g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] spi: fspi: add support for imx8ulp
-To: Bough Chen <haibo.chen@nxp.com>
-Cc: Han Xu <han.xu@nxp.com>, "yogeshgaur.83@gmail.com" <yogeshgaur.83@gmail.com>, 
-	"broonie@kernel.org" <broonie@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"singh.kuldeep87k@gmail.com" <singh.kuldeep87k@gmail.com>, "hs@denx.de" <hs@denx.de>, 
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Jarkko Sakkinen <jarkko@kernel.org>, bp@alien8.de, rafael@kernel.org,
+ wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
+ tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
+ james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
+ will@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240902030034.67152-2-xueshuai@linux.alibaba.com>
+ <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
+In-Reply-To: <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 10:49=E2=80=AFPM Bough Chen <haibo.chen@nxp.com> wro=
-te:
 
-> Hi Fabio,
->
-> I only add the .lut_num here, do not touch .lettle_endian here, and I add=
- another 8ulp in the follow line, but format patch show in this way. Anythi=
-ng I can do to adjust how to format patch?
 
-Now that I look at the original code, I see that imx8dl already has
-little_endian =3D true.
+在 2024/9/4 00:09, Jarkko Sakkinen 写道:
+> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
+>> Synchronous error was detected as a result of user-space process accessing
+>> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+>> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+>> memory_failure() work which poisons the related page, unmaps the page, and
+>> then sends a SIGBUS to the process, so that a system wide panic can be
+>> avoided.
+>>
+>> However, no memory_failure() work will be queued unless all bellow
+>> preconditions check passed:
+>>
+>> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
+>> - `if (flags == -1)` in ghes_handle_memory_failure()
+>> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
+>> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
+>>
+>> In such case, the user-space process will trigger SEA again.  This loop
+>> can potentially exceed the platform firmware threshold or even trigger a
+>> kernel hard lockup, leading to a system reboot.
+>>
+>> Fix it by performing a force kill if no memory_failure() work is queued
+>> for synchronous errors.
+>>
+>> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>
+>> ---
+>>   drivers/acpi/apei/ghes.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>> index 623cc0cb4a65..b0b20ee533d9 100644
+>> --- a/drivers/acpi/apei/ghes.c
+>> +++ b/drivers/acpi/apei/ghes.c
+>> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>   		}
+>>   	}
+>>   
+>> +	/*
+>> +	 * If no memory failure work is queued for abnormal synchronous
+>> +	 * errors, do a force kill.
+>> +	 */
+>> +	if (sync && !queued) {
+>> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption\n",
+>> +			current->comm, task_pid_nr(current));
+> 
+> Hmm... doest this need "hardware" or would "memory corruption" be
+> enough?
+> 
+> Also, does this need to say that it is sending SIGBUS when the signal
+> itself tells that already?
+> 
+> I.e. could "%s:%d has memory corruption" be enough information?
 
-Sorry for the noise.
+Hi, Jarkko,
+
+Thank you for your suggestion. Maybe it could.
+
+There are some similar error info which use "hardware memory error", e.g.
+
+	static void kill_me_maybe(struct callback_head *cb)
+	{
+		pr_err("Uncorrected hardware memory error in user-access at %llx", 
+p->mce_addr);
+		...
+		pr_err("Memory error not recovered");
+		kill_me_now(cb);
+	}
+	
+	static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
+	{
+		pr_err("%#lx: Sending SIGBUS to %s:%d due to hardware memory 
+corruption\n",
+				pfn, t->comm, task_pid_nr(t));
+		...
+			ret = force_sig_mceerr(BUS_MCEERR_AR,
+					 (void __user *)tk->addr, addr_lsb);
+	
+	}	
+
+So, personally, I prefer this info to be consistent with them.
+
+
+Best Regards,
+Shuai
 
