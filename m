@@ -1,273 +1,140 @@
-Return-Path: <linux-kernel+bounces-316842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E778796D607
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8119796D615
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F84288303
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D941F2216A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA919CCFC;
-	Thu,  5 Sep 2024 10:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B709198E83;
+	Thu,  5 Sep 2024 10:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGvQW2Ld"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HGfcqMNW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF1198A3E;
-	Thu,  5 Sep 2024 10:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDD419415D;
+	Thu,  5 Sep 2024 10:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725531888; cv=none; b=A0FZ7ZuunZF3aabmNavz2xY7Vk1j+RMKFSfTY3X/rlZIWVaIfeM6nhj1SJlL/KdV78Rtx558Wc1Bp22BRHZsXvR1LFgh/anlVC8G+nitQyM1RDHVYWmdmbq2oAYoqhbnM7g/lcahpXn2hN0rOavARk22MR5P/LLhpQBPnThD6kk=
+	t=1725532183; cv=none; b=q2yVGwByaVP5WPbbR5UKfe2GLwmPRBAOhvAd7eVI2uVnu1PfceP8uby2iK1yNMDbvq53OZDuXYGjlEBh0AyWX5lu2mb1rGsxts5f1fQniZV1aevcfRFEsVwJcjY6451m+3MvQN01VFnlzBSPshB8Pivais2T+orqEoJpWBGqT5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725531888; c=relaxed/simple;
-	bh=ymFcbMYD51eRn07YRHO/UDdIB9t+HQX0ow25KGMtxx8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bDsQ0CYj9zKREREvI4Qj54wCXeFuQrUvCbywVogRXE7ZGxYraVEgogkUPrWkpCXaZjAhdoNKdhSO5lwX1WPrCIaPHkDIxSp4f6HEpEiOqxXNB6jsvV0oiNClLupqb7H30o7vR8CWz/Vkx3CjC7jiE9WJszKcA5PtjNyEgeI2x44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGvQW2Ld; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26852af8fso660329a12.2;
-        Thu, 05 Sep 2024 03:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725531885; x=1726136685; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KD5e8iLAs44FdlnMrUVKychwWaQXORD8FkLl/XxSu6A=;
-        b=RGvQW2LdS+IXmrpIcexw4nKRqB6GGCxxFrU69WQDixnwVQZDYRSdlG181jCgI+DzP0
-         Un+44eAKjjvKwv0cp31aJY8ZvJIN+nQ4NWZp2VYhfrnarXRXIeLhPx1dA2+tR9p636kT
-         uimLzz8ioUy3Ny6pcZkfhpzFolteyA3jyDSzYI3l72fGzQRqv2MLjfE9IIxHORJWzbKb
-         uYncuRko2eNCu1QXVpFhIbsq/DtJ2N0ugOZDmjRQUQzyHjV9qhZe7A5fuYYbaozb/B+g
-         hHybwgY89mC9xu64nu0AGd/FpfQRN04JWEf672I821+yziGnYeMs0qVcPflzKz+3orkO
-         V9vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725531885; x=1726136685;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KD5e8iLAs44FdlnMrUVKychwWaQXORD8FkLl/XxSu6A=;
-        b=uR9ML1nbt++CBFsfyzGSKbcGLG7tbHg/nlo3JbxN+tvwcOUeF5eW5vFdUzQvpYqM3I
-         5q/gNkhBkKWD0YV4VMJ4gIJ25oAiA9q5vzbP2ACWo3BYXx5Tkq8oppVUkSY2jeR18s89
-         eFBzAqjWO6Z1D4Y5nt/w6mTksK06IKcd/yBDoTNbfZFc7+5joSA5qlgeao8oM3kkFY8j
-         J8iz0HtG7Qx39ltBpKako3noEV8GEo7K6dNC3hMEv6B46OhXcllNb5MwhrwQchYECbQM
-         zjC1VP89ca17o8fqoJlbD84a15C7WaQT7yCKtrRPCB3zpabbloc8nb3KBo+AEdMxGBP/
-         Zcag==
-X-Forwarded-Encrypted: i=1; AJvYcCU0aRgmNh/6T2j1uNy/u6BUy4uTQI5jD0IGw2Ayr3VanvW5/pkR4/New7J80dCUbpTznspdFTXkIx7QoNlC@vger.kernel.org, AJvYcCUS7xiuYkVaVaTydtzU6SxyFxjiAFuOGMz2WCAjuCojaiR4osYAlxoPmEgSX0/sAzDoumrdF9NJC9as@vger.kernel.org, AJvYcCUWn05zn28mvjNuXubRL30F46NRObA17ajO+6kNwn/F1Yo/cRYqyE79MpSs4uG9qc3Hhl0SAqb38hd4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUwSXl7r3k6MnXeDqt7+GPWv+9+cpwf2ByNyAS2iHbbfxMzYgp
-	B1oy0rxzS6bPWF3yJUltR8d4MESZhwb/7xahyNNMvVh/yVDKFGh8RwCRx4r7
-X-Google-Smtp-Source: AGHT+IH9QD8IgY98uB7SOYLpUoQEDlELekqA8jpzQSGk5y6R3sXTSHAUSEqr3MRXF1xYtE5tiPaKTw==
-X-Received: by 2002:a05:6402:13cc:b0:5a4:6dec:cd41 with SMTP id 4fb4d7f45d1cf-5c21ed89d15mr19180363a12.28.1725531884208;
-        Thu, 05 Sep 2024 03:24:44 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc56a897sm1050958a12.47.2024.09.05.03.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 03:24:43 -0700 (PDT)
-Message-ID: <f2568dd151efc2da76659fea4300fa7b3610d1e1.camel@gmail.com>
-Subject: Re: [PATCH RFC 2/8] iio: backend: extend features
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, Jonathan Cameron
-	 <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Olivier Moysan
- <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
- dlechner@baylibre.com
-Date: Thu, 05 Sep 2024 12:28:51 +0200
-In-Reply-To: <4826097d-b575-4895-9335-f587bbf3bc89@baylibre.com>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
-	 <20240829-wip-bl-ad3552r-axi-v0-v1-2-b6da6015327a@baylibre.com>
-	 <20240831122313.4d993260@jic23-huawei>
-	 <0fbe1321-cc67-4ade-8cbb-cbbaa40d2ca1@baylibre.com>
-	 <20240903201157.5352ec04@jic23-huawei>
-	 <4826097d-b575-4895-9335-f587bbf3bc89@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1725532183; c=relaxed/simple;
+	bh=YpBcUX+3RuIZIuZg05hsVGdqPPMg1tTxC1ZG56Aov3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dUMxS+knymZBFv9HJ6DwvwsQPVaxcesenXvwoEuewCr4xqKJUKiXNu6BxcPy/9VBRxW0R0/bAwR7UdbH1uVWOzDaqnoXVqNOjO5DIjHUVexaPfzNrQQQVi1o9D+04RsVFifsD5jhME7GN5MS3SLw1v9Rxt2q7Rz1K0B3U6VYJ2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HGfcqMNW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 96458AD0;
+	Thu,  5 Sep 2024 12:28:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725532106;
+	bh=YpBcUX+3RuIZIuZg05hsVGdqPPMg1tTxC1ZG56Aov3A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HGfcqMNWis0YRXKvxNTCqXZtAIaj5oo9v6Gs3pUKJpcno31mn0s+tj6Em65KBP3VW
+	 Mfx5zJ36nccUNAN01obAyT9X/BSK0+h1a3OBc6AEE46cm4ctwVMCPGP65zWVhJ22NP
+	 5KPjnOqKS/ZK/KyEWt8+/6arJACLPk3CDTFYldds=
+Message-ID: <c928e09a-751e-45af-8e57-f105b41df2be@ideasonboard.com>
+Date: Thu, 5 Sep 2024 13:29:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 00/12] media: ov5645: Add support for streams
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240904210719.52466-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <3eeae62a-e22b-443a-aad4-f1a384c0a3f7@ideasonboard.com>
+ <514490a2-181a-42ac-bc54-7a700e8d1bb9@ideasonboard.com>
+ <CA+V-a8v0s8Unk3pNhR1wgBk_wqkua__Dumq3KT=n-cXUwq=6Bw@mail.gmail.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <CA+V-a8v0s8Unk3pNhR1wgBk_wqkua__Dumq3KT=n-cXUwq=6Bw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-09-04 at 14:01 +0200, Angelo Dureghello wrote:
-> Hi Jonathan,
->=20
-> On 03/09/24 9:11 PM, Jonathan Cameron wrote:
-> > On Mon, 2 Sep 2024 16:03:22 +0200
-> > Angelo Dureghello <adureghello@baylibre.com> wrote:
-> >=20
-> > > Hi Jonathan,
-> > >=20
-> > > thanks for the feedbacks,
-> > >=20
-> > > On 31/08/24 1:23 PM, Jonathan Cameron wrote:
-> > > > On Thu, 29 Aug 2024 14:32:00 +0200
-> > > > Angelo Dureghello <adureghello@baylibre.com> wrote:
-> > > > =C2=A0=20
-> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > > >=20
-> > > > > Extend backend features with new calls needed later on this
-> > > > > patchset from axi version of ad3552r.
-> > > > >=20
-> > > > > A bus type property has been added to the devicetree to
-> > > > > inform the backend about the type of bus (interface) in use
-> > > > > bu the IP.
-> > > > >=20
-> > > > > The follwoing calls are added:
-> > > > >=20
-> > > > > iio_backend_ext_sync_enable
-> > > > > 	enable synchronize channels on external trigger
-> > > > > iio_backend_ext_sync_disable
-> > > > > 	disable synchronize channels on external trigger
-> > > > > iio_backend_ddr_enable
-> > > > > 	enable ddr bus transfer
-> > > > > iio_backend_ddr_disable
-> > > > > 	disable ddr bus transfer
-> > > > > iio_backend_set_bus_mode
-> > > > > 	select the type of bus, so that specific read / write
-> > > > > 	operations are performed accordingly
-> > > > > iio_backend_buffer_enable
-> > > > > 	enable buffer
-> > > > > iio_backend_buffer_disable
-> > > > > 	disable buffer
-> > > > > iio_backend_data_transfer_addr
-> > > > > 	define the target register address where the DAC sample
-> > > > > 	will be written.
-> > > > > iio_backend_bus_reg_read
-> > > > > 	generic bus read, bus-type dependent
-> > > > > iio_backend_bus_read_write
-> > > > > 	generic bus write, bus-type dependent
-> > > > >=20
-> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > ---
-> > > > > =C2=A0=C2=A0 drivers/iio/industrialio-backend.c | 151
-> > > > > +++++++++++++++++++++++++++++++++++++
-> > > > > =C2=A0=C2=A0 include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 24 ++++++
-> > > > > =C2=A0=C2=A0 2 files changed, 175 insertions(+)
-> > > > >=20
-> > > > > diff --git a/drivers/iio/industrialio-backend.c
-> > > > > b/drivers/iio/industrialio-backend.c
-> > > > > index a52a6b61c8b5..1f60c8626be7 100644
-> > > > > --- a/drivers/iio/industrialio-backend.c
-> > > > > +++ b/drivers/iio/industrialio-backend.c
-> > > > > @@ -718,6 +718,157 @@ static int __devm_iio_backend_get(struct de=
-vice
-> > > > > *dev, struct iio_backend *back)
-> > > > > =C2=A0=C2=A0=C2=A0	return 0;
-> > > > > =C2=A0=C2=A0 }
-> > > > =C2=A0=20
-> > > > > +
-> > > > > +/**
-> > > > > + * iio_backend_buffer_enable - Enable data buffering
-> > > > Data buffering is a very vague term.=C2=A0 Perhaps some more detail=
- on what
-> > > > this means?
-> > > for this DAC IP, it is the dma buffer where i write the samples,
-> > > for other non-dac frontends may be something different, so i kept it
-> > > generic. Not sure what a proper name may be, maybe
-> > >=20
-> > > "Enable optional data buffer" ?
-> > How do you 'enable' a buffer?=C2=A0 Enable writing into it maybe?
->=20
-> for the current case, this is done using the custom register
-> of the AXI IP, enabling a "stream".
->=20
-> return regmap_set_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
-> =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_STREAM_ENABLE);
->=20
-> Functionally, looks like dma data is processed (sent over qspi)
-> when the stream is enabled.
->=20
-> Maybe a name as "stream_enable" would me more appropriate ?
-> "Stream" seems less generic btw.
->=20
+On 05/09/2024 13:27, Lad, Prabhakar wrote:
+> Hi Tomi,
+> 
+> On Thu, Sep 5, 2024 at 10:11 AM Tomi Valkeinen
+> <tomi.valkeinen@ideasonboard.com> wrote:
+>>
+> <snip>
+>>> I think you actually want 1/0->0/0 routing. The error says that the sink
+>>> side device has routing which does not have a stream at stream ID 1, or
+>>> no routing support at all, which implies a single stream at stream ID 0.
+>>
+>> Looking at patch 12, there's something wrong with the approach here. Are
+>> you perhaps trying to define the CSI-2 VC with the streams?
+>>
+> Yes, based on the previous feedback received, I am implementing
+> virtual channels as streams. If this isn't the correct approach can
+> you please guide me on what we should be using to support virtual
+> channels?
 
-Yes, stream enable is very specific for this usecase. This is basically
-connected to typical IIO buffering. So maybe we could either:
+Can you describe what kind of hardware you have and how the VCs are 
+supposed to be configured and used there?
 
-1) Embed struct iio_buffer_setup_ops in the backend ops struct;
-2) Or just define directly the ones we need now in backend ops.
-=20
-> > >=20
-> > > > > + * @back: Backend device
-> > > > > + *
-> > > > > + * RETURNS:
-> > > > > + * 0 on success, negative error number on failure.
-> > > > > + */
-> > > > > +int iio_backend_buffer_enable(struct iio_backend *back)
-> > > > > +{
-> > > > > +	return iio_backend_op_call(back, buffer_enable);
-> > > > > +}
-> > > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
-> > > > > +
-> > > > > +/**
-> > > > > +/**
-> > > > > + * iio_backend_bus_reg_read - Read from the interface bus
-> > > > > + * @back: Backend device
-> > > > > + * @reg: Register valule
-> > > > > + * @val: Pointer to register value
-> > > > > + * @size: Size, in bytes
-> > > > > + *
-> > > > > + * A backend may operate on a specific interface with a related =
-bus.
-> > > > > + * Read from the interface bus.
-> > > > So this is effectively routing control plane data through the offlo=
-aded
-> > > > bus?=C2=A0 That sounds a lot more like a conventional bus than IIO =
-backend.
-> > > > Perhaps it should be presented as that with the IIO device attached
-> > > > to that bus? I don't fully understand what is wired up here.
-> > > > =C2=A0=20
-> > > Mainly, an IP may include a bus as 16bit parallel, or LVDS, or simila=
-r
-> > > to QSPI as in my case (ad3552r).
-> > ok.
-> >=20
-> > If this is a bus used for both control and dataplane, then we should re=
-ally
-> > be presenting it as a bus (+ offload) similar to do for spi + offload.
-> >=20
+  Tomi
 
-Yes, indeed. In this case we also use the axi-dac core for controlling the
-frontend device (accessing it's register) which is fairly weird. But not su=
-re
-how we can do it differently. For the spi_engine that is really a spi contr=
-oller
-with the extra offloading capability. For this one, it's now "acting" as a =
-spi
-controller but in the future it may also "act" as a parallel controller (th=
-e
-axi-adc already is in works for that with the ad7606 series).
-
-I was also very skeptical when I first saw these new functions but I'm not
-really sure how to do it differently. I mean, it also does not make much se=
-nse
-to have an additional bus driver as the register maps are the same. Not sur=
-e if
-turning it in a MFD device, helps...
-
-FWIW, I still don't fully understand why can't we have this supported by th=
-e
-spi_engine core. My guess is that we need features from the axi-dac (for th=
-e
-dataplane) so we are incorporating the controlplane on it instead of going
-spi_engine + axi-dac.
-
-Also want to leave a quick note about LVDS (that was mentioned). That inter=
-face
-is typically only used for data so I'm not seeing any special handling like=
- this
-for that interface.
-
-- Nuno S=C3=A1
-> >=20
 
