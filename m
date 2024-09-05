@@ -1,153 +1,89 @@
-Return-Path: <linux-kernel+bounces-316386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2AA96CECC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:56:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B71496CECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8F61C21CB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BBC1F274F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC6F14F126;
-	Thu,  5 Sep 2024 05:56:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945F414F11E;
-	Thu,  5 Sep 2024 05:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4023D189522;
+	Thu,  5 Sep 2024 05:57:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0A14F11E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515774; cv=none; b=lF4xh2C+6qgspmLgUmrCr+1gsPMtJiuOoWoHHLGww/ZYhOb1lS8kKIScKGpdvlmj8GpMJfw+GKn8MkPXkEF3FzSj/cs6S5AeH+BZFT2lfXkjnMZy9djNUNoMge5L1fqhH1KM4oePhTVkMry6xXUqACvsBUjY76Uip4ZJwdlvVyk=
+	t=1725515825; cv=none; b=FYzMNndzs5Fy64Bh+VoNDYfwp5kGLlMXjRJIo+adLNwnEE3HRc55XSBaO/I+pdl9cRglKSjzNWn5K4kb4rG0IDYJzlFp/8faGIeYO/eNarlxm5mG8qNFs7O6pPEFHdEpCVBU5nUp53W0afBZu+ZAH6Js00Ls7PZKgabf7DNrA6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515774; c=relaxed/simple;
-	bh=s573o035Y8vJxz/3lvfL3h7JspJd2/fPU+s90l7e8W8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bn0Z1xLqa7qGUsu8fzmw/j4dBALmTSrEfLwcOgzweM0o0j7UGismpahpENOj3Shk7P08vUqN1ZfsG4EwoVZ4yBhnqbETiF4bQfxPHMyC2vo8PXIxEkP33sM/tkszCLrR3PYzfKht7UOGkvM97iktL0kDbn/0vSGkf+Ui1d6xzJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E49BFEC;
-	Wed,  4 Sep 2024 22:56:37 -0700 (PDT)
-Received: from [10.162.43.13] (e116581.arm.com [10.162.43.13])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC93B3F73F;
-	Wed,  4 Sep 2024 22:56:05 -0700 (PDT)
-Message-ID: <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
-Date: Thu, 5 Sep 2024 11:26:02 +0530
+	s=arc-20240116; t=1725515825; c=relaxed/simple;
+	bh=pyUAhBX92buKhrzsf2G0r/M8qmQA7L+1+Ncg4M7/daw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lOVZTTGjEibW2TKK2HlRheWBDK67HxkMUpZbUWzLtNTOICLwyVd7159ZBMMxaBxhq3X3SxsF8OiUzqFC3F9o2kXe3z7ion22lz5rRa1lJUV0nRM4sduXQXChGvVhiJZpvKlhrSRq9BTBKZWns77n6JLAsXUuzlxXigVRwlWzHHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f53125f4eso4760165ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 22:57:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725515823; x=1726120623;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCD5nD1M1msY2xhN3qs13wTf/0aKlhatVMivpIcFI+Y=;
+        b=ViNb04fKMLa2d4KyqhqOrYHdfXk0AZk7BkUcnW8fT7UJnIwPMMB4hTVxUwjBuEQJxK
+         Eql059nYOk+aIgklCzXArZe/ih4jZz/G5T95RKtqlTs1wYmroIs9L9c85CXOExITKaMD
+         G47ChWJInrOIaloSoTWokN1ApZzmBra5SFDdO57+XpcIt0wFqE4Q4noZG2qz3grdnxvX
+         I6AdMI47GycgJ5PETl88Mj2r16GsnJqYAYDz8l4z3x/wHF+oTq0fml27wgs8AT/Ufskx
+         Awr9tBoNmo1gnca/iSBos9YVMJbyLotb4iuU46fNf905ufSibt9JhmjpY6tO1eb4K7Mm
+         FMrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRWUfw/kHBtSmR5ub38VOEQV+J8gWEDMDeMwy/z80ydLD5i/aafRkiGVX5Hfste3sXhGOcC/rNR8ccch8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDRnqln6bOQUaQ9BoTCfUqOQjXrpZDo1GtTkTmwmpc4sC1Btuw
+	SALtDt8kWN5G4KnMAc5aF/zj3f0TZlJNS2FaqxuYwd5cCA22CJMKQI+QbJ+hJFO02d2Zu7VErWy
+	0/zL/d6OUqSwfdIgf5WmdLoruk56RKxvBnWSyPMlZm2tzKNt9xYFw5x8=
+X-Google-Smtp-Source: AGHT+IGCvnHCK805ji6QbaIknsKC6dw63UMmm8pwocMTN3hobf2dzJHRedIyr1YdG/fO3ZASs9c3+UVO+bPSwV8gReCSrtOQsB7Z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
-To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org, oleg@redhat.com
-Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
- ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
- Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
- aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, sj@kernel.org
-References: <20240822121415.3589190-1-dev.jain@arm.com>
- <20240822121415.3589190-2-dev.jain@arm.com>
- <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
- <42d0fa4b-eb67-42fd-a8e1-05d159d0d52f@arm.com>
- <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
- <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
- <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
- <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2193:b0:39f:5c02:48cd with SMTP id
+ e9e14a558f8ab-39f5c02bbfcmr8859215ab.6.1725515823664; Wed, 04 Sep 2024
+ 22:57:03 -0700 (PDT)
+Date: Wed, 04 Sep 2024 22:57:03 -0700
+In-Reply-To: <20240905052532.533159-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b96245062158f5aa@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in
+ unix_stream_read_actor (2)
+From: syzbot <syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-On 9/4/24 22:35, Shuah Khan wrote:
-> On 9/3/24 22:52, Dev Jain wrote:
->>
->> On 9/4/24 03:14, Shuah Khan wrote:
->>> On 8/30/24 10:29, Dev Jain wrote:
->>>>
->>>> On 8/27/24 17:16, Dev Jain wrote:
->>>>>
->>>>> On 8/27/24 17:14, Shuah Khan wrote:
->>>>>> On 8/22/24 06:14, Dev Jain wrote:
->>>>>>> Rename sigaltstack to generic signal directory, to allow adding 
->>>>>>> more
->>>>>>> signal tests in the future.
->>>>>>
->>>>>> Sorry - I think I mentioned I don't like this test renamed. Why 
->>>>>> are you sending
->>>>>> this rename still included in the patch series?
->>>>>
->>>>> I am not renaming the test, just the directory. The directory name
->>>>> is changed to signal, and I have retained the name of the test -
->>>>> sas.c.
->>>>
->>>> Gentle ping: I guess there was a misunderstanding; in v5, I was
->>>> also changing the name of the test, to which you objected, and
->>>> I agreed. But, we need to change the name of the directory since
->>>> the new test has no relation to the current directory name,
->>>> "sigaltstack". The patch description explains that the directory
->>>> should be generically named.
->>>>
->>>
->>> Right. You are no longer changing the test name. You are still
->>> changing the directory name. The problem I mentioned stays the
->>> same. Any fixes to the existing tests in this directory can no
->>> longer auto applied to stables releases.
->>
->> I understand your point, but commit baa489fabd01 (selftests/vm: rename
->> selftests/vm to selftests/mm) is also present. That was a lot bigger 
->> change;
->> sigaltstack contains just one test currently, whose fixes possibly 
->> would have
->> to be backported, so I guess it should not be that much of a big 
->> problem?
->>
->>>
->
-> So who does the backports whenevenr something changes? You are adding
-> work where as the automated process would just work without this
-> change. It doesn't matter if there is another test that changed
-> the name.
->
->>> Other than the desire to rename the directory to generic, what
->>> other value does this change bring?
->>
->> Do you have an alternative suggestion as to where I should put my new 
->> test then;
->> I do not see what is the value of creating another directory to just 
->> include
->> my test. This will unnecessarily clutter the selftests/ directory with
->> directories containing single tests. And, putting this in 
->> "sigaltstack" is just
->> wrong since this test has no relation with sigaltstack.
->>
->
-> If this new test has no relation to sigaltstack, then why are you 
-> changing
-> and renaming the sigaltstack directory?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Because the functionality I am testing is of signals, and signals are a 
-superset
-of sigaltstack. Still, I can think of a compromise, if semantically you 
-want to
-consider the new test as not testing signals, but a specific syscall 
-"sigaction"
-and its interaction with blocking of signals, how about naming the new 
-directory "sigaction"?
-> Adding a new directory is much better
-> than going down a path that is more confusing and adding backport 
-> overhead.
->
-> Two options:
-> -- Add a new directory or add a note and keep it under sigaltstack
-> -- Do you foresee this new growing?
->
-> thanks,
-> -- Shuah
->
->
+Reported-by: syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com
+Tested-by: syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         43b77244 Merge tag 'wireless-next-2024-09-04' of git:/..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=137509eb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=8811381d455e3e9ec788
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1196cfdb980000
+
+Note: testing is done by a robot and is best-effort only.
 
