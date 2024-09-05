@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-316544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAD796D0FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:58:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACAD96D0F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457E02857A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:58:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C688B2279A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E5B194AE7;
-	Thu,  5 Sep 2024 07:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="05Z4+D+o"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6431946A9;
+	Thu,  5 Sep 2024 07:57:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5740A194A70
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6414EBE4A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523041; cv=none; b=SwoCrLeGjfmP/YnO2D31jqShxjzANibFYg4/Ivpc45GXKbxRKraK6xLa0Ty1Hl4SAvZCpPNXuBg2ngEK0x+8RdysRxuTwOndr/RvfXJ9TpEex6vXxeq2gbLu1NiAAHh4IhOhpdrN21YEqbTCxHY0lEyEOB8e8BpMvPE5tC3+cuc=
+	t=1725523024; cv=none; b=lTVaDtpTb4rl+o+UL1GMrFLssyv13xXlgK9mrxzumyz4JF8kOl2aGFnTZN9jL41FjWgbWnmzvwfnCXNG3hvFnoEBf/7pAzhfOU8c6fLSl1nHNBfBEsi9Da2i4ToTh7koUOcKvGwuQAlGFHnOQzKxFuBqdDsYdt9TF12rpXjoZ8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523041; c=relaxed/simple;
-	bh=/15VqRopHjfs3Vag1wk1OqFB52SnvYMNDXanIJRXvYM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ipdM4vAJneYAIY/yKcljGXNp6ojSwah89SwaEObmSBYZ7zIERua/2Mv8JLkKyXvwlaFA/3D36fHaE6U+8luzoFCSEflt2JSDhz1Gwp1CqwlMYUvq1d39Tslt1M11o3XplMqCg0kyzoXjYKZs/H08fKJ/PErDgp9o6VwkXtpSar4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=05Z4+D+o; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bb8cf8abeso3132885e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725523037; x=1726127837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q7YrEnRdBza8n37TnMfyYmOU2+akv+XRSo40dZskXfA=;
-        b=05Z4+D+o1hte8gG8ebxJ9uhLz2VkZYWO2y21Q+7/LEK8Q1bo+ICRp52NgAhPn/YIpQ
-         9gmUkMUxnn6eLFsddi7LjQvJxMQAObqxDf2+cGI7vtxvXqoXBTFweDjLyx4xZZ7XXrNK
-         TSu18Sd6CmsOfF3A7Z3MuiSUjmWNZsurpm0uWNY5WkcurJXJOzSCP6jVxL+O/mew1aK9
-         sD7EKuGMOipnlcSS3prj0/6EiOn2G2PL69U2R9bybK/MC8l8ioYV0nvWH7d6AQnpPW3D
-         HA+b8NuTILCJ0zNySkDs1XqbegyfYH43WuoqFI35U1XPZVPZDDaGLH5hMIzsC/MgOu1t
-         dCVw==
+	s=arc-20240116; t=1725523024; c=relaxed/simple;
+	bh=hqQEZmtDxYnRFaRXYxmmExpheVlMmkQEBD9FWInRZi4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=V01PbO5+DHymsaALRE/2n6EKhIQWaC+B4n+M0tcXHiNyeIX5kxaGQmlVEhzdwsfXFr8NHwL+DDbFZXSK/CL3p3wNVymbZkm23Do+IKtyEuYtbePd7nUbMfSMp9w2CTzUcYUzj/GONefH8XSv2V/ANWmO/08+y+6c4fnB6ABaTao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a206312eeso86916739f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523037; x=1726127837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q7YrEnRdBza8n37TnMfyYmOU2+akv+XRSo40dZskXfA=;
-        b=cduFZ3Sc78jYjUrHWo5Kdrsq2tgJUbEvYKO/sp1gV6bySu3QwK1JWeH7WamAUVev6f
-         KEnoHnzt1iX76Kn+E6G0ZwlDM9iT4mKFM+gndy7aDaE6SRnbR3JdkZ62nCI01B/WS12N
-         OoiPQJaeuz4w6jhhB5SXbySVFaKY0elMBAp8+G6WwgedVkpOGykkSK7vDG3uTEvYIMg5
-         nUg+KJjBUC/SkGRBvHUqRl4auG7U7k3yqsExhLMOnS91e2NtCu3yoKfKl+pDwkL3hb8J
-         BYJiOPRshrOJW3UqEMc2o7Cz8COw0yCOTMWJFXYzm4gR/azfFTtyAJ+0dY/J5ck6iL6v
-         jVSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsYEXkPTp8Rivd6a06bRrJU5VtOI7uhI9PGVZuv3SukDvASjpbSJ5XsIN4USMYyFKRGby9nGmWUDDGzPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyikEw/yuVBikY+NbH241yAg4KdlOf3QwdicIgbpcKO7DOIiCP
-	KX02DPkcO+r5UCXLRRkcHA7616ets1wPnUGsaDt7LILlValKuv8Qe9/omMJpfk5WYaOGXgWJhvs
-	RMqLgfqLgPv69uCfVg+QfzTxq7OLJBYamNpqm
-X-Google-Smtp-Source: AGHT+IFGxSk5gvaezHEawui3mVYKQEAynuLTKFXTokKk6E856Tt9Cj3ku4PsaYI/2eDBJp3YhF0CWjK1PgsgItKLriw=
-X-Received: by 2002:a05:600c:1551:b0:428:ea8e:b48a with SMTP id
- 5b1f17b1804b1-42c8de5f5c3mr45944275e9.8.1725523036325; Thu, 05 Sep 2024
- 00:57:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725523022; x=1726127822;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pWFRUKiYjgZhgwMHAzZEuCfAEAt5tf6gCveF2TlOveU=;
+        b=PnJgP3z+X6DrZIXaGYuDszWygOLRldcwigiiIHJR/4LqjWoxchqeXPMijwQhljEkal
+         yQ5xOgZ5PdIRYliPD8Dys10rROjtyScvH8oESXZYsLlukPKhrZFdRtkGZTPr5CqWCXKV
+         ZGvLhXb488ZDXUEe78Qhh+NcIFtQX96hMUQHCVpg82zYPwGfvb/cCqMbEZZJBvR1IU/i
+         spxmB4a+mPB6jQbBg+3KGKJknX0GAGIq84ii8cEvLhAggxGBXi/y7PmOrsXVJEYM7HUm
+         BbwURkH0k2eaR8Oiayp97QkmwaXgtEobTf1yQwW9FDZu4YLv4hEpOI7HRnuo3wsMJ6PF
+         IWRg==
+X-Gm-Message-State: AOJu0YyyhI1GKs+tbohL9EId/yeolqqZ46EDhuXkLTwzfgkn1nWvIbqt
+	40rBDFHDdVJABilwgnOsBYk66M+o9c52NJOdsfKLqiXiTuS6Pdhrkly0/zlaK42SA2GqQ34x3Zb
+	4bXaCpKrjIQzW/Zkc/IGEGTgvUxJSV3wl4clzCAKlfxG+2NuTekakbDc=
+X-Google-Smtp-Source: AGHT+IFwpBwBPgWDZN6ZbEnqVTl8zRIgYLM9s0heMikl6f1B1ghfOzcI4FJtZ4KIuaDuHVSkLL3QQo5/KVpHa9wy5mk05WMSBfLt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-2-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-2-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Sep 2024 09:57:02 +0200
-Message-ID: <CAH5fLghM7mLjaivcErwwMGREvdJJMosHDLdCn-RUbdqJQo-DwQ@mail.gmail.com>
-Subject: Re: [PATCH 01/19] rust: workqueue: remove unneeded ``#[allow(clippy::new_ret_no_self)]`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+X-Received: by 2002:a05:6638:8720:b0:4bf:2453:3a48 with SMTP id
+ 8926c6da1cb9f-4d017edce7cmr714653173.5.1725523022588; Thu, 05 Sep 2024
+ 00:57:02 -0700 (PDT)
+Date: Thu, 05 Sep 2024 00:57:02 -0700
+In-Reply-To: <20240905071112.1621278-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d03df706215aa23c@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 10:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Perform the same clean commit b2516f7af9d2 ("rust: kernel: remove
-> `#[allow(clippy::new_ret_no_self)]`") did for a case that appeared in
-> workqueue in parallel in commit 7324b88975c5 ("rust: workqueue: add
-> helper for defining work_struct fields"):
->
->     Clippy triggered a false positive on its `new_ret_no_self` lint
->     when using the `pin_init!` macro. Since Rust 1.67.0, that does
->     not happen anymore, since Clippy learnt to not warn about
->     `-> impl Trait<Self>` [1][2].
->
->     The kernel nowadays uses Rust 1.72.1, thus remove the `#[allow]`.
->
->     Link: https://github.com/rust-lang/rust-clippy/issues/7344 [1]
->     Link: https://github.com/rust-lang/rust-clippy/pull/9733 [2]
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Hello,
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: kernel-usb-infoleak in usbtmc_write
+
+=====================================================
+BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
+ usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
+ usbtmc_write+0xc4f/0x1240 drivers/usb/class/usbtmc.c:1607
+ vfs_write+0x493/0x1550 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+ x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3998 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4188
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ usbtmc_create_urb drivers/usb/class/usbtmc.c:757 [inline]
+ usbtmc_write+0x3d3/0x1240 drivers/usb/class/usbtmc.c:1547
+ vfs_write+0x493/0x1550 fs/read_write.c:588
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:652
+ x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Byte 15 of 16 is uninitialized
+Memory access of size 16 starts at ffff88810a6a0000
+
+CPU: 0 UID: 0 PID: 6214 Comm: syz.3.81 Not tainted 6.11.0-rc6-syzkaller-00070-gc763c4339688-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
+
+
+Tested on:
+
+commit:         c763c433 Merge tag 'bcachefs-2024-09-04' of git://evil..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13324667980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15a7fd29980000
+
 
