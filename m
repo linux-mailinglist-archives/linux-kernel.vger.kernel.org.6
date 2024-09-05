@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-316146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7B096CBC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:32:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8BC96CBCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CA01F2758A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:32:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381EFB23574
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA5512B93;
-	Thu,  5 Sep 2024 00:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D6717548;
+	Thu,  5 Sep 2024 00:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mMngY00S"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bcd8t2hv"
 Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2FCDDA9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 00:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D0712B63
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 00:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725496315; cv=none; b=lRoB+VQ6QxFNIQ+I38Rd00Ol3dhPd9K5lEUNB+puSag3jA3s9zzh2Zmn8Mz5EJjq+QR9xRRsvhZP64cG2nMh7C7VuoKIm0w7uwZesOHg+kp2a/ikRWIfv7EiKi9YnZv/JIvqIf4AywvTUyRHX2yxDxCCX7tZT7Hs1cKakcTdb70=
+	t=1725496317; cv=none; b=UAS6tmVucjiAqHTT2DHkvO+Hb+bQcAipJQ3LrkTTO2CsuGANNxwtbLx+8qhooQUUr14l7661luC9oOE+aJhWLo6uIVcG5KkA6JisR5EwiG7KS+GPn4sjyGTAP7TVB985HSD0LPkqV9rasf1D1m9OSCoVvXFT2rpVRen1eYk69eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725496315; c=relaxed/simple;
-	bh=ZLKOWxT3NuOir/w+fbRaVKkoQ7BQs6qbrCt9McP4q70=;
+	s=arc-20240116; t=1725496317; c=relaxed/simple;
+	bh=tNdPgcpIqADtqnC02rHoIq3VZI89MnwpugBq5dQEs0U=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p7Q3ckrUKhnYOVe7+N96yvdL0mFEzuSsK//BnCQyGx0zzeZKPYQnDkLJu31JONGAF6XUzcWAsf/0qK5YIVn0aVh4zAqFZAKkVNSeSu3ctbetERvrhxCOFqAZPdFK5FrjS4Ep2DUCnSX89XQHG218ZEum7yktjuX7AdqyCy9o1Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mMngY00S; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=jDRzhmVAXZXIknGR+oVveOsWP0NaS1C4m7WUNRGjHBR17nv/0US71sz1K1GzdBC3UDf34fexvX6iYeYYsX97e6nXrKekgaN1BsTO5eTp7MO8csB8w01v3ILTCrCqJmxU+zgHhOp2H8gCGPpWvkbLzUP8IzIXzn2vNAHOhlI0fJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bcd8t2hv; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7d4fb78fe49so269303a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 17:31:53 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7cf603d9ffaso164731a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 17:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725496313; x=1726101113; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725496315; x=1726101115; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ac9f2JvhNnpWVv2ZKYegshHvMbbmkBcnbuU73G1cYt8=;
-        b=mMngY00Sf9O5z89pMRe/B1BCUmu+O7z3z4Hm/s7H5elhaCSimN4eIHfMqPp9CfJKxS
-         Zj+Knf2OoRFYQ9XC3j/g6a5fBnQiD3LebFY2dor/Z9WGlU+lY5XtdH3iLYUTYE0QhsCc
-         zrnLDfJ5XYAfuyOAW0DMBxFcq4K7gVpakK1q5DrZaDZPs6QFydEhysTsitl10egHS4z+
-         6NZLrm/at1/zlPPWCFzXiN6jGkLUMT6wrHlNTJlr8yKtl1ISwL4jAyH8yQSZs15TLduy
-         /i5Q0J/gJdah5tnR0UgOqYqGpsozNissMCC6EagyvOJKbJRZqN98HNsYqt6/sHezwQkz
-         rmkA==
+        bh=C+NIQ3hruAHgC9xMj3fhofnWDiiLf7+Cp7wyaHwiSJ4=;
+        b=Bcd8t2hv6uy7PvHGY8hp73vQwhNH7Nw9dAP8Wv4NcGSnB+GU+fcl1f0BrnoNqhLqiz
+         n84PTlQ7aXAFMfdHpCyyx8h6l4Wsl4hkHoE7jBK+g3JY+c6bYieKX4dbmI3D1jIX3cTK
+         bJoAVcoWVsUjPK0AITkN430mvWFVVATHMlAF9TYtgdzY3IFvaKR8q2ToRHXRD2909aLs
+         4Rlg2mrQAboAUsA9P4fRWczdXwgFyRJbhdoutOzi6VXBJddLlDgHGbcSfM1yFNTHE1yi
+         rXTiZzrsslhOZrlZ8CktFn6IAyRbymNienNK0qU9SOS9K2v7tSSotB5AIi31GgbQHELX
+         S3UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725496313; x=1726101113;
+        d=1e100.net; s=20230601; t=1725496315; x=1726101115;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Ac9f2JvhNnpWVv2ZKYegshHvMbbmkBcnbuU73G1cYt8=;
-        b=bciZ4KGF6P4ZNPzOnnTC7OwWHZnlJnGA3sPDfC0WrYWPSzU4OxIUgkk1P6GzY4poXZ
-         V+zYjV1mP/41nevAxc4I6pYB7duREZuGJadGapMY2D+e4Avy+suQmWJhZSi79ofLsMNy
-         vnH222P4CNIay+lsgbw4x5zYjZkACzBX2g8GwMBhU1OGbbwW61mfFx2yJFD1cIIq33jg
-         +k46Nu62tY8nRspvnOsPhDDJT/Sjg45/hEvdRdE/kAJDwclhiwniX5UlBhsmCFt/CAAn
-         /XvbZCtTgH6igQZRu2md5wHR80X4d85NZJ+cNz0NAJwf0KA2zxOzc3++iarnqp8eovOZ
-         7h6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVCA+EFX7SXZDzTOC+T52gDUepGK+lM0rh+86LpZlWdD+HFeRqwbPQ8Jao+3rS2TaQ+Z05qaBEQbj5MA/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7zt/S8I1EwQw3R2wH9dmFLUK+L3YFSgv1LedbLLN0Y29igpmg
-	r1i12J7VFj8abQoYnc7Jq3jiFLqQYY0ORKc1GFzOQKcJLN3lIg9ONR8EDstZH4HQhbwLOLXTOEx
-	W5dkzjOH1qA==
-X-Google-Smtp-Source: AGHT+IHuJuEjgofhNfeZ87JSGyMalBhwo29t0H9DuDw9GmIw/cnVXOLyLUXVF5+Ftrg6N3vF7BBT4Qhm6qOSmQ==
+        bh=C+NIQ3hruAHgC9xMj3fhofnWDiiLf7+Cp7wyaHwiSJ4=;
+        b=QBIQ8gMUIB4zimDMjIzOOdAEiWme7ZbWwUlRmHb5olFX1qIAXmidwmdK7dcNhCiSzI
+         uZgPSjp8O/8BLkMvxXkS2+RwnyLWqzuaGNBcnjL2za8MGDrSTt6qY8TlUVFXmIEVmYWt
+         1FMuWCKySmyuv9HC0lkmP9oDfuOAknfRM3VKYUk7YxT4iOQX8KGNFEt5u93b36NY+ofn
+         rCw8tofP/0uyuyfU9O1Q/glzeUPZodlIUwhCGhyxGgVyMjGzeHGLWUj6IC8eGDAnW6gs
+         AwttDQn5Mvzf6tAy5SZ8S1eYnXSNQaVSI6QyoSubmzRS/i2UNgBCvBtfjRC+xzVS4vMB
+         AB8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU84b33cqQbz7XL4KUmnF1SudzZJwja+Pqq3q7oPGdvFPnkxv96j/DQtRVo1kNwib3dnMeoBT3ruTGOclA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKZV3DbXCFggClALM6oevGrOgi/YBmARO8oCBw2xa9B+R412LU
+	581SLkgOGx3XOA5X/ViJ6kXI3ERJfBQPFV6XjA7N3ZWY65F+Nlm3nr9etAJj63TT0UKasSxbxM4
+	Ihk5266rIjg==
+X-Google-Smtp-Source: AGHT+IFE9E8HfCvWJ7p3tjF6dU79+RYxA1wZ2PaXCVQ7+B7BuvDX9ZOeiHESUdZETs6+j99tFDtqjKU0xWP7eQ==
 X-Received: from kinseyct.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:46b])
- (user=kinseyho job=sendgmr) by 2002:a63:f303:0:b0:7a1:f561:8c99 with SMTP id
- 41be03b00d2f7-7d4c1087417mr46719a12.6.1725496311779; Wed, 04 Sep 2024
- 17:31:51 -0700 (PDT)
-Date: Thu,  5 Sep 2024 00:30:52 +0000
+ (user=kinseyho job=sendgmr) by 2002:a63:1c16:0:b0:7cd:8558:9151 with SMTP id
+ 41be03b00d2f7-7d4c1094218mr69531a12.10.1725496314864; Wed, 04 Sep 2024
+ 17:31:54 -0700 (PDT)
+Date: Thu,  5 Sep 2024 00:30:53 +0000
 In-Reply-To: <20240905003058.1859929-1-kinseyho@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240905003058.1859929-1-kinseyho@google.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240905003058.1859929-4-kinseyho@google.com>
-Subject: [PATCH mm-unstable v4 3/5] mm: increment gen # before restarting traversal
+Message-ID: <20240905003058.1859929-5-kinseyho@google.com>
+Subject: [PATCH mm-unstable v4 4/5] mm: restart if multiple traversals raced
 From: Kinsey Ho <kinseyho@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
@@ -84,23 +84,22 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
 	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
 	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
 	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, mkoutny@suse.com, 
-	"T . J . Mercier" <tjmercier@google.com>, Hugh Dickins <hughd@google.com>, Kinsey Ho <kinseyho@google.com>
+	"T . J . Mercier" <tjmercier@google.com>, Hugh Dickins <hughd@google.com>, Kinsey Ho <kinseyho@google.com>, 
+	syzbot+e099d407346c45275ce9@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The generation number in struct mem_cgroup_reclaim_iter should be
-incremented on every round-trip. Currently, it is possible for a
-concurrent reclaimer to jump in at the end of the hierarchy, causing a
-traversal restart (resetting the iteration position) without
-incrementing the generation number.
+Currently, if multiple reclaimers raced on the same position, the
+reclaimers which detect the race will still reclaim from the same memcg.
+Instead, the reclaimers which detect the race should move on to the next
+memcg in the hierarchy.
 
-By resetting the position without incrementing the generation, it's
-possible for another ongoing mem_cgroup_iter() thread to walk the tree
-twice.
+So, in the case where multiple traversals race, jump back to the start
+of the mem_cgroup_iter() function to find the next memcg in the
+hierarchy to reclaim from.
 
-Move the traversal restart such that the generation number is
-incremented before the restart.
-
+Reported-by: syzbot+e099d407346c45275ce9@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/000000000000817cf10620e20d33@google.com/
 Signed-off-by: Kinsey Ho <kinseyho@google.com>
 Reviewed-by: T.J. Mercier <tjmercier@google.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
@@ -114,60 +113,117 @@ Cc: Yosry Ahmed <yosryahmed@google.com>
 Cc: Zefan Li <lizefan.x@bytedance.com>
 Cc: Hugh Dickins <hughd@google.com>
 ---
- mm/memcontrol.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ include/linux/memcontrol.h |  4 ++--
+ mm/memcontrol.c            | 26 +++++++++++++++++---------
+ 2 files changed, 19 insertions(+), 11 deletions(-)
 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index fe05fdb92779..2ef94c74847d 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -57,7 +57,7 @@ enum memcg_memory_event {
+=20
+ struct mem_cgroup_reclaim_cookie {
+ 	pg_data_t *pgdat;
+-	unsigned int generation;
++	int generation;
+ };
+=20
+ #ifdef CONFIG_MEMCG
+@@ -78,7 +78,7 @@ struct lruvec_stats;
+ struct mem_cgroup_reclaim_iter {
+ 	struct mem_cgroup *position;
+ 	/* scan generation, increased every round-trip */
+-	unsigned int generation;
++	atomic_t generation;
+ };
+=20
+ /*
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index cdd324812b55..c24ef6a106e0 100644
+index c24ef6a106e0..ce5d066393c9 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -999,7 +999,7 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *r=
+@@ -988,8 +988,8 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup *r=
 oot,
- 		root =3D root_mem_cgroup;
+ 				   struct mem_cgroup_reclaim_cookie *reclaim)
+ {
+ 	struct mem_cgroup_reclaim_iter *iter;
+-	struct cgroup_subsys_state *css =3D NULL;
+-	struct mem_cgroup *memcg =3D NULL;
++	struct cgroup_subsys_state *css;
++	struct mem_cgroup *memcg;
+ 	struct mem_cgroup *pos =3D NULL;
+=20
+ 	if (mem_cgroup_disabled())
+@@ -1000,19 +1000,23 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgrou=
+p *root,
 =20
  	rcu_read_lock();
--
-+restart:
+ restart:
++	memcg =3D NULL;
++
  	if (reclaim) {
++		int gen;
  		struct mem_cgroup_per_node *mz;
 =20
-@@ -1026,14 +1026,6 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup=
- *root,
- 	for (;;) {
- 		css =3D css_next_descendant_pre(css, &root->css);
- 		if (!css) {
--			/*
--			 * Reclaimers share the hierarchy walk, and a
--			 * new one might jump in right at the end of
--			 * the hierarchy - make sure they see at least
--			 * one group and restart from the beginning.
--			 */
--			if (!prev)
--				continue;
- 			break;
- 		}
+ 		mz =3D root->nodeinfo[reclaim->pgdat->node_id];
+ 		iter =3D &mz->iter;
++		gen =3D atomic_read(&iter->generation);
 =20
-@@ -1056,8 +1048,18 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup=
- *root,
+ 		/*
+ 		 * On start, join the current reclaim iteration cycle.
+ 		 * Exit when a concurrent walker completes it.
  		 */
- 		(void)cmpxchg(&iter->position, pos, memcg);
+ 		if (!prev)
+-			reclaim->generation =3D iter->generation;
+-		else if (reclaim->generation !=3D iter->generation)
++			reclaim->generation =3D gen;
++		else if (reclaim->generation !=3D gen)
+ 			goto out_unlock;
 =20
--		if (!memcg)
-+		if (!memcg) {
- 			iter->generation++;
-+
-+			/*
-+			 * Reclaimers share the hierarchy walk, and a
-+			 * new one might jump in right at the end of
-+			 * the hierarchy - make sure they see at least
-+			 * one group and restart from the beginning.
-+			 */
-+			if (!prev)
-+				goto restart;
-+		}
+ 		pos =3D READ_ONCE(iter->position);
+@@ -1020,8 +1024,7 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgroup =
+*root,
+ 		pos =3D prev;
  	}
 =20
- out_unlock:
+-	if (pos)
+-		css =3D &pos->css;
++	css =3D pos ? &pos->css : NULL;
+=20
+ 	for (;;) {
+ 		css =3D css_next_descendant_pre(css, &root->css);
+@@ -1035,21 +1038,26 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgrou=
+p *root,
+ 		 * and kicking, and don't take an extra reference.
+ 		 */
+ 		if (css =3D=3D &root->css || css_tryget(css)) {
+-			memcg =3D mem_cgroup_from_css(css);
+ 			break;
+ 		}
+ 	}
+=20
++	memcg =3D mem_cgroup_from_css(css);
++
+ 	if (reclaim) {
+ 		/*
+ 		 * The position could have already been updated by a competing
+ 		 * thread, so check that the value hasn't changed since we read
+ 		 * it to avoid reclaiming from the same cgroup twice.
+ 		 */
+-		(void)cmpxchg(&iter->position, pos, memcg);
++		if (cmpxchg(&iter->position, pos, memcg) !=3D pos) {
++			if (css && css !=3D &root->css)
++				css_put(css);
++			goto restart;
++		}
+=20
+ 		if (!memcg) {
+-			iter->generation++;
++			atomic_inc(&iter->generation);
+=20
+ 			/*
+ 			 * Reclaimers share the hierarchy walk, and a
 --=20
 2.46.0.469.g59c65b2a67-goog
 
