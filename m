@@ -1,156 +1,190 @@
-Return-Path: <linux-kernel+bounces-316443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC7396CFA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2623A96CFB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02871F23756
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A5C283B24
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EE7191F79;
-	Thu,  5 Sep 2024 06:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1726A42C0B;
+	Thu,  5 Sep 2024 06:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kVDlOdB8"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Q8crL5EL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OU81mlQL"
+Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9323242C0B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BD21922C7;
+	Thu,  5 Sep 2024 06:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725518877; cv=none; b=ETnPqZzcoSb7Ijb8neWasyf7vui4vmjatSYDdkS9JLqruwnm/iZ27czKNsrvKRdt3IAXIUHYI9QGjGYOEYx2sL+24AQnGRg72asO0YclVWCwBNZpp+BLehl2bk6no65XzV7uKJU4qwvXxGklkUyDGxA3m5qEPAWmqFg7qtnOEYQ=
+	t=1725518896; cv=none; b=q1OsBcaLeQ4kkPvIUuDeIJbw9aBByZXeU6u3RykqSx/ddxPOCMdvYViEmpgtj/OQqKs5P1Ln7A0zYejx8PVBNrMamdU9p7pH+qK6R0/J4RHpwZbI76VEhjpkfKFh9zltL2AU/1bidT9GxIBEzqt5/gk7gULKaWTp/TqQcdpA5QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725518877; c=relaxed/simple;
-	bh=mzKXSqOdgvgkFU4SO2RWR0OAPaZFVb1eDFJtbLVh+ZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XMWbAfNRy7aFyWqsS0sv+AXPitMT01xg4c87r3qWE10JMxGw3eseuWdEgvLEIVuDmuyRjG0kWMIEY918MgeCM/hkE3CxXj7M0fnAMOMyFs3lasDNQFWSganlt3DuVBL69Ij510+Bzv1bm1TIgGKwN+19uP3pkCeI9gSp5Uhc+yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kVDlOdB8; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7176645e440so290147b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725518875; x=1726123675; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mIhDyqF9M2O2ZjRQd691tori9EsH0IRAbKfkH6ZoQcs=;
-        b=kVDlOdB8IksO5VOOdgZaDX44u9oWumRwoHbJQvx6X6OWKPGB+/jn0zxpSws+df2YiM
-         B9UpaqDiZVxlKM8cLsP6rk5YatjIsnFim/ye2L7nQOukNCW5/x6zS64ipeZLA43TkzCg
-         uXVMo01xxWj8PCWgaj5kQ0tworswTDRNQUrKU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725518875; x=1726123675;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mIhDyqF9M2O2ZjRQd691tori9EsH0IRAbKfkH6ZoQcs=;
-        b=iYdkHZ8GSYLQM948BU+KB+yoXbMKVPopE7jR/w5O9ZPot9FmZ5c+w123fkd4JPZdn0
-         Cf96tRUxd2nY2HZ1E+oTvp2wnPuoMaMMH3XutABpaOmJtALWu4dLechkqoMZ+/1TYbMO
-         UJxDcOPen6v99Kp87Fzui3ZZulgAJNSTYh9ww6e3ftqBPK/Xa+rF51ku1Ih9gCvUXys2
-         KY55mI6O/Dh8KanbmxHPUeuEiJ+6O8XHK9oeqaQ5eZ3sdPMVmQEzwEd5ICVxy7Va56Jz
-         YDTnOLWO89ueobyhsN8+8b28U5JmBuC89gWOvQgpwRAsw3ARPgnqlofI1D2J/PmNbzn3
-         Kw8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV80qlf85+3rVQCGOmUi5znSmRRIm7nB6AZUJTg4lYhXpfPFVD+nYHm+MeWQpOx4aeLK2f6o+ozxITjo4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwMcH+94NyEOvmlwJObUN8izJdOpuHpdCcI2Gv0akZiquMndi+
-	outp8w9GyGh69mYUSFBKkRHSc0Go/en540oQCUWkP26kAFTZSC6+D6/GtsRBdhstyhon3IRmh4j
-	dKg==
-X-Google-Smtp-Source: AGHT+IEqjRvOmBXN9hJWq8lL6jJY5+QXZ5XSwN6DOK2JdMuzeyss353QZbuBS30FPJ6tDXscqd5zSw==
-X-Received: by 2002:aa7:8a05:0:b0:714:2371:7a02 with SMTP id d2e1a72fcca58-7177a92d064mr6843904b3a.5.1725518874686;
-        Wed, 04 Sep 2024 23:47:54 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:734f:d85:4585:b52d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778598e1dsm2600224b3a.163.2024.09.04.23.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 23:47:54 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Minchan Kim <minchan@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] mm: use unique zsmalloc caches names
-Date: Thu,  5 Sep 2024 15:47:23 +0900
-Message-ID: <20240905064736.2250735-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+	s=arc-20240116; t=1725518896; c=relaxed/simple;
+	bh=xKGgHTaV5Qj/7OwfJTbkb+FrlLm6jv9l6WZEWAUNA5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAtt0A/cUyZoM4Ep5YpYYKv2JlGdV35DxA3oitjM7yiNCmyUgCRrlYZLek+l2V7MydwCCTivc6KZbPwPcqc/6jlyUrFf28jGVGfPh+ceHF0y2PGv/VRAE6vxtqqvPC/VJtmt0OTcHeMPS9qeRXVD7+1vsVlkyxEcFcfp64C1pks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Q8crL5EL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OU81mlQL; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.phl.internal (Postfix) with ESMTP id 2A50C200312;
+	Thu,  5 Sep 2024 02:48:13 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Thu, 05 Sep 2024 02:48:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1725518893; x=
+	1725526093; bh=Mf2wLWEzbgEDGO9xDiUM7qVc6lrNS1Frm04RYEBk1sI=; b=Q
+	8crL5ELpizMZj53aZEPPP8KupjNzGuUtN+S5Eql/8fjeevh2FEI8C/KRzBgjisY8
+	ios3Pgjc7SkHZNFrwTBdbN9vLV0hQOPZ0eGAbRLWcSFDhE/k/dFK/6686hm06Qc7
+	j+d1+irVVZvEWixrzNwCK0W0NFAOLfexqwJSuWjLycECHToeCwRE/1nGc1l53s4y
+	bTxHKlADHmHXtzGUzzaiGYjtQhWPUZPI1/USh3xl6u1Sv+0nc2TPrbw6UIkv/TH5
+	o0fe/l4uJKU0W7HYU3dmXPK5TN/niHwvbSVEfHyU6/SyMLvAiqJybTS8Vdvh4PKb
+	H+eYihXIcEOzrl4xD0b/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725518893; x=1725526093; bh=Mf2wLWEzbgEDGO9xDiUM7qVc6lrN
+	S1Frm04RYEBk1sI=; b=OU81mlQLPJz3hQL5seRxaoll2jedmTxaU/rc98Aelm4E
+	LAxjKKoyXT3sGMCDk5gVUo9sxMNF10KBdu8zNR469iNU+zb+tCPxEiRvZRViIIGY
+	4fRFF6UlbxvVpD5zNmimnvrmkdHBLjbsEEMeFENIAWyU688aW4sL4S7nK33Ed+/W
+	TyoXbq/qhCQqfRaAUgcJL4Qlr9Fj3Kdw1fErx8TN92mDg+L0IfsQjqkdjZyqKyoX
+	xxZY1zHYiN3d8+EpCTErHeTz8LagFsN6v0fROg/TqD03KtfFlVXL4OQSdmSkjWEs
+	7+FNGRNxSZmK+xVN+gK5oYOL0OpwypHDNQIa583pLA==
+X-ME-Sender: <xms:KVTZZtmPE-thdTnuY_8p_VYbScCFsLPUpHQE1sSDWOUGpPhis5okIQ>
+    <xme:KVTZZo1Rk7zksy2dploGdpr-AyeT9WYUGP1TsK2AxLpGyZ512Gxr45tn13iRPanwo
+    jUygEc69YU63tyiwpI>
+X-ME-Received: <xmr:KVTZZjq_WhH3u82jxZ84wXaPI17hSYcHUbnROaZ7wU0ggfeJ3nMXkfr_MNvXqfbD0Tby-A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehkedguddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddv
+    necuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
+    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffh
+    ffevlefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhho
+    vhdrnhgrmhgvpdhnsggprhgtphhtthhopeehjedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheprghr
+    nhgusegrrhhnuggsrdguvgdprhgtphhtthhopehrihgthhgrrhgurdhhvghnuggvrhhsoh
+    hnsehlihhnrghrohdrohhrghdprhgtphhtthhopehinhhksehjuhhrrghsshhitgdrphgr
+    rhhkrdhmshhurdhruhdprhgtphhtthhopehmrghtthhsthekkeesghhmrghilhdrtghomh
+    dprhgtphhtthhopehvghhuphhtrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehguhhorhgvnheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:KVTZZtnzzMVFQMQuTZtC752mZiRRbs6t6YcMoPbuWvOsshNuIpN2ZA>
+    <xmx:KVTZZr2NqJHS-K1m6CZXX9gA76bE8gj6MA6NfpzKnkdoePcXVRrFGA>
+    <xmx:KVTZZsvDPoUpWv-9vcqAuPt1ffOgwMCdy7jO9etPU_H5-IK1rvsyPg>
+    <xmx:KVTZZvVQYxvPemikvBptMQf8FFNrgJR1-TyZmjrtc_-NhbXBtGvm-w>
+    <xmx:LVTZZrXmQ5mCcW2zvtjGPHJiDs11N1_ZXK9wQrKvm9JMfjCFohmINZ7A>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Sep 2024 02:47:52 -0400 (EDT)
+Date: Thu, 5 Sep 2024 09:47:47 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ 	Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+ 	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+ 	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, 	WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ 	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, 	Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ 	Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>,
+ 	Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ 	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ 	Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ 	Yoshinori Sato <ysato@users.sourceforge.jp>,
+ Rich Felker <dalias@libc.org>,
+ 	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ 	Andreas Larsson <andreas@gaisler.com>,
+ Thomas Gleixner <tglx@linutronix.de>, 	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, 	Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ 	Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ 	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
+ 	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org,
+ 	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ loongarch@lists.linux.dev, 	linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ 	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, 	linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
+Message-ID: <yu7um2tcxg2apoz372rmzpkrfgbb42ndvabvrsp4usb2e3bkrf@huaucjsp5vlj>
+References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
 
-Each zsmalloc pool maintains several named kmem-caches for
-zs_handle-s and  zspage-s.  On a system with multiple zsmalloc
-pools and CONFIG_DEBUG_VM this triggers kmem_cache_sanity_check():
+On Thu, Aug 29, 2024 at 12:15:57AM -0700, Charlie Jenkins wrote:
+> Some applications rely on placing data in free bits addresses allocated
+> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> address returned by mmap to be less than the 48-bit address space,
+> unless the hint address uses more than 47 bits (the 48th bit is reserved
+> for the kernel address space).
+> 
+> The riscv architecture needs a way to similarly restrict the virtual
+> address space. On the riscv port of OpenJDK an error is thrown if
+> attempted to run on the 57-bit address space, called sv57 [1].  golang
+> has a comment that sv57 support is not complete, but there are some
+> workarounds to get it to mostly work [2].
+> 
+> These applications work on x86 because x86 does an implicit 47-bit
+> restriction of mmap() address that contain a hint address that is less
+> than 48 bits.
+> 
+> Instead of implicitly restricting the address space on riscv (or any
+> current/future architecture), a flag would allow users to opt-in to this
+> behavior rather than opt-out as is done on other architectures. This is
+> desirable because it is a small class of applications that do pointer
+> masking.
 
-  kmem_cache of name 'zspage' already exists
-  WARNING: at mm/slab_common.c:108 do_kmem_cache_create_usercopy+0xb5/0x310
-  ...
+This argument looks broken to me.
 
-  kmem_cache of name 'zs_handle' already exists
-  WARNING: at mm/slab_common.c:108 do_kmem_cache_create_usercopy+0xb5/0x310
-  ...
+The "small class of applications" is going to be broken unless they got
+patched to use your new mmap() flag. You are asking for bugs.
 
-We provide zram device name when init its zsmalloc pool, so we can
-use that same name for zsmalloc caches and, hence, create unique
-names that can easily be linked to zram device that has created
-them.
+Consider the case when you write, compile and validate a piece of software
+on machine that has <=47bit VA. The binary got shipped to customers.
+Later, customer gets a new shiny machine that supports larger address
+space and your previously working software is broken. Such binaries might
+exist today.
 
-So instead of having this
+It is bad idea to use >47bit VA by default. Most of software got tested on
+x86 with 47bit VA.
 
-cat /proc/slabinfo
-slabinfo - version: 2.1
-zspage                46     46    ...
-zs_handle            128    128    ...
-zspage             34270  34270    ...
-zs_handle          34816  34816    ...
-zspage                 0      0    ...
-zs_handle              0      0    ...
+We can consider more options to opt-in into wider address space like
+personality or prctl() handle. But opt-out is no-go from what I see.
 
-We now have this
-
-cat /proc/slabinfo
-slabinfo - version: 2.1
-zspage-zram2          46     46    ...
-zs_handle-zram2      128    128    ...
-zspage-zram0       34270  34270    ...
-zs_handle-zram0    34816  34816    ...
-zspage-zram1           0      0    ...
-zs_handle-zram1        0      0    ...
-
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- mm/zsmalloc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 73a3ec5b21ad..896ca02ed75a 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -293,13 +293,17 @@ static void SetZsPageMovable(struct zs_pool *pool, struct zspage *zspage) {}
- 
- static int create_cache(struct zs_pool *pool)
- {
--	pool->handle_cachep = kmem_cache_create("zs_handle", ZS_HANDLE_SIZE,
--					0, 0, NULL);
-+	char name[32];
-+
-+	snprintf(name, sizeof(name), "zs_handle-%s", pool->name);
-+	pool->handle_cachep = kmem_cache_create(name, ZS_HANDLE_SIZE,
-+						0, 0, NULL);
- 	if (!pool->handle_cachep)
- 		return 1;
- 
--	pool->zspage_cachep = kmem_cache_create("zspage", sizeof(struct zspage),
--					0, 0, NULL);
-+	snprintf(name, sizeof(name), "zspage-%s", pool->name);
-+	pool->zspage_cachep = kmem_cache_create(name, sizeof(struct zspage),
-+						0, 0, NULL);
- 	if (!pool->zspage_cachep) {
- 		kmem_cache_destroy(pool->handle_cachep);
- 		pool->handle_cachep = NULL;
 -- 
-2.46.0.469.g59c65b2a67-goog
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
