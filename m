@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-317187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60AE96DAAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:47:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978F296DAAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132B31C21BE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:47:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 143041F2326B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6043D19D8B2;
-	Thu,  5 Sep 2024 13:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0342119D8A6;
+	Thu,  5 Sep 2024 13:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hG3XYGg+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AVII47RW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x/PmF5ab"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFE817C9AE;
-	Thu,  5 Sep 2024 13:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F240419D063;
+	Thu,  5 Sep 2024 13:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725544025; cv=none; b=SlQ1MdEdeCltKV0AvzUx/JXa4+QTA9EjV463p5oiQTW1+XyWXUAf3L3ply8tPz1DMXK4X8JT/T4iqwPGpq+U7eatOuhy4GHRyb6RCquzFlQcHHn2HKXh9eDQO5jDodNdDyUbE+0+iu55I+1GCyvPeTiM1mIdQS6xRHFwH9pOXBU=
+	t=1725544043; cv=none; b=hERidQzo2mvke0hVRKVHN+CgPm7QWOqkSMWKsNODFSCEANkaiF41Sh2XYyXOh25XEbGmErBDoSiaca5RSuBtfm8yE6Y2r3A9vLxZT9zi4/fhIjBpzOXS/+8a9sLqczXnwMURQG0fzOjhgzhkixC8gm72XyZWzxBGjOtGTH+IRqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725544025; c=relaxed/simple;
-	bh=sI5y1eSjN/a3YRMxRNTDqjn+umUQqLG8Dfm4wjCbFBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8IU/M9USb6jtvWHkk/7QvSGidObTrWhtIH73F1ESDAA5l+EOBPHBj16HqdDtxDGh2KTy81I0o/lJ4bXKDRVgzdce0i1uemBwDJTgDi0wRz0PuUIn+zelyfbwb+OFGVjpmkuH6RvGonzZi3OAvA47g/5bI8zvfzEr6+nHi3TgLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hG3XYGg+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A2AC4CEC3;
-	Thu,  5 Sep 2024 13:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725544025;
-	bh=sI5y1eSjN/a3YRMxRNTDqjn+umUQqLG8Dfm4wjCbFBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hG3XYGg+PqbEtyngI9vHEb6I1j0nyAJYiHN5ILgGHvGp+2OlXYGrewuoVaVqMTf2w
-	 Lrac4i91ypCHaxArChDtDfvVKJV9Rf7A7V5w9XBUM3sVb6Wo/2lqJGKD7f+byYFrW2
-	 STFmhKuuciQNq4dMNXkvcJqO9fur6POG6X49W71ELClXa1rZE7uJyYCsT+1ZrDRwef
-	 uZYTH9DFlfShePSHrtyT5B5gzy6SLOxa+h9JUvemcOmi3BCieaPOMlC2Fl5tFtNqpR
-	 f1emNRzha4d12ghwG30AmwYtkWQmc+ShIX80S0tMxvoZCxmCAwu7T2I/K7hAsut9n5
-	 3RTZ2d3yZvAEQ==
-Date: Thu, 5 Sep 2024 08:47:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	Dinh Nguyen <dinguyen@kernel.org>
-Subject: Re: [PATCH 03/15] kbuild: move non-boot builtin DTBs to .init.rodata
- section
-Message-ID: <20240905134704.GB1517132-robh@kernel.org>
-References: <20240904234803.698424-1-masahiroy@kernel.org>
- <20240904234803.698424-4-masahiroy@kernel.org>
+	s=arc-20240116; t=1725544043; c=relaxed/simple;
+	bh=+gxfcjR8qFfCmdVjqWZCvR/X4nSiLGlFoYa4M4P7OWE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bAbG+GeiCfA5GmSz8wSqGSvUWemPbW8Rw1J2D1NUhma84cl5Bqkr06gmTzncPWSlagItE3bAO55uFGkcZxRkRLBfIM5RFeAjjJCTiN91h/AJrusqglEgxFzXBFYBnhna+/2/my8x2s3oT4Y1kbix68+TBOpQt/bLqFANOl2jY5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AVII47RW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x/PmF5ab; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725544040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/JbplEo/6jkwQPljc627RJR9CIzJ3Rs/Uhcltks5Xmo=;
+	b=AVII47RWIsHYhA/7fmhhwa2CfL9UKQ6CYvYKVl/tk3l1hiybJ/JnX7qXeKljdAGyoJNyj1
+	9rP7QR0+d9qBYTlSfdysdhCL3vlpj50MCYolBZy72fjO6qruHqUVOKCs65m/VLl3zg06bV
+	hb4BFi430xd9HsPYCpdIlMw4R9UfG93O7nePPKLZ7ubrWO8/BKa2IToaMd7ySVPGZ7sHDm
+	QGIYsZrl3PzlVn3awgthOrW8bBWgDSxeP9ixw+Hgu4U0qUugCdoB0hKt1GdLaxVMfz6/sv
+	2NM/WG1YeqXC3DqAEfbqQcKO04Ucs2Xy+w+4jFQFI0op11oXm1XvdS74mz6Yaw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725544040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/JbplEo/6jkwQPljc627RJR9CIzJ3Rs/Uhcltks5Xmo=;
+	b=x/PmF5abZcbnXEhdTzKmc8YK4JUP5VNUju/NJgfdI83681SuB2eRfW4Y/HPZkmy2MXNJwU
+	UnvJhboEz9QwPoAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Derek Barbosa <debarbos@redhat.com>
+Subject: [PATCH tty-next v1 0/2] convert 8250 to nbcon
+Date: Thu,  5 Sep 2024 15:53:17 +0206
+Message-Id: <20240905134719.142554-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904234803.698424-4-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 05, 2024 at 08:47:39AM +0900, Masahiro Yamada wrote:
-> Some architectures support embedding boot DTB(s) in vmlinux. These
-> architectures, except MIPS and MicroBlaze, expect a single DTB in
-> the .dtb.init.rodata section. MIPS embeds multiple DTBs in vmlinux.
-> MicroBlaze embeds a DTB in its own __fdt_blob section instead of the
-> .dtb.init.rodata section.
-> 
-> For example, RISC-V previously allowed embedding multiple DTBs, but
-> only the first DTB in the .dtb.init.rodata section was used. Commit
-> 2672031b20f6 ("riscv: dts: Move BUILTIN_DTB_SOURCE to common Kconfig")
-> ensured only one boot DTB is embedded.
-> 
-> Meanwhile, commit 7b937cc243e5 ("of: Create of_root if no dtb provided
-> by firmware") introduced another DTB into the .dtb.init.rodata section.
-> 
-> The symbol dump (sorted by address) for ARCH=riscv nommu_k210_defconfig
-> is now as follows:
-> 
->     00000000801290e0 D __dtb_start
->     00000000801290e0 D __dtb_k210_generic_begin
->     000000008012b571 D __dtb_k210_generic_end
->     000000008012b580 D __dtb_empty_root_begin
->     000000008012b5c8 D __dtb_empty_root_end
->     000000008012b5e0 D __dtb_end
-> 
-> The .dtb.init.rodata section contains the following two DTB files:
-> 
->     arch/riscv/boot/dts/canaan/k210_generic.dtb
->     drivers/of/empty_root.dtb
-> 
-> This is not an immediate problem because the boot code chooses the
-> first DTB, k210_generic.dtb. The second one, empty_root.dtb is ignored.
-> However, relying on the link order (i.e., the order in Makefiles) is
-> fragile.
-> 
-> Only the boot DTB should be placed in the .dtb.init.rodata because the
-> arch boot code generally does not know the DT name, thus it uses the
-> __dtb_start symbol to find it.
-> 
-> empty_root.dtb is looked up by name, so it can be moved to the generic
-> .init.rodata section.
-> 
-> When CONFIG_OF_UNITTEST is enabled, more unittest DTBOs are embedded in
-> the .dtb.init.rodata section. These are also looked up by name, so can
-> be moved to the .init.rodata section.
-> 
-> I added the __initdata annotation to the overlay_info data array because
-> modpost knows the .init.rodata section is discarded, and would otherwise
-> warn about it.
-> 
-> The implementation is kind of cheesy; the section is .dtb.init.rodata
-> under the arch/ directory, and .init.rodata section otherwise. This will
-> be refactored later.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  drivers/of/unittest.c | 2 +-
->  scripts/Makefile.dtbs | 4 +++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+The recent printk rework introduced a new type of console NBCON
+that will perform printing via a dedicated kthread during
+normal operation. For times when the kthread is not available
+(early boot, panic, reboot/shutdown) the NBCON console will
+print directly from the printk() calling context (even if from
+NMI).
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Futher details about NBCON consoles are available here [0].
+
+This series converts the 8250 driver to an NBCON console,
+providing both threaded and atomic printing implementations.
+Users can verify the UART console is an NBCON console via the
+proc filesystem. For example:
+
+$  cat /proc/consoles
+ttyS0                -W- (EC N  a)    4:64
+
+The 'N' shows that it is an NBCON console.
+
+There will also be a dedicated printing kthread. For example:
+
+$ ps ax | grep pr/
+   16 root       0:00 [pr/ttyS0]
+
+Derek Barbosa performed extensive tests [1] using this driver
+and encountered no issues. On the contrary, his tests showed
+the improved reliability and non-interference features of the
+NBCON-based driver.
+
+Since this is the first console driver to be converted to an
+NBCON console, it may include variables and functions that
+could be abstracted to all UART consoles (such as the
+@console_newline_needed field). However, we can abstract such
+things later as more consoles are converted to NBCON.
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/20230302195618.156940-1-john.ogness@linutronix.de
+[1] https://lore.kernel.org/lkml/ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb
+
+John Ogness (2):
+  serial: 8250: Switch to nbcon console
+  serial: 8250: Revert "drop lockdep annotation from
+    serial8250_clear_IER()"
+
+ drivers/tty/serial/8250/8250_core.c |  42 +++++++-
+ drivers/tty/serial/8250/8250_port.c | 151 +++++++++++++++++++++++++++-
+ include/linux/serial_8250.h         |   6 ++
+ 3 files changed, 196 insertions(+), 3 deletions(-)
+
+
+base-commit: f1ec92a066b2608e7c971dfce28ebe2d2cdb056e
+-- 
+2.39.2
+
 
