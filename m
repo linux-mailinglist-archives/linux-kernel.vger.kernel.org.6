@@ -1,90 +1,176 @@
-Return-Path: <linux-kernel+bounces-316347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D5D96CE48
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E6596CE4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A3E1C20C9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10BDA1F23606
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C28154439;
-	Thu,  5 Sep 2024 05:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82393156665;
+	Thu,  5 Sep 2024 05:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lmUuJyPK"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77030149013;
-	Thu,  5 Sep 2024 05:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FYc15nU5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC43149013;
+	Thu,  5 Sep 2024 05:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725512581; cv=none; b=NtwTv9VEgkNqxuuZ0ZAzDRoxZTPMPMeX5SSGrcV96YS75bZDxq7MGDmYJRmAshlVrYfTS0N4SVObNAuJM4qcpkiD/iFfHWczgYfaI7m+GPEXClexoiX2II3GQd+rsFYV16JSmhRxDwNSNsuj1qMvEKo4vu2C2kYa0zeBpVhETrs=
+	t=1725512951; cv=none; b=rglkWaliaKaxhw7KC6sBRZpP5szfFTU4Wci8nyTd572g2535WXvbexFostKdo2sv5tD5dLAuxU8mWJFq/DvXQj6RFNKPHmWfcVQ1ZdWkIt/DxD2pTT6qq7htys4oowoyRZHHmYEQHV0UQ1fSrfvCs5cH5Z9VBy6vtHd90Vhggrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725512581; c=relaxed/simple;
-	bh=L3qUMwvA3KWGAqDnm6wh0SHRRBa8vXjJemfzc6fNwdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJribz3UCg2f5f1ck5NeQ2RV62IUo5qqTczF/sMm3kp+teuLOuHOKOldVDQA+DuMODcx6ZLLdRAG8OT1jZGPScmV9On9bXA2OSJukcK3nNT65IDOxXp9Jz/Tmm8m9rUX2gk/WnTO8S9vD4sPPweXkJIC07iB3koO9r50VAFjk7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lmUuJyPK; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id DED8B20B740D; Wed,  4 Sep 2024 22:02:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DED8B20B740D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1725512573;
-	bh=ach9qMfKtP33v/w5Spjx/P7JOXueUpTltpnyDAzTFk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lmUuJyPKu1VM1DWAPiRNjlFEZhsXmGx/V9apFBjEI9N+ExvDCvH1TxYlFsHqbuikG
-	 qZ3wpFAEXc0kw0SZ5BbInkrvk/BJJuCCwk7BSjuAxsTCf0+AkI0Vuxwsg/6bBtjFA7
-	 eoDbgLiRFpTNgzLqQqvW++b6/VrXdBvBRWrRr7rM=
-Date: Wed, 4 Sep 2024 22:02:53 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: hv: rm .*.cmd when make clean
-Message-ID: <20240905050253.GA29491@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
+	s=arc-20240116; t=1725512951; c=relaxed/simple;
+	bh=PV1dot6IkOdfky3a18LJYttMTTjQc7/AxJio4n5es+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Bcnt46hSlr106/IpnDVrRTbK3zrs1Ap7UIIIBA3oGkkDGX6+Z9KBOBd/AM975vAknxqZ+VunGzAaG63IeTr234cluzpjs7bg8QXQkBRuseSyryt+e1wEg6h/lVlWFYkQTdXWMdpJKymdPCWA9O60oahKAhNzNp4P2EOd6Eczrjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FYc15nU5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4853hGTw015471;
+	Thu, 5 Sep 2024 05:09:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	blv1g8lDixUTvwNPzm74VyQ/gY1Y7f7LXa1JE8of2UQ=; b=FYc15nU5dCKHF5RK
+	Ujq1WEfPKvsv/7qwrJnY5VHxefpQDCR9S0yYt/z8neMMJdOEFAbP3mTOaKAJI7ND
+	ZsolW8JWhLX5+78g005PrOGgBRIOVFDU4JTS6/7BlXM9aTtNsainGFjgqUjkYKHw
+	xRUQ0KuMZ/VLyPCLb+twPb3DGFMZKfDobHe0xaBDUC0lFPp1jIgnb2BAejK1gRmG
+	STibGgk4JdT5yFqjCsceFE/vSFFlWVezG4WtpI1O2d2+vCc42S/Q2ArkT6qW1vvt
+	4nEK/YZ7PDi1fZeoHLBt6mOtEYKTmhrWC+HgaG5UIiCAG9cT9EEM2Wd1UMlbweEe
+	aczWTA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dt69eydj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 05:09:03 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485592d8016627
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 05:09:02 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 22:08:58 -0700
+Message-ID: <aa74f55b-7e14-4ca4-bd79-2104d81a0660@quicinc.com>
+Date: Thu, 5 Sep 2024 13:08:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/19] Add initial support for QCS8300
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Xin Liu <quic_liuxin@quicinc.com>,
+        Tingguo Cheng <quic_tingguoc@quicinc.com>,
+        Zhenhua Huang
+	<quic_zhenhuah@quicinc.com>,
+        Kyle Deng <quic_chunkaid@quicinc.com>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <fcfaeed3-8544-4e98-9f95-f43346dc83e8@kernel.org>
+ <3535a897-8708-463d-b931-fa344a967f18@kernel.org>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <3535a897-8708-463d-b931-fa344a967f18@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bnLwfZsGRmRda-UGSi281BOPlnk_groP
+X-Proofpoint-ORIG-GUID: bnLwfZsGRmRda-UGSi281BOPlnk_groP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050035
 
-On Mon, Sep 02, 2024 at 12:21:03PM +0800, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> 
-> rm .*.cmd when make clean
-> 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
->  tools/hv/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/hv/Makefile b/tools/hv/Makefile
-> index 2e60e2c212cd..34ffcec264ab 100644
-> --- a/tools/hv/Makefile
-> +++ b/tools/hv/Makefile
-> @@ -52,7 +52,7 @@ $(OUTPUT)hv_fcopy_uio_daemon: $(HV_FCOPY_UIO_DAEMON_IN)
->  
->  clean:
->  	rm -f $(ALL_PROGRAMS)
-> -	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
-> +	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete -o -name '\.*.cmd' -delete
->  
->  install: $(ALL_PROGRAMS)
->  	install -d -m 755 $(DESTDIR)$(sbindir); \
-> -- 
-> 2.33.0
-> 
-> 
+Hi Krzysztof,
 
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com> 
+On 9/4/2024 6:19 PM, Krzysztof Kozlowski wrote:
+> On 04/09/2024 11:34, Krzysztof Kozlowski wrote:
+>> On 04/09/2024 10:33, Jingyi Wang wrote:
+>>> Add initial support for QCS8300 SoC and QCS8300 RIDE board.
+>>>
+>>> This revision brings support for:
+>>> - CPUs with cpu idle
+>>> - interrupt-controller with PDC wakeup support
+>>> - gcc
+>>> - TLMM
+>>> - interconnect
+>>> - qup with uart
+>>> - smmu
+>>> - pmic
+>>> - ufs
+>>> - ipcc
+>>> - sram
+>>> - remoteprocs including ADSP,CDSP and GPDSP
+>>>
+>>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>>> ---
+>>> patch series organized as:
+>>> - 1-2: remoteproc binding and driver
+>>> - 3-5: ufs binding and driver
+>>> - 6-7: rpmhpd binding and driver
+>>> - 8-15: bindings for other components found on the SoC
+>>
+>> Limit your CC list. I found like 8 unnecessary addresses for already
+>> huge Cc list. Or organize your patches per subsystem, as we usually expect.
+>>
+>>> - 16-19: changes to support the device tree
+>>>
+>>> dependencies:
+>>> tlmm: https://lore.kernel.org/linux-arm-msm/20240819064933.1778204-1-quic_jingyw@quicinc.com/
+>>> gcc: https://lore.kernel.org/all/20240820-qcs8300-gcc-v1-0-d81720517a82@quicinc.com/
+>>> interconnect: https://lore.kernel.org/linux-arm-msm/20240827151622.305-1-quic_rlaggysh@quicinc.com/
+>>
+>> Why? UFS cannot depend on pinctrl for example.
+>>
+>> This blocks testing and merging.
+>>
+>> Please organize properly (so decouple) your patches, so that there is no
+>> fake dependency.
+> 
+> Let me also add here one more thought. That's like fourth or fifth
+> QCS/SA patchset last two weeks from Qualcomm and they repeat the same
+> mistakes. Not correctly organized, huge cc list, same problems with
+> bindings or drivers.
+> 
+> I am giving much more comments to fix than review/ack tags.
+> 
+> I am not going to review this. I will also slow down with reviewing
+> other Qualcomm patches. Why? Because you post simultaneously, apparently
+> you do not learn from other review, so I have to keep repeating the same.
+> 
+> I am overwhelmed with this, so please expect two week review time from me.
+> 
+> Best regards,
+> Krzysztof
+> 
+The CC list is generated from B4 tool, however, thanks for your advice and we
+will decouple the changes to avoid this. And could you please help us to confirm
+the better way to handle binding changes which just add one compatible, should
+it be submitted as a single patch or submmitted together with dts patch series?
+
+Thanks,
+Jingyi
 
