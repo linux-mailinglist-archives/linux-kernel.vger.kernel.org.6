@@ -1,128 +1,155 @@
-Return-Path: <linux-kernel+bounces-317135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29B596D9BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:04:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7858D96D9CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01EB41C23B94
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380B5281EFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE6D19B5BB;
-	Thu,  5 Sep 2024 13:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FA019C56E;
+	Thu,  5 Sep 2024 13:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sF0H9EPP"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DPytj8+Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC50198E84
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D203A198E84
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725541488; cv=none; b=ABBQ+y/Wdw5BAIYw/N7qC/tl5SS0FY8SBh/cHRRbckHl/gCAK8BZ7q97OzIq5loGLKN0M97V1P7iKaMW7eJKF1le09WbCVVUR2PZT9aixQaVk9SZ1ADC3kMLmZGofVYVsQGWuvvCzVjpgUJQoNp8bBtMIz3mhGbY1hiN9x9xDhE=
+	t=1725541574; cv=none; b=Uui68M94J83V5W3ck8DOdlMubtHsLmiHSXbcg/K/oGqeU/6cvByAIH6Y1C9Hv9gG1oeUYTFb2ATKvn3duqr+jOGXhz+saUJ0htdY0QnjVfSFLNGEAKu1XcOoTitaIbuhR69zLD6yxDGxvLxqdoJdMjlf4I99wWK4NXHTIco59/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725541488; c=relaxed/simple;
-	bh=N/VtCV6UKmGzISX9jSpbNqrj81M5RVqAaF4hKF/4BXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MMmduEMg1WN/DaIfyu7MmMcgRdsY9ZitXJKuSF5J0qKuaCCjTgTjvECQWXIkIXAQFd6bygbR36uxiMqGxqSBThMkOEa/T2XvT6LEQRj9sUpBRSeGlQ1Wac7IfGlKOVJknHfQFEDbFifkZ0eJz4yhSxAcYPEBxcFnOnPevNqoHSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sF0H9EPP; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f3f163e379so13903461fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 06:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725541485; x=1726146285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2sYI/kMEQjv4c5kmtLazolOaBbntnQqMArZgDWaqpro=;
-        b=sF0H9EPPe5pL9RZU2SwKeQHN43ohrgHdtE1tqJVUenwqMayN5KhGfodfNAwjITr/XJ
-         VAqRCMgfW5OzSpVkLkccsFAHZZS2/OhkXZ/pq64s4AukubOajq4eMHmypsjHxK1yPOZM
-         5wo91yOPesMKICLEYzjVbPbTGNZPS0lrby1QEcTfafgVdD46KnEYlEPttGSg2o1ms1Sx
-         YyFidA0cDMDET3Syjw2mMz80LdgfDJgWtDOHSktFfssdytGd5I6dU8I4it2JRBBiLtD0
-         9oFI0sppcfy+3iA45JfDqTTACGGtcHlgezyaO6YOkAgVyoujSgccYHj13Va32HqME43a
-         XCog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725541485; x=1726146285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2sYI/kMEQjv4c5kmtLazolOaBbntnQqMArZgDWaqpro=;
-        b=PbL0cDcuLr0Ty+df2Eao6oU+XtxE93QBUFD1et2sPfcl40J9Uj1hetxd1upP093BaU
-         JrzQRUgMYiyvcAT39OO1xFE0cL9g8LfZ2UzXDYUlnqHzv5slVvxJK3Pp9m3u2Y7krhQD
-         e5uUgOdsg8IDUlWBkKY1iOE9RVpEz4vi1XH4q1b/agzfGDmp0TfTkeAwhgnWwWJFsJIc
-         KliCtm/siVajGiB+KoAS1JRfTKB6MMccmh1jr9yYeQtVlClHqY8Wki+JMmqQKvDwMoAz
-         lq6LyA9WoII6rTRqCdLY/QyWQWd2hEVxH8NqIbF2oyg+2JcHJnafdUNLK6u3lnMSEewk
-         yjQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuVeWA0DQnOCfP7vg3HxDBkYS3xaaQaNEMwiKE7cp9NOck4fyY8261llcx7Jglun5R+99FJZ58iVHB8aI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvQOQ4+adlGRynZOxay5lRF4jREyKV0sWYxzkvNpBZFFcPRA9P
-	gHeQM7zCxHe6N0lBp1HGsraajp8MHTEwJczUJNStHvzKrc991Kfo8go0FEMDMzSQcONcXnQTeS2
-	IreTt8YSrcmvz8NTFKWUGAlQCnPfWt0x+YwxzHQ==
-X-Google-Smtp-Source: AGHT+IHOHIaz9dVBbolPHU7EfIO5jfwLbPNj5lBOgI9PHj1N4SUTyLwK/EoaFWFkJ6ATMaitWneLJtSroPos2uHgCNU=
-X-Received: by 2002:a05:651c:551:b0:2f0:27da:6864 with SMTP id
- 38308e7fff4ca-2f6105d7954mr228845611fa.17.1725541484830; Thu, 05 Sep 2024
- 06:04:44 -0700 (PDT)
+	s=arc-20240116; t=1725541574; c=relaxed/simple;
+	bh=g1SQN7j55UMlCekE8jx808qYJxlM2mhzf/HdquuSpmo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LeW/Az/Bg4HaRUAMvbz1qlu+2RTZEehIluZpFFWVC3kp9PRNLOvkulQrUglqiI5m2VRrFQEdncB49L/0EMJJcuCoNTiFl8aEcHNJiC6ONrd1C1rYLdeOPns6mmZ1Kor3Y8R4cL2T7GlzqJpoWmboNuD5qpTOYyfYxSxnT6kUIjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DPytj8+Z; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725541573; x=1757077573;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=g1SQN7j55UMlCekE8jx808qYJxlM2mhzf/HdquuSpmo=;
+  b=DPytj8+ZrQj+66sfTsEowfNnDrBEWzdiuDML8jRrY0aiUnSdWpmvECfa
+   BQgbPySGNC6lNtmq4GufQuLHLsnbDUv/rvMNN/X+0/c6sYppyt/1Gtvi9
+   5+QtufgFdGFiM8f+rMaTtjUzdAkPUrBlIy+trA610rSrnmikAg8ros897
+   FhHyI+JJCvS3asXt9OIG4AFcXsk76vEHCB9PjGYakxWZaaU413+lTPaUF
+   WDSn8/DSNUhO+o5MfvBlVlmiLVP4iKlN9McEh6rrWyfssdjD7OBOHpJkM
+   BhDJ7p4SSsbbgXpBx5SQZP98nMDDcLe05XOt+xpItt5hazG/vO2psPMmi
+   g==;
+X-CSE-ConnectionGUID: hhIJnHdzT5ioyINstPFiIQ==
+X-CSE-MsgGUID: u7W4Xw2QR8inv58B6e5WUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27177037"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="27177037"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 06:06:12 -0700
+X-CSE-ConnectionGUID: D6YR5lCgSHyhMajcqYWpcQ==
+X-CSE-MsgGUID: ARXOi5PXRXiTHFtQOtIKOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="70210401"
+Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.160])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 06:06:09 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 02/18] drm/i915/selftests: Include <linux/prandom.h>
+ instead of <linux/random.h>
+In-Reply-To: <20240905122020.872466-3-ubizjak@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240905122020.872466-1-ubizjak@gmail.com>
+ <20240905122020.872466-3-ubizjak@gmail.com>
+Date: Thu, 05 Sep 2024 16:06:06 +0300
+Message-ID: <871q1yqmgx.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904090743.1204593-1-andy.shevchenko@gmail.com>
- <172552177868.28435.4071190094207246356.b4-ty@linaro.org> <20240905130121.GA166185@rigel>
-In-Reply-To: <20240905130121.GA166185@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Sep 2024 15:04:34 +0200
-Message-ID: <CAMRc=Mc=aK98ZYvz8AuwxYpqEPDAqG1kLcM+T24JipP6HW0L9A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpiolib: cdev: use !mem_is_zero() instead of
- memchr_inv(s, 0, n)
-To: Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 3:01=E2=80=AFPM Kent Gibson <warthog618@gmail.com> w=
-rote:
+On Thu, 05 Sep 2024, Uros Bizjak <ubizjak@gmail.com> wrote:
+> Usage of pseudo-random functions requires inclusion of
+> <linux/prandom.h> header instead of <linux/random.h>.
 >
-> On Thu, Sep 05, 2024 at 09:36:20AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> >
-> > On Wed, 04 Sep 2024 12:07:43 +0300, Andy Shevchenko wrote:
-> > > Use the mem_is_zero() helper where possible.
-> > >
-> > >
-> >
-> > Applied, thanks!
-> >
-> > [1/1] gpiolib: cdev: use !mem_is_zero() instead of memchr_inv(s, 0, n)
-> >       commit: b1da870ba36b3f525aee9be35b2f08a1feec61a7
-> >
->
-> As per my other mail, mem_is_zero() is not defined in gpio/for-next yet.
-> So how does this work?
->
-> If I build for-next I get:
->
-> drivers/gpio/gpiolib-cdev.c: In function =E2=80=98gpio_v2_line_config_val=
-idate=E2=80=99:
-> drivers/gpio/gpiolib-cdev.c:1334:14: error: implicit declaration of funct=
-ion =E2=80=98mem_is_zero=E2=80=99; did you mean =E2=80=98xa_is_zero=E2=80=
-=99? [-Werror=3Dimplicit-function-declaration]
->  1334 |         if (!mem_is_zero(lc->padding, sizeof(lc->padding)))
->       |              ^~~~~~~~~~~
->       |              xa_is_zero
->
->
-> Cheers,
-> Kent.
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: intel-gfx@lists.freedesktop.org
+> Cc: dri-devel@lists.freedesktop.org
 
-Ah, it'll have to wait until the next release cycle then. Sorry for
-vacuuming patches too eagerly today. Dropping it.
+LGTM,
 
-Bart
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+
+for merging via whichever tree suits you best.
+
+> ---
+>  drivers/gpu/drm/i915/selftests/i915_gem.c    | 2 +-
+>  drivers/gpu/drm/i915/selftests/i915_random.h | 2 +-
+>  drivers/gpu/drm/i915/selftests/scatterlist.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/selftests/i915_gem.c b/drivers/gpu/drm/=
+i915/selftests/i915_gem.c
+> index 61da4ed9d521..0727492576be 100644
+> --- a/drivers/gpu/drm/i915/selftests/i915_gem.c
+> +++ b/drivers/gpu/drm/i915/selftests/i915_gem.c
+> @@ -4,7 +4,7 @@
+>   * Copyright =C2=A9 2018 Intel Corporation
+>   */
+>=20=20
+> -#include <linux/random.h>
+> +#include <linux/prandom.h>
+>=20=20
+>  #include "gem/i915_gem_internal.h"
+>  #include "gem/i915_gem_pm.h"
+> diff --git a/drivers/gpu/drm/i915/selftests/i915_random.h b/drivers/gpu/d=
+rm/i915/selftests/i915_random.h
+> index 05364eca20f7..70330a2e80f2 100644
+> --- a/drivers/gpu/drm/i915/selftests/i915_random.h
+> +++ b/drivers/gpu/drm/i915/selftests/i915_random.h
+> @@ -26,7 +26,7 @@
+>  #define __I915_SELFTESTS_RANDOM_H__
+>=20=20
+>  #include <linux/math64.h>
+> -#include <linux/random.h>
+> +#include <linux/prandom.h>
+>=20=20
+>  #include "../i915_selftest.h"
+>=20=20
+> diff --git a/drivers/gpu/drm/i915/selftests/scatterlist.c b/drivers/gpu/d=
+rm/i915/selftests/scatterlist.c
+> index 805c4bfb85fe..7e59591bbed6 100644
+> --- a/drivers/gpu/drm/i915/selftests/scatterlist.c
+> +++ b/drivers/gpu/drm/i915/selftests/scatterlist.c
+> @@ -22,7 +22,7 @@
+>   */
+>=20=20
+>  #include <linux/prime_numbers.h>
+> -#include <linux/random.h>
+> +#include <linux/prandom.h>
+>=20=20
+>  #include "i915_selftest.h"
+>  #include "i915_utils.h"
+
+--=20
+Jani Nikula, Intel
 
