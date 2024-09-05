@@ -1,183 +1,171 @@
-Return-Path: <linux-kernel+bounces-317218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E5B96DB0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94CEA96DB0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B32E1F270C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238371F2705A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A0119DF68;
-	Thu,  5 Sep 2024 14:03:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898BA19DF43
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F76D19DF86;
+	Thu,  5 Sep 2024 14:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5mf1QRD"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E84819D063;
+	Thu,  5 Sep 2024 14:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545029; cv=none; b=Qn+jE2Zu1TsUmW77ZN4bLG0V9zTkFiX6ieNwiqOI1cpNkIYGvLuFGocbVXRGY7ijFHRlrMSvwSpK2QnjKlbpkb314pHXPT897+zeHYEjzdlS19cstKI1woC+80dBMreGkjtLNkpfkRiRxInCMFtjmkeuyXrCvNMRwAr+90OhQTs=
+	t=1725545050; cv=none; b=UQeJ4qdBdcPgdZIFqeeqqmfv+NTO4XKUBTHp5ZSRro+CCmgKmsiNaRpvmGbf/XS28Nc1+Ti3rF2jznD5x7w5lz9/Jalwz7DsfD9p/wm3AIefpLFulYCGVg8cS/oCptZXgkBDQt2OLmjzx0CY2uwkffR1xm0hTK6ISTUiSu0+jDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545029; c=relaxed/simple;
-	bh=htu0Nvpe4IfY0NtyRQnv/eIJUyKFKNjpyhdvPje3PKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpbSNur/sdE2U2avrwecjyAcHx0rEyOMtV3t4R4tmQDPTlRH3IpeLRFEhgf8mi3CbuedIHUo6daD4oj+0G1adYi0BQKsPqf283nbUL7pmbnhqVw4EbzCg6dVhfsNXf3h57nBYvDMuCSB2sIJvXpPDNtd5i/9pHtBkP32y0dVsMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96223FEC;
-	Thu,  5 Sep 2024 07:04:12 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 517DB3F73F;
-	Thu,  5 Sep 2024 07:03:44 -0700 (PDT)
-Date: Thu, 5 Sep 2024 15:03:34 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Will Deacon <will@kernel.org>,
-	syzbot <syzbot+908886656a02769af987@syzkaller.appspotmail.com>,
-	catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	ardb@kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [syzbot] [arm?] upstream test error: KASAN: invalid-access Write
- in setup_arch
-Message-ID: <Ztm56ZxiqlTL6ntA@J2N7QTR9R3.cambridge.arm.com>
-References: <000000000000f362e80620e27859@google.com>
- <20240830095254.GA7769@willie-the-truck>
- <86wmjwvatn.wl-maz@kernel.org>
+	s=arc-20240116; t=1725545050; c=relaxed/simple;
+	bh=gzhmBa26+EHZsl1gl1YKdKBHsUAHOOnf6c1Vi8oiMW0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=e08IrycayIxADr3ncaUDod+obuUeyjFLvPVEuWG4g5pTYs+7aG/D7F+Fasjr46QMQuV88mV+PQ5W7gkcG8ED1KvTuZN5sYT6MvIXiivK23qv1jLJHPkdhXEUlqM8SF0iFTYD5UwTBIJHuj2lI8t0giEONWwc9eo43RYbQ56YUC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5mf1QRD; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-205659dc63aso8433815ad.1;
+        Thu, 05 Sep 2024 07:04:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725545048; x=1726149848; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cYNDaZPT4tF0L25ucvYmyrqe/wq83Pn5yG5NcXp+fHo=;
+        b=G5mf1QRDQGzdmSQkh+JtKU+NxYR0xk5bb1Iot+/zh7HeDuMuF1vSDxLnN4M4Pqiixe
+         WXOLXEPlj7+GvHjfXVsEULuOq/KQoxpZ0TZSfVJ9k4SEkqi/LX9SgmHoNYmn3Pjz1b5A
+         EtNToo5QeYZN0+FMc6zy6oEcY0JCDh33aedAsTZii3pLS1D9bZEgWd+VtlaWjFMLVpe+
+         khOGhj5kIUgd4DaUTnQJPSUGsel12JYqiV/PmG1S4w3QYQ+2OatwQqSnYM5d6USRPRg2
+         ouXZvEWUG0/iGAFMyHrXByAHCio5EcRls0zLLl/ZWIa8uMXGK1lIK7HSX5qp3+Vv8Iys
+         hkEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725545048; x=1726149848;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cYNDaZPT4tF0L25ucvYmyrqe/wq83Pn5yG5NcXp+fHo=;
+        b=w593WtgQ7QOL57yoxleGknV+VveYYrKpd+rmzLm1NOEQsxWFFd8DTAZ0SEHYcREzjB
+         pgTkBGReIc5DnrYfmSmnAUXDOm25E8rHeA0kg/+8qfY+IEHIbqivnnDYrHwLVm6KsEzi
+         V17ku1WKh7BsTzSoGwFHMC+w6iZtbc/SOT5adIqO2gxwiRn8sneML0O6mrfDX5wOJB3u
+         hvPklJsvCJc5qgPAj3h2mm23w8QKqDerVFTfb8PHRchh6NwL3mNF5uOHYneUw2HyrDaH
+         vpNeY6KBcHY3y7iLN+bNyl7kQrVUM1249zHC7nnBjwJ5wri9/aYaibIKPuvpjZ896bNQ
+         tdrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeYBnSLS77q0zmxEsIGlMPobe/KP7/iDZsK0sSVw1oPlgK1d5JU+trd6rVW1Ma5tdiqomc/bT9CulGSK0=@vger.kernel.org, AJvYcCX1L4u6uyiOLQIGCcTldFgzuEFy0MOPlW2UZKAQzQDQdvjLZSAnRA/gmi3hdxrvC/Yau2HNwTzxpBwIx4YsPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbiZN9ZZ9hYLw/j99akfAzU6AV4s4md19v6KmfeqhytIA+6Mo0
+	/b29Kkly3nBQIRDL424z035LsFcdtldSx5yOV1Y9qFW4hDHhIljkk05PpmzS
+X-Google-Smtp-Source: AGHT+IEamEZb7VdE1gnvDpAc/KUDDU8OeSItmzSJzq/5hVybb0LVoRW7CmsPunkWK9qCSj/fLM/WWw==
+X-Received: by 2002:a17:902:fc4c:b0:205:5547:92d2 with SMTP id d9443c01a7336-205554794bbmr177887405ad.48.1725545047543;
+        Thu, 05 Sep 2024 07:04:07 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.178.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea3933fsm29039345ad.171.2024.09.05.07.04.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Sep 2024 07:04:06 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86wmjwvatn.wl-maz@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <20240904180648.fni3xeqkdrvswgcx@treble>
+Date: Thu, 5 Sep 2024 22:03:52 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5B13628F-755E-4081-9E12-EB2F2441BBDF@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <20240904044807.nnfqlku5hnq5sx3m@treble>
+ <AAD198C9-210E-4E31-8FD7-270C39A974A8@gmail.com>
+ <20240904071424.lmonwdbq5clw7kb7@treble>
+ <1517E547-55C1-4962-9B6F-D9723FEC2BE0@gmail.com>
+ <20240904180648.fni3xeqkdrvswgcx@treble>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-[adding Ard and LLVM folk; there's a question right at the end after
-some context]
 
-On Sat, Aug 31, 2024 at 06:52:52PM +0100, Marc Zyngier wrote:
-> On Fri, 30 Aug 2024 10:52:54 +0100,
-> Will Deacon <will@kernel.org> wrote:
-> > 
-> > On Fri, Aug 30, 2024 at 01:35:24AM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    33faa93bc856 Merge branch kvmarm-master/next into kvmarm-m..
-> > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
-> > 
-> > +Marc, as this is his branch.
-> >
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1398420b980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=2b7b31c9aa1397ca
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=908886656a02769af987
-> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > > userspace arch: arm64
-> 
-> As it turns out, this isn't specific to this branch. I can reproduce
-> it with this config on a vanilla 6.10 as a KVM guest. Even worse,
-> compiling with clang results in an unbootable kernel (without any
-> output at all).
-> 
-> Mind you, the binary is absolutely massive (130MB with gcc, 156MB with
-> clang), and I wouldn't be surprised if we were hitting some kind of
-> odd limit.
+Hi, Josh.
+> Most of this information is already available in sysfs, with the
+> exception of patch stacking order.
+>=20
+Well, this is the problem my patch want to fix. But my patch is more =
+simpler, it just shows the stack top of the target function, which is =
+the only thing users care.
 
-Putting the KASAN issue aside (which I'll handle in a separate thread),
-I think there is a real issue here with LLVM.
+>=20
+> We want patches that fix real world, tangible problems, not =
+theoretical
+> problems that it *might* solve for a hypothetical user.
+>=20
+> What is the motiviation behind this patch?  What real world problem =
+does
+> it fix for you, or an actual user? =20
 
-What's going on here is that .idmap.text ends up more than 128M away
-from .head.text, so the 'b primary_entry' at the start of the Image
-isn't in range:
+Here I can give you an example as I previous described:
 
-| [mark@lakrids:~/src/linux]% usekorg 14.1.0 aarch64-linux-objdump -t vmlinux | grep -w _text        
-| ffff800080000000 g       .head.text     0000000000000000 _text
-| [mark@lakrids:~/src/linux]% usekorg 14.1.0 aarch64-linux-objdump -t vmlinux | grep -w primary_entry
-| ffff8000889df0e0 g       .rodata.text   000000000000006c primary_entry
+>>Here I can give you an example.
+We are going to fix a problem of io_uring.
+Our team made a livepatch of io_sq_offload_create.
+This livepatch module is deployed to some running servers.
 
-... as those are ~128MiB apart.
+Then, another team make some change to the same function and deployed it =
+to the same cluster.
 
-When building with GCC those end up ~101MiB apart:
+Finally, they found that there are some livepatch module modifying the =
+same function io_sq_offload_create. But none of them can tell which =
+version of io_sq_offload_create is now exactly running in the system.
 
-| [mark@lakrids:~/src/linux]% usekorg 14.1.0 aarch64-linux-objdump -t vmlinux | grep -w _text        
-| ffff800080000000 g       .head.text     0000000000000000 _text
-| [mark@lakrids:~/src/linux]% usekorg 14.1.0 aarch64-linux-objdump -t vmlinux | grep -w primary_entry
-| ffff8000865ae0e0 g       .rodata.text   000000000000006c primary_entry
+We can only use crash to debug /proc/kcore to see if we can get more =
+information from the kcore.
 
-When that happens, LLD makes the header branch to a veneer/thunk:
+If livepatch can tell which version of the function is now running or =
+going to run, it will be very useful.
 
-| ffff800080000000 <_text>:
-| ffff800080000000:       fa405a4d        ccmp    x18, #0x0, #0xd, pl     // pl = nfrst
-| ffff800080000004:       14003fff        b       ffff800080010000 <__AArch64AbsLongThunk_primary_entry>
+>>>>>>
+What's more, the scenario we easily face is that for the confidential =
+environment, the system maintenance mainly depends on SREs. Different =
+team may do bug fix or performance optimization to kernel function.=20
 
-... and unfortunately, that veneer/thunk uses a literal with the
-statically-linked TTBR1 address of primary_entry:
+Here usually some SREs comes to me and ask me how to make sure which =
+version is now actually active because tow teams make tow livepatch =
+modules, both of them make changes to one function.=20
 
-| ffff800080010000 <__AArch64AbsLongThunk_primary_entry>:
-| ffff800080010000:       58000050        ldr     x16, ffff800080010008 <__AArch64AbsLongThunk_primary_entry+0x8>
-| ffff800080010004:       d61f0200        br      x16
-| ffff800080010008:       889df0e0        .word   0x889df0e0
-| ffff80008001000c:       ffff8000        .word   0xffff8000
+He wants to know if his system is under risk, he want the system run the =
+right version of the function because one module is a bug fix and the =
+other is just a performance optimization module, at this time, the bug =
+fix version is much more important. dmesg is too long, he find it hard =
+to find out the patch order from dmesg.
 
-... so as soon as the CPU tries to branch there it'll take a synchronous
-exception since either:
+With this patch, he can just cat =
+/sys/kernel/livepatch/<module>/<object>/<function>/using and get his =
+answer.
 
-(a) The MMU is off, and that's larger than the physical address size.
+> Have you considered other solutions,
+> like more organized patch management in user space?
 
-(b) The MMU is on, but there's no TTBR1 mapping.
+User space solutions seems unreliable. What we need is just the enabling =
+version of target function. The order of livepatch module enable mainly =
+from dmesg, which is easily flush away or being cleaned.
 
-We can bodge around this instance by manually open-coding a veneer with
-ADRP+ADD+BR after the header, and having the header branch to that, but
-AFAICT we have no guarantee that other early asm or PI C code won't hit
-the same problem.
+If we use an user space program to maintain the information of patch =
+order, once the program is killed, the information is loss either.
 
-It'd be good if we could convince LLD to use ADRP+ADD, since we already
-rely on the entire kernel image falling within 2GiB for data
-relocations. I'm not sure if it doesn't support using ADRP+ADD in
-veneers or if we're doing something that prevents it from using ADRP+ADD
-in the veneer.
+Neither of the previous user space solutions seems reliable. Only kernel =
+space will no one can change it. And it is the most accurate.
 
-By comparison, if I force the branch range to be longer, GCC 14.1.0 and
-GNU LD 2.4.20 use ADRP+ADD for the veneer, and the resulting kernel
-boots successfully.
 
-I tested that by hacking some .rodata between .head.text and .idmap.text
-with:
-
-| char hack_force_veneer[SZ_128M] __ro_after_init;
-
-... which forces a ~230MiB branch range using the config above:
-
-| [mark@lakrids:~/src/linux]% usekorg 14.1.0 aarch64-linux-objdump -t vmlinux | grep -w _text        
-| ffff800080000000 g       .head.text     0000000000000000 _text
-| [mark@lakrids:~/src/linux]% usekorg 14.1.0 aarch64-linux-objdump -t vmlinux | grep -w primary_entry
-| ffff80008e5be0e0 g       .rodata.text   000000000000006c primary_entry
-
-... with the generated code being:
-
-| ffff800080000000 <__efistub__text>:
-| ffff800080000000:       fa405a4d        ccmp    x18, #0x0, #0xd, pl     // pl = nfrst
-| ffff800080000004:       14004001        b       ffff800080010008 <__primary_entry_veneer>
-...
-| ffff800080010008 <__primary_entry_veneer>:
-| ffff800080010008:       d0072d70        adrp    x16, ffff80008e5be000 <__idmap_text_start>
-| ffff80008001000c:       91038210        add     x16, x16, #0xe0
-| ffff800080010010:       d61f0200        br      x16
-
-LLVM folk, is there any existing option to ask LLD to use ADRP+ADD for
-the veneer/thunk? ... and if not, would it be possible to add an option
-for that?
-
-I realise it shouldn't matter for most users, but it'd be nice to avoid
-the boobytrap for anyone building test kernels.
-
-Mark.
 
