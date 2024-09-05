@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-317457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC6996DE9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:42:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8627196DE92
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15CD4283412
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:42:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25706B233F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2108D19DFB4;
-	Thu,  5 Sep 2024 15:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="W+RVo1X3"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2084.outbound.protection.outlook.com [40.107.20.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8730A19D895;
-	Thu,  5 Sep 2024 15:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725550914; cv=fail; b=WUM0Kq77FKuTsOzrc9i499a1l9KWsAGqzR+0DVAmreq8heDBt+6HqDXmfJXikk8Paqb0xAE671VpzH1xTyRCFpX9U3tr1KP9vKAdyuEEPX6Fy/MWGQBBB4MGfjUMXGgfuANuUMjYvtwRD1RcDr/zbTWWCDU+bEvZciM6tl3azoE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725550914; c=relaxed/simple;
-	bh=IOhUuCc8isQ2wT34Quv3guIQ7aZ241rcLJx+7jxJWsU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FTwF7Ou/tx1pAmJtH7yCWlxa97AJGvbXP+eBScnuZkC3hQ+M73sdUL+KRg5j+EP/CS9PjxLFJP9IxoE76EFAl3rgOUbKmpUQhIHtH4HENM5yhbwEnKqq4nqjLe7SzWiNOYd/iOuyybAlKv7FUECgDZjET8xOpxtk8S4Uh8CVOKw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=W+RVo1X3; arc=fail smtp.client-ip=40.107.20.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GKTrV0nY1aIN0gdvaARggNljaq8dLaaWD64eX24vQc3dIHOqX9fUisozGzTIsESangddeUS3tv/S/ZUpZucgRSDwTF2yg/oa0hXvv0uiVyzwRk118Gy+QYbMA62hnHdVU9HFMXhSFmIylBnGUUuj6fP0O+hIwpV3NrdMXSLvJUR6fgSqNjB5srQ2JLs8DsYyb2mhLPNKRexFClae1a9koFDN8MHK30SCULKLYPnsHpz045CF0Ojm8lmZ5E5kxgiTShiPM840saZAdLx/GXYB5sRDmPIXoire9TpNM8YfHrHFml+9Hp07dTS3PW1nOTOhiVw/WZp9OFOolhSUkrFO7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8KL9/f7Sq4UXl4UGphd2vc93lZqYyI6VAzhuWLB8O/c=;
- b=nF6P+OLIUXaVuuer4Ab/EZCapp2ZYH9vV36v2iK6PqTmOCAKgBJeMocktzccqreS4IIE3ZOVYtWYPKDnn+NKVXUgxcjQksYrPFS7NeUiKZAJN1pi8o9IzYX3Lul7nDzQnVR5dXs4nuTQW34l/xbjVuOI3n7wbafDbP/H6QQ4ZVO/10JRNaEYPh+WqMIfF63dKjYq4JrXLL+9fILi0D2sk7DlZyv/j92wcH2vhe6XnZNYbJbup9BSuZ3P/nzy/1bfyLiNLl68NN3wrbCn15TfQq1/4eR2DjTTYjxhR+TY0mMyisj5FFTvSte/LaCiXxzFmbHLGGvlCy/u0r2bEJ2EcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8KL9/f7Sq4UXl4UGphd2vc93lZqYyI6VAzhuWLB8O/c=;
- b=W+RVo1X3BnaVI3soiu46wkROFqqh+/IN2UdSL1jFoaXKVhrLC7wafltvzq9qzGYIcNc+I/XlsGKzaAdpxLhWu0d/ohz5yXGhWJhZFQ9pEqGBY6MWRPgJk7Hg25Q3aGV0ZTtn6CA1jSGjME9DZ8hX/Z19BVz+Ecc5xT5R9Sx3iJwx/ZG7m9fIFqb4jVZhLy4ktvKRKrzCAs0ik9EbMxyhNvCE8F/hPUrldVuPlaYl1zEjrui7ORimNG4LbnpFEHzISp/YDWoFNPrvACU+nnm02Vqa5onbkZJThBlrkR9zDTnbSqIx7ViNx3rhNyIDdmpS7sTtIFGqoqR/99U5Cjw3ig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8521.eurprd04.prod.outlook.com (2603:10a6:20b:430::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Thu, 5 Sep
- 2024 15:41:42 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 15:41:42 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: wahrenst@gmx.net,
-	broonie@kernel.org
-Cc: carlos.song@nxp.com,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	linux-spi@vger.kernel.org,
-	s.hauer@pengutronix.de,
-	shawnguo@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] MAINTAINERS: SPI: Add freescale lpspi maintainer information
-Date: Thu,  5 Sep 2024 11:41:24 -0400
-Message-Id: <20240905154124.1901311-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0050.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DA219DF61;
+	Thu,  5 Sep 2024 15:41:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE42110E9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725550897; cv=none; b=q25lItUoydEIejj/gkHHu5Yvn1zHBoezSmziTGW1zyYTNwNTC0auWGpeNyxYcOgKOR+yjs1Wen/hiJ3YDXdqgLTZqPdtIUjMmkv1D2+1DsZI7BHIGLIFk8E7mp+Q3rcL9Der5qilRmIMT8xB7MA/RNGYbxGID0RoXgN0XIugAv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725550897; c=relaxed/simple;
+	bh=P8bMYvM6fVItm4QudOKWfWW3EfgN6MewtAcVJuNHuCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uUewDs2QoNa9jZmVwLadZl50dZTuGevzDbUj42uVkrA+0SVWEg9qxKCN3QuJ37p6xcDsazgT0qZrbz9eSZ5i2xZ6vtq4n5XUkL5iOKLK/B33svgQzUQA4aU11FZ2asD+WQzaCnsNALaSILXhe6JLQcLsw0RHqMznWfq9Xi61KRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98A71FEC;
+	Thu,  5 Sep 2024 08:42:01 -0700 (PDT)
+Received: from [10.1.29.28] (e122027.cambridge.arm.com [10.1.29.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0B7D3F73B;
+	Thu,  5 Sep 2024 08:41:32 -0700 (PDT)
+Message-ID: <d24272d4-e21a-4f62-8797-ce29dd6d2147@arm.com>
+Date: Thu, 5 Sep 2024 16:41:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8521:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b48abd5-2b4b-4b2d-faec-08dccdc13d1b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MpDfBWfEuYODSnq2UFNbq/YTR9wuDKeCBFr9RPARQv4vd+PsRGsBlKVZNjuR?=
- =?us-ascii?Q?EUFq8z/iDrYC87kdsl29AKPTXPHrYIPT6BrrwmPycFnxAxUBVzQcyy9L6GF5?=
- =?us-ascii?Q?DtBXe32r+xzBnOnkkYQTwhwWoP06+eiFsxZjDAuRJwWpyWc9EejdXQZcaMnf?=
- =?us-ascii?Q?BtfuFP0vlMkPxIKdnz02dKEcuCpjhnwe82Qn3L1j5gEtnpVPv5QKqJt5ooHF?=
- =?us-ascii?Q?gmHfpkdiFWK6FuboCz9Er2RP0N0PfULRyodHZTZ9fNx9WzwDsJ9CYFZEnq5C?=
- =?us-ascii?Q?zEXmF9R2TaKy4Gxi598+4D8L5hp8LXBEm/b7C8kpmEk6orf/Hb1/+sxkV5SM?=
- =?us-ascii?Q?YgFUEZj5AbJnW1w39Kdc/sMbbb1Ab76a+aXIufT83OZEAESh9It1/FR0E4w8?=
- =?us-ascii?Q?Hy4G/THM2U3IZqqVX9Z7g1/5nI57T17BQeaku2U4MivE+OsOsbfvbI6GVc8M?=
- =?us-ascii?Q?Q99QqZg8gIvS5CL5QnNyJmi0xp4L8xEIprBbreKN5Ubw9jcpFnhwGfq+bHvt?=
- =?us-ascii?Q?lv7rCIAuUwxBQjTddf8Yt0WslkgLfQUSYa0P72XKXo8WAL+T7GX5T0jiuMBm?=
- =?us-ascii?Q?PJJ6XKwvA6E0HzXQkqfBLwzOtqSlfSM5E2HspYcL2peIIMe82DK3I+o5xZGG?=
- =?us-ascii?Q?5CYUJL54ZDv9fV15PxTm/fJTzK8BHtezS3vW+FxRqJmYjXbMMFltYLHtCQKr?=
- =?us-ascii?Q?KT8PPoRYHzMlP7nmF+zrs3WruKl0b+XdPloEX45ehTInkreOxP+aZb5rn7pu?=
- =?us-ascii?Q?qYzQ22QxRsYuNFArxsecGV0yqFmOZoVSA7y2bkDPHhpD4fJYx3fEK63LiM4L?=
- =?us-ascii?Q?0cbUmW9sjISXplhvP8/qjgBY5X6zTbSf9M9t+VEPHa14ZhW6qdruGh2ziaHV?=
- =?us-ascii?Q?h+ye/EXG5XicT3Ikz6y7G7OOvU6AYlc7nddOpsJxGiHP93ME1V5c9ipzdzgH?=
- =?us-ascii?Q?HrB0UWvx7mRMQcmDjGxyPI8R46XTRD9Vt4FMEDBt+aGWNS6mqKeXBB+xG2+0?=
- =?us-ascii?Q?NxZiCWIhQRq67y5KwKSwrBgpBeI8B6MR+/vBxRH+B8n/nGC1G0WwhSO083Kg?=
- =?us-ascii?Q?fGwJvQm40JUXD+Gxr0QD695S7rl74XNgO/Iwh5g9JQlihU8JgzBT+9rA2oN6?=
- =?us-ascii?Q?3k6dxBZ4u8O9QBGWYrCGddJt/kyBnaUgqzw5cNRjWXoKKOTC4jjWo5l7WtFD?=
- =?us-ascii?Q?feyHLTV1N2YE73/Xfpa2obgiDpM3HXZVb8VPj4pMIvRODUAzZJzghiqvVJpg?=
- =?us-ascii?Q?nc7ciDk6D6WKWD7Z0iwz0zJyl+NLFywT316NnfwIrQCjHPJ4ifDyXo9K8+qO?=
- =?us-ascii?Q?nTlx/Z8WXlW5pNkSAdvLxgSZpnoe8RoUo4r7yQIEqNlVH4NwKDrH8/ZuBENW?=
- =?us-ascii?Q?rbLdWbHxKIxZT0pSLsxPJ/fmNFzOuakfqJvQHT6EYBmtcFBiCg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HE37Z7b1v42VNHWF4rnD7RGsJ01LFny4lzi4W8+xYJe9enSr+dlVf0jevc1Q?=
- =?us-ascii?Q?lktjsr9SDd9F7tCAkqmBu3xge7MOScEpp4C7JPpvYLYQGj6sa8sPchccTTfK?=
- =?us-ascii?Q?u/T4WuyQ7n2vWwK8pauhIqiq5IAhloxvuHiVfjcroACNGQP2hWRHl+5GPyrK?=
- =?us-ascii?Q?ocxsc3HEIjOuauc+zOgXX6X1e1W0XbouSdAbCLz2unTEbEO44wXBckXHLGQB?=
- =?us-ascii?Q?DxDc71n65PI2kb5hpXkX5/ibqI22kKzEJk9vrqhs+nmYJmFFNP6cL6hvsOeo?=
- =?us-ascii?Q?lzDaG2azK0CmWZCwPYAo3pAnUX70I67i4Fm3vVfp/cXibyjKPmgECvdWM4q3?=
- =?us-ascii?Q?XjHBaTDciExtDKnyaoW9fjg5JyXQC9UqtstfLOjN8vNpzELxAkjHeTnP4MeN?=
- =?us-ascii?Q?bArOqgwjKhvqdmlndAgLwxlbhn6dKJgRaBEMoDwvM9RR/aNhjPEJhRCacVrW?=
- =?us-ascii?Q?IX1M8pbpKz/ZEFQ1mp/cvYVapGSstBFZP3j//GI0xXG2djKXgQsbiOlpBddD?=
- =?us-ascii?Q?Ip9vyEG1nPggacQpGJmXmtVCtYbmec1ALSz0WPkiDuyfBG8awFQWEf6ixNHR?=
- =?us-ascii?Q?3JCadL93WLkbdStqzz8kwZx7nSGbFf0wCw+d1WBgsxnJwWKrYe8VGs16uv+F?=
- =?us-ascii?Q?v479ALueQ+gFdIs6rnW1hH3J5zAiGPoZHnNdLhJIDuAqWjApNny2zVLHClKL?=
- =?us-ascii?Q?hwjJ/WDm7a1H4j9mnqu69uwVXobipuSMD/qXE8eD4wUJ2ccn9D4wwof/g1v8?=
- =?us-ascii?Q?0JiyYzVyZ58MFoS+lnUwEjN7g4tz+AjvSkqc2F/XPq/YvxVRvRKhUp5fF2w7?=
- =?us-ascii?Q?vmjoM6jLK4TgfeSh7qMIJCkZcQYJexQ6cBYTquU9TSxpgQdRGDsdPaKIgjKl?=
- =?us-ascii?Q?B/RRpm6LX24p7fPPq/t9wzBnmuIlI8sRtKbeE5YOQAqjp3WbMI5lwy1lQTzQ?=
- =?us-ascii?Q?pUFJUaMd+40kbfTVepQ8vBygf82BOUQvrsrY69GrgpEQ5/05i11T0CKd/WiY?=
- =?us-ascii?Q?1qdMdns3A4msQfE20GFOLrLrvmAS1ih/vQtSUW49JQgfHQK1H/n63yPgUF80?=
- =?us-ascii?Q?egQTmvISHbvavfv5R+zb7PwjvJDepvXxWsoyTBpLzF//F9nzJ4tDUg1rWIIv?=
- =?us-ascii?Q?nXYJPFgvBGUvQWSJ53M78XGt6FfYyPVF+PFuJnqxrfaoRjZWIY62lCDFtWFP?=
- =?us-ascii?Q?bYtEARSahwGpDNFAqU18txC0JDa33mxSbymFDAHqe+NhVtSgUZaTZmqoxzL0?=
- =?us-ascii?Q?WCA/VkAYjHZ5v/bce8/y3J+lvTUNGqe86AH4zXFIgxRNBrtQKjKhMdGMCsey?=
- =?us-ascii?Q?w4sDqqttGhMoY/bOdei2CubCI3oXxJNuS3D8czwBHqkuMZP88An81hHFKWbe?=
- =?us-ascii?Q?uQJfW+zr17gsmNVPK8dU8vUHpDNmAe6m6GX5km6vA2lt7RgGyqrQqkMKeinl?=
- =?us-ascii?Q?iqCoH5RMlwA2CCbx9HaR+aoZ1FUXUNInmeOQAwEvsaMjFPJ930u/peczSLvD?=
- =?us-ascii?Q?jf4U0V64M8SGD0qxZq+Q3w6phszDr89Fy+HjHyug9jb+34LHuWJHa879NuvD?=
- =?us-ascii?Q?mhRzCc1IOG2ooSPHLTbEDxT4ZvyXzgwWOSs5XIYt?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b48abd5-2b4b-4b2d-faec-08dccdc13d1b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 15:41:42.0260
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TXCEgRjF9ryKZXhIjyFTy4YkUN1cs9qbfZizqUOLJKnuyFA0EmHxM9LaS0jZZqeJHDJ4cQ04lFqV77h0Jx19dg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8521
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm/panthor: Add PANTHOR_GROUP_PRIORITY_REALTIME
+ group priority
+To: Mihail Atanassov <mihail.atanassov@arm.com>,
+ Mary Guillemard <mary.guillemard@collabora.com>, linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Christopher Healy <healych@amazon.com>, kernel@collabora.com,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ nd <nd@arm.com>
+References: <20240905111338.95714-1-mary.guillemard@collabora.com>
+ <20240905111338.95714-2-mary.guillemard@collabora.com>
+ <2b2d13a9-9e84-406a-a803-5366036fa761@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <2b2d13a9-9e84-406a-a803-5366036fa761@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add imx@lists.linux.dev and NXP maintainer information for lpspi driver
-(drivers/spi/spi-fsl-lpspi.c).
+Hi Mihail,
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 05/09/2024 14:54, Mihail Atanassov wrote:
+> Hi Mary,
+> 
+> On 05/09/2024 12:13, Mary Guillemard wrote:
+>> This adds a new value to drm_panthor_group_priority exposing the
+>> realtime priority to userspace.
+>>
+>> This is required to implement NV_context_priority_realtime in Mesa.
+>>
+>> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+>> ---
+>>   drivers/gpu/drm/panthor/panthor_drv.c   | 2 +-
+>>   drivers/gpu/drm/panthor/panthor_sched.c | 2 --
+>>   include/uapi/drm/panthor_drm.h          | 7 +++++++
+>>   3 files changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c
+>> b/drivers/gpu/drm/panthor/panthor_drv.c
+>> index 0caf9e9a8c45..7b1db2adcb4c 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+>> @@ -1041,7 +1041,7 @@ static int group_priority_permit(struct drm_file
+>> *file,
+>>                    u8 priority)
+>>   {
+>>       /* Ensure that priority is valid */
+>> -    if (priority > PANTHOR_GROUP_PRIORITY_HIGH)
+>> +    if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
+>>           return -EINVAL;
+>>         /* Medium priority and below are always allowed */
+>> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c
+>> b/drivers/gpu/drm/panthor/panthor_sched.c
+>> index 91a31b70c037..86908ada7335 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+>> @@ -137,8 +137,6 @@ enum panthor_csg_priority {
+>>        * non-real-time groups. When such a group becomes executable,
+>>        * it will evict the group with the lowest non-rt priority if
+>>        * there's no free group slot available.
+>> -     *
+>> -     * Currently not exposed to userspace.
+>>        */
+>>       PANTHOR_CSG_PRIORITY_RT,
+>>   diff --git a/include/uapi/drm/panthor_drm.h
+>> b/include/uapi/drm/panthor_drm.h
+>> index 1fd8473548ac..011a555e4674 100644
+>> --- a/include/uapi/drm/panthor_drm.h
+>> +++ b/include/uapi/drm/panthor_drm.h
+>> @@ -720,6 +720,13 @@ enum drm_panthor_group_priority {
+>>        * Requires CAP_SYS_NICE or DRM_MASTER.
+>>        */
+>>       PANTHOR_GROUP_PRIORITY_HIGH,
+>> +
+>> +    /**
+>> +     * @PANTHOR_GROUP_PRIORITY_REALTIME: Realtime priority group.
+>> +     *
+>> +     * Requires CAP_SYS_NICE or DRM_MASTER.
+>> +     */
+>> +    PANTHOR_GROUP_PRIORITY_REALTIME,
+> 
+> This is a uapi change, but doesn't have a corresponding driver version
+> bump in the same patch. You also document the addition of this enum
+> value in the next patch, which also is a tad wonky. If you reversed the
+> order of the patches, they'd make more sense IMO.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87c128de792b4..59eb18b0261fd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9042,6 +9042,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
- F:	drivers/i2c/busses/i2c-imx-lpi2c.c
- 
-+FREESCALE IMX LPSPI DRIVER
-+M:	Frank Li <Frank.Li@nxp.com>
-+L:	linux-spi@vger.kernel.org
-+L:	imx@lists.linux.dev
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-+F:	drivers/spi/spi-fsl-lpspi.c
-+
- FREESCALE MPC I2C DRIVER
- M:	Chris Packham <chris.packham@alliedtelesis.co.nz>
- L:	linux-i2c@vger.kernel.org
--- 
-2.34.1
+You can't reverse the order because then the version bump would be
+before all the features were present. Generally we put the version bump
+at the end of a patch series because it's indicating to user space that
+the new features can be used. This way round if a bisect lands in the
+middle of the series then the new priority is there but won't be used
+because user space won't know about it (which is fine).
+
+Steve
+
+>>   };
+>>     /**
+> 
 
 
