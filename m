@@ -1,53 +1,75 @@
-Return-Path: <linux-kernel+bounces-317725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A88F96E2C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 481C596E292
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1722B23C37
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:10:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAE47B24343
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1250818D64B;
-	Thu,  5 Sep 2024 19:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B963B18785F;
+	Thu,  5 Sep 2024 19:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="uQYq59Y/"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqDCbL2E"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C33158DC8;
-	Thu,  5 Sep 2024 19:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7646C1552E0;
+	Thu,  5 Sep 2024 19:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725563395; cv=none; b=lYnnKLD2NCwTSQw0X961dJh6FDOEuRcYEx1fQOWx6ffOasIogOZtMtaOlFOg6xgbHOJ+wmfwofsvh4hOktZIc/phsrfuvK9gnt8HZNEJeSSGuPtFn3AUNZnHTdma3A+4BHvSo6FTFw6TWZ1jtU47iQvvV4dp1h0ZC24KXuQY7MU=
+	t=1725562901; cv=none; b=m0FVkDXdYe0uZf2jjXGYBtMmj5halqgl/77zWYqeshXl1mTmkBUqu9CeFK6rwRV2+Z76446UtPmWoLmhFmmYrl6gzlbG+fpCvRZsrECCjsaJVH3/evhheuu66GxGxZYH69xBUAtfwtJMAFvqPgYM8AJpWzoWgqaFQzea9vd3lOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725563395; c=relaxed/simple;
-	bh=GrkSvGc83gmOa+ZfzM3uLj86ulug8IfnV8jKz9sInjI=;
+	s=arc-20240116; t=1725562901; c=relaxed/simple;
+	bh=/e4u/JDvc6bVXSRURtHyV8WfjImNr4XaUNgP4OjRRBU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pEpBcaFmyyeWa4TJ1D72gn0fcTpVOI5WgeP+L7Bov7vDAT5NT36M0U0bnvleRhOApCm5Zl9+Kt17bguyhEblMu9U8YThA1U0hWvrVIFNb2WMARqwXXZcGwoV8VgU+kk71Xt7EhK4xgCXyK67eu+mGH1z4WxqzQ9D//TWcdLxgiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=uQYq59Y/; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 2EE4C88BD6;
-	Thu,  5 Sep 2024 21:09:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1725563391;
-	bh=edm4F86Hk2qklkmhJHHSmSvMydQmT4S2HIAG+u+hZ1s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uQYq59Y/ONuJJUHV1/P7Mc42bMIsefHvm8V+NrdSYjgwJWVo0UabBeixP/G+jRKGZ
-	 jugMbbFBeE8rNqnflqv5UyOMVkbB7SShhhfoSJCgsMb9hQJpICAn8t379Gkd9xM/TG
-	 H84ct/bz/lV7Y/xPA8qoOa67FRLLR1Fj5ZXLRlevCcYBMbshmdVQoY3iX8a5kzE3OG
-	 xIPFmMDBudiKoOrM6sDUqJyPOfWuuyoxEAPkH1THz5TmJm83L4UrCMLfwZodsixPBA
-	 qZBq1dJDFt4Fqzrlr5ZjXVJ2oraPjH2adULbz8VXGOwGTwQeSF5qh4Q+qTVgQqrkT9
-	 78qUQt7AoePYQ==
-Message-ID: <1a5114c5-92d1-4f5a-9ad6-616475f3ba56@denx.de>
-Date: Thu, 5 Sep 2024 21:01:06 +0200
+	 In-Reply-To:Content-Type; b=tNGkSlyxW2hDrLemEm5Ady4yWzPnoVXYK06K+42N5r7Qfj41g5LEV8eQWTgIvi/SB4Q6xz4OPAuB/m6/Dehtgl4Zy1MsvMVqxPo63eaL9d0sXjtbazU6IfHABghrjYZzhxVqCCfZfph1TB9bujgfnj9uyL1w+0YYhh2v+YbKdcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqDCbL2E; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-717934728adso728696b3a.2;
+        Thu, 05 Sep 2024 12:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725562898; x=1726167698; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7jvqKHWKTNEwzmEHt4HX/4BnyKCC/7k0aB+R5vHLZNI=;
+        b=jqDCbL2E9ppU3qgDmZA925dMepkXSpEeCvVh5q6cRDfZhf3+0GeARbuzmNoWLaavXy
+         bEKTRMFfr0BztbZ/uWMRS/JWTyz5F9uewTSMgAPvj7vVaxRkBksJNinKj7KJy2HAC/EP
+         VKCdQPK5s9TXl6C4mP0T1V49K6Qgo/2td90ADEI5Mk6jOExvZZaslALZrionYgbIkx49
+         syhtfU8zX+WkUHYPuOMrLe/gfSEdVhk+Ojrz8Yr4oWVUBggr8U0VyA/RfFiz3JK60V9L
+         lYUg16Dm8K/9481PrZChTUDJRhgVra3Q5Vk5B8+QlWzdTILT1iUDPmcro7wyafOVps0E
+         ulvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725562898; x=1726167698;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7jvqKHWKTNEwzmEHt4HX/4BnyKCC/7k0aB+R5vHLZNI=;
+        b=sVOGrXMxA3JqfBsIsk9929yHyIban66fnBNN0w0aw5Vi6ll4KsfUkCcrfbehI8T244
+         XFrIWfC/0WtrMCMCoH1hNS9Y6gCtNt/4kR4qrBYpWreQQrMwIY/FyMN4SddyN5CKUIap
+         NXHps5KrhM7jxoFlueaIZZT6dnHKomvHqatbsaWUJ1rAE9Z4aLOOko+cO0tWggjR9r9z
+         PbPC8mePYtZMXz6HHh/YJ/lqDEWcJVBZmG7yO0EXMtcbMg3UKvHDfjiXl5in1gZFmjzM
+         rj6R1G1chdGTgSkrlUuidzdeeljgPsIH/4/GftclFc/+W+fXttCxYgfi4JnTwfL7wM9R
+         Yn1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+r32kiyXBkZsujqNGLNfmKkSCg4CwBXvh1zNR9LSfqXnZw31WZRBvLfbBZwzTbhGhwXZeLbM2jF/@vger.kernel.org, AJvYcCUtBKSNDlY3H21CYqjCJpaZ5hr+5WM53V3XlbbcKdmynWGCTkrDAjCxmYNFasIifPtPeZMN10T6QZgVTnC1@vger.kernel.org, AJvYcCXEcwqSxCGR9qkMgv2pJWMPArn2J6tjXIxlvNQ/9coy5tbP+LS15duMcNZ8PsV2L9IbeVk1I9ZeeD20EsWoHsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb+2lUN86SpwPFZEk9RNPfVcCbanvJfALyAprHdmhpSkKxVXuv
+	eKGMgqsm5N6Dc5IcGxhaRNWQmCKmFncNTkKLvu/5YS3b1FYY2yb0JLrMYw==
+X-Google-Smtp-Source: AGHT+IFxTTWpZUiDBR4nIYLol5cprsIqljX/0VILfOAPfpIcvRqe+FExe2zYb7967dhzt+eRUJqsmw==
+X-Received: by 2002:a05:6a00:1951:b0:717:97ac:ef46 with SMTP id d2e1a72fcca58-71797acf5a6mr1613754b3a.15.1725562898217;
+        Thu, 05 Sep 2024 12:01:38 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178e2a4ab6sm1460359b3a.9.2024.09.05.12.01.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 12:01:36 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <9cf523a0-53b3-4b5a-b325-15626e12a6dd@roeck-us.net>
+Date: Thu, 5 Sep 2024 12:01:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,217 +77,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Frank Li <Frank.li@nxp.com>
-Cc: Fabio Estevam <festevam@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- pratikmanvar09@gmail.com, francesco@dolcini.it,
- Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>
-References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com>
- <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
- <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
- <ac922fd5-9438-4f73-9a3d-08cceb1d7409@denx.de>
- <Ztn+SiBUp0BC5lzy@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v3] dt-bindings: watchdog: qcom-wdt: document support on
+ SA8255p
+To: Nikunj Kela <quic_nkela@quicinc.com>, wim@linux-watchdog.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, quic_psodagud@quicinc.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240905185642.3767906-1-quic_nkela@quicinc.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <Ztn+SiBUp0BC5lzy@lizhi-Precision-Tower-5810>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240905185642.3767906-1-quic_nkela@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 7bit
 
-On 9/5/24 8:54 PM, Frank Li wrote:
-> On Thu, Sep 05, 2024 at 08:26:34PM +0200, Marek Vasut wrote:
->> On 9/5/24 7:12 PM, Fabio Estevam wrote:
->>> Adding Marek.
->>>
->>> On Mon, Jul 15, 2024 at 5:30 PM Frank Li <Frank.Li@nxp.com> wrote:
->>>>
->>>> From: Clark Wang <xiaoning.wang@nxp.com>
->>>>
->>>> Implement workaround for ERR051198
->>>> (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
->>>>
->>>> PWM output may not function correctly if the FIFO is empty when a new SAR
->>>> value is programmed
->>>>
->>>> Description:
->>>>     When the PWM FIFO is empty, a new value programmed to the PWM Sample
->>>>     register (PWM_PWMSAR) will be directly applied even if the current timer
->>>>     period has not expired. If the new SAMPLE value programmed in the
->>>>     PWM_PWMSAR register is less than the previous value, and the PWM counter
->>>>     register (PWM_PWMCNR) that contains the current COUNT value is greater
->>>>     than the new programmed SAMPLE value, the current period will not flip
->>>>     the level. This may result in an output pulse with a duty cycle of 100%.
->>>>
->>>> Workaround:
->>>>     Program the current SAMPLE value in the PWM_PWMSAR register before
->>>>     updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
->>>>     register. This will ensure that the new SAMPLE value is modified during
->>>>     a non-empty FIFO, and can be successfully updated after the period
->>>>     expires.
->>
->> Frank, could you submit this patch separately ? The 1/3 and 2/3 are
->> unrelated as far as I can tell ?
->>
->>>> ---
->>>> Change from v1 to v2
->>>> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
->>>>     About disable/enable pwm instead of disable/enable irq:
->>>>     Some pmw periphal may sensitive to period. Disable/enable pwm will
->>>> increase period, althouhg it is okay for most case, such as LED backlight
->>>> or FAN speed. But some device such servo may require strict period.
->>>>
->>>> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
->>>>     Using official errata number
->>>>     fix typo 'filp'
->>>>     add {} for else
->>>>
->>>> I supposed fixed all previous issues, let me know if I missed one.
->>>> ---
->>>>    drivers/pwm/pwm-imx27.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
->>>>    1 file changed, 51 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
->>>> index 253afe94c4776..e12eaaebe3499 100644
->>>> --- a/drivers/pwm/pwm-imx27.c
->>>> +++ b/drivers/pwm/pwm-imx27.c
->>>> @@ -27,6 +27,7 @@
->>>>    #define MX3_PWMSR                      0x04    /* PWM Status Register */
->>>>    #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
->>>>    #define MX3_PWMPR                      0x10    /* PWM Period Register */
->>>> +#define MX3_PWMCNR                     0x14    /* PWM Counter Register */
->>>>
->>>>    #define MX3_PWMCR_FWM                  GENMASK(27, 26)
->>>>    #define MX3_PWMCR_STOPEN               BIT(25)
->>>> @@ -232,8 +233,11 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>>>    {
->>>>           unsigned long period_cycles, duty_cycles, prescale;
->>>>           struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
->>>> +       void __iomem *reg_sar = imx->mmio_base + MX3_PWMSAR;
->>>>           unsigned long long c;
->>>>           unsigned long long clkrate;
->>>> +       unsigned long flags;
->>>> +       int val;
->>>>           int ret;
->>>>           u32 cr;
->>>>
->>>> @@ -274,7 +278,53 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>>>                   pwm_imx27_sw_reset(chip);
->>>>           }
->>>>
->>>> -       writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
->>>> +       /*
->>>> +        * This is a limited workaround. When the SAR FIFO is empty, the new
->>>> +        * write value will be directly applied to SAR even the current period
->>>> +        * is not over.
->>>> +        *
->>>> +        * If the new SAR value is less than the old one, and the counter is
->>>> +        * greater than the new SAR value, the current period will not filp
->>>> +        * the level. This will result in a pulse with a duty cycle of 100%.
->>>> +        * So, writing the current value of the SAR to SAR here before updating
->>>> +        * the new SAR value can avoid this issue.
->>>> +        *
->>>> +        * Add a spin lock and turn off the interrupt to ensure that the
->>>> +        * real-time performance can be guaranteed as much as possible when
->>>> +        * operating the following operations.
->>>> +        *
->>>> +        * 1. Add a threshold of 1.5us. If the time T between the read current
->>>> +        * count value CNR and the end of the cycle is less than 1.5us, wait
->>>> +        * for T to be longer than 1.5us before updating the SAR register.
->>>> +        * This is to avoid the situation that when the first SAR is written,
->>>> +        * the current cycle just ends and the SAR FIFO that just be written
->>>> +        * is emptied again.
->>>> +        *
->>>> +        * 2. Use __raw_writel() to minimize the interval between two writes to
->>>> +        * the SAR register to increase the fastest pwm frequency supported.
->>>> +        *
->>>> +        * When the PWM period is longer than 2us(or <500KHz), this workaround
->>>> +        * can solve this problem.
->>>> +        */
->>>> +       val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->>>> +       if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
->>>> +               c = clkrate * 1500;
->>>> +               do_div(c, NSEC_PER_SEC);
->>>> +
->>>> +               local_irq_save(flags);
->>>> +               if (state->period >= 2000)
->>>> +                       readl_poll_timeout_atomic(imx->mmio_base + MX3_PWMCNR, val,
->>>> +                                                 period_cycles - val >= c, 0, 10);
->>>> +
->>>> +               val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->>>> +               if (!val)
->>>> +                       writel_relaxed(imx->duty_cycle, reg_sar);
->>>> +               writel_relaxed(duty_cycles, reg_sar);
->>>> +               local_irq_restore(flags);
->>>> +       } else {
->>>> +               writel_relaxed(duty_cycles, reg_sar);
->>>> +       }
->>
->> Why so complicated ? Can't this be simplified to this ?
->>
->> const u32 sar[3] = { old_sar, old_sar, new_sar };
->>
->> val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base +
->> MX3_PWMSR));
->>
->> switch (val) {
->> case MX3_PWMSR_FIFOAV_EMPTY:
->> case MX3_PWMSR_FIFOAV_1WORD:
->>    writesl(duty_cycles, sar, 3);
->>    break;
->> case MX3_PWMSR_FIFOAV_2WORDS:
->>    writesl(duty_cycles, sar + 1, 2);
->>    break;
->> default: // 3 words in FIFO
->>    writel(new_sar, duty_cycles);
->> }
->>
->> The MX3_PWMSR_FIFOAV_EMPTY/MX3_PWMSR_FIFOAV_1WORD case will effectively
->> trigger three consecutive 'str' instructions:
->>
->> 1: str PWMSAR, old_sar
->> 2: str PWMSAR, old_sar
->> 3: str PWMSAR, new_sar
->>
->> If the PWM cycle ends before 1:, then PWM will reload old value, then pick
->> old value from 1:, 2: and then new value from 3: -- the FIFO will never be
->> empty.
->>
->> If the PWM cycle ends after 1:, then PWM will pick up old value from 1:
->> which is now in FIFO, 2: and then new value from 3: -- the FIFO will never
->> be empty.
->>
->> The MX3_PWMSR_FIFOAV_2WORDS and default: case is there to prevent FIFO
->> overflow which may lock up the PWM. In case of MX3_PWMSR_FIFOAV_2WORDS there
->> are two words in the FIFO, write two more, old SAR value and new SAR value.
->> In case of default, there must be at least one free slot in the PWM FIFO
->> because pwm_imx27_wait_fifo_slot() which polled the FIFO for free slot
->> above, so there is no danger of FIFO being empty or FIFO overflow.
->>
->> Maybe this can still be isolated to "if (duty_cycles < imx->duty_cycle)" .
->>
->> What do you think ?
+On 9/5/24 11:56, Nikunj Kela wrote:
+> Add a compatible for the SA8255p platform's KPSS watchdog.
 > 
-> Reasonable. Let me test it.
-Thank you.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
 
-I have MX8MN locally, so if you need RB/TB for V3, let me know.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Will I be able to reproduce it on another iMX too? Like MX8MP or MX8MM 
-(they are a bit easier to work with for me) ?
+> ---
+> 
+> Changes in v3:
+> 	- Removed the patch from original series[1]
+> 
+> Changes in v2:
+> 	- Added Reviewed-by tag
+> 
+> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+> ---
+>   Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+> index 47587971fb0b..932393f8c649 100644
+> --- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+> @@ -26,6 +26,7 @@ properties:
+>                 - qcom,apss-wdt-msm8994
+>                 - qcom,apss-wdt-qcm2290
+>                 - qcom,apss-wdt-qcs404
+> +              - qcom,apss-wdt-sa8255p
+>                 - qcom,apss-wdt-sa8775p
+>                 - qcom,apss-wdt-sc7180
+>                 - qcom,apss-wdt-sc7280
 
-Could you include "how to reproduce" in the commit message ? Something 
-easy like:
-- Write this and that sysfs attribute file with old value
-- Write this and that sysfs attribute file with new value
-- Observe this on a scope
 
