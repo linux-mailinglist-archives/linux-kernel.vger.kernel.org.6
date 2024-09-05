@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-317719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30CB96E2AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:05:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A46396E2B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ACBE1C25767
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771EE1C2594C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65781B12F9;
-	Thu,  5 Sep 2024 19:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB114188A2F;
+	Thu,  5 Sep 2024 19:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WdLwE6Cn"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8rlVhPV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493A418D633;
-	Thu,  5 Sep 2024 19:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2093812C7FB;
+	Thu,  5 Sep 2024 19:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725563037; cv=none; b=uuA4yNrABkKQiY4NUMfsKutOJFPgBiB1HVMWVsp3HQCWSOLZIqbGxQ8C28DQQs0IyG0Q3hRfGTtV4JUqZcZl2IYWiP9Fx1qrqGDlIyjKRkwvVww8b2z7phYg376n7FQKwILxyEL77VPJTF2OXZ3sKksKO7vBb85yI4JZKcTOwMk=
+	t=1725563168; cv=none; b=D7n5IsGJQA48HwOcnM10yqqEQDSJ5stycZKI71x+QVO8duPZmDweMkm5FySDx3Tq/69YIMVhJE5Creb3s7dQfhrWzuIpoK62QvCgZ620AjkGgLkfmOfz0JxJusjqd8afXBN8+7n9LtKbRXX1xoAMFTVd1puZtRrylKnsrXcsOQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725563037; c=relaxed/simple;
-	bh=w9njlXbTjKRFGbFKbv7kGAlfDQmuLVt42zz+nC9FzHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P6/nAeyAEq0Y6GoV8NbZ2PMQ45DfXGRq0Wkw7uLgFG68Ok7EfXFmwtMybEiQxCNcUnFYjz73/ZHNV0213TdplDaKDmkbwah/XA5iir4p76PnbXhP7uyppiZV6Q9+MaxxzhkLQpOgpPnkEdF1fmEfOye9CiyW2A/0n2PMqusCPSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WdLwE6Cn; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/LWMOwEq5GUDt5NImZXWEjsD4awT5R9j9E8cdrJ7p4o=; b=WdLwE6CnNPUk/lsHJztjMUkO1P
-	+tQrfJtNZbR2466KvpkhAb47I8QsJqk19D2JRASXbyOu98VInDhMDWQ59T+6tthxgIv2DV3PMZTGn
-	50S5rIaMFmmD6YrSxYF9uBN3+dJR/kHGxDWPFEGZLeyurkyEkWiEhU6HHQCvIjdoJZpC+/LAVS0iC
-	iboVw7Uax+cEX+It6g/ziPM2e1sK+892Agovno4V+gWDpsL+DSvSchSEQdh0DFyXwj8xpAQ7jyobH
-	fA61Fh/M1s2fyuoI72AvqlyV4W1Nw0byJx1aChWO4PtaufxCZptDFlTeEFBcjrfTpUhMqmpDsPsSf
-	KPxrkOAg==;
-Received: from [177.172.122.98] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1smHli-00A6Ho-U0; Thu, 05 Sep 2024 21:03:46 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com,
-	Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v3 9/9] docs: tmpfs: Add casefold options
-Date: Thu,  5 Sep 2024 16:02:52 -0300
-Message-ID: <20240905190252.461639-10-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240905190252.461639-1-andrealmeid@igalia.com>
-References: <20240905190252.461639-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1725563168; c=relaxed/simple;
+	bh=p1NL4lA6aQW0dc7CsvZOuEyngKVleWJuJw8cqJv4U98=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=bU2eI2uqD9vsatdKZd3ouCHVkmeTKwrBmVUoR7mkXDJAwWFcSjApwJGUyCCyci8++m2z7z/GpXHFwis+6uOr19aGiSLjJt7LJGp8YCy13RCMf4rUrixtJ6eaE7nEEKYEgmzsnqAm1sS6MxGOsBpy+7LXRUFUi6kFNhFNfBKHfe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8rlVhPV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B77C4CEC3;
+	Thu,  5 Sep 2024 19:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725563167;
+	bh=p1NL4lA6aQW0dc7CsvZOuEyngKVleWJuJw8cqJv4U98=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=c8rlVhPVwANDway5HZx0uUdFWaP58i+hiQySG8m7Hpl2FNwo9V8oay7ADf0a65JOl
+	 U9vC1F42lXWdWjmmlIq5wlAB2jNsyIZfUHRkafTpqYskJYDHh+Nz37uy/nnsKrMGVy
+	 RPmzEkMtT6ZgQtXuDjLOvftbmafahfqKfbxD9+zsP0VdKbzshtxxWJ5i7RvU18+nPC
+	 qwurTeTzMnB7l3+PMxDCWJYsZBKPoG6NB/wdvi5VtlEVCnM0Ao0Ks6chQqBYKS3sL/
+	 5LdYLyTFH1MwWiAbqUT2+p44QUjyeO6BfJ5o9PZuMyKoK5BHZYNI/eEDl4dh76oPtJ
+	 VYrC0ADWQQrXw==
+Message-ID: <0161bb1640489c7a677ac26967b65ee1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240831111056.3864-7-hpausten@protonmail.com>
+References: <20240831111056.3864-1-hpausten@protonmail.com> <20240831111056.3864-7-hpausten@protonmail.com>
+Subject: Re: [PATCH 6/6] clk: clocking-wizard: move dynamic reconfig setup behind flag
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+To: Conor Dooley <conor+dt@kernel.org>, Harry Austen <hpausten@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>
+Date: Thu, 05 Sep 2024 12:06:05 -0700
+User-Agent: alot/0.10
 
-Document mounting options for casefold support in tmpfs.
+Quoting Harry Austen (2024-08-31 04:13:26)
+> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
+inx/clk-xlnx-clock-wizard.c
+> index 1a65a7d153c35..967eacc28050d 100644
+> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> @@ -1146,20 +1146,6 @@ static int clk_wzrd_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(clk_wzrd->base))
+>                 return PTR_ERR(clk_wzrd->base);
+> =20
+> -       ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->s=
+peed_grade);
+> -       if (!ret) {
+> -               if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > =
+3) {
+> -                       dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
+> -                                clk_wzrd->speed_grade);
+> -                       clk_wzrd->speed_grade =3D 0;
+> -               }
+> -       }
+> -
+> -       clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
+> -       if (IS_ERR(clk_wzrd->clk_in1))
+> -               return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in=
+1),
+> -                                    "clk_in1 not found\n");
+> -
+>         clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_acl=
+k");
+>         if (IS_ERR(clk_wzrd->axi_clk))
+>                 return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_cl=
+k),
+> @@ -1170,31 +1156,48 @@ static int clk_wzrd_probe(struct platform_device =
+*pdev)
+>                 return -EINVAL;
+>         }
+> =20
+> -       ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+> -       if (ret)
+> -               return ret;
+> -
+> -       clk_wzrd->clk_data.num =3D nr_outputs;
+> -       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell=
+_get, &clk_wzrd->clk_data);
+> -       if (ret) {
+> -               dev_err(&pdev->dev, "unable to register clock provider\n"=
+);
+> -               return ret;
+> -       }
+> +       if (of_property_read_bool(np, "xlnx,dynamic-reconfig")) {
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- Documentation/filesystems/tmpfs.rst | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Is this going to break the existing DTBs? Before the property existed,
+the driver seems to have always tried to read xlnx,speed-grade and then
+setup a notifier, etc. Why would xlnx,speed-grade be set if
+xlnx,dynamic-reconfig wasn't set?
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe..636afd3eaf48 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -241,6 +241,27 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insensitive lookups support:
-+
-+================= ==============================================================
-+casefold          Enable casefold support at this mount point using the given
-+                  argument as the encoding standard. Currently only UTF-8
-+                  encodings are supported. If no argument is used, it will load
-+                  the latest UTF-8 encoding available.
-+strict_encoding   Enable strict encoding at this mount point (disabled by
-+                  default). In this mode, the filesystem refuses to create file
-+                  and directory with names containing invalid UTF-8 characters.
-+================= ==============================================================
-+
-+Note that this option doesn't enable casefold by default; one needs to set
-+casefold flag per directory, setting the +F attribute in an empty directory. New
-+directories within a casefolded one will inherit the flag.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,strict_enconding fs_name /mytmpfs
-+    $ mount -t tmpfs -o casefold fs_name /mytmpfs
-+
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
-@@ -250,3 +271,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
-    KOSAKI Motohiro, 16 Mar 2010
- :Updated:
-    Chris Down, 13 July 2020
-+:Updated:
-+   André Almeida, 23 Aug 2024
--- 
-2.46.0
-
+The binding has implicitly had xlnx,dynamic-reconfig set before this
+patch, and we should strive to maintain that. Perhaps the property
+should be inverted, i.e. xlnx,static-config, and the absence of that
+property can imply the reconfig property.
 
