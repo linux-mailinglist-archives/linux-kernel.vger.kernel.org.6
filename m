@@ -1,110 +1,91 @@
-Return-Path: <linux-kernel+bounces-317334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DCF96DCA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:55:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD27E96DCAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B480D1F231B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:55:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B06B1C21EE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E330F19DF5B;
-	Thu,  5 Sep 2024 14:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8BD19E822;
+	Thu,  5 Sep 2024 14:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjfbRAYO"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="W36AO+Ok"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11697D405;
-	Thu,  5 Sep 2024 14:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF174148302
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548016; cv=none; b=Zl9PQ5QtqX2nzSU9/P8s1HEbcNevgqLLgsYsAXbBhpgAAULtbbaNo4jhYqxmbawSHuTHguu81KgUvzVNlSg/1irAtE/fFQ088fYCeqLZkwd1cnXnBSH+GBwHAoFIimA/xq5eBJp2uut5EQeNm2xOvwISUas+uFbgQmUBt1JopUE=
+	t=1725548056; cv=none; b=TUPEx+aEXXXzbqZpIOxHw23I5lClfLNKuOIvom+KevlsBX5L11bKr+n1A37qhLRQaVvp6JuCl2bNq1ijOp7gPMEk/LNUW6TJ54vB2KZk8qygtLbppzKNpesZaEfgP93cj7zuZz6E/B3tkC714SXjXwygdyTpyAW61j+9FqVGlqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548016; c=relaxed/simple;
-	bh=jqcZny1PU1DcuE8GExy2+KpWKtl29hP9zSYbnzunf1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnCSWgetVoEJyPMGi9FrXiDz42RSC12olI9oLMdPpfQRGI7fAqIqouxMdRQJIQYSBBi2Nk6oM5Oa0GSNGXFrZS+EEmcNOG8IPkKZdkK1/xzae1m4ZqXdiuanZhHaRXkoPTmd3+zxd/C26jwpN01gIx2HaoNqJEvZrxfQlxwkTLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MjfbRAYO; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c26e5d05d3so113261a12.0;
-        Thu, 05 Sep 2024 07:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725548013; x=1726152813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZR0iYi2IfJinEuVM0L8yEAQAxrisPIV++kgfxATokkM=;
-        b=MjfbRAYOQOEkNDdXJWL9He1XEVdK0OQXwiHa/dJ85M8R7a6RL3BTJwVWlfev0k9pL8
-         G7AHyyAchhCX19ds0RAdRoCiwix854PK+idubgvLV1bNZue1ECd/Fz5cDlIvhPMHWc3e
-         N1nVUKLo4BZ6cW2Acf02qOKxgcmsLZ2hX1+UrFp9qhhmTG+Hz9RQDjEBadnvEbdAQFGC
-         ZKFtTJrO/LRrL/Nf6THTff2SCGNC4jSausz6vk180aLnXeeNJ0RYZDav5lhuS3P4meC3
-         Gqn/GYbDXDVkv/bXSd6rbNvywLQ6l/TwuDSjgX6J/OEhsfOad0t0UUtnet1+k+4oN2LY
-         zA1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725548013; x=1726152813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZR0iYi2IfJinEuVM0L8yEAQAxrisPIV++kgfxATokkM=;
-        b=l0RvzB3KDhldjsztQzUn2IYd6MIaBueTdu/ydnKC0qSlQ9x6IOBT789CWjY6kN+cSv
-         9HvUeazgNzuwIRi1E3Xgh0Th/NihLdaMm3+t2/WzeG4Jj68R3RXo5SF1pf2ojCSkm9Ym
-         assuqzECOBIY7LjEbaUz4JqXtTeXgauZUZA+E7HrnRZSeEYPz8wqtNfOS4m6Sll+DUoe
-         sVewK4ZBtD+5ClMKbtjQdKqT0DcdrH/UgDTxjVtCXU9N8dFyFgOq65/4kJ5GTxpMr+Q1
-         WR8je3QDURwZyqlHmbXaJF8nbb3q14MVjG8oYQ3gg28k8+hAZH0iJ2fMzAXumpF8XcoC
-         tM2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVHWCBPvuEwHa3m4+SRYkUVZ1Xd1c0rsAMGpshe6HA37ASqxzZkTSJeMOUGVJcxxwWxZog8/7EK@vger.kernel.org, AJvYcCWCF77WEnfd0SMUMqApADw+xpVrkDnZ/fOImXPJotF8jp/UcwPneLjBCs9zA+mk+o34R9e+VrdmhKWZZ3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA9qlpT8SSNb1936ANHtx0KX45xngRbb595BHfPfnuIdJFQklg
-	4MsMcKYlWak1hPEFrcbs9vpMJIIcZ50qG8Hae6q2Gc1JCp9Rvw6u
-X-Google-Smtp-Source: AGHT+IHSJDF7488/JNd5/mBRKMIt/AGCz8WaJYYqZBzFyEHSWTtvg92OHespTIAyKntNsE/Yr1Q17g==
-X-Received: by 2002:a05:6402:35ca:b0:5c2:4e5b:d0cc with SMTP id 4fb4d7f45d1cf-5c24e5bd937mr6396914a12.1.1725548012976;
-        Thu, 05 Sep 2024 07:53:32 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc6a5cfasm1316252a12.92.2024.09.05.07.53.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 07:53:32 -0700 (PDT)
-Date: Thu, 5 Sep 2024 17:53:29 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com
-Subject: Re: [PATCH net-next v8 7/7] net: stmmac: silence FPE kernel logs
-Message-ID: <20240905145329.bqarpzzaciluwdxi@skbuf>
-References: <cover.1725518135.git.0x1207@gmail.com>
- <cover.1725518135.git.0x1207@gmail.com>
- <508ae4f14cf173c9bd8a630b8f48a59a777f716e.1725518136.git.0x1207@gmail.com>
- <508ae4f14cf173c9bd8a630b8f48a59a777f716e.1725518136.git.0x1207@gmail.com>
+	s=arc-20240116; t=1725548056; c=relaxed/simple;
+	bh=XHNWFsPO4rhOhjUD5kfeygL+CLo9i0mepp1M3cGnGrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oks3IwJ1X9gePW3+BPYQ4XNwW9LHFmXuF1ZiRlAQBkhQWlTkqYlZ3J5rZTtygP7jlT0R+CdnHc4mfAmA/KmHug7A5OQyE463WhmMZnCmIizwCPao1afCxD0NJNArTqQRFYw6H0pTJOdoV+oqI+TBvZ80Kb/5ts5tMCO4HnUDxs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=W36AO+Ok; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 485ErsAr004661
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 10:53:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725548039; bh=XT9HRP1/P5NPb53sSdVf17ip7FShvNz7T2P4ENR7kg4=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=W36AO+OkeEOYjBLCGHxy5leMVqtTaVb4yX2sXW7q77XUXr9A0G/UbPIh26J5WfdYr
+	 QqTvAVc8ncKHnEQ9BylwuNkvzHkx8omJceHUolDxpRXRnbx73J9c4MCovAWtsmVFel
+	 qdSO8mZ5aPNa+3G+GngPMLiXef30a+cmDjPU+mbTvPeI+Vrrz9sxYMlKmKVe0/smN/
+	 C3Ij3Q7HgOSGaL9uoMwN0ckTzPZeG0QEpkloJgzwqecu4FcBhQnF2hM2K9Qn1kqz+O
+	 t4iGXEnWHm6FSQFam47BptcdA1E6sNR7vD1e2lngOl54mIU0EFjVJnd7U+2xso65rz
+	 SxOvsTNgHGZjQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id DAA1115C02C6; Thu, 05 Sep 2024 10:53:54 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Artem Sadovnikov <ancowi69@gmail.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lvc-project@linuxtesting.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        Mikhail Ukhin <mish.uxin2012@yandex.ru>
+Subject: Re: [PATCH v3] ext4: fix i_data_sem unlock order in ext4_ind_migrate()
+Date: Thu,  5 Sep 2024 10:53:40 -0400
+Message-ID: <172554793835.1268668.9896908315159460691.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240829152210.2754-1-ancowi69@gmail.com>
+References: <20240829152210.2754-1-ancowi69@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <508ae4f14cf173c9bd8a630b8f48a59a777f716e.1725518136.git.0x1207@gmail.com>
- <508ae4f14cf173c9bd8a630b8f48a59a777f716e.1725518136.git.0x1207@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 05, 2024 at 03:02:28PM +0800, Furong Xu wrote:
-> ethtool --show-mm can get real-time state of FPE.
-> fpe_irq_status logs should keep quiet.
-> 
-> tc-taprio can always query driver state, delete unbalanced logs.
-> 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+On Thu, 29 Aug 2024 15:22:09 +0000, Artem Sadovnikov wrote:
+> Fuzzing reports a possible deadlock in jbd2_log_wait_commit.
+> 
+> This issue is triggered when an EXT4_IOC_MIGRATE ioctl is set to require
+> synchronous updates because the file descriptor is opened with O_SYNC.
+> This can lead to the jbd2_journal_stop() function calling
+> jbd2_might_wait_for_commit(), potentially causing a deadlock if the
+> EXT4_IOC_MIGRATE call races with a write(2) system call.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] ext4: fix i_data_sem unlock order in ext4_ind_migrate()
+      commit: cc749e61c011c255d81b192a822db650c68b313f
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
