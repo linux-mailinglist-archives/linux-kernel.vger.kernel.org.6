@@ -1,345 +1,146 @@
-Return-Path: <linux-kernel+bounces-316994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F164796D80C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A74296D808
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37761B24F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:13:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9152289BB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49B319AA68;
-	Thu,  5 Sep 2024 12:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212CE19ADA4;
+	Thu,  5 Sep 2024 12:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mhiKDw6e"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLuInnLe"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A14419415D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA7219AA5D;
+	Thu,  5 Sep 2024 12:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538384; cv=none; b=hMwaT/vGdmob1uqQGhuLZDh5Co7C9OiiMOGVKSGflciFsGT+J62IYS69KLME9XE8t5xQL9aL2HT71u+bENDIyh745F8Df6EWLJCdmEjkjsKFaqPoaUqC5KOi1JT4MAdH2UU3zAEDTmGgxRhj1WcwNZ6ceOJ9nxUvo2EmsUXThzA=
+	t=1725538347; cv=none; b=DDXlcKxr83lGAKZkYPKY7JaCI3sTCc+bYRNX+xQQ6zfKa9NOnEYRwLS59aDHSLm7kaYlRfue+mlztuUBeqVmcI7Ytm2Frry0nI/ZFDgsUMcVTf7OX/AeZ9Z1OhVIIrQnz1cOk8jeLG9wevTa/358i1/vlzRjzU3ZZdiTA6bR7Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538384; c=relaxed/simple;
-	bh=+jDG3JYDe/++FF/fh8h9sLbqIlRkatmczwokOPhdfro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAXk05wXTkmkl3fbUL8SiEnd17ckQRwLkoJCImWODcxEn41QVtJGRxKNr3L+dvGmrPYVKjLqY5tuFsejorwsbp3/Ymp2FvuPiuPkEAj94me5y2n7uVo3IA9QZtAImgTA1tsBmvg5zY0B4iXRx/n4S9elFVMNiu/+yNGF65cHyrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mhiKDw6e; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso7116055e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:13:02 -0700 (PDT)
+	s=arc-20240116; t=1725538347; c=relaxed/simple;
+	bh=FONOtkrHn9wffb60g9bCFmD5Ce6Mpzm24koAoepUZFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fUECrZRafxLwprvJ1GUdXM/RxVyGiIsGFuapYPbd2PuxN6NEr+I3MwXUuF3za0VxZBQpWH+2RWaQEcnD2LsfENC/4JjYV02VPMer+tx0X+kvasdXEpJ4BWwOV3zbiKoyA5eKnrx56KIdc0TP9+jHpG9vqCT/LcVE8rPTYhnx44k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLuInnLe; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-501274e2c29so10878e0c.3;
+        Thu, 05 Sep 2024 05:12:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725538381; x=1726143181; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m6It2HdDUC4BbNQGIGTSDyaqe3HUtc/IZnrLdGUtApY=;
-        b=mhiKDw6eM7LsHfUYp4jkMgu95khQDk2TJD8n9DBzadvYrlJHMa/VDTLWB0pxC4R7PD
-         IIJOA73P4t0dadO7JhghqR4AL9UX6bGCmVc6pDlHTp1usHa7Fb6nd4fVoj9cGlyl3+gk
-         ra91RHIFzCksVAuKlffDJ/j3CzS+egEb5NWynMbVIg1fjpoaU7gb1mDEEQf52f/HteW6
-         EaKpDcKufNkIHd6CHWEJrWqi0fM0qbEuowHjKIiLAfmbmdk0TvPljFsd+nUZKzjhWXqA
-         Jld0SCUSYm87p1wWEqqS7zLKCnX4n+qdOJ4/5pJCSsaqs0YxrfJcJjtA9tVcQzlhKpD+
-         VlWg==
+        d=gmail.com; s=20230601; t=1725538345; x=1726143145; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gZAyTtY3aoGNNDzIbl+ioueHhEM4J2F6ba4GcLwUm8=;
+        b=CLuInnLegHd+XHPSVPghafie3UQqCrew+zqk0jBidVXsiJWTlSRxxdHf3u/3wOT5dP
+         DU/IV5j4AP8rQKqeJOEyO1bUiX70hPNpDsd//gajwRYph0pQCMovSgxX4NzLTCnWJHXG
+         SgsfLC/7ODYsYrVIEav8G48iHKbmsS4r4I45w27Pa1hYuZDVqxsW86gVLP7gd4ni2aox
+         pvy8Q0RCOMJnM9mc7KGUmOemJURBq4XgMCIHWoU50TcwhKmQGTZgyfBabfMygmnSR52e
+         cV/01Sx9MseL0bIhAVo3vGtuWgBfRUgaGFQSQve22OZ/US/AeGgakV0vn+wT5d3kLrld
+         xZOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725538381; x=1726143181;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m6It2HdDUC4BbNQGIGTSDyaqe3HUtc/IZnrLdGUtApY=;
-        b=NVF91zOsummpsTfGQMrobjNLAk2gpuBYvgcFmQbzRso3W0We2bWLlpwZnHdjOfnxwo
-         eFkP9vaepZ0eo1oVxLvuM2HaAlixXpIVBdmljC50qX31+YcGt+proIN5jRIcTajgrqcR
-         wOEpqbgJyAyqNOojqJ8g/KIeHxx7nA6aSCwKKkgfAibmq+ZcNXbaDnMobW87nP1W4lon
-         jKNGyvV1Af3MhF+E64k7r7fgIxCywOQfDz37fDebUBUhBgmb6wp1CoJ/vKqb2Oh2V6gE
-         X3/J74vB2eFfldvpk1XH+uKBj2URsvtQjVyZX2GliVPb6kbLQaKc3ZTBKIp3fJZkt2A0
-         aJmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2CnSWfJJ/67pzA4qq57KeWv+U/7KV4HpO8nSiUcEBGE1DclsTd1izAoDYiA/rBGH5YTBRKAFJwPvejgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4KrZGECDxtZ+snqFEsnAS6A9VXAsCMsV0N90DnBTomVeVIJxd
-	/RSd7myQdLYz4dm5LIgXxanPf6YBJnNfhOhrTZ4fL/u7/2CfWmVt1iI1HOd8TD4=
-X-Google-Smtp-Source: AGHT+IFtTOwg01ZV8wigd8IpvAdo9Pm90FUvvktd9bNtF2isYdPsdJqza1tsCWD6aeOTo0Q/OaYBOw==
-X-Received: by 2002:a05:600c:198a:b0:426:5f09:cf53 with SMTP id 5b1f17b1804b1-42c9a365e3fmr22108905e9.15.1725538380309;
-        Thu, 05 Sep 2024 05:13:00 -0700 (PDT)
-Received: from [192.168.0.2] (host-95-233-232-76.retail.telecomitalia.it. [95.233.232.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df84b9sm231345205e9.24.2024.09.05.05.12.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 05:12:59 -0700 (PDT)
-Message-ID: <ad1a8507-49df-49c6-a285-8adb407ad7a1@baylibre.com>
-Date: Thu, 5 Sep 2024 14:11:49 +0200
+        d=1e100.net; s=20230601; t=1725538345; x=1726143145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9gZAyTtY3aoGNNDzIbl+ioueHhEM4J2F6ba4GcLwUm8=;
+        b=vN5p5r7jhdMk5fYx1cc+DG1kuMzNeBaEpKhKlaL1YjPWgE0wL7uhfIqrhvRzblSrpu
+         LJj6wlJ2KHkP6Mj9sOp1NIHWmsrW5yMJtiDmWVb2u9xnewb3vJScqrnjZ07ooAklT9BA
+         3rjPV9w57lurVPdYLGSbU+zVawEyZhBGRq/sPl9qsTmwBzStW4VMcUfE1WWsq6uPrjxR
+         DiFL8vYGFSZID9C/HniE8UC9E1U/z9neyXO1Tmrr2DG/Fy9TbIrr5yV21NydeDdM2VjN
+         dGaIY2Uqd6RiOKhSYbQ2HihxcDIhhnsXl64KdxAbrwZgQja4w8B/mHqhOK/2BVf3V966
+         w9eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0SOatdL9lwsYOtMrDx8f2VqVGKFCwyBhdBRhaAJfulErAhyRPXD7ZW9x2ghMtcbQKxBz5/1hoNlPAVVxIxB4=@vger.kernel.org, AJvYcCUIyS2LrF4ZRM87PVA50vgfzUVq6RGhGP36mkaD7nyszIidtXVyr89nG2dsgpHbNzHIaTJTiTb8lh4BB0UUzLSsmzU=@vger.kernel.org, AJvYcCVngW5Pc/z4y++SYszOywSS2BpCvQK7Rc4pBm9AHIY1ltRA1KXhfvgMdCR2iUlcX+FXmze5koUTRVjQRnqf@vger.kernel.org, AJvYcCXnJgbLGA9cNl9rD5mbpovVj7NVH5V8WOUHankVSOL261M4mb5rvyCkl7wU8ee1t+81Nb1D075jquMh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfuY4KgeTMBzNKH+3n7bPeYqoKsHnnv89d7Pclg8OGt83l3mTK
+	qPUr+6VakIRDlg/qf6MPMAFrYu2zBCnfqOVtBrdHG7puKQdkHo+8FvihAIE9Zm5qR8YG1BQJWZr
+	zdRibrzcpOsrZ0ANZrOePAauu4M+Vf7zH/P8=
+X-Google-Smtp-Source: AGHT+IHXyw2RxkWhPsZxpmqiSi/213b8QWfi+5HjtH7I9tuPHtt3kLBnh3OYZTkw1Y8/ZGUBwriigeoD0h16GDmtUJg=
+X-Received: by 2002:a05:6122:2a05:b0:4f6:a7f7:164d with SMTP id
+ 71dfb90a1353d-5009ac7a8a8mr21097634e0c.8.1725538344968; Thu, 05 Sep 2024
+ 05:12:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/8] iio: backend adi-axi-dac: backend features
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dlechner@baylibre.com
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240829-wip-bl-ad3552r-axi-v0-v1-3-b6da6015327a@baylibre.com>
- <20240831123418.6bef6039@jic23-huawei>
- <fd68cda2-f523-49fd-943b-c07dbb461799@baylibre.com>
- <20240903201614.08722f59@jic23-huawei>
- <e7aacdc36be2bc11dc0e5ce5cf135482257d2a7d.camel@gmail.com>
-Content-Language: en-US
-From: Angelo Dureghello <adureghello@baylibre.com>
-In-Reply-To: <e7aacdc36be2bc11dc0e5ce5cf135482257d2a7d.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240829193831.80768-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240829193831.80768-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 5 Sep 2024 13:11:58 +0100
+Message-ID: <CA+V-a8tzZPkdxiivuRvOQoo8ayFttzXBWGoMufDXtdGg9477Yw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] Add Watchdog Timer driver for Renesas RZ/V2H(P) SoC
+To: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Wim,
 
-sorry forgot to reply about the regmap,
-
-On 05/09/24 12:49 PM, Nuno Sá wrote:
-> On Tue, 2024-09-03 at 20:16 +0100, Jonathan Cameron wrote:
->> On Mon, 2 Sep 2024 18:04:51 +0200
->> Angelo Dureghello <adureghello@baylibre.com> wrote:
->>
->>> On 31/08/24 1:34 PM, Jonathan Cameron wrote:
->>>> On Thu, 29 Aug 2024 14:32:01 +0200
->>>> Angelo Dureghello <adureghello@baylibre.com> wrote:
->>>>   
->>>>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>>>
->>>>> Extend DAC backend with new features required for the AXI driver
->>>>> version for the a3552r DAC.
->>>>>
->>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>>> Hi Angelo
->>>> Minor comments inline.
->>>>>    
->>>>>    static int axi_dac_enable(struct iio_backend *back)
->>>>> @@ -460,7 +493,13 @@ static int axi_dac_data_source_set(struct
->>>>> iio_backend *back, unsigned int chan,
->>>>>    	case IIO_BACKEND_EXTERNAL:
->>>>>    		return regmap_update_bits(st->regmap,
->>>>>    					
->>>>> AXI_DAC_REG_CHAN_CNTRL_7(chan),
->>>>> -					  AXI_DAC_DATA_SEL,
->>>>> AXI_DAC_DATA_DMA);
->>>>> +					  AXI_DAC_DATA_SEL,
->>>>> +					  AXI_DAC_DATA_DMA);
->>>> Unrelated change.   If you want to change this, separate patch.
->>> Thanks, fixed.
->>>>   
->>>>> +	case IIO_BACKEND_INTERNAL_RAMP_16:
->>>>> +		return regmap_update_bits(st->regmap,
->>>>> +					
->>>>> AXI_DAC_REG_CHAN_CNTRL_7(chan),
->>>>> +					  AXI_DAC_DATA_SEL,
->>>>> +					
->>>>> AXI_DAC_DATA_INTERNAL_RAMP_16);
->>>>>    	default:
->>>>>    		return -EINVAL;
->>>>>    	}
->>>>> @@ -518,9 +557,204 @@ static int axi_dac_reg_access(struct iio_backend
->>>>> *back, unsigned int reg,
->>>>>    	return regmap_write(st->regmap, reg, writeval);
->>>>>    }
->>>>>    
->>>>> +
->>>>> +static int axi_dac_bus_reg_write(struct iio_backend *back,
->>>>> +				 u32 reg, void *val, size_t size)
->>>> Maybe just pass an unsigned int for val?
->>>> So follow what regmap does? You will still need the size, but it
->>>> will just be configuration related rather than affecting the type
->>>> of val.
->>>>   
->>> void * was used since data size in the future may vary depending
->>> on the bus physical interface.
->>>
->> I doubt it will get bigger than u64.  Passing void * is always
->> nasty if we can do something else and this is a register writing
->> operation.  I'm yet to meet an ADC or similar with > 64 bit registers
->> (or even one with 64 bit ones!)
-> I think the original thinking was to support thinks like appending crc to the
-> register read/write. But even in that case, u32 for val might be enough. Not
-> sure. Anyways, as you often say with the backend stuff, this is all in the
-> kernel so I guess we can change it to unsigned int and change it in the future
-> if we need to.
+On Thu, Aug 29, 2024 at 8:38=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
 >
-> Since you mentioned regmap, I also want to bring something that was discussed
-> before the RFC. Basically we talked about having the backend registering it's
-> own regmap_bus. Then we would either:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> 1) Have a specific get_regmap_bus() callback for the frontend to initialize a
-> regmap on;
-> 2) Pass this bus into the core and have a new frontend API like
-> devm_iio_backend_regmap_init().
+> Hi All,
 >
-> Then, on top of the API already provided by regmap (like _update_bit()), the
-> frontend could just use regmap independent of having a backend or not.
+> This patch series aims to add WDT support to Renesas RZ/V2H(P) SoC.
 >
-> The current API is likely more generic but tbh (and David and Angelo are aware
-> of it) my preferred approach it to use the regmap_bus stuff. I just don't feel
-> that strong about it :)
-
-regmap idea seems really nice and a better style.
-
-Honestly, if possible, would not go for it right now.
-The main reason is that i am on this work from months and it would 
-require a quite
-big rework (also rearranging more common code, retest, etc) while i am 
-trying to
-finalize a first driver.
-
-If you agree, this could come in a second "cleanup" patchset, but at 
-least i can
-provide an initial support for ad3552r.
-
->>> Actually, a reg bus write involves several AXI regmap operations.
->>>>   
->>>>> +{
->>>>> +	struct axi_dac_state *st = iio_backend_get_priv(back);
->>>>> +
->>>>> +	if (!st->bus_type)
->>>>> +		return -EOPNOTSUPP;
->>>>> +
->>>>> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {
->>>> As below, I'd use a switch and factor out this block as a separate
->>>> bus specific function.
->>> Ok, changed.
->>>>   
->>>>> +		int ret;
->>>>> +		u32 ival;
->>>>> +
->>>>> +		if (size != 1 && size != 2)
->>>>> +			return -EINVAL;
->>>>> +
->>>>> +		switch (size) {
->>>>> +		case 1:
->>>>> +			ival = FIELD_PREP(AXI_DAC_DATA_WR_8, *(u8
->>>>> *)val);
->>>>> +			break;
->>>>> +		case 2:
->>>>> +			ival =  FIELD_PREP(AXI_DAC_DATA_WR_16, *(u16
->>>>> *)val);
->>>>> +			break;
->>>>> +		default:
->>>>> +			return  -EINVAL;
->>>> Hopefully compiler won't need this and the above. I'd drop the size != 1..
->>>> check in favour of just doing it in this switch.
->>>>   
->>> sure, done.
->>>
->>>
->>>>> +		}
->>>>> +
->>>>> +		ret = regmap_write(st->regmap, AXI_DAC_CNTRL_DATA_WR,
->>>>> ival);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +
->>>>> +		/*
->>>>> +		 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to
->>>>> know
->>>>> +		 * the data size. So keeping data size control here
->>>>> only,
->>>>> +		 * since data size is mandatory for to the current
->>>>> transfer.
->>>>> +		 * DDR state handled separately by specific backend
->>>>> calls,
->>>>> +		 * generally all raw register writes are SDR.
->>>>> +		 */
->>>>> +		if (size == 1)
->>>>> +			ret = regmap_set_bits(st->regmap,
->>>>> AXI_DAC_REG_CNTRL_2,
->>>>> +					      AXI_DAC_SYMB_8B);
->>>>> +		else
->>>>> +			ret = regmap_clear_bits(st->regmap,
->>>>> AXI_DAC_REG_CNTRL_2,
->>>>> +						AXI_DAC_SYMB_8B);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +
->>>>> +		ret = regmap_update_bits(st->regmap,
->>>>> AXI_DAC_REG_CUSTOM_CTRL,
->>>>> +					 AXI_DAC_ADDRESS,
->>>>> +					 FIELD_PREP(AXI_DAC_ADDRESS,
->>>>> reg));
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +
->>>>> +		ret = regmap_update_bits(st->regmap,
->>>>> AXI_DAC_REG_CUSTOM_CTRL,
->>>>> +					 AXI_DAC_TRANSFER_DATA,
->>>>> +					 AXI_DAC_TRANSFER_DATA);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +
->>>>> +		ret = regmap_read_poll_timeout(st->regmap,
->>>>> +					       AXI_DAC_REG_CUSTOM_CTRL,
->>>>> ival,
->>>>> +					       ival &
->>>>> AXI_DAC_TRANSFER_DATA,
->>>>> +					       10, 100 * KILO);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +
->>>>> +		return regmap_clear_bits(st->regmap,
->>>>> AXI_DAC_REG_CUSTOM_CTRL,
->>>>> +					  AXI_DAC_TRANSFER_DATA);
->>>>> +	}
->>>>> +
->>>>> +	return -EINVAL;
->>>>> +}
->>>>> +
->>>>> +static int axi_dac_bus_reg_read(struct iio_backend *back,
->>>>> +				u32 reg, void *val, size_t size)
->>>> As for write, I'd just use an unsigned int * for val like
->>>> regmap does.
->>> Ok, so initial choice was unsigned int, further thinking of
->>> possible future busses drive the choice to void *.
->>>
->>> Let me know, i can switch to unsigned int in case.
->> I would just go with unsigned int or at a push u64 *
->>
->>>
->>>>   
->>>>> +{
->>>>> +	struct axi_dac_state *st = iio_backend_get_priv(back);
->>>>> +
->>>>> +	if (!st->bus_type)
->>>>> +		return -EOPNOTSUPP;
->>>>> +
->>>>> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {
->>>> It got mentioned in binding review but if this isn't QSPI, even
->>>> if similar don't call it that.
->>> It's a bit difficult to find a different name, physically,
->>> it is a QSPI, 4 lanes + clock + cs, and datasheet is naming it Quad SPI.
->>> But looking the data protocol, it's a bit different.
->> is QSPI actually defined anywhere? I assumed it would be like
->> SPI for which everything is so flexible you can build whatever you like.
->>
->>> QSPI has instruction, address and data.
->>> Here we have just ADDR and DATA.
->>>
-> I'm not sure the instruction is really relevant for this. From a quick look, it
-> feels like something used for accessing external flash memory like spi-nors. So,
-> I would not be surprised if things are just like Jonathan said and this is just
-> flexible as spi (being that extra instruction field a protocol defined for flash
-> memory - where one typically sees this interface)
+> v4->v5
+> - Updated commit description for patch 1/2
+> - Collated RB tags from Geert and Guenter
 >
-> - Nuno Sá
-regards,
-Angelo
+> v3->v4
+> - Simplified calculation of max_hw_heartbeat_ms
+> - Turn on the clocks first before reset operation in start & restart
+>   callbacks
+> - Added checks in restart callback before turning ON clocks/resets
+> - Dropped udelay after every ping operation
+> - Added comments
+>
+> v2->v3
+> - Fixed dependency, ARCH_R9A09G011->ARCH_R9A09G057
+> - Added dependency for PM
+> - Added delay after de-assert operation as clks are halted temporarily
+>   after de-assert operation
+> - Clearing WDTSR register
+>
+> v1->v2
+> - Included RB tag for binding patch
+> - Fixed review comments from Claudiu
+> - Stopped using PM runtime calls in restart handler
+> - Dropped rstc deassert from probe
+>
+> Cheers,
+> Prabhakar
+>
+> Lad Prabhakar (2):
+>   dt-bindings: watchdog: renesas,wdt: Document RZ/V2H(P) SoC
+>   watchdog: Add Watchdog Timer driver for RZ/V2H(P)
+>
+>  .../bindings/watchdog/renesas,wdt.yaml        |  17 +-
+>  drivers/watchdog/Kconfig                      |   9 +
+>  drivers/watchdog/Makefile                     |   1 +
+>  drivers/watchdog/rzv2h_wdt.c                  | 272 ++++++++++++++++++
+>  4 files changed, 298 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/watchdog/rzv2h_wdt.c
+>
+Gentle ping.
 
--- 
-  ,,,      Angelo Dureghello
-:: :.     BayLibre -runtime team- Developer
-:`___:
-  `____:
-
+Cheers,
+Prabhakar
 
