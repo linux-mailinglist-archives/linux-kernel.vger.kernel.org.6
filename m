@@ -1,112 +1,200 @@
-Return-Path: <linux-kernel+bounces-317149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6401E96DA00
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:17:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0416B96DA09
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22EF92838B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8351F233BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE2D19D077;
-	Thu,  5 Sep 2024 13:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFEC19D087;
+	Thu,  5 Sep 2024 13:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ed3/0FsR"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sNGkKR+x"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2059.outbound.protection.outlook.com [40.107.93.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7EA198852;
-	Thu,  5 Sep 2024 13:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542264; cv=none; b=Atf8MQx9pJ738ooO3X8MAk6Y7aFl/UxSjWl46Wqjzw2+Ed4+MglWQ+/NpGEuKKRXQVm/CXlEumVNFs14LXlpXs9KYKFJ5aZ7g7VaNMTm1hu5jiOzJY1A3o1DTf83WpqhISLrdOlBco0GU2PFBdc34izy37TxR3WpuwOvHA3SlWs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542264; c=relaxed/simple;
-	bh=mtsb392WNG6b6DuTJvS0+Do9RHM8v8Le1vrjRjP9gpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQC+L1lKbNytjM0IZOSgQlvPSgHXpsC45rdk1smjG8QLQbq3bseREIaOUiKPLfLJhqqiWKWJyQDrCBjAjhAqti5VhvFBEBOMkD5mfmOjpNHr5FyYN4gDYIdf3KmBmCA/t01jUsMUlNB48bruMuG6KS7DCEZ3LbfaTgY3bO3/UpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ed3/0FsR; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=uSLA4QzqeKoxXIsDyYl7MU0S/K45h0h7fl/gv0XNWRw=; b=Ed3/0FsRR177NyjmXNhyo3INPI
-	4yLjOWczASWhQV6rNqfMbNV5iB/brlmO7uzxEZEAx8QTuda8Eb8WgN947gwis0rXhgJAUY6xherwG
-	+6ZloCVTpNVE98ytrnt8iD9yq9A1cyFEZ+cexnc8L+skiPEurC37CwaljDUx72BwAC3c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smCMb-006gCV-F3; Thu, 05 Sep 2024 15:17:29 +0200
-Date: Thu, 5 Sep 2024 15:17:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: saikrishnag@marvell.com, robh@kernel.org, jan.kiszka@siemens.com,
-	dan.carpenter@linaro.org, hkallweit1@gmail.com,
-	diogo.ivo@siemens.com, kory.maincent@bootlin.com, pabeni@redhat.com,
-	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Make pa_stats optional
-Message-ID: <48c2a26c-b7ad-4449-921c-7dd65fd2909a@lunn.ch>
-References: <20240905101739.44563-1-danishanwar@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F079019D079;
+	Thu,  5 Sep 2024 13:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725542298; cv=fail; b=Lt/v6jXTuid+p+UJXqbSgAsPucIbr97Xzqm1xt4kgKlgK1Alcdu7oQLqCO68Z4QOQ5z/X3KTs6A67OAAbPX7W2pJv7BweAAogLS9Fe8wrxB+h7ZLuZoeivmgWFqcD+M0Q09imMOOt2N6CvKCC3w1a33ESYYws1DLEQYODZ9n/dA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725542298; c=relaxed/simple;
+	bh=r1AlEq5ucmAiDTT0NxSZIMrolOFi+kbS67ZfWWD81MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DkL+eNNSzuJcLEnY/qZvblSjdn7Wi8FhLWxpR2RclXzRZFWgIT32CoII8htuXGfY65ftR2cc2LoUwttPAjrDtLRnvjrxeU8wxn6NQtEILxy9hDo4q2ipHYQwLXRMSmUR+ztIxPT4NYgNG9wVsNlrXvhfkgGhc8bnseDEJQh5wOE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sNGkKR+x; arc=fail smtp.client-ip=40.107.93.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bqS43+AS1dLtTKiQ7YSGUEC8SZKe504sGDfajYE1a4b5EzKOVeQBDwjHrY/psOJL3MU10UTPdMJZhc+7Ryjb0NFz2d97mwxf2Iy0C0rkZiTcGqx//HidMSE9fcoM+OQIv2SHIrP6rfZzvEP6Whdjgoqi3cXJwzIfXmSEyHJJtxA4Csh7JXwlQndVZovtxL3DvQX5T9NVBfmKrS0njViFjsNI36BcsYvt1sqAsKPzaiiKvaPlCAHjqsGqkTQBz0qVTgEhFCTyeH8c+c66X4CpREmH4aAW3f4v32r9DsAVO+OOwW96/qVsuEnLbwKXIDjY+cvG3SN3SMd2E5uLD6HbTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rb3bq/MdPrRpAr9bK1qAHrreZM3pBFMMBQxOYTOtRP4=;
+ b=Ym4lgFQduxfO5NpGI//m0mPCbdEo5pZnW+zEjFo0cKW7wG5f+qVWcZ98itf8xgkU3Mc2+/JLRkvtirlspA4oURjJ/vYpUfMMb4fxUOW7iOA6K7eKOOx4jS9SFvgPMAclRm1+SuV5p1QiPRZQapTgNXNa67/80uHPsencfqI47xDeN4KfajT67/C6jTLdykjlZocZcaNOAFAEyk7IC9X8LAJeq9yc2vD9XXRuxi/mXKUkkk4Ktwg7o1VEnHf/vmlzbBxorabbct1tMrpHp2qajcFkiYBZrB5tdYVeqi/UUoE8cVugDKtFOn9evvex8cagCRG7ifG628g+Xdj/dwd3Qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rb3bq/MdPrRpAr9bK1qAHrreZM3pBFMMBQxOYTOtRP4=;
+ b=sNGkKR+xsts3qIqibKe4ozwXtqTdzUvCNytYDmkCOuf7x5DNMBOvbRRYbosi4bF88uEX7HyVk3iB/2Af+23+7Ma8BTfmfqvsg1pIRSv8oWi3Rhq8TD9Dj4ASn4aDY+YmVQdPwEWTEeWFq4DPoILDwXQYSGLcIaa1S8/eER4FFyawNbLVGZI9gd6NBhKM+PYmZP8qgx1Yk40LtGqkWeCL/pkC6/imlUw9MsCHXebXihfozhYr3297svKGg/N6NFqu711Cuo4DeFOsbVbLNtFWNq+3Uk2g3TigHupeu9PXiUTWhHYpJ9oMuyzKymxgAxj/NSQAIRVT2Cpyfzpj5zlgKg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by SN7PR12MB7854.namprd12.prod.outlook.com (2603:10b6:806:32b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Thu, 5 Sep
+ 2024 13:18:14 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
+ 13:18:14 +0000
+Date: Thu, 5 Sep 2024 10:18:12 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
+	robin.murphy@arm.com, joro@8bytes.org, jonathanh@nvidia.com,
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	mochs@nvidia.com
+Subject: Re: [PATCH next 2/2] iommu/tegra241-cmdqv: Do not allocate vcmdq
+ until dma_set_mask_and_coherent
+Message-ID: <20240905131812.GI1358970@nvidia.com>
+References: <cover.1725503154.git.nicolinc@nvidia.com>
+ <530993c3aafa1b0fc3d879b8119e13c629d12e2b.1725503154.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <530993c3aafa1b0fc3d879b8119e13c629d12e2b.1725503154.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BL1PR13CA0282.namprd13.prod.outlook.com
+ (2603:10b6:208:2bc::17) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905101739.44563-1-danishanwar@ti.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|SN7PR12MB7854:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d1c0d54-d3c9-4918-ddd0-08dccdad3242
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lhPMbrNTCCqs8xeNjKvpJEc+/rzwM0F/cj9EZHBXD5yWfafqALyI4feHgL87?=
+ =?us-ascii?Q?V49BAfZPJM2AkFI/t0VN55cxbjhuxDwn/9PmOMmBaFZc9OPvX2H0YSCN530K?=
+ =?us-ascii?Q?FSkPMHlIKgP4JF1p+8hfCWbQv4I/Jn2/Qij2ONX41BlwOS7hM0ePDHRvTR/5?=
+ =?us-ascii?Q?801XLgCgLo1TSy+am3pcrFTCV1jPoVF97PJ+C7/xelx/1AhzfEF3oPk7719B?=
+ =?us-ascii?Q?4oO794b+K5lglGbgEhguViQdFm3FehkCcaKopDkN5RpopsJj+4Vse7ld/a7i?=
+ =?us-ascii?Q?u5B+mBC1rq+vAHvjawv5xxB6EFIxqnKinaFkKwAHy4CekZb8p3QHEmuPq7dS?=
+ =?us-ascii?Q?2LZ2Btd4SgbVsF3zyPdrxd9NZSBvTQcmWGWW0iG3v6AtkJz3hfrqmVlWjtcC?=
+ =?us-ascii?Q?bZYqZopWTBLKcbdihAqy3Y/YEive77Y5c3cyl7eSUsmg9s84EFLAPliYS8S+?=
+ =?us-ascii?Q?JHS30YYipvMw2A4reAyHLSu4v2vfkapPOvwZXGyYlOyTyRDy0N/QCm2Oh7iZ?=
+ =?us-ascii?Q?l26YqhGg2z7VEdNZom6AZRU1Dd6k7YmVzC8nFkbsr7mcUA35O4YJxIuZ8ILf?=
+ =?us-ascii?Q?bZCtzaJ5KuaWxuFTWvjKuB2ro8ubS1PvDyKlzjwqCbhSBtuXkHYymwFgj4d0?=
+ =?us-ascii?Q?Ivx8e06InloIrMvioAEMbJJ0J4X6kz+vuRzBW0DZRs08ZUfFatbSdOsVs8mM?=
+ =?us-ascii?Q?u5UrvL9aiNQt9bt6ytt//Xm6ZEdhOHE8Kzlx27C5/lJhhh62WEXOLt4v9hPT?=
+ =?us-ascii?Q?jzxLUJpHCPJZnsau3+enyD34H1Mi3sZZ+7Oyj0lp8Kksv2endTeEVrxQ+Ndb?=
+ =?us-ascii?Q?vVTXqU8n9o9CBWn78k8kYSkFo4jBe4cKk9QIOVGGKqFunWgNR+qLRaZwz4fJ?=
+ =?us-ascii?Q?p+69cEgaCVwI69EPAqlBIiBZ2lnkzx1Jef+jzwXoTtrVcakyK65X5PMQ/tQB?=
+ =?us-ascii?Q?I8Vxt6CFJ2HkU/CvjDFyrjjcx3qhkbiTEUU7ugMdHLFjwutCROEaVkcFdzeW?=
+ =?us-ascii?Q?igApDj3M8lBTVbhGWDdUQSPSoHRLFJRTzZosVIc+Ik/HD4AB6F7SlENl88aF?=
+ =?us-ascii?Q?ikqooYIPg9aJUryQO37jea5f8fhVb3lla53LUwXklvlE54H3I34Cli5kSoKc?=
+ =?us-ascii?Q?2YihUD6YDBRLJWcGjKkplrOQ9NwiFLm5m7K6mCYyuFpxepWEpWpIQoB2t2t/?=
+ =?us-ascii?Q?sJa10GtLBKfKk8Wcusb6jjLJEuz3ezQzU2NnvHwBpvyzDtN19JlSZDxjkYAL?=
+ =?us-ascii?Q?Ev6o+2fLvnpMfCFAg/BDTbSo0VP3rLmspufxlLbhP0II/PQrJ4/bZ6V3eOzE?=
+ =?us-ascii?Q?Q+GOGpNHLHRNPV5Is2Se/FvBQooMSKFKy0SPsh0cyNjn6Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nl74i7TSKPwlAZlmV65UQASW1m9sQF8WY9cx0Nhmgqx1+t1REh08olNzuKsS?=
+ =?us-ascii?Q?44N0Jc2NnoumBW1W2VoN1+10Fx9uAakiQy2+cM/IMQZ1FMPgJe9SeZNYok9T?=
+ =?us-ascii?Q?kCUqryo/QmBABFdnB5YlsHWSoHgQvzaeASiucR/yt/eL+X5ai/JdHWFvZ/C+?=
+ =?us-ascii?Q?MbRWaFOHHc1SVgwxTL4Jl0cKN5DN+ZYOWRKXyv54y4AkaxTojvfmXFST7xMM?=
+ =?us-ascii?Q?xfgVWtrg/DhmYlmZchj7g3spo5hn/Yr+EOnisST4Cb5KupDqNfBQqisQGox7?=
+ =?us-ascii?Q?RY01JuCUkqz9RjL40McIViv4nM4waM00Zmyo34ejA6PvMVNoMD4Z9FlXbWJ8?=
+ =?us-ascii?Q?/eAL8+lv6c6mY50eXd7VQPvTL8g9DX0NNY/1JFypAokc/13R1W6UqUfPEGn4?=
+ =?us-ascii?Q?IIrQ8Q0ezmcZCc7+9+jhwso1Alhz2kkKCc4yM1F/N0HpCTkZEjft7CNJ+LAH?=
+ =?us-ascii?Q?iXyrNDqnk4w/y3ZKY2cJHsayixI95t9MjndX0q5jB6Ik1O4ue+bYkJJm7g5+?=
+ =?us-ascii?Q?7s8eZmVWMpY1BbS8zE3NJnmLIXNImmgnaIFg/NEI3rD+bGLvHbRX1b58wGx+?=
+ =?us-ascii?Q?UWuZPizvADZbmODzWtifz/V869jR+78M5TS0+8RM4qJONDTi5+nr0nFtPu3+?=
+ =?us-ascii?Q?xuys6TshQPNTMQY5EiLR8czzlfcep9xtLGn8PGQ8ywAqA05UhUru8Oo4iS5S?=
+ =?us-ascii?Q?0vz+8UlthURaoC21iUe1JkP2tU8aBOsmkLtLQZvPE+NoJ4sRUAEM3FORPrZo?=
+ =?us-ascii?Q?yeQfLQn1/8JlU2AoMus5xkShishGnzIZvyaaO8aFaWeItaXIFLB8AuoZqBNW?=
+ =?us-ascii?Q?1Jf9MeTpthJCXAFpZ0r95Sk968aojbKYOLDY2D7uePA0Vaea8CNAcYR9Jzbi?=
+ =?us-ascii?Q?jgHLFhyhNsAnRZWGl++2YTh3OhACky3Uqq7YMQlh1zVylvCI5glsgxe56/KI?=
+ =?us-ascii?Q?STgrvlae5LKoZp6uPBfhsLM8ltlg5YSXEb9vxmWbK5n7eKTgBR99hqcOniHb?=
+ =?us-ascii?Q?CkffAXdj1PIlxhroScBT6Lx1mYmCex8QqbNLv4DaOZLXOOlkbKkBaMv6JIIc?=
+ =?us-ascii?Q?uL7HystmWwBAfC48qaMJs6fwSmFboWzUscipv8hWLk37y6ud47DJnWYHBgol?=
+ =?us-ascii?Q?x+iMrHnnXFJyoOKCTsZkUUouI5zevciOvqgBwcj3VQimCCyxPkkzaC0uUyyM?=
+ =?us-ascii?Q?7T/2WNLxdIqkqSaguZs9cIF3DhQz66x+AgLoYyeZGXqMtJxhRJciuAIwEoGS?=
+ =?us-ascii?Q?B/K2pa1BsqyaGT+Mbtweugw5XeGzPzPs+8Hs7iq5whefNduGbTxxOiyt36Vn?=
+ =?us-ascii?Q?hlI7EdAI+iRdILzYaXNt8Rq1BwgtuBSQ+8WMbFvwOL/96OflRY/20D7BxuQ1?=
+ =?us-ascii?Q?VSAqnrxbyu1aoQJxK9rKq/fuIX5PSUSv8k04cwAi4aNrOGtcywyC6GeMtiZi?=
+ =?us-ascii?Q?P8vF4ou1slZZvfG8DhqYoADmrx+zn4tjH3syx6A1v3B7TjCakmkAqDUmfUfZ?=
+ =?us-ascii?Q?7S+GPzj51pG4BoPYNs0jf5tuzgTzkXK8u6uHp6u+kl5/d940PUDCFpDPAg7S?=
+ =?us-ascii?Q?Z5lOA4jBwtIfTg8zhCXpMNnMGXeNCPWcpsUWdDfv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d1c0d54-d3c9-4918-ddd0-08dccdad3242
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 13:18:13.7609
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qau//y5yaUoVebSnoGEAO1wKh+ZPvSFbZERzez9sKtiyyvZl8fWaBn/DTeLgdb7z
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7854
 
-On Thu, Sep 05, 2024 at 03:47:39PM +0530, MD Danish Anwar wrote:
-> pa_stats is optional in dt bindings, make it optional in driver as well.
-> Currently if pa_stats syscon regmap is not found driver returns -ENODEV.
-> Fix this by not returning an error in case pa_stats is not found and
-> continue generating ethtool stats without pa_stats.
+On Wed, Sep 04, 2024 at 07:40:43PM -0700, Nicolin Chen wrote:
+> It's observed that, when the first 4GB of system memory was reserved, all
+> VCMDQ allocations failed (even with the smallest qsz in the last attempt):
+>     arm-smmu-v3: found companion CMDQV device: NVDA200C:00
+>     arm-smmu-v3: option mask 0x10
+>     arm-smmu-v3: failed to allocate queue (0x8000 bytes) for vcmdq0
+>     acpi NVDA200C:00: tegra241_cmdqv: Falling back to standard SMMU CMDQ
+>     arm-smmu-v3: ias 48-bit, oas 48-bit (features 0x001e1fbf)
+>     arm-smmu-v3: allocated 524288 entries for cmdq
+>     arm-smmu-v3: allocated 524288 entries for evtq
+>     arm-smmu-v3: allocated 524288 entries for priq
 > 
-> Fixes: 550ee90ac61c ("net: ti: icssg-prueth: Add support for PA Stats")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> This is because the 4GB reserved memory shifted the entire DMA zone from a
+> lower 32-bit range (on a system without the 4GB carveout) to higher range,
+> while the dev->coherent_dma_mask was set to DMA_BIT_MASK(32) by default.
+> 
+> The dma_set_mask_and_coherent() call is done in arm_smmu_device_hw_probe()
+> of the SMMU driver. So any DMA allocation from tegra241_cmdqv_probe() must
+> wait until the coherent_dma_mask is correctly set.
+> 
+> Move the vintf/vcmdq structure initialization routine into a different op,
+> "init_structures". Call it at the end of arm_smmu_init_structures(), where
+> standard SMMU queues get allocated.
+> 
+> Most of the impl_ops aren't ready until vintf/vcmdq structure are init-ed.
+> So replace the full impl_ops with an init_ops in __tegra241_cmdqv_probe().
+> 
+> And switch to tegra241_cmdqv_impl_ops later in arm_smmu_init_structures().
+> Note that tegra241_cmdqv_impl_ops does not link to the new init_structures
+> op after this switch, since there is no point in having it once it's done.
+> 
+> Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
+> Reported-by: Matt Ochs <mochs@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
-> Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> NOTE: This fix is targetted to net-next because the concerned commit is not
-> yet synced to net. So the issue isn't present in net.
-> 
->  drivers/net/ethernet/ti/icssg/icssg_ethtool.c | 17 ++++++++++-----
->  drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  4 +---
->  drivers/net/ethernet/ti/icssg/icssg_stats.c   | 21 ++++++++++++-------
->  3 files changed, 26 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-> index 5073ec195854..b85c03172f68 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-> @@ -68,9 +68,13 @@ static int emac_nway_reset(struct net_device *ndev)
->  
->  static int emac_get_sset_count(struct net_device *ndev, int stringset)
->  {
-> +	struct prueth_emac *emac = netdev_priv(ndev);
->  	switch (stringset) {
->  	case ETH_SS_STATS:
-> -		return ICSSG_NUM_ETHTOOL_STATS;
-> +		if (IS_ERR(emac->prueth->pa_stats))
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  9 +-
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  1 +
+>  .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 83 ++++++++++++-------
+>  3 files changed, 60 insertions(+), 33 deletions(-)
 
-All these IS_ERR() are not so nice. What you often see is during
-probe, if getting an optional resource returns an error, you replace
-the error code with NULL. The code then becomes
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-> +		if (emac->prueth->pa_stats)
-> +			return ICSSG_NUM_ETHTOOL_STATS;
-> +		else
-> +			return ICSSG_NUM_ETHTOOL_STATS - ICSSG_NUM_PA_STATS;
-
-which looks nicer.
-
-	Andrew
+Jason
 
