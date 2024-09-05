@@ -1,79 +1,70 @@
-Return-Path: <linux-kernel+bounces-317690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253D696E235
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:44:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2B996E238
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9AC1F22AFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:44:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A94B1C22E8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CC9187FEA;
-	Thu,  5 Sep 2024 18:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7295B188A11;
+	Thu,  5 Sep 2024 18:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZQQOISAU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hSrUnMqh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912C17C991;
-	Thu,  5 Sep 2024 18:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942E2156F28;
+	Thu,  5 Sep 2024 18:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725561839; cv=none; b=TSKBFE7XuPfJ52926JG94zy8CtDBP0hKQYhEwBw5gWYbpUmzmikFLXP5nbDWCBRPE97wMiAM2jfUNIQH1iq8xkTDaMam4oiHVgEyMnTokD6q9yFKnWneu1plJraQM9r6AXWKcXEMUU9EdE+o3GjcAwp8O2MCRsB5q4QChvT6ono=
+	t=1725562079; cv=none; b=tKrIGIadxGbu1ivakXwQTPjCc4MpbI8qy1dZdPHIaAftcIKAd0wZwwok/Qsoc3D+v506HCIdW9vfP1RAd3iyG1iLRliBr1o1xkpBTxcbrcmpoOHPMJFE8BYaZ+/uvZLZQHVp3CxyAnZ/AGuyG9CJ0DM7SG3i3e+cP5FsaD1sAhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725561839; c=relaxed/simple;
-	bh=nBfjKE3bg5Bz1iS/U8d1Ggy3AginAlf1fR3zMKD5m24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rdXNJZG9E4uZ2a47q0GijtoYQg/ZQ3NXgVOfgqcDlbULa8FKLqdTgsbIrNb710XMWHLUaiDHafIlj/IF4lMlnGHfCpsqBuXpkCUWzwj1mDcvsgyV5Gy5Ieh6eH0q1LgdslJUtQxZ26yFRuvmZGr/boFREfpzrlOVcbJLsNLwmP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZQQOISAU; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725561837; x=1757097837;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nBfjKE3bg5Bz1iS/U8d1Ggy3AginAlf1fR3zMKD5m24=;
-  b=ZQQOISAUpQSoiZTtsoaj+Xi5Q/P6e7FqzvYFq6SDiqDssDiiKfuNR8eM
-   oCauTRzfewAuqNe6Ku58ldOgJm5G/eLpBHdhtnrxJW7oOI2VyXPSF4m4w
-   9vG4of7ICr6TRoFxEHncW/kucwDzN/thEZzNN6z4LY4ihPQJsMHjJqJ3B
-   wnw4YiGFeShzTd2QHnbiOOGYVkSa1dJ3z3YxN6vFRpYTkICNECiSjM5ed
-   LnQsN7PJJwxxZDIhKQ6OL3jcKt4U/J/trxc00a4EPk4jBzg9NW3N3Gjre
-   E5I5ZR3miZexMNad3Qglx92oTiPxvSAbu4XWoZC42/uwkT+tUjGlbalVR
-   Q==;
-X-CSE-ConnectionGUID: 2senLj4+Rri22isfFvWQoQ==
-X-CSE-MsgGUID: qGYmf1NEQGCgkxRLgL4Hvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="28052938"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="28052938"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 11:43:56 -0700
-X-CSE-ConnectionGUID: zWIrjf09Rkieqb+IT4Yw6A==
-X-CSE-MsgGUID: 0aospkpTQAmLaCnKqZSwfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="65955636"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 05 Sep 2024 11:43:53 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BDE8731E; Thu, 05 Sep 2024 21:43:51 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Kuehne <thomas.kuehne@gmx.li>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] HID: debug: Remove duplicates from 'keys'
-Date: Thu,  5 Sep 2024 21:43:50 +0300
-Message-ID: <20240905184351.311858-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725562079; c=relaxed/simple;
+	bh=u1f+B9H2BSYGuPmARHLMMPR9FJ6EBCBY3LnhjGAiT1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cu9AQOX7tudVVah8cCOp9nF4HEJXELcGj0QTTj7nTWGSNZ/iT18WA5VqMQKP7PNoWrX8IvWz9mmHFZs1ojeb0xAUMTKEViVg46PDrfS73JkZdZsRNZ+0Pd2BVhfh0P8BmGaNwYdxOgWsJPc9FRPx4rFcHRseCWshPgzVsZAH4og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hSrUnMqh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IR1Y1029920;
+	Thu, 5 Sep 2024 18:47:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9Tv0skhcTVsQNb9pDT1RDT
+	vuRnQPYTxVr8IyeE9mhZQ=; b=hSrUnMqhJX7PMqHDFpcsjT5Cp02mnJMSkaaaDc
+	/Gwc/HB3SUagUqxxHIwMFIgsNr7GTI+vTDqZfOndpIvANZCRbwos7u/jrVx13zWE
+	UBRdV9MMzWkdzZ4duhQDhXl4Qi58cXKy5I8JpZC27cZUvqsbGZhhw6sXWRVm8N7i
+	qv42qMf+mZcB80YRO+eM/BsJQmZcJXPSmA77zyMEvuNIh65O7pvwloZnTerpvgGS
+	2x1yE0GT1LYJGKnQ9KcEwZFkcq9qQf5HnkJbiyPEpNTx319FszNjb1DuNPGEARnI
+	gjbSK0Va878Zg7QSitIFdo9fAu1sSyqqWTIR3GrYNv1pcc5w==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu01ep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 18:47:54 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485IlrNs004144
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 18:47:53 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 11:47:50 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3] dt-bindings: mailbox: qcom-ipcc: document the support for SA8255p
+Date: Thu, 5 Sep 2024 11:47:36 -0700
+Message-ID: <20240905184736.3763361-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,64 +72,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kFP3SIINrkq3DqSa6UxJVHgQbi6OA8uo
+X-Proofpoint-GUID: kFP3SIINrkq3DqSa6UxJVHgQbi6OA8uo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_13,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 spamscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=928 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409050139
 
-Duplicates in 'keys prevents kernel builds with clang, `make W=1` and
-CONFIG_WERROR=y, for example:
+Add a compatible for the ipcc on SA8255p platforms.
 
-drivers/hid/hid-debug.c:3443:18: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
- 3443 |         [KEY_HANGEUL] = "HanGeul",              [KEY_HANGUP_PHONE] = "HangUpPhone",
-      |                         ^~~~~~~~~
-drivers/hid/hid-debug.c:3217:18: note: previous initialization is here
- 3217 |         [KEY_HANGUEL] = "Hangeul",              [KEY_HANJA] = "Hanja",
-      |                         ^~~~~~~~~
-
-Fix this by removing them.
-
-The logic of removal is that, remove...
-1) if there is a constant that uses another defined constant, OR
-2) the one that appears later in the list.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
 ---
- drivers/hid/hid-debug.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index d5abfe652fb5..618ebaa3bfc0 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -3214,7 +3214,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[KEY_VOLUMEUP] = "VolumeUp",		[KEY_POWER] = "Power",
- 	[KEY_KPEQUAL] = "KPEqual",		[KEY_KPPLUSMINUS] = "KPPlusMinus",
- 	[KEY_PAUSE] = "Pause",			[KEY_KPCOMMA] = "KPComma",
--	[KEY_HANGUEL] = "Hangeul",		[KEY_HANJA] = "Hanja",
-+	[KEY_HANJA] = "Hanja",
- 	[KEY_YEN] = "Yen",			[KEY_LEFTMETA] = "LeftMeta",
- 	[KEY_RIGHTMETA] = "RightMeta",		[KEY_COMPOSE] = "Compose",
- 	[KEY_STOP] = "Stop",			[KEY_AGAIN] = "Again",
-@@ -3309,9 +3309,9 @@ static const char *keys[KEY_MAX + 1] = {
- 	[KEY_EPG] = "EPG",			[KEY_PVR] = "PVR",
- 	[KEY_MHP] = "MHP",			[KEY_LANGUAGE] = "Language",
- 	[KEY_TITLE] = "Title",			[KEY_SUBTITLE] = "Subtitle",
--	[KEY_ANGLE] = "Angle",			[KEY_ZOOM] = "Zoom",
-+	[KEY_ANGLE] = "Angle",
- 	[KEY_MODE] = "Mode",			[KEY_KEYBOARD] = "Keyboard",
--	[KEY_SCREEN] = "Screen",		[KEY_PC] = "PC",
-+	[KEY_PC] = "PC",
- 	[KEY_TV] = "TV",			[KEY_TV2] = "TV2",
- 	[KEY_VCR] = "VCR",			[KEY_VCR2] = "VCR2",
- 	[KEY_SAT] = "Sat",			[KEY_SAT2] = "Sat2",
-@@ -3409,8 +3409,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[BTN_TRIGGER_HAPPY35] = "TriggerHappy35", [BTN_TRIGGER_HAPPY36] = "TriggerHappy36",
- 	[BTN_TRIGGER_HAPPY37] = "TriggerHappy37", [BTN_TRIGGER_HAPPY38] = "TriggerHappy38",
- 	[BTN_TRIGGER_HAPPY39] = "TriggerHappy39", [BTN_TRIGGER_HAPPY40] = "TriggerHappy40",
--	[BTN_DIGI] = "Digi",			[BTN_STYLUS3] = "Stylus3",
--	[BTN_TOOL_QUINTTAP] = "ToolQuintTap",	[BTN_WHEEL] = "Wheel",
-+	[BTN_STYLUS3] = "Stylus3",		 [BTN_TOOL_QUINTTAP] = "ToolQuintTap",
- 	[KEY_10CHANNELSDOWN] = "10ChannelsDown",
- 	[KEY_10CHANNELSUP] = "10ChannelsUp",
- 	[KEY_3D_MODE] = "3DMode",		[KEY_ADDRESSBOOK] = "Addressbook",
+Changes in v3:
+	- Removed the patch from original series[1]
+
+Changes in v2:
+	- Added Reviewed-by tag
+
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+index 05e4e1d51713..bc108b8db9f4 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
++++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+@@ -25,6 +25,7 @@ properties:
+     items:
+       - enum:
+           - qcom,qdu1000-ipcc
++          - qcom,sa8255p-ipcc
+           - qcom,sa8775p-ipcc
+           - qcom,sc7280-ipcc
+           - qcom,sc8280xp-ipcc
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.34.1
 
 
