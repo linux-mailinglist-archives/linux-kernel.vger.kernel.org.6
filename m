@@ -1,169 +1,97 @@
-Return-Path: <linux-kernel+bounces-317258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E4596DB94
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:19:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025C296DB98
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D2E28C302
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1361F27901
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E3419F479;
-	Thu,  5 Sep 2024 14:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4093C3C08A;
+	Thu,  5 Sep 2024 14:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYENXWRq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czgZWYAd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D8319F123;
-	Thu,  5 Sep 2024 14:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB552AE7F;
+	Thu,  5 Sep 2024 14:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545865; cv=none; b=PyGvCD2/6e0l8IcKWv39dLzjlIWAL0Oobc0hVTVUCJBTj4IeQxtdTY5oqe4mg/puPJnd+thRic6+WKmtaLJMta2CWKzIdMFUs29fqunuYrEZwMFLGmNJGatIXmJjBJGiOgXwe3d0uPnKBT9PANb1wJMKgKRO6YOzX8seBZP8FFc=
+	t=1725545891; cv=none; b=jN21aQ4WSTf7oWoSML/JQRoDeA5OoOyNgFM/8KlUAdP5blk8dR9fzTsa7iBhdigMXV2fpXYvNJq7FztksQPJNYKOqODaMgbTKtBUwaaPb8GdwSSBnmn+c35gcULPWPDkDcMBG5vzwUMXYkUJ85Aw9PvKdgIRsRA6cbQfR/eaWhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545865; c=relaxed/simple;
-	bh=9ObeGGmMmZUQNIKDyBpvXEWmJ0neSXU3BmU9ES+ry00=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=sYIlDBmVmcvBSP7OWqCyZEhY8QHcgsXb44AfpNG12K5ieyPUqXmGuwTm7k6csi+ZPLufUs3QthjjN37iyG3aUwEloeQlPdWAEapuxDTSNIjqyQ1NtbLuoPc6RhHERqNc6KtkUvEVYo+r+0PA/3xTX9LyE1uRBlMGDoCX2QgBCvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYENXWRq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F66CC4CEC3;
-	Thu,  5 Sep 2024 14:17:44 +0000 (UTC)
+	s=arc-20240116; t=1725545891; c=relaxed/simple;
+	bh=+kJG3MWd701xj6aWVLxnJVwKEiqr15ER77Vl4LvoX8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GmaOSou64tb5oqEj9SwYkknpw86BpCSDI3LINVOBcTKFooEP+6+prwm8AP3AVfizv11LaQoedGzzLSHYl9PWX3n2RdxJCW9PAP6ArC94287TARAowbjVBVYLneZ2ah8G5ijnxQovaBucrGKraNbjLiAqcaw3NOQ5FSvCM2NRwyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czgZWYAd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31ABEC4CEC3;
+	Thu,  5 Sep 2024 14:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725545864;
-	bh=9ObeGGmMmZUQNIKDyBpvXEWmJ0neSXU3BmU9ES+ry00=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=jYENXWRq/s5piuSSClbLNfn9GFyK4cNTB1pV0h/NuSNrs5WGB/QZd94fU1antviwf
-	 aoUjZN+asVBX/qvzQfKFoQWXme7Z3PyBLR+1op7KQltt2sWvirJQksblrYbPCNpgY5
-	 kXYaFMy2m64KmCZIRGNuMFscNyQXoeciOoOTQQtnkWF5fU7WgQwNLk7Qe+ZZU2ZX0+
-	 i8qVFEBpXfTvhMFsPy4xrXlXAGXlCz25fW7aycdWn2N2dzY6EwRjxncUuFQQhzp+X7
-	 xfr1vTNQ8FW5YM1ih7KNGLzHa0gS3mbijcLxtm/Di4C6vb98WpFgMsOEQqYlf5Uca2
-	 ZF9PgrfFzBebQ==
+	s=k20201202; t=1725545891;
+	bh=+kJG3MWd701xj6aWVLxnJVwKEiqr15ER77Vl4LvoX8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=czgZWYAd/9bwzWsitKwIVnOwLV4eqH1cWWYar4R8VCwHJbAvjpeO3mbul3cCr+YWE
+	 fnlPsI3+iORdRfFSdjMxKP+AVq8/9CheOTpfdbQv5KEPcvxjrwuqYTdQeT6qlIuotj
+	 +FQ6woxyknEM2q+1S0SZZRLA1XVbJq1qKiXRzAJe/YpiG3Emi7jBBl8arLx6gfFzsP
+	 w5a60yx5WCpQ6aNOdTI5UQPtiyy7ox/YDbP1t5tsM5wjX0Gs4NrPh2owfg+/xWwk8f
+	 TTmk6Sarx5OYejzfImS3mQpa6miFWpYMrdqHE9P4J0HmKPUfnOUVSJos7/ZV0Fa1oc
+	 QE7eSDrv+BnrQ==
+Date: Thu, 5 Sep 2024 15:18:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.1 000/101] 6.1.109-rc1 review
+Message-ID: <18920b5e-03bc-4004-bbf1-06043c8db795@sirena.org.uk>
+References: <20240905093716.075835938@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 05 Sep 2024 17:17:41 +0300
-Message-Id: <D3YEYH69KMV4.13SX59Y2HT6D@kernel.org>
-Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
- <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
- <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
- <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
- <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
- <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
- <zhuo.song@linux.alibaba.com>
-Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Shuai Xue"
- <xueshuai@linux.alibaba.com>, <bp@alien8.de>, <rafael@kernel.org>,
- <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
- <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
- <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
- <gregkh@linuxfoundation.org>, <will@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240902030034.67152-2-xueshuai@linux.alibaba.com>
- <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
- <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
- <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org>
-In-Reply-To: <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PNcUL+9LmE6mV15a"
+Content-Disposition: inline
+In-Reply-To: <20240905093716.075835938@linuxfoundation.org>
+X-Cookie: The horror... the horror!
 
-On Thu Sep 5, 2024 at 5:14 PM EEST, Jarkko Sakkinen wrote:
-> On Thu Sep 5, 2024 at 6:04 AM EEST, Shuai Xue wrote:
-> >
-> >
-> > =E5=9C=A8 2024/9/4 00:09, Jarkko Sakkinen =E5=86=99=E9=81=93:
-> > > On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
-> > >> Synchronous error was detected as a result of user-space process acc=
-essing
-> > >> a 2-bit uncorrected error. The CPU will take a synchronous error exc=
-eption
-> > >> such as Synchronous External Abort (SEA) on Arm64. The kernel will q=
-ueue a
-> > >> memory_failure() work which poisons the related page, unmaps the pag=
-e, and
-> > >> then sends a SIGBUS to the process, so that a system wide panic can =
-be
-> > >> avoided.
-> > >>
-> > >> However, no memory_failure() work will be queued unless all bellow
-> > >> preconditions check passed:
-> > >>
-> > >> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_han=
-dle_memory_failure()
-> > >> - `if (flags =3D=3D -1)` in ghes_handle_memory_failure()
-> > >> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_mem=
-ory_failure()
-> > >> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` i=
-n ghes_do_memory_failure()
-> > >>
-> > >> In such case, the user-space process will trigger SEA again.  This l=
-oop
-> > >> can potentially exceed the platform firmware threshold or even trigg=
-er a
-> > >> kernel hard lockup, leading to a system reboot.
-> > >>
-> > >> Fix it by performing a force kill if no memory_failure() work is que=
-ued
-> > >> for synchronous errors.
-> > >>
-> > >> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> > >> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> > >>
-> > >> ---
-> > >>   drivers/acpi/apei/ghes.c | 10 ++++++++++
-> > >>   1 file changed, 10 insertions(+)
-> > >>
-> > >> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> > >> index 623cc0cb4a65..b0b20ee533d9 100644
-> > >> --- a/drivers/acpi/apei/ghes.c
-> > >> +++ b/drivers/acpi/apei/ghes.c
-> > >> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
-> > >>   		}
-> > >>   	}
-> > >>  =20
-> > >> +	/*
-> > >> +	 * If no memory failure work is queued for abnormal synchronous
-> > >> +	 * errors, do a force kill.
-> > >> +	 */
-> > >> +	if (sync && !queued) {
-> > >> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption=
-\n",
-> > >> +			current->comm, task_pid_nr(current));
-> > >=20
-> > > Hmm... doest this need "hardware" or would "memory corruption" be
-> > > enough?
-> > >=20
-> > > Also, does this need to say that it is sending SIGBUS when the signal
-> > > itself tells that already?
-> > >=20
-> > > I.e. could "%s:%d has memory corruption" be enough information?
-> >
-> > Hi, Jarkko,
-> >
-> > Thank you for your suggestion. Maybe it could.
-> >
-> > There are some similar error info which use "hardware memory error", e.=
-g.
->
-> By tweaking my original suggestion just a bit:
->
-> "%s:%d: hardware memory corruption"
->
-> Can't get clearer than that, right?
 
-And obvious reason that shorter and more consistent klog message is easy
-to spot and grep. It is simply less convoluted.
+--PNcUL+9LmE6mV15a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If you want also SIGBUS, I'd just put it as "%s:%d: hardware memory
-corruption (SIGBUS)"
+On Thu, Sep 05, 2024 at 11:40:32AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.109 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-BR, Jarkko
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--PNcUL+9LmE6mV15a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbZvZoACgkQJNaLcl1U
+h9BlFQf/X58FIEMg45bLFxPGFruR0cK9ta0HcT6vlgsVLw4RjmhVuCXzfrl0yzr0
+U1PB4rh+rWt6dEfYUDoXEA7o2QKh4f9VxnzYsIGSwsNsv9JsCtR3hbmWhD2qJauh
+VgBayO3BOyV6AqFqGtZ6igNNj9nnT2o8f8qhZWXfGgH4TMUuEEfP5vnS+FzskcPJ
+7XwcKHL6ZnaJ6tosNwrZRiJ0BHJjAE74K7yhkYhmPwaaz9r95Be/EX4uTB0opb+N
+cvsxI0AJAUB15EYOWhOOVuCPgNfqjMJhMNzDrPKywbUGPUbiIsL0zGCYHhphPfqy
+WbiCKWkffcfHwC8SVy0S29p3ioFGfg==
+=z85G
+-----END PGP SIGNATURE-----
+
+--PNcUL+9LmE6mV15a--
 
