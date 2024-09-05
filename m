@@ -1,152 +1,125 @@
-Return-Path: <linux-kernel+bounces-316631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CAD96D22B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:31:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C19A96D22C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B7A1C20D67
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F36A1C21E43
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F35019341E;
-	Thu,  5 Sep 2024 08:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="Cq7Nsl98"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9122019342A;
+	Thu,  5 Sep 2024 08:31:56 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0563D1487C0;
-	Thu,  5 Sep 2024 08:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914A71482E9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525083; cv=none; b=H9qS/hinrwE2syAh/S1SEDSrfE8G5AOciYNP8g40sChew0IcKc0PsX9BAG9CbrzWm2wKA2GEUgQsXEydZNPWDGH3pF8CQMfkEndY46J32J2HTISKkPqhoLA4H4N1Qpf/SufXJnvl9fgr3xOSy1RB4f+xlCw8U0+WmJlT9IMxJlQ=
+	t=1725525116; cv=none; b=nw7/HfBqiBsVUfxrf+BXRaK4sVCLSJb9S+aS4XWNFfpKmxJal3ePmK/kPd68DsDmD18xciRyEQxW7nYAHgp3dwODiXATz19RQPPm/VS2/qF+AgEyyBiVK2xEfL/1qdSy9sFvps9N48rUpGAWhv+hrir8k4Y4Ytc+TbCCZQQ5FS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525083; c=relaxed/simple;
-	bh=Mo3pv8nna+g3MgtN4jCHH0Q7EFRuxFLuDvY0BG0S0aY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FhmzKdl8mO7mCTDn5HXosrX38Pfs5VJM2UxGjCixUA83XgKe2t2rTilyk1dr6nCyVJWvWhvdf7nKVuJ++2/hng2QszLIGpRopB19ntBGOjoM0Klf59kFau6Sozo+4yiEjbcn4j1b/C5Yszuqo7grBBhT+hX44TzQYh47E0YVZBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=Cq7Nsl98; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1725525058; x=1726129858; i=deller@gmx.de;
-	bh=Mo3pv8nna+g3MgtN4jCHH0Q7EFRuxFLuDvY0BG0S0aY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Cq7Nsl98uPJDCt7m2WmN9rM7oAxG0VH97r2yKTiBIBgWbivhz+tGUi3lqicwPNcL
-	 AVXdZbsQtCxUfh4G1W9kKyTubrj/WbtWlF2AJBEb/veUyPLv3mIEaPIuQBTXpL98O
-	 LYGcZzd8RQVnhAuGYNXsKdTx4axvUgC85iE4xX1NipcwDY5ulG5of9nCzoAab37l5
-	 SCLcE23HVJJoyWJezYL4PePmi1C/hL94h5/LQ3jE47/+TLUPFHuKbCbcspcunr92d
-	 /Vp6Mbi1n5+AbJ0Rkj5pTUbkYHOZVx16s6Can59rsSxDu2R5MSDwVEjoMQcb19KEW
-	 x5/cyoLubdgEjKGvKg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MybKf-1rpd5r2mHF-00ywNM; Thu, 05
- Sep 2024 10:30:58 +0200
-Message-ID: <5f6ce496-15cc-45d1-b3d0-10e362543a3c@gmx.de>
-Date: Thu, 5 Sep 2024 10:30:56 +0200
+	s=arc-20240116; t=1725525116; c=relaxed/simple;
+	bh=keIR8EElTZoyCJKMGLRf33PbH/0xT+F5e+jm0fSahlg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=jXVMqBZLGO+Rd0knKhH/0LP9/piFuVilxHS+0kESnYALAF1bjJaNiAxZmHTAgYXpIL3BOkPRWNxMjCj+P3a9EAPubV80EQZHFo/4+S8z6YYy9DJRZ9fNUzBYsZAY+dYS0iBW8dE/oSdPncZq7FbnqTWQu8kezo4dGAmprKGEaRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-208-bBR0HpsdP6-OvqFAN2Hggw-1; Thu, 05 Sep 2024 09:31:43 +0100
+X-MC-Unique: bBR0HpsdP6-OvqFAN2Hggw-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 5 Sep
+ 2024 09:30:59 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 5 Sep 2024 09:30:59 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Yan Zhen' <yanzhen@vivo.com>, "marcin.s.wojtas@gmail.com"
+	<marcin.s.wojtas@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"openkernel.kernel@vivo.com" <openkernel.kernel@vivo.com>, "horms@kernel.org"
+	<horms@kernel.org>
+Subject: RE: [PATCH net-next v1] net: mvneta: Avoid the misuse of the '_t'
+ variants
+Thread-Topic: [PATCH net-next v1] net: mvneta: Avoid the misuse of the '_t'
+ variants
+Thread-Index: AQHa/14Ov5o5FRmGBkKUkiUQCQhZ8bJI3SGw
+Date: Thu, 5 Sep 2024 08:30:59 +0000
+Message-ID: <d1709ca244ac45cd8a7361d7cbd0ea66@AcuMS.aculab.com>
+References: <20240905063645.586354-1-yanzhen@vivo.com>
+In-Reply-To: <20240905063645.586354-1-yanzhen@vivo.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev/hyperv_fb: Convert comma to semicolon
-To: Wei Liu <wei.liu@kernel.org>, Chen Ni <nichen@iscas.ac.cn>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
- gpiccoli@igalia.com, mikelley@microsoft.com, linux-hyperv@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240902074402.3824431-1-nichen@iscas.ac.cn>
- <Ztlc52c6fIz3azbn@liuwe-devbox-debian-v2>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <Ztlc52c6fIz3azbn@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cMBy/c8U9lDq5XB93f6BZ342XLrpxBeKJowrfuymtYdmXw6J1ax
- HPFxbxP42tnNiBBM2IrRtDuWjA1mWAu6vVHz2nuWZqs4wlYHUQk5KvMPW/ALXtt0+qiX/gJ
- Gc6Sr+eg9mSg95bu3TE07rIlAM2utPHBARFDBHtWx+Y/RUB56itqNNTKVQf3WBXNd7kPCMG
- sWb9EZzckQTka7cuA9X0g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EGT4DGNMYqo=;082i0+0KVEi/vGisvb43p2mSlDr
- HTn8xrazGEeNsV7GjZkimBRYhyarvQuGs13EOLJ4K3rdLB4nUXz3cnnMe7kCAXaSdf2Qdyr4T
- Z+7WXBxnelqRQYHq+zk4N0NqGZWMTeuClk+Mgbsu4HODbxuLUf7hjQ7/dCTrIsgQcKby2sdg9
- A7D7xdp7lEqKu6XXh/QC7YZzgiBh7KoVG7P2vEc4DzwTv2QJgBNj9SYYrDZealCiWgXhYQCAG
- 9mbCpqPJkHq7nEjHK3bOwYWqeDy2c5jP7ffS5Scv4n3LrWZT6mL5Oa0YFI9zcrtSijuNi2gJC
- aqtjUyX01Lbvk+oxUIK9U0GRvV9OdNZ4quMB/Xq1HUhVQryKTkHW6HKTeYkG9CHTtlPCIlvup
- hqp0h+Cg0JaLOaMwAF0e3XD7ha+IAnoeMz5qtq6w6OKtZXsAlpTeRMzBPoILaYldkDw27ENqq
- 7G9D1sg/hIkj6wTUvSEJsVNBOF1mR/4oIv4fhW8bMzVZJ6gPzWdRveaGZRBn9HSkGtYep6j4t
- o7CpWFvXG3N3RfG3OgFYnyDq4f7Xy2nHiri6j/ErSvAIen0LpI2QzMNqiROQTn440Zku0UlAL
- +jD4cAaZ3CvP8OZx1Zb90ioczRcIeC19ABZ6KZP40Hw1sj6kdKmZP4/rwWbsil8T7tnVz3/oI
- Eqi+QYlwz098bje6f+jQVACO2tHZY2KKbHJskLtSbo5jzsdEJATCYhg/Pv251RUeb7xwCpTuT
- BayxediaoxRzsOAV8AW9TvSSj61GefPfMgNJDmYTn5XyMXYR9hWHvJ9bW+Sq0z68gRyIHWy1w
- H3KTiZjtSKVvwUd/FdFy9GDw==
 
-On 9/5/24 09:25, Wei Liu wrote:
-> On Mon, Sep 02, 2024 at 03:44:02PM +0800, Chen Ni wrote:
->> Replace a comma between expression statements by a semicolon.
->>
->> Fixes: d786e00d19f9 ("drivers: hv, hyperv_fb: Untangle and refactor Hyp=
-er-V panic notifiers")
->> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
->
-> Applied to hyperv-fixes, thanks!
+From: Yan Zhen
+> Sent: 05 September 2024 07:37
+>=20
+> Type conversions (especially when narrowing down types) can lead to
+> unexpected behavior and should be done with extreme caution.
+>=20
+> In this case if someone tries to set the tx_pending to 65536(0x10000),
+> after forcing it to convert to u16, it becomes 0x0000, they will get
+> the minimum supported size and not the maximum.
+>=20
+> Based on previous discussions [1], such behavior may confuse users or eve=
+n
+> create unexpected errors.
+>=20
+> [1] https://lore.kernel.org/netdev/d23dfbf563714d7090d163a075ca9a51@AcuMS=
+.aculab.com/
+>=20
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 
-I added it to the fbdev git tree 3 days ago.
+Reviewed-by: david.laight@aculab.com
 
-Either you or me should drop it from our trees.
-Please let me know what you prefer.
+> ---
+>  drivers/net/ethernet/marvell/mvneta.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet=
+/marvell/mvneta.c
+> index d72b2d5f96db..b41de182cc88 100644
+> --- a/drivers/net/ethernet/marvell/mvneta.c
+> +++ b/drivers/net/ethernet/marvell/mvneta.c
+> @@ -4753,8 +4753,8 @@ mvneta_ethtool_set_ringparam(struct net_device *dev=
+,
+>  =09pp->rx_ring_size =3D ring->rx_pending < MVNETA_MAX_RXD ?
+>  =09=09ring->rx_pending : MVNETA_MAX_RXD;
+>=20
+> -=09pp->tx_ring_size =3D clamp_t(u16, ring->tx_pending,
+> -=09=09=09=09   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
+> +=09pp->tx_ring_size =3D clamp(ring->tx_pending,
+> +=09=09=09=09 MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
+>  =09if (pp->tx_ring_size !=3D ring->tx_pending)
+>  =09=09netdev_warn(dev, "TX queue size set to %u (requested %u)\n",
+>  =09=09=09    pp->tx_ring_size, ring->tx_pending);
+> --
+> 2.34.1
 
-Helge
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
