@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-317629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD5596E143
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:37:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B011896E145
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE31F28C575
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664581F2503C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919071A4F08;
-	Thu,  5 Sep 2024 17:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136B41A725D;
+	Thu,  5 Sep 2024 17:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lte24/Uo"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K12/yRbv"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFCA19D06D;
-	Thu,  5 Sep 2024 17:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB4914F125;
+	Thu,  5 Sep 2024 17:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557845; cv=none; b=NsLr1VXRdQ0HEUjARo4hO+miwC0ScJ6uZH+dRSImpg8ObVjQsv7cU3/NqxIpa7bS2JjuyfoEaY4LdzDkEiWofmwpITOpYr+VtXVeAP87GcZ+2q5arWf5gMsuMWaGEQLi0AZqbt/EBLG9IIiRkmUpVYYbOUsB4de10bPpLn2K2R8=
+	t=1725557846; cv=none; b=o02rmY8l+iV7piWeMmuAm4GZFXLU9qHJK9rceW/pWUUtndom7Dq4dMHnn1P4GUB9jCCtQgkq130REcJCx5d7TLnl0k7RcYPKRZzsIw1j+8amZbRBM/yF8kIDN5eA01/ekkuB5rDggYxMb3Ae/2+jKJPYns8jgs/z9qeHZrUEoL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557845; c=relaxed/simple;
-	bh=QAO4zUKegzIVbTCAiUAXPouHjb63cshPgOVmMLANiKk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hATPcsPIjc1iSGvsjt9+KNKsPrIMEMrHpxrv760vc4YHr6GnpMgFsv1fvPachXh2LeKWpEnyW4hWjTIdC78d+H8oBrnXIhlOU7qNa7U/ljLXpSSIP+fkgXWtkIReZN55MAq+HP/+Iw6snJuvSilwN1EfBsCRsNv53nnbysj+05I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lte24/Uo; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1725557846; c=relaxed/simple;
+	bh=RNhLy3kONeDz/+IGq0BW6Nukk5PX4HbKNZTyiChMq2M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qmUBW24HW2epGvBXvABRAc5GpatyYoTHglJ2DBXNBWyOWU3vRIH1s0QX1alrpN0K8gwunLrGgliUkmGTi6o55dzv7UILqX/DIqMYrWWKRbqohN3zPQQSt5+vr28V5ZHVvv14Dyq6+sz+U60CkuWB6Tr/05NNSQ2GReaQb6Qq4HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K12/yRbv; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so9046875e9.3;
-        Thu, 05 Sep 2024 10:37:23 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42c7a49152aso11336045e9.2;
+        Thu, 05 Sep 2024 10:37:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725557842; x=1726162642; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6dwp5+FG3mYl3iAH/R5p+Cpn2uLGGqSBL6USwliexo=;
-        b=Lte24/UoIH3+4zX4/zEYX//F0yVzHpBKMLIeyc7tHIStI87WI3QfzqL7HeqOXbSQqp
-         rPkcE8+W18ofklpI4Xr8zYmt5fHdSgSZBcGfBdoiIkyFVhrnievuFxSjJfdLs4CgwVLW
-         orJ2BmaPubPm2K0NIz5RH5bucfz2Bsglz+ZP0ejT9n+MT5wBBFnqF6paddL8qDrcToDM
-         DyGT06N0FFtRgmyFKq7Ynzc14/ltgd27vgFAMJ8kHNS5fyxdW74w5I+IZrtbTZvpN4IT
-         x8R+WVkeozHChwn3k8ZcRXMJa3h1ZcCM51ZWP30613Lwlaw5QbM4c+PRJOQu9yzkclU1
-         TkFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725557842; x=1726162642;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1725557843; x=1726162643; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v6dwp5+FG3mYl3iAH/R5p+Cpn2uLGGqSBL6USwliexo=;
-        b=udzde/q+xFZCwZmXlbbEjjbSg+5zJny1+pn29fXCRlg0JOezU7qMYBxxeFErp7yedw
-         pUK+86rnxC5dnVGZDB7Bk+Mq9ye95FwB+W9GGE1rdM/HSgWQQc5VoetZcjHcoPvV4zz6
-         mIeIEkPMoM2PIaf6e5LD96o6gwejoGlk6cBnx/m0iRiMR6uWL8D60I/EfyE6J+jCAair
-         sElshjQ06veDAyxfm2HQPL6DNHsE3BDT+liX6967441xv0RHdsJhsbhPc0cbfzCAX3gf
-         hr01BpUU5G0vbNrF2FQ723dj5M/nuKKL4TTiKJE5CbBZS4HPcja6E7yhuiN0ISTGRe+O
-         0orA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSWqCFWq1JTJ/3n4Qgr3lYTGIty0xHji6GnkCzamIZoRJiyZfJqin1EUx2KoX1daiSRlO8Z5KzOroGqhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylB0qgtUErH+QgjNatyAtNbHKaarupCDXqTUDbMIMwsa8zE49+
-	uhpZuhPuHGUd71QQbidhXEfcRGsh7HrZpufLtxQxXOrCyxdjXGhk
-X-Google-Smtp-Source: AGHT+IF7qL7hjpQRpe8F1oifMTqAJQN8x6pLigqqQWNP8W7C97x0zMgdmF7381zQz86A7gmatgOVBA==
-X-Received: by 2002:a05:600c:3b11:b0:429:a05:32fb with SMTP id 5b1f17b1804b1-42bb01b4428mr160392165e9.10.1725557841763;
-        Thu, 05 Sep 2024 10:37:21 -0700 (PDT)
+        bh=oxD/2bn0T/dFXzCPoiChAlaQk6ipCE9icGUJFuoXA1Q=;
+        b=K12/yRbvbrSfaAVg79hBMxgYky9yobaES6qVouvA81PdnYTpBr2Wrk0T/uzSP9HyLr
+         UvMVIqeAaIPBCZCiF5+bJhzPIc2vkBal/6yxEV6flkiPfSJBZKg5DyFFke/DuoPVocJn
+         7osuhG9R62diOnWQGsvLBAaLpWLQgGV94F5Otrz4J9g2SRrQpdUvGgUIgdtBuRicQqUt
+         F1ZhgEMW+5k1Z1XBP/krDESv75G+TR6zcnmEtmcVIgFNVnGJuG82tTYuo1GSNf7uiE8H
+         +4Gch/kEmLS+JL6TTYmS9A4MTI1vB7QY41L8sC4iKpEBms0d0pVQxcGqxcJvPpCxTtpJ
+         /JHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725557843; x=1726162643;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oxD/2bn0T/dFXzCPoiChAlaQk6ipCE9icGUJFuoXA1Q=;
+        b=bzO3/FC7NzJ68/QtkTIm/gLuLNpqGN0YM3Iboj4PUPb9rMPb39zkcfvNo2BFt9PGbR
+         wP104xtEgUMWWS0yIYYVfBSB7Lez3IMLNcNCHiZi6t9txbSEfN/nXo/YxbNPgipE6kUH
+         99/SIbW6FyRCwzGTiJYzqX6Gq6TrAexdnnn9yvraGHa/MJQcwghlqJSun+nfJdmaSyQQ
+         hIfL/xhCKgPW+3720guQpRmTTPkE3NVPbbfCNJnofhSElu8HBxoDyvx+EmyBFCLzwe+9
+         FB1xR+j6TFc5XaECngmSAr4cGbOun/eQ+H+eHB8RtiXNzE1sKmwPBZFzm7fQyXZ+2hVP
+         aVrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNMn7ePhOy32ypArlTmhia3Brp65K+5Ble2Hy8lQm9kY+8YG+iGY6fQnmF+9SDxLPQ4A5uSjc7/GlCuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzospeudttjcRi59NdXEpHNqyqY/Ndj2+uXqYjJiCIP/rY1NI/Q
+	XYVjJ8czFAWbNEtiA3jfQoJQDT8Hw9MqLDuieVD6R2GZXNlWBsaw3vnKN75qZOU=
+X-Google-Smtp-Source: AGHT+IEIDulTsaaq38yymlQC7bbdXx0m4PCzq23xq+gvpBO7GHB6rSksYTXnQ2o8e1Qm3lp69ntdfg==
+X-Received: by 2002:adf:f608:0:b0:374:c05f:2313 with SMTP id ffacd0b85a97d-374c05f2775mr13707086f8f.45.1725557842988;
+        Thu, 05 Sep 2024 10:37:22 -0700 (PDT)
 Received: from cleve-worktop. (85-193-33-185.rib.o2.cz. [85.193.33.185])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42bb37f7849sm245704605e9.7.2024.09.05.10.37.20
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42bb37f7849sm245704605e9.7.2024.09.05.10.37.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 10:37:21 -0700 (PDT)
+        Thu, 05 Sep 2024 10:37:22 -0700 (PDT)
 From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Subject: [PATCH v3 0/2] NanoPi NEO Plus2: Fix regulators and assign them
-Date: Thu, 05 Sep 2024 19:37:09 +0200
-Message-Id: <20240905-nanopi-neo-plus2-regfix-v3-0-1895dff59598@gmail.com>
+Date: Thu, 05 Sep 2024 19:37:10 +0200
+Subject: [PATCH v3 1/2] arm64: dts: allwinner: H5: NanoPi Neo Plus2: Fix
+ regulators
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAEXs2WYC/4XOQQ6CMBAF0KuQrh1Da6HoynsYFqUMMAm0pEWiI
- dzdAht2Lv8k//1ZWEBPGNgjWZjHmQI5G8PtkjDTadsiUB0zE6mQaSEUWG3dSGDRwdi/gwCPbUM
- fqPKU89wgF0az2B49xvMuv8qYG+8GmDqP+uxJqCRs9YON6oGO5DY4wMyBgzJZo2otZaabZzto6
- q/GDdtKR2Fy/ru/P4tt6/+ns4AU5F3lhURTCKNOZLmu6w8AcuOWFAEAAA==
+Message-Id: <20240905-nanopi-neo-plus2-regfix-v3-1-1895dff59598@gmail.com>
+References: <20240905-nanopi-neo-plus2-regfix-v3-0-1895dff59598@gmail.com>
+In-Reply-To: <20240905-nanopi-neo-plus2-regfix-v3-0-1895dff59598@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
  Jernej Skrabec <jernej.skrabec@gmail.com>, 
@@ -88,36 +89,77 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725557840; l=782;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725557840; l=2036;
  i=cleverline1mc@gmail.com; s=20240824; h=from:subject:message-id;
- bh=QAO4zUKegzIVbTCAiUAXPouHjb63cshPgOVmMLANiKk=;
- b=s3bCCIt5WLyYQ6C/5gtmFO/gtd5JWGKczWJGLJvZzX771vKcV6GZEfFZ8h4SJIugdb4byUrNf
- MXegnWlLZ3hD4cOIv2pNkYjgcRNZ+ZDQ0KGlBS9uVusHHMMsVhPcF/z
+ bh=RNhLy3kONeDz/+IGq0BW6Nukk5PX4HbKNZTyiChMq2M=;
+ b=mRqnuyRIbQD4SoMGj0V2V9H2g3ftmeIT1qPwpgUttP3Ep15ApEySEepSU4AJoX1x0uqG6oQ59
+ NkdC329VWZdDCPkNfXmvnoDruhSysZqbd+FVqFRIPWeii4pyYYzqlqR
 X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
  pk=CQifx5FUgTQKAoj5VCYrwYHi235AkXQ5yT1P6gkaBxM=
 
-Just minor changes based on feedback.
+Added the main board 5 V supply regulator,
+a 2.5 V supply regulator for GMAC PHY IO and correct vin-supply elements.
 
 Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
 ---
-Changes in v3:
-- Renamed patches - added prefix.
-- Remove the patch that added regulator to emmc.
-- Link to v2: https://lore.kernel.org/r/20240827-nanopi-neo-plus2-regfix-v2-0-497684ec82c7@gmail.com
+ .../dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts   | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
----
-Kryštof Černý (2):
-      arm64: dts: allwinner: H5: NanoPi Neo Plus2: Fix regulators
-      arm64: dts: allwinner: H5: NanoPi NEO Plus2: Use regulators for pio
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+index b69032c44557..dee4cd82636b 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+@@ -45,16 +45,40 @@ reg_gmac_3v3: gmac-3v3 {
+ 		startup-delay-us = <100000>;
+ 		enable-active-high;
+ 		gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&reg_vcc3v3>;
++	};
++
++	reg_gmac_2v5: gmac-2v5 {
++		/* 2V5 supply for GMAC PHY IO */
++		compatible = "regulator-fixed";
++		regulator-name = "gmac-2v5";
++		regulator-min-microvolt = <2500000>;
++		regulator-max-microvolt = <2500000>;
++		regulator-always-on;
++		vin-supply = <&reg_vcc3v3>;
++	};
++
++	reg_vcc5v: regulator-vcc5v {
++		/* board 5V supply from micro USB or pin headers */
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
+ 	};
+ 
+ 	reg_vcc3v3: vcc3v3 {
++		/* board 3V3 supply by SY8089A */
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc3v3";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&reg_vcc5v>;
+ 	};
+ 
+ 	vdd_cpux: gpio-regulator {
++		/* cpu voltage regulator MP2143DJ */
+ 		compatible = "regulator-gpio";
+ 		regulator-name = "vdd-cpux";
+ 		regulator-type = "voltage";
+@@ -66,6 +90,7 @@ vdd_cpux: gpio-regulator {
+ 		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>;
+ 		gpios-states = <0x1>;
+ 		states = <1100000 0>, <1300000 1>;
++		vin-supply = <&reg_vcc5v>;
+ 	};
+ 
+ 	wifi_pwrseq: pwrseq {
 
- .../dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts   | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
----
-base-commit: 6f923748057a4f6aa187e0d5b22990d633a48d12
-change-id: 20240827-nanopi-neo-plus2-regfix-b60116ce12ca
-
-Best regards,
 -- 
-Kryštof Černý <cleverline1mc@gmail.com>
+2.39.2
 
 
