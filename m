@@ -1,273 +1,247 @@
-Return-Path: <linux-kernel+bounces-316474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA1696D012
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:05:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051DE96D013
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F192B25214
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298611C22A8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ACE193089;
-	Thu,  5 Sep 2024 07:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erQbufUP"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D29192D79;
+	Thu,  5 Sep 2024 07:04:19 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F71418BC2D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156ED1925BB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725519837; cv=none; b=FtkSzRxRzC7/mraOog0LiwRo3LJLwzGEV6zAGeu0DLNrUu5zJGG6kGEMRXAaIAobpWBgUcmi73MaiciAGbNbCqtIdMPipzomfDwRn8AZBgPkht4K7lFdjRXQ4XAhag92NAw6qWJqUW6hBrR+4AWKXxfhjHZzleSUIRD17K1QYPs=
+	t=1725519858; cv=none; b=Iq0w85tltUN2NLeT71MWfpGFqsH1ih1m4w1ZkFamVUIUr76md1GqWJLgpcd04wGKg4hunF75VhoSjQlL7aU5edmZ2U6gIZKjvRUstsnSLp17B1H37Wq06K2HFN/tRUcsI7CCJNljnXX2KzEzrNvlNdjCoCIFM31sBLwBJryAuI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725519837; c=relaxed/simple;
-	bh=Cd7XNmlW9MqqhP5qrtViYw8o2PrVf6BaKi7OzsrYujA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lYOugKEBxOc3rkV6hfFhVp7LpRedOJkmEksZzTtMgOta64aN9U4TmQzdnEwZGnMzcguanBu0Zz6laTEOtXu/52cWW9fi5iW1ij9AjFD1uAyBreGXbsZYDsPTJcSa7r+QEi+YKvh1K56QlN2THumCc1G0Rr0LMhFxyFfUcEP5dV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erQbufUP; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4fcefbd6bc4so155278e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725519834; x=1726124634; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ER2L0+4siAxGA0mjEF/2tgr84COLH8G/X1oBsGURNq4=;
-        b=erQbufUPk1Rw4qS64I+Qygy4yCCB3KyPvFkJQ4Rwn1KqGQJ2WW4C2jLExAtagTSaAI
-         S0JqeUw1NVZEbMs9KtynNZSeg51+7v1ammmRlZmeD8Pc5hOel+K7/vKlJJPdoVXer3OW
-         g1Rx1IyueAhmyxdhSgHwdLruDwsFlsg+mkyZlaiRGO6FOB1KCFDNjEvXvZOXlllDvZpp
-         igoozsir/Tyuuxv99JfnAI6jA22oLHjjMpG2hX+Z+F+02hpi4vxaylms9vDyQBpODFhG
-         NODO1qopSi+IhbFMccAK5VSZd9nTew/C3CIWMSDBfwXtKHTwEWzP0465TLO8OS8niqdI
-         dYrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725519834; x=1726124634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ER2L0+4siAxGA0mjEF/2tgr84COLH8G/X1oBsGURNq4=;
-        b=kMqYVRf91HtL9VIDkOucRz4edBJ58NYGYr2IuvDYV7jQcvkdXJsz99l04d6QPvfJIx
-         RaZBzu15oBF5kpb+AyD93yDWa4Fsm19Zcr664gNRuchFyrQ37B3n5xfGRbeCqEcSpmg0
-         sIRw6KxXF7bWBJruRDfYE5vW4LvKyTkTj6pzvgLmqOOEsyqG3oA31qrhDz+6Va+avkY6
-         g68QjPWxQyMs/hGkAZBewmy9sxV4ao0HhUqeYJ0nbNOwH1aLgG8s7szc8GGuUzseMfp3
-         hnx47GRANcxpWWC5LFLCSB9oSirBSV+8GSSqmxMgcNUfan3E7oL+Lx4t7eZ5wn4Td2Ek
-         JuMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuA/f941bFR/xOY6yQsK9VCLn3YoaExGWdgIFc3SuxkUXxxn1jpky9hnN4gxCqhrQN3HfDiZOL1o3B7U0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsKVUnG0qgdvDbxzG2+3W+1NDy1JxYHbrQbxcbYtcTRXsexat+
-	OW5d9taazkfN4cCAmk+a3LjCEV1A71BQLGCptYogKkAQA/eFsNN7UmVti1yHvadxpF8MOwp+lDZ
-	xGH9ri2L30zpAyPVjn9LhkxAjCQg=
-X-Google-Smtp-Source: AGHT+IF1ZSvi5OD6Vd1LoKxHOJRg5Vlz1rUm1VAolvT5eKOZLMFg5nbKgw6aWPOezt7qpOYbnciRnVzXId8dKhPTXCQ=
-X-Received: by 2002:a05:6122:3296:b0:4f6:b610:61bf with SMTP id
- 71dfb90a1353d-5009b0827f9mr20454612e0c.8.1725519834280; Thu, 05 Sep 2024
- 00:03:54 -0700 (PDT)
+	s=arc-20240116; t=1725519858; c=relaxed/simple;
+	bh=6TreK1AMfwp8DrqbjRh4hzKOjl0roMFm7yxkJH3c06c=;
+	h=Subject:From:To:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QEKc1wEVoTlABT9Dw+WJ9hpxp6AULoC8QJLyzjMupKbdLejGairBL3Y2sA6/MBrnwZlZsDlri+G9S3M+fMiLs7ATt33KwRZgTfTAubGS6lWixSUldaI9P+mkyQPmu4ObJ2kmdhdsOMN9de8Zuwjo2HXFwYNRmtn/pPJWTM5daKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wzr1f4ql5z2Dbn1;
+	Thu,  5 Sep 2024 15:03:50 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1F8141400DC;
+	Thu,  5 Sep 2024 15:04:12 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 5 Sep 2024 15:04:11 +0800
+Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
+ remaining nodes locally
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
+	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
+ <20240904133944.2124-5-thunder.leizhen@huawei.com>
+ <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
+ <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com>
+Message-ID: <711bf7dd-1f57-7cee-54b0-e439a70db967@huawei.com>
+Date: Thu, 5 Sep 2024 15:04:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-2-usamaarif642@gmail.com>
- <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
- <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com>
- <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
- <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com> <CAJD7tkY+wXUwmgZUfVqSXpXL_CxRO-4eKGCPunfJaTDGhNO=Kw@mail.gmail.com>
-In-Reply-To: <CAJD7tkY+wXUwmgZUfVqSXpXL_CxRO-4eKGCPunfJaTDGhNO=Kw@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 5 Sep 2024 19:03:42 +1200
-Message-ID: <CAGsJ_4zP_tA4z-n=3MTPorNnmANdSJTg4jSx0-atHS1vdd2jmg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
-	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
-	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
-	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Thu, Sep 5, 2024 at 5:41=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> [..]
-> > > I understand the point of doing this to unblock the synchronous large
-> > > folio swapin support work, but at some point we're gonna have to
-> > > actually handle the cases where a large folio being swapped in is
-> > > partially in the swap cache, zswap, the zeromap, etc.
-> > >
-> > > All these cases will need similar-ish handling, and I suspect we won'=
-t
-> > > just skip swapping in large folios in all these cases.
-> >
-> > I agree that this is definitely the goal. `swap_read_folio()` should be=
- a
-> > dependable API that always returns reliable data, regardless of whether
-> > `zeromap` or `zswap` is involved. Despite these issues, mTHP swap-in sh=
-ouldn't
-> > be held back. Significant efforts are underway to support large folios =
-in
-> > `zswap`, and progress is being made. Not to mention we've already allow=
-ed
-> > `zeromap` to proceed, even though it doesn't support large folios.
-> >
-> > It's genuinely unfair to let the lack of mTHP support in `zeromap` and
-> > `zswap` hold swap-in hostage.
->
 
-Hi Yosry,
 
-> Well, two points here:
->
-> 1. I did not say that we should block the synchronous mTHP swapin work
-> for this :) I said the next item on the TODO list for mTHP swapin
-> support should be handling these cases.
+On 2024/9/5 11:45, Leizhen (ThunderTown) wrote:
+> 
+> 
+> On 2024/9/5 11:11, Leizhen (ThunderTown) wrote:
+>>
+>>
+>> On 2024/9/4 21:39, Zhen Lei wrote:
+>>> If the conditions for starting fill are met, it means that all cores that
+>>> call fill() later are blocked until the first core completes the fill
+>>> operation. But obviously, for a core that has free nodes locally, it does
+>>> not need to be blocked(see below for why). This is good in stress
+>>> situations.
+>>>
+>>> 1. In the case of no nesting, a core uses only one node at a time. As long
+>>>    as there is a local node, there is no need to use the free node in
+>>>    obj_pool.
+>>> 2. In the case of nesting depth is one, nodes in obj_pool need to be used
+>>>    only when there is only one local node.
+>>>    #define ODEBUG_POOL_PERCPU_SIZE      64
+>>>    #define ODEBUG_BATCH_SIZE            16
+>>>    Assume that when nested, the probability of percpu_obj_pool having each
+>>>    number of nodes is the same. The probability of only one node is less
+>>>    than 1/17=6%. Assuming the probability of nesting is 5%, that's a
+>>>    pretty high estimate. Then the probability of using obj_pool is
+>>>    6% * 5% = 0.3%. In other words, a 333-core environment produces only
+>>>    one core to compete for obj_pool.
+>>>    #define ODEBUG_POOL_MIN_LEVEL        256
+>>>    #define ODEBUG_BATCH_SIZE            16
+>>>    But we can tolerate "256 / (16 + 1)" = 15 cores competing at the same
+>>>    time.
+>>
+>> One detail is omitted. In function debug_objects_mem_init(), an extra batch
+>> is reserved for each core.
+>> 	extras = num_possible_cpus() * ODEBUG_BATCH_SIZE;
+>> 	debug_objects_pool_min_level += extras;
+>>
+>> In addition, above method of calculating probabilities is wrong. The correct
+>> calculation method is as follows:
+>> When the number of local nodes is 0, fill is performed. When the number of
+>> local nodes is 1 and nested, 16 nodes are moved from obj_pool to obj_pool.
+>> As a result, the obj_pool resource pool keeps decreasing. When this happens
+>> continuously(The number of local nodes equal 0 is not met), the resource
+>> pool will eventually be exhausted. The error probability is:
+>> (1/2)^((256+16^ncpus)/17) * (5% + 5%^2 + ... + 5%^N) * 2/17 < 1e-7 (ncpus=1).
+> 
+> Should be:
+> ==> (1/2)^((256+16^ncpus)/17) * 5% * 2/17 < 9e-8 (ncpus=1).
+> 
+>> 1/2 ==> denominator sequence: 0,1; numerator sequence: 1
+>> (5% + 5%^2 + ... + 5%^N) < 5% + (5%^2) * 2 = 0.055
+>> 17 = ODEBUG_BATCH_SIZ + 1, amount moved from obj_pool when the number of local nodes is 0.
+>> 2/17 ==> denominator sequence: 0-16; numerator sequence: 0,1
+>> The more cores, the lower the probability of exhaustion.
+>>
+>> If obj_pool is not filled only when there are more than two local nodes,
+>> the probability of exhaustion is:
+>> (1/3)^((256+16^ncpus)/17) * (5% + 5%^2 + ... + 5%^N) * 3/17 < < 2.3e-10
+> 
+> Should be:
+> ==> (1/3)^((256+16^ncpus)/17) * (5%^2) * 3/17 < 1.03e-11 (ncpus=1).
+> 
+>> 1/3 ==> denominator sequence: 0,1,2; numerator sequence: 2
+>> 3/17 ==> denominator sequence: 0-16; numerator sequence: 0,1,2
+> 
+> Hi, Thomas Gleixner:
+>   Seems to need to add an additional patch as follows to be foolproof.
+> I'll prepare it.
 
-Thanks for your clarification!
+I've rethinked this problem, and there's another remedy. When the number
+of remaining free nodes is less than half of debug_objects_pool_min_level,
+still do fill. In this way, "nr_cpus/2 + 256/(16+1)" cores are required to
+bypass the check before obj_pool_free is updated, which is almost impossible.
 
->
-> 2. I think two things are getting conflated here. Zswap needs to
-> support mTHP swapin*. Zeromap already supports mTHPs AFAICT. What is
-> truly, and is outside the scope of zswap/zeromap, is being able to
-> support hybrid mTHP swapin.
->
-> When swapping in an mTHP, the swapped entries can be on disk, in the
-> swapcache, in zswap, or in the zeromap. Even if all these things
-> support mTHPs individually, we essentially need support to form an
-> mTHP from swap entries in different backends. That's what I meant.
-> Actually if we have that, we may not really need mTHP swapin support
-> in zswap, because we can just form the large folio in the swap layer
-> from multiple zswap entries.
->
+But then again, I'm just theoretical, and I don't have the data, so maybe
+the best solution is to give up this patch and talk about it in future.
 
-After further consideration, I've actually started to disagree with the ide=
-a
-of supporting hybrid swapin (forming an mTHP from swap entries in different
-backends). My reasoning is as follows:
+By the way, I've found a new concern.
+	static int debug_objects_pool_size = ODEBUG_POOL_SIZE;			//1024
+	static int debug_objects_pool_min_level = ODEBUG_POOL_MIN_LEVEL;	//256
+	extras = num_possible_cpus() * ODEBUG_BATCH_SIZE;			//16
+	debug_objects_pool_size += extras;
+	debug_objects_pool_min_level += extras;
+When there are so many cores, it should be easier to walk back and forth
+around debug_objects_pool_min_level. For example, nr_cpus=128,
+	debug_objects_pool_min_level = 128 *16 + 256 = 2304
+	debug_objects_pool_size - debug_objects_pool_min_level = 768	//fixed
+There are many more loafers than workers. As above, it's better to
+discuss it in future.
 
-1. The scenario where an mTHP is partially zeromap, partially zswap, etc.,
-would be an extremely rare case, as long as we're swapping out the mTHP as
-a whole and all the modules are handling it accordingly. It's highly
-unlikely to form this mix of zeromap, zswap, and swapcache unless the
-contiguous VMA virtual address happens to get some small folios with
-aligned and contiguous swap slots. Even then, they would need to be
-partially zeromap and partially non-zeromap, zswap, etc.
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 58de57090ac6389..2eb246901cf5367 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -135,6 +135,10 @@ static void fill_pool(void)
+        if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+                return;
 
-As you mentioned, zeromap handles mTHP as a whole during swapping
-out, marking all subpages of the entire mTHP as zeromap rather than just
-a subset of them.
++       if (likely(obj_cache) &&
++           this_cpu_read(percpu_obj_pool.obj_free) > 0 &&
++           likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level / 2))
++               return;
+        /*
+         * Reuse objs from the global tofree list; they will be reinitialized
+         * when allocating.
 
-And swap-in can also entirely map a swapcache which is a large folio based
-on our previous patchset which has been in mainline:
-"mm: swap: entirely map large folios found in swapcache"
-https://lore.kernel.org/all/20240529082824.150954-1-21cnbao@gmail.com/
 
-It seems the only thing we're missing is zswap support for mTHP.
+> 
+> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+> index e175cc74f7b7899..d3f8cc7dc1c9291 100644
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -245,6 +245,21 @@ alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *d
+> 
+>         raw_spin_lock(&pool_lock);
+>         obj = __alloc_object(&obj_pool);
+> +       if (!obj) {
+> +               raw_spin_unlock(&pool_lock);
+> +               obj = kmem_cache_zalloc(obj_cache, __GFP_HIGH | GFP_NOWAIT);
+> +               if (!obj)
+> +                       return NULL;
+> +
+> +               raw_spin_lock(&pool_lock);
+> +               debug_objects_allocated++;
+> +
+> +               /*
+> +                * It can be understood that obj is allocated immediately after
+> +                * being added to obj_pool.
+> +                */
+> +               obj_pool_used++;
+> +       }
+>         if (obj) {
+>                 int cnt = 0;
+> 
+> 
+> 
+>>
+>>> 3. In the case of nesting depth more than one, the probability is lower
+>>>    and negligible.
+>>>    Nesting Depth=2: "2/17 * 5% * 5%" = 0.03%
+>>>    Nesting Depth=3: "3/17 * 5% * 5% * 5%" = 0.002%
+>>>
+>>> However, to ensure sufficient reliability, obj_pool is not filled only
+>>> when there are more than two local nodes, reduce the probability of
+>>> problems to the impossible.
+>>>
+>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>> ---
+>>>  lib/debugobjects.c | 10 ++++++++++
+>>>  1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+>>> index 7a8ccc94cb037ba..4f64b5d4329c27d 100644
+>>> --- a/lib/debugobjects.c
+>>> +++ b/lib/debugobjects.c
+>>> @@ -131,6 +131,16 @@ static void fill_pool(void)
+>>>  	struct debug_obj *obj;
+>>>  	unsigned long flags;
+>>>  
+>>> +	/*
+>>> +	 * The upper-layer function uses only one node at a time. If there are
+>>> +	 * more than two local nodes, it means that even if nesting occurs, it
+>>> +	 * doesn't matter. The probability of nesting depth >= 2 is extremely
+>>> +	 * low, and the number of global free nodes guarded by
+>>> +	 * debug_objects_pool_min_level is adequate.
+>>> +	 */
+>>> +	if (likely(obj_cache) && this_cpu_read(percpu_obj_pool.obj_free) >= 2)
+>>> +		return;
+>>> +
+>>>  	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+>>>  		return;
+>>>  
+>>>
+>>
+> 
 
-2. Implementing hybrid swap-in would be extremely tricky and could disrupt
-several software layers. I can share some pseudo code below:
-
-swap_read_folio()
-{
-       if (zeromap_full)
-               folio_read_from_zeromap()
-       else if (zswap_map_full)
-              folio_read_from_zswap()
-       else {
-              folio_read_from_swapfile()
-              if (zeromap_partial)
-                       folio_read_from_zeromap_fixup()  /* fill zero
-for partially zeromap subpages */
-              if (zwap_partial)
-                       folio_read_from_zswap_fixup()  /* zswap_load
-for partially zswap-mapped subpages */
-
-               folio_mark_uptodate()
-               folio_unlock()
-}
-
-We'd also need to modify folio_read_from_swapfile() to skip
-folio_mark_uptodate()
-and folio_unlock() after completing the BIO. This approach seems to
-entirely disrupt
-the software layers.
-
-This could also lead to unnecessary IO operations for subpages that
-require fixup.
-Since such cases are quite rare, I believe the added complexity isn't worth=
- it.
-
-My point is that we should simply check that all PTEs have consistent zerom=
-ap,
-zswap, and swapcache statuses before proceeding, otherwise fall back to the=
- next
-lower order if needed. This approach improves performance and avoids comple=
-x
-corner cases.
-
-So once zswap mTHP is there, I would also expect an API similar to
-swap_zeromap_entries_check()
-for example:
-zswap_entries_check(entry, nr) which can return if we are having
-full, non, and partial zswap to replace the existing
-zswap_never_enabled().
-
-Though I am not sure how cheap zswap can implement it,
-swap_zeromap_entries_check()
-could be two simple bit operations:
-
-+static inline zeromap_stat_t swap_zeromap_entries_check(swp_entry_t
-entry, int nr)
-+{
-+       struct swap_info_struct *sis =3D swp_swap_info(entry);
-+       unsigned long start =3D swp_offset(entry);
-+       unsigned long end =3D start + nr;
-+
-+       if (find_next_bit(sis->zeromap, end, start) =3D=3D end)
-+               return SWAP_ZEROMAP_NON;
-+       if (find_next_zero_bit(sis->zeromap, end, start) =3D=3D end)
-+               return SWAP_ZEROMAP_FULL;
-+
-+       return SWAP_ZEROMAP_PARTIAL;
-+}
-
-3. swapcache is different from zeromap and zswap. Swapcache indicates
-that the memory
-is still available and should be re-mapped rather than allocating a
-new folio. Our previous
-patchset has implemented a full re-map of an mTHP in do_swap_page() as ment=
-ioned
-in 1.
-
-For the same reason as point 1, partial swapcache is a rare edge case.
-Not re-mapping it
-and instead allocating a new folio would add significant complexity.
-
-> >
-> > Nonetheless, `zeromap` and `zswap` are distinct cases. With `zeromap`, =
-we
-> > permit almost all mTHP swap-ins, except for those rare situations where
-> > small folios that were swapped out happen to have contiguous and aligne=
-d
-> > swap slots.
-> >
-> > swapcache is another quite different story, since our user scenarios be=
-gin from
-> > the simplest sync io on mobile phones, we don't quite care about swapca=
-che.
->
-> Right. The reason I bring this up is as I mentioned above, there is a
-> common problem of forming large folios from different sources, which
-> includes the swap cache. The fact that synchronous swapin does not use
-> the swapcache was a happy coincidence for you, as you can add support
-> mTHP swapins without handling this case yet ;)
-
-As I mentioned above, I'd really rather filter out those corner cases
-than support
-them, not just for the current situation to unlock swap-in series :-)
-
-Thanks
-Barry
+-- 
+Regards,
+  Zhen Lei
 
