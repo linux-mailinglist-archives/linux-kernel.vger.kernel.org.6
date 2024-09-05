@@ -1,151 +1,192 @@
-Return-Path: <linux-kernel+bounces-317603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EAA96E0EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B360B96E0EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FCB1F23D9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 938E51C241AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244471A2842;
-	Thu,  5 Sep 2024 17:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9F2155CB0;
+	Thu,  5 Sep 2024 17:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrjZF/G/"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XsUmZi5H"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF41A254E;
-	Thu,  5 Sep 2024 17:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0371522F;
+	Thu,  5 Sep 2024 17:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725556455; cv=none; b=KH1IaEq3B9xe0KJ/93ChJxQ6PtSfRBCGp6x3gDZn2UdKGlDrvEWLg2+oCC0yzjbCm72GgFSlMR+vJD/K9wCJ01GtoG2MMY3iBO8hWcnUpPzh1mdQoOD/f+M/v+TpkvyGYfqaP85mJiXpFTB99bS3BBo2LB/nxDNQhdb1d1oE3dk=
+	t=1725556528; cv=none; b=Pf8jPgDatfRzmCtQqzsARbdBUQ9o/Fv9dRFQBE1E5ctoL/BlqdUYf8mGXtZtwscaM7AvUoDXvKR266GUZkFJEgIis1Y8tmIFrDniutlxxBMAeC3r+wK51xxIkXgWLEXOTeJKoBzrxBvwOtBpVkeXv6BufILwqF+gn8/pZ88Q59E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725556455; c=relaxed/simple;
-	bh=ACiEB5LXUh7OfpSRX4hgkRl9TgTVeMVuJ5u8n6h3v6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rN+W483BRXQ9l95V4RU45L18pgO5Ne9r0dt6GsnYel+AWIYbCydnMUOW37wT6ueIoEEzy2T4jmtshjhu03Hn71Xol4FtunF1gwUj3VIlKuuPHdRTfuBh2i/q1l7LJzVgtAdrgsO+2b3xS4WpJHCSiD7q/OPPP13ub8/cyzhzAGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrjZF/G/; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717594b4ce7so896435b3a.0;
-        Thu, 05 Sep 2024 10:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725556453; x=1726161253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1qzH2P6QT/VZDU01WTRilziL7RsN8P6XpRi7hhgH0MM=;
-        b=nrjZF/G/I1KX+y2s0kso1I6zI//seQ5RcfWgX/YzSjfHS2wiAB5VVDPAgmeHpyplHg
-         8DlWsB3h7leOv/GPlf1uXnlefTo+k7M0SOigU7sYvsnMhujvHoOrb8GxC+vImMDFgNpH
-         HhqZflvoKdgU9zub9hUQw6bZWnciBC/VoZjNkNAfvQScMKP90/xx8+N46JltZAVQrjfe
-         OFbkh8GI21i85xzrh0y9aPDrZQ/h9zxsqiMjJOudocCw1MnmwaK1gVzj+QpeNhoMk70y
-         xcHmymUhgQrjc27IYmyokyN+RBo2KNQmXLJ1kyOmxx5AW/uAUYbC6iEwzHT2VyE6uxLt
-         nSUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725556453; x=1726161253;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1qzH2P6QT/VZDU01WTRilziL7RsN8P6XpRi7hhgH0MM=;
-        b=JVpOnFa+Ux+xKq0pRhRA2Sfjnmp0wOt5XeY5ZdEu3iz5fW/QajZqxorpzktgWCuuEp
-         BWrqkxbhHKZ+0NrZQHH5CPRAKSf0FNzRWaQgAby312ryRA48COBMOrK6/RwTyCiFIeTp
-         scC6C7JOSKIRm+N/DyumO4Cfeo6CeVqHfw/qBpVnnqVbM57uVYY2zgmwsej9FmotUV6R
-         itxTL2JECFS7N9jF/iN/b6x2YUq6hGKCRIilh4VKJYmT0wQEZ2MfeNKCNAy2ujRdHAox
-         7ADRORkOmDNkA8SNQNCikOa3EsidWFlYwlsrD5WB9n5Hq5w/zQxD7eqgJx08UrPCoflV
-         v/Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhiXPJ6Z6HDKvqdXEarxPPsuuOOZTbIMaWxllO7XMKPu3h2a3eWk6fyjbwxCwfWf9YcUULTbNkDYCMa74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAF1n0kvkeTCdoRYxIFpHoV2FOSfudV8YdN+H+HSbXSvbvWbB2
-	56pcboJ6DLeDNQNO9pE75XhMWYSmEKY9lyLWcjk17w5ppFmmd6QG
-X-Google-Smtp-Source: AGHT+IFNQ30Hl3bbgFIamcPL18mrmHP0yLBj3dz/0jzD0MnCq/pSxUooRWLpBz/POMEpqh31MC1ZtA==
-X-Received: by 2002:a05:6a20:5530:b0:1cc:e17f:a3a2 with SMTP id adf61e73a8af0-1cce17fa3bfmr20162553637.0.1725556453229;
-        Thu, 05 Sep 2024 10:14:13 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178e99c111sm1364522b3a.92.2024.09.05.10.14.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 10:14:12 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chen.dylane@gmail.com
-Subject: [RFC PATCH bpf-next] bpf: Check percpu map value size first
-Date: Fri,  6 Sep 2024 01:14:06 +0800
-Message-Id: <20240905171406.832962-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725556528; c=relaxed/simple;
+	bh=b3J0zmDqUTroBSZmui7RtRtrLz5VtHqzff2jtxVhDnk=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=XeWnUjWIK9U/Iv+OeQwuoTfhxE3GLLWQ4N75STEy6y3KS5z1eV8tfLFIfm37RPAO5FBYauQQHSSDoxdxfHvISUNQVku6VR0DKhVn1OVTspr9/CWozGKiREJo0n9Iv4fXxUgJWGBZUFYBmNm35MlizANDwq63O1kd3n3ePi5u7ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XsUmZi5H; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725556518; bh=IdmLzzE4Y30s9YeYCM0UVuwavqz/aTp5LLdmTh4K8f0=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=XsUmZi5HPqQjER2B98kOFc2PPfFs8IGDZYwGuoonrTzf9KFuX8IJjXUIxr8wTFikf
+	 5f366F/4LO6GWGn1TbgtVF+juAFuzy1Mg+1iDo7z9qu1SxNdiVwQ+tP2PccyjRCqaI
+	 oxL4xwV5gzqX76ew2bykD20WrZw/Pf7UWpCQla2M=
+Received: from smtpclient.apple ([2001:da8:c800:d084:a0ed:5d47:36ee:f762])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 3CF3FE5C; Fri, 06 Sep 2024 01:15:15 +0800
+X-QQ-mid: xmsmtpt1725556515tl5azvo8d
+Message-ID: <tencent_B49BC6F11F5737662664B35196CF50904805@qq.com>
+X-QQ-XMAILINFO: ODdZrkDuTlAgtf9EojIpmtCpfUBNWoLW0j3WAfyUMzA3bmwJ7yeQCYEc7UNFBn
+	 dgh4i/ubTQJldg/Ixe82HlksCUKuP6ZB9TbSRJBKn41i3yBB2sRE7UvmO3YIC1QadIh8rIj/U8Ob
+	 xH7bwli6OntCsqeLXERo7Y0XmcVZVpp1clpxOMdhqTinb81fAts36L1vK8A+E7h2Mf5Hldqx5cw1
+	 Yh1mPCbyW5t+OXe9JQuZiQHaBL5Tgi+M8fqLuqsqpn2IOD6+uiIq3lfhyh4XjmrrH7DdlZ6Jzkib
+	 kVJz16UBYU8LzQHK1p4nAPJrBTi7vHY4UZNzZ/5grKw7LomY+65wIzlpDI+bKGJqB9A6tjY/U24G
+	 QkI6/AcMcoh1NoUKktLykS5V1O7JTc72+tHKbZhrP2UpPXaWITkdAhdVW1HGgAG+kXTlZpcvLh/Y
+	 8cpdW+BsQI0yAsgApBmRlPDdPDE/ZrbPs8dicFV9WM8cZwe9x48K/ZBKXKCTqVxqnOiKqXEyz72l
+	 ZCEhLxim4Nn/TV4mxzfNuiu+Da5NUfHJ3+w2yPm9qk1A0127lY/g/Pk0kL08DiDn5mQz8jdY4tdl
+	 8bs9yiNxXxzyqzwRNBOts1bSTKhyPoDOSDVpGRR0It1732B7jTZvZ2ZxB1/b9c4pMZfX7vuXSQNw
+	 2UuHfqJH6fhYR7CUn72aJtd8RIZR+2YbwsI8lZvt2dvJrJ8nuuBMZgHjqN+0CmzCFrkTU1irKZNm
+	 2Meayw7xkV0dXhvVEmvLrzv375PBa8l7NAjRa9C0wnDMGPMWduh8lpGneRF0E3V/nNOj6vCaALJk
+	 B8AEFCvseA/R67BkrBlCzy7HjhoKhEzOzq2YodvvCsYqH6lgwH2nzVcn5Zkr2R5wXd2D71Zlq/yF
+	 ow3eN1KFSzysK54VOaYlROVEN801XV85jm9ownawFqEtQ1NDGDvayh16w3Ot3KgCCu8Y8Wy4ZdBv
+	 qxg4sXU4K+3FSYX4TYO/9OJF01ZzV4O6nmyo/XVJzdPzuwYjBm9/mYtXGswYJ1suUI3Ztp28A=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 3/3] riscv: mm: Do not restrict mmap address based on hint
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <mhng-ad0c8c3b-568a-484d-bc3d-49b56a11dcd6@palmer-ri-x1c9>
+Date: Fri, 6 Sep 2024 01:15:04 +0800
+Cc: Charlie Jenkins <charlie@rivosinc.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Shuah Khan <shuah@kernel.org>,
+ Levi Zim <rsworktech@outlook.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ linux-doc@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-kselftest@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <AFED66DE-BE37-467B-A7FD-BF6D530CE0D3@cyyself.name>
+References: <mhng-ad0c8c3b-568a-484d-bc3d-49b56a11dcd6@palmer-ri-x1c9>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Percpu map is often used, but the map value size limit often ignored,
-like issue: https://github.com/iovisor/bcc/issues/2519. Actually,
-percpu map value size is bound by PCPU_MIN_UNIT_SZIE, so we
-can check the value size whether it exceeds PCPU_MIN_UNIT_SZIE first,
-like percpu map of local_storage. Maybe the error message seems clearer
-compared with "cannot allocate memory".
 
-the test case we create a percpu map with large value like:
-struct test_t {
-        int a[100000];
-};
-struct {
-        __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-        __uint(max_entries, 1);
-        __type(key, u32);
-        __type(value, struct test_t);
-} start SEC(".maps");
 
-test on ubuntu24.04 vm:
-libbpf: Error in bpf_create_map_xattr(start):Argument list too long(-7).
-Retrying without BTF.
+> On Sep 3, 2024, at 22:27, Palmer Dabbelt <palmer@rivosinc.com> wrote:
+>=20
+> On Mon, 26 Aug 2024 19:24:38 PDT (-0700), cyy@cyyself.name wrote:
+>>=20
+>>=20
+>>> On Aug 27, 2024, at 00:36, Charlie Jenkins <charlie@rivosinc.com> =
+wrote:
+>>> The hint address should not forcefully restrict the addresses =
+returned
+>>> by mmap as this causes mmap to report ENOMEM when there is memory =
+still
+>>> available.
+>>=20
+>> Fixing in this way will break userspace on Sv57 machines as some
+>> issues mentioned in the patch [1].
+>>=20
+>> I suggest restricting to BIT(47) by default, like patch [2], to
+>> align with kernel behavior on x86 and aarch64, and this does exist
+>> on x86 and aarch64 for quite a long time. In that way, we will also
+>> solve the problem mentioned in the first patch [1], as QEMU enables
+>> Sv57 by default now and will not break userspace.
+>>=20
+>> [1] =
+https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosi=
+nc.com/
+>> [2] =
+https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B51199=
+4F4805@qq.com/
+>=20
+> I'm going to pick this up as it's a revert and a bug fix, so we can =
+backport it.  If the right answer is to just forget about the sv39 =
+userspace and only worry about sv48 userspace then your patches are =
+likely the way to go,
 
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
----
- kernel/bpf/arraymap.c | 3 +++
- kernel/bpf/hashtab.c  | 3 +++
- 2 files changed, 6 insertions(+)
+I think we don't need to care about restricting to sv39 now since
+the ASAN bug has been fixed. We should care about what to do to not
+break userspace on sv57 machines as QEMU enables sv57 by default,
+which is widely used.
 
-diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-index a43e62e2a8bb..7c3c32f156ff 100644
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -73,6 +73,9 @@ int array_map_alloc_check(union bpf_attr *attr)
- 	/* avoid overflow on round_up(map->value_size) */
- 	if (attr->value_size > INT_MAX)
- 		return -E2BIG;
-+	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
-+	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
-+		return -E2BIG;
- 
- 	return 0;
- }
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index 45c7195b65ba..16d590fe1ffb 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -462,6 +462,9 @@ static int htab_map_alloc_check(union bpf_attr *attr)
- 		 * kmalloc-able later in htab_map_update_elem()
- 		 */
- 		return -E2BIG;
-+	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
-+	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
-+		return -E2BIG;
- 
- 	return 0;
- }
--- 
-2.25.1
+> but there's a handful of discussions around that which might take a =
+bit.
+>=20
+>>=20
+>> Thanks,
+>> Yangyu Chen
+>>=20
+>>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>>> Fixes: b5b4287accd7 ("riscv: mm: Use hint address in mmap if =
+available")
+>>> Fixes: add2cc6b6515 ("RISC-V: mm: Restrict address space for =
+sv39,sv48,sv57")
+>>> Closes: =
+https://lore.kernel.org/linux-kernel/ZbxTNjQPFKBatMq+@ghost/T/#mccb1890466=
+bf5a488c9ce7441e57e42271895765
+>>> ---
+>>> arch/riscv/include/asm/processor.h | 26 ++------------------------
+>>> 1 file changed, 2 insertions(+), 24 deletions(-)
+>>> diff --git a/arch/riscv/include/asm/processor.h =
+b/arch/riscv/include/asm/processor.h
+>>> index 8702b8721a27..efa1b3519b23 100644
+>>> --- a/arch/riscv/include/asm/processor.h
+>>> +++ b/arch/riscv/include/asm/processor.h
+>>> @@ -14,36 +14,14 @@
+>>> #include <asm/ptrace.h>
+>>> -/*
+>>> - * addr is a hint to the maximum userspace address that mmap should =
+provide, so
+>>> - * this macro needs to return the largest address space available =
+so that
+>>> - * mmap_end < addr, being mmap_end the top of that address space.
+>>> - * See Documentation/arch/riscv/vm-layout.rst for more details.
+>>> - */
+>>> #define arch_get_mmap_end(addr, len, flags) \
+>>> ({ \
+>>> - unsigned long mmap_end; \
+>>> - typeof(addr) _addr =3D (addr); \
+>>> - if ((_addr) =3D=3D 0 || is_compat_task() || \
+>>> -    ((_addr + len) > BIT(VA_BITS - 1))) \
+>>> - mmap_end =3D STACK_TOP_MAX; \
+>>> - else \
+>>> - mmap_end =3D (_addr + len); \
+>>> - mmap_end; \
+>>> + STACK_TOP_MAX; \
+>>> })
+>>> #define arch_get_mmap_base(addr, base) \
+>>> ({ \
+>>> - unsigned long mmap_base; \
+>>> - typeof(addr) _addr =3D (addr); \
+>>> - typeof(base) _base =3D (base); \
+>>> - unsigned long rnd_gap =3D DEFAULT_MAP_WINDOW - (_base); \
+>>> - if ((_addr) =3D=3D 0 || is_compat_task() || \
+>>> -    ((_addr + len) > BIT(VA_BITS - 1))) \
+>>> - mmap_base =3D (_base); \
+>>> - else \
+>>> - mmap_base =3D (_addr + len) - rnd_gap; \
+>>> - mmap_base; \
+>>> + base; \
+>>> })
+>>> #ifdef CONFIG_64BIT
+>>> --=20
+>>> 2.45.0
 
 
