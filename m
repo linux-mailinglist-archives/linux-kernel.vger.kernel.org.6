@@ -1,74 +1,71 @@
-Return-Path: <linux-kernel+bounces-317264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8EE96DBB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:23:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4CB96DBAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60E228D09C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:23:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63EFFB2617F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19EE1CD31;
-	Thu,  5 Sep 2024 14:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB1FFC0B;
+	Thu,  5 Sep 2024 14:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YM+eRsFr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BQ3CKMIJ"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654881CA84;
-	Thu,  5 Sep 2024 14:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E43CA6B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725546181; cv=none; b=NnorXjUIYzSkRIqSyWTynDTJFk/SLd1nPxF/YSovPln0SarWTtZK7A9kc6nGcrQLATEvWT3pFctK/poNkQIGnUjg8+CfnCNzSLRD6VQCHXyvLUGtRuztCmS3SYVO2lKrgKezaIdiZAArQhkq85XT03KY6jg9QdK2tV9P5lUzdiE=
+	t=1725546107; cv=none; b=cTFTjRR6DkL76dh8gU651zjGT+h8+qzs99dbPC61wNtyf8ImPlJtpHD6qwcWUAvKGAOAiv1d42aQADtqtoGJQ6A9yKBmYjuxP1iq9+gqjWD7ztvthxvorWO3Mx7XTxvDIf/WVrKOGysTLFfdp9sSMVDmZ2jSO4JZkjjKK+zJzIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725546181; c=relaxed/simple;
-	bh=rLNyEBQDkZqcHhPUa6TayxFxwoSgkdma4B13Esk2aCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OkwoGxPBkb/wfO7RYGtw6d0SmP589gG9IEuJQmQvIu3vBnqejVjWaCCAAF9GCtX9Wuj8PfLsX+scHZEHEr9sq8W9mi2vUnGqpYdusIz+bBmCtJroWdKGlciKgL14fVlXN63b9yf5PNxrCGZjXI8oWBXcoyD+KGlPyTzOS46sZpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YM+eRsFr; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725546179; x=1757082179;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=rLNyEBQDkZqcHhPUa6TayxFxwoSgkdma4B13Esk2aCE=;
-  b=YM+eRsFriidMt4AhSCx4dZz8DxPIl3hEDTeZwgZsRICIE9uTdLOU0drd
-   RCgyvZLCW7n2BOjSGigEYNzZnRu1TpJ+j8911tCwONNDoy0PqEA0FBGyb
-   ZssDY77a0/fxrPn7IpU5pb1+CUPj0F8pu8ZuxAvuEAVtFkttEjpheTUam
-   wT4URH77R+8/1Gct0SmIyQeR2RUqAKOCwzZrDBAYq0nHONr8yVozVTgxa
-   Sf+fWj6w44QYrZ5ejFYE34oozEYUw0ZHivCgPVyWfSDdOtdvmbnyqrpbH
-   jEBGKklcmVawuGVcZTO6Ooi0iKqkX1VKL96IaOYbc5V5zwejFIIFSEWpr
-   A==;
-X-CSE-ConnectionGUID: 6vmY9gUZSzGdbo/ZY2pY4Q==
-X-CSE-MsgGUID: WhqncnODQmGpuAn1rq2pOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="49675517"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="49675517"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:22:54 -0700
-X-CSE-ConnectionGUID: uZZZ8sT1RzuAWLdUbyBz7Q==
-X-CSE-MsgGUID: SOETt3ElSJGD0TSNfawUEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="70226852"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Sep 2024 07:22:52 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 02118A1; Thu, 05 Sep 2024 17:22:50 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 1/1] pinctrl: intel: Constify struct intel_pinctrl parameter
-Date: Thu,  5 Sep 2024 17:21:38 +0300
-Message-ID: <20240905142249.707556-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725546107; c=relaxed/simple;
+	bh=soe4lSBt3n/0AW0IvOwAvfTmHxrYurlhVZOxeGsvUzY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Oa3U3XMq5mA2rykyiSf6Fcb/CrtmzrksqRvylCQYpW+fxrw96OcyUpKPoeedHfOKCMYU0A3BcLG8GolJNIUvli0bdKb+D8kWcp1zwdry3m2Rm8Yfr8V111qcOYOK8wixm1EjDJitf9LQeJeSSnbneZtfjPiRUItefBsILOxNxmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BQ3CKMIJ; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725546101; bh=ijlHayz1ulziNTvGeLOjpuJ9VgH6XzHM9AqcFIyjmjk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=BQ3CKMIJcIMbUSPVJsg+J608Sckj7P+MK+mZjzOB50lnCqSgEOF2JA8sVhtu5861X
+	 h5gsRTjkw3ZmawgAu19sk3A8nEGkjOJuuD1IAqt/Zzlg1vjQ1CP7Pd0xkemBkkilFg
+	 XD9pHxRTitCdlpXPXEfxCf1ulBb/ORKgVlXYg+/U=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 5672282C; Thu, 05 Sep 2024 22:21:39 +0800
+X-QQ-mid: xmsmtpt1725546099tj1b4ns5n
+Message-ID: <tencent_BBD3CC8A27DA46FB12D0C64E89AD2ECDEE06@qq.com>
+X-QQ-XMAILINFO: N9rp9v+OMEj5mN4gLYlMmDyyQay1oG1bhPaMSkJTOSXHhR5MHmU9M8v5aqY/Wx
+	 bXq7AWO0GveB9SJm9pwLoXZeBON+/aqzFhUA2nqCd/l4CQ4xxf4+2H0Q8rFFO3+vVnOfaBk+Qck5
+	 3u3BcoTlAdHDIFMKFLfw57mDXrKuh1bDhDC0MRYMP1OhzWqNoMILUSZSRMFR8CF1DzcFOOwuo4/w
+	 GoK4LeklKw9urCDWFnGgSUElNAp7W8L1CUniSmqu5zKGJ8a92MswR/G5pA6o5K8x6pMGAmleQiD1
+	 03cSxP59ihppxUB8/ccH8NtHk1aMO1HVCO52a1Paabl6ki5/hm7j1W8zKmYskOH+RRCqL0G4CIRs
+	 c61QDH/ntS3tvgdO3AgPth64Mzhg0EZJcIWgamy5jEoSXiAzTUBlsrOgf+ta5Oihk1hUnNpH//Dj
+	 iRJj0U3893htuJymrUHJh4hhl2NnVTPGYtvZs6yOtY/x+Tgn1VBCstSMt0xJ5kxDxkRGz2mHjaqE
+	 Ak9H3z3Z88V2dpnFu64WSlZ7r+vlGLEnts9Tmc5PDFzR82iSYeOX5kdKgSR5r5LJdt4TnPNPJsgL
+	 yeMGooOaTJ5/3eRs0YX04ZwAKdu/1ojf8XvJ0BArpMXuMGz5kYjgI+bm8Q2KDeSAnKX/Vz7HPzJI
+	 qdLc0RUSRyq6FrPewCoulLer15lHq+ReVw1ufugP9fZYjz+2ktWYNGBrixsKVHDRWcId7VTx3bNk
+	 Wr0ecmD7J1WDQTdNwqGrWRh+iJUHSoOsBSdAtv1DrVtzPjb5gY6BBIFSm7XmN/PHntUisPqhbdSF
+	 zudBSHMdyH4G8QHTae5Bkr/WzoY3HT9Tp92vYmRCtyB2UeW/3GyTL/skvipQ6j6CFxIkm0XqxcIr
+	 Om0tdoQkCeTlrakAcyptOVTrhMYmLCh6mDjT0J9/M9Y/tR+jrnzNBAvF4xh2EAr3vjhaYBuc9MZX
+	 sMzB4k7Qkt/Nz3bdSyhvvwbZ+eb6fG4Jtj5hTadMRA39pQ9Cg2rw==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+Date: Thu,  5 Sep 2024 22:21:39 +0800
+X-OQ-MSGID: <20240905142138.203122-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <000000000000a338d6062149eb22@google.com>
+References: <000000000000a338d6062149eb22@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,159 +74,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are a few functions that do not and should not change
-the state of the pin control object. Constify the respective
-parameter.
+clear save user data buf before copying data from user.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: dropped cases like <non-const TYPE>* foo(const *pctrl) (Mika)
- drivers/pinctrl/intel/pinctrl-intel.c | 29 ++++++++++++++-------------
- drivers/pinctrl/intel/pinctrl-intel.h |  3 ++-
- 2 files changed, 17 insertions(+), 15 deletions(-)
+#syz test
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index a2194d2ab178..f6f6d3970d5d 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -132,7 +132,8 @@ struct intel_community_context {
- 	for_each_intel_pad_group(pctrl, community, grp)			\
- 		if (grp->gpio_base == INTEL_GPIO_BASE_NOMAP) {} else
+diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+index e9ddaa9b580d..19bfe25e675c 100644
+--- a/drivers/usb/class/usbtmc.c
++++ b/drivers/usb/class/usbtmc.c
+@@ -1586,6 +1586,7 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+ 		aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;
+ 	}
  
--const struct intel_community *intel_get_community(struct intel_pinctrl *pctrl, unsigned int pin)
-+const struct intel_community *intel_get_community(const struct intel_pinctrl *pctrl,
-+						  unsigned int pin)
- {
- 	const struct intel_community *community;
- 
-@@ -181,7 +182,7 @@ static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl,
- 	return community->pad_regs + reg + padno * nregs * 4;
- }
- 
--static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned int pin)
-+static bool intel_pad_owned_by_host(const struct intel_pinctrl *pctrl, unsigned int pin)
- {
- 	const struct intel_community *community;
- 	const struct intel_padgroup *padgrp;
-@@ -206,7 +207,7 @@ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned int pi
- 	return !(readl(padown) & PADOWN_MASK(gpp_offset));
- }
- 
--static bool intel_pad_acpi_mode(struct intel_pinctrl *pctrl, unsigned int pin)
-+static bool intel_pad_acpi_mode(const struct intel_pinctrl *pctrl, unsigned int pin)
- {
- 	const struct intel_community *community;
- 	const struct intel_padgroup *padgrp;
-@@ -248,7 +249,7 @@ enum {
- 	PAD_LOCKED_FULL	= PAD_LOCKED | PAD_LOCKED_TX,
- };
- 
--static int intel_pad_locked(struct intel_pinctrl *pctrl, unsigned int pin)
-+static int intel_pad_locked(const struct intel_pinctrl *pctrl, unsigned int pin)
- {
- 	const struct intel_community *community;
- 	const struct intel_padgroup *padgrp;
-@@ -286,19 +287,19 @@ static int intel_pad_locked(struct intel_pinctrl *pctrl, unsigned int pin)
- 	return ret;
- }
- 
--static bool intel_pad_is_unlocked(struct intel_pinctrl *pctrl, unsigned int pin)
-+static bool intel_pad_is_unlocked(const struct intel_pinctrl *pctrl, unsigned int pin)
- {
- 	return (intel_pad_locked(pctrl, pin) & PAD_LOCKED) == PAD_UNLOCKED;
- }
- 
--static bool intel_pad_usable(struct intel_pinctrl *pctrl, unsigned int pin)
-+static bool intel_pad_usable(const struct intel_pinctrl *pctrl, unsigned int pin)
- {
- 	return intel_pad_owned_by_host(pctrl, pin) && intel_pad_is_unlocked(pctrl, pin);
- }
- 
- int intel_get_groups_count(struct pinctrl_dev *pctldev)
- {
--	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	return pctrl->soc->ngroups;
- }
-@@ -306,7 +307,7 @@ EXPORT_SYMBOL_NS_GPL(intel_get_groups_count, PINCTRL_INTEL);
- 
- const char *intel_get_group_name(struct pinctrl_dev *pctldev, unsigned int group)
- {
--	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	return pctrl->soc->groups[group].grp.name;
- }
-@@ -315,7 +316,7 @@ EXPORT_SYMBOL_NS_GPL(intel_get_group_name, PINCTRL_INTEL);
- int intel_get_group_pins(struct pinctrl_dev *pctldev, unsigned int group,
- 			 const unsigned int **pins, unsigned int *npins)
- {
--	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	*pins = pctrl->soc->groups[group].grp.pins;
- 	*npins = pctrl->soc->groups[group].grp.npins;
-@@ -383,7 +384,7 @@ static const struct pinctrl_ops intel_pinctrl_ops = {
- 
- int intel_get_functions_count(struct pinctrl_dev *pctldev)
- {
--	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	return pctrl->soc->nfunctions;
- }
-@@ -391,7 +392,7 @@ EXPORT_SYMBOL_NS_GPL(intel_get_functions_count, PINCTRL_INTEL);
- 
- const char *intel_get_function_name(struct pinctrl_dev *pctldev, unsigned int function)
- {
--	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	return pctrl->soc->functions[function].func.name;
- }
-@@ -400,7 +401,7 @@ EXPORT_SYMBOL_NS_GPL(intel_get_function_name, PINCTRL_INTEL);
- int intel_get_function_groups(struct pinctrl_dev *pctldev, unsigned int function,
- 			      const char * const **groups, unsigned int * const ngroups)
- {
--	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	*groups = pctrl->soc->functions[function].func.groups;
- 	*ngroups = pctrl->soc->functions[function].func.ngroups;
-@@ -952,7 +953,7 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
-  * Return: a pin number and pointers to the community and pad group, which
-  * the pin belongs to, or negative error code if translation can't be done.
-  */
--static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned int offset,
-+static int intel_gpio_to_pin(const struct intel_pinctrl *pctrl, unsigned int offset,
- 			     const struct intel_community **community,
- 			     const struct intel_padgroup **padgrp)
- {
-@@ -982,7 +983,7 @@ static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned int offset,
-  *
-  * Return: a GPIO offset, or negative error code if translation can't be done.
-  */
--static int intel_pin_to_gpio(struct intel_pinctrl *pctrl, int pin)
-+static int intel_pin_to_gpio(const struct intel_pinctrl *pctrl, int pin)
- {
- 	const struct intel_community *community;
- 	const struct intel_padgroup *padgrp;
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index c7b025ea989a..4d4e1257afdf 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -264,7 +264,8 @@ int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
- 
- extern const struct dev_pm_ops intel_pinctrl_pm_ops;
- 
--const struct intel_community *intel_get_community(struct intel_pinctrl *pctrl, unsigned int pin);
-+const struct intel_community *intel_get_community(const struct intel_pinctrl *pctrl,
-+						  unsigned int pin);
- 
- int intel_get_groups_count(struct pinctrl_dev *pctldev);
- const char *intel_get_group_name(struct pinctrl_dev *pctldev, unsigned int group);
--- 
-2.43.0.rc1.1336.g36b5255a03ac
++	memset(&buffer[USBTMC_HEADER_SIZE], 0, aligned - USBTMC_HEADER_SIZE);
+ 	if (copy_from_user(&buffer[USBTMC_HEADER_SIZE], buf, transfersize)) {
+ 		retval = -EFAULT;
+ 		up(&file_data->limit_write_sem);
 
 
