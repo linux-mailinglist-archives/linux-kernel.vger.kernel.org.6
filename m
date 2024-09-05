@@ -1,181 +1,123 @@
-Return-Path: <linux-kernel+bounces-317627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFADD96E13E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:36:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD5596E143
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31D83B261DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE31F28C575
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604FE1A38D8;
-	Thu,  5 Sep 2024 17:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919071A4F08;
+	Thu,  5 Sep 2024 17:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bvm5EpLb"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lte24/Uo"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F49919D06D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFCA19D06D;
+	Thu,  5 Sep 2024 17:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557808; cv=none; b=WSdxctRPDVCMhR6iWwpXCH36Iic+pN+7csdz3v3csZfoBMWfhYLh7E569UkZxyBuHORS9FULomQAJjYCuwX2HCzKt8DF6FicPo67Nrt66bpfCLvFXS+Rgzc6OV5sGI0XY1MlAJHWmUc+eSEvXzE61C+2n/XRiw6AZ7xSZfOM1ug=
+	t=1725557845; cv=none; b=NsLr1VXRdQ0HEUjARo4hO+miwC0ScJ6uZH+dRSImpg8ObVjQsv7cU3/NqxIpa7bS2JjuyfoEaY4LdzDkEiWofmwpITOpYr+VtXVeAP87GcZ+2q5arWf5gMsuMWaGEQLi0AZqbt/EBLG9IIiRkmUpVYYbOUsB4de10bPpLn2K2R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557808; c=relaxed/simple;
-	bh=4iSlrb2nnX2YmeZ9VNADCnw8Fv2K8MPDBikeg5JmHUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtcNECINj5pbS6ySlXLpRFSG6Wyp/1AiA8dYLIQxfCzGTXrRqDfmGvyohG/XG/0dMiFcbe7v1QngKBPJVL9AZuGV8TGMCFp1W2aSRlmUVNQp6iCL2BdUQJxo7xboJNXey7D8P5mJhEkK3ebqmW3S9Qys1PkMFWN2NVmrOtXmjfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bvm5EpLb; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c260b19f71so1125506a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 10:36:46 -0700 (PDT)
+	s=arc-20240116; t=1725557845; c=relaxed/simple;
+	bh=QAO4zUKegzIVbTCAiUAXPouHjb63cshPgOVmMLANiKk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hATPcsPIjc1iSGvsjt9+KNKsPrIMEMrHpxrv760vc4YHr6GnpMgFsv1fvPachXh2LeKWpEnyW4hWjTIdC78d+H8oBrnXIhlOU7qNa7U/ljLXpSSIP+fkgXWtkIReZN55MAq+HP/+Iw6snJuvSilwN1EfBsCRsNv53nnbysj+05I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lte24/Uo; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so9046875e9.3;
+        Thu, 05 Sep 2024 10:37:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725557805; x=1726162605; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UM2g72fniLrPpHAJ7GqOnShEWlEjFXue9+ErTDOIp4E=;
-        b=bvm5EpLbqxM9TVcEiAugGaX3J3BjqeJadEDiXUCpzZA1Snib2Wy5mkqscBY0kKeutZ
-         mfONx1LZmKEEH8P1zPCP36IZM0yZ+FyAnAryvIYH5sE9KDdFRP6tM0X1AZIhMjBfhtPD
-         6N8E/cdzwMiQV6qVu4l/86b/yigYozQ4kENiJ8bO2z9ZkEU5a4sCcC2ffCzBDOx8hjee
-         rR+QsjwQYLrJSDMdtVb8chBiMRXoJchL08XqXEpkpyvpedFVaERtAfq/qjuoJZvTkkIq
-         QBbMf1xL/A3QT88xuOa8maVZ09w2XnVukp3WdKYPE4iqGwwro+Jt1otGsNpLE4EQvvUj
-         kzOQ==
+        d=gmail.com; s=20230601; t=1725557842; x=1726162642; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v6dwp5+FG3mYl3iAH/R5p+Cpn2uLGGqSBL6USwliexo=;
+        b=Lte24/UoIH3+4zX4/zEYX//F0yVzHpBKMLIeyc7tHIStI87WI3QfzqL7HeqOXbSQqp
+         rPkcE8+W18ofklpI4Xr8zYmt5fHdSgSZBcGfBdoiIkyFVhrnievuFxSjJfdLs4CgwVLW
+         orJ2BmaPubPm2K0NIz5RH5bucfz2Bsglz+ZP0ejT9n+MT5wBBFnqF6paddL8qDrcToDM
+         DyGT06N0FFtRgmyFKq7Ynzc14/ltgd27vgFAMJ8kHNS5fyxdW74w5I+IZrtbTZvpN4IT
+         x8R+WVkeozHChwn3k8ZcRXMJa3h1ZcCM51ZWP30613Lwlaw5QbM4c+PRJOQu9yzkclU1
+         TkFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725557805; x=1726162605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725557842; x=1726162642;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UM2g72fniLrPpHAJ7GqOnShEWlEjFXue9+ErTDOIp4E=;
-        b=o4Cz9SCg8tqsNXksJTdNLL+3+yfZZDaIwucGWoTJVlywv3nmrjDMvOpt6uQk52lR+v
-         +XKQFiX8PSqmN1zrhUX6FN64HdsVUO8YiIVCJK2ui7l5mhJxg+kA5/x3ky3hYorHGGkf
-         qmQQMSFg5g+fYnWSUjNH7QLVDqtW5G4dO0P3xv3dbmrdveWrSoj3zQPOsljmqKPagNFs
-         GtBaUXNQlMUh17Pg462dMCkxUUFRiFHaYxvnIlD04FTfaLrfGOqQnemxPRQ+ifEYfS6d
-         0arJ3fATdfTeJkpGcBD4o4Oju2VsAP66zJ7H2eKCg6yXA7KY/4zGUDtQaLh7+plydEHp
-         cFhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Zim8ORc23okcNcI+VZc+C70+UkHHZu3K7ejwNdlkfypnNcmwmdDsG2IRcATHcq6ujMkXElF5S11qoAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSAl04IYaZFwWiRV0YJ5Ngq2JEbnqd0ePoR5nX/Rwa4HD9crIY
-	DQsjOLlXBXFkRFYuEDk602AEYcY/6a3l3dmtg2hR0PKsMEm43Xfb5f/6sswO6PiPre6jAO7LVSf
-	SkkOcxf70p0r6f2fPjHbSnGSC2I9qRfYQ8xQ3
-X-Google-Smtp-Source: AGHT+IFVsqcC5vgfkAPbLy2xZ2+kBQWZCMyiZeQj3BWOgktt31rtTCQagTWJ4wB/saFVJsnWxjIs9RgWKzTHkeYsYBI=
-X-Received: by 2002:a17:907:d5a5:b0:a77:dd1c:6273 with SMTP id
- a640c23a62f3a-a89a3512fedmr1532468766b.12.1725557804885; Thu, 05 Sep 2024
- 10:36:44 -0700 (PDT)
+        bh=v6dwp5+FG3mYl3iAH/R5p+Cpn2uLGGqSBL6USwliexo=;
+        b=udzde/q+xFZCwZmXlbbEjjbSg+5zJny1+pn29fXCRlg0JOezU7qMYBxxeFErp7yedw
+         pUK+86rnxC5dnVGZDB7Bk+Mq9ye95FwB+W9GGE1rdM/HSgWQQc5VoetZcjHcoPvV4zz6
+         mIeIEkPMoM2PIaf6e5LD96o6gwejoGlk6cBnx/m0iRiMR6uWL8D60I/EfyE6J+jCAair
+         sElshjQ06veDAyxfm2HQPL6DNHsE3BDT+liX6967441xv0RHdsJhsbhPc0cbfzCAX3gf
+         hr01BpUU5G0vbNrF2FQ723dj5M/nuKKL4TTiKJE5CbBZS4HPcja6E7yhuiN0ISTGRe+O
+         0orA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSWqCFWq1JTJ/3n4Qgr3lYTGIty0xHji6GnkCzamIZoRJiyZfJqin1EUx2KoX1daiSRlO8Z5KzOroGqhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylB0qgtUErH+QgjNatyAtNbHKaarupCDXqTUDbMIMwsa8zE49+
+	uhpZuhPuHGUd71QQbidhXEfcRGsh7HrZpufLtxQxXOrCyxdjXGhk
+X-Google-Smtp-Source: AGHT+IF7qL7hjpQRpe8F1oifMTqAJQN8x6pLigqqQWNP8W7C97x0zMgdmF7381zQz86A7gmatgOVBA==
+X-Received: by 2002:a05:600c:3b11:b0:429:a05:32fb with SMTP id 5b1f17b1804b1-42bb01b4428mr160392165e9.10.1725557841763;
+        Thu, 05 Sep 2024 10:37:21 -0700 (PDT)
+Received: from cleve-worktop. (85-193-33-185.rib.o2.cz. [85.193.33.185])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42bb37f7849sm245704605e9.7.2024.09.05.10.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 10:37:21 -0700 (PDT)
+From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+Subject: [PATCH v3 0/2] NanoPi NEO Plus2: Fix regulators and assign them
+Date: Thu, 05 Sep 2024 19:37:09 +0200
+Message-Id: <20240905-nanopi-neo-plus2-regfix-v3-0-1895dff59598@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-2-usamaarif642@gmail.com>
- <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
- <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com>
- <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
- <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
- <CAJD7tkY+wXUwmgZUfVqSXpXL_CxRO-4eKGCPunfJaTDGhNO=Kw@mail.gmail.com>
- <CAGsJ_4zP_tA4z-n=3MTPorNnmANdSJTg4jSx0-atHS1vdd2jmg@mail.gmail.com>
- <CAJD7tkZ7ZhGz5J5O=PEkoyN9WeSjXOLMqnASFc8T3Vpv5uiSRQ@mail.gmail.com>
- <CAGsJ_4x0y+RtghmFifm_pR-=P_t5hNW5qjvw-oF+-T_amuVuzQ@mail.gmail.com>
- <CAGsJ_4zB7za72xL94-1Oc+M2M1RtxftVYUAUk=1yngUoK65stw@mail.gmail.com> <CAGsJ_4yBFpyA4Znfgr7V=eoHAnhuLPDTqaVOre9waTKZ+R3R9A@mail.gmail.com>
-In-Reply-To: <CAGsJ_4yBFpyA4Znfgr7V=eoHAnhuLPDTqaVOre9waTKZ+R3R9A@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 5 Sep 2024 10:36:08 -0700
-Message-ID: <CAJD7tkZWpWtim72u74AM67E1yEZ49-2EnDUgoDuaf-X=aYUFmQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Barry Song <21cnbao@gmail.com>
-Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
-	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
-	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
-	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEXs2WYC/4XOQQ6CMBAF0KuQrh1Da6HoynsYFqUMMAm0pEWiI
+ dzdAht2Lv8k//1ZWEBPGNgjWZjHmQI5G8PtkjDTadsiUB0zE6mQaSEUWG3dSGDRwdi/gwCPbUM
+ fqPKU89wgF0az2B49xvMuv8qYG+8GmDqP+uxJqCRs9YON6oGO5DY4wMyBgzJZo2otZaabZzto6
+ q/GDdtKR2Fy/ru/P4tt6/+ns4AU5F3lhURTCKNOZLmu6w8AcuOWFAEAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725557840; l=782;
+ i=cleverline1mc@gmail.com; s=20240824; h=from:subject:message-id;
+ bh=QAO4zUKegzIVbTCAiUAXPouHjb63cshPgOVmMLANiKk=;
+ b=s3bCCIt5WLyYQ6C/5gtmFO/gtd5JWGKczWJGLJvZzX771vKcV6GZEfFZ8h4SJIugdb4byUrNf
+ MXegnWlLZ3hD4cOIv2pNkYjgcRNZ+ZDQ0KGlBS9uVusHHMMsVhPcF/z
+X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
+ pk=CQifx5FUgTQKAoj5VCYrwYHi235AkXQ5yT1P6gkaBxM=
 
-[..]
-> >
-> > /*
-> >  * Return the number of contiguous zeromap entries started from entry;
-> >  * If all entries have consistent zeromap, *consistent will be true;
-> >  * otherwise, false;
-> >  */
-> > static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry,
-> >                 int nr, bool *consistent)
-> > {
-> >         struct swap_info_struct *sis = swp_swap_info(entry);
-> >         unsigned long start = swp_offset(entry);
-> >         unsigned long end = start + nr;
-> >         unsigned long s_idx, c_idx;
-> >
-> >         s_idx = find_next_bit(sis->zeromap, end, start);
-> >         if (s_idx == end) {
-> >                 *consistent = true;
-> >                 return 0;
-> >         }
-> >
-> >         c_idx = find_next_zero_bit(sis->zeromap, end, start);
-> >         if (c_idx == end) {
-> >                 *consistent = true;
-> >                 return nr;
-> >         }
-> >
-> >         *consistent = false;
-> >         if (s_idx == start)
-> >                 return 0;
-> >         return c_idx - s_idx;
-> > }
-> >
-> > I can actually switch the places of the "consistent" and returned
-> > number if that looks
-> > better.
->
-> I'd rather make it simpler by:
->
-> /*
->  * Check if all entries have consistent zeromap status, return true if
->  * all entries are zeromap or non-zeromap, else return false;
->  */
-> static inline bool swap_zeromap_entries_check(swp_entry_t entry, int nr)
-> {
->         struct swap_info_struct *sis = swp_swap_info(entry);
->         unsigned long start = swp_offset(entry);
->         unsigned long end = start + *nr;
->
->         if (find_next_bit(sis->zeromap, end, start) == end)
->                 return true;
->         if (find_next_zero_bit(sis->zeromap, end, start) == end)
->                 return true;
->
->         return false;
-> }
+Just minor changes based on feedback.
 
-We can start with a simple version like this, and when the time comes
-to implement the logic below we can decide if it's worth the
-complexity to return an exact number/order rather than a boolean to
-decide the swapin order. I think it will also depend on whether we can
-do the same for other backends (e.g. swapcache, zswap, etc). We can
-note that in the commit log or something.
+Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+---
+Changes in v3:
+- Renamed patches - added prefix.
+- Remove the patch that added regulator to emmc.
+- Link to v2: https://lore.kernel.org/r/20240827-nanopi-neo-plus2-regfix-v2-0-497684ec82c7@gmail.com
 
->
-> mm/page_io.c can combine this with reading the zeromap of first entry to
-> decide if it will read folio from zeromap; mm/memory.c only needs the bool
-> to fallback to the largest possible order.
->
-> static inline unsigned long thp_swap_suitable_orders(...)
-> {
->         int order, nr;
->
->         order = highest_order(orders);
->
->         while (orders) {
->                 nr = 1 << order;
->                 if ((addr >> PAGE_SHIFT) % nr == swp_offset % nr &&
->                     swap_zeromap_entries_check(entry, nr))
->                         break;
->                 order = next_order(&orders, order);
->         }
->
->         return orders;
-> }
->
+---
+Kryštof Černý (2):
+      arm64: dts: allwinner: H5: NanoPi Neo Plus2: Fix regulators
+      arm64: dts: allwinner: H5: NanoPi NEO Plus2: Use regulators for pio
+
+ .../dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts   | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+---
+base-commit: 6f923748057a4f6aa187e0d5b22990d633a48d12
+change-id: 20240827-nanopi-neo-plus2-regfix-b60116ce12ca
+
+Best regards,
+-- 
+Kryštof Černý <cleverline1mc@gmail.com>
+
 
