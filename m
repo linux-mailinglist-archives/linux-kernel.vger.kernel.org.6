@@ -1,143 +1,213 @@
-Return-Path: <linux-kernel+bounces-317289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAB996DBF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:36:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D0696DBF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A123F1C20FFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:36:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDFF9B25653
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D6217543;
-	Thu,  5 Sep 2024 14:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB55175A1;
+	Thu,  5 Sep 2024 14:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TrY3foED";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e6njH3pq"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Q4vyRurz"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15E214A8B;
-	Thu,  5 Sep 2024 14:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CB317548;
+	Thu,  5 Sep 2024 14:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725546999; cv=none; b=tVH54rPjYXaB5JqeAJZNOE8fi/vMpqi+93Wfx7tfWqSjzhCJHCEIn6jwylIB8kZXyFIZaK6xzkV7hEeVXY2hXPZ5zzWnA72nv+4lw7GgZuI+4h5LvJt9UUnglwOqeCrddzKnChdAPzXtSak8zRZqC/Dc3TPgbVGTJR8O9uBPuwI=
+	t=1725547017; cv=none; b=Pii/kFk8IPuqZr0jv5MksZ69X1c0cu5kLxnjRmVpbDMzrVQjz4XD2RxenTyrJlQHHdyV7rgezJo3wQFxt72xLRQNWFVViH0grSv5q8UQvzOc12m8rhR7/QC/FEZqmdU3kOVr/9XZSykvnJHg+nb4JX3tjJIurHaSSQqim/CfboM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725546999; c=relaxed/simple;
-	bh=MbBmuhIqi6H5qQWXHp/yL+9hCsC0gcfcAgyKgrBXuk0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=CekW0CTNJPmnAbJx18qzTwPO2uecnGGm8ybjSXNKwodZCoJjY20HfrWFhc184vfCmqf5QYR2MbS6U/qngm5ucvCZMNXrNvyffcm4xDOU4XF9w01oqlxKyPbcqiAIeoYBn5qDnOg/GS64rh1UysEVrI0qme+x2NGrY1X9ED2rzl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TrY3foED; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e6njH3pq; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id C552113800F6;
-	Thu,  5 Sep 2024 10:36:36 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Thu, 05 Sep 2024 10:36:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725546996;
-	 x=1725633396; bh=uIbC69aguAWvRSfW+UCsvvSejwdoxgr+xUoySi1DV84=; b=
-	TrY3foEDI7o6+2N5x+GTphSQpPUXdrdXKeGD5eB1Bj2zygPYECeEip3/hSlMBwdj
-	gC5vTi5NLrhzT8o8wKN1pdsMOTSCRwQoNU4DoxwIf8Aw8rz/0+c4E6pbH6swcLww
-	n69TWwIO+YjJt+9GGHqB+3x8nyxS2eyMpj8/PVq/Mj14hyuW0ywGZg/OjDMMpNJj
-	HcwbWRWqqa5eWqnYIFBaG9sLe7r5DJhfjE1faWPXEH8NefZNtUE1gTMBK4z7viqS
-	Rw2GSQzne8+jNQg1EBQsj/gPw+8Sxf2E2MXaq6SUhugenNKeQ4i1VfZcpdViQrPg
-	Ya9wRFKIn//UfIMyv1ntLg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725546996; x=
-	1725633396; bh=uIbC69aguAWvRSfW+UCsvvSejwdoxgr+xUoySi1DV84=; b=e
-	6njH3pqZ9S0hD0AFdXmaR+YHSdexQ1bRBUVR6cAsL/xwXrK+myDrg+8Nzc79FCns
-	Z/OvUW7ScA0TBcDomZRi4GUipYPz3u/uvSEAn3Wh7BaBhYsgABXzOF+OhGxsQt2Q
-	QHaA5UnRfbk0jG9EVDdcwSO7liKJZC3l4CKezC5z6cC0K20Lj57gIVfdg4c4cGFd
-	jWXVssho39u/CkbmzkxHlTpd28X+yTCXCFS3fi52HeoON1rJTi4+Mw4E3OYULtdq
-	fhFHvSjerSH/L9B7dvyQao3gsrw9/A2Pbs3qORZQOm1GTcQlEZTc8/Dt78KzGh/D
-	ywveDOGO/62XOLR7gELew==
-X-ME-Sender: <xms:9MHZZpaETmJpoiepAPmHQQIFLBYv8slUu6e8N8ZWu28ZYmKX0q7FhQ>
-    <xme:9MHZZgZUy_yPXZQL_DvgzmKL_I5ci4EcI-iSP8g3OEmt5VuMWUxTRlOLa6NWrtRgw
-    gMKHHxvgEa6XnnDf2w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgjeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihmihhkse
-    hfrhgvvgdrfhhrpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhhhovhesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehhrghojhhirghnrdiihhhurghnghesghhmrghilhdrtg
-    homhdprhgtphhtthhopehsohgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    grrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepuggrnhhivghlseiiohhnqhhuvgdrohhrgh
-X-ME-Proxy: <xmx:9MHZZr-C-PAQCMNBK2czpj2-SmHV6PYP_4-xIlmcNaQyubj42ntkhA>
-    <xmx:9MHZZnqxPk7iaVqzS8SMVq4saAd8AxTsGpJpr3AsKRTI50TdsnL74Q>
-    <xmx:9MHZZkrx4Ejc2CbshK0_Wi9Nxy_J0YdG4y5vywaoLlQVwAF21WEiGg>
-    <xmx:9MHZZtTUrT1ctS3jun852oFlSXSR3kY96Smk3o9chMTP65IpBKofKA>
-    <xmx:9MHZZgeZWTatk783rZIGHyJetSmDCqIKUaDaQbHz3ppiizM6Cw-rRnhF>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5F7812220072; Thu,  5 Sep 2024 10:36:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725547017; c=relaxed/simple;
+	bh=ioOxBTL+YcNfqfyxlm1LH+AxreuQgTq5diXJPly0R9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TbX2brEELHcE5v7oqV3HEmgJSdMHuYzQ2MUR16+kAc9m5fqyJxQGdmF847Koy8friFQGQbtdSuPP5dUbre8rC74fYfnS0iYVxM6SnXf/EpbSwC+jUA9WflZ1loecTY72xRB55LGbw5V5ruapwCaC1ItXs+I7pPLCeknW+/+pA6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Q4vyRurz; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725547015; x=1757083015;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ioOxBTL+YcNfqfyxlm1LH+AxreuQgTq5diXJPly0R9M=;
+  b=Q4vyRurzI69r0085c/Lj7p65qevqMGslOIc4ef710eccPSBCad5ks8my
+   9KaJW8/bVzKi94L3WSE/QZef6L4TyUMhOKSYPTCK5EXnXyqDRktEjeBYS
+   3z8X2CcNNdJdbhCC8wzL6C/uf1D5NFZpkUtMoQrS5wiiqkQoQuK2Hz3um
+   fMEpPwBbyjYRLmEAMyZ9HXFNr9WV2u+w1wg7T+CNgMfUXsE213ToCAyQt
+   n28Z4SG8Fiupf/GFWJ1UlPSHy0xb1OQrj08xxhX8i053Nc1Yf5E9v12K8
+   TpGVBqPA/rHP2IFeLemWVQgicqT873bmn0QkIxdFz5VIWUDIlbuwyejYo
+   Q==;
+X-CSE-ConnectionGUID: iZMzHRBARyy75LFHdHopJA==
+X-CSE-MsgGUID: pYc4MCd7RVaRERYpNZN8uA==
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="34471301"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Sep 2024 07:36:54 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 5 Sep 2024 07:36:44 -0700
+Received: from [10.180.116.241] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 5 Sep 2024 07:36:41 -0700
+Message-ID: <e477ba59-36e8-4021-b32c-4db10fccea6e@microchip.com>
+Date: Thu, 5 Sep 2024 16:37:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 05 Sep 2024 14:36:15 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Walleij" <linus.walleij@linaro.org>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
-Cc: "Haojian Zhuang" <haojian.zhuang@gmail.com>,
- "Daniel Mack" <daniel@zonque.org>, "Robert Jarzmik" <robert.jarzmik@free.fr>,
- soc@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Message-Id: <513f718b-b964-4af1-9c51-9e0ba3809225@app.fastmail.com>
-In-Reply-To: 
- <CACRpkdZ_y=2WKCLwi5or-=MasvNw2bcxht6a+bFjV=yAfvQhdQ@mail.gmail.com>
-References: <20240805014710.1961677-1-dmitry.torokhov@gmail.com>
- <CACRpkdYFc8vuz__7DkFSMFxUC=LSwCJmEun2KXgUvPMq+_e17A@mail.gmail.com>
- <ZsiygIj9SiP4O0OM@google.com>
- <CACRpkdZ_y=2WKCLwi5or-=MasvNw2bcxht6a+bFjV=yAfvQhdQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Remove support for platform data from matrix keypad driver
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: sam9x60: Add missing property
+ atmel,usart-mode
+Content-Language: en-US, fr-FR
+To: Andrei Simion <andrei.simion@microchip.com>, <claudiu.beznea@tuxon.dev>,
+	<alexandre.belloni@bootlin.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+References: <20240905093046.23428-1-andrei.simion@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240905093046.23428-1-andrei.simion@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024, at 08:52, Linus Walleij wrote:
-> On Fri, Aug 23, 2024 at 6:02=E2=80=AFPM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
->
->> I'm glad that we agree that we do not want the elaborate merge process
->> and instead push the changes through one tree in one shot we just need
->> to decide which one - soc or input. I am fine with using either.
->
-> I'm also fine with either, but let's take the input tree because the
-> you're in direct control of it so it will be easier.
+On 05/09/2024 at 11:30, Andrei Simion wrote:
+> ~: make dtbs_check DT_SCHEMA_FILES=atmel,at91-usart.ymal
+> -> for all boards which inherit sam9x60.dtsi: serial@200: $nodename:0:
+> 'serial@200' does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$
+> serial@200: atmel,use-dma-rx: False schema does not allow True
+> serial@200: atmel,use-dma-tx: False schema does not allow True
+> serial@200: atmel,fifo-size: False schema does not allow [[16]]
+> -> Means : atmel,usart-mode = <AT91_USART_MODE_SERIAL> misses for uart:
+> 0,1,2,3,4,6,7,8,9,10,11,12
+> 
+> Add to uart nodes the property atmel,usart-mode to specify the driver to be
+> used in serial mode to be compliant to atmel,at91-usart.yaml.
+> 
+> Fixes: 99c808335877 ("ARM: dts: at91: sam9x60: Add missing flexcom definitions")
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 
-Sorry I dropped the ball here, I just saw that these five patches
-are still in the patchwork waiting for me to apply them.
+Thanks Andrei:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-I'm also happy for them to go through the input tree, and have
-marked them as not-for-us in patchwork now. Dmitry, please add
-my
+Best regards,
+   Nicolas
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   arch/arm/boot/dts/microchip/sam9x60.dtsi | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> index 04a6d716ecaf..0ba424bba7cc 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> @@ -174,6 +174,7 @@ flx4: flexcom@f0000000 {
+>   				uart4: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -376,6 +377,7 @@ flx11: flexcom@f0020000 {
+>   				uart11: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -427,6 +429,7 @@ flx12: flexcom@f0024000 {
+>   				uart12: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -586,6 +589,7 @@ flx6: flexcom@f8010000 {
+>   				uart6: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -637,6 +641,7 @@ flx7: flexcom@f8014000 {
+>   				uart7: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -688,6 +693,7 @@ flx8: flexcom@f8018000 {
+>   				uart8: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -739,6 +745,7 @@ flx0: flexcom@f801c000 {
+>   				uart0: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -809,6 +816,7 @@ flx1: flexcom@f8020000 {
+>   				uart1: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -879,6 +887,7 @@ flx2: flexcom@f8024000 {
+>   				uart2: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -949,6 +958,7 @@ flx3: flexcom@f8028000 {
+>   				uart3: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -1074,6 +1084,7 @@ flx9: flexcom@f8040000 {
+>   				uart9: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -1125,6 +1136,7 @@ flx10: flexcom@f8044000 {
+>   				uart10: serial@200 {
+>   					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+>   					reg = <0x200 0x200>;
+> +					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
+>   					interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
+>   					dmas = <&dma0
+>   						(AT91_XDMAC_DT_MEM_IF(0) |
+> 
+> base-commit: fdadd93817f124fd0ea6ef251d4a1068b7feceba
 
-and pick them up in your tree. I've checked that there are no
-conflicts against contents of the SoC tree. If you prefer me to
-pick them up after all, that is also fine, but please resend in
-that case.
-
-      Arnd
 
