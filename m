@@ -1,130 +1,143 @@
-Return-Path: <linux-kernel+bounces-316258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6711196CD25
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:22:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAA896CD08
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24950285CAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F32281092
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1C1145B25;
-	Thu,  5 Sep 2024 03:22:05 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFCF42AA2
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4161448E0;
+	Thu,  5 Sep 2024 03:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BAxgEyN2"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7223C25634;
+	Thu,  5 Sep 2024 03:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725506524; cv=none; b=phzhrYqoHhw6vUYiDbKkMq0m1F6rgA2P4rXsK7RVV1vlwRaxzWpB2QPcLhF+WuJ4LeKgUotZKbaq9QAT2dDLIIYpgUq2zME3d7aq5SNekInGebOMHKWP6cQQ6bJS5cCUt8D2VrLZenldplEDUNZMkpcd8Prcy1PT9DcsMgUGzU4=
+	t=1725505802; cv=none; b=Dq+7JeDfO6kDPzP0Sj1ix2LvyFIWpXMgZAkkCnmXLIAkV9NXBsOEK81ycEYGgYK8YEK+vdviIKQFbKxR9AizZmYq8nXy0weTsoNSng/cUkIQEYrFrNVpy2fNYaCXbYUxex5bqLZZ79Le07wfXBIHcqzq/cTz0WNd+dIh0S8OuB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725506524; c=relaxed/simple;
-	bh=ElO+9uuM3oV7yzTPx99G1jGd2YGUKC+h38xsFa6DBsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGeq8qHrx7WME3V+hrIzgFfJoF6QkhavqUjgLPP+NKjhvjYeOMIUAdi7/QUBZY5Uz1/bEeXtoKj2dA7grocSyKr52Kc7o/TqmPHHzvb/pUwvDG7iOEi/vx568kqr+BQxXibWOXoEjyCWpFvEhgTmE+KiSUGileVchb6uvfbDV2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 48538ghR029098;
-	Thu, 5 Sep 2024 05:08:42 +0200
-Date: Thu, 5 Sep 2024 05:08:42 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc for 6.12-rc1
-Message-ID: <20240905030842.GA29082@1wt.eu>
-References: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
- <9de5090f-038f-4d68-af96-fbb9ed45b901@linuxfoundation.org>
- <f882fa56-c198-4574-bb12-18337ac0927e@linuxfoundation.org>
- <9440397d-5077-460d-9c96-6487b8b0d923@t-8ch.de>
- <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
+	s=arc-20240116; t=1725505802; c=relaxed/simple;
+	bh=iXpc5nwT9T8D773UI6C/JrWPJ2zYuJYUq2vKFdkUIb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UBRXjXcFSefk0zT4ZgfMoTIADwMgg+18HK8Vo7sVuELM1p1MC5t2hQf2O+yGAxPrVBhYcJ0nzEKXvEEOxWnOp1KV5MJGju/FpRC90OVEP44bc27LtIhPwEOvbjvJjsC7S4QK2T/JyBuZEvItH6oWdbnY8Ceuwm1dVj2JD0u6WEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BAxgEyN2; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725505797; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EEK3tU0+O04g/bTYssKY4oUfiGHLfHkoGwUrwDWQSJo=;
+	b=BAxgEyN2X8Qmzl+WgU/TJczxDcEwwwzEuX/aEs80gX4BJ9mq8b7mFyls/gkwj99naX/V3tlg+xGjtuppdFqfLj/TORzMv5320uX3IZE81c3SfrDqWOle0gU/yxObmmnAmF1cNBKs7L1vgRmZz+K1QTwKN60I5/VW8aVwmTiL/R8=
+Received: from 30.246.162.144(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WEJd2C3_1725505794)
+          by smtp.aliyun-inc.com;
+          Thu, 05 Sep 2024 11:09:55 +0800
+Message-ID: <d539c09c-4064-4511-9a1e-cff51b1f35f4@linux.alibaba.com>
+Date: Thu, 5 Sep 2024 11:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 3/3] ACPI: APEI: handle synchronous exceptions in task
+ work
+To: Jarkko Sakkinen <jarkko@kernel.org>, bp@alien8.de, rafael@kernel.org,
+ wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
+ tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
+ james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
+ will@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240902030034.67152-4-xueshuai@linux.alibaba.com>
+ <D3WS4D64BTGD.217F1PPA4VQSF@kernel.org>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <D3WS4D64BTGD.217F1PPA4VQSF@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <13169754-c8ea-4e9e-b062-81b253a07078@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Sep 04, 2024 at 03:19:42PM -0600, Shuah Khan wrote:
-> On 9/4/24 15:13, Thomas Weißschuh wrote:
-> > On 2024-09-04 15:04:35+0000, Shuah Khan wrote:
-> > > On 8/27/24 06:56, Shuah Khan wrote:
-> > > > On 8/24/24 12:53, Thomas Weißschuh wrote:
-> > > > > Hi Shuah,
-> > > > > 
-> > > > > The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-> > > > > 
-> > > > >     Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-> > > > > 
-> > > > > are available in the Git repository at:
-> > > > > 
-> > > > >     https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git nolibc-20240824-for-6.12-1
-> > > > > 
-> > > > > for you to fetch changes up to 25fb329a23c78d59a055a7b1329d18f30a2be92d:
-> > > > > 
-> > > > >     tools/nolibc: x86_64: use local label in memcpy/memmove (2024-08-16 17:23:13 +0200)
-> > > > > 
-> > > > > ----------------------------------------------------------------
-> > > > > nolibc changes for 6.12
-> > > > > 
-> > > > > Highlights
-> > > > > ----------
-> > > > > 
-> > > > > * Clang support (including LTO)
-> > > > > 
-> > > > > Other Changes
-> > > > > -------------
-> > > > > 
-> > > > > * stdbool.h support
-> > > > > * argc/argv/envp arguments for constructors
-> > > > > * Small #include ordering fix
-> > > > > 
-> > > > 
-> > > > Thank you Thomas.
-> > > > 
-> > > > Pulled and pushed to linux-kselftest nolibc branch for Linux 6.12-rc1
-> > > > 
-> > > 
-> > > I am running sanity tests and getting this message:
-> > > 
-> > > $HOME/.cache/crosstools/gcc-13.2.0-nolibc/i386-linux/bin/i386-linux-: No such file or directory
-> > 
-> > This indicates you are using 'run-tests.sh'.
-> > Pass "-p" to let it download the toolchain automatically.
 
-Maybe it appends a "$CC" at the end that's not yet set anymore for some
-reason, e.g. the change of includes.
 
-> > > Something changed since the last time I did the pull request handling.
-> > 
-> > In the test setup not much has changed.
-> > Maybe you cleaned out your ~/.cache?
+åœ¨ 2024/9/4 00:11, Jarkko Sakkinen å†™é“:
+> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
+>> The memory uncorrected error could be signaled by asynchronous interrupt
+>> (specifically, SPI in arm64 platform), e.g. when an error is detected by
+>> a background scrubber, or signaled by synchronous exception
+>> (specifically, data abort excepction in arm64 platform), e.g. when a CPU
+>> tries to access a poisoned cache line. Currently, both synchronous and
+>> asynchronous error use memory_failure_queue() to schedule
+>> memory_failure() exectute in kworker context.
+>>
+>> As a result, when a user-space process is accessing a poisoned data, a
+>> data abort is taken and the memory_failure() is executed in the kworker
+>> context:
+>>
+>>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
+>>    - can not kill the user-space in some cases resulting a synchronous
+>>      error infinite loop
+>>
+>> Issue 1: send wrong si_code in early_kill mode
+>>
+>> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+>> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+>> could be used to determine whether a synchronous exception occurs on
+>> ARM64 platform.  When a synchronous exception is detected, the kernel is
+>> expected to terminate the current process which has accessed poisoned
+>> page. This is done by sending a SIGBUS signal with an error code
+>> BUS_MCEERR_AR, indicating an action-required machine check error on
+>> read.
+>>
+>> However, when kill_proc() is called to terminate the processes who have
+>> the poisoned page mapped, it sends the incorrect SIGBUS error code
+>> BUS_MCEERR_AO because the context in which it operates is not the one
+>> where the error was triggered.
+>>
+>> To reproduce this problem:
+>>
+>>    # STEP1: enable early kill mode
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 5 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+>> error and it is not fact.
+>>
+>> To fix it, queue memory_failure() as a task_work so that it runs in
+>> the context of the process that is actually consuming the poisoned data.
+>>
+>> After this patch set:
 > 
-> Not intentionally ...
-> Guess I just have to do run download.sh again.
+> s/patch set/patch/
 > 
-> > Or it's the first PR with run-tests.sh?
-> 
-> I have been running the following successfully in the past:
-> 
-> From tools/testing/selftests/nolibc
-> make run
-> make run-user
-> 
-> ./run-tests.sh -m user
-> ./run-tests.sh -m system
 
-At least it means we've broken some setups and we need to figure how,
-and what to do to fix them :-/
+Hi, Jarkko,
 
-Thanks Shuah for the report,
-Willy
+Will fix the typo in next version.
+
+Thank you.
+
+Best Regards,
+Shuai
 
