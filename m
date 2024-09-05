@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-317489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC8496DF0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB23B96DF0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FEF0B22787
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5D9285CC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E519FA7E;
-	Thu,  5 Sep 2024 16:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1973A19EEB1;
+	Thu,  5 Sep 2024 16:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CXQ2vv6T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bTFLpjdM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A792819F489
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AFA19E82C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552049; cv=none; b=NE54RUhJBcWyPfd3ApnSTHstTgDzdoLEGoILyXWBGoGI+ocZZTCIzMYz+HX0B+/9a59ImmJP9Sv0DnrXAuIQZomdHqvnjIG9C+9OQTJzHlhkCsFJg0WAnb91cI/iWPvrpi5Ax1gO2KBHcvbcJQc8TjPDov7QcdtvOB0m8kwETWw=
+	t=1725552055; cv=none; b=ELpe61mkzNLG6SZ8xMV7/qnmf4fzBfygo6CPUqygDzaP94KLIUdSEVOU4NIQ/jPZpFjOwZzPCmCkx/AS4lXASQQUIh26Qsg+l3s8oRtxhZJPO6OTYQGLeejDgDmpO+hrVGs7CUJjzJkQUv8Hgnn83ht+J54FSejAqO/UNJPQFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552049; c=relaxed/simple;
-	bh=OduRHAVBGOjYFmib5cZvnd9hU/f1pWV6cNPWVVpgWck=;
+	s=arc-20240116; t=1725552055; c=relaxed/simple;
+	bh=7XNLoPjMi2p0yPNBVBbQHtFB3VyLvnKB24qCJaKJbNM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MX6hZoTBrAX/lxz0P4m0WJ3e9V0bRPLRegqR4XzCE7DMlO1vviBOunkRvLd4nuo57d6/b1iWrjSX8joNlUsdmhOVp4RaC9bD4SUErNrbTmP2lIf0wCvf2pthGbtwkAgDWK4nMkhBx4z50Rt/WwtSKWLgxmo7xStlg0nixTHfLqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CXQ2vv6T; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/KUY1zbrv7LaHmuIj/HmFZbWIWfyuR1qtEHBz1XC8TWIAP91+J4BW9EeE04uadWUz778b4O7YBxCA5a+yBME0/D+ZWl5MFBdqa2VkKbK/egbu6lg+ZGOtv9K6sDPbvp+YZCZLwTQOnCcDdwnmNqSoYdaTpgC8LvFO3vj1wwD00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bTFLpjdM; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725552048; x=1757088048;
+  t=1725552054; x=1757088054;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=OduRHAVBGOjYFmib5cZvnd9hU/f1pWV6cNPWVVpgWck=;
-  b=CXQ2vv6TXjlVx/wCgrKNqe7a4iemhNe2vJnay9zbWoTaoHw3RPY+YiSf
-   LZI82EaILMT+vVUF6Cs2IQtMHhwtFDu4Zvk2U7o0hshFgU6+BujHhQ697
-   9rm2uJoONOfBw6xGjIzRUJJNGNEZo+tKL4bWKpUqR5wqUKtZpM7Ptn/CL
-   r0RCLdJ4/NzIAMMZnLy4CanQRawSHI3Afyk1gpRUzI/AaytBDDp7hws5A
-   20pPbdm0JZHbiAsQBeXTCkOuxbgieOIoDoPbNBmjhdrIi5OEB0SfAE7SP
-   xU108Lo9ISygsOYqhtyMXf3Mj0zoV93kiH++x+ybqLjxzsWdpgQLbOA/+
-   Q==;
-X-CSE-ConnectionGUID: Bznn2VnkQPGqWbs9qwyvAg==
-X-CSE-MsgGUID: 3441DCKWTsK95tCEypwHzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24147239"
+  bh=7XNLoPjMi2p0yPNBVBbQHtFB3VyLvnKB24qCJaKJbNM=;
+  b=bTFLpjdMaAgbP4ScvYv0bNlsdZQT9QHBp8VlE1NPTgtbJG4Og6S/M1CW
+   T+fSyHvS1GZGEc0XncQhhmjMWl8uN3w1j81Geg6xu0zyJdUHCkjPFgtpl
+   SU8d/dTqB9Mhe5YR/gSSE2KB0mNW6+jMBqtSDOALRsIJkd93/3oLGYtTT
+   v460qCfgwKejDNuGRgCUl4/V+suo7wSCuQtQmoBfkZ445ENkE1YenJakr
+   Z0OQp1+j6uCR23dDDKVWDNlD1OT7dd6RXhWP/U6gmY1NoE9YqTNo3E7dz
+   6y/OmcK+1sPgAPLUAJRFxZEdArzPA59ws8qkDp7m8A4IyeEPHSyCQQAvW
+   g==;
+X-CSE-ConnectionGUID: z2qDCLQHRUq3eBBZPTk1lA==
+X-CSE-MsgGUID: EglFYrGHSm+j9VvMVfdf7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35665992"
 X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="24147239"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:47 -0700
-X-CSE-ConnectionGUID: 1Y7tpDMhTcOBMXbhts50QQ==
-X-CSE-MsgGUID: Td1pJgRVSuacoTssJHuW0A==
+   d="scan'208";a="35665992"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:53 -0700
+X-CSE-ConnectionGUID: jnljNIoWQdu3jDy0bQ/NsA==
+X-CSE-MsgGUID: U13ZolXrRVG4RY8Hr6TrHQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="70462544"
+   d="scan'208";a="69816294"
 Received: from bllerma-mobl2.amr.corp.intel.com (HELO desk) ([10.125.147.102])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:47 -0700
-Date: Thu, 5 Sep 2024 09:00:45 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:53 -0700
+Date: Thu, 5 Sep 2024 09:00:51 -0700
 From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 To: Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,8 +68,9 @@ Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
 	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
 	antonio.gomez.iglesias@linux.intel.com,
 	daniel.sneddon@linux.intel.com
-Subject: [PATCH v6 1/3] x86/entry_32: Do not clobber user EFLAGS.ZF
-Message-ID: <20240905-fix-dosemu-vm86-v6-1-7aff8e53cbbf@linux.intel.com>
+Subject: [PATCH v6 2/3] x86/entry_32: Clear CPU buffers after register
+ restore in NMI return
+Message-ID: <20240905-fix-dosemu-vm86-v6-2-7aff8e53cbbf@linux.intel.com>
 X-Mailer: b4 0.14.1
 References: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
 Precedence: bulk
@@ -82,42 +83,49 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
 
-Opportunistic SYSEXIT executes VERW to clear CPU buffers after user EFLAGS
-are restored. This can clobber user EFLAGS.ZF.
+CPU buffers are currently cleared after call to exc_nmi, but before
+register state is restored. This may be okay for MDS mitigation but not for
+RDFS. Because RDFS mitigation requires CPU buffers to be cleared when
+registers don't have any sensitive data.
 
-Move CLEAR_CPU_BUFFERS before the user EFLAGS are restored. This ensures
-that the user EFLAGS.ZF is not clobbered.
+Move CLEAR_CPU_BUFFERS after RESTORE_ALL_NMI.
 
 Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-Reported-by: Jari Ruusu <jariruusu@protonmail.com>
-Closes: https://lore.kernel.org/lkml/yVXwe8gvgmPADpRB6lXlicS2fcHoV5OHHxyuFbB_MEleRPD7-KhGe5VtORejtPe-KCkT8Uhcg5d7-IBw4Ojb4H7z5LQxoZylSmJ8KNL3A8o=@protonmail.com/
 Cc: stable@vger.kernel.org # 5.10+
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 ---
  arch/x86/entry/entry_32.S | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index d3a814efbff6..9ad6cd89b7ac 100644
+index 9ad6cd89b7ac..20be5758c2d2 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -871,6 +871,8 @@ SYM_FUNC_START(entry_SYSENTER_32)
+@@ -1145,7 +1145,6 @@ SYM_CODE_START(asm_exc_nmi)
  
- 	/* Now ready to switch the cr3 */
- 	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+	/* Clobbers ZF */
-+	CLEAR_CPU_BUFFERS
- 
- 	/*
- 	 * Restore all flags except IF. (We restore IF separately because
-@@ -881,7 +883,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 	BUG_IF_WRONG_CR3 no_user_check=1
- 	popfl
- 	popl	%eax
+ 	/* Not on SYSENTER stack. */
+ 	call	exc_nmi
 -	CLEAR_CPU_BUFFERS
+ 	jmp	.Lnmi_return
  
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
+ .Lnmi_from_sysenter_stack:
+@@ -1166,6 +1165,7 @@ SYM_CODE_START(asm_exc_nmi)
+ 
+ 	CHECK_AND_APPLY_ESPFIX
+ 	RESTORE_ALL_NMI cr3_reg=%edi pop=4
++	CLEAR_CPU_BUFFERS
+ 	jmp	.Lirq_return
+ 
+ #ifdef CONFIG_X86_ESPFIX32
+@@ -1207,6 +1207,7 @@ SYM_CODE_START(asm_exc_nmi)
+ 	 *  1 - orig_ax
+ 	 */
+ 	lss	(1+5+6)*4(%esp), %esp			# back to espfix stack
++	CLEAR_CPU_BUFFERS
+ 	jmp	.Lirq_return
+ #endif
+ SYM_CODE_END(asm_exc_nmi)
 
 -- 
 2.34.1
