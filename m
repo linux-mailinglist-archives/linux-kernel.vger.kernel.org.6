@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-317685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C1096E228
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:41:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D81F96E22B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723D21F25D33
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:41:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95B31C2244C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57270187FE9;
-	Thu,  5 Sep 2024 18:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF58F187FF5;
+	Thu,  5 Sep 2024 18:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EV7haNi4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0cbN73W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0658821;
-	Thu,  5 Sep 2024 18:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BF018785F;
+	Thu,  5 Sep 2024 18:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725561709; cv=none; b=CpOsaRnQME3O43aupgAypCrMmoZY/9wN8aQWiJM5w9ICs38OjKPk2rCqjc//vjsZfT9hx4928r5nXHqT4Ht6Uyt2M6MxWhbLLA1IlT671cHNlaMoCe3rMsQ2aqfq7g5iyd2WfAD1q+7U/bqIyJ39c7rJXlSoHgaWKSBxzCstC2A=
+	t=1725561728; cv=none; b=Aee5+G3zAzwK+8TIx3nH/DTyOy1G8Y5cE0EYzklk28H8WFZ0AAQoIpUm/13+3LC17A3GoqMgCw4fv5raC+S5bn/mecdbEFZ0Zx5RIW52njBjjyq7aq5iNA7fuDdFgHVUS53/Eua26mfwsVW5l4DE1uNDIXCA8+FiMXv0DfTI5kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725561709; c=relaxed/simple;
-	bh=o9v6tfiHjwh1ItvVQA7QxJ59GhaJ+30hamTD7fOplT8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=SX64OsrArJOD/BSweuzjiJytdNoxL0WmpC53dCb+lSjGjk17chkB1YQ6e9dm2rGbKZyxNPjI0KHAODCWsKgyUAHE69PeUS8mrfNQeNg518cwZUBu+2mEJtT3KpiyT97Os/bQSj2n6C3kSktBIUE/o/52d39hoAWlkJOqRUfAXos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EV7haNi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33397C4CEC3;
-	Thu,  5 Sep 2024 18:41:46 +0000 (UTC)
+	s=arc-20240116; t=1725561728; c=relaxed/simple;
+	bh=JLzVazegeLJ+NiJYdoB5mJULvbuw17ruPjgTitRufoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNbD1xWqRrpiKhwh1kPW4Ey82SrOy6wNJJK9eAM1rwF/NxZWv+yavX3yjk67n95u72qwOVhohNcyuROCChc8cl3NWxirxfv+4sjgOCjvQ4J+U4jS424EaldoIiLrrsE1efrDNrDIZy82Bydkj6xNHM30N2TkZ7GqsvQVfegahaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0cbN73W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E462CC4CEC3;
+	Thu,  5 Sep 2024 18:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725561709;
-	bh=o9v6tfiHjwh1ItvVQA7QxJ59GhaJ+30hamTD7fOplT8=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=EV7haNi4o6VN3Sv+POQLZunJzxyqb0jbJNFTM36W6Y027zpPGoXAF74Tj/pdZ0kR8
-	 H6DRhMJX7kUcHB0b2JnHENE+lb0elboyCMZkE5//ooqk55pvv3VVjwyLBshyB3Ryo+
-	 p/YO0LjM9b9lorsPtZRofCZ4OkdMLCfZ0yvd6W00ufrFC++BMziq9owzSvQdjhSQM8
-	 o/0rw9CmrGrHqDMNBTQh+QbJFnSJdiMcojyXIOOaaXjUxGKNR8itL7xgsyrPlzIChe
-	 SJDoZu89a4didcjg5QZNqTqLMLa7wn+Xw9SgRFWFSi5nyUREgoCtg7mHb2zJJZ5wig
-	 v8pDzyseDzcmw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,  Dmitry Baryshkov
- <dbaryshkov@gmail.com>,  Johan Hovold <johan@kernel.org>,  Dmitry
- Baryshkov <dmitry.baryshkov@linaro.org>,  Bjorn Andersson
- <andersson@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
-  linux-arm-msm@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>,
-    ath11k@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
- the on-board wcn6855
-References: <20240905122023.47251-1-brgl@bgdev.pl>
-	<20240905122023.47251-2-brgl@bgdev.pl>
-	<6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek>
-	<CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
-	<CALT56yOP+un5nkxuirJVg=gr7fo4Hqjt1ew3z-=F2J_Y_RcTqg@mail.gmail.com>
-	<CAMRc=Mci-8R1Oe3Fe+1E+K-7khzwBPgn_8SQSUPXthpE4032Pw@mail.gmail.com>
-	<d6d5a943-ab29-4034-b465-b62d9d1efa61@kernel.org>
-Date: Thu, 05 Sep 2024 21:41:44 +0300
-In-Reply-To: <d6d5a943-ab29-4034-b465-b62d9d1efa61@kernel.org> (Konrad
-	Dybcio's message of "Thu, 5 Sep 2024 15:13:45 +0200")
-Message-ID: <87v7zagcyf.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1725561727;
+	bh=JLzVazegeLJ+NiJYdoB5mJULvbuw17ruPjgTitRufoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F0cbN73WOD3DxYI/K0CjeWeXQd+U2po05/OERE8h+3LJsoO65AO8hdXiC5G1uW26k
+	 Mr0thEzBNsosJ/XZ/MGKrcc2q5nRtKbmNN07lWaa2J/plvpbavsA5vQFfFAM4wWdcG
+	 OfoBOn5tY98MNlmAvKTK+yV+h2l3A8+BUVyoWyTWQFIYsxxiYa1cnwNztDaigyURad
+	 7Md/MqbqhEpRZ3vC1ibWwrh7QeHcsYKy59cpPvy8Izuzugfn2oGrsNsYq6gvgLB1ja
+	 H6tuWfrXiZDfcB+A7Z89KPML8vSAp6ugE6xqJPmppgoGBvbPlErl8sR1UX5DmI4sUk
+	 EKTqn0OtRTQLQ==
+Date: Thu, 5 Sep 2024 19:42:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
+Message-ID: <1e91439d-e8fe-4675-ac0b-03939f563bca@sirena.org.uk>
+References: <20240904090016.2841572-1-wenst@chromium.org>
+ <20240904090016.2841572-10-wenst@chromium.org>
+ <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
+ <CAGXv+5F27K76t=ht5v75jKsNF-J+C0r5+m=czHz6PtV3t5DxcQ@mail.gmail.com>
+ <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XGG4EEhvNkYs12Vb"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com>
+X-Cookie: The horror... the horror!
+
+
+--XGG4EEhvNkYs12Vb
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Konrad Dybcio <konradybcio@kernel.org> writes:
+On Thu, Sep 05, 2024 at 11:14:58AM -0700, Doug Anderson wrote:
+> On Thu, Sep 5, 2024 at 8:10=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> =
+wrote:
 
-> On 5.09.2024 3:00 PM, Bartosz Golaszewski wrote:
->> On Thu, Sep 5, 2024 at 2:56=E2=80=AFPM Dmitry Baryshkov <dbaryshkov@gmai=
-l.com> wrote:
->>>
->>>>>
->>>>> As you are going to post another revision, please also add
->>>>>
->>>>> qcom,ath11k-calibration-variant
->>>>>
->>>>
->>>> I had it in earlier revisions. The only one we could add here would be
->>>> the one from X13s as QCom has not yet released the data for the CRD.
->>>> Johan and Konrad were against adding this here if it doesn't refer to
->>>> the correct one so I dropped it.
->>>
->>> As Kalle usually merges data with some delay it's not infrequent to
->>> have DTS which names calibration variant, but board-2.bin doesn't have
->>> corresponding data. The driver safely falls back to the data without
->>> variant if it can find it. Als  usually it's us who supply the
->>> calibration name.
->>>
->>=20
->> Johan, Konrad,
->>=20
->> What do you think? Do we know the exact name and should I add it or
->> should we wait until it's in board-2.bin?
->
-> If we can agree on the string identifier with Kalle in advance, we can
-> add it even before the boardfile drops
+> > This next item would be a later enhancement (which isn't implemented in
+> > this series anyway):
 
-There have not been really any naming rules for the variant string, it
-just needs to be unique so that it doesn't conflict with other variant
-strings. What have you been thinking?
+> >   - optional prober callback that does actual probing
 
-But please Cc the ath11k list for anything ath11k related, adding it
-now.
+> > In our case it would only be used for cases where an HID-over-I2C
+> > component shares the same address as a non-HID one, and some extra
+> > work is needed to determine which type it is. I still need to think
+> > about the structure of this.
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+> IMO _that_ would be a great option to the i2c prober. It feels like
+> you could have an optional register read that needs to match to have
+> the i2c prober succeed. Most people would leave it blank (just the i2c
+> device existing is enough) but probably a single register read would
+> be enough to confirm you got the right device. Most i2c devices have
+> some sort of "version" / "vendor" / "id" type register somewhere.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+I'm not so sure about the "most" there - it depends quite a bit on the
+class of device.  This also imply that the prober would have a regmap
+config as well...
+
+--XGG4EEhvNkYs12Vb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbZ+3cACgkQJNaLcl1U
+h9C98Qf/eDbxzuWN9wKXOgtyn/KGNJ9usI1DrqYUNAy7+kXpYwuywHuxw7jQX/m7
+apBm7viyIeyEcsCjy7BmmPJ3Fyfqfpt/4/cvh+wFla+E/dVadH0thHf+1XHjI7sC
+M6Vs/bjtPpEIAC2StD3yNUezMRQc/6KW2mlzh66rPCfE7vubfHN3xXgq5xFr402G
+/m1HX2HkBqGarvXdkUgOOQuFfb/FIiKB4l+VyXwGmzAgwTeXYofMuEwfF6lPqpvX
+VYgxNyAJdvImmjHthf/EFx5TDwj3tSMDYj0/qAhKrFnreXU6H1sNcAhIvv/7gyGa
++SArYn2Cah9+B40+mW2rGa619WFc7Q==
+=aEkW
+-----END PGP SIGNATURE-----
+
+--XGG4EEhvNkYs12Vb--
 
