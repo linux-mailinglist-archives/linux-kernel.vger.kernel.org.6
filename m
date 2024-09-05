@@ -1,252 +1,122 @@
-Return-Path: <linux-kernel+bounces-317692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FB096E23B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6454696E23D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD6EB24165
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120481F22CBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C82B189500;
-	Thu,  5 Sep 2024 18:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9388C188A17;
+	Thu,  5 Sep 2024 18:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lHnrRcFs"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ze+tsMpD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CA618859D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9AA18594F;
+	Thu,  5 Sep 2024 18:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725562109; cv=none; b=lexvwDRLUEk1GF1H4GDBAgJ6adYCPCq5RDP7d0DzEfoj8F6VgmqiA521V0HoTB2m5K9wUC64deEuqG2pAt+Pc5pN6TrIYZBOb5gKs3nAIlMePASY06URHoZhkc+fZN0kjVruXveYCi3argtejn3KVuQeXi6Q8cRvJdkPiZwJTmY=
+	t=1725562136; cv=none; b=uR1TBlsLVbsTXRgIZK0WxhBS+i6niTYZU8Vg7jr0xEgB4idh24q9QIdUM9MS3/e7P4j6PoEdj7Zo+ZxrTeiHLojkEL2W/SSY/LF/s2Ck6NdIfWrS8qQSCQcXP0lFvp/IYQ0QtUf++zT7cv1rQniYrHminfhbb6VZx4KTELV1LcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725562109; c=relaxed/simple;
-	bh=1QmnQHQRfzIATDtjh91SmiBQjutqyby/XWada8DuMfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tX3+t0TsJoPF/A7U1Xr93i61169THWf0kvYB4X/Hel8ibQo4c59IS+O74SsC/3kJ8E/5+qdBkFpVYg6BJgpYWXceHBVtIxnrlKEdEiTw7ymCYp7l+tatOQAXxv5ti+0iBPgH5FhX4v0D+MkyPSmduUIvppcg0fZm+A4ATxH61AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lHnrRcFs; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 5 Sep 2024 11:48:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725562104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPVvvGxX6KnyYMnY+Bb1uv8l52/JsFo3bCWRW8e8nIU=;
-	b=lHnrRcFsdOTKs93Ljwr8n62qkKUbVwQFwQ9rCI9qgw+2lGQY9AtbmVkN0Fc4sCvOfuRVXO
-	5upeiVt2jc84iD+ezeTC8bCjuXwJCiSmuZd+H4s1nLj4P7iBbkCjqCeJMzfvU9Nk2//9j3
-	1HrOVQiH68x5q4JQKb4mmsW8zr7y3dY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Rientjes <rientjes@google.com>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	"David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v4] memcg: add charging of already allocated slab objects
-Message-ID: <qk3437v2as6pz2zxu4uaniqfhpxqd3qzop52zkbxwbnzgssi5v@br2hglnirrgx>
-References: <20240905173422.1565480-1-shakeel.butt@linux.dev>
- <CAJD7tkbWLYG7-G9G7MNkcA98gmGDHd3DgS38uF6r5o60H293rQ@mail.gmail.com>
+	s=arc-20240116; t=1725562136; c=relaxed/simple;
+	bh=ZljIkKUS2LF56585H3POgSW+/xG8s5rlvOrzZoy8J/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NiUn9l2BBhix3m0cJhGKkjYEncq1q/R3Cr3UZrJdqR6gylYFn9+/SutD18wULjpx0QkOxyYpSytjJZBUyeJczLAHvkwlBxFFTfqyrItnDVmyR0QRdm85Olm4fL2O/q+gSYi8P3nuiCbNyZ+ptb/22ZNkPQ71EJ/tU2NSBcCC0I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ze+tsMpD; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725562135; x=1757098135;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZljIkKUS2LF56585H3POgSW+/xG8s5rlvOrzZoy8J/s=;
+  b=Ze+tsMpDXUz9mF8CKTKHuMjM9aP9DB2WQP5NglkoNuDbfXo0shzqoljn
+   2QzkXYSJkqC2WlNRuTtkzN8epAu0cNycv4vwiSXMwSMw1fL1w9D2sOXG3
+   wHrs7NSEQdo2qUbMfHvaUZ9/evf4KJIeXbc/kXnBYWpQO98eoAm+Kpixe
+   A3/RYc/NxHcfw7FbLnnPnVW3vcD4CmyP6QwuyVosEaIl+LonsYZo1dvPV
+   Nl2NFMGoJT5rI5wwhaUthN1kDDOej5VBTYAVjdQz4Oxdb18odq0xW+E++
+   RaF/wuVXFjIqNed77AEPj8tD9OKB7Bmg9FGoWs0p+GnpjFFbp0G6Ag5LR
+   w==;
+X-CSE-ConnectionGUID: ELC9Ksm+T7yCK649IgpyVg==
+X-CSE-MsgGUID: nwzT1wdCSCWhiOrvZz3mfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="28187977"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="28187977"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 11:48:54 -0700
+X-CSE-ConnectionGUID: /+wtgG3KS+ydmXMb+ufECw==
+X-CSE-MsgGUID: 8YAd/cYsT/GUYAOpERb1KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="70523400"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 05 Sep 2024 11:48:51 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 4D90B31E; Thu, 05 Sep 2024 21:48:49 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] PM: hibernate: Remove unused stub for saveable_highmem_page()
+Date: Thu,  5 Sep 2024 21:48:48 +0300
+Message-ID: <20240905184848.318978-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkbWLYG7-G9G7MNkcA98gmGDHd3DgS38uF6r5o60H293rQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 05, 2024 at 10:48:50AM GMT, Yosry Ahmed wrote:
-> On Thu, Sep 5, 2024 at 10:34 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > At the moment, the slab objects are charged to the memcg at the
-> > allocation time. However there are cases where slab objects are
-> > allocated at the time where the right target memcg to charge it to is
-> > not known. One such case is the network sockets for the incoming
-> > connection which are allocated in the softirq context.
-> >
-> > Couple hundred thousand connections are very normal on large loaded
-> > server and almost all of those sockets underlying those connections get
-> > allocated in the softirq context and thus not charged to any memcg.
-> > However later at the accept() time we know the right target memcg to
-> > charge. Let's add new API to charge already allocated objects, so we can
-> > have better accounting of the memory usage.
-> >
-> > To measure the performance impact of this change, tcp_crr is used from
-> > the neper [1] performance suite. Basically it is a network ping pong
-> > test with new connection for each ping pong.
-> >
-> > The server and the client are run inside 3 level of cgroup hierarchy
-> > using the following commands:
-> >
-> > Server:
-> >  $ tcp_crr -6
-> >
-> > Client:
-> >  $ tcp_crr -6 -c -H ${server_ip}
-> >
-> > If the client and server run on different machines with 50 GBPS NIC,
-> > there is no visible impact of the change.
-> >
-> > For the same machine experiment with v6.11-rc5 as base.
-> >
-> >           base (throughput)     with-patch
-> > tcp_crr   14545 (+- 80)         14463 (+- 56)
-> >
-> > It seems like the performance impact is within the noise.
-> >
-> > Link: https://github.com/google/neper [1]
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-> 
-> LGTM from an MM perspective with a few nits below. FWIW:
-> Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+When saveable_highmem_page() is unused, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
-Thanks.
+kernel/power/snapshot.c:1369:21: error: unused function 'saveable_highmem_page' [-Werror,-Wunused-function]
+ 1369 | static inline void *saveable_highmem_page(struct zone *z, unsigned long p)
+      |                     ^~~~~~~~~~~~~~~~~~~~~
 
-> 
-> > ---
-> > v3: https://lore.kernel.org/all/20240829175339.2424521-1-shakeel.butt@linux.dev/
-> > Changes since v3:
-> > - Add kernel doc for kmem_cache_charge.
-> >
-> > v2: https://lore.kernel.org/all/20240827235228.1591842-1-shakeel.butt@linux.dev/
-> > Change since v2:
-> > - Add handling of already charged large kmalloc objects.
-> > - Move the normal kmalloc cache check into a function.
-> >
-> > v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
-> > Changes since v1:
-> > - Correctly handle large allocations which bypass slab
-> > - Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
-> >
-> > RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
-> > Changes since the RFC:
-> > - Added check for already charged slab objects.
-> > - Added performance results from neper's tcp_crr
-> >
-> >
-> >  include/linux/slab.h            | 20 ++++++++++++++
-> >  mm/slab.h                       |  7 +++++
-> >  mm/slub.c                       | 49 +++++++++++++++++++++++++++++++++
-> >  net/ipv4/inet_connection_sock.c |  5 ++--
-> >  4 files changed, 79 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index eb2bf4629157..68789c79a530 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -547,6 +547,26 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
-> >                             gfp_t gfpflags) __assume_slab_alignment __malloc;
-> >  #define kmem_cache_alloc_lru(...)      alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
-> >
-> > +/**
-> > + * kmem_cache_charge - memcg charge an already allocated slab memory
-> > + * @objp: address of the slab object to memcg charge.
-> > + * @gfpflags: describe the allocation context
-> > + *
-> > + * kmem_cache_charge is the normal method to charge a slab object to the current
-> > + * memcg. The objp should be pointer returned by the slab allocator functions
-> > + * like kmalloc or kmem_cache_alloc. The memcg charge behavior can be controller
-> 
-> s/controller/controlled
+Fix this by removing unused stub.
 
-Thanks. Vlastimil please fix this when you pick this up.
+See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+inline functions for W=1 build").
 
-> 
-> > + * through gfpflags parameter.
-> > + *
-> > + * There are several cases where it will return true regardless. More
-> > + * specifically:
-> > + *
-> > + * 1. For !CONFIG_MEMCG or cgroup_disable=memory systems.
-> > + * 2. Already charged slab objects.
-> > + * 3. For slab objects from KMALLOC_NORMAL caches.
-> > + *
-> > + * Return: true if charge was successful otherwise false.
-> > + */
-> > +bool kmem_cache_charge(void *objp, gfp_t gfpflags);
-> >  void kmem_cache_free(struct kmem_cache *s, void *objp);
-> >
-> >  kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
-> > diff --git a/mm/slab.h b/mm/slab.h
-> > index dcdb56b8e7f5..9f907e930609 100644
-> > --- a/mm/slab.h
-> > +++ b/mm/slab.h
-> > @@ -443,6 +443,13 @@ static inline bool is_kmalloc_cache(struct kmem_cache *s)
-> >         return (s->flags & SLAB_KMALLOC);
-> >  }
-> >
-> > +static inline bool is_kmalloc_normal(struct kmem_cache *s)
-> > +{
-> > +       if (!is_kmalloc_cache(s))
-> > +               return false;
-> > +       return !(s->flags & (SLAB_CACHE_DMA|SLAB_ACCOUNT|SLAB_RECLAIM_ACCOUNT));
-> > +}
-> > +
-> >  /* Legal flag mask for kmem_cache_create(), for various configurations */
-> >  #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
-> >                          SLAB_CACHE_DMA32 | SLAB_PANIC | \
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index c9d8a2497fd6..3f2a89f7a23a 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -2185,6 +2185,41 @@ void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
-> >
-> >         __memcg_slab_free_hook(s, slab, p, objects, obj_exts);
-> >  }
-> > +
-> > +static __fastpath_inline
-> > +bool memcg_slab_post_charge(void *p, gfp_t flags)
-> > +{
-> > +       struct slabobj_ext *slab_exts;
-> > +       struct kmem_cache *s;
-> > +       struct folio *folio;
-> > +       struct slab *slab;
-> > +       unsigned long off;
-> > +
-> > +       folio = virt_to_folio(p);
-> > +       if (!folio_test_slab(folio)) {
-> > +               return folio_memcg_kmem(folio) ||
-> 
-> If the folio is charged user memory, we will still double charge here,
-> but that would be a bug. We can put a warning in this case or use
-> folio_memcg() instead to avoid double charges in that case as well.
->
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ kernel/power/snapshot.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-I don't think we need to do anything for such scenarios similar to how
-other kmem function handles them. For example passing user memory to
-kfree() will treat it similar to this and there is no warning as well.
+diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
+index 405eddbda4fc..30894d8f0a78 100644
+--- a/kernel/power/snapshot.c
++++ b/kernel/power/snapshot.c
+@@ -1365,11 +1365,6 @@ static unsigned int count_highmem_pages(void)
+ 	}
+ 	return n;
+ }
+-#else
+-static inline void *saveable_highmem_page(struct zone *z, unsigned long p)
+-{
+-	return NULL;
+-}
+ #endif /* CONFIG_HIGHMEM */
+ 
+ /**
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-> > +                       (__memcg_kmem_charge_page(folio_page(folio, 0), flags,
-> > +                                                 folio_order(folio)) == 0);
-> > +       }
-> > +
-> > +       slab = folio_slab(folio);
-> > +       s = slab->slab_cache;
-> > +
-> > +       /* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
-> 
-> Is it possible to point to the commit that has the explanation here?
-> The one you pointed me to before? Otherwise it's not really obvious
-> where the circular dependency comes from (at least to me).
-> 
-
-Not sure about the commit reference. We can add more text here.
-Vlastimil, how much detail do you prefer?
-
-thanks,
-Shakeel
 
