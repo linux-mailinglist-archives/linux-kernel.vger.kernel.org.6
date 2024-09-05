@@ -1,165 +1,137 @@
-Return-Path: <linux-kernel+bounces-316896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C522C96D6AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:03:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C69796D6A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2AAB26357
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:03:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A067BB25F4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E551993B6;
-	Thu,  5 Sep 2024 11:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A58019413B;
+	Thu,  5 Sep 2024 11:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xn0TUE7Z"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ho6rayyI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E9B1991AC;
-	Thu,  5 Sep 2024 11:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41251991AC;
+	Thu,  5 Sep 2024 11:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534194; cv=none; b=lYDcKFb0JBGA6d50IhhQZ7jFZxYj31NLiSvcWxLT+0wFT1yM1/sWJuBQuXj9luHilNBwpS4MbXWYqHQVebhtuETj8ydQOSZfAvvagPCSLWcIrnOl60gcGIMPaKTQmgsCb+NAOKBk3+yTU1e0awvfhzxrekMIeVP7jHZY9pLpdZo=
+	t=1725534188; cv=none; b=XTWgXcVS/LAodw8PWzzI+NGo0g1uHxlStZ3tKPeAJNcC8tl4uKsDSjZZYF88ZhApM2n+vrf6u4Zot/sf268lEkh4/V6OJAOvmXYdcAO+Fw6Ey00t6inmqXaNM6xEGA8x3Fy4XhvspnZm/eoREj3PFIO2w1VwM6P7P/8DoD3gDXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534194; c=relaxed/simple;
-	bh=kULKZKLkS2PrKozHLNRgCRlFTA2YdEZVBjhxdYEj1ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NTvshVe5L2Y9W4u96RgdPE8iaM0uLPW517sLgX8zFwm2g1WQchR4KXaOOnLvqCZWbbXd4839e5CpliMnn/35+mkijfNFFnHO7XphC74BvnTFPsIJitZh7ZP0qtxFszPhBfWY9KirVQOxS6mp6T9ULkUijURC2JuSQOSlYj8fVcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xn0TUE7Z; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so2736168a12.1;
-        Thu, 05 Sep 2024 04:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725534191; x=1726138991; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1hOHRMeURfMUpbACLgDFFzFN/aSRoKqeTYS7sZPRrU8=;
-        b=Xn0TUE7ZrcOJD0/jxbpCZaPUUEsr5rAQBVKZUchCrcxsYxrYxs15TZr/XOFg2hlaAI
-         mnWlWHhGbLxfFdksoyos3OBco8Ie6K9uDLh4lyUYiaB0Hd9NB9ilUogNAikYGd/yS1hV
-         b0sbeetszq9Hi0jhyBLUMsyxmQLNice84grsPDKY+u9fuBlTAdVIDffuhTiU8ZKfKPTh
-         BvPpGuveo62LOjisKUC8Uaj8/zoAJsNE39VCzMoCUCqPB4ABPyh/CFtrwgg5RQLNSEIL
-         1BunospLmCkxSlTWV6BICd01DZnsBJuo/VdH77V2Xm9etavedhyxog+d4WRag1eSUv88
-         U4QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725534191; x=1726138991;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1hOHRMeURfMUpbACLgDFFzFN/aSRoKqeTYS7sZPRrU8=;
-        b=rwrIcrUphOV8S4cH5tDp7Sje0Js8fEFZKmaj1cNtXfxMO6MTQHyEgbVhmORky6/Tm3
-         BZDW8V3kawZ2H2CeOpO3OWcf2Z0ei3AlvBqgk1zHqwlweFGyX35u3GcwDGWkLbUTG8Om
-         owBL6keyRsURjCIc5tHwjZHZx1dFUla3GK0r7WsUfW7pXZ3JWOjlLZlyHcIoKJr/tQG0
-         tACxRbbEVG8l7XhURJmg/L5WZ9QrzxiOG/i/2i6zm9pUsFedP2mykw6m7yhqXm+1QL+l
-         w8laiRKqXp1gPUO8NbvHGiJz4x/1rQs/1afLuc7yd6yZY2vCoZV0Pf3XfCtQpstrcP6h
-         20Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVKdC+EPLrOx7msHuhHfqJbzw0eaKHgWhrN4MPw9W0ZH7nqoyPQP/clMex2o7gTicZN0dpTP3mNyrOOEWn/A==@vger.kernel.org, AJvYcCUv8/9FCgbT1pOWO9G/cTi6J2DOIKlenOgdH9adiCXyMzOo8phMwCMz5BYbN6Duv7hh+EhFTZQ6vhAklXnC@vger.kernel.org, AJvYcCWgS+ZSjE513di0eaD1vxqo8cZCrAdlj041ZLLAaKonOGBfzm9KVXosmSWbCqQfYVr53XX7MMKJ0q3SUf0=@vger.kernel.org, AJvYcCXBTA0Ad86piq178jaxZ/P+2ErtDesdBXTDNWOzBwuqmroS1sThon7kZeq0TvQHgaQU7xgP9cTepzuo@vger.kernel.org
-X-Gm-Message-State: AOJu0YztiD6azwcnULxuwSzepCs7S9xWYpZrVE1CEbsB3/iaw2cNQlZ6
-	G8704Qm12kdOkVaGYPfAY6KMgXPJKZhuGXpZ9JhzLAiyJ2PrJWqDaKp7YybkbYPWCrbD8PdOXhR
-	t14aI48G5LkUbWpkOBxVqinj5E7OKHFpB
-X-Google-Smtp-Source: AGHT+IEN/4n4hQZmleaNBkkWBxNThIxEfttefqTfSQi3FlQ7k8ed/KCjhPmLoxQDbVbY5uP0ce+hrSm13SS2cOJL47w=
-X-Received: by 2002:a05:6402:5208:b0:5c2:2b1f:f75a with SMTP id
- 4fb4d7f45d1cf-5c3c1f87bf5mr6598837a12.11.1725534190001; Thu, 05 Sep 2024
- 04:03:10 -0700 (PDT)
+	s=arc-20240116; t=1725534188; c=relaxed/simple;
+	bh=RGlpkz/2wav5shSUEwVGF248vvCXxGMpr0ImcE8tEvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=efqPELkcD0AWXJeqg+gKgg10B0a/s/tpuLN50CvCGOwwrLxn+G+efoABKmra8B7Ea4Es8d9Rhkr5ms4LiJC64v5F1LPUkBUfqkqt+d5nUKru38MEUajZE30R1LV/w9xwzVqiIYM+KxVAmqw2cS5EjgQ8TPEpGD4yu0asqBwKN1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ho6rayyI; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725534187; x=1757070187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=RGlpkz/2wav5shSUEwVGF248vvCXxGMpr0ImcE8tEvg=;
+  b=ho6rayyIUaOiRAgZ1Gu6kekA5d/W5JsCUdyyd2HHdXcSvlO6Su73MdpF
+   OdcxK3RMTQ8pEfcuKCDCPiQlTXbK3IJpPENNu6HWLs5OXpXoSsA6tfvfn
+   iWgJs5f9XxQq5zUOq4JyI2eGSjWrT3yx1A5vHOD+GkRqMAi/3tSvGzDJ9
+   wEdidmHTeYRwB6NaUj0MiI/NcdXeK3wVoYpG8bfnTYzU+WTVXiM0dN2qd
+   vfAkpl/ma8iqOO25RHkGTtvQ01cQqLi7NkiRwjk5b12AcDxtkMh0mgWwt
+   s+/NFwOOp6O6LIYo4C6d1cYrePfcfOyEGigHCkWe7L0YLo/rgKp7Mxelu
+   A==;
+X-CSE-ConnectionGUID: XqYvgrRNRj+3x5DMMqWHaA==
+X-CSE-MsgGUID: 1XZxXAEIQYO98kxSXE4G4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24106423"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="24106423"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 04:03:06 -0700
+X-CSE-ConnectionGUID: Xxo8+cQDRjeUBZQ3GWqNkQ==
+X-CSE-MsgGUID: iphZhlX/TAm9hay70M2MXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="103044732"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 04:03:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smAGT-00000005Mvq-1lYf;
+	Thu, 05 Sep 2024 14:03:01 +0300
+Date: Thu, 5 Sep 2024 14:03:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kimriver liu <kimriver.liu@siengine.com>
+Cc: jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
+	jsd@semihalf.com, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabled
+Message-ID: <ZtmP5VixBvXF9THk@smile.fi.intel.com>
+References: <20240905074211.2278-1-kimriver.liu@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-2-c5fdbbe65e70@quicinc.com> <afba364d-8299-49b6-9848-ed1660f86327@kernel.org>
- <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com> <tdvofocpygklipddgf7gbpttxdnmhe33krziwkzh2czpf4uiao@htiismc4dekz>
- <2108cb24-0e1b-c804-eb0d-397cefa0fc32@quicinc.com>
-In-Reply-To: <2108cb24-0e1b-c804-eb0d-397cefa0fc32@quicinc.com>
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Date: Thu, 5 Sep 2024 14:02:58 +0300
-Message-ID: <CALT56yMni-p3XSj=pa4yU7GtgKqXW2wXVfAvwAXjAjxRdQdJRA@mail.gmail.com>
-Subject: Re: [PATCH v3 02/29] media: MAINTAINERS: Add Qualcomm Iris video
- accelerator driver
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240905074211.2278-1-kimriver.liu@siengine.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 5 Sept 2024 at 14:02, Dikshita Agarwal
-<quic_dikshita@quicinc.com> wrote:
->
->
->
-> On 9/5/2024 3:40 PM, Dmitry Baryshkov wrote:
-> > On Thu, Sep 05, 2024 at 11:17:55AM GMT, Dikshita Agarwal wrote:
-> >>
-> >>
-> >> On 8/27/2024 4:12 PM, Krzysztof Kozlowski wrote:
-> >>> On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
-> >>>> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >>>>
-> >>>> Add an entry for Iris video decoder accelerator driver.
-> >>>>
-> >>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> >>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >>>> ---
-> >>>>  MAINTAINERS | 11 +++++++++++
-> >>>>  1 file changed, 11 insertions(+)
-> >>>>
-> >>>> diff --git a/MAINTAINERS b/MAINTAINERS
-> >>>> index 8766f3e5e87e..105e67fca308 100644
-> >>>> --- a/MAINTAINERS
-> >>>> +++ b/MAINTAINERS
-> >>>> @@ -18898,6 +18898,17 @@ S:        Maintained
-> >>>>  F:        Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
-> >>>>  F:        drivers/regulator/vqmmc-ipq4019-regulator.c
-> >>>>
-> >>>> +QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
-> >>>> +M:        Vikash Garodia <quic_vgarodia@quicinc.com>
-> >>>> +M:        Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >>>> +R:        Abhinav Kumar <quic_abhinavk@quicinc.com>
-> >>>> +L:        linux-media@vger.kernel.org
-> >>>> +L:        linux-arm-msm@vger.kernel.org
-> >>>> +S:        Maintained
-> >>>> +T:        git git://linuxtv.org/media_tree.git
-> >>>
-> >>> Drop, you do not maintain that Git tree.
-> >> Sure, will remove
-> >>>
-> >>>> +F:        Documentation/devicetree/bindings/media/qcom,*-iris.yaml
-> >>>> +F:        drivers/media/platform/qcom/iris/
-> >>>
-> >>> Drop, does not exist. Or fix your patch order.
-> >> Are you suggesting to add this patch as the last patch of the series?
-> >> or remove just below entry and add one more patch at the end to update
-> >> MAINTAINERS file with the same?
-> >
-> > Adding it after the patch that adds the driver should be fine. Likewise
-> > adding it at the end is also fine.
-> >
-> sure, so should I add the whole patch once driver is introduced or have a
-> separate patch for just below?
+On Thu, Sep 05, 2024 at 03:42:11PM +0800, kimriver liu wrote:
+> From: "kimriver.liu" <kimriver.liu@siengine.com>
 
-I'd say a single patch is better.
+You forgot bumping patch version in the Subject and now it's quite confusing.
 
-> >> +F:  drivers/media/platform/qcom/iris/
-> >>
-> >> Thanks,
-> >> Dikshita
-> >>>
-> >>>
-> >>> Best regards,
-> >>> Krzysztof
-> >>>
-> >>>
-> >
+> Failure in normal Stop operational path
 
+Is this a subsection?
+Make it more clear, by using additional formatting, like
 
+Failure in normal Stop operational path
+---------------------------------------
+
+> This failure happens rarely and is hard to reproduce. Debug trace
+> showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
+> immediately disable ENABLE bit that can result in
+> IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
+
+> Failure in ENABLE bit is disabled path
+
+Ditto.
+
+> It was observed that master is holding SCL low and the IC_ENABLE is
+> already disabled, Enable ABORT bit and ENABLE bit simultaneously
+> cannot take effect.
+> 
+> Check if the master is holding SCL low after ENABLE bit is already
+> disabled. If SCL is held low, The software can set this ABORT bit only
+> when ENABLE is already set，otherwise,
+> the controller ignores any write to ABORT bit. When the abort is done,
+> then proceed with disabling the controller.
+> 
+> These kernel logs show up whenever an I2C transaction is attempted
+> after this failure.
+> i2c_designware e95e0000.i2c: timeout in disabling adapter
+> i2c_designware e95e0000.i2c: timeout waiting for bus ready
+> 
+> The patch can be fix the controller cannot be disabled while SCL is
+> held low in ENABLE bit is already disabled.
+> 
+> Signed-off-by: kimriver.liu <kimriver.liu@siengine.com>
+> ---
+
+Here is the place for comments and changelog.
+Since it's not the first version of the patch, changelog is a must.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
