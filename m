@@ -1,241 +1,299 @@
-Return-Path: <linux-kernel+bounces-316991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1238396D7FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:11:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15CB96D7FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8275289A22
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 231AAB20DB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A11B19D070;
-	Thu,  5 Sep 2024 12:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BBA19ABAE;
+	Thu,  5 Sep 2024 12:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZg8amQC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqyH/42m"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7C919ADBB;
-	Thu,  5 Sep 2024 12:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB038199E95;
+	Thu,  5 Sep 2024 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538241; cv=none; b=csLEtWTEyK9MdmzpbymNgEOcSazssfjr488S+Gx1xlMBXHcViwM23p0+QY19/2m6nt4sRIH9KW6rZYUbjXQVj/XWufzbOfJ9pHDuiW9HH/wcGYOrdwL4Lyc1BmxrhVBcsqLg1bwGieaqtQ01sfEd3K8LMSKlBOyUUKgLWeevf3o=
+	t=1725538252; cv=none; b=twawvUho7ycr7BZWzkQGOEG7dl27I/gsWH7cDmtqL3JIEHmhipEZNtbJJS8tUSX8m/BQEOlz3vwMs+I9E+7sqWiXO1tuxcPOBzJdUgx/1oYzO+Aa9hmcJeyeZmXMc3oncD52KKNS7pRjUVs5c5EkMSOph6W9utzAvk16tsPhmhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538241; c=relaxed/simple;
-	bh=Y5YauDm1aJKiushd8sUfegx+qyj0cP2ABdG0ky7tors=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=EHgMspChJFemPvPC5Vlt5+swBHr5YMvkBp+nrNdlwK3ARM0EtJQ3lDcJVuCCP+tZREWBecKchYbqn3ScKvgB6otowphDwF6U65SBUSeC6iFj5TRV43yaNA/Dwf4EZj+jqfWroQxHS6fa+7LJIQ7eq01YGvFkD8K309xzDzQT+Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZg8amQC; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725538240; x=1757074240;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Y5YauDm1aJKiushd8sUfegx+qyj0cP2ABdG0ky7tors=;
-  b=nZg8amQCZKY8dIwK3Io2jp0e27MGeyGtx6dHU4Uf+o2v8c5uOFmcQuTi
-   RAowd4/NdSFj6szgqCwItrixXXo6QA7YcINP3kPzLxQiewc/5oH7Wqqrk
-   4TmynOaKYT79A0BXXTgj69yWSQDm1KguoBpmHJ6o63C/GOHAx/AJrDmjm
-   VatzZ3c9cXw3s74c7u5pdWjv9lFuOwF7evly6GJDTHFyxuhnlSBXrNdKq
-   FstNcN5xXFc0Z3Z8v7WM0dDu6y2DyPh6cEIdD4gcIY9hmSrb7d9CJu/9d
-   gdWhattYyRg5TgtyukB32bmcDlkbzaMCWKghZ6NC+SSwD3lwelbGyF4oV
-   g==;
-X-CSE-ConnectionGUID: 0i7Fjds0Rf2TQBAQ/WexAg==
-X-CSE-MsgGUID: kkSgs8h0Q52Tysye46lkQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27170856"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="27170856"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:10:37 -0700
-X-CSE-ConnectionGUID: vazeR913SECH+bFbC/1U6g==
-X-CSE-MsgGUID: w5lOfYErRCmRZgi+WkKp1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70198858"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.31])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:10:34 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 5 Sep 2024 15:10:29 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] selftests/resctrl: Ensure measurements skip
- initialization of default benchmark
-In-Reply-To: <156ad739-3f80-456f-92df-74da9266dca0@intel.com>
-Message-ID: <da06ea9d-5081-b81f-5d2b-28200527f419@linux.intel.com>
-References: <cover.1724970211.git.reinette.chatre@intel.com> <a0fe2be86f3e868a5f908ac4f2c76e71b4d08d4f.1724970211.git.reinette.chatre@intel.com> <3add783b-74cf-23c0-a301-aa203efdd0f6@linux.intel.com> <0ae6d28f-0646-48b2-a4e7-17e2d14f6dd5@intel.com>
- <85a11091-3c61-2d8b-28d4-2a251f3b8ffe@linux.intel.com> <156ad739-3f80-456f-92df-74da9266dca0@intel.com>
+	s=arc-20240116; t=1725538252; c=relaxed/simple;
+	bh=9L6fhXI0mohfxy8b5hB8nXfaYXrjFTBsgDp1M5qzBGc=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BcBaI7ifAuEa2pixaGAJBeZhi4nthWdeYovXEDNP5ryTucBt7vSjWMJjL6eCPUA8kQlhhqXiabwQCoV0LGA1pMPyzvKNesqmkug0ZQnk8Mpr5+DJWwxaXPU0qB299NdndqzuJl0XTcKqKYzAsWxLCdD1IgN6IJZO5aM1CLtNyvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqyH/42m; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70f6e65d605so404438a34.3;
+        Thu, 05 Sep 2024 05:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725538250; x=1726143050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LK3IHackpoEuMNjncuXg3SKL/wNGnWCmIAq0L0PIah4=;
+        b=JqyH/42ml22k5/+a/fmn/gNWxYmGUP6QxY/0DlttMBvaehVrWKTm48FTxnPTE7Kmax
+         3G6Ts4d0BUG2WTA3dVNclsnL9FhlWt0+uxEbn/QLWXQIDXkOuiYdBG3g9nrgHIdUtSvA
+         2dA0zc62OJ/BssIw5omoxAYQsxp0OAX569WB4qLe8tW0pLaVAZy/uHpQIi3fyw9u58KF
+         0BtHlrysqFIxDF9g2CD9NZdR1tsuC89L4bS2kQxSpfp5h/URo/K6/An/5iQy+E7/shlg
+         az2L14x/b7ytucrj/R1G/wAy3htt4ym8Pro60YMvV74SV3tL7/Sc6UHsoS/iWfiU+ugg
+         9k5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725538250; x=1726143050;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LK3IHackpoEuMNjncuXg3SKL/wNGnWCmIAq0L0PIah4=;
+        b=sfUEg/lkGzmIqQyvtFvJmkGtisHYRA+/18kVHInEQY/lNalU5a0rFU7OcCmjS807IW
+         JJbfjCnCouLJlRTnL/+Maf8guTuX6+3dza8DLmL+tQcqFQyI2oi8MwFlN7caYKczqxLG
+         gTSjhLI8M2C7967AueJPvfXXqGHh7OpJhJ/mQ/2IxV/AH0Ryh9f92RG6hlMtenbNEp1a
+         /vlFh86RNySfXvZJUMMH9xPOIKRi63V4ogVY6+LOkyZjgZudsppg+E5/+3KBoCllpZWZ
+         qv4+BbcWIY6jaP99RcGG3toxTqQm8gNM9P213+5zE/mxEbBdLGT/Zths1nSHNesMiprF
+         xnqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUI0+QdPu9LgAzYyfEWM+gHTTJbSx0Zdu7IUoAmDO5/M/ELEELEOCN3k4tKSKwyvyvDqkFR9KuN3nkE@vger.kernel.org, AJvYcCUu2qaqlDvTjufl3Qrt3DIjuP4prvgpUsrJZBXbec7WZX+lkoh05YFTz+pWwP7lDye+My9lV2co8oaHbfPn@vger.kernel.org, AJvYcCVjjm7VycDZfBKXSfLFz6PjUcmoCt8vwR1jqden0YBKajdvCqVdGKDlpS2PXbtm6oELZuKqZlR+4Uk9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8eUJfK6PVK+YoVdM8mYYQ1ppBB6k7DXjyhY+HEsF720Goyk6S
+	KUmPWDp7JBUMT+JSa3WRgXuU9BK0rHFo3eEQwn+vAuyKYNYUb6iIm3CAGeR+
+X-Google-Smtp-Source: AGHT+IHh+BOXyYZhMqca+Gp9Z6ku4LYrEw/r5Gi1ZCkkbWzyDTxWRs1YU+MyFQM7QKIs4EIKe1PY/w==
+X-Received: by 2002:a05:6830:d02:b0:70f:331e:90f6 with SMTP id 46e09a7af769-70f5c466677mr33305848a34.23.1725538249874;
+        Thu, 05 Sep 2024 05:10:49 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f671cf763sm3248566a34.80.2024.09.05.05.10.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 05:10:49 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: ukleinek@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Subject: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
+Date: Thu,  5 Sep 2024 20:10:42 +0800
+Message-Id: <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1725536870.git.unicorn_wang@outlook.com>
+References: <cover.1725536870.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1758549309-1725538229=:1411"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Chen Wang <unicorn_wang@outlook.com>
 
---8323328-1758549309-1725538229=:1411
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
 
-On Wed, 4 Sep 2024, Reinette Chatre wrote:
-> On 9/4/24 4:57 AM, Ilpo J=C3=A4rvinen wrote:
-> > On Fri, 30 Aug 2024, Reinette Chatre wrote:
-> > > On 8/30/24 3:56 AM, Ilpo J=C3=A4rvinen wrote:
-> > > > On Thu, 29 Aug 2024, Reinette Chatre wrote:
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ drivers/pwm/Kconfig             |   9 ++
+ drivers/pwm/Makefile            |   1 +
+ drivers/pwm/pwm-sophgo-sg2042.c | 148 ++++++++++++++++++++++++++++++++
+ 3 files changed, 158 insertions(+)
+ create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
 
-> > > > > @@ -699,111 +639,80 @@ int resctrl_val(const struct resctrl_test
-> > > > > *test,
-> > > > >    =09=09return ret;
-> > > > >    =09}
-> > > > >    -=09/*
-> > > > > -=09 * If benchmark wasn't successfully started by child, then
-> > > > > child
-> > > > > should
-> > > > > -=09 * kill parent, so save parent's pid
-> > > > > -=09 */
-> > > > >    =09ppid =3D getpid();
-> > > > >    -=09if (pipe(pipefd)) {
-> > > > > -=09=09ksft_perror("Unable to create pipe");
-> > > > > +=09/* Taskset test to specified CPU. */
-> > > > > +=09ret =3D taskset_benchmark(ppid, uparams->cpu, &old_affinity);
-> > > >=20
-> > > > Previously only CPU affinity for bm_pid was set but now it's set be=
-fore
-> > > > fork(). Quickly checking the Internet, it seems that CPU affinity g=
-ets
-> > > > inherited on fork() so now both processes will have the same affini=
-ty
-> > > > which might make the other process to interfere with the measuremen=
-t.
-> > >=20
-> > > Setting the affinity is intended to ensure that the buffer preparatio=
-n
-> > > occurs in the same topology as where the runtime portion will run.
-> > > This preparation is done before the work to be measured starts.
-> > >=20
-> > > This does tie in with the association with the resctrl group and I
-> > > will elaborate more below ...
-> >=20
-> > Okay, that's useful to retain but thinking this further, now we're also
-> > going do non-trivial amount of work in between the setup and the test b=
-y
->=20
-> Could you please elaborate how the amount of work during setup can be an
-> issue? I have been focused on the measurements that are done afterwards
-> that do have clear boundaries from what I can tell.
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 3e53838990f5..6287d63a84fd 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -577,6 +577,15 @@ config PWM_SL28CPLD
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-sl28cpld.
+ 
++config PWM_SOPHGO_SG2042
++	tristate "Sophgo SG2042 PWM support"
++	depends on ARCH_SOPHGO || COMPILE_TEST
++	help
++	  PWM driver for Sophgo SG2042 PWM controller.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called pwm_sophgo_sg2042.
++
+ config PWM_SPEAR
+ 	tristate "STMicroelectronics SPEAr PWM support"
+ 	depends on PLAT_SPEAR || COMPILE_TEST
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 0be4f3e6dd43..ef2555e83183 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -52,6 +52,7 @@ obj-$(CONFIG_PWM_RZ_MTU3)	+= pwm-rz-mtu3.o
+ obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+ obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+ obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
++obj-$(CONFIG_PWM_SOPHGO_SG2042)	+= pwm-sophgo-sg2042.o
+ obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+ obj-$(CONFIG_PWM_SPRD)		+= pwm-sprd.o
+ obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+new file mode 100644
+index 000000000000..cf11ad54b4de
+--- /dev/null
++++ b/drivers/pwm/pwm-sophgo-sg2042.c
+@@ -0,0 +1,148 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Sophgo SG2042 PWM Controller Driver
++ *
++ * Copyright (C) 2024 Sophgo Technology Inc.
++ * Copyright (C) 2024 Chen Wang <unicorn_wang@outlook.com>
++ */
++
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
++
++#include <asm/div64.h>
++
++/*
++ * Offset RegisterName
++ * 0x0000 HLPERIOD0
++ * 0x0004 PERIOD0
++ * 0x0008 HLPERIOD1
++ * 0x000C PERIOD1
++ * 0x0010 HLPERIOD2
++ * 0x0014 PERIOD2
++ * 0x0018 HLPERIOD3
++ * 0x001C PERIOD3
++ * Four groups and every group is composed of HLPERIOD & PERIOD
++ */
++#define REG_HLPERIOD	0x0
++#define REG_PERIOD	0x4
++
++#define REG_GROUP	0x8
++
++#define SG2042_PWM_CHANNELNUM	4
++
++/**
++ * struct sg2042_pwm_chip - private data of PWM chip
++ * @base:		base address of mapped PWM registers
++ * @base_clk:		base clock used to drive the pwm controller
++ */
++struct sg2042_pwm_chip {
++	void __iomem *base;
++	struct clk *base_clk;
++};
++
++static inline
++struct sg2042_pwm_chip *to_sg2042_pwm_chip(struct pwm_chip *chip)
++{
++	return pwmchip_get_drvdata(chip);
++}
++
++static void pwm_sg2042_config(void __iomem *base, unsigned int channo, u32 period, u32 hlperiod)
++{
++	writel(period, base + REG_GROUP * channo + REG_PERIOD);
++	writel(hlperiod, base + REG_GROUP * channo + REG_HLPERIOD);
++}
++
++static int pwm_sg2042_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			    const struct pwm_state *state)
++{
++	struct sg2042_pwm_chip *sg2042_pwm = to_sg2042_pwm_chip(chip);
++	u32 hlperiod;
++	u32 period;
++	u64 f_clk;
++	u64 p;
++
++	if (!state->enabled) {
++		pwm_sg2042_config(sg2042_pwm->base, pwm->hwpwm, 0, 0);
++		return 0;
++	}
++
++	/*
++	 * Period of High level (duty_cycle) = HLPERIOD x Period_clk
++	 * Period of One Cycle (period) = PERIOD x Period_clk
++	 */
++	f_clk = clk_get_rate(sg2042_pwm->base_clk);
++
++	p = f_clk * state->period;
++	do_div(p, NSEC_PER_SEC);
++	period = (u32)p;
++
++	p = f_clk * state->duty_cycle;
++	do_div(p, NSEC_PER_SEC);
++	hlperiod = (u32)p;
++
++	dev_dbg(pwmchip_parent(chip), "chan[%d]: period=%u, hlperiod=%u\n",
++		pwm->hwpwm, period, hlperiod);
++
++	pwm_sg2042_config(sg2042_pwm->base, pwm->hwpwm, period, hlperiod);
++
++	return 0;
++}
++
++static const struct pwm_ops pwm_sg2042_ops = {
++	.apply		= pwm_sg2042_apply,
++};
++
++static const struct of_device_id sg2042_pwm_match[] = {
++	{ .compatible = "sophgo,sg2042-pwm" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, sg2042_pwm_match);
++
++static int pwm_sg2042_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct sg2042_pwm_chip *sg2042_pwm;
++	struct pwm_chip *chip;
++	int ret;
++
++	chip = devm_pwmchip_alloc(&pdev->dev, SG2042_PWM_CHANNELNUM, sizeof(*sg2042_pwm));
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++	sg2042_pwm = to_sg2042_pwm_chip(chip);
++
++	chip->ops = &pwm_sg2042_ops;
++
++	sg2042_pwm->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(sg2042_pwm->base))
++		return PTR_ERR(sg2042_pwm->base);
++
++	sg2042_pwm->base_clk = devm_clk_get_enabled(&pdev->dev, "apb");
++	if (IS_ERR(sg2042_pwm->base_clk))
++		return dev_err_probe(dev, PTR_ERR(sg2042_pwm->base_clk),
++				     "failed to get base clk\n");
++
++	ret = devm_pwmchip_add(&pdev->dev, chip);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to register PWM chip\n");
++
++	platform_set_drvdata(pdev, chip);
++
++	return 0;
++}
++
++static struct platform_driver pwm_sg2042_driver = {
++	.driver	= {
++		.name	= "sg2042-pwm",
++		.of_match_table = of_match_ptr(sg2042_pwm_match),
++	},
++	.probe = pwm_sg2042_probe,
++};
++module_platform_driver(pwm_sg2042_driver);
++
++MODULE_AUTHOR("Chen Wang");
++MODULE_DESCRIPTION("Sophgo SG2042 PWM driver");
++MODULE_LICENSE("GPL");
+-- 
+2.34.1
 
-Well, you used it as a justification: "Setting the affinity is intended=20
-to ensure that the buffer preparation occurs in the same topology as where=
-=20
-the runtime portion will run." So I assumed you had some expectations about=
-=20
-"preparations" done outside of those "clear boundaries" but now you seem
-to take entirely opposite stance?
-
-fork() quite heavy operation as it has to copy various things including=20
-the address space which you just made to contain a huge mem blob. :-)
-
-BTW, perhaps we could use some lighter weighted fork variant in the=20
-resctrl selftests, the processes don't really need to be that separated=20
-to justify using full fork() (and custom benchmarks will do execvp()).
-
-> > forking. I guess that doesn't matter for memflush =3D true case but mig=
-ht be
-> > meaningful for the memflush =3D false case that seems to be there to al=
-low
-> > keeping caches hot (I personally haven't thought how to use "caches hot=
-"
-> > test but we do have that capability by the fact that memflush paremeter
-> > exists).
->=20
-> I believe that memflush =3D true will always be needed/used by the tests
-> relying on memory bandwidth measurement since that reduces cache hits dur=
-ing
-> measurement phase and avoids the additional guessing on how long the work=
-load
-> should be run before reliable/consistent measurements can start.
->
-> Thinking about the memflush =3D false case I now think that we should use=
- that
-> for the CMT test. The buffer is allocated and initialized while the task
-> is configured with appropriate allocation limits so there should not be a
-> reason to flush the buffer from the cache. In fact, flushing the cache
-> introduces
-> the requirement to guess the workload's "settle" time (time to allocate t=
-he
-> buffer
-> into the cache again) before its occupancy can be measured. As a quick te=
-st I
-> set memflush =3D false on one system and it brought down the average diff
-> between
-> the cache portion size and the occupancy counts. I'll try it out on a few=
- more
-> systems to confirm.
-
-Oh great!
-
-I've not really figured out the logic used in the old CMT test because=20
-there was the rewrite for it in the series I started to upstream some of=20
-these improvements from. But I was unable to rebase successfully that=20
-rewrite either because somebody had used a non-publically available tree=20
-as a basis for it so I never did even have time to understand what even=20
-the rewritten test did thanks to the very complex diff.
-
-> > > > Neither behavior, however, seems to result in the intended behavior=
- as
-> > > > we
-> > > > either get interfering processes (if inherited) or no desired resct=
-rl
-> > > > setup for the benchmark process.
-> > >=20
-> > > There are two processes to consider in the resource group, the parent
-> > > (that
-> > > sets up the buffer and does the measurements) and the child (that run=
-s the
-> > > workload to be measured). Thanks to your commit da50de0a92f3
-> > > ("selftests/resctrl:
-> > > Calculate resctrl FS derived mem bw over sleep(1) only") the parent
-> > > will be sleeping while the child runs its workload and there is no
-> > > other interference I am aware of. The only additional measurements
-> > > that I can see would be the work needed to actually start and stop th=
-e
-> > > measurements and from what I can tell this falls into the noise.
-> > >=20
-> > > Please do keep in mind that the performance counters used, iMC, canno=
-t
-> > > actually
-> > > be bound to a single CPU since it is a per-socket PMU. The measuremen=
-ts
-> > > have
-> > > thus never been as fine grained as the code pretends it to be.
-> >=20
-> > I was thinking if I should note the amount of work is small. Maybe it's
-> > fine to leave that noise there and I'm just overly cautious :-), when I
-> > used to do networking research in the past life, I wanted to eliminate =
-as
-> > much noise sources so I guess it comes from that background.
->=20
-> The goal of these tests are to verify *resctrl*, these are not intended t=
-o be
-> hardware validation tests. I think it would be better for resctrl if more=
- time
-> is spent on functional tests of resctrl than these performance tests.
-
-This sounds so easy... (no offence) :-) If only there wouldn't be the=20
-black boxes and we'd have good and fine-grained ways to instrument it,
-it would be so much easier to realize non-statistical means to do=20
-functional tests.
-
---=20
- i.
-
---8323328-1758549309-1725538229=:1411--
 
