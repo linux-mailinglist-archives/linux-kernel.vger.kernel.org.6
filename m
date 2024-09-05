@@ -1,255 +1,123 @@
-Return-Path: <linux-kernel+bounces-317674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1794796E200
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BD096E1FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4ECD288FC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD782851F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58639185931;
-	Thu,  5 Sep 2024 18:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F343185945;
+	Thu,  5 Sep 2024 18:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Bf6L3a3f"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGjxyBNW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EB516C84B;
-	Thu,  5 Sep 2024 18:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFCD1803D;
+	Thu,  5 Sep 2024 18:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725560944; cv=none; b=fyB8y/7YBq9JEtxIMgXFle4aUOeH52a8IKlx1doZQ84lGBaJVWe6fGMmHyTQLWNn0LEygGlE1qNdBKDTAQF2CbD868jAkJF2FHfsqhXLX/EgJ+dajpo338H72/5kehsibwozf8DdVQ4uEJyWzmiLWbHYH07J3RxZxBepNDxyGjU=
+	t=1725560922; cv=none; b=jZDFKACzBp8feSe/tSzU+FipVPOGFFtRSUO36FbuKxYP2lJ2dyQbcYS1H3I1WvEmUdECLcGeS9BoIGcesCamqs6X9jOaFeNIE7bkIG+0gu8vmK2u2q+vZLPMzcbXyPIgygyc9IZm8QZACUHUk6gwEQOeehi15TyLG3u0pme3ONs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725560944; c=relaxed/simple;
-	bh=RzH7YeQcOe3cwiGwu/SoGWjxyZNxZtjC5k/biggfzXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fyxqaIJGaV7kcPqmKxVGUSgZJXJ2sxIZq9AEbLZBCbXam/GCjEfA4ewTEYUeiiK3QqI9E20bgn19gRb9yFYb8ArpOt3Sw7YQQHob8xo9WM/VPIBdNxqNhHUiq4n7ZJ3nwJ3NfL7zLigjhLaLs+EIHxu9U5r1USdC8PV01u+uYmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Bf6L3a3f; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 143EB88CC1;
-	Thu,  5 Sep 2024 20:28:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1725560934;
-	bh=mnlOn+20C49szsiIT5w0NLtAJkZUlNBplzPPTN3aoqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bf6L3a3fxGvrFbeBlQVDD22e37MRnlF57PgHKTw++RlIWFVbUCPjOxI2XrCYjhwoZ
-	 aZLInovRZc3+5yj+OTid82sNwCuFlCzMF2Rizvg7PSj54C/c6QfGKS+vHNVFgusyJI
-	 PBjZlU81KAPhyRZtBW688tJ2mRhyNOsXx1MpGao8FRLLgq+JoOMZJrcvl5j/bXW7mB
-	 iY5scM0OWpc0pM2qX3nFqFMber/T7i+5b3SEUyXal9E+h8zoqlmAL72W9wqScYPSrn
-	 A1YZs5glMXfF2ozlz0AG8IlONkyLO9bn9AtBvprNiVlfJRpbpwfOcYC+ohL/MgcNe2
-	 bbbwz514h8l0w==
-Message-ID: <ac922fd5-9438-4f73-9a3d-08cceb1d7409@denx.de>
-Date: Thu, 5 Sep 2024 20:26:34 +0200
+	s=arc-20240116; t=1725560922; c=relaxed/simple;
+	bh=f7E3AztuRKMZ28p4LyFuIOxzMggsHH+GtAi8Hcdna/o=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=lD1PtZklZfqteyo4ZqOAKwxWWIfNngv+LK6qMYWoFRX6E0nOOu3/m0bsmtmmoK9+l7EaK/4uZ+SLypLiXcVUCd90NnY+BnW3VlCN9BBg39Ae+fZ8Ro/hqzM5x6m6KvD3DKsveLtwNrG7TmVO2EM25g5X1IgnBv9pZPQhPRVKmKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGjxyBNW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6951FC4CEC3;
+	Thu,  5 Sep 2024 18:28:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725560920;
+	bh=f7E3AztuRKMZ28p4LyFuIOxzMggsHH+GtAi8Hcdna/o=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=RGjxyBNWFIjT0UV3k85KNMQ/C8AmP1eZPymbVkmmAeHO+w9izHOhUHUbt6IdZjUsX
+	 Em7OWJPKgEi0qYauywdcZE5zP1W+HBk0KVfG+kxWfzIu6fQ69oKZryVf0cMduv8MD5
+	 /vaAjz7ThafuSkdFPJ+J/c3RCXax/c9OdNPz1N9cDnMmwRYgy1Ni9y1zp85eJxNVGK
+	 ocORw5/Vj2GSKuXf3ChkJ4YzMCnezms/KgokuHTEV854SPtDaIwoxqPP28g9iEOwe5
+	 h95lzF9t/6XyA65YcxpSX5vVsnyMEHxigBsFVDOzcDkCVQ+226l9MzpcRkXUqtoF2T
+	 lYHR2RzLUVGiw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "David S . Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Jeff Johnson
+ <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
+  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
+  ath11k@lists.infradead.org,  linux-kernel@vger.kernel.org,  Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the
+ inputs of the ath11k on WCN6855
+References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org>
+	<CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
+	<87y146ayrm.fsf@kernel.org>
+	<CAMRc=Mfes+=59WP8dcMsiUApqjsFrY9iVFEdKU6FbTKAFP1k_A@mail.gmail.com>
+Date: Thu, 05 Sep 2024 21:28:35 +0300
+In-Reply-To: <CAMRc=Mfes+=59WP8dcMsiUApqjsFrY9iVFEdKU6FbTKAFP1k_A@mail.gmail.com>
+	(Bartosz Golaszewski's message of "Thu, 5 Sep 2024 20:19:34 +0200")
+Message-ID: <878qw6hs4s.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- pratikmanvar09@gmail.com, francesco@dolcini.it,
- Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>
-References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com>
- <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
- <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/5/24 7:12 PM, Fabio Estevam wrote:
-> Adding Marek.
-> 
-> On Mon, Jul 15, 2024 at 5:30 PM Frank Li <Frank.Li@nxp.com> wrote:
+Bartosz Golaszewski <brgl@bgdev.pl> writes:
+
+> On Thu, Sep 5, 2024 at 5:47=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrot=
+e:
 >>
->> From: Clark Wang <xiaoning.wang@nxp.com>
+>> Bartosz Golaszewski <brgl@bgdev.pl> writes:
 >>
->> Implement workaround for ERR051198
->> (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
+>> >> > +  - if:
+>> >> > +      properties:
+>> >> > +        compatible:
+>> >> > +          contains:
+>> >> > +            const: pci17cb,1103
+>> >> > +    then:
+>> >> > +      required:
+>> >> > +        - vddrfacmn-supply
+>> >> > +        - vddaon-supply
+>> >> > +        - vddwlcx-supply
+>> >> > +        - vddwlmx-supply
+>> >> > +        - vddrfa0p8-supply
+>> >> > +        - vddrfa1p2-supply
+>> >> > +        - vddrfa1p8-supply
+>> >> > +        - vddpcie0p9-supply
+>> >> > +        - vddpcie1p8-supply
+>> >>
+>> >> Like we discussed before, shouldn't these supplies be optional as not
+>> >> all modules need them?
+>> >>
+>> >
+>> > The answer is still the same: the ATH11K inside a WCN6855 does - in
+>> > fact - always need them. The fact that the X13s doesn't define them is
+>> > bad representation of HW and I'm fixing it in a subsequent DTS patch.
 >>
->> PWM output may not function correctly if the FIFO is empty when a new SAR
->> value is programmed
+>> But, like we discussed earlier, M.2 boards don't need these so I think
+>> this should be optional.
 >>
->> Description:
->>    When the PWM FIFO is empty, a new value programmed to the PWM Sample
->>    register (PWM_PWMSAR) will be directly applied even if the current timer
->>    period has not expired. If the new SAMPLE value programmed in the
->>    PWM_PWMSAR register is less than the previous value, and the PWM counter
->>    register (PWM_PWMCNR) that contains the current COUNT value is greater
->>    than the new programmed SAMPLE value, the current period will not flip
->>    the level. This may result in an output pulse with a duty cycle of 100%.
->>
->> Workaround:
->>    Program the current SAMPLE value in the PWM_PWMSAR register before
->>    updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
->>    register. This will ensure that the new SAMPLE value is modified during
->>    a non-empty FIFO, and can be successfully updated after the period
->>    expires.
+>
+> If they are truly dynamic, plug-and-play M.2 boards then they
+> shouldn't need any description in device-tree. If they are M.2 sockets
+> that use custom, vendor-specific pins (like what is the case on
+> sc8280xp-crd and X13s) then the HW they carry needs to be described
+> correctly. We've discussed that before.
 
-Frank, could you submit this patch separately ? The 1/3 and 2/3 are 
-unrelated as far as I can tell ?
+Sigh. Please reread the previous discussion. In some cases we need to
+set qcom,ath11k-calibration-variant even for M.2 boards.
 
->> ---
->> Change from v1 to v2
->> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
->>    About disable/enable pwm instead of disable/enable irq:
->>    Some pmw periphal may sensitive to period. Disable/enable pwm will
->> increase period, althouhg it is okay for most case, such as LED backlight
->> or FAN speed. But some device such servo may require strict period.
->>
->> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
->>    Using official errata number
->>    fix typo 'filp'
->>    add {} for else
->>
->> I supposed fixed all previous issues, let me know if I missed one.
->> ---
->>   drivers/pwm/pwm-imx27.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 51 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
->> index 253afe94c4776..e12eaaebe3499 100644
->> --- a/drivers/pwm/pwm-imx27.c
->> +++ b/drivers/pwm/pwm-imx27.c
->> @@ -27,6 +27,7 @@
->>   #define MX3_PWMSR                      0x04    /* PWM Status Register */
->>   #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
->>   #define MX3_PWMPR                      0x10    /* PWM Period Register */
->> +#define MX3_PWMCNR                     0x14    /* PWM Counter Register */
->>
->>   #define MX3_PWMCR_FWM                  GENMASK(27, 26)
->>   #define MX3_PWMCR_STOPEN               BIT(25)
->> @@ -232,8 +233,11 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>   {
->>          unsigned long period_cycles, duty_cycles, prescale;
->>          struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
->> +       void __iomem *reg_sar = imx->mmio_base + MX3_PWMSAR;
->>          unsigned long long c;
->>          unsigned long long clkrate;
->> +       unsigned long flags;
->> +       int val;
->>          int ret;
->>          u32 cr;
->>
->> @@ -274,7 +278,53 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>                  pwm_imx27_sw_reset(chip);
->>          }
->>
->> -       writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
->> +       /*
->> +        * This is a limited workaround. When the SAR FIFO is empty, the new
->> +        * write value will be directly applied to SAR even the current period
->> +        * is not over.
->> +        *
->> +        * If the new SAR value is less than the old one, and the counter is
->> +        * greater than the new SAR value, the current period will not filp
->> +        * the level. This will result in a pulse with a duty cycle of 100%.
->> +        * So, writing the current value of the SAR to SAR here before updating
->> +        * the new SAR value can avoid this issue.
->> +        *
->> +        * Add a spin lock and turn off the interrupt to ensure that the
->> +        * real-time performance can be guaranteed as much as possible when
->> +        * operating the following operations.
->> +        *
->> +        * 1. Add a threshold of 1.5us. If the time T between the read current
->> +        * count value CNR and the end of the cycle is less than 1.5us, wait
->> +        * for T to be longer than 1.5us before updating the SAR register.
->> +        * This is to avoid the situation that when the first SAR is written,
->> +        * the current cycle just ends and the SAR FIFO that just be written
->> +        * is emptied again.
->> +        *
->> +        * 2. Use __raw_writel() to minimize the interval between two writes to
->> +        * the SAR register to increase the fastest pwm frequency supported.
->> +        *
->> +        * When the PWM period is longer than 2us(or <500KHz), this workaround
->> +        * can solve this problem.
->> +        */
->> +       val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->> +       if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
->> +               c = clkrate * 1500;
->> +               do_div(c, NSEC_PER_SEC);
->> +
->> +               local_irq_save(flags);
->> +               if (state->period >= 2000)
->> +                       readl_poll_timeout_atomic(imx->mmio_base + MX3_PWMCNR, val,
->> +                                                 period_cycles - val >= c, 0, 10);
->> +
->> +               val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->> +               if (!val)
->> +                       writel_relaxed(imx->duty_cycle, reg_sar);
->> +               writel_relaxed(duty_cycles, reg_sar);
->> +               local_irq_restore(flags);
->> +       } else {
->> +               writel_relaxed(duty_cycles, reg_sar);
->> +       }
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-Why so complicated ? Can't this be simplified to this ?
-
-const u32 sar[3] = { old_sar, old_sar, new_sar };
-
-val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + 
-MX3_PWMSR));
-
-switch (val) {
-case MX3_PWMSR_FIFOAV_EMPTY:
-case MX3_PWMSR_FIFOAV_1WORD:
-   writesl(duty_cycles, sar, 3);
-   break;
-case MX3_PWMSR_FIFOAV_2WORDS:
-   writesl(duty_cycles, sar + 1, 2);
-   break;
-default: // 3 words in FIFO
-   writel(new_sar, duty_cycles);
-}
-
-The MX3_PWMSR_FIFOAV_EMPTY/MX3_PWMSR_FIFOAV_1WORD case will effectively 
-trigger three consecutive 'str' instructions:
-
-1: str PWMSAR, old_sar
-2: str PWMSAR, old_sar
-3: str PWMSAR, new_sar
-
-If the PWM cycle ends before 1:, then PWM will reload old value, then 
-pick old value from 1:, 2: and then new value from 3: -- the FIFO will 
-never be empty.
-
-If the PWM cycle ends after 1:, then PWM will pick up old value from 1: 
-which is now in FIFO, 2: and then new value from 3: -- the FIFO will 
-never be empty.
-
-The MX3_PWMSR_FIFOAV_2WORDS and default: case is there to prevent FIFO 
-overflow which may lock up the PWM. In case of MX3_PWMSR_FIFOAV_2WORDS 
-there are two words in the FIFO, write two more, old SAR value and new 
-SAR value. In case of default, there must be at least one free slot in 
-the PWM FIFO because pwm_imx27_wait_fifo_slot() which polled the FIFO 
-for free slot above, so there is no danger of FIFO being empty or FIFO 
-overflow.
-
-Maybe this can still be isolated to "if (duty_cycles < imx->duty_cycle)" .
-
-What do you think ?
-
->>          writel(period_cycles, imx->mmio_base + MX3_PWMPR);
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
