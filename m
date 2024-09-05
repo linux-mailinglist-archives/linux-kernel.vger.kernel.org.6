@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-316653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F38696D263
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3B296D264
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6282841BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643BC284851
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48274194AEC;
-	Thu,  5 Sep 2024 08:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DtuqXX7V"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A93194ACB;
+	Thu,  5 Sep 2024 08:42:59 +0000 (UTC)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31DB15531A;
-	Thu,  5 Sep 2024 08:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6C5188A1F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525666; cv=none; b=oRG+b1AHI7UEsqRNx/U+Y//W01wTasixsGHSX+vp5RW6kSK9ZtDz2xLPH2DY3sMWRMWq27//FueAkWru/GR5wma1mvvXJasB9M51epV3c+cBMaw3EO01XeHgd+f+PmtReRm96i1H4ZY5QN06KnbjDNDLr+GAeoE/Iv/3Zvl937E=
+	t=1725525779; cv=none; b=IunVRca2bXuQ0Y3bgO29LogwyR6yqFUCOemF+KBbDschg5G7GmXU2ETeowkF3eUmwx8eExBqCTNsGmrDptEpxIbQrlbsnqPDdtgbrD5cSZJ1Wz+1/LTrRYSca00hNesp7mJPAdJm9QyPfKFddjRjX0neoM6AuKIxWYY+3rgHdcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525666; c=relaxed/simple;
-	bh=MIk5eecgLKUNxL92w9oDsmlIObv2Z9r0Gms8hTPiyRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XVPSdDoWbGj/2FHMtLJtKp7kAy4j2GpJYjlOdRK7RaUWPnyjqPk4TOskb4tZ3RcJytFKJ/XygI9pF8YNOTlO3iQ0Zr0U2IiAHkgqdwhPDf+6CTze3URDxJBsZZQQpYLm5DfFlREEaLUwHxqD+6wq2DtBdlJNTbfvvDAC8CpjS9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DtuqXX7V; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725525660;
-	bh=0WPOe0euIe4Z3oUWtlbjRF4sGihEkgeMr9W7mK/Cc6s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DtuqXX7VmbRB4+yjZ70d26hz011Hesegi9nC1GBCokG9IZoCGoXB1r4djLf+B0PTC
-	 TAOcVpEO9Ig3WhaA8Tc31zN5HNZ09oIzDhx5F3C1HZTzFDlKnNdOso2AezS/JDiG1e
-	 qjQisZgJAVHLNYYsr2/ULNp7iGMLJuS+nSaxSj/51MsbW1PDtEJGk4CsuUnRDh2MXC
-	 Sorvxy9i3qSzf1W3q1s16TUc5lWCIW4i+ahzezsHnuRuL0KKOsFqZIPevMxi/UBOMU
-	 0djBrI04QwhYv8ga53lo+3tiyay9xUO5S9TxwfWmnGqEBXVIVn41AXq60AyWJ5dxsS
-	 FXAabgcMmRUMw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wzt9m1mvxz4w2N;
-	Thu,  5 Sep 2024 18:41:00 +1000 (AEST)
-Date: Thu, 5 Sep 2024 18:40:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jan Luebbe
- <jlu@pengutronix.de>, Michael Grzeschik <m.grzeschik@pengutronix.de>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the usb tree
-Message-ID: <20240905184059.0f30ff9a@canb.auug.org.au>
+	s=arc-20240116; t=1725525779; c=relaxed/simple;
+	bh=ChgFo9eXz1riBlmQc9b0eHc1s4jpQzKcj8FtnnMjiVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IxUSv9F+pafvCDRJBR7LykAHxEnn/H0Xv/9nm9EiimTSewXEb4Vj4t+Dywe16lqHHxlrTRE1mvX165pTgVkclGOPHOjeEjKEd02+K2PJX75cYAgl5AvQ/lEw3rCFOpQBm1p4edv0H5Db4j6Vke2EluA7ugKntGK6YBabQT8/jew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6c3f1939d12so4082377b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:42:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725525775; x=1726130575;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yZSY7FNZtnzQvBIAg02l8scN//ySNS0tayfFTq5jNew=;
+        b=YeJfHbDYuGuxaE4rm8dmQEyMsqa8BTSc6cHP0lYCkUzG9LjpU4oMwWFbXokbuol0Xg
+         N1cpCLITvvctt193A5u0aqd9EhXudnuCK9Z/9dDQeO+DgBdSoZx4xhaVjF9CEk6A7vRL
+         of9yPabbpzeEAfsjHpVvMNKDkHzMezVCRdkcKvFm/vIGeHtYMR4npyT3bWg0R5/WckAd
+         GE3bRh8cMmDPiF3paVMqL0A1RwTzkJNpeM8C7Y6bC1qlKJuQcnBzyESwX5E+SMb/NHfc
+         LRyt6XjbSBysHc7rOrHZCUV4Hpu0mZgTfnQ/r/8Ms7Paz2D1hjU8wT6xhL/mwT7o9W7n
+         KJMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWo+2SlCbLQCzDZTmVbRrvu3EGXeeIpffOTLVo3b2IiwTXlKRydOO3tjZ1MEHMuU49gmWED2l4y5F84PiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqYEm/lkLPKedzGdPxJYVG6CG0G08oqG+EO3aJ9Orhm+sqbTrl
+	Razmy3Ymm7dUQO9sZoxkZJLV7AkFRx8WC9WNCFfERt2h2PiF4jM14cagHKn7
+X-Google-Smtp-Source: AGHT+IGwITUyiDFj3xF7vXmOkGMGCuCz0G/dKF4uZPY+Usw/k2jejJ+a0bGwCqs/HVblhErNRDu9uA==
+X-Received: by 2002:a05:690c:ec1:b0:646:25c7:178e with SMTP id 00721157ae682-6d40d88bc97mr247109957b3.5.1725525775419;
+        Thu, 05 Sep 2024 01:42:55 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d6611acadesm17910057b3.99.2024.09.05.01.42.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 01:42:55 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6c3f1939d12so4082137b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:42:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPD7g3XpHkw83VTatOgw1iL/43EEvroKwm1nZ8HI8u/duwGp2vRqQ17+H/jqWTi/0JOwHm5CE6PO2RvSI=@vger.kernel.org
+X-Received: by 2002:a05:690c:3386:b0:6ad:91df:8fad with SMTP id
+ 00721157ae682-6d40e689319mr248185507b3.26.1725525774394; Thu, 05 Sep 2024
+ 01:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BdtE3n5eEXMNymSV.rfJq=t";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/BdtE3n5eEXMNymSV.rfJq=t
-Content-Type: text/plain; charset=US-ASCII
+References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
+ <20240904-devel-anna-maria-b4-timers-flseep-v1-3-e98760256370@linutronix.de>
+In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-3-e98760256370@linutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Sep 2024 10:42:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVZOKCOkrdjbDFRgAxTGdnWKHYN1a8mx=d9Q+gGU+DM9w@mail.gmail.com>
+Message-ID: <CAMuHMdVZOKCOkrdjbDFRgAxTGdnWKHYN1a8mx=d9Q+gGU+DM9w@mail.gmail.com>
+Subject: Re: [PATCH 03/15] Comments: Fix wrong singular form of jiffies
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, 
+	Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Sep 4, 2024 at 3:09=E2=80=AFPM Anna-Maria Behnsen
+<anna-maria@linutronix.de> wrote:
+> There are several comments all over the place, which uses a wrong singula=
+r
+> form of jiffies.
+>
+> Replace 'jiffie' by 'jiffy'. No functional change.
+>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-After merging the usb tree, today's linux-next build (htmldocs) produced
-this warning:
+>  arch/m68k/q40/q40ints.c                                      |  2 +-
 
-Documentation/filesystems/9p.rst:99: ERROR: Unexpected indentation.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
 
-Introduced by commit
+Gr{oetje,eeting}s,
 
-  673f0c3ffc75 ("tools: usb: p9_fwd: add usb gadget packet forwarder script=
-")
+                        Geert
 
 --=20
-Cheers,
-Stephen Rothwell
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
---Sig_/BdtE3n5eEXMNymSV.rfJq=t
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbZbpsACgkQAVBC80lX
-0Gx2CAgApVs5TxGDii2RmFmjGgVDBBinVWpEITVa42IQNMSRLhtrFFaXNf3T4cPJ
-CfYhkzFzA1+b4o91FynuNG/FLPFE9AGTKL2s5HdeeYSBqnZ8mWaJxFryXaLtJLPS
-xdu4G9FHF/y2dFaQ431YVli4o1RajMoRooch/lmBdE6ikv4gx+xJMjm4cBiYCnIu
-971rFTdzFsN5GMrl+Pn3DM5cVt39bTBxzPGJHBgFZ52mBQDVoo8CK84H8sjhozie
-tpS5qI7xMQaPDAXachYip14CXXr3cyONZrWrCtal+XzVhSYwW0xubJoO7D62jRep
-d0KepiWqIGUr5Vl6K0afXDsIidPnKw==
-=76Hj
------END PGP SIGNATURE-----
-
---Sig_/BdtE3n5eEXMNymSV.rfJq=t--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
