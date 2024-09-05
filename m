@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-316286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC8596CD7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:50:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8904896CD7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61736B24E1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:50:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7391F2713B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1411448C7;
-	Thu,  5 Sep 2024 03:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03D5143C7E;
+	Thu,  5 Sep 2024 03:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OCHlZUwI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kDxGwEGF"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0758143C7E;
-	Thu,  5 Sep 2024 03:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A1410E9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725508196; cv=none; b=bYxpHF43rIe94Or7HEM3LEkujC460YyXAZ/t0rGHefkWoucs/lCoP1H76S0GWWGu3aNV+x6XYmSW10j1eB1DCXNCxNacGSgHS8E2dawczYmZdE96ua36p/wjcyoXKa6G0M4UQxqbF++yOmlmLVTlkGegIBY35LgRWWBeBM8aLAs=
+	t=1725508082; cv=none; b=fOj9SpDjOR8kxJjpnpS1JmyPxQAxmQNb00pbpDijBNQbcjkdy39kH1Nv9gO+RsIk82ZjIpq8GeBO1J6oZvz1iaRQ63eKUNn2AJmJ+tcp5eu+Z1cyRLhB1HB7QhH5P3rLRyoU+EYgb381ze3wgeOAQ7w5IyRogzTVMGEOqTpVDso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725508196; c=relaxed/simple;
-	bh=RAteYIaNnUAZW65hHa+40QC8nCjTx4WeIyD12L3SoJE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=a91zoXAvWI1CFIsLQR2exk+F3er5OIo+YcDBRCx1ACtAldC4XvezjLdg/jxPwn+/GhIIttBOJuFXShR3fUucLek/0RtrXiJbbMLfgRK5jTWr6uMut3MgToD9m7D8/rbEYjVRY8zxIShcKJlcThVKfBS64ejfFAUfruepLcz8gLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OCHlZUwI; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725508195; x=1757044195;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RAteYIaNnUAZW65hHa+40QC8nCjTx4WeIyD12L3SoJE=;
-  b=OCHlZUwIolb3ClLVcyxnThY4gQoA1LoStASsXO+Kdw7k9l0XkyZmCiFT
-   ptxdVs+551IcnJGVn31z9wKKQ6n0MZbdiFfwZ/0ifKOoDslILUZ1FKWqF
-   P6Uxcyfb4upyzYUkD7nGqrUtGH1FBlZFiAH0ipn/Ju7iD64EmFHt92l69
-   qitN3N9cMXX+KMYc3F4k2QrziRIhAcD87BEvKeh6P35p9tXUUOgJ7laBz
-   BLVeHjbsgEIjF2+2BXkLpXzy1Sw9G/p1knNVJ8cYhKzTitqEadCQdIo2C
-   qsoDGPomLoQci8QVrDCp8bpiQnxMOIJYyPfLyQHsHputOVDpI5GMlHGn7
-   A==;
-X-CSE-ConnectionGUID: qtvYkXZ5R5qI0Wn/+x+6Vw==
-X-CSE-MsgGUID: fbzqLSHUTyOXpd9XoaWmmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="23761796"
-X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
-   d="scan'208";a="23761796"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 20:49:54 -0700
-X-CSE-ConnectionGUID: UXc+KRgWS2u2yWZRevyL/w==
-X-CSE-MsgGUID: k84odTRHTHGLh5cC11PvSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
-   d="scan'208";a="65722623"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa010.fm.intel.com with ESMTP; 04 Sep 2024 20:49:52 -0700
-Message-ID: <97bc177f-49ba-48cc-9dd3-37f79b1432b6@linux.intel.com>
-Date: Thu, 5 Sep 2024 11:45:55 +0800
+	s=arc-20240116; t=1725508082; c=relaxed/simple;
+	bh=JyEEhSzwsXOS4ZpiCbWor7RSL9eSgGolNaYxseMXh3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y9F9UoNUzOG0IcOxKwSy8Nw6v5m3ZB2PWZfVTlmgaIfgE29Y9ZBVrOUi9Z+EOYQ4JThy4Caxkok1rccvLintyuWhhgYttLILD9gDILavhc+ZwYwvTCYBO5HeyB8oPu1sNDMwaeboMKeN4Tm5blFeIlhLcYkyJVaOOC+SQS5Zpy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kDxGwEGF; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725508076; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=pFI+pahaRnG+81eE2WtVl2HkbJm0IUUxQro0GhJkgTU=;
+	b=kDxGwEGFgKT1hiTFlQntB46wOdFN3pcKYUY6dmuwh5lVHGfSwnOu5blS6Xo7p3d00wMQkvjYM/SNQgLJ/uMbUN+7/n3P9Cp2/TIduym0ZQqBKoNLmjOzApqX8bJKYEUTArf6B9EHqoeTk+4VxL30TItIB117FbSvqfmvyN2JKl8=
+Received: from 30.221.129.218(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEJsxlR_1725508075)
+          by smtp.aliyun-inc.com;
+          Thu, 05 Sep 2024 11:47:56 +0800
+Message-ID: <6023d984-335b-4940-83d5-339db0b89c5b@linux.alibaba.com>
+Date: Thu, 5 Sep 2024 11:47:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,47 +47,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, jani.saarinen@intel.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Prevent boot failure with devices
- requiring ATS
-To: Mark Pearson <mpearson-lenovo@squebb.ca>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>
-References: <20240904060705.90452-1-baolu.lu@linux.intel.com>
- <0dc9ac00-1148-4c64-8c12-4d08a2a27429@app.fastmail.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <0dc9ac00-1148-4c64-8c12-4d08a2a27429@app.fastmail.com>
+Subject: Re: [PATCH] erofs: simplify erofs_map_blocks_flatmode()
+To: Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240905030339.1474396-1-hongzhen@linux.alibaba.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240905030339.1474396-1-hongzhen@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/5/24 2:00 AM, Mark Pearson wrote:
-> Hi Lu,
-> 
-> Tested this on an X1 Carbon G12 with a kernel built form drm-tip and this patch - and was able to boot successfully with pci=noats
-> 
-> Tested-by: Mark Pearson<mpearson-lenovo@squebb.ca>
 
-Thank you!
 
+On 2024/9/5 11:03, Hongzhen Luo wrote:
+> Get rid of redundant variables (nblocks, offset) and a dead branch
+> (!tailendpacking).
 > 
-> Mark
-> 
-> PS - note on small typo below.
-> 
-> On Wed, Sep 4, 2024, at 2:07 AM, Lu Baolu wrote:
->> SOC-integrated devices on some platforms require their PCI ATS enabled
->> for operation when the IOMMU is in scalable mode. Those devices are
->> reported via ACPI/SATC table with the ATC_REQUIRED bit set in the Flags
->> field.
->>
->> The PCI subsystem offers the 'pci=noats' kernel command to disable PCI
->> ATS on all devices. Using 'pci=noat' with devices that require PCI ATS
-> pci=noats
+> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
 
-Fixed.
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
 Thanks,
-baolu
+Gao Xiang
 
