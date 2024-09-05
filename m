@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-316496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8396E96D05E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:27:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF02F96D060
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4513C28659D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:27:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E3ACB22897
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D15A193069;
-	Thu,  5 Sep 2024 07:27:16 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5344C192D72;
+	Thu,  5 Sep 2024 07:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4VsvWJhI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CDHsX2g9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6BA83CC1;
-	Thu,  5 Sep 2024 07:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D7083CC1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725521235; cv=none; b=lGClX+KmR01F2NZbo9yyVt3qfLqWC4NsJJxBtypnLm3UYvOX8VXSiO0y0F2+47wPk2NNMWTAGstDOXHG/ofV3NC4qxszh+gbFpHdGcYO0zQsX4JqVIuM+DZ1us9NUC3vYUPF7zr5cxYl0onISoMMLr/BRd4RF6WeIvsj4LALiOI=
+	t=1725521375; cv=none; b=f3B/JUd0j3aRxrTrFzfX5BDjO258JX/mjyAeJJwP5HsB6plX54Wsx4qM/X9/j4aoSQTTebBlzpW2UJ6ejGW3O6CzAv2sfZQXrSfDBbRqQA5XNhKIG2BU8/OPtXssvChT/Jmzv5CziA/NdRyDgR+I5M+bAPUEjBzPI1YmhqeL/zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725521235; c=relaxed/simple;
-	bh=BdUYCaUqAyqMdI0qwb8lVQTGEmCdhngFO7G2VLqZrNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ascTHebSptoV5tfGTP175RjDjXA4e0HOO48Nq5U+Q2LAw667HTK5kKZayIfi2pMiQfbPOO/4p48DuM72WKyH7RCv2kcHL5xcrqQu51K8IY6BrtgeSMWbXTbtKDgdX0VGtRVkePDc1OGC9pGLFoVMffcMROxDfJKF8nRhFUPmfjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-714226888dfso369780b3a.1;
-        Thu, 05 Sep 2024 00:27:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725521233; x=1726126033;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hwNixpFRaGOFzJZ48mu9rffSw/yWpbWl+RpttX/sgFc=;
-        b=gMclfJwBTtTdcLoVNEvvgPPoZoB7V8H+qYcTx6fjYJCMFIPFr5xYppzmfOP48x3Wwy
-         rAxuo/AVDMUt5cd66BQS4uhwkFacoynb8+PbDIgjVSEqachmpPbJkTwSvkOhknOFTmNM
-         KhZTzCZyXzXIVIzoKNzqy1ZunYldYwzG/984+S2w/n+incXkdwYcWZAEl1P2cMCc4wRE
-         l94s1yM7ywloHDT9JrVG7TTbGOPAvmETGk5TXpAGRTZhn/OOOIOfhKoMGmL0xcRxfFVE
-         aucaFYzdvnTh9zoTX8wzMTsIiHkkwrsGOCwJE3HIQbpiMQ1XYPtL+caQtvZnRC+Z0fW8
-         xyJg==
-X-Forwarded-Encrypted: i=1; AJvYcCULTWByZifZ21/2tTCXbC8dV7lfSSdF6sNhQ4ptEBmeDmeEHH+g27g4TECkRSh2cc6+gfugXSj3QTayhA==@vger.kernel.org, AJvYcCVDrIA3AzdV3uCrw8sMFjP9dLVTC3rQhc79c3zp+ura3yODr1ldx9TmSsLv2mBfbdv9nKGh+GgJ2nzK/7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0UphCOOujRVbIYp3JVNZx006lfhPhykeBDSnHbBId5+75nd5g
-	GZVAbjA+nE7SCp5nHxllRcvAj90JXGpWQe+qcB2eHeyeAESuM7lA
-X-Google-Smtp-Source: AGHT+IF314UW0kgEGrkeY4n3/fJtVv4DzP0+7f4M97uL9g9DwqrrEOtN8ERD8tLaboYqmeT9LwKffA==
-X-Received: by 2002:a05:6a00:1acb:b0:70e:98e3:1aef with SMTP id d2e1a72fcca58-715dfc76335mr25537839b3a.29.1725521233302;
-        Thu, 05 Sep 2024 00:27:13 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71791e54585sm329851b3a.182.2024.09.05.00.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 00:27:12 -0700 (PDT)
-Date: Thu, 5 Sep 2024 16:27:10 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the devicetree tree
-Message-ID: <20240905072710.GA1538040@rocinante>
-References: <20240905164019.5086e9b1@canb.auug.org.au>
+	s=arc-20240116; t=1725521375; c=relaxed/simple;
+	bh=h1Q1BrpqFo24i9DWuPhlWTjTw30IMbMn8IY9rI46wts=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=umQheEBVwkzXIIYE+x6QuP6U/DP4MsPbkTKpI592Ih+fuPhEd+E0zzb396E0nM/7RksVc3ZIaFeJrv1+Yd+AT/1vWrJO0E6BMx+3Q+8xvhLq0MQF21EnQZ6gTdrbZGmZg9AlwPZgqd2uKDVK1GQQr9NdW6Zz/4h75geeRjw39M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4VsvWJhI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CDHsX2g9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725521372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rODZ8Mcl6ziSPnpnBj5WSdN83ODOngMe8fjgQSCk7sQ=;
+	b=4VsvWJhIgO6iOu+WSABF/Vd1TbWZKTYdL32xWfsUmmStHG21H4HY8N8sXsWIjisOLPNUal
+	MTUO08TZSvAjuwxdP2srzHxOq3V6L2eaPk9EZV83YHlyRBKzPDb9sUOWpOdYqPrsNAPhFg
+	0gclCQ9rYw5Xp2HMAgSQ3N3ZJg7dabo76xtiv0gy6ihqBXpDfObqppemAP1cdT/DxB6bhE
+	vVpTu8mwkmdw+0cWniDg/GAn21DfKhzBToj0du4zYNpiJUdpxRMEPxcESoDXPAPtEc7wSc
+	nWqt3hFnjITzqQD/NM7rJjr3EWDH4HDr6KhueU9+ElPZCPFjmu//u1qcwZNEPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725521372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rODZ8Mcl6ziSPnpnBj5WSdN83ODOngMe8fjgQSCk7sQ=;
+	b=CDHsX2g9hyGqoMqhMDrhQ+Cos/UxfKayejpg0mJp/IGg/Ysu5mWwm3r9wIryQFc3NcZ0DV
+	R/wzh7sdoAxrvWCw==
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, linux-kernel@vger.kernel.org, Marc
+ Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in
+ gic_ipi_send_mask()
+In-Reply-To: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
+References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
+Date: Thu, 05 Sep 2024 09:29:32 +0200
+Message-ID: <87cyli5zj7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905164019.5086e9b1@canb.auug.org.au>
+Content-Type: text/plain
 
-Hello,
+On Wed, Sep 04 2024 at 23:23, Sergey Shtylyov wrote:
+> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
+> looking at the GIC driver's irq_set_affinity() method, it seems that the
+> passed CPU mask may contain the logical CPU #s beyond 8, and that method
+> filters them out before reading gic_cpu_map[], bailing out with
+> -EINVAL.
 
-> The following commit is also in the pci tree as a different commit
-> (but the same patch):
-> 
->  80cfdfeb8367 ("dt-bindings: PCI: layerscape-pci: Fix property 'fsl,pcie-scfg' type")
-> 
-> This is commit
-> 
->   f66b63ef10d6 ("dt-bindings: PCI: layerscape-pci: Change property 'fsl,pcie-scfg' type")
-> 
-> in the pci tree.
+The reasoning is correct in theory, but in reality it's a non problem.
 
-Rob took it some time ago into his tree as we were a bit slow, sadly.  Rob,
-do you mind if we take it?  I would prefer our version given the updated
-commit message, etc.
+Simply because processors which use this GIC version cannot have more
+than 8 cores.
 
-Sorry for troubles!
+That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
+bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
 
-	Krzysztof
+Thanks
+
+        tglx
 
