@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-316404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32FC096CF12
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:21:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCB596CF19
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9901F2814A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851801C208A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5831891BB;
-	Thu,  5 Sep 2024 06:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA50618BC0A;
+	Thu,  5 Sep 2024 06:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JK3f94ab"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1VRSiwl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0242BB15
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEAE2BB15;
+	Thu,  5 Sep 2024 06:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725517269; cv=none; b=Zhxw+Rdcf3egx1pE97200RLK8NNHDkT7+Ox9kJD1CkNOCxM03fx1ofgQiFXwRr5eyfPwSuZCU9REdQwszkZqLd88l6rDrVmYtush07YJCce+nQBju5qvyJdmaDRcrWvkC/HgLFqzvmgGrFjjfleyZnv+LCBLjk3KwXhSsrjApbE=
+	t=1725517300; cv=none; b=JXZMGWQQq7wA4JfUo90SUMxsxRCly52Hxw3Pxd2Wcr6hDQFOZPFClmUg7GagI8+BhfF7L6iv3vWTEMP28XVtI9oit2wWQVfKECj34xqH3+34T5BhrJ+lVgLEyfKm+P+b6mikV4P+Y8j7FAOfcJArOlgonsHBiCPFUEcpCk9UH20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725517269; c=relaxed/simple;
-	bh=9G4uSfBJSYvJhSJCNBznlu05STrgif4WeJtvaeHYwnc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AhsHuq3e+y8UJpRFz7HVkEbD3a3MUuXO1lJsx6Lx5vjnNmb7/J+5lDhu2CfoGMR+2EhCLYh6uJCEX5lC0qSbLNMVG/DvVR/cZWzXs+k9JzOEX07PlujWvcsS0vkdMGtG8zHOAGA4/6hNdSaSVjkr26I+knjcmrs1uon/pmKL6Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JK3f94ab; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9DEC4CEC4;
-	Thu,  5 Sep 2024 06:21:08 +0000 (UTC)
+	s=arc-20240116; t=1725517300; c=relaxed/simple;
+	bh=sZTowVQmdtCFZcfiYVNZ4zocQ+AolAKfo4MSe7xfMwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rEu/ixsxc2OcvHf7KCBkeQ8/AC7/WbVIjItEG86KbH3/QTXt/SErrUC7NOpbJtkDfzs1+dOwJYERW0XyBATQkavxCRZmNP1rL5oS2e1OgNMMAtQjpRqTOSdVB1xzCrV8Kc6Yd3JTzdEhAWF81c2zsfQCVi/z1n0VeFZIs4pBoeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1VRSiwl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9DBC4CEC4;
+	Thu,  5 Sep 2024 06:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725517268;
-	bh=9G4uSfBJSYvJhSJCNBznlu05STrgif4WeJtvaeHYwnc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JK3f94abeR/I2GZxc1EEOZA8jRB5GpzhuZW1jUqfHeZUQFBH+5elVYmkTUkwSZUbB
-	 vEy1kRGIWVsxs3qDn76TSaYVujt9Ywr7KbHNU9VFCF87y+Dff916B4xWNjV/oHwrRi
-	 4Hf4XRf8APHTgggRhzHUMKNYj2dF8GVEVnirLq5H7A3csnVom5M3vcCCHtXTkDka/z
-	 mJTHco564npzEKReeQflovZ/jbIyLeF24hJIP8o/xjMGsPYcv0qvMA23/x84wocaVt
-	 uxOn7AdXn+beSIQLKnXf6yke/1T64Hfd+twtI28Vj49J6SFleiwDXL+lm988JLV3+d
-	 iKOofR5/GQ8/Q==
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 04 Sep 2024 23:21:06 -0700
-Subject: [PATCH] mm: vmscan.c: fix OOM on swap stress test
+	s=k20201202; t=1725517299;
+	bh=sZTowVQmdtCFZcfiYVNZ4zocQ+AolAKfo4MSe7xfMwo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N1VRSiwlaPgqhu7MnabOpaTT7B+/8mBs72Xo+IhXsVKeP2vnNPGLAf2erTMdmGIFv
+	 9KoY01i9rRnYo3G6xQzwKW4e4sXkdOsliSrrN/RZMH4OgOSLNLf/LyihZoULOLC0BA
+	 CrXfHXFovAYxIz9mXNlgjfA25H7tgoAdLKA2qRL18zaSsY8oGqkgeaFwBYnzk9mzry
+	 +1gBdWATLr6KXM0r1I0+fHT60gSjY4F28rx0CJOXzgYA7FL3ZCcyGMtKNSSVchD4pa
+	 AH1pH7xgAIBVa7UFwJSJYJ/DLPB3cfxokohz4Nau+26W80l+rSIGt2b54fgDbo7SFE
+	 tn+Yhh554k0Ng==
+Message-ID: <497c8852-8aa5-4d46-b547-9ca22f1c7673@kernel.org>
+Date: Thu, 5 Sep 2024 08:21:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
+ <20240829092418.2863659-2-quic_msavaliy@quicinc.com>
+ <74c13a4a-0d4b-4cbd-9a75-9933c098c3ba@kernel.org>
+ <cb7613d0-586e-4089-a1b6-2405f4dc4883@quicinc.com>
+ <a4bbb898-bf91-4dcb-b7da-ab032b228aa2@kernel.org>
+ <dc434cb2-7eb0-48fc-967f-5ed93ad1284c@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <dc434cb2-7eb0-48fc-967f-5ed93ad1284c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240904-lru-flag-v1-1-36638d6a524c@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANFN2WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDSwMT3ZyiUt20nMR0XaPENKM0S1NTcxODVCWg8oKi1LTMCrBR0bG1tQC
- z1AvvWgAAAA==
-To: Andrew Morton <akpm@linux-foundation.org>, yangge <yangge1116@126.com>
-Cc: Yu Zhao <yuzhao@google.com>, David Hildenbrand <david@redhat.com>, 
- Hugh Dickins <hughd@google.com>, baolin.wang@linux.alibaba.com, 
- Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Chris Li <chrisl@kernel.org>
-X-Mailer: b4 0.13.0
 
-I found a regression on mm-unstable during my swap stress test,
-using tmpfs to compile linux. The test OOM very soon after
-the make spawns many cc processes.
+On 05/09/2024 07:43, Mukesh Kumar Savaliya wrote:
+> 
+> 
+> On 9/4/2024 11:50 PM, Krzysztof Kozlowski wrote:
+>> On 04/09/2024 20:12, Mukesh Kumar Savaliya wrote:
+>>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>>>> people, so fix your workflow. Tools might also fail if you work on some
+>>>> ancient tree (don't, instead use mainline) or work on fork of kernel
+>>>> (don't, instead use mainline). Just use b4 and everything should be
+>>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
+>>>> patches to the patchset.
+>>>>
+>>>> You missed at least devicetree list (maybe more), so this won't be
+>>>> tested by automated tooling. Performing review on untested code might be
+>>>> a waste of time.
+>>>>
+>>>
+>>> You mean flag addition into DTSI file ? If yes, then the intention was
+>>> to just enable feature support but not into mainline because it should
+>>> happen per board or usecase. Please suggest if i can enable particular
+>>> node with DTSI feature flag.
+>>> Please correct me if my understanding on your ask went wrong.
+>>
+>> How is this related?
+> "You missed at least devicetree list (maybe more)" - Do you mean to say 
+> i missed to add DTSI changes OR maintainers for DTSI ? seeking clarity 
+> to avoid confusion.
 
-It bisects down to this change: 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
-(mm/gup: clear the LRU flag of a page before adding to LRU batch)
-
-Yu Zhao propose the fix: "I think this is one of the potential side
-effects -- Huge mentioned earlier about isolate_lru_folios():"
-
-I test that with it the swap stress test no longer OOM.
-
-Link: https://lore.kernel.org/r/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZUmErNAXoXmw@mail.gmail.com/
-Fixes: 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding to LRU batch")
-Suggested-by: Yu Zhao <yuzhao@google.com>
-Suggested-by: Hugh Dickins <hughd@google.com>
-Tested-by: Chris Li <chrisl@kernel.org>
-Signed-off-by: Chris Li <chrisl@kernel.org>
----
- mm/vmscan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a9b6a8196f95..96abf4a52382 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4323,7 +4323,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	}
- 
- 	/* ineligible */
--	if (zone > sc->reclaim_idx) {
-+	if (!folio_test_lru(folio) || zone > sc->reclaim_idx) {
- 		gen = folio_inc_gen(lruvec, folio, false);
- 		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
- 		return true;
-
----
-base-commit: 756ca36d643324d028b325a170e73e392b9590cd
-change-id: 20240904-lru-flag-2af2f955740e
+You did not CC maintainers and necessary list. I wrote nothing about
+DTSI. You are expected to use tools, not manually come with some address
+list.
 
 Best regards,
--- 
-Chris Li <chrisl@kernel.org>
+Krzysztof
 
 
