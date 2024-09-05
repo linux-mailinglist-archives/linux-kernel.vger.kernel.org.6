@@ -1,317 +1,262 @@
-Return-Path: <linux-kernel+bounces-316775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A8096D449
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:51:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E92C96D3F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D59E1C21095
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:51:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE717283ADE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712F6199E8F;
-	Thu,  5 Sep 2024 09:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8605F1991BA;
+	Thu,  5 Sep 2024 09:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hkDgCWS8"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lK0bb7+M"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06580198E90;
-	Thu,  5 Sep 2024 09:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7627194AC7;
+	Thu,  5 Sep 2024 09:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529807; cv=none; b=ujGGwRCMLwBK90y1c51MGDWqqIo+bEKQrcbZW03/52iXharzmt+BOol8Cmyi2wOmSwZofFnN7gJi4lNFMyQcJZv7NG1rzKxHo/K0S3UcfozCjrnF7USj4FLQXPn0plgkL7XXKfoyghGjSQFEIdDss+/F+jxw45R4joOclB3HTOI=
+	t=1725529603; cv=none; b=j3hVVTvQR9k7GJ1hc2wzqNEY+mzb/URTl+SgfqaI8tksh+IiCxBn6dwiHeVRbUVB/baMDAS85E60caw1cfPSHAsfnXDdY90pzTpBV4nY67rJ1QhNP8H7TGA9dI62SLcrIF1rS7mUt47CxMfnK2SdaDL7jzpFIUebs8dVnDbxyao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529807; c=relaxed/simple;
-	bh=eFltO8ALLwKPvZfxeUMN0tIVoPplnY2rshUIO4tfLO4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s/cVt+48NK4Fvmm3Fu7U6m5YshA3lynVyJCPXtcAlJQzd/mGsCm3TIUNdA5q0FRd0nLoYh+l8TyZzQ2644YMRAZPz4mr4VXXGva0W1PPQv443gf1UMLI6JddqzPsjNmFCsl36k9W51QQXvo4xuhEKwqNF4GIpRh5VFCJvs+cClQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=hkDgCWS8; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48586iUQ015126;
-	Thu, 5 Sep 2024 02:49:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=AlqtUJIcYAei7slUqqsN7mcIN
-	UcPdvItezvTsSZ6YqY=; b=hkDgCWS8rKFJmHgYPOnR50bB10aKGxjMHib3b4R/B
-	blU1ux3+Qfhj/vpl9EFdLD2YJ6CpojLg7NXYJtn1K1MEcgLQNCu0G8T32Kf2khyo
-	6KSqkiUbnHmSUfByiD36mhox9UfZDaM+/Owe1pY+cZmd6vMM7vSluQzCC8yskbik
-	sz9jdxgcLk/MF67DCGT568JBJF1KNc9v6SZ7xzE1V5anied75NZP5AMJxWlTUZ5N
-	XXLFYGwjqiLhX+UcsS/VTEEiXLIjNT2YZ0zn8LcgxJM0Zk1/oSZ4l32i9jcO8B1/
-	I9Q913O8jFXCzPHYj1+nxmWWG3iQwMf6upVbrHxJgUjtQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41f8u48bkb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 02:49:58 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 5 Sep 2024 02:49:56 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 5 Sep 2024 02:49:56 -0700
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id 014875B6927;
-	Thu,  5 Sep 2024 02:49:52 -0700 (PDT)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <jiri@resnulli.us>, <edumazet@google.com>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net-next PATCH v2 4/4] octeontx2-pf: Export common APIs
-Date: Thu, 5 Sep 2024 15:19:35 +0530
-Message-ID: <20240905094935.26271-5-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240905094935.26271-1-gakula@marvell.com>
-References: <20240905094935.26271-1-gakula@marvell.com>
+	s=arc-20240116; t=1725529603; c=relaxed/simple;
+	bh=hfyLaFfMkYpNRtL4fR5wRcnbCnNmAquAnd9wooE+JoY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QA6km7BvSm3+shaLs39Ug4fig5eQTS4ZnMUDdUPoz+FGGv1atFmhLwyU9Vt0yP9eZTXCXlKo9YZrqeJ6a6BS1//2HZE2pCSeCgEvPIrqCTCVZTuBuu8W+mGKg596ijQ0lThUtMzxfTwk6Z53rGc25lH6gDkHBAGYmn9qrBYMD3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lK0bb7+M; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533de5a88f8so411052e87.3;
+        Thu, 05 Sep 2024 02:46:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725529600; x=1726134400; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hfyLaFfMkYpNRtL4fR5wRcnbCnNmAquAnd9wooE+JoY=;
+        b=lK0bb7+MkXqw+yoSznoZF5ONQGHdIvLO7gUKa48JDDLwqVV0DK9zErn3sxf3IvSRQB
+         X3MRtQ1Xuih1AAotKvu5nwKryGwrrCOvf/S34OQh29Ra7sUOJiAVwHxVeKXMCGTuggTI
+         C4VlTWJ0jdDJoKbZ/GG9+xzogAKf8XvvJsmcfe/8m7PLfsNb7urIcBVZ4YBp90G1semf
+         kE8ww1wPEoy5V4FinB9OpRhKZ/8R2QTIdKP0ItKWPej8SN3N1oscUUuvAwPVsT2iC/xM
+         7FJ1bwAebLeejgV6/AW3seLmMhcw+m/G5r3VIdVpJW+I4wLUFfmFYDcGPdJ2TVYoEcyj
+         g4/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725529600; x=1726134400;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hfyLaFfMkYpNRtL4fR5wRcnbCnNmAquAnd9wooE+JoY=;
+        b=b67m8CTqYH890D+p5+oBBiUGzxq1TTCCylH13DacGGmStdQkaxbKzOYKo1cuoxTo0A
+         qcxJrpZ1/z8SbekCVOsmxjTijjxSaIpnFvvc9XTxLE5KhJ+7DrkgR/3I3D/Zr8lbf3AL
+         h6DRGtZaAvMWvdVDvNJf103/7rDhXJvVaKMyXrlyOn1Ir9dFLuui9J+gWUYuC+q70UUF
+         zYyG2Jq+/rl/sWyBgVcg9NN0Q9+LMse2HIPftGB/dN98gVussmQlD7ZxzI737Ut2523T
+         D8PHGrU+Sg9/S5CpC7sYin083u2JK+i9SChGWcvl9BvmAcjAyjSRnFWabqKNxQwdfx9j
+         RGXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzUn0iB9tOv/c4qAKkl0oa2nmzu+ClhH55fWOxIDCJtHJOdfeq9a4J8Jh5QGXW5yN1qF7KdyZPKdy/@vger.kernel.org, AJvYcCXe6TFWPnWX3HNjVKB3pD0HJXdAoysGmNX5NFQvmySLsvpwjyvhXFFxSwtD9NZ87c0MdBI7xgG2LiYzPXD7@vger.kernel.org, AJvYcCXyrhY1ijd8nbRe/yK3c9b8CEWL+NUVU3S7nbx0kPpfcC02f4+9sTw4SDwsCBBMFs1hOYCwNo3bPlY7@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy29fuLilkIOr4b3iEBfpoi2H+L9U47qXKrAk/uhVrAFVWrZEm
+	kJt3MvdR3oAPQ264gPFhV2ziEIyQUpAuQ126sFATvCFXLm0Ws1WZ
+X-Google-Smtp-Source: AGHT+IFo1Up3OyHVy39h81UAR8Z2KOYVfLj1evigl5cnWjFtkgT8ubvK5n+0l8M/bVE8AJc4AjVq0Q==
+X-Received: by 2002:ac2:568f:0:b0:536:14a1:d645 with SMTP id 2adb3069b0e04-53614a1d756mr1333730e87.44.1725529598877;
+        Thu, 05 Sep 2024 02:46:38 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d290sm111882666b.116.2024.09.05.02.46.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:46:38 -0700 (PDT)
+Message-ID: <642d61b23c58d9b846e42badb2f2d97691c92144.camel@gmail.com>
+Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
+ property
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Angelo Dureghello
+	 <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dlechner@baylibre.com
+Date: Thu, 05 Sep 2024 11:50:45 +0200
+In-Reply-To: <20240830-quilt-appointee-4a7947e84988@spud>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	 <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
+	 <20240829-stopwatch-morality-a933abb4d688@spud>
+	 <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
+	 <20240830-quilt-appointee-4a7947e84988@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: lQLLz_ADQhakeFhSAHUBSo-vNE5Mh4UF
-X-Proofpoint-GUID: lQLLz_ADQhakeFhSAHUBSo-vNE5Mh4UF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_05,2024-09-04_01,2024-09-02_01
 
-Export mbox, hw resources and interrupt configuration functions.
-So, that they can be used later by the RVU representor driver.
+On Fri, 2024-08-30 at 16:33 +0100, Conor Dooley wrote:
+> On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
+> > Hi Conor,
+> >=20
+> > On 29/08/24 5:46 PM, Conor Dooley wrote:
+> > > On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
+> > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > >=20
+> > > > Add bus property.
+> > > RFC it may be, but you do need to explain what this bus-type actually
+> > > describes for commenting on the suitability of the method to be
+> > > meaningful.
+> >=20
+> > thanks for the feedbacks,
+> >=20
+> > a "bus" is intended as a generic interface connected to the target,
+> > may be used from a custom IP (fpga) to communicate with the target
+> > device (by read/write(reg and value)) using a special custom interface.
+> >=20
+> > The bus could also be physically the same of some well-known existing
+> > interfaces (as parallel, lvds or other uncommon interfaces), but using
+> > an uncommon/custom protocol over it.
+> >=20
+> > In concrete, actually bus-type is added to the backend since the
+> > ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes DDR
+> > parallel bus (interface that i named QSPI, but it's not exactly a QSPI
+> > as a protocol), so it's a device-specific interface.
+> >=20
+> > With additions in this patchset, other frontends, of course not only
+> > DACs, will be able to add specific busses and read/wrtie to the bus
+> > as needed.
+> >=20
+> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > ---
+> > > > =C2=A0 Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml |=
+ 9
+> > > > +++++++++
+> > > > =C2=A0 1 file changed, 9 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.=
+yaml
+> > > > b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > index a55e9bfc66d7..a7ce72e1cd81 100644
+> > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > @@ -38,6 +38,15 @@ properties:
+> > > > =C2=A0=C2=A0=C2=A0 clocks:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > > You mentioned about new compatible strings, does the one currently
+> > > listed in this binding support both bus types?
+>=20
+> You didn't answer this, and there's insufficient explanation of the
+> "hardware" in this RFC, but I found this which is supposedly the
+> backend:
+> https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
+> adi,axi-dac.yaml has a single compatible, and that compatible has
+> nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I would
+> expect either justification for reuse of the compatible, or a brand new
+> compatible for this backend, even if the driver can mostly be reused.
+>=20
 
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
----
- .../marvell/octeontx2/nic/otx2_common.c       |  2 +
- .../marvell/octeontx2/nic/otx2_common.h       | 11 ++++++
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 37 +++++++++++++------
- .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  4 +-
- 4 files changed, 40 insertions(+), 14 deletions(-)
+Hi Conor,
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 34e76cfd941b..e38b3eea11f3 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -246,6 +246,7 @@ int otx2_hw_set_mtu(struct otx2_nic *pfvf, int mtu)
- 	mutex_unlock(&pfvf->mbox.lock);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_hw_set_mtu);
- 
- int otx2_config_pause_frm(struct otx2_nic *pfvf)
- {
-@@ -1782,6 +1783,7 @@ void otx2_free_cints(struct otx2_nic *pfvf, int n)
- 		free_irq(vector, &qset->napi[qidx]);
- 	}
- }
-+EXPORT_SYMBOL(otx2_free_cints);
- 
- void otx2_set_cints_affinity(struct otx2_nic *pfvf)
- {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-index b36b87dae2cb..327254e578d5 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-@@ -1000,6 +1000,17 @@ int otx2_aura_init(struct otx2_nic *pfvf, int aura_id,
- int otx2_init_rsrc(struct pci_dev *pdev, struct otx2_nic *pf);
- void otx2_free_queue_mem(struct otx2_qset *qset);
- int otx2_alloc_queue_mem(struct otx2_nic *pf);
-+int otx2_init_hw_resources(struct otx2_nic *pfvf);
-+void otx2_free_hw_resources(struct otx2_nic *pf);
-+int otx2_wq_init(struct otx2_nic *pf);
-+int otx2_check_pf_usable(struct otx2_nic *pf);
-+int otx2_pfaf_mbox_init(struct otx2_nic *pf);
-+int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af);
-+int otx2_realloc_msix_vectors(struct otx2_nic *pf);
-+void otx2_pfaf_mbox_destroy(struct otx2_nic *pf);
-+void otx2_disable_mbox_intr(struct otx2_nic *pf);
-+void otx2_disable_napi(struct otx2_nic *pf);
-+irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq);
- 
- /* RSS configuration APIs*/
- int otx2_rss_init(struct otx2_nic *pfvf);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index 2460913fc510..fa7480f05e33 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -1008,7 +1008,7 @@ static irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
- 	return IRQ_HANDLED;
- }
- 
--static void otx2_disable_mbox_intr(struct otx2_nic *pf)
-+void otx2_disable_mbox_intr(struct otx2_nic *pf)
- {
- 	int vector = pci_irq_vector(pf->pdev, RVU_PF_INT_VEC_AFPF_MBOX);
- 
-@@ -1016,8 +1016,9 @@ static void otx2_disable_mbox_intr(struct otx2_nic *pf)
- 	otx2_write64(pf, RVU_PF_INT_ENA_W1C, BIT_ULL(0));
- 	free_irq(vector, pf);
- }
-+EXPORT_SYMBOL(otx2_disable_mbox_intr);
- 
--static int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
-+int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
- {
- 	struct otx2_hw *hw = &pf->hw;
- 	struct msg_req *req;
-@@ -1060,8 +1061,9 @@ static int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_register_mbox_intr);
- 
--static void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
-+void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
- {
- 	struct mbox *mbox = &pf->mbox;
- 
-@@ -1076,8 +1078,9 @@ static void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
- 	otx2_mbox_destroy(&mbox->mbox);
- 	otx2_mbox_destroy(&mbox->mbox_up);
- }
-+EXPORT_SYMBOL(otx2_pfaf_mbox_destroy);
- 
--static int otx2_pfaf_mbox_init(struct otx2_nic *pf)
-+int otx2_pfaf_mbox_init(struct otx2_nic *pf)
- {
- 	struct mbox *mbox = &pf->mbox;
- 	void __iomem *hwbase;
-@@ -1124,6 +1127,7 @@ static int otx2_pfaf_mbox_init(struct otx2_nic *pf)
- 	otx2_pfaf_mbox_destroy(pf);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_pfaf_mbox_init);
- 
- static int otx2_cgx_config_linkevents(struct otx2_nic *pf, bool enable)
- {
-@@ -1379,7 +1383,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
-+irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
- {
- 	struct otx2_cq_poll *cq_poll = (struct otx2_cq_poll *)cq_irq;
- 	struct otx2_nic *pf = (struct otx2_nic *)cq_poll->dev;
-@@ -1398,20 +1402,25 @@ static irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
- 
- 	return IRQ_HANDLED;
- }
-+EXPORT_SYMBOL(otx2_cq_intr_handler);
- 
--static void otx2_disable_napi(struct otx2_nic *pf)
-+void otx2_disable_napi(struct otx2_nic *pf)
- {
- 	struct otx2_qset *qset = &pf->qset;
- 	struct otx2_cq_poll *cq_poll;
-+	struct work_struct *work;
- 	int qidx;
- 
- 	for (qidx = 0; qidx < pf->hw.cint_cnt; qidx++) {
- 		cq_poll = &qset->napi[qidx];
--		cancel_work_sync(&cq_poll->dim.work);
-+		work = &cq_poll->dim.work;
-+		if (work->func)
-+			cancel_work_sync(work);
- 		napi_disable(&cq_poll->napi);
- 		netif_napi_del(&cq_poll->napi);
- 	}
- }
-+EXPORT_SYMBOL(otx2_disable_napi);
- 
- static void otx2_free_cq_res(struct otx2_nic *pf)
- {
-@@ -1477,7 +1486,7 @@ static int otx2_get_rbuf_size(struct otx2_nic *pf, int mtu)
- 	return ALIGN(rbuf_size, 2048);
- }
- 
--static int otx2_init_hw_resources(struct otx2_nic *pf)
-+int otx2_init_hw_resources(struct otx2_nic *pf)
- {
- 	struct nix_lf_free_req *free_req;
- 	struct mbox *mbox = &pf->mbox;
-@@ -1601,8 +1610,9 @@ static int otx2_init_hw_resources(struct otx2_nic *pf)
- 	mutex_unlock(&mbox->lock);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_init_hw_resources);
- 
--static void otx2_free_hw_resources(struct otx2_nic *pf)
-+void otx2_free_hw_resources(struct otx2_nic *pf)
- {
- 	struct otx2_qset *qset = &pf->qset;
- 	struct nix_lf_free_req *free_req;
-@@ -1688,6 +1698,7 @@ static void otx2_free_hw_resources(struct otx2_nic *pf)
- 	}
- 	mutex_unlock(&mbox->lock);
- }
-+EXPORT_SYMBOL(otx2_free_hw_resources);
- 
- static bool otx2_promisc_use_mce_list(struct otx2_nic *pfvf)
- {
-@@ -2808,7 +2819,7 @@ static const struct net_device_ops otx2_netdev_ops = {
- 	.ndo_set_vf_trust	= otx2_ndo_set_vf_trust,
- };
- 
--static int otx2_wq_init(struct otx2_nic *pf)
-+int otx2_wq_init(struct otx2_nic *pf)
- {
- 	pf->otx2_wq = create_singlethread_workqueue("otx2_wq");
- 	if (!pf->otx2_wq)
-@@ -2819,7 +2830,7 @@ static int otx2_wq_init(struct otx2_nic *pf)
- 	return 0;
- }
- 
--static int otx2_check_pf_usable(struct otx2_nic *nic)
-+int otx2_check_pf_usable(struct otx2_nic *nic)
- {
- 	u64 rev;
- 
-@@ -2836,8 +2847,9 @@ static int otx2_check_pf_usable(struct otx2_nic *nic)
- 	}
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_check_pf_usable);
- 
--static int otx2_realloc_msix_vectors(struct otx2_nic *pf)
-+int otx2_realloc_msix_vectors(struct otx2_nic *pf)
- {
- 	struct otx2_hw *hw = &pf->hw;
- 	int num_vec, err;
-@@ -2859,6 +2871,7 @@ static int otx2_realloc_msix_vectors(struct otx2_nic *pf)
- 
- 	return otx2_register_mbox_intr(pf, false);
- }
-+EXPORT_SYMBOL(otx2_realloc_msix_vectors);
- 
- static int otx2_sriov_vfcfg_init(struct otx2_nic *pf)
- {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-index 79a8acac6283..c4e6c78a8deb 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-@@ -500,7 +500,7 @@ static const struct net_device_ops otx2vf_netdev_ops = {
- 	.ndo_setup_tc = otx2_setup_tc,
- };
- 
--static int otx2_wq_init(struct otx2_nic *vf)
-+static int otx2_vf_wq_init(struct otx2_nic *vf)
- {
- 	vf->otx2_wq = create_singlethread_workqueue("otx2vf_wq");
- 	if (!vf->otx2_wq)
-@@ -689,7 +689,7 @@ static int otx2vf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto err_ptp_destroy;
- 	}
- 
--	err = otx2_wq_init(vf);
-+	err = otx2_vf_wq_init(vf);
- 	if (err)
- 		goto err_unreg_netdev;
- 
--- 
-2.25.1
+So most of these designs have some changes (even if minimal) in the registe=
+r map
+and the idea (mine actually) with this backend stuff was to keep the backen=
+d
+driver (axi-dac/adc) with the generic compatible since all the (different)
+functionality is basically defined by the frontend they connect too and tha=
+t
+functionality is modeled by IIO backend ops. For some more
+significant/fundamental differences in the IP like this bus controller kind=
+ of
+thing, we would add have proper FW properties. The main idea was kind of us=
+ing
+the frontend + generic backend combo so no need for new compatibles for eve=
+ry
+new design.
+
+It's still early days (at least upstream) for these IP cores and the backen=
+d
+code so if you say that we should have new compatibles for every new design=
+ that
+has some differences in the register map (even if minimal), I'm of course f=
+ine
+with it. I've done it like this because I was (am) kind of afraid for thing=
+s to
+get complicated fairly quickly both in the bindings and driver (well maybe =
+not
+in the driver). OTOH, it can simplify things a lot as it's way easier to
+identify different implementations of the IP directly in the driver so we h=
+ave
+way more flexibility.
+
+> Could you please link to whatever ADI wiki has detailed information on
+> how this stuff works so that I can look at it to better understand the
+> axes of configuration here?
+>=20
+> > >=20
+> > > Making the bus type decision based on compatible only really makes se=
+nse
+> > > if they're different versions of the IP, but not if they're different
+> > > configuration options for a given version.
+> > >=20
+> > > > +=C2=A0 bus-type:
+> >=20
+> > DAC IP on fpga actually respects same structure and register set, excep=
+t
+> > for a named "custom" register that may use specific bitfields depending
+> > on the application of the IP.
+>=20
+> To paraphrase:
+> "The register map is the same, except for the bit that is different".
+> If ADI is shipping several different configurations of this IP for
+> different DACs, I'd be expecting different compatibles for each backend
+> to be honest.
+
+Yes, pretty much we have a generic core with most of the designs being base=
+d on
+it but with some slight differences. At least for the new ones, almost all =
+of
+them have slight deviations from the generic/base core.
+
+> If each DAC specific backend was to have a unique compatible, would the
+> type of bus used be determinable from it? Doesn't have to work for all
+> devices from now until the heath death of the universe, but at least for
+> the devices that you're currently aware of?
+>=20
+
+My original idea was to have a bus controller boolean for this core at leas=
+t for
+now that we only have one bus type (so we could assume qspi in the driver).=
+ If
+the time comes we need to add support for something else, then we would nee=
+d
+another property to identify the type.
+
+> > > If, as you mentioned, there are multiple bus types, a non-flag proper=
+ty
+> > > does make sense. However, I am really not keen on these "forced" nume=
+rical
+> > > properties at all, I'd much rather see strings used here.
+>=20
+> > > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > > > +=C2=A0=C2=A0=C2=A0 description: |
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Configure bus type:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0: none
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1: qspi
+>=20
+> Also, re-reading the cover letter, it says "this platform driver uses a 4
+> lanes parallel bus, plus a clock line, similar to a qspi."
+> I don't think we should call this "qspi" if it is not actually qspi,
+> that's just confusing.
+>=20
+
+Just by looking at the datasheet it feels like typical qspi to be honest. A=
+nd,
+fwiw, even if not really qspi, this is how the datasheet names the interfac=
+e.
+
+- Nuno S=C3=A1
+> >=20
 
 
