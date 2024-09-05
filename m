@@ -1,243 +1,164 @@
-Return-Path: <linux-kernel+bounces-317252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2920C96DB82
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E576296DBAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96411F213BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490AA28D08E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB01FF507;
-	Thu,  5 Sep 2024 14:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70133C08A;
+	Thu,  5 Sep 2024 14:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MN03jAJ6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WlNkXtMW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6756CDDD2;
-	Thu,  5 Sep 2024 14:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E75CA6B;
+	Thu,  5 Sep 2024 14:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545713; cv=none; b=uDiWjLfvgAFoNOw65ZzFbHU5SLHbfRgrdwaewxxgkSPsb9OooeR+K+zlFtQydwB5jp87yL8yE6dfyfz0scf7CTiZC/5DbLw6wp7WuS+akDV3dlWymnuxHpfOOL1UOzNxeat/+4ua3048OtJOJ39qVPZfKM5E/MGO3209hYUcaWM=
+	t=1725546095; cv=none; b=gSUvIJJD+EFhMqjIBtXmE6SJzv+eIqGiD/PMPMmwek+botF8ESlnK1yVuYy+VzA83FF5yvx3sA3Q3MVP76qC9ssxzIfDipkL4hlxw/kdWC3WyIOZ14HJvB5JeqqpFCADf6Cp3RGlKexDUbsYCM1VJq6TQsnGq2L8A3aWxG0JWnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545713; c=relaxed/simple;
-	bh=VfkiF78s61HLrfjc1XjUx593xgRMVs66g8YIw198YBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BD+mT6J2Ik+Y0Kwl+vZF0jxv4nV4CHv8LH/xRLBlaJQwcZk21SZUZZq1ntV8w53pqFK2Jhut1ZJIEO1+yE/OqQ93H8wX8FygQQnbYd5vYj9JJh89GX+Sto19VN46K2BTtuq4iH5Lj3X2T14YgDT9l5MVh/WXMkbCYNYDJHE/EdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MN03jAJ6; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725545711; x=1757081711;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VfkiF78s61HLrfjc1XjUx593xgRMVs66g8YIw198YBU=;
-  b=MN03jAJ6sV5cOE6pfjgmSFnzRc3ybdWiTfwMgCz+a0yXMEhhFxcdS0BO
-   HN1b+5xzyNts+GhW1qVDA6xtA+8xVcZ3MzfTVg0m2RSj+XKh3lLxhVD4H
-   4G7BU0rpdKvgd3g0Fdv6KqMuuru/x0kue4GYfY6DgBlswAwR32P4OcS/9
-   4Jj9h8ahlDlUuTE34Y40X6YsFVfdtaBVkIJr4KUc/qfJjJUIeQUlzMseZ
-   sNeDSuB4dLHX/vl4mRqjmoZUBoEJNGT2bcCDes4rlOqb3Fu2Qu9Nll851
-   toobBIG0mqU/svSIubeYatc38DHuUV3sc/zAxR/h1SAmkehwF8jfYbEw4
-   g==;
-X-CSE-ConnectionGUID: 8ofElff8Rza2DYAjxj50fQ==
-X-CSE-MsgGUID: 8boVKjigRJmn7760x5tXZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35649654"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="35649654"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:15:09 -0700
-X-CSE-ConnectionGUID: TkcWMN9ZT6S1utG77k8V3g==
-X-CSE-MsgGUID: dKVnBy2DQ4ikjBXiO1a9TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="70553810"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:15:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smDGH-00000005Q26-3ZNs;
-	Thu, 05 Sep 2024 17:15:01 +0300
-Date: Thu, 5 Sep 2024 17:15:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
-Message-ID: <Ztm85Y_mo5-OJveq@smile.fi.intel.com>
-References: <20240905134719.142554-1-john.ogness@linutronix.de>
- <20240905134719.142554-2-john.ogness@linutronix.de>
+	s=arc-20240116; t=1725546095; c=relaxed/simple;
+	bh=DXyaYUEdp9Wc5HqoVQv8h4Xdqi2x4QC9WP7/RCMuanY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oU2i2+feEojsZgVnLw3U4/bG3qAEC3Yg25sMudCwbOCYpYN9ys3E23N5QCLejBJgkaSXezpF56HxHqnCPynSpwhhSanIo0ppDovMEo+hyP3I8nPoRYfYE28Vqw27cOJUzTi1rWYJqDjex1m6cHbtwWlY+JdetJ6Xt9ba3Xn7auI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WlNkXtMW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48597n0o023730;
+	Thu, 5 Sep 2024 14:15:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PqmjsGtsdH0pPKX2Ec8nWXjou6CnajA32b/jszhvD/A=; b=WlNkXtMWL4A/p4gj
+	eimNBRrtTjZB9Z3WhjPtgq1cOmqEOBOy9PFERhTZm8vBWYo+/y1qbK/qlITSK7AP
+	1MbuDlf18GTjDMQCXuHnyhpELUbgX4LdZr7qIjTb/U2ztsyGxTLPdG+Pn4ldtncz
+	Kjw8NQwKzDlnrwdht/A+gvm85rLbq35s2CTkyrnMMpPB/9Gj8/+Nm3i9vBMLH3Dd
+	XKrZJ+X9mYfuO5svrt9X3UFhMqef5HPpXpOQ+FEUd1cQc3gagvjfUAqANWUPwNdN
+	xc5aJx0QKGkJJe1JmhdkYbgHyUH5sAT9KqFIm/iYS+hJk2KpBry/loFskPu/NKjW
+	h6/sAw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41f86ks3da-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 14:15:53 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485EFq25019533
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 14:15:52 GMT
+Received: from [10.110.102.234] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 07:15:48 -0700
+Message-ID: <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
+Date: Thu, 5 Sep 2024 07:15:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905134719.142554-2-john.ogness@linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Thu, Sep 05, 2024 at 03:53:18PM +0206, John Ogness wrote:
-> Implement the necessary callbacks to switch the 8250 console driver
-> to perform as an nbcon console.
-> 
-> Add implementations for the nbcon console callbacks (write_atomic,
-> write_thread, device_lock, device_unlock) and add CON_NBCON to the
-> initial flags.
-> 
-> The legacy code is kept in order to easily switch back to legacy mode
-> by defining USE_SERIAL_8250_LEGACY_CONSOLE.
-
-...
-
->  static struct console univ8250_console = {
->  	.name		= "ttyS",
-> +#ifdef USE_SERIAL_8250_LEGACY_CONSOLE
-
-Can it be done at run-time (theoretically or even practically)?
-(Note that we have already knob to disable / enable consoles.)
-
->  	.write		= univ8250_console_write,
-> +	.flags		= CON_PRINTBUFFER | CON_ANYTIME,
-> +#else
-> +	.write_atomic	= univ8250_console_write_atomic,
-> +	.write_thread	= univ8250_console_write_thread,
-> +	.device_lock	= univ8250_console_device_lock,
-> +	.device_unlock	= univ8250_console_device_unlock,
-> +	.flags		= CON_PRINTBUFFER | CON_ANYTIME | CON_NBCON,
-> +#endif
->  	.device		= uart_console_device,
->  	.setup		= univ8250_console_setup,
->  	.exit		= univ8250_console_exit,
->  	.match		= univ8250_console_match,
-> -	.flags		= CON_PRINTBUFFER | CON_ANYTIME,
->  	.index		= -1,
->  	.data		= &serial8250_reg,
->  };
-
-I would arrange this slightly differently, but not a big deal.
-
-static struct console univ8250_console = {
-	.name		= "ttyS",
-	.device		= uart_console_device,
-#ifndef USE_SERIAL_8250_LEGACY_CONSOLE
-	.flags		= CON_PRINTBUFFER | CON_ANYTIME | CON_NBCON,
-	.write_atomic	= univ8250_console_write_atomic,
-	.write_thread	= univ8250_console_write_thread,
-	.device_lock	= univ8250_console_device_lock,
-	.device_unlock	= univ8250_console_device_unlock,
-#else
-	.flags		= CON_PRINTBUFFER | CON_ANYTIME,
-	.write		= univ8250_console_write,
-#endif
-	.setup		= univ8250_console_setup,
-	.exit		= univ8250_console_exit,
-	.match		= univ8250_console_match,
-	.index		= -1,
-	.data		= &serial8250_reg,
-};
-
-...
-
-> +	if (nbcon_exit_unsafe(wctxt)) {
-> +		int len = READ_ONCE(wctxt->len);
-
-> +		int i;
-
-unsigned ?
-
-> +		/*
-> +		 * Write out the message. Toggle unsafe for each byte in order
-> +		 * to give another (higher priority) context the opportunity
-> +		 * for a friendly takeover. If such a takeover occurs, this
-> +		 * must abort writing since wctxt->outbuf and wctxt->len are
-> +		 * no longer valid.
-> +		 */
-> +		for (i = 0; i < len; i++) {
-> +			if (!nbcon_enter_unsafe(wctxt))
-> +				break;
-> +
-> +			uart_console_write(port, wctxt->outbuf + i, 1, serial8250_console_putchar);
-> +
-> +			if (!nbcon_exit_unsafe(wctxt))
-> +				break;
-> +		}
-> +	}
-
-...
-
-> +	/* Finally, wait for transmitter to become empty and restore IER. */
-> +	wait_for_xmitr(up, UART_LSR_BOTH_EMPTY);
-> +	if (em485) {
-> +		mdelay(port->rs485.delay_rts_after_send);
-> +		if (em485->tx_stopped)
-> +			up->rs485_stop_tx(up);
-> +	}
-> +	serial_port_out(port, UART_IER, ier);
-> +
-> +	/*
-> +	 * The receive handling will happen properly because the receive ready
-> +	 * bit will still be set; it is not cleared on read.  However, modem
-> +	 * control will not, we must call it if we have saved something in the
-> +	 * saved flags while processing with interrupts off.
-> +	 */
-> +	if (up->msr_saved_flags)
-> +		serial8250_modem_status(up);
-
-(1)
-
-...
-
-> +	/* Atomic console not supported for rs485 mode. */
-
-RS485
-
-...
-
-> +	/*
-> +	 * First save IER then disable the interrupts. The special variant to
-> +	 * clear IER is used because atomic printing may occur without holding
-> +	 * the port lock.
-> +	 */
-> +	ier = serial_port_in(port, UART_IER);
-> +	__serial8250_clear_IER(up);
-> +
-> +	/* Check scratch reg if port powered off during system sleep. */
-> +	if (up->canary && (up->canary != serial_port_in(port, UART_SCR))) {
-> +		serial8250_console_restore(up);
-> +		up->canary = 0;
-> +	}
-> +
-> +	if (up->console_newline_needed)
-> +		uart_console_write(port, "\n", 1, serial8250_console_putchar);
-> +	uart_console_write(port, wctxt->outbuf, wctxt->len, serial8250_console_putchar);
-> +
-> +	/* Finally, wait for transmitter to become empty and restore IER. */
-> +	wait_for_xmitr(up, UART_LSR_BOTH_EMPTY);
-> +	serial_port_out(port, UART_IER, ier);
-
-(2)
-
-Feels like parts (1) and (2) duplicates existing pieces of code. May it be
-refactored to minimize the duplication?
-
--- 
-With Best Regards,
-Andy Shevchenko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-17-quic_nkela@quicinc.com>
+ <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+ <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
+ <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
+ <516f17e6-b4b4-4f88-a39f-cc47a507716a@quicinc.com>
+ <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
+ <204f5cfe-d1ed-40dc-9175-d45f72395361@quicinc.com>
+ <70c75241-b6f1-4e61-8451-26839ec71317@kernel.org>
+ <75768451-4c85-41fa-82b0-8847a118ea0a@quicinc.com>
+ <ce4d6ea9-0ba7-4587-b4a7-3dcb2d6bb1a6@kernel.org>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <ce4d6ea9-0ba7-4587-b4a7-3dcb2d6bb1a6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mwTkK25Wdk3u_xGDqOaQj7Oc4I2DLIkL
+X-Proofpoint-ORIG-GUID: mwTkK25Wdk3u_xGDqOaQj7Oc4I2DLIkL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_09,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050106
 
 
+On 9/5/2024 7:09 AM, Krzysztof Kozlowski wrote:
+> On 05/09/2024 16:03, Nikunj Kela wrote:
+>> On 9/5/2024 1:04 AM, Krzysztof Kozlowski wrote:
+>>> On 04/09/2024 23:06, Nikunj Kela wrote:
+>>>> On 9/4/2024 9:58 AM, Andrew Lunn wrote:
+>>>>>> Sorry, didn't realize SPI uses different subject format than other
+>>>>>> subsystems. Will fix in v3. Thanks
+>>>>> Each subsystem is free to use its own form. e.g for netdev you will
+>>>>> want the prefix [PATCH net-next v42] net: stmmac: dwmac-qcom-ethqos:
+>>>> of course they are! No one is disputing that.
+>>>>> This is another reason why you should be splitting these patches per
+>>>>> subsystem, and submitting both the DT bindings and the code changes as
+>>>>> a two patch patchset. You can then learn how each subsystem names its
+>>>>> patches.
+>>>> Qualcomm QUPs chips have serial engines that can be configured as
+>>>> UART/I2C/SPI so QUPs changes require to be pushed in one series for all
+>>>> 3 subsystems as they all are dependent.
+>>> No, they are not dependent. They have never been. Look how all other
+>>> upstreaming process worked in the past.
+>> Top level QUP node(patch#18) includes i2c,spi,uart nodes.
+>> soc/qcom/qcom,geni-se.yaml validate those subnodes against respective
+>> yaml. The example that is added in YAML file for QUP node will not find
+>> sa8255p compatibles if all 4 yaml(qup, i2c, spi, serial nodes) are not
+>> included in the same series.
+>>
+> So where is the dependency? I don't see it. 
+
+Ok, what is your suggestion on dt-schema check failure in that case as I
+mentioned above? Shall we remove examples from yaml that we added?
+
+
+> Anyway, if you insist,
+> provide reasons why this should be the only one patchset - from all
+> SoCs, all companies, all developers - getting an exception from standard
+> merging practice and from explicit rule about driver change. See
+> submitting bindings.
+>
+> This was re-iterated over and over, but you keep claiming you need some
+> sort of special treatment. If so, please provide arguments WHY this
+> requires special treatment and *all* other contributions are fine with it.
+>
+> Best regards,
+> Krzysztof
+>
 
