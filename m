@@ -1,539 +1,164 @@
-Return-Path: <linux-kernel+bounces-317165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3517896DA47
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C34796DA52
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0401C22E14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:27:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EFDF1C23BA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0BA19D09F;
-	Thu,  5 Sep 2024 13:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857319D090;
+	Thu,  5 Sep 2024 13:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cJ315/7k"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="HPa/VX+6"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE24156250
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D129119D071;
+	Thu,  5 Sep 2024 13:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542850; cv=none; b=MLt5AWZThQK79AwD/6kebMiVtWJmVb0tLNJUfso+KbsHn29Kq3jZVzFWez8r47O7GhYUZxltTG2D5CN1Frpw9KGeYoOgvWRMpUKj8Kn5nhmLAB1HHgB/q3gPvmg0pRfCsxX4CSVi7fBkB8u08+bWE9CRL/ZgX95EuFHfOnu84RM=
+	t=1725542980; cv=none; b=pawE87ocdTRoQrJKFl9lZKfqSN+IbN+Lyq8iwWQmz4tLdLR2UbijSIOfGtLzbWkh1XTtN4bed1j6wFqzH00qCIJC5GP+orHdmgIoVXRYppx18EwQDobKao8Y3a9PRJiOgNEdA5c/VH+V8VVs7mraLVP6nEMaX2zAvUthboSIL7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542850; c=relaxed/simple;
-	bh=csTnGMoIt/SoncS59Z1+qmpiqE97IINAH4ZIz3oj2FM=;
+	s=arc-20240116; t=1725542980; c=relaxed/simple;
+	bh=nAJEZl5O5HMkGChBesBIUXkkrxjC8ZCN9hQwnaV/sIY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUYTlOjIJIpJBc9ZLbdWHWTN6mHbZzbeoPSecxW4pLKOnPf0zIx2XHlLGR3rW3WeiaKQYvxXqqIRnp9yEfUvYIsNAVOyciAn0hiZ3t0/M65ufda6yU1cytoutszC0Nf/1My36XPLeJogbGXUQkvUhU7qX6vffGhh3mG37lX7y5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cJ315/7k; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 575E960002;
-	Thu,  5 Sep 2024 13:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725542845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jnMk1wKMmsTYQGD6EneCCOjCUrAhvh/AC4nFwpQ1iO4=;
-	b=cJ315/7k0E7t9J569fkKl972V5Qh7lV2bygECHl5X0Rl2Ro/OGY3l6S58o5XXnN3S8QpZK
-	0r5GHdA/QXIhYQh8w78SnbXNSb0V4IRa/BZWfEQsbGhsW8XemhuUbrjzPbqu6O6eI+frs9
-	sXZeqQFGdn14apeMUf7dlJV/nbnDwVSwbnYPpqXbGM35Gq0IzIAT20WlHSm+FNV8ewV4Nh
-	7czJrpQHjIMz93YhLPsgpiTFLK6WTbgplxXmDAKWDLtKGShi/78lMRo8wGh9hjpsf2ASgo
-	munaGSKREBMM+p2wHyewAR3PCbqDpBOfbFsGQ/5va9oqCRI2PTbi9TtKc+66mg==
-Date: Thu, 5 Sep 2024 15:27:20 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-Cc: airlied@gmail.com, arthurgrillo@riseup.net, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
-	jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
-	marcheu@google.com, melissa.srw@gmail.com,
-	miquel.raynal@bootlin.com, mripard@kernel.org,
-	nicolejadeyee@google.com, rodrigosiqueiramelo@gmail.com,
-	seanpaul@google.com, thomas.petazzoni@bootlin.com,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v3] drm/vkms: Add documentation
-Message-ID: <ZtmxuPg1U3dOCWXg@louis-chauvet-laptop>
-Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
-	airlied@gmail.com, arthurgrillo@riseup.net, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
-	jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
-	marcheu@google.com, melissa.srw@gmail.com,
-	miquel.raynal@bootlin.com, mripard@kernel.org,
-	nicolejadeyee@google.com, rodrigosiqueiramelo@gmail.com,
-	seanpaul@google.com, thomas.petazzoni@bootlin.com,
-	tzimmermann@suse.de
-References: <20240829-google-clarifications-v3-1-f6604e2f6297@bootlin.com>
- <20240905123319.3035-1-jose.exposito89@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZ4ZUI8V2naYcch0104d2kaxOhByytdw+LenwPGSoMBItmKQ/gW7b5LD3yBgmQXZCIvq2jFl7ZVqA4dbqjH/RxGLuszfN7DWH243AoLo9vuW8+N1XAOpaKSEAK+dzGqbbjGd3ltG5/kZeK3sDALRh9fPw4IcnqeErOxjvtAJlgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=HPa/VX+6; arc=none smtp.client-ip=212.227.126.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1725542931; x=1726147731; i=christian@heusel.eu;
+	bh=ltEfOBgyjmfFU+sjw4qaKjqJ7Vpk4OnL6zQfxu27USI=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HPa/VX+6kD8FvWLNjz/73BBZbqiQe20s0K5ZxnwuF1aNb8mZyTZKB3Zoidu+EjXo
+	 0VZBTWShDHxoiBbLWx2A7g5R/QJFtdywh6IQmGZgU3T4hMmeyubjqgHsH8Ts1xvcn
+	 XNTnR1Q7emYm9b89dZIEzxKezE+02S58eBmArKF0HSy3oASiHol9Cn5Ls5K2+mpBg
+	 Sm18nyWWpOOcB7pln/56AE9hO3ePx425Ddy3b66Vhjk7l+WUCUKQCCOnLpZQOY9qh
+	 z6t9e/+xxQvGfeMw44xXFanXJbsOZYTQuGc+RRVrV/kqHG+NOnkG3euTj/ZFI4iPW
+	 GscnkMYKcCU79U0swg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([93.196.138.43]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MlNgz-1sKGr946yj-00f0Eb; Thu, 05 Sep 2024 15:28:51 +0200
+Date: Thu, 5 Sep 2024 15:28:47 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Rob <rob@durendal.co.uk>, Borislav Petkov <bp@alien8.de>, 
+	regressions@lists.linux.dev, x86@kernel.org, Joerg Roedel <joro@8bytes.org>, 
+	Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Paul Menzel <pmenzel@molgen.mpg.de>, Lyude Paul <lyude@redhat.com>
+Subject: Re: [PATCH] x86/apic: Remove logical destination mode for 64-bit
+Message-ID: <d9cbe524-ad83-4c48-b6f4-3376ff3172d4@heusel.eu>
+References: <87a5i4whoz.ffs@tglx>
+ <ZqQSmw51ihns03ob@vendhya2>
+ <ZqQl79UhhSQ5IobX@vendhya2>
+ <8734nvuvrs.ffs@tglx>
+ <ZqTufKvJKvotC-o_@vendhya2>
+ <87cymyua9j.ffs@tglx>
+ <877cd5u671.ffs@tglx>
+ <ZqZ3Kp2NVctgstxs@vendhya2>
+ <c7b68723-6ecb-42be-a9f8-14d64c696283@heusel.eu>
+ <87jzgpubxj.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bfqpdzedzbu2pe7h"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240905123319.3035-1-jose.exposito89@gmail.com>
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <87jzgpubxj.ffs@tglx>
+X-Provags-ID: V03:K1:jo84XfmlfhbhtUDby/o7e8Otrjh/iw2fuZCImL0pcrvoM9Kt8KQ
+ PrblHavKOARyEUFGQYtRg3U9XuRELba933ipz1uU4vh8QoMg7HhWrtiLtv4GsFQttMUtL9V
+ uPa808RVxJJ/xvrful2NZWBlFZeEiCUee6PAH7J6EPXJnUNSHzP4xhg4DETsR/1Fmecsd7u
+ odqmJGeYNUzjy/Kjmy3EQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LzV54rweJ6Q=;qLjdUFVmjk16SpszX5FVB6MoFLM
+ XY7mwW2TBndiZWuTUg1t7GscOvcXYLswTmCf/tY/mDEa9VllkGXoMgE9H+JY+lMgYxOapOGuf
+ nwt/bsOAwL5KmV7r08po0Be4d4jUKosSXp9ifL6C9/rTAW/iqUL00aIU13cby34m7XMaIayhN
+ gF47sA837AnIfFa8goxhFdICjO2RInWyBuMUCWuzge//haMZVRWF5EhpJP43Y1RGB0XzZOZua
+ Q3OEJZ5E0JE8/ePGjFpwVxmWGVrSmtwoh24U3KpMFQnsMIFNh3p5mtOkRkldZwFeNX9/XHOqA
+ AmHJDleBL+guNYvHAnAXNAGZIMQgdzjav3It8LCpMrS+t/IDkYXIIwSnMJDhvs6IxAb4KL0L+
+ ughLTMcea+UZDtVXZ7snJNuPOnBfM78V7xT4SpY15K6S+OSNh//Kx8vxo8/vgxEcamJwkjk5r
+ Zuw1iUKaOpW4T3yr14E40BhpyAF0DLWJx0vryeh5qU4tiN7yfrD3yCyW9faspjG1z6CikO4us
+ E28mXrIpaHj6Fo4Xp4QlJ8/8KsSt4DAUDP4PdGlHIVMQwWC1v7Rc+nncwBw3hLHzgl8oFw6Ku
+ FY/lH+S5kwEpngt1G080FdNdrQQZ6uQwZikfFrAiLNWsL4K4JDig4VhEURYCcnFHgf0Pdq30r
+ GtHo9pZGyvRGH1kw7+EXcvmOB3/u8hQSRfoietNZ3GCsOF9oEI/XOpS9eGKZ8V4BaMSUinc1R
+ kwG9yuXc31WKuJ6KKpoR+hMKnXc4Np6GQ==
 
-Le 05/09/24 - 14:33, José Expósito a écrit :
-> Hi Louis,
-> 
-> Thanks for appling the suggested changes.
-> 
-> I added some minor style comments, but other than that patch looks
-> good to me.
-> 
-> > Add documentation around vkms_output and its initialization.
-> > Add some documentation on pixel conversion functions.
-> > Update of outdated comments for pixel_write functions.
-> > 
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> 
-> With the suggested changes, feel free to add:
-> Reviewed-by: José Expósito <jose.exposito89@gmail.com>
 
-Thanks, the v4 is in your inbox!
- 
-> > ---
-> > This series does not introduce functionnal changes, only some
-> > documentation and renaming to clarify the code.
-> > ---
-> > Changes in v3:
-> > - Merged https://lore.kernel.org/all/20240802-yuv-v9-3-08a706669e16@bootlin.com/
-> >   as it also add documentation
-> > - Apply José's comments, sorry
-> > - Replace =1 by =BIT(0) for possible_crtc value
-> > - Link to v2: https://lore.kernel.org/r/20240826-google-clarifications-v2-1-2574655b0b91@bootlin.com
-> > 
-> > Changes in v2:
-> > - Dropped already applied patches
-> > - Dropped useless patch as its content is deleted later
-> > - Remove dependency on previous series
-> > - Apply Maíra's comments
-> > - Link to v1: https://lore.kernel.org/r/20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com
-> > ---
-> >  drivers/gpu/drm/vkms/vkms_composer.c |   7 +++
-> >  drivers/gpu/drm/vkms/vkms_drv.h      | 101 ++++++++++++++++++++++++++++++-----
-> >  drivers/gpu/drm/vkms/vkms_formats.c  |  62 +++++++++++++++++----
-> >  drivers/gpu/drm/vkms/vkms_output.c   |  14 ++++-
-> >  4 files changed, 161 insertions(+), 23 deletions(-)
-> > 
-> > 
-> > ---
-> > base-commit: 84addde447fd9d713e101437db0d4924855eff4f
-> > change-id: 20240520-google-clarifications-dede8dcbe38a
-> > 
-> > Best regards,
-> > 
-> > diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> > index e7441b227b3c..57a5769fc994 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> > @@ -189,6 +189,13 @@ static void blend(struct vkms_writeback_job *wb,
-> >  
-> >  	size_t crtc_y_limit = crtc_state->base.crtc->mode.vdisplay;
-> >  
-> > +	/*
-> > +	 * The planes are composed line-by-line to avoid heavy memory usage. It is a necessary
-> > +	 * complexity to avoid poor blending performance.
-> > +	 *
-> > +	 * The function vkms_compose_row() is used to read a line, pixel-by-pixel, into the staging
-> > +	 * buffer.
-> > +	 */
-> >  	for (size_t y = 0; y < crtc_y_limit; y++) {
-> >  		fill_background(&background_color, output_buffer);
-> >  
-> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> > index 5e46ea5b96dc..12a11976f2fc 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > @@ -25,6 +25,17 @@
-> >  
-> >  #define VKMS_LUT_SIZE 256
-> >  
-> > +/**
-> > + * struct vkms_frame_info - Structure to store the state of a frame
-> > + *
-> > + * @fb: backing drm framebuffer
-> > + * @src: source rectangle of this frame in the source framebuffer, stored in 16.16 fixed-point form
-> > + * @dst: destination rectangle in the crtc buffer, stored in whole pixel units
-> > + * @map: see drm_shadow_plane_state@data
-> 
-> I think that the right format is "@drm_shadow_plane_state.data"?
-> https://docs.kernel.org/doc-guide/kernel-doc.html#nested-structs-unions
-> 
-> > + * @rotation: rotation applied to the source.
-> > + *
-> > + * @src and @dst should have the same size modulo the rotation.
-> > + */
-> >  struct vkms_frame_info {
-> >  	struct drm_framebuffer *fb;
-> >  	struct drm_rect src, dst;
-> > @@ -52,9 +63,11 @@ struct vkms_writeback_job {
-> >  };
-> >  
-> >  /**
-> > - * vkms_plane_state - Driver specific plane state
-> > + * struct vkms_plane_state - Driver specific plane state
-> >   * @base: base plane state
-> >   * @frame_info: data required for composing computation
-> > + * @pixel_read: function to read a pixel in this plane. The creator of a struct vkms_plane_state
-> > + *	        must ensure that this pointer is valid
-> >   */
-> >  struct vkms_plane_state {
-> >  	struct drm_shadow_plane_state base;
-> > @@ -73,29 +86,56 @@ struct vkms_color_lut {
-> >  };
-> >  
-> >  /**
-> > - * vkms_crtc_state - Driver specific CRTC state
-> > + * struct vkms_crtc_state - Driver specific CRTC state
-> > + *
-> >   * @base: base CRTC state
-> >   * @composer_work: work struct to compose and add CRC entries
-> > - * @n_frame_start: start frame number for computed CRC
-> > - * @n_frame_end: end frame number for computed CRC
-> > + *
-> 
-> Sorry I missed this extra empty line in my previous review.
-> You can delete this extra "*".
-> 
-> > + * @num_active_planes: Number of active planes
-> > + * @active_planes: List containing all the active planes (counted by
-> > + *  @num_active_planes). They should be stored in z-order.
-> > + * @active_writeback: Current active writeback job
-> > + * @gamma_lut: Look up table for gamma used in this CRTC
-> > + * @crc_pending: Protected by @vkms_output.composer_lock, true when the frame CRC is not computed
-> > + *		 yet. Used by vblank to detect if the composer is too slow.
-> > + * @wb_pending: Protected by @vkms_output.composer_lock, true when a writeback frame is requested.
-> > + * @frame_start: Protected by @vkms_output.composer_lock, saves the frame number before the start
-> > + *		 of the composition process.
-> > + * @frame_end: Protected by @vkms_output.composer_lock, saves the last requested frame number.
-> > + *	       This is used to generate enough CRC entries when the composition worker is too slow.
-> >   */
-> >  struct vkms_crtc_state {
-> >  	struct drm_crtc_state base;
-> >  	struct work_struct composer_work;
-> >  
-> >  	int num_active_planes;
-> > -	/* stack of active planes for crc computation, should be in z order */
-> >  	struct vkms_plane_state **active_planes;
-> >  	struct vkms_writeback_job *active_writeback;
-> >  	struct vkms_color_lut gamma_lut;
-> >  
-> > -	/* below four are protected by vkms_output.composer_lock */
-> >  	bool crc_pending;
-> >  	bool wb_pending;
-> >  	u64 frame_start;
-> >  	u64 frame_end;
-> >  };
-> >  
-> > +/**
-> > + * struct vkms_output - Internal representation of all output components in VKMS
-> > + *
-> > + * @crtc: Base CRTC in DRM
-> > + * @encoder: DRM encoder used for this output
-> > + * @connector: DRM connector used for this output
-> > + * @wb_connecter: DRM writeback connector used for this output
-> > + * @vblank_hrtimer: Timer used to trigger the vblank
-> > + * @period_ns: vblank period, in nanoseconds, used to configure @vblank_hrtimer and to compute
-> > + *	       vblank timestamps
-> > + * @composer_workq: Ordered workqueue for @composer_state.composer_work.
-> > + * @lock: Lock used to protect concurrent access to the composer
-> > + * @composer_enabled: Protected by @lock, true when the VKMS composer is active (crc needed or
-> > + *		      writeback)
-> > + * @composer_state: Protected by @lock, current state of this VKMS output
-> > + * @composer_lock: Lock used internally to protect @composer_state members
-> > + */
-> >  struct vkms_output {
-> >  	struct drm_crtc crtc;
-> >  	struct drm_encoder encoder;
-> > @@ -103,28 +143,38 @@ struct vkms_output {
-> >  	struct drm_writeback_connector wb_connector;
-> >  	struct hrtimer vblank_hrtimer;
-> >  	ktime_t period_ns;
-> > -	/* ordered wq for composer_work */
-> >  	struct workqueue_struct *composer_workq;
-> > -	/* protects concurrent access to composer */
-> >  	spinlock_t lock;
-> >  
-> > -	/* protected by @lock */
-> >  	bool composer_enabled;
-> >  	struct vkms_crtc_state *composer_state;
-> >  
-> >  	spinlock_t composer_lock;
-> >  };
-> >  
-> > -struct vkms_device;
-> > -
-> > +/**
-> > + * struct vkms_config - General configuration for VKMS driver
-> > + *
-> > + * @writeback: If true, a writeback buffer can be attached to the CRTC
-> > + * @cursor: If true, a cursor plane is created in the VKMS device
-> > + * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
-> > + * @dev: Used to store the current VKMS device. Only set when the device is instantiated.
-> > + */
-> >  struct vkms_config {
-> >  	bool writeback;
-> >  	bool cursor;
-> >  	bool overlay;
-> > -	/* only set when instantiated */
-> >  	struct vkms_device *dev;
-> >  };
-> >  
-> > +/**
-> > + * struct vkms_device - Description of a VKMS device
-> > + *
-> > + * @drm - Base device in DRM
-> > + * @platform - Associated platform device
-> > + * @output - Configuration and sub-components of the VKMS device
-> > + * @config: Configuration used in this VKMS device
-> > + */
-> >  struct vkms_device {
-> >  	struct drm_device drm;
-> >  	struct platform_device *platform;
-> > @@ -132,6 +182,10 @@ struct vkms_device {
-> >  	const struct vkms_config *config;
-> >  };
-> >  
-> > +/*
-> > + * The following helpers are used to convert a member of a struct into its parent.
-> > + */
-> > +
-> >  #define drm_crtc_to_vkms_output(target) \
-> >  	container_of(target, struct vkms_output, crtc)
-> >  
-> > @@ -144,12 +198,33 @@ struct vkms_device {
-> >  #define to_vkms_plane_state(target)\
-> >  	container_of(target, struct vkms_plane_state, base.base)
-> >  
-> > -/* CRTC */
-> > +/**
-> > + * vkms_crtc_init() - Initialize a CRTC for VKMS
-> > + * @dev: DRM device associated with the VKMS buffer
-> > + * @crtc: uninitialized CRTC device
-> > + * @primary: primary plane to attach to the CRTC
-> > + * @cursor plane to attach to the CRTC
-> 
-> Missing ":" after "@cursor":
-> 
->  * @cursor: cursor plane to attach to the CRTC
-> 
-> > + */
-> >  int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-> >  		   struct drm_plane *primary, struct drm_plane *cursor);
-> >  
-> > +/**
-> > + * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
-> > + *
-> > + * @vkmsdev: VKMS device to initialize
-> > + * @index: CRTC which can be attached to the planes. The caller must ensure that
-> > + *	   @index is positive and less or equals to 31.
-> > + */
-> >  int vkms_output_init(struct vkms_device *vkmsdev, int index);
-> >  
-> > +/**
-> > + * vkms_plane_init() - Initialize a plane
-> > + *
-> > + * @vkmsdev: VKMS device containing the plane
-> > + * @type: type of plane to initialize
-> > + * @possible_crtc_index: CRTC which can be attached to the plane. The caller must ensure that
-> > + * possible_crtc_index is positive and less or equals to 31.
-> 
-> Should read:
-> 
->  * @index: CRTC which can be attached to the plane. The caller must ensure that
->  *	   @index is positive and less or equals to 31.
-> 
-> > + */
-> >  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> >  				   enum drm_plane_type type, int index);
-> >  
-> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> > index 040b7f113a3b..e8a5cc235ebb 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> > @@ -9,24 +9,40 @@
-> >  
-> >  #include "vkms_formats.h"
-> >  
-> > +/**
-> > + * pixel_offset() - Get the offset of the pixel at coordinates x/y in the first plane
-> > + *
-> > + * @frame_info: Buffer metadata
-> > + * @x: The x coordinate of the wanted pixel in the buffer
-> > + * @y: The y coordinate of the wanted pixel in the buffer
-> > + *
-> > + * The caller must ensure that the framebuffer associated with this request uses a pixel format
-> > + * where block_h == block_w == 1.
-> > + * If this requirement is not fulfilled, the resulting offset can point to an other pixel or
-> > + * outside of the buffer.
-> > + */
-> >  static size_t pixel_offset(const struct vkms_frame_info *frame_info, int x, int y)
-> >  {
-> >  	return frame_info->offset + (y * frame_info->pitch)
-> >  				  + (x * frame_info->cpp);
-> >  }
-> >  
-> > -/*
-> > - * packed_pixels_addr - Get the pointer to pixel of a given pair of coordinates
-> > +/**
-> > + * packed_pixels_addr() - Get the pointer to the block containing the pixel at the given
-> > + * coordinates
-> >   *
-> >   * @frame_info: Buffer metadata
-> > - * @x: The x(width) coordinate of the 2D buffer
-> > - * @y: The y(Heigth) coordinate of the 2D buffer
-> > + * @x: The x (width) coordinate inside the plane
-> > + * @y: The y (height) coordinate inside the plane
-> >   *
-> >   * Takes the information stored in the frame_info, a pair of coordinates, and
-> >   * returns the address of the first color channel.
-> >   * This function assumes the channels are packed together, i.e. a color channel
-> >   * comes immediately after another in the memory. And therefore, this function
-> >   * doesn't work for YUV with chroma subsampling (e.g. YUV420 and NV21).
-> > + *
-> > + * The caller must ensure that the framebuffer associated with this request uses a pixel format
-> > + * where block_h == block_w == 1, otherwise the returned pointer can be outside the buffer.
-> >   */
-> >  static void *packed_pixels_addr(const struct vkms_frame_info *frame_info,
-> >  				int x, int y)
-> > @@ -51,6 +67,13 @@ static int get_x_position(const struct vkms_frame_info *frame_info, int limit, i
-> >  	return x;
-> >  }
-> >  
-> > +/*
-> > + * The following functions take pixel data from the buffer and convert them to the format
-> > + * ARGB16161616 in @out_pixel.
-> > + *
-> > + * They are used in the vkms_compose_row() function to handle multiple formats.
-> > + */
-> > +
-> >  static void ARGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
-> >  {
-> >  	/*
-> > @@ -143,12 +166,11 @@ void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state
-> >  }
-> >  
-> >  /*
-> > - * The following  functions take an line of argb_u16 pixels from the
-> > - * src_buffer, convert them to a specific format, and store them in the
-> > - * destination.
-> > + * The following functions take one &struct pixel_argb_u16 and convert it to a specific format.
-> > + * The result is stored in @dst_pixels.
-> >   *
-> > - * They are used in the `compose_active_planes` to convert and store a line
-> > - * from the src_buffer to the writeback buffer.
-> > + * They are used in vkms_writeback_row() to convert and store a pixel from the src_buffer to
-> > + * the writeback buffer.
-> >   */
-> >  static void argb_u16_to_ARGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
-> >  {
-> > @@ -214,6 +236,14 @@ static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
-> >  	*pixels = cpu_to_le16(r << 11 | g << 5 | b);
-> >  }
-> >  
-> > +/**
-> > + * vkms_writeback_row() - Generic loop for all supported writeback format. It is executed just
-> > + * after the blending to write a line in the writeback buffer.
-> > + *
-> > + * @wb: Job where to insert the final image
-> > + * @src_buffer: Line to write
-> > + * @y: Row to write in the writeback buffer
-> > + */
-> >  void vkms_writeback_row(struct vkms_writeback_job *wb,
-> >  			const struct line_buffer *src_buffer, int y)
-> >  {
-> > @@ -227,6 +257,13 @@ void vkms_writeback_row(struct vkms_writeback_job *wb,
-> >  		wb->pixel_write(dst_pixels, &in_pixels[x]);
-> >  }
-> >  
-> > +/**
-> > + * get_pixel_conversion_function() - Retrieve the correct read_pixel function for a specific
-> > + * format. The returned pointer is NULL for unsupported pixel formats. The caller must ensure that
-> > + * the pointer is valid before using it in a vkms_plane_state.
-> > + *
-> > + * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
-> > + */
-> >  void *get_pixel_conversion_function(u32 format)
-> >  {
-> >  	switch (format) {
-> > @@ -245,6 +282,13 @@ void *get_pixel_conversion_function(u32 format)
-> >  	}
-> >  }
-> >  
-> > +/**
-> > + * get_pixel_write_function() - Retrieve the correct write_pixel function for a specific format.
-> > + * The returned pointer is NULL for unsupported pixel formats. The caller must ensure that the
-> > + * pointer is valid before using it in a vkms_writeback_job.
-> > + *
-> > + * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
-> > + */
-> >  void *get_pixel_write_function(u32 format)
-> >  {
-> >  	switch (format) {
-> > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> > index 5ce70dd946aa..56801e914208 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_output.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> > @@ -21,6 +21,7 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
-> >  {
-> >  	int count;
-> >  
-> > +	/* Use the default modes list from DRM */
-> >  	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
-> >  	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
-> >  
-> > @@ -58,6 +59,12 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> >  	int writeback;
-> >  	unsigned int n;
-> >  
-> > +	/*
-> > +	 * Initialize used plane. One primary plane is required to perform the composition.
-> > +	 *
-> > +	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
-> > +	 * composition.
-> > +	 */
-> >  	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
-> >  	if (IS_ERR(primary))
-> >  		return PTR_ERR(primary);
-> > @@ -76,6 +83,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> >  			return PTR_ERR(cursor);
-> >  	}
-> >  
-> > +	/* [1]: Allocation of a CRTC, its index will be 1 */
-> 
-> It'd be great to clarify that BIT(0) == 1. Maybe?
-> 
->   /* [1]: Allocation of a CRTC, its index will be BIT(0) = 1 */
+--bfqpdzedzbu2pe7h
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Good catch, thanks!
+On 24/08/09 02:18PM, Thomas Gleixner wrote:
+> On Fri, Aug 09 2024 at 11:37, Christian Heusel wrote:
+> > On 24/07/28 05:51PM, Rob wrote:
+> >> * Thomas Gleixner (tglx@linutronix.de) wrote:
+> >> > As the number of CPUs keeps increasing, logical destination mode bec=
+omes a
+> >> > less used code path so there is no real good reason to keep it aroun=
+d.
+> >> >=20
+> >> > Therefore remove logical destination mode support for 64-bit and def=
+ault to
+> >> > physical destination mode.
+> >>=20
+> >> Thanks Chris for applying the patch for me.
+> >>=20
+> >> Thomas - The patched kernel boots successfully.  I held off updating t=
+he
+> >> BIOS so there can be no ambiguity.
+> >>=20
+> >> Thanks,
+> >>=20
+> >> Rob
+> >
+> > As far as I can tell this patch did not get applied anywhere so far,
+> > right? Or did I miss anything?
+>=20
+> I forgot about it. Let me find it again and stick it into the tip tree.
 
-> >  	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
-> >  	if (ret)
-> >  		return ret;
-> > @@ -95,7 +103,11 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> >  		DRM_ERROR("Failed to init encoder\n");
-> >  		goto err_encoder;
-> >  	}
-> > -	encoder->possible_crtcs = 1;
-> > +	/*
-> > +	 * This is a hardcoded value to select crtc for the encoder.
-> > +	 * 1 here designate the first registered CRTC, the one allocated in [1]
-> 
-> BIT(0) here designate the first...
-> 
-> > +	 */
-> > +	encoder->possible_crtcs = BIT(0);
-> >  
-> >  	ret = drm_connector_attach_encoder(connector, encoder);
-> >  	if (ret) {
+I think the patch did not make it past the tip tree after that if I
+checked correctly.
+
+Now since it's summer people are maybe on vacation and I hope it got
+stuck there because of cocktails on the beach and so on =F0=9F=98=86=F0=9F=
+=8D=B9
+
+In any case I wanted to send a reminder about it ..
+
+Cheers,
+Chris
+
+--bfqpdzedzbu2pe7h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmbZsg8ACgkQwEfU8yi1
+JYXclg/+OIRJcNL46KOCd4XEnmkRWWby4BYwKDybZRvvJ/ZiVWx9O4fk94dyU5ul
+jwGDKM9pAparUHHpVrhewXX6W3fJH8sJI0ahRDVxZCNZ2v6p3zyqRdu7MdI3O1XN
+hPucXItzNQCEaXqDZRfxkskf+4qHG/I46CVx+wn1exh/OQ+OsRO0vJZV7suxJSRy
+7GIk0rBKHV5wLhDMYAdM2Yhp2EO7249HwbVmfkJI+pW8jE7CIrSrdN60aJPHJjij
+IxIY5r1n1WqLDTHckLlvRk0xUIkeZVrSRLvzif9JmUz2E5b8jbcbPr6VUPBgM2z8
+8foVPh5NiDXrOhaqjcsEY4rBFNvG07xMXFgvknGx5yh22HaG/hDAm3qTRnvcaYTw
+yHnLS48hZVdcw7B16K3HfF/w4vRVj2IL200o2snmdtIPURKHrnhos/3LYocg3WeV
+Z34Phf9HTJH9JrIOsn5HvnTnzoxflkh+rxlF+L4avGSLzQ1Ph+nSdFLzfDDji1Gv
+JKKKSPxDovXpSiP27Ru5UnzOiXIoF6uBiSmKilbEk/AcJIFIcG7AagAujFiGNgSZ
+P8N0JUnSDm8/tB6vb/gs7l05NCg7WzAumE8b4opw+Cqip4Oau+EdLMhDXCDBl+bh
+Dk5JzoSJu2/RHJcllczc58QbY0eH9hnncffy5WvCCm3/Izd1L+0=
+=Qoy9
+-----END PGP SIGNATURE-----
+
+--bfqpdzedzbu2pe7h--
 
