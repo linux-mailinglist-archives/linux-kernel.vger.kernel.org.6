@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-317270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFD396DBBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA0D96DBF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEB6C1C20E8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:26:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAFA1C212A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED7F1D551;
-	Thu,  5 Sep 2024 14:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7241A1B977;
+	Thu,  5 Sep 2024 14:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT2emT1x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="zQvz90zW"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ECC1DFD8;
-	Thu,  5 Sep 2024 14:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF56817C69;
+	Thu,  5 Sep 2024 14:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725546381; cv=none; b=OxeR/AN4jrDa4FyPKnQymtABBj8SO/EzEt5fH7j39DgbJkBizRxSFGETDtmTszgATri4q1dy2DRV2sHdziEET7fnLlqiI1dbV0TQB5jlRgOCztk9aLzVhkpAGfyT+oE/Q91jxhb3V8get/kmu1w6XVB1toZmxjDvdIEkAHW656E=
+	t=1725547021; cv=none; b=MEwRyQTeygDblTCk394DooOKNNZw+lAI+0JL+bLwAeCsSG5ITvXD/46B4CUN+7C8/dNuX7QH4dI7KSWI4kP7NP99VFLEFRHr3CiD5lUIcD/eyzIUfdyd1bCCYkHcP+b6mJ6JWOS//B/roPmkC7rRK33qmFcCpnFSL6eJ9Ua3ShQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725546381; c=relaxed/simple;
-	bh=cjIK4MXp2ychqW40KbQPt1aZ9lUypAyZZyXEdWDht28=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=lUMVsU2cp+rGqBVCYhI+hM4lYFYk7uWW8/X6r2jcf6EeiP/2JCfL5Ncz0M6HTcO10rfFRop2DLjm51NmrwocwjVTo83q9IhvEw/hYF7lYSc9klYJLw2DBqBm3BKXCpOCVy5arIhZPYoBS2d5wZ+y4wU4qqrN2A7dxQHELhT0rk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT2emT1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1696C4CEC5;
-	Thu,  5 Sep 2024 14:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725546381;
-	bh=cjIK4MXp2ychqW40KbQPt1aZ9lUypAyZZyXEdWDht28=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=LT2emT1xvJ0FhLoGFLsWTR30Nr7s1gp/0JQHuJd0rqQXSTFLN26dVSci4YQmtqkb1
-	 0T2VWkl0bW555WoLgXDkL4er5ehSlUK1+UI1hg0uRT1SmDv7C11kKwOAdyAgiH0dEO
-	 SzeTyo0+tkxhWzyrcivLgoCMXT4It1F7Dv0DZg3tNzAYtXFEa8DWdpawrCDO+QAmJe
-	 quT1X04TnwiNcVXjUoocSEg0OlBOljNnXW+TLcBISeQjCvKuXPZNEf+BvEx+6DteNJ
-	 O78VDKO7XTonkh2xFA5tI29414mpqNTfzf34YKE+wt2bNUIWphHdTh1LmzrNgWuPnV
-	 P2/IZZ/yopH1Q==
+	s=arc-20240116; t=1725547021; c=relaxed/simple;
+	bh=3jMXTiNdWHZiQ7dXI7nYaFZUC0owo1rFk1Gy77YaZK0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ZE7KpGIFKTIdqM28GKSoa4juBAnV+BBbkUKmPlOGN2gyMOZ7uxz5p1g7MeeOWGXQBY4//EU9ZQGJN1Gv9jSB4fxH1nYNduFl+qJUEwuf9LlV8T8evLzgctLk5/TtWgLdDK77OXEPIE8v0VY3+r4045A+v/BVt2WGDJ2H4i4Gfrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=zQvz90zW; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1725546412; bh=3jMXTiNdWHZiQ7dXI7nYaFZUC0owo1rFk1Gy77YaZK0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References;
+	b=zQvz90zWQ8dwrhEe4N+FvPh/rADHV9771Wz97P2S6JCub0LzV62lWnBkLIkoxdbnn
+	 EHJfVcZtpoSh4mVQjZvOerP4DVoVjTaoqRkCpyODbi7UJvM//y2AkTp/NKKvwcWDr2
+	 9hcdUdv67/HEKV2p66CL/oBHKNf5o/lraNm8A3dE=
+Date: Thu, 05 Sep 2024 16:26:49 +0200
+From: Luca Weiss <luca@lucaweiss.eu>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Fabien Parent <fabien.parent@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_arm64=3A_dts=3A_qcom=3A_msm89?=
+ =?US-ASCII?Q?39=3A_revert_use_of_APCS_mbox_for_RPM?=
+In-Reply-To: <2a15105f-67e2-42f6-b624-562485b0bee2@kernel.org>
+References: <20240904-msm8939-rpm-apcs-fix-v1-1-b608e7e48fe1@linaro.org> <2a15105f-67e2-42f6-b624-562485b0bee2@kernel.org>
+Message-ID: <46D2A6F9-B524-47A3-A61E-5DA910F3A957@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 05 Sep 2024 17:26:17 +0300
-Message-Id: <D3YF52E4EVJ0.2ZJSCR5FCVIGX@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <mpe@ellerman.id.au>,
- <naveen.n.rao@linux.ibm.com>, <zohar@linux.ibm.com>,
- <stable@vger.kernel.org>, "kernel test robot" <lkp@intel.com>, "Mingcong
- Bai" <jeffbai@aosc.io>
-Subject: Re: [PATCH v2 RESEND] tpm: export tpm2_sessions_init() to fix
- ibmvtpm building
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Kexy Biscuit" <kexybiscuit@aosc.io>, <stefanb@linux.ibm.com>,
- <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-X-Mailer: aerc 0.18.2
-References: <20240905085219.77240-2-kexybiscuit@aosc.io>
-In-Reply-To: <20240905085219.77240-2-kexybiscuit@aosc.io>
 
-On Thu Sep 5, 2024 at 11:52 AM EEST, Kexy Biscuit wrote:
-> Commit 08d08e2e9f0a ("tpm: ibmvtpm: Call tpm2_sessions_init() to
-> initialize session support") adds call to tpm2_sessions_init() in ibmvtpm=
-,
-> which could be built as a module. However, tpm2_sessions_init() wasn't
-> exported, causing libmvtpm to fail to build as a module:
->
-> ERROR: modpost: "tpm2_sessions_init" [drivers/char/tpm/tpm_ibmvtpm.ko] un=
-defined!
->
-> Export tpm2_sessions_init() to resolve the issue.
->
-> Cc: stable@vger.kernel.org # v6.10+
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202408051735.ZJkAPQ3b-lkp@i=
-ntel.com/
-> Fixes: 08d08e2e9f0a ("tpm: ibmvtpm: Call tpm2_sessions_init() to initiali=
-ze session support")
-> Signed-off-by: Kexy Biscuit <kexybiscuit@aosc.io>
-> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
-> ---
-> V1 -> V2: Added Fixes tag and fixed email format
-> RESEND: The previous email was sent directly to stable-rc review
->
->  drivers/char/tpm/tpm2-sessions.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-ses=
-sions.c
-> index d3521aadd43e..44f60730cff4 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -1362,4 +1362,5 @@ int tpm2_sessions_init(struct tpm_chip *chip)
-> =20
->  	return rc;
->  }
-> +EXPORT_SYMBOL(tpm2_sessions_init);
->  #endif /* CONFIG_TCG_TPM2_HMAC */
+FWIW msm8226 has a similar problem but there it is enough to provide <&xo_b=
+oard> instead of the equivalent &rpmcc reference to gcc, which is what was =
+done in a recent patch for msm8226=2Edtsi=2E
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+But in the end clk and mailbox drivers should probably be split so that th=
+is dependency cycle can be broken=2E But I haven't looked into this further=
+ yet=2E
 
-BR, Jarkko
+Regards
+Luca
+
+Konrad Dybcio <konradybcio@kernel=2Eorg> schreef op 5 september 2024 14:38=
+:53 CEST:
+>On 4=2E09=2E2024 8:26 PM, Fabien Parent wrote:
+>> Commit 22e4e43484c4 ("arm64: dts: qcom: msm8939: Use mboxes
+>> properties for APCS") broke the boot on msm8939 platforms=2E
+>>=20
+>> The issue comes from the SMD driver failing to request the mbox
+>> channel because of circular dependencies:
+>> 	1=2E rpm -> apcs1_mbox -> rpmcc (RPM_SMD_XO_CLK_SRC) -> rpm=2E
+>> 	2=2E rpm -> apcs1_mbox -> gcc -> rpmcc (RPM_SMD_XO_CLK_SRC) -> rpm
+>> 	3=2E rpm -> apcs1_mbox -> apcs2 -> gcc -> rpmcc (RPM_SMD_XO_CLK_SRC) -=
+> rpm
+>>=20
+>> To fix this issue let's switch back to using the deprecated
+>> qcom,ipc property for the RPM node=2E
+>>=20
+>> Fixes: 22e4e43484c4 ("arm64: dts: qcom: msm8939: Use mboxes properties =
+for APCS")
+>> Signed-off-by: Fabien Parent <fabien=2Eparent@linaro=2Eorg>
+>> ---
+>
+>This is fine as a stopgap solution, Bjorn can we push it in -fixes?
+>
+>This platform is admittedly not of top importance=2E=2E but fixing this
+>eventually would be nice
+>
+>#regzbot introduced: 22e4e43484c4
+>
+>Konrad
 
