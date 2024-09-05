@@ -1,149 +1,150 @@
-Return-Path: <linux-kernel+bounces-316929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B34296D72D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:32:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A6A96D732
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2626B1F245D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05C31F25B0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D889199FB4;
-	Thu,  5 Sep 2024 11:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59104199252;
+	Thu,  5 Sep 2024 11:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MH3Vu9Nk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="kw16o/JK"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8380019882C;
-	Thu,  5 Sep 2024 11:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40BF199934;
+	Thu,  5 Sep 2024 11:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725535928; cv=none; b=CfVINWhm6gENBgTVuQGoSSY47pQezbumSoJPrXVrCZFbrCRIXW0Sj4cqLGT29aJe8ghh983B4fwagzF6qNQ0nEHRlv3ZqGqxTLjqKu60hl9ZeeCjGwRc+nr9fk8IvA1oLWx0PlkrxZ7Vrwt23jQ+QGu7k4EAAA/w3zcAkQYoHX8=
+	t=1725535954; cv=none; b=XjlVmTJKIC7rLDoBVCylnPWCH00zSWVtGvQtZYUWU/iDVTjexkAzHvtN+u9Gs8YtHgGtGjPcGYMngxhTzYv3JS+H0BE2DklGu1JxZB2/km3A6FEOEcY2F3bgCe8mJlmLO8hueha4I5yGJ5K3fBcIqbtu+xCAH9gCZTFAF1iRnjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725535928; c=relaxed/simple;
-	bh=vFGbvJgagX7pycnyLSyGLOXNpMsQbEA2VPqFK/LxMVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZMR412JR+QMz70uA/soNxlvUTiGDzd2ipAe2n3C1tCx3hZ2xSpD+Wd3WJpO3yIw049gS/vjtrGWWlZjpeuXAqXtIg7oJVQvp8eU+y89v7ZmOakrFwVn9E5yColBxo7/m7VUAmimj8MAjuqXCqE1Mk1i318t48FmTZcE3+qKkps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MH3Vu9Nk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28182C4CEC3;
-	Thu,  5 Sep 2024 11:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725535928;
-	bh=vFGbvJgagX7pycnyLSyGLOXNpMsQbEA2VPqFK/LxMVk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MH3Vu9NkIaVJTQRY9bsxF4XNon84qFN6htU9jBkoaQ7SFxX7RTdsVJB/Q/qf4NI2A
-	 jUp9aP4Y+T27yUjaWKGGauYE7M5Si171BzXITROP99aiQ8I/FOGh9FybE+ftgc8kMR
-	 lPovjw3wz7+v4ErmLt0m8Wz+dxEpnNU549csr9aNQPt34wO7Rpg/DgNwoXSdbFUvlI
-	 jiWAB75ckfrwgUK30aji2MTlbeLSAwHd5EwIydhzaGmqf/ypZCi5HKnqygFhGx0kU0
-	 liahfy3EgC5Qx5ZS9nBBcbxkjJc+Wt7RJJbUhg2pmICo8kAnIZ6yNSY5WzHZztsoqc
-	 owEeW++rAZtdA==
-Message-ID: <8ad6d902-8d19-49a5-b12d-d0d8b0b17cb6@kernel.org>
-Date: Thu, 5 Sep 2024 13:31:56 +0200
+	s=arc-20240116; t=1725535954; c=relaxed/simple;
+	bh=8pgTWXKFnVm36YkNjWt4EqpXaxerwdD3Y7wKt9GJCn8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nzbuYSoVtTx643F4835IdGd/gdjYFGBPVZadKUpgt+7AcBE4xki1zWR6SUkSstfxPD6kLNBM2RyeZJeEKmEXmEdioBPd5Oucm29K723+xIY2AHq8UiCVdvBP8paLUfEdGJlQF+phH07bd09N4i6FT+4E7+IujpblTcPOZPEwiq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=kw16o/JK; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1725535949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MITZUtkw5bagB0eVerd/j8Yzb+fVQlvaPcZds1xrZjs=;
+	b=kw16o/JKlg5aGkXHHhhG/ITTlNiWvRjaihOKX5D3/SmPXrmaTcP0xsYTJ93b8yTd5iDKWV
+	GN+sqCUIuV8VZOPPQxFamoBWhiVocioLwOiAygfY5NFtEpJwwz7VEfynjeGBFOA2U5Bwna
+	VP3Ppa9xhu/2IsEL2Oy1st0XivEfx5TAIW0dqn1l4x0mYQ/wl67mLESlZ9pJm2P5ezyWQJ
+	FaTb0YAG6m3LSx1/kZ328AJ/cr/bf3KQ68K6QLxmMIYkIrNg9S9d6gDJpyl5khC4jY0dDC
+	9HZBwTiimAv54ojebZqvJlK0PxmzDHKBhuLRHkkWaVNdqlwcbtS4JwLey+7FMQ==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] arm64: dts: rockchip: Add a few aliases to the PineTab2 dtsi
+Date: Thu,  5 Sep 2024 13:32:19 +0200
+Message-Id: <987e68d1c5e9a0cc56d730aec87246aa5ab8ea14.1725535770.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/19] dt-bindings: power: rpmpd: Add QCS8300 power
- domains
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Jingyi Wang <quic_jingyw@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Robert Marko <robimarko@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>, Jassi Brar
- <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, Shazad Hussain <quic_shazhuss@quicinc.com>,
- Tingguo Cheng <quic_tingguoc@quicinc.com>
-References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
- <20240904-qcs8300_initial_dtsi-v1-6-d0ea9afdc007@quicinc.com>
- <d5e338fe-bd38-49f7-b69f-fc27f9f87495@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <d5e338fe-bd38-49f7-b69f-fc27f9f87495@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 5.09.2024 1:30 PM, Konrad Dybcio wrote:
-> On 4.09.2024 10:33 AM, Jingyi Wang wrote:
->> From: Shazad Hussain <quic_shazhuss@quicinc.com>
->>
->> Add compatible and constants for the power domains exposed by the RPMH
->> in the Qualcomm QCS8300 platform.
->>
->> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
->> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  .../devicetree/bindings/power/qcom,rpmpd.yaml         |  1 +
->>  include/dt-bindings/power/qcom-rpmpd.h                | 19 +++++++++++++++++++
->>  2 files changed, 20 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
->> index 929b7ef9c1bc..be1a9cb71a9b 100644
->> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
->> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
->> @@ -32,6 +32,7 @@ properties:
->>            - qcom,msm8998-rpmpd
->>            - qcom,qcm2290-rpmpd
->>            - qcom,qcs404-rpmpd
->> +          - qcom,qcs8300-rpmhpd
->>            - qcom,qdu1000-rpmhpd
->>            - qcom,qm215-rpmpd
->>            - qcom,sa8155p-rpmhpd
->> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
->> index 608087fb9a3d..7dd7b9ebc480 100644
->> --- a/include/dt-bindings/power/qcom-rpmpd.h
->> +++ b/include/dt-bindings/power/qcom-rpmpd.h
->> @@ -4,6 +4,25 @@
->>  #ifndef _DT_BINDINGS_POWER_QCOM_RPMPD_H
->>  #define _DT_BINDINGS_POWER_QCOM_RPMPD_H
->>  
->> +/* QCS8300 Power Domain Indexes */
->> +#define QCS8300_CX	0
->> +#define QCS8300_CX_AO	1
->> +#define QCS8300_DDR	2
->> +#define QCS8300_EBI	3
->> +#define QCS8300_GFX	4
->> +#define QCS8300_LCX	5
->> +#define QCS8300_LMX	6
->> +#define QCS8300_MMCX	7
->> +#define QCS8300_MMCX_AO	8
->> +#define QCS8300_MSS	9
->> +#define QCS8300_MX	10
->> +#define QCS8300_MX_AO	11
->> +#define QCS8300_MXC	12
->> +#define QCS8300_MXC_AO	13
->> +#define QCS8300_NSP0	14
->> +#define QCS8300_NSP1	15
->> +#define QCS8300_XO	16
-> 
-> Some time ago we moved RPM*h*pd to common defines.. we should
-> definitely do the same here. Please reuse the RPMPD_xxx definitions
-> from [1] and credit Rohit in the commit message, as he did some
-> processing on that to make sure they're ordered based on usage
+Sprinkle a few commonly used aliases onto the PineTab2 dtsi file, to improve
+its readability a bit, to make it easier to refer to the actual nodes later,
+if needed, and to add a bit more detail to some of the labels.
 
-Oh no, this is actually rpmhpd... drop this patch and use RPMHPD_x
-from include/dt-bindings/power/qcom,rpmhpd.h
+No functional changes are introduced, which was validated by decompiling and
+comparing all affected board dtb files before and after these changes.  When
+compared with the decompiled original dtb files, some of the phandles in the
+updated dtb files have different values, and the updated dtb files contain
+some additional phandles and additional symbols that come from the introduced
+aliases, but they still effectively remain the same as the originals.
 
-Konrad
+Suggested-by: Diederik de Haas <didi.debian@cknow.org>
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+
+Notes:
+    This patch wasn't tested on a PineTab2 before it was submitted to the
+    mailing list, because I don't have that device, but Diederik has already
+    agreed to test this patch on his PineTab2 and provide feedback.
+
+ arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
+index db40281eafbe..04d98715ae6e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
+@@ -41,7 +41,7 @@ button-vol-down {
+ 		};
+ 	};
+ 
+-	backlight: backlight {
++	backlight: backlight-dsi {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm4 0 25000 0>;
+ 		brightness-levels = <20 220>;
+@@ -551,20 +551,20 @@ regulator-state-mem {
+ 			};
+ 		};
+ 
+-		charger {
++		rk817_charger: charger {
+ 			monitored-battery = <&battery>;
+ 			rockchip,resistor-sense-micro-ohms = <10000>;
+ 			rockchip,sleep-enter-current-microamp = <300000>;
+ 			rockchip,sleep-filter-current-microamp = <100000>;
+ 		};
+ 	};
+ };
+ 
+ &i2c1 {
+ 	clock-frequency = <400000>;
+ 	status = "okay";
+ 
+-	touchscreen@5d {
++	touchscreen: touchscreen@5d {
+ 		compatible = "goodix,gt911";
+ 		reg = <0x5d>;
+ 		interrupt-parent = <&gpio0>;
+@@ -583,13 +583,13 @@ &i2c2 {
+ 	pinctrl-0 = <&i2c2m1_xfer>;
+ 	status = "okay";
+ 
+-	vcm@c {
++	vcm: vcm@c {
+ 		compatible = "dongwoon,dw9714";
+ 		reg = <0x0c>;
+ 		vcc-supply = <&vcc1v8_dvp>;
+ 	};
+ 
+-	camera@36 {
++	camerab: camera@36 {
+ 		compatible = "ovti,ov5648";
+ 		reg = <0x36>;
+ 		pinctrl-names = "default";
+@@ -619,7 +619,7 @@ &i2c5 {
+ 	clock-frequency = <400000>;
+ 	status = "okay";
+ 
+-	accelerometer@18 {
++	accelerometer: accelerometer@18 {
+ 		compatible = "silan,sc7a20";
+ 		reg = <0x18>;
+ 		interrupt-parent = <&gpio3>;
 
