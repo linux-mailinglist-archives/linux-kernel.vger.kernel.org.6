@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-317336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD27E96DCAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4871996DCB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B06B1C21EE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A9228D0E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8BD19E822;
-	Thu,  5 Sep 2024 14:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C767219F49E;
+	Thu,  5 Sep 2024 14:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="W36AO+Ok"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="juisWDZn"
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF174148302
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40C419F499
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548056; cv=none; b=TUPEx+aEXXXzbqZpIOxHw23I5lClfLNKuOIvom+KevlsBX5L11bKr+n1A37qhLRQaVvp6JuCl2bNq1ijOp7gPMEk/LNUW6TJ54vB2KZk8qygtLbppzKNpesZaEfgP93cj7zuZz6E/B3tkC714SXjXwygdyTpyAW61j+9FqVGlqw=
+	t=1725548064; cv=none; b=MQav8Tc4AXVT53k7aBded7BkVXWbmw7ZGpx/7wj/K/W1uw4KA0SgfHZVDb0D/T87hFB0kZfvIxqM+iltAc7R5/KjbAyTI3oQzOc4JdBmRznz6krusQarZ/G1fSEcner+f79qZi9iPzCqzNVjNoh8B7r3cYDVoGM4GXaOTQWSST8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548056; c=relaxed/simple;
-	bh=XHNWFsPO4rhOhjUD5kfeygL+CLo9i0mepp1M3cGnGrQ=;
+	s=arc-20240116; t=1725548064; c=relaxed/simple;
+	bh=i3IkJZ8CVvslUAGx/dB+0f+mJECIBoFQBahEYT71yEo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oks3IwJ1X9gePW3+BPYQ4XNwW9LHFmXuF1ZiRlAQBkhQWlTkqYlZ3J5rZTtygP7jlT0R+CdnHc4mfAmA/KmHug7A5OQyE463WhmMZnCmIizwCPao1afCxD0NJNArTqQRFYw6H0pTJOdoV+oqI+TBvZ80Kb/5ts5tMCO4HnUDxs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=W36AO+Ok; arc=none smtp.client-ip=18.9.28.11
+	 MIME-Version:Content-Type; b=CNQhTD/gFxJmKUXNjQDvvUqHlgaMc467zSFKxm0elXEgEGocdkoldYtd5aFiUhenSISNsyDAX01vY5mqh0t6mTN2Ct5nNZKDyIc0XLQ06YPkrrfdW4u0P3XJzfJofCOhCP3yuK1jPJsFuFrvHdJ+nv1AM8CXFcc7fgz1UO4zEKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=juisWDZn; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 485ErsAr004661
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 485ErsHX004659
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 5 Sep 2024 10:53:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1725548039; bh=XT9HRP1/P5NPb53sSdVf17ip7FShvNz7T2P4ENR7kg4=;
+	t=1725548040; bh=bPePAcmEsqxs7gy1FbVzMnCjjwWUf7FZa+kBRyOnqgk=;
 	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=W36AO+OkeEOYjBLCGHxy5leMVqtTaVb4yX2sXW7q77XUXr9A0G/UbPIh26J5WfdYr
-	 QqTvAVc8ncKHnEQ9BylwuNkvzHkx8omJceHUolDxpRXRnbx73J9c4MCovAWtsmVFel
-	 qdSO8mZ5aPNa+3G+GngPMLiXef30a+cmDjPU+mbTvPeI+Vrrz9sxYMlKmKVe0/smN/
-	 C3Ij3Q7HgOSGaL9uoMwN0ckTzPZeG0QEpkloJgzwqecu4FcBhQnF2hM2K9Qn1kqz+O
-	 t4iGXEnWHm6FSQFam47BptcdA1E6sNR7vD1e2lngOl54mIU0EFjVJnd7U+2xso65rz
-	 SxOvsTNgHGZjQ==
+	b=juisWDZn/Cu0EYVSmTg1OoHtGUVGBgmnJuyjyWHd1cJDWJtnvHJALCIODORWo9+Bd
+	 HTx8HAWRQXe+LkIgMRPwpotlx3xWr6bk3ym8iiDJvdeZN19YO79Yg2vUnPmrKmXAPi
+	 ydyBG72pLzwajtZzFOM0LHYgtWJ7ovqiPavKdemnx4yyvyIINPphKttVcnhlF4j9XZ
+	 B5gfGi8mSBmvJeQ/pJ0Us5113NbCl6vjZRFCxCwbMXU0Ijy1FfHBxW24/qqPG6K0Yy
+	 yNI4N3t7fPtENFqQsR8Ey4Pm9CZIMaHIpilRzVHLTC2Bsu57yow9rtf2R+ZMrj9yOq
+	 G/94L7EBRK74w==
 Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id DAA1115C02C6; Thu, 05 Sep 2024 10:53:54 -0400 (EDT)
+	id DC0D715C1909; Thu, 05 Sep 2024 10:53:54 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: Artem Sadovnikov <ancowi69@gmail.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lvc-project@linuxtesting.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        Mikhail Ukhin <mish.uxin2012@yandex.ru>
-Subject: Re: [PATCH v3] ext4: fix i_data_sem unlock order in ext4_ind_migrate()
-Date: Thu,  5 Sep 2024 10:53:40 -0400
-Message-ID: <172554793835.1268668.9896908315159460691.b4-ty@mit.edu>
+To: linux-ext4@vger.kernel.org,
+        Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        Tao Ma <boyu.mt@taobao.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        kernel-dev@igalia.com
+Subject: Re: [PATCH 0/4] ext4: avoid OOB when system.data xattr changes underneath the filesystem
+Date: Thu,  5 Sep 2024 10:53:41 -0400
+Message-ID: <172554793832.1268668.642779330743885621.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240829152210.2754-1-ancowi69@gmail.com>
-References: <20240829152210.2754-1-ancowi69@gmail.com>
+In-Reply-To: <20240821152324.3621860-1-cascardo@igalia.com>
+References: <20240821152324.3621860-1-cascardo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,21 +69,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 29 Aug 2024 15:22:09 +0000, Artem Sadovnikov wrote:
-> Fuzzing reports a possible deadlock in jbd2_log_wait_commit.
+On Wed, 21 Aug 2024 12:23:20 -0300, Thadeu Lima de Souza Cascardo wrote:
+> This patchset changes some of the error paths involving dir entries lookups
+> and recheck that xattrs are valid after an inode is potentially reread from
+> disk.
 > 
-> This issue is triggered when an EXT4_IOC_MIGRATE ioctl is set to require
-> synchronous updates because the file descriptor is opened with O_SYNC.
-> This can lead to the jbd2_journal_stop() function calling
-> jbd2_might_wait_for_commit(), potentially causing a deadlock if the
-> EXT4_IOC_MIGRATE call races with a write(2) system call.
+> Thadeu Lima de Souza Cascardo (4):
+>   ext4: ext4_search_dir should return a proper error
+>   ext4: return error on ext4_find_inline_entry
+>   ext4: explicitly exit when ext4_find_inline_entry returns an error
+>   ext4: avoid OOB when system.data xattr changes underneath the
+>     filesystem
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] ext4: fix i_data_sem unlock order in ext4_ind_migrate()
-      commit: cc749e61c011c255d81b192a822db650c68b313f
+[1/4] ext4: ext4_search_dir should return a proper error
+      commit: cd69f8f9de280e331c9e6ff689ced0a688a9ce8f
+[2/4] ext4: return error on ext4_find_inline_entry
+      commit: 4d231b91a944f3cab355fce65af5871fb5d7735b
+[3/4] ext4: explicitly exit when ext4_find_inline_entry returns an error
+      commit: 51e14e78b5fb3e6f839393cd2d34386ee7b69af3
+[4/4] ext4: avoid OOB when system.data xattr changes underneath the filesystem
+      commit: c6b72f5d82b1017bad80f9ebf502832fc321d796
 
 Best regards,
 -- 
