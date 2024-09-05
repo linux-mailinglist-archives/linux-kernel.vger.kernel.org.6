@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-316789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D3596D586
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:11:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15E796D58A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123CA2887DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA5B1F293F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DAC1991D0;
-	Thu,  5 Sep 2024 10:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB40919939D;
+	Thu,  5 Sep 2024 10:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVgV2ZKP"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYrl0NrH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8351990A7;
-	Thu,  5 Sep 2024 10:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877891990C1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725531040; cv=none; b=XIAY1BBYSNe6D5FC1MR0XAFl8C4xIGja87CyLGKWDMamxSip9uXwFD+0rlLjtQI0B3qLhq3YMjk/3/WiAuSnbjqqPNfFcwLJW0fcmDs9CAZA2rJ+OUj4QpeAXXa40l0OU5I5T8xzBM930nksbWZefCsuGTQVvnJAxFtxZKMQPw0=
+	t=1725531053; cv=none; b=Nqs6oh2BjfMhTLdU6WCMElPqHVb6svxzUhOX5E8m9jyiSyGq4t45FdC+Q9+jqu21pATg4v6q9Vghfytt0rkop8YMYw48CSGg0dl4pmMP4iyhp+tMmKduIt9tTeqkupQVIkhPYb1pju8uC+6adfofUkaqWiK0NV2TLS5E+AblYss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725531040; c=relaxed/simple;
-	bh=0/vMyYQ0Wx2NMxRdccZKOydZqvl0rEL7RRjlWjX53Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GsIkgZb1IA6i7o/Inl7KJUP3ogJ9Z7Fx36C96myuYTBz8WbH1W1c9RtgjqlpNmf+moh6pGauzA5fChGgIMk3AYgSQv27DAVRsJ43Y1eGo+JZDExQ13/C/BHdteetFlfVzzDcCgiJOGCnxIw0oEOKIL1Num5xTeQwwNEXqyooBuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVgV2ZKP; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53346132348so692760e87.2;
-        Thu, 05 Sep 2024 03:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725531037; x=1726135837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvN1I2knXR6FRaPCTP2Nq68jAbwk/9FcIR+V12XMub4=;
-        b=FVgV2ZKP3IvsgspYZ3dwSLs46wB0P2e40+lsrEwkkT/vytiRoY6W/HShKTb4HAcISL
-         kVqTzjXcIwqKFcfHDtvrDt34srxASm5x88Ul+YTrc2NQ4DN4S5031Cgjs5zBvsQE1UBy
-         UyhCavPKgD4QVI789vyx89VeaYlWxzy9jW5bfxqxsN8XKfwrwRK2UGhLKyN7sZdbeGS/
-         i2xJ5v/3LAAAeGsdXWrU0YvpMirN7rmHLOSdRnjErS6EuTfvfYqg8OUTWjzpia+9lvah
-         V0XtcQCdEW+ZZISa2+7kz0soHyMvIThVhZyM/EhjiUWPoU+Y8BiK5zAsq7wmKsekdXf6
-         4yYg==
+	s=arc-20240116; t=1725531053; c=relaxed/simple;
+	bh=cBe8sSpkzIPUNbYdTQ9Y4CF5l4pTJfe4EnCGYPSCLxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l2jxBrX+vTNTQALUPkJGJ5+0sliKu5EZllOzoGaM89jeDU5kcPnrRUBdiBTb/yONdXOFfGV3vTJxL0RJmDIA6W1D3/IJdirr3TH8mBw/aSlLGlYZPhNEfpSlOqit/OIdrMt6Hgwq+E9TgWyQfr/e876ADGs2aoxjkQSgyiaWcDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYrl0NrH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725531050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0teAkyIxaQF3tqPPR/0rHNjidomC+KXZ12snZ/y5XOg=;
+	b=JYrl0NrHSv7NHyVLkG1G6cYmqxhRpPeWFRz3Uj4I8BFgmsYCW+HgUV/fNTi5PiRIVMKg0T
+	YFmnmUwxnZHU7Qy6H9mhO7suFd69ye4P5ijukKEYO6N+EC5LhhCqOWJ5z4WNQkmC4cIKl2
+	ewInUfTyjjz3YOgixyL73L8IGIKSnsU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-zdvRA1ZyOziECWGvSbNvlw-1; Thu, 05 Sep 2024 06:10:49 -0400
+X-MC-Unique: zdvRA1ZyOziECWGvSbNvlw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3756212a589so436460f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:10:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725531037; x=1726135837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wvN1I2knXR6FRaPCTP2Nq68jAbwk/9FcIR+V12XMub4=;
-        b=YZaVzmuSVi9/zSTKLoKpUvEMzv8Iy6wfjunem0X+MxpAd+eBca7W7eSynBn/SbncEX
-         tdGJXbYyDS5i52BtUlVJ4ZVz1E5WU2xPzWNm9y9LI9hLjESKvHhyWiUO+bDmAeW/jLWx
-         lpDNLHGuiABtFgnDkQQUb6vLX4mMVxXz+DS5pisMlF2RC67ZC1luvhEch+Prjf9bUMQx
-         DzqNDtsPLNBkFVFe8zGq1LZIU/zjaI4gWy3vUULQG9AvwPdIR/b6cMzSQNzgWqWD5MbX
-         yP886lfqvjYZilUiHFvbSm+2u6dhU21O8RWqUgcQ/qZfI0W0Hn+6XL94bJ+k4bgsdvQV
-         x/2w==
-X-Forwarded-Encrypted: i=1; AJvYcCULNBjTSh38D6INWgRtqEyQGxKAraT+H7H0n+ZVd+pNjVzwCEruFOtUhFfR0wOvwmcDOa6p8ifRSBRo@vger.kernel.org, AJvYcCUqUwaTkNgG4f6MOqe/oGFeyrgTphCnxLFbJJM69DDjXwO3lqfeFNYzXJ1H39MFYVh65MCKkV2f1NOt04x/9g==@vger.kernel.org, AJvYcCWRVSPGtfBqS4BAHKd3NbzXprtz3AQQ+8RZVxdSQteRZM+YL/MvNtZvP3nH4jKepo1UY4t16UKaSmXSPOY=@vger.kernel.org, AJvYcCXx9szJenD/fERIshZtmksbNUFkUIp5gSV75XMhqE+YY/rjPq3sA4XXbvOC92U3JU8yN2Qv4MAoBPrRivcw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+HRocZymxWDjGB1xj4wdOCzCghDTSIcpuJUVwpsfal49pl7RR
-	yIheHNHVuktUQg0FsY9m5h6oSbJO74JNc1Rp5eiYVpHdArNkACAH
-X-Google-Smtp-Source: AGHT+IE9Xi84jEcvzMiidrfQVMoZc0TSOAS4xDwigWpUpHyJVJSj99CT0xX9KW/9RVO6OwwwvGvp0g==
-X-Received: by 2002:a05:6512:3055:b0:530:e323:b1ca with SMTP id 2adb3069b0e04-53565f20df3mr4208181e87.25.1725531036183;
-        Thu, 05 Sep 2024 03:10:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5356a7ad1d7sm283806e87.205.2024.09.05.03.10.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 03:10:35 -0700 (PDT)
-Date: Thu, 5 Sep 2024 13:10:34 +0300
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/29] media: MAINTAINERS: Add Qualcomm Iris video
- accelerator driver
-Message-ID: <tdvofocpygklipddgf7gbpttxdnmhe33krziwkzh2czpf4uiao@htiismc4dekz>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-2-c5fdbbe65e70@quicinc.com>
- <afba364d-8299-49b6-9848-ed1660f86327@kernel.org>
- <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com>
+        d=1e100.net; s=20230601; t=1725531048; x=1726135848;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0teAkyIxaQF3tqPPR/0rHNjidomC+KXZ12snZ/y5XOg=;
+        b=S/ybyqe42B94fJ6O7RgBgNpZN///5BHrqKvF4FMVp3WavNFKorWqZRvMRvTGxHFWfO
+         3hhlFwVWE4ZyNuJIOFAYjoXqM2IPMO1M3ViwEo31Qg8qqqHhUIi3mBFEKLU6lB/iHDg3
+         ScSZUvhIzXFdLl5rkgZcI3Pnk5KkaDfk+vEslK6MwfYPVVe4ulqPw7v4mLchqUzMC80W
+         bDoCtYVAtECwPsvdPI6UIkJVMQzzbDwDuwzMMViC+CasRoUjpC2LMeIm6aI1dJpyANlb
+         /akPvOtAwgERO4KrZd/jsdreRVJ+shEsATRYDHVla9kjn2IkQl/NBfoOS9vrP8U+OyIB
+         +Ohw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdV4fN6f8TGOmR6rXpvaewH8gwFp3QPZIxPm92tkg1lrTVKObIyF4aNullh+Ei8zBuscGMxyel+Je4w/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0f4VQlphliPGibABYoCTLcin8+Onqudf5Et/SOVNvQdX0yYCy
+	RQlPYyHK70u3U0gcyf+JgAXOhBBNrE9npCDKY1GQSIFcinm/y8lrC1Vy9IAjgvg6THiXKSMVrBz
+	hP/QBQkh8anHh/xwmF8Ghy1YKwsHpIcSpzz7jrdiJgM5zkXxh/KdxIqA8y+FHnA==
+X-Received: by 2002:a5d:6d05:0:b0:374:c231:a5ea with SMTP id ffacd0b85a97d-374c231ab35mr14568277f8f.5.1725531047893;
+        Thu, 05 Sep 2024 03:10:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFowkwDiPwaM9wpYpfNUi84o0mhCVB4P3QbkABbz603ypTH6pars552aw4N0k7UTIUaCxxNOw==
+X-Received: by 2002:a5d:6d05:0:b0:374:c231:a5ea with SMTP id ffacd0b85a97d-374c231ab35mr14568233f8f.5.1725531047372;
+        Thu, 05 Sep 2024 03:10:47 -0700 (PDT)
+Received: from [192.168.88.27] (146-241-55-250.dyn.eolo.it. [146.241.55.250])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4d391sm19083130f8f.3.2024.09.05.03.10.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 03:10:46 -0700 (PDT)
+Message-ID: <b5da52e7-6715-4f94-ba95-5453972d9f8d@redhat.com>
+Date: Thu, 5 Sep 2024 12:10:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 net-next 6/8] net: ibm: emac: use netdev's phydev
+ directly
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, horms@kernel.org,
+ sd@queasysnail.net, chunkeey@gmail.com
+References: <20240903194312.12718-1-rosenp@gmail.com>
+ <20240903194312.12718-7-rosenp@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240903194312.12718-7-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05, 2024 at 11:17:55AM GMT, Dikshita Agarwal wrote:
-> 
-> 
-> On 8/27/2024 4:12 PM, Krzysztof Kozlowski wrote:
-> > On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
-> >> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >>
-> >> Add an entry for Iris video decoder accelerator driver.
-> >>
-> >> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> >> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >> ---
-> >>  MAINTAINERS | 11 +++++++++++
-> >>  1 file changed, 11 insertions(+)
-> >>
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index 8766f3e5e87e..105e67fca308 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -18898,6 +18898,17 @@ S:	Maintained
-> >>  F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
-> >>  F:	drivers/regulator/vqmmc-ipq4019-regulator.c
-> >>  
-> >> +QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
-> >> +M:	Vikash Garodia <quic_vgarodia@quicinc.com>
-> >> +M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >> +R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
-> >> +L:	linux-media@vger.kernel.org
-> >> +L:	linux-arm-msm@vger.kernel.org
-> >> +S:	Maintained
-> >> +T:	git git://linuxtv.org/media_tree.git
-> > 
-> > Drop, you do not maintain that Git tree.
-> Sure, will remove
-> > 
-> >> +F:	Documentation/devicetree/bindings/media/qcom,*-iris.yaml
-> >> +F:	drivers/media/platform/qcom/iris/
-> > 
-> > Drop, does not exist. Or fix your patch order.
-> Are you suggesting to add this patch as the last patch of the series?
-> or remove just below entry and add one more patch at the end to update
-> MAINTAINERS file with the same?
+Hi,
 
-Adding it after the patch that adds the driver should be fine. Likewise
-adding it at the end is also fine.
+On 9/3/24 21:42, Rosen Penev wrote:
+> @@ -2622,26 +2618,28 @@ static int emac_dt_mdio_probe(struct emac_instance *dev)
+>   static int emac_dt_phy_connect(struct emac_instance *dev,
+>   			       struct device_node *phy_handle)
+>   {
+> +	struct phy_device *phy_dev = dev->ndev->phydev;
 
-> +F:	drivers/media/platform/qcom/iris/
-> 
-> Thanks,
-> Dikshita
-> > 
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
-> > 
+The above assignment looks confusing/not needed, as 'phy_dev' will be 
+initialized a few line later and not used in between.
 
--- 
-With best wishes
-Dmitry
+Cheers,
+
+Paolo
+
 
