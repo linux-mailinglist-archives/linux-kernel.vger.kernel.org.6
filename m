@@ -1,150 +1,107 @@
-Return-Path: <linux-kernel+bounces-316592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A2D96D1B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:16:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1954996D1B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25869281849
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7D57B246B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EE8199250;
-	Thu,  5 Sep 2024 08:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB8419006E;
+	Thu,  5 Sep 2024 08:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hSnyJUsb"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S8xiPHtK"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DEE199FA1
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A008194C95
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523894; cv=none; b=uEt0LqxZwboQw80BVA2+hERY0O/cDq2edBXGTexiLCXbb1opi3KRWW+l0WbMUvZ2e3l5JsHGN7AmzUufYwOyuYHbq48QUvAwTuVYZm32MOTnDsuN4C1y7eM85pk08GGSbVH6wmm+UPyD6Dl+NWXULZNdjfWdW4ZkhxIWDLv27KE=
+	t=1725523942; cv=none; b=gPPrKihcxDBNUORtCSPicYa//VfQBU+5IKWjs3JTDC47YaH68holDB2jH/XkbK0UeLYUV57QZWOtlQHYQgTdLisfjfHM/HPkayqNVByPKTY6/hrhyDyAIt+lleY7CtezlxWU/Vo5GH/XUku7/ht5vA7A/RP+FN28NC5NfQH8mQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523894; c=relaxed/simple;
-	bh=F4EbLyf6kkAeGukY+adQL1kHBSivOSuwUA1FnPkwLr8=;
+	s=arc-20240116; t=1725523942; c=relaxed/simple;
+	bh=rSIoNT2lPLs96YVVwRh5JllJcJJ2SY8FNEGfw3S1XSQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ceB7pcfVsTNsSO2sk33YhJQMv0TSuafD4aJ5cuU+DGx/qhxmq3k6LhTany97PCacrBCdRQos1VyV3jdlT2RLyotPWU3gAq6gJn9V4R/ps1upscg6Ti9kK2KfdtTwmkjNIk7Q8waxdWKuLB5/c4iHT/MChF//QvMw6D/lbQbPmjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hSnyJUsb; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f64cc05564so5114571fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:11:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=ujC3PFGXjesQr4tA0dnwCmpqTSVppgEKwfvpfvRXHdVaaVozpBt07xIm3KzGKVL/96R3PHHney+72teKMvThVzlmofaj3RFnNi0A8XiUClaspRfCpeIOsyLIjGlCWiqH30KKCJ6ccA5YFZU/++ezeFI7QvDz/j2xnVgj/8NdaWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S8xiPHtK; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374c3eef39eso236708f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725523891; x=1726128691; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725523939; x=1726128739; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RqxrNHgbeGAL4h4J6aJ4gyN3+tB2yX3dGNtW99El5js=;
-        b=hSnyJUsbK5rFp5pga6NLRt8f31DufTzNirIiUlRWClp4JK/sq+w/Xjva9NpfHS7SIZ
-         1bTDsXYgQ1O6Hh/Qd+y7M4YdvZOohwaDxEautCUoEZp91jxeywCoxSToqtSFbcpFQuaE
-         NKyFUp4tbb6IM1oQYZJ1ReXBCbgrlrzxU8MLA=
+        bh=rSIoNT2lPLs96YVVwRh5JllJcJJ2SY8FNEGfw3S1XSQ=;
+        b=S8xiPHtK5tNT5PSZhh1Jjp9ekK1+OnLY05p9jf4OnkYlPlwIhIZ4+N1HhNFthj480K
+         aJ1zPCiJ0uXVIdORH/Nx5TAnc9sS/Wbx+mrbvwkXRjBFsFM/4H4c0OyNMIGBzxZB1WtO
+         rrk9+q27m7Kyt39SUj+cbil55XoHskktXq/yBKdfBerA2s6UMzbFm03PF2a1iXZTetCh
+         rFtrJhuYNvkrhXfUeQVOUaLxxMTa19hy4sR07N9YUqh4pXTwv5hunbEqgXGpEOsMAjc1
+         kNvi0RYQqjlR+LzooOgvChdSA9iL1YY6xWYWHRqjCEeTQwaTkVK3Da4Sc9SuCp1J3pSW
+         OvEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523891; x=1726128691;
+        d=1e100.net; s=20230601; t=1725523939; x=1726128739;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RqxrNHgbeGAL4h4J6aJ4gyN3+tB2yX3dGNtW99El5js=;
-        b=oCJiKXLL6uUJikZQkI7kO9pF1LcwRLMR+B1tznl4aTRq3JGZ9XBm1TEdE1IpRLFZzm
-         g5sN2BjZ6EY7Qak1CTrkutmRQIjHMx7M5HdY+FZ0XjV7bB37w88UESrCeCgFNTCF3Ej2
-         MZY2RpVoU/tx0b2dpP5XbMVEm+/N/Y/d5+VGHrmi1LCjJIwVk3GgaKFOWIgEKkCRiuvN
-         SPW6PaVz9H6SIcER2DE0Ez+aRwiS5VQgRNFtA4XzEES38QmTPxvbeqrcLQ7h2w8YIPbx
-         j/fQT5JrOTbPw3iufbPz1Z9y/x46aiRQcK5z3hz7EZ99OUMIk1EQ8BCBrWPl7sXIExpj
-         QdkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUZu+uEA2+NYFoysW9fJpNUSSrncTthDo+hEuFOOBnHrfzfWno4WilgSm6AatnCfRf7xCldgme0fXd+40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxopaxNAHoc3HYyb+76AXzVGKppOX6zaQwwBoQ4QjhFbMqeeqlF
-	p16HyZC1l93SP9h3esM4LGwgq2pKRnzdzPe2tA2debLfFSd7OPSfcVho/DwFxIvjN2uxKvodSOO
-	dkPsEkSvfxtRSL390gBNV0Xsy6YRxRFyW+8gN
-X-Google-Smtp-Source: AGHT+IHgBQxVW+6mWOLd4xU/v/uqA2bXrlgX+qclLv/VfI8suvKUwIZp0O6ejzR9OBlUf64DSkNg9Mtn8N7ARtFnYaI=
-X-Received: by 2002:a2e:a9a9:0:b0:2f4:9fb:5905 with SMTP id
- 38308e7fff4ca-2f64d38cf3fmr53482011fa.0.1725523891012; Thu, 05 Sep 2024
- 01:11:31 -0700 (PDT)
+        bh=rSIoNT2lPLs96YVVwRh5JllJcJJ2SY8FNEGfw3S1XSQ=;
+        b=nIdkAETi00lKQnBfwvt3QLiOrI+TmoKoVlOZq8qixRk/qZ1GLB4fyhkyuAhBizlBGg
+         mK+9K0fzL1OmA/VXcb0AdsuSaIYzLrRec6C4Fq3RCzaUgWHjEqiX+pMXNa76Kl+Fy9B4
+         XWnwOr5jyAu2LmXYGYM0mqruyzDtABHzqCAdGSgvHSzwO6J8uxZzGlEHfTXxNyFGtKdp
+         8OSbwwmFRMKzZXiXTPGSBhUJhDfrVDBgE5ynDmo6hPvKW1TKu3Gee+EFCALWYbZmRkCw
+         l2GR2Op+a1Svdy6T0SRgIWODloZtVs2oOPPC+rZpE2Rj9XieNqUN6w4KZSy9c1bomSgz
+         d3ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUPT61wVW8wGKG88IPmGRVzMXZIcaPs5UWzB6ybhzAx5lomC86jXXz53ujOmoYgKByf6chgYq7POSfMTAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyUDeqqyynRxjajzl5pbaWQEhHajq6ACl3Um7kOgHO/6n2eQPa
+	lFjgEbqj9b+pfaqdNf92nHrH+g5D19bPf7XTLvv0QsyZo5s9hc9Nrpr/UAxJpEH4at6rG3HStRd
+	hGCpkQW5dmXSDYXGPPAMKb3O9+x/XyJbpGdk8
+X-Google-Smtp-Source: AGHT+IE62Epsi0v41kZrmq00wKSCQR34/0qV3MJKgYftCiq9+X1v5PTgR44xXkcmKdvrW/zHlM01xfs3FnBHh4EANoM=
+X-Received: by 2002:a5d:424b:0:b0:374:c64e:3fe7 with SMTP id
+ ffacd0b85a97d-377717f4f33mr3567902f8f.59.1725523939035; Thu, 05 Sep 2024
+ 01:12:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904090016.2841572-1-wenst@chromium.org> <20240904090016.2841572-4-wenst@chromium.org>
- <ZthcBpx8WFIvsrJj@smile.fi.intel.com> <ZthdU6UGlM75GJVj@smile.fi.intel.com>
-In-Reply-To: <ZthdU6UGlM75GJVj@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 5 Sep 2024 16:11:18 +0800
-Message-ID: <CAGXv+5Ew23BGgw6XpikBtAm+wQiOjFDyGuCSpt_GsGhoAwD22A@mail.gmail.com>
-Subject: Re: [PATCH v6 03/12] regulator: Move OF-specific regulator lookup
- code to of_regulator.c
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-12-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-12-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 5 Sep 2024 10:12:07 +0200
+Message-ID: <CAH5fLghOG3tSySfn4vnxU7v_Y26ZQcerQT7-4pUJZpYv1zGM4w@mail.gmail.com>
+Subject: Re: [PATCH 11/19] rust: introduce `.clippy.toml`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 9:16=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Sep 4, 2024 at 10:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
 >
-> On Wed, Sep 04, 2024 at 04:09:26PM +0300, Andy Shevchenko wrote:
-> > On Wed, Sep 04, 2024 at 05:00:05PM +0800, Chen-Yu Tsai wrote:
+> Some Clippy lints can be configured/tweaked. We will use these knobs to
+> our advantage in later commits.
 >
-> > > +static struct device_node *of_get_child_regulator(struct device_node=
- *parent,
-> > > +                                             const char *prop_name)
-> > > +{
-> > > +   struct device_node *regnode =3D NULL;
+> This is done via a configuration file, `.clippy.toml` [1]. The file is
+> currently unstable. This may be a problem in the future, but we can adapt
+> as needed. In addition, we proposed adding Clippy to the Rust CI's RFL
+> job [2], so we should be able to catch issues pre-merge.
 >
-> > > +   struct device_node *child =3D NULL;
+> Thus introduce the file.
 >
-> Btw, redundant assignment here, as child will be assigned anyway AFAIR.
->
-> > > +   for_each_child_of_node(parent, child) {
-> >
-> > > +           regnode =3D of_parse_phandle(child, prop_name, 0);
-> > > +           if (!regnode) {
-> > > +                   regnode =3D of_get_child_regulator(child, prop_na=
-me);
-> > > +                   if (regnode)
-> > > +                           goto err_node_put;
-> > > +           } else {
-> > > +                   goto err_node_put;
-> > > +           }
-> >
-> > I know this is just a move of the existing code, but consider negating =
-the
-> > conditional and have something like
-> >
-> >               regnode =3D of_parse_phandle(child, prop_name, 0);
-> >               if (regnode)
-> >                       goto err_node_put;
-> >
-> >               regnode =3D of_get_child_regulator(child, prop_name);
-> >               if (regnode)
-> >                       goto err_node_put;
-> >
+> Link: https://doc.rust-lang.org/clippy/configuration.html [1]
+> Link: https://github.com/rust-lang/rust/pull/128928 [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Looks like Mark already merged this one. I'll send extra patches to clean
-this up later.
-
-ChenYu
-
-> > > +   }
-> > > +   return NULL;
-> > > +
-> > > +err_node_put:
-> > > +   of_node_put(child);
-> > > +   return regnode;
-> > > +}
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
