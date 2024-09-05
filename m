@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-316372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC2A96CE8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:44:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D3F96CEB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C782128768E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 398832886F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6371891BB;
-	Thu,  5 Sep 2024 05:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095E4188A2E;
+	Thu,  5 Sep 2024 05:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b5kMD/Ft"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0D779F5;
-	Thu,  5 Sep 2024 05:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="pOSwJcGU"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2A0621;
+	Thu,  5 Sep 2024 05:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515038; cv=none; b=cbk5zvsaCLimwQJ4CBoejoSdbUI5uoCXYd4L0yx0FcPqDaTmH90eBTVQHxqsJmxJrcNyQXFqJ5YFVfeIQTfcJRehN4sGABvGQJpA6NC/NV/qOtaLUc83hMnjzT1ttd5Q9lM/gL2fOtO2atJf0is+3oAj85cHBtCT4QOhVIrMvFY=
+	t=1725515182; cv=none; b=kvzz5sHdyssj5l720vC0IZr4HeDn3o7IboWALLJUVDXvPAoChsUJkAh/Gpl4nJzxS7oceknuaxlTLuH2sfA0GK4wmqCgdM72WZmB1Dg2Af0diJnxIJONV/lX5uwLcZ/BQtsO2uEuimISh8A1yAB7QAtzPXQbibJoIAiEM/X0L3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515038; c=relaxed/simple;
-	bh=q+zcd/AxeOziSdwbqUmOmd4zSWg5vCcozQ08BK137UQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VcUA4FHiSnNV5ez6nc0oYYEIbkMJB2yZL8pVjFNMLJ05/yNtRx7xJXGy5bldG30mHRs6Kpi6Yx3TZURhQprWqPosgDxuH9zVhU8/QEIHsA/2fpdRBzvrzGqeGEuADWreLazJofekXR3coR5GjrT4fN3WnpyNUrQqoosnP63bffY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b5kMD/Ft; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484NukP7015153;
-	Thu, 5 Sep 2024 05:43:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NcLeOZ+VFMi0rCey5/OVrJLPv82lHpaGbxk1UvZ6Xi8=; b=b5kMD/FtYBIz82uf
-	pihjmW+92urCeLvjUJtsPUMMePePEfCnZ3Z2CCdWwELQmNGnucgln+LympRrin9N
-	u0IRi1MbiK/Ood9m3hO1Wo5FSjdfZAzXSKBdmwWyCeW+G1UBpTcAHbi1FTqzFQfw
-	JM8wrDaGUDCLr32trkSARxvzQTXQkK6GTRwWd+ql9TbIDpzxRcKol5Lq9f+/dX/y
-	ReOAc+56VDLBYX2y3GGIv/12+1qFadDDfBBAoZCP0xvOSFD7EK0xzcUsu9znIJAz
-	Q49tLZUcgNIs4FLoMPbc8jGQejL6GWn/dogNdSVbO4xZNsgtPRXhqS2VKKf34BOy
-	c3YlEA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dt69f1bp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 05:43:52 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4855hpeU023840
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 05:43:51 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 22:43:48 -0700
-Message-ID: <dc434cb2-7eb0-48fc-967f-5ed93ad1284c@quicinc.com>
-Date: Thu, 5 Sep 2024 11:13:45 +0530
+	s=arc-20240116; t=1725515182; c=relaxed/simple;
+	bh=gkFqSe+yBFPGJXWtoklPb7SbaLVqLrf51WcVPND+b7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=MvGpxuH9uv6u8D+CsANbcjewntKHkTS8xLq9sbOMRrFedaKNz+Mr3f+lM8fBlg7vgjLkIyYRT3wORo5RfhSFH/ArpftVW/rxE6hNfVr2/cGiIcZsF6WmmJslBPyqYzmtk6ElCnO8yy0iLyiCZDmzmQqCnxr4sf2TvQXrshylJ+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=pOSwJcGU; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.155.100.110])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 6A515789E8;
+	Thu,  5 Sep 2024 13:46:16 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 6A515789E8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1725515177;
+	bh=OomeZ9C2cFgTv1cxVJuJnlf6/kevrKyeiis7TxIKY9E=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=pOSwJcGUoHKIga3h/dzUVuC7Hlob0YbYxP2libUjLtR7gccsntnxeclKTQXqLTlt0
+	 x8Ts+NgEq7Nh4GSzZTneHc6iw1lYV0311U86Bn9HbLd+HjI2ZKX1hW0KV2Epxe4Ipg
+	 +opWaUEe8X731Hx5/z4lNmxfAHUCVwQioi2XSU58=
+Message-ID: <a39de56d-07d3-4554-8c37-c28b1654f717@classfun.cn>
+Date: Thu, 5 Sep 2024 13:47:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,67 +49,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Krzysztof Kozlowski <krzk@kernel.org>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
- <20240829092418.2863659-2-quic_msavaliy@quicinc.com>
- <74c13a4a-0d4b-4cbd-9a75-9933c098c3ba@kernel.org>
- <cb7613d0-586e-4089-a1b6-2405f4dc4883@quicinc.com>
- <a4bbb898-bf91-4dcb-b7da-ab032b228aa2@kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: add dts for Ariaboard
+ Photonicat RK3568
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240904111456.87089-1-bigfoot@classfun.cn>
+ <20240904111456.87089-4-bigfoot@classfun.cn>
+ <6030542f-070d-4d76-9a5a-fbfc6bd433e6@lunn.ch>
 Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <a4bbb898-bf91-4dcb-b7da-ab032b228aa2@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
+ FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <6030542f-070d-4d76-9a5a-fbfc6bd433e6@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bcmTdO1uQoLMnXacK3-MvmrmdQ_WTYJ2
-X-Proofpoint-ORIG-GUID: bcmTdO1uQoLMnXacK3-MvmrmdQ_WTYJ2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 mlxlogscore=445 mlxscore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050040
 
+On 2024/9/5 01:25, Andrew Lunn wrote:
+>> +&gmac1 {
+>> +	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
+>> +	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
+>> +	assigned-clock-rates = <0>, <125000000>;
+>> +	clock_in_out = "output";
+>> +	phy-handle = <&rgmii_phy1>;
+>> +	phy-mode = "rgmii";
+>> +	phy-supply = <&vcc_3v3>;
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&gmac1m1_miim
+>> +		     &gmac1m1_tx_bus2
+>> +		     &gmac1m1_rx_bus2
+>> +		     &gmac1m1_rgmii_clk
+>> +		     &gmac1m1_rgmii_bus>;
+>> +	snps,reset-gpio = <&gpio4 RK_PC0 GPIO_ACTIVE_LOW>;
+>> +	snps,reset-active-low;
+>> +	snps,reset-delays-us = <0 20000 100000>;
+>> +	tx_delay = <0x38>;
+>> +	rx_delay = <0x15>;
+>> +	status = "okay";
+> 
+> This has been discussed a few times. You should be using phy-mode
+> rgmii-id.
+> 
+> arch/arm/boot/dts/rockchip/rk3288-phycore-som.dtsi is i think also a
+> YT8521SC.
+> 
+> 	Andrew
 
+Thanks, I changed phy-mode to rgmii-id and it seems to work fine.
 
-On 9/4/2024 11:50 PM, Krzysztof Kozlowski wrote:
-> On 04/09/2024 20:12, Mukesh Kumar Savaliya wrote:
->>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->>> people, so fix your workflow. Tools might also fail if you work on some
->>> ancient tree (don't, instead use mainline) or work on fork of kernel
->>> (don't, instead use mainline). Just use b4 and everything should be
->>> fine, although remember about `b4 prep --auto-to-cc` if you added new
->>> patches to the patchset.
->>>
->>> You missed at least devicetree list (maybe more), so this won't be
->>> tested by automated tooling. Performing review on untested code might be
->>> a waste of time.
->>>
->>
->> You mean flag addition into DTSI file ? If yes, then the intention was
->> to just enable feature support but not into mainline because it should
->> happen per board or usecase. Please suggest if i can enable particular
->> node with DTSI feature flag.
->> Please correct me if my understanding on your ask went wrong.
-> 
-> How is this related?
-"You missed at least devicetree list (maybe more)" - Do you mean to say 
-i missed to add DTSI changes OR maintainers for DTSI ? seeking clarity 
-to avoid confusion.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+Best regards,
+Junhao
 
