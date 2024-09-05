@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-316635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8EB96D237
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB6996D23A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ECD91C21555
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B16CD1F2A3C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C27D194AEC;
-	Thu,  5 Sep 2024 08:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8C4194C73;
+	Thu,  5 Sep 2024 08:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ky+j55qz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMO47Wgv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE01946AA
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9001898E4;
+	Thu,  5 Sep 2024 08:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525210; cv=none; b=dqWmSQEcMHjwFDYftGOSfdlCbhYuIottz/El5/sqcO7gRTls5ZJVNX+NirzgEp9Qy1rsb0bJGxLVaZbq1PObfi9sVFn8cQnqsyp8ktVuwnUoMofc6f2lvddulN4XZpvV9J9lWJOpGV6dAs1wnufkUrrvFLAN/hHzLK8ocOuClo0=
+	t=1725525223; cv=none; b=HB7kblshEAJloxE9qNccnUfi/jVKeo7FmXfDkBcit65CFHixyj4S0s/tz4sgIlXh8KECZH9gJIgQAbEsIT7N+vXRCGX6dh2YBiSYd0BAtrdX11s101koneXigT0kHnjHjeG7OMktBbvYdCo3AEjJKTrFSfMA0Z19RzFGIvTC4ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525210; c=relaxed/simple;
-	bh=imv8U08gHO+jhkWfKoa3G4FjFUXru6I5ky+OmAJv/sQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QU9gfEHoUEWbVm6KRU4sA8eod4pmOJZ78fEzsSAfABVfwA6nw9d9tCillNNtIBCuwSGA+3jN2JHxJmD5Fu61tXoRieeLyXoOjzrdvKZhSN6JMnaudsKMCNlffy3rUrJeS8zZ3VAHTW8iGWYAypev/5u8GMY4npFAwrJ5OSkllvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ky+j55qz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725525207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RDEdIC/fJh3s7WsAQenvIjI2Fjpnx/yCMstntJbdT3w=;
-	b=Ky+j55qzCHSx/jHcbXBjo4QTx3rbyPHS8/8/HNrjPKjqH2Ssjeak3sFJCpcaNPSccSfZGz
-	UR31J+ia0qsxXYRL6BHANdxNbsmiq+dVAQcVbLgsQmpJFXgoohVcZAT/lX+3RTykICle7u
-	wQ2989CzvlXUWHxGz6K/rZfkwLZBxtA=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-wtxLe6WdPcqlWlG8IRNZAQ-1; Thu, 05 Sep 2024 04:33:25 -0400
-X-MC-Unique: wtxLe6WdPcqlWlG8IRNZAQ-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a868c4d16a6so53006566b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:33:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725525204; x=1726130004;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDEdIC/fJh3s7WsAQenvIjI2Fjpnx/yCMstntJbdT3w=;
-        b=SnukiQ4wCizYiPUPZT1T5qekMLcxUCuJZLeAbG8B+g7rwg9wnj1uFccEJpu9/TtM+N
-         OnOdTH6BW/UfTll3DUIIFnv3r4ue4JRxYs6Z25Y7ZpWlWqTCItz+6k6a0M8S4MQ5QqSA
-         m5fn1AkcGAfv+hPUpPZq/MAO7jPIbuqKSkE7f0GQxwsPDAKS4Np29H/o5Tn3cL0e5BD8
-         GK3Okewaz0Xb1Cu6K5P84Fph5jvKuR7dvS4NZ9HVWV4obZFAscgeazPNNmX0vuSjWE59
-         X6SiecQMOUb4//wQhBrAAemQrTnmBlbXweKwbYLrH0XOk0NMYOQBa8XymAE+XAWZI4Gi
-         01WA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHaVj8MIOjDsfn6zfzHFouQuksIL4IxckoBLE/v0eYodaMozIkrdTV8HUTIJcMQZuTC1U7xYCIA8Sko5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZE8CTGGEnHsSeSxshIfoRAH5D2Qie5lz28cT8wWTFNoTyCRfs
-	OVbxmMEpNzYLbw98yytDU+wE26kD8ob6B0YhdXP18LpJQFWF+JI4+rkikKTGbnMlww3sJNgZipt
-	IjAZVwCiCdLN3EwX6RD8wuAuId3I6zWZ+uEsruytaX/lO35C94WcYCU02yCcL6w==
-X-Received: by 2002:a17:906:6189:b0:a8a:7a3d:64b2 with SMTP id a640c23a62f3a-a8a7a3d6573mr18501966b.17.1725525204596;
-        Thu, 05 Sep 2024 01:33:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENHEGjwK07jNX9TXIrPYe4KiFmSpnjTi1k+HyH4mHnyAw95VjI3ZYYdR8iiWNH6/nno2rgGQ==
-X-Received: by 2002:a17:906:6189:b0:a8a:7a3d:64b2 with SMTP id a640c23a62f3a-a8a7a3d6573mr18500066b.17.1725525204060;
-        Thu, 05 Sep 2024 01:33:24 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d527sm102196466b.135.2024.09.05.01.33.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 01:33:23 -0700 (PDT)
-Message-ID: <8d35db80-5bf3-40ca-b041-8a94e76739c7@redhat.com>
-Date: Thu, 5 Sep 2024 10:33:22 +0200
+	s=arc-20240116; t=1725525223; c=relaxed/simple;
+	bh=5Kce66BoEzhRGGCAESwM3bAZjGKtJPGCv8Uo03s2PIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cp8acyRq4W/gK6RxN1SvGyKLxgFy5+5SjxYnQyBBXP8DoSqW22lHgXjwNlLuKJfPpE6b+6fQ8+m6VnK/Ys5VyQb5lzZMCyrYMiYsgVl180HiWezLbpvD2IhN1px2YyJkPgwT0l4Ci/R97Drn306SrnuIwBoRNvw/p7CSMtD97/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMO47Wgv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89ECFC4CEC3;
+	Thu,  5 Sep 2024 08:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725525223;
+	bh=5Kce66BoEzhRGGCAESwM3bAZjGKtJPGCv8Uo03s2PIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GMO47Wgv82i87rGl7EqWh4tt/Oh8xQTnJLZlAO6yBzXLmHTqXtHHBl2Vu3PkhrIeP
+	 OeY5gsZrEMLC6Kvf+P8QP+ASlK01jJDjCrf4dpLb8a8jeqkAUqadm+TDwJoar1CdmL
+	 KPPNt8JvgQnVaq3GZ5XENoZT8HAdzYWV1vQrLaBhHitH80WlOpFz42QFOamgrLYKNX
+	 RbHOOoT6GHT99xGSLckNa1FE4cEFnaPMzriOQo4zIWcGqGvrCSTvLKBC/Q07kMEibC
+	 Rf9r52yfi3RP3Dq9CziePEsWV62HhxgjmJfVNjzZgkCFDndP3Mu8eBysXnbDmNVRtW
+	 CQp7N8geOYrFA==
+Date: Thu, 5 Sep 2024 10:33:38 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: libata-eh: Clear scsicmd->result when setting
+ SAM_STAT_CHECK_CONDITION
+Message-ID: <Ztls4mim6Jky7E0S@ryzen.lan>
+References: <20240904223727.1149294-1-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
- scope_guard() clear of its scope
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Gergo Koteles <soyer@irl.hu>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ike Panhc <ike.pan@canonical.com>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, kernel test robot <lkp@intel.com>
-References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
- <8a106cfe-f7cd-4660-983a-feba627cdcab@redhat.com>
- <ZtjAmavK5tr4mvka@surfacebook.localdomain>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZtjAmavK5tr4mvka@surfacebook.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904223727.1149294-1-ipylypiv@google.com>
 
-Hi Andy,
+Hello Igor,
 
-On 9/4/24 10:18 PM, Andy Shevchenko wrote:
-> Wed, Sep 04, 2024 at 08:14:53PM +0200, Hans de Goede kirjoitti:
->> Hi,
->>
->> On 8/29/24 6:50 PM, Andy Shevchenko wrote:
->>> First of all, it's a bit counterintuitive to have something like
->>>
->>> 	int err;
->>> 	...
->>> 	scoped_guard(...)
->>> 		err = foo(...);
->>> 	if (err)
->>> 		return err;
->>>
->>> Second, with a particular kernel configuration and compiler version in
->>> one of such cases the objtool is not happy:
->>>
->>>   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end of section
->>>
->>> I'm not an expert on all this, but the theory is that compiler and
->>> linker in this case can't understand that 'result' variable will be
->>> always initialized as long as no error has been returned. Assigning
->>> 'result' to a dummy value helps with this. Note, that fixing the
->>> scoped_guard() scope (as per above) does not make issue gone.
->>>
->>> That said, assign dummy value and make the scope_guard() clear of its scope.
->>> For the sake of consistency do it in the entire file.
->>>
->>> Fixes: 7cc06e729460 ("platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands")
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes: https://lore.kernel.org/oe-kbuild-all/202408290219.BrPO8twi-lkp@intel.com/
->>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Wed, Sep 04, 2024 at 10:37:27PM +0000, Igor Pylypiv wrote:
+> commit 24aeebbf8ea9 ("scsi: ata: libata: Change ata_eh_request_sense() to
+> not set CHECK_CONDITION") changed the way how SAM_STAT_CHECK_CONDITION is
+> set. Assignment "scmd->result = SAM_STAT_CHECK_CONDITION;" was replaced by
+> set_status_byte() which does not clear the scsicmd->result.
+
+"which does not clear the scsicmd->result"
+
+scsicmd->result is a combination of:
+-SCSI status byte
+-SCSI ML byte
+-host byte
+
+Please be more specific of which byte(s) that you want to clear,
+both here and in other places in the commit message.
+
+
 > 
->> Thank you for your patch, I've applied this patch to my review-hans 
->> branch:
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+> By not clearing the scsicmd->result we end up in a state where both
+> the DID_TIME_OUT host byte and the SAM_STAT_CHECK_CONDITION status
+> bytes are set.
 > 
-> Have you had a chance to go through the discussion?
-
-Yes I did read the entire discussion.
-
-> TL;DR: please defer this. There is still no clear understanding of the root
-> cause and the culprit.
-
-My gist from the discussion was that this was good to have regardless of
-the root cause.
-
-IMHO the old construction where the scoped-guard only guards the function-call
-and not the "if (ret)" on the return value of the guarded call was quite ugly /
-convoluted / hard to read and this patch is an improvement regardless.
-
-Regards,
-
-Hans
 
 
+> The DID_TIME_OUT host byte is getting set a part of error handling:
+> 
+> ata_qc_complete()
+>     ata_qc_schedule_eh()
+>         blk_abort_request()
+>             WRITE_ONCE(req->deadline, jiffies);
+> 
+> blk_mq_timeout_work()
+>     blk_mq_check_expired()
+>         blk_mq_rq_timed_out()
+> 	    req->q->mq_ops->timeout() / scsi_timeout()
+>                 set_host_byte(scmd, DID_TIME_OUT);
 
+I would have reorder your commit log and have this first in the commit log.
+
+
+> 
+> Having the host byte set to DID_TIME_OUT for a command that didn't timeout
+> is confusing. Let's bring the old behavior back by setting scmd->result to
+> SAM_STAT_CHECK_CONDITION.
+
+I think you are missing something very important in the commit log here:
+What is the user visible change before and after your change?
+
+Is there a difference is the error message in dmesg? If not, that should
+be mentioned as well.
+
+
+> 
+> Fixes: 24aeebbf8ea9 ("scsi: ata: libata: Change ata_eh_request_sense() to not set CHECK_CONDITION")
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> ---
+>  drivers/ata/libata-eh.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+> index 214b935c2ced..4927b40e782f 100644
+> --- a/drivers/ata/libata-eh.c
+> +++ b/drivers/ata/libata-eh.c
+> @@ -1605,7 +1605,7 @@ static unsigned int ata_eh_analyze_tf(struct ata_queued_cmd *qc)
+>  		 */
+>  		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID) &&
+>  		    (stat & ATA_SENSE) && ata_eh_request_sense(qc))
+> -			set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
+> +			qc->scsicmd->result = SAM_STAT_CHECK_CONDITION;
+
+ata_eh_analyze_tf() will only be called on commands that are owned by EH
+(has ATA_QCFLAG_EH set).
+
+Thus this command will end up in:
+ata_eh_finish() -> ata_eh_qc_complete() -> __ata_eh_qc_complete() ->
+-> __ata_qc_complete() -> qc->complete_fn().
+
+complete_fn will be (except in special cases): ata_scsi_qc_complete()
+If you look at ata_scsi_qc_complete(), it already clears the host byte:
+https://github.com/torvalds/linux/blob/v6.11-rc6/drivers/ata/libata-scsi.c#L1695-L1696
+
+So could you please be more specific of what problem this change is fixing?
+Is it just that you think that it makes sense to clear the host byte earlier
+in the call chain?
+
+There are many different paths a QC can take via EH, e.g. policy 0xD NCQ
+commands will not fetch sense data via ata_eh_request_sense(), so clearing
+the host byte in ata_scsi_qc_complete() should be fine, otherwise we need
+to do a similar change to yours in all the different code paths that sets
+sense data ...which might actually be something that makes sense, but then
+I would expect a patch series that changes all the locations where we set
+sense data, not just in ata_eh_analyze_tf(), and then drops the clearing in
+ata_scsi_qc_complete() (which was introduced in commit 7574a8377c7a ("ata:
+libata-scsi: do not overwrite SCSI ML and status bytes")).
+
+
+See this patch to see all the places where we set sense data:
+https://git.kernel.org/pub/scm/linux/kernel/git/libata/linux.git/commit/?h=for-6.12&id=9526dec226f0779d72f798e7a18375bf8d414775
+
+
+
+
+Side note:
+You might also be interested to know that a command that was sent via EH will
+be finished using scsi_eh_finish_cmd() (called by __ata_eh_qc_complete()),
+and will thus end up in scsi_eh_flush_done_q(). A command that has sense data
+will have scmd->retries == scmd->allowed (set by ata_eh_qc_complete()), so you
+will end up in this code path:
+https://github.com/torvalds/linux/blob/v6.11-rc6/drivers/scsi/scsi_error.c#L2213-L2227
+
+Which means that SCSI EH will set DID_TIME_OUT for any command that does
+not have (SCSI ML byte || SCSI status byte || host byte) set.
+
+A command with sense data will have most often have CHECK_CONDITION set, but
+there is also CDL policy 0xD commands (which will have the SCSI ML byte set).
+So this special flag SCMD_FORCE_EH_SUCCESS is for commands that were completed
+successfully without any SK/ASC/ASCQ in the same interrupt as other policy 0xD
+commands which did have SK/ASC/ASCQ set.
+For details, see 3d848ca1ebc8 ("scsi: core: Allow libata to complete successful
+commands via EH").
+
+
+Kind regards,
+Niklas
 
