@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-316904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A377796D6C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 022DA96D6C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267491F26FE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:08:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D7C1F23D84
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82B019924F;
-	Thu,  5 Sep 2024 11:08:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5649519883C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAC319993E;
+	Thu,  5 Sep 2024 11:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f0sXFzh2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94309199223
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534517; cv=none; b=PoxIV0cTpws+/IwML+L/S3MiEiufCoZno8iU+MiD+o2ZsMNH/pZtUsvV8q+e9dZH2RDuGnudapBeTD87dbnC7Ts7DapU4lKc7fb9s0QVfXtfnLW77LempfmPizitGxxKKed4Cmg+oyK3QLNcAPD03lf4iupYuiuxuBJxA51cwaI=
+	t=1725534523; cv=none; b=TWox4fezY97EJmpszdAAAw8FwxunTxAnG5vZS5ww8mBXxnYnH8VbQrCYCYM9ImdepspBL8NxbkrMSBWPDMNdSXmrSMU6GxbgE2MWqLeaMWtc6qH9m/WtfO4lmVQIYhiICYUJMUpRRYPbMx2LM3FwpDtar2nmFrR7g6bihKH9G/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534517; c=relaxed/simple;
-	bh=y+gUMmwdtV8VGhI8w/qqwAflgQClweoFc8fSGGh4vM8=;
+	s=arc-20240116; t=1725534523; c=relaxed/simple;
+	bh=T74FLgEMRbwNanNVn34x8nN09A+oCVO9WxT1A0X8lsg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QCd2hHbjIlVG8D1LwpXD46dXX7HqhRL7tMhSEVs8kjWWe+xgVh9+3d5iOtEVbM+/LZGOrUpR6Yjbp8YOhKUyktqLQboqFCQdk7qIIJ76s1SxX6UL9KX9t4ho9S/mAbZ1RKvz4JMhCNvGhXnDhaHAlTyvhu84ImJSCE4pcy3wFA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D2D1DA7;
-	Thu,  5 Sep 2024 04:09:00 -0700 (PDT)
-Received: from [10.1.36.183] (XHFQ2J9959.cambridge.arm.com [10.1.36.183])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20CAC3F73B;
-	Thu,  5 Sep 2024 04:08:30 -0700 (PDT)
-Message-ID: <336ce914-43dc-4613-a339-1a33f16f71ad@arm.com>
-Date: Thu, 5 Sep 2024 12:08:28 +0100
+	 In-Reply-To:Content-Type; b=dSfkj4J6K4+ZMtGXy34UVkuYfz43TOl6zuy+uU2NGZWpGV46Pziox9nKznOfSF/CbL14pWyUOyEG7VdGwZMbeWPrwhmqFkogvjEwA7jkITQizkE9Iv8q+FUQQ4QWcCYZ1/Aa6mxktHcPYZzdeSkf/kmLoU0ayZMoDU4KfoJqG6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f0sXFzh2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725534520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GuM9XXecG6m7Bq9F8M7Qo2NTP71Qi/wqsXre7rS8OKY=;
+	b=f0sXFzh2mSR+90bMjbtK9mOzFylnK+v+g8wv70FETy3PjbnyRRma8hGq1P3yQRTDhmJxdr
+	9iowib27UUSb8gw7gZlgmyjpfQSZl+mSYPgS3qmmkKIqlsg+LKTkLOnpcRwuugHzY7S4d6
+	BJ26CyrZ2eHVDHB4HY/h6z2WhyEI208=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-359-ujSLDboXMBSSzw6qy4I_1w-1; Thu, 05 Sep 2024 07:08:39 -0400
+X-MC-Unique: ujSLDboXMBSSzw6qy4I_1w-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42c78767b90so5838645e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 04:08:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725534518; x=1726139318;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GuM9XXecG6m7Bq9F8M7Qo2NTP71Qi/wqsXre7rS8OKY=;
+        b=F0PuWUAeZjkj15jOmAntzU80DTPPj7LUTFan/Q9hZgKmyinZXaebc4hlYV7iodmmZX
+         ebzWYwlVGU+c6ecMDGVJxr4UWxpQK4KuxUG1SFMxl7wJ5bGn/2WzJ2LkvOjtBRqYfiON
+         A4Ku6y8YeIrJ4T1If2N/r7JrCaElOiHrHsBZY5TR2PSyKeI/2nqTLlPombcpY1OodGY3
+         L6L0Quj3m40X697O6prC51wHgpZwCGae/2QvyCDYO3HRsIlrJMtT8AhLjp5CJU7CugPD
+         XOF1WH5fgl3QHCcYcKhObtCVyMsJ0aXHd+Wcgd06CJQ/uinWEhXdat3SursNAAKaM4bm
+         0bLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkg29YwHY2ZkQ2n2n6AOVlUDhn15NWPQ/6DF2wgjsUC9glfXx1hM+GZkVSxhPMzoyOm8bZAszlIsRYQcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj8rRcIxsVy3U+qtyqTQII4tD1eiC2KYcWwPlbOSXNI+gpf7vc
+	7SOKU5jSV10XxR0fSsXmFxXbVe10QXvzrOUr4FQbdDP3DCH6/O9WGvzK94E4uEBTp3dYZZKQF11
+	CRcv7G8gtoOmPUu30/4H1O3UkBavxhus38Q61TxvXbpjemBkhAHBsPxgNUPnvdw==
+X-Received: by 2002:a05:600c:474f:b0:428:d83:eb6b with SMTP id 5b1f17b1804b1-42c880efd7emr85389875e9.15.1725534518064;
+        Thu, 05 Sep 2024 04:08:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8jb7VG0GmOLyhAxFm/EVuV0ysPY7NXFeWFToQ9W8b34/g4Fr0+wanY40DaGxyVG126b9kvg==
+X-Received: by 2002:a05:600c:474f:b0:428:d83:eb6b with SMTP id 5b1f17b1804b1-42c880efd7emr85389645e9.15.1725534517477;
+        Thu, 05 Sep 2024 04:08:37 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c708:5400:6c12:d0e2:3757:2963? (p200300cbc70854006c12d0e237572963.dip0.t-ipconnect.de. [2003:cb:c708:5400:6c12:d0e2:3757:2963])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d55sm234023595e9.41.2024.09.05.04.08.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 04:08:36 -0700 (PDT)
+Message-ID: <65838cc0-9a20-4994-a0ef-9cd50bb00951@redhat.com>
+Date: Thu, 5 Sep 2024 13:08:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,223 +82,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: Abstract THP allocation
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-2-dev.jain@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240904100923.290042-2-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dan Williams <dan.j.williams@intel.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Alistair Popple <apopple@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Baoquan He <bhe@redhat.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04/09/2024 11:09, Dev Jain wrote:
-> In preparation for the second patch, abstract away the THP allocation
-> logic present in the create_huge_pmd() path, which corresponds to the
-> faulting case when no page is present.
+On 05.09.24 12:56, Andy Shevchenko wrote:
+> On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+>> Huang, Ying wrote:
+>>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 > 
-> There should be no functional change as a result of applying
-> this patch.
+> [..]
 > 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->  mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
->  1 file changed, 67 insertions(+), 43 deletions(-)
+>>>> You may move Cc list after '---', so it won't unnecessarily pollute the commit
+>>>> message.
+>>>
+>>> Emm... It appears that it's a common practice to include "Cc" in the
+>>> commit log.
+>>
+>> Yes, just ignore this feedback, it goes against common practice. Cc list
+>> as is looks sane to me.
 > 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 67c86a5d64a6..58125fbcc532 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -943,47 +943,89 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
->  }
->  EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->  
-> -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
-> -			struct page *page, gfp_t gfp)
-> +static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> It seems nobody can give technical arguments why it's better than just keeping
+> them outside of the commit message. Mantra "common practice" nowadays is
+> questionable.
 
-Is there a reason for specifying order as a parameter? Previously it was
-hardcoded to HPAGE_PMD_ORDER. But now, thp_fault_alloc() and
-__thp_fault_success_stats() both take order and map_pmd_thp() is still
-implicitly mapping a PMD-sized block. Unless there is a reason you need this
-parameter in the next patch (I don't think there is?) I suggest simplifying.
+Just look at how patches look like in the git tree that Andrew picks up. 
+(IIRC, he adds a bunch of CCs himself that are not even part of the 
+original patch).
 
-> +				  unsigned long haddr, struct folio **foliop,
+Having in the git tree who was actually involved/CCed can be quite 
+valuable. More helpful than get_maintainers.pl sometimes.
 
-FWIW, I agree with Kirill's suggestion to just return folio* and drop the output
-param.
+-- 
+Cheers,
 
-Thanks,
-Ryan
-
-> +				  unsigned long addr)
->  {
-> -	struct vm_area_struct *vma = vmf->vma;
-> -	struct folio *folio = page_folio(page);
-> -	pgtable_t pgtable;
-> -	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-> -	vm_fault_t ret = 0;
-> +	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->  
-> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
-> +	*foliop = folio;
-> +	if (unlikely(!folio)) {
-> +		count_vm_event(THP_FAULT_FALLBACK);
-> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
-> +		return VM_FAULT_FALLBACK;
-> +	}
->  
-> +	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->  	if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
->  		folio_put(folio);
->  		count_vm_event(THP_FAULT_FALLBACK);
->  		count_vm_event(THP_FAULT_FALLBACK_CHARGE);
-> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
-> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
-> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->  		return VM_FAULT_FALLBACK;
->  	}
->  	folio_throttle_swaprate(folio, gfp);
->  
-> -	pgtable = pte_alloc_one(vma->vm_mm);
-> -	if (unlikely(!pgtable)) {
-> -		ret = VM_FAULT_OOM;
-> -		goto release;
-> -	}
-> -
-> -	folio_zero_user(folio, vmf->address);
-> +	folio_zero_user(folio, addr);
->  	/*
->  	 * The memory barrier inside __folio_mark_uptodate makes sure that
->  	 * folio_zero_user writes become visible before the set_pmd_at()
->  	 * write.
->  	 */
->  	__folio_mark_uptodate(folio);
-> +	return 0;
-> +}
-> +
-> +static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
-> +{
-> +	count_vm_event(THP_FAULT_ALLOC);
-> +	count_mthp_stat(order, MTHP_STAT_ANON_FAULT_ALLOC);
-> +	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
-> +}
-> +
-> +static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-> +			struct vm_area_struct *vma, unsigned long haddr,
-> +			pgtable_t pgtable)
-> +{
-> +	pmd_t entry;
-> +
-> +	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
-> +	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
-> +	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
-> +	folio_add_lru_vma(folio, vma);
-> +	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
-> +	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
-> +	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
-> +	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-> +	mm_inc_nr_ptes(vma->vm_mm);
-> +}
-> +
-> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
-> +{
-> +	struct vm_area_struct *vma = vmf->vma;
-> +	struct folio *folio = NULL;
-> +	pgtable_t pgtable;
-> +	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-> +	vm_fault_t ret = 0;
-> +	gfp_t gfp = vma_thp_gfp_mask(vma);
-> +
-> +	pgtable = pte_alloc_one(vma->vm_mm);
-> +	if (unlikely(!pgtable)) {
-> +		ret = VM_FAULT_OOM;
-> +		goto release;
-> +	}
-> +
-> +	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
-> +			      vmf->address);
-> +	if (ret)
-> +		goto release;
->  
->  	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-> +
->  	if (unlikely(!pmd_none(*vmf->pmd))) {
->  		goto unlock_release;
->  	} else {
-> -		pmd_t entry;
-> -
->  		ret = check_stable_address_space(vma->vm_mm);
->  		if (ret)
->  			goto unlock_release;
-> @@ -997,20 +1039,9 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
->  			VM_BUG_ON(ret & VM_FAULT_FALLBACK);
->  			return ret;
->  		}
-> -
-> -		entry = mk_huge_pmd(page, vma->vm_page_prot);
-> -		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
-> -		folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
-> -		folio_add_lru_vma(folio, vma);
-> -		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
-> -		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
-> -		update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
-> -		add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-> -		mm_inc_nr_ptes(vma->vm_mm);
-> +		map_pmd_thp(folio, vmf, vma, haddr, pgtable);
->  		spin_unlock(vmf->ptl);
-> -		count_vm_event(THP_FAULT_ALLOC);
-> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
-> -		count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
-> +		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
->  	}
->  
->  	return 0;
-> @@ -1019,7 +1050,8 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
->  release:
->  	if (pgtable)
->  		pte_free(vma->vm_mm, pgtable);
-> -	folio_put(folio);
-> +	if (folio)
-> +		folio_put(folio);
->  	return ret;
->  
->  }
-> @@ -1077,8 +1109,6 @@ static void set_huge_zero_folio(pgtable_t pgtable, struct mm_struct *mm,
->  vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
-> -	gfp_t gfp;
-> -	struct folio *folio;
->  	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->  	vm_fault_t ret;
->  
-> @@ -1129,14 +1159,8 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->  		}
->  		return ret;
->  	}
-> -	gfp = vma_thp_gfp_mask(vma);
-> -	folio = vma_alloc_folio(gfp, HPAGE_PMD_ORDER, vma, haddr, true);
-> -	if (unlikely(!folio)) {
-> -		count_vm_event(THP_FAULT_FALLBACK);
-> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
-> -		return VM_FAULT_FALLBACK;
-> -	}
-> -	return __do_huge_pmd_anonymous_page(vmf, &folio->page, gfp);
-> +
-> +	return __do_huge_pmd_anonymous_page(vmf);
->  }
->  
->  static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+David / dhildenb
 
 
