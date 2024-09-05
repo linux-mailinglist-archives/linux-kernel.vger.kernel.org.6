@@ -1,102 +1,129 @@
-Return-Path: <linux-kernel+bounces-317160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E3196DA30
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:23:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4A596DA33
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10E6A1F22247
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50CA1F244C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C14419D88C;
-	Thu,  5 Sep 2024 13:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFD219D89F;
+	Thu,  5 Sep 2024 13:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJNk0sKR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3c3HpEP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B02B19AA73;
-	Thu,  5 Sep 2024 13:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B63719D07F;
+	Thu,  5 Sep 2024 13:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542599; cv=none; b=R8gwso3+cTnlegmkvg0Swi1AbkSKR+nMSs3AdcnxgBa9JYmNcK5A3U5KcO0AO99iiY/7cmSgwPJZbbAK4kvoE3Vw3cFzsfzvJNk+K+A9tzPm6HSkJVOPXf6nJ8SWtGC1reyDZj57x7mUTNqrkSYWs9dkpL7Q/umfibSv6UY5wtE=
+	t=1725542608; cv=none; b=gQrUWQxY8aoipx2NeiR4asHr2VKqkiQZzg8aY1mpI4pJs2Xs6v9gPlfjORdGMYgmBu6M0LvsnBb/5qP2oEkS38chmwUlVmbzjPXpJ/3vb0NJv0RckFRV58+2SgGs6p4a1+lBndNU5HlzNAFaEVkoAnAmtxniSiFv3FbcqhbnFLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542599; c=relaxed/simple;
-	bh=h+XbA3+VCIeuLn9lhEd8QO33LVVy/IJRQcMcL8Ekg3g=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=oMcBanb16gv/bjMjcldPvB57zs2pBt07+lgQLROUZ/on7+JOFgVT/JAmTBi9WjZLX/lg+JOSXFs2r5xLz6XFKCVjX0nPRpym7pLeE5fEZH6BI/hkdHqR901EEEgpalZrAakFJ67lkLvtVu3JYd9sW6zeOtlwN6WHtoeqPuY7eac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJNk0sKR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE12FC4CEC3;
-	Thu,  5 Sep 2024 13:23:17 +0000 (UTC)
+	s=arc-20240116; t=1725542608; c=relaxed/simple;
+	bh=XQUjsAC0HxJIc98Z9NWzSHnpbnIOxRr1q4RYdDEzP/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GgcHS6DAUQrxoi+qJh6Nlqq2xh9uMpZKUWvjOrIjoTGoTfH0Cb1tEAc3kfKbiMLEPAneIdkxZnQNmim7I53nTDtgjGVwPKMBBv8CkgUXQpMgDuNpGQlOtGyZDE3yd0qoWGFD2WsonO/R4K/ajFfrnrAWEJiXCxN1oC4MCpPUyVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3c3HpEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 459C1C4CEC3;
+	Thu,  5 Sep 2024 13:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725542599;
-	bh=h+XbA3+VCIeuLn9lhEd8QO33LVVy/IJRQcMcL8Ekg3g=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=FJNk0sKRWaKGiQHD2tLO2bJzbExykEVZTAnVu7Y7XOAyMw+ZkkBcdgilkwrHJ6yUk
-	 qbY8qZr6GdqhG9O0VfJ5Q8wGmY9W3TRAJoyjsM3uIqfV0pD24pjpw3k71A5CttjCXj
-	 Ol0XM/C3aR4oaDOC9x0RBQAfttl5vxKNXXcaAZElf1AWChmaJEUENSq6S+pKuhiZOH
-	 m/B2m/dg3qd+wlfVAnANk4ayhl4pZwir/BeqxNHuQc6W/XNPi4IvwFAUYFoyYFfnGv
-	 NLepWwPO6y4eZXTCPpuKoPpEiK01WFrIpPH5sovgzEqIBceh3SU+1FhtDZPUrSvET8
-	 8/rjbdW8dUYPA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,  James Prestwood
- <prestwoj@gmail.com>,  linux-wireless@vger.kernel.org,
-  ath10k@lists.infradead.org,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware
- (-110) (ETIMEDOUT)
-References: <d8253ab3-f4f0-40fd-a550-d75eef121b56@molgen.mpg.de>
-	<87bk13jwzv.fsf@kernel.org>
-	<00dfdaab-4d26-45f6-b69d-049ae489b2bd@molgen.mpg.de>
-Date: Thu, 05 Sep 2024 16:23:15 +0300
-In-Reply-To: <00dfdaab-4d26-45f6-b69d-049ae489b2bd@molgen.mpg.de> (Paul
-	Menzel's message of "Wed, 4 Sep 2024 23:42:35 +0200")
-Message-ID: <877cbqcjzw.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1725542608;
+	bh=XQUjsAC0HxJIc98Z9NWzSHnpbnIOxRr1q4RYdDEzP/M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j3c3HpEPwS6hMf9CzYoJPQTauvVWH2X+4k3m53gqUC0QZXFPwGlr64oFiv/ElLsZV
+	 5H5xalY7QznB16ShPZH+Xpb0BL+esq+NKrOoasDEz2hXQo/GRyqcdIhfuOiVrvwjXy
+	 NitZyl8lJvrzJf3A6bQzH1V8YTNwEKPmbFx+YfHCYRfY2orjCkYna+NFfNlka7iN++
+	 V/NkCYHG/PBpr181WZ0yHH+xjfxu9Ht5XgClp2IA4N0iqE6WWb9wktVmSP9cP8XR/w
+	 VhB94JJO62nvgH7qkeHY29wzpf98kKsfaVrUTVgzKLMM0CWEMKGWtts2vgNbOfOQu6
+	 3gAivu7Yz+exA==
+Message-ID: <a4520c05-d64b-4ef0-823c-6c568b459e21@kernel.org>
+Date: Thu, 5 Sep 2024 15:23:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] dt-bindings: display: Add Sharp Memory LCD
+ bindings
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Mehdi Djait <mehdi.djait@bootlin.com>
+Cc: christophe.jaillet@wanadoo.fr, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20240905124432.834831-1-lanzano.alex@gmail.com>
+ <20240905124432.834831-2-lanzano.alex@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240905124432.834831-2-lanzano.alex@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Paul Menzel <pmenzel@molgen.mpg.de> writes:
+On 05/09/2024 14:43, Alex Lanzano wrote:
+> Add device tree bindings for the monochrome Sharp Memory LCD
+> 
+> Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
 
-> Am 04.09.24 um 16:48 schrieb Kalle Valo:
->> Paul Menzel writes:
->
->>> Linux 6.11-rc6+ logged the warning below when resuming from ACPI S3
->>> (or unloading and loading the `ath10k_core`/`ath10k_pci` modules)
->>> having been connected to an AVM network:
->>>
->>>      wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware=
- (-110)
->>>
->>> Error code 110 is the value for ETIMEDOUT. I saw James patch [1], and
->>> applied it, and the error is still there (as expected).
->>>
->>> Can the warning be improved so the user know, which component is at fau=
-lt?
->> The warning comes from mac80211 and it already contains your network
->> interface name (wlp58s0). What else would you want to see?
->
-> As an ignorant user, I do not know what to do with the warning. I=E2=80=
-=99d
-> like to see a suggestion how to get rid of the warning. Maybe:
->
->     wlp58s0: failed to remove key (0, ce:ce:1e:27:bb:e0) from hardware
->     in X s (-110), please report it to the vendor firmware
+I don't understand what happened here. Your process of handling patches
+is odd. Tags do not disappear, you had to remove them, right? So where
+is the explanation for this?
 
-The warning can come due to different reasons in different drivers, it's
-not really easy to identify what the user should do.
+Best regards,
+Krzysztof
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
 
