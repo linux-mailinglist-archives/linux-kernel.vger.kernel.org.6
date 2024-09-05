@@ -1,103 +1,72 @@
-Return-Path: <linux-kernel+bounces-317303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AA696DC10
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:40:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896B896DBDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1597228412A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B121C23487
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF9F1A0713;
-	Thu,  5 Sep 2024 14:37:27 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7331818037;
+	Thu,  5 Sep 2024 14:32:10 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E1719D8AF;
-	Thu,  5 Sep 2024 14:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D45617C9B;
+	Thu,  5 Sep 2024 14:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725547046; cv=none; b=gXfDSMjj9KexbKaNXMNMRUIihQIZFe5U3EE8dHxEa3UqsLCnHGlXV6smdcy0FFeqcLKkujjrAII+g6uqXxtDZ5bFiYQVaNPv8j7w6HfwJw18q2eJai6JYg6IVF3nqYxxH1yrbDQXNsKltVLZ9qfUJCTrXDd1kAyT5+XNY0Q0V0c=
+	t=1725546730; cv=none; b=bE4rfM/EmFR+HQNkLdxmxGot95RSrvASJ16NpPGaFlewb5/vACR+pvCJuU2rtivSAJg7kQGgRGissHXBhMP9jtfTxu6PCdVQpmS0nYxEwVYqWJYApHsF0C4uuE1zVMgUxfiwjhxMI97K9TLV5gj6B8/pP+4945E3/bjks5ZiV0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725547046; c=relaxed/simple;
-	bh=j2sFzKHIvZtXIzn+EfS/3JETndR1dfz583G/k3ujcDE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TFI45jLeV2omkinye2XYljzgSDnAejDqO50PsN/g5c1TYnFlkYu1Ofkwe09tqQusnIPonUEJGc6DMwZDz4YJsnH4Bl07WdEiA2k5ADjy2QdjI3M+ej+IiTLQDkf9fzcVCbQgYYSQP4Xnk+M6XCTe1pzMYfMO+7aWYRUjA+N2p2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X023p5D3Wz18N54;
-	Thu,  5 Sep 2024 22:36:22 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F302180100;
-	Thu,  5 Sep 2024 22:37:21 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 5 Sep 2024 22:37:20 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <zhuyuan@huawei.com>, <forest.zhouchang@huawei.com>,
-	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH V7 net-next 11/11] net: add ndo_validate_addr check in dev_set_mac_address
-Date: Thu, 5 Sep 2024 22:31:20 +0800
-Message-ID: <20240905143120.1583460-12-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240905143120.1583460-1-shaojijie@huawei.com>
-References: <20240905143120.1583460-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1725546730; c=relaxed/simple;
+	bh=55OjlP3iUWYoGk6en4lD65WOZ0/EzVYL/xp/dr2dwxk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rauG/roE2beEcM5vY4iYbKRL6MVWHeda3Mx3CiUt7L9q2iFGSyvo18YcdQNtCM+gHBmXR0Os8YFuuesrNeMQy/36OOU4YUqiIdHEWeBY2FDodEBvB17BLsAarLQbdFlJOfnPBS8fwIgQEZmLAbjfxRVsewHD3hStWD9PxmBVRXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A028C4CEC5;
+	Thu,  5 Sep 2024 14:32:09 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 2436510604BA; Thu, 05 Sep 2024 16:32:07 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <9c2f76e7-5679-473b-9b9c-e11b492b96ac@stanley.mountain>
+References: <9c2f76e7-5679-473b-9b9c-e11b492b96ac@stanley.mountain>
+Subject: Re: [PATCH next] power: supply: fix a double free on error in
+ probe()
+Message-Id: <172554672712.1074347.2449586209838548923.b4-ty@collabora.com>
+Date: Thu, 05 Sep 2024 16:32:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-If driver implements ndo_validate_addr,
-core should check the mac address before ndo_set_mac_address.
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
-ChangeLog:
-v2 -> v3:
-  - Use ndo_validate_addr() instead of is_valid_ether_addr()
-    in dev_set_mac_address(), suggested by Jakub and Andrew.
-  v2: https://lore.kernel.org/all/20240820140154.137876-1-shaojijie@huawei.com/
----
- net/core/dev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On Thu, 05 Sep 2024 16:28:59 +0300, Dan Carpenter wrote:
+> In this code, if devm_add_action_or_reset() fails, it will call
+> max1720x_unregister_ancillary() which in turn calls
+> i2c_unregister_device().  Thus the call to i2c_unregister_device() on the
+> following line is not required and is a double unregister.  Delete it.
+> 
+> 
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 98bb5f890b88..d6ec91ea8043 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9089,6 +9089,11 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 		return -EOPNOTSUPP;
- 	if (sa->sa_family != dev->type)
- 		return -EINVAL;
-+	if (ops->ndo_validate_addr) {
-+		err = ops->ndo_validate_addr(dev);
-+		if (err)
-+			return err;
-+	}
- 	if (!netif_device_present(dev))
- 		return -ENODEV;
- 	err = dev_pre_changeaddr_notify(dev, sa->sa_data, extack);
+Applied, thanks!
+
+[1/1] power: supply: fix a double free on error in probe()
+      commit: 48f703d6a3d7cf345fe9c6209ea3703fe9024628
+
+Best regards,
 -- 
-2.33.0
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
