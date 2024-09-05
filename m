@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-316955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A9F96D783
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:49:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D60A96D787
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9D2285484
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E2D1F236EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEE6199FB2;
-	Thu,  5 Sep 2024 11:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB6A199FC2;
+	Thu,  5 Sep 2024 11:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCjXlZGt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZcttmyo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAC2199E80;
-	Thu,  5 Sep 2024 11:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72511192D72;
+	Thu,  5 Sep 2024 11:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725536897; cv=none; b=AHIpQiuYMUwJSqqcBrguy8jNbdkp+MWPvoiDMehMcItzC0ij1dMSL6B0l8l0XeEeE05GyQ2r+AvqofkuTkB+8yiWGUxTVvRwhhWtmpExoilKdpfjbg62k+GpuVwlvIFm4q4GIIR2l/Jk93wkpcM382b40YGRXmkMdM3JvD7w3EU=
+	t=1725537007; cv=none; b=tzQn175pvhOihpkxy2nP7lD5YEJ72atzf9NfEICbF8Eps/cWDW1EPVYWZ8y0B2uRvDQadJSSZP8HGORopdYUSQcISl/uWoealearEQa2gHnL6B4/rhszKIoRxJ4V6zIdHa2PqqLpEHGMcau6sfe4nutYTXB/mqjyhsUvogfNVSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725536897; c=relaxed/simple;
-	bh=T21tX2VBKM/OmPVqXdeXOgDGfwFhoAbLqQIBdG+mOXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZ2NT/ExS8XRiIasnju7Q9RKAljoPYbAPz1RXUbsfP2FSiWXvcnjeO89lh7jHT1PEDnIRCfcUubSCDD+1ytJ0erdEU763Qwenzl1I0lSfnWcIe6TJ/fgiXH/ELgZ+4aZTGQizz2jP6ZkL0t52XhCDe7Nw1yiRwxBpfUTnvI5C1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCjXlZGt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8A4C4CEC3;
-	Thu,  5 Sep 2024 11:48:13 +0000 (UTC)
+	s=arc-20240116; t=1725537007; c=relaxed/simple;
+	bh=j+E59ehvKxXo4I4jO12qrppSXMcfVff2poOB3lSPhBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jvV292RPH4hTPjflOpo4OjnkZ8m8XKOhCg4X0m6xzTICOgu3ghXWTmRkJKGgqdFli9wfFhiDSMVOOYCAnEZtH0efk6pDPM7C7liWaFepJ2giIo8mniIDYjJV4/OZGObsHMuCz+tWUUFW2D4vw1ppcvg4Q0RYivWNjiQTZEB9ebo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZcttmyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433F2C4CEC3;
+	Thu,  5 Sep 2024 11:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725536897;
-	bh=T21tX2VBKM/OmPVqXdeXOgDGfwFhoAbLqQIBdG+mOXQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gCjXlZGtD4dMEK9/HUcqdOpp2oX4MZKCg0UJ+f7GvI6YA6C6i7QgUEBWe6GpSeeu4
-	 UZ2+vMIhkSSzz8YUJ4VKyh8i5yQ8gzmRR2xmNj2YJEyxIx9bIv7yYuunmg9sEqZzJ8
-	 nWW4k0MysrHPTM7IPRhkV8ilRqk5qPtf28BEZe4dWpx+oWqIk0MvFPqMBD70b7hF3+
-	 3s5C23H7gTHDDrx+cx5qqtqAvECR0l1AUSAMLa62O+PX10XRuNez47c2rsTFDjQliN
-	 SxIHqI6Ekmqc6SdwC/+GRgUeL1tCbSVb9F5xFDIQ6evZqoa0mKKDkjCD2poSEkJIIE
-	 uFamotDSw9dIQ==
-Message-ID: <6b51f810-438c-42fe-92c2-87966906b534@kernel.org>
-Date: Thu, 5 Sep 2024 13:48:10 +0200
+	s=k20201202; t=1725537007;
+	bh=j+E59ehvKxXo4I4jO12qrppSXMcfVff2poOB3lSPhBE=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=HZcttmyoH7TkT40fRuoTOmJmMFsO7zsW8RRIo5atqIN+vJEujeQHumFb0n1iiA8MY
+	 RMxdQMuXRpCGmN7cyC8PLnB08FWr4TK5Jl7eST/CWSSeNP1S4VZfD+3W6jMHktKfsu
+	 I3gb96CHZDLhrNWR8CetzLzAP8Txj/MewRddfgQLFI/ZKEh8HPL977T4WOfKiJdnw2
+	 dXS9wFi2dX+GyJvH11dtnzcW0qWTwvGXk5vdZkRN85grOZ1ybki1MUskX/Wz2VT7FE
+	 /HDsKWpMhKzEsoZHU4pLb6B9SO2FthOzucogMsqAFMQK4u6yjid9wr6DjE0EShkim2
+	 ytYBKtEAPi0+w==
+Message-ID: <f4883736-7c85-44b8-976f-f98b2d270973@kernel.org>
+Date: Thu, 5 Sep 2024 13:49:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: Add a few aliases to the PineTab2
- dtsi
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>
-References: <987e68d1c5e9a0cc56d730aec87246aa5ab8ea14.1725535770.git.dsimic@manjaro.org>
- <c820085c-a4f4-4d03-9df8-733a79e911c0@kernel.org>
- <946b8248f5b282a8532c8532a3eda98e@manjaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: net: aspeed: Add binding for ASPEED
+ AST2700 MDIO
+To: Jacky Chou <jacky_chou@aspeedtech.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk
+References: <20240905114754.519609-1-jacky_chou@aspeedtech.com>
+ <20240905114754.519609-2-jacky_chou@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,51 +105,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <946b8248f5b282a8532c8532a3eda98e@manjaro.org>
+In-Reply-To: <20240905114754.519609-2-jacky_chou@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/09/2024 13:43, Dragan Simic wrote:
-> Hello Krzysztof,
+On 05/09/2024 13:47, Jacky Chou wrote:
+> Add a new compatible for ASPEED AST2700 MDIO.
+
+You have entire commit msg to explain the differences of the hardware,
+including whether they are or are not compatible.
+
 > 
-> On 2024-09-05 13:39, Krzysztof Kozlowski wrote:
->> On 05/09/2024 13:32, Dragan Simic wrote:
->>> Sprinkle a few commonly used aliases onto the PineTab2 dtsi file, to 
->>> improve
->>> its readability a bit, to make it easier to refer to the actual nodes 
->>> later,
->>> if needed, and to add a bit more detail to some of the labels.
->>>
->>> No functional changes are introduced, which was validated by 
->>> decompiling and
->>> comparing all affected board dtb files before and after these changes. 
->>>  When
->>> compared with the decompiled original dtb files, some of the phandles 
->>> in the
->>> updated dtb files have different values, and the updated dtb files 
->>> contain
->>> some additional phandles and additional symbols that come from the 
->>> introduced
->>> aliases, but they still effectively remain the same as the originals.
->>>
->>> Suggested-by: Diederik de Haas <didi.debian@cknow.org>
->>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->>> ---
->>
->> Unused aliases do not improve readability, so for me this change is
->> making code worse without valid reason.
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/net/aspeed,ast2600-mdio.yaml          | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> Then why do we already have, for example, unused "rk817_charger: 
-> charger"
-> aliases in quite a few board dts(i) files?  If those are actually seen 
+> diff --git a/Documentation/devicetree/bindings/net/aspeed,ast2600-mdio.yaml b/Documentation/devicetree/bindings/net/aspeed,ast2600-mdio.yaml
+> index d6ef468495c5..6dadca099875 100644
+> --- a/Documentation/devicetree/bindings/net/aspeed,ast2600-mdio.yaml
+> +++ b/Documentation/devicetree/bindings/net/aspeed,ast2600-mdio.yaml
+> @@ -19,7 +19,9 @@ allOf:
+>  
+>  properties:
+>    compatible:
+> -    const: aspeed,ast2600-mdio
+> +    enum:
+> +      - aspeed,ast2600-mdio
+> +      - aspeed,ast2700-mdio
 
-Ask contributors...
-
-> as
-> redundant, we should remove all of them.
-
-They are already there, so dropping them is close to unnecessary churn.
-And quite a lot of work to investigate the reason behind EACH label.
+Your driver says something else...
 
 Best regards,
 Krzysztof
