@@ -1,125 +1,112 @@
-Return-Path: <linux-kernel+bounces-317686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D81F96E22B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:42:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E4D96E22E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95B31C2244C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC847286990
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF58F187FF5;
-	Thu,  5 Sep 2024 18:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2DD188017;
+	Thu,  5 Sep 2024 18:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0cbN73W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mV+s/gii"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BF018785F;
-	Thu,  5 Sep 2024 18:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F18D186E37;
+	Thu,  5 Sep 2024 18:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725561728; cv=none; b=Aee5+G3zAzwK+8TIx3nH/DTyOy1G8Y5cE0EYzklk28H8WFZ0AAQoIpUm/13+3LC17A3GoqMgCw4fv5raC+S5bn/mecdbEFZ0Zx5RIW52njBjjyq7aq5iNA7fuDdFgHVUS53/Eua26mfwsVW5l4DE1uNDIXCA8+FiMXv0DfTI5kM=
+	t=1725561747; cv=none; b=bt9zdwClCwfGRMaETtNvz79vi59ddvw6agS23vqHdU8siAw8EZAs3NPilelIO49TI2wTYfg111X5x+SHXrHjFOHo6gwt0Gip2NxprhX0/V3X6JPBWHE4iEAiZN9nAv2lGLdIINXnzuJj3QQUhboV1qQ4Xcc6zuJTnhjhI4x/ONw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725561728; c=relaxed/simple;
-	bh=JLzVazegeLJ+NiJYdoB5mJULvbuw17ruPjgTitRufoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNbD1xWqRrpiKhwh1kPW4Ey82SrOy6wNJJK9eAM1rwF/NxZWv+yavX3yjk67n95u72qwOVhohNcyuROCChc8cl3NWxirxfv+4sjgOCjvQ4J+U4jS424EaldoIiLrrsE1efrDNrDIZy82Bydkj6xNHM30N2TkZ7GqsvQVfegahaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0cbN73W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E462CC4CEC3;
-	Thu,  5 Sep 2024 18:42:02 +0000 (UTC)
+	s=arc-20240116; t=1725561747; c=relaxed/simple;
+	bh=4eWG/a/26/vZU95IBABJgRDgFGSUm8AvCLiQp6PJwQo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IUK+oThr+Vv+OdyKhSEn9pTRMU1boawLo9GA6/BKN1Bo4ODc4yUitD/5QiCRi/jTSZAPZZQq+YPdYqgVba/i9C1rRNn7rAQld+eOEy/1fWmsXm3DafuMFoNbLztaY4+eDsGLUY6ALNlOKqxqZeKcvbbsyuKJgmC4RjEz6SZBedc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mV+s/gii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58B1C4CEC3;
+	Thu,  5 Sep 2024 18:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725561727;
-	bh=JLzVazegeLJ+NiJYdoB5mJULvbuw17ruPjgTitRufoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F0cbN73WOD3DxYI/K0CjeWeXQd+U2po05/OERE8h+3LJsoO65AO8hdXiC5G1uW26k
-	 Mr0thEzBNsosJ/XZ/MGKrcc2q5nRtKbmNN07lWaa2J/plvpbavsA5vQFfFAM4wWdcG
-	 OfoBOn5tY98MNlmAvKTK+yV+h2l3A8+BUVyoWyTWQFIYsxxiYa1cnwNztDaigyURad
-	 7Md/MqbqhEpRZ3vC1ibWwrh7QeHcsYKy59cpPvy8Izuzugfn2oGrsNsYq6gvgLB1ja
-	 H6tuWfrXiZDfcB+A7Z89KPML8vSAp6ugE6xqJPmppgoGBvbPlErl8sR1UX5DmI4sUk
-	 EKTqn0OtRTQLQ==
-Date: Thu, 5 Sep 2024 19:42:00 +0100
+	s=k20201202; t=1725561746;
+	bh=4eWG/a/26/vZU95IBABJgRDgFGSUm8AvCLiQp6PJwQo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=mV+s/giiqa2lTulNqxBg2vltuHE7NO/2vObB7ZNwXKPdSfwEiCKW7MQwuYBO2knWU
+	 tRpPi0dWs9oN4ufQFxUegT2HKYIbf/gQm9CP6d9qThM+hPLla6lveIImLmVX6PGPtY
+	 VIZXzcoWzCar2VqiK5Ty5xMg8eDzmYMFg99UyeK6UPJF7FTiA4DcEJjrH8HUL+KqeS
+	 QzQCo+3Vv3zOXLBxLQZ5Zaa4MuBx6ss/VqqbhQJFo3g967w6qd6LSU+VfEoZ6DATTP
+	 OMELBiKR+Uxcb9JBR1W0NB29/S/6atbMAJAx3ktc3qn6TmbzhYfkbFlWElbQm+3lM+
+	 yNgp6FcD1UlnQ==
 From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
-Message-ID: <1e91439d-e8fe-4675-ac0b-03939f563bca@sirena.org.uk>
-References: <20240904090016.2841572-1-wenst@chromium.org>
- <20240904090016.2841572-10-wenst@chromium.org>
- <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
- <CAGXv+5F27K76t=ht5v75jKsNF-J+C0r5+m=czHz6PtV3t5DxcQ@mail.gmail.com>
- <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, amergnat@baylibre.com
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ devicetree@vger.kernel.org, Nicolas Belin <nbelin@baylibre.com>
+In-Reply-To: <20240226-audio-i350-v8-0-e80a57d026ce@baylibre.com>
+References: <20240226-audio-i350-v8-0-e80a57d026ce@baylibre.com>
+Subject: Re: (subset) [PATCH v8 0/5] Add audio support for the MediaTek
+ Genio 350-evk board
+Message-Id: <172556174352.65454.6443840128203694133.b4-ty@kernel.org>
+Date: Thu, 05 Sep 2024 19:42:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XGG4EEhvNkYs12Vb"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com>
-X-Cookie: The horror... the horror!
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
+On Thu, 05 Sep 2024 11:06:57 +0200, amergnat@baylibre.com wrote:
+> This serie aim to add the following audio support for the Genio 350-evk:
+> - Playback
+>   - 2ch Headset Jack (Earphone)
+>   - 1ch Line-out Jack (Speaker)
+>   - 8ch HDMI Tx
+> - Capture
+>   - 1ch DMIC (On-board Digital Microphone)
+>   - 1ch AMIC (On-board Analogic Microphone)
+>   - 1ch Headset Jack (External Analogic Microphone)
+> 
+> [...]
 
---XGG4EEhvNkYs12Vb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Thu, Sep 05, 2024 at 11:14:58AM -0700, Doug Anderson wrote:
-> On Thu, Sep 5, 2024 at 8:10=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> =
-wrote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> > This next item would be a later enhancement (which isn't implemented in
-> > this series anyway):
+Thanks!
 
-> >   - optional prober callback that does actual probing
+[1/5] ASoC: codecs: add MT6357 support
+      commit: 5e2404493f9f6028bf143972b18c88156c9893e6
+[2/5] ASoC: mediatek: Add MT8365 support
+      commit: 5bbfdad8cf8d4b2c3189fee8e6300b38f65f8d72
 
-> > In our case it would only be used for cases where an HID-over-I2C
-> > component shares the same address as a non-HID one, and some extra
-> > work is needed to determine which type it is. I still need to think
-> > about the structure of this.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> IMO _that_ would be a great option to the i2c prober. It feels like
-> you could have an optional register read that needs to match to have
-> the i2c prober succeed. Most people would leave it blank (just the i2c
-> device existing is enough) but probably a single register read would
-> be enough to confirm you got the right device. Most i2c devices have
-> some sort of "version" / "vendor" / "id" type register somewhere.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I'm not so sure about the "most" there - it depends quite a bit on the
-class of device.  This also imply that the prober would have a regmap
-config as well...
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---XGG4EEhvNkYs12Vb
-Content-Type: application/pgp-signature; name="signature.asc"
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Mark
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbZ+3cACgkQJNaLcl1U
-h9C98Qf/eDbxzuWN9wKXOgtyn/KGNJ9usI1DrqYUNAy7+kXpYwuywHuxw7jQX/m7
-apBm7viyIeyEcsCjy7BmmPJ3Fyfqfpt/4/cvh+wFla+E/dVadH0thHf+1XHjI7sC
-M6Vs/bjtPpEIAC2StD3yNUezMRQc/6KW2mlzh66rPCfE7vubfHN3xXgq5xFr402G
-/m1HX2HkBqGarvXdkUgOOQuFfb/FIiKB4l+VyXwGmzAgwTeXYofMuEwfF6lPqpvX
-VYgxNyAJdvImmjHthf/EFx5TDwj3tSMDYj0/qAhKrFnreXU6H1sNcAhIvv/7gyGa
-+SArYn2Cah9+B40+mW2rGa619WFc7Q==
-=aEkW
------END PGP SIGNATURE-----
-
---XGG4EEhvNkYs12Vb--
 
