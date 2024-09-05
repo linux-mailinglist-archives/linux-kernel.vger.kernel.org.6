@@ -1,118 +1,95 @@
-Return-Path: <linux-kernel+bounces-317517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A4A96DF69
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63CD96DF65
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F89D1F22461
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9660728289E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD5D1A00F0;
-	Thu,  5 Sep 2024 16:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF791A00E7;
+	Thu,  5 Sep 2024 16:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1rVmZTc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4+fjJZF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8F019F49E
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640F9101DE;
+	Thu,  5 Sep 2024 16:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553241; cv=none; b=G2iOMIf7tbIpd4GMICehoc6r5qVWsZXxGgEZPF8TFTFqYi5rMZwhDtReBawBobsFNY6CLWjTqUd5r5cwcKLg+nXjHngHFk0GhJzK0SuS7LlYpybRgYxn5wZoNQdKi/LcP8kxmjEj2//FoWRgzoTOCDbb7pQW48v9OK/BDHlfvNQ=
+	t=1725553202; cv=none; b=Fh+HOG8GKG/X1fWQUL0wD6myCXFAQZiA+0QZdFxzdLJWgDKL3tSePfGP8jSi4PxRlRw8ZFUnEcTLm2B5pXBAspCRq6sy80QvbH2lzx6Xa1qevRARc8048HfW7U2++b8Ern0hT0U7q7UsrH8euwAJOqn8vEH34ZLZz9BT0MyrSwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553241; c=relaxed/simple;
-	bh=n04gPQHvDkHClWZLlSJYgzA0AjqGslLWpNik4Jq1KMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QeY4OYLX9IuAyP1QrphUUFWay3XHZTEP2UdL1LUNPpg0P/BcIiOGZFlPW9Pzwf5kE7aHxBGAtW/4Kw4hUpy5aHfyUAF/jjIQX1dxdKrlGC+a27O/Tzv1mRQUAOy5Jshmfe9BIgnBJdZKsOOXkyFZqaPyQwdUEkGUNvQKcFOVbPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1rVmZTc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725553238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TyHzQXM3uFT+3nz9MywkA1E5XwrT2IxpHMEhawq1JI=;
-	b=G1rVmZTc0A9YiPt4yTQ4MQnXTdZl8lwRUAz58IdQB7JBuDD1QR+zGirJsQdJ88IZtINRSl
-	k2N3a51yHj9oHxIeU9r3mE+A7KjD4bn1bLsJMtvgheLdgbaSA9lJEvR7gZjklmGkQPL7e+
-	T+DPPTJKKsHupKDaPw+/J/X9bZTJdhA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-15-W8ivkgECOSuplGP9zlYeWA-1; Thu,
- 05 Sep 2024 12:20:32 -0400
-X-MC-Unique: W8ivkgECOSuplGP9zlYeWA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A5F77181E042;
+	s=arc-20240116; t=1725553202; c=relaxed/simple;
+	bh=nwAsYYrguqDxU9no8Long5e3xKJoCmijbR2bx/gDFhw=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=jjUWisqebuvjikxD6rB6Rqxz4AAItWrZ9cr3/fghdhNiFugN5NGXI5CwmWoKstqlpkjRJRx5l/j5OAygWMi3T9m22Tm8RjTG5Uvi9L5njggiWI19PHp0rF6gheKzgs9mfO2Zl+eIOC2lNAvsScn4AX5nv5ONy1/QJF1P9YXnvFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4+fjJZF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F62C4CEC3;
 	Thu,  5 Sep 2024 16:20:00 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E6A131956056;
-	Thu,  5 Sep 2024 16:19:57 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	kvm@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	x86@kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Suleiman Souhlal <ssouhlal@freebsd.org>,
-	Vineeth Pillai <vineeth@bitbyteword.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [RFC][PATCH] KVM: Remove HIGH_RES_TIMERS dependency
-Date: Thu,  5 Sep 2024 12:19:27 -0400
-Message-ID: <20240905161926.186090-2-pbonzini@redhat.com>
-In-Reply-To: <20240821095127.45d17b19@gandalf.local.home>
-References: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725553201;
+	bh=nwAsYYrguqDxU9no8Long5e3xKJoCmijbR2bx/gDFhw=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=A4+fjJZFwxZXIo+Fp5KBmDUo2y8g0G56NQINFwik/ZW1ZyjTGwrdRn9STiEXVyVY2
+	 VjTUTVFupBsrGajsyjKRxBgUf8IumTRm6MHPUol60y26FYd87vP1C8RhO+OBRqiXBj
+	 jZ+XzQsLEqY4Y3jtZtW5WjGvWwM9F6WkNlcEBxikDq/RBZD7Njx8itpS9b+z8cUNf5
+	 XlEP4WNQxRONaj55fjBf7dAu5F125t6WdSaWAfUJmf+uYQXjYnUBhSbixMqLCiUWwR
+	 rZRa3YA2DyD4EUlSdGSHDRUCHHDahfrINjGED/WAEvXs5nfnWwGb8/yNlapHEFdmFt
+	 qQt0bvT+3424w==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] wifi: ath11k: Avoid -Wflex-array-member-not-at-end
+ warnings
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <ZrZB3Rjswe0ZXtug@cute>
+References: <ZrZB3Rjswe0ZXtug@cute>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-hardening@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172555319846.1740680.15884701557144481853.kvalo@kernel.org>
+Date: Thu,  5 Sep 2024 16:20:00 +0000 (UTC)
 
-> Commit 92b5265d38f6a ("KVM: Depend on HIGH_RES_TIMERS") added a dependency
-> to high resolution timers with the comment:
-> 
->     KVM lapic timer and tsc deadline timer based on hrtimer,
->     setting a leftmost node to rb tree and then do hrtimer reprogram.
->     If hrtimer not configured as high resolution, hrtimer_enqueue_reprogram
->     do nothing and then make kvm lapic timer and tsc deadline timer fail.
-> 
-> That was back in 2012, where hrtimer_start_range_ns() would do the
-> reprogramming with hrtimer_enqueue_reprogram(). But as that was a nop with
-> high resolution timers disabled, this did not work. But a lot has changed
-> in the last 12 years.
-> 
-> For example, commit 49a2a07514a3a ("hrtimer: Kick lowres dynticks targets on
-> timer enqueue") modifies __hrtimer_start_range_ns() to work with low res
-> timers. There's been lots of other changes that make low res work.
-> 
-> I added this change to my main server that runs all my VMs (my mail
-> server, my web server, my ssh server) and disabled HIGH_RES_TIMERS and the
-> system has been running just fine for over a month.
-> 
-> ChromeOS has tested this before as well, and it hasn't seen any issues with
-> running KVM with high res timers disabled.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+"Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
 
-Queued, thanks.
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declaration to the end of the structure. Notice
+> that `struct ieee80211_chanctx_conf` is a flexible structure --a
+> structure that contains a flexible-array member.
+> 
+> Also, remove a couple of unused structures.
+> 
+> Fix the following warnings:
+> drivers/net/wireless/ath/ath11k/core.h:409:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/ath/ath11k/dp.h:1309:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/ath/ath11k/dp.h:1368:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Paolo
+Patch applied to ath-next branch of ath.git, thanks.
 
+820aa897837f wifi: ath11k: Avoid -Wflex-array-member-not-at-end warnings
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/ZrZB3Rjswe0ZXtug@cute/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+https://docs.kernel.org/process/submitting-patches.html
 
 
