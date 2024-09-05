@@ -1,150 +1,158 @@
-Return-Path: <linux-kernel+bounces-317753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E290B96E35C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36C096E361
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 990B528BF5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E651F246A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0516C192B6B;
-	Thu,  5 Sep 2024 19:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DBC191F87;
+	Thu,  5 Sep 2024 19:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qQrJHv8j"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZLrYLIk"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F0518890F;
-	Thu,  5 Sep 2024 19:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874E4188017;
+	Thu,  5 Sep 2024 19:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565221; cv=none; b=UEwTyskL7FprcxzjN7aHcFczKhQsFGzqLRKr+eCKIiTyA4EFSPhWp4/73J8/l1x2Q4KmTp2DmmHmqaDz77VR5bJPcHJM5G5l8M8K2Zdk2vqbu8dXbG4Pn2+UnVkrf1E2Q+eQwd2pWJC2god80yF+R86wt3CF0fs4UEmxWFEOXWI=
+	t=1725565486; cv=none; b=Qf9luHs4IEE/TN0h/4cmKjdSN2Erx3sojrZp2oLzdlb+1WmSYaMc2VMP/DPp7DVhYnmYp8Ihkpg8pWej8M+x/agDnd40v8jm80x6IaP4rJurM3NeJjImwz6h6J9WDSkVtQveiDCMJFXiK4EmAUHL/UQGkAlNvAmOKkAhGmM2nQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565221; c=relaxed/simple;
-	bh=0njpqKLWluBDQGSUtohgju6AwFF6RyWPG2G9QwxX11E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l3ptDT4BJv0Q1jTupFwpoUj7R86+Z+3GlJEw2G8i+Yq7X/k2ABEYTwgtM3THGWhI1UXXI1LrLKQiN5cakqsfoV17r71ALo+URObzn57giA8YWf26sSsd4+ekcUaXGMaGFwMp3NWi4WT8f4U27zt+DgJKqq2AbADk+zloxTZscPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qQrJHv8j; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 88C4142B25
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1725565218; bh=SnvYuQFqEXegO9CMT7NfIUI17BcZjbXywADJx++0xlk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qQrJHv8jJYXwnnNG96FjPs0wS9EbXRw4l5iA8mYHJmyllP6iLyoNaMv5vVMMiVwNJ
-	 /Qw7Y3bKI+Hr+mMVGQT0hEllXkDkIjRXxCv3i7LqWe6XhScGnb0c++SpAWdpCOP6S8
-	 zCBsukWUjHd1nK3cfxKy2IM387n2tGR/tVfW2SZeh+lEkqasTj/2OZgwSq2XgHh0FZ
-	 LUmXMEBm247jfwVHOxOSPa2Q+jgedXckqvmAxJ4A+8YlfxoylPviuNSJOso3yBlKwb
-	 /6sDf/N6NJQxCZcku9VBfYvcnP/Vj8lCMy2MO71i28Fkj8Hk31itQvdChAPb/4cfx/
-	 UNZdcqJKtOEXg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 88C4142B25;
-	Thu,  5 Sep 2024 19:40:18 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Breno Leitao <leitao@debian.org>, Akinobu Mita <akinobu.mita@gmail.com>,
- Federico Vaga <federico.vaga@vaga.pv.it>, Akira Yokosawa
- <akiyks@gmail.com>, Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, Avadhut
- Naik <avadhut.naik@amd.com>, Alex Shi <alexs@kernel.org>, Yanteng Si
- <siyanteng@loongson.cn>, Hu Haowen <2023002089@link.tyut.edu.cn>, Jens
- Axboe <axboe@kernel.dk>, Kees Cook <kees@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart
- Van Assche <bvanassche@acm.org>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: leit@meta.com, "Paul E. McKenney" <paulmck@kernel.org>, Thomas Huth
- <thuth@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, Thomas
- Gleixner <tglx@linutronix.de>, Xiongwei Song
- <xiongwei.song@windriver.com>, Ard Biesheuvel <ardb@kernel.org>, John Moon
- <john@jmoon.dev>, Vegard Nossum <vegard.nossum@oracle.com>, Miguel Ojeda
- <ojeda@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
- SeongJae Park <sj@kernel.org>, "Ran.Park" <ranpark@foxmail.com>, Tiezhu
- Yang <yangtiezhu@loongson.cn>, Remington Brasga <rbrasga@uci.edu>, Damien
- Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, Chaitanya
- Kulkarni <kch@nvidia.com>, Johannes Thumshirn
- <johannes.thumshirn@wdc.com>, Zhu Yanjun <yanjun.zhu@linux.dev>, John
- Garry <john.g.garry@oracle.com>, Chengming Zhou
- <zhouchengming@bytedance.com>, Yu Kuai <yukuai3@huawei.com>, Shin'ichiro
- Kawasaki <shinichiro.kawasaki@wdc.com>, Vlastimil Babka <vbabka@suse.cz>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
- <linux-kernel@vger.kernel.org>, "open list:DOCUMENTATION PROCESS"
- <workflows@vger.kernel.org>, "open list:BLOCK LAYER"
- <linux-block@vger.kernel.org>, "open list:UNIVERSAL FLASH STORAGE HOST
- CONTROLLER DRIVER" <linux-scsi@vger.kernel.org>, "open list:GENERIC
- INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v2] docs: Move fault injection section to dev-tools
-In-Reply-To: <20240902125421.569668-1-leitao@debian.org>
-References: <20240902125421.569668-1-leitao@debian.org>
-Date: Thu, 05 Sep 2024 13:40:17 -0600
-Message-ID: <87ttethota.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1725565486; c=relaxed/simple;
+	bh=fue0HDW/3+IS1tus8cXU1jw98GqL1Ym+HsM/Iofut+Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzPj44pxwdrt2Fs0QN1/zXKV/CYokSkqfxjxs2V7Oq/hybjHtrw087wKxpFAKV7zZeV+dfUft9u8JpAGXDoRDcmTduq5seOzs549RB0KRCEImwQTMlzUsCL4BVN97FI5oZIrEN/wcOhe2cd2SCLoWd46VQUu1/ZlnfTT+2qBb54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZLrYLIk; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-715abede256so1016517b3a.3;
+        Thu, 05 Sep 2024 12:44:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725565485; x=1726170285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8blKARCK9hIi8qeqcpQY8FMcJR6skaNK4+MKzRO1q9A=;
+        b=kZLrYLIkKkmzr/7siKqbfXf3gjohD1PsZ121BTwVhtQegYgmQ1rVY7t3r6F83xmHsD
+         tf88rQWzgni/Z6cuEgx9PMSbwY0UOhndaOo5En0lW64OD7vnN+3xiNmf8V58TFFxpcdf
+         hbEiQbN1WBoNx1UTcnw8pUtY0rcFBwEOkQeEFeZKMbrfXHG24YWwDWbSIe8Nt2ja9iWC
+         zstKL8WJ19lSESDemqzZ7WMTNgZCnKolsqRyBH29SJG9HY2blX6YSBJ8hVY9BgLOARn5
+         dOOGJfXpIu9gzzCsPHL0P1vmpeYMBX+2Jd0oHgNFcrKZxndKiYcits+OO+tRSmDmLI1L
+         z7Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725565485; x=1726170285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8blKARCK9hIi8qeqcpQY8FMcJR6skaNK4+MKzRO1q9A=;
+        b=Hl16CtTXI0MnADQGJ+k2x+31xgSEtogkBpwSysNqCA7ykqHUkWLHGnnf+4EigMAm4t
+         T6ZwQMx6cYX+hHqvLNkoTvfaf/930l1AWkgoY2wmnw7mmu6/ATWdfT+7z+fb4P/AMaCc
+         aB4+3g9ohG9IOiKflbAit31n2PWIRp5379AmM+tCQzHhx9tApK5oyIxVzMiibswdp+8V
+         hHq0SPrvdhmDcxleB0BhulE2fcmObCPOpE/PSFxbtsgcGVBU24qZ/rtW3ziMsQ0/t1QJ
+         Rrwy33VtO1n5OFXVZOeALqF0yI04F2h7VnM2LORtFfBLgbXYuPOh2UJtPqbbta+cxix4
+         t69Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2lasIu6KmawZ6qDSrD7JKtxtmuWfKmrYTX8CvNe1Wq+O/SdO5l5R+NtrLQI/P5EVd0ulilDhy9ujAC5Bw@vger.kernel.org, AJvYcCUTOoWXZ/DcoeLZLINop19eunSZL/n2TgzCOAI7xgK2BXzbN5plgdmIIDbMKibWcsiHAnxSbZ5/WSi/@vger.kernel.org, AJvYcCV/jQRR9tt0n/+COjQW4JDEKEefO6DtyU54DINl4xFQXcPNpH8fPqgSB7f2kUUNS5ebJvvTB+RHv2VA@vger.kernel.org, AJvYcCV9x6ndcRcBOiOexqycY/164CmCeBBqBmPP/ws4YJfCCvqJzxEa+i0ibPPhKazeqWRjSQHb9j6YOwDEBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE8aGscXD9uYSQxlaB444qqVlP51jHfcayl/ZpZgNksdP1CEvq
+	MRn9CwakN3Ky75P0tf6B6xo+lo4unV4nSg/xCkZv/peLVu3+hybw
+X-Google-Smtp-Source: AGHT+IH4+fX/yHmOeAuqwoSbrIHi2omPpjNgufLcJxCjb0muDVPuPNm2103Rdbup4SGV09v81le2FA==
+X-Received: by 2002:a05:6300:44:b0:1ce:ebb7:dcb8 with SMTP id adf61e73a8af0-1cf1d05864amr60468637.3.1725565484771;
+        Thu, 05 Sep 2024 12:44:44 -0700 (PDT)
+Received: from leg ([2601:646:8f03:9fee:1d73:7db5:2b4a:dfdd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178e39a188sm1473548b3a.219.2024.09.05.12.44.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 12:44:44 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Thu, 5 Sep 2024 12:44:24 -0700
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v3 04/25] cxl/pci: Delay event buffer allocation
+Message-ID: <ZtoKGEEhNHByhXyw@leg>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-4-7c9b96cba6d7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816-dcd-type2-upstream-v3-4-7c9b96cba6d7@intel.com>
 
-Breno Leitao <leitao@debian.org> writes:
-
-> Fault injection is a development tool, and should be under dev-tools
-> section.
->
-> Suggested-by: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+On Fri, Aug 16, 2024 at 09:44:12AM -0500, Ira Weiny wrote:
+> The event buffer does not need to be allocated if something has failed in
+> setting up event irq's.
+> 
+> In prep for adjusting event configuration for DCD events move the buffer
+> allocation to the end of the event configuration.
+> 
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
 > ---
-> Changelog:
->
-> v2:
->   * Fixed a remaining file pointing to the wrong file, as reported by
->     kernel test robot:
-> 	* https://lore.kernel.org/all/202408312350.DEf53QzI-lkp@intel.com/ 
->
-> v1:
->   * https://lore.kernel.org/all/20240830174502.3732959-1-leitao@debian.org/
->
->  Documentation/admin-guide/kernel-parameters.txt              | 2 +-
->  .../{ => dev-tools}/fault-injection/fault-injection.rst      | 0
->  Documentation/{ => dev-tools}/fault-injection/index.rst      | 0
->  .../fault-injection/notifier-error-inject.rst                | 0
->  .../{ => dev-tools}/fault-injection/nvme-fault-injection.rst | 0
->  .../{ => dev-tools}/fault-injection/provoke-crashes.rst      | 0
->  Documentation/dev-tools/index.rst                            | 1 +
->  Documentation/index.rst                                      | 1 -
->  Documentation/process/4.Coding.rst                           | 2 +-
->  Documentation/process/submit-checklist.rst                   | 2 +-
->  Documentation/translations/it_IT/process/4.Coding.rst        | 2 +-
->  .../translations/it_IT/process/submit-checklist.rst          | 2 +-
->  Documentation/translations/ja_JP/SubmitChecklist             | 2 +-
->  .../translations/sp_SP/process/submit-checklist.rst          | 2 +-
->  Documentation/translations/zh_CN/index.rst                   | 2 +-
->  Documentation/translations/zh_CN/process/4.Coding.rst        | 2 +-
->  .../translations/zh_CN/process/submit-checklist.rst          | 2 +-
->  Documentation/translations/zh_TW/index.rst                   | 2 +-
->  Documentation/translations/zh_TW/process/4.Coding.rst        | 2 +-
->  .../translations/zh_TW/process/submit-checklist.rst          | 2 +-
->  MAINTAINERS                                                  | 2 +-
->  drivers/block/null_blk/main.c                                | 2 +-
->  drivers/misc/lkdtm/core.c                                    | 2 +-
->  drivers/ufs/core/ufs-fault-injection.c                       | 2 +-
->  include/asm-generic/error-injection.h                        | 5 +++--
->  include/linux/fault-inject.h                                 | 2 +-
->  lib/Kconfig.debug                                            | 4 ++--
->  tools/testing/fault-injection/failcmd.sh                     | 2 +-
->  28 files changed, 25 insertions(+), 24 deletions(-)
->  rename Documentation/{ => dev-tools}/fault-injection/fault-injection.rst (100%)
->  rename Documentation/{ => dev-tools}/fault-injection/index.rst (100%)
->  rename Documentation/{ => dev-tools}/fault-injection/notifier-error-inject.rst (100%)
->  rename Documentation/{ => dev-tools}/fault-injection/nvme-fault-injection.rst (100%)
->  rename Documentation/{ => dev-tools}/fault-injection/provoke-crashes.rst (100%)
 
-Applied, thanks.
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-jon
+> Changes:
+> [iweiny: keep tags for early simple patch]
+> [Davidlohr, Jonathan, djiang: move to beginning of series]
+> 	[Dave feel free to pick this up if you like]
+> ---
+>  drivers/cxl/pci.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index 4be35dc22202..3a60cd66263e 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -760,10 +760,6 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  		return 0;
+>  	}
+>  
+> -	rc = cxl_mem_alloc_event_buf(mds);
+> -	if (rc)
+> -		return rc;
+> -
+>  	rc = cxl_event_get_int_policy(mds, &policy);
+>  	if (rc)
+>  		return rc;
+> @@ -777,6 +773,10 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  		return -EBUSY;
+>  	}
+>  
+> +	rc = cxl_mem_alloc_event_buf(mds);
+> +	if (rc)
+> +		return rc;
+> +
+>  	rc = cxl_event_irqsetup(mds);
+>  	if (rc)
+>  		return rc;
+> 
+> -- 
+> 2.45.2
+> 
 
