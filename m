@@ -1,253 +1,109 @@
-Return-Path: <linux-kernel+bounces-316665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2725596D27F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:52:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF396D285
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B48289AC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408B91C242A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E5E194C62;
-	Thu,  5 Sep 2024 08:52:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286A819258A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C94F194C6E;
+	Thu,  5 Sep 2024 08:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2euH0Yri"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB381145B10;
+	Thu,  5 Sep 2024 08:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526355; cv=none; b=hopRSb8qhkUAdx5cBEyB8NtiuLEGwYFWIiDzRiuRzeJ5kVW6Ye6ifcKb6jUaZwiGiapKjNgSpEllwz7QAaomk2aZFi1OU9kMUL98pgknBWkLG7X8CJspj0tP+2OWfesH4dvOQMOuhkZ351Buo8CimlRP+xpgOUKWWyyALJRFV0o=
+	t=1725526539; cv=none; b=qRT7ZHoQyhmyeble7y3qICZjHnWT63Y85Yy83JexWf01ynj+ucEcSjXtpEzCot5WP5+bF5x4dWeLna4xpuClPpeuEe2RjlU80RWERK+eq7JojqViI0NjHAGF9mei3X5zMDbcDwOfzCv4tlCAP1T549DK3qyPdVme3nK5j7QpuxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526355; c=relaxed/simple;
-	bh=WY4CXGCsSNOlMxIL1QlPMP4MRWh/Ri31/+abr6S31AY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y4T9zNtsUTvbAevUB54b5HN694T48V9QLRlzWSdzYhh29CWGiyR12FK5k1WPMLoxI5pP4ZdfQfBKSNgPsnNebRs5CSB4K1F82mAvj6GFYuKkozCB91Y2R/WuLv9zzFOGIom7gR7xeTVlar0//TNbV6Yk7Y3axRi7xFoIPPxJvCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D890FFEC;
-	Thu,  5 Sep 2024 01:52:58 -0700 (PDT)
-Received: from [10.162.43.13] (e116581.arm.com [10.162.43.13])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 582FC3F73F;
-	Thu,  5 Sep 2024 01:52:24 -0700 (PDT)
-Message-ID: <9411b518-2505-40ca-bd81-7127dc638521@arm.com>
-Date: Thu, 5 Sep 2024 14:22:21 +0530
+	s=arc-20240116; t=1725526539; c=relaxed/simple;
+	bh=pptrtwecTm2vs7pR9+635jVizxBVhb2ekXC/H4dXEcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUmSJ/rdNHH765M2RDGSFFC0w9OeQAmlnev2xYtFtrm48VJaB20oXRwwosf9tBwOYSKIuOTpfeOltDUAkvdbbXPvVTfXGxgZIwGgJZOomRQpPfHpx89TE6Ou8KKoaD/1xtqhXWAjDRjeG1aIla/0QYvxyrUljjGPW77ljpY5Snc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2euH0Yri; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bj/9hfuUUM8WFaatE+7Vlu1JF3d9Wxc1bvxKBCXyOdc=; b=2euH0YriP++SC+vj7jsSaicW0h
+	MdsosUS095968lJj31s10KPBqE8xe5qlzO/KqsJV+yYPbyI2m9OBKBf9h9V+hQlz47pcOv1YVp0JN
+	uN8EzOyQWaoK0o7puDfkuu2yNFma3qQDSxn6Ct0H2GxvqIqIJF1VdCiRBxDbKvEwU9qkfTEHHpSQ4
+	AA7TkOtDJ0jGw6ijn+xDWBciMDPhcDMMUtQTC24fWD3cyOpVkiE5P8uBEPhaJOnxj75TvnFe+ss0n
+	mZWBpW3zMjrC8lX1jw85repNMUm4chNIsjQQuSkMqeIxT/YP3JeAhWINC4/e2iKbHH4mTDmYS/4fd
+	VE/fsGhg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sm8HB-00000007euu-0LqL;
+	Thu, 05 Sep 2024 08:55:37 +0000
+Date: Thu, 5 Sep 2024 01:55:37 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Ole Schuerks <ole0811sch@gmail.com>
+Cc: deltaone@debian.org, jan.sollmann@rub.de, jude.gyimah@rub.de,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org, thorsten.berger@rub.de
+Subject: Re: [PATCH v4 02/12] kconfig: Add picosat.c (1/3)
+Message-ID: <ZtlyCR4EloWbeWG7@bombadil.infradead.org>
+References: <ZsPBfBQXNZmbNfpE@bombadil.infradead.org>
+ <20240829212352.38083-1-ole0811sch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org,
- ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-3-dev.jain@arm.com>
- <xs7lw544kk6ftxlg6lbjicxnu5mdn666ivld5kzznm7fkoaf2x@4jowgzwfzcof>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <xs7lw544kk6ftxlg6lbjicxnu5mdn666ivld5kzznm7fkoaf2x@4jowgzwfzcof>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829212352.38083-1-ole0811sch@gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
+On Thu, Aug 29, 2024 at 11:23:52PM +0200, Ole Schuerks wrote:
+> If one has to install some external package first,
+> then that might diminish the usefulness. While there are extreme cases
+> where it can take hours to manually identify all the dependencies, first
+> having to build PicoSAT might take longer than manually resolving the
+> conflict. Many users might then never install PicoSAT to try out the
+> conflict resolver, even if they would benefit from it.
 
-On 9/5/24 13:56, Kirill A. Shutemov wrote:
-> On Wed, Sep 04, 2024 at 03:39:23PM +0530, Dev Jain wrote:
->> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
->> replace it with a PMD-mapped THP. Change the helpers introduced in the
->> previous patch to flush TLB entry corresponding to the hugezeropage,
->> and preserve PMD uffd-wp marker. In case of failure, fallback to
->> splitting the PMD.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->>   include/linux/huge_mm.h |  6 ++++
->>   mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
->>   mm/memory.c             |  5 +--
->>   3 files changed, 78 insertions(+), 12 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index e25d9ebfdf89..fdd2cf473a3c 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -9,6 +9,12 @@
->>   #include <linux/kobject.h>
->>   
->>   vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
->> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->> +			   unsigned long haddr, struct folio **foliop,
->> +			   unsigned long addr);
->> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->> +		 struct vm_area_struct *vma, unsigned long haddr,
->> +		 pgtable_t pgtable);
-> Why? I don't see users outside huge_memory.c.
+That's a package dependency problem, ie, a distro thing to consider
+which packages users should have installed. But isn't the bigger issue
+the fact that you want some C library not the picosat binary tool? Or
+would it suffice to just have picosat as a binary installed? I see at
+least debian has python3 bindings now too python3-pycosat. So what type
+of picosat integration really is best for the task at hand?
 
+> So the question is whether using PicoSAT as an external library is worth
+> the portability issues and effort, and whether it wouldn't make more sense
+> to directly include the PicoSAT source file.
 
-Ah sorry! When I started out on this I may have planned to use
-it in mm/memory.c, but then completely forgot to drop this.
+The pros of an external library are less burden on maintenance, and
+otherwise we'd be forking PicoSAT, but as I mentioned, I don't see a c
+library but instead just the picosat binary. An alternative is to use PicoSAT as
+a git subtree inside Linux on a dedicated directory, this way PicoSAT
+can evolve and we can update it when we need to. Note a git subtree is
+not the same thing as a git submodule, those are terrible.
 
->
->>   int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->>   		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
->>   		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 58125fbcc532..150163ad77d3 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
->>   }
->>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->>   
->> -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->> -				  unsigned long haddr, struct folio **foliop,
->> -				  unsigned long addr)
->> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->> +			   unsigned long haddr, struct folio **foliop,
->> +			   unsigned long addr)
->>   {
->>   	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->>   
->> @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
->>   	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>   }
->>   
->> -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->> -			struct vm_area_struct *vma, unsigned long haddr,
->> -			pgtable_t pgtable)
->> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->> +		 struct vm_area_struct *vma, unsigned long haddr,
->> +		 pgtable_t pgtable)
->>   {
->> -	pmd_t entry;
->> +	pmd_t entry, old_pmd;
->> +	bool is_pmd_none = pmd_none(*vmf->pmd);
->>   
->>   	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
->>   	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>   	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>   	folio_add_lru_vma(folio, vma);
->> -	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->> +	if (!is_pmd_none) {
->> +		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
->> +		if (pmd_uffd_wp(old_pmd))
->> +			entry = pmd_mkuffd_wp(entry);
->> +	}
->> +	if (pgtable)
->> +		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>   	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>   	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>   	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->> -	mm_inc_nr_ptes(vma->vm_mm);
->> +	if (is_pmd_none)
->> +		mm_inc_nr_ptes(vma->vm_mm);
->>   }
->>   
->>   static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
->>   	spin_unlock(vmf->ptl);
->>   }
->>   
->> +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
->> +					     unsigned long haddr,
->> +					     struct folio *folio)
-> Why the helper is needed? Cannot it be just opencodded in
-> do_huge_zero_wp_pmd()?
+> Otherwise, if we go with not including the PicoSAT source, then one could
+> inform users about the missing package in the GUI, like this:
+> When PicoSAT is installed:
+> https://drive.google.com/file/d/1asBfLp1qfOq94a69ZLz2bf3VsUv4IYwL/view?usp=sharing
+> When PicoSAT is not installed:
+> https://drive.google.com/file/d/1ytUppyFPtH_G8Gr22X0JAf5wIne-FiJD/view?usp=sharing
+> 
+> Let us know what you think. Include PicoSAT directly as a source or not,
+> and then inform the user via the GUI?
 
-I was taking inspiration from split_huge_pud_locked() and the like.
-Although I guess I should open code it, since do_huge_zero_wp_pmd_locked()
-is small anyways.
+Do you need the picosat binary or the actual c code for helpers /
+library?  I don't think we have anything in Linux yet using git
+subtrees, but I don't see why we wouldn't for generic tooling and
+this might be a good example use case.
 
->
->> +{
->> +	struct vm_area_struct *vma = vmf->vma;
->> +	vm_fault_t ret = 0;
->> +
->> +	ret = check_stable_address_space(vma->vm_mm);
->> +	if (ret)
->> +		goto out;
->> +	map_pmd_thp(folio, vmf, vma, haddr, NULL);
->> +out:
->> +	return ret;
->> +}
->> +
->> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
->> +{
->> +	struct vm_area_struct *vma = vmf->vma;
->> +	gfp_t gfp = vma_thp_gfp_mask(vma);
->> +	struct mmu_notifier_range range;
->> +	struct folio *folio = NULL;
->> +	vm_fault_t ret = 0;
->> +
->> +	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
->> +			      vmf->address);
->> +	if (ret)
->> +		goto out;
->> +
->> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
->> +				haddr + HPAGE_PMD_SIZE);
->> +	mmu_notifier_invalidate_range_start(&range);
->> +	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
->> +	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
->> +		goto unlock;
->> +	ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
->> +	if (!ret)
->> +		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
->> +unlock:
->> +	spin_unlock(vmf->ptl);
->> +	mmu_notifier_invalidate_range_end(&range);
->> +out:
->> +	return ret;
->> +}
->> +
->>   vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->>   {
->>   	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
->> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->>   	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
->>   	VM_BUG_ON_VMA(!vma->anon_vma, vma);
->>   
->> -	if (is_huge_zero_pmd(orig_pmd))
->> +	if (is_huge_zero_pmd(orig_pmd)) {
->> +		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
->> +
->> +		if (!(ret & VM_FAULT_FALLBACK))
->> +			return ret;
->> +
->> +		/* Fallback to splitting PMD if THP cannot be allocated */
->>   		goto fallback;
->> +	}
->>   
->>   	spin_lock(vmf->ptl);
->>   
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 3c01d68065be..c081a25f5173 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
->>   	if (vma_is_anonymous(vma)) {
->>   		if (likely(!unshare) &&
->>   		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
->> -			if (userfaultfd_wp_async(vmf->vma))
->> +			if (!userfaultfd_wp_async(vmf->vma))
->> +				return handle_userfault(vmf, VM_UFFD_WP);
->> +			if (!is_huge_zero_pmd(vmf->orig_pmd))
->>   				goto split;
->> -			return handle_userfault(vmf, VM_UFFD_WP);
->>   		}
->>   		return do_huge_pmd_wp_page(vmf);
->>   	}
->> -- 
->> 2.30.2
->>
+  Luis
 
