@@ -1,74 +1,104 @@
-Return-Path: <linux-kernel+bounces-316354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD1696CE62
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6E196CE64
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90461F25919
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:20:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8201C2251C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD33156886;
-	Thu,  5 Sep 2024 05:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D433915687C;
+	Thu,  5 Sep 2024 05:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sKRbmRzq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D88A20E6;
-	Thu,  5 Sep 2024 05:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ocK3UQFy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19AA20E6;
+	Thu,  5 Sep 2024 05:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725513599; cv=none; b=cJ1YhsKYpO3pPtpw+VngnOfIjTyICVJ4S5cZi1DFR7dycQgOQ5fsO52obhHDh47gGHRF+vBFKLg453WptEr5tn+tCxYy1mumKo82+yO7zw2XfIrSEhhqKv5+cWJ3UKd0gnbELeuna64nLOXd3YhM+Ms6NkIRssA5Jy9g7X3Zt7I=
+	t=1725513626; cv=none; b=MuRzm9mH+jC2WGIgdN3ez9Ibht3l82UrvDYsZ0Oe8sdPIXgeYpMz0/aHNozGFd7Xc0syDFYjwvTtB2aYcZVnP1qN+35esQNlBwJRH8keZT2Eelkt2VrlEtERwIR+Y/GBzG5afqgroP7JP7NlDwmbcWosfvK14hPihQvMcgv18eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725513599; c=relaxed/simple;
-	bh=O9pJtwUR9UjaKO3DEpJf/TT25cCybHtD1QiMZe5h93o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0Bgs48YUO5ZeGzLFzQllafEYooycWVKQ3feIJQ7+M1wCwxUkSHIoTg3fAi4J0lRjFz9lE/VAOyaRXFHjub1yIXnsbYSlQAguo82aTfjRMXjeHvTsIaRhumAEgtXntPXAm0Ht+ipiJq8Dw8hZSWiqeadNr/Z6NYNz3EGRpoPtfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sKRbmRzq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8645AC4CEC4;
-	Thu,  5 Sep 2024 05:19:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725513598;
-	bh=O9pJtwUR9UjaKO3DEpJf/TT25cCybHtD1QiMZe5h93o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sKRbmRzqVdVhqLBh4M3IjCxwbRrLtA0bik7v4pnndhrtr5in5pygBtO440RIw9pd+
-	 F18CKd0/rhu1elCFJsvSzwFDt0kJtq7Ah5ZmjcxtSLUL/A/0y8E1OTMOOWnQNw+NNo
-	 r49wpRhmS/Y4JpSnV0hNYxnVH78zryh90GSWPXmE=
-Date: Thu, 5 Sep 2024 07:19:55 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, jorge.lopez2@hp.com,
-	acelan.kao@canonical.com, platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: linux/usb.h: Move USB port definition to usb.h
-Message-ID: <2024090516-battering-prompter-3f53@gregkh>
-References: <20240905042447.418662-1-kai.heng.feng@canonical.com>
+	s=arc-20240116; t=1725513626; c=relaxed/simple;
+	bh=6+luWdIv9Wrs1LHHvcLbmKvEvv7SFe3N2xLpL1Z1Zig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o7fHqhB1rRrDoqx/cuJTwuJ0ETzbi2t5z5ptlBXbnoDUnp6PBNwOewie650j7g+D+DENAiNHqqKhasaKyL691j/LwkDYxDoSPDFTQjR8gw7FGVQdDcM7TsxOJKMITrxJu7yUd/P8MbGgDrFGUBUtrRodiKrXAVPzLztP57Abk18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ocK3UQFy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.0.216] (unknown [4.194.122.136])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 93BEB20B740C;
+	Wed,  4 Sep 2024 22:20:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93BEB20B740C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1725513624;
+	bh=voA7K9yAJ4nfkKJ4vkC+KujYPi/zFF6JkLSxCCEdCzo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ocK3UQFyrqdi3VSxoOSRPbVXNvUSpJLYruvNctG2grEGeUyTGx05v4MIoqPIv+MUM
+	 7BvZ3UGS1/40drVsArRzknKDehzcvC6+O+ZQF2/Z3Oy9rwQs2X0C+ARVQN0K5v9XD0
+	 aE9Ko/ubk6FwgT9rFoRzQt8AXv9PwOwQ+fIXhjJU=
+Message-ID: <938405f9-2f71-491c-a07b-6968105823c9@linux.microsoft.com>
+Date: Thu, 5 Sep 2024 10:50:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905042447.418662-1-kai.heng.feng@canonical.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools: hv: rm .*.cmd when make clean
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, kys@microsoft.com
+Cc: haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05, 2024 at 12:24:46PM +0800, Kai-Heng Feng wrote:
-> Move struct usb_port to linux/usb.h so other subsystems can use it too.
 
-These really are "internal to the usb core" functions and variables, I
-am loath to export them as it requires that you "know" what the device
-type is of something without any recorse if you get it wrong.  I
-commented on patch 2/2 about that.
 
-Could we provide a usb core function for you instead to help out?  What
-exactly are you trying to get access to on the USB bus that you need to
-use here, the port or the device?
+On 9/2/2024 9:51 AM, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> rm .*.cmd when make clean
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>   tools/hv/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+> index 2e60e2c212cd..34ffcec264ab 100644
+> --- a/tools/hv/Makefile
+> +++ b/tools/hv/Makefile
+> @@ -52,7 +52,7 @@ $(OUTPUT)hv_fcopy_uio_daemon: $(HV_FCOPY_UIO_DAEMON_IN)
+>   
+>   clean:
+>   	rm -f $(ALL_PROGRAMS)
+> -	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
+> +	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete -o -name '\.*.cmd' -delete
+>   
+>   install: $(ALL_PROGRAMS)
+>   	install -d -m 755 $(DESTDIR)$(sbindir); \
 
-thanks,
+While your patch is supposed to work, below code is another alternative.
 
-greg k-h
+diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+index 2e60e2c212cd..be90be9d788f 100644
+--- a/tools/hv/Makefile
++++ b/tools/hv/Makefile
+@@ -52,7 +52,7 @@ $(OUTPUT)hv_fcopy_uio_daemon: $(HV_FCOPY_UIO_DAEMON_IN)
+
+  clean:
+         rm -f $(ALL_PROGRAMS)
+-       find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
++       find $(or $(OUTPUT),.) -name '*.o*' -delete
+
+
+Regards,
+Naman
 
