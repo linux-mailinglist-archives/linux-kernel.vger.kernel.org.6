@@ -1,231 +1,146 @@
-Return-Path: <linux-kernel+bounces-317586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B72E96E0BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1F996E0C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD831C23E4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18231C24C84
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7811A262C;
-	Thu,  5 Sep 2024 17:03:36 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D9A1A0B06;
+	Thu,  5 Sep 2024 17:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8oxi/AJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309811A08A4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9C19FA8E;
+	Thu,  5 Sep 2024 17:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725555815; cv=none; b=ORZ5Owxuef03txe40GddPrcS7hP5o1JFtVifME20DjaSBK4RK8fiScH+W+3Be97JLaKwV/hh+V83q1IWA4GBIwU5PRkiW0KN6yMmbbzke87wuOCTQrcfdegiY2gJHdaKOjz0U75nD1olorPMrdkLTE8t4ppkr7Zc4pZBrAbYBQ8=
+	t=1725555822; cv=none; b=cejyqbeVm++LFquUnjASNVhkf2FVyLmtrimG7QLBRGQudIUbMLIFVFsEex+N5AY+09g5BRQea7sRzmVgZXZHjw+9+jsSs7gSdlHIg3HGntDcuygMJjvsuyXRpgk/9wJxeALc4byXogbcfFJtkLvv8UDzzgA0307PtLsMAdNIwws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725555815; c=relaxed/simple;
-	bh=fsdtgHQu5S+sGmX4XjmiO1zwvwOLPtFBcLTtq8gnQpo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YtBwNUQ15idHbf/XyslvzBFQRzpktibZ1PuIMcNesCnRKhPMfXEn5kqCRLkgYCgEPxT4OGM5+JONRPFMNfPNQaVE9wNybz6/xk2XS8mvSrzBAc6aIt+W7uLgUzFpSDgLYvUgc8w4uj0PbsairIsimAEgyNE5ooLsuAm7qJlGI70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d55a00bd7so28489985ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 10:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725555813; x=1726160613;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ICQ0YqUAuBCDVOBEFVxSd7r2rupOA9lJI8jrGUESHbY=;
-        b=nLSLNH2XAZeFA+wWozDhv7QHpdNMe7vnHmH9JXjP6MU7lr1uTrNnDa8Yf/ZZURFWKW
-         CVTTXnTScZIHUo3FieXWGgV+KNb+vcJW9I5CzLNrDnCzdEGMIC5lSfHodzfGN5RSlk7t
-         QUvNZN4WGtc7xwcTAOOssnL88/WIPeWK4x4UXPsrp9uGqINn001jXkxSTUf1dXX23S7Q
-         OXK/DZjzLMWLiCMDpOl/GEwYzpoKlelennGbi6bZhhkUt7bTCrmXSjgUSr43YYtOoSfZ
-         Uy3lgpCxov7VgV2o5EukQfSHeiqyW1yBxUltF5P7xWpiLIEhPuMuW2wZmHOM3jPXlSDh
-         /1vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBBK4CPZljtPoplEwD9ak5DxfyLW8BXb00yoRfeg3vQAX0FDAA5v0NJrUIQugcXcyTV/OM0Ew1ch/ZTpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBq7p7ACiNeXj9GpxP7gC1fz4oS2sBehRx9WaKk/p6b6MssOYp
-	mjoCbeltwTMgrc+KoGSwtNXgtHnicnDRl9I7NMvG1F1+unxJUuIOkG4y7EjoBR0JE5e3mjLTh4L
-	G+55LkJ01nCFd8z0HZRxr7KhdUUDi6cxgF30BCjXcW0hZUfjFKORTXRg=
-X-Google-Smtp-Source: AGHT+IFYRWYkcvChLrkvOANUiRcQCLrZIdD+dFvMb+kbcd5lkJ6kfExWmqX1DHM/95PiKmt9yMf0EBmeawpU8sKWE8nNizjizfkz
+	s=arc-20240116; t=1725555822; c=relaxed/simple;
+	bh=nJr8UA9brtZt8MAxTeFaBGCFlqvqywHjYo6H6YDX4GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUcaSXG1gngBBDadnmckMhgR90LhPNoagSM3HGMLETlN6JKkjUilO5mUwTS3bTO6K2DLS2w00b7B9fpUFJ/zHQPRc26Sgkzgcl9XGXfr8cr1QGQMGBDk7I6T9v16mwtYgzRcybh/KWmkDCzs9zdAiC3Q8dX7NWJ+PCwxS9MF+qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=S8oxi/AJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2114C4CEC3;
+	Thu,  5 Sep 2024 17:03:39 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8oxi/AJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725555817;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2WPPczzM5fWySeHC6qCU5mJN44nYuMHACOhNso4EGCc=;
+	b=S8oxi/AJO3vG5kC0wYzvPcvwfn+o0kCttzDIhQelVpgwHEjGgAUGSmBmhwbhPa1WeQUBkb
+	zu10fm2SriimEK0oAC9nBbD2fdcQS3U5JLuIJ3Yt6a4wdt2cJhjM7HSPHPV5+s0R7BSnJa
+	90zYJO/+yld5Pdz8ajTRqlFukUnSKxg=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 27c37213 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 5 Sep 2024 17:03:37 +0000 (UTC)
+Date: Thu, 5 Sep 2024 19:03:34 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH v5 4/5] powerpc/vdso: Wire up getrandom() vDSO
+ implementation on VDSO32
+Message-ID: <ZtnkZsHJESAqU-FH@zx2c4.com>
+References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+ <1f49c2ce009f8b007ab0676fb41187b2d54f28b2.1725304404.git.christophe.leroy@csgroup.eu>
+ <ZtnYqZI-nrsNslwy@zx2c4.com>
+ <85c02620-e8b2-4c97-9905-685a9a4e556d@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c2:b0:377:1625:5fca with SMTP id
- e9e14a558f8ab-39f40ee300emr6574465ab.1.1725555813052; Thu, 05 Sep 2024
- 10:03:33 -0700 (PDT)
-Date: Thu, 05 Sep 2024 10:03:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000047043b0621624565@google.com>
-Subject: [syzbot] [mptcp?] possible deadlock in sk_clone_lock (3)
-From: syzbot <syzbot+f4aacdfef2c6a6529c3e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org, 
-	matttbe@kernel.org, mptcp@lists.linux.dev, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85c02620-e8b2-4c97-9905-685a9a4e556d@csgroup.eu>
 
-Hello,
+On Thu, Sep 05, 2024 at 06:55:27PM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 05/09/2024 à 18:13, Jason A. Donenfeld a écrit :
+> >> +/*
+> >> + * The macro sets two stack frames, one for the caller and one for the callee
+> >> + * because there are no requirement for the caller to set a stack frame when
+> >> + * calling VDSO so it may have omitted to set one, especially on PPC64
+> >> + */
+> >> +
+> >> +.macro cvdso_call funct
+> >> +  .cfi_startproc
+> >> +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
+> >> +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
+> >> +	mflr		r0
+> >> +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
+> >> +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
+> >> +	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
+> >> +  .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
+> >> +	get_datapage	r8
+> >> +	addi		r8, r8, VDSO_RNG_DATA_OFFSET
+> >> +	bl		CFUNC(DOTSYM(\funct))
+> >> +	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
+> >> +	cmpwi		r3, 0
+> >> +	mtlr		r0
+> >> +	addi		r1, r1, 2 * PPC_MIN_STKFRM
+> >> +  .cfi_restore lr
+> >> +  .cfi_def_cfa_offset 0
+> >> +	crclr		so
+> >> +	bgelr+
+> >> +	crset		so
+> >> +	neg		r3, r3
+> >> +	blr
+> >> +  .cfi_endproc
+> >> +.endm
+> > 
+> > You wrote in an earlier email that this worked with time namespaces, but
+> > in my testing that doesn't seem to be the case.
+> 
+> Did I write that ? I can't remember and neither can I remember testing 
+> it with time namespaces.
 
-syzbot found the following issue on:
+It's possible I confused you with someone else? Hum. Anyway...
 
-HEAD commit:    67784a74e258 Merge tag 'ata-6.11-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1631e529980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=f4aacdfef2c6a6529c3e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e6cf2b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171c1f2b980000
+> >  From my test harness [1]:
+> > 
+> > Normal single thread
+> >     vdso: 25000000 times in 12.494133131 seconds
+> >     libc: 25000000 times in 69.594625188 seconds
+> > syscall: 25000000 times in 67.349243972 seconds
+> > Time namespace single thread
+> >     vdso: 25000000 times in 71.673057436 seconds
+> >     libc: 25000000 times in 71.712774121 seconds
+> > syscall: 25000000 times in 66.902318080 seconds
+> > 
+> > I'm seeing this on ppc, ppc64, and ppc64le.
+> 
+> What is the command to use to test with time namespace ?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-67784a74.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e2f2583cf0b1/vmlinux-67784a74.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0fedd864addd/bzImage-67784a74.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f4aacdfef2c6a6529c3e@syzkaller.appspotmail.com
-
-============================================
-WARNING: possible recursive locking detected
-6.11.0-rc6-syzkaller-00019-g67784a74e258 #0 Not tainted
---------------------------------------------
-syz-executor364/5113 is trying to acquire lock:
-ffff8880449f1958 (k-slock-AF_INET){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
-ffff8880449f1958 (k-slock-AF_INET){+.-.}-{2:2}, at: sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
-
-but task is already holding lock:
-ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
-ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(k-slock-AF_INET);
-  lock(k-slock-AF_INET);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-7 locks held by syz-executor364/5113:
- #0: ffff8880449f0e18 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
- #0: ffff8880449f0e18 (sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_sendmsg+0x153/0x1b10 net/mptcp/protocol.c:1806
- #1: ffff88803fe39ad8 (k-sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
- #1: ffff88803fe39ad8 (k-sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_sendmsg_fastopen+0x11f/0x530 net/mptcp/protocol.c:1727
- #2: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #2: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #2: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: __ip_queue_xmit+0x5f/0x1b80 net/ipv4/ip_output.c:470
- #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ip_finish_output2+0x45f/0x1390 net/ipv4/ip_output.c:228
- #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
- #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: process_backlog+0x33b/0x15b0 net/core/dev.c:6104
- #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ip_local_deliver_finish+0x230/0x5f0 net/ipv4/ip_input.c:232
- #6: ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #6: ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5113 Comm: syz-executor364 Not tainted 6.11.0-rc6-syzkaller-00019-g67784a74e258 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_deadlock kernel/locking/lockdep.c:3061 [inline]
- validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3855
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
- mptcp_sk_clone_init+0x32/0x13c0 net/mptcp/protocol.c:3279
- subflow_syn_recv_sock+0x931/0x1920 net/mptcp/subflow.c:874
- tcp_check_req+0xfe4/0x1a20 net/ipv4/tcp_minisocks.c:853
- tcp_v4_rcv+0x1c3e/0x37f0 net/ipv4/tcp_ipv4.c:2267
- ip_protocol_deliver_rcu+0x22e/0x440 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x341/0x5f0 net/ipv4/ip_input.c:233
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- __netif_receive_skb_one_core net/core/dev.c:5661 [inline]
- __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5775
- process_backlog+0x662/0x15b0 net/core/dev.c:6108
- __napi_poll+0xcb/0x490 net/core/dev.c:6772
- napi_poll net/core/dev.c:6841 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6963
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- rcu_read_unlock_bh include/linux/rcupdate.h:908 [inline]
- __dev_queue_xmit+0x1763/0x3e90 net/core/dev.c:4450
- dev_queue_xmit include/linux/netdevice.h:3105 [inline]
- neigh_hh_output include/net/neighbour.h:526 [inline]
- neigh_output include/net/neighbour.h:540 [inline]
- ip_finish_output2+0xd41/0x1390 net/ipv4/ip_output.c:235
- ip_local_out net/ipv4/ip_output.c:129 [inline]
- __ip_queue_xmit+0x118c/0x1b80 net/ipv4/ip_output.c:535
- __tcp_transmit_skb+0x2544/0x3b30 net/ipv4/tcp_output.c:1466
- tcp_rcv_synsent_state_process net/ipv4/tcp_input.c:6542 [inline]
- tcp_rcv_state_process+0x2c32/0x4570 net/ipv4/tcp_input.c:6729
- tcp_v4_do_rcv+0x77d/0xc70 net/ipv4/tcp_ipv4.c:1934
- sk_backlog_rcv include/net/sock.h:1111 [inline]
- __release_sock+0x214/0x350 net/core/sock.c:3004
- release_sock+0x61/0x1f0 net/core/sock.c:3558
- mptcp_sendmsg_fastopen+0x1ad/0x530 net/mptcp/protocol.c:1733
- mptcp_sendmsg+0x1884/0x1b10 net/mptcp/protocol.c:1812
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x1a6/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmmsg+0x3b2/0x740 net/socket.c:2737
- __do_sys_sendmmsg net/socket.c:2766 [inline]
- __se_sys_sendmmsg net/socket.c:2763 [inline]
- __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2763
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f04fb13a6b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd651f42d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f04fb13a6b9
-RDX: 0000000000000001 RSI: 0000000020000d00 RDI: 0000000000000004
-RBP: 00007ffd651f4310 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000020000080 R11: 0000000000000246 R12: 00000000000f4240
-R13: 00007f04fb187449 R14: 00007ffd651f42f4 R15: 00007ffd651f4300
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Look at the C in the commit I linked.
 
