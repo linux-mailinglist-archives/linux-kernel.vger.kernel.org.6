@@ -1,148 +1,173 @@
-Return-Path: <linux-kernel+bounces-316465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBA496CFF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4373696CFF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35A51C219E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:02:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6883F1C227DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A954189529;
-	Thu,  5 Sep 2024 07:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A23C192B82;
+	Thu,  5 Sep 2024 07:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eg0GRRrd"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zdtzjgg2"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15498188A24
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7291925B2;
+	Thu,  5 Sep 2024 07:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725519737; cv=none; b=hGEQzES0Tlw2IFAtQO0h2Qho+fiwuuaByYus5zpGEXTPlSwrKuu2laAm1259Ih7CLaqp5vJXaxi2g8qulrQ7twRkOLzgDuh6hD7nN2GY6DKTxgNnX4/LyK9uPfLMPKI1SRqt6MMIgHI/2vHraGCsJSF7L1Crl5mzjMyCbgYvduk=
+	t=1725519780; cv=none; b=tn3V6vPMbzP3K5VfT3+XTqMj5UO53YEwOKGTJc29j/lRJ4loEy7i9p9PMwOJ/jQdr4ImiWNDuxegHU9yA0Fdzdjaiu/WI0pdbOJw4EVYowusLgmGOC2SBe9AwkkvF+9xCijjERu4tgckfsCANrt4jD+JTg+DOsLhzrCj088r38k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725519737; c=relaxed/simple;
-	bh=cuhq/YZ1/hNdVdBIc06m/ERIsG8Bs5oT0bmbvOyYDZ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tB4Ytzt3fZ7uM/xrxEQwp5f+mviHh5YvaiNrQmiocUsd0R3dqOvvibMq3jtXbw17ecNeDgfvK0njdSobvvL821/QXdZqFwI3knspHAe3uWjody8Db3oUjJxjNMApuuWaMkFQf4nbgsWFlSjtOmjDg3kl1rmIRng6N8wp2rYoILE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eg0GRRrd; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c4c6cb29so280460f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:02:15 -0700 (PDT)
+	s=arc-20240116; t=1725519780; c=relaxed/simple;
+	bh=Xc98z3pf9jzk64noew6FjkFzwjrhgpzK9PUf6lhiia4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xt1T/R+O2F3H9z0NKM34udWbWQHqCEkbjWNU4jT5ZuUz1KSW60uLzxxPayIKGoC/OmNE9xJ7dXRpFcfUAzAc9w2+3MeiLggqftZ1ivuJLkLAOJmqmPzPY7EgD2WD8GGc54AMRsYmIMjMCMdvhVzOZfTHel1gtwjrRxGQtBgUdY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zdtzjgg2; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e174925b7bso298835eaf.0;
+        Thu, 05 Sep 2024 00:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725519734; x=1726124534; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuGQxzeNLR7CXVElCDNlPl/GjShI5gnrrfDitQYmS9k=;
-        b=eg0GRRrdpbPDx326hV+2zoALuhzfQ/+bL8/05E7j9mjwpbNgbiGi1oM7DeB20DIt8r
-         kx+DVTQ5ZZ0d7ht8eu6b/eFcU4/yFr/QiWq/z3d+Px+n/m78hNxsHHFD7KIfWJ9uZ9TB
-         LqxZlfyMJ2Y6rSHiiHqXAq2aukhk45Fj+5WjkpaUj6k4wG1MbFp1vAYsicWKFX86VUJY
-         9ZyxMAXuVZeoyyXOhsAaHUsH87910yhhzhgEPkKmnOEKnlWqccMT8Fu33B/LeXdYwDgt
-         ZDo02IovgNUWVKYVATnT8S6gya7OkcGL6QquCVjiUgblmJvCeWL+1HI3cFwn5A+SQS2X
-         jMHA==
+        d=gmail.com; s=20230601; t=1725519778; x=1726124578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGPyaa+1WDEMchRcuy5C5zdpNT7E1IN97l7V6rYpwAQ=;
+        b=Zdtzjgg2B8cA8fC29sMy3JRWkJVrviRPuYw2N6QdVBKaHZM1PPtRNROT93L7SUuVJ3
+         wjKpuuyxntaiEiCxzYn4XJVqSF/iEpD24hgimJ/jrsoCZ3dLdFDzlyYftmK7/2h4LMYG
+         lcG+2ZVoPT/kMaRs82YSh/O01N0130In8BBhMoqC2xQLkQ2wsBQ+vRdA+LRrRqvdC1Bt
+         g0SXZyNKHwAFBGwzu3ozBBNka4hQhFc0WWoEceHJ2FQDG4reoobvSbinaDPH62Qs18l7
+         ADB8tPrF5F6GKHFR3lrWO50tTYydZFnEhWHeKq6Hud22cyZdyOyPC8saHdQj93Zqu6mZ
+         oqbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725519734; x=1726124534;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725519778; x=1726124578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iuGQxzeNLR7CXVElCDNlPl/GjShI5gnrrfDitQYmS9k=;
-        b=sH1d7zOtFllJyI61au7ceShtKKbTOTrpvQDh15mVB010KdMRRK/SiTv1GIaUS9ELN1
-         XamFBg3jce4jmNPxAzwII1iisXv9Ur0gffyzKtuq2Es5S5QPI0NqF42o1FaTrsiMkgC2
-         M6DlGjQFckmA91ZSCk2obu3+BJaxo7Yr/0hJybgde/8kLEfS0x5SAZI4PNffU449A5uv
-         WuruQ59jz+iuPtPHz6tDqgi+zXRfe+2oy82wGiJG7nSPJWGfKcV3rLeSu9DT9PUwWtl1
-         4hRCLHppPvDIGS5esczzBsfg0GNDTO2AvAIW0EFu/r9vVlwQDYcWHKLMo3ced71Koa+R
-         +Njw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPMx1GnJX52NSu5dqcxHQ/tgllQWX0LmpBG0s5S+nFTqvxsEBmvWIu2wsr6dzcRRCIC3Y4xJKTwecZSdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2HdHP9/e1aqaQNbEflS/HRVMZ3BVU3uNG3QJr5vfh6PoZBd39
-	Q+Gw3Ps/fBLmwACOv6xysEW/+JaTFsIsZyLjtcN27w4Q6EzGcVAjXxeewX29yWw=
-X-Google-Smtp-Source: AGHT+IF/zqAZKn/3kHKjMNy5ew72exLnFeqVMed6p0p+agFC9EzZMcJ+j2cDCQ85W3wW9QHpZBMjLg==
-X-Received: by 2002:a5d:5351:0:b0:374:ba2b:4d1c with SMTP id ffacd0b85a97d-374ba2b4ea9mr13950066f8f.31.1725519733737;
-        Thu, 05 Sep 2024 00:02:13 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6396516sm263936935e9.4.2024.09.05.00.02.12
+        bh=gGPyaa+1WDEMchRcuy5C5zdpNT7E1IN97l7V6rYpwAQ=;
+        b=Gp4SNIqJNdargsDtRt3EDICmtF+WmS0LCOjyTjQvii4ZUgFQWyQ9lsJtt1XMdz6DjT
+         nV2jdaYJyfROARlHiZNwT9tWZbxfItYHHUak1f4G9QnAazIWMOr41PiQeSUyWyQ3E313
+         0yhv2B2NwRmVmFP+sXkZxsOZFGP+WR7TUemKf/98zSI1+SaIEswJgt88PvwQUhWLS61z
+         0EacP1t4i2BEh9FPhCsuKE2VQiBTW9QArA76cLXtCA+Bl5I3ccOr0g+xdrZivyvgY4HN
+         GzyCKO5Q8HkGLgKeHBAVRZBRgtgMCaBvjaQ8pC8rh6JRPPz5382AqyNheKDPBJVxTGPN
+         ZKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbA2OuQLRWV1fMqLgcaXQ3v/eKXgxec3jTQT1oLdhqt3aPyMYXiLo9vGCR77CvB7p/6J577rfjm/BZB1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKbhPZDFxu0pbBIp9oSXelZ4qcKrPnyqMedu9GF8GV5AgNpr4y
+	3AWiQ0G0ABhiun2zdUteuZ1yk/dcFNTq5oE86vl/ehx/oC/1jOQ3
+X-Google-Smtp-Source: AGHT+IFEQpZl3ZnRXG3Y8a3KH8gtlt/4cKxL4Zrb6w6RD/CEHqKTJ40bzqvmaOsEUf2ErIgac3XQsw==
+X-Received: by 2002:a05:6358:590f:b0:1b7:fc1f:5b95 with SMTP id e5c5f4694b2df-1b81240f229mr926884155d.14.1725519777913;
+        Thu, 05 Sep 2024 00:02:57 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71778595107sm2604897b3a.150.2024.09.05.00.02.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 00:02:13 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 05 Sep 2024 09:02:10 +0200
-Subject: [PATCH v2] arm64: dts: amlogic: gxlx-s905l-p271: drop saradc gxlx
- compatible
+        Thu, 05 Sep 2024 00:02:57 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	rmk+kernel@armlinux.org.uk,
+	linux@armlinux.org.uk,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v8 0/7] net: stmmac: FPE via ethtool + tc
+Date: Thu,  5 Sep 2024 15:02:21 +0800
+Message-Id: <cover.1725518135.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-topic-amlogic-upstream-gxlx-drop-iio-compat-v2-1-7a690eb95bc2@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAHFX2WYC/52NQQ6DIBBFr9Kw7jSA2mhXvUfjggDiJOqQgRob4
- 91LPUJXP+8v3ttF8ow+icdlF+xXTEhLAX29CDuaJXhAV1hoqWvZyRoyRbRg5olC2XdMmb2ZIWz
- TBo4pAiKBpTmaDLq1jVTSD3VViWKM7AfcztqrLzxiysSfM76q3/tfZ1WgoO2Mu1fGuE41zwkXw
- 3QjDqI/juMLegIsOecAAAA=
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Christian Hewitt <christianshewitt@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1401;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=cuhq/YZ1/hNdVdBIc06m/ERIsG8Bs5oT0bmbvOyYDZ0=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBm2Vd0gxIfQ9jEaX4HZDtiq2U11EgkGIuVEoRDa2iS
- tPU4KjWJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZtlXdAAKCRB33NvayMhJ0RzJD/
- 4s5u9cbX4fYmrOsHrwV9udPQYLt2sO7rcgF2bvwzNcBO/7mFVCEecyAJ6CzLMARFCEhXcXtzG1hs+W
- 2d57PKyqyAwpXjg5wx0yZL66QJby2HrU9gjgOsKUwrfEadWl5nfN7qH+gbEmca/AJZ75auh2XxFClD
- PsIGqW7iRSZJ/Ty6NDlDttao7X3blIlOV8oiwuP17pl+Qm3S6E4RD3RAJktm6dy9AU75CxUA9IiiPU
- r596npmo+2Qkw8EOw48k1EUAJbCcNSbHACiVbjYm1kxAmXglFURJOLL2ztCpYcdl8RwSX6ONibq/Vo
- K0Tx8Kn2MtlFN9UlMfor2Fgqzfwa3YQv1X89tF1Kc+TSMyOKBleWmhkoIwIfAL3vJRceb7MtNjNOpG
- e8czGe6A18eNLyYhlp4q7ZHWNuU6VxANvM25FI2F6zppquWU9U65gB6xniJfB3QTQ/EwRM12mwO2J5
- 4pMZ6yiugMR+UcbaCKvV3ccuDGfD+eN9qXP4IFbd0rqq4gPqpS66K/pfCCwLrs4VdAxYeDR8nm4j5M
- LGb8cIDxAxKAUKliuSHtKp/nl9M17Et6tr7u05bxZJIZtJ1lunOKK8S/52TjVrVVqOPKAIEwejtDuC
- 4Wbkm0iMYFCjidGvFmfiH4nakWetDmtNSwTQXvrxzH1YV/sGu0wn1X47x65A==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Transfer-Encoding: 8bit
 
-Drop the undocumented amlogic,meson-gxlx-saradc compatible but dropping the compatible
-override, and fix the following DTBs check:
-/soc/bus@c1100000/adc@8680: failed to match any schema with compatible: ['amlogic,meson-gxlx-saradc', 'amlogic,meson-saradc']
+Move the Frame Preemption(FPE) over to the new standard API which uses
+ethtool-mm/tc-mqprio/tc-taprio.
 
-Fixes: f6386b5afa81 ("arm64: dts: meson: add GXLX/S905L/p271 support")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
+Changes in v8:
+  1. use timer_delete_sync() instead of deprecated del_timer_sync()
+  2. check netif_running() to guarantee synchronization rules between
+  mod_timer() and timer_delete_sync()
+  3. split up stmmac_tc_ops of dwmac4, dwmac4+ and dwxgmac to give user
+  more descriptive error message
+  4. fix wrong indentation about switch-case
+  5. delete more unbalanced logs
+
+Changes in v7:
+  1. code style fixes and clean up warnings reported by
+  patchwork netdev checks, no functional change intended
+
+Changes in v6:
+  1. new FPE verification process based on Vladimir Oltean's proposal
+  2. embed ethtool_mm_state into stmmac_fpe_cfg
+  3. convert some bit ops to u32_replace_bits
+  4. register name and function name update to be more descriptive
+  5. split up stmmac_tc_ops of dwmac4+ and dwxgmac, they have different
+  implementations about mqprio
+  6. some code style fixes
+
+Changes in v5:
+  1. fix typo in commit message
+  2. drop FPE capability check in tc-mqprio/tc-taprio
+
+Changes in v4:
+  1. reorder FPE-related declarations and definitions into clean groups
+  2. move mm_lock to stmmac_fpe_cfg.lock
+  3. protect user configurations across NIC up/down
+  4. block stmmac_set_mm() when fpe_task is in progress to finish
+  5. convert to ethtool_dev_mm_supported() to check FPE capability in
+  tc-mqprio/tc-taprio
+  6. silence FPE workqueue start/stop logs
+
+Changes in v3:
+  1. avoid races among ISR, workqueue, link update and
+  register configuration.
+  2. update FPE verification retry logic, so it retries
+  and fails as expected.
+
 Changes in v2:
-- Drop the compatible override instead of dropping only the gxlx compatible, thx martin!
-- Link to v1: https://lore.kernel.org/r/20240904-topic-amlogic-upstream-gxlx-drop-iio-compat-v1-1-89ad63aad915@linaro.org
----
- arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts | 4 ----
- 1 file changed, 4 deletions(-)
+  1. refactor FPE verification process
+  2. suspend/resume and kselftest-ethtool_mm, all test cases passed
+  3. handle TC:TXQ remapping for DWMAC CORE4+
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts b/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts
-index 1221f4545130..942df754a0ed 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts
-@@ -38,10 +38,6 @@ mali: gpu@c0000 {
- 	};
- };
- 
--&saradc {
--	compatible = "amlogic,meson-gxlx-saradc", "amlogic,meson-saradc";
--};
--
- &usb {
- 	dr_mode = "host";
- };
+Furong Xu (7):
+  net: stmmac: move stmmac_fpe_cfg to stmmac_priv data
+  net: stmmac: drop stmmac_fpe_handshake
+  net: stmmac: refactor FPE verification process
+  net: stmmac: configure FPE via ethtool-mm
+  net: stmmac: support fp parameter of tc-mqprio
+  net: stmmac: support fp parameter of tc-taprio
+  net: stmmac: silence FPE kernel logs
 
----
-base-commit: 6804f0edbe7747774e6ae60f20cec4ee3ad7c187
-change-id: 20240904-topic-amlogic-upstream-gxlx-drop-iio-compat-28c5010ef433
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  10 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  96 +++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  12 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |   9 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   6 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  22 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  30 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  91 ++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 276 ++++++++----------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 153 +++++++---
+ include/linux/stmmac.h                        |  28 --
+ 11 files changed, 491 insertions(+), 242 deletions(-)
 
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+2.34.1
 
 
