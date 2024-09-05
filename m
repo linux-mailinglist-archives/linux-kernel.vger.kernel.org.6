@@ -1,77 +1,82 @@
-Return-Path: <linux-kernel+bounces-317019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514F196D853
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:23:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08B296D857
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0EB28C283
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681F52818C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA51B19F109;
-	Thu,  5 Sep 2024 12:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB6C19FA60;
+	Thu,  5 Sep 2024 12:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Byfed/BW"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLE2Cgt5"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900B19DF99
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0E19E819;
+	Thu,  5 Sep 2024 12:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538841; cv=none; b=Ceq0gPcxPwfxdRdhbErlZtHWzS24f65KcHR3mDVroryw/zmB8QbjlAsqFEeIq/HMIydG2aD4mrnkE6YG0PlnJrD8mKDwhkoZ5zAknu4Fzgs9b6SiOpf5B5P09iSZvkQ2fzrJwLP+SyXvO+YebMIvenQjlmvF6St7j2+0MAL2m5E=
+	t=1725538841; cv=none; b=C3iVF9O/vMrSMXdgJ16l8tn45p01zmGU1abC5UwPKYUd+dB0jgo+3hGXhHMYqF0t1EerC86yT/5kT6/G/j3QvAuXTcecoXPHBbjWYfo+Jhx1a83wfYTOFrC4h5SJ6aVexRXgUx+emXvbUnzrEsEDfTZ+8Zo2NQAXgAZ8r7M5IVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725538841; c=relaxed/simple;
-	bh=x0WXOnHpURYZmVW1Xd3AlkdJWFuu81kWoIQNi8fRgJs=;
+	bh=lTBimKBaGs1ZkBL0WNg4qnL25GeofL7qynlulrl3LB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qMqZydi4PmiNV52dUL9sIoblqhpDQR9EpTCgmAbjAA6fxPc1eB+1HxdIBB+CxSv3Ro1R1XfNpDE0RAmupF88wV2aVmazrVbYes+x6W6fjP7bLljjUOrUNgqEr16sCNGTC0IoZ4zQtLIdJIbI/lAWnQv9kihggWjTZKN29q1LaIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Byfed/BW; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=aHZs+ye9/eSwD+vLoY1HvSWlQCueRSUxYGvtgur92lW4aXcdcOCYBNWggvT112lNHNWNHYT8QbTLGB6Y9tzKVlIQP7Zrf+9K0h8GarjWsIPzpucrWrvLoapaJXfdlmtbggSrCVKvv+gv1rGJV05rf+MYefpzXKbj36/xRo57wNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLE2Cgt5; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42bfb50e4e6so5373495e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:20:39 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso7218615e9.1;
+        Thu, 05 Sep 2024 05:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725538837; x=1726143637; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725538838; x=1726143638; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RAchU8X3FtVU2HZXYK45dhOtULBussLCsS4H+uYcfQo=;
-        b=Byfed/BWlGNEDdqEPZJdW/xgzuSo3CDPXmZUEiDui9/6663cm9cGSVHl1ODAWu3s0d
-         6ilrFEgMHF78pYHUU4fIOoHUDqp/6qP1Ed8NUU6JSLyzSQtG2vTdj6adoHR+aEIhGlYb
-         1dPyR4EuLEfYDVm6EiPnZvSfE8Roac1KFAGfDf56fpTWOJ2YurjPPZJMwZ+7V+gs70y/
-         QvPRGnViV/UIiO2LdR9vJyDgpd4fIFQnGxz0QyBQ8gHWJoCgnIWhdcZocmZtU4xolN/r
-         91i/PFNdeN6BGSGsYt8nHZvOXYObqaIPCaWxdOKz8CXZ22MqdcJ2HhWt1A03DQFTr+Mv
-         Woow==
+        bh=MrbcAlTnlmTabJ3YUIAlxnWUZ+5STpJgWmlTb5FWPhs=;
+        b=XLE2Cgt51WzkoQ6SALorCh1ECgly/zbQyyJsql4NhZBafdNmj17ecb2ARBT6z2PgF3
+         UlYrA+Q3YmECIPkxwowDBn+IdaIQSjBC7U1QSIpQ8m/LuCADJts6uLfEeWffsY6n6mnU
+         ijR/UQlT2HHfOwcipVUYjrhADtD7NREmgMsw2Ehuf3tx6GhELptwD2MSWhLxn4+uKYhz
+         JUBiuU/Fx3IVYrVZKy/ygcyk1QZd3IDBxddyt7lWC8dAnNtCvGpJjmvFHGvsBltIP0nG
+         4NRH0kAgy6yGTvoOCZwpLfsf6/T0eb7bwFOg56yD3qxclaD6n/8lkWN8Ry8gfL1TqPWH
+         Hpew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725538837; x=1726143637;
+        d=1e100.net; s=20230601; t=1725538838; x=1726143638;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RAchU8X3FtVU2HZXYK45dhOtULBussLCsS4H+uYcfQo=;
-        b=w5U+JXQxpvBpBNdqPRI+/JX4s6cl2NOk8JVKx/W6xO8Mwj1dXfga6tid2wWtL9B6SZ
-         H9ZZ58Ni0e4kH+D16VduCsDAredbv6Y+FoXzyynLpLdWXKpwoIJs7PYLIIChGD1uAsJq
-         Cvap5OmN0PFgJ6wGkYuw2u/EZRkURpDwefnxinmjzYC7/a4cwX2Uymb5OCVXLlIyZPJb
-         6WH2418J2n5nqSKdWSEBtGgIvoHPJi9p4aEawlBzX0zGusHBUP1tm2c6hmwFFNmcmi2i
-         N5kUrSPaquJrUFaHuFQ9ujB8/JZlK6aM266PTwnMoaGvCbYS7ECChWe7MqkSybreb0Im
-         3SuA==
-X-Gm-Message-State: AOJu0Yzmpt2bVbDzSxnW41BxCgbitPZ0XaN+WhjMGGCskndsJ91XVyha
-	gdcC9bsV4MEzEb706kUCQh9ONPIQXCZ7DY7jMTiUZAl7YqopMNmxGaFydYOFfW0=
-X-Google-Smtp-Source: AGHT+IEZzGmNxpNnyUljhgZrl0lLyWsdYNNu+WGS+5pGCy7W7IPFSzHJejtHKBg5REsLlp5Cp0gxfA==
-X-Received: by 2002:a05:600c:5110:b0:42b:afe3:e9f4 with SMTP id 5b1f17b1804b1-42bb02c10b2mr184548515e9.3.1725538837155;
-        Thu, 05 Sep 2024 05:20:37 -0700 (PDT)
+        bh=MrbcAlTnlmTabJ3YUIAlxnWUZ+5STpJgWmlTb5FWPhs=;
+        b=KcISPpfMmngTgTMF6UEOlFw+2tT01MQ9N86kYfWNGvsXgohrNoaM/EZEM9Bp3O/UdP
+         pgJnuOuAvqO8EPtAG1Hr6ixe5/wlm3XJKTdpPoWgi6yG89ze6QvP6HBnad6wDNmKttZz
+         LtPrnMzoXnDX5a8ShotN88+RH9ChAl9sbJUmVvijsnTDxC72+henHIqN4j4PkW4Fxm2I
+         ciBeneN9/1pZsjYv5XhAMLf9fKdH7OcAtr+2DWNgHWluq1P+Yct4V3j2o2dyGNW93XVq
+         Anci78N46hxnONqGljq74y6XhE6xzc1NBptn/TNdbLNYnyASkfRkdNeqpT1U1B4zdikn
+         O9+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXXFxPBNwaoHMffGuSQ0MFQlxQDpRzDgr2j4FbpqPmBWM9FF/4tDzZXmYRvtGoVgWQajQrIDSqvdZYwbFitULA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzfByUuoDxy4/4aWCvdV9sErrqSgXoCQQ8bOcZjtM//mWeGRU+
+	QRXTdprp8ns8DbDomBFRZlfiHWjw7nRMzwkMgc144yEl7jdlqTWEX3E5PmD1UIg=
+X-Google-Smtp-Source: AGHT+IH1y62oVq3A7PoH6CYDdpSm5g4nRO5BNyX08uLqwzy6RI+6Cp/eKFKScAI+HQtlogwERfmxew==
+X-Received: by 2002:a05:600c:1c8a:b0:426:59d3:8cae with SMTP id 5b1f17b1804b1-42c9a365902mr20646915e9.13.1725538838425;
+        Thu, 05 Sep 2024 05:20:38 -0700 (PDT)
 Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27364sm230390515e9.34.2024.09.05.05.20.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27364sm230390515e9.34.2024.09.05.05.20.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 05:20:36 -0700 (PDT)
+        Thu, 05 Sep 2024 05:20:37 -0700 (PDT)
 From: Uros Bizjak <ubizjak@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 09/18] lib/interval_tree_test.c: Include <linux/prandom.h> instead of <linux/random.h>
-Date: Thu,  5 Sep 2024 14:17:17 +0200
-Message-ID: <20240905122020.872466-10-ubizjak@gmail.com>
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Subject: [PATCH 10/18] kunit: string-stream-test: Include <linux/prandom.h> instead of <linux/random.h>
+Date: Thu,  5 Sep 2024 14:17:18 +0200
+Message-ID: <20240905122020.872466-11-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240905122020.872466-1-ubizjak@gmail.com>
 References: <20240905122020.872466-1-ubizjak@gmail.com>
@@ -87,23 +92,26 @@ Usage of pseudo-random functions requires inclusion of
 <linux/prandom.h> header instead of <linux/random.h>.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>
+Cc: Rae Moar <rmoar@google.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: kunit-dev@googlegroups.com
 ---
- lib/interval_tree_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/kunit/string-stream-test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
-index f37f4d44faa9..837064b83a6c 100644
---- a/lib/interval_tree_test.c
-+++ b/lib/interval_tree_test.c
-@@ -2,7 +2,7 @@
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/interval_tree.h>
--#include <linux/random.h>
+diff --git a/lib/kunit/string-stream-test.c b/lib/kunit/string-stream-test.c
+index 7511442ea98f..7734e33156f9 100644
+--- a/lib/kunit/string-stream-test.c
++++ b/lib/kunit/string-stream-test.c
+@@ -9,6 +9,7 @@
+ #include <kunit/static_stub.h>
+ #include <kunit/test.h>
+ #include <linux/ktime.h>
 +#include <linux/prandom.h>
  #include <linux/slab.h>
- #include <asm/timex.h>
+ #include <linux/timekeeping.h>
  
 -- 
 2.46.0
