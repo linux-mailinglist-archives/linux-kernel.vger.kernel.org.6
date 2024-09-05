@@ -1,160 +1,114 @@
-Return-Path: <linux-kernel+bounces-316170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A536096CC26
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:16:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82A496CC29
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA11A1C203AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:16:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC4C1B247C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27C3B661;
-	Thu,  5 Sep 2024 01:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC7B666;
+	Thu,  5 Sep 2024 01:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MMviWp1M"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3MXffba"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5240946F;
-	Thu,  5 Sep 2024 01:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CED1EBFEB;
+	Thu,  5 Sep 2024 01:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725498957; cv=none; b=qiddM6muNlIu5iRn80fofXx5Gq38bhQyB5abDF0xiPkCu09mU7fYakz0vTT6JjcSdYSjnaROrMU99lkdwotv2cJy1It7GcDf0cMVc6juWAiPsG1SkJLI5xPaarht12/oNd4LCHSPv5osCfxJNldrtotMOXzU5x93+ep4QhssW1g=
+	t=1725499192; cv=none; b=QBZ6UkQbMMccS926cGnw8Ym+2i6h/1MwrLghqkLEuTCRJ1bhBFbLROktRGPBChG11g3sQHlBfcraP14qYBG3iwN2yNq7POZQRtbR4IAQUj2hLMPyhuf/Lwuu1w3Cu9sAdsokdh7WlG7U3UgqiSZ3+ZaQz3jcG/rE0CsUSysuz/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725498957; c=relaxed/simple;
-	bh=8ekNUNmJ5B7JlGsLgDmDPyFcmVABctn18IfLiXOwrM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Agbv2C6DeJfbOvp2PKA5aImmQUDaBLV3agdMXLoYqvtN3mNYWRw4XzMnYD3eQI+TGeIHTvxE2l+xCXqcTNOgHmvFPr/8Z10GP/MbMq1B5OiOrkK4L+RxT9P05bvNyd6AubPlbwyZy5fwpP0WihEvZJt6jKZY4P3flxw9XOQoYjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MMviWp1M; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717594b4ce7so205235b3a.0;
-        Wed, 04 Sep 2024 18:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725498955; x=1726103755; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lfqkii3Xuadydf2OgjL825gCtliAjphhJk+LUWBeNs4=;
-        b=MMviWp1MUdhvUBUDh8xxKDjDOqYjSSypGmO1bVdaueO2jWSENtC1jjKk0n/qeuKbFK
-         yz2+PdVTJvfxplSKA+rPTGblrueD4lCiMm4jl0WkvkfbU4xrVdMJ+YE6emLxULXC/Yw7
-         /TQ1cMJPMJ/Q+To/TMa1LWQVEq+PoQHANrtCPpNUhv8hpR0Dhqm8doeodIYNCSlaz+L4
-         c/NIUea5H5rxr3gNeOUTuiehiQB+82rMMEnqMXuwo4RnQKsw/gRRfoisY2iTTgn13H6e
-         D+w+DKufrwnA0matUz/fLv9lUqVHpyxWbBXVB2zZWKwRxvX1XGRuEVu1t3YCRPLPGaoL
-         rKYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725498955; x=1726103755;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lfqkii3Xuadydf2OgjL825gCtliAjphhJk+LUWBeNs4=;
-        b=o85DuhlFzAyiLVFcc034WTyKKVB/lq5ryUqrNHfx58l3253ckLejjLbEpKCDXQzvyN
-         HeDTw40wqHsm6li02KC82MXLieQ/4bRyAEh+L9OnLK4b+qE2IY3jPXzLLRwP2l7uV5YI
-         A1XRKJUwB/7kwELI9izhUBAP4pUqQzw/q26FBQJ+DEROiRjQ2aeBzw0NlLpMs4ldTiG8
-         Lya/v7EZTZS6XtwVOpsRJLmVeXH7/jicwjF1AHipaqOOE92bjXg+iaSQTIjlsv35RCiU
-         WgFMm8u3A1+ougO1+pWLH0vmT+K0H/LrzJgN29lWPRA3SIim5+x+QFPoywzXVX+YZzhZ
-         SrZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFUcQQloDc1Z5S7C12Dy+xZAZv4adelhll3ZvoP4Iok18k+h2NTLX+OkeCx64pnKKYbnT7y6hHK7os@vger.kernel.org, AJvYcCXEiCZZvAssjDvn+BFMGMhdjMbfILyNg1vuw/hPijRHugeZTXV+fxYsroNBvlM2pDJYqTOugpkqaQKjROd3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKo+wRgwGiRs4JQrwqSqZhf3dvazuBa9I7Nmducc6p+yRVkOcZ
-	D3juK8n/rtWqo1MZlT+T+8suUSnHL6/l/NlDn3fHvyOTXJQVKot3
-X-Google-Smtp-Source: AGHT+IHPuGTBuTh6l98ghabXikw9n1vplmTWdBl2JwA6Qq8GNc2eWq/DMEYnvYdG9PF280wjE6cHnQ==
-X-Received: by 2002:a05:6a00:13a6:b0:70b:5394:8cae with SMTP id d2e1a72fcca58-715dfc76152mr26554296b3a.28.1725498954865;
-        Wed, 04 Sep 2024 18:15:54 -0700 (PDT)
-Received: from rigel ([203.63.211.120])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778534bd1sm2202573b3a.79.2024.09.04.18.15.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 18:15:54 -0700 (PDT)
-Date: Thu, 5 Sep 2024 09:15:49 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] gpiolib: cdev: use !mem_is_zero() instead of
- memchr_inv(s, 0, n)
-Message-ID: <20240905011549.GA7299@rigel>
-References: <20240904090743.1204593-1-andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1725499192; c=relaxed/simple;
+	bh=2030roQObHKMD07MYVmrkVNTgGeX8KWnT4BgIJmDcMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=shFM6yfneWqOpT7nvo1DhsoPrcXhjEaznq7cRKJ5I4zVj77DL1IKf1sHrIqe2cAxcjGw+WUluBd5S0mgb2WhU/RDZIl5a8qOzv1aeYvfoln6jUe387VpK6vnDTiVDPtDxgDT2XDv0NA2Z8J07AH+xxA+G3foAhhedqF+j9fO6nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3MXffba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F3F5C4CEC8;
+	Thu,  5 Sep 2024 01:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725499191;
+	bh=2030roQObHKMD07MYVmrkVNTgGeX8KWnT4BgIJmDcMU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=G3MXffbazN9EZG5EMYdkQbXUjX91lqjSxqQwcqp/1CxDBoOc1VuLaLIme+BZ2roWd
+	 fT120jhuIQw18y07vxNuxa6LEgZzhh7jgOwV1g/q/ChReV8H4hO8sRJcQzloOMyGJg
+	 figU2AAjKXsvXOi1fXVB93bdQOzgNbtSNC2V+3FsOL08GaiqgW1CW8wlUEYSWU1AqB
+	 Ql6p9WRwtQPHXdOYVttYRC5J13wsm3Ncjlq70xNJlKFnf6i2uRHL090sAMsalLp+s1
+	 WFfIuKgsGHZ4OKYGiBiJdEyydAbNWR9T2LoAfe5AIOFTb6C6S0TcsT18D0Zd0Vf1eQ
+	 TzFrQkGLpKY9Q==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso168141e87.0;
+        Wed, 04 Sep 2024 18:19:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3aH7a/wZ2bJ5kbTuRb8+pIR5iaWK0QxI4cZ0p91xA4D/wZZ8MyJ2/7E63qXS055LapyqH34/Q7g9oFBI=@vger.kernel.org, AJvYcCVADf8/hoiyFac9Dh1pUw9K7aqBHl1KqH7/7ibL/V6EcxgbjMWu09mOnlJYqnNraDpxqDEmDNdJui6KHaatoww=@vger.kernel.org, AJvYcCWKX+JhoJlpByHPkk62CFbEivWZqoX70yhiEtR0zCo7mj9pYKddzs9qr8TNPUXyKcRGC7X2WcaHWTOf2dU5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVjrCy7lsRvLAbfmSxaBBls0FDyCr5B5vd9Zq+zTU6h+8ieJXJ
+	Vp0+dhb4QMGqhJav0gnBKvzw9xX+TyzE8pyYqhEV9RCIeDh+ofGpXydRHmz+eUyCn6wMm8gU9qC
+	BN0DHYS+JNjMLGlbgO2wWrLYGBrA=
+X-Google-Smtp-Source: AGHT+IF1S6v2KNIhGOZ4cv9q3lTpmiKDe9DRF/mzNEjxzA3Vdc+CY+N3vgCLk5zSrB3AtBSyj3C1NAQKG+yhUCoZzHo=
+X-Received: by 2002:a05:6512:1382:b0:530:da96:a986 with SMTP id
+ 2adb3069b0e04-53546b8dac1mr11309551e87.47.1725499190276; Wed, 04 Sep 2024
+ 18:19:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904090743.1204593-1-andy.shevchenko@gmail.com>
+References: <20240808221138.873750-1-ojeda@kernel.org> <CAH5fLgh9Moq_9M+zMu300ohK=mPqkLyS6cpQ6An2Q3THCPFjaA@mail.gmail.com>
+ <CANiq72kUBPnua1Pob++-6SJ8MeGxQMfrePY9SQVd0DZp5VU-2A@mail.gmail.com>
+In-Reply-To: <CANiq72kUBPnua1Pob++-6SJ8MeGxQMfrePY9SQVd0DZp5VU-2A@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 5 Sep 2024 10:19:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASHdd8Gv6OpXnP3tywrTA6iEZVqZGLb0V-vV_VUR-ksWQ@mail.gmail.com>
+Message-ID: <CAK7LNASHdd8Gv6OpXnP3tywrTA6iEZVqZGLb0V-vV_VUR-ksWQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] kbuild: rust: add `RUSTC_VERSION` and
+ reconfig/rebuild support
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 12:07:43PM +0300, Andy Shevchenko wrote:
-> Use the mem_is_zero() helper where possible.
+On Tue, Sep 3, 2024 at 2:40=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> On Mon, Aug 19, 2024 at 9:29=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > I tested this together with Rust Binder. I also ran this patchset
+> > through Android's CI setup to verify that it works in builds with
+> > CONFIG_RUST disabled. It passes both with and without a Rust compiler
+> > available to the build system.
+> >
+> > Tested-by: Alice Ryhl <aliceryhl@google.com>
+> >
+> > I'm happy to rerun these tests for new versions.
+>
+> Thanks a lot Alice, that is very useful.
+>
+> I sent v2, in case you have time to give it another go.
+>
+> Cheers,
+> Miguel
 
-Somehow I still don't receive mail directly from you, so I only picked
-this up via the list. Weird. It should be gmail to gmail, right - WTH?
-Unless it isn't - and that is the problem.
 
-I'm ok with the change, though mem_is_zero() hasn't hit any of the trees
-I have in front of me, and I had to find the corresponding patch on lore.
-Given this is explicitly the use case for it, I would've embedded the
-negation in the function and the name, so mem_not_zero() rather than
-!mem_is_zero(), as that reads better for me, but ok.
+With the nit in 1/6 fixed (No need to resend if you fix it locally)
 
-Acked-by: Kent Gibson <warthog618@gmail.com>
 
-> ---
->  drivers/gpio/gpiolib-cdev.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index 5aac59de0d76..e98d75dd8acd 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -16,7 +16,6 @@
->  #include <linux/hte.h>
->  #include <linux/interrupt.h>
->  #include <linux/irqreturn.h>
-> -#include <linux/kernel.h>
->  #include <linux/kfifo.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> @@ -26,6 +25,7 @@
->  #include <linux/rbtree.h>
->  #include <linux/seq_file.h>
->  #include <linux/spinlock.h>
-> +#include <linux/string.h>
->  #include <linux/timekeeping.h>
->  #include <linux/uaccess.h>
->  #include <linux/workqueue.h>
-> @@ -1331,7 +1331,7 @@ static int gpio_v2_line_config_validate(struct gpio_v2_line_config *lc,
->  	if (lc->num_attrs > GPIO_V2_LINE_NUM_ATTRS_MAX)
->  		return -EINVAL;
->
-> -	if (memchr_inv(lc->padding, 0, sizeof(lc->padding)))
-> +	if (!mem_is_zero(lc->padding, sizeof(lc->padding)))
->  		return -EINVAL;
->
->  	for (i = 0; i < num_lines; i++) {
-> @@ -1746,7 +1746,7 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
->  	if ((ulr.num_lines == 0) || (ulr.num_lines > GPIO_V2_LINES_MAX))
->  		return -EINVAL;
->
-> -	if (memchr_inv(ulr.padding, 0, sizeof(ulr.padding)))
-> +	if (!mem_is_zero(ulr.padding, sizeof(ulr.padding)))
->  		return -EINVAL;
->
->  	lc = &ulr.config;
-> @@ -2516,7 +2516,7 @@ static int lineinfo_get(struct gpio_chardev_data *cdev, void __user *ip,
->  	if (copy_from_user(&lineinfo, ip, sizeof(lineinfo)))
->  		return -EFAULT;
->
-> -	if (memchr_inv(lineinfo.padding, 0, sizeof(lineinfo.padding)))
-> +	if (!mem_is_zero(lineinfo.padding, sizeof(lineinfo.padding)))
->  		return -EINVAL;
->
->  	desc = gpio_device_get_desc(cdev->gdev, lineinfo.offset);
-> --
-> 2.46.0
->
+Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
