@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-316652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB8E96D260
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959F596D2A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EF531C22623
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CE428158B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2E01953BD;
-	Thu,  5 Sep 2024 08:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TRLUNB5h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jMYN1OmS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EE4196D8F;
+	Thu,  5 Sep 2024 09:00:22 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26921194C9E;
-	Thu,  5 Sep 2024 08:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A768F66;
+	Thu,  5 Sep 2024 09:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525519; cv=none; b=iysakQJv9377IHzpvxMMfN0KusqigUZipX/mSyE5BaYk61uD48b/pgxbZCGSbS6VSwGeFxRP5ghat7KLdM+BV/DhCq47h/CsctjADvYiSiCenM1NDJwX941UxWxVs/Q+majjlO37qNQEMTLxJEIkzVLMnFZa9DeVvmr0XHpQhPk=
+	t=1725526821; cv=none; b=MHi5jGSGdkj1wXMi/qr5LXcJFD+CPo+7KolQqN85A6ZlXrAQ/1LMQOnd3Y//OvxVSGdG81na2Et7GX6G/+t0idRkPlz5ENS5YLqGHMJcytPdnEIjdIvL0+1cEn2oXLhjlLsWf49BYJlkk4gaAspNphHNSKG9VeUM8HmwZivFXoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525519; c=relaxed/simple;
-	bh=YAF6x5FgIydFDnIOSKus8zsY7Gkql4p7Ne6/u2z3Um0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=WJeLOsbh769Le2lEg9Y61fWMfUy3homEuAXa4n8bbirSTXGhclvTbR/8idBuDP1NG5qLZiGvuEKkcjYSzIzOuyYO0nFsb2+udXuKPzhGOh3WP7ATjI+U2V5Y1evaOVCnHRI5yVtqH8qa4/3LXGFaFaeoQ/S/Z2M1t+/w3HYTzQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TRLUNB5h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jMYN1OmS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 05 Sep 2024 08:38:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725525516;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQjpQBWDZiXVQcALAXejZv2kD0nkSGsclo46d2OX9J4=;
-	b=TRLUNB5hLgaYnqFNvphwd1zszvaxFR83zFng06q1Yl6PBW+dSr+pw/dQ50SqJXiXrLgz3S
-	AZtZYgp1ZvHnHyEBn5K0OwEe1q992S2x5jFnTng8IirHBAqw9QKJhukHp4ZmOw3ozO2wGi
-	kg5Nyt6gKmbq1rAcYExo9AimYBeci/MnCtMn5vOSemk8m9SKQhnmFfZFGc+ySGwKPuJzGB
-	uOziyHG5aMSONm2nNIv1IiZ+AivG6ZVLTHEVHCc4bfjxx6Dp6jp66lt94dhX3Izsr64Bzy
-	Uzq9ZqXDLVCmVLw1/UPFGr8LxtpJ9d9uRTrFQKcWQ7rKd1r8EnJgZIhl2iee9g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725525516;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQjpQBWDZiXVQcALAXejZv2kD0nkSGsclo46d2OX9J4=;
-	b=jMYN1OmSmCxBur4BrqHEBJR1hzGUPANJbK7KBij/BVMjzbh9vcoBpDzfJBwNt+5XXnlVoD
-	PoGxUWEn/MJWtfAA==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] extcon: axp288: Switch to new Intel CPU model defines
-Cc: Tony Luck <tony.luck@intel.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240903173443.7962-2-tony.luck@intel.com>
-References: <20240903173443.7962-2-tony.luck@intel.com>
+	s=arc-20240116; t=1725526821; c=relaxed/simple;
+	bh=AKgKjIn31Ungx9gGBJeP+TPt0S1fD8k6qBlckelFmDI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=IYkHsOdUAqMxWpbLU6IIM7fER1VNoHZmwKLaF6Iq3HFKpFNZ5CcPPdZqmIdXFasJ9QHDpt/dEzitRAcdLL2By82RZ7FC5fjwcpMeYh3A4I6MDk75zHzhps4+pbGSh7S0e/vrdx9Nge/+73YgdUQ7q406mzBPXJmHOrcleppwOLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DCD1202357;
+	Thu,  5 Sep 2024 11:00:17 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4320E202348;
+	Thu,  5 Sep 2024 11:00:17 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 43203183AC0A;
+	Thu,  5 Sep 2024 17:00:15 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de
+Subject: [PATCH v4 0/2] Add one clock gate for i.MX95 HSIO block
+Date: Thu,  5 Sep 2024 16:38:53 +0800
+Message-Id: <1725525535-22924-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172552551612.2215.7307991130144265948.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+CREF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
+enable/disable.
+Add one clock gate for i.MX95 HSIO block to support PCIe REF clock
+out gate.
 
-Commit-ID:     171a7d9563a07a5101cc536932bc4db88a53374d
-Gitweb:        https://git.kernel.org/tip/171a7d9563a07a5101cc536932bc4db88a53374d
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Tue, 03 Sep 2024 10:34:41 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 04 Sep 2024 17:58:43 +02:00
+v4 changes:
+- Correct typo in commit message of #2 patch.
 
-extcon: axp288: Switch to new Intel CPU model defines
+v3 changes:
+- Squash first two dt-binding patches into one.
+- Add Krzysztof's Acked-by tag, and Frank's Reviewed-by tag.
 
-New CPU #defines encode vendor and family as well as model.
+v2 changes:
+- Correct the compatible entries by alphabetical order
+- Include all necessary To/Cc entried reminderd by Krzysztof.
+Thanks.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240903173443.7962-2-tony.luck@intel.com
----
- drivers/extcon/extcon-axp288.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[PATCH v4 1/2] dt-bindings: clock: nxp,imx95-blk-ctl: Add compatible
+[PATCH v4 2/2] clk: imx95-blk-ctl: Add one clock gate for HSIO block
 
-diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-index a703a83..d3bcbe8 100644
---- a/drivers/extcon/extcon-axp288.c
-+++ b/drivers/extcon/extcon-axp288.c
-@@ -108,7 +108,7 @@ struct axp288_extcon_info {
- };
- 
- static const struct x86_cpu_id cherry_trail_cpu_ids[] = {
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT,	NULL),
-+	X86_MATCH_VFM(INTEL_ATOM_AIRMONT,	NULL),
- 	{}
- };
- 
+Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml |  5 +++--
+drivers/clk/imx/clk-imx95-blk-ctl.c                            | 20 ++++++++++++++++++++
+2 files changed, 23 insertions(+), 2 deletions(-)
 
