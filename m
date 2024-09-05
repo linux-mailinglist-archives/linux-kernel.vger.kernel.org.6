@@ -1,130 +1,168 @@
-Return-Path: <linux-kernel+bounces-316857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C2A96D644
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:39:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E110396D649
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C0501F238AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD941C24C29
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2A91991C1;
-	Thu,  5 Sep 2024 10:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2569D198E89;
+	Thu,  5 Sep 2024 10:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjCBEM7Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJMWl+38"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456D3198E81
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB79155730;
+	Thu,  5 Sep 2024 10:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725532735; cv=none; b=egLXf1cN0INQg0xwrhQ4W2EhWi3lCjFEpZQRFlIZ93NABxZGm+ng9oNRZiIkOULIAsX0NLgRXGa2CEhoWiO7WZk9zqQzIfTGnyJ2IOAv2Vvm0AM1nkMwxxR6+IGzHyOYvHlGiM6Cn0/aTKLZ6Y5gOygG5/edBzBryPPBQ2qN/yg=
+	t=1725532831; cv=none; b=pPEsGKVKRMtP+T1NKrvWJjkZveCtyUX7BW3+ltHQ4TjwHaWIjLEfY4ZniVs668+mlNKrbC4Rrv2IdFo6uZkgFkWm+yL4kkWZ6Fw8j1sCfeF9bC3KrtQU9Fr+RWSNj8UZanPTnS+hZC9T0HAqzx8pKJM+VeJtpmbzFHHzVC67svE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725532735; c=relaxed/simple;
-	bh=5eaa+rSxz7RV4LJNTlQaXt482DTfawXdnh2HOEs2v/U=;
+	s=arc-20240116; t=1725532831; c=relaxed/simple;
+	bh=vYakvufT4aNJnUe6D0Gqkc+bmULuI+Q45BIR6PeNra8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jZGSnRfCh5BxB88nzkEYtmw8lhbR0Jjn0JhH9FmR4bzuohbyK5K/1Nqvlt0/JqomXzvmoG0qW49OrCVZROfNfXM/K7TwnLwFro2mWNsE91s6ZxCAPzfp0ys45i/LYEDhpttOdbKw+Z+mi9hMhgNwpX/dlfVRTVQJaeBpO3+1hcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjCBEM7Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725532732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wV7mzlpoDJEIgZcv8pSkUgGLoTQH8N21DlR4ywl2M0M=;
-	b=fjCBEM7Qo4D3M0BjFvdOLO8ovU2KmsEZY/JHVpqqsAr4zzkvjCp+Qfco/zcbl0HBCYrOSm
-	LJJagnT+k1RbqAM0RhVBTqxtzxmA/7rADRzQVlSf5d1glMHecSs1FgVMxjt5Pr7NpJhBHV
-	41o2bh6bMIDZW2yEN/KtpfGYv1z5X5U=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-qWnJqUm3OxKOPYque_t2Ww-1; Thu, 05 Sep 2024 06:38:51 -0400
-X-MC-Unique: qWnJqUm3OxKOPYque_t2Ww-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7d2d414949so72420866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:38:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725532730; x=1726137530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wV7mzlpoDJEIgZcv8pSkUgGLoTQH8N21DlR4ywl2M0M=;
-        b=kQ5KQlmyKFrJKUHyMTqYfH91WY9YLzElO8AeetA8cKhkRo0JtTw8MYP48lznAE49R/
-         8QMPIx0LMyQViiIzuT0cXeyjZme6AILQm944r6b0D9M0xhzxbsHoewCk/Kf+GxAGI5cE
-         my5XQh1h6Z715BRzqEu+1lZtkIy2rSm5egwek3bTonIOgsODJWCVftAIL9tK7Z9NTUSv
-         uBerOWdu0203cMGP+anCH8GSqnTQSX/q2SyL2vINFqaKDa4QOjziA1Zb0pSzC5FTdto7
-         KKk7rQUi1O4TZLqyEn9SiS7WtTGFhUelzc3BIEeGPgsZEmcjltgCChkxauD9HH8c48fV
-         bAzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCOzSzakB6TOoG2QQkM7pmHjfZMWwnASmnCiG4PDAUhNjSGysonHgFDT5jooeg2xA2os2KPyXtQ4P1NeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc1/KVuHM7bb7SwIxKzaVXe6h6f0kIR+E3wbO6zxJdqnBvKyq/
-	RzVfAHkvOu5b86u5tr9AqBoq4xBu9A936Mj4fX8HT0QoEHwqLNJU1oBcV4ZVoWLLciEPpshIyRd
-	iokoBVuwsQvmubSNJvSDHQWhYSI5BDgg4b7G8wiX59ZAB0uYmypN6G1re4tS2S29R0kv3GRyloq
-	w2axvS89zcRlBV64ws/XuQ7k6Zr1aJBFKB4mlO23OQsmNDmes=
-X-Received: by 2002:a17:907:7e90:b0:a7a:a138:dbc1 with SMTP id a640c23a62f3a-a8a32e72ebcmr610762866b.20.1725532729772;
-        Thu, 05 Sep 2024 03:38:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE98kyXo3s0NnZGdnqKCaiXTRoquo7eiLgNbREY5yttSLKxxqdUm8L/2aoPfmxvVVbNnuPcjPl1DZFVAQgZavU=
-X-Received: by 2002:a17:907:7e90:b0:a7a:a138:dbc1 with SMTP id
- a640c23a62f3a-a8a32e72ebcmr610759266b.20.1725532728703; Thu, 05 Sep 2024
- 03:38:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=HREZamoeb1bp2Ovo6bsfnTcHRJgLMDdgaP0Rn9GhC2I8UU28A+7xTVfwAQArFYd8Z0FwgwM5zVOYWE8+H/4mM23+vMQmg2V0nUrH66bD819iVvmAITB0tHy2r83a0RhSAu7yLNOI15KdXyWz6wNkgWfZhOfYoYoAMdtqmTxGu4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJMWl+38; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089D2C4CEC7;
+	Thu,  5 Sep 2024 10:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725532831;
+	bh=vYakvufT4aNJnUe6D0Gqkc+bmULuI+Q45BIR6PeNra8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DJMWl+38lEAVgkt6XXTANQ+5mPEORW5+R+YxT/iAZdz9977EM3t8h9LuC5mDGQK0+
+	 iKZtFakct6pTFNUoEjMnP1eHtTH6ENN9JS6vhW5vI3wfdL1Qw8KIGIz1iAiqxa7Xjd
+	 qYwEbopZOP/4h71SSd2oQLPTuW5R3DVCTVy22uplBarpbGkfwVUHNAPUPDEMTSrXlo
+	 5+PoIgoRE8uUZ9tWNcUGohmaJnVIG9I1XoTL/2BtLgOIIRsIeH7s/ngntqO28zwtW4
+	 g2osTpOoHflPEa5jLhEyM5VhhY+Vj3hNSBnCE0oLx4vyGWtA439qIWlqQdQvrKr20O
+	 P9VY41iKA5Rkw==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5da686531d3so375582eaf.3;
+        Thu, 05 Sep 2024 03:40:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8KUb2gMj75FAj5EnCTimjDp/mGUW9yp+9rCNm4NTZsmEZOKmKgfZQ/QBDpulpK/0k/dnwzNtQihg=@vger.kernel.org, AJvYcCXBkvm0uoyndmwHhZg2nLkAkTsxs4JBSy9hcG+eE5aPvePCLEuauPrx2Tz7duLmJOoY+sGUhTPLoj0AtF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/ipJ6hwfqsKyjy0NWizKw/0HDqMmGCAyHrVOe/HzgWqkwkAZU
+	NJM15noY73pyY6bXfXZY/KUfDsAfB/6V0AZPLbVzdgqvaxk34cv7mhkUaM47bsc+ajT4baJib6r
+	L/4DMpnuVoRLbwYxRGRM2y02xLi4=
+X-Google-Smtp-Source: AGHT+IHyw57L92V2eyHjVvhlY0AKXh5wfMRHz7eeJt99hsvIrMZ6VrRjCY/0EQMQXJkfiFIBdNzouG5Q5lL5oWEYDjM=
+X-Received: by 2002:a05:6820:1ca4:b0:5da:a26b:ce6e with SMTP id
+ 006d021491bc7-5dfacf20303mr21434605eaf.3.1725532830320; Thu, 05 Sep 2024
+ 03:40:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820130001.124768-1-tglozar@redhat.com> <20240823125426.404f2705@gandalf.local.home>
- <20240823145211.34ccda61@gandalf.local.home> <CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
- <20240826132620.1618d201@gandalf.local.home> <CAP4=nvTR9EuA5WhGweSaoeptEw0n0w5exr8gq6zfqGhGNt3zpg@mail.gmail.com>
- <CAP4=nvRfkZ2CEbFv+MFBXikZ_p2K-1uucgkdgp27JeTxe58qhw@mail.gmail.com> <20240904102104.6f2a35af@gandalf.local.home>
-In-Reply-To: <20240904102104.6f2a35af@gandalf.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Thu, 5 Sep 2024 12:38:37 +0200
-Message-ID: <CAP4=nvQPPd5nb3ao4tc9dCyd+fy30wX6=dziFEJ_AyaJOpnCmQ@mail.gmail.com>
-Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in timerlat_fd_release
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+References: <20240819154259.215504-1-axboe@kernel.dk> <20240904142841.GL4723@noisy.programming.kicks-ass.net>
+ <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
+ <CAJZ5v0hVghgKgv0zqabL1m2FT6wou8-tW_9Mm-_9=0-3yhMb3A@mail.gmail.com> <0e37c349-7076-4a02-bfbc-577e50090172@arm.com>
+In-Reply-To: <0e37c349-7076-4a02-bfbc-577e50090172@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 5 Sep 2024 12:40:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ga0FJtgQhEWzq6qYDjDz=TjiAzr4ApPAT7U_GosG3m9w@mail.gmail.com>
+Message-ID: <CAJZ5v0ga0FJtgQhEWzq6qYDjDz=TjiAzr4ApPAT7U_GosG3m9w@mail.gmail.com>
+Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
+	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-st 4. 9. 2024 v 16:23 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.org> =
-napsal:
+On Thu, Sep 5, 2024 at 11:29=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
 >
-> When running my tests, the second one would end up deadlocking and
-> triggering lockdep. I found a way to do basically the same thing with a
-> cpumask and no added locking. I'm currently testing it and will be sendin=
-g
-> out a patch later today (if it passes the tests).
+> On 9/4/24 16:18, Rafael J. Wysocki wrote:
+> > On Wed, Sep 4, 2024 at 4:42=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
+.org> wrote:
+> >>
+> >> On Wed, Sep 4, 2024 at 4:28=E2=80=AFPM Peter Zijlstra <peterz@infradea=
+d.org> wrote:
+> >>>
+> >>> On Mon, Aug 19, 2024 at 09:39:45AM -0600, Jens Axboe wrote:
+> >>>> Hi,
+> >>>>
+> >>>> This is v6 of the patchset where the current in_iowait state is spli=
+t
+> >>>> into two parts:
+> >>>>
+> >>>> 1) The "task is sleeping waiting on IO", and would like cpufreq good=
+ness
+> >>>>    in terms of sleep and wakeup latencies.
+> >>>> 2) The above, and also accounted as such in the iowait stats.
+> >>>>
+> >>>> The current ->in_iowait covers both, this series splits it into two =
+types
+> >>>> of state so that each can be controlled seperately.
+> >>>
+> >>> Yeah, but *WHY* !?!? I have some vague memories from last time around=
+,
+> >>> but patches should really keep this information.
+> >>>
+> >>>> Patches 1..3 are prep patches, changing the type of
+> >>>> task_struct->nr_iowait and adding helpers to manipulate the iowait c=
+ounts.
+> >>>>
+> >>>> Patch 4 does the actual splitting.
+> >>>>
+> >>>> This has been sitting for a while, would be nice to get this queued =
+up
+> >>>> for 6.12. Comments welcome!
+> >>>
+> >>> Ufff, and all this because menu-governor does something insane :-(
+> >>>
+> >>> Rafael, why can't we simply remove this from menu?
+> >>
+> >> Same reason as before: people use it and refuse to stop.
+> >>
+> >> But this is mostly about the schedutil cpufreq governor that uses
+> >> iowait boosting.
+> >
+> > To be more precise, there are two different uses of "iowait" in PM.
+> >
+> > One is the nr_iowait_cpu() call in menu_select() and the result of it
+> > is used for two purposes: (1) select different sets of statistics
+> > depending on whether or not this number is zero and (2) set a limit
+> > for the idle state's exit latency that depends on this number (but
+> > note that it only takes effect when the "iowait" statistics are used
+> > in the first place).  Both of these are arguably questionable and it
+> > is unclear to me whether or not they actually help and how much.
 >
-> -- Steve
+> So from my perspective it doesn't, not significantly to justify it's
+> existence anyway. Either it doesn't actually matter for menu, or teo
+> is able to compete / outperform without relying on it.
+
+Thanks for this feedback!
+
+I'm actually going to try to remove that stuff from menu and see if
+anyone cries bloody murder.
+
+> Some caution is advised though this really depends on:
+> - Which idle states are available for the kernel to select.
+> - How accurate the kernel's view of the idle states is.
 >
+> Both varies wildly.
 
-Oh that's unfortunate. Your cpumask patch does protect from timerlat
-trying to stop a user workload thread via kthread_stop, but I don't
-think it prevents this race in the code from the other patch:
+True, but let's see what the feedback is.
 
-static int timerlat_fd_release(struct inode *inode, struct file *file)
-{
-    ...
-    mutex_lock(&interface_lock);
-    <-- this can now run at the same time as tlat_var_reset(), since
-the latter is not done under interface_lock in the latest version
-    ...
-if (tlat_var->kthread)
-        <-- if tlat_var is zeroed here, we still panic on NULL dereference
-hrtimer_cancel(&tlat_var->timer);
-    ...
-}
+> > The other use is boosting CPU frequency in schedutil and intel_pstate
+> > if SCHED_CPUFREQ_IOWAIT is passed to them which in turn depends on the
+> > p->in_iowait value in enqueue_task_fair().
+> >
+> > AFAICS, the latter makes a major difference.
+>
+>
+> Indeed, fortunately the impact is quite limited here.
+> But please, Rafael, Jens and Peter, feel free to share your comments
+> over here too:
+>
+> https://lore.kernel.org/lkml/20240905092645.2885200-1-christian.loehle@ar=
+m.com/
 
-Either way, the results are much better: before, the kernel panicked
-in <10 iterations of the while loop of the reproducer; with the
-cpumask patch and the tlat_var->kthread check patch, it has been
-running on my test VM for a few hours already with no panic.
+I will.
 
-Tomas
-
+Thanks!
 
