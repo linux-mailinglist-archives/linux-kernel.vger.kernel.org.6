@@ -1,87 +1,135 @@
-Return-Path: <linux-kernel+bounces-317458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C6296DE9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:42:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6999796DEC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B8541C21A3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2552B284219
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E0B19D895;
-	Thu,  5 Sep 2024 15:42:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4D19D8A3;
+	Thu,  5 Sep 2024 15:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="QVmIezZx"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7CA19E82C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050C913BAE3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725550924; cv=none; b=TCRrE3gtzq24nZKfpgXPFuYv7PUA15rCuOjx5HHcSHP1s5IhIaKhqAK41L79YJ+qcf8UELHiJWJch1cvhFS+JtFoRIO/cJkVuD/AT1SCYuvIwl/xmX6znrowMsZ72qOBfAr1HOy+yW2KijCNsQcZNv/Rg3yR6WVhP96i8n0KCEQ=
+	t=1725551222; cv=none; b=Fux8KpHcycJhfSz9LuldzKY/hw4KN/Xd20hgEZWt3wCPCV6ChmHK5oKUo7rvSzudDAB/jbc+YCerUY+rVUVCgHQzvbC4n7Tg0MXo8zhHnm70NWXtkU2yIfEEe9EXSN0AG98CRHwYXaAmHdMVU66Xgwyr1I09WiBYy+vW2xIwEtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725550924; c=relaxed/simple;
-	bh=NUNw09G1MIXrFHY5P+ifwqkj3KgtlA8FTCb/ioYtZXg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jYa45gsaPSZ+VCZYy2fH3aKbVh98Yb2YiJEXJPg9FIui6Nfq7bS54OumwOkVIO3r9glB/l5rmmrTrzI9lrNhk/4nLIn7XWSE5f9RYBY6X5jlgiVSKNK02910bL9ERKI3wvFnm4xVgjDvHX7YajSNtQKiJn96mpcX1wFGov6OmIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f510b3f81so47063005ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:42:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725550922; x=1726155722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPhpbXwi/Of021f8bfFViSsy0MgHxG8zFmImLN5hOdw=;
-        b=ZcZriDVewPw3PeZwt9a8u/X3nFHLl1rIxVjpWC6N8+L6to0lMPIG7B639YJpJ/tnL3
-         mdIBVSvYTAQPT1A1y61dz1FjSHZkXow13l7i+Dg3x1SBnbovzptNjhaD48N7AYJeEgMm
-         /R6hjGJRk9EnioAvOccqpEj1YgJtJ0F2rUuwT5cHfRMLBZVmrXYCWB2Hof5lJeYoz450
-         QFXAj+cPmxtzPzpjooW4FpMfs3S9zhERfAsYMqeVuyeLfaG3Yy2M0ixU2sKXtbFR9hZm
-         M7BS4pkY1CsJA7LH37uMkD0OfzNT6JVnYlA+Crw7uOVpF9Y+9Vmag4JHkqubYPfliwSN
-         LJig==
-X-Forwarded-Encrypted: i=1; AJvYcCU9oLeGzcXv/ttapGrA57VY2aTQiF4whAYvmmpk3V0UloQ4PChbkNVXvkzUE/vlD6gQG7siHBZdNB8N4GE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw56JnAngo/ewaf3Gy1YVOsFDwV5GmnkAOLqsUwX3Zexb/NTrCz
-	K/qSPs5DofNF9i1THPfrkKXKDGD/4qI7j5Y4bBdZOh8VKhnrD3FqMflCRvDu/PbvoBhmAZSGCkd
-	QVWSjRBkWi8xMwj6Nr3I7Ryp3MmNfHhexiJ5DlVwaowtAcic7raKfpN4=
-X-Google-Smtp-Source: AGHT+IETw1P/YQQz1jItgL6TD3CLiI7HKKh1fuCoON1FET7WZsCTN3wnlQALaupAAUzWyFcXkm3nDgnKy5J8WMTXj/BtLZBgkjwa
+	s=arc-20240116; t=1725551222; c=relaxed/simple;
+	bh=f/L1vJBQcrayJOQ2JHYkGIgWrGSNwvUW1OTxLAbYxxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lSgPLL/0VkGX5Y7WRsqyLHMv8WpKPyUMMtyHujgegyLI80SylB4O8+x4Czj4Yt9N2gjTpgcsnLl9Q4WUzlfLH3b4iD3g7ofbAf96LGnaGggpkjyGWyzB54Pf6xK9bQMLgxtGjZL0dxz0jXQ2GK8gx0xNhNc09Hy63Y99oXcOxZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=QVmIezZx; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=default; t=1725550978;
+	bh=f/L1vJBQcrayJOQ2JHYkGIgWrGSNwvUW1OTxLAbYxxQ=;
+	h=From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=QVmIezZxp0brODB4Wk0QOGqKQGqpzt6R7vodKy0vVUSLc0/0ghI+XRtWBA0HMW/DG
+	 KNS2vvptNC3mEjMxQ1no4Qgq1qzwW7u2JzTxAmuOsg3AjSu3ELUFwvW8WLfkWdtEne
+	 O9eo6vd0sO+tg3RPAv1Q4458FRBtXmFDryis4wap9zwU9/MxM69zQK/cxML8ddLFVJ
+	 2aLFXdrS7+SAIPXHNbpOOHOo1zdQZz6NvpdYwXSOw7Lmwv4oCZUXOo0K+06qwz4W+j
+	 XviQYwBCuLG/6X55FhQnfhuorWRYuXb/RXKiCQ/SjbldXP5I6YmU9/b2jUHJesXenR
+	 V/HtC3fCCi/qg==
+Received: from biznet-home.integral.gnuweeb.org (unknown [182.253.126.159])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 16AFD3103E6C;
+	Thu,  5 Sep 2024 15:42:56 +0000 (UTC)
+Date: Thu, 5 Sep 2024 22:42:54 +0700
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	GNU/Weeb Mailing List <gwml@gnuweeb.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	Ravel Kevin Ethan <silverwolf@gnuweeb.org>,
+	Michael William Jonathan <moe@gnuweeb.org>
+Subject: Public Inbox Output Broken Due to Double HTML Encoding
+Message-ID: <ZtnRfnHrxVeEwTwx@biznet-home.integral.gnuweeb.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:16c8:b0:4cc:d5e0:a114 with SMTP id
- 8926c6da1cb9f-4d0600e56f4mr269271173.2.1725550922182; Thu, 05 Sep 2024
- 08:42:02 -0700 (PDT)
-Date: Thu, 05 Sep 2024 08:42:02 -0700
-In-Reply-To: <tencent_0A6AED06CEFC7A8E6C402E156C009578E80A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c243160621612131@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Bpl: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi,
 
-Reported-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-Tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+We have noticed a recent issue with the lore public inbox output where
+it appears to be affected by double HTML encoding. This problem
+surfaced after 1 September 2024, as that was the last time we observed
+the correct output.
 
-Tested on:
+The issue is particularly visible in email headers, where characters
+such as <, >, and quotes are incorrectly encoded twice. This results in
+unreadable and improperly rendered email headers. It also breaks
+several links in the HTML output.
 
-commit:         c763c433 Merge tag 'bcachefs-2024-09-04' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=139f168f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cb8f33980000
+For instance, in this thread:
 
-Note: testing is done by a robot and is best-effort only.
+    https://lore.kernel.org/qemu-devel/20240905141211.1253307-1-kraxel@redhat.com/
+
+Here's the current, broken output:
+```
+From: Gerd Hoffmann &lt;kraxel@redhat.com&gt;
+To: qemu-devel@nongnu.org
+Cc: &#34;Paolo Bonzini&#34; &lt;pbonzini@redhat.com&gt;,
+	&#34;Yanan Wang&#34; &lt;wangyanan55@huawei.com&gt;,
+	&#34;Zhao Liu&#34; &lt;zhao1.liu@intel.com&gt;,
+	&#34;Eduardo Habkost&#34; &lt;eduardo@habkost.net&gt;,
+	&#34;Richard Henderson&#34; &lt;richard.henderson@linaro.org&gt;,
+	&#34;Marcel Apfelbaum&#34; &lt;marcel.apfelbaum@gmail.com&gt;,
+	&#34;Philippe Mathieu-Daud&#233;&#34; &lt;philmd@linaro.org&gt;,
+	&#34;Michael S. Tsirkin&#34; &lt;mst@redhat.com&gt;,
+```
+
+And here's the expected output:
+```
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: qemu-devel@nongnu.org
+Cc: "Paolo Bonzini" <pbonzini@redhat.com>,
+	"Yanan Wang" <wangyanan55@huawei.com>,
+	"Zhao Liu" <zhao1.liu@intel.com>,
+	"Eduardo Habkost" <eduardo@habkost.net>,
+	"Richard Henderson" <richard.henderson@linaro.org>,
+	"Marcel Apfelbaum" <marcel.apfelbaum@gmail.com>,
+	"Philippe Mathieu-Daudé" <philmd@linaro.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	"Gerd Hoffmann" <kraxel@redhat.com>
+```
+
+It seems like the encoding process is being applied redundantly, causing
+special characters like &lt; (for <) and &gt; (for >) to render
+improperly. This double encoding affects both usability and
+readability, especially when dealing with email threads that rely
+heavily on clear headers for communication between contributors.
+
+For reference, I have also attached a screenshot of the output, which
+can be found here:
+
+    https://gist.github.com/ammarfaizi2/bbb1480822ece70cf2d261e876bd7ba2
+
+It would be great if this could be resolved as soon as possible to
+restore the proper display of inbox outputs.
+
+Thank you for your attention to this matter!
+
+-- 
+Ammar Faizi
+
 
