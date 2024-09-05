@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-316123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AD596CB82
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 476ED96CB86
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A425F282571
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CEE7281290
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89086182B2;
-	Thu,  5 Sep 2024 00:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCBB1C32;
+	Thu,  5 Sep 2024 00:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WU8snY3g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ST2JlQG2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE67A1C27;
-	Thu,  5 Sep 2024 00:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F124B20E6;
+	Thu,  5 Sep 2024 00:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725494442; cv=none; b=hXibaZXB+fe2G2D5M4SxE2c0OSWh85U0mUjylfdpCeFC3EREGdtO8r7LWdjtOehyd42PFLGH1OJXC430xJ07Xy3MbhQKe8X1EQ3dn/kGEAs94jcKCyhhfvQlbOCQZhsrqcQ+loegiR6bCKDbGooFYyg8Gh5RDpnf/lPEHHIR2F0=
+	t=1725494539; cv=none; b=IB2n9cKQSLER0l5ltBXHqW3A5yaXoJc79i2sgT2tAWjzZs3tZK7ofyD+ljXNgPk2NXqyS0RvyG5ob2IUL3vIOwpEV7J77FmfURjrDVq1NDZENnW43nuDAusyOozm00SRmY4R266O/y6lItuyLNDwsk5zJlG67t5ma86tbimJqis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725494442; c=relaxed/simple;
-	bh=hzPV3/MHpC/JimHpDFSYV8Yu913JXZWQ1tDa/Sh3TV8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DUwcJLwYoJ8MXlYT/DdjShjuBxpW3O9n60imtjYlbTFfebGSA2T/TH4HcYqnB9EsXVGxd0Ht/4VeLDLc1l3ZZ+YsXyQVPRhHoUpoAM4QJ0+GPpt2l24u4dhQgzEw1Nzxd9BDxtX5gV1dTRll0XzvwkwOPUN/v0v3X2sA/3N5Wpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WU8snY3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75830C4CEC2;
-	Thu,  5 Sep 2024 00:00:41 +0000 (UTC)
+	s=arc-20240116; t=1725494539; c=relaxed/simple;
+	bh=xg8MIiYKlF95wUIp47pyIkMqOEkcE+HD42aQCZA1Wfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U56Cr+FCwCzHkY7W0F3D9DvJG6ZGhARAf+cuA+UxNmfAcYeuD2dLfRYKvoh54UBUdWlXOOSX9WSKKoDrtKuQNzbuZOl1FghDQ9nuyCGXs8KU4h4atCiphJI+2LE4+J2RtbMwHMEXLifZ6xvCTF+PAwthemdqUxgReMG5Of6Igh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ST2JlQG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A06C4CEC2;
+	Thu,  5 Sep 2024 00:02:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725494441;
-	bh=hzPV3/MHpC/JimHpDFSYV8Yu913JXZWQ1tDa/Sh3TV8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WU8snY3gYGCDuqQ6L96+Vqo2eWKs8nc9tHbObKtXI0vM2n7OQluV4ktdCpjBvj+oe
-	 u2tJXtQBqs9HaexyhfBUxFvIla8taqG4rsl4oR31nYRXvfnox96r2wUBMkDbnEZYUU
-	 44Jqx4ljSqhTrl85lYxyaopjcAl1RUUfqVus++YnhLHaeQXwC4k57kX49GE96VcJQp
-	 V5y7SmdG9b737Ri2y5CHoPGnWUfpVc+aaMx2rsYVGSxvfwD5gMX6O2etu3uERX7nWN
-	 +FuGS7HWRwKGNJFoxa2g2Msg18rlTORjbHwbmOss+wvbxwlFYQHu6g7nKEWhPjKcAk
-	 xNhhazDCefCkw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 713183822D30;
-	Thu,  5 Sep 2024 00:00:43 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725494538;
+	bh=xg8MIiYKlF95wUIp47pyIkMqOEkcE+HD42aQCZA1Wfk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ST2JlQG2B+i5U/pTKMpCj/jY5KvzKeIsz5uKS6NxFx+drLUYFuLfhvKBJGIuTD+G5
+	 txbJWgNrtdWuQXAq8Fp+BGOFDmBIMPkrrI1jH5m4lxoTi9cDil0RrpASw4nm1Ig7jv
+	 wnhn9WvvOUNlPw2w36lA7kwtJwxzzX1g1+raQJ/bUcdXDoXED04UjHsbH09jXxTIdC
+	 YfnZhfm0M9LaX2SL6/3nzTO3mGb3z1Wvjjd+QBhN6FTYS/TGl5HOJqaYUxe1rBj/RL
+	 OFgrFMGyzekzuZ/nAgD8yMtaKci4aAEV7SXxAkiNutPMnBSNWhxB92zEOfWXvOR3R4
+	 ubjv9hgQHR29A==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f50966c478so1762651fa.1;
+        Wed, 04 Sep 2024 17:02:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxcCNOsDNjDkV40JsTE0q4H5dxtSxdApOEBPtPvV/LNhPxocfpQ+ntPfz4c/pkCM5PNexHpUDHbl4=@vger.kernel.org, AJvYcCVU/wXyMX6Hs6ImlUF3M46RKpM28pMkzqTyt/Pst4ToTdeSUU1z3Pw0ZUIwpkpGfaYu/axGvoes+A9NgZ5E@vger.kernel.org, AJvYcCVYKM7fWbxLRpwwOqmAIQ5z6Iqv5CS8n7sWNYmlrUWHEVSvPNxUpped/M0ruhWPnWFECXEn9wZTNe0Qq+9Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ7NRgydBg+QXYXE2fZddLT0+X+ZYCFFXH1RCUyO+5e7P7lCfi
+	K5ISHfPdoxD7qgZtcrg/UVU0giPmemw8LHDEc9/lqOjQ7RHuOTwB8S64S8oW8ObJxP4RDhNyaKx
+	T08ELWqM4rs7vsdXSoy03XgHhh4c=
+X-Google-Smtp-Source: AGHT+IHT+1s0xc0Hi5lnGPQUt4wd8DL9pfqjf9IiZTdDO2v+Pjnq1+dmI+CYrl3Stq8HtTO907KiA9ht8FKA/14ZhGA=
+X-Received: by 2002:a05:651c:221d:b0:2f0:1a19:f3f1 with SMTP id
+ 38308e7fff4ca-2f61e0257a5mr153789281fa.7.1725494537584; Wed, 04 Sep 2024
+ 17:02:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] selftests: net: convert comma to semicolon
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172549444199.1204284.9957982642293621560.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Sep 2024 00:00:41 +0000
-References: <20240904014441.1065753-1-nichen@iscas.ac.cn>
-In-Reply-To: <20240904014441.1065753-1-nichen@iscas.ac.cn>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240823194152.13881-1-stephen.s.brennan@oracle.com>
+In-Reply-To: <20240823194152.13881-1-stephen.s.brennan@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 5 Sep 2024 09:01:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATx=zveh52XYR7BzuskQLPk=oqoqCLUHJou4wKTeggn2w@mail.gmail.com>
+Message-ID: <CAK7LNATx=zveh52XYR7BzuskQLPk=oqoqCLUHJou4wKTeggn2w@mail.gmail.com>
+Subject: Re: [PATCH v2] Documentation: kbuild: explicitly document missing prompt
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed,  4 Sep 2024 09:44:41 +0800 you wrote:
-> Replace comma between expressions with semicolons.
-> 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] selftests: net: convert comma to semicolon
-    https://git.kernel.org/netdev/net-next/c/6ffa72acc9c9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+On Sat, Aug 24, 2024 at 4:42=E2=80=AFAM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
+>
+> There are a few lines in the kbuild-language.rst document which
+> obliquely reference the behavior of config options without prompts.
+> But there is nothing in the obvious location that explicitly calls
+> out that users cannot edit config options unless they have a prompt.
+>
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
+> v1: https://lore.kernel.org/linux-doc/20240820171000.1656021-1-stephen.s.=
+brennan@oracle.com/
 
 
+
+Applied to linux-kbuild.
+Thanks!
+
+
+>
+>  Documentation/kbuild/kconfig-language.rst | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kb=
+uild/kconfig-language.rst
+> index 1fb3f5e6193c3..4650daaf5d365 100644
+> --- a/Documentation/kbuild/kconfig-language.rst
+> +++ b/Documentation/kbuild/kconfig-language.rst
+> @@ -70,7 +70,11 @@ applicable everywhere (see syntax).
+>
+>    Every menu entry can have at most one prompt, which is used to display
+>    to the user. Optionally dependencies only for this prompt can be added
+> -  with "if".
+> +  with "if". If a prompt is not present, the config option is a non-visi=
+ble
+> +  symbol, meaning its value cannot be directly changed by the user (such=
+ as
+> +  altering the value in ``.config``) and the option will not appear in a=
+ny
+> +  config menus. Its value can only be set via "default" and "select" (se=
+e
+> +  below).
+>
+>  - default value: "default" <expr> ["if" <expr>]
+>
+> --
+> 2.43.5
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
