@@ -1,221 +1,148 @@
-Return-Path: <linux-kernel+bounces-316350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D45D96CE51
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:10:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6E096CE56
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17081F2398C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815611C225CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046C9156665;
-	Thu,  5 Sep 2024 05:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AC3156883;
+	Thu,  5 Sep 2024 05:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N24wyS18"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oj8Fx0C1"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCE3155392;
-	Thu,  5 Sep 2024 05:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5712F149013;
+	Thu,  5 Sep 2024 05:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725513000; cv=none; b=G0RVM+7cWuWWc9jH/xYrnQP56hHyQNbcDDjcfMTEUhgQy2RXDm0EQAsCP+PhboMatR9SU2FsLEU56PCqlW7j/nIKsazmt2uSa3wAlj13aHCkB02nbcGyupdKoYWRxvryLoor22dlFN+HRvPlFoeXm/v2k/y1+w1gFHVyPMlT4Is=
+	t=1725513295; cv=none; b=ECj7exbqQqEYIEhtZP+m4Qk7P5EmZI84BvIh4j5to7BwcYxxGTOKOrY381fm9uO07X7RAteXJrV3hcKccMNscleSrM5CnPXuBb74obTVz4zubmbfkdfVWhCROEErtD6S38Ysu/qBSPBTTv1ygQR8g/K04e7ZkiPwKFK/jKzAtj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725513000; c=relaxed/simple;
-	bh=0E7y7yRBCfjhFsNeMplfwL3x9L+02DL8n1LnASTAExw=;
-	h=From:Subject:To:References:Cc:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=d/xKhB3gzBHgAg+YkwGRg0kroLnZa2Sh4iwoYvoQLeM37bFnXWNzsBCZVPyPrAZBxMXjShRooUgHx5PtARxh6PLbap/ld5gON7NuARloLrBn4Bqfw4DHXw19fdbBh/Md5MFHD32JHljMhXls5g0lE9HN+uyTHvQOliS49vII9nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N24wyS18; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7143ae1b48fso229164b3a.1;
-        Wed, 04 Sep 2024 22:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725512997; x=1726117797; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:cc:references:to:subject:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e5w5fzqj3apt6oK40ro9gvcJ+sZus76fcJwX+XM/ais=;
-        b=N24wyS18uHPl6ruJ1jspKRnwlBiR/ldRFc8DPffvPDManMBfawLkIuYnP4fMRue61w
-         JfsDh8Qdd0srv0J2/JbGxtsmGXUuRBOB/XD0x+JfM/d54oxXGX3ZHOrhEFaSxD+rljmJ
-         PLqLe8uXbxw7uCIoU5QOR3EB61ZsZVgVu1obmD++xXpfayyUaslGsfx/ZH/qxfUdz7Nh
-         Fv3kHVBj0nry0EIUaWq3yQvQrrmwkRV+1/7TqiT9CLpNRPYz0ObnGpSG4hH4BLlrZRGp
-         zUQQl5+mvkbjw7o//OBL+HuiCxv/FJ7EVyRXx4Uwlqd9y4/5DpukTLDp8WNK6bAC1wxO
-         FbOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725512997; x=1726117797;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:cc:references:to:subject:from:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e5w5fzqj3apt6oK40ro9gvcJ+sZus76fcJwX+XM/ais=;
-        b=bwQDOKr1B75Raby4MScvU1dvJ55wKikC92p70ZD7eXMP1vczH3li5oU72Kf0ftNDUe
-         JUZXoquKePxAPln5YZmeDuTQPuJfeXOi/bTsNDO4Twsh5/Jo8zGNGCZdNf61mry3642m
-         AY8ItJPaYVU04rPcnPq44MJuIv5/3HAya2aakHxdMVi9e8Cv0yxd1WKHjzC9qZZp7UBY
-         JppkfX6PXca/W4jimJEwr8fdr9p6k6htGOpeAGuMqKLhVexILGWirEyjsEN8iFLeThon
-         udBvEEjkkbqbUXj1FNRQ6YTjbvaPkOAlbbC3Yb91iAwNUx1RPiWgdYUufGA+IRiKo+8D
-         hBEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI+O9Xs5ehTrG0GMmNw6ITAti6HWvdUS68QLab+kg1jTjfi8dSbFNfXr1NWIJ2laoYfdD8cvdfK5uf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZWpj+DzU79vNg9xdyORP8e5P8taBP5RujZiCorbZhxMZUB9um
-	6jwCan+4G4o13LciWsN/5AB4PH+HuPOJpcz1F93blNEw613MYiOK
-X-Google-Smtp-Source: AGHT+IF1WeK1FJndZi048NN00WRTFcbVCMHyuUOGUVM99/YVPNqOKbPytba6E9tNxIEL+udApTouvA==
-X-Received: by 2002:a05:6a00:9462:b0:714:1bd8:35f7 with SMTP id d2e1a72fcca58-7173fa85e0dmr14942531b3a.15.1725512996783;
-        Wed, 04 Sep 2024 22:09:56 -0700 (PDT)
-Received: from [10.1.1.24] (125-238-248-82-fibre.sparkbb.co.nz. [125.238.248.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177859968csm2506459b3a.146.2024.09.04.22.09.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Sep 2024 22:09:56 -0700 (PDT)
-From: Michael Schmitz <schmitzmic@gmail.com>
-Subject: Re: [PATCH 2/2] scsi: wd33c93: Avoid deferencing null pointer in
- interrupt handler
-To: Daniel Palmer <daniel@0x0f.com>, linux-m68k@lists.linux-m68k.org,
- linux-scsi@vger.kernel.org, geert@linux-m68k.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-References: <20240903135857.455818-1-daniel@0x0f.com>
- <20240903135857.455818-2-daniel@0x0f.com>
-Cc: linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Message-ID: <ce330ac7-c759-f7b9-71a8-448b05f65b24@gmail.com>
-Date: Thu, 5 Sep 2024 17:09:48 +1200
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+	s=arc-20240116; t=1725513295; c=relaxed/simple;
+	bh=aG+evR3+/5qIXwTAJgFCZS/zyQH8AV2X8iY2rmN/CA0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=HMCkZM8VsDrdd8OEd2AiqZCx9S7cb3JDFuo3Ju/OFEzoThddkS/lmYUnJhNYI22t9fwRdnPqN9y8jtu55fDOFbuOsLc6h2HrSNJ1qn4GGypg5gCiFhIzWWHEn4lKGYnjjTWnns0Tj5kHNtKm98IefCEj82T2/XhkSg1Dm71Kt4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oj8Fx0C1; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4855Em5a109414;
+	Thu, 5 Sep 2024 00:14:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725513288;
+	bh=T/EmD+I0Gk0axmSOCLnZzBv2wRZ3H10IZiSBl3yeiWs=;
+	h=From:Date:Subject:To:CC;
+	b=oj8Fx0C1GDa1Y8zWdBZ5mWWRgOI5i6/PD4vxLq2R7SlF2FsCxvwqEXmBM2xVQBsTK
+	 vmigXpGm6y7QW0/Gycnzr/tdk/7sFKBMKJvqK3qFgqZ6oM/zsDa33O6BgYGAdQwZZq
+	 PfUEhRa92J0TlbesPF50shuhZ3f3vuDIaJveTkl4=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4855EmNH037404;
+	Thu, 5 Sep 2024 00:14:48 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
+ Sep 2024 00:14:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 5 Sep 2024 00:14:48 -0500
+Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.68] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4855EiKw040071;
+	Thu, 5 Sep 2024 00:14:45 -0500
+From: Dhruva Gole <d-gole@ti.com>
+Date: Thu, 5 Sep 2024 10:44:32 +0530
+Subject: [PATCH v2] dt-bindings: opp: operating-points-v2-ti-cpu: Describe
+ opp-supported-hw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240903135857.455818-2-daniel@0x0f.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240905-b4-opp-dt-binding-fix-v2-1-1e3d2a06748d@ti.com>
+X-B4-Tracking: v=1; b=H4sIADc+2WYC/4WNSw7CIBRFt9K8sc8ApT9H7sN0YAu0byAQIETTs
+ HexG3B4TnLPPSDqQDrCrTkg6EyRnK0gLg2s+9NuGklVBsGEZBNrcZHovEeVcCGryG5o6I1Du/a
+ jmIaOKwF164Ou+uw+5so7xeTC57zJ/Gf/FTNHhmbQfOxl16vJ3BNdV/eCuZTyBQJ9Fue3AAAA
+To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Viresh Kumar <viresh.kumar@linaro.org>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dhruva Gole <d-gole@ti.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725513284; l=2568;
+ i=d-gole@ti.com; s=20240902; h=from:subject:message-id;
+ bh=aG+evR3+/5qIXwTAJgFCZS/zyQH8AV2X8iY2rmN/CA0=;
+ b=LkCqPjg3unfYAuZU/6ZBUvp8D3NacezwVDYTn8T2pqvDNKDcGULhOtIu5JR0sep0MtqgTLcV7
+ gwDhndcGsuiAgsehtB9pFBwuS7uip3ZeTwZ5DU5hPywWM1DrZAlQ9ni
+X-Developer-Key: i=d-gole@ti.com; a=ed25519;
+ pk=yOC9jqVaW3GN10oty8eZJ20dN4jcpE8JVoaODDmyZvA=
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Daniel.
+It seems like we missed migrating the complete information from the old
+DT binding where we had described what the opp-supported-hw is supposed
+to describe. Hence, bring back the description from the previous binding
+to the current one along with a bit more context on what the values are
+supposed to be.
 
-[resent in plain text format, sorry...]
+Fixes: e576a9a8603f ("dt-bindings: cpufreq: Convert ti-cpufreq to json schema")
+Signed-off-by: Dhruva Gole <d-gole@ti.com>
+---
+Changes in v2:
+- Drop the patch where I updated Maintainers since it's already picked
+  by Viresh.
+- Add more details of how to populate the property based on device
+  documents like TRM/ datasheet.
+- Link to v1: https://lore.kernel.org/r/20240903-b4-opp-dt-binding-fix-v1-0-f7e186456d9f@ti.com
+---
+ .../bindings/opp/operating-points-v2-ti-cpu.yaml         | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-On 4/09/24 01:58, Daniel Palmer wrote:
-> I have no idea if this fix is appropriate, the code in this driver
-> makes my brain hurt just looking at it, but sometimes when getting
-> scsi_pointer from cmd cmd itself is actually null and we get a weird
-> garbage pointer for scsi_pointer.
+diff --git a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
+index 02d1d2c17129..fd260b20c59c 100644
+--- a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
++++ b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
+@@ -45,7 +45,21 @@ patternProperties:
+       clock-latency-ns: true
+       opp-hz: true
+       opp-microvolt: true
+-      opp-supported-hw: true
++      opp-supported-hw:
++        description: |
++          Two bitfields indicating:
++            1. Which revision of the SoC the OPP is supported by.
++            This can be easily obtained from the datasheet of the
++            part being ordered/used. For eg. it will be 0x01 for SR1.0
++            2. Which eFuse bits indicate this OPP is available.
++            The device datasheet has a table talking about Device Speed Grades.
++            If one were to sort this table and only retain the unique elements
++            of the MAXIMUM OPERATING FREQUENCY starting from the first row
++            which tells the lowest OPP, to the highest. The corresponding bits
++            need to be set based on N elements of speed grade the device supports.
++            So, if there are 3 possible unique MAXIMUM OPERATING FREQUENCY
++            in the table, then BIT(0), (1) and (2) will be set, which means
++            the value shall be 0x7.
+       opp-suspend: true
+       turbo-mode: true
+ 
 
-I am not sure I read that code right (you are correct in saying all that 
-state machine code inside the interrupt handler makes for headaches, but 
-that's a different matter).
+---
+base-commit: ecc768a84f0b8e631986f9ade3118fa37852fef0
+change-id: 20240903-b4-opp-dt-binding-fix-73c6829751d2
 
-To me, this looks like the driver takes an interrupt without a connected 
-command (that is why cmd ends up NULL). The interrupt turns out to be a 
-selection interrupt, and the attempt to read the current bus phase from 
-the command private data fails.
+Best regards,
+-- 
+Dhruva Gole <d-gole@ti.com>
 
-The driver does use scsi_pointer elsewhere without ever checking it's 
-valid, so it would seem this case is not meant to happen. On the other 
-hand, we do not expect to have a connected command while selecting, so 
-this case is pretty much _guaranteed_ to happen!
-
-It would appear that when Bart worked on this driver to move 
-scsi_pointer to command private data (commit 
-dbb2da557a6a87c88bbb4b1fef037091b57f701b in my tree), he overlooked the 
-fact that 'cmd' is reloaded inside the interrupt handler from host 
-queues, in response to interrupt conditions or phases. The copy of 
-scsi_pointer initially obtained (from the connected command, without 
-checking that there is in fact a command connected) is never reloaded 
-though. Even if there had been a connected command, scsi_pointer would 
-be stale at the point where the phase information is needed to construct 
-the IDENTIFY message.
-
-The old code used phase information from the just reloaded selecting 
-command, so reloading scsi_pointer at this time (as you do) is the 
-correct behaviour.
-
-I am not certain that the test for NULL cmd at the start of the 
-interrupt handler is actually required. Any part of the driver that 
-changes cmd and makes use of scsi_pointer must reload scsi_pointer 
-afterwards. The selection interrupt part seems the only part using 
-scsi_pointer, so your fix is sufficient.
-
-Please respin and set the appropriate Fixes: tag.
-
-Cheers,
-
-     Michael
-
-> When this is accessed later on bad things happen. For my machine
-> this happens when the SCSI bus is initially scanned.
->
-> With this "fix" SCSI on my MVME147 is happy again.
->
-> [   84.330000] wd33c93-0: chip=WD33c93B/13 no_sync=0xff no_dma=0
-> [   84.330000]  debug_flags=0x00
-> [   84.350000]            setup_args=
-> <snip>
-> [   84.490000]
-> [   84.510000]            Version 1.26++ - 10/Feb/2007
-> [   84.520000] scsi host0: MVME147 built-in SCSI
-> [   85.480000]  sending SDTR 0103015e00
-> [   85.480000] 01
-> [   85.490000] 03
-> [   85.500000] 01
-> [   85.510000] 00
-> [   85.520000] 00
-> [   85.520000]  sync_xfer=30
-> [   85.530000] scsi 0:0:5:0: Direct-Access     BlueSCSI HARDDRIVE        2.0  PQ: 0 ANSI: 2
-> [   85.820000] st: Version 20160209, fixed bufsize 32768, s/g segs 256
-> [   85.900000] sd 0:0:5:0: Attached scsi generic sg0 type 0
->
-> Signed-off-by: Daniel Palmer<daniel@0x0f.com>
-> ---
->   drivers/scsi/wd33c93.c | 10 +++++++---
->   drivers/scsi/wd33c93.h |  2 ++
->   2 files changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
-> index a44b60c9004a..9789d852d541 100644
-> --- a/drivers/scsi/wd33c93.c
-> +++ b/drivers/scsi/wd33c93.c
-> @@ -733,7 +733,7 @@ transfer_bytes(const wd33c93_regs regs, struct scsi_cmnd *cmd,
->   void
->   wd33c93_intr(struct Scsi_Host *instance)
->   {
-> -	struct scsi_pointer *scsi_pointer;
-> +	struct scsi_pointer *scsi_pointer = NULL;
->   	struct WD33C93_hostdata *hostdata =
->   	    (struct WD33C93_hostdata *) instance->hostdata;
->   	const wd33c93_regs regs = hostdata->regs;
-> @@ -752,7 +752,9 @@ wd33c93_intr(struct Scsi_Host *instance)
->   #endif
->   
->   	cmd = (struct scsi_cmnd *) hostdata->connected;	/* assume we're connected */
-> -	scsi_pointer = WD33C93_scsi_pointer(cmd);
-> +	/* cmd could be null */
-> +	if (cmd)
-> +		scsi_pointer = WD33C93_scsi_pointer(cmd);
->   	sr = read_wd33c93(regs, WD_SCSI_STATUS);	/* clear the interrupt */
->   	phs = read_wd33c93(regs, WD_COMMAND_PHASE);
->   
-> @@ -828,8 +830,10 @@ wd33c93_intr(struct Scsi_Host *instance)
->   		    (struct scsi_cmnd *) hostdata->selecting;
->   		hostdata->selecting = NULL;
->   
-> -		/* construct an IDENTIFY message with correct disconnect bit */
-> +		/* cmd should now be valid and we can get scsi_pointer */
-> +		scsi_pointer = WD33C93_scsi_pointer(cmd);
->   
-> +		/* construct an IDENTIFY message with correct disconnect bit */
->   		hostdata->outgoing_msg[0] = IDENTIFY(0, cmd->device->lun);
->   		if (scsi_pointer->phase)
->   			hostdata->outgoing_msg[0] |= 0x40;
-> diff --git a/drivers/scsi/wd33c93.h b/drivers/scsi/wd33c93.h
-> index e5e4254b1477..898c1c7d024d 100644
-> --- a/drivers/scsi/wd33c93.h
-> +++ b/drivers/scsi/wd33c93.h
-> @@ -259,6 +259,8 @@ struct WD33C93_hostdata {
->   
->   static inline struct scsi_pointer *WD33C93_scsi_pointer(struct scsi_cmnd *cmd)
->   {
-> +	WARN_ON_ONCE(!cmd);
-> +
->   	return scsi_cmd_priv(cmd);
->   }
->   
 
