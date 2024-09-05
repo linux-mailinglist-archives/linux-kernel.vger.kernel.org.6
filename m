@@ -1,111 +1,206 @@
-Return-Path: <linux-kernel+bounces-316547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9EB96D113
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E03C96D116
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FAA0B2453D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B431F24EC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3B1194A5B;
-	Thu,  5 Sep 2024 07:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C45194AFE;
+	Thu,  5 Sep 2024 07:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fPi6X8yh"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqJLTrmj"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DF91946BB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F9E194AEB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523143; cv=none; b=sQVmV51LSYXDMpHOTHoWJWe7fmzxas9qwQ/TxI8SdGpbC5yWnQZC2jUhJ7V3fycDCq0aFCAzPLbohVIW0puVquwssXmOgRQoYwhMu733LQcEpGedwbobvhqwDaOdJlspLlC0ateFUsKd7DS90rugFQH1uWnx7La1L3x4Mrh1pJo=
+	t=1725523147; cv=none; b=t4bOHaVJoNQHgCKPzCafFo+TGm33QPyHjW8SfYp3+Imuua5QeXm+B226MLhIxyn2u3i1lJXerkiBKE5h8bxOka74UgnotOaIj5GhktFoySZuQt8qnhsSbnHv68BJpMwFoTYWa3eAj+OXZHLTXP25mzS7fXh8gi6v4qu2eWX09vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523143; c=relaxed/simple;
-	bh=S4wg+N7dLtvOvfF5uGJECcWCNVHiuhHmcyXrxkMmoWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kejMU9KIUaaSiPtyxjJrJmHYfqxgtepnNrWsxaqo06pnS8NF2oT2IMQ8oqZi+3liIF8T213fsdg83LjvcDmEsAW3l2gNRVlOCWVuu1fNNO7+i0861zsValRO4SdR78JMMd6J8HaqPFQTFAxjlW61rwLcB/jK1f17BijKHfLhAyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fPi6X8yh; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42c94e59b93so8711035e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:59:01 -0700 (PDT)
+	s=arc-20240116; t=1725523147; c=relaxed/simple;
+	bh=xdhnztTPxQGFqumFULWSCVPSD+7WCW1uNXGmA9Q+MJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sh/BOBLf0Vosb7GWBL/QrJET4vfOtL/RBHfoFkgeCb8er32fYA6bPvuzOWXhVmHy2IpkgjSNve2Pmdvf5NvsK7IVsqkLLCvi25DfCtdrgH3P1fsSwNNM+ld8hgIj4e369y/uJNhhBihR9RnBQTHMVOr+AlhkKCQkc0pvpOvuTWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqJLTrmj; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7093ba310b0so243575a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725523140; x=1726127940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S4wg+N7dLtvOvfF5uGJECcWCNVHiuhHmcyXrxkMmoWQ=;
-        b=fPi6X8yhNM31cx1NhF72LaKjsQf01NO4tQKcKkqS/maxUUyM89B/WxEyR1iBedGsA/
-         F+SrEzB0XxlWI4MWQokFZkPUFliWuVLy81EZq47zf0fBkuz4VpJeu7p4XUfO9RftKtV7
-         qII1uMBN808exzxDT5AYosBRAPtcLr/3YiwqmIzepqZAFz2JRgYIJzfJqm5NpexS/i/u
-         VJwsllNV4X4IfBDdQNy2awh+GlDrZ0ww9s7JmiHfv9fOmUfI9SkTeF38cKywUxGLPwHr
-         6WzykGaWo/HBtyl7O6pWjlVzDqq5Ygds9wNgeCwL6b9FfYnf8r0w4puuSNohTXPF+hZ0
-         7xOg==
+        d=linaro.org; s=google; t=1725523145; x=1726127945; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jqRnqe/PwJnjoCIcJEvnwvB4C1NjsE9+IflmvTs+MtE=;
+        b=lqJLTrmjqmCNNQR1/4P8CtLEp3Kml5bKt3wbPqi2paDCwDmp6h2sIru8rUJbGmrUdg
+         Q9VUqyM/rM+dZSiva4tKDdDkye77SmcFIFTvbDyEzLeb0FT1vawGyPvfitAeJd1DX8YF
+         S1so7vMHVimvaVjpPnh1xdM+tzn4ErXGXIXjHL0IfLEwt5cV4sBCgE9O3iA/IfLpJdpB
+         cUbIQb28iEQTHQ7vekZl1ZYLaiinQf/zRIIbBpvTxNnaXRhTc21GUDECWAgxlS83ebv5
+         18XpUweGrjKsojeuMEWVmViSEFzQF0U0cJDuvJcFaqAvrfeOHRimvfRa7Lsu2y/S6Tb1
+         XBuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523140; x=1726127940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S4wg+N7dLtvOvfF5uGJECcWCNVHiuhHmcyXrxkMmoWQ=;
-        b=uZmrdZHN3TIqelfpGi66n+kHMzdTGqtor7MKtjFsRuzC+5fZMovgw2D+9AmFHOlQBm
-         9BuPkw06e+G9ONBWbPqNu9mdomwXwbJKMIvXdwZgTCJ6ViYVbMscD8CQqFvjBJHe3kbH
-         MdBrbeBzadFgfjlxJiG7DB+Bc6pC5zNhOUeEl722byDFqsyzNnrh5sGTpraTXqr5DTKR
-         ZtV5yKMfx3mUjo17j7N4h5rqf5WvD1qXjRLY86HIjgLKZDskjhtpAWW1Bgja1wP9x5vU
-         GCu6aNYowFnVWcS5/Anjp9YTGjcOfUkdJOV4hfu5hOyOOg4nmMXIb2V3pdBNQBdwC12K
-         K6RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp3FeBDZOUA165u981wb2kKV8jUO1QoOZhA7s8gynacZP8fQl+A55fqQkZeTy1Oeqisv0+MW/w2SVO/Lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK9UmLl0JooJ139PIAiTfWUgPtECDP2Tk9db1hCNdEd9ljIYIQ
-	cfNnoh/l6XjyKWBYtwiENHhOP3CMPWjCumATYBXy5+NqqDHdojqH2yFs9pjULi0tlp8Bz+aYS68
-	72d+EvF010BY2bn0szE3DeRkdvYb6Ja7cIA5w
-X-Google-Smtp-Source: AGHT+IGtCPMuGPM1tEnxEq9yaB7NNJmDwi3mMPagHojR/JnOLPZuTRsGFLFDq1TA5h0cNWIxOaDOSqYB5CqWwC4WUqE=
-X-Received: by 2002:a5d:4a90:0:b0:376:e2f4:5414 with SMTP id
- ffacd0b85a97d-377998aaf1bmr3162540f8f.5.1725523139945; Thu, 05 Sep 2024
- 00:58:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725523145; x=1726127945;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jqRnqe/PwJnjoCIcJEvnwvB4C1NjsE9+IflmvTs+MtE=;
+        b=HhImlocu5kaN/FXv+0E9qCDVGwa/BajdD6oYPrqn1b9xYMkQflS4XDwuvab5Nlq46Z
+         Np1/ysRrSNMkdVQyLuHVCNf1sa0hvotg3UzhGQGDendbsXzajPagR8H8SqcQfqpRMuJ5
+         sjPmvG6xzs+xSH48UsUEB/DYvVNTQbH6PRgmiTB3CvCVz4PLpjrV+5/6noilTO7dH8Jc
+         yf2hsGVZWRkNuqURPAbVMwZJwhpcNjJL0NPfCX6EsDPxGSvZUCcSXCopyuRYYkPpBVsM
+         Tyqc5uenaCO4cJB0oBUCO+BzrYfRZCDSzG0CDJDMpPRnEjnrOH/lOL6nSSc69cNhulVO
+         vbhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAigUTK5ILAS1mHX9vQ4CgkO15s0ZtgR/4Z/ySQmKv35yV77/Lr9+nI8/JdBcS8I6CEnnp7RonJa91MMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUbnDyaaQd2hnPXegfDzcP5/7pfSpQIJHpMh2WfxuytrnCWwM3
+	DlwWnJ/kkPQMnUp1gKRyRzIPO+VKpdrtvRpbuxBrYRWPi1h9S2PdvCzz1xhw1w==
+X-Google-Smtp-Source: AGHT+IHZ5p615JCGrxO+kj7BETsjcRtqwBMTcKwF5GhK6YPRwEiF5dxe6YNR6DMaUH9B/CHkjVlbrw==
+X-Received: by 2002:a05:6359:1b05:b0:1b8:1fd9:8481 with SMTP id e5c5f4694b2df-1b81fd985abmr390333855d.8.1725523144794;
+        Thu, 05 Sep 2024 00:59:04 -0700 (PDT)
+Received: from thinkpad ([120.60.128.165])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbda8762sm2744422a12.69.2024.09.05.00.59.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 00:59:04 -0700 (PDT)
+Date: Thu, 5 Sep 2024 13:28:54 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Rajendra Nayak <quic_rjendra@quicinc.com>, bp@alien8.de,
+	tony.luck@intel.com, mchehab@kernel.org, rric@kernel.org,
+	konradybcio@kernel.org, quic_sibis@quicinc.com,
+	abel.vesa@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] EDAC/qcom: Make irq configuration optional
+Message-ID: <20240905075854.e2almocmqdbm7etn@thinkpad>
+References: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
+ <3rcpcypiv2cr3s66tz56lui57f7turqriwku3tvukwcejr6kh4@fkk5tyk3qgta>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-4-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-4-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Sep 2024 09:58:48 +0200
-Message-ID: <CAH5fLghNLZWjaABcztD8utC9VbPMUYGNYKjisPdV=vVYVF+H+w@mail.gmail.com>
-Subject: Re: [PATCH 03/19] rust: types: avoid repetition in `{As,From}Bytes` impls
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3rcpcypiv2cr3s66tz56lui57f7turqriwku3tvukwcejr6kh4@fkk5tyk3qgta>
 
-On Wed, Sep 4, 2024 at 10:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> In order to provide `// SAFETY` comments for every `unsafe impl`, we woul=
-d
-> need to repeat them, which is not very useful and would be harder to read=
-.
->
-> We could perhaps allow the lint (ideally within a small module), but we
-> can take the chance to avoid the repetition of the `impl`s themselves
-> too by using a small local macro, like in other places where we have
-> had to do this sort of thing.
->
-> Thus add the straightforward `impl_{from,as}bytes!` macros and use them
-> to implement `FromBytes`.
->
-> This, in turn, will allow us in the next patch to place a `// SAFETY`
-> comment that defers to the actual invocation of the macro.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On Wed, Sep 04, 2024 at 03:56:47PM -0500, Bjorn Andersson wrote:
+> On Tue, Sep 03, 2024 at 03:45:10PM GMT, Rajendra Nayak wrote:
+> > On most modern qualcomm SoCs, the configuration necessary to enable the
+> > Tag/Data RAM related irqs being propagated to the SoC irq controller is
+> > already done in firmware (in DSF or 'DDR System Firmware')
+> > 
+> > On some like the x1e80100, these registers aren't even accesible to the
+> > kernel causing a crash when edac device is probed.
+> > 
+> > Hence, make the irq configuration optional in the driver and mark x1e80100
+> > as the SoC on which this should be avoided.
+> > 
+> > Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+> > Reported-by: Bjorn Andersson <andersson@kernel.org>
+> > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Mani, would you like me to pick this through the qcom tree?
+> 
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+You can. Previously, qcom_edac patches with LLCC dependency were merged through
+qcom tree. Since the EDAC change is pretty trivial, I think you don't need to
+wait for an Ack from the EDAC maintainers.
+
+EDAC maintainers: Feel free to yell at me if you feel like I'm stepping onto
+your shoes.
+
+- Mani
+
+> Regards,
+> Bjorn
+> 
+> > ---
+> > v2: 
+> > Minor typo fixed in changelog
+> > 
+> >  drivers/edac/qcom_edac.c           | 8 +++++---
+> >  drivers/soc/qcom/llcc-qcom.c       | 3 +++
+> >  include/linux/soc/qcom/llcc-qcom.h | 2 ++
+> >  3 files changed, 10 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
+> > index d3cd4cc54ace..96611ca09ac5 100644
+> > --- a/drivers/edac/qcom_edac.c
+> > +++ b/drivers/edac/qcom_edac.c
+> > @@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
+> >  	int ecc_irq;
+> >  	int rc;
+> >  
+> > -	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+> > -	if (rc)
+> > -		return rc;
+> > +	if (!llcc_driv_data->ecc_irq_configured) {
+> > +		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
+> > +		if (rc)
+> > +			return rc;
+> > +	}
+> >  
+> >  	/* Allocate edac control info */
+> >  	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
+> > diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> > index 8fa4ffd3a9b5..b1c0ae9991d6 100644
+> > --- a/drivers/soc/qcom/llcc-qcom.c
+> > +++ b/drivers/soc/qcom/llcc-qcom.c
+> > @@ -139,6 +139,7 @@ struct qcom_llcc_config {
+> >  	int size;
+> >  	bool need_llcc_cfg;
+> >  	bool no_edac;
+> > +	bool irq_configured;
+> >  };
+> >  
+> >  struct qcom_sct_config {
+> > @@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+> >  		.need_llcc_cfg	= true,
+> >  		.reg_offset	= llcc_v2_1_reg_offset,
+> >  		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+> > +		.irq_configured = true,
+> >  	},
+> >  };
+> >  
+> > @@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+> >  	drv_data->cfg = llcc_cfg;
+> >  	drv_data->cfg_size = sz;
+> >  	drv_data->edac_reg_offset = cfg->edac_reg_offset;
+> > +	drv_data->ecc_irq_configured = cfg->irq_configured;
+> >  	mutex_init(&drv_data->lock);
+> >  	platform_set_drvdata(pdev, drv_data);
+> >  
+> > diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+> > index 9e9f528b1370..acad1f4cf854 100644
+> > --- a/include/linux/soc/qcom/llcc-qcom.h
+> > +++ b/include/linux/soc/qcom/llcc-qcom.h
+> > @@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
+> >   * @num_banks: Number of llcc banks
+> >   * @bitmap: Bit map to track the active slice ids
+> >   * @ecc_irq: interrupt for llcc cache error detection and reporting
+> > + * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
+> >   * @version: Indicates the LLCC version
+> >   */
+> >  struct llcc_drv_data {
+> > @@ -139,6 +140,7 @@ struct llcc_drv_data {
+> >  	u32 num_banks;
+> >  	unsigned long *bitmap;
+> >  	int ecc_irq;
+> > +	bool ecc_irq_configured;
+> >  	u32 version;
+> >  };
+> >  
+> > -- 
+> > 2.34.1
+> > 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
