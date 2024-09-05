@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-316912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C07396D6D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EB596D6D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB4791C22DD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:14:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444B11F23C51
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1549E19938D;
-	Thu,  5 Sep 2024 11:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF44E199E9B;
+	Thu,  5 Sep 2024 11:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="PVnatLhI"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="Ym9zbzFz"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0463414F10E
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC511993B2
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534855; cv=pass; b=Jihl7zjeVhQOe+reX/cG/TZu6Mgq15bwmZKmm5b+RNlNbKoZsbjANlRB+RFmGwgLLvUIqr23QVCxxJB6Ov98lufoGeEMFzGtk1skp9Bw7zfs+6m5YN5OxMlk1HJtciMqkFx1xNR3i1jnYzfzdImyXk5Jta5A+fwD/4+ZKH/5Q0g=
+	t=1725534857; cv=pass; b=uBxd6JPJh3ZWIuMNz9TDu6jKvmpzVjAcsgrOUKkLxSxx0LAFPwszl+cLg1tI8ijL1vPiNePNsScudIc/hKa4SofWyQwaM+2ZcLqUkLHDIW0YjDzquFBcT9vEGzIwcgcjyzyHY9OiVco0xX3HUV/myv8gaUaYbzoZ/y/T69BkgFM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534855; c=relaxed/simple;
-	bh=tXKeO1zYbhM3Ya5OVBkkOcLWffQ4EVZVDoCwip/w7v4=;
+	s=arc-20240116; t=1725534857; c=relaxed/simple;
+	bh=TUA1QQf1tXwmOwcOSOhVY2Y3OJLWEmYL0k/hRQKNyhA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H8s6ap4IJN4XcCuerVerk54gA2RyoDruz7RBPA81zqL1HEHzxyiZSC57PcBsDp2SzWKElR4z17uvBVWYfn65sbyVhq1xKA9EhX8YCSftzWKccg6evvh+z/CJ1WqgvVExZq7pe8I0XTrELQOjXvrFccJGdcQQmmfAQidgsE3oEyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=PVnatLhI; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version; b=aPm6TvZLEhbCNEBatJH11Vw9uhbbLxzySmo44xDwqgHPv8lguF74JvMLscGe9HF12XuXzXeIFmEOL31ugjiuxW35dcV/Rd/fF3StBmL9RoyA1Di+KbxiXfzWMF02rMtRjT0CsrDplZwF6Y8eM/OpGluFeeFVqQUjIVshTLuld6o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=Ym9zbzFz; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Delivered-To: boris.brezillon@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725534839; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1725534841; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=eIzhycMEQOmscNcCZglYss8rWse+93Nc7XlnhVK/VGWbU71YOc4oR/tD7lZMyUen/VhXqK4U9Xh1HE0vOduNUdJ1TR+x6gCYB2Jt9aU6IIkRA0U82/YpKbx52ED10dT4YHig0oZuAQctovSOauWoUE8FSHN8CC0TV4JjaOuSjbQ=
+	b=LwMdIyFw98pkF8PckExUs/RxaClSNRPk8OwYaEfQsbA/Lfvd53FhF9VjMZP5ix2anux679DW8Bg3COwTX43TuoHxSJlj50gEKTmACfY210+PfKhXBalf4p5GtcdIEMMG5y7nV9T64Jhp9uFXj1CrtfseJLhHwBaPWiV99a7d5do=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725534839; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+1shYGf4ZtDj9QHPRod0uklI3TkdqK73XIf3/9V5EeE=; 
-	b=ng7LRDidjR457oGQZesHMjObx5gFn+71UZ6g6zdFwenu2yRhpieJTXHmNTwFoUhfnEq8XYDRT4ZbaVCGR+xZgPaNzxEt4D49+kK3ETjE8b4QQO65XnYPMkIjttqOtWGKxgDvvsEjYKI9I2fkeh0N3a3eYYVx1QQfH9NCZE/fLbI=
+	t=1725534841; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NBGO/wd9GUl4PZyD8FAxAuruxJAxsPb2IZdrKettOI4=; 
+	b=T8bDlogkFPYi+IN2ObW7QgxZuQeJ4B4+dQk5le/OGv67Y45zV/WFaWmJe/dElogpDVitrlYjlTFHsszvdIjMnackQx6FXeecYFfG2IYV4+J6wQscaqHp7J8q4/Dmdn9ZkT1yaRLPRjXEqt8OovTs65q7vPJXxk9JcnWpgetZrDo=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
 	dmarc=pass header.from=<mary.guillemard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725534839;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725534841;
 	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=+1shYGf4ZtDj9QHPRod0uklI3TkdqK73XIf3/9V5EeE=;
-	b=PVnatLhI8Quz+SPp5mW7cC8TUbhcSqNJUdr8SOl2cUFy9iaTl0zJzyx9xzh7j57f
-	0oakJapGPlrxi12FYn5GeDqpCqqDdL9OBBaWJMpyeKsp2yVvARoq/9mcqLwYD7QGoT4
-	4m8Gzhi2L66G8pjpb2wTn6n9kZaVPRka/29Qd6kY=
-Received: by mx.zohomail.com with SMTPS id 17255348370753.769146788604644;
-	Thu, 5 Sep 2024 04:13:57 -0700 (PDT)
+	bh=NBGO/wd9GUl4PZyD8FAxAuruxJAxsPb2IZdrKettOI4=;
+	b=Ym9zbzFzGM1IBFI4y8q3fsMjmXOYljhZmN6yI7oIg/isbATbJ90TnR6BM8S+NvJX
+	gcbwqIH7z5lMmH3CK+RwxyimvgctPHe+bswXpzciFSpth9I9KA5UY12K5K+3hCpDWDc
+	DG2CbU48bOEZ5JjNPxFfcjod9vxsL/xZazryuAQw=
+Received: by mx.zohomail.com with SMTPS id 1725534840278552.1455558587656;
+	Thu, 5 Sep 2024 04:14:00 -0700 (PDT)
 From: Mary Guillemard <mary.guillemard@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org,
@@ -65,9 +65,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 1/2] drm/panthor: Add PANTHOR_GROUP_PRIORITY_REALTIME group priority
-Date: Thu,  5 Sep 2024 13:13:37 +0200
-Message-ID: <20240905111338.95714-2-mary.guillemard@collabora.com>
+Subject: [PATCH 2/2] drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO dev query
+Date: Thu,  5 Sep 2024 13:13:38 +0200
+Message-ID: <20240905111338.95714-3-mary.guillemard@collabora.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240905111338.95714-1-mary.guillemard@collabora.com>
 References: <20240905111338.95714-1-mary.guillemard@collabora.com>
@@ -80,62 +80,196 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-This adds a new value to drm_panthor_group_priority exposing the
-realtime priority to userspace.
+Expose allowed group priorities with a new device query.
 
-This is required to implement NV_context_priority_realtime in Mesa.
+This new uAPI will be used in Mesa to properly report what priorities a
+user can use for EGL_IMG_context_priority.
+
+Since this extends the uAPI and because userland needs a way to
+advertise priorities accordingly, this also bumps the driver minor
+version.
 
 Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
 ---
- drivers/gpu/drm/panthor/panthor_drv.c   | 2 +-
- drivers/gpu/drm/panthor/panthor_sched.c | 2 --
- include/uapi/drm/panthor_drm.h          | 7 +++++++
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/panthor/panthor_drv.c | 61 ++++++++++++++++++---------
+ include/uapi/drm/panthor_drm.h        | 38 +++++++++++++++++
+ 2 files changed, 80 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 0caf9e9a8c45..7b1db2adcb4c 100644
+index 7b1db2adcb4c..f85aa2d99f09 100644
 --- a/drivers/gpu/drm/panthor/panthor_drv.c
 +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -1041,7 +1041,7 @@ static int group_priority_permit(struct drm_file *file,
- 				 u8 priority)
- {
- 	/* Ensure that priority is valid */
--	if (priority > PANTHOR_GROUP_PRIORITY_HIGH)
+@@ -170,6 +170,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
++		 PANTHOR_UOBJ_DECL(struct drm_panthor_group_priorities_info, pad), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+@@ -777,11 +778,41 @@ static int panthor_query_timestamp_info(struct panthor_device *ptdev,
+ 	return 0;
+ }
+ 
++static int group_priority_permit(struct drm_file *file,
++				 u8 priority)
++{
++	/* Ensure that priority is valid */
 +	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
++		return -EINVAL;
++
++	/* Medium priority and below are always allowed */
++	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
++		return 0;
++
++	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
++	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
++		return 0;
++
++	return -EACCES;
++}
++
++static void panthor_query_group_priorities_info(struct drm_file *file,
++						struct drm_panthor_group_priorities_info *arg)
++{
++	int prio;
++
++	for (prio = PANTHOR_GROUP_PRIORITY_REALTIME; prio >= 0; prio--) {
++		if (!group_priority_permit(file, prio))
++			arg->allowed_mask |= 1 << prio;
++	}
++}
++
+ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
+ {
+ 	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
+ 	struct drm_panthor_dev_query *args = data;
+ 	struct drm_panthor_timestamp_info timestamp_info;
++	struct drm_panthor_group_priorities_info priorities_info;
+ 	int ret;
+ 
+ 	if (!args->pointer) {
+@@ -798,6 +829,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+ 			args->size = sizeof(timestamp_info);
+ 			return 0;
+ 
++		case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
++			args->size = sizeof(priorities_info);
++			return 0;
++
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -818,6 +853,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+ 
+ 		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
+ 
++	case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
++		panthor_query_group_priorities_info(file, &priorities_info);
++		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
++
+ 	default:
  		return -EINVAL;
+ 	}
+@@ -1037,24 +1076,6 @@ static int panthor_ioctl_group_destroy(struct drm_device *ddev, void *data,
+ 	return panthor_group_destroy(pfile, args->group_handle);
+ }
  
- 	/* Medium priority and below are always allowed */
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index 91a31b70c037..86908ada7335 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -137,8 +137,6 @@ enum panthor_csg_priority {
- 	 * non-real-time groups. When such a group becomes executable,
- 	 * it will evict the group with the lowest non-rt priority if
- 	 * there's no free group slot available.
--	 *
--	 * Currently not exposed to userspace.
- 	 */
- 	PANTHOR_CSG_PRIORITY_RT,
+-static int group_priority_permit(struct drm_file *file,
+-				 u8 priority)
+-{
+-	/* Ensure that priority is valid */
+-	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
+-		return -EINVAL;
+-
+-	/* Medium priority and below are always allowed */
+-	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
+-		return 0;
+-
+-	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+-	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
+-		return 0;
+-
+-	return -EACCES;
+-}
+-
+ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+ 				      struct drm_file *file)
+ {
+@@ -1436,6 +1457,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
+  * PanCSF driver version:
+  * - 1.0 - initial interface
+  * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
++ * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
++ *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
+  */
+ static const struct drm_driver panthor_drm_driver = {
+ 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+@@ -1449,7 +1472,7 @@ static const struct drm_driver panthor_drm_driver = {
+ 	.desc = "Panthor DRM driver",
+ 	.date = "20230801",
+ 	.major = 1,
+-	.minor = 1,
++	.minor = 2,
  
+ 	.gem_create_object = panthor_gem_create_object,
+ 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
 diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index 1fd8473548ac..011a555e4674 100644
+index 011a555e4674..520c467f946d 100644
 --- a/include/uapi/drm/panthor_drm.h
 +++ b/include/uapi/drm/panthor_drm.h
-@@ -720,6 +720,13 @@ enum drm_panthor_group_priority {
- 	 * Requires CAP_SYS_NICE or DRM_MASTER.
- 	 */
- 	PANTHOR_GROUP_PRIORITY_HIGH,
+@@ -263,6 +263,11 @@ enum drm_panthor_dev_query_type {
+ 
+ 	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
+ 	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
 +
 +	/**
-+	 * @PANTHOR_GROUP_PRIORITY_REALTIME: Realtime priority group.
-+	 *
-+	 * Requires CAP_SYS_NICE or DRM_MASTER.
++	 * @DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO: Query allowed group priorities information.
 +	 */
-+	PANTHOR_GROUP_PRIORITY_REALTIME,
++	DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO,
  };
  
  /**
+@@ -399,6 +404,39 @@ struct drm_panthor_timestamp_info {
+ 	__u64 timestamp_offset;
+ };
+ 
++/**
++ * enum drm_panthor_allowed_group_priority - Allowed group priority flags
++ */
++enum drm_panthor_group_allow_priority_flags {
++	/** @PANTHOR_GROUP_ALLOW_PRIORITY_LOW: Allow low priority group. */
++	PANTHOR_GROUP_ALLOW_PRIORITY_LOW = 1 << 0,
++
++	/** @PANTHOR_GROUP_ALLOW_PRIORITY_MEDIUM: Allow medium priority group. */
++	PANTHOR_GROUP_ALLOW_PRIORITY_MEDIUM = 1 << 1,
++
++	/** @PANTHOR_GROUP_ALLOW_PRIORITY_HIGH: Allow high priority group. */
++	PANTHOR_GROUP_ALLOW_PRIORITY_HIGH = 1 << 2,
++
++	/** @PANTHOR_GROUP_ALLOW_PRIORITY_REALTIME: Allow realtime priority group. */
++	PANTHOR_GROUP_ALLOW_PRIORITY_REALTIME = 1 << 3,
++};
++
++/**
++ * struct drm_panthor_group_priorities_info - Group priorities information
++ *
++ * Structure grouping all queryable information relating to the allowed group priorities.
++ */
++struct drm_panthor_group_priorities_info {
++	/**
++	 * @allowed_mask: A mask of drm_panthor_group_allow_priority_flags flags containing the
++	 * allowed group priorities.
++	 */
++	__u8 allowed_mask;
++
++	/** @pad: Padding fields, MBZ. */
++	__u8 pad[3];
++};
++
+ /**
+  * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
+  */
 -- 
 2.46.0
 
