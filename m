@@ -1,388 +1,264 @@
-Return-Path: <linux-kernel+bounces-317038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215B096D87D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:27:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CF896D880
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CE61F277C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A22288A68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A763B19B3C1;
-	Thu,  5 Sep 2024 12:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEYnInWP"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9980C19B3E2;
+	Thu,  5 Sep 2024 12:26:36 +0000 (UTC)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A326219B580;
-	Thu,  5 Sep 2024 12:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF761E489;
+	Thu,  5 Sep 2024 12:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539111; cv=none; b=gopexHNsT4Z1x/LyiGu5MuHVX8qFugASWN78bmxA7luIkn4nzSgVwETMvsJ5MK+R7NNvD6feYE7dGQAWGd9rfDzNn6rc/v78+QvHM3eMUw+5cFryBRfOMsDMr35Au4y/+3Fk5U45enN3s3FqaA15SnEQUrq5n4IMIZgzEX+0aa8=
+	t=1725539196; cv=none; b=Jto97dCqS8FrwHQlhPSVh335O6CAqLkfG3cWUBj8szLOZ174EbQ0cAwf3RWJmPiMIaH3yqHPs4UY3sm+VYb9viqvUHHXW+Q2ULje5KRYsCLY4WAgSHbYHmSKqJwtn1VfwUiGCSx/zbLF3jx/rReLu4QZl/OQ/KHewe3OrUoZTHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539111; c=relaxed/simple;
-	bh=+P20f2/lA6FyDhXA4/LRi61DPB0GFC1v6U7/x0C+lJQ=;
+	s=arc-20240116; t=1725539196; c=relaxed/simple;
+	bh=W1ZFVtfXUXJKRy2AgMkJ1X+p+rD/HA7gpZ1snU/jBjE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=s9bUgSQKA0hoAGK5N7xDOi9EN+gnXafCcgIGBZieb1nhFkzfjymhsSwk6lPXtP4QIQICbIlKSc6tQiGwnfGLDe/1+9IB9lnrAGV7xH3pbA7Fn9jyvAwabxgG2MjdCPZ0NQQ5r00KWU1wJXFFYnre3Gu40Pt7XWkHGD4lR0tAA8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEYnInWP; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=A7mV2sUFlTugzXbbuVyMc0LUE8KQnbE/C82zN2v6HmGYuvWDaK2Uy3YXfxuPYTymGptZ00K8yWh1CxgQ91o5jkGIimn3MwJQFtYbYYtiF8E83QAJorM/+gboyjiCHr3FhZeQZlOcpqvD05uJ2sPIdfZ/pW7Nu3lOMCclLTi0OXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-846bdc20098so174725241.3;
-        Thu, 05 Sep 2024 05:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725539108; x=1726143908; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ec2nsMBqzxzvelNvMAldupgf12S8fKDigkxZKpeq0bY=;
-        b=cEYnInWPXuxYY8fk6m/adFw88PLbTgDkz7TS6KvEyFFwZuWHiq0RJDrKXWcAwdMHwE
-         mPE1govveicWP6UTcitjURgVpWL0JnSAZ6fdIwoMPTjLTr/Y56XBgzf5ubvZUe2vuvJ7
-         psztGIuUOFnKpuheBI+EXh6hTU3U18hmoj0eBjpu4R1Btfj2jVIMJovecDPrGQyLJz/k
-         957ASy92OrRq6uqhQ/8XvviJ8xuo4dBLwQ1V7gPMQFHQmskXzZ9sslP5n3Z90BXwzJ6l
-         1oWaWWiacJc/dDIbzTn6Ql9YddrclcYTt1+cEFO4J3IHqqzs6SQypnWv5M9XOe1shilH
-         HARw==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso9042341fa.1;
+        Thu, 05 Sep 2024 05:26:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725539108; x=1726143908;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ec2nsMBqzxzvelNvMAldupgf12S8fKDigkxZKpeq0bY=;
-        b=TJmQJMXuS8zafCCH7RH83Z2iIWcQaKJnKdI1CYjWQuCGOAJ/KY11+HxJBc8uQlp4Xq
-         1SEoEn1LHW+2D2AMNnBpqWCcTpYsN0oOTkI3aUOmTZNeeEU/Fj6fH09W+afRL30mDMpw
-         ej9ccAKjFnEKjZC1iz28YweP3gm/V7vRONgEz+h52NKWCXUmthhkGYXVBeFyC+AzP2qe
-         LiQnm2iqA4zrCj3Fch7d1kq+n6JD76idVIfZ6aC5yMMueDxMsZ2OBbbi7VvxWB4IHejX
-         4u2UYWF48GNW6/jgtRtyemvQ/2Wh3nSPmYn5x3ou2C+7dWwlZ10Kc/CumWQYOu+hK3Um
-         uIpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1SSMI6EhCrdT4vmmEzyD7ezGMkGFpd5KP6iZhKUWgLckCEFdiaJqA9WjM2Gagcmq3KvHWBRO6irHG@vger.kernel.org, AJvYcCUyaNOS/i0FBqjsbn4iijFvocrK7dzTfo4w2c40vpREvAqo9PB+HRyxAEWQBQw60rzdNBfddJTLL/gn7ZFr@vger.kernel.org, AJvYcCVo/1VbXlWY+XfT5pwIfcwCtToC6ksdSeoViUA9e8pWQgabfPJa4GwGf6jecILEZaAbmo8hLP0G9Vqcwmlz@vger.kernel.org, AJvYcCX+6wdmaLIbEqRDMSxAjuAHG7pgx2KpDviB54vw0j5cnX89IWB0fvTcJ5ZRVnwE5lesp9HHxLuhvWvl@vger.kernel.org, AJvYcCXzgRBpULrZUL9iwwp1SPGPQ85Kv+6FzhVLe4+TXkj+hbFMFBCgT6srO2kWF48CgHFC+NvgpWE6qW+CHPKoI+d5obax@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAKquJ4/NOGq9X7ZhSXY7mvQQvyyXJyzXIJeLoSJvZ3IQBQS2h
-	ta2vgJE0c4N+VItwlZH5Tj5FyRRPOfZV/5kzmcmayF7SJfx5Vx3A7SCo5TfiWpiLnOC6/GaZMZ5
-	/dQuVEZMV0kgG2WuXYscSOJyzi3/QvQ==
-X-Google-Smtp-Source: AGHT+IHZEJjH8/gtSsjvQASanUqSRmY2T9fuhxa/99968SgqrDbqt8oSvB+k03KFDIu4+Was3fpAxP6x6xR2pHe87fk=
-X-Received: by 2002:a05:6102:5107:b0:494:3a8d:c793 with SMTP id
- ada2fe7eead31-49a775f23e8mr20798867137.28.1725539108252; Thu, 05 Sep 2024
- 05:25:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725539191; x=1726143991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HC05u3G3MyxRvr1uTN/6BxkEJxTP1nCL1t/sOLNB64U=;
+        b=eCqxBm5NMYiKW4r+hL7S4mG4LEmBpMgOPvSPUCiUvbv9jTMjoEMqB1YSsshpCAa0hQ
+         +/QOD1F+8XPgkeVC9BVbqcsWGotX9qAYQVGIf9cxm4rpGCwcUPGjy44h0fQwuAyE5kAM
+         wg1ZBEPYgi+9iqSBuEWkeaeGwFOUyclgQcQV4esVjrXIIJEtHK4TIzUWUWLM9QEycB1L
+         jymC3fLDueSLZWQNpAqUpJ5ZGnIBiOFD5MEMjqGoRsuVnjvOW/4ELDu0SmClXXdDnLfb
+         XkSc1njiSXv6/bGOtgkKQD7dBvMpTKtwRYk0bbiyswkAZ3SlfPqUoQ9+gvzrKY03dtrM
+         LnNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBlQR7Mcrwen47dizCdVL+DNpMlgxbqIVQ0B04zVwDdPl1C4eC4hkT2ETUpviWvbbbfw0x2bTfu/0f@vger.kernel.org, AJvYcCVkZMHqvpJaeyLGquPCsGwvHlq81eA/knh4lx5qfSgshsGxUUBXH+xMJSGwkUx/evj5LAjAkLhvAv+Lq8K0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXy7kV6hIVo+VIGCxv2dE69uwGKbnEi0G7C5OWmyHvmVhZRzx0
+	R8tkR5Mxi9kiwNYIlnCUHwbiyFnSoAV3FaeY5Qvus/eAYDA3i1cDz4L032BT
+X-Google-Smtp-Source: AGHT+IFidjmz8bYzNvnlm0veyB4ythVx7n2k8zOOVYKBAAxW4yoXJkyJSBBrfL5MYoDqxxnAVVZ8PQ==
+X-Received: by 2002:a2e:a544:0:b0:2f6:43fd:f870 with SMTP id 38308e7fff4ca-2f643fdf9abmr76487821fa.31.1725539190050;
+        Thu, 05 Sep 2024 05:26:30 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614ed6c91sm28498241fa.18.2024.09.05.05.26.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 05:26:29 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso9041711fa.1;
+        Thu, 05 Sep 2024 05:26:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULIB3CGGWaeBY2PZrT3eJD0G57Hfa2BQ70RkAkLMo0cSqJ0YCmk0QmeojU7FyzxzOXigXu/DrBjjsfII19@vger.kernel.org, AJvYcCX6wSOlHvSbdkTptfUjBcvxXqxlmOOZzb2DO1uvAE/+GMgwwl4Thv6TmvgKoxIWjlEL8E4aOhAzw1LX@vger.kernel.org
+X-Received: by 2002:a05:651c:1505:b0:2ef:2e90:29f9 with SMTP id
+ 38308e7fff4ca-2f629041b9amr99979771fa.17.1725539188843; Thu, 05 Sep 2024
+ 05:26:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240824230641.385839-1-wentaoz5@illinois.edu>
- <20240905043245.1389509-1-wentaoz5@illinois.edu> <20240905114140.GN4723@noisy.programming.kicks-ass.net>
- <BN0P110MB1785427A8771BD53DADB2E4DAB9DA@BN0P110MB1785.NAMP110.PROD.OUTLOOK.COM>
- <BN0P110MB1785CA856C1898EEC22ACD7EAB9DA@BN0P110MB1785.NAMP110.PROD.OUTLOOK.COM>
-In-Reply-To: <BN0P110MB1785CA856C1898EEC22ACD7EAB9DA@BN0P110MB1785.NAMP110.PROD.OUTLOOK.COM>
-From: Steve VanderLeest <steven.h.vanderleest@gmail.com>
-Date: Thu, 5 Sep 2024 08:24:56 -0400
-Message-ID: <CAKq3nP32+AR3gLY00p0KaGx_zGXTxSC6wOr08NP_zaUGU1zKGg@mail.gmail.com>
-Subject: Re: FW: [EXTERNAL] Re: [PATCH v2 0/4] Enable measuring the kernel's
- Source-based Code Coverage and MC/DC with Clang
-To: "llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-um@lists.infradead.org" <linux-um@lists.infradead.org>, 
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>
+References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
+ <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
+ <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org> <20240815181508.6800e205@donnerap.manchester.arm.com>
+ <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org> <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
+In-Reply-To: <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 5 Sep 2024 20:26:15 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+Message-ID: <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi file
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev, 
+	jernej.skrabec@gmail.com, samuel@sholland.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Resending as plain text so that lists can accept.
+Hi,
 
-On Thu, Sep 5, 2024 at 8:21=E2=80=AFAM Vanderleest (US), Steven H
-<steven.h.vanderleest@boeing.com> wrote:
+On Thu, Sep 5, 2024 at 8:17=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> wr=
+ote:
 >
-> From: Vanderleest (US), Steven H <steven.h.vanderleest@boeing.com>
-> Date: Thursday, September 5, 2024 at 8:13=E2=80=AFAM
-> To: Peter Zijlstra <peterz@infradead.org>, Wentao Zhang <wentaoz5@illinoi=
-s.edu>
-> Cc: Kelly (US), Matt <Matt.Kelly2@boeing.com>, akpm@linux-foundation.org =
-<akpm@linux-foundation.org>, Oppelt (US), Andrew J <andrew.j.oppelt@boeing.=
-com>, anton.ivanov@cambridgegreys.com <anton.ivanov@cambridgegreys.com>, ar=
-db@kernel.org <ardb@kernel.org>, arnd@arndb.de <arnd@arndb.de>, bhelgaas@go=
-ogle.com <bhelgaas@google.com>, bp@alien8.de <bp@alien8.de>, Wolber (US), C=
-huck <chuck.wolber@boeing.com>, dave.hansen@linux.intel.com <dave.hansen@li=
-nux.intel.com>, dvyukov@google.com <dvyukov@google.com>, hpa@zytor.com <hpa=
-@zytor.com>, jinghao7@illinois.edu <jinghao7@illinois.edu>, johannes@sipsol=
-utions.net <johannes@sipsolutions.net>, jpoimboe@kernel.org <jpoimboe@kerne=
-l.org>, justinstitt@google.com <justinstitt@google.com>, kees@kernel.org <k=
-ees@kernel.org>, kent.overstreet@linux.dev <kent.overstreet@linux.dev>, lin=
-ux-arch@vger.kernel.org <linux-arch@vger.kernel.org>, linux-efi@vger.kernel=
-.org <linux-efi@vger.kernel.org>, linux-kbuild@vger.kernel.org <linux-kbuil=
-d@vger.kernel.org>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.=
-org>, linux-trace-kernel@vger.kernel.org <linux-trace-kernel@vger.kernel.or=
-g>, linux-um@lists.infradead.org <linux-um@lists.infradead.org>, llvm@lists=
-.linux.dev <llvm@lists.linux.dev>, luto@kernel.org <luto@kernel.org>, marin=
-ov@illinois.edu <marinov@illinois.edu>, masahiroy@kernel.org <masahiroy@ker=
-nel.org>, maskray@google.com <maskray@google.com>, mathieu.desnoyers@effici=
-os.com <mathieu.desnoyers@efficios.com>, Weber (US), Matthew L <matthew.l.w=
-eber3@boeing.com>, mhiramat@kernel.org <mhiramat@kernel.org>, mingo@redhat.=
-com <mingo@redhat.com>, morbo@google.com <morbo@google.com>, nathan@kernel.=
-org <nathan@kernel.org>, ndesaulniers@google.com <ndesaulniers@google.com>,=
- oberpar@linux.ibm.com <oberpar@linux.ibm.com>, paulmck@kernel.org <paulmck=
-@kernel.org>, richard@nod.at <richard@nod.at>, rostedt@goodmis.org <rostedt=
-@goodmis.org>, samitolvanen@google.com <samitolvanen@google.com>, Sarkisian=
- (US), Samuel <samuel.sarkisian@boeing.com>, tglx@linutronix.de <tglx@linut=
-ronix.de>, tingxur@illinois.edu <tingxur@illinois.edu>, tyxu@illinois.edu <=
-tyxu@illinois.edu>, x86@kernel.org <x86@kernel.org>
-> Subject: Re: [EXTERNAL] Re: [PATCH v2 0/4] Enable measuring the kernel's =
-Source-based Code Coverage and MC/DC with Clang
+> Hello,
 >
-> I=E2=80=99ll answer Peter=E2=80=99s last question: =E2=80=9CWhat is the i=
-mpact on certification of not covering the noinstr code.=E2=80=9D
->
->
->
-> Any code in the target image that is not executed by a test (and thus not=
- covered) must be analyzed and justified as an exception. For example, defe=
-nsive code is often impossible to exercise by test, but can be included in =
-the image with a justification to the regulatory authority such as the Fede=
-ral Aviation Administration (FAA). In practice, this means the number of un=
-ique instances of non-instrumented code needs to be manageable.  I say =E2=
-=80=9Cunique instances=E2=80=9D because there may be many instances of a pa=
-rticular category, but justified by the same analysis/rationale. Where we s=
-pecifically mark a section of code with noinstr, it is typically because th=
-e instrumentation would change the behavior of the code, perturbing the tes=
-t results. With some analysis for each distinct category of this issue, we =
-could then write justification(s) to show the overall coverage is sufficien=
-t.
->
->
->
-> Regards,
->
-> Steve
->
->
->
->
->
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Thursday, September 5, 2024 at 7:42=E2=80=AFAM
-> To: Wentao Zhang <wentaoz5@illinois.edu>
-> Cc: Kelly (US), Matt <Matt.Kelly2@boeing.com>, akpm@linux-foundation.org =
-<akpm@linux-foundation.org>, Oppelt (US), Andrew J <andrew.j.oppelt@boeing.=
-com>, anton.ivanov@cambridgegreys.com <anton.ivanov@cambridgegreys.com>, ar=
-db@kernel.org <ardb@kernel.org>, arnd@arndb.de <arnd@arndb.de>, bhelgaas@go=
-ogle.com <bhelgaas@google.com>, bp@alien8.de <bp@alien8.de>, Wolber (US), C=
-huck <chuck.wolber@boeing.com>, dave.hansen@linux.intel.com <dave.hansen@li=
-nux.intel.com>, dvyukov@google.com <dvyukov@google.com>, hpa@zytor.com <hpa=
-@zytor.com>, jinghao7@illinois.edu <jinghao7@illinois.edu>, johannes@sipsol=
-utions.net <johannes@sipsolutions.net>, jpoimboe@kernel.org <jpoimboe@kerne=
-l.org>, justinstitt@google.com <justinstitt@google.com>, kees@kernel.org <k=
-ees@kernel.org>, kent.overstreet@linux.dev <kent.overstreet@linux.dev>, lin=
-ux-arch@vger.kernel.org <linux-arch@vger.kernel.org>, linux-efi@vger.kernel=
-.org <linux-efi@vger.kernel.org>, linux-kbuild@vger.kernel.org <linux-kbuil=
-d@vger.kernel.org>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.=
-org>, linux-trace-kernel@vger.kernel.org <linux-trace-kernel@vger.kernel.or=
-g>, linux-um@lists.infradead.org <linux-um@lists.infradead.org>, llvm@lists=
-.linux.dev <llvm@lists.linux.dev>, luto@kernel.org <luto@kernel.org>, marin=
-ov@illinois.edu <marinov@illinois.edu>, masahiroy@kernel.org <masahiroy@ker=
-nel.org>, maskray@google.com <maskray@google.com>, mathieu.desnoyers@effici=
-os.com <mathieu.desnoyers@efficios.com>, Weber (US), Matthew L <matthew.l.w=
-eber3@boeing.com>, mhiramat@kernel.org <mhiramat@kernel.org>, mingo@redhat.=
-com <mingo@redhat.com>, morbo@google.com <morbo@google.com>, nathan@kernel.=
-org <nathan@kernel.org>, ndesaulniers@google.com <ndesaulniers@google.com>,=
- oberpar@linux.ibm.com <oberpar@linux.ibm.com>, paulmck@kernel.org <paulmck=
-@kernel.org>, richard@nod.at <richard@nod.at>, rostedt@goodmis.org <rostedt=
-@goodmis.org>, samitolvanen@google.com <samitolvanen@google.com>, Sarkisian=
- (US), Samuel <samuel.sarkisian@boeing.com>, Vanderleest (US), Steven H <st=
-even.h.vanderleest@boeing.com>, tglx@linutronix.de <tglx@linutronix.de>, ti=
-ngxur@illinois.edu <tingxur@illinois.edu>, tyxu@illinois.edu <tyxu@illinois=
-.edu>, x86@kernel.org <x86@kernel.org>
-> Subject: [EXTERNAL] Re: [PATCH v2 0/4] Enable measuring the kernel's Sour=
-ce-based Code Coverage and MC/DC with Clang
->
-> EXT email: be mindful of links/attachments.
->
->
->
-> On Wed, Sep 04, 2024 at 11:32:41PM -0500, Wentao Zhang wrote:
-> > From: Wentao Zhang <zhangwt1997@gmail.com>
+> Just checking, any further thoughts about this patch?
+
+Sorry, but I feel like it's not really worth the churn. There's not
+really a problem to be solved here. What you are arguing for is more
+about aesthetics, and we could argue that having them separate makes
+it easier to read and turn on/off.
+
+And even though the GPU OPPs are in the dtsi, it's just one OPP acting
+as a default clock rate.
+
+
+ChenYu
+
+> On 2024-08-17 06:25, Dragan Simic wrote:
+> > Hello Andre,
 > >
-> > This series adds support for building x86-64 kernels with Clang's Sourc=
-e-
-> > based Code Coverage[1] in order to facilitate Modified Condition/Decisi=
-on
-> > Coverage (MC/DC)[2] that provably correlates to source code for all lev=
-els
-> > of compiler optimization.
-> >
-> > The newly added kernel/llvm-cov/ directory complements the existing gco=
-v
-> > implementation. Gcov works at the object code level which may better
-> > reflect actual execution. However, Gcov lacks the necessary information=
- to
-> > correlate coverage measurement with source code location when compiler
-> > optimization level is non-zero (which is the default when building the
-> > kernel). In addition, gcov reports are occasionally ambiguous when
-> > attempting to compare with source code level developer intent.
-> >
-> > In the following gcov example from drivers/firmware/dmi_scan.c, an
-> > expression with four conditions is reported to have six branch outcomes=
-,
-> > which is not ideally informative in many safety related use cases, such=
- as
-> > automotive, medical, and aerospace.
-> >
-> >         5: 1068:      if (s =3D=3D e || *e !=3D '/' || !month || month =
-> 12) {
-> > branch  0 taken 5 (fallthrough)
-> > branch  1 taken 0
-> > branch  2 taken 5 (fallthrough)
-> > branch  3 taken 0
-> > branch  4 taken 0 (fallthrough)
-> > branch  5 taken 5
-> >
-> > On the other hand, Clang's Source-based Code Coverage instruments at th=
-e
-> > compiler frontend which maintains an accurate mapping from coverage
-> > measurement to source code location. Coverage reports reflect exactly h=
-ow
-> > the code is written regardless of optimization and can present advanced
-> > metrics like branch coverage and MC/DC in a clearer way. Coverage repor=
+> > On 2024-08-15 19:15, Andre Przywara wrote:
+> >> On Thu, 15 Aug 2024 18:34:58 +0200
+> >> Dragan Simic <dsimic@manjaro.org> wrote:
+> >>> On 2024-08-14 18:11, Chen-Yu Tsai wrote:
+> >>> > On Wed, Aug 14, 2024 at 1:52=E2=80=AFPM Dragan Simic <dsimic@manjar=
+o.org>
+> >>> > wrote:
+> >>> >>
+> >>> >> Move the Allwinner A64 CPU OPPs to the A64 SoC dtsi file and,
+> >>> >> consequently,
+> >>> >> adjust the contents of the affected board dts(i) files appropriate=
+ly,
+> >>> >> to
+> >>> >> "encapsulate" the CPU OPPs into the SoC dtsi file.
+> >>> >>
+> >>> >> Moving the CPU OPPs to the SoC dtsi file, instead of requiring the
+> >>> >> board
+> >>> >> dts(i) files to include both the SoC dtsi file and the CPU OPP dts=
+i
+> >>> >> file,
+> >>> >> reduces the possibility for incomplete SoC data inclusion and impr=
+oves
+> >>> >> the
+> >>> >> overall hierarchical representation of data.  Moreover, the CPU OP=
+Ps
+> >>> >> are
+> >>> >> not used anywhere but together with the SoC dtsi file, which
+> >>> >> additionally
+> >>> >> justifies the folding of the CPU OPPs into the SoC dtsi file.
+> >>> >>
+> >>> >> No functional changes are introduced, which was validated by
+> >>> >> decompiling and
+> >>> >> comparing all affected board dtb files before and after these chan=
+ges.
+> >>> >>  When
+> >>> >> compared with the decompiled original dtb files, the updated dtb f=
+iles
+> >>> >> have
+> >>> >> some of their blocks shuffled around a bit and some of their phand=
+les
+> >>> >> have
+> >>> >> different values, as a result of the changes to the order in which=
+ the
+> >>> >> building blocks from the parent dtsi files are included into them,=
+ but
+> >>> >> they
+> >>> >> still effectively remain the same as the originals.
+> >>> >
+> >>> > IIRC, this was a conscious decision requiring board dts files to se=
 t
-> > for the same snippet by llvm-cov would look as follows:
+> >>> > their
+> >>> > CPU supply before OPPs are given. The bootloader does not boot the =
+SoC
+> >>> > at the highest possible OPP / regulator voltage, so if the OPPs are
+> >>> > given
+> >>> > but the supply is not, the kernel will attempt to raise the frequen=
+cy
+> >>> > beyond what the current voltage can supply, causing it to hang.
+> >>
+> >> Yes, this is what I remember as well: this forces boards to opt in to
+> >> DVFS, otherwise they get a fixed 816 MHz. Since there is only one OPP
+> >> table for all boards with that SoC, I think it's reasonable to ask for
+> >> this, since the cooling could not be adequate for higher frequencies
+> >> in
+> >> the first place, or the power supply is not up to par.
 > >
-> >  1068|      5|        if (s =3D=3D e || *e !=3D '/' || !month || month =
-> 12) {
-> >   ------------------
-> >   |  Branch (1068:6): [True: 0, False: 5]
-> >   |  Branch (1068:16): [True: 0, False: 5]
-> >   |  Branch (1068:29): [True: 0, False: 5]
-> >   |  Branch (1068:39): [True: 0, False: 5]
-> >   ------------------
+> > If the cooling isn't capable enough to dissipate the additional heat
+> > generated at higher frequencies, the thermal governor is there to
+> > handle
+> > that by lowering the operating frequency.  If the PSU isn't capable to
+> > provide an additional watt or two, I think a better PSU is needed. :)
+> > No reasonably sized PSU should work at ~100% of its power output.
 > >
-> > Clang has added MC/DC support as of its 18.1.0 release. MC/DC is a fine=
--
-> > grained coverage metric required by many automotive and aviation indust=
-rial
-> > standards for certifying mission-critical software [3].
+> > On top of that, all currently supported A64-based boards have the CPU
+> > OPPs defined and CPU DVFS enabled, so no such issues are possible
+> > there.
+> > Though, there could be some issues with new A64-based boards, which is
+> > discussed further below.
 > >
-> > In the following example from arch/x86/events/probe.c, llvm-cov gives t=
-he
-> > MC/DC measurement for the compound logic decision at line 43.
+> >>> > Now that all existing boards have it properly enabled, there should=
+ be
+> >>> > no
+> >>> > need for this. However I would appreciate a second opinion.
+> >>
+> >> Well, since there is no way to opt *out* now, I am somewhat reluctant
+> >> to
+> >> just have this. What is the actual problem we are solving here? After
+> >> all
+> >> there is just one OPP table for all A64 boards, so there is less
+> >> confusion
+> >> about what to include in each board file. Which IIUC is a more
+> >> complicated
+> >> situation on the Rockchip side.
 > >
-> >    43|     12|                        if (msr[bit].test && !msr[bit].te=
-st(bit, data))
-> >   ------------------
-> >   |---> MC/DC Decision Region (43:8) to (43:50)
-> >   |
-> >   |  Number of Conditions: 2
-> >   |     Condition C1 --> (43:8)
-> >   |     Condition C2 --> (43:25)
-> >   |
-> >   |  Executed MC/DC Test Vectors:
-> >   |
-> >   |     C1, C2    Result
-> >   |  1 { T,  F  =3D F      }
-> >   |  2 { T,  T  =3D T      }
-> >   |
-> >   |  C1-Pair: not covered
-> >   |  C2-Pair: covered: (1,2)
-> >   |  MC/DC Coverage for Decision: 50.00%
-> >   |
-> >   ------------------
-> >    44|      5|                                continue;
+> > Well, this patch doesn't solve some real problem, but it makes the
+> > things
+> > neater and a bit more clean.  The things are more complicated with
+> > Rockchip
+> > SoCs, but following the concept of "encapsulating" the CPU OPPs into
+> > the
+> > A64 SoC dtsi makes things neater.  Moreover, the A64 GPU OPPs are
+> > already
+> > in the A64 SoC dtsi, so we could also say that folding the A64 CPU OPPs
+> > into the SoC dtsi follows the A64 GPU OPPs.
 > >
-> > As the results suggest, during the span of measurement, only condition =
-C2
-> > (!msr[bit].test(bit, data)) is covered. That means C2 was evaluated to =
-both
-> > true and false, and in those test vectors C2 affected the decision outc=
-ome
-> > independently. Therefore MC/DC for this decision is 1 out of 2 (50.00%)=
-.
+> >> I still have to try "operating-points-v2", but at least on the H616
+> >> side
+> >> putting a 'status =3D "disabled";' into the OPP node didn't prevent it
+> >> from
+> >> probing. Otherwise this would have been a nice compromise, I think.
+> >>
+> >>> Good point, thanks for the clarification.  This is quite similar to
+> >>> how
+> >>> board dts(i) files for Rockchip SoCs need to enable the SoC's
+> >>> built-in
+> >>> TSADC for temperature sensing, before the CPU thermal throttling can
+> >>> actually work and prevent the SoC from overheating, etc.
+> >>>
+> >>> The consensus for Rockchip boards is that it's up to the authors and
+> >>> reviewers of the board dts(i) files to make sure that the built-in
+> >>> TSADC
+> >>> is enabled, etc.  With that approach in mind, and knowing that all
+> >>> Allwinner
+> >>> A64 board dts(i) files are in good shape when it comes to the
+> >>> associated
+> >>> voltage regulators, I think it's fine to follow the same approach of
+> >>> "encapsulating" the CPU OPPs into the A64 SoC dtsi file.
+> >>
+> >> As mentioned above, I am not so sure about this. With this patch here,
+> >> *every* board gets DVFS. And while this seems to be fine when looking
+> >> at
+> >> the current DTs in the tree (which have it anyway), it creates a
+> >> potentially dangerous situation for new boards.
+> >>
+> >> So pragmatically speaking, this patch would be fine, but it leaves me
+> >> a
+> >> bit uneasy about future or downstream boards.
 > >
-> > To do a full kernel measurement, instrument the kernel with
-> > LLVM_COV_KERNEL_MCDC enabled, and optionally set a
-> > LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS value (the default is six). Run the
-> > testsuites, and collect the raw profile data under
-> > /sys/kernel/debug/llvm-cov/profraw. Such raw profile data can be merged=
- and
-> > indexed, and used for generating coverage reports in various formats.
+> > Frankly, I wouldn't be worried about that.  When a new A64-based board
+> > is added, it should be verified that CPU DVFS works as expected, etc.,
+> > before the new board dts file is accepted upstream.
 > >
-> >   $ cp /sys/kernel/debug/llvm-cov/profraw vmlinux.profraw
-> >   $ llvm-profdata merge vmlinux.profraw -o vmlinux.profdata
-> >   $ llvm-cov show --show-mcdc --show-mcdc-summary                      =
-   \
-> >              --format=3Dtext --use-color=3Dfalse -output-dir=3Dcoverage=
-_reports \
-> >              -instr-profile vmlinux.profdata vmlinux
+> > Maybe we could take into account some possible issues when someone
+> > starts
+> > putting together a new A64-based board dts file, but there are already
+> > many dangerous things that someone can do in the process, such as
+> > messing
+> > up various regulators and voltages unrelated to the CPU DVFS, so
+> > everyone
+> > putting a new board dts file together simply have to know what are they
+> > doing.  I see no way for escaping from that need.
 > >
-> > The first two patches enable the llvm-cov infrastructure, where the fir=
-st
-> > enables source based code coverage and the second adds MC/DC support. T=
-he
-> > next patch disables instrumentation for curve25519-x86_64.c for the sam=
-e
-> > reason as gcov. The final patch enables coverage for x86-64.
-> >
-> > The choice to use a new Makefile variable LLVM_COV_PROFILE, instead of
-> > reusing GCOV_PROFILE, was deliberate. More work needs to be done to
-> > determine if it is appropriate to reuse the same flag. In addition, giv=
-en
-> > the fundamentally different approaches to instrumentation and the resul=
-ting
-> > variation in coverage reports, there is a strong likelihood that covera=
-ge
-> > type will need to be managed separately.
-> >
-> > This work reuses code from a previous effort by Sami Tolvanen et al. [4=
-].
-> > Our aim is for source-based *code coverage* required for high assurance
-> > (MC/DC) while [4] focused more on performance optimization.
-> >
-> > This initial submission is restricted to x86-64. Support for other
-> > architectures would need a bit more Makefile & linker script modificati=
-on.
-> > Informally we've confirmed that arm64 works and more are being tested.
-> >
-> > Note that Source-based Code Coverage is Clang-specific and isn't compat=
-ible
-> > with Clang's gcov support in kernel/gcov/. Currently, kernel/gcov/ is n=
-ot
-> > able to measure MC/DC without modifying CFLAGS_GCOV and it would face t=
-he
-> > same issues in terms of source correlation as gcov in general does.
-> >
-> > Some demo and results can be found in [5]. We will talk about this patc=
-h
-> > series in the Refereed Track at LPC 2024 [6].
-> >
-> > Known Limitations:
-> >
-> > Kernel code with logical expressions exceeding
-> > LVM_COV_KERNEL_MCDC_MAX_CONDITIONS will produce a compiler warning.
-> > Expressions with up to 47 conditions are found in the Linux kernel sour=
-ce
-> > tree (as of v6.11), but 46 seems to be the max value before the build f=
-ails
-> > due to kernel size. As of LLVM 19 the max number of conditions possible=
- is
-> > 32767.
-> >
-> > As of LLVM 19, certain expressions are still not covered, and will prod=
-uce
-> > build warnings when they are encountered:
-> >
-> > "[...] if a boolean expression is embedded in the nest of another boole=
-an
-> >  expression but separated by a non-logical operator, this is also not
-> >  supported. For example, in x =3D (a && b && c && func(d && f)), the d =
-&& f
-> >  case starts a new boolean expression that is separated from the other
-> >  conditions by the operator func(). When this is encountered, a warning
-> >  will be generated and the boolean expression will not be
-> >  instrumented." [7]
-> >
->
-> What does this actually look like in the generated code?
->
-> Where is the modification to noinstr ?
->
-> What is the impact on certification of not covering the noinstr code.
+
+[...]
 
