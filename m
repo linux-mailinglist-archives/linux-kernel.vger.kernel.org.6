@@ -1,215 +1,153 @@
-Return-Path: <linux-kernel+bounces-316457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8419E96CFD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3A196CFDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8EFB1C22AAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C199428469A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8588B1925B5;
-	Thu,  5 Sep 2024 06:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAABE1925B6;
+	Thu,  5 Sep 2024 06:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mfMGEJTc"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCXyZv3E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC911925A4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296991922C9;
+	Thu,  5 Sep 2024 06:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725519385; cv=none; b=tfLPQ6gdq6IVSbqqHdUT5Z69U/KJD83QXBjNyoe1Nb5R+ktiA8d50C5GzBGkCihIkOZssYy2sVZ1PQxLo0dc4YzDvgJ847rOCcd6e9lLezAw/WWBPQHZiyYjFxgqC4OqGQIYjYnVNfeezltjHvF2qll6T9T5virLZwRBf8PBnEA=
+	t=1725519476; cv=none; b=MTiAsIddWP8jQTFnzC2JaDn1ylc55LLz7Tzb8tfKrRB+NMqZPR7sSB0IqmEx2fHZKfpQ7wjMsvXvpFHB//I4rDg/HwzvQOgNYPXkwU+4IIh8XkDdrCt3BHKrwvhOIvQyw5fbTJUqsipE4YBQCgNPIl6yv0IQgIxfouPrVdp103M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725519385; c=relaxed/simple;
-	bh=smMXhjuqZRoNTKp9fMH70kgIlhlUnlp9P4aEtTO8T1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mCLfLGmxgz+zS0D8P+zvN1cfvGgBs60XtFytAN3+ERV2bGBsWs/hCgNL/hEK9X5hpTsd7k/0NnEtf1/O5MY9B75NWnQKOPK7236JDoEcWUUTjyxpYLUMfThI5isBOtrIQoK7rmIu7b3Kn94xIa16q0pykzIHFquwH4LWKJzQ16I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mfMGEJTc; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-70f79f75da6so298382a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725519383; x=1726124183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=is6oA3m8LIEojdfLA7VjQTerM+IVLQZFBibvLCSwhaA=;
-        b=mfMGEJTcauafV9kSbMjRObSWB25mUC0KdE8tzHYw4FGc5/aZWh/+/J+s3rWYzW5WZk
-         Am776c9A5hNnOj30XnIbViaFigscTy110CVg36IA5qwVoYIpqSmUNjjyS19hqxX1nsY5
-         Za7ABCIhtnmQMERG0hv5bjLWHhduPIfUNWwCzCdYo+EyIqPnZWO2HUNEzH5pDwHhYvQ4
-         Yrjm6wxsczHoMu3vvOd7Pq8brlduh4m0ILVxz4EK8qeB7EX3DdsXQZQe1Fbqh6l3dCvP
-         ei8wQdudptqg79QFbIockBIqeE/cDkugeghReqYZDoVsscUo5ENIgQH9L/+wnyLMzcQJ
-         c/FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725519383; x=1726124183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=is6oA3m8LIEojdfLA7VjQTerM+IVLQZFBibvLCSwhaA=;
-        b=sAa/ACcwiQ14KBV5+j+7cqp83LioJcG3t7OvYsdwV8dx4BqOcD0LSotWGduW1HjWQf
-         fEwzGIdWyCitz76KbTZMjxaPOew5vrr9bJPs+UDC++Ch06yZMMqiPQ31DnJO9gQwQgyF
-         p9UiZ5b/OZ+O5x9Ti4aEITEzXEpdSFb+2ZugjJyD6dn7Yrswk4nscU3OFDBUIHwE0I/D
-         2IRytbUogrLrH86Z39tKAsvEOU9btYx+ATh53DnmSwRHzNMfgaK8CQPlMRrLx8NmzYn8
-         8mH8V6JL0fBBhj31GPuotdzqhky7aVxNY3pnwtJT6+9ypOs/Is+p5eQmvMe2wZBlKYKx
-         huZQ==
-X-Gm-Message-State: AOJu0YxLty91Lr3Tme1yFIBiJ9FZ84CYtvIXlf2W3Hx8yNbfSiA23mpS
-	3eEynRhxij+x5JHwtAf1t/qFnc636gzhJZJhEyyPRif0Cj2eZPSmjHaPywlEtjZKLHzMryLtK4g
-	Q5IWHbbHYOMBL+fU8n7URbG1EPPMpbp00xfYkVA==
-X-Google-Smtp-Source: AGHT+IH5sLg/BL7saD9/TXa220ctb5hvcylawPt/eU1IH9MP/VmfAzkYvlQbzwvsbvXXi2U8bfsvnevyQYB2IQEHh6U=
-X-Received: by 2002:a05:6830:25d6:b0:703:63d3:9eef with SMTP id
- 46e09a7af769-70f7072e89bmr16742155a34.25.1725519383303; Wed, 04 Sep 2024
- 23:56:23 -0700 (PDT)
+	s=arc-20240116; t=1725519476; c=relaxed/simple;
+	bh=CEPsGflWZeSF9qjtv1h4qE9S6k0Dy+MydMjA+1WQ2YI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hsstr1EPQGqp0m5WmAaasfFvsshbnn98rNEUvADZNa1GA0uIiTgmJAjqTR9DClPLxaR4HaGAxDfDcWk6FPgo6lhJCY8e6w9ArGg6Kt/zgl6mqVfKGoDbTeime4gStyeKxxNustMqN9v35zjXBViWGmKOkoiDZ61bg2CuMgxEXSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCXyZv3E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5C5C4CEC4;
+	Thu,  5 Sep 2024 06:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725519475;
+	bh=CEPsGflWZeSF9qjtv1h4qE9S6k0Dy+MydMjA+1WQ2YI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WCXyZv3EE/SQ5wPWAKrqheSOLin73I2Xr3MDAE1Hq+0QNmnVnJdHED/qTIpHueZdL
+	 J/NO+1vWOJ7SJJaXyUN6gQQeSs03GwYNM0cFQE0yneHIdm/McE/TvCLc+qyp4yq9rm
+	 mFoMiMlMbLkJkOci2VFxPNoxoNVU56lnP+kB//OgBZg94PD2T9vqSTOPeN5xBwHWsV
+	 9XNahFL144tsafs57L0y4mgeXYp9uYHKCQuLzcTZ0390iNkQQJPuIrV4yalKrVElqD
+	 bDGM15rFHKU8jBBfhjAj8TdhMFNB+NZTJz96EaczrBeh1wEVAe09/Ir08b3isrfkjN
+	 thEzXA0suIHCg==
+Message-ID: <acd72984-4c04-40f1-9e0e-f84f6c566b37@kernel.org>
+Date: Thu, 5 Sep 2024 08:57:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
- <20240830070351.2855919-2-jens.wiklander@linaro.org> <4a498990-2d9e-4555-85f3-d1d22e26b9dd@amd.com>
-In-Reply-To: <4a498990-2d9e-4555-85f3-d1d22e26b9dd@amd.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 5 Sep 2024 08:56:11 +0200
-Message-ID: <CAHUa44G9yF2GoQD8XrE=agkGCditH1v+NYm16WpdORX4aRixYg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] dma-buf: heaps: restricted_heap: add no_map attribute
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+To: Jan Kiszka <jan.kiszka@siemens.com>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <cover.1725444016.git.jan.kiszka@siemens.com>
+ <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 30, 2024 at 10:47=E2=80=AFAM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
->
-> Am 30.08.24 um 09:03 schrieb Jens Wiklander:
-> > Add a no_map attribute to struct restricted_heap_attachment and struct
-> > restricted_heap to skip the call to dma_map_sgtable() if set. This
-> > avoids trying to map a dma-buf that doens't refer to memory accessible
-> > by the kernel.
->
-> You seem to have a misunderstanding here dma_map_sgtable() is called to
-> map a table into IOMMU and not any kernel address space.
->
-> So please explain why you need that?
+On 04/09/2024 12:00, Jan Kiszka wrote:
+> +
+> +    reg-names:
+> +      minItems: 4
+> +      items:
+> +        - const: app
+> +        - const: dbics
+> +        - const: config
+> +        - const: atu
+> +        - const: vmap_lp
+> +        - const: vmap_hp
+> +
+> +    memory-region:
 
-You're right, I had misunderstood dma_map_sgtable(). There's no need
-for the no_map attribute, so I'll remove it.
+This also did not improve. You did not address any feedback from v3.
 
-Perhaps you have a suggestion on how to fix a problem when using
-dma_map_sgtable()?
+Missed feedback:
 
-Without it, I'll have to assign a pointer to teedev->dev.dma_mask when
-using the restricted heap with the OP-TEE driver or there will be a
-warning in __dma_map_sg_attrs() ending with a failure when trying to
-register the dma-buf fd. OP-TEE is probed with a platform device, and
-taking the dma_mask pointer from that device works. Is that a good
-approach or is there a better way of assigning dma_mask?
+This *must* be defined in top-level.
+I still think this must have some sort of maxItems. I accept your
+explanation that you could have multiple memory pools, but I don't think
+2147000 pools is possible. Make it 4, 8 or 32.
 
-Thanks,
-Jens
+> +      minItems: 1
+> +      description: |
+> +        phandle to one or more restricted DMA pools to be used for all devices
+> +        behind this controller. The regions should be defined according to
+> +        reserved-memory/shared-dma-pool.yaml.
+> +      items:
+> +        maxItems: 1
 
->
-> Regards,
-> Christian.
->
-> >
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > ---
-> >   drivers/dma-buf/heaps/restricted_heap.c | 17 +++++++++++++----
-> >   drivers/dma-buf/heaps/restricted_heap.h |  2 ++
-> >   2 files changed, 15 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/dma-buf/heaps/restricted_heap.c b/drivers/dma-buf/=
-heaps/restricted_heap.c
-> > index 8bc8a5e3f969..4bf28e3727ca 100644
-> > --- a/drivers/dma-buf/heaps/restricted_heap.c
-> > +++ b/drivers/dma-buf/heaps/restricted_heap.c
-> > @@ -16,6 +16,7 @@
-> >   struct restricted_heap_attachment {
-> >       struct sg_table                 *table;
-> >       struct device                   *dev;
-> > +     bool no_map;
-> >   };
-> >
-> >   static int
-> > @@ -54,6 +55,8 @@ restricted_heap_memory_free(struct restricted_heap *r=
-heap, struct restricted_buf
-> >   static int restricted_heap_attach(struct dma_buf *dmabuf, struct dma_=
-buf_attachment *attachment)
-> >   {
-> >       struct restricted_buffer *restricted_buf =3D dmabuf->priv;
-> > +     struct dma_heap *heap =3D restricted_buf->heap;
-> > +     struct restricted_heap *rheap =3D dma_heap_get_drvdata(heap);
-> >       struct restricted_heap_attachment *a;
-> >       struct sg_table *table;
-> >
-> > @@ -70,6 +73,7 @@ static int restricted_heap_attach(struct dma_buf *dma=
-buf, struct dma_buf_attachm
-> >       sg_dma_mark_restricted(table->sgl);
-> >       a->table =3D table;
-> >       a->dev =3D attachment->dev;
-> > +     a->no_map =3D rheap->no_map;
-> >       attachment->priv =3D a;
-> >
-> >       return 0;
-> > @@ -92,9 +96,12 @@ restricted_heap_map_dma_buf(struct dma_buf_attachmen=
-t *attachment,
-> >       struct sg_table *table =3D a->table;
-> >       int ret;
-> >
-> > -     ret =3D dma_map_sgtable(attachment->dev, table, direction, DMA_AT=
-TR_SKIP_CPU_SYNC);
-> > -     if (ret)
-> > -             return ERR_PTR(ret);
-> > +     if (!a->no_map) {
-> > +             ret =3D dma_map_sgtable(attachment->dev, table, direction=
-,
-> > +                                   DMA_ATTR_SKIP_CPU_SYNC);
-> > +             if (ret)
-> > +                     return ERR_PTR(ret);
-> > +     }
-> >       return table;
-> >   }
-> >
-> > @@ -106,7 +113,9 @@ restricted_heap_unmap_dma_buf(struct dma_buf_attach=
-ment *attachment, struct sg_t
-> >
-> >       WARN_ON(a->table !=3D table);
-> >
-> > -     dma_unmap_sgtable(attachment->dev, table, direction, DMA_ATTR_SKI=
-P_CPU_SYNC);
-> > +     if (!a->no_map)
-> > +             dma_unmap_sgtable(attachment->dev, table, direction,
-> > +                               DMA_ATTR_SKIP_CPU_SYNC);
-> >   }
-> >
-> >   static int
-> > diff --git a/drivers/dma-buf/heaps/restricted_heap.h b/drivers/dma-buf/=
-heaps/restricted_heap.h
-> > index 7dec4b8a471b..94cc0842f70d 100644
-> > --- a/drivers/dma-buf/heaps/restricted_heap.h
-> > +++ b/drivers/dma-buf/heaps/restricted_heap.h
-> > @@ -27,6 +27,8 @@ struct restricted_heap {
-> >       unsigned long           cma_paddr;
-> >       unsigned long           cma_size;
-> >
-> > +     bool                    no_map;
-> > +
-> >       void                    *priv_data;
-> >   };
-> >
->
+
+
+Best regards,
+Krzysztof
+
 
