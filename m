@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-317276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2654D96DBD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F05296DBD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80311F23577
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934ED1C211C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C30339FC5;
-	Thu,  5 Sep 2024 14:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631F9DDAB;
+	Thu,  5 Sep 2024 14:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kZyW5y/u"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2062.outbound.protection.outlook.com [40.107.102.62])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2BwTPD/h"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2059.outbound.protection.outlook.com [40.107.212.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F8E210E9;
-	Thu,  5 Sep 2024 14:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D60CD528;
+	Thu,  5 Sep 2024 14:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725546689; cv=fail; b=ciTWRN8iUK114V64BomACaqhcm1hQXqiiI98ruN9I4As7w+fTYQLR9/bg3Sq3HLK98AzI0zGV7Lah0afI9Bbt9erkNi8n1v5HMWLM48uWvNnjtPdzRzxomI7hWxkE6gWUhIy2zhgSRldA5RZfCGHO9q1geFDzLkBCXxwLjfXs1k=
+	t=1725546703; cv=fail; b=BFifEDbfBKalMXKQAQJfj/CFXKTyeIyNcmKjumqQUy6Kqv1RhA0mKiOs0brPkWZr7GKaL3OBpX3JMUMlZc3JQP1elMXnk80U84EKrAw49U5Dh0tkyE32CTBdW3Xn3fdW3RaWWXkpZ0yMAVAiSmRd1RhT0QWoowas7w+jBEiVuIA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725546689; c=relaxed/simple;
-	bh=srNLLesiLDuvsSunKUoLm06Xtwdrvo3kA73BFQ3ZwlE=;
+	s=arc-20240116; t=1725546703; c=relaxed/simple;
+	bh=8TYZxNRtUEIxP4fZY/f9t3LSZbxPhlrb9Rp/uGdzmN8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+vXl3BcJCE32QL31AvdCsK8bcR5NM3yctph1n2iA3Q96wzlR60g03RXR8Kdqa/cruTiccit6Hmqvy8bTuBVqpCO6Qfd98BVdMvimBZ63XEJbYXgSj5uG3+4xOB4WoDu6hDQVUR8gWmaRooEfOnAg45GnHgLJSav/u0W+1HOFQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kZyW5y/u; arc=fail smtp.client-ip=40.107.102.62
+	 MIME-Version:Content-Type; b=F/hHczoatD2d5xQoQKOzCPMC+xnjbiVZLsXAImY5w4irhEdSILQMfp714fuxsrOyhz2PJjRnOt9Qc/vdxHW8i4eLDkiVpa3q6vsxDezk8Icqax/XDZ2H87qs8QbOr9l31Grx0eqSwiTyfjQ775U//NRQvOVPgeOrfT4VTVXJlos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2BwTPD/h; arc=fail smtp.client-ip=40.107.212.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UjTw0GkLYEVvhlio2N/zaEFoSPAqaHHoRuHVSX/vHRkYwTgR2Ee15TrZIkXZKPd5e28eK/96efstxUWAQdYyjqJ0nPFZC4wVmeizCYM68HkgQN/9nQkqvr6N2MhdBOKr4thIwhcylh0QiYi3gL6BeOPk71T+qz3JGaKV9/mnAkSL9wEvci1SPaEVhg5+bEQKN5aQNj2sp2rEeSwDDSF3quz1E+tVPH7RAZLG41WSJ6NVGQgMo3pXov0hB0BtPSPYdvmzwoYF+X3fBnr1X0ppAyxLTv36yuWAq6x5qN6BWakjs96D3mZVbPxaZWPtVgZW9pR+76gLwQRbwUeVMA4IfQ==
+ b=sqOm9943dgPiW/XAydWcEloIEXbqRv2ZYLgaUcIDfQbLylIe1u6NDkrABzgzEWwLsQip/9mbeukL4/5O3eZyRoD9TNPleOauBNp+6YZP7MQRcOJjLdVF+b78MTCulcRKpVzMejlCBh3H2OBQ23HnpHgXDwTObA0BQl8MOAOfDEEoDUoXhgTYHnJbaXRRT0QG1Qf3pCFfELnlsmHXxOUeQY0cfwpxExZmf53Ao3gfnXkJ4SK6UQqNDFz4UMPneOJCGLUf0ehyvNP1e+SUA51J8e6yjUwLCGiU6l1pam8GLvTdq+Hl9+jd4H9eLt6z9lFtBaUyC4854XsODRG95G6XGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EYpJU64SQo7/EmW+nl44948247L6IgGeXRY5+/lN9cA=;
- b=LKP2IfpT6uaRW5hs2V7demVTpd2DMSM0LA12mD9XwlEM6lgEvGKzslsOU22QO/3S3jPwF1ZtwIJMiSGIzdSExh8h9lmdnf1kx5TG31HgZ6PjKDX06o05ShXe7ApzrhtsFG0nh5Mvw72YKbciOytJiskdpe2SrzLrHvDDC5rxn9NC4QWusOxQtKXc1yEGGvRRWi42uMMj+rN5208QC3NG++bQWBc9yslfh7BO1gZzI50+RPSdXR2PpdxqCBtagi+a9ho7NIUaUJbFUou9niN5oKzbOiR7tt8FsZA1/xAQGZ3OMvJhHMPjEnaiLbf9OBk6ELzwj0aTyfs7BOF/EGhb4Q==
+ bh=lK7JzzgPgY+vB73szTd/ngGCEFFtnOqUIDOwDsAsCXw=;
+ b=SMfxwcUkAwz192+U3OOX9HU2fYyCUFdb1pLwvFCuZMnLyUWkrcIhv2phaGlk1sxL1GgXWR0cfjobrFkL/2e0OmcKa/l6IWwJ94OnLRqk3KC9/GKU80Tf1QOr8TcUPwjuY6XapCVJE5A04qMtIiICz/JbknrFZQPRDM6kAbDOa1SAQap6rfjclZNa39GIwDSYf2/wEeqdxi8KcMeTS6rdwBtXyEwmwszPdHP3Ur+s5IV5kmhnZ4FiGIEu+coqrKOQDRxOvaXNAbKQuTzRgISATC5Atcb8GAfC27p3vJr/GRYfCOcjywfwoThLT/FaXcRBBgMoCDjABz9JyyWtR3SNhg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EYpJU64SQo7/EmW+nl44948247L6IgGeXRY5+/lN9cA=;
- b=kZyW5y/umg5MWyB/SsoDZ38JOEJCY6k+D6+7G6e6GYOrFkVe2QEBfpir3VcKDSH1mURAsDPpKyDU01Eld4Ky85OH2rOUmHxr9L7UooZ6BbTWEMNLBQzK8KkNSkxeCe3gjCncTtkugiUeeFe5zJ91abc1+NU7/K/0vvaP/qKF2L4=
-Received: from BY5PR16CA0035.namprd16.prod.outlook.com (2603:10b6:a03:1a0::48)
- by MW4PR12MB6899.namprd12.prod.outlook.com (2603:10b6:303:208::20) with
+ bh=lK7JzzgPgY+vB73szTd/ngGCEFFtnOqUIDOwDsAsCXw=;
+ b=2BwTPD/h9XmerQcgbq5htj2bSiDcgnxSNPxSlBvSTMkMDs7ucbzJp75gL8VwoLPL+t1wzg4rdJP5yRVvTaN5AScmmB6iJSkTDxPk+qJ/Oa0uscHOtvuwtEySGIpORt9H1pI0bB3CUiUw8lhV442vYRXaVV+gBOHq9vHm9AzdlY8=
+Received: from SJ0PR03CA0153.namprd03.prod.outlook.com (2603:10b6:a03:338::8)
+ by PH8PR12MB7327.namprd12.prod.outlook.com (2603:10b6:510:215::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Thu, 5 Sep
- 2024 14:31:21 +0000
-Received: from SJ1PEPF0000231C.namprd03.prod.outlook.com
- (2603:10b6:a03:1a0:cafe::d) by BY5PR16CA0035.outlook.office365.com
- (2603:10b6:a03:1a0::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.16 via Frontend
- Transport; Thu, 5 Sep 2024 14:31:21 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Thu, 5 Sep
+ 2024 14:31:32 +0000
+Received: from SJ1PEPF00002319.namprd03.prod.outlook.com
+ (2603:10b6:a03:338:cafe::f) by SJ0PR03CA0153.outlook.office365.com
+ (2603:10b6:a03:338::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
+ Transport; Thu, 5 Sep 2024 14:31:32 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ1PEPF0000231C.mail.protection.outlook.com (10.167.242.233) with Microsoft
+ SJ1PEPF00002319.mail.protection.outlook.com (10.167.242.229) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Thu, 5 Sep 2024 14:31:21 +0000
+ 15.20.7918.13 via Frontend Transport; Thu, 5 Sep 2024 14:31:32 +0000
 Received: from ethanolx16dchost.amd.com (10.180.168.240) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Sep
- 2024 09:31:20 -0500
+ 2024 09:31:31 -0500
 From: Pavan Kumar Paluri <papaluri@amd.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <linux-doc@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, "Thomas
@@ -78,9 +78,9 @@ CC: <linux-doc@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, "Thomas
 	Michael Roth <michael.roth@amd.com>, "H . Peter Anvin" <hpa@zytor.com>,
 	"Peter Zijlstra" <peterz@infradead.org>, Pavan Kumar Paluri
 	<papaluri@amd.com>
-Subject: [PATCH v3 1/2] x86, KVM:SVM: Move sev specific parsing into arch/x86/virt/svm
-Date: Thu, 5 Sep 2024 09:30:55 -0500
-Message-ID: <20240905143056.48216-2-papaluri@amd.com>
+Subject: [PATCH v3 2/2] x86 KVM:SVM: Provide "nosnp" boot option for sev kernel command line
+Date: Thu, 5 Sep 2024 09:30:56 -0500
+Message-ID: <20240905143056.48216-3-papaluri@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240905143056.48216-1-papaluri@amd.com>
 References: <20240905143056.48216-1-papaluri@amd.com>
@@ -96,223 +96,101 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB03.amd.com
  (10.181.40.144)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231C:EE_|MW4PR12MB6899:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54fee22a-f18c-432d-518e-08dccdb769c7
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002319:EE_|PH8PR12MB7327:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a9fd26c-8007-4ab5-914b-08dccdb7706a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hE46hw2KrBbntEknCrZKYu+C7DydibZW0nSSriFTupGL95omAN8rOtNP/kQJ?=
- =?us-ascii?Q?7wZJipNmVGkAO9s8COc0jY5wrtf8oTbOXEFNM6spJ25j+LKMn4NB6U483tbx?=
- =?us-ascii?Q?PTuyjCxkcmaADgKL9EGblBK4+ZsAR/e8oGvPUKaLpjYQa0JOIpk5LIr4SoXA?=
- =?us-ascii?Q?0PyzmzctG5BRhF/UwZCbdplDvLJqw0QXTRBNPc923is/PZh4UrzcdI5HTo6Q?=
- =?us-ascii?Q?oS759YcnqbuK9Tux7For1DUrP2royMteXJda8jOtO4oBy6tewtEd/KSSbjvf?=
- =?us-ascii?Q?IZ5vVF0DEfcVwnxirlIohjlrkrQGshDd0qOni4zAu0xnNIl58v9O74dhVbfH?=
- =?us-ascii?Q?yyCWstuR4PfjUVKxRaTjJZraX1QbDPnNpbSWZVbWnL0EEI03VDFL+7fzjukj?=
- =?us-ascii?Q?7sRFNPSTHY4DafmbXrywmVyOh57gaNFDjBv50I7LRlcaR+1HLulGB/uck5/M?=
- =?us-ascii?Q?c5243OBSTW+/6Dvl2oG0cSG/bob3OHsQZ0nIzQxRjkxOkmYCk0/cBW78Ua2K?=
- =?us-ascii?Q?JjdircsILzEbZOOMuWWI4rSs6OcXCYAwaKYHvk27OrMOHJUq/ELkYCOSTfmP?=
- =?us-ascii?Q?6LD0d4u7vqYUI2A1mcqUD3Nn2p0ns7KMRGwroT0OlO3o6DmxxHpjeOInhEsd?=
- =?us-ascii?Q?KWnFhGfUEL1v5ghnyfZN26NREZKDn75KA47R/mEo3ZckaUhJHcxFhGJry+Fl?=
- =?us-ascii?Q?3IhLtGGqgyRZhPNN0I2IleBm7wU0ZITZfB2yB91SIEFW+tXBjZHf5hoQlHwI?=
- =?us-ascii?Q?uE748yrQk7tHuI9Dejhqc3lcXFeXkmTYmv7RfcGeNZ0azQnxBmnpm3pqI1DR?=
- =?us-ascii?Q?PrZF9QT8wilktALg1ITH1TFXYiBOF8qUrzPKaJThk1zG5729wF0ibeRVoZ89?=
- =?us-ascii?Q?JD5Q8OvBHG+NwqpUZCTBYZSipIOfLxbqu84mGxRQZWUPUsYA8rvUTACGGeN0?=
- =?us-ascii?Q?G0Oh8kyyMYNY3a1M/BCDo2EHbko1cyG8ixScGpd9BcmAcCD0Y8PXj45oSxqS?=
- =?us-ascii?Q?YC2ZcBCstpMbq6rW2h3GIwxT2LiPX7B3IU+Ja6tHkNC1vzSVdZazqfzyp072?=
- =?us-ascii?Q?yZavf80uGPco1NHPNbWnXY/Lv9k4dQDUtAVUvOzrumUmgTDs9OLmZ4/dc4Cx?=
- =?us-ascii?Q?G9Bgp2xbniWtdgLb3qDZohf0JWi+y5u1KcwBiWkf/WCLF2WoV6/cxEOA9btA?=
- =?us-ascii?Q?eWiXHKxb1rpoKBCXe7VPSK+bEZlplyXgyLEwc+sJ5GFOcm9KbOFto5knWIrp?=
- =?us-ascii?Q?Rq/UN525qBlfbZ8ejv1N3RA66lE0iswDH5Cr/7t3mR/PfCFY/YLTD+37mffR?=
- =?us-ascii?Q?P4k7+eOukUtNQycTz/l2FuEf1ofGThZB/tPaifQ9QKObmPuX/IQoeQwQm8aa?=
- =?us-ascii?Q?gu0Frjxto6BJMIzW7+x1NuJr0q/cjOPM8ayntlWeJSjsaMRKP6biHpf887K0?=
- =?us-ascii?Q?iJPVVm4sr0sdm3Owrj0BjqpwsVEzSRbY?=
+	=?us-ascii?Q?Ltqcg7Sszgq80pAxMZqEONLHUiYtJIVU0dS+PX1Z7UUCSqS4OM7Hu/7Q9D6w?=
+ =?us-ascii?Q?DyngBkX7SvUmbvfXxKSoCEfOsHVcg/fUpkN8SoIIBtwedLGkDwhF/BsMljzQ?=
+ =?us-ascii?Q?vxReEsEoOA4pFZyyZf2OkwZMUmjLyD7k8BAmUniKamoPStMy2PcqRvOpqEmS?=
+ =?us-ascii?Q?+1Bd1Elhx3JVJNSIIsZh76i2g6iBjg2nGPm0lrH8P/zH54ihFBxEKa/ZL72E?=
+ =?us-ascii?Q?gDufZSeDvVbvBjxinT8JVcxeTuHVhSWjsWAkhs7VlgAYzhWuhhVivVBIURw/?=
+ =?us-ascii?Q?pJ/HRZJLJdqa1Ayv41kEMnnUyD3N3nD9D2puVwHOmHEnsO14lgUK2BG2t3vu?=
+ =?us-ascii?Q?TT0iyhiiEhFV8Vp3fMZE2wsVSnpT/M70zvMKTShd3LE6D4hVB5pBjxQaHerH?=
+ =?us-ascii?Q?2mCMxatSAhptUNTcMFUdmqm7nRLEsIhm2nhJ64Oz/SGhe4RuKTFCEkOJaf3w?=
+ =?us-ascii?Q?q8y7TsItD/ghzmv/g8RPtfERLZkioBSBzmMuJVil8TS2exi66X+SwdRLrF7D?=
+ =?us-ascii?Q?Lu9tPu11Hza1lOLmEAf4aF5lT2nySKvWdb3+B40bKnF1h983ml8If6CkTg5F?=
+ =?us-ascii?Q?jS6QD6d4F8SmXZ2Hm/j5puyt5Lb7Hyt8Kb+3XaK/1S/c9efVm1eKtP5OW0KR?=
+ =?us-ascii?Q?f9L+gLd8Bx/x8ZDZ7ItMIRhKKvaP6wGFEwutX5x/mxIwhYYVPVMJBEL55484?=
+ =?us-ascii?Q?zThFNIpdEoExwSFZZwo8g/QeCUkFsUDCnLGzn2NXGX6clU/JQ8PnsIPvzu79?=
+ =?us-ascii?Q?iAIuNH3O5mc5sOgl6Jia0S/laAxAQZtIpe3+ZyfsBzYoZFwpOqp7pZ7QPRUh?=
+ =?us-ascii?Q?uuYRy4pXiZwOZwavidWbXjWAfJBwXjDRpykPXkHAmn3Z8KscQYczZYdcuHVe?=
+ =?us-ascii?Q?0uDdTllGJHAiDa9UnNb96k18ROmO9q+r8E+GCKCoN4SIUAROcve5us0drll+?=
+ =?us-ascii?Q?izYyS+nLMgZxhuZyLfhUxSc4BRq6twbpNlfucgJYcwyQXweDMsUoZAZD4j0D?=
+ =?us-ascii?Q?Ra7oWhXVLwf4Ydso1ozi0rjwxaxCxZL1BgQQJiPVwmdgFPJsPXounyNri58h?=
+ =?us-ascii?Q?TiQnR8izJiQH/C7TWYQ+Rj7BUPPXWpqHxjo1W+kPh/a6IuVOdm6fZEF9igCb?=
+ =?us-ascii?Q?cZOD1jV21AqsYDcP7q3oPN5YZSDj+JzDQ8uDk5WSzGTukATYtWLZysZacKqv?=
+ =?us-ascii?Q?xFt2KFCjc03v+roJz42nFxL9KFs01Inza1/wBQcrpY9svAcSBNlj0tXEzNvu?=
+ =?us-ascii?Q?/wKwpnwhT8Ruub3i5qzUrOYiAdR+7oArG0JR2rf3Bm0v6E0+ebxte/ekBDCc?=
+ =?us-ascii?Q?H9moE5sdyRPdxM0x/XeYKxW8tHwEwpKVU3r7MuNxhGx7DGUAvN9kodyLaP8r?=
+ =?us-ascii?Q?c4XxSxwyNiBY2Rs6fOqn6ARYPtEuGVGkuk20yNEOTKjqZhFEvMf+/nGpbco3?=
+ =?us-ascii?Q?A8MyHf99ezjlurWSrkP3jI44fPh+M2//?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 14:31:21.5741
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 14:31:32.6790
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54fee22a-f18c-432d-518e-08dccdb769c7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a9fd26c-8007-4ab5-914b-08dccdb7706a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF0000231C.namprd03.prod.outlook.com
+	SJ1PEPF00002319.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6899
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7327
 
-Move SEV specific kernel command line option parsing support from
-arch/x86/coco/sev/core.c to arch/x86/virt/svm/cmdline.c so that both
-host and guest related SEV command line options can be supported.
+Provide a "nosnp" kernel command line option to prevent enabling of the
+RMP and SEV-SNP features in the host/hypervisor. Not initializing the
+RMP removes system overhead associated with RMP checks.
 
-No functional changes intended.
-
+Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
 Signed-off-by: Pavan Kumar Paluri <papaluri@amd.com>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/coco/sev/core.c          | 44 -------------------------------
- arch/x86/include/asm/sev-common.h | 30 +++++++++++++++++++++
- arch/x86/virt/svm/Makefile        |  1 +
- arch/x86/virt/svm/cmdline.c       | 32 ++++++++++++++++++++++
- 4 files changed, 63 insertions(+), 44 deletions(-)
- create mode 100644 arch/x86/virt/svm/cmdline.c
+ Documentation/arch/x86/x86_64/boot-options.rst | 3 +++
+ arch/x86/virt/svm/cmdline.c                    | 7 +++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index de1df0cb45da..ff19e805e7a1 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -141,33 +141,6 @@ static DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
- static DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
- static DEFINE_PER_CPU(u64, svsm_caa_pa);
+diff --git a/Documentation/arch/x86/x86_64/boot-options.rst b/Documentation/arch/x86/x86_64/boot-options.rst
+index 137432d34109..3d4e9a7dccf2 100644
+--- a/Documentation/arch/x86/x86_64/boot-options.rst
++++ b/Documentation/arch/x86/x86_64/boot-options.rst
+@@ -317,3 +317,6 @@ The available options are:
  
--struct sev_config {
--	__u64 debug		: 1,
--
--	      /*
--	       * Indicates when the per-CPU GHCB has been created and registered
--	       * and thus can be used by the BSP instead of the early boot GHCB.
--	       *
--	       * For APs, the per-CPU GHCB is created before they are started
--	       * and registered upon startup, so this flag can be used globally
--	       * for the BSP and APs.
--	       */
--	      ghcbs_initialized	: 1,
--
--	      /*
--	       * Indicates when the per-CPU SVSM CA is to be used instead of the
--	       * boot SVSM CA.
--	       *
--	       * For APs, the per-CPU SVSM CA is created as part of the AP
--	       * bringup, so this flag can be used globally for the BSP and APs.
--	       */
--	      use_cas		: 1,
--
--	      __reserved	: 61;
--};
--
--static struct sev_config sev_cfg __read_mostly;
--
- static __always_inline bool on_vc_stack(struct pt_regs *regs)
- {
- 	unsigned long sp = regs->sp;
-@@ -2374,23 +2347,6 @@ static int __init report_snp_info(void)
- }
- arch_initcall(report_snp_info);
- 
--static int __init init_sev_config(char *str)
--{
--	char *s;
--
--	while ((s = strsep(&str, ","))) {
--		if (!strcmp(s, "debug")) {
--			sev_cfg.debug = true;
--			continue;
--		}
--
--		pr_info("SEV command-line option '%s' was not recognized\n", s);
--	}
--
--	return 1;
--}
--__setup("sev=", init_sev_config);
--
- static void update_attest_input(struct svsm_call *call, struct svsm_attest_call *input)
- {
- 	/* If (new) lengths have been returned, propagate them up */
-diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-index 98726c2b04f8..d3e7f97e2a4a 100644
---- a/arch/x86/include/asm/sev-common.h
-+++ b/arch/x86/include/asm/sev-common.h
-@@ -8,6 +8,9 @@
- #ifndef __ASM_X86_SEV_COMMON_H
- #define __ASM_X86_SEV_COMMON_H
- 
-+#include <asm/cache.h>
-+#include <asm/pgtable_types.h>
+    debug
+      Enable debug messages.
 +
- #define GHCB_MSR_INFO_POS		0
- #define GHCB_DATA_LOW			12
- #define GHCB_MSR_INFO_MASK		(BIT_ULL(GHCB_DATA_LOW) - 1)
-@@ -220,4 +223,31 @@ struct snp_psc_desc {
- #define GHCB_ERR_INVALID_INPUT		5
- #define GHCB_ERR_INVALID_EVENT		6
- 
-+struct sev_config {
-+	__u64 debug		: 1,
-+
-+	      /*
-+	       * Indicates when the per-CPU GHCB has been created and registered
-+	       * and thus can be used by the BSP instead of the early boot GHCB.
-+	       *
-+	       * For APs, the per-CPU GHCB is created before they are started
-+	       * and registered upon startup, so this flag can be used globally
-+	       * for the BSP and APs.
-+	       */
-+	      ghcbs_initialized	: 1,
-+
-+	      /*
-+	       * Indicates when the per-CPU SVSM CA is to be used instead of the
-+	       * boot SVSM CA.
-+	       *
-+	       * For APs, the per-CPU SVSM CA is created as part of the AP
-+	       * bringup, so this flag can be used globally for the BSP and APs.
-+	       */
-+	      use_cas		: 1,
-+
-+	      __reserved	: 61;
-+};
-+
-+extern struct sev_config sev_cfg __read_mostly;
-+
- #endif
-diff --git a/arch/x86/virt/svm/Makefile b/arch/x86/virt/svm/Makefile
-index ef2a31bdcc70..eca6d71355fa 100644
---- a/arch/x86/virt/svm/Makefile
-+++ b/arch/x86/virt/svm/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_KVM_AMD_SEV) += sev.o
-+obj-$(CONFIG_CPU_SUP_AMD) += cmdline.o
++   nosnp
++     Do not enable SEV-SNP (applies to host/hypervisor only).
 diff --git a/arch/x86/virt/svm/cmdline.c b/arch/x86/virt/svm/cmdline.c
-new file mode 100644
-index 000000000000..964677ab02d6
---- /dev/null
+index 964677ab02d6..454574539c49 100644
+--- a/arch/x86/virt/svm/cmdline.c
 +++ b/arch/x86/virt/svm/cmdline.c
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * AMD SVM-SEV command line parsing support
-+ *
-+ * Copyright (C) 2023 - 2024 Advanced Micro Devices, Inc.
-+ *
-+ * Author: Michael Roth <michael.roth@amd.com>
-+ */
-+
-+#include <linux/string.h>
-+#include <linux/printk.h>
-+
-+#include <asm/sev-common.h>
-+
-+struct sev_config sev_cfg;
-+
-+static int __init init_sev_config(char *str)
-+{
-+	char *s;
-+
-+	while ((s = strsep(&str, ","))) {
-+		if (!strcmp(s, "debug")) {
-+			sev_cfg.debug = true;
+@@ -11,6 +11,7 @@
+ #include <linux/printk.h>
+ 
+ #include <asm/sev-common.h>
++#include <asm/cpufeature.h>
+ 
+ struct sev_config sev_cfg;
+ 
+@@ -24,6 +25,12 @@ static int __init init_sev_config(char *str)
+ 			continue;
+ 		}
+ 
++		if (!strcmp(s, "nosnp")) {
++			setup_clear_cpu_cap(X86_FEATURE_SEV_SNP);
++			cc_platform_clear(CC_ATTR_HOST_SEV_SNP);
 +			continue;
 +		}
 +
-+		pr_info("SEV command-line option '%s' was not recognized\n", s);
-+	}
-+
-+	return 1;
-+}
-+__setup("sev=", init_sev_config);
+ 		pr_info("SEV command-line option '%s' was not recognized\n", s);
+ 	}
+ 
 -- 
 2.34.1
 
