@@ -1,98 +1,164 @@
-Return-Path: <linux-kernel+bounces-317744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC7896E32E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A1F96E32F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17AC51C23C65
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F003D1C23BDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A231917F4;
-	Thu,  5 Sep 2024 19:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB7618E772;
+	Thu,  5 Sep 2024 19:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpMd4Xpa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vl/erQi1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A221494D9;
-	Thu,  5 Sep 2024 19:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188C13D638;
+	Thu,  5 Sep 2024 19:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564494; cv=none; b=fbXvNPqoQ1gW1ccOE/4NCLCAaFX1D+BZbepTBreEjsNP2/uxkkeQGm5hVSP5y2+b8nAvTkYljx72GETPKxX8Hnoz5tsGnkkZgJ5r992Q502rnUAPoyK7L5gO//jfKdJ9Ow71h2VF0NpexpWYcemRWh5IdoGIYP/GQKuoKkyMlLA=
+	t=1725564521; cv=none; b=on5DCKV8YtbUQzRXIzCh0vOJhQv1KRM1eUSURBCOwNpGTivHo5Iybyi6gMHM+s1wa2iNH3gADrxpqUo31yGATZ7JlTMOhDtgV0EtAJQgRxbQKqeb177U4JhFWYaXQ2c4IMHNkjwgiZ5iNB8CUNP/7CruzR3JqWoL0tNOJ2mpJUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564494; c=relaxed/simple;
-	bh=GP/EYsIa04ZRzCtq5f6AP5GT6XD3MKU3ry8CRFsdUmw=;
+	s=arc-20240116; t=1725564521; c=relaxed/simple;
+	bh=xSCNcyZPAD7C2Zf/moV/PmenKrSqHCwAipxM+ngnN60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTBhUu+AW7NRZk5Pn4rfC7vpL9b58Ut9sVOXnXYA7dI/7hmfcgJWcum61saz5VU68hhoT9UHEAC7/hclkoHz3Jqt46zvpmuQhhv/qHKI0xjulooqI6BiuEMn2Wzpn1e5+WX0DgKwPigL9old2upMMUCmJS9AWN2NYS/LX09oU0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpMd4Xpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C338C4CEC6;
-	Thu,  5 Sep 2024 19:28:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NE+bHCi0nr2dCSxQ/Gb4y3lqM8nW2nEsAzzz/+WlMC9s0tfYuyAq4i3J1zfEPCWo+YlgJ27MhFquzesx+WXOt+IfmDv35YD7EN5SJtFWGEf6ujGOi24vIu0U2HDAV+RdsXRT9EpLx1wd06zjkStuh9vNO6GiKyZsWxfJ/VIAjkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vl/erQi1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273E5C4CEC3;
+	Thu,  5 Sep 2024 19:28:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725564493;
-	bh=GP/EYsIa04ZRzCtq5f6AP5GT6XD3MKU3ry8CRFsdUmw=;
+	s=k20201202; t=1725564518;
+	bh=xSCNcyZPAD7C2Zf/moV/PmenKrSqHCwAipxM+ngnN60=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HpMd4XpaRaFZEAEVPG0pYWcrD08L4YhqKnPMDvqhjGWiogv7mM0jxRTjFsKXyNub4
-	 QU8ORbfUJFBV643sjDGdaVPcPRjIAbJch1833Cq/C+7p2TQ5YYkGe18KEaEE7q6Mt2
-	 0wyDo9pl/CI9D7lsL03l+CzQj4fUQEzbqYhlv+OInwUyDI5IdCJOhUOPFhHUgmnFCt
-	 uxoMr6o2ndJUeOo1JCSaSdjtmwiBoFaAZEWUiRPQm3DAp+JzObK+6AEAeu9VK3qaOF
-	 YSBEzVadvi1hNBKTPUc29JtwKmca39MkoB7GXZCVmQeXrEu8xiSHYEl8FhRq/LTIhI
-	 gBfzySipJ7R+w==
-Date: Thu, 5 Sep 2024 21:28:10 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, tglx@linutronix.de, 
-	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jassisinghbrar@gmail.com, 
-	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
-	thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com, 
-	rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org, linux@roeck-us.net, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
-	Praveen Talari <quic_ptalari@quicinc.com>
-Subject: Re: [PATCH v2 15/21] dt-bindings: i2c: document support for SA8255p
-Message-ID: <is7hoj7s6su4sycvrbwknyf7cj4bgzrarfpdblrjt3w5i4h3to@jzfmei7z2dje>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-16-quic_nkela@quicinc.com>
- <7fc1e4c3-ca09-4a0a-b072-0c4f1d21e44f@kernel.org>
- <ZtgSd_SLndvLLVYF@shikoro>
- <24d4676f-4385-406d-9728-54afc3144e17@quicinc.com>
+	b=Vl/erQi1rk5yk7gH3N27H1rDqGA2UA4gSe4LCir9XZc2fGvbWMuIRoigfPPvyDObT
+	 HZ1ESxLaFbrEHA7aLp4zfU54ro6RZD/w351OBuOAGQ2uuzKV+zmT3dT5K7+1s1597r
+	 rmIK42612TxgaFSC8Ek+v9rgdmz9K7sVqudUY0IVpNCwMyARjwmazsU/kAYl+vheWc
+	 CdHEfBfy/PsbfFPnFIsAH48QJs/2hTpGYhRc+brihP9Os8WSYbQ8O6cTAMwZBk9ym8
+	 3a2LawmKhv74OHCWST1iJkPEhwBsWipd3Ug9SGwz4rncZF2oSfNttAyZy2c8hge0Nx
+	 sFylnzxsCeZqw==
+Date: Thu, 5 Sep 2024 21:28:34 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: libata-eh: Clear scsicmd->result when setting
+ SAM_STAT_CHECK_CONDITION
+Message-ID: <ZtoGYshL26jTuTOj@ryzen.lan>
+References: <20240904223727.1149294-1-ipylypiv@google.com>
+ <Ztls4mim6Jky7E0S@ryzen.lan>
+ <Ztl5I1Kz53MOEtF4@ryzen.lan>
+ <ZtmmvNYxkQGZwVwy@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <24d4676f-4385-406d-9728-54afc3144e17@quicinc.com>
+In-Reply-To: <ZtmmvNYxkQGZwVwy@ryzen.lan>
 
-Hi Nikunj,
-
-On Wed, Sep 04, 2024 at 05:45:05AM GMT, Nikunj Kela wrote:
+On Thu, Sep 05, 2024 at 02:40:28PM +0200, Niklas Cassel wrote:
+> Anyway, I think I came up with an even nicer patch to clear the driver byte.
 > 
-> On 9/4/2024 12:55 AM, Wolfram Sang wrote:
-> >> Just to clarify to I2C maintainers:
-> >> This is incomplete. Missing driver changes.
-> > Thanks, Krzysztof!
+> Change ata_scsi_set_sense():
+> -to set SENSE_DATA_VALID
+> -to clear driver byte (if scsicmd)
 > 
-> Driver changes are going through internal review and will soon be
-> posted. For your reference, we have pushed driver changes in CodeLinaro
-> git branch(nkela/sa8255p_v6_11_rc2)  in kernel-qcom repo [1]. You can
-> take a look at the changes that are in pipeline and will follow soon.
+> For the cases that calls:
+> -scsi_build_sense_buffer()
+> (because they don't want to set the SAM_STAT_CHECK_CONDITION)
+> or
+> -scsi_build_sense()
+> without using ata_scsi_set_sense():
+> create a new function/functions (e.g. ata_build_sense_keep_status())
+> -sets SENSE_DATA_VALID
+> -clears driver byte (if scsicmd)
+> 
+> Will send a PATCH/RFC series today or tomorrow.
 
-Please post here driver changes along with the DTS updates.
+Thinking even more about this:
 
-Thanks Krzysztof for being active here!
+ata_qc_schedule_eh() will have called scsi_timeout(), which sets
+DID_TIME_OUT, since libata does not have an abort handler.
 
-Andi
+Thus, the command when first entering EH will have DID_TIME_OUT set.
+Right now, we clear it as the final thing in ata_scsi_qc_complete().
+You are suggesting that we clear it when storing sense data.
+
+However:
+There can always be commands that was sent via EH, that will not
+have added sense data, e.g. for CDL policy 0xD commands that were
+completed in the same IRQ (where some commands might have sense
+data, but not all), same with NCQ error, one command will be the
+one that triggered the NCQ error, rest will not have sense data.
+Thus we will always need to clear the DID_TIME_OUT bit for commands
+that were sent via EH...
+
+I think what we could do, is to clear it when first entering EH,
+instead of at the end of EH. This is probably the best solution,
+because then we can remove the:
+cmd->result &= 0x0000ffff;
+from ata_scsi_qc_complete(), which is executed both for commands
+that went via EH and command that did not go via EH.
+
+And instead clear it in the beginning of EH, so DID_TIME_OUT will
+only get cleared for commands that went via EH. (Because only
+commands that went via EH will have DID_TIME_OUT set in the first
+place.)
+
+
+
+So my proposal is simply this:
+
+diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+index 7de97ee8e78b..450e9bd96c97 100644
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -630,6 +630,15 @@ void ata_scsi_cmd_error_handler(struct Scsi_Host *host, struct ata_port *ap,
+        list_for_each_entry_safe(scmd, tmp, eh_work_q, eh_entry) {
+                struct ata_queued_cmd *qc;
+ 
++               /*
++                * If the scmd was added to EH, via ata_qc_schedule_eh() ->
++                * scsi_timeout() -> scsi_eh_scmd_add(), scsi_timeout() will
++                * have set DID_TIME_OUT (since libata does not have an abort
++                * handler). Thus to clear the DID_TIME_OUT, we clear the host
++                * byte (but keep the SCSI ML and status byte).
++                */
++               scmd->result &= 0x0000ffff;
++
+                ata_qc_for_each_raw(ap, qc, i) {
+                        if (qc->flags & ATA_QCFLAG_ACTIVE &&
+                            qc->scsicmd == scmd)
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 3a442f564b0d..6a90062c8b55 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -1680,9 +1680,6 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+                        set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
+        } else if (is_error && !have_sense) {
+                ata_gen_ata_sense(qc);
+-       } else {
+-               /* Keep the SCSI ML and status byte, clear host byte. */
+-               cmd->result &= 0x0000ffff;
+        }
+ 
+        ata_qc_done(qc);
+
+
+
+Testing is appreciated :)
+
+Thoughts?
+
+
+Kind regards,
+Niklas
 
