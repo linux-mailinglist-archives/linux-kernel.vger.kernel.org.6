@@ -1,127 +1,111 @@
-Return-Path: <linux-kernel+bounces-316713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C8596D301
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:21:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216A596D2FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B17B217F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06721F24BC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC09A19309E;
-	Thu,  5 Sep 2024 09:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="18BcqTiA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7Gy+dBdt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA70192B94;
-	Thu,  5 Sep 2024 09:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA09198830;
+	Thu,  5 Sep 2024 09:20:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A8A372
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528093; cv=none; b=aWsat0syxpS8nI8eRqesHZQ1nSksJQOy8Mjox6ldwjJi8CNnOxbSNTp8g/Kul7r8F8d8rTsMN0vZC9UVO16sDVxh7583dAZ/DnEZQMZLVltta2uHRhzM0wPOGx7gqlQopstJJn1DV7hobztaDBj1kzoY69bfZYzY+bnID93OfRY=
+	t=1725528053; cv=none; b=CuPYo2+1IQlgTpMnucm0pxORiDar6ydt4suWC0EJi8+kK8anZjxVOjkagCkgQkbmzoq0Gwg53Nt7QiXsQX9H0XTg5/Dda/IMdTZIgzKXCS5IE2Nbx2Q7a6QbNDkHi4OQJJViplyypdwCkZm4kgryfVsCjca0CILQxCE4qbR3+2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528093; c=relaxed/simple;
-	bh=23asEOBJFutD+0iU+yyRxYxcnhJZmndq46UBMt/w0+A=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=XLEyw/oFnhREJ4uAwsQIQWrJ4kq6H7l1+bL/P8NaBpccrxjmM6jTNU1wgz8Jj/K1PmtDZqB5rqtHBzAHREy2iNhO4xsKHLk+ArN9flr6w80cjDMXc+Tv+fuLhU405P2291xr+Um6At3DfnpXzrecbiBXnhDuAYAQRRlR+ETBhm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=18BcqTiA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7Gy+dBdt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 05 Sep 2024 09:21:28 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725528089;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uFR8188rD1MJi8R2IyqT+ui4bTFFmBwMcKVEK2Mux0U=;
-	b=18BcqTiA9KOcXBqxpI6TZYtWgAb+DrXr5Src0td3iFXQzCfUCvAtsjGqFV39cMMcyLF4Jw
-	53OYHWzTjGSrperMlBjbFSnf88b1CJXe2kYG/OXMX9NrIbrX+i3mhdN7Fj0M1g0yt/pVHB
-	r1mBFcdqReM0PMdweazTkUw7od3ha1weq7/WVZ+rtGbNPL+Sq1bt2DOmSQHDwRMZtM4oj4
-	ZDZxHJrznedXu/DCMWmm6gZKmLeJ/BqihU+C8++CAARQf7RN0pOjFYIpyTHP2oc0ZDGW5K
-	1SMuw8pnO9FwWlNFT28fDRHyEi0JsbzwUdyY92ftgRm78MlktX4OLDw915A+Vg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725528089;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uFR8188rD1MJi8R2IyqT+ui4bTFFmBwMcKVEK2Mux0U=;
-	b=7Gy+dBdtejG4tG1PERa66vLXKlE8NLvqwwE3ncnH6AJzeN2ItNE1pyB0OmpmJWRtiOg42M
-	9HZDtTrr7sGR93Cg==
-From: "tip-bot2 for Daniel Sneddon" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/bugs] x86/bugs: Add missing NO_SSB flag
-Cc: "Shanavas.K.S" <shanavasks@gmail.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240829192437.4074196-1-daniel.sneddon@linux.intel.com>
-References: <20240829192437.4074196-1-daniel.sneddon@linux.intel.com>
+	s=arc-20240116; t=1725528053; c=relaxed/simple;
+	bh=+3eLWdFOhSWPzl6tbC8DcJS2T/Td9/PM5sBtbNXXRos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KFlw7rMFFOxxaMKc4ZMpudkEA+IjiQO5W65hlxTib6ayBsinRF/qy+/JKaj6PzXHHXfVa4VUKOpeIadDFHM0LrU1ygFDlTgYl+tb+JNkb+KNrTO1/66KaxzvYuCBPpASqa1aCTSrvSqsnsjf6a60JWF4W1cRf2Kad14YRm+PqfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42110FEC;
+	Thu,  5 Sep 2024 02:21:18 -0700 (PDT)
+Received: from [10.57.86.69] (unknown [10.57.86.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57C943F73F;
+	Thu,  5 Sep 2024 02:20:49 -0700 (PDT)
+Message-ID: <e2b7e637-3977-4c06-9a95-88fc53bf4d82@arm.com>
+Date: Thu, 5 Sep 2024 10:21:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172552808875.2215.5444492199463668370.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] energy model: Add a get previous state function
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: qyousef@layalina.io, hongyan.xia2@arm.com, mingo@redhat.com,
+ mgorman@suse.de, peterz@infradead.org, dietmar.eggemann@arm.com,
+ bsegall@google.com, vschneid@redhat.com, rostedt@goodmis.org,
+ rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
+ juri.lelli@redhat.com
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-3-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20240830130309.2141697-3-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/bugs branch of tip:
+Hi Vincent,
 
-Commit-ID:     23e12b54acf621f4f03381dca91cc5f1334f21fd
-Gitweb:        https://git.kernel.org/tip/23e12b54acf621f4f03381dca91cc5f1334f21fd
-Author:        Daniel Sneddon <daniel.sneddon@linux.intel.com>
-AuthorDate:    Thu, 29 Aug 2024 12:24:37 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 05 Sep 2024 10:29:31 +02:00
+On 8/30/24 14:03, Vincent Guittot wrote:
+> Instead of parsing all EM table everytime, add a function to get the
+> previous state.
+> 
+> Will be used in the scheduler feec() function.
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>   include/linux/energy_model.h | 18 ++++++++++++++++++
+>   1 file changed, 18 insertions(+)
+> 
+> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+> index 1ff52020cf75..ea8ea7e031c0 100644
+> --- a/include/linux/energy_model.h
+> +++ b/include/linux/energy_model.h
+> @@ -207,6 +207,24 @@ em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_states,
+>   	return nr_perf_states - 1;
+>   }
+>   
+> +static inline int
+> +em_pd_get_previous_state(struct em_perf_state *table, int nr_perf_states,
+> +			  int idx, unsigned long pd_flags)
+> +{
+> +	struct em_perf_state *ps;
+> +	int i;
+> +
+> +	for (i = idx - 1; i >= 0; i--) {
+> +		ps = &table[i];
+> +		if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES &&
+> +		    ps->flags & EM_PERF_STATE_INEFFICIENT)
+> +			continue;
+> +		return i;
+> +	}
 
-x86/bugs: Add missing NO_SSB flag
+Would you mind to add a comment on top of that for loop?
+Or maybe a bit more detail in the patch header what would you like to
+find (e.g. 1st efficient OPP which is lower).
 
-The Moorefield and Lightning Mountain Atom processors are
-missing the NO_SSB flag in the vulnerabilities whitelist.
-This will cause unaffected parts to incorrectly be reported
-as vulnerable. Add the missing flag.
+It's looking for a first OPP (don't forget it's ascending 'table') which
+is lower or equal to the 'idx' state.
 
-These parts are currently out of service and were verified
-internally with archived documentation that they need the
-NO_SSB flag.
+If uclamp_max is set and that OPP is inefficient, don't we choose
+a higher OPP which is efficient?
 
-Closes: https://lore.kernel.org/lkml/CAEJ9NQdhh+4GxrtG1DuYgqYhvc0hi-sKZh-2niukJ-MyFLntAA@mail.gmail.com/
-Reported-by: Shanavas.K.S <shanavasks@gmail.com>
-Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240829192437.4074196-1-daniel.sneddon@linux.intel.com
----
- arch/x86/kernel/cpu/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm not against this function.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index d4e539d..be307c9 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1165,8 +1165,8 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- 
- 	VULNWL_INTEL(INTEL_CORE_YONAH,		NO_SSB),
- 
--	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
--	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
-+	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
-+	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
- 
- 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
- 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT_D,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+BTW, I wonder if this design is still valid with the uclamp_max.
+
+Regards,
+Lukasz
 
