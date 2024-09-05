@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-317614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC82696E108
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:24:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A668596E10C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981E01F27093
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:24:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91841C23B56
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FC31A2643;
-	Thu,  5 Sep 2024 17:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D4F1A3041;
+	Thu,  5 Sep 2024 17:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ah7zBwWi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="VJ9ZDnhV"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0CF192D96;
-	Thu,  5 Sep 2024 17:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A051A0B0F;
+	Thu,  5 Sep 2024 17:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557051; cv=none; b=bpR6ytBZolR3tNAQ9tDkYI/9ajQlZIPCdOyS6Wj96HFZIvq9DGBS2BxWWX6/+ALdaWzFx6D+Gaszfk1QKgdW0YE+Td4jS50DdVoB9rVyR411Q+h9kV3n+oY6OQGhtJM1Gsexfy+2N/PRx5hZLcV/YynPVQaVoWsZcQZX/fwR8Cg=
+	t=1725557128; cv=none; b=Aw9Xv2+g3jrNbR0RbFqVxcaLlGhzquZ8+7NmhuLGp15Kr8XO6KTPr2En5qRrepmjd7f+hNOG6v3c2Gr7bJ0ArlZGQTuysw8SKaF2p2/YxFz+wqEzlFDuVHDFEbE6cACziMJGF4poaqJJqyyfiBX6cYexGVNOAHeE4EtPnFYYSfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557051; c=relaxed/simple;
-	bh=qZcBj0EB8G0ORdOMeKcxDRY4297XFxFpbti5X8aE3Ng=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PY57gG8kCH+7P7tLBLxvOD8YmOCqiZMc6NG/DSKvNwsTFZNlDw/nuCu0KTU3eB5gtDdzp366rYCJ0+x0patC8XqBNOSB8tJG8AOwY7PxEMTp3i9tVOqgH10a1qOROVtpL0UkgmgfiY/WBRlCUDltTc1MorXHsbZEQm2A7XV6JfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ah7zBwWi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76494C4CEC6;
-	Thu,  5 Sep 2024 17:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725557050;
-	bh=qZcBj0EB8G0ORdOMeKcxDRY4297XFxFpbti5X8aE3Ng=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ah7zBwWiGJ0NIp2n9juU/LpFhavcxTGPFb1NfC5DhDhAoxksbi7YROk8Ak7Kz/ufM
-	 XnSJH1Sy8EkaUblI3N/n01OShRkyv5/YMuQSpL2XpG4ziUd/0aXBOkY4j7PPNJ2GKO
-	 IMoB38EnGTrZ+ohqsG14MA8fYM9VWTyCf2qChOatOXakanv4fLze6xFl/kMRjx8WDi
-	 P8KjGXy6DJ2jO7vOSNsvAN/vm6fTiRRR8E22k4fFJlSe5oc+yDjuW1/YNfqeuF2H3Q
-	 8kYeKdqzHQuquIhh2Srf6GyqIuRw2pYY5/i2HWwai1sDl193xChSbe2ikYsIWZA7my
-	 urWo/1Frt/H2Q==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] mm/damon/core: avoid overflow in damon_feed_loop_next_input()
-Date: Thu,  5 Sep 2024 10:24:05 -0700
-Message-Id: <20240905172405.46995-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725557128; c=relaxed/simple;
+	bh=oA+JaK45bIvDN0Y/g2haYI3ERCCF35W5j6c76i1XHWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aJssFFmCW+awjd/9q3+PZW5Xoj4YFK4yJWU4YPkZz+8vXA1rm57pUSOHQxdBbPXjCDcKMKbTDqgkmP+VWssf59LNzmIkUx+Yx+yH0hnAYlMQPt79PQJpdBb5oCi7DeIXXnuUhZQQDbriN4bHBUrPfmvDdB/g1AxYf2FKsgWwTLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=VJ9ZDnhV; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485H6VQw012415;
+	Thu, 5 Sep 2024 12:24:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=2EPLvM+fTjNtBBRKdAtax43O9eQJ3gxJ5hQy/CTb4Wg=; b=
+	VJ9ZDnhVEjybUXSFuEkkY1m4J26M2uWOb4LI/E2E4ORRD0JAsVO3YQ4A8lSoKQhW
+	2PRR7L7P81m0idpUk9U5x2IzMXPDhD61QpRjoh/8Lah7udUAcTm3FJCfBPvQMN16
+	VC/KJDrsvpxfKjup2poagnIkMYEes47trH/+M8EsO8J2PAumxasdvLcB++KpAqzj
+	7xm0RgTdYoWAKEykbgFcwb+RiClNkJ+DWD2eQrMpxRRIX9hWnQgAeuHPEZm/Fsai
+	JnIEyan/xomUEYLwb5LP7qWzAztyba2nJOOLCIp8xqrGaRwHJvU+Q7qp0aujMrAz
+	F2lDsnQYRU4P454t905lBg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41c0jxehg6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 12:24:42 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 18:24:35 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 5 Sep 2024 18:24:35 +0100
+Received: from [141.131.157.113] (macMW3KVPQQ2W.ad.cirrus.com [141.131.157.113])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 6D335820244;
+	Thu,  5 Sep 2024 17:24:32 +0000 (UTC)
+Message-ID: <c2b7654b-74ae-4195-be0d-463b33af5965@opensource.cirrus.com>
+Date: Thu, 5 Sep 2024 12:24:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] ALSA: update sample rate definitions
+To: Jerome Brunet <jbrunet@baylibre.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Cezary Rojewski
+	<cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood
+	<liam.r.girdwood@linux.intel.com>,
+        Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen
+	<kai.vehmanen@linux.intel.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>
+References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
+Content-Language: en-US
+From: "Rhodes, David" <drhodes@opensource.cirrus.com>
+In-Reply-To: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: DCprltle2cLpNuwRuuh1hqg0jsfwhZ4c
+X-Proofpoint-GUID: DCprltle2cLpNuwRuuh1hqg0jsfwhZ4c
+X-Proofpoint-Spam-Reason: safe
 
-damon_feed_loop_next_input() is fragile to overflows.  Rewrite code to
-avoid overflows.  This is not yet well tested on 32bit archs.
+On 9/5/24 9:12 AM, Jerome Brunet wrote:
+> This patchset adds rate definitions for 12kHz, 24kHz and 128kHz.
+> 
+> It is follow-up on the series/discussion [0] about adding 128kHz for
+> spdif/eARC support. The outcome was to add 12kHz and 24kHz as well and
+> clean up the drivers that no longer require custom rules to allow these
+> rates.
+> 
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/944f3d5b-9177-48e7-8ec9-7f1331a3fea3@roeck-us.net
-Fixes: 9294a037c015 ("mm/damon/core: implement goal-oriented feedback-driven quota auto-tuning")
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
-As mentioned on the commit message, this is not yet sufficiently tested
-on 32bit machines.  That's why this is RFC.
+Reviewed-by: David Rhodes <drhodes@opensource.cirrus.com>
 
- mm/damon/core.c | 33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
-
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 32677f13f437..1d951c2a1d85 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -1494,15 +1494,36 @@ static unsigned long damon_feed_loop_next_input(unsigned long last_input,
- 		unsigned long score)
- {
- 	const unsigned long goal = 10000;
--	unsigned long score_goal_diff = max(goal, score) - min(goal, score);
--	unsigned long score_goal_diff_bp = score_goal_diff * 10000 / goal;
--	unsigned long compensation = last_input * score_goal_diff_bp / 10000;
- 	/* Set minimum input as 10000 to avoid compensation be zero */
- 	const unsigned long min_input = 10000;
-+	unsigned long score_goal_diff;
-+	unsigned long compensation;
-+
-+	if (score == goal)
-+		return last_input;
-+
-+	/* last_input, score <= ULONG_MAX */
-+	if (score < goal) {
-+		score_goal_diff = goal - score;
-+	} else {
-+		/* if score_goal_diff > goal, will return min_input anyway */
-+		score_goal_diff = min(score - goal, goal);
-+	}
-+
-+	if (last_input < ULONG_MAX / score_goal_diff)
-+		compensation = last_input * score_goal_diff / goal;
-+	else
-+		compensation = last_input / goal * score_goal_diff;
-+
-+	/* compensation <= last_input <= ULONG_MAX */
-+
-+	if (goal > score) {
-+		if (last_input < ULONG_MAX - compensation)
-+			return last_input + compensation;
-+		return ULONG_MAX;
-+	}
- 
--	if (goal > score)
--		return last_input + compensation;
--	if (last_input > compensation + min_input)
-+	if (last_input - compensation > min_input)
- 		return last_input - compensation;
- 	return min_input;
- }
--- 
-2.39.2
-
+Thanks,
+David
 
