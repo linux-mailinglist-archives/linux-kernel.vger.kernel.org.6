@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-316201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26B996CC87
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:19:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9908796CC89
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8214B1F263F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:19:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AC0B23D4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019DD84D34;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC85E13A250;
 	Thu,  5 Sep 2024 02:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdEuC+bf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R6n5+1rV"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D1C2107
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8E112BF02
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725502779; cv=none; b=mMuLjXd+g0QH40T2aLlCJXdjiCA/KWexfpRXOY5udlxA2ckP0VRrb1sTgsQrzvymtwOoU9BoZw1gzEz0ftnb/kH9KENUIH+SNJIF+FmO7sVSH8TyFymLHJK5SjayglBZesE4j6pUKk0r9DMgbn4iNNG1ZUJGXFp0JAz3KnVO3+0=
+	t=1725502780; cv=none; b=UmGAWYKMI9c1l7pIw0B2eFVXf8thhMZHGzrbzX4GFjStvvUhtZYABeuuyEDKw2uRIOXDDF4cBVMh4LnFG4aT75XyuX9Crww0BKEoAsCN0v1MKuozPlRhRwXwVOzdarBHJZNrD77tcmIDtDaAuuYYOuTle1Mmrly7V6gK/ujsv0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725502779; c=relaxed/simple;
-	bh=b+T73L+tj+3Z7fE8SEEquxnXMNFolcHTPEGwqPx1iEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nAwCOKljEXCBd8iCawE+ft/YNJVZIVBdwu4Wt19SDYKdm2eCprfPCBXqs42RQNyz3mBJS6VAg0kErKBUVme/3YJsfimVXUpqk0XDVadwB4nRQGXi6bQGO2KQ7vLfGnehhjNmt2BUVR1YOLei0kxYz4+r+8fm/6oQqPjKCeP4SE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdEuC+bf; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1725502780; c=relaxed/simple;
+	bh=6rt/Ua2bCTlaRDGfKmgzk1tmRKl373FsbSHmxOuv2Mw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nZ8mOATIQ52J3wwkqrJL2/kn2TKmz8cXv1FnWCn7RL034H9Yio93Mv2xmi49L7LAN6nyA+P1lNjJ3UTEuSZi2XSh+CLJ8ARclHltxfuyrgqUs0W/lNTK1gt4DP4ySO9KOoN3ArwRJF4hNX3y4qWfRuXnvZnWzQMjWzw2QxdvA50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R6n5+1rV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725502776;
+	s=mimecast20190719; t=1725502777;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EUF/NBcLA8q8t9cAM4xsQXEfKKe9p1yR3ynq7HjYVB4=;
-	b=bdEuC+bfMj42HBeZ3YL5ebFP5WAIOhkQ+k6tn0Ii61Cx7z0t25n/3PQs73fV6guA+o5dhk
-	Hppu7XgkaEY7v6d/bHRX6awnhQep1XPXMxIydCqKyyPUX75wqPjR6yPZPvy/c/EH601Daa
-	iVVpjWWpQnN5hRF5MRXl/sGYLW456MM=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0EKP/9IUn+VeZzi5LY6w0YXTYw3bCOdthXlaT1zlipg=;
+	b=R6n5+1rVRB9tDsRCr+ZzYDgqpP5eARP9Y+jj3mlte9a5GT3EHftn9cGtATXnzYsfikHKmY
+	Rxjri0vRgyKh0wgVJy9fBTh3W8BwxeM/p01FPKc42wWQFiq62bQzC8lRCl3IX15hsTDxh3
+	EbDJ/x7K3QgqezFr0pww1TULC8lGpM4=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-XQUfREuTPtKOsTD9fJNSlg-1; Wed, 04 Sep 2024 22:19:35 -0400
-X-MC-Unique: XQUfREuTPtKOsTD9fJNSlg-1
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e1d1a1e4896so659021276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:19:35 -0700 (PDT)
+ us-mta-356-KxowvEXiMIm6Lb0x6noVwQ-1; Wed, 04 Sep 2024 22:19:36 -0400
+X-MC-Unique: KxowvEXiMIm6Lb0x6noVwQ-1
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-4fcf8ce00f5so106343e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:19:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725502775; x=1726107575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EUF/NBcLA8q8t9cAM4xsQXEfKKe9p1yR3ynq7HjYVB4=;
-        b=K1ukPOEHoUbyMaBfQYAjxwR0wE8pXYJXLvZbeXmbT1GOUu/1Vt35nmDOlHlTx2uDPM
-         pgImpP1dMgrZbVdREg/cUXwX4xMF66avrPcQkwehjrAbePiSDNjzovxDbEVxtsUhOKs2
-         x2zbqjAqWvLy7Ad/7CXpsx303WyS6y0JpCHhj5ok41/2b2OgIIVleT4Idrl97GZLtama
-         rTdSEU4K5/PhSieZgKRcVvRFHaiLvNZe3FlSBKobnmKk9ZpSFSOid5q4/SC/djLoPlSX
-         mBV5lRcsHviYyW42gS1Sgjs3ZLhWgUWwArdSENSGjAoSHYd9bDw3Ny13EzYnIvmSnOD3
-         fOnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhHpvzG8heEg2j7J514zLSw0ccLBl5Bc+ULVB/btHHjCQvLiXtOCt6tD43xWcw2lQtnrdwD9TmUq2kqf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSIbyOFHtPMMt4VDsIJfwqVYi6oeKZTwzqNtI4CaPzmialnW67
-	OCHv31rWQeR0B5LqrQbHqu3iQcWR/7kaIRlNCfl0bmKbbpxHn9ovn1tEI7HnAasNB4C4GBkJI+z
-	U9/QRAJYZ2YiQPF2jHaJIVxGFLlrhBiRGtymFyrHMxAjurgtcorQHVghJuXXqAw==
-X-Received: by 2002:a05:6902:178c:b0:e13:d32f:b0b9 with SMTP id 3f1490d57ef6-e1a7a1c8502mr21137527276.47.1725502774947;
-        Wed, 04 Sep 2024 19:19:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSZf/dVwMJ8dlS8WJRTQcc0mc/swRBAzIWDCysLiNBsT4XwBG0ZTuLADHdZ9+HD7IpmNM8Ow==
-X-Received: by 2002:a05:6902:178c:b0:e13:d32f:b0b9 with SMTP id 3f1490d57ef6-e1a7a1c8502mr21137513276.47.1725502774594;
-        Wed, 04 Sep 2024 19:19:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725502776; x=1726107576;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0EKP/9IUn+VeZzi5LY6w0YXTYw3bCOdthXlaT1zlipg=;
+        b=E84/7OfQh/bDwS5O2y4slEFF0O2Cf2CDG/bbyvJFSCSwGa3Eu1hP6P0UIZIJ0Hv2FY
+         prGHv+k5A66WQhIIM5Hl+0GjXlZk8Ju4ZAJfAYuzMaNq6yjrh8OpJqdnY/F2tA2+TJeB
+         1a74RRarkWeS2vR2M6kCokA2szUaLpuRcJNskFE8Rzj/4zzMl7Ow36q7+5Xdcv5bsGtH
+         kRLuoCE3LUKpLTLtRS/ldREj2yR614lK0a9Q42haI/eLKsfLjnnxClxveC8UUJAPGqBC
+         qQRxkbNYV9yglwSP4R75UAO6+2cGUSREb1c9GKgVLhl6RUZhorwUs3Y7GjXDrOtu0tGJ
+         bWfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqHXGjhYxG8chb0o3Z159Bh/tFjshMtTB8dh7TYsIXzW1W5AJ71zMl6sHt44qjtjV/QLYVKPGd9ljIvWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRZ8kVAKqoA4+3pXLlsgVi5m4mVvBDRPfS1nfY5QTOoHzAVq3H
+	Gv39jFNdA/EhkVgOpo4loMWHE3L2pJ1Jck8T7Y91lkbEi8vEbgI01oseQc3s/NtgFIfO9O0BVDQ
+	ERFGeaa5EU3FUzh1HadsavxnYzWjZmTyw0FG1ScN/KIdeQCnCLjDKw7My5KvaFw==
+X-Received: by 2002:a05:6122:7c9:b0:4f2:f1f1:a9f2 with SMTP id 71dfb90a1353d-4ffe4a7d39dmr25535595e0c.4.1725502776288;
+        Wed, 04 Sep 2024 19:19:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZbGFUJCYKiucGl1DslAq9mOBBURUKRyE/cFlJqj1Sd8Nknw5XQxplsW9m1H5Rk+rJ0f31hw==
+X-Received: by 2002:a05:6122:7c9:b0:4f2:f1f1:a9f2 with SMTP id 71dfb90a1353d-4ffe4a7d39dmr25535578e0c.4.1725502775894;
+        Wed, 04 Sep 2024 19:19:35 -0700 (PDT)
 Received: from rhfedora.redhat.com ([71.217.47.229])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801db22b5sm3531181cf.72.2024.09.04.19.19.33
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801db22b5sm3531181cf.72.2024.09.04.19.19.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 19:19:34 -0700 (PDT)
+        Wed, 04 Sep 2024 19:19:35 -0700 (PDT)
 From: "John B. Wyatt IV" <jwyatt@redhat.com>
 To: Shuah Khan <skhan@linuxfoundation.org>
 Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
@@ -84,10 +86,12 @@ Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
 	Arnaldo Melo <acme@redhat.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH v3 0/4] Add SWIG Bindings to libcpupower
-Date: Wed,  4 Sep 2024 22:19:07 -0400
-Message-ID: <20240905021916.15938-1-jwyatt@redhat.com>
+Subject: [PATCH v3 1/4] pm:cpupower: Add missing powercap_set_enabled() stub function
+Date: Wed,  4 Sep 2024 22:19:08 -0400
+Message-ID: <20240905021916.15938-2-jwyatt@redhat.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240905021916.15938-1-jwyatt@redhat.com>
+References: <20240905021916.15938-1-jwyatt@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,71 +100,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SWIG is a tool packaged in Fedora and other distros that can generate
-bindings from C and C++ code for several languages including Python,
-Perl, and Go. Providing bindings for scripting languages is a common feature
-to make use of libraries more accessible to more users and programs. My team
-specifically wants to expand the features of rteval. rteval is a Python program
-used to measure real time performance. We wanted to test the effect of enabling
-some levels of idle-stat to see how it affects latency, and didn't want to
-reinvent the wheel. Since SWIG requires the .o files created by libcpupower at
-compilation it makes sense to include this in the cpupower directory so that
-others can make use of them.
+There was a symbol listed in the powercap.h file that was not implemented.
+Implement it with a stub return of 0.
 
-The V3 of this patchset includes:
-* renaming header messages as requested and adding people to Cc as
-requested
-* moving the stub (dummy) commit to the front of the patchset
-* small punctuation fixes
+Programs like SWIG require that functions that are defined in the
+headers be implemented.
 
-The V2 of this patchset includes:
-* the full definition of libcpupower headers that is needed for the bindings
-* dummy implementation in C of a function listed in the header of libcpupower
-(requested by Shuah Khan)
-* test_raw_pylibcpupower.py demonstrates an example of using the bindings
-* adding myself and John Kacur to the cpupower section of the maintainers file
-(requested by Shuah Khan)
-* addressed review comments about doc, makefile, and maintainers file
-* small style and other fixes
+Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
+Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
+---
 
-The name raw_pylibcpupower is used because a wrapper `pylibcpupower` may be
-needed to make the bindings more 'pythonic' in the future. The bindings folder
-is used because Go or Perl bindings may be useful for other users in the
-future.
+Changes in v3:
+	- Renamed commit header, moved commit to be the first in the
+	  patchset as requested by Shuah Khan. Adjusted commit message
+	  body to match.
+	- Added pm:cpupower prefix to header and Rafael to Cc
 
-Note that while SWIG itself is GPL v3+ licensed; the resulting output, the
-bindings code, has the same license as the .o files used to generate the
-bindings (GPL v2 only). Please see
-https://swig.org/legal.html
-and
-https://lore.kernel.org/linux-pm/Zqv9BOjxLAgyNP5B@hatbackup/#t
-for more details on the license.
+Changes in v2:
+	- Implemented the function so SWIG will accept the header
+	  definition
+---
+ tools/power/cpupower/lib/powercap.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Sincerely,
-John Wyatt
-Software Engineer, Core Kernel
-Red Hat
-
-John B. Wyatt IV (4):
-  pm:cpupower: Add missing powercap_set_enabled() stub function
-  pm:cpupower: Add SWIG bindings files for libcpupower
-  pm:cpupower: Include test_raw_pylibcpupower.py
-  MAINTAINERS: Add Maintainers for SWIG Python bindings
-
- MAINTAINERS                                   |   3 +
- .../power/cpupower/bindings/python/.gitignore |   8 +
- tools/power/cpupower/bindings/python/Makefile |  31 +++
- tools/power/cpupower/bindings/python/README   |  59 +++++
- .../bindings/python/raw_pylibcpupower.i       | 247 ++++++++++++++++++
- .../bindings/python/test_raw_pylibcpupower.py |  42 +++
- tools/power/cpupower/lib/powercap.c           |   8 +
- 7 files changed, 398 insertions(+)
- create mode 100644 tools/power/cpupower/bindings/python/.gitignore
- create mode 100644 tools/power/cpupower/bindings/python/Makefile
- create mode 100644 tools/power/cpupower/bindings/python/README
- create mode 100644 tools/power/cpupower/bindings/python/raw_pylibcpupower.i
- create mode 100755 tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
-
+diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
+index a7a59c6bacda..94a0c69e55ef 100644
+--- a/tools/power/cpupower/lib/powercap.c
++++ b/tools/power/cpupower/lib/powercap.c
+@@ -77,6 +77,14 @@ int powercap_get_enabled(int *mode)
+ 	return sysfs_get_enabled(path, mode);
+ }
+ 
++/*
++ * TODO: implement function. Returns dummy 0 for now.
++ */
++int powercap_set_enabled(int mode)
++{
++	return 0;
++}
++
+ /*
+  * Hardcoded, because rapl is the only powercap implementation
+ - * this needs to get more generic if more powercap implementations
 -- 
 2.46.0
 
