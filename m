@@ -1,198 +1,178 @@
-Return-Path: <linux-kernel+bounces-316490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B95296D04F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880B996D050
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E792E28240D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365072867BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D37C193075;
-	Thu,  5 Sep 2024 07:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46472193069;
+	Thu,  5 Sep 2024 07:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="SCZbC90B"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085AA193093;
-	Thu,  5 Sep 2024 07:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725520974; cv=none; b=Cj7JjJKW8E3iPeZV84n8fP1KJMIdurssbyd6NL8kd0Xkisra1uk1SMmJ+uq3GbWUulUsUtqNP8iRQSUYQxrdbZvCHyaZVo2vSo6iY/qPltH5Y8V57H0YgGHrAb/cL3Q5HKIjmEsZoF+ZbfWfq/9qlSMRcKGva2QfCiUCgpfUF4Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725520974; c=relaxed/simple;
-	bh=OlKQTydSLYfSzGLWaKzn+3UqDr6nSljVW7vlF9x1xLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eXDiHWu9YEj5DvWqRFFWTJVAcLS7jlty54PBFRbUGhHwZ3r6hrOZjkASNEtrThlPImdf0WprqarQ8ZoPdyNqhQVyym5Hx6qYC+SpIxH3yAL8g9+TKMhwqYrqRFY7Fk+9bHyv1GU2bqzD21e6sVM99gl3/Rkn+YKc7AW2gtndT/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=SCZbC90B; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from cap.home.8bytes.org (p4ffe1f47.dip0.t-ipconnect.de [79.254.31.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b="Rj0r6suk"
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id E1B92288172;
-	Thu,  5 Sep 2024 09:22:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1725520970;
-	bh=OlKQTydSLYfSzGLWaKzn+3UqDr6nSljVW7vlF9x1xLc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SCZbC90BNLxqNGCJJUERQF8bbODvE9qfO6lx/rulvDeZKRf+ClvYgrGHtb99LHCP0
-	 O3oJw2oC/msunb3QC4dPFI1tZ00Tde5FyO8M5LHqjW1sSUYa09y9TX1SKQcqsk1GVs
-	 pPk0eJQGc5Euruh5rJMUSo561n2BdL/UGgfu/otVo4ztM7MIoCcc4owz90DCUYg2vV
-	 UKk1i4p8s4Hrluf+Xe7f7qxhFnuKIru9GweUomRzivLe9ph2AOZJ/fUUiA8jMgCnKa
-	 LrCEntwSnA7kGumOU6NJwWi8hIEUCUoDGtVnKCZi8PZRBuhy8M8IkdbGotoJW2yg5Y
-	 kRTDGFyS7DTXg==
-From: Joerg Roedel <joro@8bytes.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Vasant Hegde <vasant.hegde@amd.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	linux-doc@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH] iommu/amd: Add kernel parameters to limit V1 page-sizes
-Date: Thu,  5 Sep 2024 09:22:40 +0200
-Message-ID: <20240905072240.253313-1-joro@8bytes.org>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80F48CCC;
+	Thu,  5 Sep 2024 07:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=96.47.72.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725521012; cv=pass; b=IIX8OJBvksFFbIpSL4lcbGNFpa2KkKa6GiIpyEw9ia3SD6J75HkJc8p8btiC1KTib1DFcy7Zw23mdy5pvtophF+mwDK6e/DipmEUNacL1/3YjsACdUyRT+QH/kb/neMVWwht2U7MJr4BfDwo4kfnGYLe1CpYbtJ/kS342dUloR4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725521012; c=relaxed/simple;
+	bh=fwjyZr0hhXrpSxAvTAozxDoPzTvw4FKbp8Pj/QsDXHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5Ur3142dC6W1XIJT1+qiTsw3g+O96o8Jm99wA9na/DCEzBARtkZ44CRrh2am7gnvAkS2/eYw/lfusz3tS3uoGpBnN8F/dY89mhbXl6XmQUEPrxYPbv/KGdz43lCGoz1qnMzGdj0oWaQa2ivffKxWVr2dKFzlBdutGH1NM2LA4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org; spf=pass smtp.mailfrom=freebsd.org; dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b=Rj0r6suk; arc=pass smtp.client-ip=96.47.72.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebsd.org
+Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits)
+	 client-signature RSA-PSS (4096 bits))
+	(Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
+	by mx2.freebsd.org (Postfix) with ESMTPS id 4WzrSJ6Btlz4WkV;
+	Thu,  5 Sep 2024 07:23:28 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+Received: from freefall.freebsd.org (freefall.freebsd.org [96.47.72.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "freefall.freebsd.org", Issuer "R11" (verified OK))
+	by mx1.freebsd.org (Postfix) with ESMTPS id 4WzrSJ55hhz4VcV;
+	Thu,  5 Sep 2024 07:23:28 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+	t=1725521008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=elZCUY6hLY/xsZmJf+VAyQ4knFJv9hbqHxeG+NskNGg=;
+	b=Rj0r6sukH3AJV1fnHp/g68h/3fzB2mq5Jro40HHpNfPvKbZCDLLH7Zj8FewmvWEk0//ImS
+	s5B2dT4WPFWJOu+zzYENGs842sZ6ALpwP0eYsZ96pIxs5dJGqkVfCxGOYe2LYqmjEc7Wg2
+	qoiOF/sf5dtmLiulnatjZNcMsk/44S0uL4rKo8PG7aUrcD1R1+XUNfBl36nUyjmNHILzNd
+	o9Nv7zpPG3lUKYkoU4HbDJfGgemc3zyJXgK1KKwiiZ8albQ7K9hFUrMpzKypU2LhVX9XjL
+	wPxI//8Qo76P1ZISH48km3Zay+XgxkQr5/moNQiFUMQVDEMvIW1/LNyBwQ66Ow==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1725521008; a=rsa-sha256; cv=none;
+	b=Ne9cGlXwEbsBWE+vhf3uU0bpWWVL6mvaINIBtHX3mOaGnSC2Q8VLtJfqgru6kZWypCu8gb
+	WikyDWlRA+BhYmwMu7aw93614AENjKUBPJRaHkZniK38DHKaJs1nCHKob0hKKXWwdJCoO1
+	+ZxCqsalEQxk3ZQ0a/hXfTMwX0dYmnDeKwDNwZKhN7K3QNaAw7jnhjog4dVaOWagsshdKX
+	q+zNYNmvt8/+O2efcIQjh5t8GQd426BBkJihL+pQCSyjphodTSb9w+cELmAHq1Ag1LFB++
+	Tb7dHeuVu6Vp0lNexdTFb1QxkfdFC9O0pRARqy6QOkWkX0vvT8EqFLa2cJOsoA==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+	s=dkim; t=1725521008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=elZCUY6hLY/xsZmJf+VAyQ4knFJv9hbqHxeG+NskNGg=;
+	b=XR5mIOamGNy/oHJsfrjumTGEf254TDM9QVIpEbP0f0gCPpAUrbFDmppp1kEHMVQJXYaAZv
+	mz61qFXCL2C5yF8LKkS0jbebQTPkrBlqRWZkleNKRoWog6K9dQlSkbl4wrJwsk/FS0qBAE
+	z4+Xe5VjZ49qBsmCyn637/j7mCPN2F2zXjP2MpyjhTgTdZMg8ld9W9h2kvtcIdsIAolEAO
+	DvPxT3FQ+FaJvHX/0uOORUGLrUcS4MfWjYnAiQ6LyohV+G8Bwiw8PYxNAgPrUDj9iJaMN0
+	/DgNE3d62FpSn/Niy1JTmAeJjeW6HyCZ8dgsoBN/JQ6h/Yt6f0S/2IPn2dL4GQ==
+Received: by freefall.freebsd.org (Postfix, from userid 1026)
+	id 8B62426ED; Thu, 05 Sep 2024 07:23:28 +0000 (UTC)
+Date: Thu, 5 Sep 2024 07:23:28 +0000
+From: Suleiman Souhlal <ssouhlal@freebsd.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"x86@kernel.org" <x86@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Frederic Weisbecker <fweisbec@gmail.com>, suleiman@google.com
+Subject: Re: [RFC][PATCH] KVM: Remove HIGH_RES_TIMERS dependency
+Message-ID: <ZtlccIb0CgLFeL5k@freefall.freebsd.org>
+References: <20240821095127.45d17b19@gandalf.local.home>
+ <Zs97wp2-vIRjgk-e@google.com>
+ <ZtgNqv1r7S738osp@freefall.freebsd.org>
+ <9b6ef0fa-99f5-4eac-b51a-aa0a3126c443@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b6ef0fa-99f5-4eac-b51a-aa0a3126c443@redhat.com>
 
-From: Joerg Roedel <jroedel@suse.de>
+On Wed, Sep 04, 2024 at 03:25:51PM +0200, Paolo Bonzini wrote:
+> On 9/4/24 09:35, Suleiman Souhlal wrote:
+> > On Wed, Aug 28, 2024 at 12:34:26PM -0700, Sean Christopherson wrote:
+> > > On Wed, Aug 21, 2024, Steven Rostedt wrote:
+> > > > From: Steven Rostedt <rostedt@goodmis.org>
+> > > > 
+> > > > Commit 92b5265d38f6a ("KVM: Depend on HIGH_RES_TIMERS") added a dependency
+> > > > to high resolution timers with the comment:
+> > > > 
+> > > >      KVM lapic timer and tsc deadline timer based on hrtimer,
+> > > >      setting a leftmost node to rb tree and then do hrtimer reprogram.
+> > > >      If hrtimer not configured as high resolution, hrtimer_enqueue_reprogram
+> > > >      do nothing and then make kvm lapic timer and tsc deadline timer fail.
+> > > > 
+> > > > That was back in 2012, where hrtimer_start_range_ns() would do the
+> > > > reprogramming with hrtimer_enqueue_reprogram(). But as that was a nop with
+> > > > high resolution timers disabled, this did not work. But a lot has changed
+> > > > in the last 12 years.
+> > > > 
+> > > > For example, commit 49a2a07514a3a ("hrtimer: Kick lowres dynticks targets on
+> > > > timer enqueue") modifies __hrtimer_start_range_ns() to work with low res
+> > > > timers. There's been lots of other changes that make low res work.
+> > > > 
+> > > > I added this change to my main server that runs all my VMs (my mail
+> > > > server, my web server, my ssh server) and disabled HIGH_RES_TIMERS and the
+> > > > system has been running just fine for over a month.
+> > > > 
+> > > > ChromeOS has tested this before as well, and it hasn't seen any issues with
+> > > > running KVM with high res timers disabled.
+> > > 
+> > > Can you provide some background on why this is desirable, and what the effective
+> > > tradeoffs are?  Mostly so that future users have some chance of making an
+> > > informed decision.  Realistically, anyone running with HIGH_RES_TIMERS=n is likely
+> > > already aware of the tradeoffs, but it'd be nice to capture the info here.
+> > 
+> > We have found that disabling HR timers saves power without degrading
+> > the user experience too much.
+> 
+> This might have some issues on guests that do not support kvmclock, because
+> they rely on precise delivery of periodic timers to keep their clock
+> running.  This can be the APIC timer (provided by the kernel), the RTC
+> (provided by userspace), or the i8254 (choice of kernel/userspace).
+> 
+> These guests are few and far between these days, and in the case of the APIC
+> timer + Intel hosts we can use the preemption timer (which is TSC-based and
+> has better latency _and_ accuracy).  Furthermore, only x86 is requiring
+> CONFIG_HIGH_RES_TIMERS, so it's probably just excessive care and we can even
+> apply Steven's patch as is.
+> 
+> Alternatively, the "depends on HIGH_RES_TIMERS || EXPERT" could be added to
+> virt/kvm.  Or a pr_warn could be added to kvm_init if HIGH_RES_TIMERS are
+> not enabled.
+> 
+> But in general, it seems that Linux has a laissez-faire approach to
+> disabling CONFIG_HIGH_RES_TIMERS - there must be other code in the kernel
+> (maybe sound/?) that is relying on having high-enough HZ or hrtimers but
+> that's not documented anywhere.  I don't have an objection to doing the same
+> in KVM, honestly, since most systems are running CONFIG_HIGH_RES_TIMERS
+> anyway.
 
-Add two new kernel command line parameters to limit the page-sizes
-used for v1 page-tables:
+I'm not sure how much my opinion on the matter counts, but I would be more
+than happy to see Steven's current patch get applied as is.
+It would make our (ChromeOS) life a bit simpler.
 
-	nohugepages     - Limits page-sizes to 4KiB
-
-	v2_pgsizes_only - Limits page-sizes to 4Kib/2Mib/1GiB; The
-	                  same as the sizes used with v2 page-tables
-
-This is needed for multiple scenarios. When assigning devices to
-SEV-SNP guests the IOMMU page-sizes need to match the sizes in the RMP
-table, otherwise the device will not be able to access all shared
-memory.
-
-Also, some ATS devices do not work properly with arbitrary IO
-page-sizes as supported by AMD-Vi, so limiting the sizes used by the
-driver is a suitable workaround.
-
-All-in-all, these parameters are only workarounds until the IOMMU core
-and related APIs gather the ability to negotiate the page-sizes in a
-better way.
-
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- Documentation/admin-guide/kernel-parameters.txt | 17 +++++++++++------
- drivers/iommu/amd/amd_iommu.h                   |  1 +
- drivers/iommu/amd/amd_iommu_types.h             |  4 ++++
- drivers/iommu/amd/init.c                        |  8 ++++++++
- drivers/iommu/amd/io_pgtable.c                  |  2 +-
- 5 files changed, 25 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 09126bb8cc9f..6d6630aec46c 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -333,12 +333,17 @@
- 					  allowed anymore to lift isolation
- 					  requirements as needed. This option
- 					  does not override iommu=pt
--			force_enable - Force enable the IOMMU on platforms known
--				       to be buggy with IOMMU enabled. Use this
--				       option with care.
--			pgtbl_v1     - Use v1 page table for DMA-API (Default).
--			pgtbl_v2     - Use v2 page table for DMA-API.
--			irtcachedis  - Disable Interrupt Remapping Table (IRT) caching.
-+			force_enable    - Force enable the IOMMU on platforms known
-+				          to be buggy with IOMMU enabled. Use this
-+				          option with care.
-+			pgtbl_v1        - Use v1 page table for DMA-API (Default).
-+			pgtbl_v2        - Use v2 page table for DMA-API.
-+			irtcachedis     - Disable Interrupt Remapping Table (IRT) caching.
-+			nohugepages     - Limit page-sizes used for v1 page-tables
-+				          to 4 KiB.
-+			v2_pgsizes_only - Limit page-sizes used for v1 page-tables
-+				          to 4KiB/2Mib/1GiB.
-+
- 
- 	amd_iommu_dump=	[HW,X86-64]
- 			Enable AMD IOMMU driver option to dump the ACPI table
-diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
-index 29e6e71f7f9a..6386fa4556d9 100644
---- a/drivers/iommu/amd/amd_iommu.h
-+++ b/drivers/iommu/amd/amd_iommu.h
-@@ -43,6 +43,7 @@ int amd_iommu_enable_faulting(unsigned int cpu);
- extern int amd_iommu_guest_ir;
- extern enum io_pgtable_fmt amd_iommu_pgtable;
- extern int amd_iommu_gpt_level;
-+extern unsigned long amd_iommu_pgsize_bitmap;
- 
- /* Protection domain ops */
- struct protection_domain *protection_domain_alloc(unsigned int type, int nid);
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index 35aa4ff020f5..601fb4ee6900 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -293,6 +293,10 @@
-  * Page sizes >= the 52 bit max physical address of the CPU are not supported.
-  */
- #define AMD_IOMMU_PGSIZES	(GENMASK_ULL(51, 12) ^ SZ_512G)
-+
-+/* Special mode where page-sizes are limited to 4 KiB */
-+#define AMD_IOMMU_PGSIZES_4K	(PAGE_SIZE)
-+
- /* 4K, 2MB, 1G page sizes are supported */
- #define AMD_IOMMU_PGSIZES_V2	(PAGE_SIZE | (1ULL << 21) | (1ULL << 30))
- 
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index 6b15ce09e78d..43131c3a2172 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -192,6 +192,8 @@ bool amdr_ivrs_remap_support __read_mostly;
- 
- bool amd_iommu_force_isolation __read_mostly;
- 
-+unsigned long amd_iommu_pgsize_bitmap __ro_after_init = AMD_IOMMU_PGSIZES;
-+
- /*
-  * AMD IOMMU allows up to 2^16 different protection domains. This is a bitmap
-  * to know which ones are already in use.
-@@ -3492,6 +3494,12 @@ static int __init parse_amd_iommu_options(char *str)
- 			amd_iommu_pgtable = AMD_IOMMU_V2;
- 		} else if (strncmp(str, "irtcachedis", 11) == 0) {
- 			amd_iommu_irtcachedis = true;
-+		} else if (strncmp(str, "nohugepages", 11) == 0) {
-+			pr_info("Restricting V1 page-sizes to 4KiB");
-+			amd_iommu_pgsize_bitmap = AMD_IOMMU_PGSIZES_4K;
-+		} else if (strncmp(str, "v2_pgsizes_only", 15) == 0) {
-+			pr_info("Restricting V1 page-sizes to 4KiB/2MiB/1GiB");
-+			amd_iommu_pgsize_bitmap = AMD_IOMMU_PGSIZES_V2;
- 		} else {
- 			pr_notice("Unknown option - '%s'\n", str);
- 		}
-diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-index 14f62c420e4a..804b788f3f16 100644
---- a/drivers/iommu/amd/io_pgtable.c
-+++ b/drivers/iommu/amd/io_pgtable.c
-@@ -548,7 +548,7 @@ static struct io_pgtable *v1_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
- 		return NULL;
- 	pgtable->mode = PAGE_MODE_3_LEVEL;
- 
--	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES;
-+	cfg->pgsize_bitmap  = amd_iommu_pgsize_bitmap;
- 	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE;
- 	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE;
- 
--- 
-2.46.0
-
+-- Suleiman
 
