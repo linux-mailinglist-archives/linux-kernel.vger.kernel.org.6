@@ -1,197 +1,74 @@
-Return-Path: <linux-kernel+bounces-317609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB6896E0FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:20:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3304696E0FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BBFA1F248BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB0E3B21D46
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FCE1A2C05;
-	Thu,  5 Sep 2024 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2AYdpwrn"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3ED1A08AB;
+	Thu,  5 Sep 2024 17:19:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F140214EC77
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ADB45005
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725556791; cv=none; b=jcPw7uZxqZ6/U8UeYaCHpvEd4/vOBd/McuRxVuFq0A67XzhJFXoLf/9j47pAv9knaYQqizEG6sO9GU1A2G2ghscuiuASEN/T6gwS8bRY1/PY9XLgvI/UTmXin3LDGS8xjRKwVpvFBdpafTidsbJ66S15BcIUQfiGbskvGpQigNg=
+	t=1725556765; cv=none; b=fMHQeh/d+fYtI4ecHXXmiLp1XFyGJOu7LLA6LFN2poyJ7vSrbdOKszWjtVgVH1F9zJzOmIpUIak61sgIxHI8eqcOtaPn843QnCGZDgnCS+lZAub2Z/+o76AGx1CaNDA4QobJzpOrl1rjW0kCN5veEXzVV1MmsKpleGZHOHdv+eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725556791; c=relaxed/simple;
-	bh=SOqrYYpujWF0rx1/RcFwVywMkWfqYauzZsed9RHcpQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZofHCuVaBvJG7CeiKSqNMMdP4TndctqtbGHLEp3nJcQR5lrpiaa33somSNkLf//NCrH8gQ9mz/xAFl/NjFv1celY02V127MATK9XO0aEIq/Sh6XQ2mMkKkujxLQX0EWv93Ttxlf0gyfZK1Mcw3+W2Eh0dtv38tPeUmnQ/kDPZRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2AYdpwrn; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4567fe32141so17851cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 10:19:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725556789; x=1726161589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8TUkMt4fFXBEZL3VlaXrE+AmUqotHsPhCt7Jc7mmqM=;
-        b=2AYdpwrnQavYxkexatYSxZavlV4OQ747+SlNm+hyM8ovoiZ/1Wsl58tdoT/kfABcRF
-         Dna90UWPVISGlDGmF4q65DnHNzulg+CvIsDWiKTlVyL/yrkvlEE3VgeKxa36f1Svxje9
-         UJBHdlERGbTgEBlpVOKxfOlkhZtqbP4QwgaE5BCt4If0m/lahXUfEp+yZynXBio0U+Eh
-         kFRdGXtzV6W56r95sFayFQFGkOPMfoG6DtAbVmdgi9CyXP2aTOFZGnZvNxmhRNEw8eqr
-         sdSzTRfTJJPZasgiNkiGVtfPBRVG25N8dCVng6dxwQtS3NVaWy+tTZa8Y4WP+fbgo0mA
-         on4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725556789; x=1726161589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s8TUkMt4fFXBEZL3VlaXrE+AmUqotHsPhCt7Jc7mmqM=;
-        b=k04L2UCLYXjtLVGKRosGO79KX1a8IAbQxWiMNe9+h7uSDaET5eUWaepVXEugtuXc3C
-         f2SrDTVbgMqb+pRZ5gn4kjTKvVyT4VLmMynLykqtwhvGwNdwnapFHoYrTtzypubBATTf
-         nf+YhkW60tDhvymHHAvMh6Crh8/cE8g48lPjwQUvkJC9SV+M/uGrIv8FioxcCSB2wiRL
-         /dvyzr86fOsls/rRwWRUD/esvd3/mh1lx+j3JFgGVrEoYbkv/aPojvGqJFNsc4sjzI8N
-         gmf4c45dc3ctSbqewCOuLHDiq7LQDyfaPN/d8pv/Q+mEOA+6JfWI05pZgI9wumTm7w2t
-         5QKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxzyzVLVXBx0EOR5OBDij4ELqj3uUsRSJ56Z79EiEbPKbjQprkrFM3w19ma3yXqg7JJ3w491TVsPB60sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMm/M/dpoHw3EGmbr3ZsuEXIuuRKKYnUvA21jRNq36qt8QALrs
-	SVmzDzspVbG1ClAM0vqcZlQRGAbQeSkicbFXheRKiYQX4gIGGAXaTWQxA/Vc0/rwByd8NRjc9UN
-	0KoIUkkiBjYdZlkOgig6br9+7OWorQghK806D
-X-Google-Smtp-Source: AGHT+IETIgxd5HzjpKOCX0pYc+T39/K61/DMXW8lisgIOK3FIf/vt5BqtGRErHYZut1e/sGdlaZFVuc/zR1ufHF/hsY=
-X-Received: by 2002:a05:622a:44d:b0:447:dd54:2cd4 with SMTP id
- d75a77b69052e-45801f211acmr4795831cf.22.1725556788641; Thu, 05 Sep 2024
- 10:19:48 -0700 (PDT)
+	s=arc-20240116; t=1725556765; c=relaxed/simple;
+	bh=ufswrCaKVmDnJCxuyQPoraFo+q7psNaggADoPb1AzIU=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L/ESU6O4k19+M4SYWGmVVWJ7HT5J0mnebEZD6oxvazktEsPIl9psInZJ7t7Gs7lYRY5tqO2o3A8k3O2XafJ0cgOaNjdCE9P0uESYAgKTRWu4Q0prAYCDERqECNTp2M8fsybBiZP0lHWD8Nq0YDJP8qnD6c05rbt2+Fr0d9pRq0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7C3C4CEC3;
+	Thu,  5 Sep 2024 17:19:23 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	chenqiwu <qiwuchen55@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org,
+	Puranjay Mohan <puranjay@kernel.org>
+Subject: Re: [PATCH] arm64: stacktrace: fix the usage of ftrace_graph_ret_addr()
+Date: Thu,  5 Sep 2024 18:19:20 +0100
+Message-Id: <172555675029.680759.8903911189573645433.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240618162342.28275-1-puranjay@kernel.org>
+References: <20240618162342.28275-1-puranjay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-27-samitolvanen@google.com> <1e6cd0ad-48bb-4dd7-8cd7-4e94d0cd7cf5@suse.com>
-In-Reply-To: <1e6cd0ad-48bb-4dd7-8cd7-4e94d0cd7cf5@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 5 Sep 2024 10:19:10 -0700
-Message-ID: <CABCJKucgYt09P=cjD8J6Epi67XXvJ7hBdQksLBt9-UtFSu8Pug@mail.gmail.com>
-Subject: Re: [PATCH v2 06/19] gendwarfksyms: Add a cache for processed DIEs
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Petr,
+On Tue, 18 Jun 2024 16:23:42 +0000, Puranjay Mohan wrote:
+> ftrace_graph_ret_addr() takes an 'idx' integer pointer that is used to
+> optimize the stack unwinding process. arm64 currently passes `NULL` for
+> this parameter which stops it from utilizing these optimizations.
+> 
+> Further, the current code for ftrace_graph_ret_addr() will just return
+> the passed in return address if it is NULL which will break this usage.
+> 
+> [...]
 
-On Mon, Sep 2, 2024 at 3:05=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wro=
-te:
->
-> On 8/15/24 19:39, Sami Tolvanen wrote:
-> > +void die_map_free(void)
-> > +{
-> > +     struct hlist_node *tmp;
-> > +     unsigned int stats[LAST + 1];
-> > +     struct die *cd;
-> > +     int i;
-> > +
-> > +     memset(stats, 0, sizeof(stats));
-> > +
-> > +     hash_for_each_safe(die_map, i, tmp, cd, hash) {
-> > +             stats[cd->state]++;
-> > +             reset_die(cd);
-> > +             free(cd);
-> > +     }
-> > +     hash_init(die_map);
-> > +
-> > +     if ((map_hits + map_misses > 0))
->
-> Nit: Extra parentheses can be dropped.
+Applied to arm64 (for-next/fixes), thanks!
 
-Oops, I'll fix that.
+[1/1] arm64: stacktrace: fix the usage of ftrace_graph_ret_addr()
+      https://git.kernel.org/arm64/c/c060f93253ca
 
-> > +             /*
-> > +              * If any of the DIEs in the scope is missing a name, con=
-sider
-> > +              * the DIE to be unnamed.
-> > +              */
-> > +             list[count] =3D get_name(&scopes[i]);
-> > +
-> > +             if (!list[count]) {
-> > +                     free(scopes);
-> > +                     return 0;
-> > +             }
->
-> This slightly changes how scopes with no name are processed which is
-> unrelated to the added caching. The previous logic used "<unnamed>" for
-> individual unnamed scopes. The new code in such a case returns an empty
-> FQN which is turned in process_fqn() into "<unnamed>".
->
-> This is likely ok in practice for this particular tool. In general,
-> I think "<unnamed>" should be returned when the initial DIE is missing
-> a name and something like "<anonymous>::foo" when an outer scope has no
-> name.
+-- 
+Catalin
 
-I did consider that, but didn't find instances of anonymous scopes in
-the output, so I simplified this a bit. I'll dig around a bit more and
-change this if I find a use case. Note that going through the scopes
-is mostly just needed for Rust code.
-
-> More importantly, using "<unnamed>" when a type has no name looks to me
-> overly verbose, in particular, when it comes to the symtypes output. For
-> instance, the current output for a 'const char *' parameter is:
-> formal_parameter pointer_type <unnamed> { const_type <unnamed> { base_typ=
-e char byte_size(1) encoding(8) } } byte_size(8)
->
-> .. while the following should be sufficient and easier to grasp:
-> formal_parameter pointer_type { const_type { base_type char byte_size(1) =
-encoding(8) } } byte_size(8)
-
-Agreed, that's way more readable. I'll drop the "<unnamed>" from the output=
-.
-
-> > +     for (i =3D 0; i < count; i++)
-> > +             strcat(*fqn, list[i]);
->
-> Small optimization: This loop could be written as follows to avoid
-> repeatedly searching the end of fqn:
->
-> char *p =3D *fqn;
-> for (i =3D 0; i < count; i++)
->         p =3D stpcpy(p, list[i]);
-
-True, I'll change this. Thanks!
-
-> > +static int process_fqn(struct state *state, struct die *cache, Dwarf_D=
-ie *die)
-> > +{
-> > +     const char *fqn;
-> > +
-> > +     if (!cache->fqn)
-> > +             check(get_fqn(state, die, &cache->fqn));
-> > +
-> > +     fqn =3D cache->fqn;
-> > +     fqn =3D fqn ?: "<unnamed>";
->
-> As a small optimization and for consistency, I would recommended to also
-> cache the "<unnamed>" name to avoid repeatedly calling get_fqn() for
-> such DIEs.
-
-Ack.
-
-> > +enum die_state { INCOMPLETE, COMPLETE, LAST =3D COMPLETE };
-> > +enum die_fragment_type { EMPTY, STRING, DIE };
->
-> Nit: I would suggest to prefix the enum values, for example,
-> STATE_INCOMPLETE, ... and FRAGMENT_EMPTY, ...
-
-Sure, I'll add prefixes.
-
-Sami
 
