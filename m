@@ -1,157 +1,155 @@
-Return-Path: <linux-kernel+bounces-316254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A72396CD14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:12:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFA996CD1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF19282581
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:12:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB8E1C21B12
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C7E143759;
-	Thu,  5 Sep 2024 03:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977B143C7E;
+	Thu,  5 Sep 2024 03:12:54 +0000 (UTC)
 Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181AD2E62B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018A71422D4
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505918; cv=none; b=cMDC1la/zdcNS3hK2XeI57UZ+/7cXS4MFTVJ/iGIstfVf7hBOD0r/o2ez7Q6h1uRSPEWkVuNzuFH7qq9BHPaXB7pq1jTYk7veiDQdFLfBnSCbZ4Tc829y1HfWgTwQJnCC7Bt5M8BGNbD+gNXMqG+00gUbZa7ohOpBmbudO8Y1Us=
+	t=1725505974; cv=none; b=d6PKHqHcSkcIupUaiONicYbqKR40fAfLid/ApNdabRjDK19m18QhG2kxPKTEJeartPmrze5fcJvqfGrt6V5pEP4NZy8APxGx8nzq7mdyKYhlG17+dHUgZ5bbD7Ox27//Lv8fxTsop50P02ZiPc081lvE8X+SQlAHKHMhHyTlysw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725505918; c=relaxed/simple;
-	bh=5gmZvQ6sukWr7ijJhfXhs89SjFPF160dbGv/qzJPr/4=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Ls10b/t01jO+/pWZulmRDyab3YOtHrBG0fhxvgjswZN6fRYCPK9SNnCorLPK0P8nQwFRuYpWu8BSORYw9UdyYUlaRoLzTzWlar9qclnfeY57qn3+yY37ySpRdKfk57xDAqP0hDu4O5cBLMfwRo/L9WxLNOFjOuB4QIQwndpQgCI=
+	s=arc-20240116; t=1725505974; c=relaxed/simple;
+	bh=nlq6tis2udYlSUQbvpvE1LGYV6izF24lO62tQql4nXQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=HHWCWBT21hLSfySo0XAWox+miN5LPkubnML16AOUmB+VLj5R5K8HQZvGGC/bUDutCsSpeVmsNItW1fSPlCaorUXtA1VacsaPHfAkF47u7ojqoYpbYkJpJZd7ZjE7i8SDZ4sxJjyFIBDi0mbuh7N7B09+LYYA9+7LjzK2T4lEvi8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WzksT6dXFz1j7rx;
-	Thu,  5 Sep 2024 11:11:25 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id F22D71A0190;
-	Thu,  5 Sep 2024 11:11:46 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wzkth4hsMz1j84T;
+	Thu,  5 Sep 2024 11:12:28 +0800 (CST)
+Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
+	by mail.maildlp.com (Postfix) with ESMTPS id AB7AF1A016C;
+	Thu,  5 Sep 2024 11:12:49 +0800 (CST)
+Received: from [10.67.146.137] (10.67.146.137) by
+ kwepemd500014.china.huawei.com (7.221.188.63) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 5 Sep 2024 11:11:46 +0800
-Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
- remaining nodes locally
-To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
-	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
- <20240904133944.2124-5-thunder.leizhen@huawei.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
-Date: Thu, 5 Sep 2024 11:11:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ 15.2.1258.34; Thu, 5 Sep 2024 11:12:49 +0800
+Subject: Re: Question on get random long worse in VM than on host
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	<oliver.upton@linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kvmarm@lists.linux.dev>, "guoyang (C)"
+	<guoyang2@huawei.com>
+References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
+ <86zfotuoio.wl-maz@kernel.org>
+ <CAMj1kXGocnZPe4EfzsB6xd2QZacp-a45R5f5f6FDpVtVEXCcGQ@mail.gmail.com>
+ <86y14dun1f.wl-maz@kernel.org>
+ <CAMj1kXF3JrDs=xvRmvTxS9du1F-gjSVe5qVZrPO5JLT5ho0riA@mail.gmail.com>
+ <f39ccb21-cc28-b878-bf5e-e81e378a299e@huawei.com>
+ <CAMj1kXGyJSwD=ok=Ag11mMh3d6onQkN0b_-iVwVDdyrwk5rj6Q@mail.gmail.com>
+From: Tangnianyao <tangnianyao@huawei.com>
+Message-ID: <bdf1471e-56aa-893c-0336-81828c8cb5c1@huawei.com>
+Date: Thu, 5 Sep 2024 11:12:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240904133944.2124-5-thunder.leizhen@huawei.com>
+In-Reply-To: <CAMj1kXGyJSwD=ok=Ag11mMh3d6onQkN0b_-iVwVDdyrwk5rj6Q@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Language: en-US
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500014.china.huawei.com (7.221.188.63)
 
 
 
-On 2024/9/4 21:39, Zhen Lei wrote:
-> If the conditions for starting fill are met, it means that all cores that
-> call fill() later are blocked until the first core completes the fill
-> operation. But obviously, for a core that has free nodes locally, it does
-> not need to be blocked(see below for why). This is good in stress
-> situations.
-> 
-> 1. In the case of no nesting, a core uses only one node at a time. As long
->    as there is a local node, there is no need to use the free node in
->    obj_pool.
-> 2. In the case of nesting depth is one, nodes in obj_pool need to be used
->    only when there is only one local node.
->    #define ODEBUG_POOL_PERCPU_SIZE      64
->    #define ODEBUG_BATCH_SIZE            16
->    Assume that when nested, the probability of percpu_obj_pool having each
->    number of nodes is the same. The probability of only one node is less
->    than 1/17=6%. Assuming the probability of nesting is 5%, that's a
->    pretty high estimate. Then the probability of using obj_pool is
->    6% * 5% = 0.3%. In other words, a 333-core environment produces only
->    one core to compete for obj_pool.
->    #define ODEBUG_POOL_MIN_LEVEL        256
->    #define ODEBUG_BATCH_SIZE            16
->    But we can tolerate "256 / (16 + 1)" = 15 cores competing at the same
->    time.
+On 9/3/2024 23:04, Ard Biesheuvel wrote:
+> On Tue, 3 Sept 2024 at 03:39, Tangnianyao <tangnianyao@huawei.com> wrote:
+>>
+>>
+>> On 9/3/2024 5:26, Ard Biesheuvel wrote:
+>>> On Sat, 31 Aug 2024 at 10:14, Marc Zyngier <maz@kernel.org> wrote:
+>>>> On Sat, 31 Aug 2024 08:56:23 +0100,
+>>>> Ard Biesheuvel <ardb@kernel.org> wrote:
+>>>>> As for RNDR/RNDRRS vs TRNG: the former is not a raw entropy source, it
+>>>>> is a DRBG (or CSPRNG) which provides cryptographically secure random
+>>>>> numbers whose security strength is limited by the size of the seed.
+>>>>> TRNG does not have this limitation in principle, although non-p KVM
+>>>>> happily seeds it from the kernel's entropy pool, which has the same
+>>>>> limitation in practice.
+>>>> Is that something we should address? I assume that this has an impact
+>>>> on the quality of the provided random numbers?
+>>>>
+>>> To be honest, I personally find the distinction rather theoretical - I
+>>> think it will be mostly the FIPS fetishists who may object to the
+>>> seeding of a DRBG of security strength 'n' from the kernel entropy
+>>> pool without proving that the sample has 'n' bits of entropy.
+>>>
+>>> For pKVM, the concern was that the untrusted host could observe and
+>>> manipulate the entropy and therefore the protected guest's entropy
+>>> source, which is why the hypervisor relays TRNG SMCCC calls directly
+>>> to the secure firmware in that case. The quality of the entropy was
+>>> never a concern here.
+>>>
+>>> .
+>>>
+>> Thank you for reply.
+>>
+>> In case that EL3 firmware not support SMCCC TRNG, host and guest can only
+>> get randomness from DRBG-based RNDRRS, right?
+>>
+> There are other, non-architected ways too to get entropy and/or
+> randomness. There are many hardware random number generator
+> peripherals that the OS can drive directly, and there are vendor
+> specific EL3 services too that a system might use.
+>
+> RNDR/RNDRRS does not exist yet in practical terms - there are very few
+> SOCs that actually implement that used in the field.
+>
+>> In this case, guest get DRBG-based randomness via HVC and host, but the
+>> randomness returned by host kvm is not really backed by EL3 SMCCC TRNG,
+>> and actually get from DRBG-based RNDRRS.
+>> Is this hvc process is redundancy?
+>>
+> I don't understand this question. How the host obtains its entropy
+> and/or randomness and how the guest does it are completely separate
+> concerns.
+>
+> .
+>
 
-One detail is omitted. In function debug_objects_mem_init(), an extra batch
-is reserved for each core.
-	extras = num_possible_cpus() * ODEBUG_BATCH_SIZE;
-	debug_objects_pool_min_level += extras;
+Process is different between host and guest in arch/arm64, arch_get_random_seed_longs.
+(1) In host , smccc_trng_available is false, it get randomness from RNDRRS.
 
-In addition, above method of calculating probabilities is wrong. The correct
-calculation method is as follows:
-When the number of local nodes is 0, fill is performed. When the number of
-local nodes is 1 and nested, 16 nodes are moved from obj_pool to obj_pool.
-As a result, the obj_pool resource pool keeps decreasing. When this happens
-continuously(The number of local nodes equal 0 is not met), the resource
-pool will eventually be exhausted. The error probability is:
-(1/2)^((256+16^ncpus)/17) * (5% + 5%^2 + ... + 5%^N) * 2/17 < 1e-7 (ncpus=1).
-1/2 ==> denominator sequence: 0,1; numerator sequence: 1
-(5% + 5%^2 + ... + 5%^N) < 5% + (5%^2) * 2 = 0.055
-17 = ODEBUG_BATCH_SIZ + 1, amount moved from obj_pool when the number of local nodes is 0.
-2/17 ==> denominator sequence: 0-16; numerator sequence: 0,1
-The more cores, the lower the probability of exhaustion.
+(2) In guest, smccc_trng_available is true, because kvm emulate it. Guest use smccc trng
+and hvc, and trap to host kvm. Then in host call stack:
+kvm_smccc_call_handler
+kvm_trng_call
+kvm_trng_do_rnd
+get_random_long
+...
+arch_get_random_seed_longs
 
-If obj_pool is not filled only when there are more than two local nodes,
-the probability of exhaustion is:
-(1/3)^((256+16^ncpus)/17) * (5% + 5%^2 + ... + 5%^N) * 3/17 < 2.3e-10
-1/3 ==> denominator sequence: 0,1,2; numerator sequence: 2
-3/17 ==> denominator sequence: 0-16; numerator sequence: 0,1,2
+host get randomness as (1) and return random u64 to guest.
+So the randomness guest finally get is from RNDRRS too.
+Can we let guest get randomness directly from RNDRRS, not using hvc first?
+The process for guest like (1):
+1) kvm not emulated smccc trng for guest
+2) guest check smccc trng, and get smccc_trng_available=false
+3) guest get randomness from RNDRRS
 
-> 3. In the case of nesting depth more than one, the probability is lower
->    and negligible.
->    Nesting Depth=2: "2/17 * 5% * 5%" = 0.03%
->    Nesting Depth=3: "3/17 * 5% * 5% * 5%" = 0.002%
-> 
-> However, to ensure sufficient reliability, obj_pool is not filled only
-> when there are more than two local nodes, reduce the probability of
-> problems to the impossible.
-> 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  lib/debugobjects.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index 7a8ccc94cb037ba..4f64b5d4329c27d 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -131,6 +131,16 @@ static void fill_pool(void)
->  	struct debug_obj *obj;
->  	unsigned long flags;
->  
-> +	/*
-> +	 * The upper-layer function uses only one node at a time. If there are
-> +	 * more than two local nodes, it means that even if nesting occurs, it
-> +	 * doesn't matter. The probability of nesting depth >= 2 is extremely
-> +	 * low, and the number of global free nodes guarded by
-> +	 * debug_objects_pool_min_level is adequate.
-> +	 */
-> +	if (likely(obj_cache) && this_cpu_read(percpu_obj_pool.obj_free) >= 2)
-> +		return;
-> +
->  	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
->  		return;
->  
-> 
+Thanks.
 
--- 
-Regards,
-  Zhen Lei
+
+
+
+
 
