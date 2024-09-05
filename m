@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-316608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5FB396D1E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:21:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D317D96D1E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65107B20EBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899081F2C646
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B8D198A10;
-	Thu,  5 Sep 2024 08:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F38D1946A8;
+	Thu,  5 Sep 2024 08:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e3x/kxrr"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLDBEKj8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B638B198850
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3ED2AE96
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524373; cv=none; b=fKXFh8m3/QwY5Lu/kM5I9XZ/lLUQAtjEwq3eXDyjhgTJNxy9fOuyMuOlJIHAGjE8ee0FXmR4S7bMgBjgpFwsHx3AvldfO4k1iMba8EwdZSBIwe3PjrqsZCV+mkrl6C/n/UIA4BZ6NWs0PadLiY23gxIWqelRVAQUBanplItgu7c=
+	t=1725524410; cv=none; b=SSsgicK8Cv85Qw+BZ0moWWmzKiKEOAU6Epc0PhDX2FtDCMfjLBzFxuWc9ZVmMdRK1gkJ4rT7Q6Hah3s7pJc4Uze6RHMAEsixiytEw7hS+ZCiY9eCAwH6sfbj2xuvusYkbNvDNyzUsJypP48wWUs47OAjVff0PlM89p9id7RtjNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524373; c=relaxed/simple;
-	bh=+BWzxJkQFe8ihuC1pXeT6ySQPYwRlKg+/UwNcRKMcxU=;
+	s=arc-20240116; t=1725524410; c=relaxed/simple;
+	bh=hNS1xguVDWQNKTijPRMZFqq16vpbFfxwaPirgEgkMfU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=njNRA+4hgSufrWVWPUadqBtpyRktosBmTqWMsfb+CjmY4VSFAf/yX8sm+8DpTsGwALLQIClJvoYdH50fHKDz67x2vNISzSvAFtz2xF1pJ5LvTsYhGKPDHHzZjSidoe1sqOkA1jkIyHdLwcRUtItX172N9RIn7EHf/W6qO+z+qCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e3x/kxrr; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c7d14191so842973f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725524369; x=1726129169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+BWzxJkQFe8ihuC1pXeT6ySQPYwRlKg+/UwNcRKMcxU=;
-        b=e3x/kxrrCOCNnNuzQQhjZMPaFnaFEjcsJJnlgFjMtBWnBPy7p8sNmNHx5pICdhXlyf
-         R+2uq2cIzuwNNAnNTaT+YnOcxv6JHTclQ84B8Iq52c6JFHWm8JXGtOi6Li2D98p/JoP5
-         F6/U17Mze4c3lMD+pHexoGJ1saBaKKEUjKLCBxNlphwbQ4MH7faZZAWScZCfU0AMIi22
-         R3oVGCVWiM5VA84qBzQby5ep9cqqfUpnPkxHm/mRBVW/LFf1HNib7uITNdHANbHJ9UNK
-         vg7H8+isuh5uw/cwtOvY1BzVq84bqBUn/vDANiHk1h4zMg7Pj/xT065VBrAONEFs++yF
-         EXMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725524369; x=1726129169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+BWzxJkQFe8ihuC1pXeT6ySQPYwRlKg+/UwNcRKMcxU=;
-        b=A/5rmJoaeiPnebzwYks/L+4Dp3mUkIVwanWgK6jOIMhnGYVY4yBjWcLa1/yvmVIlmx
-         5poTYi5eNZzEFZyBDJr7UaN1dq3CGr+eV8Vp100poLzjNeImF8ORlGcoEFcum4toOzzc
-         IbizGCjcg4G39FwAmGBcdHPs+sy+Xk1tvd30m9wydqtANLBQee2GUpXoUuP7ewM9T05o
-         wYdOlNWjT/G1zU1EsmdUBqyLVOXgmTH9h0ZGRwmVGXGZQJqlLPbY2KafkeT345/t0CPd
-         sRBXUwPc719xUboW57E+QMyHB8KVzqWQG8wLqYhre47p+KbDQK90U2JZuSIniCJMw18c
-         1g2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUtc43vVJKjxoNQztuP7wNfFhuY6CsZjxZYhu2rL6thbyDZLz/gN5VJP2XGbXVqwcmkp9SiAYiuGoF1Ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz/6p5LOzVINfccLbfaWGoSIhmNfeJZDjQjltIdltx3zklQ1zw
-	XAH3XYs4Uf3CAEN9Ks7bGTOADzsjtfryIQ1KJfXdwY7J8GLVHrsWAIcKdWac5IN2ymT6yRxDTPg
-	9vH5jbAno3DCrBv6ouV195ei3MPuZkhLTRbmX
-X-Google-Smtp-Source: AGHT+IFNtCG98xrOuozxty2PtnqpYGo4wzWpPlBR8g6UOkhcb7n2BIa3h2BXieak9ydWu3vH4GF9VvFlUfjcTo8Ol5I=
-X-Received: by 2002:a05:6000:1a47:b0:374:cb8e:4b43 with SMTP id
- ffacd0b85a97d-3779b37c460mr2850625f8f.32.1725524369228; Thu, 05 Sep 2024
- 01:19:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=iOLeRKbQHtZ7YMpmJj0AZXZHnfdK/fZ2xpQDpUiS0vt8UD3YGGCWfzi61sKRVxNRILBe0ei+cWGfIaCDjY2Cwnh2UMb/UMqdFppdK+iUxbZVq0g0jka1Q85zJZ7b+patObNalCqmxCUA1p0AstN+uNlG6onBbql3Hvef8YqwH6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLDBEKj8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF098C4CECE
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725524409;
+	bh=hNS1xguVDWQNKTijPRMZFqq16vpbFfxwaPirgEgkMfU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mLDBEKj8DjmR0uwBepN3z0CvvV0bP5kGO7Bdg3m4mq7lu9BtdXYc/JybNf6kjFR05
+	 UTMJxmSt+B8F8pKOHUZPKpMYv6rDaPheJkzV5C3CC4xfyxjj7LH9tbxYS3KvlEykCy
+	 7nDRAedWeANwjXoggI5uUFGwsr62NvMoME0s1I9VFiFbvmDoFY+cK+NUU+4Cn7Bwy7
+	 QnjokF7D50+76sov9Rho6uDo8b21Xnqlfybd/GD4YcflV4Cpiu+EreOWjLDRyjx7DJ
+	 8wq6aWky3xaHwAiIUtr5WVA1BLdijowgx0t93ZQMhLATt+S4P0x5iGd3uHkCSFYXST
+	 T49iwcpP6M5Lg==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6d4f1d9951fso4136907b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:20:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX1C4Lnqc1sgs4fLejpB8Qf4C8XZ8RlFlRU4LngQQz/0Eq0Bc/WRmvR+4N8d5riZWs65PswaVvznaSfekM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPHBYWcSoo3hkmqrkirIM0qHdwkZRhvnGQCWRY00WMy3tXLF7l
+	HiVREhvL9OY9lMNyK+g/BbJxQ5W2kIgjJLguFj1/BWkaFvWQPCaPncqUtOvw+hFkIVlyImqXRL3
+	mGtJ05YAzRNA3gRncToDulvNZfKlRZ1UpYSN1iA==
+X-Google-Smtp-Source: AGHT+IFXtwS0nG9o30m6bnG6CPrX+SPf8hVqmtejLkuUgeL2gu2BYQwyAbAfe5vGtSdSEIo1Ada6GvWoqN183ETy2Ds=
+X-Received: by 2002:a05:690c:fd4:b0:6ac:f8ac:7296 with SMTP id
+ 00721157ae682-6daf484a7f7mr100310507b3.1.1725524408953; Thu, 05 Sep 2024
+ 01:20:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-20-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-20-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Sep 2024 10:19:17 +0200
-Message-ID: <CAH5fLgjfxSOmnPsk_673qNdnpVoj1W11LD+qgKqBG8J7sm-u3g@mail.gmail.com>
-Subject: Re: [PATCH 19/19] rust: std_vendor: simplify `{ .. macro! .. }` with
- inner attributes
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20240904-lru-flag-v1-1-36638d6a524c@kernel.org>
+ <CAOUHufadyZBOifC8-ompzy4idEO9g-zipsSBrkWaoc=sWrk+Uw@mail.gmail.com> <d69cc5a5-ac69-4b43-82fa-391eb7a17cbd@leemhuis.info>
+In-Reply-To: <d69cc5a5-ac69-4b43-82fa-391eb7a17cbd@leemhuis.info>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 5 Sep 2024 01:19:58 -0700
+X-Gmail-Original-Message-ID: <CACePvbXpE8y09kACY+8PbzxMOStf2mVfEOFJ=LOa=CyXGwRDWg@mail.gmail.com>
+Message-ID: <CACePvbXpE8y09kACY+8PbzxMOStf2mVfEOFJ=LOa=CyXGwRDWg@mail.gmail.com>
+Subject: Re: [PATCH] mm: vmscan.c: fix OOM on swap stress test
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	yangge <yangge1116@126.com>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	baolin.wang@linux.alibaba.com, Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, 
+	Linux kernel regressions list <regressions@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 10:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Wed, Sep 4, 2024 at 11:54=E2=80=AFPM Thorsten Leemhuis
+<regressions@leemhuis.info> wrote:
 >
-> It is cleaner to have a single inner attribute rather than needing
-> several hidden lines to wrap the macro invocations.
 >
-> Thus simplify them.
 >
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> On 05.09.24 08:42, Yu Zhao wrote:
+> > On Thu, Sep 5, 2024 at 12:21=E2=80=AFAM Chris Li <chrisl@kernel.org> wr=
+ote:
+> >>
+> >> I found a regression on mm-unstable during my swap stress test,
+> >> using tmpfs to compile linux. The test OOM very soon after
+> >> the make spawns many cc processes.
+> >>
+> >> It bisects down to this change: 33dfe9204f29b415bbc0abb1a50642d1ba94f5=
+e9
+> >> (mm/gup: clear the LRU flag of a page before adding to LRU batch)
+> >>
+> >> Yu Zhao propose the fix: "I think this is one of the potential side
+> >> effects -- Huge mentioned earlier about isolate_lru_folios():"
+> >>
+> >> I test that with it the swap stress test no longer OOM.
+> >>
+> >> Link: https://lore.kernel.org/r/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-=
+MZUmErNAXoXmw@mail.gmail.com/
+> >> Fixes: 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before addi=
+ng to LRU batch")
+> >> Suggested-by: Yu Zhao <yuzhao@google.com>
+> >> Suggested-by: Hugh Dickins <hughd@google.com>
+> >> Tested-by: Chris Li <chrisl@kernel.org>
+> >> Signed-off-by: Chris Li <chrisl@kernel.org>
+>
+> Thx for taking care of this, Chris!
+>
+> > Closes: https://lore.kernel.org/56651be8-1466-475f-b1c5-4087995cc5ae@le=
+emhuis.info/
+>
+> FWIW, no big deal, but that ideally should be (in general and for
+> regression tracking) the following instead, as that link above is just
+> at the end of the thread with the report, but not the report itself --
+> and that is what often needed when someone needs to look up the
+> backstory of this chance sooner or later:
+>
+> Closes:
+> https://lore.kernel.org/all/CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9Ji=
+D9W_KA@mail.gmail.com/
 
-Are we ok with changing std_vendor?
+Thanks you Yu and Thorsten,
 
-Alice
+I just submitted the V2 to include the Closes tag. Technically it
+passes midnight here so it is another day I can submit another version
+:-).
+
+Chris
 
