@@ -1,215 +1,268 @@
-Return-Path: <linux-kernel+bounces-316623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C2D96D20E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:26:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3907C96D20F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EBA0287172
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:26:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94B8EB221F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C601925BB;
-	Thu,  5 Sep 2024 08:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF301925BB;
+	Thu,  5 Sep 2024 08:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2NI+aBjN"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjgIlVHQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680A9189518
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F49B17BEC3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524767; cv=none; b=n7eoV/ad3t/Ws60LDVHu+Pw8LkoWAt6RxmqFQkFlu39ZUkTGnveAVQjLWdfRNxDQ9CMdWcEqV8xgzPxCAn2MNbxcvmOyUYo7Hj8VqD7JgFrPCxdnfepr469fthE/JARxsfY8d/DegfN0ze4WDtLRWwJqWIEyNTDhACuCLApQtQo=
+	t=1725524826; cv=none; b=sChucwuWFJ/7V+B1qnkNjor6sdwmtmUAM45CfmEwlCdHWypRQN6mfCpKnjxA+ELkBs6v2zIywHqZGzR/1UIpj4T30EYiDI4PwnbRF6f47VsvP1CzEe6row3d+s1/yKkEUmlBMK+jBHprnurX9XbV7H9BD1zHQ095lw4uDwJmyPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524767; c=relaxed/simple;
-	bh=vYMVDeaVS3nk36UjoXWscki3cHGga/h/ahtkP0Ml0gw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eb8hYIGPR3/LTCif6GRwRq4D2ylsaGPm+/mU73AccIZLdboMwaqVFHtwFbTYJYSj6cU4kP4elnvnLmgGLt9whdKFQYIlxaZ79sKr3NjP5L8tuqHrNmz+OvGwYXOBjlhViCrqB31BMiqiC9UTP8PCuyg3ST1po1DFWh0N9GjaJwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2NI+aBjN; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f4f8742138so5358761fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725524763; x=1726129563; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HamwCCcPJT62KPA+Ewi5cXBkIpS9Qury5+XEZP/GM9Y=;
-        b=2NI+aBjN4UZPySLciKU/Wr3Uz3lrvlmC+MAfX8t7Kbq4cq5QF/VqaPuAK2qzzHKmFD
-         TWXW3OgEAHHcdjXJ22c2EgmdrzPK9mHnXFHSGq2DNMZaPD3DSzP5sqbGmwNM9bGNYpEn
-         VmFN+MxUCemMf3wEgykDrCXj8xFQk4IrXqyoHwelncW9XW9tuVm7RuFt/MtZA0lgknvL
-         DZYaWTRd0SJ400OH+rvI8whcqhqQ0pTLqNMoN3aTgYLfmF+urCcim27xvNd5Y3eKOZgo
-         bIriMRzalfLr+Z6H+OkOlrgLA6K5h8m89Sw8gjuKAMjFTn2oy52inI+gbFUHKWxkexv5
-         BRiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725524763; x=1726129563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HamwCCcPJT62KPA+Ewi5cXBkIpS9Qury5+XEZP/GM9Y=;
-        b=T6SdYQh253YD1NwSn3JUnwivRSywiPez+IUHGl7ysevO5pctgcZAMF+IorxK47xlJQ
-         WDuMTuxnoGvwYZ4nfELLMsklLv/h0gcCH0jh6cTLAMQ3LoeR0XsevU92XSCHK17McQEc
-         K1XHqDLYclYMu4gaymYRY5gidtqhGjrCwu4DmzvNoTvG9/6Uw7zWSasKoU+c9jiqDqkA
-         +Q5ObM4dFcji7yWg9M89HT521V2SyjuLE/hAEXR8Ib67Hv5KA+adW5BTdhprZI3nLp/J
-         /oLysVHYK2uqBrT+Fwbn26lhw0RdtvlC4jlb5YIxWJFz7+/Fqv7KPb8DJoqX7MuQ+C/V
-         t+Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1GkJ5fdPfHVU4Hw7yrQZI9yQ3lWhy99rHCU2YIyq4Y8M0oVnoXc3YEHhbbNuKjAlRgeSwrtiSKu+0uzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOwInB4/pmR0QJoPJG00Q2A7iOjG+BumT8EIktwjLXh5JMxxty
-	0fuHfxVureQyI/o56KylEZTImxBBk0DawjTsOeO3cb0hnXWNtE0t/GdzDUKo7aGrp0zBMd9EgY6
-	FSFuZRX+NqmpFpODRUbYk3rA5RHSu+hR+ic4e
-X-Google-Smtp-Source: AGHT+IHUl60Zp5FtBMCZokZowxWRDoV9+Xabc8FwwMYeboZDuvpv+GBY48gUTFJPkQMmAL6JuK9jUifMQKDEJwMPAw0=
-X-Received: by 2002:a2e:b8c6:0:b0:2f3:e2f0:2b74 with SMTP id
- 38308e7fff4ca-2f64d54ff96mr48371221fa.36.1725524763188; Thu, 05 Sep 2024
- 01:26:03 -0700 (PDT)
+	s=arc-20240116; t=1725524826; c=relaxed/simple;
+	bh=cWqX3P2HgWhytDM9e9SLDbRtnf5sTKbiTntuLnerQXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Keu8lpBuB9BqYIFrLMXEH1cHWWIBwSJJyL2IxJB5uAvnY7MqtLj/9DmkTnIJb4o9RrH8GfJ/x41EcuhMW7PfTgSbdLVXufDUbqxmJdGfCIiY+AQZOvSXlrxnfzaQKMJtIGAPEaBLi38rYp9ENhobZJTflcQmhrrl16JLqwwUTEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjgIlVHQ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725524825; x=1757060825;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cWqX3P2HgWhytDM9e9SLDbRtnf5sTKbiTntuLnerQXo=;
+  b=gjgIlVHQvpr76+T/IfQoZmkzqWf7nB/Wen3/XpIgAqRLyuGVB4nry0O4
+   4DKCWLZdK61CDeU8yVKXQJy42efSauvhv9IX0/GsSv2A98i6SOgrBZb7U
+   IDfqk0HBlL9n4tO64mQcMvMe65QLKKQzjdu+65lvjb5UZbaVlyzueFkMk
+   YKaUmWikVJSycCuLU6tZnKj6ugdSeI1cKugEPIBGpChHKft5eEXVwID7e
+   +ZebSoNMmOcVYLshNSbGgatpyb+59c/v3NKVYlJICwuF3rfouiPEO9qt9
+   3Tv5YxsgsmRLmvBbhyVO1uGmw1YkKpTwLjUtvAstz/TfaTtFPMeAb4U1n
+   g==;
+X-CSE-ConnectionGUID: 7w6QaYfATO6edfnd6llyJQ==
+X-CSE-MsgGUID: l4hyQjnoQPKOorRh8QLnug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34892181"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="34892181"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:27:04 -0700
+X-CSE-ConnectionGUID: H1JBgFeRTautrJ7WXgGTsQ==
+X-CSE-MsgGUID: uYqtI4AMS0Wu1KGWS/QiXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="96294676"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 05 Sep 2024 01:26:57 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 541B4179; Thu, 05 Sep 2024 11:26:56 +0300 (EEST)
+Date: Thu, 5 Sep 2024 11:26:56 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org, 
+	ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
+	cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, 
+	dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org, jack@suse.cz, 
+	mark.rutland@arm.com, hughd@google.com, aneesh.kumar@kernel.org, 
+	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com, jglisse@google.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
+Message-ID: <xs7lw544kk6ftxlg6lbjicxnu5mdn666ivld5kzznm7fkoaf2x@4jowgzwfzcof>
+References: <20240904100923.290042-1-dev.jain@arm.com>
+ <20240904100923.290042-3-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000f20106061fc9699c@google.com> <e8ce9858-87ab-4f0b-85a8-8817ec376986n@googlegroups.com>
- <CACT4Y+YkXFCQ8sUX7rgL9j23_mxKpoxR15_w=5+aJ=A_cg3C0w@mail.gmail.com>
-In-Reply-To: <CACT4Y+YkXFCQ8sUX7rgL9j23_mxKpoxR15_w=5+aJ=A_cg3C0w@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 5 Sep 2024 10:25:51 +0200
-Message-ID: <CACT4Y+Zf8Gegr_rpiCjpH2isp78zC9MWbYhuoXvrGL6Cj-cR1w@mail.gmail.com>
-Subject: Re: [moderation] [f2fs?] WARNING: still has locks held in f2fs_ioc_start_atomic_write
-To: Chao Yu <yuchaochina@gmail.com>
-Cc: syzkaller-upstream-moderation <syzkaller-upstream-moderation@googlegroups.com>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	syzbot+a2197ed0ab131bbc9d02@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904100923.290042-3-dev.jain@arm.com>
 
-On Thu, 5 Sept 2024 at 10:16, Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> Hi Chao,
->
-> The commands should not have space at the beginning of the line, and
-> also preferably sent not in HTML (I did n't check what is in the
-> plain/text section of your email).
-> You can always check if syzbot has received your command at the bug page:
-> https://syzkaller.appspot.com/bug?extid=3Da2197ed0ab131bbc9d02
->
-> But thanks for marking it as fixed:
->
->
+On Wed, Sep 04, 2024 at 03:39:23PM +0530, Dev Jain wrote:
+> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
+> replace it with a PMD-mapped THP. Change the helpers introduced in the
+> previous patch to flush TLB entry corresponding to the hugezeropage,
+> and preserve PMD uffd-wp marker. In case of failure, fallback to
+> splitting the PMD.
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  include/linux/huge_mm.h |  6 ++++
+>  mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
+>  mm/memory.c             |  5 +--
+>  3 files changed, 78 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index e25d9ebfdf89..fdd2cf473a3c 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -9,6 +9,12 @@
+>  #include <linux/kobject.h>
+>  
+>  vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
+> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> +			   unsigned long haddr, struct folio **foliop,
+> +			   unsigned long addr);
+> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+> +		 struct vm_area_struct *vma, unsigned long haddr,
+> +		 pgtable_t pgtable);
 
-Also one needs to keep syzbot email in CC, otherwise it does not know
-the bug you refer to.
-Let's try again:
+Why? I don't see users outside huge_memory.c.
 
-#syz fix: f2fs: atomic: fix to forbid dio in atomic_file
+>  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>  		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
+>  		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 58125fbcc532..150163ad77d3 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>  }
+>  EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>  
+> -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> -				  unsigned long haddr, struct folio **foliop,
+> -				  unsigned long addr)
+> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> +			   unsigned long haddr, struct folio **foliop,
+> +			   unsigned long addr)
+>  {
+>  	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
+>  
+> @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
+>  	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>  }
+>  
+> -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+> -			struct vm_area_struct *vma, unsigned long haddr,
+> -			pgtable_t pgtable)
+> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+> +		 struct vm_area_struct *vma, unsigned long haddr,
+> +		 pgtable_t pgtable)
+>  {
+> -	pmd_t entry;
+> +	pmd_t entry, old_pmd;
+> +	bool is_pmd_none = pmd_none(*vmf->pmd);
+>  
+>  	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+>  	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>  	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>  	folio_add_lru_vma(folio, vma);
+> -	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+> +	if (!is_pmd_none) {
+> +		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
+> +		if (pmd_uffd_wp(old_pmd))
+> +			entry = pmd_mkuffd_wp(entry);
+> +	}
+> +	if (pgtable)
+> +		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+>  	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>  	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>  	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+> -	mm_inc_nr_ptes(vma->vm_mm);
+> +	if (is_pmd_none)
+> +		mm_inc_nr_ptes(vma->vm_mm);
+>  }
+>  
+>  static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
+>  	spin_unlock(vmf->ptl);
+>  }
+>  
+> +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
+> +					     unsigned long haddr,
+> +					     struct folio *folio)
 
-> On Thu, 5 Sept 2024 at 08:49, Chao Yu <yuchaochina@gmail.com> wrote:
-> >
-> >  #syz fix: f2fs: atomic: fix to forbid dio in atomic_file
-> >
-> > =E5=9C=A82024=E5=B9=B48=E6=9C=8816=E6=97=A5=E6=98=9F=E6=9C=9F=E4=BA=94 =
-UTC+8 17:16:28<syzbot> =E5=86=99=E9=81=93=EF=BC=9A
-> >>
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit: 9e6869691724 Add linux-next specific files for 20240812
-> >> git tree: linux-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14d27ae598=
-0000
-> >> kernel config: https://syzkaller.appspot.com/x/.config?x=3D61ba6f3b22e=
-e5467
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da2197ed0ab13=
-1bbc9d02
-> >> compiler: Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian=
-) 2.40
-> >> CC: [ch...@kernel.org jae...@kernel.org linux-f2...@lists.sourceforge.=
-net linux-...@vger.kernel.org]
-> >>
-> >> Unfortunately, I don't have any reproducer for this issue yet.
-> >>
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/=
-disk-9e686969.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vml=
-inux-9e686969.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98=
-a/bzImage-9e686969.xz
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
-ommit:
-> >> Reported-by: syzbot+a2197e...@syzkaller.appspotmail.com
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> WARNING: syz.0.454/7910 still has locks held!
-> >> 6.11.0-rc3-next-20240812-syzkaller #0 Not tainted
-> >> ------------------------------------
-> >> 1 lock held by syz.0.454/7910:
-> >> #0: ffff888011f98f50 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_dow=
-n_write fs/f2fs/f2fs.h:2196 [inline]
-> >> #0: ffff888011f98f50 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_ioc=
-_start_atomic_write+0x2ed/0xac0 fs/f2fs/file.c:2163
-> >>
-> >> stack backtrace:
-> >> CPU: 0 UID: 0 PID: 7910 Comm: syz.0.454 Not tainted 6.11.0-rc3-next-20=
-240812-syzkaller #0
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S Google 06/27/2024
-> >> Call Trace:
-> >> <TASK>
-> >> __dump_stack lib/dump_stack.c:94 [inline]
-> >> dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> >> do_exit+0x1b67/0x28e0 kernel/exit.c:969
-> >> do_group_exit+0x207/0x2c0 kernel/exit.c:1088
-> >> get_signal+0x176f/0x1810 kernel/signal.c:2936
-> >> arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:337
-> >> exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-> >> exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >> __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >> syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
-> >> do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-> >> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >> RIP: 0033:0x7f7ba21779f9
-> >> Code: Unable to access opcode bytes at 0x7f7ba21779cf.
-> >> RSP: 002b:00007f7ba2fa4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> >> RAX: fffffffffffffffb RBX: 00007f7ba2306208 RCX: 00007f7ba21779f9
-> >> RDX: 0000000000000000 RSI: 000000000000f501 RDI: 0000000000000005
-> >> RBP: 00007f7ba21e58ee R08: 0000000000000000 R09: 0000000000000000
-> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> >> R13: 0000000000000001 R14: 00007f7ba2306208 R15: 00007ffc9069b428
-> >> </TASK>
-> >>
-> >>
-> >> ---
-> >> This report is generated by a bot. It may contain errors.
-> >> See https://goo.gl/tpsmEJ for more information about syzbot.
-> >> syzbot engineers can be reached at syzk...@googlegroups.com.
-> >>
-> >> syzbot will keep track of this issue. See:
-> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >>
-> >> If the report is already addressed, let syzbot know by replying with:
-> >> #syz fix: exact-commit-title
-> >>
-> >> If you want to overwrite report's subsystems, reply with:
-> >> #syz set subsystems: new-subsystem
-> >> (See the list of subsystem names on the web dashboard)
-> >>
-> >> If the report is a duplicate of another one, reply with:
-> >> #syz dup: exact-subject-of-another-report
-> >>
-> >> If you want to undo deduplication, reply with:
-> >> #syz undup
-> >
-> > --
-> > You received this message because you are subscribed to the Google Grou=
-ps "syzkaller-upstream-moderation" group.
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to syzkaller-upstream-moderation+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/ms=
-gid/syzkaller-upstream-moderation/e8ce9858-87ab-4f0b-85a8-8817ec376986n%40g=
-ooglegroups.com.
+Why the helper is needed? Cannot it be just opencodded in
+do_huge_zero_wp_pmd()?
+
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	vm_fault_t ret = 0;
+> +
+> +	ret = check_stable_address_space(vma->vm_mm);
+> +	if (ret)
+> +		goto out;
+> +	map_pmd_thp(folio, vmf, vma, haddr, NULL);
+> +out:
+> +	return ret;
+> +}
+> +
+> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	gfp_t gfp = vma_thp_gfp_mask(vma);
+> +	struct mmu_notifier_range range;
+> +	struct folio *folio = NULL;
+> +	vm_fault_t ret = 0;
+> +
+> +	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
+> +			      vmf->address);
+> +	if (ret)
+> +		goto out;
+> +
+> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
+> +				haddr + HPAGE_PMD_SIZE);
+> +	mmu_notifier_invalidate_range_start(&range);
+> +	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+> +	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
+> +		goto unlock;
+> +	ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
+> +	if (!ret)
+> +		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
+> +unlock:
+> +	spin_unlock(vmf->ptl);
+> +	mmu_notifier_invalidate_range_end(&range);
+> +out:
+> +	return ret;
+> +}
+> +
+>  vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+>  {
+>  	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
+> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+>  	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
+>  	VM_BUG_ON_VMA(!vma->anon_vma, vma);
+>  
+> -	if (is_huge_zero_pmd(orig_pmd))
+> +	if (is_huge_zero_pmd(orig_pmd)) {
+> +		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
+> +
+> +		if (!(ret & VM_FAULT_FALLBACK))
+> +			return ret;
+> +
+> +		/* Fallback to splitting PMD if THP cannot be allocated */
+>  		goto fallback;
+> +	}
+>  
+>  	spin_lock(vmf->ptl);
+>  
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 3c01d68065be..c081a25f5173 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>  	if (vma_is_anonymous(vma)) {
+>  		if (likely(!unshare) &&
+>  		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
+> -			if (userfaultfd_wp_async(vmf->vma))
+> +			if (!userfaultfd_wp_async(vmf->vma))
+> +				return handle_userfault(vmf, VM_UFFD_WP);
+> +			if (!is_huge_zero_pmd(vmf->orig_pmd))
+>  				goto split;
+> -			return handle_userfault(vmf, VM_UFFD_WP);
+>  		}
+>  		return do_huge_pmd_wp_page(vmf);
+>  	}
+> -- 
+> 2.30.2
+> 
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
