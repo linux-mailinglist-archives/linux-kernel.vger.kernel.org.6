@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-317926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930CB96E59E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F7196E5A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41E22B21601
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 401E1B2269F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886CA19EEC8;
-	Thu,  5 Sep 2024 22:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF831A726E;
+	Thu,  5 Sep 2024 22:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVHn8XXF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV7XQ44L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BFE14B95F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 22:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2759414B95F;
+	Thu,  5 Sep 2024 22:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725574174; cv=none; b=P+wIs5dHojvCORRfp3N9DzJED9fP8u6+WVCpDKZTU2UJHpyOpvqGD72N6m052eeWSm4lqu+ZYsyQ/R5zwht8nxoKSW5/F/oQOk/WT5q389JVUNjCVg3fTojCnQy0CoAX0ocmZdjwut5MV5HlhHCr08uptvLsFJMRc01bPkMohF8=
+	t=1725574188; cv=none; b=VLmiNuDvr6xsVF7jKT6Ncd44yu08F7uOhI6KjCrbs4aN6qPB46r7xUrejpCXwslabQKG5c0geWDjxGCQHmx9gIwUeSnJpE3IC/4Rab4phxn9qMfAlWgTlcVRCWQZGNWeRTWrI8ydbPsyHzJXmc7ozwGCW0/f24KtjF+ke3fa2tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725574174; c=relaxed/simple;
-	bh=mfkD7wV6Gy1CK5SHQXwGcVxtdxvU+GitaP24okbq77g=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=Fyh2TzDxIkw/Bamk7uKJYiNlL3fBuKJOyF8gFEwLZw1ZF6f2z2KzGiB6O1t2Sw1mcEeDMYoAbjuxntY1SHJOi7GVo5yGRNcVYM8/CQAR4ChNvKukMU1jDHlKt6Vg6BE2wUUAME282qntnsc4GG5c9XRYavy196N3tXudrJOifx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVHn8XXF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10134C4CEC7;
-	Thu,  5 Sep 2024 22:09:32 +0000 (UTC)
+	s=arc-20240116; t=1725574188; c=relaxed/simple;
+	bh=W7RYC1UyTeShUPnorjAlQ0QxnVv33EgdClbd0o4c4cM=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=I5hq4c4EPZVkszazHYLxEBsxosLFmGBvUYhfGo2buq5dXAZ0hGi7GBClBbxPzO8iJZvIXK2+VIYoLAgJjxTcAW6KoAz/uf6lMez9dTV6jRt8A8wgw6OUg3a0PfgRnUXFw53FyoV8hOC/R4etuNFuPmcW14zwSg0phasygprB1n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV7XQ44L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F78C4CEC3;
+	Thu,  5 Sep 2024 22:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725574173;
-	bh=mfkD7wV6Gy1CK5SHQXwGcVxtdxvU+GitaP24okbq77g=;
+	s=k20201202; t=1725574187;
+	bh=W7RYC1UyTeShUPnorjAlQ0QxnVv33EgdClbd0o4c4cM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=pVHn8XXFSP07rWuKRibWRoBUZjW2F04fLAcYx9SJJ3kmRnhkLT06uIucGUoE06Uwf
-	 0VBJNoG7c4AP8enTy4UZzjeGDUDeAVSX2L4pvIw7WuVM7ZygxWkR7mcXXboYZ8n8CH
-	 nT5NJjfB+B/G4u0WhHum+ZAFS5a6ISNV7GJQDg7ZTEeN0QakTPGI1welk7sBc2b/nS
-	 lGtwsXGZ07kUnwYtVAG1TXTD+spwG9GWyFWEJ/5gqxDhRDop5WFUKTdd+9QLDEKROb
-	 GUDzczRoj6ZSa21aWmckUko+zqgEXZUqlYeHUJfIGDIESScjb584UkmEvLuBdvrxno
-	 m+uDZeZmG236Q==
-Message-ID: <328dea14aef5ae409040961478b6a083.broonie@kernel.org>
+	b=pV7XQ44L7t36TyEhhrQVxT1myuRoT4DSkjG4E+HETDBv/V0f6IsvGCEeyf8xpYLTS
+	 Ap04fdumIPuDvJpV77c7ROzSRbqYu+No1hlndHQa72UPZ0egVWvQJQZ33+pI7C1ZBP
+	 vDD8OyrFc67xFCyK5elvlg/B6V4uEncfKcWOwbgKe8f/7pXtE3CLY9w4PwahofgsGW
+	 U/Asolrr/GJDVeIxd+53HDUgeaTuLx2dfUNaSp6Q4G4moMM4c2CYazbWwEFnzmDtI/
+	 8PJ4gYII/0dYCSnPskKtsoZZsKNkBSxPJSxnTvVZ3TkyrDU1SRAPf4qnc2uscB7y24
+	 lYPODypRxkg0w==
+Message-ID: <7f8f5f4771bfeba33bb62b2f6b60c254.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator fixes for v6.11-stub
-Date: Thu, 05 Sep 2024 23:09:25 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.11-rc6
+Date: Thu, 05 Sep 2024 23:09:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,23 +57,49 @@ The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.11-stub
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.11-rc6
 
-for you to fetch changes up to 1a5caec7f80ca2e659c03f45378ee26915f4eda2:
+for you to fetch changes up to c9ca76e8239810ccb08825a7b847c39d367410a6:
 
-  regulator: core: Stub devm_regulator_bulk_get_const() if !CONFIG_REGULATOR (2024-08-30 15:43:52 +0100)
-
-----------------------------------------------------------------
-regulator: Fix for v6.11
-
-A fix from Doug Anderson for a missing stub, required to fix the build
-for some newly added users of devm_regulator_bulk_get_const() in
-!REGULATOR configurations.
+  MAINTAINERS: SPI: Add mailing list imx@lists.linux.dev for nxp spi drivers (2024-09-05 19:15:45 +0100)
 
 ----------------------------------------------------------------
-Douglas Anderson (1):
-      regulator: core: Stub devm_regulator_bulk_get_const() if !CONFIG_REGULATOR
+spi: Fixes for v6.11
 
- include/linux/regulator/consumer.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+A few small driver specific fixes (including some of the widespread work
+on fixing missing ID tables for module autoloading and the revert of
+some problematic PM work in spi-rockchip), some improvements to the
+MAINTAINERS information for the NXP drivers and the addition of a new
+device ID to spidev.
+
+----------------------------------------------------------------
+Brian Norris (1):
+      spi: rockchip: Resolve unbalanced runtime PM / system PM handling
+
+Charles Han (1):
+      spi: intel: Add check devm_kasprintf() returned value
+
+Fabio Estevam (1):
+      spi: spidev: Add an entry for elgin,jg10309-01
+
+Frank Li (2):
+      MAINTAINERS: SPI: Add freescale lpspi maintainer information
+      MAINTAINERS: SPI: Add mailing list imx@lists.linux.dev for nxp spi drivers
+
+Geert Uytterhoeven (1):
+      spi: spidev: Add missing spi_device_id for jg10309-01
+
+Liao Chen (1):
+      spi: bcm63xx: Enable module autoloading
+
+Stefan Wahren (1):
+      spi: spi-fsl-lpspi: Fix off-by-one in prescale max
+
+ MAINTAINERS                 | 11 +++++++++++
+ drivers/spi/spi-bcm63xx.c   |  1 +
+ drivers/spi/spi-fsl-lpspi.c |  4 ++--
+ drivers/spi/spi-intel.c     |  3 +++
+ drivers/spi/spi-rockchip.c  | 23 +++++++----------------
+ drivers/spi/spidev.c        |  2 ++
+ 6 files changed, 26 insertions(+), 18 deletions(-)
 
