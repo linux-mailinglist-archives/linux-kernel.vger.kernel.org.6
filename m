@@ -1,110 +1,105 @@
-Return-Path: <linux-kernel+bounces-316346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F9796CE46
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:01:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D25396CE4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD2FFB2254C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A4D1F26B52
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3A149013;
-	Thu,  5 Sep 2024 05:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXmgNl9f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB202746A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A641156665;
+	Thu,  5 Sep 2024 05:03:16 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id F2DBA2746A;
+	Thu,  5 Sep 2024 05:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725512458; cv=none; b=BUWF6d4/N8AU7En/vylt+30BY2JfwoXqcpr5rpTIRIHEkMdKQxZmkZA3kWZafR4Q+Cn51Y16VHv/MAp80/ZNiHR+ce87I17XsaHVI8qTHps3LnOkjHGwKNBom6jqFooHMTDGrmUXPlWEhrCHwvAo7Qod82kZ5NwBvwCI00kqJaU=
+	t=1725512596; cv=none; b=H8PUYWBqDg7dQ31egHkj83X6JM5xYXJVZHiFgM3DiqkqcKesUcr/jQcCQi2sGtiqj/QYadXDfjTyIJf4Jm2EuNrR4F+p70ubtGRwrFR1iXJkT0fYGiayRSYqDJJiIffIti8RlXpi65lAqSYRR0gKI1eM/dA0s5n+fusWGkELuW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725512458; c=relaxed/simple;
-	bh=Wv5Kk0LeNTuRHeczRYjQUdmtIoAX70LujmlvEI/jIF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u8fXra8Omxn06BeJ0S3htu6shxTqdyMWl2syqy8VHZgNMM02Oann9CIdxBE1dsRrGqgZkknSZN97u3mbsZJe1M88Lz17WQqMCgMXN2fF+n/syqLIJ7G0s5QSjW1V8qFjr2MFy3S3seqPBX8Khv55R65q+GZHsss5GIDxeIFYEjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXmgNl9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97433C4CECD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725512457;
-	bh=Wv5Kk0LeNTuRHeczRYjQUdmtIoAX70LujmlvEI/jIF0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rXmgNl9f6iJjZ+SOPkuMIMhsquSfq2OblwnsdEKhAoUQ8/n/quJ4I38tVwcHKZb9P
-	 M/ETZzwT+/YB6Q7vWOQGCUHRGbstEElhz81Dl2brSNrLhYqculnLDSWgo6lBVW8DVs
-	 PTofTgicUnWa4KFQQvpjgnVr2tVZiKbNcRZ5TnUpqX+hJLopImNYtZzs0/A3Ur3ylB
-	 urqapjvczCAfpn+QXBlCZKG/Mq+h6bqanPi2ujDqqq6+I008W262jga/cDRKFO4MRp
-	 aSkYeSl4nXe1fxg1NO/n8zALdm3hDajMTseuWnFVRdFh684/RsB54SXQRTKf+bNPdh
-	 Njjmmg/1wGiMA==
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso105775ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 22:00:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgMOPwRf8g+4jOdDtDFo+lukirA6G8SrrhT8m1IuGYdp5koMyjz4Yu7vKgyslf6vvN7eSwxAzf78QxEoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLNG4rFFYPGG8+kvr5p2gH5Mhbdvm5usPopTgRkj3xqwLGu2Uq
-	dYpVv1WME4B3gXZnOK3pWi3CSjK53/j8NmCkdhQI2OeUkhou+BULW30gLbezco/VzO6i3g53HLH
-	H4PZzj/GI/RDzDJx/3/eXaS7MKMwPxaJ6CbrN
-X-Google-Smtp-Source: AGHT+IFDBoIur5pix1vcCpgWhNewDPqGPR9thFq+HmC1zuxlXLSxQ4sUpDhQbT3jHAsSOYV9mgX/x3Y0D1FcdjsyApY=
-X-Received: by 2002:a05:6e02:1605:b0:381:aa0b:3ccf with SMTP id
- e9e14a558f8ab-3a0475c88e0mr2417985ab.26.1725512456844; Wed, 04 Sep 2024
- 22:00:56 -0700 (PDT)
+	s=arc-20240116; t=1725512596; c=relaxed/simple;
+	bh=1OVdmWxQnf2gL69JNspl8eWwRpgkMv2erIHv+Q/JQ7A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U/uc7O3BEFvWmyYfil/VLrOg81Jbu/UZYdvADWrkncn5usGUEAw0cWzMi0LJA2KDAhOZONpkbNjftqAWqiJ0OC6teseoSb5ifk6stB/bZHlvkZmkZUoNbJM/KjyTR6WrTC1Ds8JrcP8eebAwZAceEJxLgesDuZY1JM8h5WzWI5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 03187604FCB3F;
+	Thu,  5 Sep 2024 13:02:53 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: njavali@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	JBottomley@Parallels.com,
+	saurav.kashyap@qlogic.com,
+	atul.deshmukh@qlogic.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: qla2xxx: avoid possible garbage in qla8044_rd_reg_indirect()
+Date: Thu,  5 Sep 2024 13:02:28 +0800
+Message-Id: <20240905050226.1959592-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
- <CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com>
- <0f9f7a2e-23c3-43fe-b5c1-dab3a7b31c2d@126.com> <CACePvbXU8K4wxECroEPr5T3iAsG6cCDLa12WmrvEBMskcNmOuQ@mail.gmail.com>
- <b5f5b215-fdf2-4287-96a9-230a87662194@126.com> <CACePvbV4L-gRN9UKKuUnksfVJjOTq_5Sti2-e=pb_w51kucLKQ@mail.gmail.com>
- <00a27e2b-0fc2-4980-bc4e-b383f15d3ad9@126.com> <CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZUmErNAXoXmw@mail.gmail.com>
- <CAMgjq7CLObfnEcPgrPSHtRw0RtTXLjiS=wjGnOT+xv1BhdCRHg@mail.gmail.com>
- <CAMgjq7DLGczt=_yWNe-CY=U8rW+RBrx+9VVi4AJU3HYr-BdLnQ@mail.gmail.com>
- <CACePvbXJKskfo-bd5jr2GfagaFDoYz__dbQTKmq2=rqOpJzqYQ@mail.gmail.com>
- <CACePvbWTALuB7-jH5ZxCDAy_Dxeh70Y4=eYE5Mixr2qW+Z9sVA@mail.gmail.com> <56651be8-1466-475f-b1c5-4087995cc5ae@leemhuis.info>
-In-Reply-To: <56651be8-1466-475f-b1c5-4087995cc5ae@leemhuis.info>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 4 Sep 2024 22:00:44 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuMBMJCdmjwwPxWn44CDMSngB+uqNYERDU=xPAQYNPrbNQ@mail.gmail.com>
-Message-ID: <CAF8kJuMBMJCdmjwwPxWn44CDMSngB+uqNYERDU=xPAQYNPrbNQ@mail.gmail.com>
-Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Kairui Song <ryncsn@gmail.com>, Ge Yang <yangge1116@126.com>, Yu Zhao <yuzhao@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, 
-	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org, 
-	Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>, baolin.wang@linux.alibaba.com, 
-	liuzixing@hygon.cn, Hugh Dickins <hughd@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Thorsten,
+Clang static checker (scan-build) warning:
+drivers/scsi/qla2xxx/qla_nx2.c:line 2542, column 16:
+Assigned value is garbage or undefined.
 
-On Mon, Sep 2, 2024 at 5:54=E2=80=AFAM Linux regression tracking (Thorsten
-Leemhuis) <regressions@leemhuis.info> wrote:
->
-> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-> for once, to make this easily accessible to everyone.
->
-> Chris et. al., was that fix from Yu ever submitted? From here it looks
+In qla8044_minidump_process_l1cache(), there is a garbage value
+problem as follows.
 
-Not yet. Let me make a proper patch and add "suggested-by" Yu.
+'r_value' is garbage when qla8044_rd_reg_indirect() failed, so
+'*data_ptr++ = r_value' assigned  garbage value to 'data_ptr'.
+There are many others examples like this which using
+qla8044_rd_reg_indirect() but not checking the return value.
+When qla8044_rd_reg_indirect() failed, let 'r_value = 0' to avoid these
+garbage values.
 
-It is one patch I have to apply to the mm-unstable before stress
-testing the swapping code. I even have a script performing the bisect
-after applying this one line fix, so that I can hunt down the other
-swap unstable patch.
+Fixes: 7ec0effd30bb ("[SCSI] qla2xxx: Add support for ISP8044.")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/scsi/qla2xxx/qla_nx2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> like fixing this regression fell through the cracks; but at the same
-> time I have this strange feeling that I'm missing something obvious here
-> and will look stupid by writing this mail... If that's the case: sorry
-> for the noise.
+diff --git a/drivers/scsi/qla2xxx/qla_nx2.c b/drivers/scsi/qla2xxx/qla_nx2.c
+index 41ff6fbdb933..97fd1c7833b4 100644
+--- a/drivers/scsi/qla2xxx/qla_nx2.c
++++ b/drivers/scsi/qla2xxx/qla_nx2.c
+@@ -92,11 +92,13 @@ qla8044_rd_reg_indirect(scsi_qla_host_t *vha, uint32_t addr, uint32_t *data)
+ 	struct qla_hw_data *ha = vha->hw;
+ 
+ 	ret_val = qla8044_set_win_base(vha, addr);
+-	if (!ret_val)
++	if (!ret_val) {
+ 		*data = qla8044_rd_reg(ha, QLA8044_WILDCARD);
+-	else
++	} else {
++		*data = 0;
+ 		ql_log(ql_log_warn, vha, 0xb088,
+ 		    "%s: failed read of addr 0x%x!\n", __func__, addr);
++	}
+ 	return ret_val;
+ }
+ 
+-- 
+2.30.2
 
-Not at all. You did the right thing. Thanks for the reminder. I also
-want to get rid of my one off private patch fix as well.
-
-Chris
 
