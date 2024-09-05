@@ -1,151 +1,109 @@
-Return-Path: <linux-kernel+bounces-317361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0BA96DD11
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCE696DD14
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28719289B79
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00081C23063
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA7B19CD0C;
-	Thu,  5 Sep 2024 15:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E704F19FA87;
+	Thu,  5 Sep 2024 15:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z2JxaSBy"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bU0IpBTM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B056522F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D91213C8F0;
+	Thu,  5 Sep 2024 15:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548405; cv=none; b=I7s7xV57hUqNy3O/y3TQdTq9bgZePY2LKnHKTMCFuaePGwKL1B3yBDMfF3HHNIXDMbF4Ld7YiwvkOCqpVB9FsMOoZUMBIsm4sFf73jBZYR0XbAmAZIgvYcowWI/WjeQq2a/0OJFH35F8zUkMwDXjMSbiqtRhBb5/1aO3r9Pq5mQ=
+	t=1725548422; cv=none; b=Fv+bg1Vi4pg+gW/NlxYITVt3IV82X1n9ckCcoR6yPHXH7a2vpdtKYROjzciuYR2YwJjBUwn+NwgbS2MxjnkXxK3Ft6GsMLsSMOlLjrNRgZepZGzp9SQooFwswNS694YoFdsqZvll3NTwwnyEYQAzzss7kTHAvpGcCQnC1KISLJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548405; c=relaxed/simple;
-	bh=1hB/LXrPgvAtTN9GXfwyJtxetvNDTX6pfIxTjqyczAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jnIBUKs6+cOz3HkYBvTMruLuKEQkHaaCPjJQ9qr7hn9BdQ9dlUDVaTJMlHEoJTRwFXfQKCfUXv+uj4shXWRdV2MwZi3xxxvHR5ZwyGQzIkxD6LkeJEe7l3t5j/lBnkc8RG00pgaH9b8ZzpK9ohRDpS0nXlvbYOMU0biSUurM1y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z2JxaSBy; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8a706236bfso42488866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725548402; x=1726153202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b/vwaaOM7QgzJOv5+FIRA5/127R3JaMBCh3y7Puc158=;
-        b=Z2JxaSBysVis3+ffUqMoIlqbVKTfa+brz4OuJ2wMs3aIAXygDeXP0RoftTKJr3WnOw
-         dlfeMVuRDcL983YioBjZJ4TIWyW3C3Eq29pROhKs5wyHj/XPx//Mi+swqvIskLB8P9m2
-         MaUvH5pwS2ThkZcKl/ZCmQMX8/8lvXg4fTSf/ypi5jkXf4TFcygA+B/ADcBK+XwNh+95
-         1GhJH7xJHWHTVV6rVz9CkMWqIIlxoXOBI+0k1yRb835KecdG4OhErUU6/LGQjrG+CzqG
-         XWjBLgLMUz4GMDhD8Rmbp+hJZFa53VQrziQDxGB7ncvYd7wbhcj9o3Pdmc8MN9oQ3BBP
-         WDeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725548402; x=1726153202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b/vwaaOM7QgzJOv5+FIRA5/127R3JaMBCh3y7Puc158=;
-        b=ukctV9vZRWuxtzSfjcgu0V86r1ws8GVOpFlwCdeGTLOs8O++YXH/7bwNf9FTi/juen
-         A4pnIfR6ZAocVhK9W6727sPazISmv/zYwxnUXsFTqHxhdbRFVdwBvDZ2e8cEi8RJtl2F
-         Gs7uL+jHGWwD1zQcc67r3MZQMFwc/TYuO+kAtmGVWzH+OxXAliuasUfpdIazKO37MEwz
-         nz2qI0I0xxCO7XqHly5yIJIKfLQkt7XIWFYPTjZg1FoW0orVeyxF9SH/zRevhX4euyAJ
-         fHg/w6IB6iASte1ys3YFSwOBDxLsMLKecgUOiCbAkC998ODqQa4Qd7jJTxr6zYxmfBwl
-         PguA==
-X-Forwarded-Encrypted: i=1; AJvYcCWI7VwwWwDmleRMaqdWa3vHaG7b5JGURg6OzI+19JGChDLebArDc+E954cThCA7JYwWXrg2eHTy5PZNqFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUXPE7WH6rJZCI7crxyQb7jJN24ZCngTgFqVbDOyVUp3+jRUf5
-	eTCc7IGFqdBqTyyWph8TnI77Yv0ZfkhcISWDqFk27xD0FBUNm2wn/+qA4pZCSEf2/UCQbslwFj/
-	RiECthFBSon5LN/Pw8gwnK0yQP04QhyTLJD6d
-X-Google-Smtp-Source: AGHT+IHphqMnzPf1o9hHPytHh4YLrNaMKd8hVcLv5Sr+340Jfy4m7laRRKRGW534lvPcXgloqGZBr5GIP9lZYGTISW8=
-X-Received: by 2002:a05:6402:5205:b0:5c0:8eb1:2800 with SMTP id
- 4fb4d7f45d1cf-5c3cd77e61bmr2793811a12.11.1725548400987; Thu, 05 Sep 2024
- 08:00:00 -0700 (PDT)
+	s=arc-20240116; t=1725548422; c=relaxed/simple;
+	bh=bnCo/rn97a40j7SezFlC511CH4VQCMOzgpdPx6Adums=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5kBgnkGwJJHADPmD87W79GARmFj+WsrhCyNNjoKTaF0Jax2oh9Q/04qcnH0We/ybBKNgUFgxPjRxQMUfBsi/J3rXclu3PUwV3/EeFopyG+0Z/Shec2GuYj7mzGpnjOpSU8dYhMMiAzlZaUA9Byf6B1Bcn2tpvhXAmMBlPV/wgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bU0IpBTM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BF25440E0198;
+	Thu,  5 Sep 2024 15:00:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zRiLxf_HpXVN; Thu,  5 Sep 2024 15:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725548412; bh=izxcSifsjm6Enwf2h8N9L3CVMTNiwfjfZrR+OAJBlP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bU0IpBTMDajwBaxIXkUmUftirbn3oa9/clIaBDnR44ePT13fCcc9i60yRyeWsuyvU
+	 sTO6rZZ1m/9JvVUkP3QFBOX9TN4py07i8/C1yyTN9jOTWUwWp1ysersH6XKWiLhnbi
+	 z0mEM3ajd3jDGNCYv4AhIqYoVizJsz2UBkjjl51wiTnBuTpeTKsrwWgghvSQ3x143q
+	 2dWNHWpPozB07DiM1ZPIdVMua7kRxMmY6d0cUX7jwoVkNJkuwlsom1JzgZ3VMinkYN
+	 rQ9z8jhzcLDMd2gV6neeDJFpMM2lTlkU3D4ZtZP3iAd2lGNyijihCpt+63ha5RVOuD
+	 c4BIWFgO5e27QIY6tnLtSVQF8DSQqXglRae9DMgyUE+Xl9qscWUEUFRlHyE55S+wGp
+	 jykzRfolrmcNIAzhrTHQGtTBGlSpBGWHdQmiYDKcRW1SUxn8UG+U9+dhX8cKhOjo69
+	 1BvI30LD5TNTTrYpXZComE4C6uNrIjnqLdwo5TZKy9/yLyi0Nwd6w5bF69JhDu4j6i
+	 CWDVO1tqYoBFi9qLUqnv2HIxVnhDjQKyjDKbm3bFoZLqODKWCp2mQRBKutg4TWjvqB
+	 Zpbjg8sUCjUPlBMAVwdwIQ0l9pcmwTbMYxtbggl1jJiWgmUFIab4f+sCDCcOXlzTdn
+	 UCAS8wP1f0mTbiCkjyxg8Kw0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31D3440E01A2;
+	Thu,  5 Sep 2024 15:00:03 +0000 (UTC)
+Date: Thu, 5 Sep 2024 17:00:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org
+Subject: Re: [PATCH] EDAC: Drop obsolete PPC4xx driver
+Message-ID: <20240905150002.GEZtnHchev0n6cVqZ_@fat_crate.local>
+References: <20240904192224.3060307-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903184334.4150843-1-sean.anderson@linux.dev>
- <20240903184334.4150843-4-sean.anderson@linux.dev> <CANn89iKJiU0DirRbpnMTPe0w_PZn9rf1_5=mAxhi3zbcoJR49A@mail.gmail.com>
- <156719f8-7ee8-4c81-97ba-5f87afb44fcf@linux.dev>
-In-Reply-To: <156719f8-7ee8-4c81-97ba-5f87afb44fcf@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 5 Sep 2024 16:59:47 +0200
-Message-ID: <CANn89i+3kwiF0NESY7ReK=ZrNbhc7-q7QU2sZhsR9gtwVje2jA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net: xilinx: axienet: Relax partial rx checksum checks
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904192224.3060307-2-robh@kernel.org>
 
-On Thu, Sep 5, 2024 at 4:24=E2=80=AFPM Sean Anderson <sean.anderson@linux.d=
-ev> wrote:
->
-> On 9/4/24 12:30, Eric Dumazet wrote:
-> > On Tue, Sep 3, 2024 at 8:43=E2=80=AFPM Sean Anderson <sean.anderson@lin=
-ux.dev> wrote:
-> >>
-> >> The partial rx checksum feature computes a checksum over the entire
-> >> packet, regardless of the L3 protocol. Remove the check for IPv4.
-> >> Additionally, packets under 64 bytes should have been dropped by the
-> >> MAC, so we can remove the length check as well.
-> >
-> > Some packets have a smaller len (than 64).
-> >
-> > For instance, TCP pure ACK and no options over IPv4 would be 54 bytes l=
-ong.
-> >
-> > Presumably they are not dropped by the MAC ?
->
-> Ethernet frames have a minimum size on the wire of 64 bytes. From 802.3
-> section 4.2.4.2.2:
->
-> | The shortest valid transmission in full duplex mode must be at least
-> | minFrameSize in length. While collisions do not occur in full duplex
-> | mode MACs, a full duplex MAC nevertheless discards received frames
-> | containing less than minFrameSize bits. The discarding of such a frame
-> | by a MAC is not reported as an error.
->
-> where minFrameSize is 512 bits (64 bytes).
->
-> On the transmit side, undersize frames are padded. From 802.3 section
-> 4.2.3.3:
->
-> | The CSMA/CD Media Access mechanism requires that a minimum frame
-> | length of minFrameSize bits be transmitted. If frameSize is less than
-> | minFrameSize, then the CSMA/CD MAC sublayer shall append extra bits in
-> | units of octets (Pad), after the end of the MAC Client Data field but
-> | prior to calculating and appending the FCS (if not provided by the MAC
-> | client).
->
-> That said, I could not find any mention of a minimum frame size
-> limitation for partial checksums in the AXI Ethernet documentation.
-> RX_CSRAW is calculated over the whole packet, so it's possible that this
-> check is trying to avoid passing it to the net subsystem when the frame
-> has been padded. However, skb->len is the length of the Ethernet packet,
-> so we can't tell how long the original packet was at this point. That
-> can only be determined from the L3 header, which isn't parsed yet. I
-> assume this is handled by the net subsystem.
->
+On Wed, Sep 04, 2024 at 02:22:22PM -0500, Rob Herring (Arm) wrote:
+> Since commit 47d13a269bbd ("powerpc/40x: Remove 40x platforms.")
+> support for PPC40x platforms has been removed. While the EDAC driver
+> also mentions PPC440 and PPC460 processors, the driver refuses to
+> probe on anything other than PPC405. It's unlikely support will ever be
+> added at this point for these other old platforms, so the driver can be
+> removed.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  drivers/edac/Kconfig       |    9 -
+>  drivers/edac/Makefile      |    1 -
+>  drivers/edac/ppc4xx_edac.c | 1425 ------------------------------------
+>  drivers/edac/ppc4xx_edac.h |  167 -----
+>  4 files changed, 1602 deletions(-)
+>  delete mode 100644 drivers/edac/ppc4xx_edac.c
+>  delete mode 100644 drivers/edac/ppc4xx_edac.h
 
-The fact there was a check in the driver hints about something.
+Applied, thanks.
 
-It is possible the csum is incorrect if a 'padding' is added at the
-receiver, if the padding has non zero bytes, and is not included in
-the csum.
+-- 
+Regards/Gruss,
+    Boris.
 
-Look at this relevant patch :
-
-Author: Saeed Mahameed <saeedm@mellanox.com>
-Date:   Mon Feb 11 18:04:17 2019 +0200
-
-    net/mlx4_en: Force CHECKSUM_NONE for short ethernet frames
+https://people.kernel.org/tglx/notes-about-netiquette
 
