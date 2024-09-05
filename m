@@ -1,70 +1,56 @@
-Return-Path: <linux-kernel+bounces-317380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C1296DD4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:08:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0DB96DD5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002B21C2166E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612921F225D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C219DFAE;
-	Thu,  5 Sep 2024 15:06:36 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EB01A00E7;
+	Thu,  5 Sep 2024 15:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EK3wcKHV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0844CC8FE;
-	Thu,  5 Sep 2024 15:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7CD1A01A1;
+	Thu,  5 Sep 2024 15:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548796; cv=none; b=SsmybU/kj51xf2TcWnGuhNWzQbiuiz5iYqaXM625tU2sG7TAlAti+D1GhVHrvraRYruRX4Bm2yFjrYZuzKQaZ+VMYlQam26iNA/gT3bi9haM8ehlN6RdA5QXm2/uZw3iB45VrGB4Gue4sxFhgOhVZRF7haopCo8ekqztHaj0O2Q=
+	t=1725548851; cv=none; b=I1koRGkHjYbRJRi0quT/otVKHiUY2Jt2UrD1uXkzQm5aoVq/k2baqq9lU9eZvg1KZKkkYpSB8DKBl5q5mXLR6elIfq+KAEFc/xifOdbv/nhaRqmD4zb657+js34xW0NrNlYCaB+fEYPtjMh0aYUSypI+mukpBH31Q7QS9LbSbDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548796; c=relaxed/simple;
-	bh=Ufnv4NuUXMedjDhPVeDGTu0Wit6DOd9oyIjF1G9jxxc=;
+	s=arc-20240116; t=1725548851; c=relaxed/simple;
+	bh=ww8EkVCPB6s28Jr31zz3eqdZLXzUxrSoKTexWsgo+DE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nzx2xJDC+HsyRNzANwD5+Rxv0LbGpS/2tVnABb6Cz1TZP59unKXlJlr7XtuDgFHRzGlWsjUAWiNsbSTzciY/XJfWsWaa9U1jw4wBfUzIRMFEXZng9EbaEtl/f3UUCf2GpvcJ7u6E/lKRMs201WPqxZvTYXO+2I0Z7dc+M/qnd38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2059112f0a7so8929725ad.3;
-        Thu, 05 Sep 2024 08:06:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725548794; x=1726153594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j7TTRuuU4nlji66HB0wIsokyLV65QcKx5Ad6l4uBmgg=;
-        b=wIPvDMa5JeIwGni8ZcIMNYFi0Dctm9UrMXI5rvCkKQfVuhDBFmPw8DK91XTcnXeHns
-         08W65kyfiqpByJD6tNKmzdM4+mmHyUGM0qz0VE7Nguup36Y5alXHJCiLzpXspMuUzmh6
-         ZicCAhpRE55MApXzIl71dnIM6rqCOp6EJDyhFWrWgYw9hRpOMlKfa0V0DLARlI+7/8j/
-         E1SNuFAaehWBRdWVdTfwm7ci/+KWSUKDFamdvHjHzZY7+OJpQwELA03+Qx9TSglC1C3v
-         GEym+oZAmsPR1ChKPR/xkKJ9i6zrjnpFhRA1/UCfpj233p/i8X3rnjJXDhDdcdJzYu4K
-         zlpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlnxItqBd7qh7pKaWUWf1eR+XnR4lonuo6We7mbuSzjDVYsWgTcp1aGlhc7tDuIBrLc3NDlF+tSSKxjAf5@vger.kernel.org, AJvYcCVaa6uXJ6KY5vPBiqy6EON5WnpX30/2MAGgf8sNwuxyA4xu0n8q0ai4otG4IZ2YHO0MwMEvWO9YnX1j2qGY@vger.kernel.org, AJvYcCXheWIC3VlC2N/6x81PdA6jT8UctJ29f2kOkToiAx4J0K/Vp7xIalmpu6Zi8HwSzaURv4hARKw2E/dbJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYrFEnRCAcsiv36lozz9bm6xgsUlgp5RHe3lw5GU0YO7ryB4MI
-	2SAAX21gy4QnXJItJeq92l9GWWy4BRRnLPT2yt8eemIz4KopsH+g
-X-Google-Smtp-Source: AGHT+IGStXj7Q9ESrdDcPCzdegEEQ6geuDnclkkUo7eimkLKqJZy6a3xGuNcr2bAYNITzcnTIAKDTQ==
-X-Received: by 2002:a17:903:3586:b0:205:8a25:c11 with SMTP id d9443c01a7336-2058a250d9dmr147178855ad.45.1725548794015;
-        Thu, 05 Sep 2024 08:06:34 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea5832dsm29588925ad.237.2024.09.05.08.06.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 08:06:33 -0700 (PDT)
-Date: Thu, 5 Sep 2024 15:06:18 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Helge Deller <deller@gmx.de>
-Cc: Wei Liu <wei.liu@kernel.org>, Chen Ni <nichen@iscas.ac.cn>,
-	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
-	gpiccoli@igalia.com, mikelley@microsoft.com,
-	linux-hyperv@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fbdev/hyperv_fb: Convert comma to semicolon
-Message-ID: <ZtnI6uWpRVf1Bvx8@liuwe-devbox-debian-v2>
-References: <20240902074402.3824431-1-nichen@iscas.ac.cn>
- <Ztlc52c6fIz3azbn@liuwe-devbox-debian-v2>
- <5f6ce496-15cc-45d1-b3d0-10e362543a3c@gmx.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJdvcKD7MXZ2Mf60M5dcB69gHX/AOT6JshINIg5KKrb74oBSwEdfWGNoFtDQGoGRt+lFL/bIJSLQRwj5o6Q4621D8uHRiTGsqnOemsZKOBgvkfaEVsIiS75hAdA9Xz2i3wErMyyCbh8BH6zXNEtBw81tBeYdVN5q0y4eF3iVCdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EK3wcKHV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07ABFC4CEC3;
+	Thu,  5 Sep 2024 15:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725548849;
+	bh=ww8EkVCPB6s28Jr31zz3eqdZLXzUxrSoKTexWsgo+DE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EK3wcKHVMuXgbqNLwvY8QRppCwo6SJpINLdOAjWCM4qe4U/ArLZCQT3lEf10FKZ5G
+	 w9R1iyKxGuiCgozVFJ8uibsSobTf1+fZnelbzL+qE0MgopEVL8pBoYHeFW7DBkybVG
+	 P0gR90pic6U7pMH5KfDrUJ/+M+l0ROqfGY2GM9PbAh86kXfsaL7FSiEJe6MlJEO9V5
+	 DRyxP9BbXy+21uYObdvifuI/Ph3cZi5wYfFhaT5QOWg5evTnvo1dOXOO5xbzVimspd
+	 8CF37H/sC5OqeOq07oXsR0GAtO/LbZkmUsi2iokWO3viuVekb7gKdg0Q8x8VkzP2bM
+	 Eu9QLTqM6XxcA==
+Date: Thu, 5 Sep 2024 12:07:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the perf tree
+Message-ID: <ZtnJLkO5cTIlwnSb@x1>
+References: <20240902105121.1a5b25f8@canb.auug.org.au>
+ <20240905084208.78279c14@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,29 +59,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5f6ce496-15cc-45d1-b3d0-10e362543a3c@gmx.de>
+In-Reply-To: <20240905084208.78279c14@canb.auug.org.au>
 
-On Thu, Sep 05, 2024 at 10:30:56AM +0200, Helge Deller wrote:
-> On 9/5/24 09:25, Wei Liu wrote:
-> > On Mon, Sep 02, 2024 at 03:44:02PM +0800, Chen Ni wrote:
-> > > Replace a comma between expression statements by a semicolon.
-> > > 
-> > > Fixes: d786e00d19f9 ("drivers: hv, hyperv_fb: Untangle and refactor Hyper-V panic notifiers")
-> > > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> > 
-> > Applied to hyperv-fixes, thanks!
-> 
-> I added it to the fbdev git tree 3 days ago.
-> 
-> Either you or me should drop it from our trees.
-> Please let me know what you prefer.
+On Thu, Sep 05, 2024 at 08:42:08AM +1000, Stephen Rothwell wrote:
+> On Mon, 2 Sep 2024 10:51:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Thanks for picking it up. I'll drop it from my tree.
+> > The following commits are also in the perf-current tree as different
+> > commits (but the same patches):
+
+> >   6236ebe07131 ("perf daemon: Fix the build on more 32-bit architectures")
+> >   2518e13275ab ("perf python: Fix the build on 32-bit arm by including missing "util/sample.h"")
+> >   74fd69a35cae ("perf lock contention: Fix spinlock and rwlock accounting")
+> >   37e2a19c98bf ("perf test pmu: Set uninitialized PMU alias to null")
+
+> > These are commits
+
+> >   478e3c7ebbe7 ("perf daemon: Fix the build on more 32-bit architectures")
+> >   4cb80590f12d ("perf python: include "util/sample.h"")
+> >   60f47d2c58cb ("perf lock contention: Fix spinlock and rwlock accounting")
+> >   387ad33e5410 ("perf test pmu: Set uninitialized PMU alias to null")
+
+> > and this last one is causing an unnecessary conflict.
+
+> These latter commits are now in Linus' tree.
+
+I did the usual merge of torvalds/master into
+perf-tools-next/perf-tools-next (devel) when perf-tools/perf-tools
+(current/fixes) gets merged upstream and fixed up the trivial merge
+conflict.
+
+The end result is at the tmp.perf-tools-next branch while I do the full
+container build tests, the merge commit has the explanation for the
+resolution:
+
+  Merge remote-tracking branch 'torvalds/master' into perf-tools-next
+
+  To pick up fixes from perf-tools/perf-tools, some of which were also in
+  perf-tools-next but were then indentified as being more appropriate to
+  go sooner, to fix regressions in v6.11.
+  
+  Resolve a simple merge conflict in tools/perf/tests/pmu.c where a more
+  future proof approach to initialize all fields of a struct was used in
+  perf-tools-next, the one that is going into v6.11 is enough for the
+  segfault it addressed (using an uninitialized test_pmu.alias field).
+  
+  Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
 Thanks,
-Wei.
 
-> 
-> Helge
-> 
+- Arnaldo
 
