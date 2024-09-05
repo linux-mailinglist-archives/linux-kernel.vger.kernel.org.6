@@ -1,117 +1,180 @@
-Return-Path: <linux-kernel+bounces-316536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C3896D0D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C98B896D0DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF691C21B3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE94B1C21959
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FD8193428;
-	Thu,  5 Sep 2024 07:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C561946C2;
+	Thu,  5 Sep 2024 07:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZjrlTIi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D96C1925B5
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B40C1925B5;
+	Thu,  5 Sep 2024 07:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725522757; cv=none; b=PeY2v9BsDKemhEuD7dtC9PZbLrhO3REfSLUituJ6FWPCYPoOdypHX2UZTg0af0hLXOizTcKKKhmmMbRWAKhwZ9Ag14mFTEK3pkIpD0rmetjkxjL/bASLZtY3vvFkpei2tlzLcsauLBA/GmcTHNe5r45in1XUYyKzwAIjm+NEWhA=
+	t=1725522763; cv=none; b=auMZj6ZXES1g5hF59OFDfYKNoVXbj+NuzjNmFGA3TqWFqYGBz18mhQ33U3S/e6tLr1v7D8TmS7UW9jy6+Iop77xvLGMME+dm3N+0onLH6EHJArgfWTSKjWfZCqX4RYkaqHYbHkpjwyITkmQ80gyIF4YnHDOIK6s4CjbC/T/dxxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725522757; c=relaxed/simple;
-	bh=QruOEX77o4IzM0/p+F25QvRXbfV+dn+E1QX9bbaGKgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MviZjUELE4nReEf9zAWpMbsvXSpqBsokJKvqWhNZGP29HrIRNXma5qxAvzpwVsg8v+Ax/8WLGg3olo6lfnyHCu7Pql8fbdberLzAeE7Q1Nb3KKm+XEC36ttOYWxxgdmCjHc0tYfsxpEjfMDcrZbjIrvx7tfFbVgsPyr9c94Gzzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA39C4CEC3;
-	Thu,  5 Sep 2024 07:52:36 +0000 (UTC)
-Message-ID: <30445b83-50eb-40ae-a2db-43b98d0c3224@linux-m68k.org>
-Date: Thu, 5 Sep 2024 17:52:33 +1000
+	s=arc-20240116; t=1725522763; c=relaxed/simple;
+	bh=1w/DEc4Hg4y0fdNyNzind01KPDVGipnFjRZPtt8ca10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHDdleQPVJy3PW6FTmdhhGmuWL10YF4mp1k8OPQPzaJHvjeiBMQC9t21JYwXiC6B+9rjvEAzUomvEUd/uvOjJlTuamksVDqSeWWvz+un8Fr8OMgEP/WRgfHrUxrHVCv9Yi4NZdMUmkAMnBIA9f8BOybFFaxvHTazEdIlgVlJ4yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZjrlTIi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B765C4CEC3;
+	Thu,  5 Sep 2024 07:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725522762;
+	bh=1w/DEc4Hg4y0fdNyNzind01KPDVGipnFjRZPtt8ca10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QZjrlTIihvgnrnv9ZJbwzCxYksy0vYij2huAmMf6Q1+pRI1lDYM1XNpxfwd36lloy
+	 QVF/0ASW11I1dqeofBFl6VQWpHQcfu2mN++sNVZubWKrnJ9qDvmxL/H/LkON0LM07c
+	 r5HcnUQvlJL8CRihL250rMZ6+YjP/+eMi1U1Ji/7/2G459tCwAF/wXNx+E1M5ktHyw
+	 rsPv7124pOwURK/ZC0fJuRyNCHbQzp5W03uampYTdzQK4CwNwyXDOAr+OVHD2PZeCv
+	 nViqVFyN4Kqna95qkmjJ8g0V4RykdYaJOoAvg1nOFaaAI1BJmqWIWeDnZEv204+a1N
+	 kGVMplaqhVxRQ==
+Date: Thu, 5 Sep 2024 15:52:35 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] usb: xhci: fix loss of data on Cadence xHC
+Message-ID: <20240905075235.GB325295@nchen-desktop>
+References: <20240905065716.305332-1-pawell@cadence.com>
+ <PH7PR07MB95386A40146E3EC64086F409DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] m68k: disable SRAM at startup
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-References: <20240904-fix-cf-virt-mem-sram-v1-1-fb007028d717@yoseli.org>
-Content-Language: en-US
-From: Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <20240904-fix-cf-virt-mem-sram-v1-1-fb007028d717@yoseli.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR07MB95386A40146E3EC64086F409DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-Hi JM,
-
-On 5/9/24 00:26, Jean-Michel Hautbois wrote:
-> Some of the internal SoC registers have a higher priority over the MMU
-> virtual mappings. The SRAM bank is one of them. If the bootloader
-> enables the internal SRAM at address 0x80000000, virtual memory access
-> at this address will not hit the MMU - so no TLB data misses would
-> occurr.
+On 24-09-05 07:03:28, Pawel Laszczak wrote:
+> Streams should flush their TRB cache, re-read TRBs, and start executing
+> TRBs from the beginning of the new dequeue pointer after a 'Set TR Dequeue
+> Pointer' command.
 > 
-> Since 0x80000000 is the virtual start address of all applications that
-> bit of memory is getting stomped over with inconsistent code and data
-> access.
+> Cadence controllers may fail to start from the beginning of the dequeue
+> TRB as it doesn't clear the Opaque 'RsvdO' field of the stream context
+> during 'Set TR Dequeue' command. This stream context area is where xHC
+> stores information about the last partially executed TD when a stream
+> is stopped. xHC uses this information to resume the transfer where it left
+> mid TD, when the stream is restarted.
 > 
-> Fix it by disabling the internal SRAM at startup.
+> Patch fixes this by clearing out all RsvdO fields before initializing new
+> Stream transfer using a 'Set TR Dequeue Pointer' command.
 > 
-> Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
-> Tested-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: <stable@vger.kernel.org>
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 
-I know this change fixed your specific problem, but it is not going
-to work as a general solution.
-
-For one not all ColdFire parts have an SRAM region and thus not all have
-a valid %rambar register. Secondly some ColdFire parts (like the 5249)
-have 2 SRAM regions, with mapping control registers named %rambar0
-and %rambar1.
-
-Some ColdFire uClinux applications use the mapped SRAM, so a blanket
-disable is not the best idea in any case.
-
-I am thinking it would be better to have a new Kconfig option that
-allows disabling by the startup code for those ColdFire parts that
-have SRAM (so appropriate "depends on"). That way it will only be
-disable when that is what is needed. Maybe also have that configuration
-allowing to configure and set the rambars so that a mapping
-can be forced on if wanted.
-
-Regards
-Greg
-
-
+Reviewed-by: Peter Chen <peter.chen@kernel.org>
+> 
 > ---
->   arch/m68k/coldfire/head.S | 4 ++++
->   1 file changed, 4 insertions(+)
+> Changelog:
+> v3:
+> - changed patch to patch Cadence specific
 > 
-> diff --git a/arch/m68k/coldfire/head.S b/arch/m68k/coldfire/head.S
-> index c6d7fd28c6023..3901a49c47c89 100644
-> --- a/arch/m68k/coldfire/head.S
-> +++ b/arch/m68k/coldfire/head.S
-> @@ -207,6 +207,10 @@ _start:
->   	movec	%d0,%CACR
->   	nop
->   
-> +	movel   #0,%d0
-> +	movec   %d0,%rambar
-> +	nop
+> v2:
+> - removed restoring of EDTLA field 
+> 
+>  drivers/usb/cdns3/host.c     |  4 +++-
+>  drivers/usb/host/xhci-pci.c  |  7 +++++++
+>  drivers/usb/host/xhci-ring.c | 14 ++++++++++++++
+>  drivers/usb/host/xhci.h      |  1 +
+>  4 files changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
+> index ceca4d839dfd..7ba760ee62e3 100644
+> --- a/drivers/usb/cdns3/host.c
+> +++ b/drivers/usb/cdns3/host.c
+> @@ -62,7 +62,9 @@ static const struct xhci_plat_priv xhci_plat_cdns3_xhci = {
+>  	.resume_quirk = xhci_cdns3_resume_quirk,
+>  };
+>  
+> -static const struct xhci_plat_priv xhci_plat_cdnsp_xhci;
+> +static const struct xhci_plat_priv xhci_plat_cdnsp_xhci = {
+> +	.quirks = XHCI_CDNS_SCTX_QUIRK,
+> +};
+>  
+>  static int __cdns_host_init(struct cdns *cdns)
+>  {
+> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> index b9ae5c2a2527..9199dbfcea07 100644
+> --- a/drivers/usb/host/xhci-pci.c
+> +++ b/drivers/usb/host/xhci-pci.c
+> @@ -74,6 +74,9 @@
+>  #define PCI_DEVICE_ID_ASMEDIA_2142_XHCI			0x2142
+>  #define PCI_DEVICE_ID_ASMEDIA_3242_XHCI			0x3242
+>  
+> +#define PCI_DEVICE_ID_CADENCE				0x17CD
+> +#define PCI_DEVICE_ID_CADENCE_SSP			0x0200
 > +
->   #ifdef CONFIG_MMU
->   	/*
->   	 *	Identity mapping for the kernel region.
+>  static const char hcd_name[] = "xhci_hcd";
+>  
+>  static struct hc_driver __read_mostly xhci_pci_hc_driver;
+> @@ -532,6 +535,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+>  			xhci->quirks |= XHCI_ZHAOXIN_TRB_FETCH;
+>  	}
+>  
+> +	if (pdev->vendor == PCI_DEVICE_ID_CADENCE &&
+> +	    pdev->device == PCI_DEVICE_ID_CADENCE_SSP)
+> +		xhci->quirks |= XHCI_CDNS_SCTX_QUIRK;
+> +
+>  	/* xHC spec requires PCI devices to support D3hot and D3cold */
+>  	if (xhci->hci_version >= 0x120)
+>  		xhci->quirks |= XHCI_DEFAULT_PM_RUNTIME_ALLOW;
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 1dde53f6eb31..a1ad2658c0c7 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -1386,6 +1386,20 @@ static void xhci_handle_cmd_set_deq(struct xhci_hcd *xhci, int slot_id,
+>  			struct xhci_stream_ctx *ctx =
+>  				&ep->stream_info->stream_ctx_array[stream_id];
+>  			deq = le64_to_cpu(ctx->stream_ring) & SCTX_DEQ_MASK;
+> +
+> +			/*
+> +			 * Cadence xHCI controllers store some endpoint state
+> +			 * information within Rsvd0 fields of Stream Endpoint
+> +			 * context. This field is not cleared during Set TR
+> +			 * Dequeue Pointer command which causes XDMA to skip
+> +			 * over transfer ring and leads to data loss on stream
+> +			 * pipe.
+> +			 * To fix this issue driver must clear Rsvd0 field.
+> +			 */
+> +			if (xhci->quirks & XHCI_CDNS_SCTX_QUIRK) {
+> +				ctx->reserved[0] = 0;
+> +				ctx->reserved[1] = 0;
+> +			}
+>  		} else {
+>  			deq = le64_to_cpu(ep_ctx->deq) & ~EP_CTX_CYCLE_MASK;
+>  		}
+> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> index 101e74c9060f..4cbd58eed214 100644
+> --- a/drivers/usb/host/xhci.h
+> +++ b/drivers/usb/host/xhci.h
+> @@ -1907,6 +1907,7 @@ struct xhci_hcd {
+>  #define XHCI_ZHAOXIN_TRB_FETCH	BIT_ULL(45)
+>  #define XHCI_ZHAOXIN_HOST	BIT_ULL(46)
+>  #define XHCI_WRITE_64_HI_LO	BIT_ULL(47)
+> +#define XHCI_CDNS_SCTX_QUIRK	BIT_ULL(48)
+>  
+>  	unsigned int		num_active_eps;
+>  	unsigned int		limit_active_eps;
+> -- 
+> 2.43.0
 > 
-> ---
-> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
-> change-id: 20240904-fix-cf-virt-mem-sram-abadb27fff2f
-> 
-> Best regards,
 
