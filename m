@@ -1,102 +1,145 @@
-Return-Path: <linux-kernel+bounces-316907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A1F96D6C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:10:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C1196D6C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C280E1F2159B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:10:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 440571C25243
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D119923A;
-	Thu,  5 Sep 2024 11:09:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1782F197A95;
-	Thu,  5 Sep 2024 11:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F00819924D;
+	Thu,  5 Sep 2024 11:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rFYMZ7l0"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97692194A61;
+	Thu,  5 Sep 2024 11:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534592; cv=none; b=FcIVj5lqjkFdLTPJ6gdQKchfAyTrDBIbIHzoGfHLrZgZzxEQM+AYnzsXMkbR8nWLFqMddJybQ0chDQ210JNNpkzX68qQiGaQt8GIMXslZTFrkQvAcCnJv+PBGIUQxrBNZUjlJrM1dlxb/FFA8nEomfoUokrgKbP8jbglwa3CiOA=
+	t=1725534686; cv=none; b=tOPfZfT06pRdioMYAWL97FQ+8mp67kL1GK7NcGGcDVO6GzvnzIh7vwdogTImY3WBTO3ZHaDaiUPTKnxT0zy5g5fJ+df+7wNriB5vul4+Rbb7v1euyQHNOkmL32FVrjeejiRRVpHC5xXyf2dqb3eEz6//PaDVGaY2E89E8N5vnOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534592; c=relaxed/simple;
-	bh=A2hc+vsL27uqFzsXHm/VUr96bo32AqMtbs3ZDihMcLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GDxwz/ApK1CcK3/zzMD7RGuUE29FHUx49FFJZmkh4KmmYXIFuvicyOkMgJ1Uw7kcYw2s4ibt7xLLJAlzNmA7sf9baZ/caykkck2M/dbBQpL8yXZnc40mVUW7mKXLIFr6aQuSv5WKHkU+0ZMhAooWGS4zzdnjirMXgZ/dlutofTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC988FEC;
-	Thu,  5 Sep 2024 04:10:16 -0700 (PDT)
-Received: from [10.1.32.66] (e127648.arm.com [10.1.32.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B16F33F73B;
-	Thu,  5 Sep 2024 04:09:48 -0700 (PDT)
-Message-ID: <e4aa650b-707b-4ba4-91b5-8cd021054b12@arm.com>
-Date: Thu, 5 Sep 2024 12:09:46 +0100
+	s=arc-20240116; t=1725534686; c=relaxed/simple;
+	bh=+Wp7h+yVKjMqDOnuzocHsFpFD+fZU7fCOYID9KB6ZEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8fpkdoAWVNUt68Fs5p2p3U8Wm/u2J7vr64KUO5oa+H40YxnODd8e1E+26KDWawIjZw4uySEBN8GiHPNxN9S1hqIMXkiEMT3qWwHebrxFfEp87lXRbORYqALAIgFQJScqbLqxAizclK9JuXXV3ixDzMIrNGbySZ0qoV7axCIVV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rFYMZ7l0; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1F2F13E6;
+	Thu,  5 Sep 2024 13:10:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725534609;
+	bh=+Wp7h+yVKjMqDOnuzocHsFpFD+fZU7fCOYID9KB6ZEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rFYMZ7l0z0n/9sZxti07wmHVLgrUZmxiqTRVmk0FxQLfTKljvqCypiEI86RwgfxH6
+	 QsshlovyxJQFRu6xjHEe9+ju4aumXWcR7zJFd1bl+i1c74n9linBIt/6f1IXmDzy4l
+	 qtUlbyxPaXs04Hfn6ePj2p73v41SgvcvFYoij7k4=
+Date: Thu, 5 Sep 2024 14:11:20 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <20240905111120.GK16183@pendragon.ideasonboard.com>
+References: <20240904-rp1-cfe-v4-3-f1b5b3d69c81@ideasonboard.com>
+ <202409051822.ZzUGw3XQ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- linux-kernel@vger.kernel.org, tglx@linutronix.de, daniel.lezcano@linaro.org,
- linux-pm@vger.kernel.org
-References: <20240819154259.215504-1-axboe@kernel.dk>
- <20240904142841.GL4723@noisy.programming.kicks-ass.net>
- <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
- <CAJZ5v0hVghgKgv0zqabL1m2FT6wou8-tW_9Mm-_9=0-3yhMb3A@mail.gmail.com>
- <20240905093607.GB15400@noisy.programming.kicks-ass.net>
- <3efadac3-1aa0-4747-b140-3fb6f267586e@arm.com>
- <20240905110006.GF15400@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240905110006.GF15400@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202409051822.ZzUGw3XQ-lkp@intel.com>
 
-On 9/5/24 12:00, Peter Zijlstra wrote:
-> On Thu, Sep 05, 2024 at 11:31:09AM +0100, Christian Loehle wrote:
->> On 9/5/24 10:36, Peter Zijlstra wrote:
->>> On Wed, Sep 04, 2024 at 05:18:57PM +0200, Rafael J. Wysocki wrote:
->>>
->>>> To be more precise, there are two different uses of "iowait" in PM.
->>>>
->>>> One is the nr_iowait_cpu() call in menu_select() and the result of it
->>>> is used for two purposes: (1) select different sets of statistics
->>>> depending on whether or not this number is zero and (2) set a limit
->>>> for the idle state's exit latency that depends on this number (but
->>>> note that it only takes effect when the "iowait" statistics are used
->>>> in the first place).  Both of these are arguably questionable and it
->>>> is unclear to me whether or not they actually help and how much.
->>>
->>> So this one is very dubious, it relies on tasks getting back on the CPU
->>> they went to sleep on -- not guaranteed at all.
->>>
->>>> The other use is boosting CPU frequency in schedutil and intel_pstate
->>>> if SCHED_CPUFREQ_IOWAIT is passed to them which in turn depends on the
->>>> p->in_iowait value in enqueue_task_fair().
->>>
->>> This one is fine and makes sense. At this point we know that p is going
->>> to run and where it is going to run.
->>
->> On any even remotely realistic scenario and hardware though the boost
->> isn't effective until the next enqueue-dequeue-cycle, so if your above
->> objection is based on that, I would object here too, using your argument.
+On Thu, Sep 05, 2024 at 06:50:48PM +0800, kernel test robot wrote:
+> Hi Tomi,
 > 
-> That is a quality of implementation issue with schedutil no?
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-Valkeinen/media-uapi-Add-meta-formats-for-PiSP-FE-config-and-stats/20240904-192729
+> base:   431c1646e1f86b949fa3685efc50b660a364c2b6
+> patch link:    https://lore.kernel.org/r/20240904-rp1-cfe-v4-3-f1b5b3d69c81%40ideasonboard.com
+> patch subject: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+> config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409051822.ZzUGw3XQ-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2445:12: warning: 'cfe_runtime_resume' defined but not used [-Wunused-function]
+>     2445 | static int cfe_runtime_resume(struct device *dev)
+>          |            ^~~~~~~~~~~~~~~~~~
+> >> drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2435:12: warning: 'cfe_runtime_suspend' defined but not used [-Wunused-function]
+>     2435 | static int cfe_runtime_suspend(struct device *dev)
+>          |            ^~~~~~~~~~~~~~~~~~~
+> vim +/cfe_runtime_resume +2445 drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
 
-Is it? So there is a latency from requesting a new frequency and actually
-running on it, for both x86 and arm platforms out there that should still
-be a few usecs at least during which the task is running. The task will
-dequeue quite soon (otherwise it will build up utilization and then it's
-not one we consider problematic wrt to this io utilization problem anyway).
-Just to be clear, I'm assuming fast_switch here and then I think schedutil's
-implementation isn't the problem, rather the premise of the underlying
-problem is.
-I have tried to elaborate on that in the RFC I've posted and linked though.
+The recommended way to fix this is to switch from SET_RUNTIME_PM_OPS()
+to RUNTIME_PM_OPS() and use pm_ptr() to set .driver.pm. This being said,
+the driver won't work on a kernel with !CONFIG_PM given how you
+implemented probe() and remove().
+
+The pisp-be driver suffered from the same issue and Jacopo fixed it in
+the last version. You can have a look at implement something similar.
+
+>   2434	
+> > 2435	static int cfe_runtime_suspend(struct device *dev)
+>   2436	{
+>   2437		struct platform_device *pdev = to_platform_device(dev);
+>   2438		struct cfe_device *cfe = platform_get_drvdata(pdev);
+>   2439	
+>   2440		clk_disable_unprepare(cfe->clk);
+>   2441	
+>   2442		return 0;
+>   2443	}
+>   2444	
+> > 2445	static int cfe_runtime_resume(struct device *dev)
+>   2446	{
+>   2447		struct platform_device *pdev = to_platform_device(dev);
+>   2448		struct cfe_device *cfe = platform_get_drvdata(pdev);
+>   2449		int ret;
+>   2450	
+>   2451		ret = clk_prepare_enable(cfe->clk);
+>   2452		if (ret) {
+>   2453			dev_err(dev, "Unable to enable clock\n");
+>   2454			return ret;
+>   2455		}
+>   2456	
+>   2457		return 0;
+>   2458	}
+>   2459	
+
+-- 
+Regards,
+
+Laurent Pinchart
 
