@@ -1,95 +1,137 @@
-Return-Path: <linux-kernel+bounces-317772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F131596E392
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:58:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF21E96E3A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298AB1C22494
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650C91F279B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8C51917C9;
-	Thu,  5 Sep 2024 19:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8DF193065;
+	Thu,  5 Sep 2024 20:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="gIlGp+xX"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nQ/hIZF5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFB343AD7;
-	Thu,  5 Sep 2024 19:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72F33D6D;
+	Thu,  5 Sep 2024 20:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725566284; cv=none; b=F0wiMOrsHJ9IRWnxM6RBrfJSgZg5VU1W6BVPx2GjXYapEBJdYVRhr3Hd8TgvEYT/uL0Vpk8ZXdggcW11KMB7mxH4coqSVMJgZs41Y/LsrhBzwgi5CONPGi1e1UuE1gakDaTQZH+TXLdahLL5GZtqSVlAaK1E7S3v43l2zP5rljw=
+	t=1725566559; cv=none; b=KNRibOdG6aWLVCfSZplSz7ZyMSl7571BBgrNXk0UoJV2EpxNZGhyd+byUJTDDqo7tg1Z3j0pfSFe6AIUHDaOrgSIy2lOL4hCg2lmA6c80rFwIJqsmuYLBbnBzac/2poTfBOrhLBm70BZT8jVPzgfpYo2OhE2Q9GjeUk6iv2bXJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725566284; c=relaxed/simple;
-	bh=uEWuHStiwdJiMQ6RIuH8fXo5EJOuK/FBAH3xcmLzihU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hrTMZtvHac4BxKnpCKWJIMFQahTAY2DnblmlX72PwctCPwFUN3HYQyLKsRDPsfw1aycdrsaTbSO1RS6QAKMNujYFBZUsc4Fid9b0tixG+Q0I4b2wR7Pw3N3Btp5L6W9HJ6ZqkB7WQ8TrswXsS4lNoXQY6mB9Oy4onR37Hj+JYgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=gIlGp+xX; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 74A751C0003;
-	Thu,  5 Sep 2024 19:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1725566280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uEWuHStiwdJiMQ6RIuH8fXo5EJOuK/FBAH3xcmLzihU=;
-	b=gIlGp+xX889blHM+Bq9R5Os/vg0UKY1Z6DPqflBrW4wG5UCvn2XVBma8k2P7qjCknxgov8
-	Ul/Xws0fEmZI9C48xkvQU2pcU5JaoBdH0LfBCKDcGnwOKEVYNt0Az3gzFomhtzYcMvvllX
-	fIoSv52BsfEF9esCfaP7BKtw3I8ukh8mbA1azUKerFyQIQ8QfuMU+CeeY2WG7osAKO6eXK
-	mvjIkFh7EEswDxl4B82tpWzrGO+Uf5KS6OGO2Fv95ZEgciBf+rRaAod5OcNKvwiBUN93WK
-	cW02gS0IAYHz4EejehV0EjxXayLYhwUccNCmXFTdrRb03e7jle329i1z6E3tWQ==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3 4/9] unicode: Export latest available UTF-8 version
- number
-In-Reply-To: <20240905190252.461639-5-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Thu, 5 Sep 2024 16:02:47 -0300")
-References: <20240905190252.461639-1-andrealmeid@igalia.com>
-	<20240905190252.461639-5-andrealmeid@igalia.com>
-Date: Thu, 05 Sep 2024 15:57:51 -0400
-Message-ID: <87o751oou8.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725566559; c=relaxed/simple;
+	bh=AyKX8+nt2yPLP/ENIDpA19SGhZiScbd4CUZUU3/QXes=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CxboaOP1zNRyRiMz4sq9IQJWR3hDUtUXJOdFId7sfASepSnopRn9/El5uSC/SDJMQFLr5g3Ugqyh1zDENVAmnDOzKT+CoXOg+anA0d1awfTxbzKZjA1EpBWvWtcWKUzXHM8L9NsbUsIYOWIHuj4VcAaolU+QoK2BrTc2vjmIMD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nQ/hIZF5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQQXj027901;
+	Thu, 5 Sep 2024 20:02:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Mn7XCQGjNFcU5zDL9Twrmr
+	AgmrHe+mhCNT0PPdaYjVs=; b=nQ/hIZF5B3X1/LWuh4PkukuEeQQTnO6aPz5P5L
+	jg02U2I16cnd+X2IFtbHg14Ld8kxYoSUKCJ/Nah6y4oVRviXF4vhSJecPvctBy5h
+	Qg+LDj4Z+Iqs2Ng2QZc3nOwaHFu0HGb4NU7UCWxDliO4HJFi1V3Q87+rXkUHe/Wb
+	DkCIf6NSsDz4IWenUSlHqslkocZ2yR5LvbXS0nKYrr6S5NprgRSfo8E6iDWNZLwz
+	E2Hn7LkABS8IslO8VyNnH5nInCWT9LLMjVIkOeNyq2gII/ZmlRQxCRzi04cIFv/K
+	nY7qJVSpgIe5HvRQQoF//ZBuiSVpx6OieErsX8i2XUFjyPTQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhx1r66y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 20:02:31 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485K2UqS029120
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 20:02:30 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 13:02:27 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <andersson@kernel.org>, <linus.walleij@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, <quic_psodagud@quicinc.com>,
+        Nikunj Kela
+	<quic_nkela@quicinc.com>
+Subject: [PATCH v3] dt-bindings: pinctrl: Add SA8255p TLMM
+Date: Thu, 5 Sep 2024 13:02:18 -0700
+Message-ID: <20240905200218.3810712-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FvK5MaHPvxGa8ai8NNLf8c2LINvqpRXr
+X-Proofpoint-GUID: FvK5MaHPvxGa8ai8NNLf8c2LINvqpRXr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_15,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 spamscore=0 priorityscore=1501 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409050149
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+Add compatible for TLMM block representing support on SA8255p.
 
-> Export latest available UTF-8 version number so filesystems can easily
-> load the newest one.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
->
-> If this is the accepted way of doing that, I will also add something to
-> checkpatch to warn that modifications at fs/unicode/utf8data.c likely
-> need to change this define.
+SA8255p uses the same TLMM block as SA8775p however the ownership
+of pins are split between Firmware VM and Linux VM on SA8255p. For
+example, pins used by UART are owned and configured by Firmware VM
+while pins used by ethernet are owned and configured by Linux VM.
+Therefore, adding a sa8255p specific compatible to mark the difference.
 
-I'd do it by special casing version =3D=3D 0 or -1 to utf8_load. But the
-way you've done is just fine.
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+---
 
-Acked-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Changes in v3:
+	- Removed the patch from original series[1]
+	- Fixed mising spaces schema errors
 
---=20
-Gabriel Krisman Bertazi
+Changes in v2:
+	- Modified subject line
+	- Fixed schema to include fallback
+
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ .../devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml    | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
+index e9abbf2c0689..749dbc563ac5 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
+@@ -17,7 +17,13 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: qcom,sa8775p-tlmm
++    oneOf:
++      - items:
++          - enum:
++              - qcom,sa8255p-tlmm
++          - const: qcom,sa8775p-tlmm
++      - items:
++          - const: qcom,sa8775p-tlmm
+ 
+   reg:
+     maxItems: 1
+-- 
+2.34.1
+
 
