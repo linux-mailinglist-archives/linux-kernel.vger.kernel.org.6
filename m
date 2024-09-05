@@ -1,100 +1,204 @@
-Return-Path: <linux-kernel+bounces-317780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEB196E3B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6362096E3BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D065B22D1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B395281BAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B587A19AA5A;
-	Thu,  5 Sep 2024 20:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eutQ9xFO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qGBfmjA9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3447E19D897;
+	Thu,  5 Sep 2024 20:10:31 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88B01953A9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 20:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DED18E772
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 20:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725566985; cv=none; b=k31B4lfdkuvItIIHLrRcq03bCFltZ1B1g3cS63+6p4zp/2aSphrUBUk90oxeU140dNT+NGH6Q3fq10gWtsElUW+uW0KCh2IVKphHd+EDQzsWhi86GuxSHe0NUZija5FzoTQA4kTmUFVq/a0mgCii0LhByhJr6DPAvTaaJtfHTqg=
+	t=1725567030; cv=none; b=tt+hT1eTS8IkW4FSPoSytTwSQFcfusc1t9AK9U1mC2zGs5wcIFJxcQIupv/aFB4SHXiDWmE3sCfr6uriYtpW28OuExRTMFhidVOdHXrv+uZez13Tpcu1f7s4pIDb6mcXusIypHeZpW8wCtCM6sjZ8NvUzi+kMIfsasDldK+9Y+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725566985; c=relaxed/simple;
-	bh=Wn4urdgI/XdpbjhcOnh4xQcKxiiY4lHaJa+xUfzpnu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ViHWbDRe98CSzWbVemDJ9IVd5fofrk9pVcWudR6K4Smq6kSWhOnFAfeKuSTgusgBPITzlolBA3HTPuvv8dxQCUyjnfsBwoAEug00Lf8ZbSx3jxGxJcgOz5QfrFCWS6WhePpKocglH5Z88FnbY3x/Plv5bd5N0fltP46JwgzadGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eutQ9xFO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qGBfmjA9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 5 Sep 2024 22:09:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725566982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w44uL6VHwM/DHK+ASTNjrJOWh44/UrWkNKqJ9v2M7zw=;
-	b=eutQ9xFOhWc+xf8lWfFJ8kpCNREV3H2n40OvHZrt6qSeC3IUIdBYwf8cZnUe+8EGgSsKk5
-	hr3fC2BfrmJegUI4kMyo8FKzTUmUvZDcecQTJ6a/fRTgVrc8Q0g9ZKXHLiFj1ggXHzmCM9
-	Nw/AcUcoom0WvaNEJRCHlKiiKe0vDJlFJj6ZobXBWR2K4yLX/JhrZ3Rtjdw5RiaSjZBBzt
-	RzsdiS+b1zg4tHmAnbBPjE0VzMQKnHN2eXPeBDXriOj8pHx2QgkNb8O3/gXJSnRPGoANL1
-	g+K8Coc55kWquKcjgtZwdY5ecdf/cgrZ+xNg+arVJeFJQUrE9t7eDL/O7YvLmg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725566982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w44uL6VHwM/DHK+ASTNjrJOWh44/UrWkNKqJ9v2M7zw=;
-	b=qGBfmjA95KlR7ru4HDwXgLIhNBAMUQ4SD03exNrgB7dqn4z+AsOtd+oHRKCcFUs7VNA+HI
-	fi4ZTvMs3IwdgrAQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	bigeasy@linutronix.de
-Subject: Re: [PATCH] x86/mm/pat: Support splitting of virtual memory areas
-Message-ID: <20240905200940.nFdZ_cEX@linutronix.de>
-References: <20240825152403.3171682-1-namcao@linutronix.de>
- <5jrd43vusvcchpk2x6mouighkfhamjpaya5fu2cvikzaieg5pq@wqccwmjs4ian>
- <20240827075841.BO2qAOzq@linutronix.de>
- <yvcwdfgxnyet7rjf6lhnsypz72jmp5czfkb2muvgzcul53scn6@rkhqrfgdaxsw>
- <20240903103616.i0GrRAfD@linutronix.de>
- <lfvhfjj2ysuut7sawru6aoywjowpsba3z2t56pjxh5tbi7kxfw@h7twfxw5oalf>
- <20240904075937.xh2rLk3q@linutronix.de>
- <jv6v6bgvh2uidqqeava72pjh2d5uehtyim74r3gatxn6v2uebh@t3lbrkhh6fzw>
- <111407dd-3628-4cbc-91ea-a1c31e27ed2b@intel.com>
+	s=arc-20240116; t=1725567030; c=relaxed/simple;
+	bh=pivsRGJp8NKBwxppttHmzAWJCGdoSIRe71JGCEgDemI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BYqsC6hCS/GG3qvfnu1uhmT5KQvYGlpJurXA1bs+ZkC0cRnakb+dD8AEo57I3GsGptSn+PwCqfwcNzqzVzXuDuYxE4xtHKdS3H2p9xjwoM1y7CYzylHEBGmynRkZ0A1mntZNcGpP95Ee+dyFQPf9vHfh5fgGvYRPq49xMO8ZOGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0459a8a46so34147375ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 13:10:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725567028; x=1726171828;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XiCTBlmXz66mBJxcne8N9WTdQpBfvB23eK91fk59/Tg=;
+        b=JJa7iYb5Ns68JPTXRBLwg48N5pyU2GAwCbosRsSQBeRyC6wEfLA79IWvs6o4jo0xSU
+         ku81gbCLNUisJRBQdVzfNRWkYyXbmVekGxVEZC7ABELNFJwfZKoSuiwuwRoxuWS8bily
+         htYSDSu81FysP4IbXX4Y74iGQWR/JG9WYBIQtsYTGKQ9PWZjcN2zTwBhOVhYhj8yyHLr
+         brG/DjdS1vipP/OD4f6LYDKBnuDxN5DYF2ktoOEBFeU2kMEQRrB5tkY7n2IMvArYE1TE
+         9zYWWYrf6sY5HQNNXWAvqEqN4Y8Tj0d2Kec+chezl+9VQM3GqOc8XBgpXn/JAKvtDF/V
+         MAwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDL18Ka6/DZ2dTkiPiK9mBx2w5h6ahi4UbMZoWy4Ls6xWSNb4KUzRmptDEWJs23vjPob5nfLlxwcYf4A0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLVQ1TdcWDVPX9CxnC+rAegZiKH1Tfmt+J00INaY08eeKVDtb9
+	US4B+2fIl+g36mvQzlXoft+692kmDqdvBrsJy/zV8k4VTCWn1DY8/23lYbO8ioD8laXtSWt/Yqi
+	M4hobP84QIY2SWpX/zcNrRkGiFNmKyhRKT3TaooeQxDvoa7rECrzwWH0=
+X-Google-Smtp-Source: AGHT+IGfch4QU4MPs73g55BhStEJMfxAbGwRgv9k7ov46PkNs5HaMGp/B40y2AJ6GYdRdXbU1SEWR9EAfA1f3IG2+Q0kmKa4q3b2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <111407dd-3628-4cbc-91ea-a1c31e27ed2b@intel.com>
+X-Received: by 2002:a05:6e02:1ca8:b0:39f:bac6:c31c with SMTP id
+ e9e14a558f8ab-3a04f068709mr36355ab.1.1725567028271; Thu, 05 Sep 2024 13:10:28
+ -0700 (PDT)
+Date: Thu, 05 Sep 2024 13:10:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c1ae9e062164e101@google.com>
+Subject: [syzbot] [wireless?] possible deadlock in ieee80211_remove_interfaces
+From: syzbot <syzbot+5b9196ecf74447172a9a@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 04, 2024 at 02:29:47PM -0700, Dave Hansen wrote:
-...
-> Nam, I didn't see your original patch in my inbox and I don't see it on
-> lore either.  Is there something funky going on there?
+Hello,
 
-Broken email setup on my side :(
+syzbot found the following issue on:
 
-My future patches should be received correctly.
+HEAD commit:    431c1646e1f8 Linux 6.11-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=144a43db980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=931962fa28089080
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b9196ecf74447172a9a
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Best regards,
-Nam
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-431c1646.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/01c0dadd39ff/vmlinux-431c1646.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9e2259e440f7/bzImage-431c1646.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5b9196ecf74447172a9a@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc6-syzkaller #0 Not tainted
+------------------------------------------------------
+kworker/u32:7/1108 is trying to acquire lock:
+but task is already holding lock:
+ffff888055278768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:6014 [inline]
+ffff888055278768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: ieee80211_remove_interfaces+0xfe/0x760 net/mac80211/iface.c:2262
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+-> #1 (&rdev->wiphy.mtx){+.+.}-{3:3}:
+       dev_open net/core/dev.c:1510 [inline]
+       dev_open+0xf4/0x160 net/core/dev.c:1503
+       do_setlink+0xd24/0x4190 net/core/rtnetlink.c:2907
+       __rtnl_newlink+0xc35/0x1920 net/core/rtnetlink.c:3696
+       rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
+       rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
+       netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
+       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+       netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
+       netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (team->team_lock_key#10){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+       lock_acquire kernel/locking/lockdep.c:5759 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       team_del_slave+0x31/0x1b0 drivers/net/team/team_core.c:1990
+       team_device_event+0xd0/0x770 drivers/net/team/team_core.c:2984
+       notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+       call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+       call_netdevice_notifiers net/core/dev.c:2046 [inline]
+       unregister_netdevice_many_notify+0x8bb/0x1e40 net/core/dev.c:11352
+       mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5625 [inline]
+       hwsim_exit_net+0x3ad/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6505
+       ops_exit_list+0xb0/0x180 net/core/net_namespace.c:173
+       cleanup_net+0x5b7/0xbb0 net/core/net_namespace.c:640
+       process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+       process_scheduled_works kernel/workqueue.c:3312 [inline]
+       worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+other info that might help us debug this:
+
+
+       ----                    ----
+                               lock(&rdev->wiphy.mtx);
+  lock(team->team_lock_key#10);
+
+ *** DEADLOCK ***
+
+5 locks held by kworker/u32:7/1108:
+ #0: ffff88801baf4948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work+0x1277/0x1b40 kernel/workqueue.c:3206
+stack backtrace:
+CPU: 2 UID: 0 PID: 1108 Comm: kworker/u32:7 Not tainted 6.11.0-rc6-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+ call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+ call_netdevice_notifiers net/core/dev.c:2046 [inline]
+ unregister_netdevice_many_notify+0x8bb/0x1e40 net/core/dev.c:11352
+ unregister_netdevice_many net/core/dev.c:11414 [inline]
+ unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11289
+ unregister_netdevice include/linux/netdevice.h:3129 [inline]
+ _cfg80211_unregister_wdev+0x624/0x7f0 net/wireless/core.c:1211
+ ieee80211_remove_interfaces+0x36d/0x760 net/mac80211/iface.c:2287
+ ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1669
+ mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5625 [inline]
+ hwsim_exit_net+0x3ad/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6505
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
