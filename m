@@ -1,154 +1,73 @@
-Return-Path: <linux-kernel+bounces-316756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F8496D3A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E957296D3C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8C55B236E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:44:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C1FB24C06
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3B5197A76;
-	Thu,  5 Sep 2024 09:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD7C198E7A;
+	Thu,  5 Sep 2024 09:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j+76Tc0p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mGc6qLrY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geJ9RRlf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7B2194A60
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF7A198A3D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529444; cv=none; b=caXAzLXt0DIo0dXhhQ/EkxV6ddHuIltVy6bTzxB3pKc6WLZVCRgh0Hr+iL3LcjC5wvO62+Jx7M04ifQvuqbZYv53UfvuLTdS26/KClSE9EZOdArlL2kDNCEH+uXAjLCAHLQZhXVlD89MQ4Ii+/J+LOcZvEzUk8LN6q/8yvrK7pg=
+	t=1725529501; cv=none; b=U6lFjmJznW8GE5htPCEE4QIuLkO1KpBb0kWUT0s2HTC/5z5a4cEFis1UvUT0mu4e7cP/YbgNMiL0ZRYx6+YQmQQH2BgUNQmZVMJurh3nHcw3ZgFAYzD4facuJg2KbjEFjWUYD1gsh2j9b9Dce7SQG+M2TwIhvKMGAZigsNJe7Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529444; c=relaxed/simple;
-	bh=/+5Ir2qR7DAHix3vVFkloTNiSLp5hIZ8mPlUOywN+ro=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jwG7Nqz+seUopCtG6MevJ2isS9VjkZlL/Oz9r9hSFHHc0yKEsSuSw95dg0HAXqs+RcjvC1MFd8s5bfAIhmbIZOrS5z3aB1W11lEzTN6+DMYoM4T0iGNw+LG89IY+ZNUwJNcfT6pdoIU0BjtZxGHAJTaZXqx4KP+MiZTwiU1veS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j+76Tc0p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mGc6qLrY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725529441;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vySEVyZksmhetz9aJy8k2MADB2njmAgN/TaKQJGQntI=;
-	b=j+76Tc0pAAqTn2d3fLNKkcnE3/EiWknw8v0K5Xr5KFzya4Vde36HET+OlthPx3BH1VVd7f
-	fGOBBPCwCYNFClkuv0aIpob+euc/b4xWJgg3YyM8Nur7cxj3Vs7UAa3S7u1t+bYiHWmsSb
-	2EDkLV93SsGrI2+KwxjkYGGVVrpeNHpoPrdtIN24c3G6g376EPXHvKsnA0rML9mEwde74+
-	5O1AbchW1+cp9200J8e5JduQPT0GM+jfR8epcKxL//8JlzVsJ+gvZoEcXEU7i0oRCSt3ZY
-	Q1ovLaZArZa3yMf3y1uGKgd3M8H7FGIkvfZ2PfS4h5U9w3Aw9pBa9JGC0UVqrg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725529441;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vySEVyZksmhetz9aJy8k2MADB2njmAgN/TaKQJGQntI=;
-	b=mGc6qLrYMXKxPI4j2flvBp2bMng8WPSnwkTzfTfwyZVSMArgJIR0CMemv+qyNlfPEz931u
-	9RqqloIWvxMf86AQ==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>,
- mcgrof@kernel.org, Liu Shixin <liushixin2@huawei.com>
-Subject: Re: [PATCH] static_call: Handle module init failure correctly in
- static_call_del_module()
-In-Reply-To: <50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com>
-References: <87cylj7v6x.ffs@tglx>
- <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <877cbr7qed.ffs@tglx>
- <50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com>
-Date: Thu, 05 Sep 2024 11:44:00 +0200
-Message-ID: <87a5gm5tb3.ffs@tglx>
+	s=arc-20240116; t=1725529501; c=relaxed/simple;
+	bh=S5ymXpa1KOgwMsuMGp7XboDwi0bCDu7KxdYDFH+QZ7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FXtSSjTe48s50UFKvtX/SHj+cKHSi7vsExzdN8boYFTIgqdtWrRSur+4L/3gTv5wHb1F81ffptzrdpi5Wly7+d/HS0Cjzp8x2sD4b2a/SXO7lY469mKFuN8WzP4NmzvVLzo6Nd5e7vmQix++MKa3Ygueg5oLWE+4FsPtbDvvHLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geJ9RRlf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97210C4CEC3;
+	Thu,  5 Sep 2024 09:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725529501;
+	bh=S5ymXpa1KOgwMsuMGp7XboDwi0bCDu7KxdYDFH+QZ7Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=geJ9RRlfKCgixR4Jx6yPhanHIgA8bBlWNti3bWbEV9jbRWoD8wQfGVR0XK5uCvvTR
+	 /hvzATYq43k26bTCdtGlQUGMtlEi8PScftA901sVVMlsviSCLl/dGrf+8gTUNzzBxh
+	 35jkuRdt8ypBG/X1t2DqXBtxM2+gxgBA//37VrE65ESreDk9lrUx0FD8pMy7A0kQKB
+	 dktdT+AvZFO6QlIWnwaEYrf/w/ViI8ghxx7b32ntzrp/JIcalnByFppUYzl2AA6gke
+	 H+bJ+fAjlF8ImHRqrIh+pf2sVdFKu6zBeuZ73/ZpsvsNEOYgO7sbMoJhIH3WmgrNZf
+	 H8aB9vy2+DmKg==
+Message-ID: <c73e424a-851b-4bb0-86ba-46acdd7cbe25@kernel.org>
+Date: Thu, 5 Sep 2024 17:44:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] erofs: support unencoded inodes for fileio
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+ <20240905093031.2745929-1-hsiangkao@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240905093031.2745929-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05 2024 at 11:34, Jinjie Ruan wrote:
-> On 2024/9/4 16:51, Thomas Gleixner wrote:
->> Can you spot the problem?
->
-> It seems that it is not the memory leak source,
-
-That's possible, but the code in there is definitely incorrect when
-pci_register_driver() fails. Simply because module->exit() is not
-invoked when module->init() fails.
-
-> but with the Link patch, the problem solved and the memory leak missed.
-
-Sure, but the change log of this patch is not really helpful at all and
-you sent me a gazillion of leak dumps, but failed to explain what the
-actual failure scenario is.
-
-So without a coherent description how to reproduce this issue there is
-not much I can do than looking at the code. The amdgpu init() function
-was an obvious candidate, but there seems to be some other way to cause
-that problem.
-
-Now you at least provided the information that the missing cleanup in
-the init() function is not the problem. So the obvious place to look is
-in the module core code whether there is a failure path _after_
-module->init() returned success.
-
-do_init_module()
-        ret = do_one_initcall(mod->init);
-        ...
-	ret = module_enable_rodata_ro(mod, true);
-	if (ret)
-		goto fail_mutex_unlock;
-
-and that error path does _not_ invoke module->exit(), which is obviously
-not correct. Luis?
-
-I assume that's not the problem when looking at the change log of that:
-
- https://lore.kernel.org/all/20221112114602.1268989-4-liushixin2@huawei.com/
-
-> Following the rules stated in the comment for kobject_init_and_add():
->  If this function returns an error, kobject_put() must be called to
->  properly clean up the memory associated with the object.
+On 2024/9/5 17:30, Gao Xiang wrote:
+> Since EROFS only needs to handle read requests in simple contexts,
+> Just directly use vfs_iocb_iter_read() for data I/Os.
 > 
-> kobject_put() is more appropriate for error handling after kobject_init().
+> Reviewed-by: Sandeep Dhavale <dhavale@google.com>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Why? The rules are exactly the same, no?
-
-> And we can use this function to solve this problem.
-
-Which function and which problem?
-
-> For the cache created early, the related sysfs_slab_add() is called in
-> slab_sysfs_init(). Skip free these kmem_cache since they are important
-> for system. Keep them working without sysfs.
-
-Let me try to decode this. I assume that sysfs_slab_add() fails after
-kobject_init_and_add() or kobject_init_and_add) itself fails.
-
-So the problem is that there are two ways how this can be invoked:
-
-   1) from slab_sysfs_init() for the kmem_cache instances which have
-      been allocated during early boot before sysfs was available.
-
-   2) from kmem_cache_create() after early boot
-
-So what Liu tries to avoid is to invoke kobject_put(), because
-kobject_put() would not only free the name (which is what the leak
-complains about), but also invoke the release callback, which would 
-try to destroy the kmem_cache itself.
-
-That's a problem for the mm people to solve, but that does not make my
-observations about the amdgpu init() function and the error path in
-do_init_module() moot :)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
-        tglx
-
-
 
