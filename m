@@ -1,169 +1,241 @@
-Return-Path: <linux-kernel+bounces-316990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B67796D7F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1238396D7FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE32A1C21DAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8275289A22
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B7E19ADAC;
-	Thu,  5 Sep 2024 12:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A11B19D070;
+	Thu,  5 Sep 2024 12:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoT+znXm"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZg8amQC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81E919AA68;
-	Thu,  5 Sep 2024 12:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7C919ADBB;
+	Thu,  5 Sep 2024 12:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538235; cv=none; b=Qmi8ZpJY3E+inlt9kHH1NPSEY6qBhBS0HlZTX9RqQ2Zi20E+K1Y4CNFxyIkTtnoamdC4jypuIpF4cnV7go98FtmeMNwgxp1s9tOzXqB/nInTRKy2gfJ2BlB5yF2eCizpyFcW54HqtowvTTwoRnnzYJBzQSTBDhRzqhD/JkkpvIg=
+	t=1725538241; cv=none; b=csLEtWTEyK9MdmzpbymNgEOcSazssfjr488S+Gx1xlMBXHcViwM23p0+QY19/2m6nt4sRIH9KW6rZYUbjXQVj/XWufzbOfJ9pHDuiW9HH/wcGYOrdwL4Lyc1BmxrhVBcsqLg1bwGieaqtQ01sfEd3K8LMSKlBOyUUKgLWeevf3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538235; c=relaxed/simple;
-	bh=55EhFMuf3rX520ZB+Jq/JvrzpSdYero5M2/yLftdFvQ=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BPEJPGYVIcLit1vIdbKJI//7iKfdFJ3aegUbjdsOwUWBSNY2q7lozx8p7FXdW3MTYChPIa7k7fowcmZOnjDjvjhap00/Vel+lvMzZbWg4fDIkQzv4VgUpBsnlrq11P16yO6Tv3KEmhHLMbfbgJrQJd1TOH6OnA9aq16EnpnZ/E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CoT+znXm; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2705d31a35cso481949fac.0;
-        Thu, 05 Sep 2024 05:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725538233; x=1726143033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9RwhX/0NxaxgXVwmXW6hND45TWsNukqVDswt5JLO8uU=;
-        b=CoT+znXmfdYVirly9vpK3w4mrhv3JB/vMKaRIdrRizUH8XpEC9pSP4Xad6vS+ubMZm
-         I+FWvam6tJ60gLG+W3OfA6/p8moVwLD8+zdz5Wgqn6CWLxbS/K3Zae2ni1LBbjBJNR0F
-         eZSUbe8cFo95FpTec22g/cnzl69bFKjfug2047fblfAD9t4Sx2JWZF3qIQ6P13BsKB6f
-         6sF+YwU1GRncAZpXAy/nZbGIp9ep6ncBO9jjD9zQEuH5AvGhg2fepxmDaNXLfs4U+Tej
-         /D5oQwjTbzODO3A51xbTiNniA8fHSJ4GxSzlVKf4WCWwgHy5hPrC9fnZ8xCOjhAleKfB
-         I4ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725538233; x=1726143033;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9RwhX/0NxaxgXVwmXW6hND45TWsNukqVDswt5JLO8uU=;
-        b=BE+LhIS2BIyA2/bwyhtT4lelFToXW+qvDcpDIbpBFKrIeJyD5BJTFvDz4Mj8X6T4Gk
-         K6N2aRouSk5vj/nNgCXEfgFdlMtiQhBx6XdYtPfeiOCrhpzII3GaNLol6bJOKBPZRYLD
-         6FxhDDeiVz39TaKFpq48XrUH5PH4Z2iQy+svXMlXEZ8TmI6NuB+SjUMofVIkRZCzD+p6
-         XvRWO9+56FpqmubuHHOC7Md0g5JY2WN26h4V5B6XZ6oBaKpxnlanN/ZJCYyGc891f3zP
-         T4jO72wdlVqJ00kDOsowXHUgExYCQRinrkqc6OayHmuHHFEOC6/2j/VUkDzbaYZpKhVr
-         h+jw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ApVJIfhUn9m75+Vkvk5hGm3WhnOJEgga81z7HXqGwoKXVrFAr2wMziKUAqPRtp8vyHFTZ2SvfzghYzPx@vger.kernel.org, AJvYcCUtUszYYqYd/KkkLeYF3/yvG2WsWNfrOS6jkT7L7pBceDUG0KSh92HPhXDj9XICcwzsFZPjcZ3hCWme@vger.kernel.org, AJvYcCVgSBWosnIAUEY75kQqUr0/8xVvoDsSYyx1+IXQ/LseYKVJfsvQaoT0bitE2hNPh66VvIwPBxOGMP0c@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlyhRvG3rt39LI5+j+/XmRk94FVpwXB0wE4kXioGGZq98tucwX
-	c1U983rQ320+Y04rvy/oHE4vc55tVnzn522vOfufiBzaMzx83zqy/HXkzJiq
-X-Google-Smtp-Source: AGHT+IGxtEkwnH6QBvHzbe/QGSRFYjVvranECxxZCASniIhEomIoOolLxioXFT8Y1BEE0sPlOwdT1A==
-X-Received: by 2002:a05:6871:8c15:b0:277:d7f1:db53 with SMTP id 586e51a60fabf-277d7f1ded8mr12689185fac.17.1725538232564;
-        Thu, 05 Sep 2024 05:10:32 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-277abb62c95sm3977069fac.23.2024.09.05.05.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 05:10:32 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: ukleinek@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	chunzhi.lin@sophgo.com
-Subject: [PATCH 1/2] dt-bindings: pwm: sophgo: add bindings for sg2042
-Date: Thu,  5 Sep 2024 20:10:25 +0800
-Message-Id: <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1725536870.git.unicorn_wang@outlook.com>
-References: <cover.1725536870.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1725538241; c=relaxed/simple;
+	bh=Y5YauDm1aJKiushd8sUfegx+qyj0cP2ABdG0ky7tors=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EHgMspChJFemPvPC5Vlt5+swBHr5YMvkBp+nrNdlwK3ARM0EtJQ3lDcJVuCCP+tZREWBecKchYbqn3ScKvgB6otowphDwF6U65SBUSeC6iFj5TRV43yaNA/Dwf4EZj+jqfWroQxHS6fa+7LJIQ7eq01YGvFkD8K309xzDzQT+Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZg8amQC; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725538240; x=1757074240;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Y5YauDm1aJKiushd8sUfegx+qyj0cP2ABdG0ky7tors=;
+  b=nZg8amQCZKY8dIwK3Io2jp0e27MGeyGtx6dHU4Uf+o2v8c5uOFmcQuTi
+   RAowd4/NdSFj6szgqCwItrixXXo6QA7YcINP3kPzLxQiewc/5oH7Wqqrk
+   4TmynOaKYT79A0BXXTgj69yWSQDm1KguoBpmHJ6o63C/GOHAx/AJrDmjm
+   VatzZ3c9cXw3s74c7u5pdWjv9lFuOwF7evly6GJDTHFyxuhnlSBXrNdKq
+   FstNcN5xXFc0Z3Z8v7WM0dDu6y2DyPh6cEIdD4gcIY9hmSrb7d9CJu/9d
+   gdWhattYyRg5TgtyukB32bmcDlkbzaMCWKghZ6NC+SSwD3lwelbGyF4oV
+   g==;
+X-CSE-ConnectionGUID: 0i7Fjds0Rf2TQBAQ/WexAg==
+X-CSE-MsgGUID: kkSgs8h0Q52Tysye46lkQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27170856"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="27170856"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:10:37 -0700
+X-CSE-ConnectionGUID: vazeR913SECH+bFbC/1U6g==
+X-CSE-MsgGUID: w5lOfYErRCmRZgi+WkKp1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="70198858"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.31])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:10:34 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 5 Sep 2024 15:10:29 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] selftests/resctrl: Ensure measurements skip
+ initialization of default benchmark
+In-Reply-To: <156ad739-3f80-456f-92df-74da9266dca0@intel.com>
+Message-ID: <da06ea9d-5081-b81f-5d2b-28200527f419@linux.intel.com>
+References: <cover.1724970211.git.reinette.chatre@intel.com> <a0fe2be86f3e868a5f908ac4f2c76e71b4d08d4f.1724970211.git.reinette.chatre@intel.com> <3add783b-74cf-23c0-a301-aa203efdd0f6@linux.intel.com> <0ae6d28f-0646-48b2-a4e7-17e2d14f6dd5@intel.com>
+ <85a11091-3c61-2d8b-28d4-2a251f3b8ffe@linux.intel.com> <156ad739-3f80-456f-92df-74da9266dca0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1758549309-1725538229=:1411"
 
-From: Chen Wang <unicorn_wang@outlook.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Add binding document for sophgo,sg2042-pwm.
+--8323328-1758549309-1725538229=:1411
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
----
- .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+On Wed, 4 Sep 2024, Reinette Chatre wrote:
+> On 9/4/24 4:57 AM, Ilpo J=C3=A4rvinen wrote:
+> > On Fri, 30 Aug 2024, Reinette Chatre wrote:
+> > > On 8/30/24 3:56 AM, Ilpo J=C3=A4rvinen wrote:
+> > > > On Thu, 29 Aug 2024, Reinette Chatre wrote:
 
-diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-new file mode 100644
-index 000000000000..10212694dd41
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Sophgo SG2042 PWM controller
-+
-+maintainers:
-+  - Chen Wang <unicorn_wang@outlook.com>
-+
-+description: |
-+  This controller contains 4 channels which can generate PWM waveforms.
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+properties:
-+  compatible:
-+    const: sophgo,sg2042-pwm
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: apb
-+
-+  "#pwm-cells":
-+    # See pwm.yaml in this directory for a description of the cells format.
-+    const: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pwm@7f006000 {
-+        compatible = "sophgo,sg2042-pwm";
-+        reg = <0x7f006000 0x1000>;
-+        #pwm-cells = <2>;
-+        clocks = <&clock 67>;
-+        clock-names = "apb";
-+    };
--- 
-2.34.1
+> > > > > @@ -699,111 +639,80 @@ int resctrl_val(const struct resctrl_test
+> > > > > *test,
+> > > > >    =09=09return ret;
+> > > > >    =09}
+> > > > >    -=09/*
+> > > > > -=09 * If benchmark wasn't successfully started by child, then
+> > > > > child
+> > > > > should
+> > > > > -=09 * kill parent, so save parent's pid
+> > > > > -=09 */
+> > > > >    =09ppid =3D getpid();
+> > > > >    -=09if (pipe(pipefd)) {
+> > > > > -=09=09ksft_perror("Unable to create pipe");
+> > > > > +=09/* Taskset test to specified CPU. */
+> > > > > +=09ret =3D taskset_benchmark(ppid, uparams->cpu, &old_affinity);
+> > > >=20
+> > > > Previously only CPU affinity for bm_pid was set but now it's set be=
+fore
+> > > > fork(). Quickly checking the Internet, it seems that CPU affinity g=
+ets
+> > > > inherited on fork() so now both processes will have the same affini=
+ty
+> > > > which might make the other process to interfere with the measuremen=
+t.
+> > >=20
+> > > Setting the affinity is intended to ensure that the buffer preparatio=
+n
+> > > occurs in the same topology as where the runtime portion will run.
+> > > This preparation is done before the work to be measured starts.
+> > >=20
+> > > This does tie in with the association with the resctrl group and I
+> > > will elaborate more below ...
+> >=20
+> > Okay, that's useful to retain but thinking this further, now we're also
+> > going do non-trivial amount of work in between the setup and the test b=
+y
+>=20
+> Could you please elaborate how the amount of work during setup can be an
+> issue? I have been focused on the measurements that are done afterwards
+> that do have clear boundaries from what I can tell.
 
+Well, you used it as a justification: "Setting the affinity is intended=20
+to ensure that the buffer preparation occurs in the same topology as where=
+=20
+the runtime portion will run." So I assumed you had some expectations about=
+=20
+"preparations" done outside of those "clear boundaries" but now you seem
+to take entirely opposite stance?
+
+fork() quite heavy operation as it has to copy various things including=20
+the address space which you just made to contain a huge mem blob. :-)
+
+BTW, perhaps we could use some lighter weighted fork variant in the=20
+resctrl selftests, the processes don't really need to be that separated=20
+to justify using full fork() (and custom benchmarks will do execvp()).
+
+> > forking. I guess that doesn't matter for memflush =3D true case but mig=
+ht be
+> > meaningful for the memflush =3D false case that seems to be there to al=
+low
+> > keeping caches hot (I personally haven't thought how to use "caches hot=
+"
+> > test but we do have that capability by the fact that memflush paremeter
+> > exists).
+>=20
+> I believe that memflush =3D true will always be needed/used by the tests
+> relying on memory bandwidth measurement since that reduces cache hits dur=
+ing
+> measurement phase and avoids the additional guessing on how long the work=
+load
+> should be run before reliable/consistent measurements can start.
+>
+> Thinking about the memflush =3D false case I now think that we should use=
+ that
+> for the CMT test. The buffer is allocated and initialized while the task
+> is configured with appropriate allocation limits so there should not be a
+> reason to flush the buffer from the cache. In fact, flushing the cache
+> introduces
+> the requirement to guess the workload's "settle" time (time to allocate t=
+he
+> buffer
+> into the cache again) before its occupancy can be measured. As a quick te=
+st I
+> set memflush =3D false on one system and it brought down the average diff
+> between
+> the cache portion size and the occupancy counts. I'll try it out on a few=
+ more
+> systems to confirm.
+
+Oh great!
+
+I've not really figured out the logic used in the old CMT test because=20
+there was the rewrite for it in the series I started to upstream some of=20
+these improvements from. But I was unable to rebase successfully that=20
+rewrite either because somebody had used a non-publically available tree=20
+as a basis for it so I never did even have time to understand what even=20
+the rewritten test did thanks to the very complex diff.
+
+> > > > Neither behavior, however, seems to result in the intended behavior=
+ as
+> > > > we
+> > > > either get interfering processes (if inherited) or no desired resct=
+rl
+> > > > setup for the benchmark process.
+> > >=20
+> > > There are two processes to consider in the resource group, the parent
+> > > (that
+> > > sets up the buffer and does the measurements) and the child (that run=
+s the
+> > > workload to be measured). Thanks to your commit da50de0a92f3
+> > > ("selftests/resctrl:
+> > > Calculate resctrl FS derived mem bw over sleep(1) only") the parent
+> > > will be sleeping while the child runs its workload and there is no
+> > > other interference I am aware of. The only additional measurements
+> > > that I can see would be the work needed to actually start and stop th=
+e
+> > > measurements and from what I can tell this falls into the noise.
+> > >=20
+> > > Please do keep in mind that the performance counters used, iMC, canno=
+t
+> > > actually
+> > > be bound to a single CPU since it is a per-socket PMU. The measuremen=
+ts
+> > > have
+> > > thus never been as fine grained as the code pretends it to be.
+> >=20
+> > I was thinking if I should note the amount of work is small. Maybe it's
+> > fine to leave that noise there and I'm just overly cautious :-), when I
+> > used to do networking research in the past life, I wanted to eliminate =
+as
+> > much noise sources so I guess it comes from that background.
+>=20
+> The goal of these tests are to verify *resctrl*, these are not intended t=
+o be
+> hardware validation tests. I think it would be better for resctrl if more=
+ time
+> is spent on functional tests of resctrl than these performance tests.
+
+This sounds so easy... (no offence) :-) If only there wouldn't be the=20
+black boxes and we'd have good and fine-grained ways to instrument it,
+it would be so much easier to realize non-statistical means to do=20
+functional tests.
+
+--=20
+ i.
+
+--8323328-1758549309-1725538229=:1411--
 
