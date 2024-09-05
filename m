@@ -1,126 +1,158 @@
-Return-Path: <linux-kernel+bounces-316124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476ED96CB86
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:02:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA6496CA1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CEE7281290
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 00:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E711F248D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 22:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCBB1C32;
-	Thu,  5 Sep 2024 00:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87E617839C;
+	Wed,  4 Sep 2024 22:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ST2JlQG2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzQakMYj"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F124B20E6;
-	Thu,  5 Sep 2024 00:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CF115E88;
+	Wed,  4 Sep 2024 22:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725494539; cv=none; b=IB2n9cKQSLER0l5ltBXHqW3A5yaXoJc79i2sgT2tAWjzZs3tZK7ofyD+ljXNgPk2NXqyS0RvyG5ob2IUL3vIOwpEV7J77FmfURjrDVq1NDZENnW43nuDAusyOozm00SRmY4R266O/y6lItuyLNDwsk5zJlG67t5ma86tbimJqis=
+	t=1725488084; cv=none; b=DcPvdQtk3gZLggp6S+3/yRndtmHrtgPY2m47D8q+y+1I5Mj/shutQL1YIUr/V3S8SUAC+SM3SzIuFj6kos1IL5peyjEOrRDX1nyjy6GYz96zUacoiMLzsBifyiJtk58RE2O1FzDJeY0nFUCFKn/lpS2o0Mwyq7Eu+/qOSORXwy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725494539; c=relaxed/simple;
-	bh=xg8MIiYKlF95wUIp47pyIkMqOEkcE+HD42aQCZA1Wfk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U56Cr+FCwCzHkY7W0F3D9DvJG6ZGhARAf+cuA+UxNmfAcYeuD2dLfRYKvoh54UBUdWlXOOSX9WSKKoDrtKuQNzbuZOl1FghDQ9nuyCGXs8KU4h4atCiphJI+2LE4+J2RtbMwHMEXLifZ6xvCTF+PAwthemdqUxgReMG5Of6Igh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ST2JlQG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A06C4CEC2;
-	Thu,  5 Sep 2024 00:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725494538;
-	bh=xg8MIiYKlF95wUIp47pyIkMqOEkcE+HD42aQCZA1Wfk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ST2JlQG2B+i5U/pTKMpCj/jY5KvzKeIsz5uKS6NxFx+drLUYFuLfhvKBJGIuTD+G5
-	 txbJWgNrtdWuQXAq8Fp+BGOFDmBIMPkrrI1jH5m4lxoTi9cDil0RrpASw4nm1Ig7jv
-	 wnhn9WvvOUNlPw2w36lA7kwtJwxzzX1g1+raQJ/bUcdXDoXED04UjHsbH09jXxTIdC
-	 YfnZhfm0M9LaX2SL6/3nzTO3mGb3z1Wvjjd+QBhN6FTYS/TGl5HOJqaYUxe1rBj/RL
-	 OFgrFMGyzekzuZ/nAgD8yMtaKci4aAEV7SXxAkiNutPMnBSNWhxB92zEOfWXvOR3R4
-	 ubjv9hgQHR29A==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f50966c478so1762651fa.1;
-        Wed, 04 Sep 2024 17:02:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxcCNOsDNjDkV40JsTE0q4H5dxtSxdApOEBPtPvV/LNhPxocfpQ+ntPfz4c/pkCM5PNexHpUDHbl4=@vger.kernel.org, AJvYcCVU/wXyMX6Hs6ImlUF3M46RKpM28pMkzqTyt/Pst4ToTdeSUU1z3Pw0ZUIwpkpGfaYu/axGvoes+A9NgZ5E@vger.kernel.org, AJvYcCVYKM7fWbxLRpwwOqmAIQ5z6Iqv5CS8n7sWNYmlrUWHEVSvPNxUpped/M0ruhWPnWFECXEn9wZTNe0Qq+9Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ7NRgydBg+QXYXE2fZddLT0+X+ZYCFFXH1RCUyO+5e7P7lCfi
-	K5ISHfPdoxD7qgZtcrg/UVU0giPmemw8LHDEc9/lqOjQ7RHuOTwB8S64S8oW8ObJxP4RDhNyaKx
-	T08ELWqM4rs7vsdXSoy03XgHhh4c=
-X-Google-Smtp-Source: AGHT+IHT+1s0xc0Hi5lnGPQUt4wd8DL9pfqjf9IiZTdDO2v+Pjnq1+dmI+CYrl3Stq8HtTO907KiA9ht8FKA/14ZhGA=
-X-Received: by 2002:a05:651c:221d:b0:2f0:1a19:f3f1 with SMTP id
- 38308e7fff4ca-2f61e0257a5mr153789281fa.7.1725494537584; Wed, 04 Sep 2024
- 17:02:17 -0700 (PDT)
+	s=arc-20240116; t=1725488084; c=relaxed/simple;
+	bh=CgsG2+XiNjYPEy+DVNFbWNKxDVp5dFyls1EnUueMkRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLbXVzw3SrKppx2vHJyoRBwdN/jGIkH+van0FuxsadwVfcbfb4ss1K6L0gCoOjOSXBIGPwuhSwD5s7m3/SdnxlFhYY6p7aLq3297t+P5I+Yhksj1X+LEnYfsXv3RK7SzvxEoCaNlJyx8qUPXUAKPBA9EZfIsZHOFgi8Ykz1w7po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzQakMYj; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374d29ad8a7so30486f8f.2;
+        Wed, 04 Sep 2024 15:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725488080; x=1726092880; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OsygHmC13nPym3x+NfMXuV7WZdkx9F+s+uWop9lRtS0=;
+        b=kzQakMYjNuhUg2KrnTgB/7zQkQnrD1cmQToO0r8gvmI+8iwZrHMbo/xmEtncJJKFdT
+         o5ZkUz6+aasbNXfYHX8rQbnFMz4vhUB+jjOHU8kdV6wn0P9khj2IJLwSv/h3PIXLFqSc
+         75oUfQFnf5A3vTee8HnomBmqRb+T39mrKBXapmft0qm03EmS6kWnOpH5L2yn/NVd7oqq
+         XUXGO7zZ0lVcGsAbjoxy8PWSTY6O+eaFRguWwsvCXiICWqvKKkjnsupITvTuNLWTa2cU
+         vBnKxjO3SWpgJgS8+NoEwC7GzN/3vTx1aFpFescTeV4g0nr21G0UfVmLnbGCqkddl+9i
+         Ed0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725488080; x=1726092880;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OsygHmC13nPym3x+NfMXuV7WZdkx9F+s+uWop9lRtS0=;
+        b=ATkk5MZXL457DFjJSjUKVbQ52Cuv/SdmZaihml+aGUK8cY8nvufEGWCQwamU7k4ZgS
+         KloPdGg/s8X0U7nql+NcWQO7Vf8Wd5NWlNbjOKROKLee56evAm2wXDCY5Z8wLj5F7A/W
+         a1nWpi9LVnPZ2sEnHre6OTgmXubPBv8u04798+pIebg8JyT+ts0zz6IK0HPWPiGiI50+
+         ey3QRP52C7M/Dt/VNU6t95oNgnk1n+QUbdaQt8LKXTXxYp+WH4BzevsGXepwpNh7fEJw
+         M9RSin6Cry8GDuKtmOCimjf6yt+GswTZjfzpY7EN4qXvys+KD7Om3Ieu6XikOqc3GD58
+         udmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqgFQT716Y6UGyv8Dys64v/Il5QSDJffDGpT+33esdEGgw73cZtoAazwPDVWjczGIoJgkY9uwUYgAu@vger.kernel.org
+X-Gm-Message-State: AOJu0YymV0erb/g66rfrLki+3z1B6ml8wXASxIPAyr0cU5OakxK/b3DO
+	UfKly8mvnXSWyXniquxno4SmKKKm7rk7p3AVqd6W3ik1WdhWmVIs+3GbmOOtmPw=
+X-Google-Smtp-Source: AGHT+IGf2Ws/BTsd0Y5w3sB6GiGG0rYmPyithXsJAOUnCbAG5wGVck88NwUxRvsLWRx+hgtWcFQCdA==
+X-Received: by 2002:a05:6000:136c:b0:374:c5e9:623e with SMTP id ffacd0b85a97d-37770c70337mr2815523f8f.43.1725488080248;
+        Wed, 04 Sep 2024 15:14:40 -0700 (PDT)
+Received: from localhost.localdomain ([156.197.26.140])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374cd205ab0sm8345086f8f.87.2024.09.04.15.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 15:14:39 -0700 (PDT)
+From: Ahmed Ehab <bottaawesome633@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-ext4@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: [PATCH v8 2/2] locking/lockdep: Test no new string literal is created in lockdep_set_subclass()
+Date: Thu,  5 Sep 2024 04:12:20 +0300
+Message-ID: <20240905011220.356973-1-bottaawesome633@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823194152.13881-1-stephen.s.brennan@oracle.com>
-In-Reply-To: <20240823194152.13881-1-stephen.s.brennan@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 5 Sep 2024 09:01:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATx=zveh52XYR7BzuskQLPk=oqoqCLUHJou4wKTeggn2w@mail.gmail.com>
-Message-ID: <CAK7LNATx=zveh52XYR7BzuskQLPk=oqoqCLUHJou4wKTeggn2w@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: kbuild: explicitly document missing prompt
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 24, 2024 at 4:42=E2=80=AFAM Stephen Brennan
-<stephen.s.brennan@oracle.com> wrote:
->
-> There are a few lines in the kbuild-language.rst document which
-> obliquely reference the behavior of config options without prompts.
-> But there is nothing in the obvious location that explicitly calls
-> out that users cannot edit config options unless they have a prompt.
->
-> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> ---
-> v1: https://lore.kernel.org/linux-doc/20240820171000.1656021-1-stephen.s.=
-brennan@oracle.com/
+Add a test case to ensure that no new name string literal will be
+created in lockdep_set_subclass(), otherwise a warning will be triggered
+in look_up_lock_class(). Add this to catch the problem in the future. 
 
+Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
+---
+ lib/locking-selftest.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
+diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+index 6f6a5fc85b42..0783ee97c971 100644
+--- a/lib/locking-selftest.c
++++ b/lib/locking-selftest.c
+@@ -2710,6 +2710,44 @@ static void local_lock_3B(void)
+ 
+ }
+ 
++#if CONFIG_DEBUG_LOCK_ALLOC
++static inline const char *rw_semaphore_lockdep_name(struct rw_semaphore *rwsem)
++{
++	return rwsem->dep_map.name;
++}
++#else
++static inline const char *rw_semaphore_lockdep_name(struct rw_semaphore *rwsem)
++{
++	return NULL;
++}
++#endif
++
++static void lock_class_subclass_X1(void)
++{
++	const char *name_before_setting_subclass = rw_semaphore_lockdep_name(&rwsem_X1);
++	const char *name_after_setting_subclass;
++
++	lockdep_set_subclass(&rwsem_X1, 1);
++	name_after_setting_subclass = rw_semaphore_lockdep_name(&rwsem_X1);
++	DEBUG_LOCKS_WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
++}
++
++/*
++ * after setting the subclass the lockdep_map.name changes
++ * if we initialize a new string literal for the subclass
++ * we will have a new name pointer
++ */
++static void class_subclass_X1_name_test(void)
++{
++	printk("  --------------------------------------------------------------------------\n");
++	printk("  | class and subclass name test|\n");
++	printk("  ---------------------\n");
++
++	print_testname("lock class and subclass same name");
++	dotest(lock_class_subclass_X1, SUCCESS, LOCKTYPE_RWSEM);
++	pr_cont("\n");
++}
++
+ static void local_lock_tests(void)
+ {
+ 	printk("  --------------------------------------------------------------------------\n");
+@@ -2920,6 +2958,8 @@ void locking_selftest(void)
+ 	dotest(hardirq_deadlock_softirq_not_deadlock, FAILURE, LOCKTYPE_SPECIAL);
+ 	pr_cont("\n");
+ 
++	class_subclass_X1_name_test();
++
+ 	if (unexpected_testcase_failures) {
+ 		printk("-----------------------------------------------------------------\n");
+ 		debug_locks = 0;
+-- 
+2.46.0
 
-Applied to linux-kbuild.
-Thanks!
-
-
->
->  Documentation/kbuild/kconfig-language.rst | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kb=
-uild/kconfig-language.rst
-> index 1fb3f5e6193c3..4650daaf5d365 100644
-> --- a/Documentation/kbuild/kconfig-language.rst
-> +++ b/Documentation/kbuild/kconfig-language.rst
-> @@ -70,7 +70,11 @@ applicable everywhere (see syntax).
->
->    Every menu entry can have at most one prompt, which is used to display
->    to the user. Optionally dependencies only for this prompt can be added
-> -  with "if".
-> +  with "if". If a prompt is not present, the config option is a non-visi=
-ble
-> +  symbol, meaning its value cannot be directly changed by the user (such=
- as
-> +  altering the value in ``.config``) and the option will not appear in a=
-ny
-> +  config menus. Its value can only be set via "default" and "select" (se=
-e
-> +  below).
->
->  - default value: "default" <expr> ["if" <expr>]
->
-> --
-> 2.43.5
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
