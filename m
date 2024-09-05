@@ -1,111 +1,167 @@
-Return-Path: <linux-kernel+bounces-316711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216A596D2FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:21:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11A396D304
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06721F24BC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 009C71C231CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA09198830;
-	Thu,  5 Sep 2024 09:20:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A8A372
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C2D197A92;
+	Thu,  5 Sep 2024 09:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGTOpYDa"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9B7192B94;
+	Thu,  5 Sep 2024 09:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528053; cv=none; b=CuPYo2+1IQlgTpMnucm0pxORiDar6ydt4suWC0EJi8+kK8anZjxVOjkagCkgQkbmzoq0Gwg53Nt7QiXsQX9H0XTg5/Dda/IMdTZIgzKXCS5IE2Nbx2Q7a6QbNDkHi4OQJJViplyypdwCkZm4kgryfVsCjca0CILQxCE4qbR3+2E=
+	t=1725528148; cv=none; b=fhGVL8t/XVu/oBVeoYxHe3ia3WAMdOuWZNQWYfXhm79yS/qPViV3Gv9MeB2gGWwoZ70j7M6ZIan+JQkAbB14mi7E+c0dy0IqWqwtWjpoFlzkozrR8SGK/sJH94ECc+2IW0zmpfpc/YvhMtvuGRYEXqV+lLRqULVsbWkF41bAXeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528053; c=relaxed/simple;
-	bh=+3eLWdFOhSWPzl6tbC8DcJS2T/Td9/PM5sBtbNXXRos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KFlw7rMFFOxxaMKc4ZMpudkEA+IjiQO5W65hlxTib6ayBsinRF/qy+/JKaj6PzXHHXfVa4VUKOpeIadDFHM0LrU1ygFDlTgYl+tb+JNkb+KNrTO1/66KaxzvYuCBPpASqa1aCTSrvSqsnsjf6a60JWF4W1cRf2Kad14YRm+PqfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42110FEC;
-	Thu,  5 Sep 2024 02:21:18 -0700 (PDT)
-Received: from [10.57.86.69] (unknown [10.57.86.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57C943F73F;
-	Thu,  5 Sep 2024 02:20:49 -0700 (PDT)
-Message-ID: <e2b7e637-3977-4c06-9a95-88fc53bf4d82@arm.com>
-Date: Thu, 5 Sep 2024 10:21:38 +0100
+	s=arc-20240116; t=1725528148; c=relaxed/simple;
+	bh=1Vz6IzeJ7CeYav9C4VmbTfWx/w8/kafVYBgh4fUe+qQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvoHs/ZVFlMvTeOwQcutjsOLAehqJ4v6HMVriqurBJaxynZQIesDyv9JEF/LUvexVfitw4v2gMtLGqLX6JriBfIzKYN5E1wijlQbEv6Zu8gaa/LkqxdG6IE73oBrSJApHZamgZv5AkQEg7L1Mx2AZpxKmFiYJ3r+ptMeILuqiqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGTOpYDa; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso3898375e9.1;
+        Thu, 05 Sep 2024 02:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725528145; x=1726132945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8LgmwilwZTv00oKOBkFrZ/42OcenxN7DIQ4qoy+ip1I=;
+        b=NGTOpYDaZhCjv3H/pa0YFGWpapjogOf5E6c3qV0d1iQl/Ys0oyrx9XEI0MZOdXvATh
+         wlzGPW1viTFwE8Pvc5VNEYqadVIsRgcLPGe2r+2sS43/WYIYj+zCrRnMzPkHDazcs2OY
+         qOBKiGzGLkxuyoVhGXfgdVUbR4fkE6XTUE+0eIio70ePvOS19iR8duoVcAHpNtftxWIc
+         UG/nPV3iZhlU81p+e/nInyTAmRvTanHJnUuAfIp8PzU5pPiiFtbwkBzBcY0mHlfRNw3y
+         wHM/Q+PDvpFUjzNJTHGHVJwuCiO0SttJjgxWgzEstORDO4NCtPD7hcBDhXw0g7GNqewd
+         ZM4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725528145; x=1726132945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8LgmwilwZTv00oKOBkFrZ/42OcenxN7DIQ4qoy+ip1I=;
+        b=ut3rl8tYBa/aKF0iHNPKRcdBwiIu5K1UXHiD1Caava0sXJgKcwvHnxWsYRWMnaWAux
+         eAx36WZMpSs92evYwVWSTt2OEdd4eaaH7QC6PhAcNQsm/ZQhknA8vWhE7XTUtb43HJ6d
+         SyCSiIP7LkxUIxQ+C3pCk9s1+FJxd1zvdIDYW75eqFglyeoMOZ2ccbb68U/Qhwx5TOJs
+         fx7n1aCQRYsHr8cyDPhICL2VsYTh+c51SRkuK4957eTMUQX9fhNJx8UeVI9mp7I33a2F
+         KjxEIEGjiEET/2scRUfnkZr1j4zIP85pxIenrrH0z/KGlGrBmTvU1VZCw51v+VfseOR5
+         fQnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUswI9efc+Quy5GWJlwq9WhUJBXv3zLyjlCBsK+MacVaq3B1nMk2br/MWGxorQczBIB5rV11yHsOhyPIg==@vger.kernel.org, AJvYcCWRPhcUILh8Ya3yFYVj4nQtWYslUuD6oVp/KLiqp4laN0ozZKHu+9se9j4K5AeZXbg0tn+gL1c61yENpgs=@vger.kernel.org, AJvYcCXgj5CE+pEpgTtScajAr4i7vShRaYuDUMnZM5cOdzobHiYdmFGV1Y+Cg32s9uI9//tMeKrpKJecdYBsk2U7WmfOSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTmGUhoseBX7fcpcYvhyoHZYPbhP/gz2tLJGakHmSC8Uxpsg6f
+	4Giisxu9dQ8XYfoS/oqAWnIYg6FVWhEwgks+B43y3Ch4mIchRdi5
+X-Google-Smtp-Source: AGHT+IFUdfGNW49G4+DfGHtef+3iH+rTqtv4vp7wb8eaC9NCVgAim+dCJf5aeZgCMrKkgfBOdEZuqg==
+X-Received: by 2002:a05:600c:19d2:b0:427:fa39:b0db with SMTP id 5b1f17b1804b1-42c8de9ddb6mr49602095e9.27.1725528144107;
+        Thu, 05 Sep 2024 02:22:24 -0700 (PDT)
+Received: from gmail.com (1F2EF525.unconfigured.pool.telekom.hu. [31.46.245.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6425a77sm266553755e9.45.2024.09.05.02.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:22:23 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Thu, 5 Sep 2024 11:22:20 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 4/5] x86: perf: Refactor misc flag assignments
+Message-ID: <Ztl4TDI98tnCkH0X@gmail.com>
+References: <20240904204133.1442132-1-coltonlewis@google.com>
+ <20240904204133.1442132-5-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] energy model: Add a get previous state function
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: qyousef@layalina.io, hongyan.xia2@arm.com, mingo@redhat.com,
- mgorman@suse.de, peterz@infradead.org, dietmar.eggemann@arm.com,
- bsegall@google.com, vschneid@redhat.com, rostedt@goodmis.org,
- rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
- juri.lelli@redhat.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-3-vincent.guittot@linaro.org>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20240830130309.2141697-3-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904204133.1442132-5-coltonlewis@google.com>
 
-Hi Vincent,
 
-On 8/30/24 14:03, Vincent Guittot wrote:
-> Instead of parsing all EM table everytime, add a function to get the
-> previous state.
+* Colton Lewis <coltonlewis@google.com> wrote:
+
+> Break the assignment logic for misc flags into their own respective
+> functions to reduce the complexity of the nested logic.
 > 
-> Will be used in the scheduler feec() function.
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
 > ---
->   include/linux/energy_model.h | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
+>  arch/x86/events/core.c            | 31 +++++++++++++++++++++++--------
+>  arch/x86/include/asm/perf_event.h |  2 ++
+>  2 files changed, 25 insertions(+), 8 deletions(-)
 > 
-> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-> index 1ff52020cf75..ea8ea7e031c0 100644
-> --- a/include/linux/energy_model.h
-> +++ b/include/linux/energy_model.h
-> @@ -207,6 +207,24 @@ em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_states,
->   	return nr_perf_states - 1;
->   }
->   
-> +static inline int
-> +em_pd_get_previous_state(struct em_perf_state *table, int nr_perf_states,
-> +			  int idx, unsigned long pd_flags)
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 760ad067527c..87457e5d7f65 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -2948,16 +2948,34 @@ unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
+>  	return regs->ip + code_segment_base(regs);
+>  }
+>  
+> +static unsigned long common_misc_flags(struct pt_regs *regs)
 > +{
-> +	struct em_perf_state *ps;
-> +	int i;
+> +	if (regs->flags & PERF_EFLAGS_EXACT)
+> +		return PERF_RECORD_MISC_EXACT_IP;
 > +
-> +	for (i = idx - 1; i >= 0; i--) {
-> +		ps = &table[i];
-> +		if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES &&
-> +		    ps->flags & EM_PERF_STATE_INEFFICIENT)
-> +			continue;
-> +		return i;
-> +	}
+> +	return 0;
+> +}
+> +
+> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+> +{
+> +	unsigned long guest_state = perf_guest_state();
+> +	unsigned long flags = common_misc_flags();
+> +
+> +	if (guest_state & PERF_GUEST_USER)
+> +		flags |= PERF_RECORD_MISC_GUEST_USER;
+> +	else if (guest_state & PERF_GUEST_ACTIVE)
+> +		flags |= PERF_RECORD_MISC_GUEST_KERNEL;
+> +
+> +	return flags;
+> +}
+> +
+>  unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>  {
+>  	unsigned int guest_state = perf_guest_state();
+> -	int misc = 0;
+> +	unsigned long misc = common_misc_flags();
 
-Would you mind to add a comment on top of that for loop?
-Or maybe a bit more detail in the patch header what would you like to
-find (e.g. 1st efficient OPP which is lower).
+So I'm quite sure this won't even build at this point ...
 
-It's looking for a first OPP (don't forget it's ascending 'table') which
-is lower or equal to the 'idx' state.
+Thanks,
 
-If uclamp_max is set and that OPP is inefficient, don't we choose
-a higher OPP which is efficient?
-
-I'm not against this function.
-
-BTW, I wonder if this design is still valid with the uclamp_max.
-
-Regards,
-Lukasz
+	Ingo
 
