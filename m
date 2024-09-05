@@ -1,153 +1,219 @@
-Return-Path: <linux-kernel+bounces-316327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6E096CDF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:24:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC62E96CE21
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BD21C22A5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D46A1C22071
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A3114EC4B;
-	Thu,  5 Sep 2024 04:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54740156F30;
+	Thu,  5 Sep 2024 04:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kBaABYRn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="evF528ZE"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D2048CCC;
-	Thu,  5 Sep 2024 04:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3691152166;
+	Thu,  5 Sep 2024 04:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725510277; cv=none; b=a7gguKKLOtfnvwr212K80yfQQNBXQMWOKNjU2pdzyQcSFZ/2ZsPw+/sLa/nefoQnCOtm867upy4EelqDoYFBnNKtSDCjf5kdj9Xqkv6bRu4tEtwFDFvMtZmUI0SCDFr8jhrOfDe8D0AKCvhkT1q7SC4fHsngHFJaCulhIU2jZTA=
+	t=1725510906; cv=none; b=AC4jQcdIZyFuTeW6kFn3uTUUET12E8fo9sqHo6mWsp7ons5pikRj9umEj4KCApSBy5WZ6EPXG30b4GC1ZMSuuz4OzJ/qdz11/dMFn++Tl1WnrKPl+POsjfqrVIXCPXKU74Y/O5DM/nsI0YZaU4RD2S+AYmgz2tnbPSKCr/T9RWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725510277; c=relaxed/simple;
-	bh=6MfL0Y9QFnUqWm2/ZVpAP33O/HYuWfUIjk+V0ytEdks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gWyWeeGQqm3r4mMso5ICfDu8XDgMkv8CezNAnjEku40j7wI+9e14y/WcCunAMRbqjWiR6o8bWGew9jm0X9UNLLDQTt2rCS2CMnFT+HAasav3LIPQGHxPUr0lfVDu97IXAjQJwoC4S6DE3gzdwoSvi7KXYXT1kvY0L9+a5bQD2f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kBaABYRn; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725510276; x=1757046276;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6MfL0Y9QFnUqWm2/ZVpAP33O/HYuWfUIjk+V0ytEdks=;
-  b=kBaABYRnscshrzIVdoImbiWTBNQGYTqQIu54xa1paGLx5TMTEvgenImJ
-   5TJRwUsBPaaX1XQkRn+GfUDeQAKXE3ROIQj2aQ7C594TldJ2GkA/8rEzq
-   LKnULRwkoiyLGr3jTL5StI96WAUYVmHJo1/Klu2ax38tMVOrVvi0uUpQS
-   sLy8JB4x03DfoWitbmZG8jyx5saN8erBN9miPjjrgo2L66LiiX68NP7Yy
-   IdiQUtyntI0ZYF0n9f9CLG1D/N+UxRZNaURjelFavxv++NRk/EPoa3nJi
-   eM4E0u4ciRmClTHhURVRSrIkuF4qsb2nsJVVf86ne9Nfu3yIVoW8nqde+
-   A==;
-X-CSE-ConnectionGUID: 0I32WCAGTFCsUv5KgTRL8Q==
-X-CSE-MsgGUID: uKLlz3CYSgG/lcVXFTpFQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24319998"
-X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
-   d="scan'208";a="24319998"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 21:24:35 -0700
-X-CSE-ConnectionGUID: AuTVCwsDS/m+Cgh02KTsmg==
-X-CSE-MsgGUID: AF3U6TvdTyW0jYKR7O4jvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
-   d="scan'208";a="96284840"
-Received: from shuangy2-mobl.ccr.corp.intel.com (HELO [10.238.129.122]) ([10.238.129.122])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 21:24:33 -0700
-Message-ID: <98de8dbd-1a83-40e1-ad5a-a86b1441bb08@linux.intel.com>
-Date: Thu, 5 Sep 2024 12:24:30 +0800
+	s=arc-20240116; t=1725510906; c=relaxed/simple;
+	bh=aXaVE+s/SnDKQ47vWdxiCRhxJM4RxuS7CvFpS24RYkE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G2y9S1KwsKfyO8mZiDu//EirbA/VFMWLq7RR1+V1C07dNErUsiQkfHr0QgumoF4LeeR5FZumnDBjR84ipSlIyYzHukZYL5lmE4vxZZfxrdcQ7USojK8ry4/cU5PGiR1nAZR+Irq1xEF//N9qFIQebKE1nYPiHVHKCJPdRxaqOQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=evF528ZE; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost.localdomain (unknown [10.101.196.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 4FF773F383;
+	Thu,  5 Sep 2024 04:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1725510331;
+	bh=RRQ5XZs9l1MpHcXSCY9xoJFCag9Jqr471zYJz9s+Q1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=evF528ZEZiUSFHTTfBzH5lM0QATz6OdM1u/QyyREzjTYURSoBFyTsqkWeU5Eb0wuv
+	 HiRf4sDl4SoXlkU+6GsRAqYdGIdkDFjyEtTtni0J2tVsHhRHT3DAoSJhqk6XNBb2d+
+	 imQO85avByHdWFdAyJMnzc/Unk1l5VrJYVYn/vnTuxOVJlFz7pPwJdhl77CxJkgsoi
+	 0WeVbFK8oSngAXJLYpsh1nvDTUZ+BzFuwqjUVvV/PNbwRuD2EV9Ge7XaXMHHmGjNyW
+	 n0fbaTYY8Te0aRxfZyNjwteO+RYQEBINWhbotVIbHzIC3SOeMKnbFnmk47mNJ/tWWK
+	 zbZxNLoo9A2qw==
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	jorge.lopez2@hp.com
+Cc: acelan.kao@canonical.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 1/2] usb: linux/usb.h: Move USB port definition to usb.h
+Date: Thu,  5 Sep 2024 12:24:46 +0800
+Message-ID: <20240905042447.418662-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/vt-d: Prevent boot failure with devices
- requiring ATS
-To: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
- <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: "Saarinen, Jani" <jani.saarinen@intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240904060705.90452-1-baolu.lu@linux.intel.com>
- <BN9PR11MB5276428A5462738F89190A5A8C9C2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <9e183ce2-060a-4e0b-a956-03d767368ca4@linux.intel.com>
-From: Ethan Zhao <haifeng.zhao@linux.intel.com>
-In-Reply-To: <9e183ce2-060a-4e0b-a956-03d767368ca4@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/4/2024 3:49 PM, Baolu Lu wrote:
-> On 2024/9/4 14:49, Tian, Kevin wrote:
->>> From: Lu Baolu <baolu.lu@linux.intel.com>
->>> Sent: Wednesday, September 4, 2024 2:07 PM
->>>
->>> SOC-integrated devices on some platforms require their PCI ATS enabled
->>> for operation when the IOMMU is in scalable mode. Those devices are
->>> reported via ACPI/SATC table with the ATC_REQUIRED bit set in the Flags
->>> field.
->>>
->>> The PCI subsystem offers the 'pci=noats' kernel command to disable PCI
->>> ATS on all devices. Using 'pci=noat' with devices that require PCI ATS
->>> can cause a conflict, leading to boot failure, especially if the device
->>> is a graphics device.
->>>
->>> To prevent this issue, check PCI ATS support before enumerating the 
->>> IOMMU
->>> devices. If any device requires PCI ATS, but PCI ATS is disabled by
->>> 'pci=noats', switch the IOMMU to operate in legacy mode to ensure
->>> successful booting.
->>
->> I guess the reason of switching to legacy mode is because the platform
->> automatically enables ATS in this mode, as the comment says in
->> dmar_ats_supported(). This should be explained otherwise it's unclear
->> why switching the mode can make ATS working for those devices.
->
-> Not 'automatically enable ATS,' but hardware provides something that is
-> equivalent to PCI ATS. The ATS capability on the device is still
-> disabled. That's the reason why such device must be an SOC-integrated
-> one.
+Move struct usb_port to linux/usb.h so other subsystems can use it too.
 
-That is confusing, how to know the "hardware provides something that is
-equivalent to PCI ATS" ? any public docs to say that ?
+The user will be introduced in next patch.
 
->
->>
->> But then doesn't it break the meaning of 'pci=noats' which means
->> disabling ATS physically? It's described as "do not use PCIe ATS and
->> IOMMU device IOTLB" in kernel doc, which is not equivalent to
->> "leave PCIe ATS to be managed by HW".
->
-> Therefore, the PCI ATS is not used and the syntax of pci=noats is not
-> broken.
->
->> and why would one want to use 'pci=noats' on a platform which
->> requires ats?
->
-> We don't recommend users to disable ATS on a platform which has devices
-> that rely on it. But nothing can prevent users from doing so. I am not
-> sure why it is needed. One possible reason that I can think of is about
-> security. Sometimes, people don't trust ATS because it allows devices to
-> access the memory with translated requests directly without any
-> permission check on the IOMMU end.
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/usb/core/hub.h | 45 -------------------------------------
+ drivers/usb/core/usb.h |  6 -----
+ include/linux/usb.h    | 51 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+), 51 deletions(-)
 
-Appears that would happen with CXL link, while PCI link still will do
-some checking (per VT-d spec sec 4.2.4). I have question here, such behaviour
-happens with HW passthrough, also does to software passthrough (removed identity
-mapping) ?
+diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
+index e6ae73f8a95d..8b488c247a1e 100644
+--- a/drivers/usb/core/hub.h
++++ b/drivers/usb/core/hub.h
+@@ -77,51 +77,6 @@ struct usb_hub {
+ 	struct list_head        onboard_devs;
+ };
+ 
+-/**
+- * struct usb port - kernel's representation of a usb port
+- * @child: usb device attached to the port
+- * @dev: generic device interface
+- * @port_owner: port's owner
+- * @peer: related usb2 and usb3 ports (share the same connector)
+- * @connector: USB Type-C connector
+- * @req: default pm qos request for hubs without port power control
+- * @connect_type: port's connect type
+- * @state: device state of the usb device attached to the port
+- * @state_kn: kernfs_node of the sysfs attribute that accesses @state
+- * @location: opaque representation of platform connector location
+- * @status_lock: synchronize port_event() vs usb_port_{suspend|resume}
+- * @portnum: port index num based one
+- * @is_superspeed cache super-speed status
+- * @usb3_lpm_u1_permit: whether USB3 U1 LPM is permitted.
+- * @usb3_lpm_u2_permit: whether USB3 U2 LPM is permitted.
+- * @early_stop: whether port initialization will be stopped earlier.
+- * @ignore_event: whether events of the port are ignored.
+- */
+-struct usb_port {
+-	struct usb_device *child;
+-	struct device dev;
+-	struct usb_dev_state *port_owner;
+-	struct usb_port *peer;
+-	struct typec_connector *connector;
+-	struct dev_pm_qos_request *req;
+-	enum usb_port_connect_type connect_type;
+-	enum usb_device_state state;
+-	struct kernfs_node *state_kn;
+-	usb_port_location_t location;
+-	struct mutex status_lock;
+-	u32 over_current_count;
+-	u8 portnum;
+-	u32 quirks;
+-	unsigned int early_stop:1;
+-	unsigned int ignore_event:1;
+-	unsigned int is_superspeed:1;
+-	unsigned int usb3_lpm_u1_permit:1;
+-	unsigned int usb3_lpm_u2_permit:1;
+-};
+-
+-#define to_usb_port(_dev) \
+-	container_of(_dev, struct usb_port, dev)
+-
+ extern int usb_hub_create_port_device(struct usb_hub *hub,
+ 		int port1);
+ extern void usb_hub_remove_port_device(struct usb_hub *hub,
+diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
+index b8324ea05b20..3f45b6978660 100644
+--- a/drivers/usb/core/usb.h
++++ b/drivers/usb/core/usb.h
+@@ -192,12 +192,6 @@ extern const struct file_operations usbdev_file_operations;
+ extern int usb_devio_init(void);
+ extern void usb_devio_cleanup(void);
+ 
+-/*
+- * Firmware specific cookie identifying a port's location. '0' == no location
+- * data available
+- */
+-typedef u32 usb_port_location_t;
+-
+ /* internal notify stuff */
+ extern void usb_notify_add_device(struct usb_device *udev);
+ extern void usb_notify_remove_device(struct usb_device *udev);
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index 832997a9da0a..1a8f94cc2bc1 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -772,6 +772,57 @@ extern void usb_queue_reset_device(struct usb_interface *dev);
+ 
+ extern struct device *usb_intf_get_dma_device(struct usb_interface *intf);
+ 
++/*
++ * Firmware specific cookie identifying a port's location. '0' == no location
++ * data available
++ */
++typedef u32 usb_port_location_t;
++
++/**
++ * struct usb port - kernel's representation of a usb port
++ * @child: usb device attached to the port
++ * @dev: generic device interface
++ * @port_owner: port's owner
++ * @peer: related usb2 and usb3 ports (share the same connector)
++ * @connector: USB Type-C connector
++ * @req: default pm qos request for hubs without port power control
++ * @connect_type: port's connect type
++ * @state: device state of the usb device attached to the port
++ * @state_kn: kernfs_node of the sysfs attribute that accesses @state
++ * @location: opaque representation of platform connector location
++ * @status_lock: synchronize port_event() vs usb_port_{suspend|resume}
++ * @portnum: port index num based one
++ * @is_superspeed cache super-speed status
++ * @usb3_lpm_u1_permit: whether USB3 U1 LPM is permitted.
++ * @usb3_lpm_u2_permit: whether USB3 U2 LPM is permitted.
++ * @early_stop: whether port initialization will be stopped earlier.
++ * @ignore_event: whether events of the port are ignored.
++ */
++struct usb_port {
++	struct usb_device *child;
++	struct device dev;
++	struct usb_dev_state *port_owner;
++	struct usb_port *peer;
++	struct typec_connector *connector;
++	struct dev_pm_qos_request *req;
++	enum usb_port_connect_type connect_type;
++	enum usb_device_state state;
++	struct kernfs_node *state_kn;
++	usb_port_location_t location;
++	struct mutex status_lock;
++	u32 over_current_count;
++	u8 portnum;
++	u32 quirks;
++	unsigned int early_stop:1;
++	unsigned int ignore_event:1;
++	unsigned int is_superspeed:1;
++	unsigned int usb3_lpm_u1_permit:1;
++	unsigned int usb3_lpm_u2_permit:1;
++};
++
++#define to_usb_port(_dev) \
++	container_of(_dev, struct usb_port, dev)
++
+ #ifdef CONFIG_ACPI
+ extern int usb_acpi_set_power_state(struct usb_device *hdev, int index,
+ 	bool enable);
+-- 
+2.43.0
 
-
-Thanks,
-Ethan
-
->
-> Thanks,
-> baolu
->
 
