@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-316538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B61796D0DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:53:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C3896D0D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3951C22C34
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF691C21B3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001631946B8;
-	Thu,  5 Sep 2024 07:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LqlqSlxM"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FD8193428;
+	Thu,  5 Sep 2024 07:52:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FC8194096
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D96C1925B5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725522763; cv=none; b=OncHwywVxVxTk9Fu7iSVzgWNVAGYtix9ICjWEIrb700ylYu7bzBPPQ0A6P4wyzYB+XpY3oJNkjoPFficEBX6OX6rUv90yOz8Wu9RC2Hv5hzv2yam+kw3K61OgrVykxjSqPhuD24jYUhlOnDoNXcsLnG4xvOb+GCXeqMDX4hLggQ=
+	t=1725522757; cv=none; b=PeY2v9BsDKemhEuD7dtC9PZbLrhO3REfSLUituJ6FWPCYPoOdypHX2UZTg0af0hLXOizTcKKKhmmMbRWAKhwZ9Ag14mFTEK3pkIpD0rmetjkxjL/bASLZtY3vvFkpei2tlzLcsauLBA/GmcTHNe5r45in1XUYyKzwAIjm+NEWhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725522763; c=relaxed/simple;
-	bh=edlhfocYTBb5RSXGKhxyCJoY2mjSJV4yCAz+HGPdhB4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ljl3Cae8ilza2SPt9tAY3PYFuC+Uz13vjTvXz4lP6kHZq8V4cX1nXQHJgXiecid686vH0cZAiZPtqaIQlWEq/BwseHT5CBt5msXNyYP+ZrzADCAMC8nNYLb41KUL4uONV1gc7sn50+K83ZhX6+qA/Z5PTZN7d2mYl/QP9kyahGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LqlqSlxM; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374c180d123so212080f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725522760; x=1726127560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=edlhfocYTBb5RSXGKhxyCJoY2mjSJV4yCAz+HGPdhB4=;
-        b=LqlqSlxMetbqgCeOuKJUUaWRw+brrRsqjEv2VyCniz+CpWYugqZy0C4VQRrwmysfYX
-         lNdv48eduzzsSrwUxDrHovViv5gO3y4S+zQnezEe/jMXnIPFvF5yCUWqULvbJyAzRqnC
-         e8szkRZQEcqFbbjsqLkKKf3+I5eRhqcKbDBpQowHaXR/nXq2fxazuUTfY8h/4d75AxPL
-         A1PQXnRXQe08K44rczz6/uxq9gm6jvV3bin+fdHBdv7a3uGi9gZT77gRpc5/n1jeM1bG
-         69tqZvtmizGWrrt4FMb3zAARFb5E18x7JQEXGofQs0GuRpFP5QlB16mc0mbEgh7AjbYn
-         7IgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725522760; x=1726127560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=edlhfocYTBb5RSXGKhxyCJoY2mjSJV4yCAz+HGPdhB4=;
-        b=s/pK9XATAdTowX37vDF4pob3P+phObrWF2NjxbvKea9cO8lvBT147NsFRgpQHydNkN
-         oNE/a+CE9ZTbPaM5XA2H9sRY3llQihpxNFW0Ky17VskMocnXPMBanUMvdGIef7+PaAHy
-         dte66iwzrAwrONVE/tuhTHgtad1ffo5bPWrpnoJQLwO8UadWUY8UX2F5LwEkA1Hi2/XI
-         Tug/tD7vKyRPrgADLlehwVmSszlTnS/003sL38+ljeSeNe5eJYgsANtWQz9PvuFDTUEF
-         MUSrLTLHovRVptiI916n79PoPM6PYSD8H1QWdtz/2MjTROjF4Z4dsV7jzhOvPLF/Ckj2
-         l5uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVD23dVVOQ9OIIbiseIBLmNIoWz+HlW/R3uYLEgB9IcjTpxuXDA9D6+OfDwBRmnVb3C6Z334cwuIucn3t4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF/7pgOKyzwicUKX0QiRfVjqxNa8scbkjjiPFObQGxshIDEXHM
-	WnLQW6lJwcN4bitA3swKOlyrratXR346utdkqW5P4a/CiYv+fqIeiprAawo1lAJkMZkTXPNhEu+
-	+t8PMfPOLGbDPCKI8Su4hRyXJMU95TMV/PFmz
-X-Google-Smtp-Source: AGHT+IFK43pFnPLGUXRCs6+/ppb+2QpfbK6ADGGjBpmf0Lo7PhrrA57wrAnEXXwtIovQ4N0HLObZaRzV3HTp0jsNSrg=
-X-Received: by 2002:adf:a351:0:b0:374:baeb:2fb with SMTP id
- ffacd0b85a97d-374baeb0c2amr10826925f8f.35.1725522759687; Thu, 05 Sep 2024
- 00:52:39 -0700 (PDT)
+	s=arc-20240116; t=1725522757; c=relaxed/simple;
+	bh=QruOEX77o4IzM0/p+F25QvRXbfV+dn+E1QX9bbaGKgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MviZjUELE4nReEf9zAWpMbsvXSpqBsokJKvqWhNZGP29HrIRNXma5qxAvzpwVsg8v+Ax/8WLGg3olo6lfnyHCu7Pql8fbdberLzAeE7Q1Nb3KKm+XEC36ttOYWxxgdmCjHc0tYfsxpEjfMDcrZbjIrvx7tfFbVgsPyr9c94Gzzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA39C4CEC3;
+	Thu,  5 Sep 2024 07:52:36 +0000 (UTC)
+Message-ID: <30445b83-50eb-40ae-a2db-43b98d0c3224@linux-m68k.org>
+Date: Thu, 5 Sep 2024 17:52:33 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905061214.3954271-1-davidgow@google.com>
-In-Reply-To: <20240905061214.3954271-1-davidgow@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Sep 2024 09:52:27 +0200
-Message-ID: <CAH5fLgjqdchRvVGTMLYPTZ6erakKg3sNhbSA4dLq0kLAXLWxQA@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: block: Use 32-bit atomics
-To: David Gow <davidgow@google.com>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, linux-block@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] m68k: disable SRAM at startup
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+References: <20240904-fix-cf-virt-mem-sram-v1-1-fb007028d717@yoseli.org>
+Content-Language: en-US
+From: Greg Ungerer <gerg@linux-m68k.org>
+In-Reply-To: <20240904-fix-cf-virt-mem-sram-v1-1-fb007028d717@yoseli.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 5, 2024 at 8:12=E2=80=AFAM David Gow <davidgow@google.com> wrot=
-e:
->
-> Not all architectures have core::sync::atomic::AtomicU64 available. In
-> particular, 32-bit x86 doesn't support it. AtomicU32 is available
-> everywhere, so use that instead.
->
-> Hopefully we can add AtomicU64 to Rust-for-Linux more broadly, so this
-> won't be an issue, but it's not supported in core from upstream Rust:
-> https://doc.rust-lang.org/std/sync/atomic/#portability
->
-> This can be tested on 32-bit x86 UML via:
-> ./tools/testing/kunit/kunit.py run --make_options LLVM=3D1 --kconfig_add =
-CONFIG_RUST=3Dy --kconfig_add CONFIG_64BIT=3Dn --kconfig_add CONFIG_FORTIFY=
-_SOURCE=3Dn
->
-> Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module")
-> Signed-off-by: David Gow <davidgow@google.com>
+Hi JM,
+
+On 5/9/24 00:26, Jean-Michel Hautbois wrote:
+> Some of the internal SoC registers have a higher priority over the MMU
+> virtual mappings. The SRAM bank is one of them. If the bootloader
+> enables the internal SRAM at address 0x80000000, virtual memory access
+> at this address will not hit the MMU - so no TLB data misses would
+> occurr.
+> 
+> Since 0x80000000 is the virtual start address of all applications that
+> bit of memory is getting stomped over with inconsistent code and data
+> access.
+> 
+> Fix it by disabling the internal SRAM at startup.
+> 
+> Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
+> Tested-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+
+I know this change fixed your specific problem, but it is not going
+to work as a general solution.
+
+For one not all ColdFire parts have an SRAM region and thus not all have
+a valid %rambar register. Secondly some ColdFire parts (like the 5249)
+have 2 SRAM regions, with mapping control registers named %rambar0
+and %rambar1.
+
+Some ColdFire uClinux applications use the mapped SRAM, so a blanket
+disable is not the best idea in any case.
+
+I am thinking it would be better to have a new Kconfig option that
+allows disabling by the startup code for those ColdFire parts that
+have SRAM (so appropriate "depends on"). That way it will only be
+disable when that is what is needed. Maybe also have that configuration
+allowing to configure and set the rambars so that a mapping
+can be forced on if wanted.
+
+Regards
+Greg
+
+
 > ---
->
-> Hi all,
->
-> I encountered this build error with Rust/UML since the kernel::block::mq
-> stuff landed. I'm not 100% sure just swapping AtomicU64 with AtomicU32
-> is correct -- please correct me if not -- but this does at least get the
-> Rust/UML/x86-32 builds here compiling and running again.
->
-> (And gives me more encouragement to go to the Rust atomics talk at
-> Plumbers.)
-
-I would probably go with AtomicUsize over AtomicU32 in this case.
-
-Alice
+>   arch/m68k/coldfire/head.S | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/m68k/coldfire/head.S b/arch/m68k/coldfire/head.S
+> index c6d7fd28c6023..3901a49c47c89 100644
+> --- a/arch/m68k/coldfire/head.S
+> +++ b/arch/m68k/coldfire/head.S
+> @@ -207,6 +207,10 @@ _start:
+>   	movec	%d0,%CACR
+>   	nop
+>   
+> +	movel   #0,%d0
+> +	movec   %d0,%rambar
+> +	nop
+> +
+>   #ifdef CONFIG_MMU
+>   	/*
+>   	 *	Identity mapping for the kernel region.
+> 
+> ---
+> base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
+> change-id: 20240904-fix-cf-virt-mem-sram-abadb27fff2f
+> 
+> Best regards,
 
