@@ -1,108 +1,136 @@
-Return-Path: <linux-kernel+bounces-317854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A47796E489
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:00:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5828996E495
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBBC2867D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41DA1F23FA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772F21A7275;
-	Thu,  5 Sep 2024 20:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59CD1A7279;
+	Thu,  5 Sep 2024 21:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0TSoHZXs"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="N/moXsxf"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51BB1A724A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 20:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DAF19306D;
+	Thu,  5 Sep 2024 21:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725569996; cv=none; b=Prk+UjL0N2wHF8Vt1r/EaPvFiA2JGqQip6/7qItGO+JtBnmOt/g8YDldstsRjY2CwPkYAx5l72UxFxvSoz26U9K6NdRK3M+J+cdIxgrNSVoxfe31YkOICs89w4DHMWAgopGJMUkUzUDNQKcMcs9db+wftI2GvXZBTnGIn7pfQUA=
+	t=1725570245; cv=none; b=sfqBLRXoxY5BMDdyjttdqP1hmN3YjW3XV7guB7WWBKPi7u2BcrBIKviHvSCBpxL0K9AlcyM8L3agRSnpP11bYYSA26vd3+NWgQV47kDwU85MZeM4Hoee9a072DdsfnbBMWwtA8rCD6wx+1e2RIJ4s7kuZp/eXULXoYhQzu5NIQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725569996; c=relaxed/simple;
-	bh=VSc0FsUdAaCRAnns1yPMQhkU3spaERecdAVzZ7lEBR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fds9GDd8XNvEo6XMgEYGl+CLauiDpW3vGGPMvtnohhzk2+OyePfNv54fl6Ob8r7xVIIgZrc0j1Y1YhDdnteVP3TjVfUV8IQT2/+awHuIWQbzA/5bNQjsQhMKPXcO9MTHJbKN/r8jk32GuSZl/umv03v5KjAEQ2Pg/Bp88iTSrYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0TSoHZXs; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7092dd03223so574678a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 13:59:54 -0700 (PDT)
+	s=arc-20240116; t=1725570245; c=relaxed/simple;
+	bh=/5UzigxtKUU3fXq7e8cH4FMXDWhPoqRCyKrxRwvP2Q8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GahGO+i9u6XbjIWxC0U/R4NBZLxlCRkql+cr9nrEFuH7HL+FQKjPifPU6GPB/Pmyssr/1k4ut/A4q7yjK6eEOzgw7sIO22sX+6EOVyNF2nnE5oKhEWI9D7M07uIrKBRJJ6cM4eAJ575lPr3XyjIZGsdTTAPy73FuB39mZ5WOnyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=N/moXsxf; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725569994; x=1726174794; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y0AS3aQS4y396g0OeRUOaq0UTWaz7Wtti26bVDh5PJM=;
-        b=0TSoHZXsRQ7GZ5Kf2aypY53KyoJgV0Gy7y/hkIb7le/SzMVDIH1VdOsq7CfAP9g6Ym
-         ObKFtBnrUpqFoSy6g3aZs4KLItxzSnJmDcxaVVySqybEuq+IU5tI/BW/5yGAuJYodE0O
-         AhIzI6y94oLINZAcUhlfgK8v6/cQWbirYwPvDx8mi1KCdy/okADHk5Dn12rKX8POs97o
-         Uo9T/iEeSiFgQzRJh6F9GFSzezqg5NTJSnnAHXqr/sXBM6ZWC4dEHweJCsCMCHeXMdhO
-         dujrcKftYhbE7uUmkacijduXkQLZyVHtPF1MNAlbJxNtf59Vo2ByR4GupW4xiN/viL2d
-         w/lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725569994; x=1726174794;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0AS3aQS4y396g0OeRUOaq0UTWaz7Wtti26bVDh5PJM=;
-        b=EHBMFu7Ki/b4aOSFp4AUb+g9M56w/8HfyjwKrS5+3RkiAXpVM/pxlHUPVnjwn5C/8K
-         kuucqpQVBNW71x51qrc7ZOt3l0EqawKucdtCr+HKNZxNiEV6Ys8RTUka3Tz3U9nLC/am
-         kWjkBCM2YbwFLJVDol9uGrOjA1iQGDhBBFzJRy+Po2+ErVn031uJN7vB1HazT5yUcoW8
-         lvxIkRfS4RWSC24SbznfKPgNU5srrqs4hHLQopq6wnNKkHhznTXWXMkqw0ErBTPMWuOd
-         ukbdsJiWk8s7aI5Zvz4jhKTECXrtEwBGJ9E9+QfXyIsUDOOXtp1K5m7FXg6J7d6KT/mz
-         BhhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuKV/ZfXnmN8xAKcuHkt688bQBEg0N5vl0IUIf6VxSC786joeBuIkEEAvDWChCBXi5DCWMxbMgoFH5Kas=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/sEb0Voiw/lNFt8NYomeiMopOwjV48yr558CUvjzsyIWcX1e6
-	HQrNV68P/DR7pFKKsWNMqt3GqkTo8H7/ruwkMiVPn2TLdWmopce4Qc+CIlCueY8=
-X-Google-Smtp-Source: AGHT+IE+Oa42IPjQlhVs4Offh6SV9oNCZgoKpc2av+ZrWXwQs+ozewsSrYArydiuz3bunO1kfH+R1g==
-X-Received: by 2002:a05:6830:911:b0:70d:f448:575c with SMTP id 46e09a7af769-710cc213f26mr442526a34.7.1725569993910;
-        Thu, 05 Sep 2024 13:59:53 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f671751b7sm3457067a34.48.2024.09.05.13.59.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 13:59:52 -0700 (PDT)
-Message-ID: <0321188a-1da0-43ab-b583-9bf4e91dc01f@baylibre.com>
-Date: Thu, 5 Sep 2024 15:59:51 -0500
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1725570243; x=1757106243;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=MZ9MShwTh6wxM6C1t33CKEgAZtHExCAmt67BPNPyZvc=;
+  b=N/moXsxfnQukJWLrPNWz227PYhBWDK3Lh3ZoaoIJs9xNw9I6QYyWQsHX
+   Z5Jc8M+9OaFmhWhy43QSOZVu4GygOIgEL+Bj4/kcQoDE2++9SpTLZtg/B
+   fcnHRRNoMyzO3mCQqc4/17CCMNB13CLYaeOoA+QS054bTfz0Tsf5Ok1kh
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.10,205,1719878400"; 
+   d="scan'208";a="122726726"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 21:04:01 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:23126]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.61.84:2525] with esmtp (Farcaster)
+ id 6c245a1e-1afd-4273-a186-f2e34300ff4c; Thu, 5 Sep 2024 21:04:01 +0000 (UTC)
+X-Farcaster-Flow-ID: 6c245a1e-1afd-4273-a186-f2e34300ff4c
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 5 Sep 2024 21:04:01 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.100.51) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 5 Sep 2024 21:03:58 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Thu, 5 Sep 2024 14:03:49 -0700
+Message-ID: <20240905210349.29835-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <19ce4e18-f1e0-44c4-b006-83001eb6ae24@oracle.com>
+References: <19ce4e18-f1e0-44c4-b006-83001eb6ae24@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] iio: dac: ad3552r: changes to use FIELD_PREP
-To: Angelo Dureghello <adureghello@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
- <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-6-87d669674c00@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-6-87d669674c00@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWC001.ant.amazon.com (10.13.139.202) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 9/5/24 10:17 AM, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Thu, 5 Sep 2024 13:48:16 -0700
+> On 9/5/2024 1:35 PM, Kuniyuki Iwashima wrote:
+> > From: Shoaib Rao <rao.shoaib@oracle.com>
+> > Date: Thu, 5 Sep 2024 13:15:18 -0700
+> >> On 9/5/2024 12:46 PM, Kuniyuki Iwashima wrote:
+> >>> From: Shoaib Rao <rao.shoaib@oracle.com>
+> >>> Date: Thu, 5 Sep 2024 00:35:35 -0700
+> >>>> Hi All,
+> >>>>
+> >>>> I am not able to reproduce the issue. I have run the C program at least
+> >>>> 100 times in a loop. In the I do get an EFAULT, not sure if that is
+> >>>> intentional or not but no panic. Should I be doing something
+> >>>> differently? The kernel version I am using is
+> >>>> v6.11-rc6-70-gc763c4339688. Later I can try with the exact version.
+> >>> The -EFAULT is the bug meaning that we were trying to read an consumed skb.
+> >>>
+> >>> But the first bug is in recvfrom() that shouldn't be able to read OOB skb
+> >>> without MSG_OOB, which doesn't clear unix_sk(sk)->oob_skb, and later
+> >>> something bad happens.
+> >>>
+> >>>     socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
+> >>>     sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT) = 1
+> >>>     recvmsg(3, {msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
+> >>>     sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE) = 1
+> >>>> recvfrom(3, "\21", 125, MSG_DONTROUTE|MSG_TRUNC|MSG_DONTWAIT, NULL, NULL) = 1
+> >>>     recvmsg(3, {msg_namelen=0}, MSG_OOB|MSG_ERRQUEUE) = -1 EFAULT (Bad address)
+> >>>
+> >>> I posted a fix officially:
+> >>> https://urldefense.com/v3/__https://lore.kernel.org/netdev/20240905193240.17565-5-kuniyu@amazon.com/__;!!ACWV5N9M2RV99hQ!IJeFvLdaXIRN2ABsMFVaKOEjI3oZb2kUr6ld6ZRJCPAVum4vuyyYwUP6_5ZH9mGZiJDn6vrbxBAOqYI$
+> >> Thanks that is great. Isn't EFAULT,  normally indicative of an issue
+> >> with the user provided address of the buffer, not the kernel buffer.
+> > Normally, it's used when copy_to_user() or copy_from_user() or
+> > something similar failed.
+> >
+> > But this time, if you turn KASAN off, you'll see the last recvmsg()
+> > returns 1-byte garbage instead of -EFAULT, so actually KASAN worked
+> > on your host, I guess.
 > 
-> Changes to use FIELD_PREP, so that driver-specific ad3552r_field_prep
-> is removed. Variables (arrays) that was used to call ad3552r_field_prep
-> are removed too.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
-Can we also remove enum ad3552r_dev_attributes and enum ad3552r_ch_attributes?
-It looks like they aren't used any more after these changes.
+> No it did not work. As soon as KASAN detected read after free it should 
+> have paniced as it did in the report and I have been running the 
+> syzbot's C program in a continuous loop. I would like to reproduce the 
+> issue before we can accept the fix -- If that is alright with you. I 
+> will try your new test case later and report back. Thanks for the patch 
+> though.
 
+The splat is handy, you may want to check the returned value of recvfrom()
+with KASAN on and off and then focus on the root cause.  When UAF happens,
+the real bug always happens before that.
+
+FWIW, I was able to see the splat on my setup and it disappeared with
+my patch.  Also, syzbot has already tested the equivalent change.
+https://lore.kernel.org/netdev/00000000000064fbcb06215a7bbc@google.com/
 
