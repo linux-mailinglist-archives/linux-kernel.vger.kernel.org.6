@@ -1,138 +1,170 @@
-Return-Path: <linux-kernel+bounces-317119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7251D96D972
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56A996D976
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322D7283B43
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 255F91F2A71C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A96819D88C;
-	Thu,  5 Sep 2024 12:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACBB19C541;
+	Thu,  5 Sep 2024 12:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="g5QQ/1Mn"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvWxL7bf"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF8119AD48;
-	Thu,  5 Sep 2024 12:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F0C19B3F9;
+	Thu,  5 Sep 2024 12:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540847; cv=none; b=WcRkhcY0PcLLueFVuzSDywJk05I9SMFoJaTUoJAOO+QUMPQouexmnysWOJzLNr8oQedxTORhQ/87kKJEnDl3gzG/mz1UoJIJBjYjJ0DfHEqbHTBXPpi4LOa04Djt/DufjtzM9stXzUU2rECwzQmHOyB1JqydVoEaxU6rIxXXws8=
+	t=1725540990; cv=none; b=aPIiRCetJoJ+uYLGmlCoAxMpsq3FWI9YuHycmQYNzF7dNO6Gy/VSfs5u2kPODa/SB2dOpdZhygoEhRVnjFHejTHDOPuoSMmDW2umUOWOXkYLNRUOSJUWvtYbo/o0HwdYOE1zowGDArgygt6WeJYOHcmt3UIB9dx2K1hc0k9r1Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540847; c=relaxed/simple;
-	bh=9PiVTuS8Gxkr/+Fe8T+LFEESvRnP0eN8b+UZS525hDY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Cv1PV2et6hArvHarcipttNLVB5WkaudbqeZ/mfF0jnqnPehne2wZKiu33EwnOJ9TGzX+Gvo3Y1WsZA8D83GYi2i1jo07EhxNvzwSqSB/4xQ/ba50Ay1j4Fbpd7Pr1OYwafK+fI8OkzUveHYFfV0I/Awdl+FABkDswwqyDxJ6SOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=g5QQ/1Mn; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1725540990; c=relaxed/simple;
+	bh=2B7W/vJwjmAA6E2m8YddgGMotUXAafmzNSXBcbWeT+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jcStjuOOG8v5z+Yh5lwFXF01IujNGS472J0e051MCpH+qKRFQnLMpi0F7P3ZwFSqhvZzANWVpOzbp00MMfChWUCnno0qcskMwvFOesJdojAsi/WTbTKyA3WTY1g+J/bs01JjE0J+cuBDiy486duGGvEyvzZk/P9HddmldE6y+3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvWxL7bf; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c245c62362so1000422a12.0;
+        Thu, 05 Sep 2024 05:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725540987; x=1726145787; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WEEQTkpkoiKwhEO3IWsgIyRLzd4RR8yXzV/kx3uo+/4=;
+        b=mvWxL7bfY9eMCg79QMnUvSSCKlTMkxATnmv9nozGpikQWbZVJhwRYWZq7OcttWkxkx
+         kjvsBhRFRtpUpw3rS7U/m1cnk/w+/1vAAz563c8pEqc9emroRVf7oINxZ4tOf2ZPzVUW
+         NCyqGwoSZVQKCEjUYn2O3G7JlK8CUNQ1kedBOfgodE4rEg1kdMVAIYIbPjg3XmERkuYN
+         mOZiQ4rlo2AbkoKM0x/cYPRBao/AaKN4Luk+/WxsiHMkk4mYIAqELc6kVSgF3ifEgM54
+         PHoC0LB0qrt0pOQ3Cx4o+54qjpl54fXMV9e6pgPhlgnIXyjLjiwvhXcUq/noUHfdwSEq
+         SoBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725540987; x=1726145787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WEEQTkpkoiKwhEO3IWsgIyRLzd4RR8yXzV/kx3uo+/4=;
+        b=muuS8b+cXA3ZlPz/mEEkEbZDlmCtin7PyOn2N+KFwlGVnwqz3wDC/A4AiIkMISR9Ar
+         CwHWM1tPOF8GcH+rkNCFO2CbbHljxP4bhmrlZJQ7XNhlyQ4nHXA/JcR3kSyF5VXSMwVL
+         EdsZqfreZ2Q6yaBlWhiG9FCmAHal6pljw1Ql/sRZsaTJaAtWu+OJ9dIV37h8EkWp1xQd
+         JXlEo7k8+UWKrLvR6Bu9XHzlHsKuhztXLFzHmIsoimnZuyfbIsiHNruY2rs9vZ4Xzb/P
+         6e2jvEDeSjuVJvdWusmWNtJ/sY+QczVvRXhNk96rWN+2TKrItJcgwqmJy1lOt3YGgIEz
+         W/Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8xwth5rDrD/eVqGm55k7ZRP2YNJxoPDSQ/NAuN9w5Ar+6X9GpIM5iFChctc4IQrO73mEBn7Qwk6ixbOoo@vger.kernel.org, AJvYcCWkzAfn5ghz5I7A4Tb10a5QPbwxdHMYgGpcxDR/IyZwSLSiKnXay1cDfkHvNDBvNF31V4zHmVpeyc1F@vger.kernel.org, AJvYcCXAX/pgOXxz1Uk8bvZSQal0OJVv64iPc23ryydjIxKkMn0WpX7m6hthIl0Ll23n9fJl11lV8fUZNol7a/uBYg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaLngwlywIFfPDrtJXNohRuAyG5ceWsAjNMrcRvOShFyK8gXsE
+	9NMseGOcQakB9fPnZAvQ/XDUE78ShRiyBnFO/p6LqpfiJeS9LTpgDcS8359sbYfHtyLJbJtGcdn
+	X47eRj3QwvbzQTqEaJmRkJEjGRsQ=
+X-Google-Smtp-Source: AGHT+IF+R0hpquFWFa3ySZj7Hw6ErCUc6Ze5564kopSBw7fF6uBXHcM0whC/yEucdamRF2kP0MYc7ucdDjF2pTLbzuM=
+X-Received: by 2002:a05:6402:354e:b0:5c2:43a0:47e3 with SMTP id
+ 4fb4d7f45d1cf-5c27584b805mr4833554a12.36.1725540987284; Thu, 05 Sep 2024
+ 05:56:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1725540843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4mq+B9gm9fV2NDBLUNaSg7uppvTNJbTcEl31DoYeJNU=;
-	b=g5QQ/1MnOxqB0Gc02A8EZvhIWisBgrZN65FPfeFJ4/4WDS8V/NkhSSrmL7o86KiARqRBx+
-	wTEFqPzMwnC14cSkwJ6D6OBo+O5OBeM/ksZEPsjFV90tp85PzFdehiKiNiVTz8tJ7ZoXAU
-	A+dfiHo9nAd5s1n7H1MuCKk7SxJkYlbUhMye22x5OiEdX6uG31T/HxKBNU41viuIq+1kQU
-	6TdEdLOpte7Zrzt3GRP9KeRQaLebzf08C4Slp9gZGJvc+vDJRYzTKWQC89cH0OoxVDjrKe
-	VYksRylsFzOBw+WTD60tawSBwawI3slTeJ7KyYQkY8I6g4abexRdZif7re4FlA==
-Date: Thu, 05 Sep 2024 14:54:03 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
- jernej.skrabec@gmail.com, samuel@sholland.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi
- file
-In-Reply-To: <20240905134254.6e15a1e5@donnerap.manchester.arm.com>
-References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
- <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
- <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
- <20240815181508.6800e205@donnerap.manchester.arm.com>
- <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
- <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
- <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
- <20240905133412.6ba050de@donnerap.manchester.arm.com>
- <b07f1365a6f942297f7a3308fa628187@manjaro.org>
- <20240905134254.6e15a1e5@donnerap.manchester.arm.com>
-Message-ID: <8a80465aaa4b7dc4c8c15d7a73944cfd@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240905122023.47251-1-brgl@bgdev.pl> <20240905122023.47251-2-brgl@bgdev.pl>
+ <6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek> <CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
+In-Reply-To: <CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Date: Thu, 5 Sep 2024 15:56:15 +0300
+Message-ID: <CALT56yOP+un5nkxuirJVg=gr7fo4Hqjt1ew3z-=F2J_Y_RcTqg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
+ the on-board wcn6855
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-09-05 14:42, Andre Przywara wrote:
-> On Thu, 05 Sep 2024 14:38:53 +0200
-> Dragan Simic <dsimic@manjaro.org> wrote:
-> 
->> Hello Andre,
->> 
->> On 2024-09-05 14:34, Andre Przywara wrote:
->> > On Thu, 5 Sep 2024 20:26:15 +0800
->> > Chen-Yu Tsai <wens@csie.org> wrote:
->> >
->> >> Hi,
->> >>
->> >> On Thu, Sep 5, 2024 at 8:17 PM Dragan Simic <dsimic@manjaro.org>
->> >> wrote:
->> >> >
->> >> > Hello,
->> >> >
->> >> > Just checking, any further thoughts about this patch?
->> >>
->> >> Sorry, but I feel like it's not really worth the churn. There's not
->> >> really a problem to be solved here. What you are arguing for is more
->> >> about aesthetics, and we could argue that having them separate makes
->> >> it easier to read and turn on/off.
->> >
->> > Yeah, I agree. If a board wants to support OPPs, they just have to
->> > include
->> > a single file and define the CPU regulator, and that's a nice opt-in,
->> > IMHO.
->> > But having this patch would make it quite hard to opt out, I believe.
->> > For
->> > Linux there are probably ways to disable DVFS nevertheless, but I am
->> > not
->> > sure this is true in an OS agnostic pure-DT-only way.
->> 
->> Thanks for your response.  The only thing that still makes me wonder
->> is why would a board want to opt out of DVFS?  Frankly, I'd consider
->> the design of the boards that must keep DVFS disabled broken.
-> 
-> Yes! Among the boards using Allwinner SoCs there are some, say 
-> less-optimal
-> designs ;-)
+On Thu, 5 Sept 2024 at 15:53, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> On Thu, Sep 5, 2024 at 2:50=E2=80=AFPM Dmitry Baryshkov <dbaryshkov@gmail=
+.com> wrote:
+> >
+> > On Thu, Sep 05, 2024 at 02:20:19PM GMT, Bartosz Golaszewski wrote:
+> > > From: Konrad Dybcio <konradybcio@kernel.org>
+> > >
+> > > Add nodes for the WCN6855 PMU, the WLAN module and relevant regulator=
+s
+> > > and pin functions to fully describe how the wifi is actually wired on
+> > > this platform.
+> > >
+> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> > > [Bartosz:
+> > >   - write the commit message,
+> > >   - rebase Konrad's commit,
+> > >   - fix one of the supplies' name]
+> > > Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts | 108 ++++++++++++++++++++=
+++
+> > >  1 file changed, 108 insertions(+)
+> > >
+> > > @@ -583,6 +668,23 @@ &pcie4_phy {
+> > >       status =3D "okay";
+> > >  };
+> > >
+> > > +&pcie4_port0 {
+> > > +     wifi@0 {
+> > > +             compatible =3D "pci17cb,1103";
+> > > +             reg =3D <0x10000 0x0 0x0 0x0 0x0>;
+> > > +
+> > > +             vddrfacmn-supply =3D <&vreg_pmu_rfa_cmn_0p8>;
+> > > +             vddaon-supply =3D <&vreg_pmu_aon_0p8>;
+> > > +             vddwlcx-supply =3D <&vreg_pmu_wlcx_0p8>;
+> > > +             vddwlmx-supply =3D <&vreg_pmu_wlmx_0p8>;
+> > > +             vddpcie1p8-supply =3D <&vreg_pmu_pcie_1p8>;
+> > > +             vddpcie0p9-supply =3D <&vreg_pmu_pcie_0p9>;
+> > > +             vddrfa0p8-supply =3D <&vreg_pmu_rfa_0p8>;
+> > > +             vddrfa1p2-supply =3D <&vreg_pmu_rfa_1p2>;
+> > > +             vddrfa1p8-supply =3D <&vreg_pmu_rfa_1p7>;
+> >
+> > As you are going to post another revision, please also add
+> >
+> > qcom,ath11k-calibration-variant
+> >
+>
+> I had it in earlier revisions. The only one we could add here would be
+> the one from X13s as QCom has not yet released the data for the CRD.
+> Johan and Konrad were against adding this here if it doesn't refer to
+> the correct one so I dropped it.
 
-I see, but such boards could simply disable the "cpu0_opp_table" node in
-their dts(i) files, for the encapsulated CPU OPPs scenario, and 
-everything
-would still work and be defined in a clean(er) way.
+As Kalle usually merges data with some delay it's not infrequent to
+have DTS which names calibration variant, but board-2.bin doesn't have
+corresponding data. The driver safely falls back to the data without
+variant if it can find it. Als  usually it's us who supply the
+calibration name.
 
-I mean, if there are some suboptimal designs, perhaps the defaults 
-should
-be tailored towards the good designs, and the suboptimal designs should 
-be
-some kind of exceptions.
+>
+> Bart
+>
+> > > +     };
+> > > +};
+> > > +
+> > >  &pmc8280c_lpg {
+> > >       status =3D "okay";
+> > >  };
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
->> > This could probably be solved, but same as Chen-Yu I don't see any good
->> > enough reason for this patch in the first place.
->> >
->> >> And even though the GPU OPPs are in the dtsi, it's just one OPP acting
->> >> as a default clock rate.
+
+
+--=20
+With best wishes
+Dmitry
 
