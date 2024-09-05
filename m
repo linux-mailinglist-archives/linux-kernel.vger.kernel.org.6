@@ -1,89 +1,166 @@
-Return-Path: <linux-kernel+bounces-316277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230D096CD68
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:36:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC3296CD6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99195B24285
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFD91F27294
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4109B1487D6;
-	Thu,  5 Sep 2024 03:36:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEC31494D9;
+	Thu,  5 Sep 2024 03:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OuBN4fxR"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E5613D53F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD2142AA5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725507365; cv=none; b=ohSQuvm72yFTyCYWCrQF9KVb2Tlmfo0EWXJY809+ju1yAI55/cJkvQr4BBdd9yVUbv6bz8Ullji+AEAsGwknL0QfxiNlpwlfAljBIsaY5afXEgC/JV6l3m0mK5/kV5ozZE/6C3gQ18yLvN6Fr23w1sMSLTVKrDw4qDuPpChwnYc=
+	t=1725507421; cv=none; b=NK9Mec/Fjiv6gPz98xrfFPWHJ400FscqT0QLrUs0I8T+Z9tcmCvbvriV/P018E0JPpVdRH3iKQW1ULlly0dDUejpM009wUGYpmkfER49LhPtu/jCk4Et5QbNSfwCO+byxMnmwR2QUP7Bruoxq6uRjmChRYrs9fNDciteo0dR+4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725507365; c=relaxed/simple;
-	bh=P/knbu6gM/mVmYyFtgTTjMJpSncSbpf1tzvjI6SCLjQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qXZTHshe6bGtGhbe3xWEJrHSLVQ6fQ7uVnv8D9VIoSSmNflmAKAFHVQ6cELxuFEFfhp9gN0WFQYZ7BV1mVRZuQmQxEJD9eMGgq2n7S4ZTUGr7517iW3gR+L45J8SWoaHhYXDXE/C2pWq8OpQxLwBKqNp5KcqdPuwTYWyqUWZZIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a338f090eso39854339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:36:04 -0700 (PDT)
+	s=arc-20240116; t=1725507421; c=relaxed/simple;
+	bh=eiDwd18L4MBS4Bj7MKCAM06FoS+0UCoF0CD+B+adO/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DYRjl+SAIx1d4zFQaZqFU1bqaBDbhQ+UPARo95IRgJVT1nHssEJNe8fZ6AZ0TV6QDipzqdB8mrwWN2qv5mXh+j8EoTWBjo1ba1YYW7TogExIv+AicbkTc7IqcmJ72yBti/tSUMQRsY02x06Py5qolRu7q+ViFK1HeQtyjQg5Iyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OuBN4fxR; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso315731a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1725507419; x=1726112219; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jbfc98t5OtGLuNINYKX6Z52cv1pgsj90rLeg4M2pXfA=;
+        b=OuBN4fxRqtRHrTyXiUQxiVd3gC82OGT74anauPbGeoDaxXJbCb5yTpZ/87FIDbWY1F
+         ST4+KHzq6RH0Z+G80JH5Mc28d4XqHOf+5Xllbj77xQtrRwPsg0E0Z9sObC1QKWGKchXI
+         aVJ4NT4pa95ddMP1ddVS+1Avs9sAdLH/SmsdyOXyoGOyxqLbvkpdkGAoPeE/sufcQCD2
+         qP/s3vZVJgQqxL77YtO3Cl3TA6bbpabxOru3IFadxsxVjY7jYunCvAeROlSTxaitw9cq
+         H+o3jx/OKtdF2DD+gvSuQQpvRy/wtfZ8OJdYN3H5mfpGQQEdMqntb8cmi4hNc/+WFDsr
+         YiLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725507363; x=1726112163;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWC0ltEAXp0mtaOhR7JjRJQRO63ul804XOUVSx6FfIg=;
-        b=ptenK93rN6+z+adFVLRCZzyE8hClf1IkCs8HqHY6VhmVxTJfZiP++P1a3YykoDzULe
-         brQNrquQvaHWkTboZc2U+Dtc1egsr68trgsE7fdeOrbAkgJ3xAWV2dASnjt99b0+Rvsg
-         NxHh8RhoZ35I8GQQzw8LoyLbrTC1Hy6RMsVjJN2JS90z12ZqMtweaWWxDAXKaz6Cbl8+
-         ljQW87NnD5wo40Yl/UcG9+6jf02KweVmU+c0jLz5JZ7w78guv2yPTwlvTbAAlfUosulT
-         w3NaXzl1316gjmwbaTXt6/4WtVt61HIHhNCEY+VxH5wWW+lcRYiyRCQjaNlSCA1q4Nan
-         dbEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWccJO8HX4RhTMNFUkU/l0bTy95JDVAZQsc+opBS8kAOGMk9hR+cTNzxS1yskq+WuRCMUjEARRnkfRKPPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI5XNUtSpOe2Y+Js888XScgC4kthVy0LmYB4Z4+xmwdVpIrqMT
-	w6uIzVEnUWFJcxhVTB2pEIpsOBeqKLjTJndh0N5INy8/gtHnLQ5yRd0IuFwM+CCUGLyXYdZP/yx
-	tpX9Yk5CEWgtCsatiaMTtt6t2Yf2OxYytAizfil81J6fqCao2CoLwwOE=
-X-Google-Smtp-Source: AGHT+IHuggzUQvgjXydkyLrL6SK4jj097SxIfk71LgRrMQGly6nNEvlpsA1RvKpPPJtTZE9P1kXsejCnetaJ2eW5VMvrRssuhHWJ
+        d=1e100.net; s=20230601; t=1725507419; x=1726112219;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jbfc98t5OtGLuNINYKX6Z52cv1pgsj90rLeg4M2pXfA=;
+        b=FOnqFXJr2iLQLKwg85YQsDm1ZK+/5Ue7lvKvE7VWafHX0uwdf5s/YkWhaNFarVSczr
+         fj4fBTngI2TOOiZGKUc8xxTrFeKKOH+auZI3O1JhvQg05riGAV6V3yWkFMRRxLRFvnYC
+         o4ADFe3gEwGRw64tjC0bdFmkh5eGngA0G0ISbB83yJ5Yht+bfNabsfC5DInX6Aa/lgWz
+         z1KLUxpEbkWdBcMszK6aLnoIbowlnfJ8xH7exY08c8Wrs93cey8CgLNil2JrSlCGSpZq
+         JWTpOF1gmJ9m58MapLb0YJBv6pE+YmrhxHH68Re94VqA7ELTax92eESIXeCmWVLq/+7k
+         15UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyA2llJyUtG5Uw3bbYLM0yT/Qes3yJOIj463xnnIijTjgqjaI5h9htxOciuadFv4/RU6WFHmDZZJQYbXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzvmbBoJQx1bVWNXN430JE+izYakjiPqJHi6VY4rrEckzAp6Ra
+	8DjhAGTn6fdD3/xRjfItFT5FCeVfcJCY3nWUNwaELCLkH9S9vY+oEzSfBPYVbf8=
+X-Google-Smtp-Source: AGHT+IGYhG/19XTuh1osoL6kTMpIu9yVGa1obLYLUMIJszPnRbOcE6BZN29HNsTzTrX+UGxoXr8zbQ==
+X-Received: by 2002:a05:6a20:d043:b0:1c4:bf4a:6c0e with SMTP id adf61e73a8af0-1cece5192bemr18171590637.26.1725507419250;
+        Wed, 04 Sep 2024 20:36:59 -0700 (PDT)
+Received: from medusa.lab.kspace.sh (c-98-207-191-243.hsd1.ca.comcast.net. [98.207.191.243])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d8d38ffff9sm7733089a91.39.2024.09.04.20.36.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 20:36:58 -0700 (PDT)
+Date: Wed, 4 Sep 2024 20:36:57 -0700
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	yzhong@purestorage.com, Tariq Toukan <tariqt@nvidia.com>,
+	Shay Drori <shayd@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] net/mlx5: Added cond_resched() to crdump
+ collection
+Message-ID: <ZtknWffvKCy6JjXS@ceto>
+References: <20240829213856.77619-1-mkhalfella@purestorage.com>
+ <20240829213856.77619-2-mkhalfella@purestorage.com>
+ <cbec42b2-6b9f-4957-8f71-46b42df1b35c@intel.com>
+ <ZtII7_XLo2i1aZcj@ceto>
+ <519a5d22-9e0c-43eb-9710-9ccd6c78bfe3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24f:0:b0:397:9426:e7fc with SMTP id
- e9e14a558f8ab-39f40e21b22mr12075555ab.0.1725507363662; Wed, 04 Sep 2024
- 20:36:03 -0700 (PDT)
-Date: Wed, 04 Sep 2024 20:36:03 -0700
-In-Reply-To: <80045cd0-338d-43c5-bea7-378504032006@linux.alibaba.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000077ff1f062156fd2e@google.com>
-Subject: Re: [syzbot] [erofs?] INFO: task hung in z_erofs_runqueue
-From: syzbot <syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com>
-To: hsiangkao@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	xiang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <519a5d22-9e0c-43eb-9710-9ccd6c78bfe3@intel.com>
 
-Hello,
+On 2024-09-03 14:14:58 +0200, Alexander Lobakin wrote:
+> From: Mohamed Khalfella <mkhalfella@purestorage.com>
+> Date: Fri, 30 Aug 2024 11:01:19 -0700
+> 
+> > On 2024-08-30 15:07:45 +0200, Alexander Lobakin wrote:
+> >> From: Mohamed Khalfella <mkhalfella@purestorage.com>
+> >> Date: Thu, 29 Aug 2024 15:38:56 -0600
+> >>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+> >>> index 6b774e0c2766..bc6c38a68702 100644
+> >>> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+> >>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
+> >>> @@ -269,6 +269,7 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
+> >>>  {
+> >>>  	unsigned int next_read_addr = 0;
+> >>>  	unsigned int read_addr = 0;
+> >>> +	unsigned int count = 0;
+> >>>  
+> >>>  	while (read_addr < length) {
+> >>>  		if (mlx5_vsc_gw_read_fast(dev, read_addr, &next_read_addr,
+> >>> @@ -276,6 +277,9 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
+> >>>  			return read_addr;
+> >>>  
+> >>>  		read_addr = next_read_addr;
+> >>> +		/* Yield the cpu every 128 register read */
+> >>> +		if ((++count & 0x7f) == 0)
+> >>> +			cond_resched();
+> >>
+> >> Why & 0x7f, could it be written more clearly?
+> >>
+> >> 		if (++count == 128) {
+> >> 			cond_resched();
+> >> 			count = 0;
+> >> 		}
+> >>
+> >> Also, I'd make this open-coded value a #define somewhere at the
+> >> beginning of the file with a comment with a short explanation.
+> 
+> This is still valid.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Done. See <1>.
 
-Reported-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
-Tested-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
+> 
+> > 
+> > What you are suggesting should work also. I copied the style from
+> > mlx5_vsc_wait_on_flag() to keep the code consistent. The comment above
+> > the line should make it clear.
+> 
+> I just don't see a reason to make the code less readable.
 
-Tested on:
+<1> Now I am looking at mlx5_vsc_wait_on_flag() again, I realized the 
+code does not want to reset retries to 0 because it needs to check when
+it reaches VSC_MAX_RETRIES. This is not the case here. I will update the
+code as suggested.
 
-commit:         e96d8572 erofs: handle overlapped pclusters out of cra..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d14e8f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=264b71bd0896c2bf
-dashboard link: https://syzkaller.appspot.com/bug?extid=4fc98ed414ae63d1ada2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+> 
+> > 
+> >>
+> >> BTW, why 128? Not 64, not 256 etc? You just picked it, I don't see any
+> >> explanation in the commitmsg or here in the code why exactly 128. Have
+> >> you tried different values?
+> > 
+> > This mostly subjective. For the numbers I saw in the lab, this will
+> > release the cpu after ~4.51ms. If crdump takes ~5s, the code should
+> > release the cpu after ~18.0ms. These numbers look reasonable to me.
+> 
+> So just mention in the commit message that you tried different values
+> and 128 gave you the best results.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+I will update the commit message in v3.
 
