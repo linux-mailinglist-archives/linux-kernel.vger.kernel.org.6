@@ -1,94 +1,147 @@
-Return-Path: <linux-kernel+bounces-316185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF68B96CC59
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:44:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9831F96CC5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44141C222EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13578B23997
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C686D517;
-	Thu,  5 Sep 2024 01:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2652BE4A;
+	Thu,  5 Sep 2024 01:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M2o8Q8rD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cymQDEGW";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M2o8Q8rD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cymQDEGW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cIiyUah2"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011042.outbound.protection.outlook.com [52.101.70.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C185D635;
-	Thu,  5 Sep 2024 01:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725500678; cv=none; b=c1ZrFuOpQxe+ot39ojq8Hs9W7wGUMgc4BhLoGPuW3aqBJj5MdQfE+YNvMM3dJeS4nDpKFgD9Ju7Cr/4yPEhr+SOJnEzoBPrkLNtG0B+9aYZlun1APYmlTBHgYI6qdrEsnded1jzDGc//LLqLP3azl3HtJCWFZkcAVuEIM+4or8I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725500678; c=relaxed/simple;
-	bh=4i2uC5hyOgFUSDqHUCGYYwvnxKpRZHOaOW//nRc2gEw=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=cIYLHrsKnOFMPS+gSvCiPuWoDoMY5HWBxD2IsHItVPSMAWeomyzBE/v4zTSfXtXuxSKyFAO+qhE6KUJqMxnDuqpGU4MIAWYhURw46DOQR89SV/RINQ0YUMUIUYxLXz1bQqvgIcUr1Xk9LGiWjpRnlZlwjC9PUd+X4Jc/96vqiFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M2o8Q8rD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cymQDEGW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M2o8Q8rD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cymQDEGW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BFB9221A61;
-	Thu,  5 Sep 2024 01:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725500674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
-	b=M2o8Q8rDpHawI0s0xyHhyMrU/jTAeOpjnySxF2k+3kObyLvGCj1hHYvz9OSNzhHsqHtWZJ
-	LBabVtViKA+9jI1QYjkgg9AjGPKO5nkSu/hmZEd3JP/HxGi9ioVCJ4HC6z1JGSDWLPZBrJ
-	xVO9I3Wk0miDpAUPMLNwbV2eDIWvHAc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725500674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
-	b=cymQDEGWOADoKN1LyZ03d1GlVDNw0dRcXfrSODgwuzUAHuPCr3kGQ1Ns9kUzE3kITnGhjo
-	Iq7YTdPKKll+VAAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=M2o8Q8rD;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cymQDEGW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725500674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
-	b=M2o8Q8rDpHawI0s0xyHhyMrU/jTAeOpjnySxF2k+3kObyLvGCj1hHYvz9OSNzhHsqHtWZJ
-	LBabVtViKA+9jI1QYjkgg9AjGPKO5nkSu/hmZEd3JP/HxGi9ioVCJ4HC6z1JGSDWLPZBrJ
-	xVO9I3Wk0miDpAUPMLNwbV2eDIWvHAc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725500674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dTi9sXVnnFjpBjJesi3UR5hVhx3v23LG1PtFEXVp71M=;
-	b=cymQDEGWOADoKN1LyZ03d1GlVDNw0dRcXfrSODgwuzUAHuPCr3kGQ1Ns9kUzE3kITnGhjo
-	Iq7YTdPKKll+VAAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B39E1398F;
-	Thu,  5 Sep 2024 01:44:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QhGVCP0M2WY7MwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 05 Sep 2024 01:44:29 +0000
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB732107
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725500829; cv=fail; b=BRxpZXYdaZtR9A06nCOTNPG0RJClF9Tak3b7AKb40AHz/bBBNzMy9UDHqUecKAc6tBDW878rbI9V5gjwThCOlrjC1ysQcsq0rMeOjf+FDuqoxdcdiFd3GrI5hTDJqEzxX8J2+CwlzIInY0sUykFGQTtjirnEhkg2wQEXy+x3m2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725500829; c=relaxed/simple;
+	bh=HR+y5SxGFEGBxNQKcENoNGHgmw23ojhTaU3+uDyczcU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NC0xiio6uFt+cr53nBZFnJ/cnpCRPAiL7aR6XxHF3o90p35+TqYlNU3BbsTkmyRLmSO4ywm9m1N9TaJDmriDB52APy23VKhuhWt5PekcQ1/4FmsN7gp8iu/ZpWjErlWw0KrB2H+cirrwMjI2JjTEtCRpMOC15zsJVeqdEoVAnAc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cIiyUah2; arc=fail smtp.client-ip=52.101.70.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kS6mhVrxcHUZVaj+R+KzW8ygxj7UWpCy5mTdSf7qqFqnHdHIqVJExsSXvzgBq071/66mc379DQe2JnxER28LToapqP+mggACRs9Q12H7ViFCeot2mskMEt/mmJW+7tPMBJPpL5krrQuUjNP8EdIt70dM+E9WCY+gnzACngBmtFd0ArQG0sKQq5ll+L5PfznuMljizg5XrUOxcL/l4f7fMt+4F/pjfTtblUrdcowVo1pZYD/CUgnF8ciSCFFSBhyTJ2kTH7bqXVGYLrza534A0tgWLxWSczs4BP002g7+Y0NAeY2Fzpg17wL2V+u7Tl8+AF/VFym+8SaWW4+qe+aJaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iY63M5jhSMs7PKWOhOppoW31FkgUXuwQ4jBOJlgFDbw=;
+ b=DQo98Dwo03dZBE627/bEtoqL1YSOXP2jqrJ5dy0QPMw3WVJMjWULDwXsYSJdlqqMF2zMjQ5082b62Yo30X6dZuYWG5KE5TBlqTwFrvDjo93pUi8quEa5TkZvd0KMprlp8GOISkdKkA+QqJixCWZ9MYt0aKdyOCdynVGz9IMJF6TpdOPGCrnj7W58CtCy572evraf4Mh+w0dvfkDVVx7oZHlcxsLN7Zebf1DsD+dZ9cVEBpJrsTxGm1510dJDf8bK9xoQ3LMqojB/QPGW3RpRnW0Sv1gN9B+k2KVb2US3ZBSdNQCEqEHjOsTm5nWsM5clnH+UG9peyef7NBX4pfsEjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iY63M5jhSMs7PKWOhOppoW31FkgUXuwQ4jBOJlgFDbw=;
+ b=cIiyUah2hecI4HN4HnhQnd6lSgTb7UZHP1R17MeiApARMkKGibCRAx1YIWmx1cTZov3REr5i7tMgksSOuSrlTxFlIPzy3Qihy4UIeeHvmRvoEW1n7S8H454x9AbT0LEttkpnJ8NLc3weZ+/5V4T/FGSWA/iP6A5WjbL4rAMXIK0WnIX8moziTlbu9bRU8tuvUNSf+5eoktMl7IM9hCTpygwd5CVaU8C06qJSNnHXdxdkmIhQ+aI+3NrYC8q/rxIjtDFtxUutNWpJF4FHkeY8s8FH0g+gl93bjgqRtT92CCTcvv9pkInTU4ZFRlSTH/sYjx6R52rrqyVl9HlqmGfCWg==
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
+ by AS8PR04MB9173.eurprd04.prod.outlook.com (2603:10a6:20b:448::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Thu, 5 Sep
+ 2024 01:47:04 +0000
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::3a57:67cf:6ee0:5ddb]) by VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::3a57:67cf:6ee0:5ddb%4]) with mapi id 15.20.7918.019; Thu, 5 Sep 2024
+ 01:47:03 +0000
+From: Carlos Song <carlos.song@nxp.com>
+To: Frank Li <frank.li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>
+CC: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v3] i3c: master: support to adjust first broadcast address
+ speed
+Thread-Topic: [PATCH v3] i3c: master: support to adjust first broadcast
+ address speed
+Thread-Index: AQHa/v3D3jJS11ZZzkKC05nZ3O9zOLJIagUg
+Date: Thu, 5 Sep 2024 01:47:03 +0000
+Message-ID:
+ <VI1PR04MB5005B62A894346ECDDA70384E89D2@VI1PR04MB5005.eurprd04.prod.outlook.com>
+References: <20240826050957.1881563-1-carlos.song@nxp.com>
+ <20240826101323.746b617c@xps-13>
+ <ZtiwBUDaVgL9Ejr+@lizhi-Precision-Tower-5810>
+In-Reply-To: <ZtiwBUDaVgL9Ejr+@lizhi-Precision-Tower-5810>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR04MB5005:EE_|AS8PR04MB9173:EE_
+x-ms-office365-filtering-correlation-id: 5f70131a-6690-4c7c-da3b-08dccd4ca408
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?30JOwi7lEi/8HrPzDHqFRBzBncD1XjqCF+Y6OF6mSUf3v/M2otwrUjvVuB?=
+ =?iso-8859-1?Q?Q0EK9LEk7JI0wu1MF9IMOReS+O8lnED368fJtPp7iDLLLIpXJ+GgV9U/fR?=
+ =?iso-8859-1?Q?dREo08Y+APynDUSGU0KwQFjMrL3A20mu15XVTru8OHknFMkv230FSY8lzq?=
+ =?iso-8859-1?Q?ExoRIJto9iEg5Vnf71C9qdrZNiwLI5fpA0frvxca0OExEaEr9UNONosbuk?=
+ =?iso-8859-1?Q?FjcvaU6nXf1KmjAgeEchnSvTGBxuySkAt/ATjkqi+vcFu0u8/J0kggFFop?=
+ =?iso-8859-1?Q?khGu+mfDwrh4MT3KEJq217HmlrX8taS1JqAW7X79yepnqEtAyaAcmZ0x4l?=
+ =?iso-8859-1?Q?v9pGbM4u+ls0YNbXGdi/X+JE4eeOQ/8DrBTjv3c2LbLB0Ewhdw9I+GBAAz?=
+ =?iso-8859-1?Q?Qv/rZN0uVQb+dVoOwHpfFALzMXEfkWHh9wHHRP0R6PfiNG+UclEVvYJFdk?=
+ =?iso-8859-1?Q?wrQOI/OOf1qnf/1PBdT+iNClFJjQjyUfsnvjpzpKkrxJSvhFIVVieMoaaR?=
+ =?iso-8859-1?Q?IHC7y9Ps4BB4feJhi8ryAfQaZEXWJczvF0RKaX0vbg1uN8iTAc/IM5+MKi?=
+ =?iso-8859-1?Q?wX/aG48IQV4Hmhj9kgg6wJ1IM69JhRW1W32luDMb7K3KNTceRid7+SfR5U?=
+ =?iso-8859-1?Q?/MSc3y4DoFp/LgqBioWIdGfJZIvhPOcYsnkZ9nSkiZ1vSXwXyXNPjMLICK?=
+ =?iso-8859-1?Q?MJQP42fZO5VzriKKOHOigaMAdzSCzvBj5s7eyEYbxGzxyHT5VIQl9nDPRO?=
+ =?iso-8859-1?Q?4k9Vr7AWN4jlz02t91pwt7fEfhEAlEudeUp5tB9pwDhcYd/LrKTTPN111F?=
+ =?iso-8859-1?Q?ShSaFB4h2hveANMv3pDXr8Ro+GHVQAtK5JyUg0XZhz7U8EApUddx4TaAUa?=
+ =?iso-8859-1?Q?XPA/JMaXWFOjYlwJsS9sWMEAuCTgoPxY8pfNOkC1jKeTX6CMYC4azRGoHP?=
+ =?iso-8859-1?Q?etfMkmyORLoSRmspFPaxTzy9dA4/HyZ1YQFwtEYopNXhjlw+HdIX50wor0?=
+ =?iso-8859-1?Q?MyzTjM93Lt5gauuw2MCm1AciztqXF6ynimajoqIqaCMQh1a+Rs3sFwa9+N?=
+ =?iso-8859-1?Q?oI+wjENfa3Fyup8v3ATuBduDbRFTmMudkxugVlY8spbKxezij0meNnKpnb?=
+ =?iso-8859-1?Q?msoj57+b5JmMIcyDh0edsjpyffv5N1YVBgX3NGBI6crrHvwQDGrCY+veHF?=
+ =?iso-8859-1?Q?Frsh+y8KoofdMzW5RwO1O/Tw5fSsC11Zau8cmKwH8O9zFlD5tLj6X/ch2z?=
+ =?iso-8859-1?Q?Wxv1lpwJqlJ2nWf0Xmc37rhu9mho3J1ddeXJZIdD+knaz2H/WxwDPM5o9Q?=
+ =?iso-8859-1?Q?nYz1rS4XwsLwvxcPrA+tOFKB5rnzboOq7zdjIEcwrdyHoHQwmF+ha4IEct?=
+ =?iso-8859-1?Q?r43HzWVfh0hyVZgQsr7RloJnnF285pIPrMdbNcBEA+whhcHwDemC1HUIVD?=
+ =?iso-8859-1?Q?e0k8tvZn7hEQ9SC77RdgcnhkORZByW6XjQeDZA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?F8okqWgzjFdKE7xu30g/5/UyxH8xOd/w9b5Xnni3GnQsdCsy16mmdRgYen?=
+ =?iso-8859-1?Q?hoxr/+GEt2hiBMK0bsTKMMZ6JAwjfQeynFU4hAiMV6wOHU8o7fZhTolCZ3?=
+ =?iso-8859-1?Q?h5yVSPGXiSgeYiqZeNMGgXZF30SslTr7bwh1QVyygpf0Hpg1XlOpZNcXSg?=
+ =?iso-8859-1?Q?bxk3svVoj+bCq75hNyYeX2kyM+Imnb2pXtlKNIDj/hUvJVcnYDwxLmBG1X?=
+ =?iso-8859-1?Q?4zqc7vjDDdwTHRWDz5qKhmsvXm8DIC3De85+ouKs931ZQt+I1FUSwXgQBT?=
+ =?iso-8859-1?Q?VxIacHNQC9KSsXE70QwF6xxzChNE9r9HGM0ujvBUdD7NchuiACZMApcx1z?=
+ =?iso-8859-1?Q?Q/9usyoAVeiVZSnEVcho7Hx5pRt1QsPs9J5vApAlU6QHKRmhahj82PojNB?=
+ =?iso-8859-1?Q?5OdU3eVaQg8T/4Pc0QbxEjL5gJ37YdiITi+0J6eke028BJK3pomvxtuF2T?=
+ =?iso-8859-1?Q?R2dTDBJXvcix9O4hLKJzOMuVz+rbNlVijACT4TfFmaAnGD9KyClnbWV1vZ?=
+ =?iso-8859-1?Q?OD3k1dMTs/+86xjlaR0fi7FVYBCEiBS3GHs4ZBoxoIvBwpv8p4l5GS2Ybc?=
+ =?iso-8859-1?Q?quNJgS5DZyk9hgyqb0ZdXGch4rvNaFh4KJNEYUYjoPshCmOePmZdj7SBAS?=
+ =?iso-8859-1?Q?xtJI5SalIQECrI4m3Td/KK868+M27l/6FyWK+8luQyKjDlg1PLOea29cVV?=
+ =?iso-8859-1?Q?RiN11mvNu6mZ592B/l03wz5kHAo5uXYh8KEregx0FDivVHMf64B0PkfwCw?=
+ =?iso-8859-1?Q?rVz98ee0l5x9ubUtRbLLBufm9COZmiC47I+20Bzs8+R25B7xSFNX+icTUC?=
+ =?iso-8859-1?Q?zq8kBzX83Y2NlKcPRBdJCKFtWy1yjyQRDHgmfCvqBpXL64bLLj5DR2tcj+?=
+ =?iso-8859-1?Q?3mQd6bIHsiSldbyJx71LOOHvMJz2cJ0iTsjAV1haMivaqPAtcS8N7buDDx?=
+ =?iso-8859-1?Q?9w9KgTCzV6WuShmSyci6zUkxMX9vnDW4sQd35flyyO5oG8DpK0og6WkSpp?=
+ =?iso-8859-1?Q?er3LntNNLSUfvzuEae4SVit8kalgrUWDkjJns3LMJQuK6Mquheoi4R8UM5?=
+ =?iso-8859-1?Q?OemLAF2t/7XwuUh32y86W4xDmT11cVQRP6eBrag6QnNYeFk4V5C44uBLhH?=
+ =?iso-8859-1?Q?Ix7qkoC9M1ThDWuHwgMTlpDyPgLKQEQa/RwWyvAK4P2qAlmmGJVVyXg6dB?=
+ =?iso-8859-1?Q?6nempqqt/WZHZB9WOrRYq7+2qvXt+o8aFyByIxYI/tC6lsW+5ud4no92Mq?=
+ =?iso-8859-1?Q?yR1JGZ4CQhi6+f2b0vE6zVPNFxhNhuN6Locks7/CV7+l0g4TEb4HbqDFFg?=
+ =?iso-8859-1?Q?fuKji/v9uAph3w7t2oP0UbnCoNd3QVlvIXecne08obuc8+2MMkZNiKjUQF?=
+ =?iso-8859-1?Q?EhL87HusvhLh3eFOt+LY4ogL6XDM9HfVtZPNj+EBQ0Ym4ZyWEFhUvpkfzI?=
+ =?iso-8859-1?Q?2BtfTouKSdo8ShlqibpEaSFBvEMa1FkiKKrODx+789Zkn6/LTEG2eghbqW?=
+ =?iso-8859-1?Q?NgF0jWc+H4HbY2+Zh2dBnjNEKJcrFC718Gz0EDwY5JZ4Y2nYsN31nPPzyh?=
+ =?iso-8859-1?Q?v0Mh1PV9dYwO7WCYdUpwi3KcfBTlsmW0+d+pePYBu+3rhxqTKjlRz5hGbj?=
+ =?iso-8859-1?Q?6oajK5cpWaAyo=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,141 +149,74 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever III" <chuck.lever@oracle.com>
-Cc: "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <kolga@netapp.com>,
- "Dai Ngo" <dai.ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Al Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>,
- "Jan Kara" <jack@suse.cz>, "Jonathan Corbet" <corbet@lwn.net>,
- "Tom Haynes" <loghyr@gmail.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
- "Linux FS Devel" <linux-fsdevel@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v3 03/13] nfsd: drop the ncf_cb_bmap field
-In-reply-to: <59DF9B68-4D5F-4E2D-A208-B8EE86D61A85@oracle.com>
-References: <>, <59DF9B68-4D5F-4E2D-A208-B8EE86D61A85@oracle.com>
-Date: Thu, 05 Sep 2024 11:44:21 +1000
-Message-id: <172550066195.4433.11555037330378400882@noble.neil.brown.name>
-X-Rspamd-Queue-Id: BFB9221A61
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,netapp.com,oracle.com,talpey.com,redhat.com,zeniv.linux.org.uk,suse.cz,lwn.net,gmail.com,vger.kernel.org];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f70131a-6690-4c7c-da3b-08dccd4ca408
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2024 01:47:03.2971
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: C7ACJBRhjU7SmDlf58YCaZQUHx8ltxCyL2s9qhsIUXDL+m0gV3p+dnRe3/DRU/Zk+w8MYAfsqIFrE/JzlC3ZVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9173
 
-On Thu, 05 Sep 2024, Chuck Lever III wrote:
+
+
+> -----Original Message-----
+> From: Frank Li <frank.li@nxp.com>
+> Sent: Thursday, September 5, 2024 3:08 AM
+> To: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Carlos Song <carlos.song@nxp.com>; alexandre.belloni@bootlin.com;
+> linux-i3c@lists.infradead.org; linux-kernel@vger.kernel.org; imx@lists.li=
+nux.dev;
+> dl-linux-imx <linux-imx@nxp.com>
+> Subject: Re: [PATCH v3] i3c: master: support to adjust first broadcast ad=
+dress
+> speed
 >=20
+> On Mon, Aug 26, 2024 at 10:13:23AM +0200, Miquel Raynal wrote:
+> > Hi Carlos,
+> >
+> > carlos.song@nxp.com wrote on Mon, 26 Aug 2024 13:09:57 +0800:
+> >
+> > > From: Carlos Song <carlos.song@nxp.com>
+> > >
 >=20
-> > On Sep 4, 2024, at 1:39=E2=80=AFPM, Jeff Layton <jlayton@kernel.org> wrot=
-e:
-> >=20
-> > On Wed, 2024-09-04 at 17:28 +0000, Chuck Lever III wrote:
-> >>=20
-> >>> On Sep 4, 2024, at 12:58=E2=80=AFPM, Jeff Layton <jlayton@kernel.org> w=
-rote:
-> >>>=20
-> >>> On Wed, 2024-09-04 at 11:20 -0400, Chuck Lever wrote:
-> >>>> On Thu, Aug 29, 2024 at 09:26:41AM -0400, Jeff Layton wrote:
-> >>>>> This is always the same value, and in a later patch we're going to ne=
-ed
-> >>>>> to set bits in WORD2. We can simplify this code and save a little spa=
-ce
-> >>>>> in the delegation too. Just hardcode the bitmap in the callback encode
-> >>>>> function.
-> >>>>>=20
-> >>>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> >>>>=20
-> >>>> OK, lurching forward on this ;-)
-> >>>>=20
-> >>>> - The first patch in v3 was applied to v6.11-rc.
-> >>>> - The second patch is now in nfsd-next.
-> >>>> - I've squashed the sixth and eighth patches into nfsd-next.
-> >>>>=20
-> >>>> I'm replying to this patch because this one seems like a step
-> >>>> backwards to me: the bitmap values are implementation-dependent,
-> >>>> and this code will eventually be automatically generated based only
-> >>>> on the protocol, not the local implementation. IMO, architecturally,
-> >>>> bitmap values should be set at the proc layer, not in the encoders.
-> >>>>=20
-> >>>> I've gone back and forth on whether to just go with it for now, but
-> >>>> I thought I'd mention it here to see if this change is truly
-> >>>> necessary for what follows. If it can't be replaced, I will suck it
-> >>>> up and fix it up later when this encoder is converted to an xdrgen-
-> >>>> manufactured one.
-> >>>=20
-> >>> It's not truly necessary, but I don't see why it's important that we
-> >>> keep a record of the full-blown bitmap here. The ncf_cb_bmap field is a
-> >>> field in the delegation record, and it has to be carried around in
-> >>> perpetuity. This value is always set by the server and there are only a
-> >>> few legit bit combinations that can be set in it.
-> >>>=20
-> >>> We certainly can keep this bitmap around, but as I said in the
-> >>> description, the delstid draft grows this bitmap to 3 words, and if we
-> >>> want to be a purists about storing a bitmap,
-> >>=20
-> >> Fwiw, it isn't purism about storing the bitmap, it's
-> >> purism about adopting machine-generated XDR marshaling/
-> >> unmarshaling code. The patch adds non-marshaling logic
-> >> in the encoder. Either we'll have to add a way to handle
-> >> that in xdrgen eventually, or we'll have to exclude this
-> >> encoder from machine generation. (This is a ways down the
-> >> road, of course)
-> >>=20
-> >=20
-> > Understood. I'll note that this function works with a nfs4_delegation
-> > pointer too, which is not part of the protocol spec.
-> >=20
-> > Once we move to autogenerated code, we will always have a hand-rolled
-> > "glue" layer that morphs our internal representation of these sorts of
-> > objects into a form that the xdrgen code requires. Storing this info as
-> > a flag in the delegation makes more sense to me, as the glue layer
-> > should massage that into the needed form.
+> carlos:
 >=20
-> My thought was the existing proc functions would do
-> the massaging for us. But that's an abstract,
-> architectural kind of thought. I'm just starting to
-> integrate this idea into lockd.
+> 	I just realize you missed sent out svc implement.
+>=20
+> https://lore.kernel.org/linux-i3c/20240807061306.3143528-2-carlos.song@nx=
+p.
+> com/T/#u
+>=20
+> 	Suppose both patches should send out together.
+>=20
+> Frank
+>=20
 
-So presumably xdrgen defines a bunch of structs.  The proc code fills
-those in (on the stack?) and passes them to the generated xdr code which
-encodes them to the network stream??  That seems reasonable.
+Sorry for this. I will send both again together.
 
-We still don't want ncf_cb_bmap in struct nfs4_cb_fattr, we only need it
-in the generated struct.
-
-Thanks,
-NeilBrown
-
+> > > According to I3C spec 6.2 Timing Specification, the Open Drain High
+> > > Period of SCL Clock timing for first broadcast address should be
+> > > adjusted to 200ns at least. I3C device working as i2c device will
+> > > see the broadcast to close its Spike Filter then change to work at
+> > > I3C mode. After that I3C open drain SCL high level should be adjusted=
+ back.
+> > >
+> > > Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> >
+> > Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >
+> > Frank, did you test it with eg. the Silvaco master?
+> >
+> > Thanks,
+> > Miqu=E8l
+> >
+> > --
+> > linux-i3c mailing list
+> > linux-i3c@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-i3c
 
