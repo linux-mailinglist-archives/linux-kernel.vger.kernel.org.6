@@ -1,111 +1,141 @@
-Return-Path: <linux-kernel+bounces-317061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E982296D8B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:36:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC7A96D8B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287BF1C233F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7AC21F2327D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A2E19B3F3;
-	Thu,  5 Sep 2024 12:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA76E19885F;
+	Thu,  5 Sep 2024 12:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1O7vPh5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MlCvcIV0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B83019AA72;
-	Thu,  5 Sep 2024 12:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F58199FA7;
+	Thu,  5 Sep 2024 12:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539755; cv=none; b=HWhNK2OWrsZW/+Jr3g3bBOjw+yim8xqkEl9a1xdUZp4gwK0p6h8p0uljf+i3slqi5AgjDhe9/U/dXfJ+0dtMjriOETk7o6MpOseDFvHgCDnKrY5UwuV0PoP6nwrkJ+QEuQ0ACtM8R+VEIGUN5layrYOvYAURg5xwtKs5kNI8T9M=
+	t=1725539791; cv=none; b=dMMje34JGdX5zjWPEG+AthWajgpz2ElHcvTbd+a7DfCm2Ma+U4tns5CRbCwgSGd87oE518MSCvQAK99//DSKiGlAgZLocz3e8PTNUzybuiv1nXw8ZWYCFlz7Ieno8HJRzr4oWEDEd1Tq911X06wL1fAv3iwiaRB1GLfbBaELesg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539755; c=relaxed/simple;
-	bh=KTqQKsBdJ9gRS0tkGSzy4Ng7crzV4JM8xmW8P4ui1QI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eM2vito6DEw8Zf4k9y9horgKGx6icjRhbg/1lr+p03GJlLh02NYqo49CNJLot8c2PF/iZTCBxa462y5DPfayrtYis2SII0srthmGQeISnptkB4u8g0mwV/JzxLB1xfV1kJboPdfH8mipMHfU+5MFVoftj/vm/Cvq2LHf0g/jy9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1O7vPh5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5590C4CEC3;
-	Thu,  5 Sep 2024 12:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725539754;
-	bh=KTqQKsBdJ9gRS0tkGSzy4Ng7crzV4JM8xmW8P4ui1QI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K1O7vPh5gWZwwXO+0u2MSOT/SxjeQRBXp1SJnyJcDjAI6SQvAzLKsBPFuXQu8qrDo
-	 g14hy6tOnNc3am3vP8YjHvKJQ0+OyBqvmbYtPSU6eFYt+RtCtarEhZI5vhHV4qC6kB
-	 17yDaO7Wq7armkjoJFyqyhNvg5N/DEW2I+sNY8EIBAGhYNpWkYhE0U/OodotrOV+eM
-	 y5R0aoVEF2D+NrsTWhgjAip4rPkIyUDzkPXcnC4kshqyGWcR5zXFDOflEjrA1vihgC
-	 KAhKeLRXG3/oBFzGEtGEK8P1hYdpM4spX26Bg3Nf1q+5cRonORW76xy37RpMm+s+To
-	 yjXJaUpV9pAmQ==
-Message-ID: <42cfe883-5411-4948-b36d-c0c3dd3d1294@kernel.org>
-Date: Thu, 5 Sep 2024 14:35:50 +0200
+	s=arc-20240116; t=1725539791; c=relaxed/simple;
+	bh=tUOAOd8CYkdJjqbj7ss21WuFdmdRdcvBFxMicTiHizk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iu0MvWmulKGVXnHSOxlNAqK9q6R9VUmuKIfbQp3UMtbALNOy6Mqto9iw2pVW396QsgPNvI9OvV1bKgeuMqA0hTSIzgViTZ2Ok51H0OH9ycFjsn2KIo46og7NzqBt0PC15cYjYOwtP2AcLFCYWkcPosroUIB339cqPBG2aEA6Xzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MlCvcIV0; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725539790; x=1757075790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tUOAOd8CYkdJjqbj7ss21WuFdmdRdcvBFxMicTiHizk=;
+  b=MlCvcIV0Tjl+njME49M0Qc9bYqMo0Gq7Zope5T5gHeUpWmm5esUVxRjp
+   oCiIirIh4hfZFrv1EDyqMDcAaOhb0NxiDpjG9oYMk6uYZVJrHIZtCzir6
+   siXITdVpTax286aSqm5BrYfKrqDy4TQ8Yo+t9d3HG4feb8exRvdC/TYi4
+   DSfh/hWC+LiQ6o/VfL1+uANI8+51GPbznWWgjC9gRm2Gnes5JY9UW4EZv
+   ijmKJgA1GgyK3MaNoO9WY9UP9hDfTBTPgdTepj/rXsPW2YZCSELLsY/uF
+   VRY6sl0wgBk32aZWznHgWoMxLXmIxs92I7AR5Z/np1E6w/rbHy6r8xZvJ
+   A==;
+X-CSE-ConnectionGUID: 3gA+D5oiTVi+Zu0h4kba/w==
+X-CSE-MsgGUID: aaQVbrtaR0mbfhAO6sA9hg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27173405"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="27173405"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:36:29 -0700
+X-CSE-ConnectionGUID: Exg24nuaSxatVWhPMsTnaQ==
+X-CSE-MsgGUID: 6GCVJ3eWRzqlJgZaX2z7Hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="70408882"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:36:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smBim-00000005OTQ-0x57;
+	Thu, 05 Sep 2024 15:36:20 +0300
+Date: Thu, 5 Sep 2024 15:36:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+Message-ID: <Ztmlw1q3Djn94MRQ@smile.fi.intel.com>
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+ <ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+ <874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+ <65838cc0-9a20-4994-a0ef-9cd50bb00951@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] soc: qcom: pbs: Simplify with dev_err_probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Yu Jiaoliang
- <yujiaoliang@vivo.com>, Bjorn Andersson <andersson@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240829124813.3264437-1-yujiaoliang@vivo.com>
- <894145dc-46fb-451f-a461-d0b9ff1e50dd@kernel.org>
- <10fad15b-d2a6-4ec1-8af7-bde8f7bf39be@kernel.org>
- <63162b67-22ef-482f-9600-861e9dbaf4fc@stanley.mountain>
- <08e8f26a-d87e-4d3e-9896-b809d5f0c3a0@kernel.org>
- <6267a1fe-0073-4aca-ab19-a63a7565f116@stanley.mountain>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <6267a1fe-0073-4aca-ab19-a63a7565f116@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <65838cc0-9a20-4994-a0ef-9cd50bb00951@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 4.09.2024 8:55 PM, Dan Carpenter wrote:
-> On Fri, Aug 30, 2024 at 05:31:14PM +0200, Konrad Dybcio wrote:
->>>
->>> There are a few things which we could do:
->>>
->>> 1) Returning -EPROBE_DEFER to an ioctl or something besides a probe()
->>>    This is a bug right?  -EPROBE_DEFER is basically kernel internal for probe()
->>>    functions.  It tried to write this but it was complicated so I gave up.
->>
->> Maybe call_tree.pl can somehow be used with an if name[-5:] == "probe"
->> or something along those lines..
->>
-> 
-> I wrote the call_tree.pl script before I had the database.  These days I tend to
-> use the database instead.
-> 
-> I've implemented this check but it only looks at ioctls.  I'll test it tonight.
-> 
->>>
->>> 2) Printing an error message for -EPROBE_DEFER warnings
->>>    I've written this check and I can test it tonight.
->>>
-> 
-> I've done this.  See the attached check and the dont_print.list file attached.
-> The line numbers are based on linux next.  The false positives from here are
-> pretty harmless because calling dev_err_probe() is fine.
-> 
->>> 3) Not propagating the -EPROBE_DEFER returns
->>>    This shouldn't be too hard to write.
->>>
-> 
-> I've done this too.  The false positives from this could be bad, because we only
-> want to propagate -EPROBE_DEFER back from probe() functions.
-> 
-> See propagate.list.
+On Thu, Sep 05, 2024 at 01:08:35PM +0200, David Hildenbrand wrote:
+> On 05.09.24 12:56, Andy Shevchenko wrote:
+> > On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+> > > Huang, Ying wrote:
+> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-This is great work, thank you Dan!
+[..]
 
-Konrad
+> > > > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+> > > > > message.
+> > > > 
+> > > > Emm... It appears that it's a common practice to include "Cc" in the
+> > > > commit log.
+> > > 
+> > > Yes, just ignore this feedback, it goes against common practice. Cc list
+> > > as is looks sane to me.
+> > 
+> > It seems nobody can give technical arguments why it's better than just keeping
+> > them outside of the commit message. Mantra "common practice" nowadays is
+> > questionable.
+> 
+> Just look at how patches look like in the git tree that Andrew picks up.
+> (IIRC, he adds a bunch of CCs himself that are not even part of the original
+> patch).
+
+I know that and it's historical, he has a lot of the scripts that work and when
+he moved to the Git it was another long story. Now you even can see how he uses
+Git in his quilt approach. So, it's an exceptional and not usual workflow, hence
+bad example. Try again :-)
+
+> Having in the git tree who was actually involved/CCed can be quite valuable.
+> More helpful than get_maintainers.pl sometimes.
+
+First of all, there is no guarantee they _were_ involved. From this perspective
+having Link: tag instead has much more value and supports my side of arguments.
+
+Anything else?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
