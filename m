@@ -1,178 +1,189 @@
-Return-Path: <linux-kernel+bounces-316743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CA696D35C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FACB96D369
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D611C25AA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACB61F2A038
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91E219885E;
-	Thu,  5 Sep 2024 09:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06E6198827;
+	Thu,  5 Sep 2024 09:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="tnwRddru"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OU6WpO8T"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86277192B94
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8B4194AD6;
+	Thu,  5 Sep 2024 09:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528731; cv=none; b=Q6ZHwZCW5PfaPcj5yNz6aavrmZ0t5/3zFSizf2AMC+/0VdLA/kGCxxY8TPyU3/S9FVcSZTn9bn5F8n5OeqngJm38yEaVAjUCtIHcB7kit3yP4tTOAINqfLmp3yiEUgZCBTyZtQQY+SBGKSTEqMGHKc7wI6M2GbZboel1s1RPpPo=
+	t=1725528813; cv=none; b=AiaF7Os6auso45yQTlPSSCKgvIkpsOcifzX36wcuLWJYPegnIfz23zkLDsLOZvvgcb3QIx70V25EHE+/hJ2bgJpUjvHgeBAwODtIAg5MX/d09F8hjM/BhicwUEcw9WJYDMr0gA6JLIY1DxDFcKF4V1370YQXHFPakdpT4tAxDoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528731; c=relaxed/simple;
-	bh=LQ5PvTcHlXGD/hkNFOkC5JReMWoYpmLiurPZY9rQkbs=;
+	s=arc-20240116; t=1725528813; c=relaxed/simple;
+	bh=0dGaRFdKC7oYO/LEcQPRahQRLGsH4BSOn7ODZ4lykbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HtBtagd6SU+PRfZew66Cl6h9y/vksyzCr/TN+6gmmhcPAkd6I6icWWnbvg1+qkd6q8Bn94qRl9JBXnp49sNw4PnaKbIuYKlCUvJyWyJhmQ1LayUowK9avrSBSqCUC1OlRAoeftbkq2vEJO+giIGSCBCAbEb9q/ThYQNCpHnVMmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=tnwRddru; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3787f30d892so308831f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 02:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725528728; x=1726133528; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EYvR2W7jIGeeSA8kiFQ7IQfHxoQoKGRP/A4d6og6D5c=;
-        b=tnwRddru5evt6kv6LiJrqsUHyrqRwL41fYkag8/lFruPP+3DgRx56RgZKUX0ddOVxJ
-         hnWKDe6AuaFwBbj7BtzwyXUAx/yIkjeeucknxG5HtIOhl+Hj234BsdLp/O9om88q5q/W
-         rBbEw3q0z99OHVhtnL6QTFYuJzGFxbrzXd4hQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725528728; x=1726133528;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EYvR2W7jIGeeSA8kiFQ7IQfHxoQoKGRP/A4d6og6D5c=;
-        b=JoOXGRmVoUXbUfOfFXGI5J0DcGWxAW0IjIJiYaJkwE9tb+1yUFxcJTvHCcVfU7b4SX
-         5TOBAGwmRaMyT9rm8oMyGgyteTR4jFr36qX1/b0wUgBD3ScEf58CynR0n5ifMayLVmuK
-         mw/8BTJwQ6E+x/sPcDj4b9EZXlfm8yzm2jh/SnoPVomm9zzROHeFXERP5CN9AFV893V/
-         6fVMXk9hUbmg6/R5ojeiVzP6NXMrI1to/K5axWiDgCSIezUNYe0dfS54nt2E/pHkJTF+
-         0Kw/jouWIBaaRuhkrcZkTyGUpenqSwx24L+rlOytC6MtBEDM++6ADsCm9eNawlq6Wwz3
-         bF1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtI4fD8fA4RxYoexJjh4OXgL1iNVr88Sj1omjaOTfL6dhfe2bB4iJBvtn+VJJ7daB2NHAEzXjilelvbdY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6SS5Zw72ZrDl7CrXojoeFmMTFfJPh0Q3bS8pppUDolXcYb/8U
-	2psMBdMEFhF/xobmHm+p5dLh7P6FemJA2by4SkMSY8Tj12qr7fBp+SNEEMrGd30=
-X-Google-Smtp-Source: AGHT+IFllECApaNAIcoK8oWhKRk18ZBq0kn6XAZqAdlvY0zydI7UVq0JZx8/ZTiSJkGJqBngRd8J0Q==
-X-Received: by 2002:a5d:62d0:0:b0:374:be0f:45c1 with SMTP id ffacd0b85a97d-374bf1e46ffmr9823673f8f.53.1725528727546;
-        Thu, 05 Sep 2024 02:32:07 -0700 (PDT)
-Received: from LQ3V64L9R2 (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e274b6sm228268835e9.33.2024.09.05.02.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 02:32:07 -0700 (PDT)
-Date: Thu, 5 Sep 2024 11:32:04 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
- config values
-Message-ID: <Ztl6lATqzndc2-hK@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240829131214.169977-1-jdamato@fastly.com>
- <20240829131214.169977-6-jdamato@fastly.com>
- <20240829153105.6b813c98@kernel.org>
- <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
- <20240830142235.352dbad5@kernel.org>
- <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
- <Ztjv-dgNFwFBnXwd@mini-arch>
- <20240904165417.015c647f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7iGhf/CSW90aHF0euma8kYas9ZX4XcXq+u/7s5abJl2CTv15VHLdEADHFuzGc4/Q2zUikzT4bc3wVzeWd0gL7h+/kt2YAUQgmu95KH2T4EBUXo+3agQ/683iNw3/7r7C9I1BrlWtTRF5C9W9FtqrT8ZWKYv0iARFlcABP0vBR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OU6WpO8T; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725528812; x=1757064812;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0dGaRFdKC7oYO/LEcQPRahQRLGsH4BSOn7ODZ4lykbI=;
+  b=OU6WpO8TrYdB4ndnK9tgDkv+nRTzrjkom8vk/D3j5C2XBnR2rF/5qCqe
+   oy0XSXCAHYpnZrfQBg2gnNm/Mdg0cqD43/+4kpCHXohTTj7HvxZuHUtkx
+   H6YOXa88KkAU8rDjECaMXZMmfnTHamBpQrq7yOQxBLK7xOsx7KZw+kIpN
+   /2MCJFr5CWqh0EmEzdELX6gPRt1frfbJzgXOkZc24UgycOnH7loiFI6wZ
+   JjOhqkH+hy+qCcyuBbfScxPGSIbCLBblo2Dg+BbJV0T82fVMETMrdzTJn
+   vJXx+jM0MYskIwMKkjuQorAKPDwqbR8itxBGuh2pxzxLmboB+Q4HF+7xR
+   Q==;
+X-CSE-ConnectionGUID: 1B9GDW5yTqS4VwjEEpzdoQ==
+X-CSE-MsgGUID: PU/SCH3zT4K3mOIe3av3yA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24394983"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="24394983"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 02:33:30 -0700
+X-CSE-ConnectionGUID: x6XLeCpVT+OCUNaVD2OVnA==
+X-CSE-MsgGUID: XuRiJXNsTGS6v1UZl0V3iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="69976691"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 05 Sep 2024 02:33:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id D6760179; Thu, 05 Sep 2024 12:33:25 +0300 (EEST)
+Date: Thu, 5 Sep 2024 12:33:25 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Gary Li <Gary.Li@amd.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240905093325.GJ1532424@black.fi.intel.com>
+References: <20240903182509.GA260253@bhelgaas>
+ <525214d1-793e-412c-b3b2-b7e20645b9cf@amd.com>
+ <20240904120545.GF1532424@black.fi.intel.com>
+ <2bf715fb-509b-4b00-a28d-1cc83c0bb588@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240904165417.015c647f@kernel.org>
+In-Reply-To: <2bf715fb-509b-4b00-a28d-1cc83c0bb588@amd.com>
 
-On Wed, Sep 04, 2024 at 04:54:17PM -0700, Jakub Kicinski wrote:
-> On Wed, 4 Sep 2024 16:40:41 -0700 Stanislav Fomichev wrote:
-> > > I think what you are proposing seems fine; I'm just working out the
-> > > implementation details and making sure I understand before sending
-> > > another revision.  
+Hi,
+
+On Wed, Sep 04, 2024 at 10:24:26AM -0500, Mario Limonciello wrote:
+> On 9/4/2024 07:05, Mika Westerberg wrote:
+> > Hi,
 > > 
-> > What if instead of an extra storage index in UAPI, we make napi_id persistent?
-> > Then we can keep using napi_id as a user-facing number for the configuration.
-> > 
-> > Having a stable napi_id would also be super useful for the epoll setup so you
-> > don't have to match old/invalid ids to the new ones on device reset.
+> > On Tue, Sep 03, 2024 at 01:32:30PM -0500, Mario Limonciello wrote:
+> > > On 9/3/2024 13:25, Bjorn Helgaas wrote:
+> > > > On Tue, Sep 03, 2024 at 12:31:00PM -0500, Mario Limonciello wrote:
+> > > > > On 9/3/2024 12:11, Bjorn Helgaas wrote:
+> > > > > ...
+> > > > 
+> > > > > >      8) The USB4 stack sees the device and assumes it is in D0, but it
+> > > > > >      seems to still be in D3cold.  What is this based on?  Is there a
+> > > > > >      config read that returns ~0 data when it shouldn't?
+> > > > > 
+> > > > > Yes there is.  From earlier in the thread I have a [log] I shared.
+> > > > > 
+> > > > > The message emitted is from ring_interrupt_active():
+> > > > > 
+> > > > > "thunderbolt 0000:e5:00.5: interrupt for TX ring 0 is already enabled"
+> > > > 
+> > > > Right, that's in the cover letter, but I can't tell from this what the
+> > > > ioread32(ring->nhi->iobase + reg) returned.  It looks like this is an
+> > > > MMIO read of BAR 0, not a config read.
+> > > > 
+> > > 
+> > > Yeah.  I suppose another way to approach this problem is to make something
+> > > else in the call chain poll PCI_PM_CTRL.
+> > > 
+> > > Polling at the start of nhi_runtime_resume() should also work.  For the
+> > > "normal" scenario it would just be a single read to PCI_PM_CTRL.
+> > > 
+> > > Mika, thoughts?
 > 
-> that'd be nice, initially I thought that we have some drivers that have
-> multiple instances of NAPI enabled for a single "index", but I don't
-> see such drivers now.
+> We did this experiment to throw code to poll PCI_PM_CTRL at the start of
+> nhi_runtime_resume() but this also fails.  From that I would hypothesize the
+> device transitioned to D0uninitialized sometime in the middle of
+> pci_pm_runtime_resume() before the call to pm->runtime_resume(dev);
 > 
-> > In the code, we can keep the same idea with napi_storage in netdev and
-> > ask drivers to provide storage id, but keep that id internal.
 > > 
-> > The only complication with that is napi_hash_add/napi_hash_del that
-> > happen in netif_napi_add_weight. So for the devices that allocate
-> > new napi before removing the old ones (most devices?), we'd have to add
-> > some new netif_napi_takeover(old_napi, new_napi) to remove the
-> > old napi_id from the hash and reuse it in the new one.
-> > 
-> > So for mlx5, the flow would look like the following:
-> > 
-> > - mlx5e_safe_switch_params
-> >   - mlx5e_open_channels
-> >     - netif_napi_add(new_napi)
-> >       - adds napi with 'ephemeral' napi id
-> >   - mlx5e_switch_priv_channels
-> >     - mlx5e_deactivate_priv_channels
-> >       - napi_disable(old_napi)
-> >       - netif_napi_del(old_napi) - this frees the old napi_id
-> >   - mlx5e_activate_priv_channels
-> >     - mlx5e_activate_channels
-> >       - mlx5e_activate_channel
-> >         - netif_napi_takeover(old_napi is gone, so probably take id from napi_storage?)
-> > 	  - if napi is not hashed - safe to reuse?
-> > 	- napi_enable
-> > 
-> > This is a bit ugly because we still have random napi ids during reset, but
-> > is not super complicated implementation-wise. We can eventually improve
-> > the above by splitting netif_napi_add_weight into two steps: allocate and
-> > activate (to do the napi_id allocation & hashing). Thoughts?
+> > I'm starting to wonder if we are looking at the correct place ;-) This
+> > reminds me that our PCIe SV people recently reported a couple of Linux
+> > related issues which they recommended to fix, and these are on my list
+> > but I'll share them because maybe they are related?
 > 
-> The "takeover" would be problematic for drivers which free old NAPI
-> before allocating new one (bnxt?). But splitting the two steps sounds
-> pretty clean. We can add a helper to mark NAPI as "driver will
-> explicitly list/hash later", and have the driver call a new helper
-> which takes storage ID and lists the NAPI in the hash.
+> Thanks for sharing those.  We had a try with them but sorry to say no
+> improvements to the issue at hand.
 
-Hm... I thought I had an idea of how to write this up, but I think
-maybe I've been thinking about it wrong.
+Okay, thanks for checking.
 
-Whatever I land on, I'll send first as an RFC to make sure I'm
-following all the feedback that has come in. I definitely want to
-get this right.
+Few additional side paths here, though. This is supposed to work so that
+once the host router sleep bit is set the driver is supposed to allow
+the domain to enter sleep (e.g it should not be waken up before it is
+fully transitioned). That's what we do:
 
-Sorry for the slow responses; I am technically on PTO for a bit
-before LPC :)
+1. All tunneled PCIe Root/Downstream ports are in D3.
+2. All tunneled USB 3.x ports are in U3.
+3. No DisplayPort is tunneled.
+4. Thunderbolt driver enables wakes.
+5. Thunderbolt driver writes sleep ready bit of the host router.
+6. Thunderbolt driver runtime suspend is complete.
+7. ACPI method is called (_PS3 or _PR3.OFF) that will trigger the "Sleep
+Event".
+
+If between 5 and 7 there is device connected, it should not "abort" the
+sequence. Unfortunately this is not explict in the USB4 spec but the
+connection manager guide has similar note. Even if the connect happens
+there the "Sleep Event" should happen but after that it can trigger
+normal wakeup which will then bring everything back.
+
+Would it be possible to enable tracing around these steps so that we
+could see if there is hotplug notification somewhere there that is not
+expected? Here are instructions how to get pretty accurate trace:
+
+https://github.com/intel/tbtools?tab=readme-ov-file#tracing
+
+Please also take full dmesg.
+
+It is entirely possible that this has nothing to do with the issue but I
+think it is worth checking.
+
+The second thing we could try is to check the wake status bits after
+this has happened, like:
+
+  # tbdump -r 0 -a <ADAPTER> -vv -N 1 PORT_CS_18
+
+(where <ADAPTER> is the lane 0 adapter of the USB4 port the device was
+connected).
+
+The third thing to try is to comment out TB_WAKE_ON_CONNECT in
+tb_switch_suspend(). This should result no wake even if the device is
+connected. This tells us that it is really the connect on USB4 port that
+triggered the wake.
+
+These could (also) explain why the host router appears to be in D3 even
+if it should be in D0 already.
 
