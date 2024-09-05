@@ -1,57 +1,65 @@
-Return-Path: <linux-kernel+bounces-316297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B1B96CD9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:14:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC16096CD9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D08B1C229BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:13:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631501F28044
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1B14F123;
-	Thu,  5 Sep 2024 04:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6B514F125;
+	Thu,  5 Sep 2024 04:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJAX5yUI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCxPYOeP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAC113E028;
-	Thu,  5 Sep 2024 04:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C94147C86;
+	Thu,  5 Sep 2024 04:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725509631; cv=none; b=sBRcFbmgQ4OWzKdOdbHAy2Q6gnwy3yyOKpz29SxfXMV0zpqUJTXHmUhQ99S94G8fD7tA/NXpcJsEoR+q910A6Mp35jGqY33aqCO4+u2Fidtpm/TVluqejEwbSqTCwezh892ESBNCon1x+wxjjsAzkP94wUdBfkuKut60+TRb80A=
+	t=1725509641; cv=none; b=l1nVMRKYEGcC4wILs5NJ6Tw4EA/So2x52+WjTIRvacboVuacJNeIGauRWfDQGKGW4WsKposi41Xa6R43ryi9Cr7Z/5J4F3UOVEt0ONJLXz2NGMAaFxFtOBbqTfp1//GzPOur0/GJB1+Mhx9RsuMq6NmQHk8LhStlQBc1b/nV5N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725509631; c=relaxed/simple;
-	bh=emd9sIo4BPIhMlOM5j7wsEuKbAgy+uK8kI//01doxGk=;
+	s=arc-20240116; t=1725509641; c=relaxed/simple;
+	bh=f5t3PChzy1sVjF/jbtS1q5ILWClUmKNpi1KhJynZdrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwjKP1C6AFGyYsG640PyjEczWpnXjsDEayC48CGIMTlLH8FZ8imncwrCdL20mah6t0kifSPfmYVMJj/0f2AgPdjZ14119iBbHosq836Re16Yu9f56FbgianzgxzaYq40vT2gG4FSiR4pyNAIviGemx+AY/IhcEH20gCtRdU3WFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJAX5yUI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DABC4CEC4;
-	Thu,  5 Sep 2024 04:13:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iakyx80o3xr9doxROTmDQarp6AXKXlL1LfGrXeS392ICnLxuVrkXEMLH/npr1p8ptL3iKZUNBXW+TxqjhpmC5I610K0oP1Z8247PetK3pLe8ccmooRd43FcQk13T0d7hGWdjAzD11mV0r8HvOxzgNofF/Ru6snxdXp36xRaO1Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCxPYOeP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6409AC4CEC4;
+	Thu,  5 Sep 2024 04:14:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725509631;
-	bh=emd9sIo4BPIhMlOM5j7wsEuKbAgy+uK8kI//01doxGk=;
+	s=k20201202; t=1725509640;
+	bh=f5t3PChzy1sVjF/jbtS1q5ILWClUmKNpi1KhJynZdrc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pJAX5yUINwtRTPy7uuiAw/+v9+v92ZOlUvDFNWFLnXN4sZkb4bxmn7wqw1UqxeRZq
-	 85y2gxt8qDRJQnuYTJ3Rzh5pXJUNHv2KemR25Wm1yUJ9XLU4Ku5zQhRnA/mVHkJSw/
-	 zQKQKgQ1Q4z4p6w1mAGLJ31iAsvfaZp8lYCfwH0ENBxWXkhOfwg/GcagJYIp3MKnzP
-	 s0RA1yVnR+gaFex2+T6MeYPWxpK+ilLB45gqwTrk0Ra33o3IbiclMi8hRkqkQf7m3P
-	 6OBCr4lXRoj3pOx4U15s+GX2w/EPXATr6C8vKJBH8S4M7+H2I0zozOgCi1F/a1Xe+K
-	 D8aSXcn9weQWw==
-Date: Wed, 4 Sep 2024 21:13:49 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GSoC] perf trace and BTF: Final Report
-Message-ID: <Ztkv_QD758uFckvW@google.com>
-References: <CAH0uvohVui=31tMSD=J-qshtsKHg2__4c7XEQWWXa6Ycf0Umaw@mail.gmail.com>
+	b=NCxPYOePdZiNGkstd2sW8YpWVvLf3IyLits/SotWATxNbTnnen/nitwjp/wNJhiDg
+	 X6z9Je4wRaqDkY/visy4dHdrB9zloFg4UTWMmGqH1FjFHMzkeTZlwr9O5PZ8Mv/Dtv
+	 l40e5Udwt9CM5Al6/9wM6ZQKbtPg+mQGLrv6DVXcJmJs9e2H/XnemPFwNVR3pveByl
+	 YLIGOR3J2G/g26L/dd5gzmLnpouC3aCh0Ye6EftEa7tMdLUdAluqpkpOmKIYZQ1QGl
+	 5VrclQ3RssUE4aj/HHGCsJ7Xl51sZi9IYE2UktjRVjbY1mxjY1bvM+FJ1GGXU2FeaI
+	 lWywU8gEN+zIQ==
+Date: Wed, 4 Sep 2024 21:13:58 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240905041358.5vzb3rsklbvzx73e@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <CAPhsuW6V-Scxv0yqyxmGW7e5XHmkSsHuSCdQ2qfKVbHpqu92xg@mail.gmail.com>
+ <20240904043034.jwy4v2y4wkinjqe4@treble>
+ <CAPhsuW6+6S5qBGEvFfVh7M-_-FntL=Rk=OqZzvQjpZ6MyDhNuA@mail.gmail.com>
+ <20240904063736.c7ru2k5o7x35o2vy@treble>
+ <20240904070952.kkafz2w5m7wnhblh@treble>
+ <CAPhsuW6gy-OzjYH2u7gPceuphybP8Q43J9YjeUpkWTh5DBFRSQ@mail.gmail.com>
+ <20240904205949.2dfmw6f7tcnza3rw@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,102 +68,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH0uvohVui=31tMSD=J-qshtsKHg2__4c7XEQWWXa6Ycf0Umaw@mail.gmail.com>
+In-Reply-To: <20240904205949.2dfmw6f7tcnza3rw@treble>
 
-On Wed, Aug 28, 2024 at 01:25:30AM +0800, Howard Chu wrote:
-> Hello everyone,
-> 
-> This is the final report for my project "perf trace and BTF".
-> 
-> This project aims to enhance perf trace by utilizing BTF (BPF Type
-> Format) information from the Linux kernel to collect and pretty-print
-> system call arguments more effectively. This includes data collection
-> and pretty printing of struct pointers, buffers, strings, and enum
-> arguments, which we refer to as syscall augmentation.
-> 
-> I have completed the goals mentioned above during the GSoC period, and
-> test scripts have been created to validate the new features.
-> Currently, the patch series for struct, buffer, and string pointers
-> augmentation is at v3 and under review.
-> 
-> One of my mentors, Arnaldo, wants to convert the integer flags to a
-> detached BTF object, which is what I’ll be working on after the GSoC
-> period. Additionally, I will focus on landing the perf record
-> --off-cpu patch series, incorporating feedback from my mentors Ian and
-> Namhyung on off-cpu v4.
-> 
-> I would like to express my thanks to my mentors Arnaldo Carvalho de
-> Melo, Ian Rogers, and Namhyung Kim. Their important guidance and
-> feedback have been invaluable to my work. I am grateful to acme for
-> making excellent revisions to my code, to Ian Rogers for organizing
-> weekly meetings and offering professional advice, and to Namhyung Kim
-> for his crucial insights into key issues and bugs.
-> 
-> Thank you,
-> Howard
+On Wed, Sep 04, 2024 at 01:59:51PM -0700, Josh Poimboeuf wrote:
+> On Wed, Sep 04, 2024 at 01:23:55PM -0700, Song Liu wrote:
+> > [ 7285.260195] livepatch: nothing to patch!
 
-Thanks for your great work, Howard!  I'm looking forward to working
-with you even after GSoC!
+This seems to be tripping up on an awful hack I had for silencing
+modpost warnings.  Apparently it doesn't work with your config.
 
-Thanks,
-Namhyung
+Try the below.  You can ignore the modpost warnings for now:
 
-> ---
-> 
-> Patches sent:
-> [PATCH v1 0/2] perf trace: Better -p support
-> [PATCH v1 1/2] perf trace: Collect data only for certain pids
-> [PATCH v1 2/2] perf trace: Use pid to index perf_event in BPF
-> Link: https://lore.kernel.org/linux-perf-users/20240827092013.1596-1-howardchu95@gmail.com/
-> 
-> perf trace: Enhanced augmentation for pointer arguments
-> [PATCH v3 1/8] perf trace: Fix perf trace -p <PID>
-> [PATCH v3 2/8] perf trace: Add trace__bpf_sys_enter_beauty_map() to
-> prepare for fetching data in BPF
-> [PATCH v3 3/8] perf trace: Pass the richer 'struct syscall_arg'
-> pointer to trace__btf_scnprintf()
-> [PATCH v3 4/8] perf trace: Pretty print struct data
-> [PATCH v3 5/8] perf trace: Pretty print buffer data
-> [PATCH v3 6/8] perf trace: Collect augmented data using BPF
-> [PATCH v3 7/8] perf trace: Add --force-btf for debugging
-> [PATCH v3 8/8] perf trace: Add general tests for augmented syscalls
-> Link: https://lore.kernel.org/linux-perf-users/20240824163322.60796-1-howardchu95@gmail.com/
-> 
-> perf record --off-cpu: Dump off-cpu samples directly
-> [PATCH v4 1/9] perf evsel: Set BPF output to system-wide
-> [PATCH v4 2/9] perf record --off-cpu: Add --off-cpu-thresh
-> [PATCH v4 3/9] perf record --off-cpu: Parse offcpu-time event
-> [PATCH v4 4/9] perf record off-cpu: Dump direct off-cpu samples in BPF
-> [PATCH v4 5/9] perf record --off-cpu: Dump total off-cpu time at the end
-> [PATCH v4 6/9] perf evsel: Delete unnecessary = 0
-> [PATCH v4 7/9] perf record --off-cpu: Parse BPF output embedded data
-> [PATCH v4 8/9] perf header: Add field 'embed'
-> [PATCH v4 9/9] perf test: Add direct off-cpu dumping test
-> Link: https://lore.kernel.org/linux-perf-users/20240807153843.3231451-1-howardchu95@gmail.com/
-> 
-> Patches merged:
-> [PATCH v5 0/8] perf trace: Augment enum arguments with BTF
-> [PATCH v5 1/8] perf trace: Fix iteration of syscall ids in syscalltbl->entries
-> [PATCH v5 2/8] perf trace: BTF-based enum pretty printing for syscall args
-> [PATCH v5 3/8] perf trace: Augment non-syscall tracepoints with enum
-> arguments with BTF
-> [PATCH v5 4/8] perf trace: Filter enum arguments with enum names
-> [PATCH v5 5/8] perf test: Add landlock workload
-> [PATCH v5 6/8] perf test trace_btf_enum: Add regression test for the
-> BTF augmentation of enums in 'perf trace'
-> [PATCH v5 7/8] perf trace: Introduce trace__btf_scnprintf()
-> [PATCH v5 8/8] perf trace: Remove arg_fmt->is_enum, we can get that
-> from the BTF type
-> Link: https://lore.kernel.org/linux-perf-users/20240705132059.853205-1-howardchu95@gmail.com/
-> 
-> [PATCH] perf record: Fix comment misspellings
-> Link: https://lore.kernel.org/linux-perf-users/20240425060427.1800663-1-howardchu95@gmail.com/
-> 
-> Blog posts:
-> perf trace: Add support for enum arguments
-> Link: https://sberm.cn/blog/perf-trace-enum
-> 
-> How to contribute to perf
-> Link: https://sberm.cn/blog/how-to-contrib-perf
+  WARNING: modpost: "__stop_klp_objects" [/home/jpoimboe/git/linux/klp-tmp/out/livepatch.ko] undefined!
+  WARNING: modpost: "__start_klp_objects" [/home/jpoimboe/git/linux/klp-tmp/out/livepatch.ko] undefined!
+
+diff --git a/scripts/livepatch/module.c b/scripts/livepatch/module.c
+index 101cabf6b2f1..7e4a8477231f 100644
+--- a/scripts/livepatch/module.c
++++ b/scripts/livepatch/module.c
+@@ -14,16 +14,13 @@
+ // TODO livepatch could recognize these sections directly
+ // TODO use function checksums instead of sympos
+ 
+-extern char __start_klp_objects, __stop_klp_objects;
+ 
+ /*
+  * Create weak versions of the linker-created symbols to prevent modpost from
+  * warning about unresolved symbols.
+  */
+-__weak char __start_klp_objects = 0;
+-__weak char __stop_klp_objects  = 0;
+-struct klp_object_ext *__start_objs = (struct klp_object_ext *)&__start_klp_objects;
+-struct klp_object_ext *__stop_objs  = (struct klp_object_ext *)&__stop_klp_objects;
++extern struct klp_object_ext __start_klp_objects[];
++extern struct klp_object_ext __stop_klp_objects[];
+ 
+ static struct klp_patch *patch;
+ 
+@@ -33,9 +30,9 @@ static int __init livepatch_mod_init(void)
+ 	unsigned int nr_objs;
+ 	int ret;
+ 
+-	nr_objs = __stop_objs - __start_objs;
++	nr_objs = __stop_klp_objects - __start_klp_objects;
+ 
+-	if (!__start_klp_objects || !nr_objs) {
++	if (!!nr_objs) {
+ 		pr_err("nothing to patch!\n");
+ 		ret = -EINVAL;
+ 		goto err;
+@@ -54,7 +51,7 @@ static int __init livepatch_mod_init(void)
+ 	}
+ 
+ 	for (int i = 0; i < nr_objs; i++) {
+-		struct klp_object_ext *obj_ext = __start_objs + i;
++		struct klp_object_ext *obj_ext = __start_klp_objects;
+ 		struct klp_func_ext *funcs_ext = obj_ext->funcs;
+ 		unsigned int nr_funcs = obj_ext->nr_funcs;
+ 		struct klp_func *funcs = objs[i].funcs;
+@@ -105,7 +102,7 @@ static void __exit livepatch_mod_exit(void)
+ {
+ 	unsigned int nr_objs;
+ 
+-	nr_objs = __stop_objs - __start_objs;
++	nr_objs = __stop_klp_objects - __start_klp_objects;
+ 
+ 	for (int i = 0; i < nr_objs; i++)
+ 		kfree(patch->objs[i].funcs);
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index f48d72d22dc2..20d0f03025b3 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1739,7 +1739,7 @@ static void check_exports(struct module *mod)
+ 		exp = find_symbol(s->name);
+ 		if (!exp) {
+ 			if (!s->weak && nr_unresolved++ < MAX_UNRESOLVED_REPORTS)
+-				modpost_log(warn_unresolved ? LOG_WARN : LOG_ERROR,
++				modpost_log(LOG_WARN,
+ 					    "\"%s\" [%s.ko] undefined!\n",
+ 					    s->name, mod->name);
+ 			continue;
 
