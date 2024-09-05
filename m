@@ -1,97 +1,56 @@
-Return-Path: <linux-kernel+bounces-316204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC8596CC8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:20:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8928F96CC92
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EA5287693
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DCAF1F26700
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D17A14659A;
-	Thu,  5 Sep 2024 02:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4l1Qs1H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAFC131182;
+	Thu,  5 Sep 2024 02:21:38 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E6913D297
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119E5C2C6;
+	Thu,  5 Sep 2024 02:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725502783; cv=none; b=bQPvAvljFbkCu0tuUDVr+socUXfMSMi9QTsZ8ePHGUE/k4wW3fY2tVl3zDtMFWm7IyM5g//85K/9JoxIuYvFXxi6Mue2RTPMhqkFBaXRp6P1Ps2+gqj5UMe8j9C6TBcO24fE86SVJ66+BcdfWNDgl91Ie/ZvchX0JOodCZYEVoA=
+	t=1725502898; cv=none; b=kEMBiwXOgP59FRVw+zkDNPGC3Ai41XbSk96vhBsytaXu4byh2vtrioGMLMQc8ftKP1fVOOGBgYVf4REGJlRlWsgvf2pFbTxvqyfOldkDQjFyr0Yr5EiXyiva3wdz1EI52XpljrIVoDEeuuUdNZ51G5V0AOT5Bf5So8mi9WPqd9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725502783; c=relaxed/simple;
-	bh=0JZp6F7jXSJoimpiUanwdTLHTrfCIMCDBYBHZ2Za8jo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OyaOpOdl0WC5nidtF/K0xpuksglQ3JAjoPJU92n3W3mtb2NIW0/P0IMAZzqV4FC9JQJPHi7bITCcX7DhVelXZGAW4sxztRoaexFOp/Uef6b7SgKneEPGwtig2AnmCh7ruG5vKlDrlfkFANO38IaJTNX+vDBedcWf9pHIQSuHv24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4l1Qs1H; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725502781;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=beVLnoDxWzvoQew2okb3by/wDJsJF7xaNIcc2Q2qxxw=;
-	b=E4l1Qs1Hfo0il8qYsJYXpPcxW4GO8HQV+jrKxReVc5FTV75s95tocJa9bk0R43f0ugValV
-	8v2I/XbNCfm528twLSg3lXQK9vcDBhQKXUQ1GXxMMeJfP0vTouigOXvzIkQl+6O73QKvZG
-	KEPdJea83KpoHRjYuuzWlwu/T5ZpX5U=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-311-2cK5fkvhNzGDgazfPDvCBA-1; Wed, 04 Sep 2024 22:19:40 -0400
-X-MC-Unique: 2cK5fkvhNzGDgazfPDvCBA-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-457de9445f2so3399641cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:19:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725502779; x=1726107579;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=beVLnoDxWzvoQew2okb3by/wDJsJF7xaNIcc2Q2qxxw=;
-        b=VLskk5g5K9MNpkj6iycYl7peVkOIms/vQ3QuvG1ylAbieR8r+DQCuWZocXOOYQWmmO
-         NQTWNSoT1ef1+o6mpoZUSf9dTQb44M/3ON3y4GY6NmarrIUIaJ31h3KZe03p55VY+6Wj
-         yqxyuA9/Q6dywPDXhbm1djfplsx0aHf+0xMEtSZ42qnR5Q4+OAffHGHxsnt+bBmsO3S+
-         udyeUTjPrR2QTOZ9RomVjFhFEaFGHfw6aAkSccjXf0X6nvK4UCm9+7wbrvKi8HLKk8Ni
-         cke0m+xyRKqsxYa1+To1k7TK9cCIVPJT3dhp6pLKgqsGAfi7cOzCpyOjo8g9ZzD/ydpU
-         r9JA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBhK8Y7XzL3l976ctgRi+Ar2FBIYA+AZqkP0YbskQF7FelGdQXy6FfQAyA12PKnbKNphH/Lmn8Jy7sCtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIZfHmDwjEDSEgnpBKFeknQi5CBB2HnK8itiQoZ84lhqZ2Q/uY
-	Hz2zzcprAPspABgrmCAGfuxZMFyxLe5cceAnFjfcKjUvoN7BjANcgJmkOYqWzWaH/pxK6ut4bOP
-	rsEZInnMvSxc6k5O3DMhA9m1gxTWMzMLjIdZLemtm2eDMb7JyWot7fDMCMSCATw==
-X-Received: by 2002:ac8:73c9:0:b0:456:8080:df14 with SMTP id d75a77b69052e-4568080f696mr201923191cf.5.1725502779442;
-        Wed, 04 Sep 2024 19:19:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnVAKYcljkHf9Pw9I0bXS8vwDTxO2Rebu6KULzSRIp3ra+aRj2o1z/JmNgPBf8gKe1PnRaCQ==
-X-Received: by 2002:ac8:73c9:0:b0:456:8080:df14 with SMTP id d75a77b69052e-4568080f696mr201923001cf.5.1725502779095;
-        Wed, 04 Sep 2024 19:19:39 -0700 (PDT)
-Received: from rhfedora.redhat.com ([71.217.47.229])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801db22b5sm3531181cf.72.2024.09.04.19.19.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 19:19:38 -0700 (PDT)
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
-	linux-pm@vger.kernel.org,
-	Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	s=arc-20240116; t=1725502898; c=relaxed/simple;
+	bh=sIIPZUk/McFrEGOpzaiTsFXpvninZCb+Pc2SfB0iyAM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a4PES9wJN6eXDi5/AvVrpt+s0LIvxKapvLmg3jAfyQQmesHgmOrCIKjWcD58JNnj+1Pz6Y3A7NcQ4/+sOSLoJWy9N5oLKkAdjRMdoSZP/HjutRJR8gofRxALUHNRPtp6b2GXMehgz/zhMjPS7+yHKkl85Hdx1QBKc5ywiyc3mng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowADnyuqeFdlmBX9ZAQ--.17465S2;
+	Thu, 05 Sep 2024 10:21:18 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: cezary.rojewski@intel.com,
+	pierre-louis.bossart@linux.intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	brent.lu@intel.com,
+	kuninori.morimoto.gx@renesas.com
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	John Kacur <jkacur@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Arnaldo Melo <acme@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH v3 4/4] MAINTAINERS: Add Maintainers for SWIG Python bindings
-Date: Wed,  4 Sep 2024 22:19:11 -0400
-Message-ID: <20240905021916.15938-5-jwyatt@redhat.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240905021916.15938-1-jwyatt@redhat.com>
-References: <20240905021916.15938-1-jwyatt@redhat.com>
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ASoC: Intel: skl_hda_dsp_generic: convert comma to semicolon
+Date: Thu,  5 Sep 2024 10:20:17 +0800
+Message-Id: <20240905022017.1642550-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,39 +58,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADnyuqeFdlmBX9ZAQ--.17465S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4kCw1kGrg_yoW8XFWfpF
+	1v9wn8KF98Xa4vvay7XF17CasxXan7Ja47Ww45J34qqF1rXw1rurWqgFn7ZFWUKF93Gr1j
+	vrsrKrykKFyfAFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+	Yx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY
+	1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14v_Gr1l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUUXdbUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Adding myself as the primary maintainer and John Kacur as the backup
-maintainer for the libcpupower SWIG generated Python bindings.
+Replace comma between expressions with semicolons.
 
-Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
+
+Found by inspection.
+No functional change intended.
+Compile tested only.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
+ sound/soc/intel/boards/skl_hda_dsp_generic.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Changes in v3:
-	- Added Rafael to Cc.
-
-Changes in v2:
-	- Added as requested.
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 62a00f9471c1..1b2bbc8c5adb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5821,6 +5821,9 @@ CPU POWER MONITORING SUBSYSTEM
- M:	Thomas Renninger <trenn@suse.com>
- M:	Shuah Khan <shuah@kernel.org>
- M:	Shuah Khan <skhan@linuxfoundation.org>
-+M:	John B. Wyatt IV <jwyatt@redhat.com>
-+M:	John B. Wyatt IV <sageofredondo@gmail.com>
-+M:	John Kacur <jkacur@redhat.com>
- L:	linux-pm@vger.kernel.org
- S:	Maintained
- F:	tools/power/cpupower/
+diff --git a/sound/soc/intel/boards/skl_hda_dsp_generic.c b/sound/soc/intel/boards/skl_hda_dsp_generic.c
+index 225867bb3310..8e104874d58c 100644
+--- a/sound/soc/intel/boards/skl_hda_dsp_generic.c
++++ b/sound/soc/intel/boards/skl_hda_dsp_generic.c
+@@ -217,14 +217,14 @@ static int skl_hda_audio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	card = &ctx->card;
+-	card->name = "hda-dsp",
+-	card->owner = THIS_MODULE,
+-	card->dai_link = skl_hda_be_dai_links,
+-	card->dapm_widgets = skl_hda_widgets,
+-	card->dapm_routes = skl_hda_map,
+-	card->add_dai_link = skl_hda_add_dai_link,
+-	card->fully_routed = true,
+-	card->late_probe = skl_hda_card_late_probe,
++	card->name = "hda-dsp";
++	card->owner = THIS_MODULE;
++	card->dai_link = skl_hda_be_dai_links;
++	card->dapm_widgets = skl_hda_widgets;
++	card->dapm_routes = skl_hda_map;
++	card->add_dai_link = skl_hda_add_dai_link;
++	card->fully_routed = true;
++	card->late_probe = skl_hda_card_late_probe;
+ 
+ 	snd_soc_card_set_drvdata(card, ctx);
+ 
 -- 
-2.46.0
+2.25.1
 
 
