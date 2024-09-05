@@ -1,191 +1,110 @@
-Return-Path: <linux-kernel+bounces-316601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271BC96D1D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:19:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960DC96D1D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD9A281DE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB362811ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878921946C2;
-	Thu,  5 Sep 2024 08:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B541E19924E;
+	Thu,  5 Sep 2024 08:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ki1ZTvxK"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LbRXe4x4"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3D41991C8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB51991D0
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524160; cv=none; b=XUwJTbvJ6KpHlnG8nzHfJ2112e0nW8Cd/T9tRXoatTzW86WZTofSuzrT8aqg29igIjQBBYjYl1UQrms1SP/HpItR05JBXiRe5jcyuRKYwwA/n/4YKPpk3bSwoN05ZtdpZWJmR13+/fmZZQBAI1ayTmhzRynXTUjj0vh7cgsyZBM=
+	t=1725524163; cv=none; b=a4nJWL9nBE0y/e4aGheXX4s3sbUcrfRpq5+j2kE3Rx5EP1D03HLwitNHBkHVDX9rPUFhsT1SM4BNVAt8nE0u23Dg0J+duS0+eozEMbxMQJqJwDm4qgRSb6A4fjqIdkyZER4eqbmUjgcaUOBWycCw6giwtTas7dUkMtwptEmv3A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524160; c=relaxed/simple;
-	bh=icEa2sW0vAQa973BQSvnfSg86nhC1mMPXtOnkbj4Kvw=;
+	s=arc-20240116; t=1725524163; c=relaxed/simple;
+	bh=zzEfaENRIqRQl0JbYcNKk5MHDb85IJy5SJDJt767CxQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NolXbnndNCGXSMO5b7oL1m3KuG2X8PolrUlvVum99DqN59bmOi5OB/gkdkztBcSI465xu10nstlLZ6JYJAQ7Z6Cnvqb/A5EJ8UjMUoiEbnTeDonKUQNDAYj/CyV/wPFBGZ5x3rY8vJFxMNVu+cpZt8+kHJFPuKa1GOZAK2BRV00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ki1ZTvxK; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-846bd770d9cso309420241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:15:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=nb7SpJzLMvrtwoIvxkP8mlfs2J0stnlxErt24Mbkbkt9XgL6jArU62PF6VBw4UUww284eZqdAdZZJb7IqWWcD8868OkIK7B2gCEks3pKRUOgg2pG45bfqOSP+xyAvyXQyQTFwybbOi3gGq4pHPtEhdsKkEISnn2hVfQdobORcDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LbRXe4x4; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42c7b5b2d01so4314885e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725524156; x=1726128956; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725524160; x=1726128960; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k0rSmKjg6Zyu63XwLKpT0uVVvkdtwY/RJAX7lMT3kHE=;
-        b=ki1ZTvxKRrHDThv+Qayzt4FxsgYe4eCp6kB1FCJEiNFJMt88/yxwRi+xSZ1NQNHZck
-         RrDhkrTn/jVYDKVARD4rFhEObPzry5IpIIkKZf7HOu3KL4n2yxhP10zm6ja5Xohqsu3t
-         qX+gRjgJN7cnhVLBGAf8de7YxtylnktLVCuCL2inxtUfgy1Dl+ZH1OtGvMiIYNY/D52Y
-         SYuOQTUtSvGp0ciT0vxSjmRd1pDHG2SZ/INapLIL9BWesIXj81mfFhOjiyggaXunrqyS
-         XglU3Os55yXGRfQ8cUDthjmhbjnQfWZHZCOe3oVHVqSiiQKp0vKlwybhUOQNN0TG9WPw
-         BZiw==
+        bh=zzEfaENRIqRQl0JbYcNKk5MHDb85IJy5SJDJt767CxQ=;
+        b=LbRXe4x4V2G4d3x+k4gr0uEDrvMhlC7P3i1R9+VrswR+tJFo4qXR4z794I+1f3xINW
+         j4L0BV9AMxqrtxFIgGADGJoWGR1CmEhipt2wmT4XMum/ohLLMW+nHKWoPrZbnRrhF+Cd
+         0OJz2cJguCJfBxu/UBEBAdpc1Ptp3/nN2sOyy/qHAdYQCp1wyE7Ryq8PXYxuWDdaZYfR
+         5SLwOGwRzcl9nDFz+Q28JdaiNX7j68ZlgmhDW6WUUI3lP4kpEvKjAys/NC2jX5sNritq
+         WU4SqXyTb3AvrbHzfkDn59HAvlfqcr1qRisdRuwF73iYMI9vdg0uMMBqpYoh1W8xwLao
+         8jzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725524156; x=1726128956;
+        d=1e100.net; s=20230601; t=1725524160; x=1726128960;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k0rSmKjg6Zyu63XwLKpT0uVVvkdtwY/RJAX7lMT3kHE=;
-        b=TLwcfK4U9plmmg2zbk3IQfAmlmUNNpEi5gjqoywiUFouuDvUVMMDU1oi1Mf6JwrW3Q
-         xkxHgbURMGzLQQlQfMCb9sv8eCdp/9miYE5/BXiUMADDfDDSihhU4a+tJqWqoMgU3aVd
-         yxY674BQSPO/RapbXFL76g/5xzZKkm6HpsgG1GqtZt/jG+XAQy1q4UTTVhJNRJbhfZqt
-         7tPJhwdWAWxJDRQ2J4U5HkADdlwwjmS1ce8cNppde5zIsHIFf5ktUrzynzAoVvcE6xVj
-         +gc00Q+nlZ6rjSln+PPag5Ai2hjPoFBTO2CZnLfoi7zNAldf0QkpAruPqsoVBH6pZ6Mu
-         cQVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSATuvaSgX3z+OeZWf0BbvzULqHpUqyYkabJtCn/rvU73M7YivpKezFApV70LcFstF2YGk/4Uo3vFXAnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxou5nCwpowbfb8SXdP2sZX6jQ9aJay8dW1nKwhKoOWFyLp8ib7
-	07qob2YyfKVhtCWQxlFNmfLcFW4gSl2nPZFNn7N5CyNk3ECVmJFCJmFIrXUSyTqL/0T4JUa8icN
-	KotVPBX2J7SxBoENI6voy+MbzaFoHJ1gtKXRHuQ==
-X-Google-Smtp-Source: AGHT+IFEH+lyNDFzGtkVSG1R/MllAqnAbnshuBp7OLXzYpkWk9kP5U+zafpVUGNBEIuYZPwN0AjC2CdInBVcFvp2Bi0=
-X-Received: by 2002:a05:6102:c4c:b0:497:921:b799 with SMTP id
- ada2fe7eead31-49bba766182mr3164053137.11.1725524155939; Thu, 05 Sep 2024
- 01:15:55 -0700 (PDT)
+        bh=zzEfaENRIqRQl0JbYcNKk5MHDb85IJy5SJDJt767CxQ=;
+        b=bORhxGPTp7oqjeYYc4SjcKtQ6HEXIaDYxBmMJ/JYxAhu7NixVwwtelOc0c2/HW3jqo
+         vnbBpNwOIeY1vVNm+aYqh7dLaScBHFm95aS9MJ5CrHC8SLEQ8vhspvQHsmVphG+Sd9Db
+         LksqiCpbPIoY/CTPYQMZRPqA4MrnFRByDSLYNQbUQ2z9IvXXtjMIBJ68RbKWobiXyEDY
+         +L9JPkok3VPC8GBemRL1bXAtPTXhuHi7R8uQm/8Lj71Cnf0mVm5dzhjWdam2uvAjZ/T6
+         xQa3TmhCY0ehy1I1vFmB8hcAK7jl9rLdF9I1TH9C7k0hj3jb0h85/3oLzpcGpzOFOQZK
+         7x3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVS54KyHX8b/EPvm57a/XPF7QRTsQctfEvSJbnqpWB2fJARNA/Fa5fUANPX2Fn05cwEm7cDi5Evn/TrQdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhpY4b53Q5dwcogRuSdwDvnapGVIlPZElIdGqC2hKiTHhr/PEG
+	1HJ0ImRCnluf8f2Gu/bGkyl4yLuvjFnNIVHWBC6Us7rkxO1nn4P2mYB8N4FKzDcrj3ckX84KEm0
+	7IOVgIlbahNz6TK3W/BdS9z10DykunxNL+Z2x
+X-Google-Smtp-Source: AGHT+IFGe9FwF4ew6fPFdL2Ygl8vPEA3LpCNMQCfRGgsrU2sesbleRr+RS60eiRwK9tP5YwgxFA3l6MeMRDAa53pyQU=
+X-Received: by 2002:adf:e6c8:0:b0:374:c3cd:73de with SMTP id
+ ffacd0b85a97d-374c3cd74d5mr12499736f8f.35.1725524159551; Thu, 05 Sep 2024
+ 01:15:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904072718.1143440-1-aardelean@baylibre.com>
- <20240904072718.1143440-8-aardelean@baylibre.com> <tpl7wufkyog2bvnhg36keczeokadxkqkcoiy5qjscsoosxsiql@6a3ghbo4pc7f>
-In-Reply-To: <tpl7wufkyog2bvnhg36keczeokadxkqkcoiy5qjscsoosxsiql@6a3ghbo4pc7f>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Thu, 5 Sep 2024 11:15:44 +0300
-Message-ID: <CA+GgBR-oER6S3iqJR_T781fT-qxH2awPwdD7ubKxTZsC_RWn0g@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
- compatible strings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-17-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-17-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 5 Sep 2024 10:15:47 +0200
+Message-ID: <CAH5fLgg20kDCJfD_6+fTSogOnpqK0x3a6eKaTahgSvdgfFzSEw@mail.gmail.com>
+Subject: Re: [PATCH 16/19] Documentation: rust: add coding guidelines on lints
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 9:39=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Wed, Sep 4, 2024 at 10:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
 >
-> On Wed, Sep 04, 2024 at 10:27:15AM +0300, Alexandru Ardelean wrote:
-> > @@ -114,6 +124,45 @@ properties:
-> >        assumed that the pins are hardwired to VDD.
-> >      type: boolean
-> >
-> > +patternProperties:
-> > +  "^channel@([1-8])$":
+> In the C side, disabling diagnostics locally, i.e. within the source code=
+,
+> is rare (at least in the kernel). Sometimes warnings are manipulated
+> via the flags at the translation unit level, but that is about it.
 >
-> Drop ()
+> In Rust, it is easier to change locally the "level" of lints
+> (e.g. allowing them locally). In turn, this means it is easier to
+> globally enable more lints that may trigger a few false positives here
+> and there that need to be allowed ocally, but that generally can spot
+> issues or bugs.
 >
-> > +    type: object
-> > +    $ref: adc.yaml
-> > +    unevaluatedProperties: false
-> > +
-> > +    properties:
-> > +      reg:
-> > +        description:
-> > +          The channel number, as specified in the datasheet (from 1 to=
- 8).
-> > +        minimum: 1
-> > +        maximum: 8
-> > +
-> > +      diff-channels:
-> > +        description:
-> > +          Each channel can be configured as a differential bipolar cha=
-nnel.
-> > +          The ADC uses the same positive and negative inputs for this.
-> > +          This property must be specified as 'reg' (or the channel num=
-ber) for
-> > +          both positive and negative inputs (i.e. diff-channels =3D <r=
-eg reg>).
-> > +        items:
-> > +          minimum: 1
-> > +          maximum: 8
-> > +
-> > +      bipolar:
-> > +        description:
-> > +          Each channel can be configured as a unipolar or bipolar sing=
-le-ended.
-> > +          When this property is not specified, it's unipolar, so the A=
-DC will
-> > +          have only the positive input wired.
-> > +          For this ADC the 'diff-channels' & 'bipolar' properties are =
-mutually
-> > +          exclusive.
-> > +
-> > +    oneOf:
-> > +      - required:
-> > +          - reg
-> > +          - diff-channels
-> > +      - required:
-> > +          - reg
-> > +          - bipolar
+> Thus document this.
 >
-> rather:
->
-> required:
->   - reg
->
-> oneOf:
->  - required:
->      - diff-channels
->  - required:
->     - bipolar
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Ack
+Wow, does C really not have an easier way to do it?
 
->
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > @@ -170,6 +219,17 @@ allOf:
-> >          adi,conversion-start-gpios:
-> >            maxItems: 1
-> >
-> > +  - if:
-> > +      not:
-> > +        properties:
-> > +          compatible:
-> > +            enum:
-> > +              - adi,ad7606c-16
-> > +              - adi,ad7606c-18
-> > +    then:
-> > +      patternProperties:
-> > +        "^channel@[1-8]+$": false
->
->
-> You have two different patterns here and in top-level. Please keep one:
-> ^channel@[1-8]$
-
-Ah.
-Good point.
-
->
->
-> Best regards,
-> Krzysztof
->
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
