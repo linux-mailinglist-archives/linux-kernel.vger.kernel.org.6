@@ -1,169 +1,149 @@
-Return-Path: <linux-kernel+bounces-316274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D43096CD62
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:35:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7719396CD66
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329591F27008
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1196EB255AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6B4154444;
-	Thu,  5 Sep 2024 03:34:31 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6380114D2B3;
+	Thu,  5 Sep 2024 03:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q+fIlPF1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F1C153838
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201AC1494B5;
+	Thu,  5 Sep 2024 03:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725507271; cv=none; b=fcH+7814Dgs1USts19GsRPx5pkMRdBApi66fmbsizVqQIO7FLKu7sEhdR0KJ5Gv+qo+RgMPJi9IKt4InRWg7r/Si33tMgvDCqAPU7GhJZkVUf+8Xmb/F3jsPxvSvfBGoGZoq6gtt1L0KCzQtcWh+li+2k4ukU78aj1sk3GsbaNc=
+	t=1725507335; cv=none; b=FbjjvY4wAzrhNuu6SY28t5lf8deOPXVUikitqEdjCs2SctjKMyVawdwy1SaREniZJquvbigIfl4WXq4eC9C7Ix6epusCJZhznwt1MHVp4w5JMu24CSNOOJqPLNjlvxpJdbRqhEOyzWuXYnjI3rFvnIxRvghwdcOT8fScWG4AVNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725507271; c=relaxed/simple;
-	bh=dXjidnn83ylHHOMKhEoaST7/Gc1CP8t7ZniVbUgNCJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=k0pA8fBGD+Vc2MxByo3JEwlNxJVNYyrctG8i1hrfXFNjpKk0YwPhEWBERHefjpcPsbC2x1+2HNI0h+z/pWhb+LiauX+Vg/8zEL6RkqXrJGbtmSzBKqqwmsuh/1F1JgsaGdHuOkkywIs5bor3StqytCirmVOqcbcDHHPtcXV23Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WzlGH0zkSz69Wt;
-	Thu,  5 Sep 2024 11:29:27 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 66C6E18005F;
-	Thu,  5 Sep 2024 11:34:25 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+	s=arc-20240116; t=1725507335; c=relaxed/simple;
+	bh=71BZXfdBCTsAyrqUDA4M3Xj0hkLE7+Dkt0m6fJL0whI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jng0T3OeRh4fSCHHxCGnXN6L2o+yhSsDMwDC3gU7r017nhTUvKxo6OdKW42dLeMuDOkjCSNjIaUHAWNnPo5BOH+gzlEF/Ao6dlWWr/tnlc/12NK26Z7jxDs9VFVlKS2vUYu3WQKDgWTfv1St6KBQqvZKLXmTSsbmYlbWeD/vyto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q+fIlPF1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484MSBZn032349;
+	Thu, 5 Sep 2024 03:35:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=QJf3w+JkFSAhj424/ky9GdSZ
+	1Wc02Dx4ry4NpAboNqg=; b=Q+fIlPF1v62A9lMaLW9mBzKiHcS93QXL+rEuBE60
+	NdCb0e25PTSR8y7uBvhxVB3tWkC7zca2UBdru3Mx3orKI5Yi+JyFdIo5jblG1ACg
+	8MtYNSU077Lg41y70+JXOdSXwfxyamYzRJsikNzCxk1ehHb8JidW/6TYHTmyYCKn
+	Uo346DHmViO49wNc4D+7jWRFlnOoo/ivVFdLrcfgW5WfNEuATHGwnQMqvEKjLvRt
+	IEXid3roEK1DWrxBCXTJvKAyk/V4iFIDbgfZsI0lahnI+3xu0cD67QWeoy/DEFGR
+	rz5Sl4wTSEK0Uh9S+RKGE1O8L05ItsrPRwm/9vB0iuj9gg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe6x4v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 03:35:29 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4853ZS4U021328
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 03:35:28 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 5 Sep 2024 11:34:24 +0800
-Message-ID: <50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com>
-Date: Thu, 5 Sep 2024 11:34:24 +0800
+ 15.2.1544.9; Wed, 4 Sep 2024 20:35:24 -0700
+Date: Thu, 5 Sep 2024 11:35:20 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
+ x1e80100
+Message-ID: <Ztkm+IOzEtvvD4Vf@jiegan-gv.ap.qualcomm.com>
+References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
+ <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
+ <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
+ <1be14849-ba98-432a-9686-e0189c9c7ffd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] static_call: Handle module init failure correctly in
- static_call_del_module()
-Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Josh Poimboeuf <jpoimboe@kernel.org>
-References: <87cylj7v6x.ffs@tglx>
- <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <877cbr7qed.ffs@tglx>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <877cbr7qed.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1be14849-ba98-432a-9686-e0189c9c7ffd@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W9U-EYGwk8c3Vb1SwrfVHq0UDzKx4fDU
+X-Proofpoint-ORIG-GUID: W9U-EYGwk8c3Vb1SwrfVHq0UDzKx4fDU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_02,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 spamscore=0 mlxlogscore=649 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409050024
 
-
-
-On 2024/9/4 16:51, Thomas Gleixner wrote:
-> On Wed, Sep 04 2024 at 16:03, Jinjie Ruan wrote:
->> On 2024/9/4 15:08, Thomas Gleixner wrote:
->>> So the check must be:
->>>
->>> 	if (!static_call_key_has_mods(key))
->>>         	break;
->>
->> Hi, Thomas,
->>
->> with this patch, the issue not occurs again，
->>
->> but there are some memory leak here same to the following problem:
+On Wed, Sep 04, 2024 at 12:24:19PM +0200, Konrad Dybcio wrote:
+> On 3.09.2024 3:30 AM, JieGan wrote:
+> > On Mon, Sep 02, 2024 at 05:27:32PM +0200, Konrad Dybcio wrote:
+> >> On 27.08.2024 9:27 AM, Jie Gan wrote:
+> >>> Add coresight components for x1e80100. This change includes CTI,
+> >>> dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
+> >>>
+> >>> Change in V1:
+> >>> Check the dtb with dtbs_check W=1, and fix the warnings for
+> >>> the change.
+> >>>
+> >>
+> >> Applying this series and enabling CORESIGHT=m (along with all the options
+> >> in menuconfig) breaks booting on my X1E Surface Laptop 7
+> >>
+> >> Konrad
+> > 
+> > Did not observe any booting issues with our devices. Any relevant log to share?
+> > This patch also tested by my colleague.
 > 
-> That has absolutely nothing to do with static calls and the memory
-> allocation failure case there.
+> Sorry, it crashes too early and my device doesn't seem to have an
+> easily accessible serial port. Does any of the functionality
+> described here require an unsecured device?
 > 
-> The module passed all preparatory steps, otherwise it would not be able
-> to create a kmem_cache from the module init() function:
-> 
->      kmem_cache_create+0x11/0x20
->      do_one_initcall+0xdc/0x550
->      do_init_module+0x241/0x630
-> 
-> amdgpu_init()
-> 
-> 	r = amdgpu_sync_init();
-> 	if (r)
-> 		goto error_sync;
-> 
-> 	r = amdgpu_fence_slab_init();
-> 	if (r)
-> 		goto error_fence;
-> 
->         <SNIP>
->         
-> 	return pci_register_driver(&amdgpu_kms_pci_driver);
-> 
-> error_fence:
-> 	amdgpu_sync_fini();
-> error_sync:
->         return r;
-> 
-> Can you spot the problem?
+I just checked the devices we used to test, they are all unsecured devices.
+I also checked the dts, there are two components(known issue internally)
+will fail the booting of the secure device.
 
-Hi, Thomas,
+I will disable those two components in next version. You can test it
+with next patch.
 
-It seems that it is not the memory leak source,
+Thanks for testing.
 
-I test with the following patch, the memory leak also occurs,
+> What tag did you test this patch against?
 
-but with the Link patch, the problem solved and the memory leak missed.
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 094498a0964b..3589e4768bd6 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -3032,11 +3032,11 @@ static int __init amdgpu_init(void)
-
-        r = amdgpu_sync_init();
-        if (r)
--               goto error_sync;
-+               return r;
-
-        r = amdgpu_fence_slab_init();
-        if (r)
--               goto error_fence;
-+               goto error_sync;
-
-        DRM_INFO("amdgpu kernel modesetting enabled.\n");
-        amdgpu_register_atpx_handler();
-@@ -3046,12 +3046,18 @@ static int __init amdgpu_init(void)
-        amdgpu_amdkfd_init();
-
-        /* let modprobe override vga console setting */
--       return pci_register_driver(&amdgpu_kms_pci_driver);
-+       r = pci_register_driver(&amdgpu_kms_pci_driver);
-+       if (r)
-+               goto error_fence;
-+
-+       return 0;
-
- error_fence:
--       amdgpu_sync_fini();
-+       amdgpu_fence_slab_fini();
-
- error_sync:
-+       amdgpu_sync_fini();
-+
-        return r;
- }
-
+next-20240820
 
 > 
-> Thanks,
+> > 
+> > Can you successfully boot without the patch?
 > 
->         tglx
+> Yes.
+> 
+> Konrad
+
+Thanks,
+Jie
 
