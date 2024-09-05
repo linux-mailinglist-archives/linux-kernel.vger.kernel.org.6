@@ -1,165 +1,104 @@
-Return-Path: <linux-kernel+bounces-317180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686EE96DA7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:37:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4851696DA88
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77248B21557
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084CA288066
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B3D19D068;
-	Thu,  5 Sep 2024 13:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E5019D890;
+	Thu,  5 Sep 2024 13:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pelCccCE"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hxt+Auo9"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CBC1E481
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6321B19925B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725543432; cv=none; b=fDcmUOIWIduUq73JhbnPJFl+ysxVDF/wpWIfht4ixEMJOCEzIkRxQX7c2wkxZSCp3hi/vczb+PfR3rVuZZjSxGFn1o6B0wEq7p93RaMdAje2UF51j5D74VXSEQCdPpBYNIU2rfWUfb2naCn29eo+YADg1EF8t9bxYlLz+sZ1Z44=
+	t=1725543655; cv=none; b=UbbxHN7/TYkswBw6jB8e/B9KK947Qt3dMq6GjlKZE98f9uJRSfpBlLyggFOD8pyNL+6JCyPupgcpjrKOt+eD7ftjQHQEG2asUUd7RyA4Vvz7mgrp5Gz2DvAgyMjQza+sWwRAIBRetEiqnANZ7szVsbTgyRVo+IwIUL6rU0h3jeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725543432; c=relaxed/simple;
-	bh=xCF4SVAxGXNdrma6eHTvLtr2IUHOBO0DZvrhvql5vUM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MXSfA5O2v22Hx2xCd/beaBy3bjcZTtxxFJnKm/t/eQ8p1WCDBj4Kac4DNIaIrOXsMrQ8Z+7jvJ36yBNVctPcYw1U6HqLWTjSWTVpPjTgJ90+3G/1urkuw8l2WDsnTu0FJsgBaHgz4jyuj3IZdYyafU4vL4U2ozQRAve+hfvq+Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=pelCccCE; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725543427;
-	bh=xCF4SVAxGXNdrma6eHTvLtr2IUHOBO0DZvrhvql5vUM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=pelCccCEmv6Mp/PlpzBq/PIHP7OljdJmXuMApbd5er5tNPk4NDzuJxrmUoJrF8sOm
-	 GV87gRFRwwN/colBVBCXO855qduqfVEmsUbS19yqYk/NYSfUi2dcRfUIFHovTJTxWX
-	 HD5CDx2P3V68rpUCyPc4V21Q7lk5xK02CV62TJVEiYR/V53GdlWoeiJw+12lZjdmJa
-	 EoDJxL+WHUIzKK60Uv+SN7qL1yByLhhLSjGb+S0K8NvBWW2YbgqECZxTzGnohDG921
-	 nMvUuu7bjuB2ixE+rU8ztCVl22J0FhK07G3zHdIH1K5jWhOawlERSH2xr7APLTb3dp
-	 zMaaMdW+bnBYA==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X00lR2MmRz1Jqd;
-	Thu,  5 Sep 2024 09:37:07 -0400 (EDT)
-Message-ID: <fb2b7e96-23b8-449e-93fe-88ee3ea167d1@efficios.com>
-Date: Thu, 5 Sep 2024 09:36:49 -0400
+	s=arc-20240116; t=1725543655; c=relaxed/simple;
+	bh=AxPtjHYuOVtkkcmxIcpgFsQxIf83bf8J45zt3NGqfPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCDfAqk0PymM8CGy8E6zz7N9As/+VKtHrHJCF9LyzKKJaOkkkSkbbFO+IP6Zeh1eJFT23q5du/W8QofEI/urL34+Nx17H6heCKVSxpcQlEQ/Pa0Sw4fkO09AYFgogcXRvn0jOJ7xmm8OkGHOH2jld02nDmL5KuZ0BUCxXESVW6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hxt+Auo9; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-456757d8871so5009131cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 06:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1725543652; x=1726148452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVryk+sEYmFSRDSp/0MfOEJVaFXd2+NxfDVIFtGzX2A=;
+        b=hxt+Auo9Q2mnPIpEYTjgMCt8kq1fxdATKo6fi5w1wEAZZt8BQqo77nWYbp0kQOwX7n
+         dw479o62r9W1YqUDfOmhrQCNbgsP2MkoqLsjiG46JVimBLITL2RkgKM5yf377gEqjvfK
+         +1Uz01KEL1kYF1WmST1iVluLx0DR4YbNdD+q8HPxoW2YJ9fjSrnWj3eDV9DULG/kXF7+
+         8L0/2Khz7p0sVKBNvlT9LcAo296o2OZX9AGZ6zeLXDUR0AblqVhicUgoriS8VxNDWAZQ
+         W+0LkV//xwkYrqrw40L/4CORO+vBavmDAHh0lBbzMOEAlE7sh1PUMpdBLe67rY/rvivM
+         vAJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725543652; x=1726148452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UVryk+sEYmFSRDSp/0MfOEJVaFXd2+NxfDVIFtGzX2A=;
+        b=BC6AXmUA9bpSGx3nLu1LBtopOPj0nHp2gklMQFmWAAO0aimePouX2a7Xp4H5/McsL5
+         V8K+CMrgL4mRb1mLG3zuM3WGBOS9nb/hgou6iKhq+Ts6PV4iodwq81Grx8aVE+P5QtU0
+         kRiwhrGBFz3yKtWIysgKR0uOf8iS33cTgJvUolpXTOWgIQoHfEYhKNnR4vJsWMcMb3Xz
+         k4G0vffmNp4L/GIron0t9uitAlxuJxZmLsG1VFCLxrx3P1MAyoVTmKovkjAAx64ptghV
+         95qx9aRsicSjm5ozMY8BKUtvxfBXX74ElTrGX3rKhHAmpxcl3IpYACHW1m2GKWbAVw/g
+         xVkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhp4r+Z86QFgB+krIkY+IcAlmQwVW4gsrAPCWleloyn2uvbS0y+4cjqCp2ebfehz0C5FJBfkD56XWLvkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeC03lMjvAxPuBdWPqhL+Aqls0GygMZMcGW2WC1f2Oo9qyI64s
+	t0aHek+Oi6VqMORA2onuPvE2XxQfzPoEA9nHvco2ybhxJIkugqiMTY8C0Ubjkj8=
+X-Google-Smtp-Source: AGHT+IEUdiC6y6FiD5Qy2DoUR0vrZOWliBVAargS1d8t8110/9207+SXKsATbVvJ1NnKgXhpPCa79g==
+X-Received: by 2002:a05:622a:420c:b0:457:e3dd:498e with SMTP id d75a77b69052e-457e3dd4b3dmr105811761cf.9.1725543652193;
+        Thu, 05 Sep 2024 06:40:52 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45801dc366csm7138601cf.93.2024.09.05.06.40.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 06:40:51 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1smCjD-00CZyU-0k;
+	Thu, 05 Sep 2024 10:40:51 -0300
+Date: Thu, 5 Sep 2024 10:40:51 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: dwmw2@infradead.org, baolu.lu@linux.intel.com, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] iommu/vt-d: Use PCI_DEVID() macro
+Message-ID: <20240905134051.GA2994907@ziepe.ca>
+References: <20240829021011.4135618-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] sched: Improve cache locality of RSEQ concurrency
- IDs for intermittent workloads
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>
-References: <20240903190650.53644-1-mathieu.desnoyers@efficios.com>
- <20240903190650.53644-3-mathieu.desnoyers@efficios.com>
- <ZtdqhmKmbVsCSAkJ@yury-ThinkPad>
- <615f169b-3b24-4661-8a2c-185c6d80f7a4@efficios.com>
- <Zth7tj9Cq-gigTx8@yury-ThinkPad>
- <46d08f8e-bd68-44a3-9b33-ba029c7e2a10@efficios.com>
- <1a1e06d4-7f41-4f37-a9b5-d1610e8d8669@efficios.com>
-Content-Language: en-US
-In-Reply-To: <1a1e06d4-7f41-4f37-a9b5-d1610e8d8669@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829021011.4135618-1-ruanjinjie@huawei.com>
 
-On 2024-09-04 14:28, Mathieu Desnoyers wrote:
-> On 2024-09-04 11:50, Mathieu Desnoyers wrote:
->> On 2024-09-04 11:24, Yury Norov wrote:
-> [...]
->>>
->>> This all doesn't look like a hot path. And anyways, speculating around
->>> performance without numbers on hands sounds cheap.
->>
->> This is done whenever userspace invokes sched_setaffinity, or changes
->> its cgroup cpuset. It may not be the most important fast-path in the
->> world, but I expect some workloads to issue sched_setaffinity whenever
->> they create a thread, so it's not a purely slow-path either.
->>
->>> In my experience, iterators with a very lightweight payload are ~100
->>> times slower comparing to dedicated bitmap ops. Check this for example:
->>> 3cea8d4753277.
->>>
->>> If you're really cared about performance here, I'd suggest you to
->>> compare your iterators approach with something like this:
->>>
->>>    cpumask_or(mm_allowed, mm_allowed, cpumask);
->>>    atomic_set(&mm->nr_cpus_allowed, cpumask_weight(mm_allowed);
+On Thu, Aug 29, 2024 at 10:10:11AM +0800, Jinjie Ruan wrote:
+> The macro PCI_DEVID() can be used instead of compose it manually.
 > 
-> Here are the benchmark results. Each test use two entirely filled
-> bitmaps as input to mimic the common scenario for cpus allowed
-> being updated with a subset of the original process CPUs allowed,
-> and also the common case where the initial cpumask is filled.
-> 
-> #define BITMAP_LEN      (4096UL * 8 * 10)
-> (len = BITMAP_LEN)
-> 
-> * Approach 1:
-> 
->         int nr_set = 0;
->         for_each_andnot_bit(bit, bitmap, bitmap2, len)
->                 nr_set += !test_and_set_bit(bit, bitmap2);
->         if (nr_set)
->                 atomic_add(nr_set, &total);
-> 
-> Time: 4680 ns
-> 
-> * Approach 2:
-> 
->         int nr_set = 0;
->         for_each_set_bit(bit, bitmap, len)
->                 nr_set += !test_and_set_bit(bit, bitmap2);
->         if (nr_set)
->                 atomic_add(nr_set, &total);
-> 
-> Time: 1791537 ns
-> 
-> * Approach 3:
-> 
->         mutex_lock(&lock);
->         bitmap_or(bitmap2, bitmap, bitmap2, len);
->         atomic_set(&total, bitmap_weight(bitmap2, len));
->         mutex_unlock(&lock);
-> 
-> Time: 79591 ns
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/iommu/intel/iommu.c         | 4 ++--
+>  drivers/iommu/intel/irq_remapping.c | 4 ++--
+>  drivers/iommu/intel/pasid.c         | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
 
-The benchmark result is wrong for approach 3, as it was taken with
-CONFIG_PROVE_LOCKING=y and lockdep.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Corrected result:
-
-Time: 4500 ns.
-
-So let's go with your approach. I'm wondering whether I should
-re-use an existing mutex/spinlock from mm_struct or add a new one.
-
-Thanks,
-
-Mathieu
-
-> 
-> The test hardware is a AMD EPYC 9654 96-Core Processor.
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Jason
 
