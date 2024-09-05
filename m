@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-317941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A70596E5C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:32:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C8696E5C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DB528330B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:32:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0E86B23AA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68B1AD413;
-	Thu,  5 Sep 2024 22:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C101B12F9;
+	Thu,  5 Sep 2024 22:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MkIhYe0Q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqBjHc1v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B58B15687C;
-	Thu,  5 Sep 2024 22:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1481715532A;
+	Thu,  5 Sep 2024 22:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725575571; cv=none; b=JA5zi/nnWfn3SpOsEg/GNbw8FPOhMjKdOFpI1ekkesXa0FeildMvwTksdjGv2drVZxMyLe0mtUdzplwNyQV2rTZjtD4U6UDYp6iQ36B/9KDfAtG2m4xrOn0p1kEuXSVcRGa25ynGKXOp4IAa4iav+eJrjw1+b9YfDKuFnx1+d7k=
+	t=1725575758; cv=none; b=YLPQ5V+kYjvT/TFjYL52mJ9+Hif6ebvAJGTriBRpprxP4bpxwOyWTghabvbxVOqQQh5eTQZWWiOoRj/MfKFybxrmP84+hr4vbZU2aLtlyr6HWt1gxTZxMM5y2+YidQBwzRARgyydti3SO3xJ36BA37ri3IcFENUGLCi90kL/VPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725575571; c=relaxed/simple;
-	bh=+NVDix8T2xQyedNPt3M1bRr8eVJnqQyakfFC98R23UA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=s3WSywQ35qo9RZH3rQIlz5qf4Pk9fEtwvnNvRyNYQJS1XUNsyXPq6yPunKKlxbTfo7zcHCdgRRzgbrxPGcbVR17tPDJr5eaoutm9M3V0ziVK1GhkHtvebWqXw+IWIGPN9Ry0e+n0MrcU99JtaAPXjt7iaJ2yLBhJX0uRFhKFfAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MkIhYe0Q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725575567;
-	bh=QNSjDmvq9WCZzo/kTctKtEaVFzD9p319royOrt/C1uA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MkIhYe0QLy38PIUAkCMhi1Zc3G76udEBKtQDR4FsCt2G4sKZ4J2Nk97EAzBzqdMt6
-	 p5YhojYZ9OYUy2UOlyyo55vdrfJ/hyqhfCfvNAQ74l/z5hlRUJojRPr2TmoQQRI4lE
-	 8nisMUQev/ranvLARmBfJMva37XLzzFm30jpQvonrBrBp3+gfEYSQXPvy7gtfs4JnU
-	 S+dopIqKa9/zCJE5WYn1GPjqfmZ5anKzZr7PyUz0KqJwY0+TFu0WESUdVXFXvHzQde
-	 jz9MWvjjB0X8N4HLUdk6F01DMTUvEjH/T/JbXgeuY6o7SQfSXZD5pl4LGUq4leFRQZ
-	 gomXM1ioY0ecg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0DdW0hjlz4wd0;
-	Fri,  6 Sep 2024 08:32:47 +1000 (AEST)
-Date: Fri, 6 Sep 2024 08:32:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs-brauner tree with the ext3 tree
-Message-ID: <20240906083246.599063b0@canb.auug.org.au>
+	s=arc-20240116; t=1725575758; c=relaxed/simple;
+	bh=ZH7eakCEqONTQG+utGtrrkQgjtVFFzSSiYzeozJllEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZnMET1QvuOYEaPDzoOjApPWiuxBCiXzE1g4oQ6YR/te4yB9Ek2w93GfFZmcBr864nSNtkyPMHbLygZewXucDqvBKcixE1wrKxFVxIsuxd5y1wJXvXRxtYX4yS7T1at4VV3VkyiKpWhmsBX+IyEqA/r6qrLpqS66vbCP7JXoVOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqBjHc1v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50422C4CEC3;
+	Thu,  5 Sep 2024 22:35:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725575757;
+	bh=ZH7eakCEqONTQG+utGtrrkQgjtVFFzSSiYzeozJllEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uqBjHc1vPwX2LM3sHccZnVGzlDj+VO3Q6IAPs0JCljCw42+x7hzSiuWl/fGl7ITB5
+	 /yamueN1OV31HWlB9WgD2cxkFcwWt4fohIUUBqJ3b0aCI/QVWGQrQhWHs3CnAm0beI
+	 dJi7XmqPAgfS3s2VsWcwOpfa6sFsUDwBLCNlA+uf8XiMlZfwhuGugTZq1+3R3A1E3h
+	 yu5AtTYFBYyd6CIvAVm6qjIuwqDu1GYpHxx4tyeyNjPyJGzt9wKAl/qhGK8QoAIVZ6
+	 qYOpr445tekwhQAnywUGahiL2NU8NFg4u9kmQAwlrt3WFrZfY8lkczO7Kt2kcS4Kv5
+	 1lgwxqS0S+piw==
+Date: Thu, 5 Sep 2024 15:35:55 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: [PATCH] dm verity: don't use WQ_MEM_RECLAIM
+Message-ID: <20240905223555.GA1512@sol.localdomain>
+References: <20240904040444.56070-1-ebiggers@kernel.org>
+ <086a76c4-98da-d9d1-9f2f-6249c3d55fe9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LwIk8x16cFnZjJMqNA2NE=4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <086a76c4-98da-d9d1-9f2f-6249c3d55fe9@redhat.com>
 
---Sig_/LwIk8x16cFnZjJMqNA2NE=4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 05, 2024 at 08:21:46PM +0200, Mikulas Patocka wrote:
+> 
+> 
+> On Tue, 3 Sep 2024, Eric Biggers wrote:
+> 
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Since dm-verity doesn't support writes, the kernel's memory reclaim code
+> > will never wait on dm-verity work.  That makes the use of WQ_MEM_RECLAIM
+> > in dm-verity unnecessary.  WQ_MEM_RECLAIM has been present from the
+> > beginning of dm-verity, but I could not find a justification for it;
+> > I suspect it was just copied from dm-crypt which does support writes.
+> > 
+> > Therefore, remove WQ_MEM_RECLAIM from dm-verity.  This eliminates the
+> > creation of an unnecessary rescuer thread per dm-verity device.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> 
+> Hmm. I can think about a case where you have read-only dm-verity device, 
+> on the top of that you have dm-snapshot device and on the top of that you 
+> have a writable filesystem.
+> 
+> When the filesystem needs to write data, it submits some write bios. When 
+> dm-snapshot receives these write bios, it will read from the dm-verity 
+> device and write to the snapshot's exception store device. So, dm-verity 
+> needs WQ_MEM_RECLAIM in this case.
+> 
+> Mikulas
+> 
 
-Hi all,
+Yes, unfortunately that sounds correct.
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+This means that any workqueue involved in fulfilling block device I/O,
+regardless of whether that I/O is read or write, has to use WQ_MEM_RECLAIM.
 
-  fs/btrfs/super.c
+I wonder if there's any way to safely share the rescuer threads.
 
-between commit:
-
-  ec24789ec8d6 ("btrfs: disable defrag on pre-content watched files")
-
-from the ext3 tree and commit:
-
-  c7e408a168b5 ("btrfs: convert to multigrain timestamps")
-
-from the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/btrfs/super.c
-index c9aef6708779,d423acfe11d0..000000000000
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@@ -2199,7 -2199,7 +2199,7 @@@ static struct file_system_type btrfs_fs
-  	.parameters		=3D btrfs_fs_parameters,
-  	.kill_sb		=3D btrfs_kill_super,
-  	.fs_flags		=3D FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA |
-- 				  FS_ALLOW_IDMAP | FS_ALLOW_HSM,
- -				  FS_ALLOW_IDMAP | FS_MGTIME,
-++				  FS_ALLOW_IDMAP | FS_ALLOW_HSM | FS_MGTIME,
-   };
- =20
-  MODULE_ALIAS_FS("btrfs");
-
---Sig_/LwIk8x16cFnZjJMqNA2NE=4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaMY4ACgkQAVBC80lX
-0GwAzwf+KZ6FbeLNPJt+2qvVKPeSSkjqCpAjGHnblDBN1Qowgk+/52vDnFqtMlZP
-089Zc7kHR8YbLeiU13JjbZavsGQG/ujFIwzyWVlv0CNIrPVu8H+joPIdfcY+5UvI
-pl/gNB8OvZgSW47OeTHDU5hLsVrpTyHZ06YQr7ieJsyPh5USwsjTUPOt5mbtwp1F
-D7xLcYjduVTc0HW1wFe2137BfWr/IMYjbkSxKccMgSAyjcaNC9HaSO25rsoveZSR
-PNJIGUgLoDUmCEUt9g/nKaLAZCVK+8QmNzEbHhVw4OGQ7AfXgQYJsMoi8+wHAyvS
-Fi/qXSfK1P++FhL9ULgQ7uuiRhZ8LQ==
-=It/+
------END PGP SIGNATURE-----
-
---Sig_/LwIk8x16cFnZjJMqNA2NE=4--
+- Eric
 
