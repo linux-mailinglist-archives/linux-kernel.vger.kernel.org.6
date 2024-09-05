@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-317532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA0C96DFA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:28:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF0F96DFAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991D31F22881
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1FC21C2315F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353881A0721;
-	Thu,  5 Sep 2024 16:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE541A01B7;
+	Thu,  5 Sep 2024 16:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQn21NAw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWXWfkh3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0381A01DD;
-	Thu,  5 Sep 2024 16:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60ED2A1AA;
+	Thu,  5 Sep 2024 16:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553690; cv=none; b=hxumCIfP6kuQXYCarI/Mr6UAA8n+/VVrjRnHv815xkstnowVR+dVH84reJ+AFtrkbKd2LyCNCmiTOYEaSOYm0K6vwflXHRD0y9AckC1NW5N0gPGImHcK1ld3TiHfJIDDjkb9BNp1X67HagJNjFC8sQ9pXjvap9bvzt9BxyrOhiI=
+	t=1725553817; cv=none; b=S+lR/9EEh1oplp86KMp9ImCTEFr84RsdtHTU7g6IPJ+ANpn6nGmf4IroNgIZEJ+p+I7/6fsmUDUekPk37f0kq/H6Q2wd9/vwqkJjiVFBARrGm2WwiCG7vR2TNWsrbgem+4GqXhlQIwwEbVOidWz+tL7VGGHYSIPqJXDKEBYsjOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553690; c=relaxed/simple;
-	bh=FP+BVfo2UMegtFvHwfZox0H5CnqyUyzvhJUx4qmnh4w=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=G/xwhPv3Vnd0clxqkNlyfI7a3hRL/9c4wKGaK+zD7fIPDKd6AVePmFmo7fNzh9S6di974nIv6ysVW8FWTCTePFXfnIjyMu7bq1ZlCDLksJk7dy6SYYten09DRCMuh3vgoD4hSNXgjvUz1FOoAFgCBohotPK0gUCgcPoNacXPuFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQn21NAw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3854C4CECB;
-	Thu,  5 Sep 2024 16:28:08 +0000 (UTC)
+	s=arc-20240116; t=1725553817; c=relaxed/simple;
+	bh=aGSV/IXaaRkWTZNeNSyIH1EiufpI+oKBGif8O/p8MsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJV3Cl7SO+8taFCWxpZElMawpDOalJGbMcmHYAwXK0GJIRbXeBM0dOWsuuZqugq72jGBrYu7/DuZM+lU/quD2aE1uU7RuNVNTcXc8HG1KKZoWI8uQP1DMflJkXrSLSPUJTWfsnIybMZO4mp+3Kbtt9HX1UUE/fcyPB+BwGD/6qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWXWfkh3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FAC3C4CEC3;
+	Thu,  5 Sep 2024 16:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725553689;
-	bh=FP+BVfo2UMegtFvHwfZox0H5CnqyUyzvhJUx4qmnh4w=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=BQn21NAwWjjAejx+Ho0HTAOzzCm1oJKRQUAnQQdKi3JGcMENg9epzJUnWBR0Ojav6
-	 XFdnvzPrUMO1GfOCutI6pEOZKFK99F+FYwcgmfGQbGSQ9xUuyCYToixFR77cv/Ak2L
-	 l1jPWfeZDTcyLX1s1Y4Lllv2MKwUdqukMNCQAQ1IVxgSRAfL698Q+C9LD4LJuH/PMB
-	 BUBgwRUW/P5Z+LA7V4po1Kr+3M5HespZ7oKbj1FXJtgODjmfpmHxpRaPBAg5ykZ3ba
-	 Q/LC8xPB5pLDlha4dj3uTnLSQECtlIplHIJViCs036tuohh4hZDPJhlOo6w4vaFFOV
-	 ilUr/iadk8ouw==
-Date: Thu, 05 Sep 2024 11:28:08 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1725553817;
+	bh=aGSV/IXaaRkWTZNeNSyIH1EiufpI+oKBGif8O/p8MsY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lWXWfkh3G/3E+N6xEFslPdSMmp+lUljGl1KnaypN/IJSpRPAi1Ylya2UCyKL8aU6f
+	 vlPQ4X+AazAVKVq04b4niVglm0ysJzLVxTAf/wN+dVpHE4+c+X9DehWgee0EROcOpA
+	 XHg7W08fuJXxk59DvmAdye7CnSEotb71HJqFLeKGWY8PviJd9onPNnQRp1lmZidPc9
+	 8RrM6C/34Cdw5jYDte7DbqH/F/qCRs99xTTNG8eC5firjA5jrSe/j0d6mnsl166dYt
+	 QNu/5+18tJFlpZFft03SRRFhgbv5nt16s8RP5Nt3efvT0QXyoXdYBVuvGCC6i4UywT
+	 z12YOxANQ1vMw==
+From: Mario Limonciello <superm1@kernel.org>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-acpi@vger.kernel.org (open list:ACPI),
+	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v3 00/11] Adjustments for preferred core detection
+Date: Thu,  5 Sep 2024 11:29:56 -0500
+Message-ID: <20240905163007.1350840-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-5-87d669674c00@baylibre.com>
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
- <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-5-87d669674c00@baylibre.com>
-Message-Id: <172555368662.2001148.18336732787459313920.robh@kernel.org>
-Subject: Re: [PATCH v2 5/9] dt-bindings: iio: dac: add ad3552r axi-dac
- compatible
+Content-Transfer-Encoding: 8bit
 
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-On Thu, 05 Sep 2024 17:17:35 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Add a new compatible for the ad3552r variant of the generic DAC IP.
-> 
-> The ad3552r DAC IP variant is very similar to the generic DAC IP,
-> register map is the same, but some register fields are specific to
-> this IP, and also, a DDR QSPI bus has been included in the IP.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Preferred core detection is fragile in that any CPU that reports
+less than 255 for any core is assumed to be a preferred core design.
+This might not always be true, so it's better to check all CPUs and
+see that varying values are actually reported.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Furthermore, preferred core detection isn't used by acpi-cpufreq. So
+incorrect frequencies are used unless amd-pstate is active.
 
-yamllint warnings/errors:
+This series moves preferred core detection out of amd-pstate in a more
+robust fashion.  It also removes some tech debt of hardcoded values for
+platforms that are actually preferred core platforms.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb: axi_dac@44a70000: 'dac' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/dac/adi,axi-dac.yaml#
+This branch is based off v6.11-rc6.
 
-doc reference errors (make refcheckdocs):
+v2->v3:
+ * Pick up tags
+ * Fix LKP reported issue
+Mario Limonciello (11):
+  x86/amd: Move amd_get_highest_perf() from amd.c to cppc.c
+  ACPI: CPPC: Adjust return code for inline functions in
+    !CONFIG_ACPI_CPPC_LIB
+  x86/amd: Rename amd_get_highest_perf() to
+    amd_get_boost_ratio_numerator()
+  ACPI: CPPC: Drop check for non zero perf ratio
+  ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to warn
+  x86/amd: Move amd_get_highest_perf() out of amd-pstate
+  x86/amd: Detect preferred cores in amd_get_boost_ratio_numerator()
+  cpufreq: amd-pstate: Merge amd_pstate_highest_perf_set() into
+    amd_get_boost_ratio_numerator()
+  cpufreq: amd-pstate: Optimize amd_pstate_update_limits()
+  cpufreq: amd-pstate: Add documentation for `amd_pstate_hw_prefcore`
+  amd-pstate: Add missing documentation for
+    `amd_pstate_prefcore_ranking`
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-5-87d669674c00@baylibre.com
+ Documentation/admin-guide/pm/amd-pstate.rst |  15 +-
+ arch/x86/include/asm/processor.h            |   3 -
+ arch/x86/kernel/acpi/cppc.c                 | 172 ++++++++++++++++++--
+ arch/x86/kernel/cpu/amd.c                   |  16 --
+ drivers/cpufreq/acpi-cpufreq.c              |  12 +-
+ drivers/cpufreq/amd-pstate.c                | 128 ++++-----------
+ include/acpi/cppc_acpi.h                    |  41 +++--
+ 7 files changed, 241 insertions(+), 146 deletions(-)
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.43.0
 
 
