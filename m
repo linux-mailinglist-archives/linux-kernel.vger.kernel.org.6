@@ -1,75 +1,52 @@
-Return-Path: <linux-kernel+bounces-317443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79DA96DE36
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:29:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E866896DE2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5290A1F2779E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:29:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15079B25E6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9885719D8A3;
-	Thu,  5 Sep 2024 15:28:53 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB91419E810;
+	Thu,  5 Sep 2024 15:27:40 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1D52B9A8;
-	Thu,  5 Sep 2024 15:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18637FBAC;
+	Thu,  5 Sep 2024 15:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725550133; cv=none; b=DVSTKwzGc2jh/P3DaZj0WVlW0gSiaPOcKjJpMVZ28cCwAuR02mpzOEpeZ4Mq+DkSUgOBa8MXRxn9OkxhQ5yliyOVTEoEVbPYPtHdUGuLCuCTFJR3bNa1a+UDiENoYAFjzhtHPywdg02sC4ucHFHNhmM++dEsJP+37IigdTlCBbE=
+	t=1725550060; cv=none; b=C+kkIEtuRrL0ceeNd/FoQ7IGNStxDWdlMFQmzw1T1hg65OYn98x2A3I+UsLc/2AwnTtOxfKteDGBjpa9/ywmsERdxQTbtmjz+zzWCJX5YLvmapTxsX3WVuuHd9FNDvowX/UAlxki/xdxgcm4ZJi8pwv/uBDKV+V6PRbIshVozpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725550133; c=relaxed/simple;
-	bh=uUuQL1v3UN0ZZ+C8tX9Tg+KiKIRSZLZMGkRyO//juw4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tKbg3ZVJ7T+JPa4GqAy1MTYD8FEWghKs3nlUnqOSNsC8IodzDUDzA56p+k5u43dVkj3EJb/5zeEs0uSRBEzRaBHbl5kTI/OzCJ9dnFJpg2z+h6oIS83A+tyaC6VEqCuPZxmU3q9qGy9M5ALxP09uy/hVpiBEFHum94hWTuRtuuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X02gP6vcBz9v7Jg;
-	Thu,  5 Sep 2024 23:03:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 373481404F6;
-	Thu,  5 Sep 2024 23:28:47 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBXBschztlmKVFVAA--.16538S2;
-	Thu, 05 Sep 2024 16:28:46 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	wufan@linux.microsoft.com,
-	pbrobinson@gmail.com,
-	zbyszek@in.waw.pl,
-	hch@lst.de,
-	mjg59@srcf.ucam.org,
-	pmatilai@redhat.com,
-	jannh@google.com,
-	dhowells@redhat.com,
-	jikos@kernel.org,
-	mkoutny@suse.com,
-	ppavlu@suse.com,
-	petr.vorel@gmail.com,
-	mzerqung@0pointer.de,
-	kgold@linux.ibm.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH v3 10/10] ima: Use digest caches for appraisal
-Date: Thu,  5 Sep 2024 17:25:12 +0200
-Message-Id: <20240905152512.3781098-11-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
-References: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1725550060; c=relaxed/simple;
+	bh=Ev/v1tmtEmcgft9I/mZSDFgz3zzn6joI4rVzVipKP/U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pk4ez8rn3hV5w/CpG+5OLW+aZAstzXB3u8PU7AFR86LS2C+yg6ypJpfSIuhIKHMi+E0++Tioe+kA3/LPMDNaJteYlrQejYHSPkrS4X+8YIhjYvuxBcuM6igaORJMQ9fqq5UN5fu/Hd2sPwWAUK3xuJ/UBhMKmYPP97IL/3g5d6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X038g0pdxzpVQQ;
+	Thu,  5 Sep 2024 23:25:39 +0800 (CST)
+Received: from kwepemm600003.china.huawei.com (unknown [7.193.23.202])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8BA6A1800FE;
+	Thu,  5 Sep 2024 23:27:33 +0800 (CST)
+Received: from huawei.com (10.175.124.71) by kwepemm600003.china.huawei.com
+ (7.193.23.202) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 5 Sep
+ 2024 23:27:32 +0800
+From: Nanyong Sun <sunnanyong@huawei.com>
+To: <akpm@linux-foundation.org>, <mhiramat@kernel.org>, <oleg@redhat.com>,
+	<peterz@infradead.org>
+CC: <wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
+Subject: [PATCH] mm: move mm flags to mm_types.h
+Date: Thu, 5 Sep 2024 23:26:22 +0800
+Message-ID: <20240905152622.1205046-1-sunnanyong@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,161 +54,356 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwBXBschztlmKVFVAA--.16538S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XFWkZrW5Ar47Zr45tr1UJrb_yoW7WF4xpa
-	9IgF1UKry8WFWI9FZxCa9rCa1Sk3y0gFWUWws8X3429FnxXr109ryrtw12vF15Wr1Utrs7
-	twsFgr1UAa1rt3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7
-	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x02
-	62kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s
-	026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_
-	GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20x
-	vEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
-	aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_GcCE3sUvcSsGvfC2KfnxnUUI43
-	ZEXa7IU0uMKtUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGbZE-oLMwAAs5
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600003.china.huawei.com (7.193.23.202)
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+The types of mm flags are now far beyond the core dump related features.
+This patch moves mm flags from linux/sched/coredump.h to linux/mm_types.h.
+The linux/sched/coredump.h has include the mm_types.h, so the C files
+related to coredump does not need to change head file inclusion.
+In addition, the inclusion of sched/coredump.h now can be deleted from
+the C files that irrelevant to core dump.
 
-Similarly to measurement, enable the new appraisal style too using digest
-caches.
-
-It allows files to be verified by only checking the signature of the
-package they belong to (as opposed to checking individual file signatures),
-and by doing a digest lookup in the digest cache.
-
-The first benefit is that packages are already signed (e.g. RPM package
-headers) and also contain file digests, so it is not necessary to further
-add signatures for each file.
-
-The second benefit is performance, which improves due to verifying less
-signatures (computationally expensive).
-
-Appraisal with a digest cache is successful only if the allowed usage
-(AND of policy usage and verified usage) has the
-IMA_DIGEST_CACHE_APPRAISE_DATA bit set, and if EVM is disabled or the file
-does not have any protected xattr
-
-The digest cache appraisal method is tried first, for performance reasons.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Nanyong Sun <sunnanyong@huawei.com>
 ---
- security/integrity/ima/ima.h          |  6 ++++--
- security/integrity/ima/ima_appraise.c | 31 +++++++++++++++++++++------
- security/integrity/ima/ima_main.c     |  4 +++-
- 3 files changed, 31 insertions(+), 10 deletions(-)
+ include/linux/huge_mm.h        |  1 -
+ include/linux/khugepaged.h     |  2 -
+ include/linux/ksm.h            |  1 -
+ include/linux/mm_types.h       | 81 +++++++++++++++++++++++++++++++++
+ include/linux/oom.h            |  1 -
+ include/linux/sched/coredump.h | 82 ----------------------------------
+ kernel/events/uprobes.c        |  1 -
+ kernel/fork.c                  |  1 -
+ mm/huge_memory.c               |  1 -
+ mm/khugepaged.c                |  1 -
+ mm/ksm.c                       |  1 -
+ mm/memory.c                    |  1 -
+ mm/oom_kill.c                  |  1 -
+ 13 files changed, 81 insertions(+), 94 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index c915339dd0d4..8f74783e6174 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -440,7 +440,8 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig);
-+			     int xattr_len, const struct modsig *modsig,
-+			     u64 allowed_usage);
- int ima_must_appraise(struct mnt_idmap *idmap, struct inode *inode,
- 		      int mask, enum ima_hooks func);
- void ima_update_xattr(struct ima_iint_cache *iint, struct file *file);
-@@ -465,7 +466,8 @@ static inline int ima_appraise_measurement(enum ima_hooks func,
- 					   const unsigned char *filename,
- 					   struct evm_ima_xattr_data *xattr_value,
- 					   int xattr_len,
--					   const struct modsig *modsig)
-+					   const struct modsig *modsig,
-+					   u64 allowed_usage)
- {
- 	return INTEGRITY_UNKNOWN;
- }
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index d479cf58d859..d4745d90ae23 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -480,7 +480,8 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig)
-+			     int xattr_len, const struct modsig *modsig,
-+			     u64 allowed_usage)
- {
- 	static const char op[] = "appraise_data";
- 	const char *cause = "unknown";
-@@ -489,13 +490,20 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	enum integrity_status status = INTEGRITY_UNKNOWN;
- 	int rc = xattr_len;
- 	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
-+	bool cache_pass = (allowed_usage & IMA_DIGEST_CACHE_APPRAISE_DATA);
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index e25d9ebfdf89..322ac8606840 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -2,7 +2,6 @@
+ #ifndef _LINUX_HUGE_MM_H
+ #define _LINUX_HUGE_MM_H
  
--	/* If not appraising a modsig, we need an xattr. */
--	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
-+	/*
-+	 * If not appraising a modsig/there is no digest cache match, we need
-+	 * an xattr.
-+	 */
-+	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig && !cache_pass)
- 		return INTEGRITY_UNKNOWN;
+-#include <linux/sched/coredump.h>
+ #include <linux/mm_types.h>
  
--	/* If reading the xattr failed and there's no modsig, error out. */
--	if (rc <= 0 && !try_modsig) {
-+	/*
-+	 * If reading the xattr failed and there's no modsig/digest cache match,
-+	 * error out.
-+	 */
-+	if (rc <= 0 && !try_modsig && !cache_pass) {
- 		if (rc && rc != -ENODATA)
- 			goto out;
+ #include <linux/fs.h> /* only for vma_is_dax() */
+diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
+index f68865e19b0b..70c9ad255fbd 100644
+--- a/include/linux/khugepaged.h
++++ b/include/linux/khugepaged.h
+@@ -2,8 +2,6 @@
+ #ifndef _LINUX_KHUGEPAGED_H
+ #define _LINUX_KHUGEPAGED_H
  
-@@ -526,8 +534,11 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	case INTEGRITY_UNKNOWN:
- 		break;
- 	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
--		/* It's fine not to have xattrs when using a modsig. */
--		if (try_modsig)
-+		/*
-+		 * It's fine not to have xattrs when using a modsig or there
-+		 * is a digest cache match.
-+		 */
-+		if (try_modsig || cache_pass)
- 			break;
- 		fallthrough;
- 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
-@@ -544,6 +555,12 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
- 	}
+-#include <linux/sched/coredump.h> /* MMF_VM_HUGEPAGE */
+-
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ extern struct attribute_group khugepaged_attr_group;
  
-+	if (cache_pass) {
-+		status = INTEGRITY_PASS;
-+		rc = 0;
-+		goto out;
-+	}
+diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+index 11690dacd986..d4675416f0c2 100644
+--- a/include/linux/ksm.h
++++ b/include/linux/ksm.h
+@@ -13,7 +13,6 @@
+ #include <linux/pagemap.h>
+ #include <linux/rmap.h>
+ #include <linux/sched.h>
+-#include <linux/sched/coredump.h>
+ 
+ #ifdef CONFIG_KSM
+ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 485424979254..d5f7dc917604 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1485,4 +1485,85 @@ enum {
+ 	/* See also internal only FOLL flags in mm/internal.h */
+ };
+ 
++/* mm flags */
 +
- 	if (xattr_value)
- 		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
- 				  &cause);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 3b34bfa5c891..aa2f117ae0ba 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -399,7 +399,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 			inode_lock(inode);
- 			rc = ima_appraise_measurement(func, iint, file,
- 						      pathname, xattr_value,
--						      xattr_len, modsig);
-+						      xattr_len, modsig,
-+						      (policy_usage &
-+						       verified_usage));
- 			inode_unlock(inode);
- 		}
- 		if (!rc)
++/* for SUID_DUMP_* above */
++#define MMF_DUMPABLE_BITS 2
++#define MMF_DUMPABLE_MASK ((1 << MMF_DUMPABLE_BITS) - 1)
++/* coredump filter bits */
++#define MMF_DUMP_ANON_PRIVATE	2
++#define MMF_DUMP_ANON_SHARED	3
++#define MMF_DUMP_MAPPED_PRIVATE	4
++#define MMF_DUMP_MAPPED_SHARED	5
++#define MMF_DUMP_ELF_HEADERS	6
++#define MMF_DUMP_HUGETLB_PRIVATE 7
++#define MMF_DUMP_HUGETLB_SHARED  8
++#define MMF_DUMP_DAX_PRIVATE	9
++#define MMF_DUMP_DAX_SHARED	10
++
++#define MMF_DUMP_FILTER_SHIFT	MMF_DUMPABLE_BITS
++#define MMF_DUMP_FILTER_BITS	9
++#define MMF_DUMP_FILTER_MASK \
++	(((1 << MMF_DUMP_FILTER_BITS) - 1) << MMF_DUMP_FILTER_SHIFT)
++#define MMF_DUMP_FILTER_DEFAULT \
++	((1 << MMF_DUMP_ANON_PRIVATE) |	(1 << MMF_DUMP_ANON_SHARED) |\
++	 (1 << MMF_DUMP_HUGETLB_PRIVATE) | MMF_DUMP_MASK_DEFAULT_ELF)
++
++#ifdef CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS
++# define MMF_DUMP_MASK_DEFAULT_ELF	(1 << MMF_DUMP_ELF_HEADERS)
++#else
++# define MMF_DUMP_MASK_DEFAULT_ELF	0
++#endif
++					/* leave room for more dump flags */
++#define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
++#define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
++
++/*
++ * This one-shot flag is dropped due to necessity of changing exe once again
++ * on NFS restore
++ */
++//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
++
++#define MMF_HAS_UPROBES		19	/* has uprobes */
++#define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
++#define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
++#define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
++#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
++#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
++#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
++#define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
++#define MMF_MULTIPROCESS	26	/* mm is shared between processes */
++/*
++ * MMF_HAS_PINNED: Whether this mm has pinned any pages.  This can be either
++ * replaced in the future by mm.pinned_vm when it becomes stable, or grow into
++ * a counter on its own. We're aggresive on this bit for now: even if the
++ * pinned pages were unpinned later on, we'll still keep this bit set for the
++ * lifecycle of this mm, just for simplicity.
++ */
++#define MMF_HAS_PINNED		27	/* FOLL_PIN has run, never cleared */
++
++#define MMF_HAS_MDWE		28
++#define MMF_HAS_MDWE_MASK	(1 << MMF_HAS_MDWE)
++
++
++#define MMF_HAS_MDWE_NO_INHERIT	29
++
++#define MMF_VM_MERGE_ANY	30
++#define MMF_VM_MERGE_ANY_MASK	(1 << MMF_VM_MERGE_ANY)
++
++#define MMF_TOPDOWN		31	/* mm searches top down by default */
++#define MMF_TOPDOWN_MASK	(1 << MMF_TOPDOWN)
++
++#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
++				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
++				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
++
++static inline unsigned long mmf_init_flags(unsigned long flags)
++{
++	if (flags & (1UL << MMF_HAS_MDWE_NO_INHERIT))
++		flags &= ~((1UL << MMF_HAS_MDWE) |
++			   (1UL << MMF_HAS_MDWE_NO_INHERIT));
++	return flags & MMF_INIT_MASK;
++}
++
+ #endif /* _LINUX_MM_TYPES_H */
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 7d0c9c48a0c5..1e0fc6931ce9 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -7,7 +7,6 @@
+ #include <linux/types.h>
+ #include <linux/nodemask.h>
+ #include <uapi/linux/oom.h>
+-#include <linux/sched/coredump.h> /* MMF_* */
+ #include <linux/mm.h> /* VM_FAULT* */
+ 
+ struct zonelist;
+diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
+index e62ff805cfc9..6eb65ceed213 100644
+--- a/include/linux/sched/coredump.h
++++ b/include/linux/sched/coredump.h
+@@ -8,12 +8,6 @@
+ #define SUID_DUMP_USER		1	/* Dump as user of process */
+ #define SUID_DUMP_ROOT		2	/* Dump as root */
+ 
+-/* mm flags */
+-
+-/* for SUID_DUMP_* above */
+-#define MMF_DUMPABLE_BITS 2
+-#define MMF_DUMPABLE_MASK ((1 << MMF_DUMPABLE_BITS) - 1)
+-
+ extern void set_dumpable(struct mm_struct *mm, int value);
+ /*
+  * This returns the actual value of the suid_dumpable flag. For things
+@@ -31,80 +25,4 @@ static inline int get_dumpable(struct mm_struct *mm)
+ 	return __get_dumpable(mm->flags);
+ }
+ 
+-/* coredump filter bits */
+-#define MMF_DUMP_ANON_PRIVATE	2
+-#define MMF_DUMP_ANON_SHARED	3
+-#define MMF_DUMP_MAPPED_PRIVATE	4
+-#define MMF_DUMP_MAPPED_SHARED	5
+-#define MMF_DUMP_ELF_HEADERS	6
+-#define MMF_DUMP_HUGETLB_PRIVATE 7
+-#define MMF_DUMP_HUGETLB_SHARED  8
+-#define MMF_DUMP_DAX_PRIVATE	9
+-#define MMF_DUMP_DAX_SHARED	10
+-
+-#define MMF_DUMP_FILTER_SHIFT	MMF_DUMPABLE_BITS
+-#define MMF_DUMP_FILTER_BITS	9
+-#define MMF_DUMP_FILTER_MASK \
+-	(((1 << MMF_DUMP_FILTER_BITS) - 1) << MMF_DUMP_FILTER_SHIFT)
+-#define MMF_DUMP_FILTER_DEFAULT \
+-	((1 << MMF_DUMP_ANON_PRIVATE) |	(1 << MMF_DUMP_ANON_SHARED) |\
+-	 (1 << MMF_DUMP_HUGETLB_PRIVATE) | MMF_DUMP_MASK_DEFAULT_ELF)
+-
+-#ifdef CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS
+-# define MMF_DUMP_MASK_DEFAULT_ELF	(1 << MMF_DUMP_ELF_HEADERS)
+-#else
+-# define MMF_DUMP_MASK_DEFAULT_ELF	0
+-#endif
+-					/* leave room for more dump flags */
+-#define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
+-#define MMF_VM_HUGEPAGE		17	/* set when mm is available for
+-					   khugepaged */
+-/*
+- * This one-shot flag is dropped due to necessity of changing exe once again
+- * on NFS restore
+- */
+-//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
+-
+-#define MMF_HAS_UPROBES		19	/* has uprobes */
+-#define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
+-#define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
+-#define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
+-#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
+-#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+-#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+-#define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
+-#define MMF_MULTIPROCESS	26	/* mm is shared between processes */
+-/*
+- * MMF_HAS_PINNED: Whether this mm has pinned any pages.  This can be either
+- * replaced in the future by mm.pinned_vm when it becomes stable, or grow into
+- * a counter on its own. We're aggresive on this bit for now: even if the
+- * pinned pages were unpinned later on, we'll still keep this bit set for the
+- * lifecycle of this mm, just for simplicity.
+- */
+-#define MMF_HAS_PINNED		27	/* FOLL_PIN has run, never cleared */
+-
+-#define MMF_HAS_MDWE		28
+-#define MMF_HAS_MDWE_MASK	(1 << MMF_HAS_MDWE)
+-
+-
+-#define MMF_HAS_MDWE_NO_INHERIT	29
+-
+-#define MMF_VM_MERGE_ANY	30
+-#define MMF_VM_MERGE_ANY_MASK	(1 << MMF_VM_MERGE_ANY)
+-
+-#define MMF_TOPDOWN		31	/* mm searches top down by default */
+-#define MMF_TOPDOWN_MASK	(1 << MMF_TOPDOWN)
+-
+-#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+-				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
+-				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
+-
+-static inline unsigned long mmf_init_flags(unsigned long flags)
+-{
+-	if (flags & (1UL << MMF_HAS_MDWE_NO_INHERIT))
+-		flags &= ~((1UL << MMF_HAS_MDWE) |
+-			   (1UL << MMF_HAS_MDWE_NO_INHERIT));
+-	return flags & MMF_INIT_MASK;
+-}
+-
+ #endif /* _LINUX_SCHED_COREDUMP_H */
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 73cc47708679..5954afce3836 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -15,7 +15,6 @@
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/export.h>
+ #include <linux/rmap.h>		/* anon_vma_prepare */
+ #include <linux/mmu_notifier.h>
+diff --git a/kernel/fork.c b/kernel/fork.c
+index cc760491f201..cf8ccfc9367c 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -16,7 +16,6 @@
+ #include <linux/slab.h>
+ #include <linux/sched/autogroup.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/sched/user.h>
+ #include <linux/sched/numa_balancing.h>
+ #include <linux/sched/stat.h>
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c5349c2a8275..68af4357fb18 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -8,7 +8,6 @@
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/sched/numa_balancing.h>
+ #include <linux/highmem.h>
+ #include <linux/hugetlb.h>
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index cdd1d8655a76..c5dd495fe6d4 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -4,7 +4,6 @@
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/rmap.h>
+ #include <linux/swap.h>
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 14d9e53b1ec2..f008d417f975 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -20,7 +20,6 @@
+ #include <linux/mman.h>
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/sched/cputime.h>
+ #include <linux/rwsem.h>
+ #include <linux/pagemap.h>
+diff --git a/mm/memory.c b/mm/memory.c
+index 3c01d68065be..5691de41c03d 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -44,7 +44,6 @@
+ #include <linux/mm.h>
+ #include <linux/mm_inline.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/sched/numa_balancing.h>
+ #include <linux/sched/task.h>
+ #include <linux/hugetlb.h>
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 4d7a0004df2c..1c485beb0b93 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -24,7 +24,6 @@
+ #include <linux/gfp.h>
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
+-#include <linux/sched/coredump.h>
+ #include <linux/sched/task.h>
+ #include <linux/sched/debug.h>
+ #include <linux/swap.h>
 -- 
-2.34.1
+2.33.0
 
 
