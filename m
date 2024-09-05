@@ -1,161 +1,84 @@
-Return-Path: <linux-kernel+bounces-316236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4B396CCE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:04:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CD996CCEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44161F25977
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE18285A36
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53038145B27;
-	Thu,  5 Sep 2024 03:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RmrAbVvA"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254B41448C7;
-	Thu,  5 Sep 2024 03:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FB813D2BB;
+	Thu,  5 Sep 2024 03:05:15 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED3F25634;
+	Thu,  5 Sep 2024 03:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505459; cv=none; b=cdN8qM3iaEz9vwLxdqMl8xEfbhsHR59cL4vle2KfYFU7ffZfNEEfFCMkyo8KYms7V8xWnlkDK56aXc7B6GK8f0jXrtA7k2bfuTDC0rR3nzJD6VtxaTAASvjPY0adA8172KVHuLqkRH1t2nPe2K7ypvDmOOElHGrouHicTgObEV0=
+	t=1725505515; cv=none; b=SVdTEjvJ+ElXkA1pvz/nD9Q2oPtGRGBWy3mtLE7NO15rbp86kFV17TZ9h0PP5rw4mr3p41N8vlvldIhD+Ehq2NKU6+x9uXlHI+wMrUbIjVlw2s3BA7n3QvF9J3OK5DvNJdVGjrliQfmVPnxgWhkMpJmBLC4Tfn2aqpO6xKaXqZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725505459; c=relaxed/simple;
-	bh=7GdYfRNzrCCZuilokKtXRCmGGQXdXKTLbn56/sVnFFo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CZ3AbOqoGAsAL28OdO6bb3yIJmn7fhxVyOrqQ85byqDCiNB0YHdbosFsyTerYDFaxfvchavtHcPhmgXmbeCvKA0jYvINXUBc0RhbL4pLbE4gDiYoaPtVmzsRagGwU4O8fCuSBE794T9GK+aow5seOgkeSulcfNRm/HDhu0PUR0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RmrAbVvA; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725505449; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
-	bh=GDVRuhXoCkztJWuUnUtFfnUSjUnxHDl6SdZdNPHpDvI=;
-	b=RmrAbVvAsKRpX3PwvsUZ09TXaKrc7esqwkpG3puATjoSAeYWRUMbQ1YKEFyWRdr29yNuVgnVceKKJfiNRZoqQh75pt7VlNoD1U/cs9nIR3NHEtk41DwoPIq6bijkeeYGhIHV4YFoEqKMSx5b68JoYOZ/2XllsmqQypUrPUkd0LQ=
-Received: from 30.246.162.144(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WEJd.uX_1725505445)
-          by smtp.aliyun-inc.com;
-          Thu, 05 Sep 2024 11:04:07 +0800
-Message-ID: <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
-Date: Thu, 5 Sep 2024 11:04:04 +0800
+	s=arc-20240116; t=1725505515; c=relaxed/simple;
+	bh=5/0dQs5nHT7aU+wiTJCNmQZy8BlOE3HVXAvpG+REYsU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sxWK2NQAddSMFe/wcJ67NrPQhEbmAJ0rz8MdZKfC341yYFm4RcjP3V1S1HS/b1dOnSRrik7uLFbCMXKMD/3/VpHu2vCsIzOhhkHEfgANpae4FIpoSBt4+eAyhqF8cqmQL3CEBTtYQfOcGzu4wiC2zbIbpkdajuZBxLC1pgNdG9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: HjVoPGokRDi945fTJbKpIw==
+X-CSE-MsgGUID: BAX83Nz6QKyZQJ4nF74JCQ==
+X-IronPort-AV: E=Sophos;i="6.10,203,1719849600"; 
+   d="scan'208";a="121174424"
+From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
+To: Bart Van Assche <bvanassche@acm.org>, "axboe@kernel.dk" <axboe@kernel.dk>
+CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?5pa557+U?= <fangxiang@xiaomi.com>, =?utf-8?B?546L6L6J?=
+	<wanghui33@xiaomi.com>
+Subject: Re: [External Mail]Re: [PATCH v3] block: move non sync requests
+ complete flow to softirq
+Thread-Topic: [External Mail]Re: [PATCH v3] block: move non sync requests
+ complete flow to softirq
+Thread-Index: AQHa/fgOh/cV01vbcESyzBPikRppQrJFy1gAgACpkoCAAOcQgIAAos8A
+Date: Thu, 5 Sep 2024 03:05:09 +0000
+Message-ID: <3ef65dbf-6a75-45f5-b9e4-af2d6603c581@xiaomi.com>
+References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
+ <769fb0e4-6f55-4a2d-a0f2-e8836b790617@acm.org>
+ <f669709a-b8e6-4c76-a75c-f3e7828e09f2@xiaomi.com>
+ <a2cb0302-b333-4cea-aaea-4a7bae7024a9@acm.org>
+In-Reply-To: <a2cb0302-b333-4cea-aaea-4a7bae7024a9@acm.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1B412BFE939FE74DB44A197FA52D31FA@xiaomi.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-To: Jarkko Sakkinen <jarkko@kernel.org>, bp@alien8.de, rafael@kernel.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
- james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
- will@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240902030034.67152-2-xueshuai@linux.alibaba.com>
- <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
-In-Reply-To: <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-
-
-在 2024/9/4 00:09, Jarkko Sakkinen 写道:
-> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
->> Synchronous error was detected as a result of user-space process accessing
->> a 2-bit uncorrected error. The CPU will take a synchronous error exception
->> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
->> memory_failure() work which poisons the related page, unmaps the page, and
->> then sends a SIGBUS to the process, so that a system wide panic can be
->> avoided.
->>
->> However, no memory_failure() work will be queued unless all bellow
->> preconditions check passed:
->>
->> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
->> - `if (flags == -1)` in ghes_handle_memory_failure()
->> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
->> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
->>
->> In such case, the user-space process will trigger SEA again.  This loop
->> can potentially exceed the platform firmware threshold or even trigger a
->> kernel hard lockup, leading to a system reboot.
->>
->> Fix it by performing a force kill if no memory_failure() work is queued
->> for synchronous errors.
->>
->> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->>
->> ---
->>   drivers/acpi/apei/ghes.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->> index 623cc0cb4a65..b0b20ee533d9 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
->>   		}
->>   	}
->>   
->> +	/*
->> +	 * If no memory failure work is queued for abnormal synchronous
->> +	 * errors, do a force kill.
->> +	 */
->> +	if (sync && !queued) {
->> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption\n",
->> +			current->comm, task_pid_nr(current));
-> 
-> Hmm... doest this need "hardware" or would "memory corruption" be
-> enough?
-> 
-> Also, does this need to say that it is sending SIGBUS when the signal
-> itself tells that already?
-> 
-> I.e. could "%s:%d has memory corruption" be enough information?
-
-Hi, Jarkko,
-
-Thank you for your suggestion. Maybe it could.
-
-There are some similar error info which use "hardware memory error", e.g.
-
-	static void kill_me_maybe(struct callback_head *cb)
-	{
-		pr_err("Uncorrected hardware memory error in user-access at %llx", 
-p->mce_addr);
-		...
-		pr_err("Memory error not recovered");
-		kill_me_now(cb);
-	}
-	
-	static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
-	{
-		pr_err("%#lx: Sending SIGBUS to %s:%d due to hardware memory 
-corruption\n",
-				pfn, t->comm, task_pid_nr(t));
-		...
-			ret = force_sig_mceerr(BUS_MCEERR_AR,
-					 (void __user *)tk->addr, addr_lsb);
-	
-	}	
-
-So, personally, I prefer this info to be consistent with them.
-
-
-Best Regards,
-Shuai
+T24gMjAyNC85LzUgMToyMiwgQmFydCBWYW4gQXNzY2hlwqB3cm90ZToNCj4gT24gOS8zLzI0IDg6
+MzUgUE0sIOeroOi+iSB3cm90ZToNCj4+IERvZXMgc2V0IHJxX2FmZmluaXR5IHRvIDIgbWVhbiBR
+VUVVRV9GTEFHX1NBTUVfQ09NUD8NCj4NCj4gRnJvbSBibG9jay9ibGstc3lzZnMuYzoNCj4NCj4g
+wqDCoMKgwqDCoMKgIGlmICh2YWwgPT0gMikgew0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGJsa19xdWV1ZV9mbGFnX3NldChRVUVVRV9GTEFHX1NBTUVfQ09NUCwgcSk7DQo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYmxrX3F1ZXVlX2ZsYWdfc2V0KFFVRVVFX0ZMQUdfU0FN
+RV9GT1JDRSwgcSk7DQo+IMKgwqDCoMKgwqDCoCB9DQo+DQo+PiBUaGlzIHNlZW1zIHRvIGRldGVy
+bWluZSBvbiB3aGljaCBjb3JlIHRoZSBjdXJyZW50IHJlcXVlc3QgaXMNCj4+IGNvbXBsZXRlZCwg
+cmF0aGVyIHRoYW4gaW4gdGhlIGludGVycnVwdCB0b3Agb3IgYm90dG9tIGhhbGY/DQo+DQo+IFRo
+YXQncyBjb3JyZWN0LiBJIHN1Z2dlc3RlZCB0aGlzIGJlY2F1c2UgSSB3YXMgd29uZGVyaW5nIHdo
+ZXRoZXINCj4gc3ByZWFkaW5nIHRoZSBJL08gY29tcGxldGlvbiB3b3JrbG9hZCBvdmVyIG1vcmUg
+Q1BVIGNvcmVzIHdvdWxkIGhlbHA/DQo+DQo+IFRoYW5rcywNCj4NCj4gQmFydC4NCj4NCmhpIEJh
+cnQsDQoNCkluY3JlYXNpbmcgdGhlIENQVSBmcmVxdWVuY3kgb3IgZGlyZWN0bHkgYmluZGluZyB0
+aGUgaW50ZXJydXB0IHRvIHRoZQ0KYmlnIGNvcmUgcHJvY2Vzc2luZyB3aWxsIGRlZmluaXRlbHkg
+aGVscCB0aGUgZW5kIGlvIHByb2Nlc3NpbmcgZGVsYXksDQpkZXBlbmRpbmcgb24gdGhlIHN5c3Rl
+bSdzIHJlcXVpcmVtZW50cyBmb3IgSU8gcmVzcG9uc2UgZGVsYXkuDQoNCkJ1dCBpdCBkb2VzIG5v
+dCBzZWVtIHRvIGNvbmZsaWN0IHdpdGggdGhpcyBtb2RpZmljYXRpb24gdG8gcHV0IHRoZQ0KdGlt
+ZS1jb25zdW1pbmcgb3BlcmF0aW9uIGluIHRoZSBsb3dlciBoYWxmLg0KDQoNClRoYW5rcw0KWmhh
+bmcNCg0KDQoNCg==
 
