@@ -1,56 +1,106 @@
-Return-Path: <linux-kernel+bounces-317561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F249096DFFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:41:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3DF96E017
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D5F1F25C1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:41:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73CE1C24123
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316FD19DF70;
-	Thu,  5 Sep 2024 16:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141891A072D;
+	Thu,  5 Sep 2024 16:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8+E1uIb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZgZpHhGV"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B021487FF
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545F91A00F0
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725554503; cv=none; b=Jk6KMqPpPoiHwlWXExrsM8zCLr9KqR4pBAxiFZeL/82Pg2zYSQdPVGIMdreix079zj9ICTL4Dwdd+zuUPWhiEuFX1n8dwpTC9xvMLf4Qh9D6mjc3tVaHeNjlJk810LxrFtsZk0ke9jnDXw5gDT8353zN9V78X2dbasKW8ZtPrdw=
+	t=1725554612; cv=none; b=OhzcfM0XRu2kMLPLlYu++aDQGzNM7kSL5subJSRUjywKbEXmLAle5bBFTqiIBfgR7d4BaZ6SO4aLtmcBYIlwXCZJvj2MDOfNxORoP4gTHR1Y/QSIBfgm3pa37PLci5lgPOvclLG1iGHt8ZhPNsc72+1mRQvdhuQvvPo2QcmVvVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725554503; c=relaxed/simple;
-	bh=/KXlBn2PgyXloXiU1K5ZuRezydyuPnJXDLoq/nHtOv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a3zU8wotLEdwAvfqPRcGqwLyvyT6loz8ViVZ5uTU733FlPnUxa6Y6/PF8mefIJv0x+2To00JN9vFVzpZqYTZEb7A8gbXU7UTlfydVuUgGPa3faRTIUVvo0/1RtVJi8t0Wduev50e0I1uO/0s7nie4RY7V0tcLKS15flF3v3ytkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8+E1uIb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E48CC4CEC7;
-	Thu,  5 Sep 2024 16:41:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725554503;
-	bh=/KXlBn2PgyXloXiU1K5ZuRezydyuPnJXDLoq/nHtOv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T8+E1uIbXZtryYrzhwB7R7SLrwZNxx7RmWAZIb5WwGjFAlVmfAMYv+L8HNObGbuDZ
-	 jqXiNgYFzM6P1dlMFKwhVsro/b0wd6aiaN9TJmIY7vjFH5H4RAG8TfIrxGVU6k4GJy
-	 piMSO+lrMv4GhJOS4sFyHxXYKRnKF5nqt8Ok4onMEna0vBCHqhOBQXdbjcNHeonwUk
-	 fQW0tDIcj7r2Tuxec1OE0pxtjtHUbGr1bOAE87k7GhIOFaV07YP2DxEGWycGHxEzFY
-	 8sxms0afhAU3RdDEVdOS2nRuGMw7AEMabsNs0WMPufSmwfUqCafirMXbFtXVjGcShl
-	 8XbWJXvCiXuCg==
-Date: Thu, 5 Sep 2024 06:41:42 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Handle cases where
- pick_task_scx() is called without preceding balance_scx()
-Message-ID: <ZtnfRnmo-EpWKcyC@slm.duckdns.org>
-References: <Ztj_h5c2LYsdXYbA@slm.duckdns.org>
- <20240905092858.GA15400@noisy.programming.kicks-ass.net>
- <20240905150012.GF4928@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1725554612; c=relaxed/simple;
+	bh=c7m+RNyq7iAjsBTay5Gjc6yi5+rmYBoTjqtXT+27Ecs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DasDwGkAQFOECTtv0OvHcWqTr/UcaKlNde7ML10ZP+2743T1JwTdy7DN0OT8yA4x5w488jLIzoKLkn88TckYVGiblvVIbja2pXbEIi/tsFkNIvWxZzk6wyCfIJWVvlEB9bv8YD3jNym3Q7qPFru0a7FZANc3n72FGagxhGO7blI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZgZpHhGV; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86c476f679so140789266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 09:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725554608; x=1726159408; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q9/Cl4pns2tvY2+ex2I7VzPKJmEi9tuK1Vum+Ld5DXw=;
+        b=ZgZpHhGVJh5N2A/lMrtG3RzRcBAcAkw5QwAsHDHWu1i0n4n1O0tR+otEU7nfw15lD5
+         wETq84/L8Jo1ZImayOTRnhZ5CT3UEw8mz6GSCT/w103tkpbanEkSo8/KcMfUJ2ziZMX+
+         putGeW/TVBjI3ZOjPprwPYvDMcDE5eoof1iE8eCmkAmGyqqpHcF8Uwk/XdTXHApO6+hU
+         bLEGJjkQm2gho3TQAhJlm3p9LZjNNaCoXJY7L/ipp0zsmExPosPNtabUpfSfm+TlOA39
+         VnGPzE7xpCp7dwvlBam7G+tsBC3wz+KhNvBevec9HmNfujZ0DuzRzAf42HvfPnHInwxU
+         C5dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725554608; x=1726159408;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q9/Cl4pns2tvY2+ex2I7VzPKJmEi9tuK1Vum+Ld5DXw=;
+        b=fDnOHj+YJTw0KjMXqylIQnOS8mdWlHeT/Msap0/Qw0QKkp9MnRaSMlNVQq+Ycwga5Q
+         Yjxq7lc6GPunWdINZBheFavrmwcqqymBmJaxEEGd7aYCjZwSlhpEQohEJtpX6Bu2l8oL
+         lVLnOoFYFhkpxODVGct0hlGpJva/BmOUlyZis+wNk9eKE+d2XRvRqUyd8SOvCJiqcNC7
+         032e7x7ln5xBy2mucasY0OqdcgLeH559W1g6p9Q51/rCOUNnQOlrcsPUzO69ir/QQQHA
+         Om1D+NtCIy3t5VX7yZGx+Ze+pS57SbECpKKWALpkIICjpeeg5CfIICZhylN+N9Abr/TS
+         /c+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZVFLpUtdquUkSXF1yLSOMZz/OYJp5E98dUmf81wtgwTDC4hdzQ2XQUzuk4KQ6SHCVAdtua1tMlPpyb2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNmA+2i8rbf+HsQ/LkYlhfmN7TNfmAx5NGRINKXC8YQHWF7RKn
+	Rk2iPddiMTN7pscl6dmw1e2fheZ52FN3me/MP4LYWQnV0Tc7JFVNqbdgFJjoBc8=
+X-Google-Smtp-Source: AGHT+IEz20rh2z3FuTn3FqdARHdBZA33h+CRI0+H4sggZcuGroEd9OHEiz6QTkjQzE4FTjN3pv3RUA==
+X-Received: by 2002:a17:907:dab:b0:a86:743a:a716 with SMTP id a640c23a62f3a-a89b96f8af8mr1230712666b.53.1725554607887;
+        Thu, 05 Sep 2024 09:43:27 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d0easm156239566b.102.2024.09.05.09.43.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 09:43:27 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 5 Sep 2024 18:43:35 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <Ztnft3p3tb_kP1jc@apocalypse>
+References: <Zszcps6bnCcdFa54@apocalypse>
+ <20240903222644.GA126427@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,48 +109,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905150012.GF4928@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240903222644.GA126427@bhelgaas>
 
-Hello,
+Hi Bjorn,
 
-On Thu, Sep 05, 2024 at 05:00:12PM +0200, Peter Zijlstra wrote:
-...
-> > Oh cute. Which class in particular did you see this do?
-
-The easiest repro was fair.
-
-> > Looking at balance_fair() / sched_balance_newidle() I suppose we could
-> > verify we actually have a runnable task once we've re-acquired the
-> > rq-lock and have pulled_task > 0.
-> > 
-> > 
-> > Tightening all that up would probably be better than trying to deal with
-> > the fallout like this, hmm?
-
-Oh, yeah, that would be better and we probably want to add a sanity check so
-that we know if balance() and pick_task() disagree.
-
-> Something like so. Haven't yet looked at the rt/dl classes.
+On 17:26 Tue 03 Sep     , Bjorn Helgaas wrote:
+> On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
+> > On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
+> > > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
+> > > > The of_pci_set_address() function parses devicetree PCI range
+> > > > specifier assuming the address is 'sanitized' at the origin,
+> > > > i.e. without checking whether the incoming address is 32 or 64
+> > > > bit has specified in the flags.  In this way an address with no
+> > > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
+> > > > the upper 32 bits of the address will be set too, and this
+> > > > violates the PCI specs stating that in 32 bit address the upper
+> > > > bit should be zero.
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 11e890486c1b..7db42735d504 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -12716,6 +12716,12 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
->  	if (this_rq->cfs.h_nr_running && !pulled_task)
->  		pulled_task = 1;
->  
-> +	/*
-> +	 * We pulled a task, but it got stolen before we re-acquired rq->lock.
-> +	 */
-> +	if (!this_rq->cfs.h_nr_running && pulled_task)
-> +		pulled_task = 0;
-> +
+> > > I don't understand this code, so I'm probably missing something.  It
+> > > looks like the interesting path here is:
+> > > 
+> > >   of_pci_prop_ranges
+> > >     res = &pdev->resource[...];
+> > >     for (j = 0; j < num; j++) {
+> > >       val64 = res[j].start;
+> > >       of_pci_set_address(..., val64, 0, flags, false);
+> > >  +      if (OF_PCI_ADDR_SPACE_MEM64)
+> > >  +        prop[1] = upper_32_bits(val64);
+> > >  +      else
+> > >  +        prop[1] = 0;
+> > > 
+> > > OF_PCI_ADDR_SPACE_MEM64 tells us about the size of the PCI bus
+> > > address, but the address (val64) is a CPU physical address, not a PCI
+> > > bus address, so I don't understand why of_pci_set_address() should use
+> > > OF_PCI_ADDR_SPACE_MEM64 to clear part of the CPU address.
+> > 
+> > It all starts from of_pci_prop_ranges(), that is the caller of
+> > of_pci_set_address().
+> 
+> > val64 (i.e. res[j].start) is the address part of a struct resource
+> > that has its own flags.  Those flags are directly translated to
+> > of_pci_range flags by of_pci_get_addr_flags(), so any
+> > IORESOURCE_MEM_64 / IORESOURCE_MEM in the resource flag will
+> > respectively become OF_PCI_ADDR_SPACE_MEM64 /
+> > OF_PCI_ADDR_SPACE_MEM32 in pci range.
+> 
+> > What is advertised as 32 bit at the origin (val64) should not become
+> > a 64 bit PCI address at the output of of_pci_set_address(), so the
+> > upper 32 bit portion should be dropped. 
+> 
+> > This is explicitly stated in [1] (see page 5), where a space code of 0b10
+> > implies that the upper 32 bit of the address must be zeroed out.
+> 
+> OK, I was confused and thought IORESOURCE_MEM_64 was telling us
+> something about the *CPU* address, but it's actually telling us
+> something about what *PCI bus* addresses are possible, i.e., whether
+> it's a 32-bit BAR or a 64-bit BAR.
+> 
+> However, the CPU physical address space and the PCI bus address are
+> not the same.  Generic code paths should account for that different by
+> applying an offset (the offset will be zero on many platforms where
+> CPU and PCI bus addresses *look* the same).
+> 
+> So a generic code path like of_pci_prop_ranges() that basically copies
+> a CPU physical address to a PCI bus address looks broken to me.
 
-Lemme test that.
+Hmmm, I'd say that a translation from one bus type to the other is
+going on nonetheless, and this is done in the current upstream function
+as well. This patch of course does not add the translation (which is
+already in place), just to do it avoiding generating inconsistent address.
 
-Thanks.
 
--- 
-tejun
+> 
+> Maybe my expectation of this being described in DT is mistaken.
+
+Not sure what you mean here, the address being translated are coming from
+DT, in fact they are described by "ranges" properties.
+
+Many thanks,
+Andrea
+
+> Bjorn
 
