@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-317906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4F496E54B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:51:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4E896E54D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2284A1C211DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0281F24B2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFE21AB6CE;
-	Thu,  5 Sep 2024 21:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027741B1425;
+	Thu,  5 Sep 2024 21:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5ycgSkX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bS4mkPUn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD5F19409A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 21:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5631A19409A;
+	Thu,  5 Sep 2024 21:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725573080; cv=none; b=RSAUELv3RpxWQKPEoIEVQwoz8/kKRroCzdz3iKKDDwznupAgcZHXIs14839PGcDxHwSzfbSL1Lclm/WKa4U3/YjqRTW0Csze5FslBzmyf+8qW71kuhaqnBtwUiq78bYZGg0T35+UGV6CtQqTHP6IA6x26TKm9okdyueIIU8vDkM=
+	t=1725573086; cv=none; b=CK333kZpMavmxuB9ciWFMPTaz9ESFkz1bSJXO3msk7g3V/2Jzs1tg/f+qCGUNx/Ubogt0bZEQCFfxqMSTGPDglY9+LzGcv9vev28bT9mxTAWlt1JisVUcZoHcnjSwlBCWmhzYrWsmGVXNryim6aRESaZgQ5aDB9ni+2+8z2uJAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725573080; c=relaxed/simple;
-	bh=Xjl+UI0HvZtep+WFpHKINNNzU33P0JHEaIx47J3frw8=;
+	s=arc-20240116; t=1725573086; c=relaxed/simple;
+	bh=qC/j76b+R8nl4FvGF+wfVAUMRsOLUWok+1+ITyjyOyU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E6qTzzgZbRmKCv8Nau/CbawXr8+RlCAv7aUT0RioFGjvH4qQR49TB4VTnxmPS+J6ukU9hH/+OzCP73m2YCbmH8MJDGic7d00865TRB5SoBMx2QAAinowL+qXzsTng3CZIQ4n+ZlzHYCo4QH7a6TNjSvi2A6LEooMS4haUvx9C48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5ycgSkX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D92C4CEC3;
-	Thu,  5 Sep 2024 21:51:18 +0000 (UTC)
+	 MIME-Version:Content-Type; b=t/+AW5TJ8K0Uuz2cYi3oZjAylBqBtofFO0EB/fwRU+BZe1i+CTcv+VNpZAHtcfbxugOze9bK/cjSfG8LvvSyHbyeZWJym0IlGIlafRCxGlqD9z9EPMmJtVudP/M5+l5+i40sviBngm4uY1Pj/h4XDUzWFI+6T2U+AIsvWjXzMIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bS4mkPUn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BBD1C4CEC3;
+	Thu,  5 Sep 2024 21:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725573079;
-	bh=Xjl+UI0HvZtep+WFpHKINNNzU33P0JHEaIx47J3frw8=;
+	s=k20201202; t=1725573086;
+	bh=qC/j76b+R8nl4FvGF+wfVAUMRsOLUWok+1+ITyjyOyU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=f5ycgSkXv5xCBPCopJn0QDZga2g5RP7PxDRWE291nfmAdbPgL2to1jHl8DPQIDTZ7
-	 3iFagW62LR/SR62WelQ7vVUTgqQrnBlO5JGdSH+i3W1wo5oJ29CIJi1xxACJVA6Bok
-	 Xqxr9RyX2wCSLghCtPamjxUeeKt18XnYvUSpBzdzONAqSUdpYue0PRNc7vRZ6oFqls
-	 Mbd+sgRJZwOuDjcBAVQMJLcHwY0jRFb3qNQpDLrReXgs4zWKO2CSv3NzdgR/QKap8A
-	 5sP4VUPdNRJUTZAoOQCCWbf1iEHctD/WMoCH5HeIy3mx5aeSI1QRxo+HQa1YHhmZ5D
-	 jTYeJRaX2pSUA==
+	b=bS4mkPUnFgcQZg4athcccUMGNGlA1lyJQPoF24ov48v7+RtyEhDgCCBPOmGvaswPX
+	 V4i0BM5DSP+dZWc61T+1pCoeYwbv3Y2kfGyrrsQ4FVkQJhafnAMlSbQz+Kf0ouChpH
+	 Y+mDzT7uW6aLGWsmAGQkKoRoRVq/m8ymjq5CRwGjCdaO6fD6dXTUhHIlQ/TA+RxkA0
+	 ixqWOtq+st5+z71/nfgy3Mz7mFtBWPVjiMEDeAA309qul49DjRpvcxkiQ0BT9VQ5Xf
+	 6jU9RW2WepOLrzkCIT3COoR7EnsOrxdbW5wD4s6ViS4fQgZkYSqMrzLRRPpb5+Fmy3
+	 JV19ijdjtCZ9g==
 From: Mark Brown <broonie@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <20240904190856.1221459-1-andy.shevchenko@gmail.com>
-References: <20240904190856.1221459-1-andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/1] regulator: of: Refactor of_get_*regulator() to
- decrease indentation
-Message-Id: <172557307796.131732.5317450199702474356.b4-ty@kernel.org>
-Date: Thu, 05 Sep 2024 22:51:17 +0100
+To: wahrenst@gmx.net, Frank Li <Frank.Li@nxp.com>
+Cc: carlos.song@nxp.com, festevam@gmail.com, imx@lists.linux.dev, 
+ kernel@pengutronix.de, linux-spi@vger.kernel.org, s.hauer@pengutronix.de, 
+ shawnguo@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240905154124.1901311-1-Frank.Li@nxp.com>
+References: <20240905154124.1901311-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] MAINTAINERS: SPI: Add freescale lpspi maintainer
+ information
+Message-Id: <172557308391.131770.11874502570887851555.b4-ty@kernel.org>
+Date: Thu, 05 Sep 2024 22:51:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +61,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Wed, 04 Sep 2024 22:08:56 +0300, Andy Shevchenko wrote:
-> Refactor of_get_*regulator() to decrease indentation and increase readability.
-> No functional changes intended.
+On Thu, 05 Sep 2024 11:41:24 -0400, Frank Li wrote:
+> Add imx@lists.linux.dev and NXP maintainer information for lpspi driver
+> (drivers/spi/spi-fsl-lpspi.c).
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: of: Refactor of_get_*regulator() to decrease indentation
-      commit: 401d078eaf2edd605c9121741e166d9326c63677
+[1/1] MAINTAINERS: SPI: Add freescale lpspi maintainer information
+      commit: fb9820c550cfc58684b612471cc50e4b5c305404
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
