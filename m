@@ -1,178 +1,236 @@
-Return-Path: <linux-kernel+bounces-316660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F3E96D275
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:48:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F47696D27D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3701F26B2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C296F1C232A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24841957FF;
-	Thu,  5 Sep 2024 08:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AFC195381;
+	Thu,  5 Sep 2024 08:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5F9kJBH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YL9rOZaB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013E819538A;
-	Thu,  5 Sep 2024 08:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAD8194A42;
+	Thu,  5 Sep 2024 08:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526076; cv=none; b=ipabeDNPkuBdoOV4VbRQCBAsQwhaSz/oa2OY/iAE6Ej7Du/RnPG8i1PlzjwwZBFTxw+c4tQpi/hIf4JyVXWXLrL7SW0LOb7mefiJL/h/lFa1tNIZXAnFYk8BalGH7woQCPpfrAujEGot9H9fZhXkcoAK1KEBUgNKXcAbc3/iPl4=
+	t=1725526289; cv=none; b=nWl785XZQL2rZtPH6sTf7DxooCsAerv1ZSqlXD9maxwoqnmFqPo1md8cRjQtbwhXHiQcXLlRqnaxQy+0AZkvpifB1GWANF7ZbhauvLJPd/cOrZDFhZVyrmkWVIDW4lMeopJ6P7xwvKRMLJf365PLUpQ/wNyDsBI6f1ZL4y11wwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526076; c=relaxed/simple;
-	bh=DnSuif62uCCVhEeRI162fm17cbXet/3kgwd0VQ3vzW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAizto+xVmXFxmF0lYq2FipCxvDcZfqr1fKcOo5UOl+opzndpNr29lc9TjOswfrg7v+QppNcLK2SvqrjcAzks0n1EcnmydEqOAqiOcfvykIjVvPmYUhAyfmHQQH89tVNV+aCOYafI2LeW5tzqrzTcPr1WnmyZmx90NAqI9PCvJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5F9kJBH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C041CC4AF09;
-	Thu,  5 Sep 2024 08:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725526075;
-	bh=DnSuif62uCCVhEeRI162fm17cbXet/3kgwd0VQ3vzW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a5F9kJBHbKVu5NS4eqt9wfG8qyufkBzZopWKazo+jGncJNZ8epN/xCNBaC0hnkoUe
-	 MZLHoAXLXgZoFU9fLTl0ee81NBvd7cQJ+UufyCmpXruMRo57IQTkN/pL2LDrQsB7Rp
-	 XrtL8oh+Hpw8YGr5oDL3iP5MBfyuq5EYRwYl34f9C+qpc2WQxCoAhQaV/QU5SWP5Hh
-	 wwYuXOSRwrT6xh++S/aJjLb0wRjDNlujly5qE0GnVdKEaZBBUrKex3YLdZWgtWDyPQ
-	 YWi4fYo4ZaOu26/3+TAlA3EbW2rxlD4Td6S9R4psU4PawVkACOUXFov+zcNEwqAQfM
-	 MlsN2bs06o+nA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sm8A1-000000002xD-3oNJ;
-	Thu, 05 Sep 2024 10:48:13 +0200
-Date: Thu, 5 Sep 2024 10:48:13 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/8] serial: qcom-geni: fix fifo polling timeout
-Message-ID: <ZtlwTQNZTdyzBChw@hovoldconsulting.com>
-References: <20240902152451.862-1-johan+linaro@kernel.org>
- <20240902152451.862-2-johan+linaro@kernel.org>
- <CAD=FV=WDx69BqK2MmhOMfKdEUtExo1wWFMY_n3edQhSF7RoWzg@mail.gmail.com>
+	s=arc-20240116; t=1725526289; c=relaxed/simple;
+	bh=80/WkKy4+58WhxyVhe0GJYSeVYKLmPwl64dVAgD2T+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bBfCIMbgX9EgRYAKX/FKBZuqIfhzatTMb8K29kgPZ80rjytv6v692L1Xn2hfEgOz1vuXnu6atx/hgkdPsyfm/ganxFDYtvsYRTRkmOMWiWTS7oVE/77kFkfZZyMUD0wLbLC5czcZz8g7ZD6x5qGf34/BUWFolCntlJExfwuCkBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YL9rOZaB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4850VJva026179;
+	Thu, 5 Sep 2024 08:48:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OEmwguPbSMR4OI/fouKPP2ZikTsz+zMzR7xDWEb6e2g=; b=YL9rOZaBpRfq8Ye0
+	OM2yGdXE9f3rm8QnlTLEko1oT8qF7E08mDFvgf4gnLu8Vuqtz3y7s8l2b1WERtw7
+	7zIxUnBdYkAvDyL9wH5wgi8ja9waRdY95o3/dIHiIofqudeVa53OGvKaDVxGJS9h
+	htBbP31LU4u1N83RT+eMQL/wusrn1F2xGaiVJOMLkCTvpU6BcOBYsdCXw5vdLU8R
+	ac/7I1I86EYbJCddA6jC/RWIZ2xiroSu9uCiexGMn2go1sSYJxbSgsNcmQaO5fh3
+	+8nXhiiaHN2gHIUQYlCg6zdh+GBPU7o3AxFNoH21nDUWXLOUfBUH3B57LZHezyRY
+	U9/NqQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt675fcm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 08:48:54 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4858mruc019913
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 08:48:53 GMT
+Received: from [10.253.33.121] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 01:48:50 -0700
+Message-ID: <c95932bf-4d11-4952-8835-b212fdb490a7@quicinc.com>
+Date: Thu, 5 Sep 2024 16:48:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=WDx69BqK2MmhOMfKdEUtExo1wWFMY_n3edQhSF7RoWzg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
+ device_for_each_child()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zijun Hu
+	<zijun_hu@icloud.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>,
+        Jonathan Cameron
+	<jonathan.cameron@huawei.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alison
+ Schofield <alison.schofield@intel.com>,
+        Vishal Verma
+	<vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams
+	<dan.j.williams@intel.com>,
+        Timur Tabi <timur@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-cxl@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
+ <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
+ <2024090531-mustang-scheming-3066@gregkh>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <2024090531-mustang-scheming-3066@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eFnkto18Mdva7Bh7Q04G4bjkLY1Iz_5P
+X-Proofpoint-GUID: eFnkto18Mdva7Bh7Q04G4bjkLY1Iz_5P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050064
 
-On Wed, Sep 04, 2024 at 02:50:57PM -0700, Doug Anderson wrote:
-> On Mon, Sep 2, 2024 at 8:26 AM Johan Hovold <johan+linaro@kernel.org> wrote:
-> >
-> > The qcom_geni_serial_poll_bit() can be used to wait for events like
-> > command completion and is supposed to wait for the time it takes to
-> > clear a full fifo before timing out.
-> >
-> > As noted by Doug, the current implementation does not account for start,
-> > stop and parity bits when determining the timeout. The helper also does
-> > not currently account for the shift register and the two-word
-> > intermediate transfer register.
-> >
-> > Instead of determining the fifo timeout on every call, store the timeout
-> > when updating it in set_termios() and wait for up to 19/16 the time it
-> > takes to clear the 16 word fifo to account for the shift and
-> > intermediate registers. Note that serial core has already added a 20 ms
-> > margin to the fifo timeout.
-> >
-> > Also note that the current uart_fifo_timeout() interface does
-> > unnecessary calculations on every call and also did not exists in
-> > earlier kernels so only store its result once. This also facilitates
-> > backports as earlier kernels can derive the timeout from uport->timeout,
-> > which has since been removed.
-
-> > @@ -270,22 +270,21 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
-> >  {
-> >         u32 reg;
-> >         struct qcom_geni_serial_port *port;
-> > -       unsigned int baud;
-> > -       unsigned int fifo_bits;
-> >         unsigned long timeout_us = 20000;
-> >         struct qcom_geni_private_data *private_data = uport->private_data;
-> >
-> >         if (private_data->drv) {
-> >                 port = to_dev_port(uport);
-> > -               baud = port->baud;
-> > -               if (!baud)
-> > -                       baud = 115200;
-> > -               fifo_bits = port->tx_fifo_depth * port->tx_fifo_width;
-> > +
-> >                 /*
-> > -                * Total polling iterations based on FIFO worth of bytes to be
-> > -                * sent at current baud. Add a little fluff to the wait.
-> > +                * Wait up to 19/16 the time it would take to clear a full
-> > +                * FIFO, which accounts for the three words in the shift and
-> > +                * intermediate registers.
-> > +                *
-> > +                * Note that fifo_timeout_us already has a 20 ms margin.
-> >                  */
-> > -               timeout_us = ((fifo_bits * USEC_PER_SEC) / baud) + 500;
-> > +               if (port->fifo_timeout_us)
-> > +                       timeout_us = 19 * port->fifo_timeout_us / 16;
+On 9/5/2024 1:32 PM, Greg Kroah-Hartman wrote:
+> On Thu, Sep 05, 2024 at 08:36:09AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> To prepare for constifying the following old driver core API:
+>>
+>> struct device *device_find_child(struct device *dev, void *data,
+>> 		int (*match)(struct device *dev, void *data));
+>> to new:
+>> struct device *device_find_child(struct device *dev, const void *data,
+>> 		int (*match)(struct device *dev, const void *data));
+>>
+>> The new API does not allow its match function (*match)() to modify
+>> caller's match data @*data, but match_free_decoder() as the old API's
+>> match function indeed modifies relevant match data, so it is not suitable
+>> for the new API any more, solved by using device_for_each_child() to
+>> implement relevant finding free cxl decoder function.
+>>
+>> By the way, this commit does not change any existing logic.
+>>
+>> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/cxl/core/region.c | 30 ++++++++++++++++++++++++------
+>>  1 file changed, 24 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 21ad5f242875..c2068e90bf2f 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
+>>  	return rc;
+>>  }
+>>  
+>> +struct cxld_match_data {
+>> +	int id;
+>> +	struct device *target_device;
+>> +};
+>> +
+>>  static int match_free_decoder(struct device *dev, void *data)
+>>  {
+>> +	struct cxld_match_data *match_data = data;
+>>  	struct cxl_decoder *cxld;
+>> -	int *id = data;
+>>  
+>>  	if (!is_switch_decoder(dev))
+>>  		return 0;
+>> @@ -805,17 +810,31 @@ static int match_free_decoder(struct device *dev, void *data)
+>>  	cxld = to_cxl_decoder(dev);
+>>  
+>>  	/* enforce ordered allocation */
+>> -	if (cxld->id != *id)
+>> +	if (cxld->id != match_data->id)
+>>  		return 0;
+>>  
+>> -	if (!cxld->region)
+>> +	if (!cxld->region) {
+>> +		match_data->target_device = get_device(dev);
 > 
-> It made me giggle a bit that part of the justification for caching
-> "fifo_timeout_us" was to avoid calculations each time through the
-> function. ...but then the code does the "19/16" math here instead of
-> just including it in the cache. ;-) ;-) ;-)
+> Where is put_device() called?
+>
 
-Heh, yeah, but I was really talking about uart_fifo_timeout() doing
-unnecessary calculations on each call (and that value used to be
-calculated once and stored for later use).
+it is called within cxl_region_find_decoder()
 
-I also realised that we need to account for the intermediate register
-after I wrote the initial commit message, and before that this was just
-a shift and add.
+> Ah, it's on the drop later on after find_free_decoder(), right?
 
-> That being said, I'm not really a fan of the "19 / 16" anyway. The 16
-> value is calculated elsewhere in the code as:
+yes, it shares the same put_device() which is used for original
+device_find_child().
+
 > 
-> port->tx_fifo_depth = geni_se_get_tx_fifo_depth(&port->se);
-> port->tx_fifo_width = geni_se_get_tx_fifo_width(&port->se);
-> port->rx_fifo_depth = geni_se_get_rx_fifo_depth(&port->se);
-> uport->fifosize =
->   (port->tx_fifo_depth * port->tx_fifo_width) / BITS_PER_BYTE;
+>>  		return 1;
+>> +	}
+>>  
+>> -	(*id)++;
+>> +	match_data->id++;
+>>  
+>>  	return 0;
+>>  }
+>>  
+>> +/* NOTE: need to drop the reference with put_device() after use. */
+>> +static struct device *find_free_decoder(struct device *parent)
+>> +{
+>> +	struct cxld_match_data match_data = {
+>> +		.id = 0,
+>> +		.target_device = NULL,
+>> +	};
+>> +
+>> +	device_for_each_child(parent, &match_data, match_free_decoder);
+>> +	return match_data.target_device;
+>> +}
+>> +
+>>  static int match_auto_decoder(struct device *dev, void *data)
+>>  {
+>>  	struct cxl_region_params *p = data;
+>> @@ -840,7 +859,6 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>  			struct cxl_region *cxlr)
+>>  {
+>>  	struct device *dev;
+>> -	int id = 0;
+>>  
+>>  	if (port == cxled_to_port(cxled))
+>>  		return &cxled->cxld;
+>> @@ -849,7 +867,7 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>  		dev = device_find_child(&port->dev, &cxlr->params,
+>>  					match_auto_decoder);
+>>  	else
+>> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
+>> +		dev = find_free_decoder(&port->dev);
 > 
-> ...and here you're just hardcoding it to 16. Then there's also the
-> fact that the "19 / 16" will also multiply the 20 ms "slop" added by
-> uart_fifo_timeout() which doesn't seem ideal.
-
-Indeed, and the early console code also hardcodes this to 16.
-
-I don't care about the slop being 20 ms or 23.5, this is just a timeout
-for the error case.
-
-This will over count a bit if there is uart hw with 256 B fifos, but
-could potentially undercount if there is hw with less than 16 words. I'm
-not sure if such hw exists, but I'll see what I can find out.
-
-> How about this: we just change "uport->fifosize" to account for the 3
-> extra words? So it can be:
+> This still feels more complex that I think it should be.  Why not just
+> modify the needed device information after the device is found?  What
+> exactly is being changed in the match_free_decoder that needs to keep
+> "state"?  This feels odd.
 > 
-> ((port->tx_fifo_depth + 3) * port->tx_fifo_width) / BITS_PER_BYTE;
+
+for match_auto_decoder() original logic, nothing of aim device is
+modified, it just need to modifies state or @id to find the aim device.
+
+
+> thanks,
 > 
-> ...then the cache will be correct and everything will work out. What
-> do you think?
+> greg k-h
 
-I don't think uart_fifo_timeout traditionally accounts for the shift
-register and we wait up to *twice* the time it takes to clear to fifo
-anyway (in wait_until_sent). The intermediate register I found here
-could perhaps be considered part of the fifo however.
-
-I'll give this some more thought.
-
-Johan
 
