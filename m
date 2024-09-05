@@ -1,79 +1,104 @@
-Return-Path: <linux-kernel+bounces-317944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B8096E5CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0C196E5D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C78285AB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:40:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87FFA285DDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D8B1AE861;
-	Thu,  5 Sep 2024 22:40:43 +0000 (UTC)
-Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B7E1B12DD;
+	Thu,  5 Sep 2024 22:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uter.be header.i=@uter.be header.b="Lv0fHl/a"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E6A1482E9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 22:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC6B172BDF;
+	Thu,  5 Sep 2024 22:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725576042; cv=none; b=pq+vH1iALS45ENXksuit3wNnC2nnxAqkRRJerZrssFHFs7FwUs7TfAsq+ULXCNTkboHmn9lqs1DsHeNSNG0s76yEwqD3HibbE2OZScLH88XTOdGObLCok0jBiVJqGDtqvlo425GC9AyPL7uRq2sA2yikRyMSCAujOb2+QI8oCp4=
+	t=1725576138; cv=none; b=WP8/M1GTg9nwsjOXCxLpGPP+NBAHcmZJ0DgRHr5RA/CXLz4CH3WKUchFNuc7spMSO5KMsiNEM/fQk232IupCRt3O5uCNpT2Y8ICBJA4/5AJ+iimfGcDqmKHklwDUBSEevbpllJMk15j47Jw2088nCiz4BWXWA5Sr/VXjXQjEmvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725576042; c=relaxed/simple;
-	bh=w8v7RvXqT0KlDpml49QYizFPqdb4aYGrqseedqucWSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hViIBNgldHWsycr7mzh5duELxjOfFYBDZr1kwydozhe2WvdQ+XfYlm++v5Dngm9uNVEG3jP9LzuvNLZ9RrR7In0+t60zBY6O0tlGA67CMiz6PzchYuDI+CPR4pwkxYX4PN7dJL1NlSL7fg4kKG+84ptZ1/wgSfkhgdxMytp3WqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.11.67])
-	by sina.com (10.185.250.22) with ESMTP
-	id 66DA29DA00006578; Thu, 6 Sep 2024 05:59:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2911437602652
-X-SMAIL-UIID: FE693CDE161143748A508DE683140C07-20240906-055957-1
-From: Hillf Danton <hdanton@sina.com>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: yosryahmed@google.com,
-	mhocko@kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1725576138; c=relaxed/simple;
+	bh=ko5WShKQj27YD3J0AZLold2aoeCBwAumIuRKuxF1D4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGUp+PzDKed0AQkRjs+3SmIOJkdlUaj2jfveAizHeEgNHeYaCjw61vyX0yO4SDBBBHeCR6nAejZPjM9Key+5ozmOnCUgDIP9x00KviGzfT9/pN6zju/cKdXDVlHvhwmMDcnZpqrRGPFI/jtwckLG6tGbtw8gNb9/ZIbekOEuc5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=uter.be; dkim=pass (2048-bit key) header.d=uter.be header.i=@uter.be header.b=Lv0fHl/a; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uter.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=uter.be;
+	s=2021.lounge; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=jM70IaqB9BGHYnrOZoKLUhqPTN3IEuxRbg88d5FNPPY=; b=Lv0fHl/a5D5K+IfJJMIUdUPH1T
+	iL2NxSkhrzIq5xWEJC0Npme9vpGttHO9tSrsdvR1MuqdDkssYSVYkZrnNoijFMKtJzKnkmLTHeahM
+	pP7Ipf11/8Af7uY1fFTwDRnv/QGrLMXNXSsDSIYRON9CdkbJZxbK8LJlXtfDrTZycgceW17RDp0ug
+	JPLutyQyP5w8yCfzErw17la1TXy/FpW+SS0Lut/ziWsloADxCUoCBA+bUNnEMducQNls0LoqYltnp
+	aJkhgqFjyVh4yq44EyGw95vy+EYuVfJCZBdCdxlI9/34CFPQaPm1cA73PDyAuWj1lW/7/mkquo1re
+	gtUJAWwA==;
+Received: from [102.39.140.57] (helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <w@uter.be>)
+	id 1smKXA-00CRS7-0H;
+	Fri, 06 Sep 2024 00:00:56 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <w@uter.be>)
+	id 1smKX2-000000003EE-0qNM;
+	Fri, 06 Sep 2024 00:00:48 +0200
+Date: Fri, 6 Sep 2024 00:00:47 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Eric Blake <eblake@redhat.com>, Damien Le Moal <dlemoal@kernel.org>,
+	linux-block@vger.kernel.org, nbd@other.debian.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
-Date: Fri,  6 Sep 2024 05:59:45 +0800
-Message-Id: <20240905215945.1909-1-hdanton@sina.com>
-In-Reply-To: <20240904162740.1043168-1-dave@stgolabs.net>
-References: 
+Subject: Re: [PATCH v4 0/3] nbd: WRITE_ZEROES and a few fixes
+Message-ID: <ZtoqD0ObBsZJQEKy@pc220518.home.grep.be>
+References: <20240812133032.115134-1-w@uter.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812133032.115134-1-w@uter.be>
+X-Speed: Gates' Law: Every 18 months, the speed of software halves.
+Organization: none
 
-On Wed,  4 Sep 2024 09:27:40 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+Hi Jens,
 
-> This adds support for allowing proactive reclaim in general on a
-> NUMA system. A per-node interface extends support for beyond a
-> memcg-specific interface, respecting the current semantics of
-> memory.reclaim: respecting aging LRU and not supporting
-> artificially triggering eviction on nodes belonging to non-bottom
-> tiers.
+Has been a few weeks since I sent this. Friendly ping?
+
+On Mon, Aug 12, 2024 at 03:20:35PM +0200, Wouter Verhelst wrote:
+> Implement the WRITE_ZEROES command for the NBD kernel driver. While
+> here, add NBD_FLAG_ROTATIONAL to the function that decodes our flags for
+> debugfs.
 > 
-> This patch allows userspace to do:
+> ---
+> v2: Divide UINT_MAX by blksize for the maximum number of sectors
+> supported by trim/discard and write_zeroes commands, as NBD uses 32-bit
+> values for byte lengths, and otherwise that wouldn't fit.
+> v3: Use the SECTOR_SHIFT value as a right-shift operand, rather than the
+> blksize value, to get the correct operand.
+> v4: Fix commit messages to use correct style. Thanks, Jens.
+> ---
+>  drivers/block/nbd.c      |   12 +++++++++++-
+>  include/uapi/linux/nbd.h |    5 ++++-
+>  2 files changed, 15 insertions(+), 2 deletions(-)
 > 
->      echo 512M swappiness=10 > /sys/devices/system/node/nodeX/reclaim
->
-The proactive reclaim on the cmdline looks like waste of cpu cycles before
-the cases where kswapd fails to work are spotted. It is not correct to add
-it because you can type the code.
+> 
+
+-- 
+     w@uter.{be,co.za}
+wouter@{grep.be,fosdem.org,debian.org}
+
+I will have a Tin-Actinium-Potassium mixture, thanks.
 
