@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-317143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F147496D9EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:14:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8025E96D9F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1201F22100
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019B61F21B1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351D119CD0E;
-	Thu,  5 Sep 2024 13:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZ9kSqVf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8747E1CFBC;
-	Thu,  5 Sep 2024 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D03119CCE2;
+	Thu,  5 Sep 2024 13:14:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4B119C56E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542033; cv=none; b=Ng22uE6dsclmE8QZgcgr1mujXmXxtwvKQgQd1hN8QwdkYLvi1tyjJe47QhOjMLWMkFcwU7jMVrc/aIRrGSmXyaM0JoN+rffDgGSvaedoUyGM8lU8wCwq1eCysdtAGeXXXm+Z8QykGlmeUI7Y44Re2J7OXYqB+7oyYOXiVZ12lyg=
+	t=1725542060; cv=none; b=i/SURNbLfouVCZxlyenpUdZEOdmEUWg2qoUqeIw7sOW1mfAckFJyJFN144OYUTvDIAADIYf6/vLOdVqLwaTz3dGlgbsX/b6JpbcVDv4uW3Qs+mCM9y0snRt8L9F75Qe7CTpY55t0E9GNcebTkfE7oxakShKJbWZ2hxYGHeAwoxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542033; c=relaxed/simple;
-	bh=wW0ff2EldvqC/GcrU2aNtVQMYEYXhK4WpgRcXeEhjAY=;
+	s=arc-20240116; t=1725542060; c=relaxed/simple;
+	bh=R+9ISWfFRMkxm4dz6brDQ5SH5t0fvAHITkpNnmPwZvg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CtmLxTn9HpM2mR/jAEGzAGkERKmtlMzSQQ3zaW0GxxVm8JwGQDUI+tUBhc9SQ5rU6isq1GOfSiRDkcbT7xx/cAZeAgi6RvSJHZFxtGZEklxHBQDI4xW+0WXs/iNCCHV5l2GILqbKKTGXrTrUz2YOxWhOdI4CfLXAy3exyrADkM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZ9kSqVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84140C4CEC3;
-	Thu,  5 Sep 2024 13:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725542033;
-	bh=wW0ff2EldvqC/GcrU2aNtVQMYEYXhK4WpgRcXeEhjAY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hZ9kSqVfLciBWuBH9zxa2bUru4yHZCf5bFVq7czfAdtifBOCZwuhvjmUWEIiCLs2r
-	 rroBcO0+m5kRDp7uag957dwhHw7v2ixo51IUm8DZVC7Upvv1fyrZGnE4C/70miQ5if
-	 iZblQMiVn3wROVVjzY0c/dA+YcgnkoBeJ9UpClujgFeJZltxbwln806Fg82LOmAdis
-	 YE3/GhiFxMgCrv4sSiVzY68L2ljU3eW9PE2jVTGyPQnB+CWe37oJAvdcgUKQhdfrZu
-	 WUpGNI8qkfrOVM4L7/QXEwSD4y7r9RaNQ0UmHPXjbut0+eh9oSBl3dw0sURRekHsuk
-	 Fqshxy0UKvvUA==
-Message-ID: <d6d5a943-ab29-4034-b465-b62d9d1efa61@kernel.org>
-Date: Thu, 5 Sep 2024 15:13:45 +0200
+	 In-Reply-To:Content-Type; b=jvLZhhUGG81iGjOKCO5269qU0rKE0b6g/zQWIbUUXFkBOcSKWit9pRU/ef2MtYbOWmDKVhYd4JJUkm6zGJsLH6oV88/or1CawJmPglO7/JupmLOc3BCDHlrl3HYQSLPGIhGpGRKY9K4pwcg1FMGqpuoFfimHZtinHtmNovZfzPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6868AFEC;
+	Thu,  5 Sep 2024 06:14:44 -0700 (PDT)
+Received: from [10.1.36.183] (XHFQ2J9959.cambridge.arm.com [10.1.36.183])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDE693F73F;
+	Thu,  5 Sep 2024 06:14:14 -0700 (PDT)
+Message-ID: <542b8267-39de-4593-82ef-a586bb372824@arm.com>
+Date: Thu, 5 Sep 2024 14:14:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,58 +41,225 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
- the on-board wcn6855
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Dmitry Baryshkov <dbaryshkov@gmail.com>, Johan Hovold <johan@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Kalle Valo <kvalo@kernel.org>
-References: <20240905122023.47251-1-brgl@bgdev.pl>
- <20240905122023.47251-2-brgl@bgdev.pl>
- <6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek>
- <CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
- <CALT56yOP+un5nkxuirJVg=gr7fo4Hqjt1ew3z-=F2J_Y_RcTqg@mail.gmail.com>
- <CAMRc=Mci-8R1Oe3Fe+1E+K-7khzwBPgn_8SQSUPXthpE4032Pw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <CAMRc=Mci-8R1Oe3Fe+1E+K-7khzwBPgn_8SQSUPXthpE4032Pw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
+ willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240904100923.290042-1-dev.jain@arm.com>
+ <20240904100923.290042-3-dev.jain@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240904100923.290042-3-dev.jain@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 5.09.2024 3:00 PM, Bartosz Golaszewski wrote:
-> On Thu, Sep 5, 2024 at 2:56 PM Dmitry Baryshkov <dbaryshkov@gmail.com> wrote:
->>
->>>>
->>>> As you are going to post another revision, please also add
->>>>
->>>> qcom,ath11k-calibration-variant
->>>>
->>>
->>> I had it in earlier revisions. The only one we could add here would be
->>> the one from X13s as QCom has not yet released the data for the CRD.
->>> Johan and Konrad were against adding this here if it doesn't refer to
->>> the correct one so I dropped it.
->>
->> As Kalle usually merges data with some delay it's not infrequent to
->> have DTS which names calibration variant, but board-2.bin doesn't have
->> corresponding data. The driver safely falls back to the data without
->> variant if it can find it. Als  usually it's us who supply the
->> calibration name.
->>
+On 04/09/2024 11:09, Dev Jain wrote:
+> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
+> replace it with a PMD-mapped THP. Change the helpers introduced in the
+> previous patch to flush TLB entry corresponding to the hugezeropage,
+> and preserve PMD uffd-wp marker. In case of failure, fallback to
+> splitting the PMD.
 > 
-> Johan, Konrad,
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  include/linux/huge_mm.h |  6 ++++
+>  mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
+>  mm/memory.c             |  5 +--
+>  3 files changed, 78 insertions(+), 12 deletions(-)
 > 
-> What do you think? Do we know the exact name and should I add it or
-> should we wait until it's in board-2.bin?
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index e25d9ebfdf89..fdd2cf473a3c 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -9,6 +9,12 @@
+>  #include <linux/kobject.h>
+>  
+>  vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
+> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> +			   unsigned long haddr, struct folio **foliop,
+> +			   unsigned long addr);
+> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+> +		 struct vm_area_struct *vma, unsigned long haddr,
+> +		 pgtable_t pgtable);
 
-If we can agree on the string identifier with Kalle in advance, we can
-add it even before the boardfile drops
+I don't think you are using either of these outside of huge_memory.c, so not
+sure you need to declare them here or make them non-static?
 
-Konrad
+>  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>  		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
+>  		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 58125fbcc532..150163ad77d3 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>  }
+>  EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>  
+> -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> -				  unsigned long haddr, struct folio **foliop,
+> -				  unsigned long addr)
+> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> +			   unsigned long haddr, struct folio **foliop,
+> +			   unsigned long addr)
+>  {
+>  	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
+>  
+> @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
+>  	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>  }
+>  
+> -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+> -			struct vm_area_struct *vma, unsigned long haddr,
+> -			pgtable_t pgtable)
+> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+> +		 struct vm_area_struct *vma, unsigned long haddr,
+> +		 pgtable_t pgtable)
+>  {
+> -	pmd_t entry;
+> +	pmd_t entry, old_pmd;
+> +	bool is_pmd_none = pmd_none(*vmf->pmd);
+>  
+>  	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+>  	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>  	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>  	folio_add_lru_vma(folio, vma);
+> -	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+> +	if (!is_pmd_none) {
+> +		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
+> +		if (pmd_uffd_wp(old_pmd))
+> +			entry = pmd_mkuffd_wp(entry);
+
+I don't really get this; entry is writable, so I wouldn't expect to also be
+setting uffd-wp here? That combination is not allowed and is checked for in
+page_table_check_pte_flags().
+
+It looks like you expect to get here in the uffd-wp-async case, which used to
+cause the pmd to be split to ptes. I'm guessing (but don't know for sure) that
+would cause the uffd-wp bit to be set in each of the new ptes, then during
+fallback to handling the wp fault on the pte, uffd would handle it?
+
+> +	}
+> +	if (pgtable)
+> +		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+
+Should this call be moved outside of here? It doesn't really feel like it
+belongs. Could it be called before calling map_pmd_thp() for the site that has a
+pgtable?
+
+>  	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>  	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>  	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+> -	mm_inc_nr_ptes(vma->vm_mm);
+> +	if (is_pmd_none)
+> +		mm_inc_nr_ptes(vma->vm_mm);
+>  }
+>  
+>  static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
+>  	spin_unlock(vmf->ptl);
+>  }
+>  
+> +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
+> +					     unsigned long haddr,
+> +					     struct folio *folio)
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	vm_fault_t ret = 0;
+> +
+> +	ret = check_stable_address_space(vma->vm_mm);
+> +	if (ret)
+> +		goto out;
+> +	map_pmd_thp(folio, vmf, vma, haddr, NULL);
+> +out:
+> +	return ret;
+> +}
+> +
+> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	gfp_t gfp = vma_thp_gfp_mask(vma);
+> +	struct mmu_notifier_range range;
+> +	struct folio *folio = NULL;
+> +	vm_fault_t ret = 0;
+> +
+> +	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
+> +			      vmf->address);
+
+Just checking: the PTE table was already allocated during the read fault, right?
+So we don't have to allocate it here.
+
+> +	if (ret)
+> +		goto out;
+> +
+> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
+> +				haddr + HPAGE_PMD_SIZE);
+> +	mmu_notifier_invalidate_range_start(&range);
+> +	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+> +	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
+> +		goto unlock;
+> +	ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
+> +	if (!ret)
+> +		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
+> +unlock:
+> +	spin_unlock(vmf->ptl);
+> +	mmu_notifier_invalidate_range_end(&range);
+
+I'll confess I don't understand all the mmu notifier rules. But the doc at
+Documentation/mm/mmu_notifier.rst implies that the notification must be done
+while holding the PTL. Although that's not how wp_page_copy(). Are you confident
+what you have done is correct?
+
+Thanks,
+Ryan
+
+> +out:
+> +	return ret;
+> +}
+> +
+>  vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+>  {
+>  	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
+> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+>  	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
+>  	VM_BUG_ON_VMA(!vma->anon_vma, vma);
+>  
+> -	if (is_huge_zero_pmd(orig_pmd))
+> +	if (is_huge_zero_pmd(orig_pmd)) {
+> +		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
+> +
+> +		if (!(ret & VM_FAULT_FALLBACK))
+> +			return ret;
+> +
+> +		/* Fallback to splitting PMD if THP cannot be allocated */
+>  		goto fallback;
+> +	}
+>  
+>  	spin_lock(vmf->ptl);
+>  
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 3c01d68065be..c081a25f5173 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>  	if (vma_is_anonymous(vma)) {
+>  		if (likely(!unshare) &&
+>  		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
+> -			if (userfaultfd_wp_async(vmf->vma))
+> +			if (!userfaultfd_wp_async(vmf->vma))
+> +				return handle_userfault(vmf, VM_UFFD_WP);
+> +			if (!is_huge_zero_pmd(vmf->orig_pmd))
+>  				goto split;
+> -			return handle_userfault(vmf, VM_UFFD_WP);
+>  		}
+>  		return do_huge_pmd_wp_page(vmf);
+>  	}
+
 
