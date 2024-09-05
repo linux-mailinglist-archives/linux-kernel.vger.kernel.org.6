@@ -1,166 +1,135 @@
-Return-Path: <linux-kernel+bounces-317405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A76796DDB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB5C96DDB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDEF1C25CAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706B71F24166
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8054210A3E;
-	Thu,  5 Sep 2024 15:15:20 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F85217C9AE;
+	Thu,  5 Sep 2024 15:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V4hurzOO"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3AD3A27E;
-	Thu,  5 Sep 2024 15:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDE97FBAC
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725549320; cv=none; b=mrixapsiz9vtGmLY57QafaycAotzj/c8vSErP1JY+ZtH90aWEF/3VQY1Yl2rkmlKd9VG8OSDCjXDAexQUBrPVSRPcdNJUXGm82/edNsQwps6VftRPK6OkF4Nbu+AgUzeE8Vpq9B6gS56oegZmKDRtEcRBxuLP53axFZkvRk0wao=
+	t=1725549402; cv=none; b=d4DULeaVfiJhvBSdED9c+cqhTQS5Oi1KS/Emk9mubIPk7tMPvPuZz9ys2Mwb2ZI/DiEdPSGVJgfFhih/BpEW8e8AL1IhPZSrBrV6kR2LrLyM47dFaUbEj2AHxkTp1mTpJQwL2TqKzyO+CXMH1KLpCH/FbpiPUe+JdZl0U8A2xtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725549320; c=relaxed/simple;
-	bh=x59hBC6f2Ezk12MvkosF/SoIg1FNCzCKgMnXTFv+YPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=deOhx90vfV04yHPVXRXMBEboK9Ls4ZKW/vdNs68/C2Ho9q9FTdx4DaLtR1lcuMFBxX9ky6HyoKFPzuue50p8sGqlWqYgfpEpHraxiudcdI78fZT8PQWDkpHi1nd9BWJSvHskrJlKToYLS2Pv+w6kFptn3eSdlEmy+kI7VsmqIdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B839C4CEC3;
-	Thu,  5 Sep 2024 15:15:18 +0000 (UTC)
-Date: Thu, 5 Sep 2024 11:16:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
- <guoren@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-csky@vger.kernel.org
-Subject: Re: [PATCH 0/7] add function arguments to ftrace
-Message-ID: <20240905111620.5211d9f8@gandalf.local.home>
-In-Reply-To: <20240904065908.1009086-1-svens@linux.ibm.com>
-References: <20240904065908.1009086-1-svens@linux.ibm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725549402; c=relaxed/simple;
+	bh=ekPdpG7oyzJtXPp+xFvsL02Ww7Tof9pw8p/Ac8jNKvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O9VVM8lLfGdmwcS6knScQIxDrQZjjRTNGwKSF51FOCPll/te2+ZwTEJjY6PgCvf/X2muYf7sPbvZWx6mXw7AVuy4zfMgR+CElKQ9Aq1FiKartIOZ9kyhXx9epGsu9ZYazrFdqJ5DitcWWJDgcW0WsE3W6bQL1ngWlWq/aNkBfLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V4hurzOO; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bb9a23ea7so1185465e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725549399; x=1726154199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lbqQMJHY0wP1Gv+M3FnecbwVctkR8rJv1ZT1Z1xP6vc=;
+        b=V4hurzOOG0jmrI3N7imHNPugDOKpqWArtBgEqnWVjGRC8w1tcTaEbjfXMrLxgdnjMv
+         clHxMGkjY7BnuW9W6b3VRsf09yaMJHsWkcX/oTSbDe3hxw4c5hH1aagf2BhbV64dyhoS
+         jgbQOn7iHYywxxfrzR9O4uoSXUeEA5M8WdKYJPHOZfCRJRZaogntbAbHGGi35o9fZYKm
+         bzgDzVb78RlTqkCTSyibQF7hHTRh7B8nhkwuC+oi6d/3eyi0p1FwVCRzFqzY9LLHf1UF
+         NZ3rWHWYvYRvXZKLbRXW2YLzuROWMy7k5KdRPZatIe4WteGVl9bu+VjTGxOdEjlNOZA2
+         5o7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725549399; x=1726154199;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lbqQMJHY0wP1Gv+M3FnecbwVctkR8rJv1ZT1Z1xP6vc=;
+        b=A26u2eiD2olOzw5LfWa7VsggRkf3C84+Wmt3sd493aaBg5tU6yo3z3qBA5gCGieU2b
+         p2T0gll7ByHLItSIN46c3X7azZ+uAeAUhcUXLoLkvto33cKQPYHUyFyBdwSEfVzGhJYu
+         ej1W4Gna32dBdgj1t/SNyKcLXiqO1LengsX4ue3Djihnyx2TOdG/EiFIdPHzgvcY9Tvg
+         8F5kiZ23JBZHAsHEmFOk4CKzKxAsY+HXkNoUNbC9FwetOHbaNqKhAcV0xVDDsJNdhn5S
+         9LdHmSz0XwPXoijPJ27tk8qsvUgjRbTYDY7RQqvkB/oHEwOLxGBI59RFefAyuDuisMUV
+         NIGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXybrd0OLURV6dQeP/tls+2M82hlVy6vjNb8dFUEIz7ooRL+YEwxgqVa2XZ7q2e0XZBA4VQ1JD2dnVwacQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeO92Z8yaoby3oi394WPEolJ9aflzLQ1SXNXbFVQM4FzWW7SAR
+	lyIA2F0GF3cBWZEwlprSTwvjKP2hGI2WVah0gLgnkuZeaEjtyNcWf27P8ekl3+o=
+X-Google-Smtp-Source: AGHT+IGrqnC4Fav20HZ0B43mlW3Q7hCc6eUOmNpGzWD39vmPmtHqiCHTNhSqc6PSx7LNERIQuu47nw==
+X-Received: by 2002:a05:600c:3b21:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-42bbb0a2ed9mr82336185e9.0.1725549398958;
+        Thu, 05 Sep 2024 08:16:38 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbf15b9b1sm195072195e9.10.2024.09.05.08.16.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 08:16:38 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Georgi Djakov <djakov@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] interconnect: qcom: msm8937: constify pointer to qcom_icc_node
+Date: Thu,  5 Sep 2024 17:16:36 +0200
+Message-ID: <20240905151636.280065-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed,  4 Sep 2024 08:58:54 +0200
-Sven Schnelle <svens@linux.ibm.com> wrote:
+Pointers to struct qcom_icc_node are const.
 
-> These patches add support for printing function arguments in ftrace.
-> 
-> Example usage:
-> 
-> function tracer:
-> 
-> cd /sys/kernel/tracing/
-> echo icmp_rcv >set_ftrace_filter
-> echo function >current_tracer
-> echo 1 >options/func-args
-> ping -c 10 127.0.0.1
-> [..]
-> cat trace
-> [..]
->             ping-1277    [030] ..s1.    39.120939: icmp_rcv(skb = 0xa0ecab00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    39.120946: icmp_rcv(skb = 0xa0ecac00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    40.179724: icmp_rcv(skb = 0xa0ecab00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    40.179730: icmp_rcv(skb = 0xa0ecac00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    41.219700: icmp_rcv(skb = 0xa0ecab00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    41.219706: icmp_rcv(skb = 0xa0ecac00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    42.259717: icmp_rcv(skb = 0xa0ecab00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    42.259725: icmp_rcv(skb = 0xa0ecac00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    43.299735: icmp_rcv(skb = 0xa0ecab00) <-ip_protocol_deliver_rcu
->             ping-1277    [030] ..s1.    43.299742: icmp_rcv(skb = 0xa0ecac00) <-ip_protocol_deliver_rcu
-> 
-> function graph:
-> 
-> cd /sys/kernel/tracing
-> echo icmp_rcv >set_graph_function
-> echo function_graph >current_tracer
-> echo 1 >options/funcgraph-args
-> 
-> ping -c 1 127.0.0.1
-> 
-> cat trace
-> 
->  30)               |  icmp_rcv(skb = 0xa0ecab00) {
->  30)               |    __skb_checksum_complete(skb = 0xa0ecab00) {
->  30)               |      skb_checksum(skb = 0xa0ecab00, offset = 0, len = 64, csum = 0) {
->  30)               |        __skb_checksum(skb = 0xa0ecab00, offset = 0, len = 64, csum = 0, ops = 0x232e0327a88) {
->  30)   0.418 us    |          csum_partial(buff = 0xa0d20924, len = 64, sum = 0)
->  30)   0.985 us    |        }
->  30)   1.463 us    |      }
->  30)   2.039 us    |    }
-> [..]
-> 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/interconnect/qcom/msm8937.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-First I want to say THANK YOU!!!!
-
-This has been on my TODO list for far too long. I never got the time to
-work on it :-p
-
-Anyway, this is something I definitely want added. But I'm going to guess
-that there is going to be issues with it and I doubt it will be ready for
-the next merge window. I'm currently focused on some other things and also
-have to get ready for next weeks travels (I'll be in Prague for GNU Cauldron,
-then Vienna for Plumbers and OSS EU, then to Paris for Kernel Recipes!).
-
-But I most definitely want this in. Hopefully by 6.13. This may be
-something I can review on the plane (if I get my slides done).
-
-Again, thanks for doing this!
-
--- Steve
-
-> 
-> Sven Schnelle (7):
->   tracing: add ftrace_regs to function_graph_enter()
->   x86/tracing: pass ftrace_regs to function_graph_enter()
->   s390/tracing: pass ftrace_regs to function_graph_enter()
->   Add print_function_args()
->   tracing: add config option for print arguments in ftrace
->   tracing: add support for function argument to graph tracer
->   tracing: add arguments to function tracer
-> 
->  arch/arm/kernel/ftrace.c             |  2 +-
->  arch/arm64/kernel/ftrace.c           |  2 +-
->  arch/csky/kernel/ftrace.c            |  2 +-
->  arch/loongarch/kernel/ftrace.c       |  2 +-
->  arch/loongarch/kernel/ftrace_dyn.c   |  2 +-
->  arch/microblaze/kernel/ftrace.c      |  2 +-
->  arch/mips/kernel/ftrace.c            |  2 +-
->  arch/parisc/kernel/ftrace.c          |  2 +-
->  arch/powerpc/kernel/trace/ftrace.c   |  2 +-
->  arch/riscv/kernel/ftrace.c           |  2 +-
->  arch/s390/kernel/entry.h             |  4 +-
->  arch/s390/kernel/ftrace.c            |  4 +-
->  arch/sh/kernel/ftrace.c              |  2 +-
->  arch/sparc/kernel/ftrace.c           |  2 +-
->  arch/x86/include/asm/ftrace.h        |  2 +-
->  arch/x86/kernel/ftrace.c             |  6 +-
->  include/linux/ftrace.h               |  4 +-
->  kernel/trace/Kconfig                 | 12 ++++
->  kernel/trace/fgraph.c                |  7 ++-
->  kernel/trace/trace.c                 |  8 ++-
->  kernel/trace/trace.h                 |  4 +-
->  kernel/trace/trace_entries.h         |  7 ++-
->  kernel/trace/trace_functions.c       | 46 ++++++++++++++--
->  kernel/trace/trace_functions_graph.c | 74 +++++++++++++------------
->  kernel/trace/trace_irqsoff.c         |  4 +-
->  kernel/trace/trace_output.c          | 82 +++++++++++++++++++++++++++-
->  kernel/trace/trace_output.h          |  9 +++
->  kernel/trace/trace_sched_wakeup.c    |  4 +-
->  28 files changed, 228 insertions(+), 73 deletions(-)
-> 
-> --
-> 2.43.0
+diff --git a/drivers/interconnect/qcom/msm8937.c b/drivers/interconnect/qcom/msm8937.c
+index 052b14c28ef8..d9f8ba69b329 100644
+--- a/drivers/interconnect/qcom/msm8937.c
++++ b/drivers/interconnect/qcom/msm8937.c
+@@ -1175,7 +1175,7 @@ static struct qcom_icc_node slv_lpass = {
+ 	.qos.qos_mode = NOC_QOS_MODE_INVALID,
+ };
+ 
+-static struct qcom_icc_node *msm8937_bimc_nodes[] = {
++static struct qcom_icc_node * const msm8937_bimc_nodes[] = {
+ 	[MAS_APPS_PROC] = &mas_apps_proc,
+ 	[MAS_OXILI] = &mas_oxili,
+ 	[MAS_SNOC_BIMC_0] = &mas_snoc_bimc_0,
+@@ -1204,7 +1204,7 @@ static const struct qcom_icc_desc msm8937_bimc = {
+ 	.ab_coeff = 154,
+ };
+ 
+-static struct qcom_icc_node *msm8937_pcnoc_nodes[] = {
++static struct qcom_icc_node * const msm8937_pcnoc_nodes[] = {
+ 	[MAS_SPDM] = &mas_spdm,
+ 	[MAS_BLSP_1] = &mas_blsp_1,
+ 	[MAS_BLSP_2] = &mas_blsp_2,
+@@ -1268,7 +1268,7 @@ static const struct qcom_icc_desc msm8937_pcnoc = {
+ 	.regmap_cfg = &msm8937_pcnoc_regmap_config,
+ };
+ 
+-static struct qcom_icc_node *msm8937_snoc_nodes[] = {
++static struct qcom_icc_node * const msm8937_snoc_nodes[] = {
+ 	[MAS_QDSS_BAM] = &mas_qdss_bam,
+ 	[MAS_BIMC_SNOC] = &mas_bimc_snoc,
+ 	[MAS_PCNOC_SNOC] = &mas_pcnoc_snoc,
+@@ -1304,7 +1304,7 @@ static const struct qcom_icc_desc msm8937_snoc = {
+ 	.qos_offset = 0x7000,
+ };
+ 
+-static struct qcom_icc_node *msm8937_snoc_mm_nodes[] = {
++static struct qcom_icc_node * const msm8937_snoc_mm_nodes[] = {
+ 	[MAS_JPEG] = &mas_jpeg,
+ 	[MAS_MDP] = &mas_mdp,
+ 	[MAS_VENUS] = &mas_venus,
+-- 
+2.43.0
 
 
