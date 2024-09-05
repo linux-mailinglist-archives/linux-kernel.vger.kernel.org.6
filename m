@@ -1,233 +1,134 @@
-Return-Path: <linux-kernel+bounces-316188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E01E96CC60
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:48:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F17896CC63
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104C1285BDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:48:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3538BB23720
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C4A14285;
-	Thu,  5 Sep 2024 01:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOkhyNt+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F5AD517;
+	Thu,  5 Sep 2024 01:48:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6317812B93
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06378F6E;
+	Thu,  5 Sep 2024 01:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725500902; cv=none; b=Y8CmuNO8ou+k4Q1mzz8gUKX+og8wFiq9/H9r7Qipp1d47BozkONub5AeYY05S8XWRXUJD9G1C367Zusp2bsYHGz+YwpzgSbX+fSzLuPD0s1IcWQxQ0KzRPZ7ABc6T4QPLCnGzU7q2CtVZ66OPpBJXgAt3TJuRtNrTTi2VACxT3w=
+	t=1725500912; cv=none; b=MGDpEH7a5ILRVdGw2lonoy+J6YsdJCUgmIxMLTC0GK+4FD87R/9zDm/Y5IvGIM6DZKsQOYf3tICRY6rm7c5FJaACdPURH/eDoWSwXRsHVp4mN2FHT+A+qXFB3HioNO+LIho8a9NRbS6KqUnr8SJ/mDCvqogTHP3ZCt25wiCRHlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725500902; c=relaxed/simple;
-	bh=kQQS/C3UUqrDEJUP8rfugi4K1dvCHH+BDTi4eVD5ZW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jHphfZmPQY6FUGA4w1g56ZyvqpMrAGpdaiU/b9dzTFj02oQHPmJnrb2JZQw5tJtzF6v3y8C2z3By+iCa/pKUeOmJYZ14DcGdopcf/Z44xxbt74kzZQWHajlohVbZ7z9mWFq4fHmzSMrHFfk28RS4H7iV3qMJtUZOOZfC4YDZayU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOkhyNt+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7784C4CEC9;
-	Thu,  5 Sep 2024 01:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725500901;
-	bh=kQQS/C3UUqrDEJUP8rfugi4K1dvCHH+BDTi4eVD5ZW8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=oOkhyNt+guXF/NzDiiVszJyEHybtrItyXhPEaFipkbw18iV6uM+wKDitwKbqeZLMN
-	 sEPI4V9JA8aDFyy6bIvgrdJNZ50sYeQ6JReFLWBeQ9vRw/Xy8G7Lw05JZacM9Xerbp
-	 P4IWZu9FfSo/3+PakOKNEPtR67FzkyEJZG03sc7svEnClkI8NN5erP+WxAy3XCBSLb
-	 PlqXXs9Ri93WBWx0gbDpWbbXyXAJtjn2C8Y5OqmaVCSoWI4oOFYCZ/7yoOrLcoQHHI
-	 z1dqCPq8OSyIMfFYQ/zeNFtjpzpr4OArnlB213mc4R89Mr9MP4dZ3lAFwFUXSk6XL6
-	 /2VcSAcl0qc8Q==
-Message-ID: <63c5c38b-4824-4bca-9698-b0d746e9f22a@kernel.org>
-Date: Thu, 5 Sep 2024 09:48:17 +0800
+	s=arc-20240116; t=1725500912; c=relaxed/simple;
+	bh=yIphmlHathP5Wz8+1/m1DOpN6KOZy/rtpCdj9vcnA+I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=L91/G29Jb8oIBFD6/2/8xD+ZhQlnCkLXX2lXN0kxu9gqTrqDIMsqffMpakvzXbgsQwlHWXRd/WBF2+D1FeIl6iJECteTygrN2m3umHIi47rQGtt5uyHv/3+VI6uY/GHYZmOCqhDXlGQ3Ym3terUC6rA7vyajAtUp/+gqDdXNvNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wzj1W6dMgz4f3jkP;
+	Thu,  5 Sep 2024 09:48:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3FA0A1A0925;
+	Thu,  5 Sep 2024 09:48:26 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgDH+8foDdlmObuyAQ--.63759S3;
+	Thu, 05 Sep 2024 09:48:26 +0800 (CST)
+Subject: Re: [PATCH for-6.12 0/4] block, bfq: fix corner cases related to bfqq
+ merging
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Jens Axboe <axboe@kernel.dk>, jack@suse.cz, tj@kernel.org,
+ josef@toxicpanda.com, paolo.valente@unimore.it, mauro.andreolini@unimore.it,
+ avanzini.arianna@gmail.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240902130329.3787024-1-yukuai1@huaweicloud.com>
+ <2ee05037-fb4f-4697-958b-46f0ae7d9cdd@kernel.dk>
+ <c2a6d239-aa96-f767-9767-9e9ea929b014@huaweicloud.com>
+ <b5b0e655-fb17-4967-9104-4386710ee8db@acm.org>
+ <80732d0d-e1a6-8b5e-791d-7c8a8091159a@huaweicloud.com>
+ <db586849-a7d6-44b2-96d0-113629f8d8f9@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <52711505-53db-315c-0e39-143fe8379514@huaweicloud.com>
+Date: Thu, 5 Sep 2024 09:48:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [syzbot] [f2fs?] possible deadlock in
- f2fs_release_file (2)
-To: syzbot <syzbot+9aff3b6811f0a00daffa@syzkaller.appspotmail.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000f963fc061fc96998@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <000000000000f963fc061fc96998@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <db586849-a7d6-44b2-96d0-113629f8d8f9@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDH+8foDdlmObuyAQ--.63759S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF4DGw4DKFy8AF18Zw4fXwb_yoW8Gw47pa
+	y8ta42yrsrJry5C3sFqw1jkrySkrZIy347tr1DXryYkr9I93Wft3W5t39Y9asrZw1xZw1j
+	9FWrZ3Z3Cw1kA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-#syz invalid
+Hi,
 
-Becuase commit "f2fs: atomic: fix to not allow GC to pollute atomic_file" has
-been dropped from linux-next git repo.
+在 2024/09/05 1:17, Bart Van Assche 写道:
+> On 9/3/24 7:45 PM, Yu Kuai wrote:
+>> 在 2024/09/04 10:28, Bart Van Assche 写道:
+>>> On 9/3/24 6:32 PM, Yu Kuai wrote:
+>>>> We do have customers are using bfq in downstream kernels, and we are
+>>>> still running lots of test for bfq.
+>>>
+>>> It may take less time to add any missing functionality to another I/O
+>>> scheduler rather than to keep maintaining BFQ.
+>>>
+>>> If Android device vendors would stop using BFQ, my job would become
+>>> easier.
+>>
+>> I'm confused now, I think keep maintaining BFQ won't stop you from
+>> adding new functionality to another scheduler, right? Is this something
+>> that all scheduler have to support?
+> 
+> As long as the BFQ I/O scheduler does not get deprecated, there will be
+> Android device vendors that select it for their devices. BFQ bug reports
+> are either sent to one of my colleagues or to myself.
 
-On 2024/8/16 17:16, syzbot wrote:
-> Hello,
+Then, you can share them to me now, I'll like to help.
 > 
-> syzbot found the following issue on:
+> For Android devices that use UFS storage, we noticed that the
+> mq-deadline scheduler is good enough. The device boot time is shorter
+> and I'm not aware of any significant differences in application startup
+> time.
+
+We're using bfq for HDD, performance overhead in bfq is not less,
+like you said, if bfq doen't show better results in UFS storage, and you
+don't want to use the io control feature, you can choose not to use it,
+however, remove bfq will be too aggressive.
+
+Thanks,
+Kuai
+
 > 
-> HEAD commit:    9e6869691724 Add linux-next specific files for 20240812
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1203caf3980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9aff3b6811f0a00daffa
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> Thanks,
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
+> Bart.
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/disk-9e686969.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vmlinux-9e686969.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98a/bzImage-9e686969.xz
+> .
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9aff3b6811f0a00daffa@syzkaller.appspotmail.com
-> 
-> F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
-> syz.0.98: attempt to access beyond end of device
-> loop0: rw=2049, sector=45096, nr_sectors = 8 limit=40427
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.11.0-rc3-next-20240812-syzkaller #0 Not tainted
-> ------------------------------------------------------
-> syz.0.98/5917 is trying to acquire lock:
-> ffff88807896ad30 (&sb->s_type->i_mutex_key#26){++++}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
-> ffff88807896ad30 (&sb->s_type->i_mutex_key#26){++++}-{3:3}, at: f2fs_release_file+0x9b/0x100 fs/f2fs/file.c:1940
-> 
-> but task is already holding lock:
-> ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
-> ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_commit_atomic_write+0x105/0x1510 fs/f2fs/segment.c:388
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}:
->         lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
->         down_write+0x99/0x220 kernel/locking/rwsem.c:1579
->         f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
->         f2fs_setattr+0xb80/0x12d0 fs/f2fs/file.c:1060
->         notify_change+0xb9d/0xe70 fs/attr.c:535
->         do_truncate+0x220/0x310 fs/open.c:65
->         handle_truncate fs/namei.c:3395 [inline]
->         do_open fs/namei.c:3745 [inline]
->         path_openat+0x2ced/0x3470 fs/namei.c:3900
->         do_filp_open+0x235/0x490 fs/namei.c:3927
->         do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
->         do_sys_open fs/open.c:1431 [inline]
->         __do_sys_creat fs/open.c:1507 [inline]
->         __se_sys_creat fs/open.c:1501 [inline]
->         __x64_sys_creat+0x123/0x170 fs/open.c:1501
->         do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->         do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->         entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> -> #0 (&sb->s_type->i_mutex_key#26){++++}-{3:3}:
->         check_prev_add kernel/locking/lockdep.c:3136 [inline]
->         check_prevs_add kernel/locking/lockdep.c:3255 [inline]
->         validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3871
->         __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5145
->         lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
->         down_write+0x99/0x220 kernel/locking/rwsem.c:1579
->         inode_lock include/linux/fs.h:799 [inline]
->         f2fs_release_file+0x9b/0x100 fs/f2fs/file.c:1940
->         __fput+0x24a/0x8a0 fs/file_table.c:425
->         task_work_run+0x24f/0x310 kernel/task_work.c:228
->         get_signal+0x16ad/0x1810 kernel/signal.c:2690
->         arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:337
->         exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->         exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->         __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->         syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
->         do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->         entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> other info that might help us debug this:
-> 
->   Possible unsafe locking scenario:
-> 
->         CPU0                    CPU1
->         ----                    ----
->    lock(&fi->i_gc_rwsem[WRITE]);
->                                 lock(&sb->s_type->i_mutex_key#26);
->                                 lock(&fi->i_gc_rwsem[WRITE]);
->    lock(&sb->s_type->i_mutex_key#26);
-> 
->   *** DEADLOCK ***
-> 
-> 1 lock held by syz.0.98/5917:
->   #0: ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
->   #0: ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_commit_atomic_write+0x105/0x1510 fs/f2fs/segment.c:388
-> 
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 5917 Comm: syz.0.98 Not tainted 6.11.0-rc3-next-20240812-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->   check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2189
->   check_prev_add kernel/locking/lockdep.c:3136 [inline]
->   check_prevs_add kernel/locking/lockdep.c:3255 [inline]
->   validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3871
->   __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5145
->   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
->   down_write+0x99/0x220 kernel/locking/rwsem.c:1579
->   inode_lock include/linux/fs.h:799 [inline]
->   f2fs_release_file+0x9b/0x100 fs/f2fs/file.c:1940
->   __fput+0x24a/0x8a0 fs/file_table.c:425
->   task_work_run+0x24f/0x310 kernel/task_work.c:228
->   get_signal+0x16ad/0x1810 kernel/signal.c:2690
->   arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:337
->   exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->   exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->   syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
->   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1c8c1779f9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f1c8d01f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: fffffffffffffffb RBX: 00007f1c8c305f80 RCX: 00007f1c8c1779f9
-> RDX: 0000000000000000 RSI: 000000000000f502 RDI: 0000000000000004
-> RBP: 00007f1c8c1e58ee R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007f1c8c305f80 R15: 00007ffdbf6238f8
->   </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
