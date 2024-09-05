@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-317604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B360B96E0EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:15:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5614696E0F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 938E51C241AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:15:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28561F242CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9F2155CB0;
-	Thu,  5 Sep 2024 17:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A127195F3A;
+	Thu,  5 Sep 2024 17:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XsUmZi5H"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W5LSHwMM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0371522F;
-	Thu,  5 Sep 2024 17:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D89522F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725556528; cv=none; b=Pf8jPgDatfRzmCtQqzsARbdBUQ9o/Fv9dRFQBE1E5ctoL/BlqdUYf8mGXtZtwscaM7AvUoDXvKR266GUZkFJEgIis1Y8tmIFrDniutlxxBMAeC3r+wK51xxIkXgWLEXOTeJKoBzrxBvwOtBpVkeXv6BufILwqF+gn8/pZ88Q59E=
+	t=1725556562; cv=none; b=XC7REKTXdpCXeeEp1hFBCa8zuXiBTbR8izzzZztky3Uwd3SGZBGubn4Lf/RbViqUwMu5sFa/XDdcbSEBht9auBwXH/IdxL4diHun1eIhU32wgOF4zynsNbhy4ZO/JgjOpPDOhtF5ZacEwgZJBOfCAWHhESXEnQxt1oZ7KSP4V94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725556528; c=relaxed/simple;
-	bh=b3J0zmDqUTroBSZmui7RtRtrLz5VtHqzff2jtxVhDnk=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=XeWnUjWIK9U/Iv+OeQwuoTfhxE3GLLWQ4N75STEy6y3KS5z1eV8tfLFIfm37RPAO5FBYauQQHSSDoxdxfHvISUNQVku6VR0DKhVn1OVTspr9/CWozGKiREJo0n9Iv4fXxUgJWGBZUFYBmNm35MlizANDwq63O1kd3n3ePi5u7ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XsUmZi5H; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725556518; bh=IdmLzzE4Y30s9YeYCM0UVuwavqz/aTp5LLdmTh4K8f0=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=XsUmZi5HPqQjER2B98kOFc2PPfFs8IGDZYwGuoonrTzf9KFuX8IJjXUIxr8wTFikf
-	 5f366F/4LO6GWGn1TbgtVF+juAFuzy1Mg+1iDo7z9qu1SxNdiVwQ+tP2PccyjRCqaI
-	 oxL4xwV5gzqX76ew2bykD20WrZw/Pf7UWpCQla2M=
-Received: from smtpclient.apple ([2001:da8:c800:d084:a0ed:5d47:36ee:f762])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 3CF3FE5C; Fri, 06 Sep 2024 01:15:15 +0800
-X-QQ-mid: xmsmtpt1725556515tl5azvo8d
-Message-ID: <tencent_B49BC6F11F5737662664B35196CF50904805@qq.com>
-X-QQ-XMAILINFO: ODdZrkDuTlAgtf9EojIpmtCpfUBNWoLW0j3WAfyUMzA3bmwJ7yeQCYEc7UNFBn
-	 dgh4i/ubTQJldg/Ixe82HlksCUKuP6ZB9TbSRJBKn41i3yBB2sRE7UvmO3YIC1QadIh8rIj/U8Ob
-	 xH7bwli6OntCsqeLXERo7Y0XmcVZVpp1clpxOMdhqTinb81fAts36L1vK8A+E7h2Mf5Hldqx5cw1
-	 Yh1mPCbyW5t+OXe9JQuZiQHaBL5Tgi+M8fqLuqsqpn2IOD6+uiIq3lfhyh4XjmrrH7DdlZ6Jzkib
-	 kVJz16UBYU8LzQHK1p4nAPJrBTi7vHY4UZNzZ/5grKw7LomY+65wIzlpDI+bKGJqB9A6tjY/U24G
-	 QkI6/AcMcoh1NoUKktLykS5V1O7JTc72+tHKbZhrP2UpPXaWITkdAhdVW1HGgAG+kXTlZpcvLh/Y
-	 8cpdW+BsQI0yAsgApBmRlPDdPDE/ZrbPs8dicFV9WM8cZwe9x48K/ZBKXKCTqVxqnOiKqXEyz72l
-	 ZCEhLxim4Nn/TV4mxzfNuiu+Da5NUfHJ3+w2yPm9qk1A0127lY/g/Pk0kL08DiDn5mQz8jdY4tdl
-	 8bs9yiNxXxzyqzwRNBOts1bSTKhyPoDOSDVpGRR0It1732B7jTZvZ2ZxB1/b9c4pMZfX7vuXSQNw
-	 2UuHfqJH6fhYR7CUn72aJtd8RIZR+2YbwsI8lZvt2dvJrJ8nuuBMZgHjqN+0CmzCFrkTU1irKZNm
-	 2Meayw7xkV0dXhvVEmvLrzv375PBa8l7NAjRa9C0wnDMGPMWduh8lpGneRF0E3V/nNOj6vCaALJk
-	 B8AEFCvseA/R67BkrBlCzy7HjhoKhEzOzq2YodvvCsYqH6lgwH2nzVcn5Zkr2R5wXd2D71Zlq/yF
-	 ow3eN1KFSzysK54VOaYlROVEN801XV85jm9ownawFqEtQ1NDGDvayh16w3Ot3KgCCu8Y8Wy4ZdBv
-	 qxg4sXU4K+3FSYX4TYO/9OJF01ZzV4O6nmyo/XVJzdPzuwYjBm9/mYtXGswYJ1suUI3Ztp28A=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1725556562; c=relaxed/simple;
+	bh=HprEm+25bMv9ipc0ur/k025rHi0KLLQza4pA0qsXpJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CHdleN2oIWEFdtIA60k/QHZlZs4YXrkINm7m/m4jHALfdImRcHNxSdYJo90/FRGV7ekATjmpdxotW3Y7TMcSKVSyEwBKWsuJtI3LdAovVuErG9Hs2vkTMuHUTIYDwQPTuTufylnjUR0m70Il3Wbo3cjg7Ga9CHATKWC5u6X2mls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W5LSHwMM; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725556562; x=1757092562;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HprEm+25bMv9ipc0ur/k025rHi0KLLQza4pA0qsXpJo=;
+  b=W5LSHwMM+TczkJZd0gPFWfniVFffWE5/jT51OMpREVSzaRJVt6/zzOaQ
+   OOrng+eyY2QSjH6Txy0zzIm8l2Ths8vM+uswPKyyvmjmLwo16Nk7VPHVt
+   Wjmyqytqd4xINT8EKe+hThhczoVzkyK8+JSe4yQyRfi3Geo7gnUgqC0/P
+   nI9R6kmdYLjRGLnfZDoS8M3Th11Z4WtWlrSNOgMPmdCIEmOTqYv6Ho7nH
+   xT8fYT0hFlg3eSp8l00rmfNHrKyoxCFBk8q8uD+w5iRBS41sgWigSvNuT
+   jXIh1qNWftTbe0wExnEtO1FemoqiMK45nvtx7gLW/zrU0SthJmfuMUX6H
+   A==;
+X-CSE-ConnectionGUID: 5HdP8Xa2Sq2PIVQ25t3qnw==
+X-CSE-MsgGUID: A+eoBGe0TV2mhY4azK1AMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="46820338"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="46820338"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:16:01 -0700
+X-CSE-ConnectionGUID: jG0AhIh3TROoGs10VT+HdA==
+X-CSE-MsgGUID: NJo70IV1TDe5tF7dhehhQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="70260947"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Sep 2024 10:15:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 8BE3531E; Thu, 05 Sep 2024 20:15:57 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] mm/page_alloc: Mark has_unaccepted_memory() with __maybe_unused
+Date: Thu,  5 Sep 2024 20:15:53 +0300
+Message-ID: <20240905171553.275054-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 3/3] riscv: mm: Do not restrict mmap address based on hint
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <mhng-ad0c8c3b-568a-484d-bc3d-49b56a11dcd6@palmer-ri-x1c9>
-Date: Fri, 6 Sep 2024 01:15:04 +0800
-Cc: Charlie Jenkins <charlie@rivosinc.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Shuah Khan <shuah@kernel.org>,
- Levi Zim <rsworktech@outlook.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <AFED66DE-BE37-467B-A7FD-BF6D530CE0D3@cyyself.name>
-References: <mhng-ad0c8c3b-568a-484d-bc3d-49b56a11dcd6@palmer-ri-x1c9>
-To: Palmer Dabbelt <palmer@rivosinc.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+When has_unaccepted_memory() is unused, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
+mm/page_alloc.c:7036:20: error: unused function 'has_unaccepted_memory' [-Werror,-Wunused-function]
+ 7036 | static inline bool has_unaccepted_memory(void)
+      |                    ^~~~~~~~~~~~~~~~~~~~~
 
-> On Sep 3, 2024, at 22:27, Palmer Dabbelt <palmer@rivosinc.com> wrote:
->=20
-> On Mon, 26 Aug 2024 19:24:38 PDT (-0700), cyy@cyyself.name wrote:
->>=20
->>=20
->>> On Aug 27, 2024, at 00:36, Charlie Jenkins <charlie@rivosinc.com> =
-wrote:
->>> The hint address should not forcefully restrict the addresses =
-returned
->>> by mmap as this causes mmap to report ENOMEM when there is memory =
-still
->>> available.
->>=20
->> Fixing in this way will break userspace on Sv57 machines as some
->> issues mentioned in the patch [1].
->>=20
->> I suggest restricting to BIT(47) by default, like patch [2], to
->> align with kernel behavior on x86 and aarch64, and this does exist
->> on x86 and aarch64 for quite a long time. In that way, we will also
->> solve the problem mentioned in the first patch [1], as QEMU enables
->> Sv57 by default now and will not break userspace.
->>=20
->> [1] =
-https://lore.kernel.org/linux-riscv/20230809232218.849726-1-charlie@rivosi=
-nc.com/
->> [2] =
-https://lore.kernel.org/linux-riscv/tencent_B2D0435BC011135736262764B51199=
-4F4805@qq.com/
->=20
-> I'm going to pick this up as it's a revert and a bug fix, so we can =
-backport it.  If the right answer is to just forget about the sv39 =
-userspace and only worry about sv48 userspace then your patches are =
-likely the way to go,
+Fix this by marking it with __maybe_unused (all cases for the sake of
+symmetry).
 
-I think we don't need to care about restricting to sv39 now since
-the ASAN bug has been fixed. We should care about what to do to not
-break userspace on sv57 machines as QEMU enables sv57 by default,
-which is widely used.
+See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+inline functions for W=1 build").
 
-> but there's a handful of discussions around that which might take a =
-bit.
->=20
->>=20
->> Thanks,
->> Yangyu Chen
->>=20
->>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
->>> Fixes: b5b4287accd7 ("riscv: mm: Use hint address in mmap if =
-available")
->>> Fixes: add2cc6b6515 ("RISC-V: mm: Restrict address space for =
-sv39,sv48,sv57")
->>> Closes: =
-https://lore.kernel.org/linux-kernel/ZbxTNjQPFKBatMq+@ghost/T/#mccb1890466=
-bf5a488c9ce7441e57e42271895765
->>> ---
->>> arch/riscv/include/asm/processor.h | 26 ++------------------------
->>> 1 file changed, 2 insertions(+), 24 deletions(-)
->>> diff --git a/arch/riscv/include/asm/processor.h =
-b/arch/riscv/include/asm/processor.h
->>> index 8702b8721a27..efa1b3519b23 100644
->>> --- a/arch/riscv/include/asm/processor.h
->>> +++ b/arch/riscv/include/asm/processor.h
->>> @@ -14,36 +14,14 @@
->>> #include <asm/ptrace.h>
->>> -/*
->>> - * addr is a hint to the maximum userspace address that mmap should =
-provide, so
->>> - * this macro needs to return the largest address space available =
-so that
->>> - * mmap_end < addr, being mmap_end the top of that address space.
->>> - * See Documentation/arch/riscv/vm-layout.rst for more details.
->>> - */
->>> #define arch_get_mmap_end(addr, len, flags) \
->>> ({ \
->>> - unsigned long mmap_end; \
->>> - typeof(addr) _addr =3D (addr); \
->>> - if ((_addr) =3D=3D 0 || is_compat_task() || \
->>> -    ((_addr + len) > BIT(VA_BITS - 1))) \
->>> - mmap_end =3D STACK_TOP_MAX; \
->>> - else \
->>> - mmap_end =3D (_addr + len); \
->>> - mmap_end; \
->>> + STACK_TOP_MAX; \
->>> })
->>> #define arch_get_mmap_base(addr, base) \
->>> ({ \
->>> - unsigned long mmap_base; \
->>> - typeof(addr) _addr =3D (addr); \
->>> - typeof(base) _base =3D (base); \
->>> - unsigned long rnd_gap =3D DEFAULT_MAP_WINDOW - (_base); \
->>> - if ((_addr) =3D=3D 0 || is_compat_task() || \
->>> -    ((_addr + len) > BIT(VA_BITS - 1))) \
->>> - mmap_base =3D (_base); \
->>> - else \
->>> - mmap_base =3D (_addr + len) - rnd_gap; \
->>> - mmap_base; \
->>> + base; \
->>> })
->>> #ifdef CONFIG_64BIT
->>> --=20
->>> 2.45.0
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ mm/page_alloc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index c565de8f48e9..3b47f1b17ae5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6990,7 +6990,7 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+ 	return ret;
+ }
+ 
+-static inline bool has_unaccepted_memory(void)
++static inline __maybe_unused bool has_unaccepted_memory(void)
+ {
+ 	return static_branch_unlikely(&zones_with_unaccepted_pages);
+ }
+@@ -7033,7 +7033,7 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+ 	return false;
+ }
+ 
+-static inline bool has_unaccepted_memory(void)
++static inline __maybe_unused bool has_unaccepted_memory(void)
+ {
+ 	return false;
+ }
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
