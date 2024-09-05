@@ -1,164 +1,262 @@
-Return-Path: <linux-kernel+bounces-317602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DCD96E0EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:14:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5383C96E0E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C971C24DB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863AF1C22CFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F951A257F;
-	Thu,  5 Sep 2024 17:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9B61A264D;
+	Thu,  5 Sep 2024 17:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QA2FDKB7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9fZwCtw"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F225A19DFB8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D1619DFB8;
+	Thu,  5 Sep 2024 17:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725556433; cv=none; b=gLbBMrVWsnv9IwohwqN6GaagUwEjKJrsyiV3GpIe27Bn3J4tP1LmHcTIPeVxXtL/pOfVqdPWfAuqfhjiFBbrZp30GqptfYMd2ty1yVV/qX+hnKBm2x3xUn+pmU11mpEMsL6T+KayCLgHRPDi3nacihu1XJRry9Pg4JnA2/7ChCU=
+	t=1725556369; cv=none; b=TQ5r2cUKBvT4v1bPDcgwdbcyqellE5UUEfxr86LpTvXeoKzUEf6YO0+O3j0/EJr3uunQEVTtFwk9EsNCNJ+LY2uBjpJOwhzYdFs+XGCtheATqimtMPylEG4UO5fZUZvw7IU8rliJgROWsxgMeadvA5jXLbOiXwGjVBAQ2dYpTSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725556433; c=relaxed/simple;
-	bh=OKsws4AYyTGeGlOnUqGnm9T+Wb0mx3BnDDnBXSbo06g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lpYZ27LK0lWA36Nteif6gQbISbmR/bPmFZibxO9MecDPoohbpYNH3KeHUxAmzpi2rUr8eLuMTtv7mARnCpLTahzC/G3/ymqZ9SRaJfREK2gyfj2ap6PaS4iaLYhO6Kn8VgmpA8vj6auMwy2GRgJdv13OsD09fcEqfYkCgjtwBkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QA2FDKB7; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725556432; x=1757092432;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=OKsws4AYyTGeGlOnUqGnm9T+Wb0mx3BnDDnBXSbo06g=;
-  b=QA2FDKB7fkmaLC3oQlZUzmX78GxAvUVRF1stKOyPs/F7nABNyGI3e2Qv
-   As7rKsJpN1mhdHAtMPTiJBCYE295zRzI3DozIBBdkYW5kxIy2kvfUSfOy
-   tT5zvgApw34i997zr7/2ia+uhJ+yFMVIYKWnd29YHUTRukOVbEigRHc/N
-   uLsEkGXobmvAQxJH10Lug6IyGGIOt34bAkrM1BHka/YIQNvf/7pYFg3kd
-   CwQyGLns9RxSjeIImHBEpOlWdeB1rJKTvweJ7+Ru8oYWjPOl8o9a46M8B
-   FWbYGpBtlBTys89G7Ng1W8cpTyZe8yUXMNIyKxze0Kz8QNy++qzu7lPOk
-   g==;
-X-CSE-ConnectionGUID: Ffg5hfHDSm6Ve0wWVg0qrg==
-X-CSE-MsgGUID: foyYbklXR8OO2AtdjvaSSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="34863342"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="34863342"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:13:52 -0700
-X-CSE-ConnectionGUID: t+S3g3I7Q+Kc8My2JXJOcg==
-X-CSE-MsgGUID: 8O8VSu/cQgSr5sGAN0d3HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="65409979"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 05 Sep 2024 10:13:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5D4D331E; Thu, 05 Sep 2024 20:13:46 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] sched/fair: Mark cfs_bandwidth_used() and m*_vruntime() with __maybe_unused
-Date: Thu,  5 Sep 2024 20:12:10 +0300
-Message-ID: <20240905171210.267626-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725556369; c=relaxed/simple;
+	bh=A7TtDQQAdTUo+ZDaXSaI6ceuzOQKZTjGvuB/qTrYS9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=stIfsMoAmctnAeTte615H79t7qPJXwj8K3rFyaWOu2Pp0O/PSIE8pQAg3lskrl+tQxxksIWarqosNVO57oCDAFgdt77HRe3X58Qunz8Kj6y3ypbqRw3/lC9f1kPrgKtxAAn2YntAqHtSs0MYA7YGCNAVA2VnUFUyqP5S/zHCykQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9fZwCtw; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53653682246so1192913e87.1;
+        Thu, 05 Sep 2024 10:12:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725556366; x=1726161166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MtORbUfBuSYpw+ZpNAYafseBri04aZwmXOf583OZnkE=;
+        b=h9fZwCtwuUfWBDjb166+ga/nFOeu2Ky1hYx0/oeIW6KklDTQGqQ6avP9y45LVszTvG
+         /0g6LWz9KUqZk+WGcx3As/vVtyTrPG3cYyn+yTqhzfiK2GK3kDhgRG9F7abtXvFydI6O
+         qOkHsImrmBmvbe3dxK0pcRXDJoEYstoxyoERqWt3iKJi+Pp5PVElu5NiggYy+OnhWtA0
+         2xclcO66OAWzVtcJTyCLlkQ/+y3FIDV/Ez2edGqY1CwpoqSND8w8vAMVzAamd9vI1DKl
+         j+OOdLVdnHkSCX+by4Ejgf20YRo2ByczA2ENt9ALOBhtUfYKYfVbExHWZv2Pre6T8WVU
+         +IEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725556366; x=1726161166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MtORbUfBuSYpw+ZpNAYafseBri04aZwmXOf583OZnkE=;
+        b=iz+dJGh/E1XVghv3Zw78nvUDNBsUCIZKgFkFMEywFuZz/x9Jyb0jIx17N4/z51tUYB
+         2ZmUMgrkKd1d7L0cDDULqjjtz2J34HOE6OgtIw2dEaNvLb/qvcEHjfHJUXq3xCxltX+P
+         2uvwUN33+bbRVmOoj9cJsr7tLpaOM+hXiblNiFGAci3LaSaHSU0OCOqgqEnxsqDTzcq7
+         0WMrHtCixRSJlFxvroUJ4+dXOG0J0/xHR4lpiP/UxBvtuRTQ2y31NTjI8dbesEO/BR8c
+         J6YuvNein6T3jGNRh+OuAwBvGJbhR8z1CGoWJYqj9GOFyXhY53Mb1gKSohrlGr517ZXy
+         fWLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEF7b7Yy11Hpnb3B92p10Lalg/5liOybGSQSsU6x/C5keZV/8aQZODDbwb72C3YzW8+agzBSmHYr8A@vger.kernel.org, AJvYcCVNK5O/wPa5UGAvayYnWR5Gjp7iWTH60zb7AsEIdvhOKEvJhwc64GMe5KVBSZ2h7zcUzJ047FptuaIVXbSe@vger.kernel.org, AJvYcCWxncviQwI4Ry/+eQYHVZWY/gXldkkEEmyrCpFnDlfNQQgp19MmT0f5RGPuNGWTAddH/i4IDSvVXRvc@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDUxiPmccz7wHigYNaqvMHh/tC907idwXHrXQVnktcZYQseate
+	BAfc6A6qDxR8AjhBFf9fEooQ+ep9scJgkOtrNz5D1lcgL6TVq8owqwlQTHuceQSEm9HHqz7piGy
+	uOGSVI52E9fPmrQ0n9zi6PET9/GY=
+X-Google-Smtp-Source: AGHT+IHSwofzoxwQsG0zMSSmo1+llgW2Wy3bZzwTo3q9Dkz410dXl/IeuLUWClfjbJdYjUEnCtJ+IeVIoX1nfMyYe0c=
+X-Received: by 2002:a05:6512:2394:b0:536:55a9:4b6c with SMTP id
+ 2adb3069b0e04-53655a94bf8mr892897e87.13.1725556365789; Thu, 05 Sep 2024
+ 10:12:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com> <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
+In-Reply-To: <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 5 Sep 2024 14:12:33 -0300
+Message-ID: <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.Li@nxp.com>, Marek Vasut <marex@denx.de>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	pratikmanvar09@gmail.com, francesco@dolcini.it, 
+	Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When cfs_bandwidth_used() is unused, it prevents kernel builds
-with clang, `make W=1` and CONFIG_WERROR=y:
+Adding Marek.
 
-kernel/sched/fair.c:526:19: error: unused function 'max_vruntime' [-Werror,-Wunused-function]
-  526 | static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
-      |                   ^~~~~~~~~~~~
-kernel/sched/fair.c:6580:20: error: unused function 'cfs_bandwidth_used' [-Werror,-Wunused-function]
- 6580 | static inline bool cfs_bandwidth_used(void)
-      |                    ^~~~~~~~~~~~~~~~~~
-
-Fix this by marking them with __maybe_unused (all cases for the sake of
-symmetry).
-
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- kernel/sched/fair.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9057584ec06d..b9d35675db50 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -523,7 +523,7 @@ void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec);
-  * Scheduling class tree data structure manipulation methods:
-  */
- 
--static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
-+static inline __maybe_unused u64 max_vruntime(u64 max_vruntime, u64 vruntime)
- {
- 	s64 delta = (s64)(vruntime - max_vruntime);
- 	if (delta > 0)
-@@ -532,7 +532,7 @@ static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
- 	return max_vruntime;
- }
- 
--static inline u64 min_vruntime(u64 min_vruntime, u64 vruntime)
-+static inline __maybe_unused u64 min_vruntime(u64 min_vruntime, u64 vruntime)
- {
- 	s64 delta = (s64)(vruntime - min_vruntime);
- 	if (delta < 0)
-@@ -5547,7 +5547,7 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
- #ifdef CONFIG_JUMP_LABEL
- static struct static_key __cfs_bandwidth_used;
- 
--static inline bool cfs_bandwidth_used(void)
-+static inline __maybe_unused bool cfs_bandwidth_used(void)
- {
- 	return static_key_false(&__cfs_bandwidth_used);
- }
-@@ -5562,7 +5562,7 @@ void cfs_bandwidth_usage_dec(void)
- 	static_key_slow_dec_cpuslocked(&__cfs_bandwidth_used);
- }
- #else /* CONFIG_JUMP_LABEL */
--static bool cfs_bandwidth_used(void)
-+static inline __maybe_unused bool cfs_bandwidth_used(void)
- {
- 	return true;
- }
-@@ -6577,7 +6577,7 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
- 
- #else /* CONFIG_CFS_BANDWIDTH */
- 
--static inline bool cfs_bandwidth_used(void)
-+static inline __maybe_unused bool cfs_bandwidth_used(void)
- {
- 	return false;
- }
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+On Mon, Jul 15, 2024 at 5:30=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> From: Clark Wang <xiaoning.wang@nxp.com>
+>
+> Implement workaround for ERR051198
+> (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
+>
+> PWM output may not function correctly if the FIFO is empty when a new SAR
+> value is programmed
+>
+> Description:
+>   When the PWM FIFO is empty, a new value programmed to the PWM Sample
+>   register (PWM_PWMSAR) will be directly applied even if the current time=
+r
+>   period has not expired. If the new SAMPLE value programmed in the
+>   PWM_PWMSAR register is less than the previous value, and the PWM counte=
+r
+>   register (PWM_PWMCNR) that contains the current COUNT value is greater
+>   than the new programmed SAMPLE value, the current period will not flip
+>   the level. This may result in an output pulse with a duty cycle of 100%=
+.
+>
+> Workaround:
+>   Program the current SAMPLE value in the PWM_PWMSAR register before
+>   updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
+>   register. This will ensure that the new SAMPLE value is modified during
+>   a non-empty FIFO, and can be successfully updated after the period
+>   expires.
+>
+> Write the old SAR value before updating the new duty cycle to SAR. This
+> avoids writing the new value into an empty FIFO.
+>
+> This only resolves the issue when the PWM period is longer than 2us
+> (or <500KHz) because write register is not quick enough when PWM period i=
+s
+> very short.
+>
+> Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
+> Reviewed-by: Jun Li <jun.li@nxp.com>
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz=
+4qbnhdqziftymw@pengutronix.de/
+>   About disable/enable pwm instead of disable/enable irq:
+>   Some pmw periphal may sensitive to period. Disable/enable pwm will
+> increase period, althouhg it is okay for most case, such as LED backlight
+> or FAN speed. But some device such servo may require strict period.
+>
+> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4ba=
+c-8b77-0bb69f55accd@gmx.net/
+>   Using official errata number
+>   fix typo 'filp'
+>   add {} for else
+>
+> I supposed fixed all previous issues, let me know if I missed one.
+> ---
+>  drivers/pwm/pwm-imx27.c | 52 +++++++++++++++++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 51 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+> index 253afe94c4776..e12eaaebe3499 100644
+> --- a/drivers/pwm/pwm-imx27.c
+> +++ b/drivers/pwm/pwm-imx27.c
+> @@ -27,6 +27,7 @@
+>  #define MX3_PWMSR                      0x04    /* PWM Status Register */
+>  #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
+>  #define MX3_PWMPR                      0x10    /* PWM Period Register */
+> +#define MX3_PWMCNR                     0x14    /* PWM Counter Register *=
+/
+>
+>  #define MX3_PWMCR_FWM                  GENMASK(27, 26)
+>  #define MX3_PWMCR_STOPEN               BIT(25)
+> @@ -232,8 +233,11 @@ static int pwm_imx27_apply(struct pwm_chip *chip, st=
+ruct pwm_device *pwm,
+>  {
+>         unsigned long period_cycles, duty_cycles, prescale;
+>         struct pwm_imx27_chip *imx =3D to_pwm_imx27_chip(chip);
+> +       void __iomem *reg_sar =3D imx->mmio_base + MX3_PWMSAR;
+>         unsigned long long c;
+>         unsigned long long clkrate;
+> +       unsigned long flags;
+> +       int val;
+>         int ret;
+>         u32 cr;
+>
+> @@ -274,7 +278,53 @@ static int pwm_imx27_apply(struct pwm_chip *chip, st=
+ruct pwm_device *pwm,
+>                 pwm_imx27_sw_reset(chip);
+>         }
+>
+> -       writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+> +       /*
+> +        * This is a limited workaround. When the SAR FIFO is empty, the =
+new
+> +        * write value will be directly applied to SAR even the current p=
+eriod
+> +        * is not over.
+> +        *
+> +        * If the new SAR value is less than the old one, and the counter=
+ is
+> +        * greater than the new SAR value, the current period will not fi=
+lp
+> +        * the level. This will result in a pulse with a duty cycle of 10=
+0%.
+> +        * So, writing the current value of the SAR to SAR here before up=
+dating
+> +        * the new SAR value can avoid this issue.
+> +        *
+> +        * Add a spin lock and turn off the interrupt to ensure that the
+> +        * real-time performance can be guaranteed as much as possible wh=
+en
+> +        * operating the following operations.
+> +        *
+> +        * 1. Add a threshold of 1.5us. If the time T between the read cu=
+rrent
+> +        * count value CNR and the end of the cycle is less than 1.5us, w=
+ait
+> +        * for T to be longer than 1.5us before updating the SAR register=
+.
+> +        * This is to avoid the situation that when the first SAR is writ=
+ten,
+> +        * the current cycle just ends and the SAR FIFO that just be writ=
+ten
+> +        * is emptied again.
+> +        *
+> +        * 2. Use __raw_writel() to minimize the interval between two wri=
+tes to
+> +        * the SAR register to increase the fastest pwm frequency support=
+ed.
+> +        *
+> +        * When the PWM period is longer than 2us(or <500KHz), this worka=
+round
+> +        * can solve this problem.
+> +        */
+> +       val =3D FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base =
++ MX3_PWMSR));
+> +       if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORD=
+S) {
+> +               c =3D clkrate * 1500;
+> +               do_div(c, NSEC_PER_SEC);
+> +
+> +               local_irq_save(flags);
+> +               if (state->period >=3D 2000)
+> +                       readl_poll_timeout_atomic(imx->mmio_base + MX3_PW=
+MCNR, val,
+> +                                                 period_cycles - val >=
+=3D c, 0, 10);
+> +
+> +               val =3D FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mm=
+io_base + MX3_PWMSR));
+> +               if (!val)
+> +                       writel_relaxed(imx->duty_cycle, reg_sar);
+> +               writel_relaxed(duty_cycles, reg_sar);
+> +               local_irq_restore(flags);
+> +       } else {
+> +               writel_relaxed(duty_cycles, reg_sar);
+> +       }
+> +
+>         writel(period_cycles, imx->mmio_base + MX3_PWMPR);
+>
+>         /*
+>
+> --
+> 2.34.1
+>
 
