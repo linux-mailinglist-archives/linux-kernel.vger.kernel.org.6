@@ -1,75 +1,64 @@
-Return-Path: <linux-kernel+bounces-317708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481C596E292
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC3596E295
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAE47B24343
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1779D1C22EB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B963B18785F;
-	Thu,  5 Sep 2024 19:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC59F18786A;
+	Thu,  5 Sep 2024 19:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqDCbL2E"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VkSUZPth"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7646C1552E0;
-	Thu,  5 Sep 2024 19:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B79617BEB0;
+	Thu,  5 Sep 2024 19:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725562901; cv=none; b=m0FVkDXdYe0uZf2jjXGYBtMmj5halqgl/77zWYqeshXl1mTmkBUqu9CeFK6rwRV2+Z76446UtPmWoLmhFmmYrl6gzlbG+fpCvRZsrECCjsaJVH3/evhheuu66GxGxZYH69xBUAtfwtJMAFvqPgYM8AJpWzoWgqaFQzea9vd3lOo=
+	t=1725562954; cv=none; b=Xar1A2fBZLodJiaKL71ImuUtajJqCI08PI9ZRi0Eg+D3NVWYIwlvtTze3oJ+ec1pP2pFJkzl7rUNaxKOC40hixUsnWUMGlUSplNk2t6hCZAfPlmr1wWqbkTHaxh9vq00QAI+adxAz0g6SCoLkpExscZkXKLki+KfYRtkIUiyyo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725562901; c=relaxed/simple;
-	bh=/e4u/JDvc6bVXSRURtHyV8WfjImNr4XaUNgP4OjRRBU=;
+	s=arc-20240116; t=1725562954; c=relaxed/simple;
+	bh=wNvHJj0V7cMUjU89w6pkw8ni5Oe5m50fqhhDme5bCO0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tNGkSlyxW2hDrLemEm5Ady4yWzPnoVXYK06K+42N5r7Qfj41g5LEV8eQWTgIvi/SB4Q6xz4OPAuB/m6/Dehtgl4Zy1MsvMVqxPo63eaL9d0sXjtbazU6IfHABghrjYZzhxVqCCfZfph1TB9bujgfnj9uyL1w+0YYhh2v+YbKdcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqDCbL2E; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-717934728adso728696b3a.2;
-        Thu, 05 Sep 2024 12:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725562898; x=1726167698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=7jvqKHWKTNEwzmEHt4HX/4BnyKCC/7k0aB+R5vHLZNI=;
-        b=jqDCbL2E9ppU3qgDmZA925dMepkXSpEeCvVh5q6cRDfZhf3+0GeARbuzmNoWLaavXy
-         bEKTRMFfr0BztbZ/uWMRS/JWTyz5F9uewTSMgAPvj7vVaxRkBksJNinKj7KJy2HAC/EP
-         VKCdQPK5s9TXl6C4mP0T1V49K6Qgo/2td90ADEI5Mk6jOExvZZaslALZrionYgbIkx49
-         syhtfU8zX+WkUHYPuOMrLe/gfSEdVhk+Ojrz8Yr4oWVUBggr8U0VyA/RfFiz3JK60V9L
-         lYUg16Dm8K/9481PrZChTUDJRhgVra3Q5Vk5B8+QlWzdTILT1iUDPmcro7wyafOVps0E
-         ulvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725562898; x=1726167698;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7jvqKHWKTNEwzmEHt4HX/4BnyKCC/7k0aB+R5vHLZNI=;
-        b=sVOGrXMxA3JqfBsIsk9929yHyIban66fnBNN0w0aw5Vi6ll4KsfUkCcrfbehI8T244
-         XFrIWfC/0WtrMCMCoH1hNS9Y6gCtNt/4kR4qrBYpWreQQrMwIY/FyMN4SddyN5CKUIap
-         NXHps5KrhM7jxoFlueaIZZT6dnHKomvHqatbsaWUJ1rAE9Z4aLOOko+cO0tWggjR9r9z
-         PbPC8mePYtZMXz6HHh/YJ/lqDEWcJVBZmG7yO0EXMtcbMg3UKvHDfjiXl5in1gZFmjzM
-         rj6R1G1chdGTgSkrlUuidzdeeljgPsIH/4/GftclFc/+W+fXttCxYgfi4JnTwfL7wM9R
-         Yn1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6+r32kiyXBkZsujqNGLNfmKkSCg4CwBXvh1zNR9LSfqXnZw31WZRBvLfbBZwzTbhGhwXZeLbM2jF/@vger.kernel.org, AJvYcCUtBKSNDlY3H21CYqjCJpaZ5hr+5WM53V3XlbbcKdmynWGCTkrDAjCxmYNFasIifPtPeZMN10T6QZgVTnC1@vger.kernel.org, AJvYcCXEcwqSxCGR9qkMgv2pJWMPArn2J6tjXIxlvNQ/9coy5tbP+LS15duMcNZ8PsV2L9IbeVk1I9ZeeD20EsWoHsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb+2lUN86SpwPFZEk9RNPfVcCbanvJfALyAprHdmhpSkKxVXuv
-	eKGMgqsm5N6Dc5IcGxhaRNWQmCKmFncNTkKLvu/5YS3b1FYY2yb0JLrMYw==
-X-Google-Smtp-Source: AGHT+IFxTTWpZUiDBR4nIYLol5cprsIqljX/0VILfOAPfpIcvRqe+FExe2zYb7967dhzt+eRUJqsmw==
-X-Received: by 2002:a05:6a00:1951:b0:717:97ac:ef46 with SMTP id d2e1a72fcca58-71797acf5a6mr1613754b3a.15.1725562898217;
-        Thu, 05 Sep 2024 12:01:38 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178e2a4ab6sm1460359b3a.9.2024.09.05.12.01.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 12:01:36 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9cf523a0-53b3-4b5a-b325-15626e12a6dd@roeck-us.net>
-Date: Thu, 5 Sep 2024 12:01:34 -0700
+	 In-Reply-To:Content-Type; b=N9P8gqii5LXw+KEqJgAOk+3rjjLUyEqGZTIqKXT8hh3HlGvrT9giwFLf7wCgTdj1FPPaAEdHOwf32C42fg3VzMiK5hqyJi149MdU1cPHbq/phvrHt7ABunqQDEzn4rtLu6a3TvKtu208NRaJTZLPKH5dtLyGPFzM14jA5DwXQQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VkSUZPth; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725562952; x=1757098952;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wNvHJj0V7cMUjU89w6pkw8ni5Oe5m50fqhhDme5bCO0=;
+  b=VkSUZPthqJGdU67hltUeuEAkvvXQV9rs2GI8Ux/UgqEpPkwFA/6sUzh0
+   rAknYTnG9mIky3p02xtn019gDYCdeaeZipjVF+Cxq+lW3LMcbVKurONsU
+   0FFLhbF5xjVVsg+6KTBg7euj+9txnlcqzucB76QECa4+VavY7xM9fwDLD
+   ZmH2Do+b4Dd4MEeIJc2F3dbX5m+hWGytWCs59+CemP7p4ax1E6HDSvBCs
+   4h7ZWtMs4F1Y7APT3ak0CtfPDtTJ7WhfpvzWqWZ1YlJ7Slg8H7pDy5ux3
+   ixPKbncbtEBiylVMfP2mh5lIZPo2xyzczmnEoeC8ZL5WQRg5Rt22N5n2v
+   w==;
+X-CSE-ConnectionGUID: ClkvpXMTQPmzhygluC/4IQ==
+X-CSE-MsgGUID: VSswM9biSTK4pn+24Uiw/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="41807447"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="41807447"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:02:28 -0700
+X-CSE-ConnectionGUID: GJug6uv6SR2o6nTETyy0bw==
+X-CSE-MsgGUID: ZdX5Vd5GR4Gqp8C7fjsZqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="66265840"
+Received: from johncoop-mobl1.amr.corp.intel.com (HELO [10.124.222.49]) ([10.124.222.49])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:02:28 -0700
+Message-ID: <585f9b58-3506-499e-ab9f-6076f2e83ef5@intel.com>
+Date: Thu, 5 Sep 2024 12:02:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,96 +66,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: watchdog: qcom-wdt: document support on
- SA8255p
-To: Nikunj Kela <quic_nkela@quicinc.com>, wim@linux-watchdog.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240905185642.3767906-1-quic_nkela@quicinc.com>
+Subject: Re: [PATCH v2 2/2] x86/sgx: Log information when a node lacks an EPC
+ section
+To: Jarkko Sakkinen <jarkko@kernel.org>, Aaron Lu <aaron.lu@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Kai Huang <kai.huang@intel.com>
+Cc: "Molina Sabido, Gerardo" <gerardo.molina.sabido@intel.com>,
+ Zhimin Luo <zhimin.luo@intel.com>, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+References: <20240905080855.1699814-1-aaron.lu@intel.com>
+ <20240905080855.1699814-3-aaron.lu@intel.com>
+ <D3YF42L6VP2I.12ZOBQPIPQ2BA@kernel.org>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240905185642.3767906-1-quic_nkela@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <D3YF42L6VP2I.12ZOBQPIPQ2BA@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/5/24 11:56, Nikunj Kela wrote:
-> Add a compatible for the SA8255p platform's KPSS watchdog.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+On 9/5/24 07:24, Jarkko Sakkinen wrote:
+>> +	for_each_online_node(nid) {
+>> +		if (!node_isset(nid, sgx_numa_mask) &&
+>> +		    node_state(nid, N_MEMORY) && node_state(nid, N_CPU))
+>> +			pr_info("node%d has both CPUs and memory but doesn't have an EPC section\n",
+>> +				nid);
+> Is this enough, or is there anything that would need to be done
+> automatically if this happens? With a tracepoint you could react to such
+> even but I'm totally fine with this.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+There's always the theoretical chance that there are nodes being
+hotplugged or that this is all running in a VM that has some whacky
+topology.
 
-> ---
-> 
-> Changes in v3:
-> 	- Removed the patch from original series[1]
-> 
-> Changes in v2:
-> 	- Added Reviewed-by tag
-> 
-> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
-> ---
->   Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> index 47587971fb0b..932393f8c649 100644
-> --- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-> @@ -26,6 +26,7 @@ properties:
->                 - qcom,apss-wdt-msm8994
->                 - qcom,apss-wdt-qcm2290
->                 - qcom,apss-wdt-qcs404
-> +              - qcom,apss-wdt-sa8255p
->                 - qcom,apss-wdt-sa8775p
->                 - qcom,apss-wdt-sc7180
->                 - qcom,apss-wdt-sc7280
-
+But this simple pr_info() provides good coverage for the common cases
+and shouldn't be too much of a burden for the weridos.
 
