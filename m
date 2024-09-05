@@ -1,210 +1,125 @@
-Return-Path: <linux-kernel+bounces-317613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECBE96E107
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC82696E108
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA7A1F2747E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981E01F27093
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052911A38E5;
-	Thu,  5 Sep 2024 17:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FC31A2643;
+	Thu,  5 Sep 2024 17:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHfUAGzO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ah7zBwWi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96F2192D96;
-	Thu,  5 Sep 2024 17:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0CF192D96;
+	Thu,  5 Sep 2024 17:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557012; cv=none; b=eXILJPz/mU8H9ig0c37xU26AIInykKYolF6bgVtDUNftYdlUWMkFkpLiTv7OHVE5U6LpyjIm4nGytYKUECjjZ6U+7WX7Ye5wQosnxm2VOBVkdpCV4duq8XpV07QWBiZ0CSyAB1l/1ffiB4uWB03918aPzeWzhi+BvIvmmqsS4XY=
+	t=1725557051; cv=none; b=bpR6ytBZolR3tNAQ9tDkYI/9ajQlZIPCdOyS6Wj96HFZIvq9DGBS2BxWWX6/+ALdaWzFx6D+Gaszfk1QKgdW0YE+Td4jS50DdVoB9rVyR411Q+h9kV3n+oY6OQGhtJM1Gsexfy+2N/PRx5hZLcV/YynPVQaVoWsZcQZX/fwR8Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557012; c=relaxed/simple;
-	bh=gcTzKj46zf/SMFLXFooTQgLJ4j06KU6IYokYRxsZK60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gSsbWzFG4/fdNgOZ6lxJ5wNDuFGL4f+L978Ft7OTFlHMcrcXIIlnMsYIkFnRL0fLci9M+gN1Pq99smMdjVlaV+uiVEqnWpQdGgkwi0yAWDGmNOT9xcAKEDDsie0yAtb5e7+ZhiN+Px0xzTY2aPy1TKcAd3bdEn2j3k7ho12+gHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHfUAGzO; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725557011; x=1757093011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gcTzKj46zf/SMFLXFooTQgLJ4j06KU6IYokYRxsZK60=;
-  b=ZHfUAGzOIzYPMfEWnB9gN4/x/XeOvbF69SR6b/Bvqu9zA1LhcLtE40fl
-   MVwkqvXaPgKSfx9WHP65HbyIlbTK+OuaZ9nUr+qTSneRPtBgmLAnGqhcK
-   wnlMUruWRO1C7MYdp9wPZMn+HlgYxhFOQYKahEIe0SrfhE9zfyCyH8kuz
-   sKgpqRO7NcBGAxoZODxNYd9kV3SYhdE8nU0nDYxxPsK4yVXOgZo+mO4Wb
-   1TIC4jbpGU9dMCPXO3wwRPyzC6eH0Y3sKYSHpZ3QB1kiOqJw2q9L/fHEV
-   Tq9VuBQ46Djd5yuTwCu1WU/T08qqILqXe/umzcU3lSC8aZX9V4hkgIMiG
-   w==;
-X-CSE-ConnectionGUID: lTIflgWBQuGisoZfBhUUJQ==
-X-CSE-MsgGUID: mrpsUsbkRoKbi4MfjhDWAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24407008"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="24407008"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:23:30 -0700
-X-CSE-ConnectionGUID: r/NG7K2MTu2mxlSDLqGFoQ==
-X-CSE-MsgGUID: RRI8B7LzQ/+cExd8C1noog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="66241768"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:23:30 -0700
-Received: from [10.212.68.73] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 16B2920B5782;
-	Thu,  5 Sep 2024 10:23:28 -0700 (PDT)
-Message-ID: <caba86ad-bcba-4e1e-acc4-b18d769db87d@linux.intel.com>
-Date: Thu, 5 Sep 2024 13:23:27 -0400
+	s=arc-20240116; t=1725557051; c=relaxed/simple;
+	bh=qZcBj0EB8G0ORdOMeKcxDRY4297XFxFpbti5X8aE3Ng=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PY57gG8kCH+7P7tLBLxvOD8YmOCqiZMc6NG/DSKvNwsTFZNlDw/nuCu0KTU3eB5gtDdzp366rYCJ0+x0patC8XqBNOSB8tJG8AOwY7PxEMTp3i9tVOqgH10a1qOROVtpL0UkgmgfiY/WBRlCUDltTc1MorXHsbZEQm2A7XV6JfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ah7zBwWi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76494C4CEC6;
+	Thu,  5 Sep 2024 17:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725557050;
+	bh=qZcBj0EB8G0ORdOMeKcxDRY4297XFxFpbti5X8aE3Ng=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ah7zBwWiGJ0NIp2n9juU/LpFhavcxTGPFb1NfC5DhDhAoxksbi7YROk8Ak7Kz/ufM
+	 XnSJH1Sy8EkaUblI3N/n01OShRkyv5/YMuQSpL2XpG4ziUd/0aXBOkY4j7PPNJ2GKO
+	 IMoB38EnGTrZ+ohqsG14MA8fYM9VWTyCf2qChOatOXakanv4fLze6xFl/kMRjx8WDi
+	 P8KjGXy6DJ2jO7vOSNsvAN/vm6fTiRRR8E22k4fFJlSe5oc+yDjuW1/YNfqeuF2H3Q
+	 8kYeKdqzHQuquIhh2Srf6GyqIuRw2pYY5/i2HWwai1sDl193xChSbe2ikYsIWZA7my
+	 urWo/1Frt/H2Q==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] mm/damon/core: avoid overflow in damon_feed_loop_next_input()
+Date: Thu,  5 Sep 2024 10:24:05 -0700
+Message-Id: <20240905172405.46995-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: perf mem record not getting the mem_load_aux events by default
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <Zthu81fA3kLC2CS2@x1>
- <e848ad7b-bc9d-4eca-8918-0dd5a67c347e@linux.intel.com> <Zth-DBdaSXodeFqn@x1>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <Zth-DBdaSXodeFqn@x1>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+damon_feed_loop_next_input() is fragile to overflows.  Rewrite code to
+avoid overflows.  This is not yet well tested on 32bit archs.
 
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/944f3d5b-9177-48e7-8ec9-7f1331a3fea3@roeck-us.net
+Fixes: 9294a037c015 ("mm/damon/core: implement goal-oriented feedback-driven quota auto-tuning")
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+As mentioned on the commit message, this is not yet sufficiently tested
+on 32bit machines.  That's why this is RFC.
 
-On 2024-09-04 11:34 a.m., Arnaldo Carvalho de Melo wrote:
-> On Wed, Sep 04, 2024 at 11:20:57AM -0400, Liang, Kan wrote:
->>
->>
->> On 2024-09-04 10:30 a.m., Arnaldo Carvalho de Melo wrote:
->>> Hi Kan,
->>>
->>> Recently I presented about 'perf mem record' and found that I had use
->>> 'perf record' directly as 'perf mem record' on a Intel Hybrid system
->>> wasn't selecting the required aux event:
->>>
->>>   http://vger.kernel.org/~acme/prez/lsfmm-bpf-2024/#/19
->>>
->>> The previous slides show the problem and the one above shows what worked
->>> for me.
->>>
->>> I saw this while trying to fix that:
->>>
->>> Author: Kan Liang <kan.liang@linux.intel.com>
->>> commit abbdd79b786e036e60f01b7907977943ebe7a74d
->>> Date:   Tue Jan 23 10:50:32 2024 -0800
->>>
->>>     perf mem: Clean up perf_mem_events__name()
->>>     
->>>     Introduce a generic perf_mem_events__name(). Remove the ARCH-specific
->>>     one.
->>>     
->>>     The mem_load events may have a different format. Add ldlat and aux_event
->>>     in the struct perf_mem_event to indicate the format and the extra aux
->>>     event.
->>>     
->>>     Add perf_mem_events_intel_aux[] to support the extra mem_load_aux event.
->>>     
->>>     Rename perf_mem_events__name to perf_pmu__mem_events_name.
->>>
->>> --------------------------´
->>>
->>> So there are provisions for selecting the right events, but it doesn't
->>> seem to be working when I tried, can you take a look at what I describe
->>> on those slides and see what am I doing wrong?
->>>
->>
->> If I understand the example in the slides correctly, the issue is that
->> no mem events from big core are selected when running perf mem record,
->> rather than wrong mem events are selected.
->>
->> I don't see an obvious issue. That looks like a regression of the perf
->> mem record. I will find a Alder Lake or Raptor Lake to take a deep look.
-> 
-> My expectation was for whatever is needed for having those events to be
-> put in place, like I did manually, and indeed, limiting it to cpu_core:
-> 
-> taskset -c 0 \
->   perf record --weight --data \
->               --event '{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/P}:S' \
-> 	      --event cpu_core/mem-stores/ find / > /dev/null
-> 
-> I.e. lots of boilerplate for using 'perf mem record', we should at least
-> have some sort of warning about the 'perf mem record' experience having
-> to be restricted to workloads running on PMUs where it can take place,
-> perhaps making 'perf mem record' to restrict the CPUs used for a session
-> to be the ones with the needed resources... and we have that already:
-> 
-> root@number:~# perf mem record sleep 1
-> Memory events are enabled on a subset of CPUs: 16-27
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.032 MB perf.data ]
-> root@number:~#
-> 
-> But...
-> 
-> root@number:~# perf evlist
-> cpu_atom/mem-loads,ldlat=30/P
-> cpu_atom/mem-stores/P
-> dummy:u
-> root@number:~# perf evlist -v
-> cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, enable_on_exec: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-> cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, enable_on_exec: 1, precise_ip: 3, sample_id_all: 1
-> dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-> root@number:~# 
-> 
-> It is not setting up the required
-> 
->   --event '{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/P}:S'
-> 
-> part, right?
->
+ mm/damon/core.c | 33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-Right, it's bug on ADL and RPL. The p-core of ADL and RPL requires
-mem-loads-aux to work around an HW defect. So there are different
-mem_events for e-core and p-core, perf_mem_events_intel[] and
-perf_mem_events_intel_aux[].
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 32677f13f437..1d951c2a1d85 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -1494,15 +1494,36 @@ static unsigned long damon_feed_loop_next_input(unsigned long last_input,
+ 		unsigned long score)
+ {
+ 	const unsigned long goal = 10000;
+-	unsigned long score_goal_diff = max(goal, score) - min(goal, score);
+-	unsigned long score_goal_diff_bp = score_goal_diff * 10000 / goal;
+-	unsigned long compensation = last_input * score_goal_diff_bp / 10000;
+ 	/* Set minimum input as 10000 to avoid compensation be zero */
+ 	const unsigned long min_input = 10000;
++	unsigned long score_goal_diff;
++	unsigned long compensation;
++
++	if (score == goal)
++		return last_input;
++
++	/* last_input, score <= ULONG_MAX */
++	if (score < goal) {
++		score_goal_diff = goal - score;
++	} else {
++		/* if score_goal_diff > goal, will return min_input anyway */
++		score_goal_diff = min(score - goal, goal);
++	}
++
++	if (last_input < ULONG_MAX / score_goal_diff)
++		compensation = last_input * score_goal_diff / goal;
++	else
++		compensation = last_input / goal * score_goal_diff;
++
++	/* compensation <= last_input <= ULONG_MAX */
++
++	if (goal > score) {
++		if (last_input < ULONG_MAX - compensation)
++			return last_input + compensation;
++		return ULONG_MAX;
++	}
+ 
+-	if (goal > score)
+-		return last_input + compensation;
+-	if (last_input > compensation + min_input)
++	if (last_input - compensation > min_input)
+ 		return last_input - compensation;
+ 	return min_input;
+ }
+-- 
+2.39.2
 
-Ideally, perf should initialize and set the corresponding config bit for
-both mem_events. However, the current code only does it for the first
-PMU, which brings trouble. The second PMU (p-core) is always ignored.
-
-Except ADL/RPL, it doesn't impact the other hybrid machine. Because the
-workaround is not required. So both e-core and p-core share the same
-perf_mem_events_intel[].
-
-The patch set to fix it has been posted. Please take a look.
-https://lore.kernel.org/lkml/20240905170737.4070743-1-kan.liang@linux.intel.com/
-
-BTW: I found a regression with perf mem record -e when I did the test.
-The fix patch can also be found in the above patch set.
-
-Thanks,
-Kan
-
-> To make this more useful perhaps we should, in addition to warning that
-> is running just on those CPUs, when we specify a workload (sleep 1) in
-> the above case, limit that workload to that set of CPUs so that we can
-> get those mem events on all of the workload runtime?
-> 
-> We would just add a new warning for that behaviour, etc.
-> 
-> - Arnaldo
-> 
 
