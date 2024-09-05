@@ -1,89 +1,125 @@
-Return-Path: <linux-kernel+bounces-316915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A11A96D6E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:15:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E24496D6E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2A51F22AFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19A91C23686
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BC81991CD;
-	Thu,  5 Sep 2024 11:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEC719923F;
+	Thu,  5 Sep 2024 11:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="VxUTqFwx"
-Received: from classfun.cn (unknown [129.204.178.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB432A1BF;
-	Thu,  5 Sep 2024 11:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaTYY8rq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95A62A1BF;
+	Thu,  5 Sep 2024 11:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534943; cv=none; b=VdzxmhYrk5JlGaH42bea9wGzPgdaowuuvQu1W6Mztde2OC8cd9OoMy8FwMMgPSzQdliQeBm0wUcj++z5dIoOAGkkws0u2Mr00BOd7loKX1lcpUL4ra1b1TQI1P9HhD92XAB5fjsQrm+I74Ic6jffKc7H4RzdF99iXk1zwYkEJn4=
+	t=1725535052; cv=none; b=k101IHAH0S+wkszG3GQ2QnzjyvHVmlbZUOSNhqDzDQhFICOQYBbbUCx9XJ4dM/ZjFoCwcLhrsCT0J/6y1+0xFKDH8IFycio7lbYu3DH2OpwH6oiQms88kjYzhcaqJyb5vpeJQoOUrAQwymgdEe97ic/Ztm+AMvdK/SZhxg68Ljk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534943; c=relaxed/simple;
-	bh=JOGaZj39lzFUsnVmb+9NOSEKsjbRLstbQxPE3JMJV+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=n1jIqZVDZaITmI858nkgdy/gtTrSpOM1OrNZXjU675SClLpWk/wfHJ/VH6oYQSH76dSDT5+JW5vc6D+gWQGCrNVvLvZTnpphT5ftfL7NmVYqiiLlGGWpol1skxisiAkTJz/lqmnaly+EK2ZHYNqCQq3DUumwBSBcrghTn/g2S1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=VxUTqFwx; arc=none smtp.client-ip=129.204.178.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
-Received: from [192.168.0.160] (unknown [14.155.100.110])
-	(Authenticated sender: bigfoot)
-	by classfun.cn (Postfix) with ESMTPSA id 7DB03789F0;
-	Thu,  5 Sep 2024 19:15:37 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 7DB03789F0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
-	s=default; t=1725534938;
-	bh=JOGaZj39lzFUsnVmb+9NOSEKsjbRLstbQxPE3JMJV+0=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=VxUTqFwxyboQDUWWIUMv5fOWPIfy9DxQC8xpIlawOx6NZOtz2frHITCp6UXGLmDrA
-	 te+s86iIiNUkqjG8TFna6ln51ncTWioR8I7Oygw8qbudwAh/xqdlsg7mQklbv9dqlY
-	 d6QeCoVPD/EPmCX3finH+YZpNvlJ38em01XLXql0=
-Message-ID: <1e189c70-e677-453d-9e31-6637196c2b5c@classfun.cn>
-Date: Thu, 5 Sep 2024 19:17:03 +0800
+	s=arc-20240116; t=1725535052; c=relaxed/simple;
+	bh=2bTgGPogJndOUdisITWVgnlUdPNq8gbXQX1LJa3+JEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8QvFpZvNZ6S7/XSl+hFX22toztaLXIl8ITLhKMC+ex3XBuIvAaNszVpBcbr6Tlt359HPFkYrpMIY5Xkxp4dhbuiqZN3YhXSQRZfZxpAxbDrUBZ2oiaCnrJ7lObZacFET5lFyLhKDIMHUd+RNYBcm9cEaUS/sS2M0qqNqSgzlrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JaTYY8rq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2451BC4CEC7;
+	Thu,  5 Sep 2024 11:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725535051;
+	bh=2bTgGPogJndOUdisITWVgnlUdPNq8gbXQX1LJa3+JEA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JaTYY8rqHlT3lAJ+MgK9Yxe0FJO77hNAvd1MitvtC9+6s38tCSM498qJMs9nBdOKI
+	 VqWc+2OmTpfdOK8rslzBUO6uUZoYvuVsgb4dGTu1S1AE7tRetzJwlf9a60goF/DaLX
+	 hen39ktYC4kCWkk8bdR0SK2M73h2S5kO3rzk54iS3mEzak3RDdvnAdJa9U8x50XTux
+	 wZcFBAnrxDPSthoGFrOosFVCStENY8KiZlPMM5ZCfIbOoUPFbbld7LWWYLT+K1ws1v
+	 zdpRss5iGTiLKLRijL+gCpzn9qCEDD8LSIMakPQ6XrV4lbJ0DIK/X4du0C51Nfblc2
+	 ICI48Y7uhG7Bw==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e017808428so390042eaf.1;
+        Thu, 05 Sep 2024 04:17:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWGJW7WCOlIEnjDPQDS5Scx7n+g7WLlhuMYbIgXvIUaU4/v5fNNJr7kr2/Sek3NXN5jm3PEhevJ+nE=@vger.kernel.org, AJvYcCXUVY9r+g9l8PbXFXOmeje966zGGoo826CKxTxShEnhad+dC6u8nFmgqB7khVKMt5LwLs6F4fzZSdP0AJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3MBzmju8Hg1HZL53owkbxXg6qTYzEQWK+1v++6IY2hs1qf0EH
+	TjXhaQzVEJdLUn+keywwyXPNidISDncHMSz8DOb+iy7uWNzCrvZSVzUII1hTbl27ME+ue8L/N76
+	aJFj6IE3WrRnjIIcep1pOCxmNFME=
+X-Google-Smtp-Source: AGHT+IErBvLOnblhIfrrDVXA2ivRReqGmOQLiphztIFTh8YuhSOqUbf8aYXxp46O9CO9kbKYLXOldEaLiFKEnkNjnTw=
+X-Received: by 2002:a05:6870:71c4:b0:278:65c:3c14 with SMTP id
+ 586e51a60fabf-27810b27295mr12299961fac.5.1725535050490; Thu, 05 Sep 2024
+ 04:17:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: add dts for Ariaboard
- Photonicat RK3568
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20240904111456.87089-1-bigfoot@classfun.cn>
- <20240904111456.87089-4-bigfoot@classfun.cn>
- <6030542f-070d-4d76-9a5a-fbfc6bd433e6@lunn.ch>
-Content-Language: en-US
-From: Junhao Xie <bigfoot@classfun.cn>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
- FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Junhao Xie <bigfoot@classfun.cn>
-In-Reply-To: <6030542f-070d-4d76-9a5a-fbfc6bd433e6@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <a226a5ab-b30f-47a8-825b-2ee073cbe28a@linuxfoundation.org>
+In-Reply-To: <a226a5ab-b30f-47a8-825b-2ee073cbe28a@linuxfoundation.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 5 Sep 2024 13:17:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g8NThqGj8qhi4w9OpfLCMFgNjT5tefxpRC+Bg8O4YHhQ@mail.gmail.com>
+Message-ID: <CAJZ5v0g8NThqGj8qhi4w9OpfLCMFgNjT5tefxpRC+Bg8O4YHhQ@mail.gmail.com>
+Subject: Re: [GIT PULL] cpupower update for Linux 6.12-rc1
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, shuah <shuah@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Renninger <trenn@suse.com>, 
+	Thomas Renninger <trenn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/9/5 01:25, Andrew Lunn wrote:
->> +&gmac1 {
-[...]
-> This has been discussed a few times. You should be using phy-mode
-> rgmii-id.
+Hi Shuah,
 
-After I changed phy-mode to rgmii-id, it seemed to work,
-but it didn't transmit any data.
-Maybe I made a mistake or should I continue to use phy-mode rgmii?
+On Thu, Sep 5, 2024 at 12:02=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> Hi Rafael,
+>
+> Please pull the following cpupower update for Linux 6.12-rc1.
+>
+> This cpupower update for Linux 6.12-rc1 consists of an enhancement
+> to cpuidle tool to display the residency value of cpuidle states.
+> This addition provides a clearer and more detailed view of idle
+> state information when using cpuidle-info.
+>
+> diff is attached.
 
-> arch/arm/boot/dts/rockchip/rk3288-phycore-som.dtsi is i think also a
-> YT8521SC.
+Pulled and added to the linux-next branch in linux-pm.git, thanks!
 
-According to commit message and some pictures,
-rk3288-phycore-som is using TI DP83867 PHY?
 
-Best regards,
-Junhao
+> ----------------------------------------------------------------
+> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
+7b:
+>
+>    Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+>
+> are available in the Git repository at:
+>
+>    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-c=
+pupower-6.12-rc1
+>
+> for you to fetch changes up to 76fb981ad6774b82f06703c896b492c8659b543b:
+>
+>    tools/cpupower: display residency value in idle-info (2024-08-09 10:32=
+:33 -0600)
+>
+> ----------------------------------------------------------------
+> linux-cpupower-6.12-rc1
+>
+> This cpupower update for Linux 6.12-rc1 consists of an enhancement
+> to cpuidle tool to display the residency value of cpuidle states.
+> This addition provides a clearer and more detailed view of idle
+> state information when using cpuidle-info.
+>
+> ----------------------------------------------------------------
+> Aboorva Devarajan (1):
+>        tools/cpupower: display residency value in idle-info
+>
+>   tools/power/cpupower/lib/cpuidle.c        | 8 ++++++++
+>   tools/power/cpupower/lib/cpuidle.h        | 2 ++
+>   tools/power/cpupower/utils/cpuidle-info.c | 4 ++++
+>   3 files changed, 14 insertions(+)
+> ----------------------------------------------------------------
 
