@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-316242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C7696CCFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:08:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6897F96CD03
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19EAC1F28DF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:08:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8A9EB24529
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E25B1487F4;
-	Thu,  5 Sep 2024 03:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3BD14F9FF;
+	Thu,  5 Sep 2024 03:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aBYe0GCo"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KfsoBZyB"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E9C140E30
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEA614373F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505708; cv=none; b=k7SRC7ZByH3qPAY4e/ig3dCD3D0i4zy00aWp713bOiX625gtYJTltbhf3CYPi+k3/0D8/VX6rrXTTttsNCyrGdZPgajDbljtPuH7K/rWzNQRjh2OExVRs0W3o/ZLwaCCiahREOSMrEEtl4h0qD4/LMzdL2g4D/m82o5OoMR3PoQ=
+	t=1725505710; cv=none; b=qaVLtO7TaBBXJWJr1PUyYI4ZQgV8ZdnAqqjt5BehvMu35XFYxmJGMrUm2YmrcMmEhrqaI9h4AVoCKeUZnNlhod1h4v32jZ2NYs+Wqp/EUX0Nltpe3igmf1CYZ/lqCtJVaFcO47Pay7NHZ9LgNmBze+DciP0ikKr2p/BCHnkfR7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725505708; c=relaxed/simple;
-	bh=/uc/spJSdC+Q0uOvIRVDDGVfhgEPfChpAlvRBCMAkJQ=;
+	s=arc-20240116; t=1725505710; c=relaxed/simple;
+	bh=BCbsERjKTr7ofnF9wFZIPROtJSJ8qvwLvP3xHx0S1jE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jZAUkRwYACRvgpfpDs3AUrSj/sMuk4fAom89CYwkha+oaQFp9AkgiOLRxegd5L845mYviSmHL9NWFDFbEjJS4CcRimcwtNxazvGRmBj+qeyLPfqidFqpdusA8VijLQIK5iFxx/X6NHDq5BGykTumOLdJOqNxWtlfbvoLuKjXpfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aBYe0GCo; arc=none smtp.client-ip=209.85.167.45
+	 In-Reply-To:To:Cc; b=mhauS02701P56EEY8mkzKm0Y21WkQqtH+JbULIb0xCMofCB4I9U+INI/oSVvfi1QDDfYOCQnWzCjXXpZ6sRa5Vm/rUDyD0nhOk+MlWFRp7hBRa0bTj2yj+rcm+VseP/lf7fJO7iwvryaqhtyptFcRAEekGXzPth8TqMTgZm4ilY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KfsoBZyB; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53653ee23adso3924e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:08:26 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5334c4d6829so229062e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:08:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725505705; x=1726110505; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725505706; x=1726110506; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aCUd9z1LcLMx6hSjP2k+xgb3eFs9dKtX8QI9QhSVFF0=;
-        b=aBYe0GCo7NICxWqfVblVqsbMYUI9GOMQzTwz+trBlzc1OK4z+skkAtcVyei33UEuqW
-         PYxV7/FyR8h4QIXN2xdPHVQZE8t9O/bPv2HugXPw0mUwdhVSG/dIUXbOoZNeQjG8XszH
-         kWHTyTG23HeZSjDG4XXjj1+TS7tYKalRum4AA4/R8aftFM6oTzN6cUIxwjAvsDJ0JZwb
-         MLEuW7AFCuydRR2+RpId/8HsiBIlxb3+OYYwYOyAzZDy78ttTgULIhi7q4Hbp2g7OmqS
-         7XTQBu/tBiU/1X85fHgwZftcwZ7aUkZFECfzHktLqhpiq+syDEp5NVEpX1/U+0+kww2r
-         ViFA==
+        bh=wg90eho1NN5KHQOILS8jppGY/NSDMd/xispQJ9CCEd8=;
+        b=KfsoBZyBq/CiTnaaOCCyfUJsgGHRWUHdSdzuFcqmjaihJneXb9ejDiU8fbY3SpYzO7
+         osxj7AKWATzaWuzgmWub+E1d689Et/g9JtB2IEvVUc59VbN/LOoBswEGM/tSUYOSVVVh
+         X8ZQMwafrTrlMD5PT7ujYAluvHar6lKrEjYNzzsJ8vgaZJDM7CekfCMvhWDIju0bq5Wa
+         2iSD4HwDYUdTAYx0oNWHzHH3fWzWIyljPcHGYegWgumdyb3WwOAqBMD059aD41iCLXJg
+         g+KXZ90Wlu+qR5vt8M4silbGBxU6v/EPy53jKMMGGt6mRHjMW9PtMtIkot37gXnkyQjE
+         aPEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725505705; x=1726110505;
+        d=1e100.net; s=20230601; t=1725505706; x=1726110506;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aCUd9z1LcLMx6hSjP2k+xgb3eFs9dKtX8QI9QhSVFF0=;
-        b=HM+6+2ia9TXOFsXyi+lttdI7gW0uQC+XqhO3C2UBEKtKnGvathO2BRzK57NqkzC/Nd
-         8sTxXbO8nYYEon4l4kJD8bYqofNOUyxTEA2no3iEErRw51XW+TRH8pu6A71BG4Jd3Pck
-         aNEslPzhCRrhwjBVDmClMTnAcuXf9bBj0i8IxYOKZGlYNoMZ5AnyB+xTFiJeDRqlXMWV
-         Cbu5cEUlpWyx+fEPbTaKRkI2y6hc0VFEKte1JdGZap/FiWH4KQ3fm40EV5uPKvzrRCpC
-         bKEEE4Acy7V+a8HdGMKA3BMU18JxiqI1cGQjwwLuntHbPlLSMbL+XAZSithsGhdH6ehx
-         AQ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2s2vHK5v9Tm2cyd86qP4BqvyNwzEzrTqPu5K6LmfWfEpOaGChSu/LfonLjJPlkWENiiSgSX5ItYZMxMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA/f/9HcwAcvL6o1rdfU95VmtaZiuRr+OWZQIM0luvDvfIYHS5
-	zbn5PxuQICEyBoQae+pxJ8ygsR6oJN5Zs7o+skPfIs6tFnv881N+VeK+uYRfKc0=
-X-Google-Smtp-Source: AGHT+IE/2jE3CvFlvvIXHzJupYuHbi2/1IhdOJoiEbZkzmE63Jt8Mh6dMcluwOLczC02VOgLi+O/ew==
-X-Received: by 2002:a05:6512:b82:b0:530:ae22:a6ea with SMTP id 2adb3069b0e04-53546b91ef2mr14631592e87.40.1725505704199;
-        Wed, 04 Sep 2024 20:08:24 -0700 (PDT)
+        bh=wg90eho1NN5KHQOILS8jppGY/NSDMd/xispQJ9CCEd8=;
+        b=ZRaUPqXaM4XFZbJdjJE/FVXOwQke29ThM4elWENlPJbUUeNsZjP2YzJxMeySZs30l5
+         uDrO1FtbpylvQwPOTqzh7kTd0R7Wm5JyBEB1NbqasSlS0kYwMjHIIuwl2ZMEaFAD9mjv
+         fBSg3oXf2f9rMbdnMqR8t7QTgmKXwD9UBpE/XmJ+WfF1YgSTz9Bash992Nx+NaLbX0Hu
+         tQjMcrMHLmMD4c1IW47R4EvbVf9Tllag5orKJ3k/VZDV1SbE1yM098tSq0s4fA94iVaq
+         Aj9uQStSgXtYZIisntPDBzSMJtTt+WpJH0uR+Ad7HklOF7hOCmBzqVrNe8hvf8HNclq0
+         d3uA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDM7uMxBt/oCOhmN0JNdeJ8dM1MdgAWiqtswlXv8nChOA4+A1jU4gSnK3M7qbHoQ5KZeqv0aYXz7LO2pE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHVRe3NpcMPBqOgbjKBVGbEnlvY5kLE5EIPo1PGU4AHqYzgRc2
+	82MW4asIPmtRF3akQvcq/KYadlE5luCx97VIQrgrcYzZaG32AR+ZPH6CeLczSyU=
+X-Google-Smtp-Source: AGHT+IFS2SH8V6BfMue9a/tZMnJv31NuvpbvMZDdc2zfWEvaj2lRGOa8zyeQpUNMbYTS6CvNIU5M1A==
+X-Received: by 2002:a05:6512:3e26:b0:533:43bf:565d with SMTP id 2adb3069b0e04-53546b45292mr13195276e87.27.1725505705252;
+        Wed, 04 Sep 2024 20:08:25 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac190sm2485277e87.96.2024.09.04.20.08.23
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac190sm2485277e87.96.2024.09.04.20.08.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 20:08:23 -0700 (PDT)
+        Wed, 04 Sep 2024 20:08:24 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 05 Sep 2024 06:08:21 +0300
-Subject: [PATCH 1/2] drm/xe: select DRM_DISPLAY_DSC_HELPER
+Date: Thu, 05 Sep 2024 06:08:22 +0300
+Subject: [PATCH 2/2] drm/msm: add another DRM_DISPLAY_DSC_HELPER selection
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-fix-dsc-helpers-v1-1-3ae4b5900f89@linaro.org>
+Message-Id: <20240905-fix-dsc-helpers-v1-2-3ae4b5900f89@linaro.org>
 References: <20240905-fix-dsc-helpers-v1-0-3ae4b5900f89@linaro.org>
 In-Reply-To: <20240905-fix-dsc-helpers-v1-0-3ae4b5900f89@linaro.org>
 To: Lucas De Marchi <lucas.demarchi@intel.com>, 
@@ -95,44 +95,43 @@ Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
  kernel test robot <lkp@intel.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1005;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=961;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=/uc/spJSdC+Q0uOvIRVDDGVfhgEPfChpAlvRBCMAkJQ=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm2SClH3jAjsQwXueRbupby/Qyxo1pNCBRE+FYy
- TrQumjDJhWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtkgpQAKCRCLPIo+Aiko
- 1WUdB/4mLKT7toID+4EsvnWOp5TQO7a7GiChrUuI653sWs0XNN89QO+aQlpsdo+wgVvTcrvWvBO
- C6i8x2AwjrHm9cSIn5uu66DDhCRRCiCelWh8vwvtQNgwDP30tOt38PSkFuLdZhEQfeJZvBPBC/u
- JS/Y5Npl49z2KqrYk9QbimEg9oy0KI9Aj0nva6UW5rNWFw0ZBy1d2taaUr/KBPdp1F2VkUtoWtx
- ecBErdsaSdt5CHrTfB4FXFE8eVr083nB6qqd2UQNsHA2SdUD3IFLJCk0zqUkbyZ0UCXzgizmuf7
- vixPcb25txPAUaZD+YKZIsHQ2gGnzMPV7x1YmszSmdjXVpUA
+ bh=BCbsERjKTr7ofnF9wFZIPROtJSJ8qvwLvP3xHx0S1jE=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm2SCmybu00XFAc9fujRRSrrHOHRKtSvgq5E7u+
+ 0ErMTKGuXaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtkgpgAKCRCLPIo+Aiko
+ 1Sl9B/4zozy7yVS6RWpddXd9g6pE9XQMwgmW3D/LAFsWvdrVOcU5BdpMBXwAQ+3gnaRYYaRPGGR
+ PQUnF4sf1JHAdvX7eftAQDwZqm1zS8sVpf0fkr+UKSF7wHKEozTwFKwUmHkMmeFnteiAz6D/DRf
+ wB+GPvicWfQLGpW3QiXxv+7da8MRnB06s/P0d8N5G5I6ivuROWVNAQVrg0auvA5blTVz71UKafL
+ pnPLsSrxE0BSdm1EIJRWgbIMcyr+X5tuhR4pQlQTSJonqC0i2MymA+Qxq2tF3DK5lTU9lXDK4uT
+ wRua1p5tZQAvJqJTsLuK/5Jbd1JhWE09gePQQPwqeJh+hXUK
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The Xe driver shares display code with the i915 driver, pulling in the
-dependency on the DSC helpers this way. However when working on
-separating DRM_DISPLAY_DSC_HELPER this was left unnoticed. Add missing
-dependency.
+In the drm/msm driver both DSI and DPU subdrivers use drm_dsc_*
+functions, but only DSI selects DRM_DISPLAY_DSC_HELPER symbol. Add
+missing select to the DPU subdriver too.
 
 Fixes: ca097d4d94d8 ("drm/display: split DSC helpers from DP helpers")
 Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409032226.x6f4SWQl-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202409040129.rqhtRTeC-lkp@intel.com/
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/xe/Kconfig | 1 +
+ drivers/gpu/drm/msm/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-index 7bbe46a98ff1..ebd0879e04d4 100644
---- a/drivers/gpu/drm/xe/Kconfig
-+++ b/drivers/gpu/drm/xe/Kconfig
-@@ -14,6 +14,7 @@ config DRM_XE
- 	select DRM_PANEL
- 	select DRM_SUBALLOC_HELPER
- 	select DRM_DISPLAY_DP_HELPER
+diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+index 94d3ed4f7761..c8dda0ebd043 100644
+--- a/drivers/gpu/drm/msm/Kconfig
++++ b/drivers/gpu/drm/msm/Kconfig
+@@ -92,6 +92,7 @@ config DRM_MSM_DPU
+ 	bool "Enable DPU support in MSM DRM driver"
+ 	depends on DRM_MSM
+ 	select DRM_MSM_MDSS
 +	select DRM_DISPLAY_DSC_HELPER
- 	select DRM_DISPLAY_HDCP_HELPER
- 	select DRM_DISPLAY_HDMI_HELPER
- 	select DRM_DISPLAY_HELPER
+ 	default y
+ 	help
+ 	  Compile in support for the Display Processing Unit in
 
 -- 
 2.39.2
