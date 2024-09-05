@@ -1,149 +1,106 @@
-Return-Path: <linux-kernel+bounces-316430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C77596CF7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:39:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C672596CF83
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEBE01C2195C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787D51F25546
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D0A18BC2A;
-	Thu,  5 Sep 2024 06:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CBA18BC10;
+	Thu,  5 Sep 2024 06:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnbhqUm/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uNOo5RNx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2C518950D;
-	Thu,  5 Sep 2024 06:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DCD3612D;
+	Thu,  5 Sep 2024 06:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725518355; cv=none; b=F+/n5PG3X5vEeBVV5SiZD6tiFB/sUI8DUFhJEgXRiVCKPNnQcDcVD9aBn3L8Qc+L/URqGKTh3YcyD+Y8pH/idWRC5+d+ozl5FtFl9Y97UnEcwIOpiTmZqAJjZ7Gj8+2TmtWcb3sM9VBE8LV+t2pLZ5tp6sFoC6HlbD8je9o+QPY=
+	t=1725518427; cv=none; b=Kt/u7Ksk/6b59Vpbh8osuTM5yf+w49SAo8vcNrEao7aB/exZs/k7shW97qak6xOfWXmVBFrZj6pOR14+fmFrpBLljkzm4UQYQS94MZ9Ynz3K3aO5ZKr6XygZd1DuAoV4CO3KV8T4fRuVSHUKoNHsBzLGumjpkB4YeVsMY51zLJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725518355; c=relaxed/simple;
-	bh=2kvLgZSNSvnNIYgFXbp2REpmmaeH1UenYwG7tEWJAQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIlCD2TbIt+GtwzcvCljRlpOhdWXV8tAd3TPEyYL5OzBhlL9V07Rl30m6upNzpU5CIdsg9BdOY4acAwWPi4UJFCcTqUHsfWWS/Gq1eAKDxurwrEYKV2g6Qj/2thLMOvTmAJ507ZLn8vA7xXUlAYvSNiPpwXkyNDjFYNCDXnRfDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnbhqUm/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898E5C4CEC4;
-	Thu,  5 Sep 2024 06:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725518354;
-	bh=2kvLgZSNSvnNIYgFXbp2REpmmaeH1UenYwG7tEWJAQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mnbhqUm/IIxKsOeHPYZvElQkW4FPs4nH335acd2BvI/6FSyeFeCAsN3SqlK2VzFtf
-	 7t1CTOyGcuwLVo+U4NIyZaVI4QsmfiD6JlvqEF6bzonYxi3K1o67iq1kCGDzkPikap
-	 wAv6dM3Rqb5PMk/+rvWqQ1pxdwP1pywCTqZmSTPs9MshWcUEl7BqEFYJ0l/eaHt4uf
-	 jNjMw1zel0TcP7AhvRysIjc15BXz5Eeeiqy6bOzTyLYjM2Syl1fgoACIKeh8T+j5fC
-	 pHZSLOaDia0abVduwJhECz7evzUJYhE1Vfwf4ocWYjuT/CVJkimb7Jdj2rUYcJrdTM
-	 QugGssGykRtDg==
-Date: Thu, 5 Sep 2024 08:39:10 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
-	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
-Subject: Re: [PATCH v3 7/8] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
- compatible strings
-Message-ID: <tpl7wufkyog2bvnhg36keczeokadxkqkcoiy5qjscsoosxsiql@6a3ghbo4pc7f>
-References: <20240904072718.1143440-1-aardelean@baylibre.com>
- <20240904072718.1143440-8-aardelean@baylibre.com>
+	s=arc-20240116; t=1725518427; c=relaxed/simple;
+	bh=mZg95VM7BF60b0vm1tIB5yAQdeXTD1pMTShrRus8zp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sE5cSyLlQBIi+C6a27+q/CXP0ozW56Hx9fmhuM6TB/b2/DkRBjDu9Gf6nYH9qnecvJWDpqH5FiQVLaFe9kb5R05XdNqpWt1n22IZVYKJR5wUwts95O1rn1xWue7XS8bMAETIEH2WURHf3bErb12Et12vfNv0bct/7nB6oSngJV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uNOo5RNx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725518420;
+	bh=6VP7AomkR+7TeadwTXH8+CAmxhLwvPndDE5UlE+nsMY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=uNOo5RNxaxm+2Bf55hYazStxaKq6Hxt2+vShF0ucCQICnJHE+RKVev18pCOnvb44A
+	 NtYWZaoD3+ea7iNUQM7iZLm/rhKipSDLgpVFnpT1QeFL/BFplK1uVETNTsGJq4cAGW
+	 YQoaflTjoY5oMADwf1ihQZIPanKEjXgTVL0AKrFlG3wTu7Y6+M7JNV4dd0TounkSoO
+	 02963zi1SQGv4c/iOvMkPi9tZ56wIFux4+76JTNILjluvTQyWinP9ok4IAtSq1mrYZ
+	 /hr7/PE7iODAPiRSO4q1mUFFQ2ppxQyxJNvFbkX5XGMvPJfQut01RgBUX7TV4GX7JB
+	 YPmKToPSfX1cA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WzqVX0kklz4x0H;
+	Thu,  5 Sep 2024 16:40:20 +1000 (AEST)
+Date: Thu, 5 Sep 2024 16:40:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5?=
+ =?UTF-8?B?xYRza2k=?= <kw@linux.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the devicetree tree
+Message-ID: <20240905164019.5086e9b1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240904072718.1143440-8-aardelean@baylibre.com>
+Content-Type: multipart/signed; boundary="Sig_/Jc_FKpbnaD=AYLnz6otH_Dz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Sep 04, 2024 at 10:27:15AM +0300, Alexandru Ardelean wrote:
-> @@ -114,6 +124,45 @@ properties:
->        assumed that the pins are hardwired to VDD.
->      type: boolean
->  
-> +patternProperties:
-> +  "^channel@([1-8])$":
+--Sig_/Jc_FKpbnaD=AYLnz6otH_Dz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Drop ()
+Hi all,
 
-> +    type: object
-> +    $ref: adc.yaml
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          The channel number, as specified in the datasheet (from 1 to 8).
-> +        minimum: 1
-> +        maximum: 8
-> +
-> +      diff-channels:
-> +        description:
-> +          Each channel can be configured as a differential bipolar channel.
-> +          The ADC uses the same positive and negative inputs for this.
-> +          This property must be specified as 'reg' (or the channel number) for
-> +          both positive and negative inputs (i.e. diff-channels = <reg reg>).
-> +        items:
-> +          minimum: 1
-> +          maximum: 8
-> +
-> +      bipolar:
-> +        description:
-> +          Each channel can be configured as a unipolar or bipolar single-ended.
-> +          When this property is not specified, it's unipolar, so the ADC will
-> +          have only the positive input wired.
-> +          For this ADC the 'diff-channels' & 'bipolar' properties are mutually
-> +          exclusive.
-> +
-> +    oneOf:
-> +      - required:
-> +          - reg
-> +          - diff-channels
-> +      - required:
-> +          - reg
-> +          - bipolar
+The following commit is also in the pci tree as a different commit
+(but the same patch):
 
-rather:
+ 80cfdfeb8367 ("dt-bindings: PCI: layerscape-pci: Fix property 'fsl,pcie-sc=
+fg' type")
 
-required:
-  - reg
+This is commit
 
-oneOf:
- - required:
-     - diff-channels
- - required:
-    - bipolar
+  f66b63ef10d6 ("dt-bindings: PCI: layerscape-pci: Change property 'fsl,pci=
+e-scfg' type")
 
-> +
->  required:
->    - compatible
->    - reg
-> @@ -170,6 +219,17 @@ allOf:
->          adi,conversion-start-gpios:
->            maxItems: 1
->  
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            enum:
-> +              - adi,ad7606c-16
-> +              - adi,ad7606c-18
-> +    then:
-> +      patternProperties:
-> +        "^channel@[1-8]+$": false
+in the pci tree.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-You have two different patterns here and in top-level. Please keep one:
-^channel@[1-8]$
+--Sig_/Jc_FKpbnaD=AYLnz6otH_Dz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbZUlMACgkQAVBC80lX
+0GwPpAf/bXIMkvO0IZT79AS7c6/pjVa4stGp2ZBPxg4qzis0YEJuWrUp2q3Hgvad
++4TQyuZHNJ/355O25jd7g6gN6yD018NSY2h5MduXsY/jQMlfB60rzGJA5ojPkirB
+EKn3Io86tmRrCSTjPj3GTy4otK1dZ8roWxBt33OpBfydwpze5N0TOKV6d46u0DV8
+sznp32edmAWC2+S3Z3E5J7fEykDweIAquNZFjJ9HCX1gBePK1FV1fBXD3DMJdqLx
+VCJdt6CfKjYveqPNV4gsOWCYL9vCT/cMXEmlpjv6WT2Q7G5P2IaRyvxi4lFYVeSL
+JyWWCsYWxCmOkMv6/tMF3851NpNpIw==
+=9a9N
+-----END PGP SIGNATURE-----
 
+--Sig_/Jc_FKpbnaD=AYLnz6otH_Dz--
 
