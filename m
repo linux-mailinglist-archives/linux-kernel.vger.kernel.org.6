@@ -1,192 +1,120 @@
-Return-Path: <linux-kernel+bounces-317198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF8A96DACF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0204A96DA93
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDE87B2209B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BCA1C210AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05FC19E7E2;
-	Thu,  5 Sep 2024 13:49:41 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5518419D88B;
+	Thu,  5 Sep 2024 13:43:53 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D945519DF76;
-	Thu,  5 Sep 2024 13:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F44619D081;
+	Thu,  5 Sep 2024 13:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725544181; cv=none; b=ukccfLgTlMV3sFZu4PM3zNAK4jzf5d0poOsGO/jGry3zGaSFd17WpTK7W5HZQERlpq82PBhUPH0gCcGrgISGo9PZgD+rCTJV5tuWoAjJVjmR2T7slfAfOJb3pSchGhqPjMiueb9NcKiX9UZ4Bdfz26aY6qIY0t92jUz0+dDLFjE=
+	t=1725543833; cv=none; b=Rc1xDr1EP5QyC4syTkC1uEz1Ti63+ICO5h49ARPj3rABmjeU1c7bm547akPXLpF7QJNF8sWdqaVhU9qapRNulizM985rqXFxcEDpuJDD8bawUTrR8gign033CVWx1DFpyAlyTgu+JludpbIL9IAc67opzpcva6+qoFX/8E7ob/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725544181; c=relaxed/simple;
-	bh=duIcmcapnLvgS8EADyMQQhxQqGvNu2gkdOzmng6AXAk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ro0IMQC3iSLNqQqBI2W5FH6BD5fQRLoDS7TynSpEurUR+jXEmDehHFndSC97ImdZtjN5Ja2lC1ffpq52Tu6LpIc5LRlBLCXplLlGWfF8+H9l+1u7n/MSUM3jMbEFwBYowPvuRBaT9aXFtghyHf2sYuv5cU15NQ+It3N/oNilrXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X011Q4rTMz1j89M;
-	Thu,  5 Sep 2024 21:49:14 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4647E14037C;
-	Thu,  5 Sep 2024 21:49:36 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 5 Sep
- 2024 21:49:35 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
-	<mkoutny@suse.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<chenridong@huaweicloud.com>
-Subject: [PATCH v1 -next 3/3] cgroup/freezer: Add freeze selftest
-Date: Thu, 5 Sep 2024 13:41:30 +0000
-Message-ID: <20240905134130.1176443-4-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240905134130.1176443-1-chenridong@huawei.com>
-References: <20240905134130.1176443-1-chenridong@huawei.com>
+	s=arc-20240116; t=1725543833; c=relaxed/simple;
+	bh=PkNt6kHkJvTmmkhz7Ij2z36xJivzgPBWs53QH8fsNcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBedVoxSN3eJroOKIZxu3FEl6clsUd8km47gq24KdJuk6xygaJVDG39bNMFH1YIl7TgZWNtcyY4bjDA5PtkuS28+47yhgrgqhKlFzKrvm280T06UQQUt8SeOSrs7XV9tGKDlkcQiQZryXNBwhUFKnn5yBKFvpGF8tfRxD9q8ehE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 51F951C009D; Thu,  5 Sep 2024 15:43:43 +0200 (CEST)
+Date: Thu, 5 Sep 2024 15:43:42 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 000/184] 6.10.9-rc1 review
+Message-ID: <Ztm1jiYCcv8cUEwG@duo.ucw.cz>
+References: <20240905093732.239411633@linuxfoundation.org>
+ <CA+G9fYsppY-GyoCFFbAu1q7PdynMLKn024J3CenbN12eefaDwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yE2BAdk9sXh2yg0j"
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYsppY-GyoCFFbAu1q7PdynMLKn024J3CenbN12eefaDwA@mail.gmail.com>
 
-Add selftest to test cgroup.freeze and check cgroup.events state.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- .../testing/selftests/cgroup/test_freezer.sh  | 111 ++++++++++++++++++
- 1 file changed, 111 insertions(+)
- create mode 100755 tools/testing/selftests/cgroup/test_freezer.sh
+--yE2BAdk9sXh2yg0j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/testing/selftests/cgroup/test_freezer.sh b/tools/testing/selftests/cgroup/test_freezer.sh
-new file mode 100755
-index 000000000000..7178980b1db8
---- /dev/null
-+++ b/tools/testing/selftests/cgroup/test_freezer.sh
-@@ -0,0 +1,111 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Test freeze hierarchy state
-+#
-+ROOT_PATH=/sys/fs/cgroup
-+skip_test() {
-+	echo "$1"
-+	echo "Test SKIPPED"
-+	exit 4 # ksft_skip
-+}
-+
-+write_freeze() {
-+	path=$1
-+	value=$2
-+	echo $value > $ROOT_PATH/$path/cgroup.freeze
-+}
-+
-+get_event_frozen()
-+{
-+	path=$1
-+	return $(cat $ROOT_PATH/$path/cgroup.events | grep frozen | awk '{print $2}')
-+}
-+
-+# the test subtree:
-+#        A
-+#       / \
-+#      B   C
-+#    / | \  \
-+#    D E F   G
-+#   /
-+#  H
-+
-+PATH_MATRIX=(
-+	'A'
-+	'A/B'
-+	'A/C'
-+	'A/B/D'
-+	'A/B/E'
-+	'A/B/F'
-+	'A/C/G'
-+	'A/B/D/H'
-+)
-+CGRP_CNT=${#PATH_MATRIX[@]}
-+
-+# Interface value to set/check
-+ITF_MATRIX=(
-+	#value write to freeze         expect event value
-+	#A  B  C  D  E  F  G  H  |  A  B  C  D  E  F  G  H
-+	'1  0  0  0  0  0  0  0     1  1  1  1  1  1  1  1'
-+	'1  1  0  0  0  0  0  0     1  1  1  1  1  1  1  1'
-+	'1  0  1  0  0  0  0  0     1  1  1  1  1  1  1  1'
-+	'0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0'
-+
-+	'1  1  1  1  0  0  0  0     1  1  1  1  1  1  1  1'
-+	'1  1  1  0  0  0  0  0     1  1  1  1  1  1  1  1'
-+	'1  1  0  0  0  0  0  0     1  1  1  1  1  1  1  1'
-+	'1  0  0  0  0  0  0  0     1  1  1  1  1  1  1  1'
-+
-+	'0  0  0  1  0  0  0  0     0  0  0  1  0  0  0  1'
-+	'0  0  0  1  0  0  0  1     0  0  0  1  0  0  0  1'
-+	'0  0  0  1  0  0  0  0     0  0  0  1  0  0  0  1'
-+	'0  0  1  1  0  0  0  0     0  0  1  1  0  0  1  1'
-+	'0  0  0  0  0  0  0  0     0  0  0  0  0  0  0  0'
-+)
-+
-+prepare()
-+{
-+	for i in "${PATH_MATRIX[@]}" ; do
-+		path="$ROOT_PATH/$i"
-+		mkdir $path
-+	done
-+}
-+
-+do_clean()
-+{
-+	for(( i=$CGRP_CNT-1; i>=0; i-- ));do
-+		path="/sys/fs/cgroup/${PATH_MATRIX[i]}"
-+		rmdir $path
-+	done
-+}
-+
-+run_test()
-+{
-+	prepare
-+	cgrp_cnt="${PATH_MATRIX[@]}"
-+	for i in "${ITF_MATRIX[@]}" ; do
-+		args=($i)
-+		#write freeze
-+		for(( j=0; j<$CGRP_CNT; j++ ));do
-+			write_freeze "${PATH_MATRIX[j]}" ${args[j]}
-+		done
-+		#event frozen should eq expected value
-+		for(( j=0; j<$CGRP_CNT; j++ ));do
-+			get_event_frozen "${PATH_MATRIX[j]}"
-+			if [ $? -ne ${args[j + $CGRP_CNT]} ];then
-+				echo "failed: $i"
-+				do_clean
-+				exit 1
-+			fi
-+		done
-+	done
-+	do_clean
-+}
-+
-+start_time=$(date +%s%N)
-+run_test
-+end_time=$(date +%s%N)
-+elapsed_time=$((end_time - start_time))
-+echo "Test PASSED, elapsed_time:$elapsed_time (ns)"
-+exit 0
--- 
-2.34.1
+Hi!
 
+> > This is the start of the stable review cycle for the 6.10.9 release.
+> > There are 184 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 07 Sep 2024 09:36:50 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patc=
+h-6.10.9-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git linux-6.10.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>=20
+> The following build errors noticed on arm64 on
+> stable-rc linux.6.6.y and linux.6.10.y
+>=20
+> drivers/ufs/host/ufs-qcom.c: In function 'ufs_qcom_advertise_quirks':
+> drivers/ufs/host/ufs-qcom.c:862:32: error:
+> 'UFSHCD_QUIRK_BROKEN_LSDBS_CAP' undeclared (first use in this
+> function); did you mean 'UFSHCD_QUIRK_BROKEN_UIC_CMD'?
+>   862 |                 hba->quirks |=3D UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
+>       |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>       |                                UFSHCD_QUIRK_BROKEN_UIC_CMD
+>=20
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+We see that one, too, on 6.10 and 6.6. 6.1 does not seem to have this
+problem.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--yE2BAdk9sXh2yg0j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZtm1jgAKCRAw5/Bqldv6
+8l42AKCPzC7rb972sEduGGeEaN+8NDsSgQCgqev5wrwNyTkvtRKHLa1s7oHPu5s=
+=OwmN
+-----END PGP SIGNATURE-----
+
+--yE2BAdk9sXh2yg0j--
 
