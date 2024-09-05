@@ -1,262 +1,151 @@
-Return-Path: <linux-kernel+bounces-317601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5383C96E0E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:12:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EAA96E0EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863AF1C22CFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FCB1F23D9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9B61A264D;
-	Thu,  5 Sep 2024 17:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244471A2842;
+	Thu,  5 Sep 2024 17:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9fZwCtw"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrjZF/G/"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D1619DFB8;
-	Thu,  5 Sep 2024 17:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF41A254E;
+	Thu,  5 Sep 2024 17:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725556369; cv=none; b=TQ5r2cUKBvT4v1bPDcgwdbcyqellE5UUEfxr86LpTvXeoKzUEf6YO0+O3j0/EJr3uunQEVTtFwk9EsNCNJ+LY2uBjpJOwhzYdFs+XGCtheATqimtMPylEG4UO5fZUZvw7IU8rliJgROWsxgMeadvA5jXLbOiXwGjVBAQ2dYpTSY=
+	t=1725556455; cv=none; b=KH1IaEq3B9xe0KJ/93ChJxQ6PtSfRBCGp6x3gDZn2UdKGlDrvEWLg2+oCC0yzjbCm72GgFSlMR+vJD/K9wCJ01GtoG2MMY3iBO8hWcnUpPzh1mdQoOD/f+M/v+TpkvyGYfqaP85mJiXpFTB99bS3BBo2LB/nxDNQhdb1d1oE3dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725556369; c=relaxed/simple;
-	bh=A7TtDQQAdTUo+ZDaXSaI6ceuzOQKZTjGvuB/qTrYS9U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=stIfsMoAmctnAeTte615H79t7qPJXwj8K3rFyaWOu2Pp0O/PSIE8pQAg3lskrl+tQxxksIWarqosNVO57oCDAFgdt77HRe3X58Qunz8Kj6y3ypbqRw3/lC9f1kPrgKtxAAn2YntAqHtSs0MYA7YGCNAVA2VnUFUyqP5S/zHCykQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9fZwCtw; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1725556455; c=relaxed/simple;
+	bh=ACiEB5LXUh7OfpSRX4hgkRl9TgTVeMVuJ5u8n6h3v6Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rN+W483BRXQ9l95V4RU45L18pgO5Ne9r0dt6GsnYel+AWIYbCydnMUOW37wT6ueIoEEzy2T4jmtshjhu03Hn71Xol4FtunF1gwUj3VIlKuuPHdRTfuBh2i/q1l7LJzVgtAdrgsO+2b3xS4WpJHCSiD7q/OPPP13ub8/cyzhzAGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrjZF/G/; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53653682246so1192913e87.1;
-        Thu, 05 Sep 2024 10:12:47 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717594b4ce7so896435b3a.0;
+        Thu, 05 Sep 2024 10:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725556366; x=1726161166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MtORbUfBuSYpw+ZpNAYafseBri04aZwmXOf583OZnkE=;
-        b=h9fZwCtwuUfWBDjb166+ga/nFOeu2Ky1hYx0/oeIW6KklDTQGqQ6avP9y45LVszTvG
-         /0g6LWz9KUqZk+WGcx3As/vVtyTrPG3cYyn+yTqhzfiK2GK3kDhgRG9F7abtXvFydI6O
-         qOkHsImrmBmvbe3dxK0pcRXDJoEYstoxyoERqWt3iKJi+Pp5PVElu5NiggYy+OnhWtA0
-         2xclcO66OAWzVtcJTyCLlkQ/+y3FIDV/Ez2edGqY1CwpoqSND8w8vAMVzAamd9vI1DKl
-         j+OOdLVdnHkSCX+by4Ejgf20YRo2ByczA2ENt9ALOBhtUfYKYfVbExHWZv2Pre6T8WVU
-         +IEw==
+        d=gmail.com; s=20230601; t=1725556453; x=1726161253; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1qzH2P6QT/VZDU01WTRilziL7RsN8P6XpRi7hhgH0MM=;
+        b=nrjZF/G/I1KX+y2s0kso1I6zI//seQ5RcfWgX/YzSjfHS2wiAB5VVDPAgmeHpyplHg
+         8DlWsB3h7leOv/GPlf1uXnlefTo+k7M0SOigU7sYvsnMhujvHoOrb8GxC+vImMDFgNpH
+         HhqZflvoKdgU9zub9hUQw6bZWnciBC/VoZjNkNAfvQScMKP90/xx8+N46JltZAVQrjfe
+         OFbkh8GI21i85xzrh0y9aPDrZQ/h9zxsqiMjJOudocCw1MnmwaK1gVzj+QpeNhoMk70y
+         xcHmymUhgQrjc27IYmyokyN+RBo2KNQmXLJ1kyOmxx5AW/uAUYbC6iEwzHT2VyE6uxLt
+         nSUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725556366; x=1726161166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MtORbUfBuSYpw+ZpNAYafseBri04aZwmXOf583OZnkE=;
-        b=iz+dJGh/E1XVghv3Zw78nvUDNBsUCIZKgFkFMEywFuZz/x9Jyb0jIx17N4/z51tUYB
-         2ZmUMgrkKd1d7L0cDDULqjjtz2J34HOE6OgtIw2dEaNvLb/qvcEHjfHJUXq3xCxltX+P
-         2uvwUN33+bbRVmOoj9cJsr7tLpaOM+hXiblNiFGAci3LaSaHSU0OCOqgqEnxsqDTzcq7
-         0WMrHtCixRSJlFxvroUJ4+dXOG0J0/xHR4lpiP/UxBvtuRTQ2y31NTjI8dbesEO/BR8c
-         J6YuvNein6T3jGNRh+OuAwBvGJbhR8z1CGoWJYqj9GOFyXhY53Mb1gKSohrlGr517ZXy
-         fWLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEF7b7Yy11Hpnb3B92p10Lalg/5liOybGSQSsU6x/C5keZV/8aQZODDbwb72C3YzW8+agzBSmHYr8A@vger.kernel.org, AJvYcCVNK5O/wPa5UGAvayYnWR5Gjp7iWTH60zb7AsEIdvhOKEvJhwc64GMe5KVBSZ2h7zcUzJ047FptuaIVXbSe@vger.kernel.org, AJvYcCWxncviQwI4Ry/+eQYHVZWY/gXldkkEEmyrCpFnDlfNQQgp19MmT0f5RGPuNGWTAddH/i4IDSvVXRvc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDUxiPmccz7wHigYNaqvMHh/tC907idwXHrXQVnktcZYQseate
-	BAfc6A6qDxR8AjhBFf9fEooQ+ep9scJgkOtrNz5D1lcgL6TVq8owqwlQTHuceQSEm9HHqz7piGy
-	uOGSVI52E9fPmrQ0n9zi6PET9/GY=
-X-Google-Smtp-Source: AGHT+IHSwofzoxwQsG0zMSSmo1+llgW2Wy3bZzwTo3q9Dkz410dXl/IeuLUWClfjbJdYjUEnCtJ+IeVIoX1nfMyYe0c=
-X-Received: by 2002:a05:6512:2394:b0:536:55a9:4b6c with SMTP id
- 2adb3069b0e04-53655a94bf8mr892897e87.13.1725556365789; Thu, 05 Sep 2024
- 10:12:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725556453; x=1726161253;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1qzH2P6QT/VZDU01WTRilziL7RsN8P6XpRi7hhgH0MM=;
+        b=JVpOnFa+Ux+xKq0pRhRA2Sfjnmp0wOt5XeY5ZdEu3iz5fW/QajZqxorpzktgWCuuEp
+         BWrqkxbhHKZ+0NrZQHH5CPRAKSf0FNzRWaQgAby312ryRA48COBMOrK6/RwTyCiFIeTp
+         scC6C7JOSKIRm+N/DyumO4Cfeo6CeVqHfw/qBpVnnqVbM57uVYY2zgmwsej9FmotUV6R
+         itxTL2JECFS7N9jF/iN/b6x2YUq6hGKCRIilh4VKJYmT0wQEZ2MfeNKCNAy2ujRdHAox
+         7ADRORkOmDNkA8SNQNCikOa3EsidWFlYwlsrD5WB9n5Hq5w/zQxD7eqgJx08UrPCoflV
+         v/Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhiXPJ6Z6HDKvqdXEarxPPsuuOOZTbIMaWxllO7XMKPu3h2a3eWk6fyjbwxCwfWf9YcUULTbNkDYCMa74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAF1n0kvkeTCdoRYxIFpHoV2FOSfudV8YdN+H+HSbXSvbvWbB2
+	56pcboJ6DLeDNQNO9pE75XhMWYSmEKY9lyLWcjk17w5ppFmmd6QG
+X-Google-Smtp-Source: AGHT+IFNQ30Hl3bbgFIamcPL18mrmHP0yLBj3dz/0jzD0MnCq/pSxUooRWLpBz/POMEpqh31MC1ZtA==
+X-Received: by 2002:a05:6a20:5530:b0:1cc:e17f:a3a2 with SMTP id adf61e73a8af0-1cce17fa3bfmr20162553637.0.1725556453229;
+        Thu, 05 Sep 2024 10:14:13 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178e99c111sm1364522b3a.92.2024.09.05.10.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 10:14:12 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chen.dylane@gmail.com
+Subject: [RFC PATCH bpf-next] bpf: Check percpu map value size first
+Date: Fri,  6 Sep 2024 01:14:06 +0800
+Message-Id: <20240905171406.832962-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com> <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
-In-Reply-To: <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 5 Sep 2024 14:12:33 -0300
-Message-ID: <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Frank Li <Frank.Li@nxp.com>, Marek Vasut <marex@denx.de>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	pratikmanvar09@gmail.com, francesco@dolcini.it, 
-	Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Adding Marek.
+Percpu map is often used, but the map value size limit often ignored,
+like issue: https://github.com/iovisor/bcc/issues/2519. Actually,
+percpu map value size is bound by PCPU_MIN_UNIT_SZIE, so we
+can check the value size whether it exceeds PCPU_MIN_UNIT_SZIE first,
+like percpu map of local_storage. Maybe the error message seems clearer
+compared with "cannot allocate memory".
 
-On Mon, Jul 15, 2024 at 5:30=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> From: Clark Wang <xiaoning.wang@nxp.com>
->
-> Implement workaround for ERR051198
-> (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
->
-> PWM output may not function correctly if the FIFO is empty when a new SAR
-> value is programmed
->
-> Description:
->   When the PWM FIFO is empty, a new value programmed to the PWM Sample
->   register (PWM_PWMSAR) will be directly applied even if the current time=
-r
->   period has not expired. If the new SAMPLE value programmed in the
->   PWM_PWMSAR register is less than the previous value, and the PWM counte=
-r
->   register (PWM_PWMCNR) that contains the current COUNT value is greater
->   than the new programmed SAMPLE value, the current period will not flip
->   the level. This may result in an output pulse with a duty cycle of 100%=
-.
->
-> Workaround:
->   Program the current SAMPLE value in the PWM_PWMSAR register before
->   updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
->   register. This will ensure that the new SAMPLE value is modified during
->   a non-empty FIFO, and can be successfully updated after the period
->   expires.
->
-> Write the old SAR value before updating the new duty cycle to SAR. This
-> avoids writing the new value into an empty FIFO.
->
-> This only resolves the issue when the PWM period is longer than 2us
-> (or <500KHz) because write register is not quick enough when PWM period i=
-s
-> very short.
->
-> Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
-> Reviewed-by: Jun Li <jun.li@nxp.com>
-> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz=
-4qbnhdqziftymw@pengutronix.de/
->   About disable/enable pwm instead of disable/enable irq:
->   Some pmw periphal may sensitive to period. Disable/enable pwm will
-> increase period, althouhg it is okay for most case, such as LED backlight
-> or FAN speed. But some device such servo may require strict period.
->
-> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4ba=
-c-8b77-0bb69f55accd@gmx.net/
->   Using official errata number
->   fix typo 'filp'
->   add {} for else
->
-> I supposed fixed all previous issues, let me know if I missed one.
-> ---
->  drivers/pwm/pwm-imx27.c | 52 +++++++++++++++++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-> index 253afe94c4776..e12eaaebe3499 100644
-> --- a/drivers/pwm/pwm-imx27.c
-> +++ b/drivers/pwm/pwm-imx27.c
-> @@ -27,6 +27,7 @@
->  #define MX3_PWMSR                      0x04    /* PWM Status Register */
->  #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
->  #define MX3_PWMPR                      0x10    /* PWM Period Register */
-> +#define MX3_PWMCNR                     0x14    /* PWM Counter Register *=
-/
->
->  #define MX3_PWMCR_FWM                  GENMASK(27, 26)
->  #define MX3_PWMCR_STOPEN               BIT(25)
-> @@ -232,8 +233,11 @@ static int pwm_imx27_apply(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
->  {
->         unsigned long period_cycles, duty_cycles, prescale;
->         struct pwm_imx27_chip *imx =3D to_pwm_imx27_chip(chip);
-> +       void __iomem *reg_sar =3D imx->mmio_base + MX3_PWMSAR;
->         unsigned long long c;
->         unsigned long long clkrate;
-> +       unsigned long flags;
-> +       int val;
->         int ret;
->         u32 cr;
->
-> @@ -274,7 +278,53 @@ static int pwm_imx27_apply(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
->                 pwm_imx27_sw_reset(chip);
->         }
->
-> -       writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-> +       /*
-> +        * This is a limited workaround. When the SAR FIFO is empty, the =
-new
-> +        * write value will be directly applied to SAR even the current p=
-eriod
-> +        * is not over.
-> +        *
-> +        * If the new SAR value is less than the old one, and the counter=
- is
-> +        * greater than the new SAR value, the current period will not fi=
-lp
-> +        * the level. This will result in a pulse with a duty cycle of 10=
-0%.
-> +        * So, writing the current value of the SAR to SAR here before up=
-dating
-> +        * the new SAR value can avoid this issue.
-> +        *
-> +        * Add a spin lock and turn off the interrupt to ensure that the
-> +        * real-time performance can be guaranteed as much as possible wh=
-en
-> +        * operating the following operations.
-> +        *
-> +        * 1. Add a threshold of 1.5us. If the time T between the read cu=
-rrent
-> +        * count value CNR and the end of the cycle is less than 1.5us, w=
-ait
-> +        * for T to be longer than 1.5us before updating the SAR register=
-.
-> +        * This is to avoid the situation that when the first SAR is writ=
-ten,
-> +        * the current cycle just ends and the SAR FIFO that just be writ=
-ten
-> +        * is emptied again.
-> +        *
-> +        * 2. Use __raw_writel() to minimize the interval between two wri=
-tes to
-> +        * the SAR register to increase the fastest pwm frequency support=
-ed.
-> +        *
-> +        * When the PWM period is longer than 2us(or <500KHz), this worka=
-round
-> +        * can solve this problem.
-> +        */
-> +       val =3D FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base =
-+ MX3_PWMSR));
-> +       if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORD=
-S) {
-> +               c =3D clkrate * 1500;
-> +               do_div(c, NSEC_PER_SEC);
-> +
-> +               local_irq_save(flags);
-> +               if (state->period >=3D 2000)
-> +                       readl_poll_timeout_atomic(imx->mmio_base + MX3_PW=
-MCNR, val,
-> +                                                 period_cycles - val >=
-=3D c, 0, 10);
-> +
-> +               val =3D FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mm=
-io_base + MX3_PWMSR));
-> +               if (!val)
-> +                       writel_relaxed(imx->duty_cycle, reg_sar);
-> +               writel_relaxed(duty_cycles, reg_sar);
-> +               local_irq_restore(flags);
-> +       } else {
-> +               writel_relaxed(duty_cycles, reg_sar);
-> +       }
-> +
->         writel(period_cycles, imx->mmio_base + MX3_PWMPR);
->
->         /*
->
-> --
-> 2.34.1
->
+the test case we create a percpu map with large value like:
+struct test_t {
+        int a[100000];
+};
+struct {
+        __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+        __uint(max_entries, 1);
+        __type(key, u32);
+        __type(value, struct test_t);
+} start SEC(".maps");
+
+test on ubuntu24.04 vm:
+libbpf: Error in bpf_create_map_xattr(start):Argument list too long(-7).
+Retrying without BTF.
+
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ kernel/bpf/arraymap.c | 3 +++
+ kernel/bpf/hashtab.c  | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+index a43e62e2a8bb..7c3c32f156ff 100644
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -73,6 +73,9 @@ int array_map_alloc_check(union bpf_attr *attr)
+ 	/* avoid overflow on round_up(map->value_size) */
+ 	if (attr->value_size > INT_MAX)
+ 		return -E2BIG;
++	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
++	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
++		return -E2BIG;
+ 
+ 	return 0;
+ }
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index 45c7195b65ba..16d590fe1ffb 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -462,6 +462,9 @@ static int htab_map_alloc_check(union bpf_attr *attr)
+ 		 * kmalloc-able later in htab_map_update_elem()
+ 		 */
+ 		return -E2BIG;
++	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
++	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
++		return -E2BIG;
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
+
 
