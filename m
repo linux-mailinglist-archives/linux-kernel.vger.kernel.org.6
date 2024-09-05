@@ -1,225 +1,108 @@
-Return-Path: <linux-kernel+bounces-317816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B296E40B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B2E96E414
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F102F1F23853
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 094561C20D35
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61081A42C7;
-	Thu,  5 Sep 2024 20:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F33919EEA0;
+	Thu,  5 Sep 2024 20:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="FlpHb8kz"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoKIsS1F"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D6D1A3022
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 20:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9953CD515;
+	Thu,  5 Sep 2024 20:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725567899; cv=none; b=l2Xl6eYcY8tWbWBNz1T1zta70UMX/6RNk3mQcduqWrR1IFkoCV/ABVUf2Q8m/6rqeRir9N6T0ULHXEXkJUvFxfL3g5CWLClzTWW8b9Tvh0gUXvsuZtjVGQDo9N3d+mVXho/HaZsgv0WN1lh+Mfrmf6R9wqiJGA2jbfcw5pyZLzQ=
+	t=1725568074; cv=none; b=RD8yiEaxorkf9fdHGwHc3joVTa+HdDg/L0Nbm/oZ4kE0c+/2CQF5gzqWrhSyu4+thuwFwZC1fjhCtvTvCpPOQ2whnKdobagnbwaJyi/MoSOoJLtvDb8IYnk8K5UTKzHjvMIU7WFTfoBdbJugdy3j5CXZjKlGQRvrVJXG9dIlh80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725567899; c=relaxed/simple;
-	bh=wvJODaIBgD1jUPLAQ4kNOzQaEXZUpgapfSzeNtFOXRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mhTjDUFZTnVRV4jnRlSwzWY3BZYqwAZ1+1m+pMuB+2Zk1rs13JVaFiOPnCyi3g86Zq3RfHBU+MwUn3bItGr1nN0aN9pz81Ot64NiPnWK9HzPpk7nypFEDuPv9rXkvOrfYq9w/K/nm4AxRwzyfiq33y6xvhkHipZFZR/BOcoNGHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=FlpHb8kz; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d87f34a650so889330a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 13:24:57 -0700 (PDT)
+	s=arc-20240116; t=1725568074; c=relaxed/simple;
+	bh=wg3v/Bzl6fHbsDe6vUK0VkO4iWopD9ovPVhR1LwUhPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kF0IIm7IN6l9s8qwWVkm2IyIyH9qDuwzyhOEsiG2jlZBAoK39vGI7ZzhdBZk0tpuEvqdKtH9TfdzJwERM8nkYPL3wN/4YMshNuHkPY5pKbxnbb0hmR13ktw5Fm0XfJMLl4IWenmjL5SFxjD6fOw/w352//xdv8H2KUc38tNt7+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoKIsS1F; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a9782651bdso200435785a.1;
+        Thu, 05 Sep 2024 13:27:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1725567897; x=1726172697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MFqtA/E7v5gQ+W6lQ8y6AL+BzpP0eM4/rxOM2YdHIlk=;
-        b=FlpHb8kzYDORq0QbPZFkH11NHAZgFVQBw4+9gvAZPatfjnoxjH/5LcJmbMid07hDUg
-         WRFzLMRdxTv9L8MsK8L4EqqnAEC/VtjBF3qILWt5XKnH4qCy5GQoxRMKfFdK5dMZ0i+8
-         acKxa9ilDb94rEPRa+/OfNeVit0U5Bfk8+13UeBox92eLC4fNq1C/743ZSDPgkolCpb1
-         CwkTevUn0beRFFvyDvcWAez/PwotWT0ELIz/H+xUSlg8lNXY0ZQ7OOYGPuqerKa1WDfu
-         nUtgj4GiVE3ooXiwGzpYBNZkZ+VWxfnGvUzWVeb1X3kE0xIhCuPvb9zSvqESeJmdJ0F9
-         uJtw==
+        d=gmail.com; s=20230601; t=1725568071; x=1726172871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ID4h32vMpKJpRELS7Wjz6ZK11jdarXsZHBRZ7AsCm8=;
+        b=EoKIsS1FtNZ6D8HrFwabO/ZEs0jC+8RjHXQsJmZ2z3Q70XQ8K8HcZgWEQDAuN+vFq5
+         KJyI37Y0fU8RcQCLk0u0NljhLFpZftNCAaaPCk25ficqvXpmszVFy0gW/uyxR6nliw72
+         68zCUuG+xzUU6HWqK4ZztNO6x26ThLMi8S4eeht+903msIjaeZASAZBnazM+R6RdfX9f
+         FZzIcFMSyLPNgsvCtDUaxb1gRqOkbvfb7kbFQPZ1R5jBeUWH4tp1t+dmW14+UhWsc2iW
+         LBqLHV3GMnLAn+G02nvikKGMg+3xpt127xhEyJmH4Jj0eIN8C+6dB41TzJhOv6upptpw
+         kwIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725567897; x=1726172697;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFqtA/E7v5gQ+W6lQ8y6AL+BzpP0eM4/rxOM2YdHIlk=;
-        b=iFDJ334IOUe0Hpu2g9Nhx3Jrfv/4Tzans1TWCLVX2mqPUQo8KVBSoN5+t85XvpaGnx
-         lz/6KyBCJDl3LkRwQPYryFizcX8uWY4V/qOKZ5NSjs0IZC1YggHtdS+MJaHzN1EJevuJ
-         ftAmqOwPBgNMEyO+hssTAhL99SnyU3QVzmquOxIduL63yi3nfWGfWxMDvHbP6LKMIkxX
-         zQT3zk5WozDRQjHTy1t5BbB3nRGUjaDM1ArbvquPbgBUNWkInQiwtd1eNSh7yx2cxQRu
-         HSgqcg9pUZ3UlMW/lZA1TqC49lK/+L2pEeTDxRIrnycTpD2zSaDWeyUjO0N6a+IHOo6b
-         PzRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUICYI641M0xcerPTQYkXn4H267AUBZVk9a8RaG1Ed375lRtLcKMLxEyh1/2cCE9EoBi7lzvFFk36VbTj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEtID/+Qw0nzN/HqN7NyPUteRITt+nKv/RaIC/KYOSD7/JGgl7
-	tttj6TLtV5P4Xe6qP0eDUxQIosj+UcX8x032oeoxWmj1PLQxkUdmt21TC9ESWQ==
-X-Google-Smtp-Source: AGHT+IHWsZrJ/0FG7b8hwchFVze0z1FJkzK5dQbSnSTMfUnlfMdkkmNUaojAuy0wmGiazF8Xhwp4mQ==
-X-Received: by 2002:a17:90b:3cce:b0:2c9:6abd:ca64 with SMTP id 98e67ed59e1d1-2dad506f880mr762344a91.9.1725567896838;
-        Thu, 05 Sep 2024 13:24:56 -0700 (PDT)
-Received: from [172.16.118.100] ([103.15.228.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8d38ffff9sm9454416a91.39.2024.09.05.13.24.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 13:24:56 -0700 (PDT)
-Message-ID: <dfb5b79f-4241-4507-8aaa-3c57f3038c3f@beagleboard.org>
-Date: Fri, 6 Sep 2024 01:54:48 +0530
+        d=1e100.net; s=20230601; t=1725568071; x=1726172871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ID4h32vMpKJpRELS7Wjz6ZK11jdarXsZHBRZ7AsCm8=;
+        b=kxcAiyC6Ae3VDUmVDUoktLA7VeUtI7K0yjztSGyRogt9RGSgaykNN9O228mP3eduJW
+         k2hx6HHfFMIc4xF6rgDwx/WKh3J31FTNaVOEy75Wi/cJRjE04yHOqEEPrY2oKmkGte6f
+         8WeCNR1Fqg/PpCTO3JyllKzHWNuWUz9Jvv066OgOqVlI9DCIrZs6R8tmAgKJSF23cZ7+
+         brTtdXK8ugySZUAziS5l/tPQuwQbg8I3tnyWmSTUgAbFUG8mo/yuWYBiLcKjTi91FDfp
+         GN7fZc5NiIbeYTRwaDxbiIjQtCMakiPgHOGmyHwwwSSLVSRnKyF4+lCptKz5eNu1gM09
+         Yg5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVm1YU8Bf4mjGSKyQW6APGM44FYqtpBS1QxTFe9QwzxmuAGWM6L/DycOWk+Ty5xIZEopFY3ycdudV+U@vger.kernel.org, AJvYcCVsb5oJ457OI1wiaWPXCQ4jaxgV+h/RvThiSt6C8+PqS+eKVFNnsCj5cPCSYOupzJjEjT6UucY5lm3HxqCs@vger.kernel.org, AJvYcCXEUFZdFaegkz3DDw6nA21aWlx8XkhP1g6X6wsTb7jb6d/F9bZOkW27lbgLk22ze5z5hvX2umIgxMTT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVvgnSH2HsIr4ItW9K+Yh4oRSfocmp4yD1avIoINvTXb6xWFbz
+	edlAakdWhWfaiOVCc3zj4H2xDIPwOrwb/j70o94d6z/DHzRravRn
+X-Google-Smtp-Source: AGHT+IGbZB34qSMVQXaWXVGoFS+5k+r/7KenyVF92+5VxThGj7KDYCLvSxV5ux3DDhJjZvlE7MIaPA==
+X-Received: by 2002:a05:6214:dcf:b0:6b5:2062:dd5c with SMTP id 6a1803df08f44-6c518def647mr137814096d6.8.1725568071408;
+        Thu, 05 Sep 2024 13:27:51 -0700 (PDT)
+Received: from VM-Arch (239.sub-174-193-4.myvzw.com. [174.193.4.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c5201dee67sm10610496d6.26.2024.09.05.13.27.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 13:27:50 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:27:42 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Mehdi Djait <mehdi.djait@bootlin.com>, 
+	christophe.jaillet@wanadoo.fr, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: display: Add Sharp Memory LCD
+ bindings
+Message-ID: <trlyhlclf74itbgj4x6baj6ga6yipdicw3c6odtjgxtbw3cjyl@lyfiny2yiz35>
+References: <20240905124432.834831-1-lanzano.alex@gmail.com>
+ <20240905124432.834831-2-lanzano.alex@gmail.com>
+ <a4520c05-d64b-4ef0-823c-6c568b459e21@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
- Vaishnav M A <vaishnav@beagleboard.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
- robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
- <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org>
- <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
- <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
- <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
- <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com>
- <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
- <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4520c05-d64b-4ef0-823c-6c568b459e21@kernel.org>
 
-On 9/4/24 23:19, Rob Herring wrote:
+On Thu, Sep 05, 2024 at 03:23:20PM GMT, Krzysztof Kozlowski wrote:
+> On 05/09/2024 14:43, Alex Lanzano wrote:
+> > Add device tree bindings for the monochrome Sharp Memory LCD
+> > 
+> > Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> > Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+> 
+> I don't understand what happened here. Your process of handling patches
+> is odd. Tags do not disappear, you had to remove them, right? So where
+> is the explanation for this?
 
-> On Wed, Sep 4, 2024 at 12:09 PM Ayush Singh <ayush@beagleboard.org> wrote:
->>>> gpio-map is what you are looking for. It's documented in the DT spec.
->>>> It was created exactly for this purpose of remapping GPIO lines on a
->>>> connector.
->>>>
->>>> Rob
->>
->> Hi. I found docs on nexus nodes [1] and tried using it for mikroBUS, but
->> it does not seem to be working. Here is my connector:
->>
->> ```
->>
->>       mikrobus_gpio0: mikrobus-gpio0 {
->>           #gpio-cells = <2>;
->>           gpio-map =
->>           <0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
->>           <2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
->>           <4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
->>           <6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
->>           <8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
->>           <10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
->>           gpio-map-mask = <0xf 0x0>;
->>           gpio-map-pass-thru = <0x0 0x1>;
->>       };
->>
->> ...
->>
->> &main_uart5 {
->>       status = "okay";
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&mikrobus_uart_pins_default>;
->>
->>       gnss {
->>           compatible = "u-blox,neo-8";
->>           reset-gpios = <&mikrobus_gpio0 10 GPIO_ACTIVE_LOW>;
->>       };
->> };
->>
->> ```
->>
->>
->> After some fdtdump, I can see that at least the dtc compiler does not
->> seem to do the forwarding at dt compile time. Here is the dump:
-> dtc knows nothing about it.
->
->> ```
->>
->> mikrobus-gpio0 {
->>           #gpio-cells = <0x00000002>;
->>           gpio-map = <0x00000000 0x00000000 0x00000025 0x0000000b
->> 0x00000000 0x00000001 0x00000000 0x00000025 0x00000009 0x00000000
->> 0x00000002 0x00000000 0x00000025 0x00000018 0x00000000 0x00000003
->> 0x00000000 0x00000025 0x00000019 0x00000000 0x00000004 0x00000000
->> 0x00000025 0x00000016 0x00000000 0x00000005 0x00000000 0x00000025
->> 0x00000017 0x00000000 0x00000006 0x00000000 0x00000025 0x00000007
->> 0x00000000 0x00000007 0x00000000 0x00000025 0x00000008 0x00000000
->> 0x00000008 0x00000000 0x00000025 0x0000000e 0x00000000 0x00000009
->> 0x00000000 0x00000025 0x0000000d 0x00000000 0x0000000a 0x00000000
->> 0x00000025 0x0000000c 0x00000000 0x0000000b 0x00000000 0x00000025
->> 0x0000000a 0x00000000>;
->>           gpio-map-mask = <0x0000000f 0x00000000>;
->>           gpio-map-pass-thru = <0x00000000 0x00000001>;
->>           phandle = <0x0000000e>;
->>       };
-> You might need "gpio-controller" here. Though if you do, I think
-> that's a mistake in the kernel. It should work like interrupt-map and
-> generally you have either interrupt-controller or interrupt-map, but
-> not both (though that is allowed now too).
->
->> ...
->>
->> serial@2850000 {
->>               compatible = "ti,am64-uart", "ti,am654-uart";
->>               reg = <0x00000000 0x02850000 0x00000000 0x00000100>;
->>               interrupts = <0x00000000 0x000000b7 0x00000004>;
->>               power-domains = <0x00000003 0x0000009c 0x00000001>;
->>               clocks = <0x00000002 0x0000009c 0x00000000>;
->>               clock-names = "fclk";
->>               status = "okay";
->>               pinctrl-names = "default";
->>               pinctrl-0 = <0x0000000d>;
->>               phandle = <0x00000081>;
->>               gnss {
->>                   compatible = "u-blox,neo-8";
->>                   reset-gpios = <0x0000000e 0x0000000a 0x00000001>;
->>               };
->>    };
->>
->> ```
->>
->>
->> So I am a bit unsure. Is the dtc parser in the kernel supposed to do the
-> No such thing as "dtc parser in the kernel".
->
->> mapping, or is it supposed to be done by `dtc` at compile time?
-> No.
->
->> Maybe we
->> do not have support for it in upstream kernel yet?
-> Yes, there is upstream support. Grep for of_parse_phandle_with_args_map.
->
-> Rob
-
-
-So, after a bit of troubleshooting, it seems that a nexus node should 
-not be present at root level (unless it also has an actual driver). If 
-the nexus node is a root node without an actual driver, anything 
-referring to the node is deferred.
-
-
-I am still a bit unsure if I should make the `mikrobus-connector` itself 
-a nexus node or if I should have a subnode named `mikrobus_gpio`, but at 
-least things seem to be working now. So, thanks for your help.
-
-
-Ayush Singh
-
+Whoops! My apologies for wasting time. Nothing changed in this patch
+I forgot to add in your reviewed-by tag.
 
