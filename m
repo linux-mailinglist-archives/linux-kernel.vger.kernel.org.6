@@ -1,242 +1,159 @@
-Return-Path: <linux-kernel+bounces-317126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2196596D989
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B353F96D89C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 471401C23852
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FAE2815F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BEC19C573;
-	Thu,  5 Sep 2024 12:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="CD+/pCk5"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2767219AD8B;
+	Thu,  5 Sep 2024 12:33:22 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E89189BB5;
-	Thu,  5 Sep 2024 12:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4281A83CC1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725541176; cv=none; b=bnIYjvTjmN3/ROpXZWDCU484DmsqYI1WJhjH+3BjYREhSglDsXbnf9TnNbcJR/J99b12waKbhIDPNe46aH0znIGsvqhrMnaxcQI5PoHQeZw7a84UNXOYCbUAHshv/q2Q66EbMvGlcSPTXw6snczbl159JQZkB9yhpaSBQAkrWOw=
+	t=1725539601; cv=none; b=Z3ypqgVz5cL/pNHcLymgOPgrI5FEw8V3DQVaZMJPQ0+rLE93QJMpkJvUwTzsT+tD8cuijivSP+gG+6ClofZCGFIz5u6u/gcoLJquQa8PL2l7jYLdMB45RERUaXiFxEApCseuAeGAO2nRQ+srBI9Z+gn/e3rh+5/JCPc+NnTnoCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725541176; c=relaxed/simple;
-	bh=U8KsPidIOseHcU9fJbkYzs1/1HWUJ+Su99UJG+hwyHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WuLGg0SiUeomfUKM/d42mdSjgz+zxPwFGIPQLKb21+bespDCC3sU1olThFMHskH2j15RAJQY5Qs69bpfkw3gXfD+bGdF95vbB1hxAjRTtRwyb0nuWA0rBD3cO+vDeG7PL3WB5jQjQRF2IxeN/mfV3TurUCOdeoQ13F5FyOOsC0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=CD+/pCk5; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZAq/WJxRl2xBJIxFJpgtsT4PJFM/lj/rAoqJbf9U0sA=; b=CD+/pCk5mtH51Q16lJ4sroXiZs
-	I6R3hgwZZzlSWkq9EP5RDAEf+R2m6QBmuEaDqRZlhqW1iru/OffZH96DdDtO/RB06oLGuVQe4Ji76
-	46HWpIYojIOQdyuzhsWozqMGZ5mcH9vd/o37J3lNAwKT7O0jiA4i1Z3ygc7jelnSPPgQ=;
-Received: from p4ff1376f.dip0.t-ipconnect.de ([79.241.55.111] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1smBeZ-009Esk-2q;
-	Thu, 05 Sep 2024 14:31:59 +0200
-Message-ID: <49a385d0-9ffc-468f-b7de-83abfa1e18f0@nbd.name>
-Date: Thu, 5 Sep 2024 14:31:58 +0200
+	s=arc-20240116; t=1725539601; c=relaxed/simple;
+	bh=MecRGAENHhyfGFAz7r3MsJFRR01iHi9sdLn/98a3Ttk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8OjanUotoz++m/78Y5yAEclc9XEBvZ+QwPBoTUHIkT2n2Qhf5gUgcjA91mdV72dx0lt1Ga/oDdPDwdqUXCLheKXYZ0aQmwCeJ+hSdNWfQLwaXJjsfz9J08wUwsne50qYXowlrLCKvNlHLQExlnQ6UwUUI5uyudz/3oP4z5Gfp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: VO34fhYkRSeTbGMzg5Jisw==
+X-CSE-MsgGUID: njtI/mOrTW6PfeRpqaAnBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34918004"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="34918004"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:33:19 -0700
+X-CSE-ConnectionGUID: i1USyyJERJOLLlav3CIv2Q==
+X-CSE-MsgGUID: UxMegDvnRjq/rqUFRsCnag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="65299117"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:33:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1smBfm-00000005OQg-3VFI;
+	Thu, 05 Sep 2024 15:33:14 +0300
+Date: Thu, 5 Sep 2024 15:33:14 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Zhang Ning <zhangn1985@outlook.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, lee@kernel.org
+Subject: Re: mfd: intel_soc_pmic_bxtwc: irq 0 issue, tmu and typec components
+ fail to probe.
+Message-ID: <ZtmlCh4NScc25tS2@smile.fi.intel.com>
+References: <TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYMne34hVa33qKf@smile.fi.intel.com>
+ <TY2PR01MB33222D8BE4B1107EB3A1917FCDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYjLdPryElDubaM@smile.fi.intel.com>
+ <TY2PR01MB33224CE088EF01D57DE1BABFCD9C2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <CAHp75VeMp9C04iDW5_c9owq3HP=5wvccoOuHwrSQ5SFeV+SRVA@mail.gmail.com>
+ <TY2PR01MB3322699682DBE2F13F919F80CD9D2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] wifi: mt76: mt7915: add wds support when wed is
- enabled
-To: Shengyu Qu <wiagn233@outlook.com>, lorenzo@kernel.org,
- ryder.lee@mediatek.com, shayne.chen@mediatek.com, sean.wang@mediatek.com,
- kvalo@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, daniel@makrotopia.org,
- miriam.rachel.korenblit@intel.com, money.wang@mediatek.com,
- StanleyYP.Wang@mediatek.com, meichia.chiu@mediatek.com,
- chui-hao.chiu@mediatek.com, johannes.berg@intel.com, quic_adisi@quicinc.com,
- sujuan.chen@mediatek.com, allen.ye@mediatek.com,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Bo Jiao <bo.jiao@mediatek.com>
-References: <TY3P286MB26111E4DB0841A176DF8E44E98BE2@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
-From: Felix Fietkau <nbd@nbd.name>
-Content-Language: en-US
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <TY3P286MB26111E4DB0841A176DF8E44E98BE2@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <TY2PR01MB3322699682DBE2F13F919F80CD9D2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 05.08.24 14:43, Shengyu Qu wrote:
-> The current WED only supports 256 wcid, whereas mt7986 can support up to
-> 512 entries, so firmware provides a rule to get sta_info by DA when wcid
-> is set to 0x3ff by txd. Also, WED provides a register to overwrite txd
-> wcid, that is, wcid[9:8] can be overwritten by 0x3 and wcid[7:0] is set
-> to 0xff by host driver.
+On Thu, Sep 05, 2024 at 07:27:25PM +0800, Zhang Ning wrote:
+> On Wed, Sep 04, 2024 at 05:36:35PM +0300, Andy Shevchenko wrote:
+> > On Wed, Sep 4, 2024 at 5:29 PM Zhang Ning <zhangn1985@outlook.com> wrote:
+> > > On Fri, Aug 09, 2024 at 05:09:49PM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Aug 09, 2024 at 08:53:24PM +0800, Zhang Ning wrote:
+> > > > > On Fri, Aug 09, 2024 at 03:33:33PM +0300, Andy Shevchenko wrote:
+> > > > > > On Fri, Aug 09, 2024 at 08:02:43PM +0800, Zhang Ning wrote:
+> > > > > > > Hi, Greg & Rafael
+> > > > > > >
+> > > > > > > recently, when I try to enable mfd components for intel_soc_pmic_bxtwc
+> > > > > > > for debian kernel[0]. I find tmu and typec failed to probe.
+> > > > > > >
+> > > > > > > after check source code, I find irq for these two devices are 0, when
+> > > > > > > use platform_get_irq, it will alway fail.
+> > > > > > >
+> > > > > > >         if (WARN(!ret, "0 is an invalid IRQ number\n"))
+> > > > > > >                 return -EINVAL;
+> > > > > > >         return ret;
+> > > > > > >
+> > > > > > > My workaround for debian is to hardcode irq to 0, instead to use api.
+> > > > > > >
+> > > > > > > I don't know how to write a good solution, thus send an email to you.
+> > > > > >
+> > > > > > Hold on, how the heck you got 0 in the first place?A
+> > > > >
+> > > > > use tmu as an example
+> > > > >
+> > > > > enum bxtwc_irqs_tmu {
+> > > > >         BXTWC_TMU_IRQ = 0,
+> > > > > };
+> > > > >
+> > > > > static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
+> > > > >         REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, GENMASK(2, 1)),
+> > > > > };
+> > > > >
+> > > > > static const struct resource tmu_resources[] = {
+> > > > >         DEFINE_RES_IRQ_NAMED(BXTWC_TMU_IRQ, "TMU"),
+> > > > > };
+> > > > >
+> > > > >         {
+> > > > >                 .name = "bxt_wcove_tmu",
+> > > > >                 .num_resources = ARRAY_SIZE(tmu_resources),
+> > > > >                 .resources = tmu_resources,
+> > > > >         },
+> > > > >
+> > > > > this is why I got 0, and I don't do any hack.
+> > > >
+> > > > Thanks for elaboration, I will look at this a bit later (may be next or one
+> > > > after next week, just returned from vacations).
+> > 
+> > >    could you share the patch link to the fix? then I could port it to
+> > >    debian.
+> > 
+> > Sorry I was busy with other stuff (as well), I am still in the middle
+> > of debugging that.
+> > The issue is that the leaf drivers for some reason do not request
+> > proper vIRQ (that should come from the secondary IRQ chip). OTOH there
+> > is only one _similar_ design in the kernel besides this one. And when
+> > I tried to test the version where all this appears, I couldn't boot
+> > (yeah, I spent some time on bisecting things) the board I have (One of
+> > pre-production variants of Intel Joule SoM).
 > 
-> However, firmware is unable to get sta_info from DA as DA != RA for
-> 4addr cases, so firmware and wifi host driver both use wcid (256 - 271)
-> and (768 ~ 783) for sync up to get correct sta_info.
+> Yes, me too. I'm trying to enable Joule on Debian. thus found this
+> issue. you can use debian sid with linux 6.11 to debug this issue.
 > 
-> Currently WDS+WED config is completely broken on MT7986/7981 devices if
-> without this patch.
+> and another issue is Joule HDA pci id is removed from Linux kernel, thus
+> no sound, but I don't plan to submit an issue.
 > 
-> Tested-by: Sujuan Chen <sujuan.chen@mediatek.com>
-> Co-developed-by: Bo Jiao <bo.jiao@mediatek.com>
-> Signed-off-by: Bo Jiao <bo.jiao@mediatek.com>
-> Signed-off-by: Sujuan Chen <sujuan.chen@mediatek.com>
-> Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
-> ---
-> Changes since v1:
->   - Drop duplicate setting in mmio
->   - Reduce the patch size by redefining mt76_wcid_alloc
-> Changes since v2:
->   - Rework wds wcid getting flow
-> Changes since v3:
->   - Rebase to next-20240703
->   - Sync with downstream patch
-> Changes since v4:
->   - Rebase to next-20240802
-> Changes since v5:
->   - Fixed build test error reported by robot
->   - Rebase to next-20240805
-> ---
->   drivers/net/wireless/mediatek/mt76/mt76.h     |  9 +++++
->   .../net/wireless/mediatek/mt76/mt7915/main.c  | 32 ++++++++++++++--
->   .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 18 +++++++--
->   .../net/wireless/mediatek/mt76/mt7915/mcu.h   |  1 +
->   drivers/net/wireless/mediatek/mt76/util.c     | 37 +++++++++++++++++--
->   drivers/net/wireless/mediatek/mt76/util.h     |  7 +++-
->   6 files changed, 93 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
-> index 4a58a78d5ed25..1186a4998faff 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt76.h
-> +++ b/drivers/net/wireless/mediatek/mt76/mt76.h
-> @@ -28,6 +28,9 @@
->   
->   #define MT76_TOKEN_FREE_THR	64
->   
-> +#define MT76_WED_WDS_MIN    256
-> +#define MT76_WED_WDS_MAX    272
-> +
->   #define MT_QFLAG_WED_RING	GENMASK(1, 0)
->   #define MT_QFLAG_WED_TYPE	GENMASK(4, 2)
->   #define MT_QFLAG_WED		BIT(5)
-> @@ -71,6 +74,12 @@ enum mt76_wed_type {
->   	MT76_WED_RRO_Q_IND,
->   };
->   
-> +enum mt76_wed_state {
-> +	MT76_WED_DEFAULT,
-> +	MT76_WED_ACTIVE,
-> +	MT76_WED_WDS_ACTIVE,
-> +};
-> +
->   struct mt76_bus_ops {
->   	u32 (*rr)(struct mt76_dev *dev, u32 offset);
->   	void (*wr)(struct mt76_dev *dev, u32 offset, u32 val);
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-> index 049223df9beb1..dc4d87e004a0f 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-> @@ -745,8 +745,15 @@ int mt7915_mac_sta_add(struct mt76_dev *mdev, struct ieee80211_vif *vif,
->   	bool ext_phy = mvif->phy != &dev->phy;
->   	int ret, idx;
->   	u32 addr;
-> +	u8 flags = MT76_WED_DEFAULT;
->   
-> -	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, MT7915_WTBL_STA);
-> +	if (mtk_wed_device_active(&dev->mt76.mmio.wed) &&
-> +	    !is_mt7915(&dev->mt76)) {
-> +		flags = test_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags) ?
-> +		       MT76_WED_WDS_ACTIVE : MT76_WED_ACTIVE;
-> +	}
-> +
-> +	idx = __mt76_wcid_alloc(mdev->wcid_mask, MT7915_WTBL_STA, flags);
->   	if (idx < 0)
->   		return -ENOSPC;
->   
+> > Do you have any (most recent) kernel version that works as expected?
+> I don't try any old kernel, but from git log, I think bad commit is:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=57129044f5044dcd73c22d91491906104bd331fd`
 
-I'd prefer to replace the mt76_wcid_alloc flags argument with an 
-explicit start offset argument.
+No, it does the right thing from architectural point of view. It might be that
+it was never tested or it was a regression somewhere. That's why I wanted to find
+the newest possible kernel that works on that machine.
 
-> @@ -1201,12 +1208,27 @@ static void mt7915_sta_set_4addr(struct ieee80211_hw *hw,
->   {
->   	struct mt7915_dev *dev = mt7915_hw_dev(hw);
->   	struct mt7915_sta *msta = (struct mt7915_sta *)sta->drv_priv;
-> +	int min = MT76_WED_WDS_MIN, max = MT76_WED_WDS_MAX;
->   
->   	if (enabled)
->   		set_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags);
->   	else
->   		clear_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags);
->   
-> +	if (mtk_wed_device_active(&dev->mt76.mmio.wed) &&
-> +	    !is_mt7915(&dev->mt76) &&
-> +	    (msta->wcid.idx < min || msta->wcid.idx > max - 1)) {
-> +		struct ieee80211_sta *pre_sta;
-> +
-> +		pre_sta = kzalloc(sizeof(*sta) + sizeof(*msta), GFP_KERNEL);
-> +		mt76_sta_pre_rcu_remove(hw, vif, sta);
-> +		memmove(pre_sta, sta, sizeof(*sta) + sizeof(*msta));
-> +		mt7915_sta_add(hw, vif, sta);
-> +		synchronize_rcu();
-> +		mt7915_sta_remove(hw, vif, pre_sta);
-> +		kfree(pre_sta);
-> +	}
-> +
->   	mt76_connac_mcu_wtbl_update_hdr_trans(&dev->mt76, vif, sta);
->   }
->  
-In order to update the code based on my latest changes and to fix 
-potential race conditions on tx/rx packets during the transition, please 
-change to this order:
+> > > > > > > [0]: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1156/diffs
 
-1. copy the sta
-2. allocate a new wcid
-3. change the wcid index in the copied sta to the newly allocated wcid
-4. call mcu functions on the duplicate sta for creating the new sta entry.
-5. use rcu_assign_pointer to point dev->wcid[new_idx] at &msta->wcid
-6. swap wcid index between real sta and duplicated sta
-7. rcu_assign_pointer(dev->wcid[orig_idx], NULL)
-8. synchronize_rcu()
-9. call mcu functions to delete the duplicate sta's entry (points to old 
-wcid after the swap)
-10. free the duplicated sta
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This should allow mgmt tx/rx to work while the sta is being migrated to 
-the new wcid entry.
 
-- Felix
 
