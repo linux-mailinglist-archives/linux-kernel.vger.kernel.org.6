@@ -1,131 +1,231 @@
-Return-Path: <linux-kernel+bounces-317585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0D596E0BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:03:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B72E96E0BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86706286C04
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD831C23E4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335991A0AF4;
-	Thu,  5 Sep 2024 17:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDsN7LDN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7811A262C;
+	Thu,  5 Sep 2024 17:03:36 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4451478283
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309811A08A4
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725555796; cv=none; b=qnSTY96geKxP6TEai3do+tl8iIXCFxvpFIWx6iq8b4sr2IWwo0R9zxEwenT7iEN1HcCwEbu25rSwbm7RtMpm34ZsXb8A19lNmJoJM7pVGqMv/8HYNi9tBZkNVjVlngjoUf2Vgjk6VoT9rSY4I9jwk1hjZzc6U9UjNoG+C9VpQrE=
+	t=1725555815; cv=none; b=ORZ5Owxuef03txe40GddPrcS7hP5o1JFtVifME20DjaSBK4RK8fiScH+W+3Be97JLaKwV/hh+V83q1IWA4GBIwU5PRkiW0KN6yMmbbzke87wuOCTQrcfdegiY2gJHdaKOjz0U75nD1olorPMrdkLTE8t4ppkr7Zc4pZBrAbYBQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725555796; c=relaxed/simple;
-	bh=jBlfS9LpREMmCfI8EHARvp0EI/YS2QafWg/0wZ5hBs8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tYnt0Iz4mOFkVPF/8nl7/+BTumIkmVy8xrwGO1YJagKVOqLknP2AauyW+0bwNYhC4+6GmJSJTh0PMF149D+X9LvNMEbBF1Kw/rQKlW10J0YXUURbIOpZRMrzW5DSGZOjZMj8csymqhGbYEDonzHM/w8kRvXQF8V3blUv6gQqchs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDsN7LDN; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725555795; x=1757091795;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=jBlfS9LpREMmCfI8EHARvp0EI/YS2QafWg/0wZ5hBs8=;
-  b=dDsN7LDNVnb49bUEZDFi0hFfxSHDfuuYbebVWCYIhrbBMwHY7V+zwCLA
-   g7HNOY1Kj4Xp65zm+0/+FhZQxTYI/4TddhtsyJppS4eGbw33sybQnzyE0
-   Yfw0gnRD/xCYUlfanonI8V/jp1bFC2vAByPRjPN7kpa9rGMJ80KM/7vgM
-   t9CapMbsN7hskTcH2kMdzTd2en4+i3onuNHAwsz0AatOGsd6tMKxVi4CK
-   8UDiFhY91Yuttbc/7CnmQtzdOi/DJbkOY6gWBfgJEhBONGxWvu+UOjYRl
-   a6OsJiA9xHl58PoJz+IY+sBKxOhVDw5ibh4eIEk2JUJtmOpo4uFrlwGEE
-   g==;
-X-CSE-ConnectionGUID: 7dBpZZwiTtqWSGcdSbyTsA==
-X-CSE-MsgGUID: YFSkN3yjTOiW7PRt/q5SvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="46818498"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="46818498"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:03:15 -0700
-X-CSE-ConnectionGUID: xikwf8/JR72y3DP+LKwr9w==
-X-CSE-MsgGUID: aQyujqbUQfqNh1955k5UlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="65702374"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 05 Sep 2024 10:03:11 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BA71731E; Thu, 05 Sep 2024 20:03:10 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] x86/cpu: Mark flag_is_changeable_p() with __maybe_unused
-Date: Thu,  5 Sep 2024 20:02:51 +0300
-Message-ID: <20240905170308.260067-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725555815; c=relaxed/simple;
+	bh=fsdtgHQu5S+sGmX4XjmiO1zwvwOLPtFBcLTtq8gnQpo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YtBwNUQ15idHbf/XyslvzBFQRzpktibZ1PuIMcNesCnRKhPMfXEn5kqCRLkgYCgEPxT4OGM5+JONRPFMNfPNQaVE9wNybz6/xk2XS8mvSrzBAc6aIt+W7uLgUzFpSDgLYvUgc8w4uj0PbsairIsimAEgyNE5ooLsuAm7qJlGI70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d55a00bd7so28489985ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 10:03:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725555813; x=1726160613;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ICQ0YqUAuBCDVOBEFVxSd7r2rupOA9lJI8jrGUESHbY=;
+        b=nLSLNH2XAZeFA+wWozDhv7QHpdNMe7vnHmH9JXjP6MU7lr1uTrNnDa8Yf/ZZURFWKW
+         CVTTXnTScZIHUo3FieXWGgV+KNb+vcJW9I5CzLNrDnCzdEGMIC5lSfHodzfGN5RSlk7t
+         QUvNZN4WGtc7xwcTAOOssnL88/WIPeWK4x4UXPsrp9uGqINn001jXkxSTUf1dXX23S7Q
+         OXK/DZjzLMWLiCMDpOl/GEwYzpoKlelennGbi6bZhhkUt7bTCrmXSjgUSr43YYtOoSfZ
+         Uy3lgpCxov7VgV2o5EukQfSHeiqyW1yBxUltF5P7xWpiLIEhPuMuW2wZmHOM3jPXlSDh
+         /1vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBBK4CPZljtPoplEwD9ak5DxfyLW8BXb00yoRfeg3vQAX0FDAA5v0NJrUIQugcXcyTV/OM0Ew1ch/ZTpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBq7p7ACiNeXj9GpxP7gC1fz4oS2sBehRx9WaKk/p6b6MssOYp
+	mjoCbeltwTMgrc+KoGSwtNXgtHnicnDRl9I7NMvG1F1+unxJUuIOkG4y7EjoBR0JE5e3mjLTh4L
+	G+55LkJ01nCFd8z0HZRxr7KhdUUDi6cxgF30BCjXcW0hZUfjFKORTXRg=
+X-Google-Smtp-Source: AGHT+IFYRWYkcvChLrkvOANUiRcQCLrZIdD+dFvMb+kbcd5lkJ6kfExWmqX1DHM/95PiKmt9yMf0EBmeawpU8sKWE8nNizjizfkz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:20c2:b0:377:1625:5fca with SMTP id
+ e9e14a558f8ab-39f40ee300emr6574465ab.1.1725555813052; Thu, 05 Sep 2024
+ 10:03:33 -0700 (PDT)
+Date: Thu, 05 Sep 2024 10:03:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000047043b0621624565@google.com>
+Subject: [syzbot] [mptcp?] possible deadlock in sk_clone_lock (3)
+From: syzbot <syzbot+f4aacdfef2c6a6529c3e@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org, 
+	matttbe@kernel.org, mptcp@lists.linux.dev, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When flag_is_changeable_p() is unused, it prevents kernel builds
-with clang, `make W=1` and CONFIG_WERROR=y:
+Hello,
 
-arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
-  351 | static inline int flag_is_changeable_p(u32 flag)
-      |                   ^~~~~~~~~~~~~~~~~~~~
+syzbot found the following issue on:
 
-Fix this by marking it with __maybe_unused (both cases for the sake of
-symmetry).
+HEAD commit:    67784a74e258 Merge tag 'ata-6.11-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1631e529980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f4aacdfef2c6a6529c3e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e6cf2b980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171c1f2b980000
 
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-67784a74.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e2f2583cf0b1/vmlinux-67784a74.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0fedd864addd/bzImage-67784a74.xz
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f4aacdfef2c6a6529c3e@syzkaller.appspotmail.com
+
+============================================
+WARNING: possible recursive locking detected
+6.11.0-rc6-syzkaller-00019-g67784a74e258 #0 Not tainted
+--------------------------------------------
+syz-executor364/5113 is trying to acquire lock:
+ffff8880449f1958 (k-slock-AF_INET){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ffff8880449f1958 (k-slock-AF_INET){+.-.}-{2:2}, at: sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
+
+but task is already holding lock:
+ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(k-slock-AF_INET);
+  lock(k-slock-AF_INET);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+7 locks held by syz-executor364/5113:
+ #0: ffff8880449f0e18 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
+ #0: ffff8880449f0e18 (sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_sendmsg+0x153/0x1b10 net/mptcp/protocol.c:1806
+ #1: ffff88803fe39ad8 (k-sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
+ #1: ffff88803fe39ad8 (k-sk_lock-AF_INET){+.+.}-{0:0}, at: mptcp_sendmsg_fastopen+0x11f/0x530 net/mptcp/protocol.c:1727
+ #2: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #2: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #2: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: __ip_queue_xmit+0x5f/0x1b80 net/ipv4/ip_output.c:470
+ #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #3: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ip_finish_output2+0x45f/0x1390 net/ipv4/ip_output.c:228
+ #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+ #4: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: process_backlog+0x33b/0x15b0 net/core/dev.c:6104
+ #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #5: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: ip_local_deliver_finish+0x230/0x5f0 net/ipv4/ip_input.c:232
+ #6: ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ #6: ffff88803fe3cb58 (k-slock-AF_INET){+.-.}-{2:2}, at: sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5113 Comm: syz-executor364 Not tainted 6.11.0-rc6-syzkaller-00019-g67784a74e258 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_deadlock kernel/locking/lockdep.c:3061 [inline]
+ validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3855
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ sk_clone_lock+0x2cd/0xf40 net/core/sock.c:2328
+ mptcp_sk_clone_init+0x32/0x13c0 net/mptcp/protocol.c:3279
+ subflow_syn_recv_sock+0x931/0x1920 net/mptcp/subflow.c:874
+ tcp_check_req+0xfe4/0x1a20 net/ipv4/tcp_minisocks.c:853
+ tcp_v4_rcv+0x1c3e/0x37f0 net/ipv4/tcp_ipv4.c:2267
+ ip_protocol_deliver_rcu+0x22e/0x440 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x341/0x5f0 net/ipv4/ip_input.c:233
+ NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
+ NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
+ __netif_receive_skb_one_core net/core/dev.c:5661 [inline]
+ __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5775
+ process_backlog+0x662/0x15b0 net/core/dev.c:6108
+ __napi_poll+0xcb/0x490 net/core/dev.c:6772
+ napi_poll net/core/dev.c:6841 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6963
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:908 [inline]
+ __dev_queue_xmit+0x1763/0x3e90 net/core/dev.c:4450
+ dev_queue_xmit include/linux/netdevice.h:3105 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0xd41/0x1390 net/ipv4/ip_output.c:235
+ ip_local_out net/ipv4/ip_output.c:129 [inline]
+ __ip_queue_xmit+0x118c/0x1b80 net/ipv4/ip_output.c:535
+ __tcp_transmit_skb+0x2544/0x3b30 net/ipv4/tcp_output.c:1466
+ tcp_rcv_synsent_state_process net/ipv4/tcp_input.c:6542 [inline]
+ tcp_rcv_state_process+0x2c32/0x4570 net/ipv4/tcp_input.c:6729
+ tcp_v4_do_rcv+0x77d/0xc70 net/ipv4/tcp_ipv4.c:1934
+ sk_backlog_rcv include/net/sock.h:1111 [inline]
+ __release_sock+0x214/0x350 net/core/sock.c:3004
+ release_sock+0x61/0x1f0 net/core/sock.c:3558
+ mptcp_sendmsg_fastopen+0x1ad/0x530 net/mptcp/protocol.c:1733
+ mptcp_sendmsg+0x1884/0x1b10 net/mptcp/protocol.c:1812
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x1a6/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmmsg+0x3b2/0x740 net/socket.c:2737
+ __do_sys_sendmmsg net/socket.c:2766 [inline]
+ __se_sys_sendmmsg net/socket.c:2763 [inline]
+ __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2763
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f04fb13a6b9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd651f42d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f04fb13a6b9
+RDX: 0000000000000001 RSI: 0000000020000d00 RDI: 0000000000000004
+RBP: 00007ffd651f4310 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000020000080 R11: 0000000000000246 R12: 00000000000f4240
+R13: 00007f04fb187449 R14: 00007ffd651f42f4 R15: 00007ffd651f4300
+ </TASK>
+
+
 ---
-v2: marked both 32- and 64-bit cases
- arch/x86/kernel/cpu/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index d4e539d4e158..4b35744ef9b2 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -287,7 +287,7 @@ static int __init cachesize_setup(char *str)
- __setup("cachesize=", cachesize_setup);
- 
- /* Standard macro to see if a specific flag is changeable */
--static inline int flag_is_changeable_p(u32 flag)
-+static inline __maybe_unused int flag_is_changeable_p(u32 flag)
- {
- 	u32 f1, f2;
- 
-@@ -348,7 +348,7 @@ static int __init x86_serial_nr_setup(char *s)
- }
- __setup("serialnumber", x86_serial_nr_setup);
- #else
--static inline int flag_is_changeable_p(u32 flag)
-+static inline __maybe_unused int flag_is_changeable_p(u32 flag)
- {
- 	return 1;
- }
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
