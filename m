@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-316664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF2096D27E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E47E96D284
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427F01C2277A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FAAE1C239E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA5C194C62;
-	Thu,  5 Sep 2024 08:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5333A194C9D;
+	Thu,  5 Sep 2024 08:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PL4wowfT"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="w3IN+vsm"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB90194A60
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B46145B10;
+	Thu,  5 Sep 2024 08:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.241.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526301; cv=none; b=npbwo8pS53YFQeCEwa9sKtNaJRyfP6w0i1dNlikKtPiJ0N4QbWRj1WHeRAnt0q1VdiBHb2aytitmIKqV8Lkqhodv7raFOrDGbvLQyAI1wffJqusdZe2+Tg18dT2JGUmdRbdciUyHQs3iX6xPN6pOgHoYD4e4VgCAj976a32bmk8=
+	t=1725526533; cv=none; b=oPppr4fGFNrGWqnY8Rq1HyZdRbXZSF8HSbFnJ1hrAZSO//XUT88qKNlxNi6vCjoYCAhpemI1kZZoFCL+4RqU2K4cilORZRRpRP/8QKBKlu9as00VOfT5sbi+36NZxNeUerRgkCK7ereZ7y9fIIli3u8jcB53lHzA9LS1srlHKcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526301; c=relaxed/simple;
-	bh=twM7WddQqfc+l5fSW0h5VYv6nypnRrYgNwIfYpYw8BI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZBEfZYAH/DPPZGGaoYtbwD9/pkgobwdG+rCtorgndVvL01KrZpVCxs9mtrogWNkhZRh5zubveS4h6km4iYiCICtKmqlFn5bYC5WP9dwDlEPivYId+HCyBniBCQ+lEaS34EquFTzc154GdqPy1Y62cof/kNfW4JY5rx5tovN4vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PL4wowfT; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <07708265-0c57-4a8d-be2b-b722dd9503e3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725526297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nXzsr8O7f91QuUqU4vZsbIiIpOuXLyCN04Gn/9BoEHw=;
-	b=PL4wowfTkWkScpWzSOZu7RiOgau+n9sK1ZViknZG0bUFhlT3X2cub1filQuvvgk/1DZFQh
-	4fNWOcU5WkhYCcFBeEhkzWqVdlvFYcamoJtZCPMpYyvnkSpbqzcOPDHTKoE6cpQIgJ5Vuf
-	aeAH77UX7K9W28dfp0Jr1UqFUCildx0=
-Date: Thu, 5 Sep 2024 16:51:09 +0800
+	s=arc-20240116; t=1725526533; c=relaxed/simple;
+	bh=f1MPAD4O/d2BtmRLp4/BYgjptMhBAm5TS4m5Ii3NVJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DHIS/58hm4nxXTu6/kcWm6Bj8zDo26MjL2D/3yvudJlStZc++uG5eVzXvU9rbj/D/ki/FmGxfZi/rV5+Vhpx3xwsSiGwfCaJ9LCoFdC2kU44QjEFFWKrHmpYSj0LQFOGiv5ZJvkAScJviwQ+UGxGbxr52t3qhUdzHsXBlZFOz5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=w3IN+vsm; arc=none smtp.client-ip=159.100.241.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.157])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id 69D5220114;
+	Thu,  5 Sep 2024 08:55:24 +0000 (UTC)
+Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
+	by relay3.mymailcheap.com (Postfix) with ESMTPS id 96F293E970;
+	Thu,  5 Sep 2024 10:55:16 +0200 (CEST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 91B81400B3;
+	Thu,  5 Sep 2024 08:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1725526514; bh=f1MPAD4O/d2BtmRLp4/BYgjptMhBAm5TS4m5Ii3NVJY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=w3IN+vsmPVD4TLlGAVgh4wAY9Bqv2QZbp8Oj/VVoDmNq6/9tyh4jXwVK6JAzQ/LVF
+	 8uQeyoQK7+wn1+qwvO6gy5cOT2U1uHPL1qEAP22SWNT8bbwYFwhtipACq8SzjrU2E8
+	 GQ/nP3k13J5pz/FrVkhMNSb55MnWeqkqwxHWitsw=
+Received: from localhost.localdomain (unknown [58.32.40.121])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id ECFFF42639;
+	Thu,  5 Sep 2024 08:55:07 +0000 (UTC)
+From: Kexy Biscuit <kexybiscuit@aosc.io>
+To: stefanb@linux.ibm.com,
+	jarkko@kernel.org,
+	linux-integrity@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+	mpe@ellerman.id.au,
+	naveen.n.rao@linux.ibm.com,
+	zohar@linux.ibm.com,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	stable@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Mingcong Bai <jeffbai@aosc.io>
+Subject: [PATCH v2 RESEND] tpm: export tpm2_sessions_init() to fix ibmvtpm building
+Date: Thu,  5 Sep 2024 16:52:20 +0800
+Message-ID: <20240905085219.77240-2-kexybiscuit@aosc.io>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] amba: make amba_bustype constant
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, krzk@kernel.org,
- andi.shyti@kernel.org, robh@kernel.org, gregkh@linuxfoundation.org,
- suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
- Kunwu Chan <chentao@kylinos.cn>
-References: <20240823064203.119284-1-kunwu.chan@linux.dev>
- <ZsiTPjtnZZIW-K4k@smile.fi.intel.com>
- <56e29159-3ebb-425a-9bd6-cb66484d7738@linux.dev>
- <ZsxbjnMa8teJ5_Pg@smile.fi.intel.com>
- <5b4987e3-af8a-413f-bbbe-d493d6c371f6@linux.dev>
- <Zs3Wt5xkFOiuH-iP@smile.fi.intel.com>
- <6774cd23-47f9-4d15-8954-a9f749998fe2@linux.dev>
- <Zs8jZiN1TvNfHQ9N@smile.fi.intel.com>
- <65c80deb-21e1-44eb-87c9-c7cdd36d77cd@linux.dev>
- <ZthnjPjPB+6cMf9w@shell.armlinux.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <ZthnjPjPB+6cMf9w@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Rspamd-Queue-Id: 91B81400B3
+X-Rspamd-Server: nf2.mymailcheap.com
+X-Spamd-Result: default: False [1.40 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_ONE(0.00)[1];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Action: no action
 
-Thanks for the reply.
-On 2024/9/4 21:58, Russell King (Oracle) wrote:
-> On Thu, Aug 29, 2024 at 09:31:29AM +0800, Kunwu Chan wrote:
->> Thanks for the reply.
->> On 2024/8/28 21:17, Andy Shevchenko wrote:
->>> On Wed, Aug 28, 2024 at 10:51:54AM +0800, Kunwu Chan wrote:
->>>> On 2024/8/27 21:37, Andy Shevchenko wrote:
->>>>> On Tue, Aug 27, 2024 at 03:45:31PM +0800, Kunwu Chan wrote:
->>>>>> On 2024/8/26 18:40, Andy Shevchenko wrote:
->>>>>>> On Mon, Aug 26, 2024 at 06:08:11PM +0800, Kunwu Chan wrote:
->>> ...
->>>
->>>>>>> Make it patch series:
->>>>>>> 1) patch that introduces exported function called dev_is_amba() (1 patch)
->>>> Done.
->>>>>>> 2) convert user-by-user (N patches)
->>>> I've no idea about how to modify, such as in iommu.c:
->>> Oh, crap. Yes, this need more thinking.
->>> Anyway, Russell is okay with your initial patch, the rest can be done
->>> separately. For now probably we can leave it exported for this only case.
->>>
->> Anyway, thanks for the suggestion, i'll   introduce the dev_is_amba function
->>
->> and  add the Suggested tag for you.
->>
->> If you have a better idea and need me to do it, you can always contact me.
-> General policy is not to add stuff that doesn't have any users. From
-> what I can see from briefly reading this discussion, and looking at
-> the patches submitted to me, the dev_is_amba() patch adds a helper,
-> but as yet there are no users - and not even any patches on a mailing
-> list to make use of this helper. Therefore, I won't be applying that
-> patch.
+Commit 08d08e2e9f0a ("tpm: ibmvtpm: Call tpm2_sessions_init() to
+initialize session support") adds call to tpm2_sessions_init() in ibmvtpm,
+which could be built as a module. However, tpm2_sessions_init() wasn't
+exported, causing libmvtpm to fail to build as a module:
 
-Actually, here is a user in [1], i'am ready to use it  in [2].
+ERROR: modpost: "tpm2_sessions_init" [drivers/char/tpm/tpm_ibmvtpm.ko] undefined!
 
-  #ifdef CONFIG_ARM_AMBA
-  	else if (dev->bus == &amba_bustype)
+Export tpm2_sessions_init() to resolve the issue.
 
-[1] 
-https://elixir.bootlin.com/linux/v6.10.8/source/drivers/of/platform.c#L631
+Cc: stable@vger.kernel.org # v6.10+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202408051735.ZJkAPQ3b-lkp@intel.com/
+Fixes: 08d08e2e9f0a ("tpm: ibmvtpm: Call tpm2_sessions_init() to initialize session support")
+Signed-off-by: Kexy Biscuit <kexybiscuit@aosc.io>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+---
+V1 -> V2: Added Fixes tag and fixed email format
+RESEND: The previous email was sent directly to stable-rc review
 
-[2] https://lore.kernel.org/all/20240828150826.GA3803566-robh@kernel.org/
+ drivers/char/tpm/tpm2-sessions.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Good idea, but it needs users...
->
-> Please note that I likely won't be reading further discussion (see
-> my signature below, and I'm having the same op on the other eye -
-> which is the only eye suitable for screen work at the moment -
-> this Friday.)
-
-Sure, i've send it to the armlinux.org.uk as:
-
-https://www.armlinux.org.uk/developer/patches/viewpatch.php?id=9415/1
-
-https://www.armlinux.org.uk/developer/patches/viewpatch.php?id=9416/1
-
-
-Good health.
-
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index d3521aadd43e..44f60730cff4 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1362,4 +1362,5 @@ int tpm2_sessions_init(struct tpm_chip *chip)
+ 
+ 	return rc;
+ }
++EXPORT_SYMBOL(tpm2_sessions_init);
+ #endif /* CONFIG_TCG_TPM2_HMAC */
 -- 
-Thanks,
-   Kunwu.Chan
+2.46.0
 
 
