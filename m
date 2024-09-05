@@ -1,126 +1,151 @@
-Return-Path: <linux-kernel+bounces-316162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE1696CBFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCD396CC08
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9CEA1F26D3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A76287621
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C8748D;
-	Thu,  5 Sep 2024 01:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FKFy/o14"
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA5B748D;
+	Thu,  5 Sep 2024 01:06:29 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F9B7464
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E8E4A33
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725498181; cv=none; b=mFQdvSbdjqT83C9Xf9gX09F2rfdf0vWAgpWMf2dd+pnoEyld/R7Xwedy1yqIdew79S+r9knj2CfXr+F90K2fuPlqWyB0PEU6ksM00fMliqrXEhq4a5+GOqeSC4DUot42Md13C7ACVAd8uCLqe4mMIG1AHLHIUHqDqcIFfyvN7NI=
+	t=1725498389; cv=none; b=Qsi10M6t2RhoDHNjPUNsW14BTLX3n2OkesRmxMKPGSOja91vgKBMF7mTGzYw1a+BiMLtU1n1kAzuTV6BNAo6cLThJyVMfPqEHAQmygd6OJlwTgobZhzFlEVf8MgRlsavc39dZrirMfYK6jVOsUBlItJOhzTSfI7zpn4IL2n20XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725498181; c=relaxed/simple;
-	bh=GykyIwLq1BnUDdl5erj5qQJG0n/oyjRymF+evXtV7oI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g75CqRO3uJVJlBcYVInma+i/x/1I4PSpOYKfYvPbQtHYradTWPv8niMDS8hPBjD0+cPie08K8SkafaXtrIAxQ9tKN3xhBW+fV3ekIOupedLHhinQVxEBd4NDgsZARJvcs1aU6Ls2Cv8GjmJFocmj7vmFggjdqg2/VvWjzgYNfps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FKFy/o14; arc=none smtp.client-ip=17.58.6.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725498180;
-	bh=6Hmte6RnfrOEToAS1kUk3LKPZ+n947JNju3lGec5oho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=FKFy/o14jYYGLMVx0PnK+yfGg62i3AEV4ZeN5WdNc8sWQ6rDfobm6Qrv2wCwD8uYI
-	 Q81qVTarBT2msuVAJGQqI67vJv72jwNnGdj8snLO4LuJdQxAOuDxtUNP4uAozN8RjZ
-	 TdLh9QRaIUyLNc+ScugLRz+uP2b9xE8O4CVhUWgaZhiEU2DYCk4BZ23bU63EWeVy9g
-	 m68raLb96raoC5J7r5cmCmJGazO1IWb7HG7YDEyMDMiUG1Ruy7X1D5C6v6wrUuym3G
-	 sWdaSMnUBBFcvq5JIjkz4TWJI4lJKz4XbCxdVLlpP/JjRzCOY2bFv8H1AyKQ8z9Fxv
-	 Jpvk+WJ9N69Nw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 13315C8009E;
-	Thu,  5 Sep 2024 01:02:54 +0000 (UTC)
-Message-ID: <af326d48-e41e-4e4f-8555-5bf62dd6e552@icloud.com>
-Date: Thu, 5 Sep 2024 09:02:50 +0800
+	s=arc-20240116; t=1725498389; c=relaxed/simple;
+	bh=+2N2cz/vZlvK6MElK7BHsETaZta8am9aEmLHNHtUIcI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=R3kRYcKzWaLFKFlR0V7OhDokDMrIct6jqZLMVgp8Kglzx0o03BSzrEyqQMlJzqaZf8yF3sBN4nchfiXNOpfE+DXVQn4sIHm9OEKfViTLuOQQ5ZJSYtG7ZEaosmihVbiYtRCjr2DCZkA2onGwmY3/RbES/OlfmzTYyiPY2c3eSAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a124bc41aso27945639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 18:06:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725498387; x=1726103187;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAYLa3gAJq10imgnxwcHrNfTMkbi9jOvDxj4gkfBOpk=;
+        b=wJ8hMo6w2HCk5tBpLtscsK2+MVosd7dwqUpp/GhHCm1kqC+g4y84LFD/xbrX/RpyId
+         c7YMSuyVIUqWUuIeZ4L+QpUKQ1jKFN9x40sP5VHd7t1ThTxYA+AvMohXX1MCGJHdn/e4
+         BBDYexS9zV/VgDt1bij1Rni+EB7OoMaby6Gt+GWn7x5R/RB3y12UJmMBxU9TbwskgW9Z
+         kjbSXena0hOSjk52Av3O1OqURxyef1fiJc2cRDk65JhTctckowfGOcLjOdQzP2LrPM4E
+         5DCYLdnbvK0lzgXmbKLkjqLceU3muGAr0Ml3TclY+jctoElXynb9LHJkJ7foTIOs85qH
+         4TQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtmhUZuphTzmG9LzHKNILD4Elqd0E0UOt1dLoR6svOXozbteeCyn+0n2afJHF5LlcUQhBDoQX1wtugSjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGqWXsxyN4wQJTPn6z+d89hoPQLAs8naVF0zXRD+H1qNJu75jO
+	jRViFONGIDARzCKi3435q7dY50KjdDi9HD9NVk6+z47iGvS+X5v526lOTfoepDXSVUg0bZFiAFQ
+	RRyT/3DzrYM5LIXQXOI3clZcDv8UvI/m8j0ilUkuxL5Yd2vl/ZCOgnVg=
+X-Google-Smtp-Source: AGHT+IE5oGFdAYetB0WLbVlthXsHM+ywys8HRBRBTS9ulokWHG3VpTsY5NmR61O+Zlkrq2VPGQF8Z2WbhGLDZk+MvNpDzvPFqaID
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/region: Fix logic for finding a free cxl decoder
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- Ben Widawsky <bwidawsk@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
- stable@vger.kernel.org
-References: <20240903-fix_cxld-v1-1-61acba7198ae@quicinc.com>
- <ZtduQeu2NNyVWTk7@aschofie-mobl2.lan>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <ZtduQeu2NNyVWTk7@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: lYNaOzvWn1x7jVXL8M2WOO0oJq-sykJ4
-X-Proofpoint-GUID: lYNaOzvWn1x7jVXL8M2WOO0oJq-sykJ4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_22,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 mlxscore=0
- clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409050006
+X-Received: by 2002:a05:6638:8720:b0:4b9:6f13:fb1a with SMTP id
+ 8926c6da1cb9f-4d05e73844cmr161634173.4.1725498387122; Wed, 04 Sep 2024
+ 18:06:27 -0700 (PDT)
+Date: Wed, 04 Sep 2024 18:06:27 -0700
+In-Reply-To: <000000000000f4447f06202eca5f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006cde9c062154e6f3@google.com>
+Subject: Re: [syzbot] [fbdev?] KASAN: vmalloc-out-of-bounds Write in imageblit (4)
+From: syzbot <syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com>
+To: daniel@ffwll.ch, deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/4 04:14, Alison Schofield wrote:
-> On Tue, Sep 03, 2024 at 08:41:44PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> match_free_decoder()'s logic for finding a free cxl decoder depends on
->> a prerequisite that all child decoders are sorted by ID in ascending order
->> but the prerequisite may not be guaranteed, fix by finding a free cxl
->> decoder with minimal ID.
-> 
-> After reading the 'Closes' tag below I have a better understanding of
-> why you may be doing this, but I don't want to have to jump to that
-> Link. Can you describe here examples of when the ordered allocation
-> may not be guaranteed, and the impact when that happens.
-> 
+syzbot has found a reproducer for the following issue on:
 
-thank you for code review.
-let me try to do it.
+HEAD commit:    c7fb1692dc01 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11742d63980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4b7aa0513823e2ea880
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11703653980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154565b7980000
 
-> This includes a change to device_for_each_child() which I see mentioned
-> in the Closes tag discussion too. Is that required for this fix?
->
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-c7fb1692.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/246da487db6f/vmlinux-c7fb1692.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f0ea1e4dac0f/bzImage-c7fb1692.xz
 
-yes, device_for_each_child() is better than device_find_child() to
-correct logic for finding a free cxl decoder.
-> It's feeling like the fix and api update are comingled. Please clarify.
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com
 
-actually, there are two concerns as shown below:
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in fast_imageblit drivers/video/fbdev/core/sysimgblt.c:257 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in sys_imageblit+0x1ec6/0x2b00 drivers/video/fbdev/core/sysimgblt.c:326
+Write of size 4 at addr ffffc90001c41000 by task syz-executor161/5103
 
-concern A: device_find_child() modifies caller's match data.
-concern B: weird logic for finding a free cxl decoder
+CPU: 0 UID: 0 PID: 5103 Comm: syz-executor161 Not tainted 6.11.0-rc6-syzkaller-00048-gc7fb1692dc01 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ fast_imageblit drivers/video/fbdev/core/sysimgblt.c:257 [inline]
+ sys_imageblit+0x1ec6/0x2b00 drivers/video/fbdev/core/sysimgblt.c:326
+ drm_fbdev_shmem_defio_imageblit+0x2e/0x100 drivers/gpu/drm/drm_fbdev_shmem.c:39
+ bit_putcs+0x18ba/0x1db0
+ fbcon_putcs+0x255/0x390 drivers/video/fbdev/core/fbcon.c:1288
+ do_update_region+0x396/0x450 drivers/tty/vt/vt.c:619
+ redraw_screen+0x902/0xe90 drivers/tty/vt/vt.c:971
+ con2fb_init_display drivers/video/fbdev/core/fbcon.c:794 [inline]
+ set_con2fb_map+0xa6c/0x10a0 drivers/video/fbdev/core/fbcon.c:865
+ fbcon_set_con2fb_map_ioctl+0x207/0x320 drivers/video/fbdev/core/fbcon.c:3092
+ do_fb_ioctl+0x38f/0x7b0 drivers/video/fbdev/core/fb_chrdev.c:138
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feb9b353729
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffde9b9f968 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffde9b9f980 RCX: 00007feb9b353729
+RDX: 00000000200000c0 RSI: 0000000000004610 RDI: 0000000000000003
+RBP: 0000000000000001 R08: 00007ffde9b9f707 R09: 00000000000000a0
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
-this patch focuses on concern B, and it also solve concern A in passing.
+The buggy address belongs to the virtual mapping at
+ [ffffc90001941000, ffffc90001c42000) created by:
+ drm_gem_shmem_vmap+0x3ac/0x630 drivers/gpu/drm/drm_gem_shmem_helper.c:343
 
-the following exclusive patch only solves concern A.
-https://lore.kernel.org/all/20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com/
+Memory state around the buggy address:
+ ffffc90001c40f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90001c40f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90001c41000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+                   ^
+ ffffc90001c41080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc90001c41100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+==================================================================
 
-either will solve concern A i care about.
 
-> Thanks,
-> Alison
-> 
->>
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
