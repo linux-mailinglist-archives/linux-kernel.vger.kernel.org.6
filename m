@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-317524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85C396DF83
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DF496DF85
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FDB5B257E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44C1A281719
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B689D1A072F;
-	Thu,  5 Sep 2024 16:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFE81A00DF;
+	Thu,  5 Sep 2024 16:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUDR3iSQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RC361kxC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201221A00F3;
-	Thu,  5 Sep 2024 16:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427917DA92;
+	Thu,  5 Sep 2024 16:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553437; cv=none; b=Qt9zCR8PoUk2CLqdr5GE1fmN+NocnmMgtYhzBu6cnIYQz0xasMd0sRV7j6wi+Ukyysl9JZ5eWDZwKFuNh8eCx59TbiSSHp2HzADf77udtKYkZx+LxNd3psw53hqgEzjOAV1b5rJakAUpTwkY+NFjBA2QOT/DfQd9nPuZi2X0/Vo=
+	t=1725553475; cv=none; b=qChII8r1j4uG28VS+F9+M+A1EdUlH0Ed9eIU5FM/tDDHOcSzftAGmFcD95u5H1490hclI/pjeyIxHUWcyjbHsjWTiwsnfKFQc127HoWZup5fx3St4hHx8i4vViU2uIMgnpiNuHltkNosJ2B/yNzl/JCcbWp9xP8pYfaXVNCZtKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553437; c=relaxed/simple;
-	bh=Z3fYQhSzMGh4bomqD58tfJu1KD2iYehN+DZHksXLCls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NKsaQdPJUF0nZQBIEQm6UjTjzmEqwDOh/U/uOFyHI+3k4xiIPAMZRuICr5vPlwOzhrFEZS/SGrkZ0QLbcUZaWDIL0bD5Nf5VYWacz9iRvwNNRSA6VswjXntOtHxT74H9nrbEJnJidpil067B9/FF/iqrkdFPoDTIqK5zZtGt2UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUDR3iSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156B1C4CEC5;
-	Thu,  5 Sep 2024 16:23:55 +0000 (UTC)
+	s=arc-20240116; t=1725553475; c=relaxed/simple;
+	bh=fqMbyiPOPWXkEPOx14J7eYz98VVS1VH43XBaqNJ6PmM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vDEOPjrsgVfJSz6dKZ3BSQOGpnmN3Les1bBtapFtMWLizgYSjIrZR+TBhHYONGkvvCL5mkzUoIsJ5beWU/FM+SAcgECHc5QT+FCbkQMk+w9Na/p6AkHRGNVu4fNJth0OV2ZR/syUE9IEsIBQHQq4pBDralr39q76doK/3L22gEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RC361kxC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F3EC4CEC3;
+	Thu,  5 Sep 2024 16:24:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725553436;
-	bh=Z3fYQhSzMGh4bomqD58tfJu1KD2iYehN+DZHksXLCls=;
+	s=k20201202; t=1725553474;
+	bh=fqMbyiPOPWXkEPOx14J7eYz98VVS1VH43XBaqNJ6PmM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=oUDR3iSQBy+fA6D2FhSNRDOcUD3VCRx4KJ+brtTB44X5t67MYMZB++ODUO/XTXS7h
-	 EGV01fIE2fj0Bz8NPTYkqon5CEq7ojJs749OFSb6PzD7io63jNOKxFKpkzaRuRGtXX
-	 a478AFm0FIVSytqv1PrCdNeYXHrYkY6759YrWBug6FDmPjNPlvZ1iSX4ukTsJrH0CY
-	 YjzIPU0zoPAwBYCxECAlk4Gd3yM10oM8RhjXuEHHLu47kXFwE+xN0eudjXg7lzOG3h
-	 DCPOjERdDSpdjqe+LWU/vFg1G3RSUPoRxk4PzKJPK1OKTtcoXoC0nBhr9zp063KJps
-	 IkotNr/Eu0ADA==
-From: Mario Limonciello <superm1@kernel.org>
-To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Cc: linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH] cpufreq/amd-pstate: Fix non kerneldoc comment
-Date: Thu,  5 Sep 2024 11:23:51 -0500
-Message-ID: <20240905162351.1345560-1-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	b=RC361kxC4yaIbdnqo4wbAJzrWBPc0e7jPmVDZEoqIJ2y+Dj8Sz6sbt2zMTEyPnQnP
+	 4nIg2jqI5mOYmPVYcXgDS7UbKV965aF4ttZEj879KGiXx6kzt7/odkHiZep5/2VQ3J
+	 s5SGuEPod5QOzFoUhKK4C3nVBHmA91ksU0Lohvb+7kvbIiwyqMtvidNfTYEtTJqqnm
+	 OTxS8G2pYi7Pd2UgfkWRTUwqbr2kbdSrtIk04562i1lsn08SnRJXQUy/RT3GCTPC5A
+	 NH/B0ZVFhRJQBA+Dov6aOk6m5cmF0ghp5KK5BNmczUKF9IL2zKcqjgvnujWf3X3QUE
+	 J9pI5UtJxaRmw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] mm/damon/tests/core-kunit: skip damon_test_nr_accesses_to_accesses_bp() if aggr_interval is zero
+Date: Thu,  5 Sep 2024 09:24:23 -0700
+Message-Id: <20240905162423.74053-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,33 +62,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+The aggregation interval of test purpose damon_attrs for
+damon_test_nr_accesses_to_accesses_bp() becomes zero on 32 bit
+architecture, since size of int and long types are same.  As a result,
+damon_nr_accesses_to_accesses_bp() call with the test data triggers
+divide-by-zero exception.  damon_nr_accesses_to_accesses_bp() shouldn't
+be called with such data, and the non-test code avoids that by checking
+the case on damon_update_monitoring_results().  Skip the test code in
+the case, and add an explicit caution of the case on the comment for the
+test target function.
 
-The comment for amd_cppc_supported() isn't meant to be kernel doc.
-
-Fixes: cb817ec6673b7 ("cpufreq: amd-pstate: show CPPC debug message if CPPC is not supported")
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/c771b962-a58f-435b-89e4-1211a9323181@roeck-us.net
+Fixes: 5e06ad590096 ("mm/damon/core-test: test max_nr_accesses overflow caused divide-by-zero")
+Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
-v2->v3:
- * New patch
----
- drivers/cpufreq/amd-pstate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/damon/core.c             |  8 +++++++-
+ mm/damon/tests/core-kunit.h | 12 ++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 9312d4e40994f..19372a077ecc9 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1746,7 +1746,7 @@ static int __init amd_pstate_set_driver(int mode_idx)
- 	return -EINVAL;
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 8b99c5a99c38..a83f3b736d51 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -552,7 +552,13 @@ static unsigned int damon_accesses_bp_to_nr_accesses(
+ 	return accesses_bp * damon_max_nr_accesses(attrs) / 10000;
  }
  
--/**
+-/* convert nr_accesses to access ratio in bp (per 10,000) */
 +/*
-  * CPPC function is not supported for family ID 17H with model_ID ranging from 0x10 to 0x2F.
-  * show the debug message that helps to check if the CPU has CPPC support for loading issue.
-  */
++ * Convert nr_accesses to access ratio in bp (per 10,000).
++ *
++ * Callers should ensure attrs.aggr_interval is not zero, like
++ * damon_update_monitoring_results() does .  Otherwise, divide-by-zero would
++ * happen.
++ */
+ static unsigned int damon_nr_accesses_to_accesses_bp(
+ 		unsigned int nr_accesses, struct damon_attrs *attrs)
+ {
+diff --git a/mm/damon/tests/core-kunit.h b/mm/damon/tests/core-kunit.h
+index ae03df71737e..cf22e09a3507 100644
+--- a/mm/damon/tests/core-kunit.h
++++ b/mm/damon/tests/core-kunit.h
+@@ -320,6 +320,18 @@ static void damon_test_nr_accesses_to_accesses_bp(struct kunit *test)
+ 		.aggr_interval = ((unsigned long)UINT_MAX + 1) * 10
+ 	};
+ 
++	/*
++	 * In some cases such as 32bit architectures where UINT_MAX is
++	 * ULONG_MAX, attrs.aggr_interval becomes zero.  Calling
++	 * damon_nr_accesses_to_accesses_bp() in the case will cause
++	 * divide-by-zero.  Such case is prohibited in normal execution since
++	 * the caution is documented on the comment for the function, and
++	 * damon_update_monitoring_results() does the check.  Skip the test in
++	 * the case.
++	 */
++	if (!attrs.aggr_interval)
++		kunit_skip(test, "aggr_interval is zero.");
++
+ 	KUNIT_EXPECT_EQ(test, damon_nr_accesses_to_accesses_bp(123, &attrs), 0);
+ }
+ 
 -- 
-2.43.0
+2.39.2
 
 
