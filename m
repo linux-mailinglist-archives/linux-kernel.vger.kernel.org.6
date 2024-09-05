@@ -1,78 +1,88 @@
-Return-Path: <linux-kernel+bounces-317203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2900D96DADD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:54:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB2D96DADA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9979286EBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE461C23043
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B280019DF58;
-	Thu,  5 Sep 2024 13:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E19919D8A3;
+	Thu,  5 Sep 2024 13:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="h1S+UO08"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lyHTfygO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F26C19D8A0
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D478A199938;
+	Thu,  5 Sep 2024 13:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725544469; cv=none; b=LgioAxOHmrlVCeNomYlFDp8e8Tclip21OuYOrOmbx5bUMX8AEGDBKHQhqCS3ZnfKBr+HR++fp7UCU9aid/1annEdYH5rV3sFogED8bNZ74jrLquMxwwv/e0hHHBRYxEhQ5Z0Plm/95Zkvt9AhTDqb0M9yOcUwXlRtL79EuqXp+Q=
+	t=1725544437; cv=none; b=tmLxW13hgnPlk9AKPhUOzdhmu3SJMHbeDgPoXkU9yuo9x59oewaA5b4B6lHyDPLb+Ub7fTuH9qV+8hD8/q87R9spwLG0o6cxFSxJvJpoX/eF3WUQzeg3JsyNp31nl51837x9YZ1kul6FzkW66vrS2xj7iGDhNGz4FK+J85V/E1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725544469; c=relaxed/simple;
-	bh=89eTR3ds69z8RUvRwzGHLCMj5E0DqW6ePx39Zak+vtc=;
+	s=arc-20240116; t=1725544437; c=relaxed/simple;
+	bh=ldpMruZmOqq5mhdXAGLxXTdCZJ/TZ6YWaXl34z7WL7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xti4ZAgd1RFWtHQP/XaYl9vDHLS1Z6cw8x0D9B15DLyIx8ADngRhmogm58mc0wKs+j3PqKQDDQbLF7+aaf8bwJVer9fhFINKgtaZIwoFISmZRoOaUDnQAnEg+qyaPUnjKODU7wMdwFF42UFPM9hEK3QrBlfKBsFPRSeubE6VIxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=h1S+UO08; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 485DrQUd030840
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 09:53:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1725544412; bh=XBNj3KHe7DuZpKVxVCA9zURNDJAF8QFjg3YArsA6zRA=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=h1S+UO08dOUuPvbuUYg4xCtN3hwTpd8U8iHTnZ57kQtu3ngdZyMQCrpxb0cVl1hnO
-	 kAnh0KhRN6gOt/MKk2OzgdPPZ6JcXoVdichJUmxDnCgZ9L9Dzi7YxTUZcKKCxDp+go
-	 TNSKBU696FyLxDtUULiBYhT7JSyEaHO9FBP1mQOb9aRmdGbh25Qt9ISUgVS48X2nk0
-	 mJ6bowqneHcB9SZu+dxoYfOYPOrf7cGeCKq9YjTkAgkoBxYW7jBMjacelHLhkBu4QH
-	 sxLy0OBwi7QsAUdbWSLkct+8+Xls9RBw/tcEjLCNt/OYnbL6t3na9M4BU7jQsIc6PA
-	 pTfxwI1xAeGyQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 7501415C02C6; Thu, 05 Sep 2024 09:53:26 -0400 (EDT)
-Date: Thu, 5 Sep 2024 09:53:26 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-        jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
-        Dave Chinner <dchinner@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <20240905135326.GU9627@mit.edu>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
- <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
- <ZtiOyJ1vjY3OjAUv@tiehlicka>
- <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
- <ZtmVej0fbVxrGPVz@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnkWl0cAKAGfHNSc/nFTYJipAhByOmy+V2qZyFMS5FXzxABoKs+V5jEur0wUZOBqP480BptzwxZ4byrRon4NRXEVe7L8cIiGpYKkYXmCSseiew6I4t+jyIjGr5BsMQsPP8qy2aQD1WfbdmB1OUP9jWKRev3LQBtSusv7TND+qGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lyHTfygO; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725544436; x=1757080436;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ldpMruZmOqq5mhdXAGLxXTdCZJ/TZ6YWaXl34z7WL7c=;
+  b=lyHTfygOy2kZFZB6mlOonVx4JzsJepIwJeWpNXCGoDpY8rCoPrfKBKcX
+   8KuDZ7MV8722Y/IHl7E9Xfpjl1SL+UwZ4FzgQz6brxWzxpFyPwUm4pdIZ
+   nO7PuYp7XZoDneV/mb6XynfJrhAfNFpKtzRL5GRiNINW5yBdsuR8Yj6Kg
+   wtcv18oh0I2GRz0IiUSbCJ+9A59J1A3cDC26I5oTo6Agycm4+JPWN+Hdk
+   NUy1/FoUs3IvHV1887yv79ESi4WSnkmjFjS6JVpgmuWNzAREEv9Jqnpgn
+   EKrKqkPh4NhqB0Ibf1asmVjfJHdRe9baNwWi4pXsgSJvnIW4yirt0ML4j
+   g==;
+X-CSE-ConnectionGUID: 2Mw24WXKRxCyGbAT1UeGFw==
+X-CSE-MsgGUID: 4jbRu4qgTniczEkZev9RRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="34926614"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="34926614"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 06:53:55 -0700
+X-CSE-ConnectionGUID: CIZf5RD5Rtm3Rp8Eq3xcig==
+X-CSE-MsgGUID: CwJZnJ4kQimy8JftNu/arA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="70045366"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 06:53:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smCvj-00000005Phr-0ZLy;
+	Thu, 05 Sep 2024 16:53:47 +0300
+Date: Thu, 5 Sep 2024 16:53:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Derek Barbosa <debarbos@redhat.com>
+Subject: Re: [PATCH tty-next v1 0/2] convert 8250 to nbcon
+Message-ID: <Ztm36qPI7fVteSX_@smile.fi.intel.com>
+References: <20240905134719.142554-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,57 +91,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtmVej0fbVxrGPVz@tiehlicka>
+In-Reply-To: <20240905134719.142554-1-john.ogness@linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 05, 2024 at 01:26:50PM +0200, Michal Hocko wrote:
-> > > > > This is exactly GFP_KERNEL semantic for low order allocations or
-> > > > > kvmalloc for that matter. They simply never fail unless couple of corner
-> > > > > cases - e.g. the allocating task is an oom victim and all of the oom
-> > > > > memory reserves have been consumed. This is where we call "not possible
-> > > > > to allocate".
-> > > > 
-> > > > Which does beg the question of why GFP_NOFAIL exists.
-> > > 
-> > > Exactly for the reason that even rare failure is not acceptable and
-> > > there is no way to handle it other than keep retrying. Typical code was 
-> > > 	while (!(ptr = kmalloc()))
-> > > 		;
-> > 
-> > But is it _rare_ failure, or _no_ failure?
-> >
-> > You seem to be saying (and I just reviewed the code, it looks like
-> > you're right) that there is essentially no difference in behaviour
-> > between GFP_KERNEL and GFP_NOFAIL.
+On Thu, Sep 05, 2024 at 03:53:17PM +0206, John Ogness wrote:
+> The recent printk rework introduced a new type of console NBCON
+> that will perform printing via a dedicated kthread during
+> normal operation. For times when the kthread is not available
+> (early boot, panic, reboot/shutdown) the NBCON console will
+> print directly from the printk() calling context (even if from
+> NMI).
+> 
+> Futher details about NBCON consoles are available here [0].
+> 
+> This series converts the 8250 driver to an NBCON console,
+> providing both threaded and atomic printing implementations.
+> Users can verify the UART console is an NBCON console via the
+> proc filesystem. For example:
+> 
+> $  cat /proc/consoles
+> ttyS0                -W- (EC N  a)    4:64
+> 
+> The 'N' shows that it is an NBCON console.
+> 
+> There will also be a dedicated printing kthread. For example:
+> 
+> $ ps ax | grep pr/
+>    16 root       0:00 [pr/ttyS0]
 
-That may be the currrent state of affiars; but is it
-****guaranteed**** forever and ever, amen, that GFP_KERNEL will never
-fail if the amount of memory allocated was lower than a particular
-multiple of the page size?  If so, what is that size?  I've checked,
-and this is not documented in the formal interface.
+Wondering if this can use the DEVNAME instead of opaque (to some extent) ttySx?
+Or is it using the same what has been passed to the console= kernel command line
+parameter?
 
-> The fundamental difference is that (appart from unsupported allocation
-> mode/size) the latter never returns NULL and you can rely on that fact.
-> Our docummentation says:
->  * %__GFP_NOFAIL: The VM implementation _must_ retry infinitely: the caller
->  * cannot handle allocation failures. The allocation could block
->  * indefinitely but will never return with failure. Testing for
->  * failure is pointless.
+> Derek Barbosa performed extensive tests [1] using this driver
+> and encountered no issues. On the contrary, his tests showed
+> the improved reliability and non-interference features of the
+> NBCON-based driver.
+> 
+> Since this is the first console driver to be converted to an
+> NBCON console, it may include variables and functions that
+> could be abstracted to all UART consoles (such as the
+> @console_newline_needed field). However, we can abstract such
+> things later as more consoles are converted to NBCON.
+> 
+> John Ogness
+> 
+> [0] https://lore.kernel.org/lkml/20230302195618.156940-1-john.ogness@linutronix.de
+> [1] https://lore.kernel.org/lkml/ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb
 
-So if the documentation is going to give similar guarantees, as
-opposed to it being an accident of the current implementation that is
-subject to change at any time, then sure, we can probably get away
-with all or most of ext4's uses of __GFP_NOFAIL.  But I don't want to
-do that and then have a "Lucy and Charlie Brown" moment from the
-Peanuts comics strip where the football suddenly gets snatched away
-from us[1] (and many file sytem users will be very, very sad and/or
-angry).
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[1] https://www.cracked.com/article_37831_good-grief-how-lucy-pulling-the-football-away-from-charlie-brown-became-a-signature-peanuts-gag.html
 
-It might be that other file systems have requirements which isblarger
-than the not-formally-defined GFP_KMALLOC guarantee, but it's true we
-can probably reduce the usage of GFP_NOFAIL if this guarantee is
-formalized.
-
-						- Ted
 
