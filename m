@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-316328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B6096CDFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:26:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971D596CE02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45C21C225A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F81284B32
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C9E14E2E6;
-	Thu,  5 Sep 2024 04:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F330E153838;
+	Thu,  5 Sep 2024 04:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KhFBw2td"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Up5Ehn6C"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AA7136E0E
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 04:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D6220E6;
+	Thu,  5 Sep 2024 04:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725510378; cv=none; b=L5hygLFo3Y65ko15/NZZdBbRf15ML+83H/b4GhI5WsMxW+t+u0mR4Cz/z6mjHysKp/fGRRPHWBct+9uNn+iAZsRYyJb217vhfoMHoVGEQ5UwBjqhMRBbPAhfls/Qg0ECHUPyKpB9x/ZLHrm6FTRHd7kQyfpmtZnJ1qc8w29bxPI=
+	t=1725510678; cv=none; b=BN/6dhpvq2Mx9rtTo6uY3dg3+seAR7IpDJeCW9+9g4KtueQotG5IjM3ApTNFsEQ9mHi8UH6S++Ezv4EVU1uUCj8KuDUmAWTriLUDX0+kKEBAX3ArIqHX07L1jfuP6P/vVtldeGWHKey5/WP4f7HEK/2a5yOaLiU5qjGX7On1Res=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725510378; c=relaxed/simple;
-	bh=JDiJriQOsSjqYTgO6CGcINNnDcQDnQci+Dh9TCs3ky0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZpQhSK6H04YiJQ0KQWVkj0C1Iz2Va0TeIt8ZexEVfxXzBJELSTxiCEroFnCPXCie8EcLTBzzVFTFA4DgUulokqoC0VUBj+7y9+1wLKmQGE35S2KQwatHJnOmnsCa/zBAzgQVBBqaqeCkaZ786yolwRdrhp3DHADkZemPfsfCQkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KhFBw2td; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 5 Sep 2024 00:26:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725510373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFmB0YdptJaMSJg558EWPyTwDghbh83+8VHE90A76kQ=;
-	b=KhFBw2tdgsHqAJlEiQDWYn4OHR0k8WI44IZd4fqI8yIx525CCTl2cPOBENDnDbiKt9QaEc
-	mZd6VI5BJkalhnG/ZyS6G0jD0LtHiZ1LTdUdwVUm+RBoA+QGw5QSdcPBfu3kFAFBJfN1DR
-	TikQL9fWWCut5nao2uy/T8FcGHV8JQc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: David Wang <00107082@163.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs: keep writing to device when there is no
- high-level I/O activity.
-Message-ID: <xzz5l6mvyyoqcjx7t5tq4hznqyhmyec3fqfcqoxyqvbecmribc@4vw3gnt5b46d>
-References: <20240827094933.6363-1-00107082@163.com>
+	s=arc-20240116; t=1725510678; c=relaxed/simple;
+	bh=bN9Fq1ft45JvfI5jIyNzkE4a7BGFF7N2Lx4btHWmg2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r9UtAffdpWHccMbwJP2xRkeRWyYZMY5zulFpMvE1KlDP5tYT5E6it43Ewt0Z4LSMjOfNF4vz11kVGJ/2UbzxDrZQ5+o972exG9btkARFILmV2eB6/4e3eWOpnL4ikDl/VTHVcdDjSayfBL2GwG6ICSKBXl6UHmTIJc3hAXlqw8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Up5Ehn6C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4851hpMJ005471;
+	Thu, 5 Sep 2024 04:31:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5/xCQVHD57yk2LrnCzuJn9xrmDwsidUddYV1q7OkqOY=; b=Up5Ehn6Cl4NrSk5t
+	FGGhR2RSo3MMq1pjbFuPP7GUtmWjzlCw83DRDhCXtKUrlUYshSPMwfrHFPyT3t9r
+	rfrw4YauBWGF99KZIN77wxFqHOb118UO4tHdXn+hqEfAo4WPW2tC/fSvwpHyrCLt
+	/uaNirUSLVtGuKcaFcd6n7AWusk/Bhjov5oderzQNJF4a9eotPvj4UTGvQQeaaKV
+	c7P4DI9DG0kNeaoxaJMOixCphs9uE9zmjk7tZUOKIcgwf/tkkkdjvsNMpVbhhOM9
+	KSbja1+HAaMvGKaaFwkI678fpWmHKuWblBP6PdJNwHCGsTpYexcx85rF/TmPPGp6
+	BrK5Pw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41epwe26fy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 04:31:01 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4854V0P0032515
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 04:31:00 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 21:30:57 -0700
+Message-ID: <a0f3176d-9b2a-4fb9-9a7b-f8e778e3b427@quicinc.com>
+Date: Thu, 5 Sep 2024 12:30:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827094933.6363-1-00107082@163.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/19] remoteproc: qcom: pas: Add QCS8300 remoteproc
+ support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Xin Liu
+	<quic_liuxin@quicinc.com>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <20240904-qcs8300_initial_dtsi-v1-2-d0ea9afdc007@quicinc.com>
+ <ecd95f82-ea98-4279-ad01-dc73d361180a@kernel.org>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <ecd95f82-ea98-4279-ad01-dc73d361180a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NS3d9gifhVEWGS-r9NoqxWGMZ2sJt8Q7
+X-Proofpoint-GUID: NS3d9gifhVEWGS-r9NoqxWGMZ2sJt8Q7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_03,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050030
 
-On Tue, Aug 27, 2024 at 05:49:33PM GMT, David Wang wrote:
-> Hi,
-> 
-> I was using two partitions on same nvme device to compare filesystem performance,
-> and I consistantly observed a strange behavior:
-> 
-> After 10 minutes fio test with bcachefs on one partition, performance degrade
-> significantly for other filesystems on other partition (same device).
-> 
-> 	ext4  150M/s --> 143M/s
-> 	xfs   150M/s --> 134M/s
-> 	btrfs 127M/s --> 108M/s
-> 
-> Several round tests show the same pattern that bcachefs seems occupy some device resource
-> even when there is no high-level I/O.
-> 
-> I monitor /proc/diskstats, and it confirmed that bcachefs do keep writing the device.
-> Following is the time serial samples for "writes_completed" on my bcachefs partition:
-> 
-> writes_completed @timestamp
-> 	       0 @1724748233.712
-> 	       4 @1724748248.712    <--- mkfs
-> 	       4 @1724748263.712
-> 	      65 @1724748278.712
-> 	   25350 @1724748293.712
-> 	   63839 @1724748308.712    <--- fio started
->   	  352228 @1724748323.712
-> 	  621350 @1724748338.712
-> 	  903487 @1724748353.712
->         ...
-> 	12790311 @1724748863.712
-> 	13100041 @1724748878.712
-> 	13419642 @1724748893.712
-> 	13701685 @1724748908.712    <--- fio done (10minutes)
-> 	13701769 @1724748923.712    <--- from here, average 5~7writes/second for 2000 seconds
-> 	13701852 @1724748938.712
-> 	13701953 @1724748953.712
-> 	13702032 @1724748968.712
-> 	13702133 @1724748983.712
-> 	13702213 @1724748998.712
-> 	13702265 @1724749013.712
-> 	13702357 @1724749028.712
->         ...
-> 	13712984 @1724750858.712
-> 	13713076 @1724750873.712
-> 	13713196 @1724750888.712
-> 	13713299 @1724750903.712
-> 	13713386 @1724750918.712
-> 	13713463 @1724750933.712
-> 	13713501 @1724750948.712   <--- writes stopped here
-> 	13713501 @1724750963.712
-> 	13713501 @1724750978.712
-> 	...
-> 
-> Is this behavior expected? 
 
-We've got tracepoints and counters (in sysfs) for checking what's doing
-the writing.
 
-If it's a moderate amount of IO, it's probably journal reclaim; it
-trickles out writes if the journal has room (it's trying to spread out
-bursty work). If it's a lot of IO, it might be a bug.
+On 9/4/2024 5:36 PM, Krzysztof Kozlowski wrote:
+> On 04/09/2024 10:33, Jingyi Wang wrote:
+>> Add support for PIL loading on ADSP, CDSP and GPDSP on QCS8300
+>> platform.
+>>
+>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_pas.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+>> index ef82835e98a4..f92ccd4921b7 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>> @@ -1416,6 +1416,9 @@ static const struct of_device_id adsp_of_match[] = {
+>>  	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
+>>  	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
+>>  	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
+>> +	{ .compatible = "qcom,qcs8300-adsp-pas", .data = &sa8775p_adsp_resource},
+>> +	{ .compatible = "qcom,qcs8300-cdsp-pas", .data = &sa8775p_cdsp0_resource},
+>> +	{ .compatible = "qcom,qcs8300-gpdsp-pas", .data = &sa8775p_gpdsp0_resource},
+> 
+> What's the point of this? You have entire commit msg to explain such
+> weird duplication. Otherwise sorry, don't duplicate unnecessarily.
+> Devices are compatible, aren't they?
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+I will drop this, could you please help us to understand what is the correct way to
+deal such situation, do we need to update the yaml and add qcs8300 bindings or just
+reference to sa8775p bindings in the device tree?
 
-Changing journal reclaim behaviour (and other background tasks) is on
-the todo list, the current behaviour is not great for machines where we
-want to "race to idle" to save power.
+Thanks,
+Jingyi
 
