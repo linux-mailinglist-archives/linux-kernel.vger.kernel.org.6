@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-317003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708B196D824
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:18:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8FE96D82E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273E71F23980
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:18:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 574C7B21082
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BCF19AD8D;
-	Thu,  5 Sep 2024 12:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778B219ADB9;
+	Thu,  5 Sep 2024 12:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="GvRbIcAu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cqLFhe4x"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="K9RNtijG"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB8198A15;
-	Thu,  5 Sep 2024 12:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139D117A5BE;
+	Thu,  5 Sep 2024 12:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538699; cv=none; b=C0PwAW+Iy4WWNBOqPVdk3HnTqiHdmelc/ThL/oU4ihuWFCZWq8QLZaYaCUoNELRZkyDe14s45y8nxIUa3ZMamjRg+QXF24YdVZLX3GewnffsjS7baEKMLqAlLphcXYWbHEtwFJbmq8r/3p0ePybvQxOfu0YiBgQs3gogFjSk1jI=
+	t=1725538731; cv=none; b=Wrk0HzJxtlM1n5JYwU1quUFwaSkedfchBPVaybo439z8p0kwmJhn7oV21VbtxPuMZ9OyKf+/6fIR9g6j9a5ejHVuZGqxv30foXp/TGjSB8JduPx7K5OwGlVKPr565Qb2G73AzlftlzU7FQ2+6bmgC/JcjXtP6vZOM1zrQHeVNX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538699; c=relaxed/simple;
-	bh=OU9khEplSXIPZvW9YQW/kvPNsg3xOvy2fLqNBZtfO68=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g+axVXesyhlOq61k4f4YeatAj03loEKUuHxHuibLz1i+xFpbuh45puhc8H5uBw0trKkOoY9/tQ6d6j+usopxTr2tNwvXKy4mWqi+PX8nvJPQD20a8NpjXOWzURKSPqD6ni32gNHJPE/dOPb40c1yd57xS4LQ4t9RtBSChPZNcSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=GvRbIcAu; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cqLFhe4x reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1725538696; x=1757074696;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NDxfANTOSF3Gqj/jX4uANi4UICSv0g4HgY7ZY918h7U=;
-  b=GvRbIcAuiIle8LDQbkeMxyM7KgH9DEHDm705bGrrokhgEaGNfVfLWddh
-   uv77cN7gvISJZgJgqHrduQW6WpIPhIdQaZDTyJntRjQhDtpdAgzIFOby9
-   ryqUSsJRkDlfGiq5/Shs3kI+DA82kaJ//BYKtUAkDr6JiF8Z/bU1boTkT
-   OuchpcLfTfBKhlmQUu/MQXhsIpRZb3+qBo++gdAD5XacF3lQwry4Ua9sW
-   5Pk2Lb6GIiNf+ug+icPXMZB1+U0FMYcJu+p+Dsb2RRvQg/C7bxRb2cDT/
-   cwGf1Ib5o5sBPr9kDp+aAj3ODo+nDg9PZm3/RNj8UR4wDT8bSe6DbL4Cn
-   w==;
-X-CSE-ConnectionGUID: i7nCo4KJT0KmFXKOpBGsmg==
-X-CSE-MsgGUID: jTc9RNZ+TjiT4moshVTTLw==
-X-IronPort-AV: E=Sophos;i="6.10,204,1719871200"; 
-   d="scan'208";a="38787541"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Sep 2024 14:18:08 +0200
-X-CheckPoint: {66D9A180-7-E520F13A-D17B83D9}
-X-MAIL-CPID: BE149099F5842D0D7886CFAB60102631_2
-X-Control-Analysis: str=0001.0A782F23.66D9A180.00AC,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 754BD16ABF3;
-	Thu,  5 Sep 2024 14:18:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1725538684;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=NDxfANTOSF3Gqj/jX4uANi4UICSv0g4HgY7ZY918h7U=;
-	b=cqLFhe4xTz7mmpxEfHbUyKsiWANnAzEBjLS3gI+ytMVesMfVNW6K8k8gd/HO55TMzv2CJR
-	lESX+8bba6lLbt7w4lhBeisQyX2UCFbO5rN4Ia6XO3XAnaKDjhJXSI22tDwVKyMGVepQAa
-	RYdQ3QEOn67qGo+TLGQqGIBfMllvcK+yKoD19+IWBLaso/qCtlNF1E5Y9zrRvM32AZMqFg
-	iJSM25OLI4S/grqzty1GR+9RKEX23rijag2WI8jNmn0gN0SE3V4aUriBuM+H23h5mrpNB0
-	O6PZwXzOPZB+RIYPNT9jVqmRcY12WMuPURTaf+19ggUkogbXBBVKUDLXWBc+uQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Subject: Re: [PATCH v2 2/7] arm64: dts: freescale: imx95: add bbm/misc/syspower scmi nodes
-Date: Thu, 05 Sep 2024 14:18:00 +0200
-Message-ID: <22416715.EfDdHjke4D@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240903-imx95-dts-new-v2-2-8ed795d61358@nxp.com>
-References: <20240903-imx95-dts-new-v2-0-8ed795d61358@nxp.com> <20240903-imx95-dts-new-v2-2-8ed795d61358@nxp.com>
+	s=arc-20240116; t=1725538731; c=relaxed/simple;
+	bh=xnxK5to/0ePcX0+Bd3U+Y0/lgElvGf1/1Pp5sQgodpI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=p8Z5Sio7ZOhPks12600tLrbI8T+PSLRJK6tdoZqsgt6zckRx3msHTTs4ATFZVoR5+YO5YfN9TEhLE1UYy5cJPMnj9A5lgfXm0uWPGHVpj874uGp9ed6TCDHPhiiNMSp3alSJWokxYmvNwOqvQYxkYpowzVsRBevT+R17Kzbzr58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=K9RNtijG; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1725538726;
+	bh=uHtMyZ0mGdGut63ipl9pSNEPhg4gQFAZt25TdNzawnM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=K9RNtijGnQSSSovlUF+85A4m8nKayeSvx/Ob0UZe5MJZyqYtM2pQp+6L4nOcFBaL8
+	 BMvvg2k7bpp41TQpyqsAUXWRf9BykbfFXJDdQCMgNnVRzMXGqdYM3Sm6ZG58e+Zzi8
+	 xqDI/zBSXPr5VH16d77RzHiYS8QQhrpNG+LVTWOYc8PJiopRQ7aKFTBzvlaxwbnjCz
+	 6ss+QYEqmuStkZsohKp2idavtqXQSJWsED2PrAQKG3qsuvIpbAmxC3YKMYwXrruEr9
+	 LEfLpNhWcsB0I1NH6JCVZcsdgJSq7qa1g0AzaMpAXveSikpyikaPbous9gKJoszvTM
+	 yYb9S47fFXRUg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wzz0y4N1Rz4w2Q;
+	Thu,  5 Sep 2024 22:18:42 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill
+ Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Shuah
+ Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+ llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, Adhemerval Zanella
+ <adhemerval.zanella@linaro.org>, Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH v5 0/5] Wire up getrandom() vDSO implementation on powerpc
+In-Reply-To: <Zthr1nB_RJ56YD3O@zx2c4.com>
+References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+ <Zthr1nB_RJ56YD3O@zx2c4.com>
+Date: Thu, 05 Sep 2024 22:18:40 +1000
+Message-ID: <87frqe5m5b.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
 
-Hi,
+"Jason A. Donenfeld" <Jason@zx2c4.com> writes:
+> Hi Christophe, Michael,
+>
+> On Mon, Sep 02, 2024 at 09:17:17PM +0200, Christophe Leroy wrote:
+>> This series wires up getrandom() vDSO implementation on powerpc.
+>> 
+>> Tested on PPC32 on real hardware.
+>> Tested on PPC64 (both BE and LE) on QEMU:
+>> 
+>> Performance on powerpc 885:
+>> 	~# ./vdso_test_getrandom bench-single
+>> 	   vdso: 25000000 times in 62.938002291 seconds
+>> 	   libc: 25000000 times in 535.581916866 seconds
+>> 	syscall: 25000000 times in 531.525042806 seconds
+>> 
+>> Performance on powerpc 8321:
+>> 	~# ./vdso_test_getrandom bench-single
+>> 	   vdso: 25000000 times in 16.899318858 seconds
+>> 	   libc: 25000000 times in 131.050596522 seconds
+>> 	syscall: 25000000 times in 129.794790389 seconds
+>> 
+>> Performance on QEMU pseries:
+>> 	~ # ./vdso_test_getrandom bench-single
+>> 	   vdso: 25000000 times in 4.977777162 seconds
+>> 	   libc: 25000000 times in 75.516749981 seconds
+>> 	syscall: 25000000 times in 86.842242014 seconds
+>
+> Looking good. I have no remaining nits on this patchset; it looks good
+> to me.
+>
+> A review from Michael would be nice though (in addition to the necessary
+> "Ack" I need to commit this to my tree), because there are a lot of PPC
+> particulars that I don't know enough about to review properly. For
+> example, you use -ffixed-r30 on PPC64. I'm sure there's a good reason
+> for this, but I don't know enough to assess it. And cvdso_call I have no
+> idea what's going on. Etc.
+ 
+It all looks good to me, and has survived some testing. Let's get it
+merged and get some wider test coverage.
 
-Am Dienstag, 3. September 2024, 09:17:47 CEST schrieb Peng Fan (OSS):
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Add SYS Power, BBM and MISC nodes under SCMI firmware node.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+There is an existing comment in the a/p/vdso/Makefile about the
+fixed-r30 thing, tldr is it's a workaround to avoid breaking old
+versions of Go.
 
-Looks good.
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+For the series:
 
-> ---
->  arch/arm64/boot/dts/freescale/imx95.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/d=
-ts/freescale/imx95.dtsi
-> index 7880d3efbd7e..314a45e82c38 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> @@ -301,6 +301,10 @@ scmi_devpd: protocol@11 {
->  				#power-domain-cells =3D <1>;
->  			};
-> =20
-> +			scmi_sys_power: protocol@12 {
-> +				reg =3D <0x12>;
-> +			};
-> +
->  			scmi_perf: protocol@13 {
->  				reg =3D <0x13>;
->  				#power-domain-cells =3D <1>;
-> @@ -320,6 +324,13 @@ scmi_iomuxc: protocol@19 {
->  				reg =3D <0x19>;
->  			};
-> =20
-> +			scmi_bbm: protocol@81 {
-> +				reg =3D <0x81>;
-> +			};
-> +
-> +			scmi_misc: protocol@84 {
-> +				reg =3D <0x84>;
-> +			};
->  		};
->  	};
-> =20
->=20
->=20
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
+If you can include Maddy's test results from Power9 in the change log
+for patch 5 that'd be nice.
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+cheers
 
