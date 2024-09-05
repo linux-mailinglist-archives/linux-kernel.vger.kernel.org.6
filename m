@@ -1,170 +1,147 @@
-Return-Path: <linux-kernel+bounces-317162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E0996DA36
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5754D96DA3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B70B1F23AC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12CC91F22503
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC8919D079;
-	Thu,  5 Sep 2024 13:24:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AAC19AA73;
-	Thu,  5 Sep 2024 13:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD8719D081;
+	Thu,  5 Sep 2024 13:25:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E02B19D082
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542660; cv=none; b=idjN3VAGLDpxsSZz0yO/knH1CKz1XP5AWRBBxeRyQ/5dtvgPDvj6AZkU5zwJOw8rOf1G7sWSok8B/V4xL4p4MirPZTbkqjM4XSamuaF128Nj2P8yX8c4VSFc3sCOnuNw51/Dtj5sQGcIAOJawNpB/dMpXQ10TIfLhEP7FfsRjDo=
+	t=1725542724; cv=none; b=EBolboJx1GrcoUSKU1UCl3lMQ4mnGYc0ZEPNxlrhWjBVLps9Xu3m2iMMPOKDx8O8i3kSaCAhBMFOXymIkeE6TJD75gWN1qIY01FR+rrMI5DJeRwCTM6jYLs5PUBuc4tUDts5dRI3ANP9c96Ei/QUNKVaFBn3kazv3UrvMDBPLPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542660; c=relaxed/simple;
-	bh=rM/wBWPr26fVgdZjczjk5Z21mwxZ3d1vEzmRuZNZLnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUTeObzEjiRo+/8sj5BR2hI+UdLDOFcN4gsI1iF2WiOdKNWzxt8wgdQppzTswosIPnPlaCqRlLW8qWodCpcH6wLavKTckM3iAFm85ZX6kb/CI1DsqdlAdoNOMJqm7143AVb22pLTGpq7mWth3bw56WyXycFHCMv30ytWMK+h9TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C1A5FEC;
-	Thu,  5 Sep 2024 06:24:44 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6ED823F73F;
-	Thu,  5 Sep 2024 06:24:16 -0700 (PDT)
-Message-ID: <fb54ef8d-f769-47d5-8a9d-aa93f96d5c41@arm.com>
-Date: Thu, 5 Sep 2024 14:24:14 +0100
+	s=arc-20240116; t=1725542724; c=relaxed/simple;
+	bh=7jZHLN6x7TS1NEyREZ70lKrrl7an8E99MUq7DicLtJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=klsdMRnZwu0qBeh3LNgyY+SV1hwGxmrjDnPyznZjyIBVQASMKujcNLr6llYsAB79vy/f0U/JT0xio73MiYbfejCVvVcRywQyD7tNPXyMljht+qoxOZ8JOwKewzg9yFtOFwsl+1nFFWapk7eQsrtBQP3hSU/4XeRB6Xi7sBDY18o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1smCTY-0003eO-E5; Thu, 05 Sep 2024 15:24:40 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1smCTV-005iOY-Fj; Thu, 05 Sep 2024 15:24:37 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 031D4333683;
+	Thu, 05 Sep 2024 13:24:37 +0000 (UTC)
+Date: Thu, 5 Sep 2024 15:24:36 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: kernel@pengutronix.de, Alibek Omarov <a1ba.omarov@gmail.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Elaine Zhang <zhangqing@rock-chips.com>, 
+	David Jander <david.jander@protonic.nl>, Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH can-next v5 00/20] can: rockchip_canfd: add support for
+ CAN-FD IP core found on Rockchip RK3568
+Message-ID: <20240905-thoughtful-gerbil-of-growth-28f014-mkl@pengutronix.de>
+References: <20240904-rockchip-canfd-v5-0-8ae22bcb27cc@pengutronix.de>
+ <86274585.BzKH3j3Lxt@diego>
+ <20240904-imposing-determined-mayfly-ba6402-mkl@pengutronix.de>
+ <4091366.iTQEcLzFEP@diego>
+ <20240905-galago-of-unmatched-development-cc97ac-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Optimise non-coherent
- unmap"
-To: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Ashish Mhetre <amhetre@nvidia.com>, Rob Clark <robdclark@chromium.org>,
- Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240905124956.84932-1-robdclark@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240905124956.84932-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z26o4qqv53ya5nl6"
+Content-Disposition: inline
+In-Reply-To: <20240905-galago-of-unmatched-development-cc97ac-mkl@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 05/09/2024 1:49 pm, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> This reverts commit 85b715a334583488ad7fbd3001fe6fd617b7d4c0.
-> 
-> It was causing gpu smmu faults on x1e80100.
-> 
-> I _think_ what is causing this is the change in ordering of
-> __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
-> memory) and io_pgtable_tlb_flush_walk().
 
-As I just commented, how do you believe the order of operations between:
+--z26o4qqv53ya5nl6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	__arm_lpae_clear_pte();
-  	if (!iopte_leaf()) {
-  		io_pgtable_tlb_flush_walk();
+On 05.09.2024 08:19:10, Marc Kleine-Budde wrote:
+> On 04.09.2024 18:43:52, Heiko St=C3=BCbner wrote:
+> > Am Mittwoch, 4. September 2024, 17:10:08 CEST schrieb Marc Kleine-Budde:
+> > > On 04.09.2024 10:55:21, Heiko St=C3=BCbner wrote:
+> > > [...]
+> > > > How/when are you planning on applying stuff?
+> > > >=20
+> > > > I.e. if you're going to apply things still for 6.12, you could simp=
+ly take
+> > > > the whole series if the dts patches still apply to your tree ;-)
+> > >=20
+> > > The DTS changes should not go via any driver subsystem upstream, so
+> > > here's a dedicated PR:
+> > >=20
+> > > https://patch.msgid.link/20240904-rk3568-canfd-v1-0-73bda5fb4e03@peng=
+utronix.de
+> >=20
+> > I wasn't on Cc for the pull-request so I'll probably not get a notifica=
+tion
+> > when it gets merged?
+> >=20
+> > So if you see your PR with the binding and driver getting merged to
+> > next-next, can you provide a ping please?
+>   ^^^^^^^^^
+>   net-next?
+>=20
+> Will do.
 
-and:
-  	
-  	if (!iopte_leaf()) {
-		__arm_lpae_clear_pte();
-  		io_pgtable_tlb_flush_walk();
+The driver reached net-next/main:
 
-fundamentally differs?
+https://lore.kernel.org/all/172554243626.1687913.5623663966016175191.git-pa=
+tchwork-notify@kernel.org/
 
-I'm not saying there couldn't be some subtle bug in the implementation 
-which we've all missed, but I still can't see an issue with the intended 
-logic.
+regards,
+Marc
 
->  I'm not entirely sure how
-> this patch is supposed to work correctly in the face of other
-> concurrent translations (to buffers unrelated to the one being
-> unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
-> stale data read back into the tlb.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Read back from where? The ex-table PTE which was already set to zero 
-before tlb_flush_walk was called?
+--z26o4qqv53ya5nl6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And isn't the hilariously overcomplicated TBU driver supposed to be 
-telling you exactly what happened here? Otherwise I'm going to continue 
-to seriously question the purpose of shoehorning that upstream at all...
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Robin.
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbZsREACgkQKDiiPnot
+vG/JvAf/XoO+j2bRaV/OIKVKmVBLZH5kRJnidPSorqD9aB1pbIDk0+hNkyuHTghI
+sZIvHzuNJYf+y93aEiK2M3k8++YM0bEMLbkVOOJEK/CaMHCf1jIyFgOATkffElPC
+yOjaUlOuwyJwZt2idPGQIRqdoCO1PtkPTs6mki1ZY3y8pO7y1HXsoGJy4sKLnXxp
+BTZpdvAUZmdGeLEUefKaxiRH1NHMjh3jAb1TEst2IWdB/13IjNTw3jeALqer28nq
+1eJflTIXAs24J4CxUruHRl1YttaaTgyets+Qu0jTZnBZSnzlbm7qh+t8qrAoPyQx
++2os847WP91NL5CRSbE0eMGZBR8A+w==
+=DLSm
+-----END PGP SIGNATURE-----
 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->   drivers/iommu/io-pgtable-arm.c | 31 ++++++++++++++-----------------
->   1 file changed, 14 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 16e51528772d..85261baa3a04 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
->   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
->   }
->   
-> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
-> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
->   {
-> -	for (int i = 0; i < num_entries; i++)
-> -		ptep[i] = 0;
->   
-> -	if (!cfg->coherent_walk && num_entries)
-> -		__arm_lpae_sync_pte(ptep, num_entries, cfg);
-> +	*ptep = 0;
-> +
-> +	if (!cfg->coherent_walk)
-> +		__arm_lpae_sync_pte(ptep, 1, cfg);
->   }
->   
->   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> @@ -653,28 +653,25 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
->   		num_entries = min_t(int, pgcount, max_entries);
->   
-> -		/* Find and handle non-leaf entries */
-> -		for (i = 0; i < num_entries; i++) {
-> -			pte = READ_ONCE(ptep[i]);
-> +		while (i < num_entries) {
-> +			pte = READ_ONCE(*ptep);
->   			if (WARN_ON(!pte))
->   				break;
->   
-> -			if (!iopte_leaf(pte, lvl, iop->fmt)) {
-> -				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
-> +			__arm_lpae_clear_pte(ptep, &iop->cfg);
->   
-> +			if (!iopte_leaf(pte, lvl, iop->fmt)) {
->   				/* Also flush any partial walks */
->   				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
->   							  ARM_LPAE_GRANULE(data));
->   				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
-> +			} else if (!iommu_iotlb_gather_queued(gather)) {
-> +				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
->   			}
-> -		}
->   
-> -		/* Clear the remaining entries */
-> -		__arm_lpae_clear_pte(ptep, &iop->cfg, i);
-> -
-> -		if (gather && !iommu_iotlb_gather_queued(gather))
-> -			for (int j = 0; j < i; j++)
-> -				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
-> +			ptep++;
-> +			i++;
-> +		}
->   
->   		return i * size;
->   	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
+--z26o4qqv53ya5nl6--
 
