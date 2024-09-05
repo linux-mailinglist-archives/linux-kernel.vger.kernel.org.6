@@ -1,138 +1,82 @@
-Return-Path: <linux-kernel+bounces-317671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F42E96E1F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:24:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1E396E1F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5E62895D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EFE1F270D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD3517A938;
-	Thu,  5 Sep 2024 18:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BCC17C9B9;
+	Thu,  5 Sep 2024 18:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="z/aWqasn"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="astDoqXp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E96617ADFC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5750D1C2E;
+	Thu,  5 Sep 2024 18:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725560634; cv=none; b=hJ2Oy/AB0S3AxuGu5pL6v6ktMT4d3Ubo5N1NOreQkfrlBOnLQtv4vBw/cayBDFnuO4WT8XbpB68S0aolQx9Tfsfi9Er/XR6nkDNVoSZ5b3AqEbEXiS4A4xciuIGfSDz9FZN1YHOflUnWX9D+lcw9obbV/P7wzaveHp6s9wVAbM8=
+	t=1725560740; cv=none; b=O58ykUXnd7oXH6+U5T3IGE56AjFsnQLDWnAKfZlfep7RK3lNJtnhtID/B+sUS8f1bKYsdLqmgfFI2mYP2jFdRA8/MkhJJPpGeGqX8fUshzP8rs8e7gmtRZBvrd5wpIl64CGkdiJIA+CyGNamHvIvU27CTBH7nIK21mk2qHhLozE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725560634; c=relaxed/simple;
-	bh=f/31/t5k3O6xvGerABCcvxRjUn1id1UbVA9kPbTFwyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PdrYnqhVQAZuTqFT4d2rZ7ChENWqI+3DYyw3yJ2rq1ed/7bYlo36lPhbK4vEl7TQQ/phrEEOZCvN14kUr7zHayPhHvYqA6yrI9HAoeu+Sf40YXEs5G4fIAojoH467n7LXDUCt8uK6TG51603kccJDD7it4PBc8BOUoHmSSPKfWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=z/aWqasn; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5356bb55224so1411420e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 11:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725560631; x=1726165431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTXrlwhXw1zt8lQFSd42ZTE/ToLKGShHg8+BHiGWWNs=;
-        b=z/aWqasn+NCHxj5X5U2zyA2hTNr3BP23iecYQMuHzGueVPAf7IKUgI6F3pQ4sFR3+O
-         Cf09wFpVg7dwxX4x93okeTq6OwQHPdmGCozwuwwI1XkCcloUDUnjeclsUyF/uNvbb5rL
-         Hcq5eJuYxe27zA83sF1KldvDQHnOySgQW7BYuIWUrWsQ6v9dD+hCtUikjGXNpdsoRk9T
-         OcMhVoZFIPTgUqOWxYajDFuGvrrWjHypgmOj+5JdXjU1tec4oWQqOiQeRQ59Y6qU/GUT
-         O0botCUy9+c5ef0Y0+DkdWZAwCq54Q2+vo9efUPDZ1Sw9QWSsDiKt4GbUryvhxQoqbGp
-         NpbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725560631; x=1726165431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PTXrlwhXw1zt8lQFSd42ZTE/ToLKGShHg8+BHiGWWNs=;
-        b=DyfQG5/B+nBfJZAg8yw/4PnXdmSqd5nkSLGwfj4m5g/Fl79ND6SCGzONlLfHEBYJeL
-         AZSXkfOF/kiIURMDY/vzHoqFYvtO+aFsz6nXu/vWNRBsC1ZRcLmoqwOryX0iH1wI1r0e
-         2rIebDrsqpV1b0vPPA4aF8h42150W6zD02Ld24vqZlBAI/ZZUk1F2XUqXZ7hdrVZF/7j
-         atxWefI+ZSA1QtMRg97cpHj7meiHNPu50lkSzc+YCiTWVBHwRHIM6r318XT6g93F2owx
-         iwqaBfLfF+LavNb3B4Z8m0hGc5aLwY+FB2oFwCs7IpnnpQ/t7HWjlEHqi2ruR3oSMSj0
-         tp7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8vHfIGChAQBMFK3TOncoC85AuEWwE1J7LL/kFyPR3jyF0YkxT0YXgyIqGZO6LrNARgpG+1FhfLxexi0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF3EAX8xts7Ge1fUVs9gx2/DJZndj1iQCuQ7Dmn3FzRVUbK8IT
-	7t54nlsPJNtnHx+r1027wyBsjCgEPeGge7WA0IIBeTNcIHZfZ040jmyFJfg6kzQnmr14g+9UuyA
-	oEJJ1ciizs2NDQmvq6xBXennIJghVtqlblivReQ==
-X-Google-Smtp-Source: AGHT+IHiDLQvaJ4IVXwK2VyRvlFAAcwq5bTMEw79jXXUoeb0Z+oAV0I9OTCJQoWIe7envtsIcNDLvCxL0Z8pFxQr6X0=
-X-Received: by 2002:a05:6512:3f26:b0:52c:d84b:eee6 with SMTP id
- 2adb3069b0e04-53546baac97mr15674180e87.38.1725560630677; Thu, 05 Sep 2024
- 11:23:50 -0700 (PDT)
+	s=arc-20240116; t=1725560740; c=relaxed/simple;
+	bh=upDPrIzD3Q5267hh2eQQIgGASxYMEBmzc1rIw5hZSb0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=QKRmWoMxBaweszCqLql5PeIxFa7JSrSu8wpU7qn5pySbRY2ZNGLQZgn+Fu67XLplpds6JUOO9qYGE4Yeadd9kT8BOm4EGcvLg2PnjwM3dyEw5EMNH+m4mUZunMOguGlvvBJsKDk3l7qLFEk+5pxcTR08CULi0f0LaDYTrKHdNDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=astDoqXp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53A7C4CEC3;
+	Thu,  5 Sep 2024 18:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725560739;
+	bh=upDPrIzD3Q5267hh2eQQIgGASxYMEBmzc1rIw5hZSb0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=astDoqXpHIPiyWN56wTlr1R9sZpmWC+kzNkQY+C60WJJsX6nmAy43OXYgDnib6AEn
+	 AhnewzaLfxc5YRKXiGFzpb4ZAmi1UuChBDsoVaoljMNd050hsx6OdoF5t5n/YNw40i
+	 X+uJM6AItzS7AmqX9pPzoTpDqhUALLPcN71MV2TtLbBi2ITCiK/qehQzkr3Em+NgK9
+	 2ckZKdrQPtjKOD1+eQi7TynpKZQ/RWiLwrdA2rd63r7Goj3X604LiFadDbX2beLgls
+	 dGoC9UhKENadf4xweR+PW7/GWcrOLIQ9xVCzZp1hCaK2+mvj+RC20fZLSsev4PTubt
+	 UhOTSSm0c9scg==
+Message-ID: <a8400f018cc94177b6a91634fd977248.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905122023.47251-1-brgl@bgdev.pl> <20240905122023.47251-5-brgl@bgdev.pl>
- <Ztm6fzmoeWcCpqvi@hovoldconsulting.com>
-In-Reply-To: <Ztm6fzmoeWcCpqvi@hovoldconsulting.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Sep 2024 20:23:39 +0200
-Message-ID: <CAMRc=McDHi5EVpBjsuFE+JHgBhh84tsT6xr5PWO5yeU8zbS99Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: sc8280xp-x13s: keep less
- regulators always-on
-To: Johan Hovold <johan@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240904095710.2813541-1-abel.vesa@linaro.org>
+References: <20240904095710.2813541-1-abel.vesa@linaro.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.12
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
+Date: Thu, 05 Sep 2024 11:25:37 -0700
+User-Agent: alot/0.10
 
-On Thu, Sep 5, 2024 at 4:04=E2=80=AFPM Johan Hovold <johan@kernel.org> wrot=
-e:
->
-> On Thu, Sep 05, 2024 at 02:20:22PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Remove the regulator-always-on property from the ones that used to be
-> > implicitly needed by the on-board WCN6855 now that its PMU is modeled i=
-n
-> > device-tree.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 4 ----
-> >  1 file changed, 4 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts=
- b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > index 88b31550f9df..1a9dac16c952 100644
-> > --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > @@ -479,7 +479,6 @@ vreg_s10b: smps10 {
-> >                       regulator-min-microvolt =3D <1800000>;
-> >                       regulator-max-microvolt =3D <1800000>;
-> >                       regulator-initial-mode =3D <RPMH_REGULATOR_MODE_H=
-PM>;
-> > -                     regulator-always-on;
-> >               };
->
-> What makes you think s10b is only used by wcn6855?
->
+Quoting Abel Vesa (2024-09-04 02:57:10)
+> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
+7b:
+>=20
+>   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-6.12
+>=20
+> for you to fetch changes up to 32c055ef563c3a4a73a477839f591b1b170bde8e:
+>=20
+>   clk: imx6ul: fix clock parent for IMX6UL_CLK_ENETx_REF_SEL (2024-09-04 =
+12:39:38 +0300)
+>=20
+> ----------------------------------------------------------------
 
-I didn't say that. It's used by many components but they seem to be
-all described in DT. But I get it, the schematics show it in so many
-places, it would be risky to not keep it on.
-
-> You clearly did not check the schematics so make sure you verify the
-> rest as well before resending.
->
-> And if any of these are valid, I think this should be part of the
-> previous patch.
->
-
-At least vreg_s11b and vreg_s12b should be fine. I'm not sure when
-I'll respin the series though, we need to first figure out whether to
-upstream the calibration variant property and what its name should be.
-
-Bart
+Thanks. Pulled into clk-next. I also found the v6.11 PR for clk-imx in my
+repo for some reason :( Sorry about that! I've merged that into clk-next
+as well now so the next merge window will get two cycles worth.
 
