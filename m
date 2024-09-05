@@ -1,148 +1,108 @@
-Return-Path: <linux-kernel+bounces-316266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBC796CD3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FA896CD5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8631C21BFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:26:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44C122871C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F804152166;
-	Thu,  5 Sep 2024 03:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F046B148849;
+	Thu,  5 Sep 2024 03:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jzDtOzUd"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpeibTcE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D914830A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451E13D291
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725506782; cv=none; b=e+MpIDJkO9uZK0LxjVJrikILYxR5CdMUNKfQTRiFsbC6JC1Up60QR/CQxZ0GZFBcDuQ5KjCfTqkoFDK8BbWTkfI0X+HAGJLtuxvTjYthBR8c/ttFXiehbOpOu9nlhXgRA50o5DWAXfB76cwwNA1QMh7grVMEZVY8tZ75s6IvYf4=
+	t=1725507247; cv=none; b=kMrJ46GEgCtE0UlbJ2PCZhNKmGaNLBe7uE5L5EGwAIpprLf4kw8SbWqpcOnYuvfzHWqwMdRmueTHCErOwbXbn8kXOc17jQMVz4/Bzu3ZVpeZhIE09LgOIpc2bwXEC8ot7VMbLywsr0RHT1DcBbfNhPhP+jTix78+anNEdVmr/1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725506782; c=relaxed/simple;
-	bh=KnnNbGZkukvbhdJ4+vjUC7nnvFSR94+qavRX0iu+euY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TaF+sSwX7em2kJ2Qz1d1IS0Czf74CoBIlEabx0mrHWoBBWn5xH/3TtpriZ0w0Q5WJvPwqqJq6qo8ftS0w3W+H7QFGx0yKOB4RzybhjuDlOfCwszpktkbzQb2rpPWOYRvMvPfVPCRoGw0TbHwr4THrvY8/8k4Zt8F21gHQlT8H64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jzDtOzUd; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53568ffc525so276061e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725506778; x=1726111578; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dMVe3dV+riSJbx0XmpXNkjqyIshg14e/HbhXiq4bN9I=;
-        b=jzDtOzUdUP6t7++D08ksVaTQYh5hMe1x5ijVzz3/cwNWAmoRbxkClSvjhRQ0dbMUBd
-         L9A1CM2EJZMFc5pqVbDaCIUYKMHKPLBfsAPlJz91I9E7rY4CkHSvD8H9RM0Plt/I/2R+
-         rAVK5wkASGDICo+ZoMp8lSNvRE8Dm+WIag4fBohnvd53TAkV1RYOHCAVsl6dD9avDig3
-         T3t5d9JwXzzWnnOXe+TtRTb8pdY38+wz+sGLKo0JTbQ+l1fqNV7QY9DuSWuaSwUgHYli
-         LnG99mveuj1M+WkDj1m5SUTEsafWmyMHCW9xKfuuQ27osQtTQXkV8VOpP8eyH2LQGPQU
-         NwXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725506778; x=1726111578;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dMVe3dV+riSJbx0XmpXNkjqyIshg14e/HbhXiq4bN9I=;
-        b=Q1v/Ga8aDapQDmes1ep8tyXBF8BlwNrD0rqxNGwLs1cPdrM5uyKulx2cuCggSEnU7r
-         od65nwPFJAOim5zv6uIy43/799JjstYr4vmLlqWijfJvKg3nuDMjb8CTYhIH45z6FZ3a
-         x4s+aak+HAu7OOeUTNywiE5AbWfsgiKcNyTS5HjZhLNxd1HGGIlqQrsI9AeSRv4b5WH0
-         gAQCh+Ls/vynKJFmsLfDaZNsLkSwWsiWwlzmf2XaaBzdCgA6wfu+sPf2ILX60v+U5yNg
-         pJjrlw7Jp0v4/7CbEQEgxf5WkPTHABln3p6vEHDGCGFLpcUqz0+8ZPGblRyXskvjb73p
-         2d2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWpypt4ouIb4xTbyAFVpSqC0P0TJ+dpS1bbn0g8W+tqDFZVycDQfKz/U3iQOIlBsTMUCYmHRysNERim9M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJtdsv6TWeT91SRcr6dCW05QVX5qGMJxkd2voekuVRAgMA61D7
-	igp3aHSqYF5XwdQ81aGqGVdA2FTHklhn1m34YEXIOo0uPH29zXuLmgIhFl0sWOI=
-X-Google-Smtp-Source: AGHT+IE+acS5vwCPZFfqy48BFrmCtYX0ql9IXQeheRpZrwQ/SpmPQiQYu7G/Vy0git+9k2kOjN0YnA==
-X-Received: by 2002:a05:6512:3d24:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-53546bb4d0fmr14476272e87.49.1725506778081;
-        Wed, 04 Sep 2024 20:26:18 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540841a3csm2533860e87.226.2024.09.04.20.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 20:26:17 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 05 Sep 2024 06:26:15 +0300
-Subject: [PATCH 3/3] drm/msm/dpu: drop LM_3 / LM_4 on MSM8998
+	s=arc-20240116; t=1725507247; c=relaxed/simple;
+	bh=Aol8sGaTwxobrlkDaS24ORRfHXM+S/kWtOiBEfAMRZY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Bx/h3WCKeLS/3o7z/yz/AuZyrfV7jbIKJ6DUSZ5SZN2+RpvPZEzVSXA2mC0ubC7NXoB66zpgJV5+YK0TQ8I+TLsxkFJaVzzbRjn3oNE0f8IyHY+duBpXOo8wJBx+ODgNYlPIWeoK2v889iniTrHljNut8rWaMx27a150H54IaXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpeibTcE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725507246; x=1757043246;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Aol8sGaTwxobrlkDaS24ORRfHXM+S/kWtOiBEfAMRZY=;
+  b=mpeibTcE2zkh/oelCrfGRpw/30EtaizlzaIRoUzdN+bXB7RpLdYyo0HM
+   mF6byg/wLArcALttAN4oTAknCHXsWFTt6RCd8ly7LyZCA+Ej6FUlRnZqF
+   ed/Q1aUs2zU6kSYL2KRy/i4m50Jpuw/2d5TfRSjZ5vmlHwtyzwIIEjxi2
+   UUBAINu0EYy0H1cy0Ji39AfLfOAC83yrJE24Tvolf1ycflF5Jv/u65fVZ
+   ObAb/GDkLMYe9LfZTLDW899tLnhtsNd63ZSQp6XxuBFgpbuqqZ7jXKHbR
+   9lH7N0zbggHtNU9dSP76JUPji2TUQ/JsQAxCG9gVI6cKkbFBkw/eVqjts
+   w==;
+X-CSE-ConnectionGUID: AxvdsuphRWOeJNQHv3yHGQ==
+X-CSE-MsgGUID: OB8l1RcOTOC2J61H5H8nvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24001374"
+X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
+   d="scan'208";a="24001374"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 20:34:05 -0700
+X-CSE-ConnectionGUID: 82X4yBmtRei/wWg6CiHN3w==
+X-CSE-MsgGUID: gNz3yjWdQ+OseRCbsMtI8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
+   d="scan'208";a="65475690"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa009.jf.intel.com with ESMTP; 04 Sep 2024 20:34:02 -0700
+Message-ID: <c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
+Date: Thu, 5 Sep 2024 11:30:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+Subject: Re: [PATCH 5/6] iommu: init pasid array while doing domain_replace
+ and iopf is active
+To: j.granados@samsung.com, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>
+References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
+ <20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-dpu-fix-sdm845-catalog-v1-3-3363d03998bd@linaro.org>
-References: <20240905-dpu-fix-sdm845-catalog-v1-0-3363d03998bd@linaro.org>
-In-Reply-To: <20240905-dpu-fix-sdm845-catalog-v1-0-3363d03998bd@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Sravanthi Kollukuduru <skolluku@codeaurora.org>, 
- Rajesh Yadav <ryadav@codeaurora.org>, 
- Archit Taneja <architt@codeaurora.org>, 
- Jami Kettunen <jami.kettunen@somainline.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jeykumar Sankaran <jsanka@codeaurora.org>, 
- Chandan Uddaraju <chandanu@codeaurora.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1277;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=KnnNbGZkukvbhdJ4+vjUC7nnvFSR94+qavRX0iu+euY=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm2STWnttq8+i1NuRxG0sRjN+Pu4vbmRCduSOT5
- PdTVOSI9cuJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtkk1gAKCRCLPIo+Aiko
- 1Y0ACACbYLNDW/4i+2oZ6R8wbt8nuCMVXDGVTRy41HFmR9wJLSiqYXZdU88wXVZUoVToIy3ZnzQ
- MB2/Y7veEbRQQm+4ZuOLZh/+kALsNMc/GGZPH/pkBJAXCp5isa87fYxWtg35rn7kjsni0F1DSol
- OO+Xs35CudYnkNtVxbxez+/Dw3OIba3jpCNngWHkE9ADO3lZBE+nOTE1xoVZfc4TAHmhZrJyeTv
- ntEcJmCYKGwKlgwFGXe/4aBNf9ZlvjvLz+XcBzEOfiMF6lhCqVjk68btl48xGZp/S/MTs1uJFW1
- E4ma7P6ds374GzuyyttRXUcK2LCw+3cSZOP1b2vakxWtDkSL
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On the MSM8998 platform ther are no LM_3 and LM_4 blocks. Drop them from
-the MSM8998 catalog.
+On 9/4/24 9:17 PM, Joel Granados via B4 Relay wrote:
+> From: Joel Granados<j.granados@samsung.com>
+> 
+> iommu_report_device_fault expects a pasid array to have an
+> iommu_attach_handle when a fault is detected.
 
-Fixes: 94391a14fc27 ("drm/msm/dpu1: Add MSM8998 to hw catalog")
-Reported-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h | 12 ------------
- 1 file changed, 12 deletions(-)
+The iommu_attach_handle is expected only when an iopf-capable domain is
+attached to the device or PASID. The iommu_report_device_fault() treats
+it as a fault when a fault occurs, but no iopf-capable domain is
+attached.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h
-index 1d3e9666c741..64c94e919a69 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h
-@@ -156,18 +156,6 @@ static const struct dpu_lm_cfg msm8998_lm[] = {
- 		.sblk = &msm8998_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_2,
--	}, {
--		.name = "lm_3", .id = LM_3,
--		.base = 0x47000, .len = 0x320,
--		.features = MIXER_MSM8998_MASK,
--		.sblk = &msm8998_lm_sblk,
--		.pingpong = PINGPONG_NONE,
--	}, {
--		.name = "lm_4", .id = LM_4,
--		.base = 0x48000, .len = 0x320,
--		.features = MIXER_MSM8998_MASK,
--		.sblk = &msm8998_lm_sblk,
--		.pingpong = PINGPONG_NONE,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
+> Add this handle when the
+> replacing hwpt has a valid iommufd fault object. Remove it when we
+> release ownership of the group.
 
--- 
-2.39.2
+The iommu_attach_handle is managed by the caller (iommufd here for
+example). Therefore, before iommu_attach_handle tries to attach a domain
+to an iopf-capable device or pasid, it should allocate the handle and
+pass it to the domain attachment interfaces. Conversely, the handle can
+only be freed after the domain is detached.
 
+Thanks,
+baolu
 
