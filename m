@@ -1,166 +1,126 @@
-Return-Path: <linux-kernel+bounces-317758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D6596E36D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:47:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C2296E370
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BCFB22B2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA591F24B34
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF65190049;
-	Thu,  5 Sep 2024 19:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDBB1917E6;
+	Thu,  5 Sep 2024 19:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzTUukA+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a9Ejs1sn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A7C168DC;
-	Thu,  5 Sep 2024 19:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB6A8F54;
+	Thu,  5 Sep 2024 19:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565629; cv=none; b=mGzTJjkZoqqd3e3gfo1LHhmDayuCSXRv2BGtSJQ2nUCG+g3CJG1grnh5dpt6TAKmsF7hlS45B6SEFdMCZihFdANEc+mvU4lOvNOKK2c0CSCXhS6AHQ3/cARmwT1zMmzwEmaS+qCkibgkTqjMf18pM4Ls998igbJZchi8GDSRAEs=
+	t=1725565681; cv=none; b=cXt7+5yr3CNBirBW99sX3g6fivvY0Do4JZgmpZ+t9H7e8jCHmrJo+91AO8IxpQSdl/Z6x7+pFTXawGnX965VKvSBKi/MorOZDZc7v10YePusDSRpGzb9T7a3CnZgktChgp7C08PUDEiYXOTlNfdZ8mExlfjQTULhOsgOau0fdsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565629; c=relaxed/simple;
-	bh=7PaorVyI9z9vGDIV3LGafZMUw8ytPx+Vm2CmLQB5q7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VOC7Brt8kyEFpiD5I437JvOOilKQh0U2FUATyyNYMYzisE2mZIcLkNFQGj3LhiIeIbdDJu8D57ieeUG7F6e8TTpsHSNNZBFObqnPZF3W3R+FfwKHpcsjdkK73si/gTo7nC4fw0ffYAZxue5cQ3I1d00icjPc1+D1ZiN2rrboSpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzTUukA+; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725565627; x=1757101627;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7PaorVyI9z9vGDIV3LGafZMUw8ytPx+Vm2CmLQB5q7k=;
-  b=HzTUukA+5jTyXXhJgzAA8SWKoP1UkEOlDUOxgzXSvxacvgig7AUwi0iL
-   a8UvFEAuLlXT/zXeScGdfbXfQXMjrgfuzEhW5gyjCvibjXZQLKj3pODk4
-   agrZWUS+UD9qCawp80P5rh+R1QdPkJ96GhHDF+ZPQKw3F6F1IHB1F2uX3
-   VvDYOF+9EBF3qVQ2MELOYZQ4KiOslBLfItexN4ug/u0BkgI5688C8o804
-   UvSW/3M76od0LPEngt06/eyjM6OJAB6XX1rj8m6aRRopGcYMms0qqy9qx
-   /OcLaf2xxni+o0A+NsdNzXdZcObzkib0v/p6hzJ6Fusiytodu/adzT4jp
-   w==;
-X-CSE-ConnectionGUID: Q+QnAE3YTOiSJqiSW1uQqQ==
-X-CSE-MsgGUID: Ioc6KedcRzStZ0NWIfbvXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24452678"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="24452678"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:47:06 -0700
-X-CSE-ConnectionGUID: C+VKV89bQyirmUHTvyi1BA==
-X-CSE-MsgGUID: IsZR9TTaQlKnMA2hcEXYJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="65550174"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:47:06 -0700
-Received: from [10.212.68.73] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 8997220B5782;
-	Thu,  5 Sep 2024 12:47:04 -0700 (PDT)
-Message-ID: <1a339858-74a3-414a-9fc1-bef47c513728@linux.intel.com>
-Date: Thu, 5 Sep 2024 15:47:03 -0400
+	s=arc-20240116; t=1725565681; c=relaxed/simple;
+	bh=YESlOol2fAtusLkQzzQjxYL0EU9Yx36fKBd7khLa3DQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l40peNAnfudXGVBD0oBAotuwS/xWQJ2MXIC/z+wf2h9aJPnOOMfpe+Aw63HBTdKceCjGpAc6OIIkNDIwQte6hpPqEX4pq+M3JZOHlajMhcas/laenO3zOzD3m1tSSG7OXSYWgvXY/6SEc5jlC0IukkCmqOmtSojx1kE0+fwv9yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a9Ejs1sn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQLGs001273;
+	Thu, 5 Sep 2024 19:47:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=W/VfX3C25keadwJOkt+rGI
+	6WhQ3VivJimP1UPy7GLFc=; b=a9Ejs1snkJtNyUY0gxqbYUG3MoSKDhN3+GmMUJ
+	Iu4PO4VWJ9Dck2Rnntu3WC7RXZlSHRjcW9gugw63vkP1d8OOST5Qx/N2z7tCtasf
+	me3i52xTtMv1+gONR6g9c4JkS4yGOm3qAuDzu9qvEwaVQ3c1hwhnAFzWOtLoFN+o
+	ee6oYEvyJ+L14Es+hpUtjIFdFNeclYHRy/zGzK7RBSHeKm/x3bsI/FcxE6827lg0
+	w/5BCywxZPgs7ayt4NcszCxcKkyS+ytamTxxzCUo+7c9W8imYWhvhIjJ9gx6lAql
+	CDs2z9zCBka6jyGv1y/O9QzSdNocfDQSakW3qiNCF6uOvSyQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwt859s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 19:47:54 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485JlrqR008882
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 19:47:53 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 12:47:50 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        Shazad Hussain
+	<quic_shazhuss@quicinc.com>
+Subject: [PATCH v3] dt-bindings: mfd: qcom,tcsr: document support for SA8255p
+Date: Thu, 5 Sep 2024 12:47:41 -0700
+Message-ID: <20240905194741.3803345-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] perf mem: Fix missed p-core mem events on ADL and RPL
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
- adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240905170737.4070743-1-kan.liang@linux.intel.com>
- <20240905170737.4070743-2-kan.liang@linux.intel.com> <ZtoHgMqNhnDdvAIi@x1>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZtoHgMqNhnDdvAIi@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: I2rPHfpI9hcshzPELULmwebtIfQkgLim
+X-Proofpoint-ORIG-GUID: I2rPHfpI9hcshzPELULmwebtIfQkgLim
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_15,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
+ adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 mlxlogscore=949
+ phishscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409050147
 
+Add compatible for tcsr representing support on SA8255p SoC.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+---
 
-On 2024-09-05 3:33 p.m., Arnaldo Carvalho de Melo wrote:
-> On Thu, Sep 05, 2024 at 10:07:36AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The p-core mem events are missed when launching perf mem record on ADL
->> and RPL.
->>
->> root@number:~# perf mem record sleep 1
->> Memory events are enabled on a subset of CPUs: 16-27
->> [ perf record: Woken up 1 times to write data ]
->> [ perf record: Captured and wrote 0.032 MB perf.data ]
->> root@number:~# perf evlist
->> cpu_atom/mem-loads,ldlat=30/P
->> cpu_atom/mem-stores/P
->> dummy:u
->>
->> A variable 'record' in the struct perf_mem_event is to indicate whether
->> a mem event in a mem_events[] should be recorded. The current code only
->> configure the variable for the first eligible PMU. It's good enough for
->> a non-hybrid machine or a hybrid machine which has the same
->> mem_events[]. However, if a different mem_events[] is used for different
->> PMUs on a hybrid machine, e.g., ADL or RPL, the 'record' for the second
->> PMU never get a chance to be set. The mem_events[] of the second PMU
->> are always ignored.
->>
->> Perf mem doesn't support the per-PMU configuration now. A
->> per-PMU mem_events[] 'record' variable doesn't make sense. Make it
->> global. That could also avoid searching for the per-PMU mem_events[]
->> via perf_pmu__mem_events_ptr every time.
->>
->> Fixes: abbdd79b786e ("perf mem: Clean up perf_mem_events__name()")
->> Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Closes: https://lore.kernel.org/lkml/Zthu81fA3kLC2CS2@x1/
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Looks better:
-> 
-> root@number:~# perf report --header-only | grep 'cmdline\|event'
-> # cmdline : /home/acme/bin/perf mem record ls 
-> # event : name = cpu_atom/mem-loads,ldlat=30/P, , id = { 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511 }, type = 10 (cpu_atom), size = 136, config = 0x5d0 (mem-loads), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1, { bp_addr, config1 } = 0x1f
-> # event : name = cpu_atom/mem-stores/P, , id = { 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523 }, type = 10 (cpu_atom), size = 136, config = 0x6d0 (mem-stores), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1
-> # event : name = cpu_core/mem-loads-aux/, , id = { 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539 }, type = 4 (cpu_core), size = 136, config = 0x8203 (mem-loads-aux), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1
-> # event : name = cpu_core/mem-loads,ldlat=30/, , id = { 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556 }, type = 4 (cpu_core), size = 136, config = 0x1cd (mem-loads), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, inherit = 1, freq = 1, precise_ip = 2, sample_id_all = 1, exclude_guest = 1, { bp_addr, config1 } = 0x1f
-> # event : name = cpu_core/mem-stores/P, , id = { 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572 }, type = 4 (cpu_core), size = 136, config = 0x2cd (mem-stores), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1
-> # event : name = dummy:u, , id = { 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600 }, type = 1 (software), size = 136, config = 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq } = 1, sample_type = IP|TID|TIME|ADDR|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, inherit = 1, exclude_kernel = 1, exclude_hv = 1, mmap = 1, comm = 1, task = 1, mmap_data = 1, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1
-> # intel_pt pmu capabilities: topa_multiple_entries=1, psb_cyc=1, single_range_output=1, mtc_periods=249, ip_filtering=1, output_subsys=0, cr3_filtering=1, psb_periods=3f, event_trace=0, cycle_thresholds=3f, power_event_trace=0, mtc=1, payloads_lip=0, ptwrite=1, num_address_ranges=2, max_subleaf=1, topa_output=1, tnt_disable=0
-> root@number:~# perf evlist
-> cpu_atom/mem-loads,ldlat=30/P
-> cpu_atom/mem-stores/P
-> cpu_core/mem-loads-aux/
-> cpu_core/mem-loads,ldlat=30/
-> cpu_core/mem-stores/P
-> dummy:u
-> root@number:~#
-> 
-> But can we reconstruct the events relationship (group, :S, etc) from
-> what we have in the perf.data header?
-> 
+Changes in v3:
+	- Removed the patch from original series[1]
 
-Do you mean show the group relation in the perf evlist?
+Changes in v2:
+	- Added Reviewed-by tag
 
-$perf mem record sleep 1
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.027 MB perf.data (10 samples) ]
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-$perf evlist -g
-cpu_atom/mem-loads,ldlat=30/P
-cpu_atom/mem-stores/P
-{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
-cpu_core/mem-stores/P
-dummy:u
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+index c6bd14ec5aa0..88f804bd7581 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+@@ -21,6 +21,7 @@ properties:
+           - qcom,msm8998-tcsr
+           - qcom,qcm2290-tcsr
+           - qcom,qcs404-tcsr
++          - qcom,sa8255p-tcsr
+           - qcom,sc7180-tcsr
+           - qcom,sc7280-tcsr
+           - qcom,sc8280xp-tcsr
+-- 
+2.34.1
 
-The -g option already did it, although the group modifier looks lost.
-
-Thanks,
-Kan
 
