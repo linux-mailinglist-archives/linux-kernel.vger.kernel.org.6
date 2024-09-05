@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-316279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC3296CD6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:37:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23F896CD6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFD91F27294
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87A831F278B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEC31494D9;
-	Thu,  5 Sep 2024 03:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7444149DF4;
+	Thu,  5 Sep 2024 03:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OuBN4fxR"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LYqDrjzM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD2142AA5
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936C513D53F;
+	Thu,  5 Sep 2024 03:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725507421; cv=none; b=NK9Mec/Fjiv6gPz98xrfFPWHJ400FscqT0QLrUs0I8T+Z9tcmCvbvriV/P018E0JPpVdRH3iKQW1ULlly0dDUejpM009wUGYpmkfER49LhPtu/jCk4Et5QbNSfwCO+byxMnmwR2QUP7Bruoxq6uRjmChRYrs9fNDciteo0dR+4o=
+	t=1725507446; cv=none; b=kiRtJn4i1ebTwDD4B6L/qYGmQsd98PpW2M+iF3/+APIuDt1rr2YtNdgwCGn3/l025nfoIAHSgAkkZYeBbyynRb/dYHR3OISe07DXdBkD3FXlQdISxTJLsRLQ6NySnpVGyvU43CRMwkj41ZZl2NZU2oM0wPSXKnjiKYUMj5cqONs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725507421; c=relaxed/simple;
-	bh=eiDwd18L4MBS4Bj7MKCAM06FoS+0UCoF0CD+B+adO/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYRjl+SAIx1d4zFQaZqFU1bqaBDbhQ+UPARo95IRgJVT1nHssEJNe8fZ6AZ0TV6QDipzqdB8mrwWN2qv5mXh+j8EoTWBjo1ba1YYW7TogExIv+AicbkTc7IqcmJ72yBti/tSUMQRsY02x06Py5qolRu7q+ViFK1HeQtyjQg5Iyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OuBN4fxR; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso315731a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1725507419; x=1726112219; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbfc98t5OtGLuNINYKX6Z52cv1pgsj90rLeg4M2pXfA=;
-        b=OuBN4fxRqtRHrTyXiUQxiVd3gC82OGT74anauPbGeoDaxXJbCb5yTpZ/87FIDbWY1F
-         ST4+KHzq6RH0Z+G80JH5Mc28d4XqHOf+5Xllbj77xQtrRwPsg0E0Z9sObC1QKWGKchXI
-         aVJ4NT4pa95ddMP1ddVS+1Avs9sAdLH/SmsdyOXyoGOyxqLbvkpdkGAoPeE/sufcQCD2
-         qP/s3vZVJgQqxL77YtO3Cl3TA6bbpabxOru3IFadxsxVjY7jYunCvAeROlSTxaitw9cq
-         H+o3jx/OKtdF2DD+gvSuQQpvRy/wtfZ8OJdYN3H5mfpGQQEdMqntb8cmi4hNc/+WFDsr
-         YiLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725507419; x=1726112219;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jbfc98t5OtGLuNINYKX6Z52cv1pgsj90rLeg4M2pXfA=;
-        b=FOnqFXJr2iLQLKwg85YQsDm1ZK+/5Ue7lvKvE7VWafHX0uwdf5s/YkWhaNFarVSczr
-         fj4fBTngI2TOOiZGKUc8xxTrFeKKOH+auZI3O1JhvQg05riGAV6V3yWkFMRRxLRFvnYC
-         o4ADFe3gEwGRw64tjC0bdFmkh5eGngA0G0ISbB83yJ5Yht+bfNabsfC5DInX6Aa/lgWz
-         z1KLUxpEbkWdBcMszK6aLnoIbowlnfJ8xH7exY08c8Wrs93cey8CgLNil2JrSlCGSpZq
-         JWTpOF1gmJ9m58MapLb0YJBv6pE+YmrhxHH68Re94VqA7ELTax92eESIXeCmWVLq/+7k
-         15UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyA2llJyUtG5Uw3bbYLM0yT/Qes3yJOIj463xnnIijTjgqjaI5h9htxOciuadFv4/RU6WFHmDZZJQYbXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzvmbBoJQx1bVWNXN430JE+izYakjiPqJHi6VY4rrEckzAp6Ra
-	8DjhAGTn6fdD3/xRjfItFT5FCeVfcJCY3nWUNwaELCLkH9S9vY+oEzSfBPYVbf8=
-X-Google-Smtp-Source: AGHT+IGYhG/19XTuh1osoL6kTMpIu9yVGa1obLYLUMIJszPnRbOcE6BZN29HNsTzTrX+UGxoXr8zbQ==
-X-Received: by 2002:a05:6a20:d043:b0:1c4:bf4a:6c0e with SMTP id adf61e73a8af0-1cece5192bemr18171590637.26.1725507419250;
-        Wed, 04 Sep 2024 20:36:59 -0700 (PDT)
-Received: from medusa.lab.kspace.sh (c-98-207-191-243.hsd1.ca.comcast.net. [98.207.191.243])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d8d38ffff9sm7733089a91.39.2024.09.04.20.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 20:36:58 -0700 (PDT)
-Date: Wed, 4 Sep 2024 20:36:57 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	yzhong@purestorage.com, Tariq Toukan <tariqt@nvidia.com>,
-	Shay Drori <shayd@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] net/mlx5: Added cond_resched() to crdump
- collection
-Message-ID: <ZtknWffvKCy6JjXS@ceto>
-References: <20240829213856.77619-1-mkhalfella@purestorage.com>
- <20240829213856.77619-2-mkhalfella@purestorage.com>
- <cbec42b2-6b9f-4957-8f71-46b42df1b35c@intel.com>
- <ZtII7_XLo2i1aZcj@ceto>
- <519a5d22-9e0c-43eb-9710-9ccd6c78bfe3@intel.com>
+	s=arc-20240116; t=1725507446; c=relaxed/simple;
+	bh=1ECGnaD69MRMHboTXQmfOmKTMUCi5318XQVc7AmLE6M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ufvqZ5crkuYyaXi6SWvMNrWAtrtiKOS3DZJUa47WsP8jZensUZUtmlw6u6YlnYUyC3lEk8a73AYCMtaC9ouk7u3PGPCixaDnVciDbTgsBO+6cDOnCQyWlogjQ2gPNvd7xFB24kABSpBsnkfwnNXN0n0oVJpsHXiCXhlU7JGqvTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LYqDrjzM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484MRZ4S008193;
+	Thu, 5 Sep 2024 03:37:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=CdglmC91JdSXvLOGKQvUO9RG
+	Ers2pICDzgc9MpH4XCM=; b=LYqDrjzMDrIIHEFzkb3buYN1YQUrJRNZ4Ct2hqr6
+	DtcrDs516UHG1eVVHzHScqzuY68Z0ltqitLemSBJIZqkaELFJnyi8XPcDLmKoj8/
+	HktjRh6Ty4j8VnFRvdmdPBibf9NbffERIFMWkNqNOaSeGzS2ODEWVZu5ntnAaAjv
+	BmFuwmikA+EsUoxC97kywJHgyYUH8mhUWPTjabd76ye/2f2IRfTubXuPtkKJvooM
+	Yl8c6/9+NZ2c3ZO5SAU9y64tN37TZG7kSPzkHliDIU3X6pMDKCntxiWxE8RpMCmC
+	Nk3xcXW9nIWubvF8wDcPsicPAeMdeOFRr7rp7CMr72AdCw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt674rru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 03:37:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4853bJLs026017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 03:37:19 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Sep 2024 20:37:15 -0700
+Date: Thu, 5 Sep 2024 11:37:11 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add coresight components for
+ x1e80100
+Message-ID: <ZtknZ2zPoFi65kq8@jiegan-gv.ap.qualcomm.com>
+References: <20240827072724.2585859-1-quic_jiegan@quicinc.com>
+ <f6813e5a-9b8e-4728-abb2-ad5926d6fa41@kernel.org>
+ <ZtZmwVK8h//nDXm1@jiegan-gv.ap.qualcomm.com>
+ <2fdcb1b1-3d60-4b46-8a9b-127a5950ea28@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <519a5d22-9e0c-43eb-9710-9ccd6c78bfe3@intel.com>
+In-Reply-To: <2fdcb1b1-3d60-4b46-8a9b-127a5950ea28@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: r5DfNZBZihsKXe0qC00XS5-O2s2jXGq9
+X-Proofpoint-GUID: r5DfNZBZihsKXe0qC00XS5-O2s2jXGq9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_02,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=573 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050024
 
-On 2024-09-03 14:14:58 +0200, Alexander Lobakin wrote:
-> From: Mohamed Khalfella <mkhalfella@purestorage.com>
-> Date: Fri, 30 Aug 2024 11:01:19 -0700
-> 
-> > On 2024-08-30 15:07:45 +0200, Alexander Lobakin wrote:
-> >> From: Mohamed Khalfella <mkhalfella@purestorage.com>
-> >> Date: Thu, 29 Aug 2024 15:38:56 -0600
-> >>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-> >>> index 6b774e0c2766..bc6c38a68702 100644
-> >>> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-> >>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-> >>> @@ -269,6 +269,7 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
-> >>>  {
-> >>>  	unsigned int next_read_addr = 0;
-> >>>  	unsigned int read_addr = 0;
-> >>> +	unsigned int count = 0;
-> >>>  
-> >>>  	while (read_addr < length) {
-> >>>  		if (mlx5_vsc_gw_read_fast(dev, read_addr, &next_read_addr,
-> >>> @@ -276,6 +277,9 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
-> >>>  			return read_addr;
-> >>>  
-> >>>  		read_addr = next_read_addr;
-> >>> +		/* Yield the cpu every 128 register read */
-> >>> +		if ((++count & 0x7f) == 0)
-> >>> +			cond_resched();
+On Wed, Sep 04, 2024 at 12:08:51PM +0200, Krzysztof Kozlowski wrote:
+> On 03/09/2024 03:30, JieGan wrote:
+> > On Mon, Sep 02, 2024 at 05:27:32PM +0200, Konrad Dybcio wrote:
+> >> On 27.08.2024 9:27 AM, Jie Gan wrote:
+> >>> Add coresight components for x1e80100. This change includes CTI,
+> >>> dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
+> >>>
+> >>> Change in V1:
+> >>> Check the dtb with dtbs_check W=1, and fix the warnings for
+> >>> the change.
+> >>>
 > >>
-> >> Why & 0x7f, could it be written more clearly?
+> >> Applying this series and enabling CORESIGHT=m (along with all the options
+> >> in menuconfig) breaks booting on my X1E Surface Laptop 7
 > >>
-> >> 		if (++count == 128) {
-> >> 			cond_resched();
-> >> 			count = 0;
-> >> 		}
-> >>
-> >> Also, I'd make this open-coded value a #define somewhere at the
-> >> beginning of the file with a comment with a short explanation.
-> 
-> This is still valid.
-
-Done. See <1>.
-
-> 
+> >> Konrad
 > > 
-> > What you are suggesting should work also. I copied the style from
-> > mlx5_vsc_wait_on_flag() to keep the code consistent. The comment above
-> > the line should make it clear.
-> 
-> I just don't see a reason to make the code less readable.
-
-<1> Now I am looking at mlx5_vsc_wait_on_flag() again, I realized the 
-code does not want to reset retries to 0 because it needs to check when
-it reaches VSC_MAX_RETRIES. This is not the case here. I will update the
-code as suggested.
-
-> 
+> > Did not observe any booting issues with our devices. Any relevant log to share?
+> > This patch also tested by my colleague.
 > > 
-> >>
-> >> BTW, why 128? Not 64, not 256 etc? You just picked it, I don't see any
-> >> explanation in the commitmsg or here in the code why exactly 128. Have
-> >> you tried different values?
-> > 
-> > This mostly subjective. For the numbers I saw in the lab, this will
-> > release the cpu after ~4.51ms. If crdump takes ~5s, the code should
-> > release the cpu after ~18.0ms. These numbers look reasonable to me.
+> > Can you successfully boot without the patch?
 > 
-> So just mention in the commit message that you tried different values
-> and 128 gave you the best results.
+> I think that's the definition of "breaks booting"...
+> 
+> Best regards,
+> Krzysztof
+>
 
-I will update the commit message in v3.
+You are right. That's a clear expression. what a stupid question for me, lol.
+
+Thanks,
+Jie 
 
