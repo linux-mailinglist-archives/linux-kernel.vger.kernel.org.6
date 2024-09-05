@@ -1,194 +1,201 @@
-Return-Path: <linux-kernel+bounces-316710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F3196D2FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:20:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EA196D2FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66E11C2540E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F8A6282E07
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6137F197558;
-	Thu,  5 Sep 2024 09:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256B2198A0C;
+	Thu,  5 Sep 2024 09:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3z7lEREb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vRLT97zD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ha65vysf"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104D2372;
-	Thu,  5 Sep 2024 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2605198848
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528047; cv=none; b=le6QtcoL5o88Fb9TpLuVjxWnComZwlwuRdw9urNsBevo0SofjJ1SdSlwNkV7zKZ1CWzSEpfSo/K1mcV13TB5/yz+frgcgq2NdepVJ+KMOvPDGiAggZY/pxYaTJAWmuWf+m96MNY52vxhJmr/RzmdmUKjXC/YFHhXcWxJ6hHxYQ4=
+	t=1725528056; cv=none; b=FN5urjUk9glB1nC5boXQmyXDfNWN00v2E5pwI7q3a7Zf6XMWpSdx/xBbJwCNGImMmITU42sH0dkIetaTkBuUPp5Rp2bxp4m4GwlBhml+PjfUJJEP5BHRYqBgE8z1LHtBB/u/TgZqo8gHUpwt6A+dMT4YFdLbmtmOLnSDIlC1cjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528047; c=relaxed/simple;
-	bh=bOrckqfkqXsth1pQp/PZxkNCv/WZaHe5LNGhOdQL1bI=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=knHFzc8vfxCfO8wIIHVJkIQfgpNGofqf4afDAXfrBNYhuUU7voTj9eZCG22m8r9010g/actcVqNPRkGdClf4gdLEXXuHYvYUg9xKVJ3rcbscN6Pz81zwgD3I8Dt9YO4B05qdDPWOjmuTKv70+2yMHiOCUiAbfwXQr2sgP7S1iuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3z7lEREb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vRLT97zD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 05 Sep 2024 09:20:43 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725528044;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=jP8Ry+WX1sQFKnrFEu0KyowyMF1MKzGDlgqXDlwNQ7s=;
-	b=3z7lEREbxZ8LcAGtWaz1yZq0HRdQIPkAYKRaSVBzxRsqo7thxrbaUZ6uQHM7xYqi4M62hN
-	Px0Y7Tqutdp0wer8gDzOfKKDQnnO6b15qrsiB9/NokWWLh5DSQmsoy+toktmWAf7eVOeKJ
-	zQJdJkVwEKCYzUH2tfvpZ5EF0rFd3GYGcTLI6DOU1llE6qncMNunSUCMsBy+Sh9lOvP7sM
-	i36W4qGrgCAwCori8IfyP8VQcBj8VPbXqGcuDlB21U24I7QtZchkYHzTi38ChzNhT6buF8
-	u1qpA1OfgRyxdrjKW+v63vp5NZES89fXmHSxb9d1fwVwXdvD6KfgREh2CNd7Dw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725528044;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=jP8Ry+WX1sQFKnrFEu0KyowyMF1MKzGDlgqXDlwNQ7s=;
-	b=vRLT97zD9w2PlWfHoeGGHSCcEI1PgEPINyvxO/d4tiBEsPOfoBsHu22oW41TrJXaofGBl5
-	Q036HXCD+3ubhLCA==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/aux: Fix AUX buffer serialization
-Cc: Ole <ole@binarygecko.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1725528056; c=relaxed/simple;
+	bh=p2lDSthd0UAUDSNfN3vnJgKP6Jqx7i1XmEotG9/mWqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TT8Pw1XioZNkKYAcYmXo/FxEqLFq89aI71TsCWvVMcODejPqtQ+NRfQ8+veccu2BCUCwnkIh12DG/cAKjj/H8MTvtZ/fyDAj6V6umBAubeeX0S7lHYxxN3TCfauDnkR6EmHvEoLXZVwsgGGyo/iKZu9UAB7UOt6C51fZGGomst4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ha65vysf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so3936535e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 02:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725528053; x=1726132853; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VngNsZVj4tHXgmy1m4a8BA8KlrpyKaaIV2tVk6G4OxE=;
+        b=ha65vysf/XZmDUqUygAtFNGJFFnF5LTu9G1I36VW/0nP2w+ADDwuzHvPDkFNpBL5pl
+         pdeaihYJPgrXnnN7KaKSNJXibZPpKOLyywVg/mS0FknVRGf0t9mQX+/2lM2LGiUSlR0D
+         OL9ZA5a1QLrt01q3yGiD+zSrmyHwnuqfOyygI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725528053; x=1726132853;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VngNsZVj4tHXgmy1m4a8BA8KlrpyKaaIV2tVk6G4OxE=;
+        b=g9pllA2WIUwWrDDXobjIdXjXXS7MUOFm9/sCABILLuLP1GyYe+GbuvaaH0zy4ZWVir
+         +EtOqw8gqNLWFxteA4uthbtmDXNkrYPjVg/kPtSf66EsnCSth8u4QcJV6EaZeApt4IyI
+         ZvfJR2HV2hzCnkut97HV6S/dxUYf2Kmu6bPFxXdZB69Zoyyt/9LRRRSSpWbrFWhANElP
+         kdFFOUhn5qq7pff2A+xeVQl+W6I/YBIKVXGTcPXXZ1TLhMwHyLTLH/tdQQ19kcVeO70F
+         BoXRicxlFaHUwHHwpSHKP0UUjECHPPchTVMcjkLYWMw7wTV30ddQDhrUAxGFhZxDMNuY
+         yMjw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/6BtrmTHOhsaFSIJDapE//1k/Fkou41w/9dtK7zm8uuEK/etjufU9BVmW7tgbpg/SP4VijrP/+oi6pyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzam34GFIbwYRmeDIdA8UQB6jPoq4SOaiq0/0sdYujS27dxqpeu
+	v+exdwWpmCGV0bVXVd516Lw9AA2V5niYVKKAfoOeCquo8+YoYLvReZQ8+4e65dc=
+X-Google-Smtp-Source: AGHT+IEvug0p6LTD4E+fEx2g7jibM+OQXqcH6xTH7HVfg+4RXyN1ckcaEvzIosMAyI+B+/HVZ75jxA==
+X-Received: by 2002:a05:600c:3b9f:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-42c8de7b0a9mr49322045e9.13.1725528052636;
+        Thu, 05 Sep 2024 02:20:52 -0700 (PDT)
+Received: from LQ3V64L9R2 (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c819e356asm141174265e9.42.2024.09.05.02.20.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:20:52 -0700 (PDT)
+Date: Thu, 5 Sep 2024 11:20:50 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <Ztl38u_2le7VhxDl@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Samiullah Khawaja <skhawaja@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-6-jdamato@fastly.com>
+ <20240829153105.6b813c98@kernel.org>
+ <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+ <20240830142235.352dbad5@kernel.org>
+ <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+ <20240902180220.312518bc@kernel.org>
+ <CAAywjhTG+2BmoN76kaEmWC=J0BBvnCc7fUhAwjbSX5xzSvtGXw@mail.gmail.com>
+ <20240903124008.4793c087@kernel.org>
+ <CAAywjhSSOfO4ivgj+oZVPn0HuWoqdZ0sr6dK10GRq_zuG16q0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172552804341.2215.8678570323683465419.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAywjhSSOfO4ivgj+oZVPn0HuWoqdZ0sr6dK10GRq_zuG16q0Q@mail.gmail.com>
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Tue, Sep 03, 2024 at 02:58:14PM -0700, Samiullah Khawaja wrote:
+> On Tue, Sep 3, 2024 at 12:40 PM Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > On Tue, 3 Sep 2024 12:04:52 -0700 Samiullah Khawaja wrote:
+> > > Do we need a queue to napi association to set/persist napi
+> > > configurations?
+> >
+> > I'm afraid zero-copy schemes will make multiple queues per NAPI more
+> > and more common, so pretending the NAPI params (related to polling)
+> > are pre queue will soon become highly problematic.
+> Agreed.
+> >
+> > > Can a new index param be added to the netif_napi_add
+> > > and persist the configurations in napi_storage.
+> >
+> > That'd be my (weak) preference.
+> >
+> > > I guess the problem would be the size of napi_storage.
+> >
+> > I don't think so, we're talking about 16B per NAPI,
+> > struct netdev_queue is 320B, struct netdev_rx_queue is 192B.
+> > NAPI storage is rounding error next to those :S
+> Oh, I am sorry I was actually referring to the problem of figuring out
+> the count of the napi_storage array.
+> >
+> > > Also wondering if for some use case persistence would be problematic
+> > > when the napis are recreated, since the new napi instances might not
+> > > represent the same context? For example If I resize the dev from 16
+> > > rx/tx to 8 rx/tx queues and the napi index that was used by TX queue,
+> > > now polls RX queue.
+> >
+> > We can clear the config when NAPI is activated (ethtool -L /
+> > set-channels). That seems like a good idea.
+> That sounds good.
+> >
+> > The distinction between Rx and Tx NAPIs is a bit more tricky, tho.
+> > When^w If we can dynamically create Rx queues one day, a NAPI may
+> > start out as a Tx NAPI and become a combined one when Rx queue is
+> > added to it.
+> >
+> > Maybe it's enough to document how rings are distributed to NAPIs?
+> >
+> > First set of NAPIs should get allocated to the combined channels,
+> > then for remaining rx- and tx-only NAPIs they should be interleaved
+> > starting with rx?
+> >
+> > Example, asymmetric config: combined + some extra tx:
+> >
+> >     combined        tx
+> >  [0..#combined-1] [#combined..#combined+#tx-1]
+> >
+> > Split rx / tx - interleave:
+> >
+> >  [0 rx0] [1 tx0] [2 rx1] [3 tx1] [4 rx2] [5 tx2] ...
+> >
+> > This would limit the churn when changing channel counts.
+> I think this is good. The queue-get dump netlink does provide details
+> of all the queues in a dev. It also provides a napi-id if the driver
+> has set it (only few drivers set this).
 
-Commit-ID:     2ab9d830262c132ab5db2f571003d80850d56b2a
-Gitweb:        https://git.kernel.org/tip/2ab9d830262c132ab5db2f571003d80850d56b2a
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 02 Sep 2024 10:14:24 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 04 Sep 2024 18:22:56 +02:00
+This is true, but there are several and IMHO extending existing
+drivers to support this can be done. I have been adding "nits" to
+driver reviewers for new drivers asking the author(s) to consider
+adding support for the API.
 
-perf/aux: Fix AUX buffer serialization
+Not sure which driver you are using, but I can help you add support
+for the API if it is needed.
 
-Ole reported that event->mmap_mutex is strictly insufficient to
-serialize the AUX buffer, add a per RB mutex to fully serialize it.
+> So basically a busy poll application would look at the queue type
+> and apply configurations on the relevant napi based on the
+> documentation above (if napi-id is not set on the queue)?
 
-Note that in the lock order comment the perf_event::mmap_mutex order
-was already wrong, that is, it nesting under mmap_lock is not new with
-this patch.
+That was my plan for my user app based on the conversation so far.
+At start, the app gets some config with a list of ifindexes it will
+bind to for incoming connections and then gets the NAPI IDs via
+netlink and sets the per-NAPI params via netlink as well.
 
-Fixes: 45bfb2e50471 ("perf: Add AUX area to ring buffer for raw data streams")
-Reported-by: Ole <ole@binarygecko.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/events/core.c        | 18 ++++++++++++------
- kernel/events/internal.h    |  1 +
- kernel/events/ring_buffer.c |  2 ++
- 3 files changed, 15 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index c973e3c..8a6c6bb 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1255,8 +1255,9 @@ static void put_ctx(struct perf_event_context *ctx)
-  *	  perf_event_context::mutex
-  *	    perf_event::child_mutex;
-  *	      perf_event_context::lock
-- *	    perf_event::mmap_mutex
-  *	    mmap_lock
-+ *	      perf_event::mmap_mutex
-+ *	        perf_buffer::aux_mutex
-  *	      perf_addr_filters_head::lock
-  *
-  *    cpu_hotplug_lock
-@@ -6373,12 +6374,11 @@ static void perf_mmap_close(struct vm_area_struct *vma)
- 		event->pmu->event_unmapped(event, vma->vm_mm);
- 
- 	/*
--	 * rb->aux_mmap_count will always drop before rb->mmap_count and
--	 * event->mmap_count, so it is ok to use event->mmap_mutex to
--	 * serialize with perf_mmap here.
-+	 * The AUX buffer is strictly a sub-buffer, serialize using aux_mutex
-+	 * to avoid complications.
- 	 */
- 	if (rb_has_aux(rb) && vma->vm_pgoff == rb->aux_pgoff &&
--	    atomic_dec_and_mutex_lock(&rb->aux_mmap_count, &event->mmap_mutex)) {
-+	    atomic_dec_and_mutex_lock(&rb->aux_mmap_count, &rb->aux_mutex)) {
- 		/*
- 		 * Stop all AUX events that are writing to this buffer,
- 		 * so that we can free its AUX pages and corresponding PMU
-@@ -6395,7 +6395,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
- 		rb_free_aux(rb);
- 		WARN_ON_ONCE(refcount_read(&rb->aux_refcount));
- 
--		mutex_unlock(&event->mmap_mutex);
-+		mutex_unlock(&rb->aux_mutex);
- 	}
- 
- 	if (atomic_dec_and_test(&rb->mmap_count))
-@@ -6483,6 +6483,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct perf_event *event = file->private_data;
- 	unsigned long user_locked, user_lock_limit;
- 	struct user_struct *user = current_user();
-+	struct mutex *aux_mutex = NULL;
- 	struct perf_buffer *rb = NULL;
- 	unsigned long locked, lock_limit;
- 	unsigned long vma_size;
-@@ -6531,6 +6532,9 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
- 		if (!rb)
- 			goto aux_unlock;
- 
-+		aux_mutex = &rb->aux_mutex;
-+		mutex_lock(aux_mutex);
-+
- 		aux_offset = READ_ONCE(rb->user_page->aux_offset);
- 		aux_size = READ_ONCE(rb->user_page->aux_size);
- 
-@@ -6681,6 +6685,8 @@ unlock:
- 		atomic_dec(&rb->mmap_count);
- 	}
- aux_unlock:
-+	if (aux_mutex)
-+		mutex_unlock(aux_mutex);
- 	mutex_unlock(&event->mmap_mutex);
- 
- 	/*
-diff --git a/kernel/events/internal.h b/kernel/events/internal.h
-index 4515144..e072d99 100644
---- a/kernel/events/internal.h
-+++ b/kernel/events/internal.h
-@@ -40,6 +40,7 @@ struct perf_buffer {
- 	struct user_struct		*mmap_user;
- 
- 	/* AUX area */
-+	struct mutex			aux_mutex;
- 	long				aux_head;
- 	unsigned int			aux_nest;
- 	long				aux_wakeup;	/* last aux_watermark boundary crossed by aux_head */
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 8cadf97..4f46f68 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -337,6 +337,8 @@ ring_buffer_init(struct perf_buffer *rb, long watermark, int flags)
- 	 */
- 	if (!rb->nr_pages)
- 		rb->paused = 1;
-+
-+	mutex_init(&rb->aux_mutex);
- }
- 
- void perf_aux_output_flag(struct perf_output_handle *handle, u64 flags)
+Haven't implemented this yet in the user app, but that's the
+direction I am planning to go with this all.
 
