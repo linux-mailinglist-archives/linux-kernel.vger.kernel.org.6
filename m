@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-316392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD24096CEE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:07:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D6D96CEE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E0E1C221AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EB7287507
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2BD15746E;
-	Thu,  5 Sep 2024 06:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9D3142E7C;
+	Thu,  5 Sep 2024 06:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOSDtUOE"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vZbPEiFf"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D863612D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3123612D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725516425; cv=none; b=Ghot7WM+nG01cm6gakaTpJDMulOIDGiDJnQHpIgI7VbHMZQhrwETiAUR+JovwiETfV7P70QGT5pJuIVeRbQziOnHW4+7zrwnvYsAj/h2fKMUXnCYc6ORIgboIoSG1iHHHzGDCeCu8JFET09H/q3QNikGUZaWJ2yy7+Fy/wEeo0E=
+	t=1725516432; cv=none; b=BKXm7cZ6M5nPlSAjlxDwkTDDZ7TRjqBzztizO0ZsymUInLB8rnjJFAmKnaQjeOBNqNCQH79cVuddlN9faLvJ6XlFun4v5UCPnEprBjLIRMwYfUqbGRHeXpexrCmV+eozo8vfFLMz3MsE8prpD71S8vzCg36AmQwiLuMvwJ7jEAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725516425; c=relaxed/simple;
-	bh=5LG1d3avN5co6G6gzC32VQF9Lut496WAZe399A99cSk=;
+	s=arc-20240116; t=1725516432; c=relaxed/simple;
+	bh=NxGLPmejrw74DcimUGcFe4YLeXDB7spXSH5h5gKxSsY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b4Kntc/1kS+zhjcjYp/F4NceyETqMpEs1O+FMNbq/AQtzabC7Ed7Djv2e3VnnPyp3SRyB9WdNutlQFMWYRWs83avZVuouYg5+Q1G/Ig7gSpJ+aGSyHMZWggap9XKyyOo8i/ofeTH4K7OE4lXlaf7V6sJa4MPWeQNZgDgXAitZeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOSDtUOE; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c358b725feso2270866d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:07:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=cbFp2qawG9XgX+SMbci20L3Fym2rsjtGTtphbA+aaH+9KX8zqzHeV8+XbtqxEvnJ2q9TRiDxYcuPNua8gzuw7kET62E7OmfhITydYZ1NanvCQ73p40HTencpEkv674v4dtq2aUdmjkdnR48oPgZyek54I4fUmbz/af2ZnCDkGBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vZbPEiFf; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e1a989bd17aso465594276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 23:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725516423; x=1726121223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5LG1d3avN5co6G6gzC32VQF9Lut496WAZe399A99cSk=;
-        b=QOSDtUOEPlKm5Fkc67GZbyO4Bxo99xAKGXMyngPoxjFAiNzyQL0JTjh9YjL9XXeBsc
-         JLXgSySabUAopAqpZl/kOAC141vVYrEpUauxFfoCOH2g5mqoRr4Qrv9U+kz7ZCcVrkNf
-         2LwQcm9eXNcDrj7+IIY4jNEHh0sA7tVBcjjMpfeNyt72QRxbAkAV7yghnlcNMokKErpq
-         H6oyyISeF4Pi7qbKYsqJX4b/82APANFf+pBiSBUwJBhKctPAU2FZcbUnfvMnZGxlAi/z
-         kfpOGA3UaQ+b7TqN1/mu+yTzCHSapPZDpz1/1Ej/vv/Ptw+RW+lqCFjFA7MrUVFDNS+A
-         fEwg==
+        d=google.com; s=20230601; t=1725516429; x=1726121229; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsjtgqmTVZY/Avx+iwqJmjfLRr60MNvla09DOjSeazo=;
+        b=vZbPEiFfqDdq44V3zwhpz0bQmuSuHZmIGtpDbJH6wVRb1hUvBL3Rh+818l301hwOSh
+         a90TJF60tSythWTjN8zqTAauayKNfYmo6HTkQZTvPoSQDxm1c6KARlNQgy/T/wqruxTT
+         rijfI1ztgZ0fwtOQmCpvhQ8lE3RjQU9mzNYIEY/rQDJy9ZfNE/scq/a67gs1BsdsvXOm
+         30bm6qb7gcKmb6KpM4xdmQgG+oENgoWDcK7LuJiRNZ5NHdeXCb9YLdFZhctwVqZpKAav
+         Dvz0fvdreSymOXOQvO1ieHgbY3YL1TtUEOcQvrIMq5IMycJ7pBjcWr/4YofB2r6QJRd9
+         +piA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725516423; x=1726121223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5LG1d3avN5co6G6gzC32VQF9Lut496WAZe399A99cSk=;
-        b=aI5mkAtC+11rlBstsEHw71Sp1p1bkCnxZqH189bE+7etc7a15HI7A3pjdjB/nIUzpT
-         7BlIi12kuaAjD2HspQ74GT3OehVCmenWwvS52WKwdGdGSXfgySAYSktZy50EJuYI1IdK
-         FHLi8WfpjBfp7TuYJTg0ZNLcXSijjBWAJ1Ogz6AwPJlQiv4GIfcvr+PxsSeaVEmUAiGG
-         ACvBBF0FJaGXge/iEGUDijlWc2OGrTwk5heWdv6U2fOnALJPu4gQfMYh9D2MGEsR6rmZ
-         TX6GUFlfD9nY1euEuM10dWY07uauYX69vH8ydtGGlEFkBuS8VKIGHOXna/rRBuwnAh7G
-         dteg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb0e2DIaZNwL8eqWSdH51vufVuXMWQ2SofJPV3kzeEh/nll2TGclpYpvzWZmWz9wNv4RqYf45nRC+Eg6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrJH6CAkhCSfyS9PHGwKtks15nZwMxoSvqWgJ2znvKveVzc7r9
-	pMNFHrg5beNsne1Fvn+tDjwKE55/mO5bHhCQnxTFT03XcRduuHn8nGEVOm72ZAB6rE2zo/XcPYm
-	ab/YJTnro8QbeUa0UVbwjJ3wXX4Q=
-X-Google-Smtp-Source: AGHT+IGB8ymXCte18l4OE7yiIbhXNCU7V0Ne5O+JMA0juqCKhfd8whLL2b7mgE/CSWSFgutJc0fE9TPCp01kmop852o=
-X-Received: by 2002:a05:6214:5982:b0:6c5:12b9:d5ce with SMTP id
- 6a1803df08f44-6c512b9d761mr74759286d6.4.1725516422860; Wed, 04 Sep 2024
- 23:07:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725516429; x=1726121229;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IsjtgqmTVZY/Avx+iwqJmjfLRr60MNvla09DOjSeazo=;
+        b=g5Bl93U9vTILYvdCL9z6ai4nnkPWFxXPLJiWLM+jpOTXXGfy9F1Im1mrBbGCcHSxTh
+         LQue98ElHFipRCAEZ6LEpNHiveDeZBJUv1DlaTabbiYVFzqShMk9JDqcmOS54hNduASW
+         uARdZTzhPHhJUeslAHyKqbtiLW2t5p/Lsy4qQi8iVmxtLUIATOljRI2Twi//D7oetlBW
+         8EP8GQbSGCsLVx5Xiq8MMeJL3QWyof7+bQxBUvVWhUsEEPQq1Ql5NBxcFJs1HVDF/vSO
+         f6o2XXYs3TZRe4ZiKwbg/yqjOT7oJnHGm9VYrYwiILIjZ+1mZ/ZFQMJxb2Opu4TYdNnd
+         alpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+fIqAdEGMD4R+toGZ26KLrEqdblrAIgxueT5MSEQ6yC/JuBte3K9TNlKxa4jr10C4LD/hZNcB/FBfXm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOxcIbkxaQygNtYwXc8YbyjWviNPEYjn+2PTIX4/F+tL9815co
+	cavdykuV+LGJmN5vG0JGlNinPdRWGGKIskZDuPKaCDbkoRlp7UyTF0NuBDnhDQd0GxIe0MU1foN
+	YQr1T7ybrbGRyaihKZCumjptTJlAM3BV3hPJf
+X-Google-Smtp-Source: AGHT+IFtujPA0bTF9fDiOxELAuwSwYS03wMEVuvJ9gcgDHzHNjL7n+UBsEChTzv19jvjY+9cvJh4fMeDMCD23S+GQ7E=
+X-Received: by 2002:a05:6902:724:b0:e1a:8ceb:49bb with SMTP id
+ 3f1490d57ef6-e1d1ec85b75mr2381787276.44.1725516429243; Wed, 04 Sep 2024
+ 23:07:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
- <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
- <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
- <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com> <CABXGCsOoL5vD0+FRALFQFr3ZBpb2z5mpGKzAD5RHoW9_sb5yaQ@mail.gmail.com>
- <f68020a3-c413-482d-beb2-5432d98a1d3e@amd.com>
-In-Reply-To: <f68020a3-c413-482d-beb2-5432d98a1d3e@amd.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Thu, 5 Sep 2024 11:06:52 +0500
-Message-ID: <CABXGCsMSTsBFW=OirDszPFVOiNgyOBSh3qyzAw-Coi-McnicAQ@mail.gmail.com>
-Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
- some RenPy games causes computer hang
-To: Leo Li <sunpeng.li@amd.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com, 
-	pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
+References: <20240827160631.67e121ed@canb.auug.org.au> <0a197b29-f0f4-429e-82c0-f54469f31b12@linuxfoundation.org>
+In-Reply-To: <0a197b29-f0f4-429e-82c0-f54469f31b12@linuxfoundation.org>
+From: David Gow <davidgow@google.com>
+Date: Thu, 5 Sep 2024 14:06:56 +0800
+Message-ID: <CABVgOSndJLkmeDDXhSSdGt3vaJ+_2p+RRhAK9gH8TP_zv9=gyQ@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the kunit-fixes tree
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Brendan Higgins <brendanhiggins@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 4:06=E2=80=AFAM Leo Li <sunpeng.li@amd.com> wrote:
+Hi all,
+
+Sorry for the delay: I've been away.
+
+Fix should be here:
+https://lore.kernel.org/linux-kselftest/20240905024757.3600609-1-davidgow@google.com/T/#u
+
+Thanks,
+-- David
+
+On Tue, 27 Aug 2024 at 21:39, Shuah Khan <skhan@linuxfoundation.org> wrote:
 >
-> Can you delete ", new_cursor_state" on that line and try again? Seems to =
-be a
-> unused variable warning being elevated to an error.
+> On 8/27/24 00:06, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > After merging the kunit-fixes tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> >
+> > include/kunit/test.h:492: warning: Function parameter or struct member 'test' not described in 'kunit_kfree_const'
+> >
+> > Introduced by commit
+> >
+> >    f2c6dbd22017 ("kunit: Device wrappers should also manage driver name")
+> >
 >
-
-Thanks, I applied both patches and can confirm that this solved the issue.
-The first patch was definitely not enough.
-
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-
---=20
-Best Regards,
-Mike Gavrilov.
+> Thank you Stephen.
+>
+> David,
+>
+> Can you send me fix for this on linux-kselftest kunit-fixes branch?
+>
+> thanks,
+> -- Shuah
 
