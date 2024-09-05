@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-317502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5D596DF37
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:09:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C6896DF2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2AA1F2389C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:09:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96ED1F2424C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8295E1A00CE;
-	Thu,  5 Sep 2024 16:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B2C19EEBF;
+	Thu,  5 Sep 2024 16:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="brgDPUjn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hwgKkTyW"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F38168B7;
-	Thu,  5 Sep 2024 16:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E9D4AEF5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552547; cv=none; b=DaX/1wB+uOnRQZnWH27Nup/PMeqFpzd1RWlhdF1PesidgBpHUMAVJRrTaCh9mBN1mR+jhgIPK/gEPlW69mud2G7t2wHtzLLAKcxluYsKaSE36PXR08xR0HnGPJgsOackEvSeDbivWOJbYpaKOziAl+gCa5Nx+sBAyoWEzLZy3/g=
+	t=1725552512; cv=none; b=Wjl9GtKJwbhO0LHL8mPB0wkiar37vr+hFky7TWKHOsfKpcJO6tHKDtr6J26QmJjjAMiosuTO+Rm2bsmXwVeQsr9C3IV4HhotzsK1XXY+N1xf62N43m9IeDSK8iHmex9vM2c7+DxM8ogmexylxvDvfTHR5rQ+3C/vDKZJIBh+dHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552547; c=relaxed/simple;
-	bh=Bn9OO23V/NtPesZCtF85oZlvJ2DsoA31jL73sUuUa3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CNX04MLKCoZGEON3Mg7Fo14OW0GNOONH6GU9li86weg7YnsvtTTNj63kyB5T1TN510vWsL9Ho4co1MUdZQPXch/mUJuU2lCWsKwgQNNlgMSCjJS/AFLkCgfvRbxyCZS5crElq8lQhSJQK2iXUkaUhkSEmdsgpYOX/y+Q7ALcT5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=brgDPUjn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48597OTm013539;
-	Thu, 5 Sep 2024 16:08:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LkliPMTK5r2MbIJ2PjBJ+/FLqZ7lN6OBhil7wXHgQ0k=; b=brgDPUjnvT8HYdWy
-	5lK52bT4j/228fVwW+9pzg5KSUXjio3vpZPpC9JG8j1JWrvAFuHal19236TRNOK5
-	sN3vDX13SXop1VEmyrLNerxkKOl1Jl4hlClo/P8RETfoatjbrsp6LunGoT2HwknQ
-	L2SHVuhGX1BvG+iiIqyXS97zfTZ/39/KPTuml8wMs3skEqTzdguao5STIb2hWIup
-	diKjigvub1fF49iaHwQJj6ssmYULoPrEJt2k5N+sAtR+eMTF0LiJAYD3dkMbP4ME
-	VO77NeFgcOqqMRx7a0Xlg/8P+MsXSJ9vDx8rLCiyV8sSajA602ONdbyyq9oARnW7
-	+2+mSw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41epwe41hh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 16:08:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485G8VMI026084
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 16:08:31 GMT
-Received: from [10.110.102.234] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
- 09:08:27 -0700
-Message-ID: <515a2837-69c3-47b2-978b-68ad3f6ad0fc@quicinc.com>
-Date: Thu, 5 Sep 2024 09:08:27 -0700
+	s=arc-20240116; t=1725552512; c=relaxed/simple;
+	bh=cuduEfejvKDdkbF8x7hNIMS7Tne31cgqmqyWhN0+h+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MYtc88dfUbqeshuDvNElXXJjUOpvFS7mnDWtmnLfXe1QRVqGMaHGJgEROi5V2VcTa0xa6UYXypkx6vwKuP3znoi8CFt46XuYyqKjgSO9H0sqLV4NVFE7ioQisDHe/owH4X3yREnwM4LaQsMIJqkYDTxZVH3KYYDTo6qNqcSnQ58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hwgKkTyW; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5dd43ab0458so602559eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 09:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725552509; x=1726157309; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f/WCYr1JbYjj0ZMzhtqR6ayRKYajzzVLnjoTs1Mi4yE=;
+        b=hwgKkTyW23VpeyAsBgbt2OczXe5oeqUNQ5Q9B7pA/zB9pbTj2D0x9f9SSrgVXZAk0A
+         MH5JAjyiqUukIksCkTWq1syZCBzrx7SsoIN8iNWVtkgk424vCS4evwQDbekI8yZV7Qjb
+         zvbRoGovMS+8Jpx6BBy0PD39yMyrCopiiy+tE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725552509; x=1726157309;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/WCYr1JbYjj0ZMzhtqR6ayRKYajzzVLnjoTs1Mi4yE=;
+        b=ZtkwQu8Q7Qvyg2ThyxBwkR63dC5KwSV6GGGK9pdMSjI9+bvdBf5sciRnBcAj1RZlya
+         nsAxkfh/l6ppXR/fLNo2sr46mvWikgfdYnJM40q/sVgXoT98HSCLkc74/f5pfg+J97ot
+         SSqhyMH3tjspR5ggoxB18NkulgVaAWalUhWwaGZNSSz76FSpGa3D/FbglB2njmIsEEBg
+         ZGrCojTlONJLze8Kn4SJSai7D3m7Wvd+h8DoTKbhOE7XJyWjF1sSssh0YFFWMCRq78sa
+         KZcgjyTDUGIYJAnACtOcFwjHFdPS6/IZMnM9tcoVJK5U3Ph69UddF5Qd94drLGf07wNW
+         bG7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVT1RVlaTkMYyuGei+v97dyf4NjHqRERGTm8vAzOaSsW4WSE1Xa7SWf4Wz93KdFYCYcuh0QrN8oRFJ0Fq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3FsDJ4N2ptgtvsV8TCq+X6b65Z6Z5GMfB7f6ynnRhLEqyqvsR
+	j4Rg3fOEOW/syuw4Jz75MdJUcp2JfTDiXQbDcgGXY1czUM79v9rSZLgsFnZUFwQ=
+X-Google-Smtp-Source: AGHT+IFWxPDKxw2DoJfRGTnmYYeDt0CbjxRedAwDovAPjSfmRBCSdw/D2Db1EVj5oCOC5Fs2eM2amA==
+X-Received: by 2002:a05:6870:331e:b0:25e:7a1:ea8f with SMTP id 586e51a60fabf-277d06c897amr16978310fac.47.1725552508933;
+        Thu, 05 Sep 2024 09:08:28 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e935a3sm3742992173.108.2024.09.05.09.08.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 09:08:27 -0700 (PDT)
+Message-ID: <f22bc072-c8b0-405f-a4e6-da6213350c1a@linuxfoundation.org>
+Date: Thu, 5 Sep 2024 10:08:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,105 +72,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
-        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-17-quic_nkela@quicinc.com>
- <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
- <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
- <9a655c1c-97f6-4606-8400-b3ce1ed3c8bf@kernel.org>
- <516f17e6-b4b4-4f88-a39f-cc47a507716a@quicinc.com>
- <2f11f622-1a00-4558-bde9-4871cdc3d1a6@lunn.ch>
- <204f5cfe-d1ed-40dc-9175-d45f72395361@quicinc.com>
- <70c75241-b6f1-4e61-8451-26839ec71317@kernel.org>
- <75768451-4c85-41fa-82b0-8847a118ea0a@quicinc.com>
- <ce4d6ea9-0ba7-4587-b4a7-3dcb2d6bb1a6@kernel.org>
- <4896510e-6e97-44e0-b3d7-7a7230f935ec@quicinc.com>
- <b1ad1c7a-0995-48e0-8ebc-46a39a5ef4b3@kernel.org>
+Subject: Re: [PATCH] Date: Remove unused macro
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, shuah@kernel.org
+Cc: jstultz@google.com, tglx@linutronix.de, anna-maria@linutronix.de,
+ frederic@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240905085230.48438-1-zhangjiao2@cmss.chinamobile.com>
 Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <b1ad1c7a-0995-48e0-8ebc-46a39a5ef4b3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240905085230.48438-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -LGl1Qpf7lJx26QAmJxpxVgv0VrmW08G
-X-Proofpoint-GUID: -LGl1Qpf7lJx26QAmJxpxVgv0VrmW08G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_11,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
- suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050120
 
+On 9/5/24 02:52, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> This macro NSEC_PER_SEC is never referenced in the code.
+> Just remove it.
 
-On 9/5/2024 7:39 AM, Krzysztof Kozlowski wrote:
-> On 05/09/2024 16:15, Nikunj Kela wrote:
->> On 9/5/2024 7:09 AM, Krzysztof Kozlowski wrote:
->>> On 05/09/2024 16:03, Nikunj Kela wrote:
->>>> On 9/5/2024 1:04 AM, Krzysztof Kozlowski wrote:
->>>>> On 04/09/2024 23:06, Nikunj Kela wrote:
->>>>>> On 9/4/2024 9:58 AM, Andrew Lunn wrote:
->>>>>>>> Sorry, didn't realize SPI uses different subject format than other
->>>>>>>> subsystems. Will fix in v3. Thanks
->>>>>>> Each subsystem is free to use its own form. e.g for netdev you will
->>>>>>> want the prefix [PATCH net-next v42] net: stmmac: dwmac-qcom-ethqos:
->>>>>> of course they are! No one is disputing that.
->>>>>>> This is another reason why you should be splitting these patches per
->>>>>>> subsystem, and submitting both the DT bindings and the code changes as
->>>>>>> a two patch patchset. You can then learn how each subsystem names its
->>>>>>> patches.
->>>>>> Qualcomm QUPs chips have serial engines that can be configured as
->>>>>> UART/I2C/SPI so QUPs changes require to be pushed in one series for all
->>>>>> 3 subsystems as they all are dependent.
->>>>> No, they are not dependent. They have never been. Look how all other
->>>>> upstreaming process worked in the past.
->>>> Top level QUP node(patch#18) includes i2c,spi,uart nodes.
->>>> soc/qcom/qcom,geni-se.yaml validate those subnodes against respective
->>>> yaml. The example that is added in YAML file for QUP node will not find
->>>> sa8255p compatibles if all 4 yaml(qup, i2c, spi, serial nodes) are not
->>>> included in the same series.
->>>>
->>> So where is the dependency? I don't see it. 
->> Ok, what is your suggestion on dt-schema check failure in that case as I
->> mentioned above? Shall we remove examples from yaml that we added?
-> I don't understand what sort of failure you want to fix and why examples
-> have any problem here. 
+Is this duplicate patch?
 
-If the QUPs yaml changes are not included in the same series with
-i2c,serial yaml changes, you see these errors:
+I think I commented on your patch on futex - include how
+you found the problem in change logs. Also you have to
+include subsystem prefix in the subject line:
 
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.example.dtb: geniqup@9c0000: serial@990000:compatible:0: 'qcom,sa8255p-geni-uart' is not one of ['qcom,geni-uart', 'qcom,geni-debug-uart']
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.example.dtb: geniqup@9c0000: i2c@984000:compatible:0: 'qcom,sa8255p-geni-i2c' is not one of ['qcom,geni-i2c', 'qcom,geni-i2c-master-hub']
+selftests/timers: Remove unused NSEC_PER_SEC macro
 
-> I said it multiple times already but I think you
-> never confirmed. Do you understand how patches are merged? That they go
-> via different trees but everything must be 100% bisectable?
->
-> Best regards,
-> Krzysztof
->
+I see another patch with similar problems from you.
+Refer to submitting patches document in the kernel
+repo.
+
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>   tools/testing/selftests/timers/change_skew.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/timers/change_skew.c b/tools/testing/selftests/timers/change_skew.c
+> index 4421cd562c24..18e794a46c23 100644
+> --- a/tools/testing/selftests/timers/change_skew.c
+> +++ b/tools/testing/selftests/timers/change_skew.c
+> @@ -30,9 +30,6 @@
+>   #include <time.h>
+>   #include "../kselftest.h"
+>   
+> -#define NSEC_PER_SEC 1000000000LL
+> -
+> -
+>   int change_skew_test(int ppm)
+>   {
+>   	struct timex tx;
+
+thanks,
+-- Shuah
 
