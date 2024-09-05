@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-317529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5258596DF96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFE696DF9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D2D1C216F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C361C23A32
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9FF1A01B6;
-	Thu,  5 Sep 2024 16:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEC11A01B5;
+	Thu,  5 Sep 2024 16:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1QvJ8nx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2t4da4P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFD73C099;
-	Thu,  5 Sep 2024 16:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFCF3C099;
+	Thu,  5 Sep 2024 16:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553639; cv=none; b=tfV1WGLgGkw2w+IavdQ7r/A9x43ZaBFwX/HDyMlens1e2uesvIk7LcxYFpzN81AfGUmk4scTNW+pOOOOmgGhJ8v9EcB4YwzpbDjiyv1ESt0qTB7nu+6RfqlMnt814iLcjH7xCQSRvQyeNad0+0hQRrtcbzVccL/ziJnlUXp+HEc=
+	t=1725553688; cv=none; b=lvE5jP/ydLrG8refxibtPa5XQLkDNHtK+tIKt/Y788EPEShoxqhnlitYQbjGFo39icl3R58kdcFT8YtxOplFmCQRUK/FaA21EOXhEjK7iW7VIgo9m7FhnC8HvpG1csaIMl+mYl8WyWptKub6YQ6W5jAJko3adx2QaoeBPgST9BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553639; c=relaxed/simple;
-	bh=deLukwfDk5TXdfNYzDpqI2Ea9Akv/6QBWcJKsEUcqbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYMfaUNAIoTPuPmNy1jJStAv3JrXa7CkzeDM1pOI7A42R4uZaFLo2qZ5HCJyT7x0GyFwHlKcD1tSelGmocuTr8FnF5/WQQ8z4YQZIi4W/GETGn9Hjqhqy+hWYDGsy22jrRC/ewr8mAkZYwMNOZCJlmg5gmF+sOBCjCW0KRcgAYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1QvJ8nx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A050C4CEC3;
-	Thu,  5 Sep 2024 16:27:19 +0000 (UTC)
+	s=arc-20240116; t=1725553688; c=relaxed/simple;
+	bh=qfpyt05VBBFtRpwCjxp29rfQKijUZcZ5AfDCicpVIVw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=PpNA//h0jvvndyoo4KwryJSiYoL1K6KViJehZAEsdcS6Eh9RCq+ubyiZjgsOJoSyDpYFqS3GjATf32PHqDrZ5Fbqs+e3MvxiwDhUrkboZl0uHKTKX8v0xP8C9WQHH/US6Xt7ctRpmkueSdJ2Gf9L8pZBvxaUUMxkgXtnbRUGsRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2t4da4P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB152C4CEC3;
+	Thu,  5 Sep 2024 16:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725553639;
-	bh=deLukwfDk5TXdfNYzDpqI2Ea9Akv/6QBWcJKsEUcqbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L1QvJ8nx/Tf5NJHNuRa9X6OyfxMtpvc0DCoebrrYQWZRIrk+ACkBOzB0BmCE9weAo
-	 sp1HXD+v4yHNM5hPTjx8LnlbseC8LaCAmRQ8860tF6jtKVd5AZEWcSOGYfW4l8MVEP
-	 TR07dTnlEBmoUvQF56aEEgI9HFLfAKpvxSs0EdjlJtZCOPAEM371s1LqbZosLM0Yue
-	 gzbEdr6ELyKLr11VyBNHbHvd9H4xiWCSpry1jZORRkv+LH0X0CZBAVLRusGmr3XNGt
-	 NiEkqVBDLPvxlp2fVufUqBj3bA7GU9vCcahXG22ij7+4huYwAXXc/J7AurdMZnzTKc
-	 cdo1IocbMiXEQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1smFKa-000000005KC-44Ar;
-	Thu, 05 Sep 2024 18:27:37 +0200
-Date: Thu, 5 Sep 2024 18:27:36 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	abel.vesa@linaro.org, johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Subject: Re: [PATCH v6 3/4] PCI: qcom: Add equalization settings for 16.0 GT/s
-Message-ID: <Ztnb-GauC_8D8N-i@hovoldconsulting.com>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
- <20240904-pci-qcom-gen4-stability-v6-3-ec39f7ae3f62@linaro.org>
- <ZtgqvXGgp2sWNg5O@hovoldconsulting.com>
- <20240905152742.4llkcjvvu3klmo6j@thinkpad>
+	s=k20201202; t=1725553687;
+	bh=qfpyt05VBBFtRpwCjxp29rfQKijUZcZ5AfDCicpVIVw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=T2t4da4P2DLWx1f/vk6RYiXPdTg/0LUt+szWSRdf+G3M5WyISWqHxkByn5OlUYee+
+	 mj5Fik14JDkC72RXPxMkj5210VQfOHozI5pHRvAgpMhZypRpckOaPZLHql9xzSBrlR
+	 vWHTOap6rc9Nz/BkI+liZeaK91vZ1TftDxYaywkqKXW0qtsqJ1burs/MidgB8TK3Q+
+	 QbKUkvLUPtEnpBrtZkaGgYZ8RE93FA9ThubovRmmpTZVu70oW+j2v5fI5CdVhbpSjH
+	 numTW+5S/bG9M4XTpew5FDfnI8qiFHcmUKX0OnCgMaXegmK/4kJwDkmBgkrB24mzqN
+	 zNlwc2uGnsoaA==
+Date: Thu, 05 Sep 2024 11:28:06 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905152742.4llkcjvvu3klmo6j@thinkpad>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, devicetree@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>, Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+Message-Id: <172555368556.2000291.1962340187875764544.robh@kernel.org>
+Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
+ property
 
-On Thu, Sep 05, 2024 at 08:57:42PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Sep 04, 2024 at 11:39:09AM +0200, Johan Hovold wrote:
 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
-> > > new file mode 100644
-> > > index 000000000000..259e04b7bdf9
-> > > --- /dev/null
-> > > +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
-> > > @@ -0,0 +1,8 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +/*
-> > > + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > > + */
-> > > +
-> > > +#include "pcie-designware.h"
-> > 
-> > You only need a forward declaration:
-> > 
-> > 	struct dw_pcie;
-> > 
-> > > +
-> > > +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
-> > 
-> > Compile guard still missing.
+On Thu, 05 Sep 2024 17:17:31 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> There is a version AXI DAC IP block (for FPGAs) that provides
+> a physical bus for AD3552R and similar chips. This can be used
+> instead of a typical SPI controller to be able to use the chip
+> in ways that typical SPI controllers are not capable of.
+> 
+> The binding is modified so that either the device is a SPI
+> peripheral or it uses an io-backend.
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++--
+>  1 file changed, 40 insertions(+), 2 deletions(-)
+> 
 
-Sorry, I meant to say *include* guard here.
- 
-> Perhaps we can just get rid of the Kconfig entry and build it by default for
-> both RC and EP drivers? I don't see a value in building it as a separate module.
-> And we may also move more common code in the future.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-It is already built by default for both drivers. I'm not sure what
-you're suggesting here.
+yamllint warnings/errors:
 
-Johan
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb: /example-1/axi_dac@44a70000: failed to match any schema with compatible: ['adi,axi-dac-ad3552r']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
