@@ -1,168 +1,108 @@
-Return-Path: <linux-kernel+bounces-316888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D7996D694
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:00:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B7D96D696
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E514C1F265D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E02285CD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54447199222;
-	Thu,  5 Sep 2024 10:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCFC1991C1;
+	Thu,  5 Sep 2024 11:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KIvnwBWC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pYX8tclX"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3A21990CE;
-	Thu,  5 Sep 2024 10:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2744C194A4C;
+	Thu,  5 Sep 2024 11:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725533997; cv=none; b=RUvaUd87nmmLw7g9X0AW0QKjU2Y4W4O2+r0BwsCZS33Fvj3qlFpdGvcaN7/zqcPu1aMZIGApLBweca6PCTLvK5pce640aod4KA2akvkqpXUn3aqNW06XqsPXdSSE2nmJJiwxQZfn7uIq5RBTaatg6ketVOcJpswHANnFyykR0ik=
+	t=1725534015; cv=none; b=bNhmCQIdtW6Er+ypPuBBGmHIKPWNdO9QAHsgny7f1+o8FIztoAE+vsUII5eTDdsOebnS2rc/+2iEaVA/sIiTxkzfFIOspiEa0SMiwp7YCXY0yP5elnNoXDMMNXGh7VMw+EOuHealXLGKGlRYg6F2lYHGtJc49M1HDy5EDMr6E64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725533997; c=relaxed/simple;
-	bh=G8vIAqhBoCUmW3PYj1YRTTXzOEypuOjhZ2S4WZOUKEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PrS8lRKm/XXvj8cF/v1BvOeEk/zMZFtQImRE7ZOfkktIlzb2h220SyQqfYfnJv60N5YvNX+Larr8kiS/C+F131rwa1n+dS/kSouXHUpjJobdDbJrlUaiGBIUsISPZo3wGBo5l3EHnWMBqUNBGD2C6+H/gS7FZxDrYmXVpjKT2/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KIvnwBWC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48597lfR004502;
-	Thu, 5 Sep 2024 10:59:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/hRnIwW1i7chXnFLofgXR//0tKVfnDVwkMWp0okmFq8=; b=KIvnwBWCsCyS8wN4
-	LB3h4jjajGTyUlBk3rb8J7I/JzcOCtWKLfnS1Ndqt9LAaWUOcoYmUKK7UNg4Bye/
-	pXyvj+CbfDL64DbStSTex8qhc7OSrI4s9Nfn2aFn8n/Q19IvGr2wwxWWlJ2UHuLm
-	CXvdJ+QSjpU0cYUEiZtntZR+0/GFB/JigDktXdrfrkKDKEryBzlCQ9OgQlJnVO7s
-	H/rR+eBKDi9YHbWyg8deBaQedTXM8KNrx2zYu/pN9lFlr6ujD/j76cX1e/2WJo4B
-	EaJGKTaADWZCK+3efxaz58apXYcTs5Z2P87fWaHgw1k+XuOm94fglKt/g85WSyP3
-	ITrBAQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt675svf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 10:59:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485AxlJo008601
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 10:59:47 GMT
-Received: from [10.216.46.64] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
- 03:59:42 -0700
-Message-ID: <bcfdeaf6-58c7-1c53-035b-07ae4bfa37f0@quicinc.com>
-Date: Thu, 5 Sep 2024 16:29:39 +0530
+	s=arc-20240116; t=1725534015; c=relaxed/simple;
+	bh=qqu+UVLLFRQmFW4+PgMflQz1ZFN1XGdRbxoaV3dbM+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=crIUI9Fiksz6qQ0zbpFBHRESBCSOQpbhIapxMMi2n0GvuerzVoVGYLFKuyEglgZagxRIK6ZRHAt5tywTqhUnSoyfzsiyFbttoz6XT7nFjBO2UqJfG4q9DVO1R4q1+j6iyivfR9DmUy0fwppoGRzAwJdRQSmWUg5KT5631CWV47Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pYX8tclX; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XwQHAg35CoC49Rywl870ZXsEshaEFtP6Wz0WnEqtpwY=; b=pYX8tclX9lCLyy50pa45sBsrsF
+	6W4BLiL4jp1An+8SrqJFQH3z0pGw21gaMNbhw6fJzrKOAEWDiE8xWr745SMugaTYhszJzaxbHWGzE
+	0gpMxCKWAmucxsH8E8ENxhvceLK9AoGMf3XPfyGOEqH2nif6xrOZ7++aIi6zNZgWf4uka+pA8E6c1
+	VM/bOHypx8TBnYrL4FiPbFodrKRFDPDrkCIKt+sNhWdE1T2wcQF/3s5u16N01+cbUA1giUALvN95d
+	mgvwuWKkdWGBswjC9KmDKY/NOYAAjsNV9YyWi5u/i7DCdvIy5UbVNgUucRDA5/tM7BFNHBLzePERl
+	nVYjORsA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1smADe-00000000T8k-3JzY;
+	Thu, 05 Sep 2024 11:00:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6EC9C300599; Thu,  5 Sep 2024 13:00:06 +0200 (CEST)
+Date: Thu, 5 Sep 2024 13:00:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
+Message-ID: <20240905110006.GF15400@noisy.programming.kicks-ass.net>
+References: <20240819154259.215504-1-axboe@kernel.dk>
+ <20240904142841.GL4723@noisy.programming.kicks-ass.net>
+ <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
+ <CAJZ5v0hVghgKgv0zqabL1m2FT6wou8-tW_9Mm-_9=0-3yhMb3A@mail.gmail.com>
+ <20240905093607.GB15400@noisy.programming.kicks-ass.net>
+ <3efadac3-1aa0-4747-b140-3fb6f267586e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 03/29] media: iris: add platform driver for iris video
- device
-Content-Language: en-US
-To: Dmitry Baryshkov <dbaryshkov@gmail.com>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-3-c5fdbbe65e70@quicinc.com>
- <74126160-57f9-4abf-a26c-3491c8f3dd78@linaro.org>
- <zfltcl5x4hol2foftyvr4oigxus4hnequd74zi7bdd7tsdv56q@3nphukr4zgmm>
- <fa674301-9c4e-c4de-361a-1d1abf413ffc@quicinc.com>
- <adb2eed8-8d5e-a052-81b3-cde705c3503b@quicinc.com>
- <ydah7lm6ov26fy5odqc6u6vlfu2w5gzqxquplimhbdamw3gdpj@dmgdr52pvm5g>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <ydah7lm6ov26fy5odqc6u6vlfu2w5gzqxquplimhbdamw3gdpj@dmgdr52pvm5g>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5r8qYnlRL7_Ea-fKWD5EzJ5GEkpV1K_L
-X-Proofpoint-GUID: 5r8qYnlRL7_Ea-fKWD5EzJ5GEkpV1K_L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_06,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3efadac3-1aa0-4747-b140-3fb6f267586e@arm.com>
+
+On Thu, Sep 05, 2024 at 11:31:09AM +0100, Christian Loehle wrote:
+> On 9/5/24 10:36, Peter Zijlstra wrote:
+> > On Wed, Sep 04, 2024 at 05:18:57PM +0200, Rafael J. Wysocki wrote:
+> > 
+> >> To be more precise, there are two different uses of "iowait" in PM.
+> >>
+> >> One is the nr_iowait_cpu() call in menu_select() and the result of it
+> >> is used for two purposes: (1) select different sets of statistics
+> >> depending on whether or not this number is zero and (2) set a limit
+> >> for the idle state's exit latency that depends on this number (but
+> >> note that it only takes effect when the "iowait" statistics are used
+> >> in the first place).  Both of these are arguably questionable and it
+> >> is unclear to me whether or not they actually help and how much.
+> > 
+> > So this one is very dubious, it relies on tasks getting back on the CPU
+> > they went to sleep on -- not guaranteed at all.
+> > 
+> >> The other use is boosting CPU frequency in schedutil and intel_pstate
+> >> if SCHED_CPUFREQ_IOWAIT is passed to them which in turn depends on the
+> >> p->in_iowait value in enqueue_task_fair().
+> > 
+> > This one is fine and makes sense. At this point we know that p is going
+> > to run and where it is going to run.
+> 
+> On any even remotely realistic scenario and hardware though the boost
+> isn't effective until the next enqueue-dequeue-cycle, so if your above
+> objection is based on that, I would object here too, using your argument.
+
+That is a quality of implementation issue with schedutil no?
+
+The whole notion that the wait was for feeding external hardware, and
+thus the normal utilization metric doesn't work right thing is still
+valid.
 
 
-
-On 9/5/2024 3:41 PM, Dmitry Baryshkov wrote:
-> On Thu, Sep 05, 2024 at 11:45:25AM GMT, Dikshita Agarwal wrote:
->>
->>
->> On 9/5/2024 11:42 AM, Dikshita Agarwal wrote:
->>>
->>>
->>> On 8/29/2024 2:43 PM, Dmitry Baryshkov wrote:
->>>> On Tue, Aug 27, 2024 at 03:08:03PM GMT, Bryan O'Donoghue wrote:
->>>>> On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
->>>>>> +static const struct of_device_id iris_dt_match[] = {
->>>>>> +	{ .compatible = "qcom,sm8550-iris", },
->>>>>> +	{ .compatible = "qcom,sm8250-venus", },
->>>>>> +	{ },
->>>>>> +};
->>>>>> +MODULE_DEVICE_TABLE(of, iris_dt_match);
->>>>>
->>>>> The enabling patch for the compat strings should come last - if its first
->>>>> then the time between the compat add and the last patch is a dead zone where
->>>>> things are bound to break on a booting board.
->>>>
->>>> But then it's impossible to test the driver in the interim state.
->>>> Moreover enabling it at the end only makes it hard to follow platform
->>>> data changes. What about adding sm8550 at this point and adding sm8250
->>>> at the end? Or enabling qcom,sm8550-iris and the fake qcom,sm8250-iris
->>>> now (and clearly documenting it as fake) and as the last patch change it
->>>> to qcom,sm8250-venus.
->>>
->>> Sure, we will add qcom,sm8250-iris at this point so that it enables the
->>> testing of the driver, and will add one patch at the last to add
->>> qcom,sm8250-venus.
->> Sorry fixing the typos. what I meant was,
->> we will add qcom,sm8550-iris at this point so that it enables the
->> testing of the driver, and will add one patch at the last to add
->> qcom,sm8250-venus.
-> 
-> I hope you meant 'to change qcom,sm8250-iris to qcom,sm8250-venus'. Also
-> please clearly document that qcom,sm8250-iris is a temporary thing just
-> to facilitate documentation and testing of the driver to be removed as a
-> last patch.
-> 
-I was agreeing to follow this suggestion of yours
-"What about adding sm8550 at this point and adding sm8250
-at the end?"
-Where we will add sm8550(qcom,sm8550-iris) first so driver can be tested on
-sm8550 and add sm8250(qcom,sm8250-venus) in the last patch.
-I think Bryan also agreed to the same.
->>>
->>> Thanks,
->>> Dikshita
->>>>
->>>
-> 
 
