@@ -1,78 +1,108 @@
-Return-Path: <linux-kernel+bounces-316742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D98F96D359
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:33:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CA696D35C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507821C25A61
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D611C25AA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22092198E84;
-	Thu,  5 Sep 2024 09:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91E219885E;
+	Thu,  5 Sep 2024 09:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5795zeE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="tnwRddru"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6163197A77;
-	Thu,  5 Sep 2024 09:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86277192B94
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528699; cv=none; b=Uo5ybCFm5aKa9nbC/Y+811l7Tj+Dr3y+eWeYzqPKrdo8/vlZD60AVpD3r4rYKcQAXXop5bWK5xrLs0hgxzCMimzNmCDnzfyIvDPMIK+rGIFIDN7tir2sLEVSZtgh+07w68TQYG5jRF2L6fnnL29OmHH+BfjdV1T6adXmpDPc5RQ=
+	t=1725528731; cv=none; b=Q6ZHwZCW5PfaPcj5yNz6aavrmZ0t5/3zFSizf2AMC+/0VdLA/kGCxxY8TPyU3/S9FVcSZTn9bn5F8n5OeqngJm38yEaVAjUCtIHcB7kit3yP4tTOAINqfLmp3yiEUgZCBTyZtQQY+SBGKSTEqMGHKc7wI6M2GbZboel1s1RPpPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528699; c=relaxed/simple;
-	bh=086CJU3xj3vqkfEQ8ZJx6ssAsn3JtiLdqrG90LXtwfo=;
+	s=arc-20240116; t=1725528731; c=relaxed/simple;
+	bh=LQ5PvTcHlXGD/hkNFOkC5JReMWoYpmLiurPZY9rQkbs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qis5e5l0g7v+ewGWQiyh/WsuIFIJDyKL1I3oZHxSlIGOq1XJTN+2a2U8eH1hdsTjYoMWzqrc9kmwBv1gzkHls3ntdYSwOpAB8wEuAa3ILIkVDx+vg/dhJSECY7ywSm8JlbyEHUl/qJl6EazrUxQWf3WbGWcijLuajf9ZbUjVNc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5795zeE; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725528698; x=1757064698;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=086CJU3xj3vqkfEQ8ZJx6ssAsn3JtiLdqrG90LXtwfo=;
-  b=e5795zeEOUckBAMm8cMM20QwbMVBgGztMf6M6FCsWBuKqHICD+JaKl2c
-   qby0np2u7IIhfLgm508WUH3JEm0K9puuHk6WpdvVPSRQ5EpxPp8m/q4N5
-   TbjlaDlkyJMYUavLxBr5E8a6feZXG9yBbWYqv1f03b8wZF8L/H5ZOiaYN
-   +AESDwNzSKqGmOkIuLBXLzIJc307AZQvaQ6Q9pLek+MBPHZGtEa/jhst6
-   OcgdDJWUyLsfw0TDEb406mgiQQuC8ADJ/mXMo/5RBlcfAlI/V8j6qOOLK
-   p4VMSsWcFEwG1FcUPodeNrAuiwnrlVaxQkCqRn7zymkL9CcA4bccBuPxH
-   g==;
-X-CSE-ConnectionGUID: 1PKB7GXPRVmOzQv5iIGmBg==
-X-CSE-MsgGUID: WuI+pNrvSnKVVTD561UXMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24394656"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="24394656"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 02:31:37 -0700
-X-CSE-ConnectionGUID: NbcObBuxSlm459nDSKj5Mg==
-X-CSE-MsgGUID: cRxlMwArSUWmAvtcHovaYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="69976282"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.103])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 02:31:33 -0700
-Date: Thu, 5 Sep 2024 12:31:26 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Chenyi Qiang <chenyi.qiang@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 14/25] KVM: TDX: initialize VM with TDX specific
- parameters
-Message-ID: <Ztl6bg2vfah35Zlj@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-15-rick.p.edgecombe@intel.com>
- <43a12ed3-90a7-4d44-aef9-e1ca61008bab@intel.com>
- <ZtaiNi09UQ1o-tPP@tlindgre-MOBL1>
- <dd48cb68-1051-48ec-ae29-874c2a77f30f@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtBtagd6SU+PRfZew66Cl6h9y/vksyzCr/TN+6gmmhcPAkd6I6icWWnbvg1+qkd6q8Bn94qRl9JBXnp49sNw4PnaKbIuYKlCUvJyWyJhmQ1LayUowK9avrSBSqCUC1OlRAoeftbkq2vEJO+giIGSCBCAbEb9q/ThYQNCpHnVMmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=tnwRddru; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3787f30d892so308831f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 02:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725528728; x=1726133528; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EYvR2W7jIGeeSA8kiFQ7IQfHxoQoKGRP/A4d6og6D5c=;
+        b=tnwRddru5evt6kv6LiJrqsUHyrqRwL41fYkag8/lFruPP+3DgRx56RgZKUX0ddOVxJ
+         hnWKDe6AuaFwBbj7BtzwyXUAx/yIkjeeucknxG5HtIOhl+Hj234BsdLp/O9om88q5q/W
+         rBbEw3q0z99OHVhtnL6QTFYuJzGFxbrzXd4hQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725528728; x=1726133528;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EYvR2W7jIGeeSA8kiFQ7IQfHxoQoKGRP/A4d6og6D5c=;
+        b=JoOXGRmVoUXbUfOfFXGI5J0DcGWxAW0IjIJiYaJkwE9tb+1yUFxcJTvHCcVfU7b4SX
+         5TOBAGwmRaMyT9rm8oMyGgyteTR4jFr36qX1/b0wUgBD3ScEf58CynR0n5ifMayLVmuK
+         mw/8BTJwQ6E+x/sPcDj4b9EZXlfm8yzm2jh/SnoPVomm9zzROHeFXERP5CN9AFV893V/
+         6fVMXk9hUbmg6/R5ojeiVzP6NXMrI1to/K5axWiDgCSIezUNYe0dfS54nt2E/pHkJTF+
+         0Kw/jouWIBaaRuhkrcZkTyGUpenqSwx24L+rlOytC6MtBEDM++6ADsCm9eNawlq6Wwz3
+         bF1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtI4fD8fA4RxYoexJjh4OXgL1iNVr88Sj1omjaOTfL6dhfe2bB4iJBvtn+VJJ7daB2NHAEzXjilelvbdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6SS5Zw72ZrDl7CrXojoeFmMTFfJPh0Q3bS8pppUDolXcYb/8U
+	2psMBdMEFhF/xobmHm+p5dLh7P6FemJA2by4SkMSY8Tj12qr7fBp+SNEEMrGd30=
+X-Google-Smtp-Source: AGHT+IFllECApaNAIcoK8oWhKRk18ZBq0kn6XAZqAdlvY0zydI7UVq0JZx8/ZTiSJkGJqBngRd8J0Q==
+X-Received: by 2002:a5d:62d0:0:b0:374:be0f:45c1 with SMTP id ffacd0b85a97d-374bf1e46ffmr9823673f8f.53.1725528727546;
+        Thu, 05 Sep 2024 02:32:07 -0700 (PDT)
+Received: from LQ3V64L9R2 (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e274b6sm228268835e9.33.2024.09.05.02.32.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:32:07 -0700 (PDT)
+Date: Thu, 5 Sep 2024 11:32:04 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <Ztl6lATqzndc2-hK@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-6-jdamato@fastly.com>
+ <20240829153105.6b813c98@kernel.org>
+ <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+ <20240830142235.352dbad5@kernel.org>
+ <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+ <Ztjv-dgNFwFBnXwd@mini-arch>
+ <20240904165417.015c647f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,92 +111,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dd48cb68-1051-48ec-ae29-874c2a77f30f@intel.com>
+In-Reply-To: <20240904165417.015c647f@kernel.org>
 
-On Tue, Sep 03, 2024 at 04:04:47PM +0800, Chenyi Qiang wrote:
-> 
-> 
-> On 9/3/2024 1:44 PM, Tony Lindgren wrote:
-> > On Tue, Sep 03, 2024 at 10:58:11AM +0800, Chenyi Qiang wrote:
-> >> On 8/13/2024 6:48 AM, Rick Edgecombe wrote:
-> >>> From: Isaku Yamahata <isaku.yamahata@intel.com>
-> >>> @@ -543,10 +664,23 @@ static int __tdx_td_init(struct kvm *kvm)
-> >>>  		}
-> >>>  	}
-> >>>  
-> >>> -	/*
-> >>> -	 * Note, TDH_MNG_INIT cannot be invoked here.  TDH_MNG_INIT requires a dedicated
-> >>> -	 * ioctl() to define the configure CPUID values for the TD.
-> >>> -	 */
-> >>> +	err = tdh_mng_init(kvm_tdx, __pa(td_params), &rcx);
-> >>> +	if ((err & TDX_SEAMCALL_STATUS_MASK) == TDX_OPERAND_INVALID) {
-> >>> +		/*
-> >>> +		 * Because a user gives operands, don't warn.
-> >>> +		 * Return a hint to the user because it's sometimes hard for the
-> >>> +		 * user to figure out which operand is invalid.  SEAMCALL status
-> >>> +		 * code includes which operand caused invalid operand error.
-> >>> +		 */
-> >>> +		*seamcall_err = err;
-> >>
-> >> I'm wondering if we could return or output more hint (i.e. the value of
-> >> rcx) in the case of invalid operand. For example, if seamcall returns
-> >> with INVALID_OPERAND_CPUID_CONFIG, rcx will contain the CPUID
-> >> leaf/sub-leaf info.
+On Wed, Sep 04, 2024 at 04:54:17PM -0700, Jakub Kicinski wrote:
+> On Wed, 4 Sep 2024 16:40:41 -0700 Stanislav Fomichev wrote:
+> > > I think what you are proposing seems fine; I'm just working out the
+> > > implementation details and making sure I understand before sending
+> > > another revision.  
 > > 
-> > Printing a decriptive error here would be nice when things go wrong.
-> > Probably no need to return that information.
+> > What if instead of an extra storage index in UAPI, we make napi_id persistent?
+> > Then we can keep using napi_id as a user-facing number for the configuration.
 > > 
-> > Sounds like you have a patch already in mind though :) Care to post a
-> > patch against the current kvm-coco branch? If not, I can do it after all
-> > the obvious comment changes are out of the way.
+> > Having a stable napi_id would also be super useful for the epoll setup so you
+> > don't have to match old/invalid ids to the new ones on device reset.
 > 
-> According to the comment above, this patch wants to return the hint to
-> user as the user gives operands. I'm still uncertain if we should follow
-> this to return value in some way or special-case the
-> INVALID_OPERAND_CPUID_CONFIG like:
+> that'd be nice, initially I thought that we have some drivers that have
+> multiple instances of NAPI enabled for a single "index", but I don't
+> see such drivers now.
 > 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index c00c73b2ad4c..dd6e3149ff5a 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -2476,8 +2476,14 @@ static int __tdx_td_init(struct kvm *kvm, struct
-> td_params *td_params,
->                  * Return a hint to the user because it's sometimes hard
-> for the
->                  * user to figure out which operand is invalid.
-> SEAMCALL status
->                  * code includes which operand caused invalid operand error.
-> +                *
-> +                * TDX_OPERAND_INVALID_CPUID_CONFIG contains more info
-> +                * in rcx (i.e. leaf/sub-leaf), warn it to help figure
-> +                * out the invalid CPUID config.
->                  */
->                 *seamcall_err = err;
-> +               if (err == (TDX_OPERAND_INVALID |
-> TDX_OPERAND_ID_CPUID_CONFIG))
-> +                       pr_tdx_error_1(TDH_MNG_INIT, err, rcx);
->                 ret = -EINVAL;
->                 goto teardown;
->         } else if (WARN_ON_ONCE(err)) {
-> diff --git a/arch/x86/kvm/vmx/tdx_errno.h b/arch/x86/kvm/vmx/tdx_errno.h
-> index f9dbb3a065cc..311c3f03d398 100644
-> --- a/arch/x86/kvm/vmx/tdx_errno.h
-> +++ b/arch/x86/kvm/vmx/tdx_errno.h
-> @@ -30,6 +30,7 @@
->   * detail information
->   */
->  #define TDX_OPERAND_ID_RCX                     0x01
-> +#define TDX_OPERAND_ID_CPUID_CONFIG            0x45
->  #define TDX_OPERAND_ID_TDR                     0x80
->  #define TDX_OPERAND_ID_SEPT                    0x92
->  #define TDX_OPERAND_ID_TD_EPOCH                        0xa9
+> > In the code, we can keep the same idea with napi_storage in netdev and
+> > ask drivers to provide storage id, but keep that id internal.
+> > 
+> > The only complication with that is napi_hash_add/napi_hash_del that
+> > happen in netif_napi_add_weight. So for the devices that allocate
+> > new napi before removing the old ones (most devices?), we'd have to add
+> > some new netif_napi_takeover(old_napi, new_napi) to remove the
+> > old napi_id from the hash and reuse it in the new one.
+> > 
+> > So for mlx5, the flow would look like the following:
+> > 
+> > - mlx5e_safe_switch_params
+> >   - mlx5e_open_channels
+> >     - netif_napi_add(new_napi)
+> >       - adds napi with 'ephemeral' napi id
+> >   - mlx5e_switch_priv_channels
+> >     - mlx5e_deactivate_priv_channels
+> >       - napi_disable(old_napi)
+> >       - netif_napi_del(old_napi) - this frees the old napi_id
+> >   - mlx5e_activate_priv_channels
+> >     - mlx5e_activate_channels
+> >       - mlx5e_activate_channel
+> >         - netif_napi_takeover(old_napi is gone, so probably take id from napi_storage?)
+> > 	  - if napi is not hashed - safe to reuse?
+> > 	- napi_enable
+> > 
+> > This is a bit ugly because we still have random napi ids during reset, but
+> > is not super complicated implementation-wise. We can eventually improve
+> > the above by splitting netif_napi_add_weight into two steps: allocate and
+> > activate (to do the napi_id allocation & hashing). Thoughts?
 > 
+> The "takeover" would be problematic for drivers which free old NAPI
+> before allocating new one (bnxt?). But splitting the two steps sounds
+> pretty clean. We can add a helper to mark NAPI as "driver will
+> explicitly list/hash later", and have the driver call a new helper
+> which takes storage ID and lists the NAPI in the hash.
 
-OK yes that should take care of the issue, I doubt that this can be
-automatically be handled by the caller even a better error code
-was returned.
+Hm... I thought I had an idea of how to write this up, but I think
+maybe I've been thinking about it wrong.
 
-Regards,
+Whatever I land on, I'll send first as an RFC to make sure I'm
+following all the feedback that has come in. I definitely want to
+get this right.
 
-Tony
+Sorry for the slow responses; I am technically on PTO for a bit
+before LPC :)
 
