@@ -1,226 +1,118 @@
-Return-Path: <linux-kernel+bounces-317514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47FB96DF63
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:18:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A4A96DF69
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C2DB221F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F89D1F22461
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36FA19FA76;
-	Thu,  5 Sep 2024 16:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD5D1A00F0;
+	Thu,  5 Sep 2024 16:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="H0KfeP3m"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1rVmZTc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A46319F485
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8F019F49E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553125; cv=none; b=kFUufHLOBpJPPKGBCzaZGWhEvayWp98BosrJfL6GlY6wNtZgJ1WdoU6tY8AZ+dwCnIuVlT2RyWX/ZVngdXa1AzSwQo7sNb54AQJnBePNNlDbq7fYpQKItqEr3rhvzGKxVsKehe3v8JHpZXWXpPAqeWobypTe0Jwk0WOo5hHON98=
+	t=1725553241; cv=none; b=G2iOMIf7tbIpd4GMICehoc6r5qVWsZXxGgEZPF8TFTFqYi5rMZwhDtReBawBobsFNY6CLWjTqUd5r5cwcKLg+nXjHngHFk0GhJzK0SuS7LlYpybRgYxn5wZoNQdKi/LcP8kxmjEj2//FoWRgzoTOCDbb7pQW48v9OK/BDHlfvNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553125; c=relaxed/simple;
-	bh=0KZJ5QCgut0qXAf4CtRoBblHiHy87RUQ10uqP8m1WTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dvl033Kg7TxG/HxfqB2TZ/ZWLugOMJ5LXqitN18py3covRCZ+YBjrxN6Q+4lereV10aNeAbm9gui/cIXXiI4PL+FccsGgK757BI7iY5na/coPR9XBngkJ1wenqkOzdk7U6Qe1ZBf3PDGRCeSSC5hYRK2FL6B2xnu2q2BrzsqUV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=H0KfeP3m; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a046d4c465so3291825ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 09:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725553122; x=1726157922; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YCC51npM/9ttAM5Vwg9IW4X3HmAK9BDVmPhlPGQ+c5o=;
-        b=H0KfeP3m+vzfkOadmlHkrI57gWMV29XMXDFjBZrt5M2c7ZZDYX1l9m6khvz2Lhwydb
-         CrSq+pq6pAdbJUi2c0eyfrHuhG8OqJr+yptenR2swtodQgKNn0VelDesp4vO/ZPSTS/r
-         hDYJHoOG71oINqTDJlDBYUt5RIA1jlGLe+IYJ7gZmeN6+IWNHZ6Sd9e48IkMsfn2bliS
-         NKrmbqolRaYGirX8fQ5Og3yYyLsbjv6D+MDdCvScVQNbfS+bvorIwZ+ZbddUv3OyjBZU
-         IIzFEQJ/HAsNKu8EwauG3tzGjo8vVfQZCKeHb7va4dd0mrHyzmbxgOyD0frYiwm41Nub
-         e1IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725553122; x=1726157922;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YCC51npM/9ttAM5Vwg9IW4X3HmAK9BDVmPhlPGQ+c5o=;
-        b=dMinUeiRAKBgAp5Y0nmFma9n9WuI+DqSA/eW8bc4X4j2Q7FV68yyzwRzY0h78fODrj
-         8Zuf9lXjc4vDE7F2B0+iIh781bCjPink20h3F8IR7cac97u1Nl1ZqRFNkjF51SlE5DYz
-         /9UZ895izsgVoP3Wcng9EIT55hrmmdG61Govvjb0aUa2O1uXLowYbTYOwGZetnyFBX2q
-         AWov29pKTrMHdqcCbMpHsigEmfm4jn35TUU1U2vTXB6oqu7LGoYMLnY5GBqTYSrEBVNv
-         jA/i0Y+OaOKJwAnG7CHwocSF/4F+5hppwiKADeSrUyHfKvz9mTQNMmWqIku6shZfmldI
-         tbdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1P0HhLIzWW226aGA6FkpMrU2fR9Z9aoT/PHzeKXqU22zECh+Ht28OOkVpZXqHr6OxxEsXoI3bhuEWFv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQSCYDvNrDp3m5YKPYerEKRm2Fcs5N+2kXqa0p1Z9TivUHM2jq
-	9MC4mlLDNMcCyDC/G5xslksRUyFzs0Fp4uw/iKLhSWWto8BGKXl8GI2Uw1CQdtA=
-X-Google-Smtp-Source: AGHT+IHhPd/S0vkF4Ol3BNci9fQmLXAbOXM8hhWK6GTvykR7qWrFYPoXnNyiBlsPYluhsEE5PinLjw==
-X-Received: by 2002:a05:6e02:1988:b0:39d:2e35:4d88 with SMTP id e9e14a558f8ab-39f379e6c36mr252106895ab.28.1725553121583;
-        Thu, 05 Sep 2024 09:18:41 -0700 (PDT)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f3afaf930sm43021215ab.29.2024.09.05.09.18.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 09:18:41 -0700 (PDT)
-Message-ID: <ce99d0a4-2a52-43f3-92ea-6e3ed9174956@baylibre.com>
-Date: Thu, 5 Sep 2024 12:18:39 -0400
+	s=arc-20240116; t=1725553241; c=relaxed/simple;
+	bh=n04gPQHvDkHClWZLlSJYgzA0AjqGslLWpNik4Jq1KMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QeY4OYLX9IuAyP1QrphUUFWay3XHZTEP2UdL1LUNPpg0P/BcIiOGZFlPW9Pzwf5kE7aHxBGAtW/4Kw4hUpy5aHfyUAF/jjIQX1dxdKrlGC+a27O/Tzv1mRQUAOy5Jshmfe9BIgnBJdZKsOOXkyFZqaPyQwdUEkGUNvQKcFOVbPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1rVmZTc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725553238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9TyHzQXM3uFT+3nz9MywkA1E5XwrT2IxpHMEhawq1JI=;
+	b=G1rVmZTc0A9YiPt4yTQ4MQnXTdZl8lwRUAz58IdQB7JBuDD1QR+zGirJsQdJ88IZtINRSl
+	k2N3a51yHj9oHxIeU9r3mE+A7KjD4bn1bLsJMtvgheLdgbaSA9lJEvR7gZjklmGkQPL7e+
+	T+DPPTJKKsHupKDaPw+/J/X9bZTJdhA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-15-W8ivkgECOSuplGP9zlYeWA-1; Thu,
+ 05 Sep 2024 12:20:32 -0400
+X-MC-Unique: W8ivkgECOSuplGP9zlYeWA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A5F77181E042;
+	Thu,  5 Sep 2024 16:20:00 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E6A131956056;
+	Thu,  5 Sep 2024 16:19:57 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	kvm@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	x86@kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Suleiman Souhlal <ssouhlal@freebsd.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [RFC][PATCH] KVM: Remove HIGH_RES_TIMERS dependency
+Date: Thu,  5 Sep 2024 12:19:27 -0400
+Message-ID: <20240905161926.186090-2-pbonzini@redhat.com>
+In-Reply-To: <20240821095127.45d17b19@gandalf.local.home>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] iio: adc: ad7625: add driver
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- David Lechner <dlechner@baylibre.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240904-ad7625_r1-v4-0-78bc7dfb2b35@baylibre.com>
- <20240904-ad7625_r1-v4-2-78bc7dfb2b35@baylibre.com>
- <23c81d6735075c0b9d98833641606a661fab7194.camel@gmail.com>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <23c81d6735075c0b9d98833641606a661fab7194.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+
+> Commit 92b5265d38f6a ("KVM: Depend on HIGH_RES_TIMERS") added a dependency
+> to high resolution timers with the comment:
+> 
+>     KVM lapic timer and tsc deadline timer based on hrtimer,
+>     setting a leftmost node to rb tree and then do hrtimer reprogram.
+>     If hrtimer not configured as high resolution, hrtimer_enqueue_reprogram
+>     do nothing and then make kvm lapic timer and tsc deadline timer fail.
+> 
+> That was back in 2012, where hrtimer_start_range_ns() would do the
+> reprogramming with hrtimer_enqueue_reprogram(). But as that was a nop with
+> high resolution timers disabled, this did not work. But a lot has changed
+> in the last 12 years.
+> 
+> For example, commit 49a2a07514a3a ("hrtimer: Kick lowres dynticks targets on
+> timer enqueue") modifies __hrtimer_start_range_ns() to work with low res
+> timers. There's been lots of other changes that make low res work.
+> 
+> I added this change to my main server that runs all my VMs (my mail
+> server, my web server, my ssh server) and disabled HIGH_RES_TIMERS and the
+> system has been running just fine for over a month.
+> 
+> ChromeOS has tested this before as well, and it hasn't seen any issues with
+> running KVM with high res timers disabled.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Queued, thanks.
+
+Paolo
 
 
-On 2024-09-05 3:58 a.m., Nuno Sá wrote:
-> On Wed, 2024-09-04 at 15:14 -0400, Trevor Gamblin wrote:
->> Add a driver for the AD762x and AD796x family of ADCs. These are
->> pin-compatible devices using an LVDS interface for data transfer,
->> capable of sampling at rates of 6 (AD7625), 10 (AD7626), and 5
->> (AD7960/AD7961) MSPS, respectively. They also feature multiple voltage
->> reference options based on the configuration of the EN1/EN0 pins, which
->> can be set in the devicetree.
->>
->> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
->> ---
-> Hi Trevor,
->
-> It LGTM, just some minor stuff from me...
->
-> With that,
->
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->
->>   MAINTAINERS              |   1 +
->>   drivers/iio/adc/Kconfig  |  16 ++
->>   drivers/iio/adc/Makefile |   1 +
->>   drivers/iio/adc/ad7625.c | 684
->> +++++++++++++++++++++++++++++++++++++++++++++++
->>
-> ...
->
->> +
->> +static int ad7625_set_sampling_freq(struct ad7625_state *st, int freq)
->> +{
->> +	u64 target;
->> +	struct pwm_waveform clk_gate_wf = { }, cnv_wf = { };
->> +	int ret;
->> +
->> +	target = DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
-> Not seeing any reason why it can't be DIV_ROUND_UP()?
-Uwe rightly pointed out (internally) that freq probably shouldn't be 
-signed, so I'll adjust that instead and resubmit.
->
->> +	cnv_wf.period_length_ns = clamp(target, 100, 10 * KILO);
->> +
->> +	/*
->> +	 * Use the maximum conversion time t_CNVH from the datasheet as
->> +	 * the duty_cycle for ref_clk, cnv, and clk_gate
->> +	 */
->> +	cnv_wf.duty_length_ns = st->info->timing_spec->conv_high_ns;
->> +
->> +	ret = pwm_round_waveform_might_sleep(st->cnv_pwm, &cnv_wf);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Set up the burst signal for transferring data. period and
->> +	 * offset should mirror the CNV signal
->> +	 */
->> +	clk_gate_wf.period_length_ns = cnv_wf.period_length_ns;
->> +
->> +	clk_gate_wf.duty_length_ns = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC *
->> +		st->info->chan_spec.scan_type.realbits,
->> +		st->ref_clk_rate_hz);
->> +
->> +	/* max t_MSB from datasheet */
->> +	clk_gate_wf.duty_offset_ns = st->info->timing_spec->conv_msb_ns;
->> +
->> +	ret = pwm_round_waveform_might_sleep(st->clk_gate_pwm, &clk_gate_wf);
->> +	if (ret)
->> +		return ret;
->> +
->> +	st->cnv_wf = cnv_wf;
->> +	st->clk_gate_wf = clk_gate_wf;
->> +
->> +	/* TODO: Add a rounding API for PWMs that can simplify this */
->> +	target = DIV_ROUND_CLOSEST_ULL(st->ref_clk_rate_hz, freq);
-> ditto...
->
->> +	st->sampling_freq_hz = DIV_ROUND_CLOSEST_ULL(st->ref_clk_rate_hz,
->> +						     target);
->> +
->> +	return 0;
->> +}
->> +
->>
-> ...
->
->> +
->> +static int ad7625_buffer_preenable(struct iio_dev *indio_dev)
->> +{
->> +	struct ad7625_state *st = iio_priv(indio_dev);
->> +	int ret;
->> +
->> +	ret = pwm_set_waveform_might_sleep(st->cnv_pwm, &st->cnv_wf, false);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = pwm_set_waveform_might_sleep(st->clk_gate_pwm,
->> +					   &st->clk_gate_wf, false);
->> +	if (ret) {
->> +		/* Disable cnv PWM if clk_gate setup failed */
->> +		pwm_disable(st->cnv_pwm);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int ad7625_buffer_postdisable(struct iio_dev *indio_dev)
->> +{
->> +	struct ad7625_state *st = iio_priv(indio_dev);
->> +
->> +	pwm_disable(st->cnv_pwm);
->> +	pwm_disable(st->clk_gate_pwm);
->> +
->> +	return 0;
->> +}
->> +
-> Might not matter but it is a good practise to disable things in the reverse
-> order.
-
-Good point, I'll change that too.
-
-Thanks!
-
->
-> - Nuno Sá
->
->
 
