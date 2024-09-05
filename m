@@ -1,78 +1,164 @@
-Return-Path: <linux-kernel+bounces-317600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F7596E0E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DCD96E0EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F63B2875C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C971C24DB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802291A287C;
-	Thu,  5 Sep 2024 17:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F951A257F;
+	Thu,  5 Sep 2024 17:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiBPhfdg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QA2FDKB7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8AC1A2C2A;
-	Thu,  5 Sep 2024 17:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F225A19DFB8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725556328; cv=none; b=OMJF+VMNt4if6hoyQtOUweO135BLLfAXlWXjFtCS5XfbE4L1mQEd3d8ezt+zZPXlWzib8fc50NNqPWsQ5ausyEpa/BBUchOUtNS1E/ZGvbGrTfVFx/M5j7HrqNCx0sImJXGrHIJeh3ubB10g9SHFY4s03Fi9fFckY8bo7jzyT2A=
+	t=1725556433; cv=none; b=gLbBMrVWsnv9IwohwqN6GaagUwEjKJrsyiV3GpIe27Bn3J4tP1LmHcTIPeVxXtL/pOfVqdPWfAuqfhjiFBbrZp30GqptfYMd2ty1yVV/qX+hnKBm2x3xUn+pmU11mpEMsL6T+KayCLgHRPDi3nacihu1XJRry9Pg4JnA2/7ChCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725556328; c=relaxed/simple;
-	bh=CXZpTUb+dJJBjGu0ZJ/RiAZAZnr+PAUMMRpbLKhPXU8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cQrcJnAZzH7n3Ff4x6v9OyR9rhwzH2iGw8iroLhUc6qmIPPhuayJB0DvpYTFlpO5cXXQFI3/j4EGoCETQEON8mFvhGTbSUc4EWV5BTgdseWmaobnHlgTRXoGtJmZb3VlzkrGY/NC1UBT4ZKbEid1yGTv8NxiADGJNc0bqRCq+lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiBPhfdg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BC4C4CEC9;
-	Thu,  5 Sep 2024 17:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725556327;
-	bh=CXZpTUb+dJJBjGu0ZJ/RiAZAZnr+PAUMMRpbLKhPXU8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=BiBPhfdgXoivUEs9mydRrY9wK7F5sbf9lrBc8xhHc85rLdDeygYkziVraRY6JwO7u
-	 GlYLg/UHWRbX1XIIjLMHTL1hFisglWEYlwhU9hLH0vg0Lrt0n+XNR4Mk2iE+hfj6IP
-	 HTpRGSJY7bS1Liy/F1IWt1RLUplqLhTotHHs6dLhAWwZwwkkYVRJBf7+gzorKCUo9I
-	 lTxzM0GHyoH235elpCCebGeyrRAde2Xrzyo1LTIgEUvcdoGRKSAkrL3rC8baNixdhZ
-	 mCogwVIeQKvsWE6RV1h6RO5oLBhZ5JqvZI7Krzn7ZxqCexwaOL3zIQmEVRz5h3hL9z
-	 VSotYd0BTXk/Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70ED13806651;
-	Thu,  5 Sep 2024 17:12:09 +0000 (UTC)
-Subject: Re: [GIT PULL] platform-drivers-x86 for v6.11-6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <pdx86-pr-20240905115603-931030098@linux.intel.com>
-References: <pdx86-pr-20240905115603-931030098@linux.intel.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <pdx86-pr-20240905115603-931030098@linux.intel.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.11-6
-X-PR-Tracked-Commit-Id: d34af755a533271f39cc7d86e49c0e74fde63a37
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ad618736883b8970f66af799e34007475fe33a68
-Message-Id: <172555632793.1768720.7525000725152300238.pr-tracker-bot@kernel.org>
-Date: Thu, 05 Sep 2024 17:12:07 +0000
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+	s=arc-20240116; t=1725556433; c=relaxed/simple;
+	bh=OKsws4AYyTGeGlOnUqGnm9T+Wb0mx3BnDDnBXSbo06g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lpYZ27LK0lWA36Nteif6gQbISbmR/bPmFZibxO9MecDPoohbpYNH3KeHUxAmzpi2rUr8eLuMTtv7mARnCpLTahzC/G3/ymqZ9SRaJfREK2gyfj2ap6PaS4iaLYhO6Kn8VgmpA8vj6auMwy2GRgJdv13OsD09fcEqfYkCgjtwBkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QA2FDKB7; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725556432; x=1757092432;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OKsws4AYyTGeGlOnUqGnm9T+Wb0mx3BnDDnBXSbo06g=;
+  b=QA2FDKB7fkmaLC3oQlZUzmX78GxAvUVRF1stKOyPs/F7nABNyGI3e2Qv
+   As7rKsJpN1mhdHAtMPTiJBCYE295zRzI3DozIBBdkYW5kxIy2kvfUSfOy
+   tT5zvgApw34i997zr7/2ia+uhJ+yFMVIYKWnd29YHUTRukOVbEigRHc/N
+   uLsEkGXobmvAQxJH10Lug6IyGGIOt34bAkrM1BHka/YIQNvf/7pYFg3kd
+   CwQyGLns9RxSjeIImHBEpOlWdeB1rJKTvweJ7+Ru8oYWjPOl8o9a46M8B
+   FWbYGpBtlBTys89G7Ng1W8cpTyZe8yUXMNIyKxze0Kz8QNy++qzu7lPOk
+   g==;
+X-CSE-ConnectionGUID: Ffg5hfHDSm6Ve0wWVg0qrg==
+X-CSE-MsgGUID: foyYbklXR8OO2AtdjvaSSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="34863342"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="34863342"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:13:52 -0700
+X-CSE-ConnectionGUID: t+S3g3I7Q+Kc8My2JXJOcg==
+X-CSE-MsgGUID: 8O8VSu/cQgSr5sGAN0d3HQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="65409979"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Sep 2024 10:13:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 5D4D331E; Thu, 05 Sep 2024 20:13:46 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] sched/fair: Mark cfs_bandwidth_used() and m*_vruntime() with __maybe_unused
+Date: Thu,  5 Sep 2024 20:12:10 +0300
+Message-ID: <20240905171210.267626-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 05 Sep 2024 11:56:03 +0300:
+When cfs_bandwidth_used() is unused, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.11-6
+kernel/sched/fair.c:526:19: error: unused function 'max_vruntime' [-Werror,-Wunused-function]
+  526 | static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
+      |                   ^~~~~~~~~~~~
+kernel/sched/fair.c:6580:20: error: unused function 'cfs_bandwidth_used' [-Werror,-Wunused-function]
+ 6580 | static inline bool cfs_bandwidth_used(void)
+      |                    ^~~~~~~~~~~~~~~~~~
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ad618736883b8970f66af799e34007475fe33a68
+Fix this by marking them with __maybe_unused (all cases for the sake of
+symmetry).
 
-Thank you!
+See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+inline functions for W=1 build").
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ kernel/sched/fair.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..b9d35675db50 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -523,7 +523,7 @@ void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec);
+  * Scheduling class tree data structure manipulation methods:
+  */
+ 
+-static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
++static inline __maybe_unused u64 max_vruntime(u64 max_vruntime, u64 vruntime)
+ {
+ 	s64 delta = (s64)(vruntime - max_vruntime);
+ 	if (delta > 0)
+@@ -532,7 +532,7 @@ static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
+ 	return max_vruntime;
+ }
+ 
+-static inline u64 min_vruntime(u64 min_vruntime, u64 vruntime)
++static inline __maybe_unused u64 min_vruntime(u64 min_vruntime, u64 vruntime)
+ {
+ 	s64 delta = (s64)(vruntime - min_vruntime);
+ 	if (delta < 0)
+@@ -5547,7 +5547,7 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+ #ifdef CONFIG_JUMP_LABEL
+ static struct static_key __cfs_bandwidth_used;
+ 
+-static inline bool cfs_bandwidth_used(void)
++static inline __maybe_unused bool cfs_bandwidth_used(void)
+ {
+ 	return static_key_false(&__cfs_bandwidth_used);
+ }
+@@ -5562,7 +5562,7 @@ void cfs_bandwidth_usage_dec(void)
+ 	static_key_slow_dec_cpuslocked(&__cfs_bandwidth_used);
+ }
+ #else /* CONFIG_JUMP_LABEL */
+-static bool cfs_bandwidth_used(void)
++static inline __maybe_unused bool cfs_bandwidth_used(void)
+ {
+ 	return true;
+ }
+@@ -6577,7 +6577,7 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
+ 
+ #else /* CONFIG_CFS_BANDWIDTH */
+ 
+-static inline bool cfs_bandwidth_used(void)
++static inline __maybe_unused bool cfs_bandwidth_used(void)
+ {
+ 	return false;
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0.rc1.1336.g36b5255a03ac
+
 
