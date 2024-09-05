@@ -1,209 +1,119 @@
-Return-Path: <linux-kernel+bounces-317051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85F096D8A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:33:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A30C96D8CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FBBE283012
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B8D1F23911
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6770219B3F3;
-	Thu,  5 Sep 2024 12:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A8B19B587;
+	Thu,  5 Sep 2024 12:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCA9RARM"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU4jN9WW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76E019AD9B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0D819885F;
+	Thu,  5 Sep 2024 12:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725539613; cv=none; b=nWk0FeK6gS5SCJmftJ3dxzyZl/hvF1KyQzUroPyFybqE+/9I7/9Byr2/27daK4trL2wHFuzCRb/rbVDQ/tXWlqk9jy/XqTYkhYkerUg6qxecQ9AlB47lHX/pS3kwAJE/efXa2oRrLYaJQ7XDV6opRhTMDPPseY6UiiJR/3wHt40=
+	t=1725539971; cv=none; b=m4E+Dua46KvXS65IO6diE2CTotLkqXW3vrWQ2LKRee5B3msF55PZqEjm7NXYd/Ss2rj7Uu6bN6BN78hQIJwya+XkDDPPLErLYs1zya4kGa1KffmUX/qlONWlX9I1ckbE1XOOJuPEACLJ2Pg1A2WAvJlNKoaUWkq/+x+skSDh/hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725539613; c=relaxed/simple;
-	bh=/U3bGDew/wUH8rEkiQsU0cIgm4Iip2Pb2a7mmrEmV00=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GwsrNRkPKuwoD4BnOeTl2/JEoNHxJm/mFy7U/zd8/c662dUcAcgbUI/yP4/0UbUvFXpcH81xed+48140BWlwShLCSujG+LT0mvjltW2JmRTXucbyne0cq4ez/SK75Wvoyo3VZLJeoEGR2cTmox2PRCO2fue2LOlowYjsclpFyxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCA9RARM; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-374b9761eecso444594f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:33:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725539609; x=1726144409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RfvHzjH+Eqg9aQgCo3Cz3Zipw1g+SvWwFvncM0vKisg=;
-        b=YCA9RARMOUY1yxcCZHndNEGG4es5USmIDKqnU2DkuSNcugXk8ap8HDEmHwte2KGt8F
-         Aijuz1DjU0IbQSgwHdCl7trkvgDkW6gN82ldk37JOy4ymwuAvL6VibIBGmIYyXoiCuVP
-         B6xvQSt6vAmozFFO6P+MqRfSqYMutghlgKaXdsLwpQjzWZUCmE9HJ7DuFLjoYMo9weUL
-         MHO/MWe0H0lkyi0aeIIdANKctGXlsi/tQe2oJWjp6HEbYKS+IOtAASF/YWjX80R+42rh
-         IJ6KezyB//GJp86kSRTHoXqoHxM16pZ9aSjvzft4oMzv7AcMgXIbk5UJesn+WpnF3ecK
-         j3gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725539609; x=1726144409;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RfvHzjH+Eqg9aQgCo3Cz3Zipw1g+SvWwFvncM0vKisg=;
-        b=ZQHHhlzS9RI48PKs5MNC/7WtR0/DxQri1Y40ckEW3/0LT/eSibM+bTcaCo4a/zizcO
-         iaaQzF7DBCMuhnBawyKRTdiUSU54INhSwNh7ZYwjAixaBIxNG+pMnIVKoRZnL9boxlXB
-         beOluaPEo4QovQl8lCn6SdOvTLKXCQmgGuN+Ai1ScwHR5oiiltzBqlz/micYopLBJXjO
-         TfPWSQnICqcxUqb7DHq/IBvPYSMPOer/vuumfL/L7mafMEJ/KBEIfZoU08d6wHMiNLZL
-         zpxEAnxMQdxxYJ7ClcDYymc65Z/GNL1fu5NAqqSzmBP4s3SJZ6ATjctDGMxPKTqt5U1a
-         hUWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcfVY/0XWIuJRGb1MN60X87lo78CAMCVH4/HbeBAr1tb/n00iKxIWuTKjZ9kRlR0CNn/DiNfJiZBlRwfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdyffVzTQfMBFFd4NIps7KQIrKH5YJ4wZW0fL8FsZ5vqqoNB76
-	FUC4yy1833fzSYARHh0tk4hsFD/UKDOVY/2mRXPN/kQNPXPCmtkY
-X-Google-Smtp-Source: AGHT+IGqrk9RY9ZJQQELiCa/NbcnoDGQ9qLtISyCVkOLNXfV5KOJMUSOzjSblaz8VUnoVwNemlMXzw==
-X-Received: by 2002:a5d:4c82:0:b0:374:b31e:3b3b with SMTP id ffacd0b85a97d-374bce97b23mr10572502f8f.1.1725539608840;
-        Thu, 05 Sep 2024 05:33:28 -0700 (PDT)
-Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c9c3944cesm15467855e9.30.2024.09.05.05.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 05:33:28 -0700 (PDT)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: louis.chauvet@bootlin.com
-Cc: airlied@gmail.com,
-	arthurgrillo@riseup.net,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	hamohammed.sa@gmail.com,
-	jeremie.dautheribes@bootlin.com,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mairacanal@riseup.net,
-	melissa.srw@gmail.com,
-	miquel.raynal@bootlin.com,
-	mripard@kernel.org,
-	nicolejadeyee@google.com,
-	rodrigosiqueiramelo@gmail.com,
-	seanpaul@google.com,
-	thomas.petazzoni@bootlin.com,
-	tzimmermann@suse.de
-Subject: [PATCH RFC 02/15] drm/vkms: remove possible crtc from parameters
-Date: Thu,  5 Sep 2024 14:33:27 +0200
-Message-ID: <20240905123327.3049-1-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240814-google-remove-crtc-index-from-parameter-v1-2-6e179abf9fd4@bootlin.com>
-References: <20240814-google-remove-crtc-index-from-parameter-v1-2-6e179abf9fd4@bootlin.com>
+	s=arc-20240116; t=1725539971; c=relaxed/simple;
+	bh=R9LFNUBxiOA+RKZaE/H7JwElegEOh582m+My/w1w5rI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AM9NvczCvpStfGCpAhro6PsKdoc2WlShjfkmvuylqATBj2AvbjgAdLtl4iNdsuzz6YH/2szfHz8cfsotDb5FwPfryeLbNSNh6UUQDKPMIPIXFP/wmNRp5sdbXUNDAJ2v0MRK34qMQSYIs079dv6Ckj0/m4kff+KS0ogpFxhTFFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU4jN9WW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CE8C4CEC3;
+	Thu,  5 Sep 2024 12:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725539971;
+	bh=R9LFNUBxiOA+RKZaE/H7JwElegEOh582m+My/w1w5rI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=jU4jN9WWlbjjLXpCK10d8JeVLlLNSekynxoG7sJY1M6hbLTZ5W/qrlwlLIjrQIPoo
+	 BMsT7YGZhNwTPv15dcMmMo1++dDUM/VhgRv2bCVr/PVyu5WCSeDLhlk2oXQv98lkP0
+	 BYbFvwAFg1s709+YV3quZn8xcPSKEXW0cj7A86ozsjit7H46HR5i2jOeVcixhmtdvm
+	 jN3x7Yph7nhPiYtf7tMx+gXNJhpPvNx9qc5LQ6u5Q3vEuqMWcvatt7JiOK8BFOpVrL
+	 B9xyYCj+IE3lbjH1Mv2WCa1dYwLpBKZTGpWrxu/mTvt4podO1vP/g3yzlhfiBghTOX
+	 0y4MEu5SOGOTQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 05 Sep 2024 13:33:33 +0100
+Subject: [PATCH v2] docs: submitting-patches: Advertise b4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240905-documentation-b4-advert-v2-1-24d686ba4117@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAByl2WYC/4WNTQ6CMBCFr0Jm7ZgWkB9X3sOwAGaARm3NtDYaw
+ t2tXMDl9/Le91bwLIY9nLMVhKPxxtkE+SGDcentzGgoMeQqL1WrCiQ3vh5sQx9SE4cSe4osAXW
+ jdMVNQTW1kNZP4cm8d/O1S7wYH5x89qOof+l/Z9SocWxaqqYTDfWgLzcWy/ejkxm6bdu+4Yk0W
+ L8AAAA=
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1503; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=R9LFNUBxiOA+RKZaE/H7JwElegEOh582m+My/w1w5rI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm2aaA0DLE+SQVB1bPQTtTveTI1fApcTJXXf4NZo5c
+ KCfwBPGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtmmgAAKCRAk1otyXVSH0M7nCA
+ CElWoy/WN7Xm9leq6VPfWGEHqsgiQJH88UtjtJLe5ItIU35YGlFooRq2VhxbbVeJ1v44zZC0ROwEJc
+ E6dzOzAL1QqPfVjgtJzwTVLIzgDnXzQRoGaRfe5j1wok3NOP0alfmoLO3iAwWNH9rOp/GM5O6jjVLr
+ CQAHWG8buzz/HA/5EuI1LZBzip+ZompAabL0MlHqRbE4LlucoypJ6BmcPzu38ASwxPtXQZGSu305Xg
+ 5TCiBzewVK03a4OzV2KNkB8Wcffn1CcqfnQk/ePNVi5AkpWVL+32RbWFVsrmmgY2ac/j2c2aFM1kzX
+ vKWF1Y14ZpjcXgWicMXDmnpNHrcUCh
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-> As the crtc mask is dynamic, avoid hardcoding it. It is already computed
-> once all the planes are created, so it should be a no-op
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_drv.c   | 10 +++++-----
->  drivers/gpu/drm/vkms/vkms_plane.c |  5 +++--
->  drivers/gpu/drm/vkms/vkms_plane.h |  4 +---
->  3 files changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> index 7ac3ab7e16e5..e71b45fcb9b8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> @@ -166,7 +166,7 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
->  	.get_modes = vkms_conn_get_modes,
->  };
->  
-> -static int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc)
-> +static int vkms_output_init(struct vkms_device *vkmsdev)
->  {
->  	struct drm_device *dev = &vkmsdev->drm;
->  	struct drm_connector *connector;
-> @@ -184,20 +184,20 @@ static int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc)
->  	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
->  	 * composition.
->  	 */
-> -	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, possible_crtc);
-> +	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
->  	if (IS_ERR(primary))
->  		return PTR_ERR(primary);
->  
->  	if (vkmsdev->config->overlay) {
->  		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-> -			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, possible_crtc);
-> +			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY);
->  			if (IS_ERR(overlay))
->  				return PTR_ERR(overlay);
->  		}
->  	}
->  
->  	if (vkmsdev->config->cursor) {
-> -		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, possible_crtc);
-> +		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
->  		if (IS_ERR(cursor))
->  			return PTR_ERR(cursor);
->  	}
-> @@ -284,7 +284,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
->  	dev->mode_config.preferred_depth = 0;
->  	dev->mode_config.helper_private = &vkms_mode_config_helpers;
->  
-> -	return vkms_output_init(vkmsdev, 0);
-> +	return vkms_output_init(vkmsdev);
->  }
->  
->  static int vkms_create(struct vkms_config *config)
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index e549c9523a34..b5740c27180b 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -5,6 +5,7 @@
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_blend.h>
-> +#include <drm/drm_plane.h>
->  #include <drm/drm_fourcc.h>
->  #include <drm/drm_gem_atomic_helper.h>
->  #include <drm/drm_gem_framebuffer_helper.h>
-> @@ -222,12 +223,12 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
->  };
->  
->  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> -				   enum drm_plane_type type, int possible_crtc_index)
-> +				   enum drm_plane_type type)
->  {
->  	struct drm_device *dev = &vkmsdev->drm;
->  	struct vkms_plane *plane;
->  
-> -	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << possible_crtc_index,
-> +	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
+b4 is now widely used and is quite helpful for a lot of the things that
+submitting-patches covers, let's advertise it to submitters to try to make
+their lives easier and reduce the number of procedural issues maintainers
+see.
 
-Shouldn't the index be BIT(0)? I see in the commit message that
-possible_crtcs is computed once all planes are added, but I
-couldn't find where. It'd be nice if you could point to the
-function that sets the correct CRTC mask in the commit message.
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Remove some blank lines.
+- Link to v1: https://lore.kernel.org/r/20240903-documentation-b4-advert-v1-1-c89d6f5db7b1@kernel.org
+---
+ Documentation/process/submitting-patches.rst | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
->  					   &vkms_plane_funcs,
->  					   vkms_formats, ARRAY_SIZE(vkms_formats),
->  					   NULL, type, NULL);
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.h b/drivers/gpu/drm/vkms/vkms_plane.h
-> index 90554c9fe250..95b2428331b8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.h
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.h
-> @@ -52,11 +52,9 @@ struct vkms_frame_info {
->   *
->   * @vkmsdev: vkms device containing the plane
->   * @type: type of plane to initialize
-> - * @possible_crtc_index: Crtc which can be attached to the plane. The caller must ensure that
-> - * possible_crtc_index is positive and less or equals to 31.
->   */
->  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> -				   enum drm_plane_type type, int possible_crtc_index);
-> +				   enum drm_plane_type type);
->  
->  #define drm_plane_state_to_vkms_plane_state(target) \
->  	container_of(target, struct vkms_plane_state, base.base)
-> 
+diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+index f310f2f36666..1518bd57adab 100644
+--- a/Documentation/process/submitting-patches.rst
++++ b/Documentation/process/submitting-patches.rst
+@@ -842,6 +842,14 @@ Make sure that base commit is in an official maintainer/mainline tree
+ and not in some internal, accessible only to you tree - otherwise it
+ would be worthless.
+ 
++Tooling
++-------
++
++Many of the technical aspects of this process can be automated using
++b4, documented at <https://b4.docs.kernel.org/en/latest/>. This can
++help with things like tracking dependencies, running checkpatch and
++with formatting and sending mails.
++
+ References
+ ----------
+ 
+
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240903-documentation-b4-advert-18016e83d7d9
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
