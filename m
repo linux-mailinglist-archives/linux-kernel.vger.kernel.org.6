@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-317943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BDE96E5CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B9E96E5D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3081C238BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01ED1F24A20
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551061AD9FA;
-	Thu,  5 Sep 2024 22:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6CB1AE861;
+	Thu,  5 Sep 2024 22:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTbGvBat"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SH+sXFum"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A18F172BDF
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 22:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850A21917D9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 22:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725575964; cv=none; b=iiPSblFlM5m6uNffLtsCrwmyzjntz5vTajfniSIhwwSAUhUdlQEnZLsNOyx1HC5AhCypx/3guEJ6vLfPAlQuMMDgMpgvFovMi8KA2L9ZLNJUj1ZdUJctY9LP1LX4LfxMH9hrFvebDSMbbfBTioNRN2vBCX4G12mdKhMVEA2gBmY=
+	t=1725576288; cv=none; b=PVOPp/hTviqXsgMZIxzkkEkc5mrqO6XrGilNhoTvMBxvtOYGjxFqIQCP46JbaiF5ySZAHsE7+BKTKb8RAa77YMb2ofz1yMAwAwWCB44aow6dRQ38t3Vj4XbCCjGjyBwrXcIdHX6jjHJO/h9WJzJXKuRUyYKGQy2J3UQVwbQkkG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725575964; c=relaxed/simple;
-	bh=rzfl4i6wwXylhJOHUu0dxixSg+q5nmQ3kdyOs73uV4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/kk0oFqZMyD+T399/HzJQDIX6ViU3+L9/vCuHiz847Zz7Shjzx1QiBB6u7ByTIg9Eoi5p/GKzfWGUB6XUGvNkfc3aA7GkOvoohryk13Lvh2mtMnDauP6ZmP8tmYsjs4xBTaBvR88PsLNv5USbiEZIwm/wCHrVPnYLFdlN7MLbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTbGvBat; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2053f6b8201so12627055ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 15:39:23 -0700 (PDT)
+	s=arc-20240116; t=1725576288; c=relaxed/simple;
+	bh=HxMXdIDgyZWWmaSLqm2XBtDbr44V1UizUHThWmxVRU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Umm0ykrpSdWjS3ju1wVcPnHu/GsJFwD3+12hbE2Vc2iOQ2osYglVcrbe9jDB/FpGn8RcLR/nUosq+hYFATWkfTT21X2VSAUQRvlyBnrGoBuYDwIHT6ywlvTI/HBWC7qVKv0L/oYviYJu8UBuQc6v19I9VVGAbNh0OwScKeo03sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SH+sXFum; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2056aa5cefcso34865ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 15:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725575963; x=1726180763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCDYYiCppuB7n7e+YXIEe54LH8OdKy8Qsr87xme6vNA=;
-        b=GTbGvBatquCRB0PfNF6uJl3DftmT1y3vmD3CyAEyGlGqWPLx6b9mg5oLN0XA6hslNF
-         qO9yJ4RhFfu+SU3YPgTBNxmX5rgAUy2/V0kClAOrX7YPbIQup1BcLqBrdSbkQS92cH+R
-         tkQsxecJeOgfQfamKN6p+XHBQh7r+/Lfgu5yJZ863ppGTzqP/9Y3knPNlm3WoW0rVaAj
-         XnPYq5BjfWDScm8aHcRCd0pIbJ7iAEWsBJh4Rz2JVCuCWPzcEW7P/D7WmnS0LbJhggXI
-         NfWvZdomsOTRBMHSCYNf0sUuaEi38194bS+k2Qb1FnHc3dnthlUxQpVddW3559V682z5
-         7BWw==
+        d=google.com; s=20230601; t=1725576287; x=1726181087; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=msUAnaP1lwyW1gCpV+BMOp+iO1+Mv6Zf+wIAvUJML+w=;
+        b=SH+sXFum01GKpQFZlvcnz6+0EB/RIVLejflKA7arT/yVTLhrT0QHKBbGgH4GgwxdSZ
+         sNCUL1Rjz7nM/20c1eShXU+c5yC7+JLJqUsY7uDDgvrgzCBXA5AFLsF0qH9bRr7Hoxmw
+         E9j/67V269vDDakArxyRGH4UR80DMpeDUeEx9HBUNASq4AOybtCkBIXFo+eyPyrg0z/N
+         hScWFf2INGz3yUk1Z8/WfrXCIb2exReOpS1T96Hw+bO4qWRJw9IHKGHBOxx56KUiFG3g
+         7Bk676KVN78If8XHiIOphNahfv5B9bU3rPZIIKRKtKzWeq8mdErMc1hq4vMaJJO1Bcdh
+         41Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725575963; x=1726180763;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rCDYYiCppuB7n7e+YXIEe54LH8OdKy8Qsr87xme6vNA=;
-        b=gAqlAsycV4eCp9qM6nElnq/SkXXwEenm5+lFH51zYeSMQaDD7rCDyrnAq3ciCPifJf
-         Yxh7z6Kd1fNOBRb/aJsvq4mWgDY3W6/NOzkvlcJt/JXr3rPEha4wg+xMnwDR8xvLC5Bs
-         dnPqtS9AnVBXSFa2plUuo/QMrnh9UfN9kGUlcSsZbEZR7MAlsiWIyL7bYg7gvl7x4FtG
-         eLviPoyn+hJ2kOd2XMbqx7VHIXqocpRjB3zoDqvamQdCjOzFx5ijDU2Q7Z7AfMqwk/be
-         yvkDZmR0q/Y1metvvJSYGE6zLXueT3WIqex0UdDVgRWR/lM7+9ccZd+X52GGyGw5Bubo
-         OfCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLPOVHHrqgyOa18O2tXIRoHzpU+HTHwKBXgYP88PHPZSS45CJUbb7OzhIdiyGb2eEGZfsLp+aq51JZXTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw114SLyDxfAiCHB9lYW23pQvKG20qLcitRnpzjIZinLsxZcqPW
-	DCvBTmp3mY7BwXKVJZuJTz6pOcyCJt/+A0gFyiiQTF3YnWsUcCmR
-X-Google-Smtp-Source: AGHT+IFdDlOtC7QKiZljAYe/nH8z6tsEcq87j6lrJJXzigssQI2/0okjfjiTxKTZxUmFaIUPQUJsvQ==
-X-Received: by 2002:a17:902:f610:b0:205:eec:5755 with SMTP id d9443c01a7336-206f0526051mr8889545ad.23.1725575962683;
-        Thu, 05 Sep 2024 15:39:22 -0700 (PDT)
-Received: from localhost.localdomain (111-240-109-89.dynamic-ip.hinet.net. [111.240.109.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea574dbsm33185335ad.214.2024.09.05.15.39.20
+        d=1e100.net; s=20230601; t=1725576287; x=1726181087;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=msUAnaP1lwyW1gCpV+BMOp+iO1+Mv6Zf+wIAvUJML+w=;
+        b=eCjEtr0nrOdSglhC+NjfLHQp+AcBq7SRWP0x/a3QM+SnhnYvsY1draMPAz8X2ToKZa
+         GvpR+4LrWRZZe0i1LuvG4ZnbGxTVYNdCJ1CECALOUTM2vCGP/64EO8oeE4yB2Sgdu/VT
+         XSnXIjNVwSEvx8YmBf6PW/iq6BbGlKMrUA3YfUZ8ghd/Ns23kIYBJD3PKZhNUZXGkDHi
+         som7FeeebvlpUSpjdzSxFDIEUZTGxUqGdR+FuiML0aaQJF7Jem7PVy8V375riEYWIFI+
+         9WhldBkp5FqC+zsdNbuVQqb4MkiDuzLQ0oZYmxeTax+9Hx1LE8sR0SgSaLEkIRrFmxJF
+         eQyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVL85b8y/UGnVl5HLxiNmb2ukuL53soFaW9YBIipdq3NfBuYIgOj6uCLemCfsJH2k2rrle21aVtv7pDPt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2eOJWKJiAjukkvI/KaRaL3k+HY/A1WxwD3+cNYeRjzYu3Q3D0
+	rL55GxEP3O7pu/1clhbI8CBgQh6apc5EdBxE6TbHGOc5TBOqGIABRsW11eBhqbArqAi1D4j2UUO
+	osA==
+X-Google-Smtp-Source: AGHT+IGu7boh7WxthvJLltmFfWHDlLO/mD5TiFLsFZqNCvxBIBv30uTWifEdd4AmhEE8IIP1O9B11g==
+X-Received: by 2002:a17:902:fac3:b0:201:daee:6fac with SMTP id d9443c01a7336-206f2b447e5mr173105ad.16.1725576286313;
+        Thu, 05 Sep 2024 15:44:46 -0700 (PDT)
+Received: from google.com (55.212.185.35.bc.googleusercontent.com. [35.185.212.55])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc12bcd5sm43724a91.53.2024.09.05.15.44.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 15:39:22 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/rockchip: include rockchip_drm_drv.h
-Date: Fri,  6 Sep 2024 06:38:50 +0800
-Message-ID: <20240905223852.188355-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 05 Sep 2024 15:44:45 -0700 (PDT)
+Date: Thu, 5 Sep 2024 22:44:41 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Ba Jing <bajing@cmss.chinamobile.com>
+Cc: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	surenb@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] binder: modify the comment for binder_proc_unlock
+Message-ID: <Zto0WT8biWkrv-43@google.com>
+References: <20240902052330.3115-1-bajing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902052330.3115-1-bajing@cmss.chinamobile.com>
 
-Include rockchip_drm_drv.h to fix the follow sparse warning:
+On Mon, Sep 02, 2024 at 01:23:30PM +0800, Ba Jing wrote:
+> Modify the comment for binder_proc_unlock() to clearly indicate which 
+> spinlock it releases and to better match the acquire comment block 
+> in binder_proc_lock().
+> 
+> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+> ---
+> Notes:
+> v1: https://lore.kernel.org/all/20240830073743.2052-1-bajing@cmss.chinamobile.com/
+> 
+> v2: Reword commit log per suggestions from cmllamas@
+> https://lore.kernel.org/all/20240902013636.1739-1-bajing@cmss.chinamobile.com/
+> 
+> v3: Wrap commit message. Add version history.
+> https://lore.kernel.org/all/20240902025720.2334-1-bajing@cmss.chinamobile.com/
+> 
+> v4: Modify the commit information.
+> https://lore.kernel.org/all/20240902033754.2708-1-bajing@cmss.chinamobile.com/
+> 
+> v5: Change the format and wrap the changelog text at 72 columns.
+> 
+>  drivers/android/binder.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index fc55b5d0e4f3..578861d57045 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -277,7 +277,7 @@ _binder_proc_lock(struct binder_proc *proc, int line)
+>  }
+>  
+>  /**
+> - * binder_proc_unlock() - Release spinlock for given binder_proc
+> + * binder_proc_unlock() - Release outer lock for given binder_proc
+>   * @proc:                struct binder_proc to acquire
+>   *
+>   * Release lock acquired via binder_proc_lock()
+> -- 
+> 2.33.0
 
-drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse:
-warning: symbol 'vop2_platform_driver' was not declared.
-Should it be static?
+Thanks,
 
-No functional change intended.
-
-Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
----
- drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-index 18efb3fe1c00..c678d1b0fd7c 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-@@ -14,6 +14,7 @@
- #include <drm/drm_print.h>
- 
- #include "rockchip_drm_vop2.h"
-+#include "rockchip_drm_drv.h"
- 
- static const uint32_t formats_cluster[] = {
- 	DRM_FORMAT_XRGB2101010,
--- 
-2.43.0
-
+Acked-by: Carlos Llamas <cmllamas@google.com>
 
