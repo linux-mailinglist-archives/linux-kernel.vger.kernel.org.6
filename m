@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-316229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CA396CCD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071F096CCAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 190DEB24DBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A5C1C229E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076CE14F11E;
-	Thu,  5 Sep 2024 02:52:41 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21F342AAA;
+	Thu,  5 Sep 2024 02:35:54 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300C31494DB;
-	Thu,  5 Sep 2024 02:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5117D1FDA;
+	Thu,  5 Sep 2024 02:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725504760; cv=none; b=tGcceXghlnVtti4xBGn7gduHT7+LrRE+cmmzlmCPfehmyQBf54JJonuzaiUd06P5sYxUmLoHOaPQL2/wsDWD54+FiG7mHj3KiKj1O9gMllRvRD+HWQ2m5gtom8fAv7sojfvbzOjEOWppdX6jdXuBCzE/W1OPr1WjPVtDapzAymg=
+	t=1725503754; cv=none; b=C/vKEzbVih685VGGgPaGv70Xvkk0Ls6eX5OnxvrDmK8lWj/RoK+998vbX8+/9HNs8qDcP+TlpZ2OggdjQZPDlH9B9VtXFQhaB6yOMdz2n2Eh+d3LPPtIr9ZCaaCtveMYBfXyXlMAa1KzFUkZaftkqpzKLIC3yJDqP/T2xKzMMcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725504760; c=relaxed/simple;
-	bh=5GRQVojJaq5NJYA21UMICSa6mcZjYe30u6WrGr1rXMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=RO40mQKJW5LE9wg2GpCgf4bTjm6sTdsRa2gsQ2k1NEKhwTA/0KURxUXyRx4iZlgWIa6XJAa91ad0TDCj9qz6ZTC06XGrWGb5O4A0w0zvPAy6NJ0mp7Zs9y0fNsFBGdZxvzDqd/Br53I4PGz4W+6/aK6ibUOARMPKFScFKaYA7pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F14781A054F;
-	Thu,  5 Sep 2024 04:52:31 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B87A91A062A;
-	Thu,  5 Sep 2024 04:52:31 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BE6431834890;
-	Thu,  5 Sep 2024 10:52:29 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com
-Cc: devicetree@vger.kernel.org,
+	s=arc-20240116; t=1725503754; c=relaxed/simple;
+	bh=JtgM5zR8Dpo0Gd3F3WSNXLiQwiL+8n7eU4oMY0eh77g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BLonokGjmxR5UZx2qePbkEG7YmxycMSGGcjP866hANXgeNQgsZdzOhBVQkT3DS9IWdyGfx80yf4hk4FDGsNWFw+S8DaZtEFDw+zZSkrHCw/rjuoB9oVR+no3gOq5SOIIvBQUbGbzUo5xCUdK/91NAH8YrcPX87/2axbO9ctgaIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowADnzSAEGdlmLilaAQ--.10052S2;
+	Thu, 05 Sep 2024 10:35:48 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v2 3/3] clk: imx95-blk-ctl: Add one clock gate for HSIO block
-Date: Thu,  5 Sep 2024 10:31:08 +0800
-Message-Id: <1725503468-22105-4-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1725503468-22105-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1725503468-22105-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] scsi: pmcraid: Convert comma to semicolon
+Date: Thu,  5 Sep 2024 10:35:21 +0800
+Message-Id: <20240905023521.1642862-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADnzSAEGdlmLilaAQ--.10052S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWDCrbEgr
+	1jq347AF1jq343KF15uw47Zr90gF1qvF4I9r42qay3A3y7XrZ8W3ZYvrs8Aw1fWr45Kry5
+	C3s0qFnI9wn3ujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7
+	v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS
+	14v26r126r1DMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUqfO7UUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-CREF_EN (Bit6) of LFAST_IO_REG control i.MX95 PCIe REF clock out
-enable/disable.
+Replace comma between expressions with semicolons.
 
-Add compatible string "fsl,imx95-hsio-blk-ctl" to support PCIe REF clock
-out gate.
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Found by inspection.
+No functional change intended.
+Compile tested only.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- drivers/clk/imx/clk-imx95-blk-ctl.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/scsi/pmcraid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-index 74f595f9e5e3..596dfb2f3b75 100644
---- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-+++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-@@ -248,6 +248,25 @@ static const struct imx95_blk_ctl_dev_data dispmix_csr_dev_data = {
- 	.clk_reg_offset = 0,
- };
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index a2a084c8075e..8f7307c4d876 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -1946,7 +1946,7 @@ static void pmcraid_soft_reset(struct pmcraid_cmd *cmd)
+ 	}
  
-+static const struct imx95_blk_ctl_clk_dev_data hsio_blk_ctl_clk_dev_data[] = {
-+	[0] = {
-+		.name = "hsio_blk_ctl_clk",
-+		.parent_names = (const char *[]){ "hsio_pll", },
-+		.num_parents = 1,
-+		.reg = 0,
-+		.bit_idx = 6,
-+		.bit_width = 1,
-+		.type = CLK_GATE,
-+		.flags = CLK_SET_RATE_PARENT,
-+	}
-+};
-+
-+static const struct imx95_blk_ctl_dev_data hsio_blk_ctl_dev_data = {
-+	.num_clks = 1,
-+	.clk_dev_data = hsio_blk_ctl_clk_dev_data,
-+	.clk_reg_offset = 0,
-+};
-+
- static int imx95_bc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -418,6 +437,7 @@ static const struct of_device_id imx95_bc_of_match[] = {
- 	{ .compatible = "nxp,imx95-display-master-csr", },
- 	{ .compatible = "nxp,imx95-lvds-csr", .data = &lvds_csr_dev_data },
- 	{ .compatible = "nxp,imx95-display-csr", .data = &dispmix_csr_dev_data },
-+	{ .compatible = "nxp,imx95-hsio-blk-ctl", .data = &hsio_blk_ctl_dev_data },
- 	{ .compatible = "nxp,imx95-vpu-csr", .data = &vpublk_dev_data },
- 	{ /* Sentinel */ },
- };
+ 	iowrite32(doorbell, pinstance->int_regs.host_ioa_interrupt_reg);
+-	ioread32(pinstance->int_regs.host_ioa_interrupt_reg),
++	ioread32(pinstance->int_regs.host_ioa_interrupt_reg);
+ 	int_reg = ioread32(pinstance->int_regs.ioa_host_interrupt_reg);
+ 
+ 	pmcraid_info("Waiting for IOA to become operational %x:%x\n",
 -- 
-2.37.1
+2.25.1
 
 
