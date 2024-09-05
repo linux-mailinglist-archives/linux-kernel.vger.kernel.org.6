@@ -1,207 +1,96 @@
-Return-Path: <linux-kernel+bounces-316487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFE496D044
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:18:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453D596D04D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E13F1C21876
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:18:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B5F28418C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73469193068;
-	Thu,  5 Sep 2024 07:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD1F193414;
+	Thu,  5 Sep 2024 07:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dTTEQmPD"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="isGlYCcr"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72B81925BB
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE7E19340B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725520729; cv=none; b=AUWamckfrYCgmOQLCaBSilsjjnEGy/zdKaqk2I5T5kmiDqJ+cNeEm6oRc6a6M1beoB39mfpjZtEg9uOXNb44cPoc+a54Ad6lXdbb2a73ETQypgjb3sEDQx8hvqYtMwmyBCSsy1Okf1rfJfwM7AEp3td9V9+lEE4A5f+ha6WV4T0=
+	t=1725520960; cv=none; b=NO7yzPtOsOE1IQh9zUqzAoCvm6G+8eNXDrje18USAdSLsWukaTQFjCYGS+DY6sKUrOrCu6W46rMzz5nV6UvQkR0XFSuVqjC38VlbPZiPe7U4tzuvBM7KEOCjc40WzwgVpF+yexgyPS7ginUzhPJsN8WkmWuvSgouNe8hZxGxJME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725520729; c=relaxed/simple;
-	bh=m8yo0ygUNvRfurS6oe7vGjo/dY5uVKasvHnDoAUEHBw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Gk194Q10VOkaJIVRmIrjhN/oAcv9M1NfMP3xTkPW15qPGBmJcd/29lppgbeZGoyPlOcHuLZFieuvhz4vaCwoIE0UqGgDbDV2UwYcjGqxYDtPShmOdyNiL+ckKq7jmaJ4Q5pj1emoN8OdO9poPPDXSV3ofouq/dcFWE9oR25BTsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dTTEQmPD; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725520725;
+	s=arc-20240116; t=1725520960; c=relaxed/simple;
+	bh=06hHvaXsr8CHUUh+tR66f3ol7vovqbRb1hyjXKEtvhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VghEzijkn8vlQ4alY8lAy6zRU8JWGiVgaP3KUHeqoRr8JLlGrrOWhbMyyBz0VUNC/fYPHn8n5ztMz0V0WhlurN6djGQ97XglErQNwOtqot6E3MjWbQFQpK9dl3yqszFezyza+DytT5sq3MwbC5GsbsttxwxK/jvloYMcvaHdW5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=isGlYCcr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 480FCFF80A;
+	Thu,  5 Sep 2024 07:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725520955;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T5FTfSc9tY5acYoQHjJ+ZBc2V1eSvg3XTLgGUoFubUE=;
-	b=dTTEQmPDGj+7RglANjOO+JH0gBypKgwITBbfCfuZQGhtYghyVvL1Xr5PdWB/5k0gtIgSu3
-	kTBOUAi4gr1JjWOxr2Dg+EZKbh0VaXgUksSLWQ7gmyiuLZZ8w/FlUx1QBP9gFaTnqh0Y+6
-	s710lUGxLXjgUFPSKnt6EzoE/r88fBo=
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ebeTHJJbb+PLFbrG1rBx4pw6eea7SBZUAwaWEbHB2HQ=;
+	b=isGlYCcrZxvgK8RrZaiIvw31/xfwNgJLYqlKFCWf60JSLeaiFGQuQurGe2W7uEnfvR5yyM
+	kJ3QDmdWJmvb9PWxmW8xS2Rf2evzyF5ry8OSKrVzxu2Sj0QvTfAhEG4CPqVZl70DIl2DgV
+	+cVzIPjxRYelptNTg1GEvTO0IGXH/T8wjIbts45+YzGo0dAKO4adWMbbslgXczh0G3WYKq
+	zmaHOPPw2OSbiNFU6oumOyaAO/sjFVS5d4qbvnO2gzw5YflN/Ewi5DdxeH8QNzh2D7qRyN
+	911xIrhrFkMMfZUM+92JTYYbQcsvc7CFrg5Zl4bon1t0IQR4Z2FICnT0fkLaKA==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] soc: fsl: qe: ucc: Export ucc_mux_set_grant_tsa_bkpt
+Date: Thu,  5 Sep 2024 09:22:15 +0200
+Message-ID: <20240905072215.337010-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2 07/14] mm: khugepaged: collapse_pte_mapped_thp() use
- pte_offset_map_rw_nolock()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <7f22c46c-2119-4de6-9d58-efcab05b5751@bytedance.com>
-Date: Thu, 5 Sep 2024 15:18:05 +0800
-Cc: David Hildenbrand <david@redhat.com>,
- Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Mike Rapoport <rppt@kernel.org>,
- Vishal Moola <vishal.moola@gmail.com>,
- Peter Xu <peterx@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- christophe.leroy2@cs-soprasteria.com,
- LKML <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <69F12D50-BCA9-4874-B558-71008EF82674@linux.dev>
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <c377dab2bf55950e6155ea051aba3887ed5a2773.1724310149.git.zhengqi.arch@bytedance.com>
- <24be821f-a95f-47f1-879a-c392a79072cc@linux.dev>
- <cd137540-ae01-46a1-93d2-062bc21b827c@bytedance.com>
- <05955456-8743-448A-B7A4-BC45FABEA628@linux.dev>
- <7f22c46c-2119-4de6-9d58-efcab05b5751@bytedance.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
+When TSA is compiled as module the following error is reported:
+  "ucc_mux_set_grant_tsa_bkpt" [drivers/soc/fsl/qe/tsa.ko] undefined!
 
+Indeed, the ucc_mux_set_grant_tsa_bkpt symbol is not exported.
 
-> On Sep 5, 2024, at 14:41, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->=20
->=20
->=20
-> On 2024/9/5 14:32, Muchun Song wrote:
->>> On Aug 30, 2024, at 14:54, Qi Zheng <zhengqi.arch@bytedance.com> =
-wrote:
->>>=20
->>>=20
->>>=20
->>> On 2024/8/29 16:10, Muchun Song wrote:
->>>> On 2024/8/22 15:13, Qi Zheng wrote:
->>>>> In collapse_pte_mapped_thp(), we may modify the pte and pmd entry =
-after
->>>>> acquring the ptl, so convert it to using =
-pte_offset_map_rw_nolock(). At
->>>>> this time, the write lock of mmap_lock is not held, and the =
-pte_same()
->>>>> check is not performed after the PTL held. So we should get =
-pgt_pmd and do
->>>>> pmd_same() check after the ptl held.
->>>>>=20
->>>>> For the case where the ptl is released first and then the pml is =
-acquired,
->>>>> the PTE page may have been freed, so we must do pmd_same() check =
-before
->>>>> reacquiring the ptl.
->>>>>=20
->>>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->>>>> ---
->>>>>  mm/khugepaged.c | 16 +++++++++++++++-
->>>>>  1 file changed, 15 insertions(+), 1 deletion(-)
->>>>>=20
->>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>>>> index 53bfa7f4b7f82..15d3f7f3c65f2 100644
->>>>> --- a/mm/khugepaged.c
->>>>> +++ b/mm/khugepaged.c
->>>>> @@ -1604,7 +1604,7 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>>>      if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
->>>>>          pml =3D pmd_lock(mm, pmd);
->>>>> -    start_pte =3D pte_offset_map_nolock(mm, pmd, haddr, &ptl);
->>>>> +    start_pte =3D pte_offset_map_rw_nolock(mm, pmd, haddr, =
-&pgt_pmd, &ptl);
->>>>>      if (!start_pte)        /* mmap_lock + page lock should =
-prevent this */
->>>>>          goto abort;
->>>>>      if (!pml)
->>>>> @@ -1612,6 +1612,9 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>>>      else if (ptl !=3D pml)
->>>>>          spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>>>> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
->>>>> +        goto abort;
->>>>> +
->>>>>      /* step 2: clear page table and adjust rmap */
->>>>>      for (i =3D 0, addr =3D haddr, pte =3D start_pte;
->>>>>           i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SIZE, pte++) {
->>>>> @@ -1657,6 +1660,16 @@ int collapse_pte_mapped_thp(struct =
-mm_struct *mm, unsigned long addr,
->>>>>      /* step 4: remove empty page table */
->>>>>      if (!pml) {
->>>>>          pml =3D pmd_lock(mm, pmd);
->>>>> +        /*
->>>>> +         * We called pte_unmap() and release the ptl before =
-acquiring
->>>>> +         * the pml, which means we left the RCU critical section, =
-so the
->>>>> +         * PTE page may have been freed, so we must do pmd_same() =
-check
->>>>> +         * before reacquiring the ptl.
->>>>> +         */
->>>>> +        if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) =
-{
->>>>> +            spin_unlock(pml);
->>>>> +            goto pmd_change;
->>>> Seems we forget to flush TLB since we've cleared some pte entry?
->>>=20
->>> See comment above the ptep_clear():
->>>=20
->>> /*
->>> * Must clear entry, or a racing truncate may re-remove it.
->>> * TLB flush can be left until pmdp_collapse_flush() does it.
->>> * PTE dirty? Shmem page is already dirty; file is read-only.
->>> */
->>>=20
->>> The TLB flush was handed over to pmdp_collapse_flush(). If a
->> But you skipped pmdp_collapse_flush().
->=20
-> I skip it only in !pmd_same() case, at which time it must be cleared
-> by other thread, which will be responsible for flushing TLB:
+Simply export ucc_mux_set_grant_tsa_bkpt.
 
-WOW! AMAZING! You are right.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409051409.fszn8rEo-lkp@intel.com/
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ drivers/soc/fsl/qe/ucc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->=20
-> CPU 0				CPU 1
-> 				pmd_clear
-> 				spin_unlock
-> 				flushing tlb
-> spin_lock
-> if (!pmd_same)=20
-> 	goto pmd_change;
-> pmdp_collapse_flush
->=20
-> Did I miss something?
->=20
->>> concurrent thread free the PTE page at this time, the TLB will
->>> also be flushed after pmd_clear().
->>>=20
->>>>> +        }
->>>>>          if (ptl !=3D pml)
->>>>>              spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>>>>      }
->>>>> @@ -1688,6 +1701,7 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>>>          pte_unmap_unlock(start_pte, ptl);
->>>>>      if (pml && pml !=3D ptl)
->>>>>          spin_unlock(pml);
->>>>> +pmd_change:
->>>>>      if (notified)
->>>>>          mmu_notifier_invalidate_range_end(&range);
->>>>>  drop_folio:
+diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
+index 21dbcd787cd5..892aa5931d5b 100644
+--- a/drivers/soc/fsl/qe/ucc.c
++++ b/drivers/soc/fsl/qe/ucc.c
+@@ -114,6 +114,7 @@ int ucc_mux_set_grant_tsa_bkpt(unsigned int ucc_num, int set, u32 mask)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(ucc_mux_set_grant_tsa_bkpt);
+ 
+ int ucc_set_qe_mux_rxtx(unsigned int ucc_num, enum qe_clock clock,
+ 	enum comm_dir mode)
+-- 
+2.46.0
 
 
