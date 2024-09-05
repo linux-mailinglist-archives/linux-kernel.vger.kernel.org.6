@@ -1,105 +1,96 @@
-Return-Path: <linux-kernel+bounces-317553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FB096DFE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:35:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82AD96DFE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB4E4B25348
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E54B28E637
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692F61A38E1;
-	Thu,  5 Sep 2024 16:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0FF19C579;
+	Thu,  5 Sep 2024 16:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bILZybfJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXFvdW5w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1C21A08A4;
-	Thu,  5 Sep 2024 16:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2374A383A3;
+	Thu,  5 Sep 2024 16:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725554028; cv=none; b=RfL9XtryKKduhpFdw+IVbVj1Z+4rVKIhMDU1hLTG+DZpNSMYzoEP2CY7FquhtD408tpo1FxOiCV9pcV/0M8hCKV2wGb8sz7aF3vU+GbYvq6hCNV69A+8rMT8ZqYmmAZTIAbNPVuySXBbpLxyduvHFc6Nt/vtKiARSAUr2rNkJ2E=
+	t=1725554092; cv=none; b=VXYL3kv4BJ1ZoxHySy/1Hkyv1MFeeWGy2Nm9zS0o5abgS7/sWpfTeBB7cj4W9qdHuTHiD/K9hce6QY2SCYvhmhGiBdK0R6m4TkNFkwFmLKxaTaPr1zEbaBKQmUUyIOOPmzO/dxTovaBeTYlV3g2kaQrROdQuUczMuGd+lvlRi3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725554028; c=relaxed/simple;
-	bh=fV+XkGhCCUlQVvIusu+HetPVTTQeYZyNkRFe9370jes=;
+	s=arc-20240116; t=1725554092; c=relaxed/simple;
+	bh=/fTC7ZnLz/HxGywyh919pXu1R19VkeDSSkMMvbHSAdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXJ+vWKGJ+l/JHvFZlFUvmu1F2awYuePjpql8f3D3Jub/QBmo6AH4IqUHho2C4CrA5oO9K2jW9EH+wDxGB2qMBFB0QDHJ/xfMPgq02z9vl9lyL4Kv6H7RxUPpI9cAOBbp5H/H8xAjSwJU94kL2gbDq6xH/nPX7aB9YQeZy3GDIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bILZybfJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C39FC4CEC3;
-	Thu,  5 Sep 2024 16:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725554028;
-	bh=fV+XkGhCCUlQVvIusu+HetPVTTQeYZyNkRFe9370jes=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXSZJna6cEQgMKv8rh+u42RKe+8LTAEsEdd+eE/hsLzUBWC0ACVvLyMRO9jBWJ+wOuICV3xA8J/EH5+B4EoUS48YKqWdTRJUKYFeNC8ECROeV8yyH3Tpo/qBaZ2nP0NAXAbb23LIbPpXECdXIteRu/Lj9jHZHG91HpH3eT1fYm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXFvdW5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A12C4CEC3;
+	Thu,  5 Sep 2024 16:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725554091;
+	bh=/fTC7ZnLz/HxGywyh919pXu1R19VkeDSSkMMvbHSAdw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bILZybfJNK3SlkLtyn6P+IKhAjQumL0HgemfaaN1Ithi0DiKFVzC3y0VydBt70Rqn
-	 B8ePubdErEY6JnxScWYOWVX8Ja7kj/cTwKPA/1ZxBbRIlNiS+ShHJXahHQNKvgeogY
-	 VjT7Pi++rW9BRQuygr4fA+uTJrZK9Y2zje6sNSi4=
-Date: Thu, 5 Sep 2024 18:33:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/184] 6.10.9-rc1 review
-Message-ID: <2024090527-scouts-cohesive-bced@gregkh>
-References: <20240905093732.239411633@linuxfoundation.org>
- <CA+G9fYsppY-GyoCFFbAu1q7PdynMLKn024J3CenbN12eefaDwA@mail.gmail.com>
+	b=HXFvdW5wYWLeZbzskpYX0Ey8zZS04RnlurLU9uN+hgRR/WxD6e9opbBfDRVGxhjJY
+	 ANeg+P2uCvy8a/pwHmqSsb88QxbIq3Jo+0ywOl0SNHHgm+WGtLkjI6qupZtojxKLaS
+	 6xtslvDMBAD9ExkahFgXKa2z5hVWPUguyKJJ9G/JvocnXrdbOv/1WtR2QN+jyQqz0J
+	 weF2GXkfcew0k7wWlWjUg5kfyJ0nMyFLS44GVVJZUmnhMR/t10He0rcZoAVhk9K2yo
+	 eNG+LjfzWr2vPJyWIRbEW6CbiLKDyqLdaz6CSP7VYYHlhfeHHYimNOnjGMwyFL3fC9
+	 NTy/zc52n1XrQ==
+Date: Thu, 5 Sep 2024 09:34:49 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Wardenjohn <zhangwarden@gmail.com>, jikos@kernel.org, pmladek@suse.com,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+Message-ID: <20240905163449.ly6gbpizooqwwvt6@treble>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYsppY-GyoCFFbAu1q7PdynMLKn024J3CenbN12eefaDwA@mail.gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
 
-On Thu, Sep 05, 2024 at 05:25:32PM +0530, Naresh Kamboju wrote:
-> On Thu, 5 Sept 2024 at 15:13, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.10.9 release.
-> > There are 184 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 07 Sep 2024 09:36:50 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.9-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Thu, Sep 05, 2024 at 12:23:20PM +0200, Miroslav Benes wrote:
+> I am not a fan. Josh wrote most of my objections already so I will not 
+> repeat them. I understand that the attribute might be useful but the 
+> amount of code it adds to sensitive functions like 
+> klp_complete_transition() is no fun.
 > 
-> The following build errors noticed on arm64 on
-> stable-rc linux.6.6.y and linux.6.10.y
-> 
-> drivers/ufs/host/ufs-qcom.c: In function 'ufs_qcom_advertise_quirks':
-> drivers/ufs/host/ufs-qcom.c:862:32: error:
-> 'UFSHCD_QUIRK_BROKEN_LSDBS_CAP' undeclared (first use in this
-> function); did you mean 'UFSHCD_QUIRK_BROKEN_UIC_CMD'?
->   862 |                 hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
->       |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                                UFSHCD_QUIRK_BROKEN_UIC_CMD
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Would it be possible to just use klp_transition_patch and implement the 
+> logic just in using_show()?
 
-Sasha has dropped these now, let me go push out some -rc2 with that
-removed.
+Yes, containing the logic to the sysfs file sounds a lot better.
 
-thanks,
+> I have not thought through it completely but 
+> klp_transition_patch is also an indicator that there is a transition going 
+> on. It is set to NULL only after all func->transition are false. So if you 
+> check that, you can assign -1 in using_show() immediately and then just 
+> look at the top of func_stack.
 
-greg k-h
+sysfs already has per-patch 'transition' and 'enabled' files so I don't
+like duplicating that information.
+
+The only thing missing is the patch stack order.  How about a simple
+per-patch file which indicates that?
+
+  /sys/kernel/livepatch/<patchA>/order => 1
+  /sys/kernel/livepatch/<patchB>/order => 2
+
+The implementation should be trivial with the use of
+klp_for_each_patch() to count the patches.
+
+-- 
+Josh
 
