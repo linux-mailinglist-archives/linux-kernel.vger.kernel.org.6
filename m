@@ -1,341 +1,123 @@
-Return-Path: <linux-kernel+bounces-316370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CF296CE88
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C72396CE8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254781C2224E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A70288BCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11039189508;
-	Thu,  5 Sep 2024 05:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE23188CD5;
+	Thu,  5 Sep 2024 05:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mMiWpch9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c4XYV4y0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA5A79F5;
-	Thu,  5 Sep 2024 05:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B516479F5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725514906; cv=none; b=pY+tiG9CIYGcixiHhChC+dxCAIVkCuxoLr0w7NgmDeomAna1P6cUek4uaaAEsbaSrRSqhiChDxheOyzEgca2V6hpm/bEA+ByWE6NkT9VY7uspjbTzQfekerzWXhH3T0+esipwyU5jwT9CHXpdPn00t1OZ4q2ww5ZgcuVmvUkEk4=
+	t=1725514920; cv=none; b=W75MjMsDP32dhI1QxW5bxFVIYGPmRgMmIttPfN1qJDuDsiFkD9yvg1/QSi/Wudspw9cCyifnXChrjvZAE+5pg1tKoafZpnFIeyiY3vjizX2fs5E7mz/sEXDMFgE+gZuYdwyPX6KSYZcaGvxIDVPzuoDc8fMx8Y9vA3z/PF4EXYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725514906; c=relaxed/simple;
-	bh=7fFc1zSvjwiXncP6/ZRpa5RwYh4v2D5d2HlqTprTYrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YsxfRBGzHVybAUyWccjT72WBqQwwt31/Of9dUmnmb0gcBY6KL1v7ZaZ9JCzy0IaJSkmdOKcTWYbtIl4FDjtcbjK6x/8Oqsaet15Do9NXc5ovaN9tX+Xvwa8MLZaWyJLqvQowN8tAr+Zp/GUCde1VLZYR2wfxwKnz8ynZgufnIBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mMiWpch9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484M1ha1025039;
-	Thu, 5 Sep 2024 05:41:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Qtd/Z535wUt/myw/OVUIdpGtB0U1J8fBSnU7aIFPpxI=; b=mMiWpch9AQLtW/x+
-	EOMqA/697PUnLYCw2GTFliBrkPDUgOspk9AiYzy9jptJI6YsvjOwAMcq3lw9DjEh
-	ftr2NrXoiLGJeXKR4u7e1QtGZAjbrJZ/AspR5yklcJcJ3Owbd6sb6lrcUNPQ3cOM
-	8ISwYThUFgwd+PDsGPfUO9j5k6zq92d1adPuugAL4K7WOZsOAsPXhI3ea3c7x224
-	VIO4WaV40q3FoPLegEsSaeel3HaPJyr+AQuyRxcZJXSGNmAfiY50DLZ/7sdFyezz
-	gZKzCQvkGL3TCPBQxymenhxmOcs/uXs57OI12rN0YcN6CNEXJyxabAE9H/xy4bdA
-	bqoNsQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxfcq5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 05:41:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4855fZQF009576
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 05:41:35 GMT
-Received: from [10.216.46.64] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 22:41:31 -0700
-Message-ID: <19a30fae-0e3b-05eb-871b-f0f131c81b9b@quicinc.com>
-Date: Thu, 5 Sep 2024 11:11:28 +0530
+	s=arc-20240116; t=1725514920; c=relaxed/simple;
+	bh=1bcPxobkNwMKDftQcBwUkHKfb/H/2K0+hr8VNa5lgwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sP1uLPBncEeGvYmF5P6zozH8BxQeK2CwgskVm0pPwiBeKAHAmVYUX2Jl5k6IZsmFGzunDzhQepKhbfxaqsxW/aEft0RpS5G00an4F7ixzcDUT19puC4pk01mB9NADCYBcz8p/sDVhQYXN675R2BdfQjwI4+nyotAyCXJ1EUNJ/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c4XYV4y0; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725514919; x=1757050919;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1bcPxobkNwMKDftQcBwUkHKfb/H/2K0+hr8VNa5lgwU=;
+  b=c4XYV4y0wVeKWe66QCmrDcga61ogtTZ3nyFs6IiFfJeRoc9fJpwj7iuw
+   BZEtlEWhmxmFRRiTDZg6EEEH0M0ozPDA3Ll6zSaPVk3peg5YFVdnSs8eP
+   Yvxa2BLBqAyAe08zTqYYs53voAUweoYm1X8ydYrC4mm98eD3AvZw7ArIz
+   Na3S4hI9zhVTvs8nOiAdeNLzYNsKsckOmYYw8RoZWb89s+rT+rzULk7sN
+   9+ehMbS0wvoH87jSYqjOtM0RTpvD8/GKALzSweA9eB1fR13jAzIxUxOod
+   Jcyi9aOwAxo/gC3Abmk3qD+R70dzmUoVerCZxYrrFoy8KIydzfJW47CIB
+   A==;
+X-CSE-ConnectionGUID: 42YQz9l5RhecklMl8HsOgA==
+X-CSE-MsgGUID: tg3bjMbNR96hXaC3K3+zNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34873056"
+X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
+   d="scan'208";a="34873056"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2024 22:41:58 -0700
+X-CSE-ConnectionGUID: gK/lmMJHR2S8MzhqR+d5yQ==
+X-CSE-MsgGUID: 3AeN9hrARmS4GSFrkoc4Ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,203,1719903600"; 
+   d="scan'208";a="65823109"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 04 Sep 2024 22:41:56 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sm5Fh-0008yh-2c;
+	Thu, 05 Sep 2024 05:41:53 +0000
+Date: Thu, 5 Sep 2024 13:41:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wende Tan <twd2.me@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: ld.lld: error: Function Import: link error: linking module flags
+ 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)'
+ and 'vmlinux.a(smartpqi_init.o at 1171352)'
+Message-ID: <202409051341.lmvIzCrZ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 01/29] dt-bindings: media: Add sm8550 dt schema
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-1-c5fdbbe65e70@quicinc.com>
- <618f4890-bdb5-48f0-b487-5123f167c322@kernel.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <618f4890-bdb5-48f0-b487-5123f167c322@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vpixDDWCbveKs3CALTM_DbBTyRPy8G44
-X-Proofpoint-ORIG-GUID: vpixDDWCbveKs3CALTM_DbBTyRPy8G44
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- adultscore=0 clxscore=1011 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409050040
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c763c43396883456ef57e5e78b64d3c259c4babc
+commit: 021d23428bdbae032294e8f4a29cb53cb50ae71c RISC-V: build: Allow LTO to be selected
+date:   8 months ago
+config: riscv-randconfig-002-20240905 (https://download.01.org/0day-ci/archive/20240905/202409051341.lmvIzCrZ-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 05f5a91d00b02f4369f46d076411c700755ae041)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051341.lmvIzCrZ-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409051341.lmvIzCrZ-lkp@intel.com/
 
-On 8/27/2024 4:12 PM, Krzysztof Kozlowski wrote:
-> On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
->> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>
->> Add a schema description for the iris video encoder/decoder
->> on sm8550.
-> 
-> A nit, subject: drop second/last, redundant "dt sche,a". The
-> "dt-bindings" prefix is already stating that these are bindings/dt schema.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> 
-> And subject is neither correct nor complete. You did not add here SM8550
-> SoC, but SM8550 Iris. Plus what is SM8550? TI SM8550? Samsung SM8550?
-> 
-> You have entire commit subject to say briefly such details without
-> repeating obvious "dt schema".
-> 
-Sure, will update the commit text with better description in next patch.
->>
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>  .../bindings/media/qcom,sm8550-iris.yaml           | 162 +++++++++++++++++++++
->>  1 file changed, 162 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->> new file mode 100644
->> index 000000000000..a7aa6a6190cf
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
->> @@ -0,0 +1,162 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/qcom,sm8550-iris.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm IRIS video encode and decode accelerators
-> 
-> IRIS or Iris? Why it is every time written differently?
-> 
-> If IRIS then explain the acronym in description.
-> 
-It should be iris, will make consistent throughout the file.
->> +
->> +maintainers:
->> +  - Vikash Garodia <quic_vgarodia@quicinc.com>
->> +  - Dikshita Agarwal <quic_dikshita@quicinc.com>
->> +
->> +description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
-Ok.
->> +  The Iris video processing unit is a video encode and decode accelerator
->> +  present on Qualcomm platforms.
->> +
->> +allOf:
->> +  - $ref: qcom,venus-common.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
-> 
-> Drop oneOf
-> 
-This was added so that in future we can add new compatible to the list
-where the same driver supports a different SOC with different compatible.
-is this not the correct way of doing it?
->> +      - enum:
->> +          - qcom,sm8550-iris
->> +
->> +  power-domains:
->> +    maxItems: 4
->> +
->> +  power-domain-names:
->> +    oneOf:
-> 
-> Drop oneOf
->
-Sure
+All errors (new ones prefixed by >>):
 
->> +      - items:
->> +          - const: venus
->> +          - const: vcodec0
->> +          - const: mxc
->> +          - const: mmcx
->> +
->> +  clocks:
->> +    maxItems: 3
->> +
->> +  clock-names:
->> +    items:
->> +      - const: iface
->> +      - const: core
->> +      - const: vcodec0_core
->> +
->> +  interconnects:
->> +    maxItems: 2
->> +
->> +  interconnect-names:
->> +    items:
->> +      - const: cpu-cfg
->> +      - const: video-mem
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  reset-names:
->> +    items:
->> +      - const: bus
->> +
->> +  iommus:
->> +    maxItems: 2
->> +
->> +  dma-coherent: true
->> +
->> +  operating-points-v2: true
->> +
->> +  opp-table:
->> +    type: object
->> +
->> +required:
->> +  - compatible
->> +  - power-domain-names
->> +  - interconnects
->> +  - interconnect-names
->> +  - resets
->> +  - reset-names
->> +  - iommus
->> +  - dma-coherent
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/qcom,rpmh.h>
->> +    #include <dt-bindings/clock/qcom,sm8550-gcc.h>
->> +    #include <dt-bindings/clock/qcom,sm8450-videocc.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/interconnect/qcom,icc.h>
->> +    #include <dt-bindings/interconnect/qcom,sm8550-rpmh.h>
->> +    #include <dt-bindings/power/qcom-rpmpd.h>
->> +    #include <dt-bindings/power/qcom,rpmhpd.h>
->> +
->> +    iris: video-codec@aa00000 {
-> 
-> Drop unused label
-> 
-This was referred from existing driver, if its not valid, can remove the
-iris label.
->> +        compatible = "qcom,sm8550-iris";
->> +
-> 
-> No blank line here
-Ok, will remove.
-> 
->> +        reg = <0x0aa00000 0xf0000>;
->> +        interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +        power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
->> +                        <&videocc VIDEO_CC_MVS0_GDSC>,
->> +                        <&rpmhpd RPMHPD_MXC>,
->> +                        <&rpmhpd RPMHPD_MMCX>;
->> +        power-domain-names = "venus", "vcodec0", "mxc", "mmcx";
->> +
->> +        clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
->> +                 <&videocc VIDEO_CC_MVS0C_CLK>,
->> +                 <&videocc VIDEO_CC_MVS0_CLK>;
->> +        clock-names = "iface", "core", "vcodec0_core";
->> +
->> +        interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
->> +                         &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ALWAYS>,
->> +                        <&mmss_noc MASTER_VIDEO QCOM_ICC_TAG_ALWAYS
->> +                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->> +        interconnect-names = "cpu-cfg", "video-mem";
->> +
->> +        memory-region = <&video_mem>;
->> +
->> +        resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
->> +        reset-names = "bus";
->> +
->> +        iommus = <&apps_smmu 0x1940 0x0000>,
->> +                 <&apps_smmu 0x1947 0x0000>;
->> +        dma-coherent;
->> +
->> +        operating-points-v2 = <&iris_opp_table>;
->> +
->> +        iris_opp_table: opp-table {
->> +            compatible = "operating-points-v2";
->> +
->> +            opp-240000000 {
->> +                opp-hz = /bits/ 64 <240000000>;
->> +                required-opps = <&rpmhpd_opp_svs>,
->> +                                <&rpmhpd_opp_low_svs>;
->> +            };
->> +
->> +            opp-338000000 {
->> +                opp-hz = /bits/ 64 <338000000>;
->> +                required-opps = <&rpmhpd_opp_svs>,
->> +                                <&rpmhpd_opp_svs>;
->> +            };
->> +
->> +            opp-366000000 {
->> +                opp-hz = /bits/ 64 <366000000>;
->> +                required-opps = <&rpmhpd_opp_svs_l1>,
->> +                                <&rpmhpd_opp_svs_l1>;
->> +            };
->> +
->> +            opp-444000000 {
->> +                opp-hz = /bits/ 64 <444000000>;
->> +                required-opps = <&rpmhpd_opp_turbo>,
->> +                                <&rpmhpd_opp_turbo>;
->> +            };
->> +
->> +            opp-533333334 {
->> +                opp-hz = /bits/ 64 <533333334>;
->> +                required-opps = <&rpmhpd_opp_turbo_l1>,
->> +                                <&rpmhpd_opp_turbo_l1>;
->> +           };
-> 
-> Fix the indentation above.
-Sure, will fix.
-> 
->> +        };
->> +    };
->> +...
->>
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(smartpqi_init.o at 1171352)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(memcontrol.o at 1089572)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(skbuff.o at 1212272)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(hpsa.o at 1171292)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(bnx2.o at 1179752)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(segment.o at 1119272)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(super.o at 1113572)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(trace.o at 1082912)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(mballoc.o at 1101512)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(filter.o at 1213352)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(slub.o at 1089332)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(volumes.o at 1114712)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(tcp.o at 1217312)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(raid5.o at 1203572)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(inode.o at 1114172)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(ixgbe_main.o at 1181852)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(core.o at 1086812)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(igc_main.o at 1181132)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(md.o at 1203752)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1073432)' and 'vmlinux.a(target_core_transport.o at 1174232)'
+   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
 
-Thanks,
-Dikshita
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
