@@ -1,57 +1,50 @@
-Return-Path: <linux-kernel+bounces-316163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3674796CC03
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:03:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE1696CBFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CA4285983
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9CEA1F26D3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023AF9463;
-	Thu,  5 Sep 2024 01:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C8748D;
+	Thu,  5 Sep 2024 01:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="I1LE+zDb"
-Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FKFy/o14"
+Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4048D747F;
-	Thu,  5 Sep 2024 01:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725498208; cv=pass; b=O6JQFjsizKPNKB44ETJ3Zpfki8R2G1KcFZEGpeBS4c7Y8H31aftosSxOfFqaOwMD+KpsCtJUUUK5d0NK4m7kIBvCkucm000tBMAZVqR+kvYlNcV3M9niuzc/08KCZUnkK8VdzG2mgNa7h+cCwIjlktbD7udmBOpIYnVzFi1pB0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725498208; c=relaxed/simple;
-	bh=xvwm9ULyMATN4LUA3hXl7b+4PDyb925p3YwCKiJ8Ud8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F9B7464
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725498181; cv=none; b=mFQdvSbdjqT83C9Xf9gX09F2rfdf0vWAgpWMf2dd+pnoEyld/R7Xwedy1yqIdew79S+r9knj2CfXr+F90K2fuPlqWyB0PEU6ksM00fMliqrXEhq4a5+GOqeSC4DUot42Md13C7ACVAd8uCLqe4mMIG1AHLHIUHqDqcIFfyvN7NI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725498181; c=relaxed/simple;
+	bh=GykyIwLq1BnUDdl5erj5qQJG0n/oyjRymF+evXtV7oI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWtZmMLJsfax72NqysVLJCIjEwfLuSwah1B9ndnMDRNNfk3Pm7IsWmgUucncmYmg9LZ5rDZqtitMDeDaRZFtj/EPu0d5T0EAZ7YviMzRTC9mGlid5WqMV1SK0voTMEshpOUImOxYrjYAzgfUpfR7mw+1qzMc+QuTfJZl1CV1JZQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=I1LE+zDb; arc=pass smtp.client-ip=136.143.188.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725498125; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=n1GwapKlqf/G11f9bXZyxIoD7k1R7NbcQOIf95YR2qUGUiwderqOqQrraRlVfwxxRmR7Re8k3NeGCmtIy2TiXvQ+zKn62wu26gh7hkiumSYANKK1u21gQgWZHbpTZl0/cgMaDaT0S7xvzFbJUhmcuijt+lurWYeobverSdHkkmQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725498125; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=MHhhgvQoIAOSgBKwKAFzW1nw5ZFZN5DJupDzq3j2bCE=; 
-	b=GnTIR0gSukchwjgWOItZ87i59diBhrbv1skYdEbrSqqZAONm+7S3KqrsBqEsYyOOqZj8dHTuDwBXLot2xYpClR5gjGUVW/mbeADllJ80vbvfFg9TMghEUFFa7W15JVS6l4pm9kzZrI1x9hxlHRE+UVUVGbgQPzjUxuGIRicNjXo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=apertussolutions.com;
-	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-	dmarc=pass header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725498125;
-	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=MHhhgvQoIAOSgBKwKAFzW1nw5ZFZN5DJupDzq3j2bCE=;
-	b=I1LE+zDbqGpOlfJl+BMuEOWTcR58dv4I/SqGYrYELweuXSrWu940A6fkSzqPXilW
-	JjrMes/NSWEf39/p6FkNSCnlDXf1zVEviNihPq/lT6Tz6DsS6XbwKS/d2sp56PINbGM
-	b/FYT7akWAq84UiE+6YlPxp0pbVAFdENRxnGF+OA=
-Received: by mx.zohomail.com with SMTPS id 1725498123590524.2720733626318;
-	Wed, 4 Sep 2024 18:02:03 -0700 (PDT)
-Message-ID: <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
-Date: Wed, 4 Sep 2024 21:01:59 -0400
+	 In-Reply-To:Content-Type; b=g75CqRO3uJVJlBcYVInma+i/x/1I4PSpOYKfYvPbQtHYradTWPv8niMDS8hPBjD0+cPie08K8SkafaXtrIAxQ9tKN3xhBW+fV3ekIOupedLHhinQVxEBd4NDgsZARJvcs1aU6Ls2Cv8GjmJFocmj7vmFggjdqg2/VvWjzgYNfps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FKFy/o14; arc=none smtp.client-ip=17.58.6.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725498180;
+	bh=6Hmte6RnfrOEToAS1kUk3LKPZ+n947JNju3lGec5oho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=FKFy/o14jYYGLMVx0PnK+yfGg62i3AEV4ZeN5WdNc8sWQ6rDfobm6Qrv2wCwD8uYI
+	 Q81qVTarBT2msuVAJGQqI67vJv72jwNnGdj8snLO4LuJdQxAOuDxtUNP4uAozN8RjZ
+	 TdLh9QRaIUyLNc+ScugLRz+uP2b9xE8O4CVhUWgaZhiEU2DYCk4BZ23bU63EWeVy9g
+	 m68raLb96raoC5J7r5cmCmJGazO1IWb7HG7YDEyMDMiUG1Ruy7X1D5C6v6wrUuym3G
+	 sWdaSMnUBBFcvq5JIjkz4TWJI4lJKz4XbCxdVLlpP/JjRzCOY2bFv8H1AyKQ8z9Fxv
+	 Jpvk+WJ9N69Nw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 13315C8009E;
+	Thu,  5 Sep 2024 01:02:54 +0000 (UTC)
+Message-ID: <af326d48-e41e-4e4f-8555-5bf62dd6e552@icloud.com>
+Date: Thu, 5 Sep 2024 09:02:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,105 +52,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: Andy Lutomirski <luto@amacapital.net>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
- Eric Biggers <ebiggers@kernel.org>,
- Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
- mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
- ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, nivedita@alum.mit.edu,
- herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
- dwmw2@infradead.org, baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org>
- <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
- <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+Subject: Re: [PATCH] cxl/region: Fix logic for finding a free cxl decoder
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+ Ben Widawsky <bwidawsk@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+ stable@vger.kernel.org
+References: <20240903-fix_cxld-v1-1-61acba7198ae@quicinc.com>
+ <ZtduQeu2NNyVWTk7@aschofie-mobl2.lan>
 Content-Language: en-US
-From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-In-Reply-To: <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <ZtduQeu2NNyVWTk7@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: lYNaOzvWn1x7jVXL8M2WOO0oJq-sykJ4
+X-Proofpoint-GUID: lYNaOzvWn1x7jVXL8M2WOO0oJq-sykJ4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-04_22,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 mlxscore=0
+ clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409050006
 
-Hi Luto.
-
-On 8/28/24 23:17, Andy Lutomirski wrote:
-> On Thu, Aug 15, 2024 at 12:10 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+On 2024/9/4 04:14, Alison Schofield wrote:
+> On Tue, Sep 03, 2024 at 08:41:44PM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
 >>
->> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
->>> On 5/31/24 09:54, Eric W. Biederman wrote:
->>>> Eric Biggers <ebiggers@kernel.org> writes:
->>>>> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
->>>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
->>>>> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
->>>>> but why would you not at least *prefer* SHA-256?
->>>>
->>>> Yes.  Please prefer to use SHA-256.
->>>>
->>>> Have you considered implementing I think it is SHA1-DC (as git has) that
->>>> is compatible with SHA1 but blocks the known class of attacks where
->>>> sha1 is actively broken at this point?
->>>
->>> We are using the kernel's implementation, addressing what the kernel
->>> provides is beyond our efforts. Perhaps someone who is interested in
->>> improving the kernel's SHA1 could submit a patch implementing/replacing
->>> it with SHA1-DC, as I am sure the maintainers would welcome the help.
->>
->> Well, someone who is interested to get his "secure" code merged should
->> have a vested interested to have a non-broken SHA1 implementation if
->> there is a sensible requirement to use SHA1 in that new "secure" code,
->> no?
->>
->> Just for the record. The related maintainers can rightfully decide to
->> reject known broken "secure" code on a purely technical argument.
->>
+>> match_free_decoder()'s logic for finding a free cxl decoder depends on
+>> a prerequisite that all child decoders are sorted by ID in ascending order
+>> but the prerequisite may not be guaranteed, fix by finding a free cxl
+>> decoder with minimal ID.
 > 
-> Wait, hold on a second.
+> After reading the 'Closes' tag below I have a better understanding of
+> why you may be doing this, but I don't want to have to jump to that
+> Link. Can you describe here examples of when the ordered allocation
+> may not be guaranteed, and the impact when that happens.
 > 
-> SHA1-DC isn't SHA1.  It's a different hash function that is mostly
-> compatible with SHA1, is different on some inputs, and is maybe more
-> secure.  But the _whole point_ of using SHA1 in the TPM code (well,
-> this really should be the whole point for new applications) is to
-> correctly cap the SHA1 PCRs so we can correctly _turn them off_ in the
-> best way without breaking compatibility with everything that might
-> read the event log.  I think that anyone suggesting using SHA1-DC for
-> this purpose should give some actual analysis as to why they think
-> it's an improvement, let alone even valid.
 
-I would say at a minimum it is to provide a means to cap the PCRs. 
-Devices with TPM1.2 are still prevalent in the wild for which members of 
-the TrenchBoot community support, and there are still valid (and secure) 
-verification uses for SHA1 that I outlined in my previous response.
+thank you for code review.
+let me try to do it.
 
-> Ross et al, can you confirm that your code actually, at least by
-> default and with a monstrous warning to anyone who tries to change the
-> default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
-> all stop hassling the people trying to develop this series about the
-> fact that they're doing their best with the obnoxious system that the
-> TPM designers gave them?
+> This includes a change to device_for_each_child() which I see mentioned
+> in the Closes tag discussion too. Is that required for this fix?
+>
 
-Our goal is to keep control in the hands of the user, not making 
-unilateral decisions on their behalf. In the currently deployed 
-solutions it is left to the initrd (user) to cap the PCRs. After some 
-thinking, we can still ensure user control and give an option to cap the 
-PCRs earlier. We hope to post a v11 later this week or early next week 
-that introduces a new policy field to the existing measurement policy 
-framework. Will add/update the kernel docs with respect to the policy 
-expansion. We are also looking the best way we might add a warning to 
-the kernel log if the SHA1 bank is used beyond capping the PCRs.
+yes, device_for_each_child() is better than device_find_child() to
+correct logic for finding a free cxl decoder.
+> It's feeling like the fix and api update are comingled. Please clarify.
+> 
 
-Hopefully this answers the outstanding comments on the SHA1 thread.
+actually, there are two concerns as shown below:
 
-v/r,
-dps
+concern A: device_find_child() modifies caller's match data.
+concern B: weird logic for finding a free cxl decoder
+
+this patch focuses on concern B, and it also solve concern A in passing.
+
+the following exclusive patch only solves concern A.
+https://lore.kernel.org/all/20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com/
+
+either will solve concern A i care about.
+
+> Thanks,
+> Alison
+> 
+>>
+
 
