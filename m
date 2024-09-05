@@ -1,158 +1,243 @@
-Return-Path: <linux-kernel+bounces-317251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0741396DB7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2920C96DB82
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47641F23F15
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96411F213BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED00519EEBA;
-	Thu,  5 Sep 2024 14:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB01FF507;
+	Thu,  5 Sep 2024 14:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R360bgrM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MN03jAJ6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DFA19E7F8;
-	Thu,  5 Sep 2024 14:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6756CDDD2;
+	Thu,  5 Sep 2024 14:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545699; cv=none; b=izZ0CvX9EwFsRRYYbfxLiyM0yQ77xxototlZf+arPwytG372q1SHoJsWcWLQuYZZ9V5WVlBaH1fXZ15kDSp95jn5K1BFV6K1knKHZfEWy17IY7Z4gUeyT/PLaTlJaCoEzukl60vf7zdPynAjiha8+UTZz+hTwisw2VcBix6rq4o=
+	t=1725545713; cv=none; b=uDiWjLfvgAFoNOw65ZzFbHU5SLHbfRgrdwaewxxgkSPsb9OooeR+K+zlFtQydwB5jp87yL8yE6dfyfz0scf7CTiZC/5DbLw6wp7WuS+akDV3dlWymnuxHpfOOL1UOzNxeat/+4ua3048OtJOJ39qVPZfKM5E/MGO3209hYUcaWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545699; c=relaxed/simple;
-	bh=EsBw3yPNu0bH1zfvQrN4wz32OLkncS3WVmWwvRCuNwM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bulOshCcUMIOMWWU4aHtGLZTZXI4iBZNqau1n+2z7JNEdk8++MoMAaotcL+ED49xpgPNr2IekHWtBwISiCeQRHJH2nMhlPUR5ZEtWgG2TW2nvBhI9/qMk0jZ2SQptoWbEkOs7Ga8AYJs1ZD2s8MZElXGpNaHiLf+/pWx03lBgKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R360bgrM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C8EC4CEC5;
-	Thu,  5 Sep 2024 14:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725545698;
-	bh=EsBw3yPNu0bH1zfvQrN4wz32OLkncS3WVmWwvRCuNwM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=R360bgrMAiS3CivOOjXyUdgY5mo2H3g7KkCXk1zaPYonwTIA037emLJBTORDXoNqW
-	 rdDZsAFSOeQ+TrCWcsfJvPZoVhMhP53ytT83TXufLoFiTy2YfH0jPAUuU2iUjZbdQm
-	 8jb1lOoaa0FXqu+xjElA9pQllZXxwgETe/9oAn6zJykfdYBX3OflfzeiBOYBh/VEnf
-	 bznsvlEMus1xyVUIJjnnTLKF3wNAKTNGFtHetuzxHPQHAXtvDAlKF0WUy+5BZMZMpR
-	 HJbOL7ode/W3dVX2CmB3u6A7oukctwEX+1YOXb3KrqVEOxahoaUYYO67+rnPr2DfbY
-	 6GdTx2d90tRqw==
+	s=arc-20240116; t=1725545713; c=relaxed/simple;
+	bh=VfkiF78s61HLrfjc1XjUx593xgRMVs66g8YIw198YBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BD+mT6J2Ik+Y0Kwl+vZF0jxv4nV4CHv8LH/xRLBlaJQwcZk21SZUZZq1ntV8w53pqFK2Jhut1ZJIEO1+yE/OqQ93H8wX8FygQQnbYd5vYj9JJh89GX+Sto19VN46K2BTtuq4iH5Lj3X2T14YgDT9l5MVh/WXMkbCYNYDJHE/EdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MN03jAJ6; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725545711; x=1757081711;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VfkiF78s61HLrfjc1XjUx593xgRMVs66g8YIw198YBU=;
+  b=MN03jAJ6sV5cOE6pfjgmSFnzRc3ybdWiTfwMgCz+a0yXMEhhFxcdS0BO
+   HN1b+5xzyNts+GhW1qVDA6xtA+8xVcZ3MzfTVg0m2RSj+XKh3lLxhVD4H
+   4G7BU0rpdKvgd3g0Fdv6KqMuuru/x0kue4GYfY6DgBlswAwR32P4OcS/9
+   4Jj9h8ahlDlUuTE34Y40X6YsFVfdtaBVkIJr4KUc/qfJjJUIeQUlzMseZ
+   sNeDSuB4dLHX/vl4mRqjmoZUBoEJNGT2bcCDes4rlOqb3Fu2Qu9Nll851
+   toobBIG0mqU/svSIubeYatc38DHuUV3sc/zAxR/h1SAmkehwF8jfYbEw4
+   g==;
+X-CSE-ConnectionGUID: 8ofElff8Rza2DYAjxj50fQ==
+X-CSE-MsgGUID: 8boVKjigRJmn7760x5tXZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35649654"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="35649654"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:15:09 -0700
+X-CSE-ConnectionGUID: TkcWMN9ZT6S1utG77k8V3g==
+X-CSE-MsgGUID: dKVnBy2DQ4ikjBXiO1a9TA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="70553810"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:15:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smDGH-00000005Q26-3ZNs;
+	Thu, 05 Sep 2024 17:15:01 +0300
+Date: Thu, 5 Sep 2024 17:15:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
+Message-ID: <Ztm85Y_mo5-OJveq@smile.fi.intel.com>
+References: <20240905134719.142554-1-john.ogness@linutronix.de>
+ <20240905134719.142554-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 05 Sep 2024 17:14:54 +0300
-Message-Id: <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org>
-Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
- <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
- <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
- <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
- <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
- <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
- <zhuo.song@linux.alibaba.com>
-Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Shuai Xue" <xueshuai@linux.alibaba.com>, <bp@alien8.de>,
- <rafael@kernel.org>, <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
- <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
- <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
- <gregkh@linuxfoundation.org>, <will@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240902030034.67152-2-xueshuai@linux.alibaba.com>
- <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
- <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
-In-Reply-To: <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905134719.142554-2-john.ogness@linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu Sep 5, 2024 at 6:04 AM EEST, Shuai Xue wrote:
->
->
-> =E5=9C=A8 2024/9/4 00:09, Jarkko Sakkinen =E5=86=99=E9=81=93:
-> > On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
-> >> Synchronous error was detected as a result of user-space process acces=
-sing
-> >> a 2-bit uncorrected error. The CPU will take a synchronous error excep=
-tion
-> >> such as Synchronous External Abort (SEA) on Arm64. The kernel will que=
-ue a
-> >> memory_failure() work which poisons the related page, unmaps the page,=
- and
-> >> then sends a SIGBUS to the process, so that a system wide panic can be
-> >> avoided.
-> >>
-> >> However, no memory_failure() work will be queued unless all bellow
-> >> preconditions check passed:
-> >>
-> >> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handl=
-e_memory_failure()
-> >> - `if (flags =3D=3D -1)` in ghes_handle_memory_failure()
-> >> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memor=
-y_failure()
-> >> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in =
-ghes_do_memory_failure()
-> >>
-> >> In such case, the user-space process will trigger SEA again.  This loo=
-p
-> >> can potentially exceed the platform firmware threshold or even trigger=
- a
-> >> kernel hard lockup, leading to a system reboot.
-> >>
-> >> Fix it by performing a force kill if no memory_failure() work is queue=
-d
-> >> for synchronous errors.
-> >>
-> >> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> >> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> >>
-> >> ---
-> >>   drivers/acpi/apei/ghes.c | 10 ++++++++++
-> >>   1 file changed, 10 insertions(+)
-> >>
-> >> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> >> index 623cc0cb4a65..b0b20ee533d9 100644
-> >> --- a/drivers/acpi/apei/ghes.c
-> >> +++ b/drivers/acpi/apei/ghes.c
-> >> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
-> >>   		}
-> >>   	}
-> >>  =20
-> >> +	/*
-> >> +	 * If no memory failure work is queued for abnormal synchronous
-> >> +	 * errors, do a force kill.
-> >> +	 */
-> >> +	if (sync && !queued) {
-> >> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption\n=
-",
-> >> +			current->comm, task_pid_nr(current));
-> >=20
-> > Hmm... doest this need "hardware" or would "memory corruption" be
-> > enough?
-> >=20
-> > Also, does this need to say that it is sending SIGBUS when the signal
-> > itself tells that already?
-> >=20
-> > I.e. could "%s:%d has memory corruption" be enough information?
->
-> Hi, Jarkko,
->
-> Thank you for your suggestion. Maybe it could.
->
-> There are some similar error info which use "hardware memory error", e.g.
+On Thu, Sep 05, 2024 at 03:53:18PM +0206, John Ogness wrote:
+> Implement the necessary callbacks to switch the 8250 console driver
+> to perform as an nbcon console.
+> 
+> Add implementations for the nbcon console callbacks (write_atomic,
+> write_thread, device_lock, device_unlock) and add CON_NBCON to the
+> initial flags.
+> 
+> The legacy code is kept in order to easily switch back to legacy mode
+> by defining USE_SERIAL_8250_LEGACY_CONSOLE.
 
-By tweaking my original suggestion just a bit:
+...
 
-"%s:%d: hardware memory corruption"
+>  static struct console univ8250_console = {
+>  	.name		= "ttyS",
+> +#ifdef USE_SERIAL_8250_LEGACY_CONSOLE
 
-Can't get clearer than that, right?
+Can it be done at run-time (theoretically or even practically)?
+(Note that we have already knob to disable / enable consoles.)
 
-BR, Jarkko
+>  	.write		= univ8250_console_write,
+> +	.flags		= CON_PRINTBUFFER | CON_ANYTIME,
+> +#else
+> +	.write_atomic	= univ8250_console_write_atomic,
+> +	.write_thread	= univ8250_console_write_thread,
+> +	.device_lock	= univ8250_console_device_lock,
+> +	.device_unlock	= univ8250_console_device_unlock,
+> +	.flags		= CON_PRINTBUFFER | CON_ANYTIME | CON_NBCON,
+> +#endif
+>  	.device		= uart_console_device,
+>  	.setup		= univ8250_console_setup,
+>  	.exit		= univ8250_console_exit,
+>  	.match		= univ8250_console_match,
+> -	.flags		= CON_PRINTBUFFER | CON_ANYTIME,
+>  	.index		= -1,
+>  	.data		= &serial8250_reg,
+>  };
+
+I would arrange this slightly differently, but not a big deal.
+
+static struct console univ8250_console = {
+	.name		= "ttyS",
+	.device		= uart_console_device,
+#ifndef USE_SERIAL_8250_LEGACY_CONSOLE
+	.flags		= CON_PRINTBUFFER | CON_ANYTIME | CON_NBCON,
+	.write_atomic	= univ8250_console_write_atomic,
+	.write_thread	= univ8250_console_write_thread,
+	.device_lock	= univ8250_console_device_lock,
+	.device_unlock	= univ8250_console_device_unlock,
+#else
+	.flags		= CON_PRINTBUFFER | CON_ANYTIME,
+	.write		= univ8250_console_write,
+#endif
+	.setup		= univ8250_console_setup,
+	.exit		= univ8250_console_exit,
+	.match		= univ8250_console_match,
+	.index		= -1,
+	.data		= &serial8250_reg,
+};
+
+...
+
+> +	if (nbcon_exit_unsafe(wctxt)) {
+> +		int len = READ_ONCE(wctxt->len);
+
+> +		int i;
+
+unsigned ?
+
+> +		/*
+> +		 * Write out the message. Toggle unsafe for each byte in order
+> +		 * to give another (higher priority) context the opportunity
+> +		 * for a friendly takeover. If such a takeover occurs, this
+> +		 * must abort writing since wctxt->outbuf and wctxt->len are
+> +		 * no longer valid.
+> +		 */
+> +		for (i = 0; i < len; i++) {
+> +			if (!nbcon_enter_unsafe(wctxt))
+> +				break;
+> +
+> +			uart_console_write(port, wctxt->outbuf + i, 1, serial8250_console_putchar);
+> +
+> +			if (!nbcon_exit_unsafe(wctxt))
+> +				break;
+> +		}
+> +	}
+
+...
+
+> +	/* Finally, wait for transmitter to become empty and restore IER. */
+> +	wait_for_xmitr(up, UART_LSR_BOTH_EMPTY);
+> +	if (em485) {
+> +		mdelay(port->rs485.delay_rts_after_send);
+> +		if (em485->tx_stopped)
+> +			up->rs485_stop_tx(up);
+> +	}
+> +	serial_port_out(port, UART_IER, ier);
+> +
+> +	/*
+> +	 * The receive handling will happen properly because the receive ready
+> +	 * bit will still be set; it is not cleared on read.  However, modem
+> +	 * control will not, we must call it if we have saved something in the
+> +	 * saved flags while processing with interrupts off.
+> +	 */
+> +	if (up->msr_saved_flags)
+> +		serial8250_modem_status(up);
+
+(1)
+
+...
+
+> +	/* Atomic console not supported for rs485 mode. */
+
+RS485
+
+...
+
+> +	/*
+> +	 * First save IER then disable the interrupts. The special variant to
+> +	 * clear IER is used because atomic printing may occur without holding
+> +	 * the port lock.
+> +	 */
+> +	ier = serial_port_in(port, UART_IER);
+> +	__serial8250_clear_IER(up);
+> +
+> +	/* Check scratch reg if port powered off during system sleep. */
+> +	if (up->canary && (up->canary != serial_port_in(port, UART_SCR))) {
+> +		serial8250_console_restore(up);
+> +		up->canary = 0;
+> +	}
+> +
+> +	if (up->console_newline_needed)
+> +		uart_console_write(port, "\n", 1, serial8250_console_putchar);
+> +	uart_console_write(port, wctxt->outbuf, wctxt->len, serial8250_console_putchar);
+> +
+> +	/* Finally, wait for transmitter to become empty and restore IER. */
+> +	wait_for_xmitr(up, UART_LSR_BOTH_EMPTY);
+> +	serial_port_out(port, UART_IER, ier);
+
+(2)
+
+Feels like parts (1) and (2) duplicates existing pieces of code. May it be
+refactored to minimize the duplication?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
