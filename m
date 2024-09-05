@@ -1,169 +1,87 @@
-Return-Path: <linux-kernel+bounces-317736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC7596E309
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8609E96E30B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28FFB2117B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:21:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2211F274ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5567518E02E;
-	Thu,  5 Sep 2024 19:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE3918BC15;
+	Thu,  5 Sep 2024 19:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="As6s0bS4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="oTL7derR"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2F8154C0D;
-	Thu,  5 Sep 2024 19:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FC9154C0D;
+	Thu,  5 Sep 2024 19:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564066; cv=none; b=qjogBwyi31fzuWThhvnmfaDD2/XPKU1vFspZFvHNsgYG+d/6ChlBA4d3/davDYxM+YgvC6opDl2PU7PW0PUKYlCeZwiISjzFExWRlVrNLfFUZXDCu7K2+OzJv8LtpWzUd1K1Zsk4YiQ0UY6lXwbTNnhyodKG9aRMgofAEK8iGa4=
+	t=1725564073; cv=none; b=ICofjLA5Wsj4d+wmoM1Pydh0IRO26KZi76F2EYanL3MNF8xMp1sIx9jx1QRxJ120RZSncyLcjsLf/0F6N87oK0YXZ074krUGdWnG/eDnHwgNqDmhcwDu8MAmhADjiIWUD/ZVpUnV8JzEDLqaGmtYPQn/yH2U8vEmmWKOVakGMLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564066; c=relaxed/simple;
-	bh=+BzS012R6syDeqd0t9o3KQ0U5UhKeDAJauumJpcn38k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ujqSQb9ERShJM5A1PXZJ9OujWW2JlkY0bAhwVzYzk2l03Q4osW7kf+kHBYLsfh+4qdui7Xkomz3x7gSHl1nFyT2agHWY5TQK+3tpcB3baQnEe1QejhKesNlSO68HxTCcRn+k58lBQtCXQiTF3DDVxWSl9jASsDBDuPUz1ghT1SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=As6s0bS4; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725564065; x=1757100065;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+BzS012R6syDeqd0t9o3KQ0U5UhKeDAJauumJpcn38k=;
-  b=As6s0bS4tUp4wH+XfnQWOCxa1theCyWLQyHtYcnvMYRguivRxkQxl85z
-   365IP4lpBU2zzRWNcizGSFAW936Ug7oOG5mnYWfk6hB8zbBHlqiJCtBF7
-   /1nmrcY3US9RZbk2Oi8hnAmxqK3pebIm+p6HJtWdBqzre6gDNeMvPfi/6
-   z+QDnFqwbI2oWVpWvEE1+Kq3cfsxmLYJwaviPAWYdgMvnLSc7HHb3+DII
-   dwHAyd9HbZRTx7a/D9fKvK2A2LjSvv+TUFWcVc9b68NLott3obWPRAsS2
-   7pzrAWP+XVqqd1dK4bgBDx4nqNYrlFFR5pZp5m0QRqSccGZjbzzW3UYFZ
-   w==;
-X-CSE-ConnectionGUID: sYcTPaQDSeqjYIvWEFow0A==
-X-CSE-MsgGUID: 1BDko2IbT+qzvL7acijf8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="23859638"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="23859638"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:21:02 -0700
-X-CSE-ConnectionGUID: q7v5jfmbQwi6MqIgTseAQw==
-X-CSE-MsgGUID: 7CRiBUEcRtWVIqEX6j2Dtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="88967415"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 12:21:02 -0700
-Received: from [10.212.68.73] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1725564073; c=relaxed/simple;
+	bh=qNQMBeI26xquITfvfDfCCw/hqV4JRWLizdX65mwYFKk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TUrLIbl0PD0b2Obtx+8EbDC4lE4EYVaxekE6ZrXaXecgWDL1Cm9EtoSQv5EUEKVwbm9/XZVkkMYyqt4m5D1DEOpYqWJBxA/ts5SLZFNMw9ywd/fVJKKLrcqVeegURBl/OZsyb/7cQMA7YA5b4TxFJ7p6BpWMiPijWNltjJP8NlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=oTL7derR; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2A6F142B29
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1725564071; bh=AzSd8iuwXxps37fo6A9UbQLK84K97jQS9+j9ZwKbwH0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=oTL7derRl1H8ouZzTVEWzB/3o3S8BwgaDQYb0anRXESFOQCCT/eVHVHgLrNg2R01I
+	 CaGkv5WjtZNu6VbXjHAbKU1PRmWdPdxb1bs43z/u6Et6w9v0u1l4hL8F9ug7cxK9W3
+	 AqJo1uiuPm6CW0u5aMQ7y8BRv+VTSj1Yr2+xD6FRESPRG3TlTsGRO6RuVrqdolsp5B
+	 fVXZx34/tPwqPztUtQsrxy90vMPIHQHuyRBs2TPcFtuIoa/KYmSQWKVz8cLWb6eNyl
+	 vfI396jv3w3CXHDQTuN2XgjpT1NTz76btagev0uFpW2uZ0ODBASZo0gDTQdgMA1S7u
+	 91lu9C9Uo3hHg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 29C1520B5782;
-	Thu,  5 Sep 2024 12:21:01 -0700 (PDT)
-Message-ID: <ddfd906c-83cc-490a-a4bb-4fa43793d882@linux.intel.com>
-Date: Thu, 5 Sep 2024 15:20:59 -0400
+	by ms.lwn.net (Postfix) with ESMTPSA id 2A6F142B29;
+	Thu,  5 Sep 2024 19:21:11 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Takahiro Itazuri <itazur@amazon.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Takahiro Itazuri <itazur@amazon.com>, Takahiro Itazuri
+ <zulinx86@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav
+ Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta
+ <pawan.kumar.gupta@linux.intel.com>
+Subject: Re: [PATCH] Documentation: Use list table for possible GDS sysfs
+ values
+In-Reply-To: <20240903132533.26458-1-itazur@amazon.com>
+References: <20240903132533.26458-1-itazur@amazon.com>
+Date: Thu, 05 Sep 2024 13:21:10 -0600
+Message-ID: <8734mdj49l.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86: fix wrong assumption that LBR is only useful
- for sampling events
-To: Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org,
- peterz@infradead.org
-Cc: x86@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, acme@kernel.org, kernel-team@meta.com,
- stable@vger.kernel.org
-References: <20240905180055.1221620-1-andrii@kernel.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240905180055.1221620-1-andrii@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Takahiro Itazuri <itazur@amazon.com> writes:
 
-
-On 2024-09-05 2:00 p.m., Andrii Nakryiko wrote:
-> It's incorrect to assume that LBR can/should only be used with sampling
-> events. BPF subsystem provides bpf_get_branch_snapshot() BPF helper,
-> which expects a properly setup and activated perf event which allows
-> kernel to capture LBR data.
-> 
-> For instance, retsnoop tool ([0]) makes an extensive use of this
-> functionality and sets up perf event as follows:
-> 
-> 	struct perf_event_attr attr;
-> 
-> 	memset(&attr, 0, sizeof(attr));
-> 	attr.size = sizeof(attr);
-> 	attr.type = PERF_TYPE_HARDWARE;
-> 	attr.config = PERF_COUNT_HW_CPU_CYCLES;
-> 	attr.sample_type = PERF_SAMPLE_BRANCH_STACK;
-> 	attr.branch_sample_type = PERF_SAMPLE_BRANCH_KERNEL;
-> 
-> Commit referenced in Fixes tag broke this setup by making invalid assumption
-> that LBR is useful only for sampling events. Remove that assumption.
-> 
-> Note, earlier we removed a similar assumption on AMD side of LBR support,
-> see [1] for details.
-> 
->   [0] https://github.com/anakryiko/retsnoop
->   [1] 9794563d4d05 ("perf/x86/amd: Don't reject non-sampling events with configured LBR")
-> 
-> Cc: stable@vger.kernel.org # 6.8+
-> Fixes: 85846b27072d ("perf/x86: Add PERF_X86_EVENT_NEEDS_BRANCH_STACK flag")
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> Using a normal table, a line break in the first column would be
+> recognized as two rows. Uses a list table instead as in MDS.
+>
+> Signed-off-by: Takahiro Itazuri <itazur@amazon.com>
 > ---
->  arch/x86/events/intel/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 9e519d8a810a..f82a342b8852 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -3972,7 +3972,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
->  			x86_pmu.pebs_aliases(event);
->  	}
->  
-> -	if (needs_branch_stack(event) && is_sampling_event(event))
-> +	if (needs_branch_stack(event))
->  		event->hw.flags  |= PERF_X86_EVENT_NEEDS_BRANCH_STACK;
+>  .../hw-vuln/gather_data_sampling.rst          | 36 ++++++++++---------
+>  1 file changed, 19 insertions(+), 17 deletions(-)
 
-To limit the LBR for a sampling event is to avoid unnecessary branch
-stack setup for a counting event in the sample read. The above change
-should break the sample read case.
-
-How about the below patch (not test)? Is it good enough for the BPF usage?
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 0c9c2706d4ec..8d67cbda916b 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3972,8 +3972,12 @@ static int intel_pmu_hw_config(struct perf_event
-*event)
- 		x86_pmu.pebs_aliases(event);
- 	}
-
--	if (needs_branch_stack(event) && is_sampling_event(event))
--		event->hw.flags  |= PERF_X86_EVENT_NEEDS_BRANCH_STACK;
-+	if (needs_branch_stack(event)) {
-+		/* Avoid branch stack setup for counting events in SAMPLE READ */
-+		if (is_sampling_event(event) ||
-+		    !(event->attr.sample_type & PERF_SAMPLE_READ))
-+			event->hw.flags  |= PERF_X86_EVENT_NEEDS_BRANCH_STACK;
-+	}
-
- 	if (branch_sample_counters(event)) {
- 		struct perf_event *leader, *sibling;
-
+Is there any chance I could get you to turn this into a grid table
+instead?  List tables are entirely unreadable in the source file...
 
 Thanks,
-Kan
->  
->  	if (branch_sample_counters(event)) {
+
+jon
 
