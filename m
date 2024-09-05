@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-316764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E892B96D3DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:47:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC7D96D3F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC561F220D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DFB71C22592
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AA21990A1;
-	Thu,  5 Sep 2024 09:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FA4198E99;
+	Thu,  5 Sep 2024 09:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKlPNsFB"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2mWxN5f"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F3198845;
-	Thu,  5 Sep 2024 09:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB87A1991D6;
+	Thu,  5 Sep 2024 09:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529532; cv=none; b=qkY9fKXwYCEbFgHhRZaGIOVytgbCGKSl0nrlXG90zaLBFVEzOz6CXFjibFPgKMOimzbovZ4C3+0+u3RCCzfk6UcZgXL0NORCFpWe2EkAn3Qcv2F3CJ+Scqeo3Yfo1Rh5Xyg8i/ZbsC2oPMRtQj4E7oX74nYlpdDz9Z/HR/8Lt8Y=
+	t=1725529610; cv=none; b=RBffo0l8pVyLfyvkWoJGyJ7VbnH0i60rwq1B0UU/tsbJ1XHmnR6I4bTruMVGp0GIJ/ERdr3bI8rdRkR7hw/NVOoXZPlf4qf4QAxjxR1L2DE2PnmSZ5gLOMxtt3vdxl9ulpmaMu+qe0eqorYo5xiVl9yuVkQeGeYicZftx7PraLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529532; c=relaxed/simple;
-	bh=T9uAT6P2XJVZAdZnyx/4GZlbV0cbx0PWvTakz+ui324=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m+Jc888/E0GyuwLc0jJ0eF5ybyVUa3HZM9Ymo8Etin/GWzslJuCkEYqNUtUB5TtVc5wxQNLTrA2vEHs6wjBeej/LyUtX/7C7mqsB0kP8aiNFALE4FLh+HXxcbIkP+gYYqEa81++h4vGBDcZJwMa/kl8eN2clG5b9R0aqK18vQGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKlPNsFB; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725529610; c=relaxed/simple;
+	bh=ooTxRmy9CNhI0QBGKGov1IP8Ny/IFn2b7BpJAt+pUGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEM0Hp0PY7etwJDHiW6mrMp7ueJv4R5fHcNyRK3mlfEpa592qa7Wd7oww4n0pVWCo0MGDRQNCwWaKTQdALZbAWJF+Y3BTTePehAPc7+Z9oRyy+hDLXCfScMQB+OhHsdqvaEOYp7ti6elwvfyvr4U+lb8wnTw34FhiSL2eQroZBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2mWxN5f; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70f5f85971dso73626a34.3;
-        Thu, 05 Sep 2024 02:45:30 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3780c8d689aso313753f8f.0;
+        Thu, 05 Sep 2024 02:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725529530; x=1726134330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T9uAT6P2XJVZAdZnyx/4GZlbV0cbx0PWvTakz+ui324=;
-        b=hKlPNsFBu9coNLPi/j5IDWlqZOCZGdSJ6qhhtHsaL533KLRUEo10++Ng8oFiYl6BF9
-         1EYHOVmKTm4f9tzmkYBhNfk6iAVos8mY5okRo20Xg5sa0E/P/mrQGEN4+uSajj+r1dJH
-         9oFtNRU774J1N7VIvxaLL13DgeWYlD8ROH5Nv0s257SQC5ilhVjXmv/gXdCtkcEtQ5TQ
-         oAlLewOG2qa66E6ZPnJJ+Jirf5ShKggpfoNT3nZfl+zL8YeXundKdhwRK+ZazLAkhUvC
-         SFOxIiDqDqxwfDckNLVWJ9cOskAEWbspr4fbaI0MtDu6Gw1lZp8QBuuwzjp8Qr3Aji+l
-         t5Wg==
+        d=gmail.com; s=20230601; t=1725529607; x=1726134407; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a3A+0OEpset36zqQ8dSnuPMDIA8aciodye1/vukDHAs=;
+        b=R2mWxN5fjYaJm2yNUzLJXoHE924sOE1VUSro0LKCnvz2Ik+75SdTlPFDxzRNFjvME0
+         C3UZu2s88Bnr/gVo9mkH5l1DHarPD4NXMIIuo59SAiVTw+JqRRFnbP5Jn9LZBGkHiVw5
+         4dQ0mFHEf1+0U9P1adjDD5Gwfx15q3seAWKvbZ67P2etyT/xs/6J1gCC3yN6hmZp4/P6
+         BQklv1cUXsVgcqrPm93Z+5Qc7FqbxwHgG+FFtgA7BqlhiY5TZ1DW8q8W1pc12tN4GmlZ
+         5osWYmaCHx6xKiyQxN6/KOQ1RtmbnX/nKvezhlZ3sqQajSNxPxYcu+aJHpvW8YBwpaSG
+         C10g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725529530; x=1726134330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725529607; x=1726134407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T9uAT6P2XJVZAdZnyx/4GZlbV0cbx0PWvTakz+ui324=;
-        b=qnL98HocVrAp6qEZLQd0rnG/HgTq7qLrUh/zv3mBasI5DwYcGyOQ589Kl+Mgqe8p7M
-         RiCQ+co1JH6fBzSK6ut0/hH6/PWbofWWw9fgwkQOeo+O5Bok7ogt0izcqxQfxtyNL66U
-         Hmmg+09F2I+Xr20EIbz1quJU+1suEJpE/e0EYd0Z/Q7zQ4inAycMDSCVH96n9dSAqDVt
-         ZbCKFnlFV90ts0ZoTEgSEFDRDmEfmGraOdsH2iOQc/VVChBcZacPYQ2Nik+PAnjfh9Lr
-         8TSLXngP+ynCAK0hxgmicysV4Gm3FPuvBGPeyp3FfkmM9jiF/+hV4uN7CdpajQXojX7y
-         95DA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZMao59pscHr2LWcZMeMyrRrxY8WrNHTBoYN/8sd58USIZlS3cPjzhRqE5+vn3Hud4f2qlzH2dzSxhZlnSAMA=@vger.kernel.org, AJvYcCXjmsUcqb1lBPG7Pc04ZCjru7jCDg4v+Q2KAkfvw6Em7la5qnRL4yR0W6J2cxuwXJd4k8a/F5WgmXPegYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsG8wp3rwmjmeVn4RLEBKWGOG5U/3H4lgnL87GHZBgg3zTViMa
-	z2uSXB1xsfF34xH25E/eWig9eqvwJckBg/yEXEv8gXqiNrlS3W+VP+gQkWpWhb9AtnmexoqHerW
-	Uv3qAXrmhl7XgkH6CADt52SiPdLM=
-X-Google-Smtp-Source: AGHT+IF4/iqCXFx0YZniYl3ZSu+g9OE3IT6hrjrMVy3pCALICpQGkQrU5kNPgWw9rFg6Yzz1lTOlB0WKywfTKVKf050=
-X-Received: by 2002:a05:6871:54a:b0:278:6e3:934c with SMTP id
- 586e51a60fabf-27806e3966fmr6728709fac.5.1725529530073; Thu, 05 Sep 2024
- 02:45:30 -0700 (PDT)
+        bh=a3A+0OEpset36zqQ8dSnuPMDIA8aciodye1/vukDHAs=;
+        b=U3Ix0QOyEAwi0c13MD2bVok++PsFIHcHnoWKKyHLp0khYhw3dtw/+rvDUFnnV5/XEb
+         WaslydGFtk5l6MAU3NsHOF4aB+VcA1sLEB1NqePwA0iVPz8Q+N3NPHAHNM32KJgWavQi
+         OvFpiIe7O3j4l+f0JIp6j96GdXBdHaJ36ehGcDyiEpB0eyewuUhmjGPUWQuKRq1pjEZN
+         eOVrSM/YEHWzsk9qoIDhTNQNJD+0ZS3ZD5L6/ekUuBtbHgikqR44SurpOYcjtZ2beEow
+         we8pzIrfwsI6xUvMV7vYrLCzWjJ2SojILTspL6hl65qTp0wc7b0MDy64k+wVvBUpTOxQ
+         G5Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7a/tO0oOyg56ndYbkbH/F76WR9zWMIEwD/vun3dYazbTORYRalRbqjzyzpiAD3DToJYzXCxqLfFsXii4=@vger.kernel.org, AJvYcCVsstE8OTxLCN1eqbh73sZmGaRJFRvzGXHmzv0bzHd8MKQbX2b3fLlSH3t3VXDP0HBePL8O03NjnlmD/Q==@vger.kernel.org, AJvYcCXYo67GQdOQSSmnCjdD/0BGT0j84y13CnkCvg32FxDa0cvLyt7ybJrfvfqhuc/JPk8Ci9/ZaI8J7clwZkNo2e1JmQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRDPTcuHR8C1qZMh9egyYtS+EpAaN7npKdbR8kouPWyS/W0vSf
+	Xv/G3QiWrHlEWEdOWgR+MFKCkKdLsWOffq0yO8W97G8f6MKqY8uZ
+X-Google-Smtp-Source: AGHT+IGwAx2QSUfLDZ+tfaLzM6jDxYn1gijqzhfBCWl8wJV2u0GTNpP6gbYbb2bM1aZJ2WyRNkSboA==
+X-Received: by 2002:a05:6000:1f8d:b0:374:c29f:8ddc with SMTP id ffacd0b85a97d-376dea47192mr5800262f8f.40.1725529606275;
+        Thu, 05 Sep 2024 02:46:46 -0700 (PDT)
+Received: from gmail.com (1F2EF525.nat.pool.telekom.hu. [31.46.245.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c1de81b2sm13382624f8f.30.2024.09.05.02.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:46:45 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Thu, 5 Sep 2024 11:46:42 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 2/5] perf: Hoist perf_instruction_pointer() and
+ perf_misc_flags()
+Message-ID: <Ztl-AjEEbIbX4lnm@gmail.com>
+References: <20240904204133.1442132-1-coltonlewis@google.com>
+ <20240904204133.1442132-3-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-17-ojeda@kernel.org>
- <CAH5fLgg20kDCJfD_6+fTSogOnpqK0x3a6eKaTahgSvdgfFzSEw@mail.gmail.com>
-In-Reply-To: <CAH5fLgg20kDCJfD_6+fTSogOnpqK0x3a6eKaTahgSvdgfFzSEw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 5 Sep 2024 11:45:17 +0200
-Message-ID: <CANiq72ktnMSfMfGEhN1kO0F+C5O_KsUY1y_eb7ZL+qzzSkg9bw@mail.gmail.com>
-Subject: Re: [PATCH 16/19] Documentation: rust: add coding guidelines on lints
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904204133.1442132-3-coltonlewis@google.com>
 
-On Thu, Sep 5, 2024 at 10:16=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> Wow, does C really not have an easier way to do it?
 
-Yeah, it would be nice to get a similar system in C.
+* Colton Lewis <coltonlewis@google.com> wrote:
 
-There are targeted attributes that can annotate certain things, like
-`[[maybe_unused]]` in C23 (and vendor attributes too like our
-`__maybe_unused` macro), so `-Wunused-function` is not really the best
-example in that sense -- I will think of a better one (it was nice to
-use the same as in the other examples I wrote for `expect` later on,
-which is why I used it).
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -6915,6 +6915,16 @@ void perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
+>  EXPORT_SYMBOL_GPL(perf_unregister_guest_info_callbacks);
+>  #endif
+>  
+> +unsigned long perf_misc_flags(unsigned long pt_regs *regs)
+> +{
+> +	return perf_arch_misc_flags(regs);
+> +}
+> +
+> +unsigned long perf_instruction_pointer(unsigned long pt_regs *regs)
+> +{
+> +	return perf_arch_instruction_pointer(regs);
+> +}
 
-But, as far as I am aware, there is no way to handle lints (and levels
-and so on) in a simple and consistent way like Rust does.
+What's an 'unsigned long pt_regs' ??
 
-Cheers,
-Miguel
+Thanks,
+
+	Ingo
 
