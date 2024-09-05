@@ -1,135 +1,224 @@
-Return-Path: <linux-kernel+bounces-316921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A2596D704
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB5696D70F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C706282CB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C6F28515D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9B0199392;
-	Thu,  5 Sep 2024 11:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D151991D4;
+	Thu,  5 Sep 2024 11:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3FJA1v3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BEu8qjzB"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33199194C6F;
-	Thu,  5 Sep 2024 11:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAEE199240
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725535513; cv=none; b=Pbkry7UAWWOlgAMxDYVPK6ak2pPVuLTEox2eXlr3U5ArCh/QPth3wcHf1D1E3sEAzweauuIs4DU1woWNEcATAuHA+7r7UvSMxtN0sCnbDt1NrFeMJ0+BpnBNAkJK0YDli1qWRBhtS301mErUCt4zsX5dTln7tLelJFUuHN/LTu8=
+	t=1725535615; cv=none; b=qAZvQTHQBTqC4pBjJoANUMbzG8knNN5YyRcK6nXCFau1LXlHPTNfPSPb+UoUMoUrXRJGdONDCCXOnbSXBof0XbKuIBvMFN1dLWSmwp8wdaCc6ZAwk5NgQpbb6RslcFTuVTuXncFBUIEyM047c5b3iZ9ot9kkEhJiXfJ7c/9IGF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725535513; c=relaxed/simple;
-	bh=x86yLT2tuptwSdTBSR4vFuTdA8qSsYK7cgeR+z74JoQ=;
+	s=arc-20240116; t=1725535615; c=relaxed/simple;
+	bh=uDHN9oD3ymzNoKqucZVNQadRU4ImbE+RLTgFQhaenkc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdyUlVYgWdZ1OsUkQ+nGguVNC+OWf1iPxbdYEjWgowSoC0ncQ0b8SyFFZhmOHlVyki5vdU7bZdgMmFltBhtklL0OG5T+t7v84MwVqLp41iDruW8Yd0Er7gO5Lzwkluxkbvh+Xr7G+tSDaA1VMeYNO4xnuBEGP3g/jFvNFrQzjqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3FJA1v3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97230C4CEC7;
-	Thu,  5 Sep 2024 11:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725535512;
-	bh=x86yLT2tuptwSdTBSR4vFuTdA8qSsYK7cgeR+z74JoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p3FJA1v3ATNflHSNkYFakiyPSgmwOuI1L7okJAy5ZK76EoIkf5TM9ajrme0d8x+5L
-	 z5EAP78+55YezXemqkS+/uRDNCK0Bb1whP0oGC8uyDwMVbiYUPTNNS3RTm5meFwLls
-	 W2tnXIaoZ3jEqy8oTPYSpbkDYrb6R0ht1D6TBZyXaxoKBD0e+HKQZ58uDc/82uB9WP
-	 TMUDkw8PzNmy3wPWYSUB7CvfVQ7kVo73S2S7tFK83EG80IK/+UclENTtRGA+NvKobn
-	 WYD0B1q71D21ODbSM20CcnMvpqLGgmCfWWRYs3qr+VFDBT+5JLvihw7CBNIO6HpWql
-	 wI+H2zzyQig1g==
-Date: Thu, 5 Sep 2024 12:25:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org,
-	oleg@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-	mark.rutland@arm.com, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
-	aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sj@kernel.org
-Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
-Message-ID: <6d026325-30cf-49aa-b3cb-da31a7713ce4@sirena.org.uk>
-References: <20240822121415.3589190-1-dev.jain@arm.com>
- <20240822121415.3589190-2-dev.jain@arm.com>
- <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
- <42d0fa4b-eb67-42fd-a8e1-05d159d0d52f@arm.com>
- <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
- <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
- <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
- <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
- <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVxuffypbR4xngS39g4Y7oWd4ImRtKypx2CvsBanvK6bR+YmXL5xuTYg92hBijs+ubr1gu920nqX1NqwIo8hRRR0YsY21cFxdiOV8dEKLYi4pfeYGIfw7+twxJM6vY+Bc58q16X7w5px/pqvRvNRTOl4Ktc2BySgzUCOgzZJhH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BEu8qjzB; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53653ee23adso500510e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 04:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725535611; x=1726140411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MT1b/AWbDQ4Zc2FSXLwenhXbbMScTqyTjSATBO5zm2Q=;
+        b=BEu8qjzBcMUR56NsccopP84Ny24P/QojRgTGrRGCOueAi+bw9q1+swNtnNE1g4MOYt
+         cM+xo/+/RpRjGLjkc/L3mnWGAdttToWfGZjfo9J3dVG3QJj7Y2+/oHfL8ifAordAnf28
+         +MwrvqMyAu1t/UKHB7P6rGE7HX0PPetS4N9vczFGrepUi4xw7ozG3trsYs9SSfsD7jJ6
+         sBO9MGmBgHLFIpNGE9t3LbwmHH3Bm33RLg7C4CI1IFYc8KYvBlC4LtPuR0y0cvt5bsr/
+         Rk4AZCzxD/LK7Q6yTOS8GTV92VKWvNE31tfF480i4clqfOHNhZ9U+2t1hPswLN4dWTVF
+         lHcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725535611; x=1726140411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MT1b/AWbDQ4Zc2FSXLwenhXbbMScTqyTjSATBO5zm2Q=;
+        b=W4QsRKJaJKDv9Vxk58DLNxC4IvIuSdqr0Xvlk4SUwn5L07EgoQMn7l0bGjJs54q7up
+         M0u2umN5roLEvSSs/nGvg1urZA6E6XUwrmG8MFyIE6JvwKauprbGHaiEkWUOB8+ccRWL
+         bKD0zd2tRJjLW0NI0YiHQ6ygJzjCXuE6ieWKlAYMYkZuy/eEtKe3UV/RxHnPTj7MS8k2
+         I8iiKThti6NKHoztqL8aXybnE9nC6FjA/2XuTpGq1oVWLu5I/o0AANDw2TNa4SqGhjPN
+         /kB7ZSmJU5mdh2e9TY8D2LseOeFgKi6HHzICMUiTYPrSf/uM8qtHvfEm01o2IZO+xTDF
+         xh0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUh2mMAlmZwIa2SvNCcmF+YKRE9sNsDfFQ/b5ovgyYq8HC9Ttk5n95W3qlU9OPdpkoYToVKejaaoFPEQ4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywQDGTydKXJg1qW0r22RlC9BjUw41VSHPiVOhKDm/LjvHuIgwH
+	7I25wb7e01t4mf7Z87XrBOixFtJyE8zd1VbJEQXgTtnc6QDA20pI9JvTxl+2NOM=
+X-Google-Smtp-Source: AGHT+IEtrnolfEptjFfOHaUd4JcPGLaKbwZaBjtKbHZL9CqfOihD83PJlSp/4jz+xU32g7o2FRHYcQ==
+X-Received: by 2002:a05:6512:230c:b0:530:ad7d:8957 with SMTP id 2adb3069b0e04-53546bb3b33mr14872842e87.49.1725535611082;
+        Thu, 05 Sep 2024 04:26:51 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a764794c9sm55307966b.1.2024.09.05.04.26.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 04:26:50 -0700 (PDT)
+Date: Thu, 5 Sep 2024 13:26:50 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtmVej0fbVxrGPVz@tiehlicka>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+ <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
+ <ZtgI1bKhE3imqE5s@tiehlicka>
+ <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
+ <ZtiOyJ1vjY3OjAUv@tiehlicka>
+ <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wPXU4iFI09jGqHnf"
-Content-Disposition: inline
-In-Reply-To: <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
-X-Cookie: The horror... the horror!
-
-
---wPXU4iFI09jGqHnf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
 
-On Thu, Sep 05, 2024 at 11:26:02AM +0530, Dev Jain wrote:
-> On 9/4/24 22:35, Shuah Khan wrote:
+On Wed 04-09-24 14:03:13, Kent Overstreet wrote:
+> On Wed, Sep 04, 2024 at 06:46:00PM GMT, Michal Hocko wrote:
+> > On Wed 04-09-24 12:05:56, Kent Overstreet wrote:
+> > > On Wed, Sep 04, 2024 at 09:14:29AM GMT, Michal Hocko wrote:
+> > > > On Tue 03-09-24 19:53:41, Kent Overstreet wrote:
+> > > > [...]
+> > > > > However, if we agreed that GFP_NOFAIL meant "only fail if it is not
+> > > > > possible to satisfy this allocation" (and I have been arguing that that
+> > > > > is the only sane meaning) - then that could lead to a lot of error paths
+> > > > > getting simpler.
+> > > > >
+> > > > > Because there are a lot of places where there's essentially no good
+> > > > > reason to bubble up an -ENOMEM to userspace; if we're actually out of
+> > > > > memory the current allocation is just one out of many and not
+> > > > > particularly special, better to let the oom killer handle it...
+> > > > 
+> > > > This is exactly GFP_KERNEL semantic for low order allocations or
+> > > > kvmalloc for that matter. They simply never fail unless couple of corner
+> > > > cases - e.g. the allocating task is an oom victim and all of the oom
+> > > > memory reserves have been consumed. This is where we call "not possible
+> > > > to allocate".
+> > > 
+> > > *nod*
+> > > 
+> > > Which does beg the question of why GFP_NOFAIL exists.
+> > 
+> > Exactly for the reason that even rare failure is not acceptable and
+> > there is no way to handle it other than keep retrying. Typical code was 
+> > 	while (!(ptr = kmalloc()))
+> > 		;
+> 
+> But is it _rare_ failure, or _no_ failure?
+>
+> You seem to be saying (and I just reviewed the code, it looks like
+> you're right) that there is essentially no difference in behaviour
+> between GFP_KERNEL and GFP_NOFAIL.
 
-> > So who does the backports whenevenr something changes? You are adding
-> > work where as the automated process would just work without this
-> > change. It doesn't matter if there is another test that changed
-> > the name.
+The fundamental difference is that (appart from unsupported allocation
+mode/size) the latter never returns NULL and you can rely on that fact.
+Our docummentation says:
+ * %__GFP_NOFAIL: The VM implementation _must_ retry infinitely: the caller
+ * cannot handle allocation failures. The allocation could block
+ * indefinitely but will never return with failure. Testing for
+ * failure is pointless.
 
-I thought git was supposed to have some ability to try to cope with
-renames, though heuristic based?  It does seem to work sometimes.  TBH
-I'm also not sure how frequent an issue backporting fixes to this one
-test is going to be, it's had a couple of minor fixes for warnings in
-the past few years and the last substantial update was in 2021.
+> So given that - why the wart?
+> 
+> I think we might be able to chalk it up to history; I'd have to go
+> spunking through the history (or ask Dave or Ted, maybe they'll chime
+> in), but I suspect GFP_KERNEL didn't provide such strong guarantees when
+> the allocation loops & GFP_NOFAIL were introduced.
 
-> >=20
-> > If this new test has no relation to sigaltstack, then why are you
-> > changing
-> > and renaming the sigaltstack directory?
+Sure, go ahead. If you manage to remove all existing users of
+__GFP_NOFAIL (without replacing them with retry loops in the caller)
+then I would be more than happy to remove __GFP_NOFAIL in the allocator. 
 
-> Because the functionality I am testing is of signals, and signals are a
-> superset
-> of sigaltstack. Still, I can think of a compromise, if semantically you w=
-ant
+[...]
+> > But the point is there are some which _do_ need this. We have discussed
+> > that in other email thread where you have heard why XFS and EXT4 does
+> > that and why they are not going to change that model. 
+> 
+> No, I agree that they need the strong guarantees.
+> 
+> But if there's an actual bug, returning an error is better than killing
+> the task. Killing the task is really bad; these allocations are deep in
+> contexts where locks and refcounts are held, and the system will just
+> grind to a halt.
 
-I do tend to agree here, it seems neater to merge things and from the
-point of view of running the tests in CI it's nice to not have too many
-tiny suites, they create runtime overhead.
+Not sure what you mean by these allocations but I am not aware that any
+of the existing user would be really buggy. Also as I've said elsewhere,
+there is simply no good way to handle a buggy caller. Killing the buggy
+context has some downsides, returning NULL has others. I have argued
+that the former has better predictable behavior than potentially silent
+failure. We can clearly disagree on this but I also do not see why that
+is relevant to the original discussion because my argument against
+PF_MEMALLOC_NORECLAIM was focused on correct GPF_NOFAIL nested context
+that would get an unexpected failure mode. No matter what kind of
+failure mode that is it would be unexpected for those users.
 
-> to
-> consider the new test as not testing signals, but a specific syscall
-> "sigaction"
-> and its interaction with blocking of signals, how about naming the new
-> directory "sigaction"?
+> > > But as a matter of policy going forward, yes we should be saying that
+> > > even GFP_NOFAIL allocations should be checking for -ENOMEM.
+> > 
+> > I argue that such NOFAIL semantic has no well defined semantic and legit
+> > users are forced to do
+> > 	while (!(ptr = kmalloc(GFP_NOFAIL))) ;
+> > or
+> > 	BUG_ON(!(ptr = kmalloc(GFP_NOFAIL)));
+> > 
+> > So it has no real reason to exist.
+> 
+> I'm arguing that it does, provided when it returns NULL is defined to
+> be:
+>  - invalid allocation context
+>  - a size that is so big that it will never be possible to satisfy.
 
-That's not going to scale amazingly if we test any other aspects of
-signals...  I'd just call it "signal" and if it's not possible to get
-the merge done just leave the sigaltstack suite as it is.
+Those are not really important situations because you are arguing about
+a buggy code that needs fixing. As said above we can argue how to deal
+with those users to get a predictable behavior but as the matter of
+fact, correct users can expect never seeing the failure so handling
+failure might be a) impossible and b) unfeasible (i.e. you are adding a
+dead code that is never tested).
 
---wPXU4iFI09jGqHnf
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
+> For large allocations in bcachefs: in journal replay we read all the
+> keys in the journal, and then we create a big flat array with references
+> to all of those keys to sort and dedup them.
+> 
+> We haven't hit the INT_MAX size limit there yet, but filesystem sizes
+> being what they are, we will soon. I've heard of users with 150 TB
+> filesystems, and once the fsck scalability issues are sorted we'll be
+> aiming for petabytes. Dirty keys in the journal scales more with system
+> memory, but I'm leasing machines right now with a quarter terabyte of
+> ram.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbZlRIACgkQJNaLcl1U
-h9Dx9Af/Qq2dGkh9bK9FpyiYKYIQJ1kZRRew4MomSgFtMpgrUhYkwPZ5afpf/Rk6
-MpGW4TkRbtORO3OUSGZAKFYEU1HjkxRYWRM0Rd+jsXw333GRZbuZDqKxKI8Wx4Yw
-DAkraiEwoX7z7YSW3oYAB7IAzKoTcQZ3L5nY8WtOzyRlMiRozTrTWWwCTyUetqc+
-qkJhaLIJiv3rV0gbZl5XZjxe8VhF7IKv6FE0Mfmra8fgb4/kiKkpB3qKrA9xWdDi
-595i1dVMyely2LrESJrcOIP1LSzArt/vrTVLYkSa73xGqQKlHTYr0lTO7GpyFzEJ
-3XCVnd4DAuKw3+x6ZfJbM8rk7MeitA==
-=LUPA
------END PGP SIGNATURE-----
+I thought you were arguing about bcachefs handling failure mode so
+presumably you do not need to use __GFP_NOFAIL for those.
 
---wPXU4iFI09jGqHnf--
+I am sorry but I am getting lost in these arguments.
+-- 
+Michal Hocko
+SUSE Labs
 
