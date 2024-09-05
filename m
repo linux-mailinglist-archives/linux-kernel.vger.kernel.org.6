@@ -1,146 +1,108 @@
-Return-Path: <linux-kernel+bounces-316935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9676996D73B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:33:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF8896D73E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BBC91F240FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187D628152F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD584199E88;
-	Thu,  5 Sep 2024 11:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696A2199E80;
+	Thu,  5 Sep 2024 11:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtT6+K7P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GKaf/VLm"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB2A194A52;
-	Thu,  5 Sep 2024 11:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4573B199231
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725536024; cv=none; b=H4p1HUeWNzkUeCAIgqgKH4Rl3xVkF6Kc/xPNfh5Pwqb19rB4z1PKNC340G1w/K4a7mJe21yUM8ZVbG6wjjfVoh0SgLkEIujjchzo2Ss5d5UVPH5+nvY+3awjAfw7OmLzpIu/KN4+v1iWes21aVhqvaREljuAYy3T39xBC1xXQXQ=
+	t=1725536053; cv=none; b=eYXD8YQvdWHqLgCrZiok6uXbMD7Vn+iKDzCMhoU8cg1rNMMrJxBLHHiu1xJJpQK0z4XKFGLbcYrL/x7wqTbLF2snuY4jLoJJPM9/h47KRBoClteYSZp5Ay0x5ZEaNGh3pmx5ceChEQutRoKIrnqkl01MA7Kbn+CKTB0pMMozcZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725536024; c=relaxed/simple;
-	bh=LXkNK7tbZpK9Bwrdl5kfMRV9eTB9+L844J1TGRnWWrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHLc5zyLZ8mTTzbo1oRYxWm7RCeCQVWz6Rd5wIUY6118TcdGeUim9fawbVzALslxbf7BBOq/d77/+iKlq4RX3aSi/L6NLAFWYPOVjt3qc3ObRWkK8wpwqovZg3P0GDux3gLmKOAs/9w4l96BP+fvYylwj9vRPe5uwJDxbi5KgNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtT6+K7P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A25CC4CEC4;
-	Thu,  5 Sep 2024 11:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725536024;
-	bh=LXkNK7tbZpK9Bwrdl5kfMRV9eTB9+L844J1TGRnWWrc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KtT6+K7PIGT336TLuzd8AEw9SgB6Yk9RPpWk5wKPtuk2CNKfP3Sk2tPwKhojg0z+B
-	 655Qu7DlqaSi17ysvw2+xZlyDpLZ5roo85vMJ8DY1tWz9BGuubtIoxlTa3Ec6LKczS
-	 yYJgqvVZ2W9rOYHFrBBfyTbjnTGpJ+DtOm5kFRO71sJ60QfXvIsVUjo1BE0ch38mlU
-	 oFNd0prIr00Qi7Ae1MCsGhAu7roUpFCdZsdrit8Fi1XGQ+Uojh4XVO751Aei6rFLlN
-	 OZyTFVoLDdLRkszY1T13/RUOzjCm2LyaW3ngC8JGpEJgolFAP7HSn2AF2G1wIqBXOQ
-	 GTZRK6RRdp2Ug==
-Message-ID: <3878b8e1-00c5-4761-bb1f-c9aa853ec501@kernel.org>
-Date: Thu, 5 Sep 2024 13:33:37 +0200
+	s=arc-20240116; t=1725536053; c=relaxed/simple;
+	bh=bLDmb4u45gfKegGAaWlNWOEqcWS6avYoGfdiMI2tkYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NqZgBTUbkg8sjO7YWW17IY8Vdq7cOsYr9Qe8qVtlbo8H7EvVySRYceyAMiEo0FQK3HvpKoQZCsBxZtbg8Lw2ZGQv7hsB1aWI05HSpgQLAZkiFZ3vpgXlhDxQe1UPGx8gNx96/7auxvgKvS7+9C7/gNaLNIdr3t6LTGPkR1SyE7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GKaf/VLm; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5353d0b7463so991362e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 04:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725536050; x=1726140850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bLDmb4u45gfKegGAaWlNWOEqcWS6avYoGfdiMI2tkYc=;
+        b=GKaf/VLmLR9R5KyABurbdCPYMqKDiN5vpWjZg8r6IH3JeunxtgaPTuYAMAyPDVa/KK
+         xYJOmLTyAajWX22STThoAV3fELT5CA3EttlgytVtIiM+9lqBEOAKn2hxS0M6cQIX8+Le
+         XkGGdrOJtulQ6ExcnsK0F10zWys8DnnNag/1qGezcWyXsLqmacuPwCk/Kud9brUUtl9M
+         MZX3y3qumVkphMx95cnrD94a9kspxFMlBrDuojZ9aQlk5pFkJBuvJvQVntqmbaVpsbY6
+         vMWHlOXqDRyMJiv1anKxvHKLTlVM2sXR6HpRtyd1u25o+PpHhaBv4m3XSUS+nTSdiza5
+         N4ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725536050; x=1726140850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bLDmb4u45gfKegGAaWlNWOEqcWS6avYoGfdiMI2tkYc=;
+        b=NpXSWaim9sIpc3MIsqiZb3cdM3EAuMqJ59/sUvSdMnyM9HUgn6cx41pkxStUW8aHeW
+         XOq6gFPST7krFuD8cgI9bQdVX0IBqrfZkspsUI5QOkicpyG2dOx/h19PSHd+XYsgWfSh
+         A5rDrFn6FBCPhYIFkUUadncvWovERLvxpftIH0W4OTFp1Ql6jjClaGT0w9vQmSALuSsJ
+         LdHTtm3keJ/TM73BUhaiWRetuwjVD8AIbZfFegaaUNTKJTXYKIEpjV1AldD2H7+bi3G+
+         9RLoxUQtXrtRN7R3qJrAULwnbkkhpPijqDrHSrNBpCe1eWkJNwc5t/3092hlqzEiUFFZ
+         2fTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSGqOFZDQtn262s2HSpuOearVclST48RUDpK25GgAVEbZA8qXoFowaRlDwuxF/NMyztxCxAa9Lm8ViaXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCofIg0G3xaXp+S+XRu4GlWTzvxJAqbjSkoVT76ElDLMuo6xKp
+	O9BGP5UvTEr2vdKL8RXGcGYncHo9rwPIObKp0yOoR39jnOzJbNrsAp99bJXo8yLiEK0nJWKWvFv
+	JqLTXDAh0Hvr9Ip4y1tDqQZduuCI7lX3Q7nyX9w==
+X-Google-Smtp-Source: AGHT+IGzsgH7C+tzPtSN8VBNWiDdDaXjEPSwwJUrmvuJsG+F6lPhfUKhjc6NKXyqkx2vA55fxHGPX68sblNZHKLWO6o=
+X-Received: by 2002:a05:6512:3da4:b0:530:e0fd:4a97 with SMTP id
+ 2adb3069b0e04-53546a55137mr16340997e87.0.1725536049827; Thu, 05 Sep 2024
+ 04:34:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/19] Add initial support for QCS8300
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Xin Liu <quic_liuxin@quicinc.com>,
- Tingguo Cheng <quic_tingguoc@quicinc.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Kyle Deng <quic_chunkaid@quicinc.com>
-References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
- <fcfaeed3-8544-4e98-9f95-f43346dc83e8@kernel.org>
- <3535a897-8708-463d-b931-fa344a967f18@kernel.org>
- <aa74f55b-7e14-4ca4-bd79-2104d81a0660@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <aa74f55b-7e14-4ca4-bd79-2104d81a0660@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240902133148.2569486-1-andriy.shevchenko@linux.intel.com> <20240902133148.2569486-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240902133148.2569486-2-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 5 Sep 2024 13:33:56 +0200
+Message-ID: <CACRpkdbskty+v0V90MrP5nm=S-mqHQq1B5C07QciaYJr09-88g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] gpio: stmpe: Fix IRQ related error messages
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5.09.2024 7:08 AM, Jingyi Wang wrote:
-> Hi Krzysztof,
-> 
-> On 9/4/2024 6:19 PM, Krzysztof Kozlowski wrote:
->> On 04/09/2024 11:34, Krzysztof Kozlowski wrote:
->>> On 04/09/2024 10:33, Jingyi Wang wrote:
->>>> Add initial support for QCS8300 SoC and QCS8300 RIDE board.
->>>>
->>>> This revision brings support for:
->>>> - CPUs with cpu idle
->>>> - interrupt-controller with PDC wakeup support
->>>> - gcc
->>>> - TLMM
->>>> - interconnect
->>>> - qup with uart
->>>> - smmu
->>>> - pmic
->>>> - ufs
->>>> - ipcc
->>>> - sram
->>>> - remoteprocs including ADSP,CDSP and GPDSP
->>>>
->>>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->>>> ---
->>>> patch series organized as:
->>>> - 1-2: remoteproc binding and driver
->>>> - 3-5: ufs binding and driver
->>>> - 6-7: rpmhpd binding and driver
->>>> - 8-15: bindings for other components found on the SoC
->>>
->>> Limit your CC list. I found like 8 unnecessary addresses for already
->>> huge Cc list. Or organize your patches per subsystem, as we usually expect.
->>>
->>>> - 16-19: changes to support the device tree
->>>>
->>>> dependencies:
->>>> tlmm: https://lore.kernel.org/linux-arm-msm/20240819064933.1778204-1-quic_jingyw@quicinc.com/
->>>> gcc: https://lore.kernel.org/all/20240820-qcs8300-gcc-v1-0-d81720517a82@quicinc.com/
->>>> interconnect: https://lore.kernel.org/linux-arm-msm/20240827151622.305-1-quic_rlaggysh@quicinc.com/
->>>
->>> Why? UFS cannot depend on pinctrl for example.
->>>
->>> This blocks testing and merging.
->>>
->>> Please organize properly (so decouple) your patches, so that there is no
->>> fake dependency.
->>
->> Let me also add here one more thought. That's like fourth or fifth
->> QCS/SA patchset last two weeks from Qualcomm and they repeat the same
->> mistakes. Not correctly organized, huge cc list, same problems with
->> bindings or drivers.
->>
->> I am giving much more comments to fix than review/ack tags.
->>
->> I am not going to review this. I will also slow down with reviewing
->> other Qualcomm patches. Why? Because you post simultaneously, apparently
->> you do not learn from other review, so I have to keep repeating the same.
->>
->> I am overwhelmed with this, so please expect two week review time from me.
->>
->> Best regards,
->> Krzysztof
->>
-> The CC list is generated from B4 tool, however, thanks for your advice and we
-> will decouple the changes to avoid this. And could you please help us to confirm
-> the better way to handle binding changes which just add one compatible, should
-> it be submitted as a single patch or submmitted together with dts patch series?
+On Mon, Sep 2, 2024 at 3:32=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-The tool did its job here, it's just that this series is very long and a ton
-of people ended up being involved due to bindings oneliners
+> First of all, remove duplicate message that platform_get_irq()
+> does already print. Second, correct the error message when unable
+> to register a handler, which is broken in two ways:
+> 1) the misleading 'get' vs. 'register';
+> 2) missing '\n' at the end.
+>
+> (Yes, for the curious ones, the dev_*() cases do not require '\n'
+> and issue it automatically, but it's better to have them explicit)
+>
+> Fix all this here.
+>
+> Fixes: 1882e769362b ("gpio: stmpe: Simplify with dev_err_probe()")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Konrad
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
