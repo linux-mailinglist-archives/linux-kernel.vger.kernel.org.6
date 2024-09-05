@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-317932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9C796E5B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:11:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA31996E5B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1C41F23AAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:11:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CC26B217C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18BD1AD9FA;
-	Thu,  5 Sep 2024 22:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B591A4E6B;
+	Thu,  5 Sep 2024 22:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gOB6O3HR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTHOBgwv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836278F54;
-	Thu,  5 Sep 2024 22:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DA58F54
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 22:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725574308; cv=none; b=KlpWipZ7acVDIhsetv1pCuc4X+rOHIdfh/BrOkZMU755nY/QaXJrjlImwTXK6plmPdxpXce5my78XJcQwWwUUwtWKx74F3reirKH2pOoFXo5oBfn5vbXPpjj4Tpfon8VoQng68Hw9AoT9logp4Mmb0PRCa/W8l3O7cZMQOt7VdY=
+	t=1725574423; cv=none; b=S+tnmlyS/4iNsxrIZcBCIT9KnGFgr7MeYUprkEa9Cj0Z8ikt+S8urt49ZYP/2fcaKiVoEqCUXLIxfu+qs2qbr+l6bBcIidlW6/3kW8zNc5NbdBX7R0X/vPlo/IQvi3drcboAF52LJBAUnj/q+nW9hbva8pulPORp7pEBHaS7s0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725574308; c=relaxed/simple;
-	bh=hc8QsJI0fp7OH3Vr4PxRn9wS0WhnMTxv9+T+8Hcn9+4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3s+Uk+Y/YduzyeQVh1qpSC0k6vi7DN9zUeJYUPXrxbvbyWJy7JFh/jCZ8dLMBe1IaU0aoAdjHcVYZ+fjWos0a2gn85R37ctgdpcqu8bsLcOeff2GITcs+52E+eYf8wnCDAqQzEC4X5v4LZaI8wUB+KpqS5vIJV1LS+aTu9MGcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gOB6O3HR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQ4tE021829;
-	Thu, 5 Sep 2024 22:11:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=uICJMqyMR9W+E3c9itZUvA
-	6mXI7wrkEBgAc0kuDayVk=; b=gOB6O3HRPNsmvvFF5aAPh8+fO2ixKdHakSU6cn
-	HcmhohiTtxvRS7PE9KhO3lbBT21A0mqivUg6tQH3pEb37rxBMTHfQTfuhwjATRPi
-	kcFvelXdQozHc1Ik/VVVm6M8m8ITIDl/456PbWFP5bMGc5iSZ5G1xnxd5SIlb1mb
-	vFqrHzw1raeVtpBa9Ba/I8Ndyv+js7th+zKYN29LX+gWYnkxcb4Sl1/sofELxQus
-	cr6jWUt0/nR03s1v7f53a1/g+8ZLLU9LdM8jAgoTHWjInlo7X5GSRuJEFzlwAMOJ
-	Y94VHXl0PYyD4MQN0uUhX4yt4Vm5QgYgA6bTbSsIhNnrib8w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhws0des-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 22:11:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485MBZP9023114
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 22:11:35 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 15:11:35 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: <dri-devel@lists.freedesktop.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <freedreno@lists.freedesktop.org>, <robdclark@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <quic_jesszhan@quicinc.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] drm: allow encoder mode_set even when connectors change for crtc
-Date: Thu, 5 Sep 2024 15:11:24 -0700
-Message-ID: <20240905221124.2587271-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1725574423; c=relaxed/simple;
+	bh=wlGcOqVw1zlmE3nrLDDnTcljzhPleYJaO2RahZ5tAVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0MoiXHzU+LcT1v9pUFJThqqz/u8F8azm2Q/VV/CGTv6Lx+2eCRLjUYtc7a51eX1Pq6FlCAao8wzrKi4BnMXR/43WGjLzAXojgJHHFpu20/X5g/eqpbf5KO7fdv2mA9HmiJlFCzaUdjKSo+8Ki//musYebfZKazRXth24vGcbXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTHOBgwv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E278FC4CEC3;
+	Thu,  5 Sep 2024 22:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725574422;
+	bh=wlGcOqVw1zlmE3nrLDDnTcljzhPleYJaO2RahZ5tAVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nTHOBgwvX/OW7+eOlFseiwvNfCCwaJqB1OrsCRO4crdB+0Ne1bqu390hqvoC7tBAa
+	 Y4jcqGAzlI4DQgYH5iHLXp5q03dzn09b+CHDbQyinpyt9b5YRs4Ro9oHX5KfhUWiW2
+	 kIDM0n3atyJcz6vtUNA/+Gtypw512xcna0hs2+drno6fLa0KSiw8UgSQBxRKayyHbS
+	 tEqMB6cPSDwNLm8RL5G7OjZ92u8fuhqKSYDWQrCO5wF9sgnFQIvlPaSwarLH4VPmXn
+	 gW8BGTxhOmvRUoJpeNV2829IxT5oIf2oCF3685OYuKzhVfQhiTs35jDCKkRVTomjoN
+	 219Ie8k9PTsOA==
+Date: Thu, 5 Sep 2024 15:13:40 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
+	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v8 3/4] driver core: shut down devices asynchronously
+Message-ID: <20240905221340.GA2732347@thelio-3990X>
+References: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
+ <20240822202805.6379-4-stuart.w.hayes@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Hvr95TcNMYKnzGZA-s50aOaSpSO56NQC
-X-Proofpoint-GUID: Hvr95TcNMYKnzGZA-s50aOaSpSO56NQC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 adultscore=0 bulkscore=0 clxscore=1011
- suspectscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409050165
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822202805.6379-4-stuart.w.hayes@gmail.com>
 
-In certain use-cases, a CRTC could switch between two encoders
-and because the mode being programmed on the CRTC remains
-the same during this switch, the CRTC's mode_changed remains false.
-In such cases, the encoder's mode_set also gets skipped.
+Hi Stuart,
 
-Skipping mode_set on the encoder for such cases could cause an issue
-because even though the same CRTC mode was being used, the encoder
-type could have changed like the CRTC could have switched from a
-real time encoder to a writeback encoder OR vice-versa.
+On Thu, Aug 22, 2024 at 03:28:04PM -0500, Stuart Hayes wrote:
+> Add code to allow asynchronous shutdown of devices, ensuring that each
+> device is shut down before its parents & suppliers.
+> 
+> Only devices with drivers that have async_shutdown_enable enabled will be
+> shut down asynchronously.
+> 
+> This can dramatically reduce system shutdown/reboot time on systems that
+> have multiple devices that take many seconds to shut down (like certain
+> NVMe drives). On one system tested, the shutdown time went from 11 minutes
+> without this patch to 55 seconds with the patch.
+> 
+> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+> Signed-off-by: David Jeffery <djeffery@redhat.com>
 
-Allow encoder's mode_set to happen even when connectors changed on a
-CRTC and not just when the mode changed.
+I am noticing several QEMU machines hang while shutting down after this
+change as commit 8064952c6504 ("driver core: shut down devices
+asynchronously") in -next. An easy test case due to the size of the
+configuration:
 
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
----
- drivers/gpu/drm/drm_atomic_helper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux- mrproper virtconfig Image.gz
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index fb97b51b38f1..8dc50dd2481d 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1376,7 +1376,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
- 		mode = &new_crtc_state->mode;
- 		adjusted_mode = &new_crtc_state->adjusted_mode;
- 
--		if (!new_crtc_state->mode_changed)
-+		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
- 			continue;
- 
- 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
--- 
-2.44.0
+  $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/arm64-rootfs.cpio.zst | zstd -d >rootfs.cpio
 
+  $ timeout --foreground 3m \
+    qemu-system-aarch64 \
+      -display none \
+      -nodefaults \
+      -cpu max,pauth-impdef=true \
+      -machine virt,gic-version=max,virtualization=true \
+      -append 'console=ttyAMA0 earlycon' \
+      -kernel arch/arm64/boot/Image.gz \
+      -initrd rootfs.cpio \
+      -m 512m \
+      -serial mon:stdio
+  [    0.000000] Linux version 6.11.0-rc4-00022-g8064952c6504 (nathan@thelio-3990X) (aarch64-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT Thu Sep  5 15:02:42 MST 2024
+  ...
+  The system is going down NOW!
+  Sent SIGTERM to all processes
+  Sent SIGKILL to all processes
+  Requesting system poweroff
+  qemu-system-aarch64: terminating on signal 15 from pid 2753792 (timeout)
+
+At the parent commit, there are the following two prints after
+"Requesting system poweroff" then the machine properly shuts down:
+
+  [    3.411387] kvm: exiting hardware virtualization
+  [    3.411741] reboot: Power down
+
+If there is any other information I can provide or patches that I can
+test, I am more than happy to do so.
+
+Cheers,
+Nathan
 
