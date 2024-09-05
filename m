@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-317423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789B796DDED
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:22:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C1F96DDF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30DD52840D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F2E1C20FC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8265219F474;
-	Thu,  5 Sep 2024 15:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3871F19D081;
+	Thu,  5 Sep 2024 15:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGAlNNJy"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="S+SbEAlY"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402C0198824
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C10E10940;
+	Thu,  5 Sep 2024 15:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725549653; cv=none; b=YEroQ3Yy1SwvLxj7aRehndrVrNIQGIaoYqYrbI4KQkgoboDwYkjNyIuniEkVIhP7DX23v3vFK1yeJbQbruJRqlK2DyhO278/rs9xkX2IAeecN1Kyu0JQmQ0O+rQEoRpK7Y4OqOg3i5dk7GAnpoEHnUV31ZyYIFFPfXpiPD3RVKk=
+	t=1725549701; cv=none; b=ti+yCsL7y0+ddmLlSAVJP3xr7XC7EfFvkTdCZXMRXJfmOZIoIoaSVEK9nyyoEX4WnMD9J0RWUM9CSuw9KLYLOKxkWhxUXJpThzMVSh/fQATVS3JtuxUewX6uNNdOoXE0JI14AzTXQ0aG6fnHF9vKFyR/XMxvraYPYWoQEWdDVNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725549653; c=relaxed/simple;
-	bh=07EZ2R2cvNPxkqgvwKm3BBDwp9JFfmM1EZaGxb9jQmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nUroStW5FqcEYY7lt2rfHfcdkPCur26pR/yKCqXlw1Jv8kKp7bmd3H5tbhB/tlMnykkw2mpSr5hRL+eCF9nG4Xr1ckmOPms7glPKG1/iwvS7tLuAov6j+YIE4fbtC9wOz3aWq1NiRImGvqTdacvFVS1U7xghgm+ESF1GUBp53mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fGAlNNJy; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5356a0a56f4so150846e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 08:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725549650; x=1726154450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nL4wK+XGBbbQRznJUjfP4Y3RXCynR/eSS+8QDOZLKvg=;
-        b=fGAlNNJyBJ1/+pJF8+DNgLSF3tjMhpyegkXn0+/QtWOONPyFt/Nk35pF5i0nvRuVNU
-         MXHJkBDzAIoSEO/FT6dbFKQidVIAbMW+UKA5LBPLrj5L6XbjdeRNmXYb1NBUGKaRNFoo
-         TuorlYOy1zoh7tLczcfJzD3cquTbXQDpcTnNh6jKI3s1yj1byILZjmhdoXZXOBmbfqvx
-         U1iKmM79F4og2Zu8iNVgA/AwVQv4vvWKKvipCjoEv3AHCLI4OBIAwJ3XUYBVX1JEnIXO
-         WHwErcWJ36pMppbDtA2Jzoam2TvBtSvYB7SBlsis213z+MuhVA0mOLTxMcTUJoreaoxk
-         eRKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725549650; x=1726154450;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nL4wK+XGBbbQRznJUjfP4Y3RXCynR/eSS+8QDOZLKvg=;
-        b=CLho44WVW1Ok9nHib5BOiSK0fLGxv4CHPHvALgN0D0vRVO2Ay3ijk9JRVeZq6G2Juq
-         zyAdzZ6msPaaupnWZPmnUExXhEe73821QCRBnBamvgQdMY77c727yrEgmHGbRoZ5eYBd
-         bbuoQ6Bf0OBZgoZDpM1nW/DZqbmL7pr/NvwDaAkd3zv7Di6zXhwNUO1OBAlZ/0Gub4Ka
-         urfaSzJIoQB7rPSsvKmqdMbKy+UnsjXc3HaapvxUdZuAXxphMTJvTws/Nl6xloGwH0hB
-         Qor4Jf/khIxyPtnc0bKxnWWaC1bkMaVeGasNZHNICWhJkk4NDy+5DbwhbuPRW5QZulbw
-         NMGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWw8LtwVzoWX07vQiau+Gzz7w1+BvxSM/TsqKqqGLK/5n2EJtZ+AGfNqxUFjNnQglJiBVU12nMqMg23rb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/yxg4S/BX0LRaFeM16HtFUDQX2iHutOoorirGsjtl461utfB4
-	8EtcMYQMHv7LBtkGnUjfRLppHzynx/9fkcQhJ/S4y2BAXEft/f2R4kw8RoO7S4g=
-X-Google-Smtp-Source: AGHT+IHcOrCnX5lCAxr8SDKciOEJ578H4NZioD2TasiDK34x6BAeibOAKn1lBxBpfh8Bw5KmvFnibQ==
-X-Received: by 2002:a05:6512:124f:b0:52c:def2:d8af with SMTP id 2adb3069b0e04-53546afcdc8mr8446487e87.4.1725549650228;
-        Thu, 05 Sep 2024 08:20:50 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540827b28sm2619062e87.140.2024.09.05.08.20.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 08:20:49 -0700 (PDT)
-Message-ID: <d3e7e8cd-fe53-4fd8-87fe-afbbca1b218e@linaro.org>
-Date: Thu, 5 Sep 2024 18:20:48 +0300
+	s=arc-20240116; t=1725549701; c=relaxed/simple;
+	bh=yGl/dLIM0UZWLi8QRker46izTh0jwKXyeHwDZm0sgp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GccygxguCWZOcbpxdR5ay9PqeYIBJIVeRViHrotbpdInYU2VfTJYQmBDBgigukNanAYbm+A+/9KzMOGb7rGtI2ChaqkXGCcEdBqhQfOh/6zOl/JAHpe7BgQotuqu/O3xVZwQ4iOSAEnIwJt2I0tFs251nBnlXqSyM0RjqqpVwSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=S+SbEAlY; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725549700; x=1757085700;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=yGl/dLIM0UZWLi8QRker46izTh0jwKXyeHwDZm0sgp4=;
+  b=S+SbEAlYnxXijP18oaftgLt+3DjdKsl/mgUYC8LMdC0M1ELQ34Bo7OfR
+   Z10Tqb9DWOjTWPT0TFYILLuHpVKKzDMiJ1vVkRIO1AiOHl8ZUIy1gd+Fo
+   oyqcPDGIwxmUD485oAKg6s8Ii5Xf2sLMsmt2F/8Q0AeypqXYqHzJuVuCG
+   +QOJoYhYQBgbB68nR7kKQhOdhOFZw4vEEfqH/Vo+pMeac/Zb8GfV/ZJdd
+   hq/Irtsxg32iN+cSoK7ev46jaZYKT78GQi7VpLwBgqQpEBTMl8R+BUtBt
+   O3sujx6c13HtMcsitsrHFEef/MYghrcKvQieQVmmfEPXRH9HaRcbZIi+m
+   g==;
+X-CSE-ConnectionGUID: 0RjtCNvaTQiSYu+j1QXsrw==
+X-CSE-MsgGUID: fF2QpZm5TmKZcdOPBLO2LA==
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="262338257"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Sep 2024 08:21:39 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 5 Sep 2024 08:21:06 -0700
+Received: from [10.180.116.241] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 5 Sep 2024 08:21:04 -0700
+Message-ID: <1da0abbb-94e5-42fd-a2d2-71d5d7d253fb@microchip.com>
+Date: Thu, 5 Sep 2024 17:21:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,81 +66,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-Content-Language: en-US
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240812144131.369378-8-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 0/3]clk: at91: add sama7d65 clock support
+Content-Language: en-US, fr-FR
+To: <Ryan.Wanner@microchip.com>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <varshini.rajendran@microchip.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <cover.1725392645.git.Ryan.Wanner@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <cover.1725392645.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hello Depeng.
-
-On 8/12/24 17:41, Depeng Shao wrote:
-> Add bindings for qcom,sm8550-camss in order to support the camera
-> subsystem for sm8550.
+On 04/09/2024 at 17:54, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+> Hello,
+> 
+> This series adds clock support for the SAMA7D65 SoC. There are also
+> changes to the master clock driver and PLL driver in order to account for
+> the increased amount of clocks being supported in this new SoC.
+> 
+> Trying to account for all the updates happening in this system, this
+> patch set is based off of the most recent updates to at91-next branch.
+> 
+> Changes in v2:
+> - Correct PLL ID from PLL_ID_IMG to PLL_ID_GPU in the description.
+> - Adjust master clock description to match amount of master clocks 0-9.
+> - Correct bad spacing and bad alignment.
+> - Remove double variable definition.
+> - Add missing kfree() at end of function.
+> - Reorganize clk and pll driver changes in patch set.
 
-<snip>
+To the whole series:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-> +
-> +            interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 479 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 688 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+> Ryan Wanner (3):
+>    clk: at91: clk-master: increase maximum number of clocks
+>    clk: at91: clk-sam9x60-pll: increase maximum amount of plls
+>    clk: at91: sama7d65: add sama7d65 pmc driver
 
-Please change all interrupt types to IRQ_TYPE_EDGE_RISING, this
-will match the type set by the camss driver itself, and I believe
-a rising edge interrupt here is correct.
+For the record, additions to the DT binding are posed here:
+https://lore.kernel.org/lkml/20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com/
 
-A similar change would be needed in the dts file change.
+Best regards,
+   Nicolas
 
-> +
-> +            interrupt-names = "csid0",
-> +                              "csid1",
-> +                              "csid2",
-> +                              "csid_lite0",
-> +                              "csid_lite1",
-> +                              "csiphy0",
-> +                              "csiphy1",
-> +                              "csiphy2",
-> +                              "csiphy3",
-> +                              "csiphy4",
-> +                              "csiphy5",
-> +                              "csiphy6",
-> +                              "csiphy7",
-> +                              "vfe0",
-> +                              "vfe1",
-> +                              "vfe2",
-> +                              "vfe_lite0",
-> +                              "vfe_lite1";
+>   drivers/clk/at91/Makefile          |    1 +
+>   drivers/clk/at91/clk-master.c      |    2 +-
+>   drivers/clk/at91/clk-sam9x60-pll.c |    2 +-
+>   drivers/clk/at91/pmc.c             |    1 +
+>   drivers/clk/at91/sama7d65.c        | 1373 ++++++++++++++++++++++++++++
+>   5 files changed, 1377 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/clk/at91/sama7d65.c
+> 
 
---
-Best wishes,
-Vladimir
 
