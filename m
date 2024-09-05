@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-317759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C2296E370
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:48:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE3C96E374
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA591F24B34
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C261C24408
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDBB1917E6;
-	Thu,  5 Sep 2024 19:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8933C18E772;
+	Thu,  5 Sep 2024 19:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a9Ejs1sn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="CB27434c"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB6A8F54;
-	Thu,  5 Sep 2024 19:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF818F54;
+	Thu,  5 Sep 2024 19:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565681; cv=none; b=cXt7+5yr3CNBirBW99sX3g6fivvY0Do4JZgmpZ+t9H7e8jCHmrJo+91AO8IxpQSdl/Z6x7+pFTXawGnX965VKvSBKi/MorOZDZc7v10YePusDSRpGzb9T7a3CnZgktChgp7C08PUDEiYXOTlNfdZ8mExlfjQTULhOsgOau0fdsg=
+	t=1725565760; cv=none; b=QWxWbC64CtsBMXA0cwklnrkTmUXXjhk61KSAYWxHgrx4GfWVJZOmr7czpKMefENROR6wuNDzjJLe0T85hyh8CyuxrUvDcdTNw5z4hHbhATjIgyiuag/JzGn9cVqGr+Mz1ZtVbVDtmFlySXyu6KXUo/+M+bUctsgcEwaefGsG3yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565681; c=relaxed/simple;
-	bh=YESlOol2fAtusLkQzzQjxYL0EU9Yx36fKBd7khLa3DQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l40peNAnfudXGVBD0oBAotuwS/xWQJ2MXIC/z+wf2h9aJPnOOMfpe+Aw63HBTdKceCjGpAc6OIIkNDIwQte6hpPqEX4pq+M3JZOHlajMhcas/laenO3zOzD3m1tSSG7OXSYWgvXY/6SEc5jlC0IukkCmqOmtSojx1kE0+fwv9yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a9Ejs1sn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQLGs001273;
-	Thu, 5 Sep 2024 19:47:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=W/VfX3C25keadwJOkt+rGI
-	6WhQ3VivJimP1UPy7GLFc=; b=a9Ejs1snkJtNyUY0gxqbYUG3MoSKDhN3+GmMUJ
-	Iu4PO4VWJ9Dck2Rnntu3WC7RXZlSHRjcW9gugw63vkP1d8OOST5Qx/N2z7tCtasf
-	me3i52xTtMv1+gONR6g9c4JkS4yGOm3qAuDzu9qvEwaVQ3c1hwhnAFzWOtLoFN+o
-	ee6oYEvyJ+L14Es+hpUtjIFdFNeclYHRy/zGzK7RBSHeKm/x3bsI/FcxE6827lg0
-	w/5BCywxZPgs7ayt4NcszCxcKkyS+ytamTxxzCUo+7c9W8imYWhvhIjJ9gx6lAql
-	CDs2z9zCBka6jyGv1y/O9QzSdNocfDQSakW3qiNCF6uOvSyQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwt859s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 19:47:54 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485JlrqR008882
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 19:47:53 GMT
-Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 12:47:50 -0700
-From: Nikunj Kela <quic_nkela@quicinc.com>
-To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        Shazad Hussain
-	<quic_shazhuss@quicinc.com>
-Subject: [PATCH v3] dt-bindings: mfd: qcom,tcsr: document support for SA8255p
-Date: Thu, 5 Sep 2024 12:47:41 -0700
-Message-ID: <20240905194741.3803345-1-quic_nkela@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725565760; c=relaxed/simple;
+	bh=R9jV6c9DzRXAzNDj79bLWCXmbUh1PrgeFsfybKFv1S0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n8fccZophL6/woql93iSoUo/JCgAUSEEBtcdcRlZDH2XBFl+jumKHmOapd/En1ZMQREItHoKE+1fQrhm0e7dMGN7XlSGzTnFOH6ndrIKRWCeQVKEdLS1XiSyAJuxOu/Iad8SOBcaTj2QKVh4naqIytnq+dN9txpuOf8v3/YENVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=CB27434c; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6353B1BF204;
+	Thu,  5 Sep 2024 19:49:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1725565749;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yAoDvWukowI9z/kaauSz2C4OPYFuBGznaXYdYnzAxxw=;
+	b=CB27434cmHsdWUgJWz+Ozodm3QtL+hlSan+xCDkrbQ+UjpkbeXKqXsa1bJjTbxFbx+xmRR
+	l2VyU/J6gXN/Af5REgs6lO4lr/AXYxUiH7VeONgAwmhlTlMPGyExR0gSeH2PqEG7hh4NB3
+	t/QJCx4TjfKHgXEixjv/DtyxCph+SlPkUBoxyq5YjNMs6Q8MCnmwCY1UvUHDsm14wj+jyI
+	I6COMk0SNFPgO/BOykMuiWPM2MFu5rfQb4YUpyE/hIy8ZMgGG1nIv5wpJuNkQIoccFFo0K
+	smVi3rU406EsAxDD76YmBF8RYWLjLEHkbvwediwvlVM9i2hYMn60qFZrXiXmPQ==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
+ <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
+  Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v3 9/9] docs: tmpfs: Add casefold options
+In-Reply-To: <20240905190252.461639-10-andrealmeid@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Thu, 5 Sep 2024 16:02:52 -0300")
+References: <20240905190252.461639-1-andrealmeid@igalia.com>
+	<20240905190252.461639-10-andrealmeid@igalia.com>
+Date: Thu, 05 Sep 2024 15:48:59 -0400
+Message-ID: <87v7z9op90.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: I2rPHfpI9hcshzPELULmwebtIfQkgLim
-X-Proofpoint-ORIG-GUID: I2rPHfpI9hcshzPELULmwebtIfQkgLim
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_15,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
- adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 mlxlogscore=949
- phishscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409050147
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-Add compatible for tcsr representing support on SA8255p SoC.
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
----
+> Document mounting options for casefold support in tmpfs.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+>  Documentation/filesystems/tmpfs.rst | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesyst=
+ems/tmpfs.rst
+> index 56a26c843dbe..636afd3eaf48 100644
+> --- a/Documentation/filesystems/tmpfs.rst
+> +++ b/Documentation/filesystems/tmpfs.rst
+> @@ -241,6 +241,27 @@ So 'mount -t tmpfs -o size=3D10G,nr_inodes=3D10k,mod=
+e=3D700 tmpfs /mytmpfs'
+>  will give you tmpfs instance on /mytmpfs which can allocate 10GB
+>  RAM/SWAP in 10240 inodes and it is only accessible by root.
+>=20=20
+> +tmpfs has the following mounting options for case-insensitive lookups
+> support:
 
-Changes in v3:
-	- Removed the patch from original series[1]
+lookups->lookup
 
-Changes in v2:
-	- Added Reviewed-by tag
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> +casefold          Enable casefold support at this mount point using the =
+given
+> +                  argument as the encoding standard. Currently only UTF-8
+> +                  encodings are supported. If no argument is used, it wi=
+ll load
+> +                  the latest UTF-8 encoding available.
+> +strict_encoding   Enable strict encoding at this mount point (disabled by
+> +                  default). In this mode, the filesystem refuses to crea=
+te file
+> +                  and directory with names containing invalid UTF-8 char=
+acters.
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> +
+> +Note that this option doesn't enable casefold by default;=20
 
-[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
----
- Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
- 1 file changed, 1 insertion(+)
+I think this is fine as is. but if we need a new iteration, could you
+perhaps rephrase this to something like:
 
-diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-index c6bd14ec5aa0..88f804bd7581 100644
---- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-+++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-@@ -21,6 +21,7 @@ properties:
-           - qcom,msm8998-tcsr
-           - qcom,qcm2290-tcsr
-           - qcom,qcs404-tcsr
-+          - qcom,sa8255p-tcsr
-           - qcom,sc7180-tcsr
-           - qcom,sc7280-tcsr
-           - qcom,sc8280xp-tcsr
--- 
-2.34.1
+This option doesn't render the entire filesystem case-insensitive.
+One needs to still set the casefold flag per directory, by flipping +F
+attribute in an empty directory. Nevertheless, new directories will
+inherit the attribute.  The mountpoint itself will cannot be made
+case-insensitive.
 
+> +
+> +Example::
+> +
+> +    $ mount -t tmpfs -o casefold=3Dutf8-12.1.0,strict_enconding fs_name =
+/mytmpfs
+
+strict_encoding
+
+> +    $ mount -t tmpfs -o casefold fs_name /mytmpfs
+> +
+>=20=20
+>  :Author:
+>     Christoph Rohland <cr@sap.com>, 1.12.01
+> @@ -250,3 +271,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by=
+ root.
+>     KOSAKI Motohiro, 16 Mar 2010
+>  :Updated:
+>     Chris Down, 13 July 2020
+> +:Updated:
+> +   Andr=C3=A9 Almeida, 23 Aug 2024
+
+--=20
+Gabriel Krisman Bertazi
 
