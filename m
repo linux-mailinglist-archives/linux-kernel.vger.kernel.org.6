@@ -1,215 +1,152 @@
-Return-Path: <linux-kernel+bounces-317741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81EED96E31B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9F796E31F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EB891C230EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672DE28A596
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFBB18D656;
-	Thu,  5 Sep 2024 19:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB8213D638;
+	Thu,  5 Sep 2024 19:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAoZOyj4"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AyqePELt"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE0818037;
-	Thu,  5 Sep 2024 19:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8F418BC15
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 19:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564294; cv=none; b=siswqzN9Q0ag8IBUdPJSZVEw3SldBE5lmphEToKr/0hypJkpJYkv1kuDweRIAdKBexI4IzuoGrI4naWn9+8ySBdcnoEqedn8Zw/oE/ER4az9JReoNKTBbrliUa8rgtvc/HtFNDAUuPf7MVNgpPPh05QeN/Rf4fagiNU+lgOHk9Y=
+	t=1725564370; cv=none; b=V57q5Rq8UO2yZQfnDCmJt/cqLPQqJ1MvyGbdcpkdE46+HDLYLNq/kseU83RplSeYmdyA9m/LuDGdhWpHGalAfnXr4tLFwjrydJS+5ifLdf0TlrqLXMhfgyz0KYJifsDkbaAHYrQpJzV1CIsJY8L84sgp+2cJmZrlA2WbBR+nqzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564294; c=relaxed/simple;
-	bh=rVqsUhOV9LZSBwXHthn2eX3X1YxvCMvvqNhKmkvsDQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DYHVC+YqJgOdCb9/HKwaPq4UL3tYguUVo16Rt02pzD7JO3QrFT4yLdDT4JI1ZI3JD7Ebp1zBo7t9ShCNofZ5Idx/i3C9xkxBNjT7pqm4O+CjiVz1FxxBkkSWLkPkab3MkJc0NsQ5EmN140utCZECFN3eFAF4BSAcxTs4fmnJ1gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YAoZOyj4; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42c7856ed66so9052125e9.3;
-        Thu, 05 Sep 2024 12:24:52 -0700 (PDT)
+	s=arc-20240116; t=1725564370; c=relaxed/simple;
+	bh=4vFgpfjtK/VPxsidTa6Wqh8BttFa+LZ9dcLOGbtAg+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2zEvBa0rsQKBzif1+D8Msn8BJHXJlDuL1+XMMf74f2cEVarYk8Thi7ACts+KV0K59dlZABLAzcAC1iCY0kqGhqNRtZstHqjZqsiQ1p1rH5Q35glBPGstoHcUNIBDrKyMXClLoaZb8Kb2UHIeC5HaEIULWoQDb+/izOowTZCzps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AyqePELt; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5334a8a1b07so1334723e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 12:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725564291; x=1726169091; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CbVNl1AsNveIurDxg2UqvATkpgD+3xfOD/Vx+6xl1Ys=;
-        b=YAoZOyj43BPJ8GqiWVaI+H7oR2xOrHfLbUoDPhyLuLO4XTr/+QI19VLIJH/fGnfSL1
-         pQgakVOVICn+SvAOe7yRJ3nqTkpHheKEIJNwNmm4ENbicBMZO6EhWxmdNCKn72wHclFA
-         kGMEgFdCADFClHcr7FZj4NeYLFmTqET+Ypz+FB6qLMgddMOxo3nfoCXaAgkyFRGufxBY
-         h5yiceNILf9eVmaxQpqfYddhu/yj+xLFl8X0LckVv7mz+0fy8eJZQ3XiJ5SWU34KTO8n
-         s11SoNjYzZ/OaZ81NLPpxI5n7mPT+xtkZOqz8+9q16aQROpMax1V+XHhv5WeXNoOUE+I
-         KaXg==
+        d=linaro.org; s=google; t=1725564367; x=1726169167; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AfdgWA6UT2GtWVGKnYj43Nhc62Fa+aN7xUtJY8n+FcM=;
+        b=AyqePELtPBVkXLdmbe2+vIkks0G4IaG15ZtJx+so9etcU/hFmCyBrwJpyQPLNrvcg4
+         adVyooykzATbi2SUK1WVA3Qc17yWrwKiORHlGP6c0d8no8wXzdA5/73cPeb2Gg/EGmrw
+         n24Nf4VwjAO9XyQEgkQbyulxd1L7FwiLh/dwWyoPBG3JgHaQNllZYgls/9kGK5k4jllu
+         2u5gfEvXA49VPcrz2w7tFAVryqzry33e9GFzgSQg5To8J17YVkEL1/mQyLEukaORoSKw
+         agx20RmErQFVzDCNUf8djyXN9sgd/mz5l6XIJZvDYaC65sawCiE1L7iKgVyhHmxi/Peh
+         GF+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725564291; x=1726169091;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725564367; x=1726169167;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbVNl1AsNveIurDxg2UqvATkpgD+3xfOD/Vx+6xl1Ys=;
-        b=Y5lVPjx90R9i+qVTfixuqidKrpEymgzCUVFrTWwVqRfdYxSgvT9cldY50SD22vSf3T
-         Rz8oaiFNA/B/vPQhHFHtHw9bedYJ2x//z3B9fDxWNk1LnHBMW2wRfvdP5iknmE0mwB/1
-         9HBrt9I37eSv3oYXsmvncl3zB77ob1oZLmoQrepj6/40nL2JzVVIFdkXTDYojVpzjez5
-         00H/0u8sszZV7HQk+jXw8WWiJU1IVSDgB2cAxJpstWY3XMvreLNS9LZqyY5zVJMjMbiW
-         bXjfH/WuJd8sY9EE65NLsWEuAWUJlV4UcJNfXAUWDA7wbMflwttWNrOZQGw3VP1zOtyo
-         aUIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU99Q70+M7pIOjsZRxU8slRyDMrkYwpvm7ockrY2JRDbdrDBP0Ez9gZft3mo/lY2iVN1Js+2+Nhqr0=@vger.kernel.org, AJvYcCVDCQp5uv4HIZnjYN4E46EtDHrybSLdLdilWrQe/6Psq6dP5U5bx3ORuccHwZjqHibTrejgFZNeHcB77OBa@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOlHVdPHmzk7lQpYlNFc1VlWTlfLXmw2KprZrWofczggxda6Uq
-	rE+fRcuzvjo6r1Sy/7rz1W8F0AGAhZ+ZkZIxDzZJkpMRkhk/abTz
-X-Google-Smtp-Source: AGHT+IHZa/rGu6zLqp1a+czg0eJcLBEk6NINPiW6JvwpJnLQEhN78I2SNiqDWkiUB3iGN4vbyXkRLA==
-X-Received: by 2002:a5d:5244:0:b0:374:c1cc:2eb7 with SMTP id ffacd0b85a97d-374c1cc2f6cmr11980228f8f.35.1725564290600;
-        Thu, 05 Sep 2024 12:24:50 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e750:7600:c5:51ce:2b5:970b? ([2a02:6b6f:e750:7600:c5:51ce:2b5:970b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378885ee8bdsm228660f8f.68.2024.09.05.12.24.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 12:24:50 -0700 (PDT)
-Message-ID: <25da676b-f87d-4cbc-8df7-93528c601d62@gmail.com>
-Date: Thu, 5 Sep 2024 20:24:49 +0100
+        bh=AfdgWA6UT2GtWVGKnYj43Nhc62Fa+aN7xUtJY8n+FcM=;
+        b=URG5LCMQ9UWvqdIfSIS3FwrXh9o9qi4CJMozUcgAjbe4XsqTg/CbA/nHY5k84udzK6
+         1QJj6Q9slCCfmkGOny/+Z993roPS3rc82kbEgVrXu1YfeHVtD6pAsTG6YpyPzyJlA9Z4
+         BslkjQszOYd+5tcLp5IvE0uft2kTeEr9YDcMwfP6fbJEqaK+LErgzV0mrSKif+H4n82F
+         +Y5legbqoahAbu0coOpUtu8wHwCHWWJyg06oKEmItoFnGOAoKNdU1V2Hrbil7BiZ4NTm
+         aENfGwJfdw/jFyhVO5TJnc3ZYEb5w/2JqDhaydzpSqmpFjqViAMjJe2lIZo4nBfVzjK1
+         Wa2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWJD1bvzKb0nAB7OOehhJTo4cs4L/4ezZ/rZEsi2T9+wLFnCe1zM+6INOgb1JlbFiRYK0rlsR3WuOmmIJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDz+UeGOJj5j99GWnYO9CXvPT7rzuzqhIWLnyVHrGiBGZyMVLk
+	GmHilllFDEWnQi6aM9ZDnDCa57/GULEhWxu5Z/9XtKkQ4FYEPObGPiQLykx5ZTg=
+X-Google-Smtp-Source: AGHT+IE2fxMk2SRrimdpexKNR4pqV1tl7BFlXZEtFft8Q7Xh+w/oKhS2oWrK6zsk64nUQBat8Or6bQ==
+X-Received: by 2002:a05:6512:a92:b0:535:6cde:5c4d with SMTP id 2adb3069b0e04-536587a79efmr18414e87.3.1725564366348;
+        Thu, 05 Sep 2024 12:26:06 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535408593e0sm2681160e87.303.2024.09.05.12.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 12:26:05 -0700 (PDT)
+Date: Thu, 5 Sep 2024 22:26:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Baryshkov <dbaryshkov@gmail.com>, 
+	Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	ath11k@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
+ the on-board wcn6855
+Message-ID: <ywn7bq6j6jgokwmm3vsumkuwijplezmery5tr6z5yeblnpyjh7@djkwdbt4sl3q>
+References: <20240905122023.47251-1-brgl@bgdev.pl>
+ <20240905122023.47251-2-brgl@bgdev.pl>
+ <6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek>
+ <CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
+ <CALT56yOP+un5nkxuirJVg=gr7fo4Hqjt1ew3z-=F2J_Y_RcTqg@mail.gmail.com>
+ <CAMRc=Mci-8R1Oe3Fe+1E+K-7khzwBPgn_8SQSUPXthpE4032Pw@mail.gmail.com>
+ <d6d5a943-ab29-4034-b465-b62d9d1efa61@kernel.org>
+ <87v7zagcyf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] mm: free zapped tail pages when splitting isolated
- thp
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Yu Zhao <yuzhao@google.com>,
- linux-mm@kvack.org, hannes@cmpxchg.org, riel@surriel.com,
- shakeel.butt@linux.dev, roman.gushchin@linux.dev, david@redhat.com,
- npache@redhat.com, baohua@kernel.org, ryan.roberts@arm.com, rppt@kernel.org,
- willy@infradead.org, cerasuolodomenico@gmail.com, ryncsn@gmail.com,
- corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com, Shuang Zhai <zhais@google.com>
-References: <20240830100438.3623486-1-usamaarif642@gmail.com>
- <20240830100438.3623486-2-usamaarif642@gmail.com>
- <1d490ab5-5cf8-4c16-65d0-37a62999fcd5@google.com>
- <1ffdf94d-ce3f-4dac-8ed3-0681f98beebf@gmail.com>
- <5efa255b-3689-0c91-1980-c0f0562d84e9@google.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <5efa255b-3689-0c91-1980-c0f0562d84e9@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87v7zagcyf.fsf@kernel.org>
 
-
-
-On 05/09/2024 19:05, Hugh Dickins wrote:
-> On Thu, 5 Sep 2024, Usama Arif wrote:
->> On 05/09/2024 09:46, Hugh Dickins wrote:
->>> On Fri, 30 Aug 2024, Usama Arif wrote:
->>>
->>>> From: Yu Zhao <yuzhao@google.com>
->>>>
->>>> If a tail page has only two references left, one inherited from the
->>>> isolation of its head and the other from lru_add_page_tail() which we
->>>> are about to drop, it means this tail page was concurrently zapped.
->>>> Then we can safely free it and save page reclaim or migration the
->>>> trouble of trying it.
->>>>
->>>> Signed-off-by: Yu Zhao <yuzhao@google.com>
->>>> Tested-by: Shuang Zhai <zhais@google.com>
->>>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->>>
->>> I'm sorry, but I think this patch (just this 1/6) needs to be dropped:
->>> it is only an optimization, and unless a persuasive performance case
->>> can be made to extend it, it ought to go (perhaps revisited later).
->>>
->>
->> I am ok for patch 1 only to be dropped. Patches 2-6 are not dependent on it.
->>
->> Its an optimization and underused shrinker doesn't depend on it.
->> Its possible that folio->new_folio below might fix it? But if it doesn't,
->> I can retry later on to make this work and resend it only if it alone shows
->> a significant performance improvement.
->>
->> Thanks a lot for debugging this! and sorry it caused an issue.
->>
->>
->>> The problem I kept hitting was that all my work, requiring compaction and
->>> reclaim, got (killably) stuck in or repeatedly calling reclaim_throttle():
->>> because nr_isolated_anon had grown high - and remained high even when the
->>> load had all been killed.
->>>
->>> Bisection led to the 2/6 (remap to shared zeropage), but I'd say this 1/6
->>> is the one to blame. I was intending to send this patch to "fix" it:
->>>
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -3295,6 +3295,8 @@ static void __split_huge_page(struct pag
->>>  			folio_clear_active(new_folio);
->>>  			folio_clear_unevictable(new_folio);
->>>  			list_del(&new_folio->lru);
->>> +			node_stat_sub_folio(folio, NR_ISOLATED_ANON +
->>> +						folio_is_file_lru(folio));
->>
->> Maybe this should have been below? (Notice the folio->new_folio)
->>
->> +			node_stat_sub_folio(new_folio, NR_ISOLATED_ANON +
->> +						folio_is_file_lru(new_folio));
+On Thu, Sep 05, 2024 at 09:41:44PM GMT, Kalle Valo wrote:
+> Konrad Dybcio <konradybcio@kernel.org> writes:
 > 
-> Yes, how very stupid of me (I'm well aware of the earlier bugfixes here,
-> and ought not to have done a blind copy and paste of those lines): thanks.
+> > On 5.09.2024 3:00 PM, Bartosz Golaszewski wrote:
+> >> On Thu, Sep 5, 2024 at 2:56 PM Dmitry Baryshkov <dbaryshkov@gmail.com> wrote:
+> >>>
+> >>>>>
+> >>>>> As you are going to post another revision, please also add
+> >>>>>
+> >>>>> qcom,ath11k-calibration-variant
+> >>>>>
+> >>>>
+> >>>> I had it in earlier revisions. The only one we could add here would be
+> >>>> the one from X13s as QCom has not yet released the data for the CRD.
+> >>>> Johan and Konrad were against adding this here if it doesn't refer to
+> >>>> the correct one so I dropped it.
+> >>>
+> >>> As Kalle usually merges data with some delay it's not infrequent to
+> >>> have DTS which names calibration variant, but board-2.bin doesn't have
+> >>> corresponding data. The driver safely falls back to the data without
+> >>> variant if it can find it. Als  usually it's us who supply the
+> >>> calibration name.
+> >>>
+> >> 
+> >> Johan, Konrad,
+> >> 
+> >> What do you think? Do we know the exact name and should I add it or
+> >> should we wait until it's in board-2.bin?
+> >
+> > If we can agree on the string identifier with Kalle in advance, we can
+> > add it even before the boardfile drops
 > 
-> However... it makes no difference. I gave yours a run, expecting a
-> much smaller negative number, but actually it works out much the same:
-> because, of course, by this point in the code "folio" is left pointing
-> to a small folio, and is almost equivalent to new_folio for the
-> node_stat calculations.
-> 
-> (I say "almost" because I guess there's a chance that the page at
-> folio got reused as part of a larger folio meanwhile, which would
-> throw the stats off (if they weren't off already).)
-> 
-> So, even with your fix to my fix, this code doesn't work.
-> Whereas a revert of this 1/6 does work: nr_isolated_anon and
-> nr_isolated_file come to 0 when the system is at rest, as expected
-> (and as silence from vmstat_refresh confirms - /proc/vmstat itself
-> presents negative stats as 0, in order to hide transient oddities).
-> 
-> Hugh
+> There have not been really any naming rules for the variant string, it
+> just needs to be unique so that it doesn't conflict with other variant
+> strings. What have you been thinking?
 
-Thanks for trying. I was hoping you had mTHPs enabled and then
-the folio -> new_folio change would have fixed it.
+QC_8380_CRD (following DMI / Windows name) or QC_X1E80100_CRD (following
+marketing name). Or maybe QTI_ instead of QC_. WDYT?
 
-Happy for patch 1 only to be dropped. I can try to figure it out
-later and send if I can actually show any performance numbers
-for the fixed version on real world cases.
-
-Thanks,
-Usama
 > 
->>
->>>  			if (!folio_batch_add(&free_folios, new_folio)) {
->>>  				mem_cgroup_uncharge_folios(&free_folios);
->>>  				free_unref_folios(&free_folios);
->>>
->>> And that ran nicely, until I terminated the run and did
->>> grep nr_isolated /proc/sys/vm/stat_refresh /proc/vmstat
->>> at the end: stat_refresh kindly left a pr_warn in dmesg to say
->>> nr_isolated_anon -334013737
->>>
->>> My patch is not good enough. IIUC, some split_huge_pagers (reclaim?)
->>> know how many pages they isolated and decremented the stats by, and
->>> increment by that same number at the end; whereas other split_huge_pagers
->>> (migration?) decrement one by one as they go through the list afterwards.
->>>
->>> I've run out of time (I'm about to take a break): I gave up researching
->>> who needs what, and was already feeling this optimization does too much
->>> second guessing of what's needed (and its array of VM_WARN_ON_ONCE_FOLIOs
->>> rather admits to that).
->>>
->>> And I don't think it's as simple as moving the node_stat_sub_folio()
->>> into 2/6 where the zero pte is substituted: that would probably handle
->>> the vast majority of cases, but aren't there others which pass the
->>> folio_ref_freeze(new_folio, 2) test - the title's zapped tail pages,
->>> or racily truncated now that the folio has been unlocked, for example?
->>>
->>> Hugh
+> But please Cc the ath11k list for anything ath11k related, adding it
+> now.
+> 
+> -- 
+> https://patchwork.kernel.org/project/linux-wireless/list/
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
+-- 
+With best wishes
+Dmitry
 
