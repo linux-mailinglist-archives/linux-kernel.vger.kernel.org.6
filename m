@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-316246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAA896CD08
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B9896CD0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F32281092
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81BD4281089
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4161448E0;
-	Thu,  5 Sep 2024 03:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAD41442E8;
+	Thu,  5 Sep 2024 03:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BAxgEyN2"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTUzM9ro"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7223C25634;
-	Thu,  5 Sep 2024 03:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5211422D4
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725505802; cv=none; b=Dq+7JeDfO6kDPzP0Sj1ix2LvyFIWpXMgZAkkCnmXLIAkV9NXBsOEK81ycEYGgYK8YEK+vdviIKQFbKxR9AizZmYq8nXy0weTsoNSng/cUkIQEYrFrNVpy2fNYaCXbYUxex5bqLZZ79Le07wfXBIHcqzq/cTz0WNd+dIh0S8OuB4=
+	t=1725505828; cv=none; b=aTLI0zKa92SfT37NaU+gXkdxnl8zYeAhaRgcqsa4pVrGBKF88e5N8FfF3IPbRb9d5hpEALQN00fp8fZy8L1w+7xwkOE6DX7qI6yCmtb+8o2EoVR+BdhvegOSS010pi62z7Occi4she4zaXzOgv0ivPnHQvLUd/2Rku+TVGNkD1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725505802; c=relaxed/simple;
-	bh=iXpc5nwT9T8D773UI6C/JrWPJ2zYuJYUq2vKFdkUIb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UBRXjXcFSefk0zT4ZgfMoTIADwMgg+18HK8Vo7sVuELM1p1MC5t2hQf2O+yGAxPrVBhYcJ0nzEKXvEEOxWnOp1KV5MJGju/FpRC90OVEP44bc27LtIhPwEOvbjvJjsC7S4QK2T/JyBuZEvItH6oWdbnY8Ceuwm1dVj2JD0u6WEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BAxgEyN2; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725505797; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=EEK3tU0+O04g/bTYssKY4oUfiGHLfHkoGwUrwDWQSJo=;
-	b=BAxgEyN2X8Qmzl+WgU/TJczxDcEwwwzEuX/aEs80gX4BJ9mq8b7mFyls/gkwj99naX/V3tlg+xGjtuppdFqfLj/TORzMv5320uX3IZE81c3SfrDqWOle0gU/yxObmmnAmF1cNBKs7L1vgRmZz+K1QTwKN60I5/VW8aVwmTiL/R8=
-Received: from 30.246.162.144(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WEJd2C3_1725505794)
-          by smtp.aliyun-inc.com;
-          Thu, 05 Sep 2024 11:09:55 +0800
-Message-ID: <d539c09c-4064-4511-9a1e-cff51b1f35f4@linux.alibaba.com>
-Date: Thu, 5 Sep 2024 11:09:53 +0800
+	s=arc-20240116; t=1725505828; c=relaxed/simple;
+	bh=8U/+lWF0Wmx6pUU6P6UrrUMykJO3VDzldoqy1DB1r8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BgOW5y4xe9ijFQprQxOJqDEKhlneaZ0MmY292TcT//jN122hUlT7hNTNAi03ja8kAQcymLMzMwfUbrpEtP7/o14j9tE7DUX7NemE76bFN0De5W2v91eRcc9s1D/A1BOZkt06P2g7xcCqRLy49MyUawcKJ7VPB8dI5vyTp/QN1Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTUzM9ro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF86C4CEC2;
+	Thu,  5 Sep 2024 03:10:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725505828;
+	bh=8U/+lWF0Wmx6pUU6P6UrrUMykJO3VDzldoqy1DB1r8k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hTUzM9romQOYOJNPRHH3o5DZshnE6uXFltI/o2FEen3LhCqxj8Sjs2aaJFuJk/Urt
+	 C6RWFczlNV/USikuFP3CefW+qIExchEbmlfF9HTv+i6EfVzKtK3QcbzicNw3qaAEXg
+	 qvbDykq8m4vPcr5uvRY6Ry1FumwLICeqW1D04dDFO6d72lF+STQ4dQuJGafJZQneub
+	 8BXEVPIa8KIfgOsoUcVKWkKwkAivQ1uUfbawBCX3bGyzVFHOizGxMt6+mtBOO4CGDB
+	 hWAlhj55WpSU+0bRdSN+Rue5ddh4F/oVQ56eZbx9/eHz5+PCHkdgMt9ji7Sx++qEi3
+	 xnQLUJHnLfdcg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Stephane Eranian <eranian@google.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>
+Subject: [RFC/PATCH 0/5] perf: Relax privilege restriction on AMD IBS (v3)
+Date: Wed,  4 Sep 2024 20:10:22 -0700
+Message-ID: <20240905031027.2567913-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/3] ACPI: APEI: handle synchronous exceptions in task
- work
-To: Jarkko Sakkinen <jarkko@kernel.org>, bp@alien8.de, rafael@kernel.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
- james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
- will@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240902030034.67152-4-xueshuai@linux.alibaba.com>
- <D3WS4D64BTGD.217F1PPA4VQSF@kernel.org>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <D3WS4D64BTGD.217F1PPA4VQSF@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hello,
+
+This is RFC v3 to allow AMD IBS to regular users on the default settings
+where kernel-level profiling is disabled (perf_event_paranoid=2).
+Currently AMD IBS doesn't allow any kind of exclusion in the event
+attribute.  But users needs to set attr.exclude_kernel to open an event
+on such an environment.
+
+v3 changes)
+
+* fix build on s390
+* add swfilt format for attr.config2
+* count powerpc core-book3s dropped samples
+
+v2) https://lore.kernel.org/lkml/20240830232910.1839548-1-namhyung@kernel.org/
+
+* add PERF_FORMAT_DROPPED
+* account dropped sw events and from BPF handler
+* use precise RIP from IBS record
+
+v1) https://lore.kernel.org/lkml/20240822230816.564262-1-namhyung@kernel.org/
+
+While IBS doesn't support hardware level privilege filters, the kernel
+can allow the event and drop samples belongs to the kernel like in the
+software events.  This is limited but it still contains precise samples
+which is important for various analysis like data type profiling.
+
+This version added format/swfilt file in sysfs to expose the software
+filtering by setting the attribute config2 value.  I think it's easier
+to add a new config rather than adding a new PMU in order to handle
+event multiplexing across IBS PMU.  Users can use the perf tool to
+enable this feature manually like below.  Probably the perf tool can
+handle this automatically in the future.
+
+  $ perf record -e ibs_op/swfilt=1/uh $PROG
+
+(Not sure if it's better to accept or ignore exclude_hv so that it can
+use ":u" modifier only.)
+
+In order to count those dropped samples correctly, I'd propose a new
+read format PERF_FORMAT_DROPPED same as we did for the lost samples.
+With this, it can count dropped samples in the software events and
+from the BPF overflow handler as well.
+
+Let me know what you think.
+
+Thanks,
+Namhyung
 
 
-在 2024/9/4 00:11, Jarkko Sakkinen 写道:
-> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
->> The memory uncorrected error could be signaled by asynchronous interrupt
->> (specifically, SPI in arm64 platform), e.g. when an error is detected by
->> a background scrubber, or signaled by synchronous exception
->> (specifically, data abort excepction in arm64 platform), e.g. when a CPU
->> tries to access a poisoned cache line. Currently, both synchronous and
->> asynchronous error use memory_failure_queue() to schedule
->> memory_failure() exectute in kworker context.
->>
->> As a result, when a user-space process is accessing a poisoned data, a
->> data abort is taken and the memory_failure() is executed in the kworker
->> context:
->>
->>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
->>    - can not kill the user-space in some cases resulting a synchronous
->>      error infinite loop
->>
->> Issue 1: send wrong si_code in early_kill mode
->>
->> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
->> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
->> could be used to determine whether a synchronous exception occurs on
->> ARM64 platform.  When a synchronous exception is detected, the kernel is
->> expected to terminate the current process which has accessed poisoned
->> page. This is done by sending a SIGBUS signal with an error code
->> BUS_MCEERR_AR, indicating an action-required machine check error on
->> read.
->>
->> However, when kill_proc() is called to terminate the processes who have
->> the poisoned page mapped, it sends the incorrect SIGBUS error code
->> BUS_MCEERR_AO because the context in which it operates is not the one
->> where the error was triggered.
->>
->> To reproduce this problem:
->>
->>    # STEP1: enable early kill mode
->>    #sysctl -w vm.memory_failure_early_kill=1
->>    vm.memory_failure_early_kill = 1
->>
->>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 5 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
->> error and it is not fact.
->>
->> To fix it, queue memory_failure() as a task_work so that it runs in
->> the context of the process that is actually consuming the poisoned data.
->>
->> After this patch set:
-> 
-> s/patch set/patch/
-> 
+Namhyung Kim (5):
+  perf/core: Add PERF_FORMAT_DROPPED
+  perf/core: Export perf_exclude_event()
+  perf/core: Account dropped samples from BPF
+  perf/powerpc: Count dropped samples in core-book3s PMU
+  perf/x86: Relax privilege filter restriction on AMD IBS
 
-Hi, Jarkko,
+ arch/powerpc/perf/core-book3s.c |  4 ++-
+ arch/s390/kernel/perf_cpum_sf.c |  8 ++++--
+ arch/x86/events/amd/ibs.c       | 50 ++++++++++++++++++++++++---------
+ include/linux/perf_event.h      |  7 +++++
+ include/uapi/linux/perf_event.h |  5 +++-
+ kernel/events/core.c            | 27 ++++++++++++++----
+ 6 files changed, 77 insertions(+), 24 deletions(-)
 
-Will fix the typo in next version.
+-- 
+2.46.0.469.g59c65b2a67-goog
 
-Thank you.
-
-Best Regards,
-Shuai
 
