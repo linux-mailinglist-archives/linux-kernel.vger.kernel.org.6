@@ -1,262 +1,126 @@
-Return-Path: <linux-kernel+bounces-316765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E92C96D3F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:47:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CB296D468
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE717283ADE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:47:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08B61F237B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8605F1991BA;
-	Thu,  5 Sep 2024 09:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B721991DF;
+	Thu,  5 Sep 2024 09:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lK0bb7+M"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RRvzrthn"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7627194AC7;
-	Thu,  5 Sep 2024 09:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C77D18732F;
+	Thu,  5 Sep 2024 09:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529603; cv=none; b=j3hVVTvQR9k7GJ1hc2wzqNEY+mzb/URTl+SgfqaI8tksh+IiCxBn6dwiHeVRbUVB/baMDAS85E60caw1cfPSHAsfnXDdY90pzTpBV4nY67rJ1QhNP8H7TGA9dI62SLcrIF1rS7mUt47CxMfnK2SdaDL7jzpFIUebs8dVnDbxyao=
+	t=1725529900; cv=none; b=lHHUbfNgo/WQK8L63Fk7vyB2gbcg8ZJhL7t/BJLXfkcnErDn8rluaL4i3naJUU0unMmcnUml2Yc5OPDGyp+O45ftXeMQxuzFeyxrK3bha/i6ea6CPwfRr2cdq/FVM6aLdw9Dg/LCXFFiPKTTpGwd0VzSmMQQjvdSmOqx7BJlBm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529603; c=relaxed/simple;
-	bh=hfyLaFfMkYpNRtL4fR5wRcnbCnNmAquAnd9wooE+JoY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QA6km7BvSm3+shaLs39Ug4fig5eQTS4ZnMUDdUPoz+FGGv1atFmhLwyU9Vt0yP9eZTXCXlKo9YZrqeJ6a6BS1//2HZE2pCSeCgEvPIrqCTCVZTuBuu8W+mGKg596ijQ0lThUtMzxfTwk6Z53rGc25lH6gDkHBAGYmn9qrBYMD3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lK0bb7+M; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533de5a88f8so411052e87.3;
-        Thu, 05 Sep 2024 02:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725529600; x=1726134400; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hfyLaFfMkYpNRtL4fR5wRcnbCnNmAquAnd9wooE+JoY=;
-        b=lK0bb7+MkXqw+yoSznoZF5ONQGHdIvLO7gUKa48JDDLwqVV0DK9zErn3sxf3IvSRQB
-         X3MRtQ1Xuih1AAotKvu5nwKryGwrrCOvf/S34OQh29Ra7sUOJiAVwHxVeKXMCGTuggTI
-         C4VlTWJ0jdDJoKbZ/GG9+xzogAKf8XvvJsmcfe/8m7PLfsNb7urIcBVZ4YBp90G1semf
-         kE8ww1wPEoy5V4FinB9OpRhKZ/8R2QTIdKP0ItKWPej8SN3N1oscUUuvAwPVsT2iC/xM
-         7FJ1bwAebLeejgV6/AW3seLmMhcw+m/G5r3VIdVpJW+I4wLUFfmFYDcGPdJ2TVYoEcyj
-         g4/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725529600; x=1726134400;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hfyLaFfMkYpNRtL4fR5wRcnbCnNmAquAnd9wooE+JoY=;
-        b=b67m8CTqYH890D+p5+oBBiUGzxq1TTCCylH13DacGGmStdQkaxbKzOYKo1cuoxTo0A
-         qcxJrpZ1/z8SbekCVOsmxjTijjxSaIpnFvvc9XTxLE5KhJ+7DrkgR/3I3D/Zr8lbf3AL
-         h6DRGtZaAvMWvdVDvNJf103/7rDhXJvVaKMyXrlyOn1Ir9dFLuui9J+gWUYuC+q70UUF
-         zYyG2Jq+/rl/sWyBgVcg9NN0Q9+LMse2HIPftGB/dN98gVussmQlD7ZxzI737Ut2523T
-         D8PHGrU+Sg9/S5CpC7sYin083u2JK+i9SChGWcvl9BvmAcjAyjSRnFWabqKNxQwdfx9j
-         RGXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzUn0iB9tOv/c4qAKkl0oa2nmzu+ClhH55fWOxIDCJtHJOdfeq9a4J8Jh5QGXW5yN1qF7KdyZPKdy/@vger.kernel.org, AJvYcCXe6TFWPnWX3HNjVKB3pD0HJXdAoysGmNX5NFQvmySLsvpwjyvhXFFxSwtD9NZ87c0MdBI7xgG2LiYzPXD7@vger.kernel.org, AJvYcCXyrhY1ijd8nbRe/yK3c9b8CEWL+NUVU3S7nbx0kPpfcC02f4+9sTw4SDwsCBBMFs1hOYCwNo3bPlY7@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy29fuLilkIOr4b3iEBfpoi2H+L9U47qXKrAk/uhVrAFVWrZEm
-	kJt3MvdR3oAPQ264gPFhV2ziEIyQUpAuQ126sFATvCFXLm0Ws1WZ
-X-Google-Smtp-Source: AGHT+IFo1Up3OyHVy39h81UAR8Z2KOYVfLj1evigl5cnWjFtkgT8ubvK5n+0l8M/bVE8AJc4AjVq0Q==
-X-Received: by 2002:ac2:568f:0:b0:536:14a1:d645 with SMTP id 2adb3069b0e04-53614a1d756mr1333730e87.44.1725529598877;
-        Thu, 05 Sep 2024 02:46:38 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d290sm111882666b.116.2024.09.05.02.46.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 02:46:38 -0700 (PDT)
-Message-ID: <642d61b23c58d9b846e42badb2f2d97691c92144.camel@gmail.com>
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Angelo Dureghello
-	 <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dlechner@baylibre.com
-Date: Thu, 05 Sep 2024 11:50:45 +0200
-In-Reply-To: <20240830-quilt-appointee-4a7947e84988@spud>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
-	 <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
-	 <20240829-stopwatch-morality-a933abb4d688@spud>
-	 <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
-	 <20240830-quilt-appointee-4a7947e84988@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1725529900; c=relaxed/simple;
+	bh=/aV6ELHH7RSjtnMAdXydDe60k9B7lF5WEKVS3VphtME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Df8Ytt1NpxuVPRsjOPyNjn6khscjk8iOeh2So1drx9Exoq4U7zB8r4sak9HvZKA1rbpFBNOsLp2bp98q9b1QKbMD5EzVAcS7xigohD4lHjpakRnYEuH5yzhBzsuaNuWia4h7geOmXn7PhFfpDwtWEF7ubPyP5o/P7k3QpzryxKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RRvzrthn; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=abaPziHXBd4s3RieNdcbjSJLRTYtbh06JX3q+3G3zhE=; b=RRvzrthnRJtWvd6iCRT7PBvRyo
+	/XR3TPA/hGoQgwDoXuVzmURocmBHVE7hwt86s01nAyrlozgWT0zAWtV5E3vYEllyXlAoPhljfdQIB
+	eZcOqFqIqouioeuMaykGYYdIXGsY0NAqZyMOvruXs28iA2kzXTOn4WgeXijqru5krkwt7/fpzmd+M
+	6Zt2cMrJx/0KbmOKaZE4/+oyo1gUtFRdFZp1ug67HM2Bwrqjk1syRGezORcBicKhEJkssg8iC9WI/
+	4DY/9cFCp/nRzh1Am8o7osNeykQY/pTDA8o0AdwpyHeCpUpsQ0FjgFBX3x2cxz8AKlZsrX28LnFlN
+	gYLVVUBQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sm99J-00000002C9z-3UD6;
+	Thu, 05 Sep 2024 09:51:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B0669300599; Thu,  5 Sep 2024 11:51:34 +0200 (CEST)
+Date: Thu, 5 Sep 2024 11:51:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, rafael@kernel.org,
+	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
+Message-ID: <20240905095134.GC15400@noisy.programming.kicks-ass.net>
+References: <20240819154259.215504-1-axboe@kernel.dk>
+ <20240904142841.GL4723@noisy.programming.kicks-ass.net>
+ <30eeae06-0d8a-4968-ba57-d723162a0782@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30eeae06-0d8a-4968-ba57-d723162a0782@kernel.dk>
 
-On Fri, 2024-08-30 at 16:33 +0100, Conor Dooley wrote:
-> On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
-> > Hi Conor,
-> >=20
-> > On 29/08/24 5:46 PM, Conor Dooley wrote:
-> > > On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
-> > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > >=20
-> > > > Add bus property.
-> > > RFC it may be, but you do need to explain what this bus-type actually
-> > > describes for commenting on the suitability of the method to be
-> > > meaningful.
-> >=20
-> > thanks for the feedbacks,
-> >=20
-> > a "bus" is intended as a generic interface connected to the target,
-> > may be used from a custom IP (fpga) to communicate with the target
-> > device (by read/write(reg and value)) using a special custom interface.
-> >=20
-> > The bus could also be physically the same of some well-known existing
-> > interfaces (as parallel, lvds or other uncommon interfaces), but using
-> > an uncommon/custom protocol over it.
-> >=20
-> > In concrete, actually bus-type is added to the backend since the
-> > ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes DDR
-> > parallel bus (interface that i named QSPI, but it's not exactly a QSPI
-> > as a protocol), so it's a device-specific interface.
-> >=20
-> > With additions in this patchset, other frontends, of course not only
-> > DACs, will be able to add specific busses and read/wrtie to the bus
-> > as needed.
-> >=20
-> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > ---
-> > > > =C2=A0 Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml |=
- 9
-> > > > +++++++++
-> > > > =C2=A0 1 file changed, 9 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.=
-yaml
-> > > > b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > index a55e9bfc66d7..a7ce72e1cd81 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > @@ -38,6 +38,15 @@ properties:
-> > > > =C2=A0=C2=A0=C2=A0 clocks:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > You mentioned about new compatible strings, does the one currently
-> > > listed in this binding support both bus types?
->=20
-> You didn't answer this, and there's insufficient explanation of the
-> "hardware" in this RFC, but I found this which is supposedly the
-> backend:
-> https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
-> adi,axi-dac.yaml has a single compatible, and that compatible has
-> nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I would
-> expect either justification for reuse of the compatible, or a brand new
-> compatible for this backend, even if the driver can mostly be reused.
->=20
+On Wed, Sep 04, 2024 at 08:41:23AM -0600, Jens Axboe wrote:
 
-Hi Conor,
+> > Yeah, but *WHY* !?!? I have some vague memories from last time around,
+> > but patches should really keep this information.
+> 
+> To decouple the frequency boost on short waits from the accounting side,
+> as lots of tooling equates iowait time with busy time and reports it as
+> such. Yeah that's garbage and a reporting issue, but decades of
+> education hasn't really improved on that. We should've dumped iowait
+> once we moved away from 1-2 processor system or had preemptible kernels,
+> but alas we did not and here we are in 2024.
 
-So most of these designs have some changes (even if minimal) in the registe=
-r map
-and the idea (mine actually) with this backend stuff was to keep the backen=
-d
-driver (axi-dac/adc) with the generic compatible since all the (different)
-functionality is basically defined by the frontend they connect too and tha=
-t
-functionality is modeled by IIO backend ops. For some more
-significant/fundamental differences in the IP like this bus controller kind=
- of
-thing, we would add have proper FW properties. The main idea was kind of us=
-ing
-the frontend + generic backend combo so no need for new compatibles for eve=
-ry
-new design.
+There's 'WAIT' in the name, what broken piece of garbage reports it as
+busy time? That has *NEVER* been right. Even on UP systems where IO-wait
+is actually a sensible number, it is explicitly the time it *could* have
+been busy, if only the IO were faster.
 
-It's still early days (at least upstream) for these IP cores and the backen=
-d
-code so if you say that we should have new compatibles for every new design=
- that
-has some differences in the register map (even if minimal), I'm of course f=
-ine
-with it. I've done it like this because I was (am) kind of afraid for thing=
-s to
-get complicated fairly quickly both in the bindings and driver (well maybe =
-not
-in the driver). OTOH, it can simplify things a lot as it's way easier to
-identify different implementations of the IP directly in the driver so we h=
-ave
-way more flexibility.
+And are we really going to make the whole kernel situation worse just
+because there's a bunch of broken userspace?
 
-> Could you please link to whatever ADI wiki has detailed information on
-> how this stuff works so that I can look at it to better understand the
-> axes of configuration here?
->=20
-> > >=20
-> > > Making the bus type decision based on compatible only really makes se=
-nse
-> > > if they're different versions of the IP, but not if they're different
-> > > configuration options for a given version.
-> > >=20
-> > > > +=C2=A0 bus-type:
-> >=20
-> > DAC IP on fpga actually respects same structure and register set, excep=
-t
-> > for a named "custom" register that may use specific bitfields depending
-> > on the application of the IP.
->=20
-> To paraphrase:
-> "The register map is the same, except for the bit that is different".
-> If ADI is shipping several different configurations of this IP for
-> different DACs, I'd be expecting different compatibles for each backend
-> to be honest.
+> >> Patches 1..3 are prep patches, changing the type of
+> >> task_struct->nr_iowait and adding helpers to manipulate the iowait counts.
+> >>
+> >> Patch 4 does the actual splitting.
+> >>
+> >> This has been sitting for a while, would be nice to get this queued up
+> >> for 6.12. Comments welcome!
+> > 
+> > Ufff, and all this because menu-governor does something insane :-(
+> > 
+> > Rafael, why can't we simply remove this from menu? All the nr_iowait*()
+> > users are basically broken and I would much rather fix broken rather
+> > than work around broken like this.
+> > 
+> > That is, from where I'm sitting this all makes the io-wait situation far
+> > worse instead of better.
+> 
+> IMHO what we need is a way to propagate expected wait times for a
+> sleeper. Right now iowait serves this purpose in a very crude way, in
+> that it doesn't really tell you the expected wait, just that it's a
+> short one.
 
-Yes, pretty much we have a generic core with most of the designs being base=
-d on
-it but with some slight differences. At least for the new ones, almost all =
-of
-them have slight deviations from the generic/base core.
+Expected wait time is one thing, but you then *still* have no clue what
+CPU it will get back on. Very typically it will be another CPU in the
+same cache cluster. One that had no consideration of it when it went to
+sleep.
 
-> If each DAC specific backend was to have a unique compatible, would the
-> type of bus used be determinable from it? Doesn't have to work for all
-> devices from now until the heath death of the universe, but at least for
-> the devices that you're currently aware of?
->=20
+A sleeping task is not associated with a CPU. There is a fundamental
+mismatch there.
 
-My original idea was to have a bus controller boolean for this core at leas=
-t for
-now that we only have one bus type (so we could assume qspi in the driver).=
- If
-the time comes we need to add support for something else, then we would nee=
-d
-another property to identify the type.
+Using io-wait for idle state selection is very tricky because of this.
 
-> > > If, as you mentioned, there are multiple bus types, a non-flag proper=
-ty
-> > > does make sense. However, I am really not keen on these "forced" nume=
-rical
-> > > properties at all, I'd much rather see strings used here.
->=20
-> > > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > > +=C2=A0=C2=A0=C2=A0 description: |
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Configure bus type:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0: none
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 1: qspi
->=20
-> Also, re-reading the cover letter, it says "this platform driver uses a 4
-> lanes parallel bus, plus a clock line, similar to a qspi."
-> I don't think we should call this "qspi" if it is not actually qspi,
-> that's just confusing.
->=20
+> If we simply remove iowait frequency boosting, then we'll have big
+> regressions particularly for low/sync storage IO.
 
-Just by looking at the datasheet it feels like typical qspi to be honest. A=
-nd,
-fwiw, even if not really qspi, this is how the datasheet names the interfac=
-e.
-
-- Nuno S=C3=A1
-> >=20
-
+The frequency boosting thing I don't object to. That happend on wakeup
+after we know that and where a task is going to run.
 
