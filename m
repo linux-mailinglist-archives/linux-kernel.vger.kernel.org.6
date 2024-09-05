@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-317156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3708996DA12
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECA496DA1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A2B1C24EEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D098C1C23B29
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7465719D07F;
-	Thu,  5 Sep 2024 13:21:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7632419AA56;
-	Thu,  5 Sep 2024 13:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF2D19D07B;
+	Thu,  5 Sep 2024 13:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3lPMym7"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1581719D077
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542461; cv=none; b=kXfyvyK9V+9YwrZ1t8NojKw6XLfVfX3XuBSM7zSXyMCc/CbZss3P173FSirXmj/GazVfaO0gYtAA+1HlUDLREHlV73Q37zcKxAelLbeh4hmJ/qRSHYFE5w1vvLXJEDhlmXiwBntjopQcJtSvsQpmF1hvUMtAoDxHaFKT2YZgPas=
+	t=1725542518; cv=none; b=iAgMnQNf3aAYSgWOhJUxzWKTfHjcGgfmcoeduqR9ihxSWX3LpIszUdi90xztstz/agep1Vq9ba/8J7FeFTL0P+hWccHgDCYU8X4T95NvEmvW3Z1bXyDavVXrjbEV03zoK+SgcUuiRBCibMh6yllCZD11uFEVurqaCV00O3ypfMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542461; c=relaxed/simple;
-	bh=4aAje/6fAqnRk/OlwFXe3sa/wcaB7DG2rt2eGKEFmTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EozBXrxDUxP8j1rFvkzZhWIYWfYD/GY0JOOYSi170WtjKKlKqg0p4mWD455QvcbljOaVIRYXMprdwGC5DzJ5tBZr8iK0Mt/jBVsjGx/xzLS0K8QOSqYJDVBs4XqCBPSJXZOget8phHIqCBScU0EaGX8Fz2SUAkUNw4NljkLcEt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F109FEC;
-	Thu,  5 Sep 2024 06:21:25 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D28343F73F;
-	Thu,  5 Sep 2024 06:20:56 -0700 (PDT)
-Date: Thu, 5 Sep 2024 14:20:54 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
- jernej.skrabec@gmail.com, samuel@sholland.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC
- dtsi file
-Message-ID: <20240905142054.58194beb@donnerap.manchester.arm.com>
-In-Reply-To: <8a80465aaa4b7dc4c8c15d7a73944cfd@manjaro.org>
-References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
-	<CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
-	<21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
-	<20240815181508.6800e205@donnerap.manchester.arm.com>
-	<06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
-	<0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
-	<CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
-	<20240905133412.6ba050de@donnerap.manchester.arm.com>
-	<b07f1365a6f942297f7a3308fa628187@manjaro.org>
-	<20240905134254.6e15a1e5@donnerap.manchester.arm.com>
-	<8a80465aaa4b7dc4c8c15d7a73944cfd@manjaro.org>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1725542518; c=relaxed/simple;
+	bh=tvMGH6acHpq0mf3wOpKqkyCyArZRu2SdyTDclFxOFhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F9KDV4KN3am9v6WB9swsrAtAlvbTM2JwKPb0qJHwC2+2G1TLJyP1fGgnV74UpbZp4P5dZw6/WzXbdflnl0xGSxPQ4mAbnKnpcRxeOmyjq1wxqNPzM8AM4ejXHgiyNw+p0VcGp+QLFqnD+UOP3Avv1nEjfz2EtKigxFy0qttv2mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A3lPMym7; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533521cd1c3so982268e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 06:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725542514; x=1726147314; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lmlFpgXruyMe2tR2xQCFFCz5LQ41UoitHBNzmaLBXlg=;
+        b=A3lPMym75YWCZz8EinkWZYCKvPIPxjaPXnNG6yUBR0Tj2kdX+v6bjRIpUDbdq3GKUO
+         bCWePp3AwiAJjO0SsJHVsG5eHVVQnvHoTyKkT5KYofW48jtvsvrDV39wR19TDLWk1Sgm
+         djA9pjfOzF72oPZZwHjZz4B6wFja0eR3qYPxmoW9C3bYdpbWcpGcsFrXyGDpzf4pkGC/
+         onKuZi07fNWILlqsBuVCVu2dEyOfD17tvaho/FL6eZ6Tfhp5GR0rYhTyQLPNizFST4Lp
+         pxjsFq2MFe7cRwBjZHFje3n0xdDu+bYUuXSeli25yMQFdpRvK2caCEIdE83okvIxtuEo
+         MYAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725542514; x=1726147314;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lmlFpgXruyMe2tR2xQCFFCz5LQ41UoitHBNzmaLBXlg=;
+        b=ZedLwH3lPDpAK7l1CKddUljwvHzXC2qlXaXbCkh5ioEvmXdq/atXiZ+uwzg6HlAQRT
+         6L9Uh74HIRETG3Wemh+KIgALRkqpBS8Zs3BztJ/8Sd64hORS+eyRBzsOlnRTqjpJ8svY
+         mZHbZQS6n/ifCfCQZCYNOH1M4cWeSbDrBlfmtVlHCerviMqvDFxdhepJHuUbJYu2036H
+         zv1EkcEVgYk8D7rpRaSF+PRiSPXpUUNrnSAEoR4sy77Y+ZMOjY17DMrBPuW/1qopLGcV
+         NJi2Y5yPyYhjCj4MqNSsgAZu4+ZI9TN3E2glkUgeLzJTNwpTnNA+CIocewNHvTAMxPOC
+         5QDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTBZoeZWX7mEg/ZDCzAnAkMSmaUDZ+6/38sts42Zvr7vNteyrsP+Egrse/I8k+lFYHMLF+ey4GbmGaRns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoPGWVP8mjd/kXzjvV3ONZfWWOnn9ErogrUfULXN6ZGStvKUSH
+	vOqkHsVyXfcl95YCRwDKwP9xEOSND/SnJMxgpA9352EKm7NmaqTerlgGpazbPvk=
+X-Google-Smtp-Source: AGHT+IGX+rtcdbYxBe2zl/yQqy3m4+s8S5Tpbx76wjpbCC2RqHyz/t9kDhohpfiwytRMDDou5RYhfA==
+X-Received: by 2002:a05:6512:a8b:b0:536:54ff:51c8 with SMTP id 2adb3069b0e04-53654ff53dbmr899587e87.17.1725542513261;
+        Thu, 05 Sep 2024 06:21:53 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53653a926besm140835e87.302.2024.09.05.06.21.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 06:21:52 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:21:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, andersson@kernel.org, 
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	rafael@kernel.org, viresh.kumar@linaro.org, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de, 
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jassisinghbrar@gmail.com, 
+	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
+	thara.gopinath@gmail.com, broonie@kernel.org, cristian.marussi@arm.com, 
+	rui.zhang@intel.com, lukasz.luba@arm.com, wim@linux-watchdog.org, linux@roeck-us.net, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
+	Praveen Talari <quic_ptalari@quicinc.com>
+Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
+Message-ID: <kyy6wb46zt32e6mxcw66xrzlourhvwxnxhhq3pxioxkabs3ny2@hyhb5bjeuoka>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-1-quic_nkela@quicinc.com>
+ <20240903220240.2594102-17-quic_nkela@quicinc.com>
+ <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
+ <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
 
-On Thu, 05 Sep 2024 14:54:03 +0200
-Dragan Simic <dsimic@manjaro.org> wrote:
+On Wed, Sep 04, 2024 at 05:48:35AM GMT, Nikunj Kela wrote:
+> 
+> On 9/3/2024 11:34 PM, Krzysztof Kozlowski wrote:
+> > On Tue, Sep 03, 2024 at 03:02:35PM -0700, Nikunj Kela wrote:
+> >> Add compatible representing spi support on SA8255p.
+> >>
+> >> Clocks and interconnects are being configured in firmware VM
+> >> on SA8255p platform, therefore making them optional.
+> >>
+> > Please use standard email subjects, so with the PATCH keyword in the
+> > title.  helps here to create proper versioned patches.
+> Where did I miss PATCH keyword in the subject here? It says "[PATCH v2
+> 16/21] dt-bindings: spi: document support for SA8255p"
+> > Another useful tool is b4. Skipping the PATCH keyword makes filtering of
+> > emails more difficult thus making the review process less convenient.
+> >
+> >
+> >> CC: Praveen Talari <quic_ptalari@quicinc.com>
+> >> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> >> ---
+> >>  .../bindings/spi/qcom,spi-geni-qcom.yaml      | 60 +++++++++++++++++--
+> >>  1 file changed, 56 insertions(+), 4 deletions(-)
 
-> On 2024-09-05 14:42, Andre Przywara wrote:
-> > On Thu, 05 Sep 2024 14:38:53 +0200
-> > Dragan Simic <dsimic@manjaro.org> wrote:
-> >  =20
-> >> Hello Andre,
-> >>=20
-> >> On 2024-09-05 14:34, Andre Przywara wrote: =20
-> >> > On Thu, 5 Sep 2024 20:26:15 +0800
-> >> > Chen-Yu Tsai <wens@csie.org> wrote:
-> >> > =20
-> >> >> Hi,
-> >> >>
-> >> >> On Thu, Sep 5, 2024 at 8:17=E2=80=AFPM Dragan Simic <dsimic@manjaro=
-.org>
-> >> >> wrote: =20
-> >> >> >
-> >> >> > Hello,
-> >> >> >
-> >> >> > Just checking, any further thoughts about this patch? =20
-> >> >>
-> >> >> Sorry, but I feel like it's not really worth the churn. There's not
-> >> >> really a problem to be solved here. What you are arguing for is more
-> >> >> about aesthetics, and we could argue that having them separate makes
-> >> >> it easier to read and turn on/off. =20
-> >> >
-> >> > Yeah, I agree. If a board wants to support OPPs, they just have to
-> >> > include
-> >> > a single file and define the CPU regulator, and that's a nice opt-in,
-> >> > IMHO.
-> >> > But having this patch would make it quite hard to opt out, I believe.
-> >> > For
-> >> > Linux there are probably ways to disable DVFS nevertheless, but I am
-> >> > not
-> >> > sure this is true in an OS agnostic pure-DT-only way. =20
-> >>=20
-> >> Thanks for your response.  The only thing that still makes me wonder
-> >> is why would a board want to opt out of DVFS?  Frankly, I'd consider
-> >> the design of the boards that must keep DVFS disabled broken. =20
-> >=20
-> > Yes! Among the boards using Allwinner SoCs there are some, say=20
-> > less-optimal
-> > designs ;-) =20
->=20
-> I see, but such boards could simply disable the "cpu0_opp_table" node in
-> their dts(i) files, for the encapsulated CPU OPPs scenario, and=20
-> everything
-> would still work and be defined in a clean(er) way.
+> >>  
+> >>  properties:
+> >>    compatible:
+> >> -    const: qcom,geni-spi
+> >> +    enum:
+> >> +      - qcom,geni-spi
+> >> +      - qcom,sa8255p-geni-spi
+> > You have entire commit msg to explain why this device's programming
+> > model is not compatible with existing generic compatible which must
+> > cover all variants (because it is crazy generic).
+> >
+> > Best regards,
+> > Krzysztof
+> 
+> I will put more details in the description of the patch, though, I had
+> put the description in the cover letter for this entire series.
 
-I agree, and I was already about to suggest this as a reply to your initial
-post, but I think I tried that, and IIRC this doesn't work: the "status"
-property is not honoured for this node.
-But please double check that.
+Cover letters do not land in the git repo, so the next person coming to
+perform modifications can not understand what was so special about this
+platform. Please always provide all reasoning for a change in the commit
+message.
 
-Cheers,
-Andre
-
-> I mean, if there are some suboptimal designs, perhaps the defaults=20
-> should
-> be tailored towards the good designs, and the suboptimal designs should=20
-> be
-> some kind of exceptions.
->=20
-> >> > This could probably be solved, but same as Chen-Yu I don't see any g=
-ood
-> >> > enough reason for this patch in the first place.
-> >> > =20
-> >> >> And even though the GPU OPPs are in the dtsi, it's just one OPP act=
-ing
-> >> >> as a default clock rate. =20
-
+-- 
+With best wishes
+Dmitry
 
