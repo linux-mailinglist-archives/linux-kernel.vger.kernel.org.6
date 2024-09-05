@@ -1,119 +1,128 @@
-Return-Path: <linux-kernel+bounces-317940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4145B96E5C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A70596E5C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B411AB23183
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:31:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DB528330B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64DB1AD9FA;
-	Thu,  5 Sep 2024 22:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68B1AD413;
+	Thu,  5 Sep 2024 22:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHSo3hdV"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MkIhYe0Q"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFD113D638;
-	Thu,  5 Sep 2024 22:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B58B15687C;
+	Thu,  5 Sep 2024 22:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725575502; cv=none; b=ez0tORwow61hIsu4wWd3uSPOBEtKR589Hu6Xhk0L0ASXMKiEtLLj7gosNuLgTocCTTfMAS4wc4MUJfIs9TBpn8R8wqCy84jhRonQRlupvxu4g1pF4zTCZnj+M6NqNGfzL63FHIg6ve/2NFb+fYqtHSVDQgLqwvOeYMF66lcZtSg=
+	t=1725575571; cv=none; b=JA5zi/nnWfn3SpOsEg/GNbw8FPOhMjKdOFpI1ekkesXa0FeildMvwTksdjGv2drVZxMyLe0mtUdzplwNyQV2rTZjtD4U6UDYp6iQ36B/9KDfAtG2m4xrOn0p1kEuXSVcRGa25ynGKXOp4IAa4iav+eJrjw1+b9YfDKuFnx1+d7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725575502; c=relaxed/simple;
-	bh=ImZuOxNJ7EmSvzdj7PGLyzPv1nqU1DZZ2z7TkryXsMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNuwn73pKyu81mo7I0WzhAHzQILgBgnBDqgT7sfH0gdcn5h+1PEWYdzl+wCO3qN9HrfFuFFlu+2e+4wBhb2ldApEMJMPa2YiGWuwJNkcgszGix0ADSW/DhC++PiAndQkVLnvENFeobAj1xwGpaC4GjgxUqHXq/ayTl/ol9Pq9bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHSo3hdV; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-26fda13f898so863948fac.1;
-        Thu, 05 Sep 2024 15:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725575498; x=1726180298; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ByTGY4/YW1oFlLnwGbDA1qTS9L9gMEUay1+a7RZYMwo=;
-        b=LHSo3hdVfBxT6eHUF+HUyKIYtlKAJ3uugys6HH9h1WlKUqj+VN7wOs2IQnCrm0XSEk
-         9wWx7OyorOAHLOc4C2tPw/vCVLebgtVze5Rj14qz7mMMeM61I3zF5P/iGIGGj6w/7CnU
-         RhiceLaYy+dkXi6MzGxSNXo9QKQ/1HPd3amLveL/+ZUWdAUG78qdRaYYuiKLHzNvb/tA
-         DvrJLJLY07EkIQF4fU0m6YTB1L56m0JiAtVWF2uE5I5m+xmCENI6ahqZCr4tUgavjzER
-         FAcnXRmiM6xHON02AMCM5NNr3UuXn9oHkY0ILXD5GTXt2UlCkbbY3Ws4mu3pzI0btt6T
-         gl2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725575498; x=1726180298;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ByTGY4/YW1oFlLnwGbDA1qTS9L9gMEUay1+a7RZYMwo=;
-        b=kDBNrhrZ0dkD5v7IRJtiAjFyg09tm371FaJvR5yU/OENc65R/fRaWdWX2nQKUyKRDL
-         IV5PskFurRtqv0yoj+Dg5wlSrvnpMNfGtU1efb+lfs4c5QymTv1SiEW2aPG/VrDLTxLp
-         I1zKLuDFxJx++g5AHHLS1FGq+T/Ci8z2pnt3HV2Zg/XDF/Gb1ah1884saiOBDYyyv6i6
-         +VY1a+/EsAaHPgNv4iHe6wzKhlIqkb7ZFvXEqSIMa7AOSVWGiz0QXQL1E9FT5Wrp/Wgl
-         i4t1C/V9md5Qc38ekhL5z/ZHwlkBDoaJz7Y4cfM9jNosl3TJmuj9fqr69Sluh2ZCuRcf
-         JZ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUDdmkxU7PBAmowRFLnuwDhSJyVL/Lmq/Ic3BFgJZk1r3LgAHnO2FOxhr0VRIApvD4ups9hjj4DdjpK@vger.kernel.org, AJvYcCUg6NASX53OBDbKYLyT5b0uZjmHOQLrhDNzZqFdYtDci0dCfTsEmZ44uGxaGKzbQFLy+OG9oMqc7GnC@vger.kernel.org, AJvYcCXHlkLSeX8kVz6NcgwjKhNjw8doNcQv1/zjZ1kvS/T5JKcMHIHoAsBV0qTH4iCfeKjFqu3ZrSzlc08QNAtD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwokCqJobPkmoUthU+f7iSBmZU8EDk0w7C5+INs3Kx8/DagDn36
-	MLbSGj9snnbLsNxNq75wU8V8vnlk3IMVMe2KLb/mZHFjzfiOI/v8
-X-Google-Smtp-Source: AGHT+IElrwBYH/D0EmLH69uk3BJrH7NaeKR2pAOqLsxRNAM44HDm9e8DYGn+wJTGKzyP8BcdCGua7w==
-X-Received: by 2002:a05:6870:ac14:b0:277:d8ee:6dda with SMTP id 586e51a60fabf-27b82ed99acmr842093fac.23.1725575498562;
-        Thu, 05 Sep 2024 15:31:38 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a98ef1e6efsm115978685a.23.2024.09.05.15.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 15:31:38 -0700 (PDT)
-Date: Thu, 5 Sep 2024 18:31:35 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Mehdi Djait <mehdi.djait@bootlin.com>, 
-	christophe.jaillet@wanadoo.fr, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] dt-bindings: display: Add Sharp Memory LCD
- bindings
-Message-ID: <w6izw3nv35zhquqipv5elp7hqf5pdtu6b2ss2infh4mmxr4aop@cxypawy5rufr>
-References: <20240905124432.834831-1-lanzano.alex@gmail.com>
- <20240905124432.834831-2-lanzano.alex@gmail.com>
- <a4520c05-d64b-4ef0-823c-6c568b459e21@kernel.org>
- <trlyhlclf74itbgj4x6baj6ga6yipdicw3c6odtjgxtbw3cjyl@lyfiny2yiz35>
- <8bab34a9-0fe4-4c69-b12b-7ad663bde2d0@kernel.org>
+	s=arc-20240116; t=1725575571; c=relaxed/simple;
+	bh=+NVDix8T2xQyedNPt3M1bRr8eVJnqQyakfFC98R23UA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=s3WSywQ35qo9RZH3rQIlz5qf4Pk9fEtwvnNvRyNYQJS1XUNsyXPq6yPunKKlxbTfo7zcHCdgRRzgbrxPGcbVR17tPDJr5eaoutm9M3V0ziVK1GhkHtvebWqXw+IWIGPN9Ry0e+n0MrcU99JtaAPXjt7iaJ2yLBhJX0uRFhKFfAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MkIhYe0Q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725575567;
+	bh=QNSjDmvq9WCZzo/kTctKtEaVFzD9p319royOrt/C1uA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MkIhYe0QLy38PIUAkCMhi1Zc3G76udEBKtQDR4FsCt2G4sKZ4J2Nk97EAzBzqdMt6
+	 p5YhojYZ9OYUy2UOlyyo55vdrfJ/hyqhfCfvNAQ74l/z5hlRUJojRPr2TmoQQRI4lE
+	 8nisMUQev/ranvLARmBfJMva37XLzzFm30jpQvonrBrBp3+gfEYSQXPvy7gtfs4JnU
+	 S+dopIqKa9/zCJE5WYn1GPjqfmZ5anKzZr7PyUz0KqJwY0+TFu0WESUdVXFXvHzQde
+	 jz9MWvjjB0X8N4HLUdk6F01DMTUvEjH/T/JbXgeuY6o7SQfSXZD5pl4LGUq4leFRQZ
+	 gomXM1ioY0ecg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0DdW0hjlz4wd0;
+	Fri,  6 Sep 2024 08:32:47 +1000 (AEST)
+Date: Fri, 6 Sep 2024 08:32:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the ext3 tree
+Message-ID: <20240906083246.599063b0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bab34a9-0fe4-4c69-b12b-7ad663bde2d0@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/LwIk8x16cFnZjJMqNA2NE=4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Sep 05, 2024 at 11:12:47PM GMT, Krzysztof Kozlowski wrote:
-> On 05/09/2024 22:27, Alex Lanzano wrote:
-> > On Thu, Sep 05, 2024 at 03:23:20PM GMT, Krzysztof Kozlowski wrote:
-> >> On 05/09/2024 14:43, Alex Lanzano wrote:
-> >>> Add device tree bindings for the monochrome Sharp Memory LCD
-> >>>
-> >>> Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> >>> Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
-> >>> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
-> >>
-> >> I don't understand what happened here. Your process of handling patches
-> >> is odd. Tags do not disappear, you had to remove them, right? So where
-> >> is the explanation for this?
-> > 
-> > Whoops! My apologies for wasting time. Nothing changed in this patch
-> > I forgot to add in your reviewed-by tag.
-> 
-> Tag was there before, so you removed it...
+--Sig_/LwIk8x16cFnZjJMqNA2NE=4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In prior versions I was manually adding the tag to the patch file. But I
-have since added it to the commit message like I should have from the
-beginning. Again, I apologize for any time wasted and appreciate the
-review.
+Hi all,
+
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
+
+  fs/btrfs/super.c
+
+between commit:
+
+  ec24789ec8d6 ("btrfs: disable defrag on pre-content watched files")
+
+from the ext3 tree and commit:
+
+  c7e408a168b5 ("btrfs: convert to multigrain timestamps")
+
+from the vfs-brauner tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/btrfs/super.c
+index c9aef6708779,d423acfe11d0..000000000000
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@@ -2199,7 -2199,7 +2199,7 @@@ static struct file_system_type btrfs_fs
+  	.parameters		=3D btrfs_fs_parameters,
+  	.kill_sb		=3D btrfs_kill_super,
+  	.fs_flags		=3D FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA |
+- 				  FS_ALLOW_IDMAP | FS_ALLOW_HSM,
+ -				  FS_ALLOW_IDMAP | FS_MGTIME,
+++				  FS_ALLOW_IDMAP | FS_ALLOW_HSM | FS_MGTIME,
+   };
+ =20
+  MODULE_ALIAS_FS("btrfs");
+
+--Sig_/LwIk8x16cFnZjJMqNA2NE=4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaMY4ACgkQAVBC80lX
+0GwAzwf+KZ6FbeLNPJt+2qvVKPeSSkjqCpAjGHnblDBN1Qowgk+/52vDnFqtMlZP
+089Zc7kHR8YbLeiU13JjbZavsGQG/ujFIwzyWVlv0CNIrPVu8H+joPIdfcY+5UvI
+pl/gNB8OvZgSW47OeTHDU5hLsVrpTyHZ06YQr7ieJsyPh5USwsjTUPOt5mbtwp1F
+D7xLcYjduVTc0HW1wFe2137BfWr/IMYjbkSxKccMgSAyjcaNC9HaSO25rsoveZSR
+PNJIGUgLoDUmCEUt9g/nKaLAZCVK+8QmNzEbHhVw4OGQ7AfXgQYJsMoi8+wHAyvS
+Fi/qXSfK1P++FhL9ULgQ7uuiRhZ8LQ==
+=It/+
+-----END PGP SIGNATURE-----
+
+--Sig_/LwIk8x16cFnZjJMqNA2NE=4--
 
