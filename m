@@ -1,129 +1,178 @@
-Return-Path: <linux-kernel+bounces-316376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD5796CEBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:50:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9813F96CEC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D6BB246BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0081C228D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F66188A26;
-	Thu,  5 Sep 2024 05:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0B8189518;
+	Thu,  5 Sep 2024 05:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ORluSlYh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Sv9qAjDH"
+Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55ADF621
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B940414F9CF
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 05:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725515449; cv=none; b=goy4NbymMT8yTIExaelu2XgBUfbQ2ywhswjgFH12CAmzIBnD+UE3MQCfX9r3tzr5YSc4aNn8mvZlLqk25Ow/efMARr+o42i2SmN9+ZPjbN9JyShHQjbTieh3ViCb7rSmlbjn5F1I+eSqumsVPviSCba+0lu9Bn7nTphgNCmwDH4=
+	t=1725515568; cv=none; b=aHMF+aeJeDiSJQteWBKLuCQG7nGsS+Bpv/eI3fv15oktAFtU5+ICDd/Y3a0Z5XU2EmJnHnFXykoOjXXDJWlmCUbITBwimgAFNWGypEsohPrDDkN9Ah6+GHRFYSkHFiUP+TDAFrYcHRRjYu5SMmDMmv6KiwDEiXu2xR6qNT74OWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725515449; c=relaxed/simple;
-	bh=5dxzGSTAslaJGmPXTzAzswelDdMwpyIDnw0rq3NilxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Pm19ma7x7/4cV6qZRn+hrYNC7McI/kO0l5CGiB4pGc1UuQCLQYLUfEyohC+sMaaSrtzNEDrPoldIemJFj3XITUlVwcp4bGz5xhvqqSEnVbocMFA0uTVJ+ijYkf2wbK8IiqYcHUoniIMI8iiy0aXauJDZW/5Oo26oMa7+ev5LPcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ORluSlYh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484FxEPf020925;
-	Thu, 5 Sep 2024 05:50:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	77SH1uvNfWLkio+SufQcVBbFIq8m2g0KthoEkMukAU0=; b=ORluSlYhqChwmtPW
-	9p4a6YMFpOY6UEz0oHZK/6Tfu5C4TDU22ps+eOF3ZwK6Ucco/HCTz/vb/QjA7M3E
-	U46M8YeppE4GbNtE09RdR5XrGeEh+9et9G2yZrdzLvyMwT++TYUJha4cLOPdapQ0
-	ySlFpfLWiX+xKuAxwXvNpYbM8+ngv2OyhYipws717Kp1qt+C7V7a/3XS23eVfJ+E
-	Q5Et7ZnWZ0kiwi88cB0ZIUWvUIljDDzN+Stir3FVMTzVxdAC1wRkwSeimP1M4vY4
-	V56X5T1OP8FmcAfqNFRnUkYN5zA6Dj7FAjp2W0jiTraLR+1He//pJtqTx9Nn0rK9
-	t6RtzA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41dxy26asb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 05:50:34 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4855oYFS002282
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 05:50:34 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 22:50:32 -0700
-Message-ID: <cc94e66f-6fa0-4499-a851-bac90533eeca@quicinc.com>
-Date: Thu, 5 Sep 2024 11:20:29 +0530
+	s=arc-20240116; t=1725515568; c=relaxed/simple;
+	bh=EJ14sOhLF8dqlqHR5/S5KsDVVFZ7Uf+ffgtsitGZDYQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1SGclZZI2YOJqEXK/0sG3GhUYTLngfOE29cuW0nuNiqK+bibQpxznBo4CARS9GzqessVJTYwC7fqJFXdYkHUUwv1jq4pDC/0hwnESnKFPmQyzwPPZKmU6R3KBvQYq0rsYr7vsMgYNzvmfQ0XaSNWli3DnLKNaY6ox7JJxPfimA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Sv9qAjDH; arc=none smtp.client-ip=209.85.221.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-374ca65cafdso148170f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 22:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725515565; x=1726120365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hjf8mtcnI/VkGNM4WcDRLxoMkosopxI2lQGXBy19+Pw=;
+        b=Sv9qAjDHFavdkYQMrMTKd+BAtcjRD23PHqNEyAxhSkqaqtMRKDir8zwREjr3qoj4lg
+         2RuuPaD6dWphNKZ5BwZhqezuMOoGhQ7LiWPCOxc5v/YI25GYoegDCCHuuBnAHiXb4QW1
+         4GIcDl5Mi1LqmMU/bOPSnm4Zdhe9ChbF9WdWBWntcXWOCcxigakc7GtgKT7wSuwJwZPh
+         q+ZIqat+0IhgFKBqghCBUNZu+Bpw+AVWKNJrr5mNxh32DjxJ57LgM19iwByAEDdI5nZC
+         i5iyIF/2O7KTNiIAUOeIChi+Z5MrjSeHODsGtI1Yg/whm7rpRrGEfMrEDgJf3CbbFsO4
+         th1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725515565; x=1726120365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hjf8mtcnI/VkGNM4WcDRLxoMkosopxI2lQGXBy19+Pw=;
+        b=GgQnpM3+dIiTPJXOtq8eRle9iOwERKoam+3/8Y1wJ7KjGV6I+Ag+Iy5OB/bdMvdrDq
+         pIDlHSAIO5EwNwpE7XKg0WnidQcN2Wk59iWpNn84yokK51qmw4kmGv9snXDYIg5gdvZm
+         WyKBMyg8/iBlIQspur7ygpIXTo+2mEUkf6GWeiWKaMCHIlpLRWmGao2fsumDwTOAl1/S
+         xLmBFpqB2Za9uNiBleHAeyGiPFZl/74QOYBCF2tR0BpC8yb6sgjiWYo/zYQWkVXX7FMO
+         JDE9BFdIhFxrbwuj65Fh0ppxsM6BlhXTK/GBtf2Fn00R5XtFAIiuRZDIXBE+ir4AJljC
+         L+ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVOwpRhYRQM8L61NKSWO35dGmaoaeLQHXX7U5aGEM3w0Z6T/NGy+rjlmLf9KiQTtrH82c4xRPTA3k7OSp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ85cZsGld//Z6q/NWqQOh1NHYKvx2ApgR4X/rBC1/Z0JyBJwp
+	G2JME9vjtCLr50UF3taFEXtuNnVu5tbEVw9I+xwHGFv3rdrAay8EYatJrbxZ+Po=
+X-Google-Smtp-Source: AGHT+IG1SWr/hH8fDwc2lTHFSC7khyXM197qaW9qea5dTMGILPk5Z4cjIsiuD9Zgz8SQL2bOy/5LAg==
+X-Received: by 2002:a5d:46ca:0:b0:374:c95e:1636 with SMTP id ffacd0b85a97d-374c95e17a1mr7580681f8f.21.1725515564903;
+        Wed, 04 Sep 2024 22:52:44 -0700 (PDT)
+Received: from localhost (39-9-193-138.adsl.fetnet.net. [39.9.193.138])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e17636sm3413678173.74.2024.09.04.22.52.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 22:52:44 -0700 (PDT)
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: Eduard Zingerman <eddyz87@gmail.com>,
+	bpf@vger.kernel.org
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	David Vernet <void@manifault.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH bpf-next] bpf: use type_may_be_null() helper for nullable-param check
+Date: Thu,  5 Sep 2024 13:52:32 +0800
+Message-ID: <20240905055233.70203-1-shung-hsi.yu@suse.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] i3c/master: cmd_v1: Fix the rule for getting i3c mode
-To: Billy Tsai <billy_tsai@aspeedtech.com>,
-        "alexandre.belloni@bootlin.com"
-	<alexandre.belloni@bootlin.com>,
-        "jarkko.nikula@linux.intel.com"
-	<jarkko.nikula@linux.intel.com>,
-        "linux-i3c@lists.infradead.org"
-	<linux-i3c@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <20240826033821.175591-1-billy_tsai@aspeedtech.com>
- <OSQPR06MB7252463A7C81BF18811DB6EC8B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <OSQPR06MB7252463A7C81BF18811DB6EC8B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -fLAWtVrUT3z_pMbs6UmvaSq9103PQoa
-X-Proofpoint-ORIG-GUID: -fLAWtVrUT3z_pMbs6UmvaSq9103PQoa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=939 spamscore=0 clxscore=1011
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050041
+Content-Transfer-Encoding: 8bit
 
+Commit 980ca8ceeae6 ("bpf: check bpf_dummy_struct_ops program params for
+test runs") does bitwise AND between reg_type and PTR_MAYBE_NULL, which
+is correct, but due to type difference the compiler complains:
 
-Hi Billy,
+  net/bpf/bpf_dummy_struct_ops.c:118:31: warning: bitwise operation between different enumeration types ('const enum bpf_reg_type' and 'enum bpf_type_flag') [-Wenum-enum-conversion]
+    118 |                 if (info && (info->reg_type & PTR_MAYBE_NULL))
+        |                              ~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~
 
-On 8/26/2024 9:32 AM, Billy Tsai wrote:
->> Based on the I3C TCRI specification, the rules for determining the I3C
->> mode are as follows:
->> I3C SCL rate > 8MHz: use SDR0, with a maximum data rate of 8MHz
->> I3C SCL rate > 6MHz: use SDR1, with a maximum data rate of 6MHz
->> I3C SCL rate > 4MHz: use SDR2, with a maximum data rate of 4MHz
->> I3C SCL rate > 2MHz: use SDR3, with a maximum data rate of 2MHz
->> Otherwise, use SDR4
-> 
-> Sorry, the description of the commit message is wrong.
-> I will change it to
-> I3C SCL rate > 8MHz: use SDR0, as SDR1 has a maximum data rate of 8MHz
-> I3C SCL rate > 6MHz: use SDR1, as SDR2 has a maximum data rate of 8MHz
-> I3C SCL rate > 4MHz: use SDR2, as SDR3 has a maximum data rate of 8MHz
-> I3C SCL rate > 2MHz: use SDR3, as SDR4 has a maximum data rate of 8MHz
-> I3C SCL rate <= 2MHz: use SDR4
-> and send the v2 patch
-Seems some typo errors, you mentioned all the modes having maximum data 
-rate of 8MHz. "has a maximum data rate of 8MHz"
+Workaround the warning by moving the type_may_be_null() helper from
+verifier.c into bpf_verifier.h, and reuse it here to check whether param
+is nullable.
 
-I3C TCRI Specification (in [MIPI06] Section 7.1.1.1) :
-MODE 	Listed Speed 	Maximum Sustainable Data Rate
-0x0 	I3C SDR0 	12.5 MHz, Standard SDR Speed, fSCL Max
-0x1 	I3C SDR1 	8 MHz
-0x2 	I3C SDR2 	6 MHz
-0x3 	I3C SDR3 	4 MHz
-0x4 	I3C SDR4 	2 MHz
+Fixes: 980ca8ceeae6 ("bpf: check bpf_dummy_struct_ops program params for test runs")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202404241956.HEiRYwWq-lkp@intel.com/
+Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+---
+Due to kernel test bot not setting the correct email header
+(reported[1]) Eduard probably never saw the report about the warning
+(nor did it show up on Patchwork).
+
+1: https://github.com/intel/lkp-tests/issues/383
+---
+ include/linux/bpf_verifier.h   | 5 +++++
+ kernel/bpf/verifier.c          | 5 -----
+ net/bpf/bpf_dummy_struct_ops.c | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 8458632824a4..4513372c5bc8 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -927,6 +927,11 @@ static inline bool type_is_sk_pointer(enum bpf_reg_type type)
+ 		type == PTR_TO_XDP_SOCK;
+ }
+ 
++static inline bool type_may_be_null(u32 type)
++{
++	return type & PTR_MAYBE_NULL;
++}
++
+ static inline void mark_reg_scratched(struct bpf_verifier_env *env, u32 regno)
+ {
+ 	env->scratched_regs |= 1U << regno;
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index b806afeba212..53d0556fbbf3 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -383,11 +383,6 @@ static void verbose_invalid_scalar(struct bpf_verifier_env *env,
+ 	verbose(env, " should have been in [%d, %d]\n", range.minval, range.maxval);
+ }
+ 
+-static bool type_may_be_null(u32 type)
+-{
+-	return type & PTR_MAYBE_NULL;
+-}
+-
+ static bool reg_not_null(const struct bpf_reg_state *reg)
+ {
+ 	enum bpf_reg_type type;
+diff --git a/net/bpf/bpf_dummy_struct_ops.c b/net/bpf/bpf_dummy_struct_ops.c
+index 3ea52b05adfb..f71f67c6896b 100644
+--- a/net/bpf/bpf_dummy_struct_ops.c
++++ b/net/bpf/bpf_dummy_struct_ops.c
+@@ -115,7 +115,7 @@ static int check_test_run_args(struct bpf_prog *prog, struct bpf_dummy_ops_test_
+ 
+ 		offset = btf_ctx_arg_offset(bpf_dummy_ops_btf, func_proto, arg_no);
+ 		info = find_ctx_arg_info(prog->aux, offset);
+-		if (info && (info->reg_type & PTR_MAYBE_NULL))
++		if (info && type_may_be_null(info->reg_type))
+ 			continue;
+ 
+ 		return -EINVAL;
+-- 
+2.46.0
+
 
