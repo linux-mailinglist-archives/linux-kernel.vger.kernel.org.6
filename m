@@ -1,430 +1,154 @@
-Return-Path: <linux-kernel+bounces-316790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EE696D587
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:11:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D3596D586
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDDD1F28F2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123CA2887DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1270819923A;
-	Thu,  5 Sep 2024 10:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DAC1991D0;
+	Thu,  5 Sep 2024 10:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRgPi9v0"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVgV2ZKP"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C8A19922A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8351990A7;
+	Thu,  5 Sep 2024 10:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725531045; cv=none; b=Yjn66BZH46LgANknAuy0uWiVaT/bP0OU1VWWOAfwL1DGgp+Qurkp9TdQkqHXQ248Uuq/iWyvrrhbAlfaiONWFevFtMGys8M37VqKnNa6+sOcsgbwJXQWH7YbcliHAuL7gwtb/VyBgy7E/VvXaBeKfeEE+bYywvHGwb27Xi22Ynw=
+	t=1725531040; cv=none; b=XIAY1BBYSNe6D5FC1MR0XAFl8C4xIGja87CyLGKWDMamxSip9uXwFD+0rlLjtQI0B3qLhq3YMjk/3/WiAuSnbjqqPNfFcwLJW0fcmDs9CAZA2rJ+OUj4QpeAXXa40l0OU5I5T8xzBM930nksbWZefCsuGTQVvnJAxFtxZKMQPw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725531045; c=relaxed/simple;
-	bh=ROSIVWd/ghgnT13QR9G/1rQG7anvjrCokcs5JVqh5Js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ULBb2HmHtgFugQ3/wC8sJV+ERf0qoOlF/A8q1pYDQcEeiqKePN8K+PrGm22TLjsjw+zbt16Lc5M+uNzGQ5NFSzlPve+0awfJdVBOKcODpRT1JwvjBVExrDTZgbqpQ4/rtELr1NgtDDuh4zYaiRO4sHWDXawWRxCOCKaSPUAPP5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRgPi9v0; arc=none smtp.client-ip=209.85.217.49
+	s=arc-20240116; t=1725531040; c=relaxed/simple;
+	bh=0/vMyYQ0Wx2NMxRdccZKOydZqvl0rEL7RRjlWjX53Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsIkgZb1IA6i7o/Inl7KJUP3ogJ9Z7Fx36C96myuYTBz8WbH1W1c9RtgjqlpNmf+moh6pGauzA5fChGgIMk3AYgSQv27DAVRsJ43Y1eGo+JZDExQ13/C/BHdteetFlfVzzDcCgiJOGCnxIw0oEOKIL1Num5xTeQwwNEXqyooBuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVgV2ZKP; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49bd40d77e5so97104137.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:10:42 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53346132348so692760e87.2;
+        Thu, 05 Sep 2024 03:10:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725531042; x=1726135842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9NkalXiXrjFXv9wiESLRtComGGu7EyyvwI+whS2j6I=;
-        b=ZRgPi9v0c44RVKW6b4xkz4Al6zSVOTHnk8IbY8aLpyq0FdVZFpLluu6IQMkltK8KvA
-         kMUtBKP/auqGUlKShiPTWEqGmqPw6lkH4LfYKe48IS3/XFanByP2Eh+lGuGoNe3XlqGf
-         UDCz/MiYT5uu9TgpaV10Kosby0g/4KjkMJap2Vi3MxVLn6n9Buo1Y+7iLa72oBVrG1ev
-         ly4ugV1DC0m0hiEtNiofvmgOQHhMzHmZhcDJjE/flU3kdiVobFFnOEn304ttLOi9cdzC
-         4YNcQDLyN/N/W3LDu6oWmWOA6jy9nA8FAQVKbYvHOizNp/PkydcdKoVOe09J1Cl6Puw8
-         m5ig==
+        d=gmail.com; s=20230601; t=1725531037; x=1726135837; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wvN1I2knXR6FRaPCTP2Nq68jAbwk/9FcIR+V12XMub4=;
+        b=FVgV2ZKP3IvsgspYZ3dwSLs46wB0P2e40+lsrEwkkT/vytiRoY6W/HShKTb4HAcISL
+         kVqTzjXcIwqKFcfHDtvrDt34srxASm5x88Ul+YTrc2NQ4DN4S5031Cgjs5zBvsQE1UBy
+         UyhCavPKgD4QVI789vyx89VeaYlWxzy9jW5bfxqxsN8XKfwrwRK2UGhLKyN7sZdbeGS/
+         i2xJ5v/3LAAAeGsdXWrU0YvpMirN7rmHLOSdRnjErS6EuTfvfYqg8OUTWjzpia+9lvah
+         V0XtcQCdEW+ZZISa2+7kz0soHyMvIThVhZyM/EhjiUWPoU+Y8BiK5zAsq7wmKsekdXf6
+         4yYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725531042; x=1726135842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w9NkalXiXrjFXv9wiESLRtComGGu7EyyvwI+whS2j6I=;
-        b=f6EiQkXZjzCfDydeYGBJKIWUW3Q7cL2FEkZQ93n2fmTEpujU2F+iowE8S8r8v8Q1Tp
-         hFN1H6WO5kiW7vRcgUNiQxTwVW3XdH7RSy9zmlnYwxBMDA3W098NCKKtgAPBkWmAmz9b
-         uSM05bZBCxLJdrBCCdQlMnnyObHB/Z/RtpVuMpzZydOf7HMNYIv+bULDVsMl60yEy94n
-         60Rn597ulGHMQokVnbjvwEGAaWSIRY175+H8aSNPJHWu/sSIco8ECdNkPGNN75HGwoTl
-         F4VIm41kz44Ecs3opSKGP6ZOgH8gA6FE+BfRnFQRUWsubec4BrvmkN40OOE5Q2wXDGk/
-         eYhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjO0619b7D9pjiFPC57QSZTOt1V5BrMbWjatVCCJAie6FNSKlhk1MLnex3flEhrMOJ4+n/ELyL3Q08Zbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVZoCCf4rmFSJeq1jbVR+yvE797o3EQMWDD3rd5Bz0FfI8gTzC
-	d4rZXSdx578PXrN21m3lD8CUVi9AEk5gm7k9yGX27putSeP+9VtORKZIVGBAaF0ItATKXAk/c/z
-	SXSqFW6/vUhlmi19pF8Q03tcfgW4=
-X-Google-Smtp-Source: AGHT+IEaMRP/2MxwEpJaq/nIw3gUV+RskEV5DiqUqiMYiHQuGlI/7DuEMwSu587QatDqCGs3ME8ZuP7FVqCP72LvhQo=
-X-Received: by 2002:a05:6102:41a2:b0:492:a93d:7cab with SMTP id
- ada2fe7eead31-49ba89b5349mr12983866137.1.1725531041854; Thu, 05 Sep 2024
- 03:10:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725531037; x=1726135837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wvN1I2knXR6FRaPCTP2Nq68jAbwk/9FcIR+V12XMub4=;
+        b=YZaVzmuSVi9/zSTKLoKpUvEMzv8Iy6wfjunem0X+MxpAd+eBca7W7eSynBn/SbncEX
+         tdGJXbYyDS5i52BtUlVJ4ZVz1E5WU2xPzWNm9y9LI9hLjESKvHhyWiUO+bDmAeW/jLWx
+         lpDNLHGuiABtFgnDkQQUb6vLX4mMVxXz+DS5pisMlF2RC67ZC1luvhEch+Prjf9bUMQx
+         DzqNDtsPLNBkFVFe8zGq1LZIU/zjaI4gWy3vUULQG9AvwPdIR/b6cMzSQNzgWqWD5MbX
+         yP886lfqvjYZilUiHFvbSm+2u6dhU21O8RWqUgcQ/qZfI0W0Hn+6XL94bJ+k4bgsdvQV
+         x/2w==
+X-Forwarded-Encrypted: i=1; AJvYcCULNBjTSh38D6INWgRtqEyQGxKAraT+H7H0n+ZVd+pNjVzwCEruFOtUhFfR0wOvwmcDOa6p8ifRSBRo@vger.kernel.org, AJvYcCUqUwaTkNgG4f6MOqe/oGFeyrgTphCnxLFbJJM69DDjXwO3lqfeFNYzXJ1H39MFYVh65MCKkV2f1NOt04x/9g==@vger.kernel.org, AJvYcCWRVSPGtfBqS4BAHKd3NbzXprtz3AQQ+8RZVxdSQteRZM+YL/MvNtZvP3nH4jKepo1UY4t16UKaSmXSPOY=@vger.kernel.org, AJvYcCXx9szJenD/fERIshZtmksbNUFkUIp5gSV75XMhqE+YY/rjPq3sA4XXbvOC92U3JU8yN2Qv4MAoBPrRivcw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+HRocZymxWDjGB1xj4wdOCzCghDTSIcpuJUVwpsfal49pl7RR
+	yIheHNHVuktUQg0FsY9m5h6oSbJO74JNc1Rp5eiYVpHdArNkACAH
+X-Google-Smtp-Source: AGHT+IE9Xi84jEcvzMiidrfQVMoZc0TSOAS4xDwigWpUpHyJVJSj99CT0xX9KW/9RVO6OwwwvGvp0g==
+X-Received: by 2002:a05:6512:3055:b0:530:e323:b1ca with SMTP id 2adb3069b0e04-53565f20df3mr4208181e87.25.1725531036183;
+        Thu, 05 Sep 2024 03:10:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5356a7ad1d7sm283806e87.205.2024.09.05.03.10.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 03:10:35 -0700 (PDT)
+Date: Thu, 5 Sep 2024 13:10:34 +0300
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/29] media: MAINTAINERS: Add Qualcomm Iris video
+ accelerator driver
+Message-ID: <tdvofocpygklipddgf7gbpttxdnmhe33krziwkzh2czpf4uiao@htiismc4dekz>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-2-c5fdbbe65e70@quicinc.com>
+ <afba364d-8299-49b6-9848-ed1660f86327@kernel.org>
+ <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-2-usamaarif642@gmail.com>
- <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
- <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com>
- <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
- <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
- <CAJD7tkY+wXUwmgZUfVqSXpXL_CxRO-4eKGCPunfJaTDGhNO=Kw@mail.gmail.com>
- <CAGsJ_4zP_tA4z-n=3MTPorNnmANdSJTg4jSx0-atHS1vdd2jmg@mail.gmail.com>
- <CAJD7tkZ7ZhGz5J5O=PEkoyN9WeSjXOLMqnASFc8T3Vpv5uiSRQ@mail.gmail.com> <CAGsJ_4x0y+RtghmFifm_pR-=P_t5hNW5qjvw-oF+-T_amuVuzQ@mail.gmail.com>
-In-Reply-To: <CAGsJ_4x0y+RtghmFifm_pR-=P_t5hNW5qjvw-oF+-T_amuVuzQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 5 Sep 2024 22:10:30 +1200
-Message-ID: <CAGsJ_4zB7za72xL94-1Oc+M2M1RtxftVYUAUk=1yngUoK65stw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
-	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
-	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
-	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <809c359f-6c24-f2d4-3c4b-83e543d8c120@quicinc.com>
 
-On Thu, Sep 5, 2024 at 8:49=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> On Thu, Sep 5, 2024 at 7:55=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
-> >
-> > On Thu, Sep 5, 2024 at 12:03=E2=80=AFAM Barry Song <21cnbao@gmail.com> =
-wrote:
-> > >
-> > > On Thu, Sep 5, 2024 at 5:41=E2=80=AFAM Yosry Ahmed <yosryahmed@google=
-.com> wrote:
-> > > >
-> > > > [..]
-> > > > > > I understand the point of doing this to unblock the synchronous=
- large
-> > > > > > folio swapin support work, but at some point we're gonna have t=
-o
-> > > > > > actually handle the cases where a large folio being swapped in =
-is
-> > > > > > partially in the swap cache, zswap, the zeromap, etc.
-> > > > > >
-> > > > > > All these cases will need similar-ish handling, and I suspect w=
-e won't
-> > > > > > just skip swapping in large folios in all these cases.
-> > > > >
-> > > > > I agree that this is definitely the goal. `swap_read_folio()` sho=
-uld be a
-> > > > > dependable API that always returns reliable data, regardless of w=
-hether
-> > > > > `zeromap` or `zswap` is involved. Despite these issues, mTHP swap=
--in shouldn't
-> > > > > be held back. Significant efforts are underway to support large f=
-olios in
-> > > > > `zswap`, and progress is being made. Not to mention we've already=
- allowed
-> > > > > `zeromap` to proceed, even though it doesn't support large folios=
-.
-> > > > >
-> > > > > It's genuinely unfair to let the lack of mTHP support in `zeromap=
-` and
-> > > > > `zswap` hold swap-in hostage.
-> > > >
-> > >
-> > > Hi Yosry,
-> > >
-> > > > Well, two points here:
-> > > >
-> > > > 1. I did not say that we should block the synchronous mTHP swapin w=
-ork
-> > > > for this :) I said the next item on the TODO list for mTHP swapin
-> > > > support should be handling these cases.
-> > >
-> > > Thanks for your clarification!
-> > >
-> > > >
-> > > > 2. I think two things are getting conflated here. Zswap needs to
-> > > > support mTHP swapin*. Zeromap already supports mTHPs AFAICT. What i=
-s
-> > > > truly, and is outside the scope of zswap/zeromap, is being able to
-> > > > support hybrid mTHP swapin.
-> > > >
-> > > > When swapping in an mTHP, the swapped entries can be on disk, in th=
-e
-> > > > swapcache, in zswap, or in the zeromap. Even if all these things
-> > > > support mTHPs individually, we essentially need support to form an
-> > > > mTHP from swap entries in different backends. That's what I meant.
-> > > > Actually if we have that, we may not really need mTHP swapin suppor=
-t
-> > > > in zswap, because we can just form the large folio in the swap laye=
-r
-> > > > from multiple zswap entries.
-> > > >
-> > >
-> > > After further consideration, I've actually started to disagree with t=
-he idea
-> > > of supporting hybrid swapin (forming an mTHP from swap entries in dif=
-ferent
-> > > backends). My reasoning is as follows:
-> >
-> > I do not have any data about this, so you could very well be right
-> > here. Handling hybrid swapin could be simply falling back to the
-> > smallest order we can swapin from a single backend. We can at least
-> > start with this, and collect data about how many mTHP swapins fallback
-> > due to hybrid backends. This way we only take the complexity if
-> > needed.
-> >
-> > I did imagine though that it's possible for two virtually contiguous
-> > folios to be swapped out to contiguous swap entries and end up in
-> > different media (e.g. if only one of them is zero-filled). I am not
-> > sure how rare it would be in practice.
-> >
-> > >
-> > > 1. The scenario where an mTHP is partially zeromap, partially zswap, =
-etc.,
-> > > would be an extremely rare case, as long as we're swapping out the mT=
-HP as
-> > > a whole and all the modules are handling it accordingly. It's highly
-> > > unlikely to form this mix of zeromap, zswap, and swapcache unless the
-> > > contiguous VMA virtual address happens to get some small folios with
-> > > aligned and contiguous swap slots. Even then, they would need to be
-> > > partially zeromap and partially non-zeromap, zswap, etc.
-> >
-> > As I mentioned, we can start simple and collect data for this. If it's
-> > rare and we don't need to handle it, that's good.
-> >
-> > >
-> > > As you mentioned, zeromap handles mTHP as a whole during swapping
-> > > out, marking all subpages of the entire mTHP as zeromap rather than j=
-ust
-> > > a subset of them.
-> > >
-> > > And swap-in can also entirely map a swapcache which is a large folio =
-based
-> > > on our previous patchset which has been in mainline:
-> > > "mm: swap: entirely map large folios found in swapcache"
-> > > https://lore.kernel.org/all/20240529082824.150954-1-21cnbao@gmail.com=
-/
-> > >
-> > > It seems the only thing we're missing is zswap support for mTHP.
-> >
-> > It is still possible for two virtually contiguous folios to be swapped
-> > out to contiguous swap entries. It is also possible that a large folio
-> > is swapped out as a whole, then only a part of it is swapped in later
-> > due to memory pressure. If that part is later reclaimed again and gets
-> > added to the swapcache, we can run into the hybrid swapin situation.
-> > There may be other scenarios as well, I did not think this through.
-> >
-> > >
-> > > 2. Implementing hybrid swap-in would be extremely tricky and could di=
-srupt
-> > > several software layers. I can share some pseudo code below:
-> >
-> > Yeah it definitely would be complex, so we need proper justification fo=
-r it.
-> >
-> > >
-> > > swap_read_folio()
-> > > {
-> > >        if (zeromap_full)
-> > >                folio_read_from_zeromap()
-> > >        else if (zswap_map_full)
-> > >               folio_read_from_zswap()
-> > >        else {
-> > >               folio_read_from_swapfile()
-> > >               if (zeromap_partial)
-> > >                        folio_read_from_zeromap_fixup()  /* fill zero
-> > > for partially zeromap subpages */
-> > >               if (zwap_partial)
-> > >                        folio_read_from_zswap_fixup()  /* zswap_load
-> > > for partially zswap-mapped subpages */
-> > >
-> > >                folio_mark_uptodate()
-> > >                folio_unlock()
-> > > }
-> > >
-> > > We'd also need to modify folio_read_from_swapfile() to skip
-> > > folio_mark_uptodate()
-> > > and folio_unlock() after completing the BIO. This approach seems to
-> > > entirely disrupt
-> > > the software layers.
-> > >
-> > > This could also lead to unnecessary IO operations for subpages that
-> > > require fixup.
-> > > Since such cases are quite rare, I believe the added complexity isn't=
- worth it.
-> > >
-> > > My point is that we should simply check that all PTEs have consistent=
- zeromap,
-> > > zswap, and swapcache statuses before proceeding, otherwise fall back =
-to the next
-> > > lower order if needed. This approach improves performance and avoids =
-complex
-> > > corner cases.
-> >
-> > Agree that we should start with that, although we should probably
-> > fallback to the largest order we can swapin from a single backend,
-> > rather than the next lower order.
-> >
-> > >
-> > > So once zswap mTHP is there, I would also expect an API similar to
-> > > swap_zeromap_entries_check()
-> > > for example:
-> > > zswap_entries_check(entry, nr) which can return if we are having
-> > > full, non, and partial zswap to replace the existing
-> > > zswap_never_enabled().
-> >
-> > I think a better API would be similar to what Usama had. Basically
-> > take in (entry, nr) and return how much of it is in zswap starting at
-> > entry, so that we can decide the swapin order.
-> >
-> > Maybe we can adjust your proposed swap_zeromap_entries_check() as well
-> > to do that? Basically return the number of swap entries in the zeromap
-> > starting at 'entry'. If 'entry' itself is not in the zeromap we return
-> > 0 naturally. That would be a small adjustment/fix over what Usama had,
-> > but implementing it with bitmap operations like you did would be
-> > better.
->
-> I assume you means the below
->
-> /*
->  * Return the number of contiguous zeromap entries started from entry
->  */
-> static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry, =
-int nr)
-> {
->         struct swap_info_struct *sis =3D swp_swap_info(entry);
->         unsigned long start =3D swp_offset(entry);
->         unsigned long end =3D start + nr;
->         unsigned long idx;
->
->         idx =3D find_next_bit(sis->zeromap, end, start);
->         if (idx !=3D start)
->                 return 0;
->
->         return find_next_zero_bit(sis->zeromap, end, start) - idx;
-> }
->
-> If yes, I really like this idea.
->
-> It seems much better than using an enum, which would require adding a new
-> data structure :-) Additionally, returning the number allows callers
-> to fall back
-> to the largest possible order, rather than trying next lower orders
-> sequentially.
+On Thu, Sep 05, 2024 at 11:17:55AM GMT, Dikshita Agarwal wrote:
+> 
+> 
+> On 8/27/2024 4:12 PM, Krzysztof Kozlowski wrote:
+> > On 27/08/2024 12:05, Dikshita Agarwal via B4 Relay wrote:
+> >> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> >>
+> >> Add an entry for Iris video decoder accelerator driver.
+> >>
+> >> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> >> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> >> ---
+> >>  MAINTAINERS | 11 +++++++++++
+> >>  1 file changed, 11 insertions(+)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index 8766f3e5e87e..105e67fca308 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -18898,6 +18898,17 @@ S:	Maintained
+> >>  F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
+> >>  F:	drivers/regulator/vqmmc-ipq4019-regulator.c
+> >>  
+> >> +QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
+> >> +M:	Vikash Garodia <quic_vgarodia@quicinc.com>
+> >> +M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
+> >> +R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
+> >> +L:	linux-media@vger.kernel.org
+> >> +L:	linux-arm-msm@vger.kernel.org
+> >> +S:	Maintained
+> >> +T:	git git://linuxtv.org/media_tree.git
+> > 
+> > Drop, you do not maintain that Git tree.
+> Sure, will remove
+> > 
+> >> +F:	Documentation/devicetree/bindings/media/qcom,*-iris.yaml
+> >> +F:	drivers/media/platform/qcom/iris/
+> > 
+> > Drop, does not exist. Or fix your patch order.
+> Are you suggesting to add this patch as the last patch of the series?
+> or remove just below entry and add one more patch at the end to update
+> MAINTAINERS file with the same?
 
-No, returning 0 after only checking first entry would still reintroduce
-the current bug, where the start entry is zeromap but other entries
-might not be. We need another value to indicate whether the entries
-are consistent if we want to avoid the enum:
+Adding it after the patch that adds the driver should be fine. Likewise
+adding it at the end is also fine.
 
-/*
- * Return the number of contiguous zeromap entries started from entry;
- * If all entries have consistent zeromap, *consistent will be true;
- * otherwise, false;
- */
-static inline unsigned int swap_zeromap_entries_count(swp_entry_t entry,
-                int nr, bool *consistent)
-{
-        struct swap_info_struct *sis =3D swp_swap_info(entry);
-        unsigned long start =3D swp_offset(entry);
-        unsigned long end =3D start + nr;
-        unsigned long s_idx, c_idx;
+> +F:	drivers/media/platform/qcom/iris/
+> 
+> Thanks,
+> Dikshita
+> > 
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> > 
 
-        s_idx =3D find_next_bit(sis->zeromap, end, start);
-        if (s_idx =3D=3D end) {
-                *consistent =3D true;
-                return 0;
-        }
-
-        c_idx =3D find_next_zero_bit(sis->zeromap, end, start);
-        if (c_idx =3D=3D end) {
-                *consistent =3D true;
-                return nr;
-        }
-
-        *consistent =3D false;
-        if (s_idx =3D=3D start)
-                return 0;
-        return c_idx - s_idx;
-}
-
-I can actually switch the places of the "consistent" and returned
-number if that looks
-better.
-
->
-> Hi Usama,
-> what is your take on this?
->
-> >
-> > >
-> > > Though I am not sure how cheap zswap can implement it,
-> > > swap_zeromap_entries_check()
-> > > could be two simple bit operations:
-> > >
-> > > +static inline zeromap_stat_t swap_zeromap_entries_check(swp_entry_t
-> > > entry, int nr)
-> > > +{
-> > > +       struct swap_info_struct *sis =3D swp_swap_info(entry);
-> > > +       unsigned long start =3D swp_offset(entry);
-> > > +       unsigned long end =3D start + nr;
-> > > +
-> > > +       if (find_next_bit(sis->zeromap, end, start) =3D=3D end)
-> > > +               return SWAP_ZEROMAP_NON;
-> > > +       if (find_next_zero_bit(sis->zeromap, end, start) =3D=3D end)
-> > > +               return SWAP_ZEROMAP_FULL;
-> > > +
-> > > +       return SWAP_ZEROMAP_PARTIAL;
-> > > +}
-> > >
-> > > 3. swapcache is different from zeromap and zswap. Swapcache indicates
-> > > that the memory
-> > > is still available and should be re-mapped rather than allocating a
-> > > new folio. Our previous
-> > > patchset has implemented a full re-map of an mTHP in do_swap_page() a=
-s mentioned
-> > > in 1.
-> > >
-> > > For the same reason as point 1, partial swapcache is a rare edge case=
-.
-> > > Not re-mapping it
-> > > and instead allocating a new folio would add significant complexity.
-> > >
-> > > > >
-> > > > > Nonetheless, `zeromap` and `zswap` are distinct cases. With `zero=
-map`, we
-> > > > > permit almost all mTHP swap-ins, except for those rare situations=
- where
-> > > > > small folios that were swapped out happen to have contiguous and =
-aligned
-> > > > > swap slots.
-> > > > >
-> > > > > swapcache is another quite different story, since our user scenar=
-ios begin from
-> > > > > the simplest sync io on mobile phones, we don't quite care about =
-swapcache.
-> > > >
-> > > > Right. The reason I bring this up is as I mentioned above, there is=
- a
-> > > > common problem of forming large folios from different sources, whic=
-h
-> > > > includes the swap cache. The fact that synchronous swapin does not =
-use
-> > > > the swapcache was a happy coincidence for you, as you can add suppo=
-rt
-> > > > mTHP swapins without handling this case yet ;)
-> > >
-> > > As I mentioned above, I'd really rather filter out those corner cases
-> > > than support
-> > > them, not just for the current situation to unlock swap-in series :-)
-> >
-> > If they are indeed corner cases, then I definitely agree.
->
-> Thanks
-> Barry
+-- 
+With best wishes
+Dmitry
 
