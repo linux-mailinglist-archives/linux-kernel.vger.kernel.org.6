@@ -1,331 +1,254 @@
-Return-Path: <linux-kernel+bounces-316541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE9D96D0E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B583696D0F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69C1285695
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF60285FF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769B1193428;
-	Thu,  5 Sep 2024 07:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393BC194C71;
+	Thu,  5 Sep 2024 07:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4n2/RKkV"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULws7HY3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A84BE4A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E801940AA;
+	Thu,  5 Sep 2024 07:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725522942; cv=none; b=TBCzbDfm3rQqgFVl5MTGjMlXhNr7uaRddQjk5kCfO6DwLhzfeQ+ciVGejI5xcQgiQc4VNnWE2Kbx6AEIAm/roRX7HiPHB8WwC/4kD2KTFG4KXtpQ4T0jKH2UwyRVgC3zSubYngoCk6JYUgwEngL6VesbOjRqpb0qmxaPWAEhfAE=
+	t=1725523003; cv=none; b=nCq/ZOnu8PpA57/GF363/zVEdNc/ssxXLtRS1Nk3atOMQ8aDv3LZsxHx+wLiB5/dhmZaXfnuR90RJEmK4DTKSX2u3bJDASv8mOc9xMIl8th/HiehugYrSwgLm/crqNAWjqsDVN1+QedPE15Tg/MGcDxk8nVYDXh4ORvbXnb3mPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725522942; c=relaxed/simple;
-	bh=nfd6NnUMNKn2S94lNqSxILqEGHyZrLVbjXbu/Hl8arQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aTjtvIIeatKP03wmoUnWMTytHgzL/k+ZdibTNTde+gaF7MJRkAjkaCwpCDL0gDlUsfloW5O03O091rmOLNcvNtv4T3IlcmLSWqBy0OKImqTasfSZgjeMQLpjUqo9+ELpNaL6nGD6c66/lna63xo7m8Sb59EvNJhsK9rx25dpvJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4n2/RKkV; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so574878a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725522939; x=1726127739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RQj7w9KgAzV4sviOPUObnL6qYVOdZSO5rlSQykT8m4Y=;
-        b=4n2/RKkVUSLi2go/qDnAEKgQZKkKlMT/ZUDmuJyE3kOhOo67iTQd+1n0NleKCITiUZ
-         gNi608e3oSWWYQNGwMDhfKhtKMmeJw+rIvRCeN6m+ZTc4ntOL7lpQx8uKj699jRO8Z/K
-         mSj0csRBWz+9qNajSDg+us+h7WCKMRBaKD0g/SzaiE9+b/j1LWO3lH9mVg4KrJ8+DQTP
-         D52LedWBIf2AAp6PeGOItW+J3GXvpUGZ6unSuaW8Hr2iy/49v5xO0Dy2p8kyvdDnuy4p
-         evf7lHhBvn1o7pSpJHPudTXloVq2BCqefctjo6/N5vkqZUbu7MccEyxO9Uq8urvTKgT6
-         n4IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725522939; x=1726127739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RQj7w9KgAzV4sviOPUObnL6qYVOdZSO5rlSQykT8m4Y=;
-        b=rmM/rjf/Bnu51eSmMezcwd9ownAHy7oKrTd9j5836UxYd6Qm6k7gyU3eoHcNaG8bLY
-         hB4gnjCN61wpl0uGk8oYiNAvohMo0ohIaqoRLv9kR5ha8lOld9rR9ehrYo7ob4vEM6eH
-         R6rgsQgJojdrUyh+UNZYTBe7dIEbRyt+AaYSmcnd//LGQbNBYIhirWjvZoWPjaruzI7C
-         /DyEZMxYX7fIFMB32FTBOTTT2wcE5H0+F7Xs1v9ou8vT0ng4maLf2v8s++6PM1H8rLr2
-         u/8JdaJUcdSJVs6ZK7rMTSY9QvPnCOY7JllDN4o4SLIo97paj7BxL1nR7502E5QmRe0g
-         p16w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2WqUQZfPvckgUyC17lvmsTPst/2I4tQ7+m5LBdqWzrOeoRXJtFwDodT9l9STtjRBcpFYDUv0vIIeoeWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwySi6vqiL0yF131CR7fnvfPdyJRqv4qFZUS+oc69/jwV05YW6
-	tsxnAzf62tnN0xQWiJLW159QQANrkOyMZ+cngc7BCnOXh8h3s4nYd7cqAXR9GgqaDwDu5yWrtgE
-	Pk2lzH3louFtLEsd4L4Cm0ryNJ9/YJEwpPfQe
-X-Google-Smtp-Source: AGHT+IEREgWlr9bVpEAUDx0lX3+PNQ9dKVxj29Lr87pLUFQnqELlg2mBrInMe1ZAgel9oznbRWZgz1nuRiGabgBWvPE=
-X-Received: by 2002:a17:907:efe2:b0:a86:a178:42de with SMTP id
- a640c23a62f3a-a8a3f532680mr429647066b.54.1725522938767; Thu, 05 Sep 2024
- 00:55:38 -0700 (PDT)
+	s=arc-20240116; t=1725523003; c=relaxed/simple;
+	bh=XdCyyOL8iDZXvD/RVTFRp9L/TCArX9gu66Scjgx3IWo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WZgKxzMvt8tAk1mb0MyK+5Dk0jgMk9OhZHBZ5nzUJH/HOQw9/d6xLFpo/vX+F8dkpDuHlUVzcJhAicLHkcsHOwTOVBf8jcvieIVoii7LAwTiFlQDjMEeqqleFIG2lmLN4LWiP6Rh2BWsASHrfIacqGJeojPF2MBVqkPZc/A8oUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULws7HY3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECCA7C4CEC3;
+	Thu,  5 Sep 2024 07:56:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725523003;
+	bh=XdCyyOL8iDZXvD/RVTFRp9L/TCArX9gu66Scjgx3IWo=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ULws7HY3oCwT77UEb6pX7KkT3hdCNZ7H2GBkN5eSIAtxA1erHGA7pEM9HHH4OxA7w
+	 ijGKbS5Eu952BZPmzerqAvdLcE6UISFyQRw6gFUVryTBczu+aDckoqFGbQkJSbrleT
+	 hNknebvDMQmoA0EwmQjuaXtaSBNeeowVbjnxhANQ7i+nXA+uqTRpq/UoMlPCLFBFba
+	 4xJYei/eAC5NCoTTVlCgf1RIqtmlQpznaRfu76D9/C80VhOyhOXFI0+tPQDwuW8tpX
+	 DFCeopqlTc+XUJMrGM2rE2mj/RnAzjIhuCf3Kb3Xv6YWLegTjbI5wAzqiLSd9UhYVd
+	 f0Hz47tn7DphQ==
+Message-ID: <ba883b6e-7d64-483d-8125-efe10ff9195c@kernel.org>
+Date: Thu, 5 Sep 2024 09:56:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612124750.2220726-2-usamaarif642@gmail.com>
- <20240904055522.2376-1-21cnbao@gmail.com> <CAJD7tkYNn51b3wQbNnJoy8TMVA+r+ookuZzNEEpYWwKiZPVRdg@mail.gmail.com>
- <CAGsJ_4w2k=704mgtQu97y5Qpidc-x+ZBmBXCytkzdcasfAaG0w@mail.gmail.com>
- <CAJD7tkYqk_raVy07cw9cz=RWo=6BpJc0Ax84MkXLRqCjYvYpeA@mail.gmail.com>
- <CAGsJ_4w4woc6st+nPqH7PnhczhQZ7j90wupgX28UrajobqHLnw@mail.gmail.com>
- <CAJD7tkY+wXUwmgZUfVqSXpXL_CxRO-4eKGCPunfJaTDGhNO=Kw@mail.gmail.com> <CAGsJ_4zP_tA4z-n=3MTPorNnmANdSJTg4jSx0-atHS1vdd2jmg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zP_tA4z-n=3MTPorNnmANdSJTg4jSx0-atHS1vdd2jmg@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 5 Sep 2024 00:55:02 -0700
-Message-ID: <CAJD7tkZ7ZhGz5J5O=PEkoyN9WeSjXOLMqnASFc8T3Vpv5uiSRQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Barry Song <21cnbao@gmail.com>
-Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
-	chengming.zhou@linux.dev, david@redhat.com, hannes@cmpxchg.org, 
-	hughd@google.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, shakeel.butt@linux.dev, 
-	willy@infradead.org, ying.huang@intel.com, hanchuanhua@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <cover.1725444016.git.jan.kiszka@siemens.com>
+ <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+ <t2mqfu62xx5uztlintofp4pquv6jalzace6w5jpymyyarb2wmn@vvo23e4cmu57>
+ <4fd1d6e8-8a66-4eff-a995-5f947a4b707d@siemens.com>
+ <669fa971-05f2-43f2-8c7b-d9de68d8910f@kernel.org>
+ <50ee7c83-7dd2-44b7-ad80-649db9a76077@siemens.com>
+ <69f16e78-218f-4e03-aeca-05be5844d656@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <69f16e78-218f-4e03-aeca-05be5844d656@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 5, 2024 at 12:03=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Thu, Sep 5, 2024 at 5:41=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
-> >
-> > [..]
-> > > > I understand the point of doing this to unblock the synchronous lar=
-ge
-> > > > folio swapin support work, but at some point we're gonna have to
-> > > > actually handle the cases where a large folio being swapped in is
-> > > > partially in the swap cache, zswap, the zeromap, etc.
-> > > >
-> > > > All these cases will need similar-ish handling, and I suspect we wo=
-n't
-> > > > just skip swapping in large folios in all these cases.
-> > >
-> > > I agree that this is definitely the goal. `swap_read_folio()` should =
-be a
-> > > dependable API that always returns reliable data, regardless of wheth=
-er
-> > > `zeromap` or `zswap` is involved. Despite these issues, mTHP swap-in =
-shouldn't
-> > > be held back. Significant efforts are underway to support large folio=
-s in
-> > > `zswap`, and progress is being made. Not to mention we've already all=
-owed
-> > > `zeromap` to proceed, even though it doesn't support large folios.
-> > >
-> > > It's genuinely unfair to let the lack of mTHP support in `zeromap` an=
-d
-> > > `zswap` hold swap-in hostage.
-> >
->
-> Hi Yosry,
->
-> > Well, two points here:
-> >
-> > 1. I did not say that we should block the synchronous mTHP swapin work
-> > for this :) I said the next item on the TODO list for mTHP swapin
-> > support should be handling these cases.
->
-> Thanks for your clarification!
->
-> >
-> > 2. I think two things are getting conflated here. Zswap needs to
-> > support mTHP swapin*. Zeromap already supports mTHPs AFAICT. What is
-> > truly, and is outside the scope of zswap/zeromap, is being able to
-> > support hybrid mTHP swapin.
-> >
-> > When swapping in an mTHP, the swapped entries can be on disk, in the
-> > swapcache, in zswap, or in the zeromap. Even if all these things
-> > support mTHPs individually, we essentially need support to form an
-> > mTHP from swap entries in different backends. That's what I meant.
-> > Actually if we have that, we may not really need mTHP swapin support
-> > in zswap, because we can just form the large folio in the swap layer
-> > from multiple zswap entries.
-> >
->
-> After further consideration, I've actually started to disagree with the i=
-dea
-> of supporting hybrid swapin (forming an mTHP from swap entries in differe=
-nt
-> backends). My reasoning is as follows:
+On 05/09/2024 09:50, Krzysztof Kozlowski wrote:
+> On 05/09/2024 09:15, Jan Kiszka wrote:
+>> On 05.09.24 08:53, Krzysztof Kozlowski wrote:
+>>> On 05/09/2024 08:40, Jan Kiszka wrote:
+>>>> On 05.09.24 08:32, Krzysztof Kozlowski wrote:
+>>>>> On Wed, Sep 04, 2024 at 12:00:11PM +0200, Jan Kiszka wrote:
+>>>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>>>
+>>>>>> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
+>>>>>> to specific regions of host memory. Add the optional property
+>>>>>> "memory-regions" to point to such regions of memory when PVU is used.
+>>>>>>
+>>>>>> Since the PVU deals with system physical addresses, utilizing the PVU
+>>>>>> with PCIe devices also requires setting up the VMAP registers to map the
+>>>>>> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
+>>>>>> mapped to the system physical address. Hence, describe the VMAP
+>>>>>> registers which are optionally unless the PVU shall used for PCIe.
+>>>>>>
+>>>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>>> ---
+>>>>>> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>>>>>> CC: "Krzysztof Wilczyński" <kw@linux.com>
+>>>>>> CC: Bjorn Helgaas <bhelgaas@google.com>
+>>>>>> CC: linux-pci@vger.kernel.org
+>>>>>> ---
+>>>>>>  .../bindings/pci/ti,am65-pci-host.yaml        | 52 ++++++++++++++-----
+>>>>>>  1 file changed, 40 insertions(+), 12 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>>>>> index 0a9d10532cc8..d8182bad92de 100644
+>>>>>> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>>>>>> @@ -19,16 +19,6 @@ properties:
+>>>>>>        - ti,am654-pcie-rc
+>>>>>>        - ti,keystone-pcie
+>>>>>>  
+>>>>>> -  reg:
+>>>>>> -    maxItems: 4
+>>>>>> -
+>>>>>> -  reg-names:
+>>>>>> -    items:
+>>>>>> -      - const: app
+>>>>>> -      - const: dbics
+>>>>>> -      - const: config
+>>>>>> -      - const: atu
+>>>>>
+>>>>>
+>>>>> Nothing improved here.
+>>>>
+>>>> Yes, explained the background to you. Sorry, if you do not address my
+>>>> replies, I'm lost with your feedback.
+>>>
+>>> My magic ball could not figure out the problem, so did not provide the
+>>> answer.
+>>>
+>>> I gave you the exact code which illustrates how to do it. If you do it
+>>> that way: it works. If you do it other way: it might not work. However
+>>
+>> The link you provided was unfortunately not self-explanatory because if 
+>> I - apparently - do it like that example, I'm getting the errors below.
+>>
+>>> without seeing anything, magic ball was silent, so I am not
+>>> participating in game: would you be so kind to give more information so
+>>> I won't waste my day in asking what is wrong.
+>>
+>> With my patch:
+>>
+>> # make ... dtbs_check
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic.dtb
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic-pg2.dtb
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced.dtb
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2.dtb
+>>   OVL [C] arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtb
+>>   OVL [C] arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-usb3.dtb
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-pg2.dtb
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-sm.dtb
+>>   DTC [C] arch/arm64/boot/dts/ti/k3-am654-base-board.dtb
+>>
+>> With this revert on top:
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>> index d8182bad92de..dd753dae24c6 100644
+>> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
+>> @@ -19,6 +19,16 @@ properties:
+>>        - ti,am654-pcie-rc
+>>        - ti,keystone-pcie
+>>  
+>> +  reg:
+>> +    maxItems: 4
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: app
+>> +      - const: dbics
+>> +      - const: config
+>> +      - const: atu
+> 
+> There is nothing like that in that example.
+> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L44
+> 
+>> +
+>>    interrupts:
+>>      maxItems: 1
+>>  
+>> @@ -104,18 +114,6 @@ then:
+>>      - msi-map
+>>      - num-viewport
+>>  
+>> -else:
+>> -  properties:
+>> -    reg:
+>> -      maxItems: 4
+>> -
+>> -    reg-names:
+>> -      items:
+>> -        - const: app
+>> -        - const: dbics
+>> -        - const: config
+>> -        - const: atu
+> 
+> Neither this.
+> 
+> Each case MUST be covered, look:
+> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L191
 
-I do not have any data about this, so you could very well be right
-here. Handling hybrid swapin could be simply falling back to the
-smallest order we can swapin from a single backend. We can at least
-start with this, and collect data about how many mTHP swapins fallback
-due to hybrid backends. This way we only take the complexity if
-needed.
+Actually your case fits better another example from UFS, so take that one:
 
-I did imagine though that it's possible for two virtually contiguous
-folios to be swapped out to contiguous swap entries and end up in
-different media (e.g. if only one of them is zero-filled). I am not
-sure how rare it would be in practice.
+https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml#L39
 
->
-> 1. The scenario where an mTHP is partially zeromap, partially zswap, etc.=
-,
-> would be an extremely rare case, as long as we're swapping out the mTHP a=
-s
-> a whole and all the modules are handling it accordingly. It's highly
-> unlikely to form this mix of zeromap, zswap, and swapcache unless the
-> contiguous VMA virtual address happens to get some small folios with
-> aligned and contiguous swap slots. Even then, they would need to be
-> partially zeromap and partially non-zeromap, zswap, etc.
+Best regards,
+Krzysztof
 
-As I mentioned, we can start simple and collect data for this. If it's
-rare and we don't need to handle it, that's good.
-
->
-> As you mentioned, zeromap handles mTHP as a whole during swapping
-> out, marking all subpages of the entire mTHP as zeromap rather than just
-> a subset of them.
->
-> And swap-in can also entirely map a swapcache which is a large folio base=
-d
-> on our previous patchset which has been in mainline:
-> "mm: swap: entirely map large folios found in swapcache"
-> https://lore.kernel.org/all/20240529082824.150954-1-21cnbao@gmail.com/
->
-> It seems the only thing we're missing is zswap support for mTHP.
-
-It is still possible for two virtually contiguous folios to be swapped
-out to contiguous swap entries. It is also possible that a large folio
-is swapped out as a whole, then only a part of it is swapped in later
-due to memory pressure. If that part is later reclaimed again and gets
-added to the swapcache, we can run into the hybrid swapin situation.
-There may be other scenarios as well, I did not think this through.
-
->
-> 2. Implementing hybrid swap-in would be extremely tricky and could disrup=
-t
-> several software layers. I can share some pseudo code below:
-
-Yeah it definitely would be complex, so we need proper justification for it=
-.
-
->
-> swap_read_folio()
-> {
->        if (zeromap_full)
->                folio_read_from_zeromap()
->        else if (zswap_map_full)
->               folio_read_from_zswap()
->        else {
->               folio_read_from_swapfile()
->               if (zeromap_partial)
->                        folio_read_from_zeromap_fixup()  /* fill zero
-> for partially zeromap subpages */
->               if (zwap_partial)
->                        folio_read_from_zswap_fixup()  /* zswap_load
-> for partially zswap-mapped subpages */
->
->                folio_mark_uptodate()
->                folio_unlock()
-> }
->
-> We'd also need to modify folio_read_from_swapfile() to skip
-> folio_mark_uptodate()
-> and folio_unlock() after completing the BIO. This approach seems to
-> entirely disrupt
-> the software layers.
->
-> This could also lead to unnecessary IO operations for subpages that
-> require fixup.
-> Since such cases are quite rare, I believe the added complexity isn't wor=
-th it.
->
-> My point is that we should simply check that all PTEs have consistent zer=
-omap,
-> zswap, and swapcache statuses before proceeding, otherwise fall back to t=
-he next
-> lower order if needed. This approach improves performance and avoids comp=
-lex
-> corner cases.
-
-Agree that we should start with that, although we should probably
-fallback to the largest order we can swapin from a single backend,
-rather than the next lower order.
-
->
-> So once zswap mTHP is there, I would also expect an API similar to
-> swap_zeromap_entries_check()
-> for example:
-> zswap_entries_check(entry, nr) which can return if we are having
-> full, non, and partial zswap to replace the existing
-> zswap_never_enabled().
-
-I think a better API would be similar to what Usama had. Basically
-take in (entry, nr) and return how much of it is in zswap starting at
-entry, so that we can decide the swapin order.
-
-Maybe we can adjust your proposed swap_zeromap_entries_check() as well
-to do that? Basically return the number of swap entries in the zeromap
-starting at 'entry'. If 'entry' itself is not in the zeromap we return
-0 naturally. That would be a small adjustment/fix over what Usama had,
-but implementing it with bitmap operations like you did would be
-better.
-
->
-> Though I am not sure how cheap zswap can implement it,
-> swap_zeromap_entries_check()
-> could be two simple bit operations:
->
-> +static inline zeromap_stat_t swap_zeromap_entries_check(swp_entry_t
-> entry, int nr)
-> +{
-> +       struct swap_info_struct *sis =3D swp_swap_info(entry);
-> +       unsigned long start =3D swp_offset(entry);
-> +       unsigned long end =3D start + nr;
-> +
-> +       if (find_next_bit(sis->zeromap, end, start) =3D=3D end)
-> +               return SWAP_ZEROMAP_NON;
-> +       if (find_next_zero_bit(sis->zeromap, end, start) =3D=3D end)
-> +               return SWAP_ZEROMAP_FULL;
-> +
-> +       return SWAP_ZEROMAP_PARTIAL;
-> +}
->
-> 3. swapcache is different from zeromap and zswap. Swapcache indicates
-> that the memory
-> is still available and should be re-mapped rather than allocating a
-> new folio. Our previous
-> patchset has implemented a full re-map of an mTHP in do_swap_page() as me=
-ntioned
-> in 1.
->
-> For the same reason as point 1, partial swapcache is a rare edge case.
-> Not re-mapping it
-> and instead allocating a new folio would add significant complexity.
->
-> > >
-> > > Nonetheless, `zeromap` and `zswap` are distinct cases. With `zeromap`=
-, we
-> > > permit almost all mTHP swap-ins, except for those rare situations whe=
-re
-> > > small folios that were swapped out happen to have contiguous and alig=
-ned
-> > > swap slots.
-> > >
-> > > swapcache is another quite different story, since our user scenarios =
-begin from
-> > > the simplest sync io on mobile phones, we don't quite care about swap=
-cache.
-> >
-> > Right. The reason I bring this up is as I mentioned above, there is a
-> > common problem of forming large folios from different sources, which
-> > includes the swap cache. The fact that synchronous swapin does not use
-> > the swapcache was a happy coincidence for you, as you can add support
-> > mTHP swapins without handling this case yet ;)
->
-> As I mentioned above, I'd really rather filter out those corner cases
-> than support
-> them, not just for the current situation to unlock swap-in series :-)
-
-If they are indeed corner cases, then I definitely agree.
 
