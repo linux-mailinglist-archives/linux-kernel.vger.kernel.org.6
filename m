@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-317739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF92496E311
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:23:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A141F96E316
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58650B214E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4401B1F275C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC84D18D64C;
-	Thu,  5 Sep 2024 19:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E711018E02E;
+	Thu,  5 Sep 2024 19:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ScFdCQoA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wjX9/tAK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iScUXFLO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E7D1537A8;
-	Thu,  5 Sep 2024 19:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E5A18037;
+	Thu,  5 Sep 2024 19:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564190; cv=none; b=YkRQwKupzmVczlcejhOyAcVt4QYtLLlRvbNph2IiEXOJuRJIrWJ9Hku8dGfT9mKFtZrrYoQyQ1KK/HzZVrJIBzNANLeuzZbLZw/KR3ElF5DCMRUIyieTKoyDJt2eIsUp0k/r5QVxxzOLuXXpVffWpaiWWMe6vNMwwvO0KL4Ca7k=
+	t=1725564226; cv=none; b=J+RV/wmL1Gu7KpQ89CIbv+vkjCbk5g7y2m7BeWVO33N2XqdaLyzS8nuO4jPoxCMRr0RS07T0T5puAzJPkuqirgXgLjJhgh8A8HoOrX1nmOHcK5jH1NC3OYJMpI2zFQczr9vmL0Gl4ARAiUFgrceA1C+ytYlek0JNwApTebqfmZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564190; c=relaxed/simple;
-	bh=mQN2pVwEQkF3flm9Z9OClScT2Lx6/mX7PDpQAhIlKXU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sQFKLAFPM3Q2tj6EXeW8M9nRpSUdQwue0KNN5beyu+c0UBl16qVxxPWrKClXpvfUxlVa0k0t5+rxiTlwjxyAbuxkfus0kOwrnRXAne+do15ov4a2sFeB7Zz7XFCEJgb2HjaklyRTk+uxiDjsLmU6Bhclyz9vwEdCeW01cm2LlQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ScFdCQoA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wjX9/tAK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725564187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x/k7v9dq75ZYxD6NMIKCBm1rrUuhMqAHo1YQGEDw0Fo=;
-	b=ScFdCQoAJFY/dmPllSBmEKraXRBBRf4xYIK3yyunky3+PnSRtx5XZL+cb+SWPHKgnzaERf
-	yeRka7fxAT5iMAP7vgy4vpbgP3t2Z2v/tZKyYIkM/PzKOiODyO2WiBhmGlIxLdwq0wTGMp
-	7GOqf+hgznZSQ01hEugy/5hfe3ftmLRFO5vwATEIJlpDxPXH/HAH8NGy3DwvvUpEyRBtkd
-	JhyzIdYKK1wayl5e12FFXmtMqJKXFZHCC8RYxVhy7Vk1GyU98CIwuh4ANP8fPnHFmZtXzI
-	vfRVHojNVHf606XuNXomgnvstOMUpQKZ3/0V09svpSfszuLHvc09zwk4TSSXAw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725564187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x/k7v9dq75ZYxD6NMIKCBm1rrUuhMqAHo1YQGEDw0Fo=;
-	b=wjX9/tAKMyXG9yPWZou0k2Z9ybR82aZUvwX6irFPBSTuZeKq2289HtbiftyhJTzhrmGLGU
-	z0ZdGIPBPY+3zJAw==
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
- Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, "Paul E.
- McKenney" <paulmck@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Serge Semin <fancer.lancer@gmail.com>,
- Rengarajan S <rengarajan.s@microchip.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
-In-Reply-To: <Ztm85Y_mo5-OJveq@smile.fi.intel.com>
-References: <20240905134719.142554-1-john.ogness@linutronix.de>
- <20240905134719.142554-2-john.ogness@linutronix.de>
- <Ztm85Y_mo5-OJveq@smile.fi.intel.com>
-Date: Thu, 05 Sep 2024 21:29:06 +0206
-Message-ID: <877cbp3nxh.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1725564226; c=relaxed/simple;
+	bh=99Aayfwr64C8h/uSTsDHwgjTG3uwPXVeNP+Xr7sRXh8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ijmKZO+4+eHgDfqTjzqWRf437U59f+v8XdpW/L4dP7JlM0UtDxUgq2oPJjWWcvDT2fa35wbUOtYHfnjHasxXGK0rI/48Vnafv4sHFKHd4qEfJL2AfnkaL6YkQ+KZO0WTMB6OMjcfk0LcVWCxEP/Y1/WquQ6Z/hLm4wD6y2m83WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iScUXFLO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IPvit019634;
+	Thu, 5 Sep 2024 19:23:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=S0UiDBMYHSMboXZOqz10Ss
+	rAQ9QSZA1WieMfCAzgYxE=; b=iScUXFLOZpdt4AoyNaqmxjMhQd4AT/661vZlHB
+	fgreGcBx/665B/YRzls2WAcWFOfRVdNWkEgyCTJd9N+UBx0VsMV41gVAcm5RA6EW
+	+x34CxtNN+qJKTk0d3AHzcMs8zhnHH+NjAoRn2VtJA7ehHHfAKwB2UA6kRboD0cp
+	luH4dodKJdDTuw7xA0RZpmALepNYfuCmZ4bEeUfd3VOs1wBYYFZ2L6N8EN84Znpv
+	+dJRttn+auY0AGG/H8S/9Baa23FLWHPtKo0bvU5tj7QE1+dYGjbWUwjavp0zOdwv
+	EmrmSKORHHhiFjYyg3nN9s0NfjAG6rWFKpkuEIDgvaTUV87A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu03gs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 19:23:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485JNekK009671
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 19:23:40 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 12:23:37 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3] dt-bindings: soc: qcom: aoss-qmp: document support for SA8255p
+Date: Thu, 5 Sep 2024 12:23:28 -0700
+Message-ID: <20240905192328.3778542-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ww9bIEgp-xtPlqW2drt0EgJWhea22cT7
+X-Proofpoint-GUID: ww9bIEgp-xtPlqW2drt0EgJWhea22cT7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_15,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 mlxlogscore=966 phishscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409050144
 
-On 2024-09-05, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> On Thu, Sep 05, 2024 at 03:53:18PM +0206, John Ogness wrote:
->> Implement the necessary callbacks to switch the 8250 console driver
->> to perform as an nbcon console.
->> 
->> Add implementations for the nbcon console callbacks (write_atomic,
->> write_thread, device_lock, device_unlock) and add CON_NBCON to the
->> initial flags.
->> 
->> The legacy code is kept in order to easily switch back to legacy mode
->> by defining USE_SERIAL_8250_LEGACY_CONSOLE.
->
-> ...
->
->>  static struct console univ8250_console = {
->>  	.name		= "ttyS",
->> +#ifdef USE_SERIAL_8250_LEGACY_CONSOLE
->
-> Can it be done at run-time (theoretically or even practically)?
-> (Note that we have already knob to disable / enable consoles.)
+Add compatible for AOSS QMP representing support on SA8255p.
 
-We don't want to maintain the legacy variant and really people should
-not be using it either. NBCON is the way forward for all console
-drivers.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+---
 
-I will just remove it for v2. If someone wants to use the old code, they
-will need to revert the patch.
+Changes in v3:
+	- Removed the patch from original series[1]
 
+Changes in v2:
+	- Added Reviewed-by tag
 
->> +	if (nbcon_exit_unsafe(wctxt)) {
->> +		int len = READ_ONCE(wctxt->len);
->
->> +		int i;
->
-> unsigned ?
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-ACK.
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+index 7afdb60edb22..bd873e7e4ae5 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+@@ -26,6 +26,7 @@ properties:
+     items:
+       - enum:
+           - qcom,qdu1000-aoss-qmp
++          - qcom,sa8255p-aoss-qmp
+           - qcom,sa8775p-aoss-qmp
+           - qcom,sc7180-aoss-qmp
+           - qcom,sc7280-aoss-qmp
+-- 
+2.34.1
 
->> +	/* Atomic console not supported for rs485 mode. */
->
-> RS485
-
-ACK.
-
-> Feels like parts (1) and (2) duplicates existing pieces of code. May it be
-> refactored to minimize the duplication?
-
-When I remove the unused legacy code, the duplication
-disappears. write_thread() and write_atomic() have very little in
-common.
-
-John Ogness
 
