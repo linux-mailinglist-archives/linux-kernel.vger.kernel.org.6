@@ -1,241 +1,178 @@
-Return-Path: <linux-kernel+bounces-316659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482E596D271
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:48:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F3E96D275
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B15ACB210D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:47:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3701F26B2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2311194A60;
-	Thu,  5 Sep 2024 08:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24841957FF;
+	Thu,  5 Sep 2024 08:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lH1xFS4r"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5F9kJBH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E133B5256
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013E819538A;
+	Thu,  5 Sep 2024 08:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725526071; cv=none; b=ronQhZlZsY4Dd7qIz8aqXeiVJAypGu3/X0ZLNW3dgfOkboxYN4WZ+myM7blEbAOAq3W1ydAdlszSZpkN4i999iy5fProNy/7UkM7GWhvrN2tX84uFb/Yw72kSu9UB9oTbkxOj13vDHgeA/qx4hDt8RSkWq/XERVYBat1bBq0fyQ=
+	t=1725526076; cv=none; b=ipabeDNPkuBdoOV4VbRQCBAsQwhaSz/oa2OY/iAE6Ej7Du/RnPG8i1PlzjwwZBFTxw+c4tQpi/hIf4JyVXWXLrL7SW0LOb7mefiJL/h/lFa1tNIZXAnFYk8BalGH7woQCPpfrAujEGot9H9fZhXkcoAK1KEBUgNKXcAbc3/iPl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725526071; c=relaxed/simple;
-	bh=RrGvaazur0Ah+f8b8oQj/KfgZN09ZyXT1T2qwu7qjnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=njPJWuZXtt/PWjX9NpurYu42r2oODxu4g79hi7oN7D4opkUpigu0jnw73cF7FZ8YPBKSmiJKQ4N0q3/YUfB0iSRSePRzlixs2IbvhzlC6nC8ryQqGr08x3CIi85Kyb86sIHZCiF9R2SlQfH5taQA2nZalRiLUC99JGKxIyNsY3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lH1xFS4r; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725526061; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=KBcIhc8Q7kIsMJt6qdxk6IoQjq0pkuleDwCZgpWG3ek=;
-	b=lH1xFS4rRcXnMOQWw8rkPAJx+rYHIT7ge/GdE7vjI3HQ0HGUihbZ7tEO5LATvkUCU6X3ZBIUaMKUVSxzJWPuWlfnhtSnvaH2qc7j6uX2XLTXApNx2gtdnc7MNpIbLbwB3jnX7E54+HVkGgLRul7vXVAGlwuR5hq8gGAY2XL3gf0=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEKumsr_1725526053)
-          by smtp.aliyun-inc.com;
-          Thu, 05 Sep 2024 16:47:41 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: sunset unneeded NOFAILs
-Date: Thu,  5 Sep 2024 16:47:32 +0800
-Message-ID: <20240905084732.2684515-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1725526076; c=relaxed/simple;
+	bh=DnSuif62uCCVhEeRI162fm17cbXet/3kgwd0VQ3vzW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KAizto+xVmXFxmF0lYq2FipCxvDcZfqr1fKcOo5UOl+opzndpNr29lc9TjOswfrg7v+QppNcLK2SvqrjcAzks0n1EcnmydEqOAqiOcfvykIjVvPmYUhAyfmHQQH89tVNV+aCOYafI2LeW5tzqrzTcPr1WnmyZmx90NAqI9PCvJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5F9kJBH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C041CC4AF09;
+	Thu,  5 Sep 2024 08:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725526075;
+	bh=DnSuif62uCCVhEeRI162fm17cbXet/3kgwd0VQ3vzW0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a5F9kJBHbKVu5NS4eqt9wfG8qyufkBzZopWKazo+jGncJNZ8epN/xCNBaC0hnkoUe
+	 MZLHoAXLXgZoFU9fLTl0ee81NBvd7cQJ+UufyCmpXruMRo57IQTkN/pL2LDrQsB7Rp
+	 XrtL8oh+Hpw8YGr5oDL3iP5MBfyuq5EYRwYl34f9C+qpc2WQxCoAhQaV/QU5SWP5Hh
+	 wwYuXOSRwrT6xh++S/aJjLb0wRjDNlujly5qE0GnVdKEaZBBUrKex3YLdZWgtWDyPQ
+	 YWi4fYo4ZaOu26/3+TAlA3EbW2rxlD4Td6S9R4psU4PawVkACOUXFov+zcNEwqAQfM
+	 MlsN2bs06o+nA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sm8A1-000000002xD-3oNJ;
+	Thu, 05 Sep 2024 10:48:13 +0200
+Date: Thu, 5 Sep 2024 10:48:13 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
+	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/8] serial: qcom-geni: fix fifo polling timeout
+Message-ID: <ZtlwTQNZTdyzBChw@hovoldconsulting.com>
+References: <20240902152451.862-1-johan+linaro@kernel.org>
+ <20240902152451.862-2-johan+linaro@kernel.org>
+ <CAD=FV=WDx69BqK2MmhOMfKdEUtExo1wWFMY_n3edQhSF7RoWzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=WDx69BqK2MmhOMfKdEUtExo1wWFMY_n3edQhSF7RoWzg@mail.gmail.com>
 
-With iterative development, our codebase can now deal with compressed
-buffer misses properly if both in-place I/O and compressed buffer
-allocation fail.
+On Wed, Sep 04, 2024 at 02:50:57PM -0700, Doug Anderson wrote:
+> On Mon, Sep 2, 2024 at 8:26 AM Johan Hovold <johan+linaro@kernel.org> wrote:
+> >
+> > The qcom_geni_serial_poll_bit() can be used to wait for events like
+> > command completion and is supposed to wait for the time it takes to
+> > clear a full fifo before timing out.
+> >
+> > As noted by Doug, the current implementation does not account for start,
+> > stop and parity bits when determining the timeout. The helper also does
+> > not currently account for the shift register and the two-word
+> > intermediate transfer register.
+> >
+> > Instead of determining the fifo timeout on every call, store the timeout
+> > when updating it in set_termios() and wait for up to 19/16 the time it
+> > takes to clear the 16 word fifo to account for the shift and
+> > intermediate registers. Note that serial core has already added a 20 ms
+> > margin to the fifo timeout.
+> >
+> > Also note that the current uart_fifo_timeout() interface does
+> > unnecessary calculations on every call and also did not exists in
+> > earlier kernels so only store its result once. This also facilitates
+> > backports as earlier kernels can derive the timeout from uport->timeout,
+> > which has since been removed.
 
-Note that if readahead fails (with non-uptodate folios), the original
-request will then fall back to synchronous read, and `.read_folio()`
-should return appropriate errnos; otherwise -EIO will be passed to
-user space, which is unexpected.
+> > @@ -270,22 +270,21 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+> >  {
+> >         u32 reg;
+> >         struct qcom_geni_serial_port *port;
+> > -       unsigned int baud;
+> > -       unsigned int fifo_bits;
+> >         unsigned long timeout_us = 20000;
+> >         struct qcom_geni_private_data *private_data = uport->private_data;
+> >
+> >         if (private_data->drv) {
+> >                 port = to_dev_port(uport);
+> > -               baud = port->baud;
+> > -               if (!baud)
+> > -                       baud = 115200;
+> > -               fifo_bits = port->tx_fifo_depth * port->tx_fifo_width;
+> > +
+> >                 /*
+> > -                * Total polling iterations based on FIFO worth of bytes to be
+> > -                * sent at current baud. Add a little fluff to the wait.
+> > +                * Wait up to 19/16 the time it would take to clear a full
+> > +                * FIFO, which accounts for the three words in the shift and
+> > +                * intermediate registers.
+> > +                *
+> > +                * Note that fifo_timeout_us already has a 20 ms margin.
+> >                  */
+> > -               timeout_us = ((fifo_bits * USEC_PER_SEC) / baud) + 500;
+> > +               if (port->fifo_timeout_us)
+> > +                       timeout_us = 19 * port->fifo_timeout_us / 16;
+> 
+> It made me giggle a bit that part of the justification for caching
+> "fifo_timeout_us" was to avoid calculations each time through the
+> function. ...but then the code does the "19/16" math here instead of
+> just including it in the cache. ;-) ;-) ;-)
 
-To simplify rarely encountered failure paths, a mimic decompression
-will be just used.  Before that, failure reasons are recorded in
-compressed_bvecs[] and they also act as placeholders to avoid in-place
-pages.  They will be parsed just before decompression and then pass
-back to `.read_folio()`.
+Heh, yeah, but I was really talking about uart_fifo_timeout() doing
+unnecessary calculations on each call (and that value used to be
+calculated once and stored for later use).
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zdata.c | 57 ++++++++++++++++++++++++++----------------------
- 1 file changed, 31 insertions(+), 26 deletions(-)
+I also realised that we need to account for the intermediate register
+after I wrote the initial commit message, and before that this was just
+a shift and add.
 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 785ae6ca77b1..ad0b59b3d23e 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1154,9 +1154,10 @@ static int z_erofs_parse_in_bvecs(struct z_erofs_decompress_backend *be,
- 		struct z_erofs_bvec *bvec = &pcl->compressed_bvecs[i];
- 		struct page *page = bvec->page;
- 
--		/* compressed data ought to be valid before decompressing */
--		if (!page) {
--			err = -EIO;
-+		/* compressed data ought to be valid when decompressing */
-+		if (IS_ERR(page) || !page) {
-+			bvec->page = NULL;	/* clear the failure reason */
-+			err = page ? PTR_ERR(page) : -EIO;
- 			continue;
- 		}
- 		be->compressed_pages[i] = page;
-@@ -1232,8 +1233,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
- 					.inplace_io = overlapped,
- 					.partial_decoding = pcl->partial,
- 					.fillgaps = pcl->multibases,
--					.gfp = pcl->besteffort ?
--						GFP_KERNEL | __GFP_NOFAIL :
-+					.gfp = pcl->besteffort ? GFP_KERNEL :
- 						GFP_NOWAIT | __GFP_NORETRY
- 				 }, be->pagepool);
- 
-@@ -1297,8 +1297,8 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
- 	return err;
- }
- 
--static void z_erofs_decompress_queue(const struct z_erofs_decompressqueue *io,
--				     struct page **pagepool)
-+static int z_erofs_decompress_queue(const struct z_erofs_decompressqueue *io,
-+				    struct page **pagepool)
- {
- 	struct z_erofs_decompress_backend be = {
- 		.sb = io->sb,
-@@ -1307,6 +1307,7 @@ static void z_erofs_decompress_queue(const struct z_erofs_decompressqueue *io,
- 			LIST_HEAD_INIT(be.decompressed_secondary_bvecs),
- 	};
- 	z_erofs_next_pcluster_t owned = io->head;
-+	int err = io->eio ? -EIO : 0;
- 
- 	while (owned != Z_EROFS_PCLUSTER_TAIL) {
- 		DBG_BUGON(owned == Z_EROFS_PCLUSTER_NIL);
-@@ -1314,12 +1315,13 @@ static void z_erofs_decompress_queue(const struct z_erofs_decompressqueue *io,
- 		be.pcl = container_of(owned, struct z_erofs_pcluster, next);
- 		owned = READ_ONCE(be.pcl->next);
- 
--		z_erofs_decompress_pcluster(&be, io->eio ? -EIO : 0);
-+		err = z_erofs_decompress_pcluster(&be, err) ?: err;
- 		if (z_erofs_is_inline_pcluster(be.pcl))
- 			z_erofs_free_pcluster(be.pcl);
- 		else
- 			erofs_workgroup_put(&be.pcl->obj);
- 	}
-+	return err;
- }
- 
- static void z_erofs_decompressqueue_work(struct work_struct *work)
-@@ -1462,17 +1464,21 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	folio_unlock(folio);
- 	folio_put(folio);
- out_allocfolio:
--	page = erofs_allocpage(&f->pagepool, gfp | __GFP_NOFAIL);
-+	page = erofs_allocpage(&f->pagepool, gfp);
- 	spin_lock(&pcl->obj.lockref.lock);
- 	if (unlikely(pcl->compressed_bvecs[nr].page != zbv.page)) {
--		erofs_pagepool_add(&f->pagepool, page);
-+		if (page)
-+			erofs_pagepool_add(&f->pagepool, page);
- 		spin_unlock(&pcl->obj.lockref.lock);
- 		cond_resched();
- 		goto repeat;
- 	}
--	bvec->bv_page = pcl->compressed_bvecs[nr].page = page;
--	folio = page_folio(page);
-+	pcl->compressed_bvecs[nr].page = page ? page : ERR_PTR(-ENOMEM);
- 	spin_unlock(&pcl->obj.lockref.lock);
-+	bvec->bv_page = page;
-+	if (!page)
-+		return;
-+	folio = page_folio(page);
- out_tocache:
- 	if (!tocache || bs != PAGE_SIZE ||
- 	    filemap_add_folio(mc, folio, pcl->obj.index + nr, gfp)) {
-@@ -1695,26 +1701,28 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
- 	z_erofs_decompress_kickoff(q[JQ_SUBMIT], nr_bios);
- }
- 
--static void z_erofs_runqueue(struct z_erofs_decompress_frontend *f,
--			     bool force_fg, bool ra)
-+static int z_erofs_runqueue(struct z_erofs_decompress_frontend *f,
-+			    unsigned int ra_folios)
- {
- 	struct z_erofs_decompressqueue io[NR_JOBQUEUES];
-+	struct erofs_sb_info *sbi = EROFS_I_SB(f->inode);
-+	bool force_fg = z_erofs_is_sync_decompress(sbi, ra_folios);
-+	int err;
- 
- 	if (f->owned_head == Z_EROFS_PCLUSTER_TAIL)
--		return;
--	z_erofs_submit_queue(f, io, &force_fg, ra);
-+		return 0;
-+	z_erofs_submit_queue(f, io, &force_fg, !!ra_folios);
- 
- 	/* handle bypass queue (no i/o pclusters) immediately */
--	z_erofs_decompress_queue(&io[JQ_BYPASS], &f->pagepool);
--
-+	err = z_erofs_decompress_queue(&io[JQ_BYPASS], &f->pagepool);
- 	if (!force_fg)
--		return;
-+		return err;
- 
- 	/* wait until all bios are completed */
- 	wait_for_completion_io(&io[JQ_SUBMIT].u.done);
- 
- 	/* handle synchronous decompress queue in the caller context */
--	z_erofs_decompress_queue(&io[JQ_SUBMIT], &f->pagepool);
-+	return z_erofs_decompress_queue(&io[JQ_SUBMIT], &f->pagepool) ?: err;
- }
- 
- /*
-@@ -1776,7 +1784,6 @@ static void z_erofs_pcluster_readmore(struct z_erofs_decompress_frontend *f,
- static int z_erofs_read_folio(struct file *file, struct folio *folio)
- {
- 	struct inode *const inode = folio->mapping->host;
--	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
- 	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
- 	int err;
- 
-@@ -1788,9 +1795,8 @@ static int z_erofs_read_folio(struct file *file, struct folio *folio)
- 	z_erofs_pcluster_readmore(&f, NULL, false);
- 	z_erofs_pcluster_end(&f);
- 
--	/* if some compressed cluster ready, need submit them anyway */
--	z_erofs_runqueue(&f, z_erofs_is_sync_decompress(sbi, 0), false);
--
-+	/* if some pclusters are ready, need submit them anyway */
-+	err = z_erofs_runqueue(&f, 0) ?: err;
- 	if (err && err != -EINTR)
- 		erofs_err(inode->i_sb, "read error %d @ %lu of nid %llu",
- 			  err, folio->index, EROFS_I(inode)->nid);
-@@ -1803,7 +1809,6 @@ static int z_erofs_read_folio(struct file *file, struct folio *folio)
- static void z_erofs_readahead(struct readahead_control *rac)
- {
- 	struct inode *const inode = rac->mapping->host;
--	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
- 	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
- 	struct folio *head = NULL, *folio;
- 	unsigned int nr_folios;
-@@ -1833,7 +1838,7 @@ static void z_erofs_readahead(struct readahead_control *rac)
- 	z_erofs_pcluster_readmore(&f, rac, false);
- 	z_erofs_pcluster_end(&f);
- 
--	z_erofs_runqueue(&f, z_erofs_is_sync_decompress(sbi, nr_folios), true);
-+	(void)z_erofs_runqueue(&f, nr_folios);
- 	erofs_put_metabuf(&f.map.buf);
- 	erofs_release_pages(&f.pagepool);
- }
--- 
-2.43.5
+> That being said, I'm not really a fan of the "19 / 16" anyway. The 16
+> value is calculated elsewhere in the code as:
+> 
+> port->tx_fifo_depth = geni_se_get_tx_fifo_depth(&port->se);
+> port->tx_fifo_width = geni_se_get_tx_fifo_width(&port->se);
+> port->rx_fifo_depth = geni_se_get_rx_fifo_depth(&port->se);
+> uport->fifosize =
+>   (port->tx_fifo_depth * port->tx_fifo_width) / BITS_PER_BYTE;
+> 
+> ...and here you're just hardcoding it to 16. Then there's also the
+> fact that the "19 / 16" will also multiply the 20 ms "slop" added by
+> uart_fifo_timeout() which doesn't seem ideal.
 
+Indeed, and the early console code also hardcodes this to 16.
+
+I don't care about the slop being 20 ms or 23.5, this is just a timeout
+for the error case.
+
+This will over count a bit if there is uart hw with 256 B fifos, but
+could potentially undercount if there is hw with less than 16 words. I'm
+not sure if such hw exists, but I'll see what I can find out.
+
+> How about this: we just change "uport->fifosize" to account for the 3
+> extra words? So it can be:
+> 
+> ((port->tx_fifo_depth + 3) * port->tx_fifo_width) / BITS_PER_BYTE;
+> 
+> ...then the cache will be correct and everything will work out. What
+> do you think?
+
+I don't think uart_fifo_timeout traditionally accounts for the shift
+register and we wait up to *twice* the time it takes to clear to fifo
+anyway (in wait_until_sent). The intermediate register I found here
+could perhaps be considered part of the fifo however.
+
+I'll give this some more thought.
+
+Johan
 
