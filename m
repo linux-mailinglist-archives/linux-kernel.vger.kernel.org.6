@@ -1,90 +1,57 @@
-Return-Path: <linux-kernel+bounces-317255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1157E96DB8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825B196DB8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422D41C23A05
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5B628B40C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8406419E96B;
-	Thu,  5 Sep 2024 14:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49719E7F6;
+	Thu,  5 Sep 2024 14:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nOR8sf8A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFlSoz8r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7790119DFB9;
-	Thu,  5 Sep 2024 14:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F712FC0A;
+	Thu,  5 Sep 2024 14:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545857; cv=none; b=Wl8/wQfk1F/rJixOwlgeeklOpvn5Mab/KdHpVMMOquTBDb3zhuYWdcJVg4XmwSbsZJNgLoZywVXxytCJ6JOL0rJXsStKIiATSAGvnz13AuiMunK1+767rBzQV2LOagle46xY7lQP2L4Vlwf04cyT+xJER2GntismcpFl9ZefTBA=
+	t=1725545845; cv=none; b=tJJLkgLyLpLO+OFLIShffs/u95gnNcjqA89ukedIUb8eRbi2rQ6YckKl+LGnri6h99StPYBt0jt+VNs2971iZd26Hc9yYKMEU0L+n80+rMOxuTt2gVVVBD/lGWFo7ZNJvfXXZPOERbMwrYl2M/BZGwPg/2r0mAur5uke96m1ZXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545857; c=relaxed/simple;
-	bh=9BBi/Zg7/2x89Qut/E++ANe43rMRcd/lBsTYheptkgs=;
+	s=arc-20240116; t=1725545845; c=relaxed/simple;
+	bh=VAsU1NPVx46+oHGO/6plAI5dIfBi0YcOt0DaaDbKjLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aL+Nz8ayIIiOkSGBaFD04ORC9jZ+oU6OQFpB4sB2EvG3pqrsk+hfzD5maj8zCkYsaGPbgdOTQA9I8/eTcRQ5+QFSMQaTgcdaocKPazqOJV/Ihex8t+DedETwKsK/lm1qlUhV2CGB4xhmObytTTscKDx2oGddCe6nCGlB9jbD1eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nOR8sf8A; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725545856; x=1757081856;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9BBi/Zg7/2x89Qut/E++ANe43rMRcd/lBsTYheptkgs=;
-  b=nOR8sf8ATwpW1lND5nAiOR081riXR/QoiF46Sq3UwKA5JzK3FAshvSmC
-   PZEtCgcaZPeJJxXXbfrPBizqDUHZTEr5Ej6WpFYAzIgIlS1JdlEqvzXbb
-   vMb3kPI6W4Yn6TFgjMWREb8TUEAMZduthUH2wWZU/YkPiNoVXNwBZyC7V
-   WvedkiawQLi14T/HfnobtR2b0n68mVyKmLpypQghf5O5GnMHCUtRdnbSA
-   sfNe4M5qeEOJhRKmSC2QK3BC9FUaDdmxLZhxoDEN6BG6/1+Whbjgehjtn
-   cFAdyUf+hPSC1RU2VNRKIiUOKxkkEV95aZ6lmFdYHUl0mU+m7XjdnISr+
-   g==;
-X-CSE-ConnectionGUID: k8gV53DwRmG00aQR3d+ScQ==
-X-CSE-MsgGUID: I2ilqzF9SbyS/saFYgGKrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="34932186"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="34932186"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:17:15 -0700
-X-CSE-ConnectionGUID: wiasB9b+Shyr0vLZOviwCA==
-X-CSE-MsgGUID: 7sU8rQyCRvCuEC/eBhflXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="65872768"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 07:17:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smDIH-00000005Q4X-3aq6;
-	Thu, 05 Sep 2024 17:17:05 +0300
-Date: Thu, 5 Sep 2024 17:17:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Derek Barbosa <debarbos@redhat.com>
-Subject: Re: [PATCH tty-next v1 0/2] convert 8250 to nbcon
-Message-ID: <Ztm9YYFpCDh18u_Q@smile.fi.intel.com>
-References: <20240905134719.142554-1-john.ogness@linutronix.de>
- <2024090554-mating-humiliate-292b@gregkh>
- <87cyli2nqo.fsf@jogness.linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpcI8brAgetiBJ9ER35l+Wkb1Cs6QC91PDLFK3YSigr0y5tU5kKI16dC58mQNec8KH6rD7uuEQpe/jf+SfEe9a12YJySHSgZCYjCGJyfrRnJgXQn6nmPZU+vaI+rlbTu9vAP7qSJlOyvVHGdouJNio3voUHNlmjebmTMuLp0aVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFlSoz8r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8CEC4CEC5;
+	Thu,  5 Sep 2024 14:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725545845;
+	bh=VAsU1NPVx46+oHGO/6plAI5dIfBi0YcOt0DaaDbKjLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFlSoz8rkTTbo6bRypczPyDGNTAdcHGaNe4+ud1iEdvPScL5zsY6gXuQwI6CvpKrf
+	 kb4ihMVDldhscSSsfHbmhoH/PWpMTKph+bqm6rpV5JhbXLyJsaKdgKQ2SY6GOkOv+V
+	 jbhcXI0cJlzZlU930yYV0HyVmXnTQgBECu8rdgv1h1q1pENqG3MNrEk6YDvB8mzSOM
+	 o6wcO2ZrgYztEMzYZbC5na7z7I4/F+VeCGjxgN9Li2p7NzDtlgOZ5M1rr5RGK94SKB
+	 l2ETcB3SXFO01fzOF5U6dc9ITgDjmzWK9zC6yK8p1DOG30XqDsBBbrvDE4t9gCYr5F
+	 kHF1NRLmB71LA==
+Date: Thu, 5 Sep 2024 09:17:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	Dinh Nguyen <dinguyen@kernel.org>
+Subject: Re: [PATCH 04/15] kbuild: add generic support for built-in boot DTBs
+Message-ID: <20240905141723.GC1517132-robh@kernel.org>
+References: <20240904234803.698424-1-masahiroy@kernel.org>
+ <20240904234803.698424-5-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,33 +60,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87cyli2nqo.fsf@jogness.linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240904234803.698424-5-masahiroy@kernel.org>
 
-On Thu, Sep 05, 2024 at 04:18:31PM +0206, John Ogness wrote:
-> On 2024-09-05, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > On Thu, Sep 05, 2024 at 03:53:17PM +0206, John Ogness wrote:
-> >> The recent printk rework introduced a new type of console NBCON
-> >> that will perform printing via a dedicated kthread during
-> >> normal operation. For times when the kthread is not available
-> >> (early boot, panic, reboot/shutdown) the NBCON console will
-> >> print directly from the printk() calling context (even if from
-> >> NMI).
-> >> 
-> >> Futher details about NBCON consoles are available here [0].
-> >
-> > Really?  That link calls them "NOBKL", is that the same thing?
+On Thu, Sep 05, 2024 at 08:47:40AM +0900, Masahiro Yamada wrote:
+> Some architectures embed boot DTBs in vmlinux. A potential issue for
+> these architectures is a race condition during parallel builds because
+> Kbuild descends into arch/*/boot/dts/ twice.
 > 
-> Sorry. Yes, they are the same thing. It was renamed because NOBKL did
-> not look nice.
+> One build thread is initiated by the 'dtbs' target, which is a
+> prerequisite of the 'all' target in the top-level Makefile:
 > 
-> NBCON stands for "No BKL Console".
+>   ifdef CONFIG_OF_EARLY_FLATTREE
+>   all: dtbs
+>   endif
+> 
+> For architectures that support the embedded boot dtb, arch/*/boot/dts/
+> is visited also during the ordinary directory traversal in order to
+> build obj-y objects that wrap DTBs.
+> 
+> Since these build threads are unaware of each other, they can run
+> simultaneously during parallel builds.
+> 
+> This commit introduces a generic build rule to scripts/Makefile.vmlinux
+> to support embedded boot DTBs in a race-free way. Architectures that
+> want to use this rule need to select CONFIG_GENERIC_BUILTIN_DTB.
+> 
+> After the migration, Makefiles under arch/*/boot/dts/ will be visited
+> only once to build only *.dtb files.
+> 
+> This change also aims to unify the CONFIG options used for embedded DTBs
+> support. Currently, different architectures use different CONFIG options
+> for the same purposes.
+> 
+> The CONFIG options are unified as follows:
+> 
+>  - CONFIG_GENERIC_BUILTIN_DTB
+> 
+>    This enables the generic rule for embedded boot DTBs. This will be
+>    renamed to CONFIG_BUILTIN_DTB after all architectures migrate to the
+>    generic rule.
+> 
+>  - CONFIG_BUILTIN_DTB_NAME
+> 
+>    This specifies the path to the embedded DTB.
+>    (relative to arch/*/boot/dts/)
+> 
+>  - CONFIG_BUILTIN_DTB_ALL
+> 
+>    If this is enabled, all DTB files compiled under arch/*/boot/dts/ are
+>    embedded into vmlinux. Only used by MIPS.
 
-New Brave Console :-)
+I started to do this a long time ago, but then decided we didn't want to 
+encourage this feature. IMO it should only be for legacy bootloaders or 
+development/debug. And really, appended DTB is more flexible for the 
+legacy bootloader case.
 
--- 
-With Best Regards,
-Andy Shevchenko
+In hindsight, a common config would have been easier to limit new 
+arches...
 
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  Makefile                 |  7 ++++++-
+>  drivers/of/Kconfig       |  6 ++++++
+>  scripts/Makefile.vmlinux | 44 ++++++++++++++++++++++++++++++++++++++++
+>  scripts/link-vmlinux.sh  |  4 ++++
+>  4 files changed, 60 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 145112bf281a..1c765c12ab9e 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1417,6 +1417,10 @@ ifdef CONFIG_OF_EARLY_FLATTREE
+>  all: dtbs
+>  endif
+>  
+> +ifdef CONFIG_GENERIC_BUILTIN_DTB
+> +vmlinux: dtbs
+> +endif
+> +
+>  endif
+>  
+>  PHONY += scripts_dtc
+> @@ -1483,7 +1487,8 @@ endif # CONFIG_MODULES
+>  CLEAN_FILES += vmlinux.symvers modules-only.symvers \
+>  	       modules.builtin modules.builtin.modinfo modules.nsdeps \
+>  	       compile_commands.json rust/test \
+> -	       rust-project.json .vmlinux.objs .vmlinux.export.c
+> +	       rust-project.json .vmlinux.objs .vmlinux.export.c \
+> +               .builtin-dtbs-list .builtin-dtb.S
+>  
+>  # Directories & files removed with 'make mrproper'
+>  MRPROPER_FILES += include/config include/generated          \
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index dd726c7056bf..5142e7d7fef8 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -2,6 +2,12 @@
+>  config DTC
+>  	bool
+>  
+> +config GENERIC_BUILTIN_DTB
+> +	bool
 
+So that we don't add new architectures to this, I would like something 
+like:
+
+# Do not add new architectures to this list
+depends on MIPS || RISCV || MICROBLAZE ...
+
+Yes, it's kind of odd since the arch selects the option...
+
+For sure, we don't want this option on arm64. For that, I can rely on 
+Will and Catalin rejecting a select, but on some new arch I can't.
+
+> +
+> +config BUILTIN_DTB_ALL
+> +	bool
+
+Can this be limited to MIPS?
+
+> +
+>  menuconfig OF
+>  	bool "Device Tree and Open Firmware support"
+>  	help
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index 5ceecbed31eb..4626b472da49 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -17,6 +17,50 @@ quiet_cmd_cc_o_c = CC      $@
+>  %.o: %.c FORCE
+>  	$(call if_changed_dep,cc_o_c)
+>  
+> +quiet_cmd_as_o_S = AS      $@
+> +      cmd_as_o_S = $(CC) $(a_flags) -c -o $@ $<
+> +
+> +%.o: %.S FORCE
+> +	$(call if_changed_dep,as_o_S)
+> +
+> +# Built-in dtb
+> +# ---------------------------------------------------------------------------
+> +
+> +quiet_cmd_wrap_dtbs = WRAP    $@
+> +      cmd_wrap_dtbs = {							\
+> +	echo '\#include <asm-generic/vmlinux.lds.h>';			\
+> +	echo '.section .dtb.init.rodata,"a"';				\
+> +	while read dtb; do						\
+> +		symbase=__dtb_$$(basename -s .dtb "$${dtb}" | tr - _);	\
+> +		echo '.balign STRUCT_ALIGNMENT';			\
+
+Is this always guaranteed to be at least 8 bytes? That's the required 
+alignment for dtbs and assumed by libfdt.
+
+> +		echo ".global $${symbase}_begin";			\
+> +		echo "$${symbase}_begin:";				\
+> +		echo '.incbin "'$$dtb'" ';				\
+> +		echo ".global $${symbase}_end";				\
+> +		echo "$${symbase}_end:";				\
+> +	done < $<;							\
+> +	} > $@
 
