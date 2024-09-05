@@ -1,92 +1,157 @@
-Return-Path: <linux-kernel+bounces-316478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF6896D021
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:11:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B227D96D023
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8921C23953
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0521DB21DD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D6A192D79;
-	Thu,  5 Sep 2024 07:11:19 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDB3192D80;
+	Thu,  5 Sep 2024 07:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U+Ydp9ka"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14C5188A37
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B8188A37;
+	Thu,  5 Sep 2024 07:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725520279; cv=none; b=Fnf8gbRSnZicldHBI6wlOxYJM+kov/H4/FJnUYMwwwEElPC5qfi/nWAATlX8l78BkLdCAor8jGtbMDU22ADMTlhZ/ss/oVTqKve6qVEj7RQ5qYIRryxhnZyh/VxnDtCGNBp6zkeqVJfPFwnZ2s2dHmfuYj8j+Hr6SfZ4C9cRfxo=
+	t=1725520395; cv=none; b=mTfEscYAul9DPhWeJBml0HdQ8bnNiz4qejB0lc3c/99ccuhMrlPM8Gs8yd6FmkBqTnX+bhYHM95S+WFbV3ah+FCdlv9taeZomkW+8e+4x5tcy5u0X7reHbMsXZ89yIgCEdCNgzNjCxC29z3o+fD1jdGT2uXxw0mmW0Lqwg0T0II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725520279; c=relaxed/simple;
-	bh=XdIjWh2yXfdFFkyPhbaUBfOFbDw1PnS2KTvQrl/NHLs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tY0qSbkr7CPtow10bKppu96/naFWntA7gnxpdnsMJ+njOZz79dba8glTKUVYPKZAppWL0kfs4KXS5oJYStPrExJTc5w0bGTjzzoOAMjZ5N5+t5dX4sa7OEU+4GvGtUxSmQIBJnv9MQa5Y4zZV86JMMafdQRL1R8Ezc39fqbv/aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a4f65fa5aso257923739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:11:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725520277; x=1726125077;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Arp/GsO4dUaOx+Wy6/ccqHPT254qDuThY/EdNkUzFzs=;
-        b=eZwgOQXlxB78bsKYnG/dbTfT1OKsAYE1/ogbzzikwhWIOP199bXiXF1phHoEjje6vl
-         svNnYcVXu8kFBnBtMkjL3HUfBWvWVSGRkuvOP6fo1axDcMMuxP5HQpt3Bmf9i+AFTykQ
-         fgDh5tEtU/Am1fNP31AmTa0aZQ8DL1J/KqPvf7YIaBlcFhGCa2paQWtpW6eVrXznb3Nn
-         nJ/HeqX+UELdNAN/OfRTbL49wheGCmBY5d2Y2hG7YVdL3a0aMtxIvaM7JSZg4KJzxOu7
-         H4tgFf0VHD7vqKaN6/8z23wJNrryVjlSe3P+/RyQI0VsuQBe8oNg0HuSfo6pd9Tpy3dr
-         XupA==
-X-Gm-Message-State: AOJu0Yy8FMeKZrm8VjTlUzSKCop0ylb6odGFhA89hidSSgK/qF2QlJ3i
-	XtH5rxqHzFntIQChoq1VcrpuDyGU2LhXwluvXuD6LAk5ZqKRmAj/wU+fU/ECzaYnYDeYoMvPYG4
-	P3Z6UkcJr0uUuoWPLfeRm9Aco741DOVY70hJ6/4u8CnGq7op1IZa5WTA=
-X-Google-Smtp-Source: AGHT+IEjR8bIaGIIXDTx4RXjbQy06ITSm/J0MufrLq7XL9vEMEtcpU6WnnQW05nk76J2J582R+N3hgDUt+QCrGaOues+iv7rzjt7
+	s=arc-20240116; t=1725520395; c=relaxed/simple;
+	bh=7LNlhMFKGtFOttw11QtnX7UvMeTpjZskhNoGqPd2rs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eqr+tJvXNyXXVK9S8LQIxhPZMnik6zoDFm+HbYg6KqOt9HiPjECgSlWCVONXDNDnA2V/r+7cGKf1eZfcjqrs+ktE+g0lAcXdYfxn6SWq/B1579TZdkj0pc0bgyRnqm1IMl5YLE2eCNwcqzI/B/Os9cdewdTRq2KvvkZQC2Wd2Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U+Ydp9ka; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725520393; x=1757056393;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=7LNlhMFKGtFOttw11QtnX7UvMeTpjZskhNoGqPd2rs4=;
+  b=U+Ydp9ka/6MHrfzeNqOAWBmZt/csZb9IG8gmN8G+QWEfuW5rWb1YfV8R
+   6mcnrMcE2cyWk+8bHDONLEdR6cLgaKywr2VpN3IYfMOrSWvwa8EdprhLp
+   VOz56JgvSVilTaI3gSBRe3XQRf8J4PeIRGY2ocp08YgBKorjQt6ZyXRSD
+   +8j0Ne293xxyS14/H1E6Pnw9XXWd0fxixQEwBvqpIFR10KNtr1HMqa3VT
+   tLLR/zqY23NR4FBP6/+twj/bhUtHeH82QsAc686zq3cRwtMPCBoOYO/Xo
+   NHW84Fxb+UhJWjWTNuKa4YlfG8H4nAPbaevTCuc8YMrStBHOfr1HylBdJ
+   w==;
+X-CSE-ConnectionGUID: 7KtoEd28RFW+UrAYxRfzsg==
+X-CSE-MsgGUID: 6bPZTkyUTpq4DUxpDsrnDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="23726289"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="23726289"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 00:13:11 -0700
+X-CSE-ConnectionGUID: 7u4c+i+kRFuFZVYymSFYbA==
+X-CSE-MsgGUID: lmoknqD7QfCJLQlnTYwNFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="96263382"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.96.163])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 00:13:06 -0700
+Message-ID: <3c95c9d3-a46d-4ce5-b10c-c3261a94f9ee@intel.com>
+Date: Thu, 5 Sep 2024 10:13:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2503:b0:4b9:ad94:2074 with SMTP id
- 8926c6da1cb9f-4d06011d262mr186643173.3.1725520277004; Thu, 05 Sep 2024
- 00:11:17 -0700 (PDT)
-Date: Thu, 05 Sep 2024 00:11:16 -0700
-In-Reply-To: <000000000000407108061e0ed264@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000029fa5f062159ff74@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/8] perf/core: Allow multiple AUX PMU events with the
+ same module
+To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
+References: <20240823113306.2310957-1-leo.yan@arm.com>
+ <20240823113306.2310957-2-leo.yan@arm.com>
+ <70a58dca-01dc-408b-a2f7-a854718a405b@intel.com>
+ <adfbd1ba-62ca-49c9-893a-3c10780ee186@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <adfbd1ba-62ca-49c9-893a-3c10780ee186@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 4/09/24 22:35, Leo Yan wrote:
+> On 9/3/2024 11:06 AM, Adrian Hunter wrote:
+>>> @@ -12345,9 +12345,16 @@ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+>>>
+>>>       /*
+>>>        * If both events generate aux data, they must be on the same PMU
+>>> +      * module but can be with different PMU instances.
+>>> +      *
+>>> +      * For a built-in PMU module, the 'pmu->module' pointer is NULL,
+>>> +      * thus it is not feasible to compare the module pointers when
+>>> +      * AUX PMU drivers are built into the kernel image. Instead,
+>>> +      * comparing the .setup_aux() callback pointer can determine if
+>>> +      * the two PMU events come from the same PMU driver.
+>>>        */
+>>>       if (has_aux(event) && has_aux(output_event) &&
+>>> -         event->pmu != output_event->pmu)
+>>> +         event->pmu->setup_aux != output_event->pmu->setup_aux)
+>>
+>> It is not very flexible and risks someone adding aux PMUs that
+>> do not want that rule but accidentally support it.  Another
+>> option is to add a PMU callback, but really you need to Peter's
+>> feedback.
+> 
+> Thanks a lot for sharing opinion, Adrian!
+> 
+> How about below code? An alternative way is to compare the PMU's parent
+> device driver, e.g. for Arm SPE PMU events, this can compare if two PMU
+> events are using the Arm SPE driver.
 
-***
+IMHO, in the general case, whether 2 AUX area events can
+output to the same buffer isn't really related to the device
+hierarchy, driver or module.
 
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-Author: lizhi.xu@windriver.com
+> 
+> /*
+>  * If both events generate aux data, they must be on the same PMU
+>  * module but can be with different PMU instances.
+>  */
+> if (has_aux(event) && has_aux(output_event)) {
+>         /* It isn't allowed if it fails to find driver pointer */
+>         if (!event->pmu->parent || !event->pmu->parent->driver)
+>                 goto out;
+> 
+>         if (!output_event->pmu->parent || !output_event->pmu->parent->driver)
+>                 goto out;
+> 
+>         /*
+>          * It isn't allowed if aux events are not same type of PMU
+>          * device. This is determined by comparing the associated
+>          * driver pointers.
+>          */
+>         if (event->pmu->parent->driver != output_event->pmu->parent->driver)
+>                 goto out;
+> }
+> 
+> I verified the code above, it also works well at my side.
+> 
+> @Peter.Z, Please let me know if this is okay for you.
+> 
+> Thanks,
+> Leo
 
-Short write.
-User input data maybe invalid, clear the data buf of the user data before copying from user.
-
-#syz test
-
-diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-index e9ddaa9b580d..b653bed40a13 100644
---- a/drivers/usb/class/usbtmc.c
-+++ b/drivers/usb/class/usbtmc.c
-@@ -1586,6 +1586,7 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
- 		aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;
- 	}
- 
-+	memset(&buffer[USBTMC_HEADER_SIZE], 0, transfersize);
- 	if (copy_from_user(&buffer[USBTMC_HEADER_SIZE], buf, transfersize)) {
- 		retval = -EFAULT;
- 		up(&file_data->limit_write_sem);
 
