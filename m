@@ -1,58 +1,128 @@
-Return-Path: <linux-kernel+bounces-317072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EBD96D8D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:40:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A8C96D8E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9111A28B45D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:40:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287F028BD1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B84819C574;
-	Thu,  5 Sep 2024 12:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DF019C574;
+	Thu,  5 Sep 2024 12:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dviBYCk0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q/944Bw+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C627219AA72;
-	Thu,  5 Sep 2024 12:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0419AD48;
+	Thu,  5 Sep 2024 12:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540034; cv=none; b=ZKOUyHGGsbywmlYimTYKnYHd/Cgx+C34CPzJtZY72Sp2b40TiolWQMgFZG8eUe3GYaqWsepVMDwZJ/Tyz8fzIGpoEEBOXaBXs/2thSTd6Ijbp1mwjr9xdqm/7tGncJGMRughjd0k3MwdhavsCp8f5zRDCDTsAQhmyBEX67qR98Y=
+	t=1725540074; cv=none; b=K/WgzY11Y7o2aCuVX8n2+Psvfz+aa15zvZXQvsrJzoH/XE42HFRmWUkURYrIQPpqAujp03ZZ4m3cHEWpnoJIAL0czS9ay9bTPOM5EvJ6SqLSWQph7W4BlQ3kT00rgJVi2KEsNrtTZ58zd7pjuGZ6Y1H/Ykv+oHafS1YnFuoswKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540034; c=relaxed/simple;
-	bh=b7VzZPMKbd09QlA5fD+GT4N8lHfOosj//nUPuzFz9as=;
+	s=arc-20240116; t=1725540074; c=relaxed/simple;
+	bh=Vmi+1f/dZY2VqSgcwNZ8hfyxCiVY3aGx6vrPWR7PizU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+MjWUjAa/ZMG0bMAHWhQmqFUAAEmiiyLzL6S+9R5MI2vSuWeLmJDnug/90wYo0wnX5Drj2/lUlfkGGdjvFKVL5wK2DXO870lDUcRpUrunJHq5jXQ+0vU6UKI/URzyJvmx4+aMuUmS4KtcmGDFg8hZ2efZbik41MELTBDPJKBGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dviBYCk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3244C4CED0;
-	Thu,  5 Sep 2024 12:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725540033;
-	bh=b7VzZPMKbd09QlA5fD+GT4N8lHfOosj//nUPuzFz9as=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dviBYCk0Snx99j3f9Ctx9AXpN+6l3eSqYJAeXRI9AAyX/GBWftdC+rbpDTOuePOOE
-	 3btm5K+TEYMaMzXtAGPFVfezJbqMwnV2g/FsWOrxYUGQbwp8cus2J9xAVH2gEj+Sfg
-	 2VHqO2lC3rSSJed35kCJUFDBM4Acurvh3B8OylXFTQ+BEygqxbtZkP5EQ5kqHneDaJ
-	 5gzJ3swz9Or/BL034DOR2GRlssLbALwCJtbLVpNqrnPOm2F5fpMMaV8I1YzxR+Gxsf
-	 7Nyqr6xW9WR122WOZxcvD3jwCPJHzcU2+dANVowELezRnS2F0PYnEpI6XPw06G48Up
-	 igcA1iMxKAk2g==
-Date: Thu, 5 Sep 2024 14:40:28 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=JInSTmaj2yyhiUQ9fHUdg0a/IaZBsxAnutcqbL+UIICzSRMRjd2TE6KdaViTzeeJ1bZ4Y3kLWvnKf0F77YwV9OJVaVQfZWBFSdWg1ad/uo3mSJlb1mc5gs1I/Nns0y6gQlnzGPB3pxZ6xxKNXl08Ap792ayEw8Uxz3YaeaO/il0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q/944Bw+; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725540073; x=1757076073;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Vmi+1f/dZY2VqSgcwNZ8hfyxCiVY3aGx6vrPWR7PizU=;
+  b=Q/944Bw+YX9pvELdh1odWY5fiJLev1bsMsr5+KujuThiTfibEWUO1GSu
+   LV11Co7chIiPv8x4f2duFXm7iNJ7O+gyfL44dahy2Tbrx0hAEhvYDJp6c
+   LXjUf1zvA+m+lcOaGdWSX/Ow59Qiblk09SdbydHhDAK1Wnm4s+om4HY19
+   z+D23z3IlL8x2iaBgq3//QLUreFe+ftcBBA3hIeqL4g1smdef8Jy95aJD
+   5vIXdnqRCPT33MQAjGRLwlS8IpOS1u7Oly6HkYsbCIuK8y5+DNKgsWcZa
+   w64MjqaUyX6vRJ6pJVRqTCVqYrhweNWG65bfJ7ILK8nIcbJCuCMcXFaqu
+   g==;
+X-CSE-ConnectionGUID: brb8ncNWSmWrH/VYb9ICPQ==
+X-CSE-MsgGUID: vzMt2iUoTqmC7gICVhdcXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34919010"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="34919010"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:41:12 -0700
+X-CSE-ConnectionGUID: g0N9q6twQTC2A0FV6dSL6w==
+X-CSE-MsgGUID: kQc8pjfKTDeNleY3Fp7LKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="65301491"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:40:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smBn9-00000005OYX-3K6o;
+	Thu, 05 Sep 2024 15:40:51 +0300
+Date: Thu, 5 Sep 2024 15:40:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Hannes Reinecke <hare@suse.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: libata-eh: Clear scsicmd->result when setting
- SAM_STAT_CHECK_CONDITION
-Message-ID: <ZtmmvNYxkQGZwVwy@ryzen.lan>
-References: <20240904223727.1149294-1-ipylypiv@google.com>
- <Ztls4mim6Jky7E0S@ryzen.lan>
- <Ztl5I1Kz53MOEtF4@ryzen.lan>
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Subject: Re: [PATCH 00/18] random: Include <linux/percpu.h> and resolve
+ circular include dependency
+Message-ID: <Ztmm00eLBQGtiwRM@smile.fi.intel.com>
+References: <20240905122020.872466-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,106 +131,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Ztl5I1Kz53MOEtF4@ryzen.lan>
+In-Reply-To: <20240905122020.872466-1-ubizjak@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 05, 2024 at 11:25:55AM +0200, Niklas Cassel wrote:
-> On Thu, Sep 05, 2024 at 10:33:38AM +0200, Niklas Cassel wrote:
-> > There are many different paths a QC can take via EH, e.g. policy 0xD NCQ
-> > commands will not fetch sense data via ata_eh_request_sense(), so clearing
-> > the host byte in ata_scsi_qc_complete() should be fine, otherwise we need
-> > to do a similar change to yours in all the different code paths that sets
-> > sense data ...which might actually be something that makes sense, but then
-> > I would expect a patch series that changes all the locations where we set
-> > sense data, not just in ata_eh_analyze_tf(), and then drops the clearing in
-> > ata_scsi_qc_complete() (which was introduced in commit 7574a8377c7a ("ata:
-> > libata-scsi: do not overwrite SCSI ML and status bytes")).
+On Thu, Sep 05, 2024 at 02:17:08PM +0200, Uros Bizjak wrote:
+> There were several attempts to resolve circular include dependency
+> after the addition of percpu.h: 1c9df907da83 ("random: fix circular
+> include dependency on arm64 after addition of percpu.h"), c0842fbc1b18
+> ("random32: move the pseudo-random 32-bit definitions to prandom.h") and
+> finally d9f29deb7fe8 ("prandom: Remove unused include") that completely
+> removes inclusion of <linux/percpu.h>.
 > 
-> I tried to implement the suggestion above, it looks like this:
+> Due to legacy reasons, <linux/random.h> includes <linux/prandom.h>, but
+> with the commit entry remark:
 > 
-> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> index e4023fc288ac..ff4945a8f647 100644
-> --- a/drivers/ata/libata-core.c
-> +++ b/drivers/ata/libata-core.c
-> @@ -4824,6 +4824,14 @@ void ata_qc_free(struct ata_queued_cmd *qc)
->  		qc->tag = ATA_TAG_POISON;
->  }
->  
-> +void ata_qc_set_sense_valid_flag(struct ata_queued_cmd *qc)
-> +{
-> +	qc->flags |= ATA_QCFLAG_SENSE_VALID;
-> +
-> +	/* Keep the SCSI ML and status byte, clear host byte. */
-> +	qc->scsicmd->result &= 0x0000ffff;
-
-This would have to be:
-	/* Keep the SCSI ML and status byte, clear host byte. */
-	if (qc->scsicmd)
-		qc->scsicmd->result &= 0x0000ffff;
-
-Since for ata_qc_complete_internal(), qc->scsicmd will be NULL.
-
-
-> +}
-> +
-
-(snip)
-
-> I guess the obvious advantage that I can see is that we would do the
-> right thing regardless of qc->complete_fn.
+> --quote--
+> A further cleanup step would be to remove this from <linux/random.h>
+> entirely, and make people who use the prandom infrastructure include
+> just the new header file.  That's a bit of a churn patch, but grepping
+> for "prandom_" and "next_pseudo_random32" "struct rnd_state" should
+> catch most users.
 > 
-> qc->complete_fn can be any of:
-> ata_qc_complete_internal()
-> ata_scsi_qc_complete()
-> atapi_qc_complete()
-> ata_scsi_report_zones_complete()
+> But it turns out that that nice cleanup step is fairly painful, because
+> a _lot_ of code currently seems to depend on the implicit include of
+> <linux/random.h>, which can currently come in a lot of ways, including
+> such fairly core headfers as <linux/net.h>.
 > 
-> Instead of only doing the right thing if:
-> qc->complete_fn == ata_scsi_qc_complete().
+> So the "nice cleanup" part may or may never happen.
+> --/quote--
 > 
-> Thoughts?
+> __percpu tag is currently defined in include/linux/compiler_types.h,
+> so there is no direct need for the inclusion of <linux/percpu.h>.
+> However, in [1] we would like to repurpose __percpu tag as a named
+> address space qualifier, where __percpu macro uses defines from
+> <linux/percpu.h>.
+> 
+> This patch series is the "nice cleanup" part, and allows us to finally
+> include <linux/percpu.h> in prandom.h.
+> 
+> The whole series was tested by compiling the kernel for x86_64 allconfig
+> and some popular architectures, namely arm64 defconfig, powerpc defconfig
+> and loongarch defconfig.
 
-ata_scsi_report_zones_complete() calls ata_scsi_qc_complete().
-And like I said above, qc->scsicmd is NULL for ata_qc_complete_internal(),
-so I guess the one qc->complete_fn that is currently not doing the right
-thing is atapi_qc_complete().
+Obvious question(s) is(are):
+1) have you seen the Ingo's gigantic patch series towards resolving issues with
+the headers?
+2) if not, please look at the preliminary work and take something from there, I
+believe there are many useful changes already waiting for a couple of years to
+be applied.
 
-However, looking at atapi_qc_complete(), it actually does:
+Because I haven't found any references nor mentions of that in the cover letter
+here and explanation why it was not taking into consideration.
 
-	if (unlikely(err_mask || qc->flags & ATA_QCFLAG_SENSE_VALID)) {
-		...
-		qc->scsicmd->result = SAM_STAT_CHECK_CONDITION;
-		ata_qc_done(qc);
-		return;
-	}
+> [1] https://lore.kernel.org/lkml/20240812115945.484051-4-ubizjak@gmail.com/
 
-	...
-	cmd->result = SAM_STAT_GOOD;
-	ata_qc_done(qc);
-
-So atapi_qc_complete() will always overwrite the host byte.
-
-So, AFAICT, there is no problematic qc->complete_fn function in the existing
-libata code, so I don't think there is any urgency to change the code.
-
-Anyway, I think I came up with an even nicer patch to clear the driver byte.
-
-Change ata_scsi_set_sense():
--to set SENSE_DATA_VALID
--to clear driver byte (if scsicmd)
-
-For the cases that calls:
--scsi_build_sense_buffer()
-(because they don't want to set the SAM_STAT_CHECK_CONDITION)
-or
--scsi_build_sense()
-without using ata_scsi_set_sense():
-create a new function/functions (e.g. ata_build_sense_keep_status())
--sets SENSE_DATA_VALID
--clears driver byte (if scsicmd)
-
-Will send a PATCH/RFC series today or tomorrow.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Kind regards,
-Niklas
 
