@@ -1,250 +1,180 @@
-Return-Path: <linux-kernel+bounces-316702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C9F96D2E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:15:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A9396D2EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C62F2819CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B058281F6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465F41957FC;
-	Thu,  5 Sep 2024 09:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70B6195FCE;
+	Thu,  5 Sep 2024 09:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="PD1Vw3Dy"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfVd6OQU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D656818BC25;
-	Thu,  5 Sep 2024 09:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1457F19413B;
+	Thu,  5 Sep 2024 09:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725527731; cv=none; b=q/EgQs9cPB/V/oiSDxzLu65QOTUZiWJLU4ZAzIS/3uJMl5Emuas8AtXr7/UAV9QW2ceEyoY5HkmdECBtxiR8CgZ9nJvC4qosCChTzN1thpzuhLL5srQdXPrFrf4P/3O3+yKx2da7Nbaqhh8w99FtzvsemHZGs0wWSJjpkQaUcTE=
+	t=1725527757; cv=none; b=XsMxsg7WpzDgAgV73ffFHKdW3DiTteymCwODAHaPKKGf85waSB9iekvQyHO9fM0O7ccTWm5wcB1TSbY6eg7apNxfhsxXndM9Y56FHndqrVAiV05X8nS70T/a3STug5N58pmaUpx7lJLhlPPUW6hndfR5aU8ymotFj+cLX3F3bl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725527731; c=relaxed/simple;
-	bh=ALtOr/yvwRsUSZIQfHRKAc9NNI/b66HvWYWhH2NBJ/Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ToAQpdPytY8RDzQx+WASHQCfmJxSDs2rV1OAl25TxY0GUxs59B29Ze5kUrkwCbWKIFvtLuxPWX1VDM5RCwcmp6wTKxyIk/CXneyLaGiY575msia0vQ/mqqCLBqfgMa5cjt3AwGqYhEc2FlMTFM9QdwF27CzW0W43Cr+LowqViIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=PD1Vw3Dy; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48586Tt4014885;
-	Thu, 5 Sep 2024 02:15:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=OgLgWktd5YuA9gsUsQMmuQZ
-	wBllmUVl9+f1MkUXajUc=; b=PD1Vw3DytYe1ETT4PeTJLAPK/fYe6NzSaf34t3f
-	bSI0HcpBR0uK7+8/VCPm2EaKvf3oAb5TtQw4yIG/reQ5tgvnR0LcoIiru1oB1u0o
-	9m9iL45yFCG94cjV1b4O99u7D4j7lg3mHZqMtFEFAy25KFcIg7aGiaMpsWhcvShH
-	/5vQvIH7pAdk6Do7ml3M7xJdXcDS2lCW7azUj66jb9hV2rjAoWR7HWQUadpmvB4V
-	8sfW91y3N9wTTRe1VPrxTa2/PWUGObXdbpmcTnX8MNq03sFYwZ9Sd+L7l/AHxQqj
-	PeOTimrMv6AoedmY+CctUI6+VCaOYkHLSoDZPSZPgN1Kp7g==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41f8u487wp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 02:15:09 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 5 Sep 2024 02:15:08 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 5 Sep 2024 02:15:08 -0700
-Received: from naveenm-PowerEdge-T630.marvell.com (unknown [10.29.37.44])
-	by maili.marvell.com (Postfix) with ESMTP id 8DA105B6928;
-	Thu,  5 Sep 2024 02:15:04 -0700 (PDT)
-From: Naveen Mamindlapalli <naveenm@marvell.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <edumazet@google.com>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
-        <lcherian@marvell.com>, <gakula@marvell.com>, <hkelam@marvell.com>,
-        <sbhatta@marvell.com>
-CC: Naveen Mamindlapalli <naveenm@marvell.com>
-Subject: [PATCH] octeontx2-af: Modify SMQ flush sequence to drop packets
-Date: Thu, 5 Sep 2024 14:44:51 +0530
-Message-ID: <20240905091451.1558303-1-naveenm@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725527757; c=relaxed/simple;
+	bh=owCjoukPHHtiQVYXFzUhx/MhWIIu5KPW4x1maYmWDP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P1IhmmSnVir9smhWCWXJ0toqYKtVmMpcNMFzThKLS2f4HIOUWKAvsVLVLWv4JLalxhw3rO2Y51tHzydZoiX3ZPu2QrT1l+zPTg2tZQFzPy6SwW5FwDbWFXeBbz1jtlVk5kDyr9SFo9J34qRJBLiA3K9jxcqnRPBKdr0EtGiT0OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfVd6OQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9011C4CEC3;
+	Thu,  5 Sep 2024 09:15:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725527756;
+	bh=owCjoukPHHtiQVYXFzUhx/MhWIIu5KPW4x1maYmWDP4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RfVd6OQU8/7zPoumOnFIZ6AdLwnsZxfrdVsMw4uRgo2gOJMvHHR/cv3TphVLcIj70
+	 1wcIhlfJyD2n06JDPSEyYMn7GsqNxPwpqhPIKt1gZGaXcCxt2CvBZrGTo5NmFCoVUO
+	 bTL11ZxvIjWRu9LWf5VTsXQQQ1PGUrDIR/ufUonGyctjdpwiawY2NUjg22pOxzVESF
+	 NG7fn/1fKiB4VphevEe9mkxtOwii9MfpfiHbnZaHXn4C3wEoRtmTA/nWdP0/Qa0M8n
+	 oZ/jyK0WedVMi6KmPpC7sv95gUcvwRAqwC7/xi5yGBLHbVb/VY5pQoT/YGAadJSyxs
+	 QAMxLu3DAd6xw==
+Message-ID: <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
+Date: Thu, 5 Sep 2024 11:15:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: dJnPxNWIUzFaWsMC4cUqJ5FYVClD-ilS
-X-Proofpoint-GUID: dJnPxNWIUzFaWsMC4cUqJ5FYVClD-ilS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: ti, sci: Add property for
+ partial-io-wakeup-sources
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+ Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729080101.3859701-1-msp@baylibre.com>
+ <20240729080101.3859701-2-msp@baylibre.com>
+ <f0f60af7-8561-433a-a027-811015fc5e16@kernel.org>
+ <ti4ffymrixcpptlrn3o5bytoyc4w5oovdrzgu442ychai2fjet@wtdhrmwrozee>
+ <44feed5a-95a7-4baa-b17e-514c0f50dae6@kernel.org>
+ <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The current implementation of SMQ flush sequence waits for the packets
-in the TM pipeline to be transmitted out of the link. This sequence
-doesn't succeed in HW when there is any issue with link such as lack of
-link credits, link down or any other traffic that is fully occupying the
-link bandwidth (QoS). This patch modifies the SMQ flush sequence to
-drop the packets after TL1 level (SQM) instead of polling for the packets
-to be sent out of RPM/CGX link.
+On 05/09/2024 11:08, Markus Schneider-Pargmann wrote:
+> On Tue, Aug 06, 2024 at 10:03:00AM GMT, Krzysztof Kozlowski wrote:
+>> On 06/08/2024 09:11, Markus Schneider-Pargmann wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On Tue, Aug 06, 2024 at 08:18:01AM GMT, Krzysztof Kozlowski wrote:
+>>>> On 29/07/2024 10:00, Markus Schneider-Pargmann wrote:
+>>>>> Partial-IO is a very low power mode in which nearly everything is
+>>>>> powered off. Only pins of a few hardware units are kept sensitive and
+>>>>> are capable to wakeup the SoC. The device nodes are marked as
+>>>>> 'wakeup-source' but so are a lot of other device nodes as well that are
+>>>>> not able to do a wakeup from Partial-IO. This creates the need to
+>>>>> describe the device nodes that are capable of wakeup from Partial-IO.
+>>>>>
+>>>>> This patch adds a property with a list of these nodes defining which
+>>>>> devices can be used as wakeup sources in Partial-IO.
+>>>>>
+>>>>
+>>>> <form letter>
+>>>> This is a friendly reminder during the review process.
+>>>>
+>>>> It seems my or other reviewer's previous comments were not fully
+>>>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>>>> just forgot to apply it. Please go back to the previous discussion and
+>>>> either implement all requested changes or keep discussing them.
+>>>>
+>>>> Thank you.
+>>>> </form letter>
+>>>
+>>> I tried to address your comment from last version by explaining more
+>>> thoroughly what the binding is for as it seemed that my previous
+>>> explanation wasn't really good.
+>>>
+>>> You are suggesting to use 'wakeup-source' exclusively. Unfortunately
+>>> wakeup-source is a boolean property which covers two states. I have at
+>>> least three states I need to describe:
+>>>
+>>>  - wakeup-source for suspend to memory and other low power modes
+>>>  - wakeup-source for Partial-IO
+>>>  - no wakeup-source
+>>
+>> Maybe we need generic property or maybe custom TI would be fine, but in
+>> any case - whether device is wakeup and what sort of wakeup it is, is a
+>> property of the device.
+> 
+> To continue on this, I currently only know of this Partial-IO mode that
+> would require a special flag like this. So I think a custom TI property
+> would work. For example a bool property like
+> 
+>   ti,partial-io-wakeup-source;
+> 
+> in the device nodes for which it is relevant? This would be in addition
+> to the 'wakeup-source' property.
 
-Fixes: 5d9b976d4480 ("octeontx2-af: Support fixed transmit scheduler topology")
-Signed-off-by: Naveen Mamindlapalli <naveenm@marvell.com>
-Reviewed-by: Sunil Kovvuri Goutham <sgoutham@marvell.com>
----
- .../net/ethernet/marvell/octeontx2/af/rvu.h   |  3 +-
- .../ethernet/marvell/octeontx2/af/rvu_nix.c   | 59 +++++++++++++++----
- 2 files changed, 48 insertions(+), 14 deletions(-)
+Rather oneOf. I don't think having two properties in a node brings any
+more information.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-index 03ee93fd9e94..db2db0738ee4 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-@@ -319,6 +319,7 @@ struct nix_mark_format {
- 
- /* smq(flush) to tl1 cir/pir info */
- struct nix_smq_tree_ctx {
-+	u16 schq;
- 	u64 cir_off;
- 	u64 cir_val;
- 	u64 pir_off;
-@@ -328,8 +329,6 @@ struct nix_smq_tree_ctx {
- /* smq flush context */
- struct nix_smq_flush_ctx {
- 	int smq;
--	u16 tl1_schq;
--	u16 tl2_schq;
- 	struct nix_smq_tree_ctx smq_tree_ctx[NIX_TXSCH_LVL_CNT];
- };
- 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-index 222f9e00b836..82832a24fbd8 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-@@ -2259,14 +2259,13 @@ static void nix_smq_flush_fill_ctx(struct rvu *rvu, int blkaddr, int smq,
- 	schq = smq;
- 	for (lvl = NIX_TXSCH_LVL_SMQ; lvl <= NIX_TXSCH_LVL_TL1; lvl++) {
- 		smq_tree_ctx = &smq_flush_ctx->smq_tree_ctx[lvl];
-+		smq_tree_ctx->schq = schq;
- 		if (lvl == NIX_TXSCH_LVL_TL1) {
--			smq_flush_ctx->tl1_schq = schq;
- 			smq_tree_ctx->cir_off = NIX_AF_TL1X_CIR(schq);
- 			smq_tree_ctx->pir_off = 0;
- 			smq_tree_ctx->pir_val = 0;
- 			parent_off = 0;
- 		} else if (lvl == NIX_TXSCH_LVL_TL2) {
--			smq_flush_ctx->tl2_schq = schq;
- 			smq_tree_ctx->cir_off = NIX_AF_TL2X_CIR(schq);
- 			smq_tree_ctx->pir_off = NIX_AF_TL2X_PIR(schq);
- 			parent_off = NIX_AF_TL2X_PARENT(schq);
-@@ -2301,8 +2300,8 @@ static void nix_smq_flush_enadis_xoff(struct rvu *rvu, int blkaddr,
- {
- 	struct nix_txsch *txsch;
- 	struct nix_hw *nix_hw;
-+	int tl2, tl2_schq;
- 	u64 regoff;
--	int tl2;
- 
- 	nix_hw = get_nix_hw(rvu->hw, blkaddr);
- 	if (!nix_hw)
-@@ -2310,16 +2309,17 @@ static void nix_smq_flush_enadis_xoff(struct rvu *rvu, int blkaddr,
- 
- 	/* loop through all TL2s with matching PF_FUNC */
- 	txsch = &nix_hw->txsch[NIX_TXSCH_LVL_TL2];
-+	tl2_schq = smq_flush_ctx->smq_tree_ctx[NIX_TXSCH_LVL_TL2].schq;
- 	for (tl2 = 0; tl2 < txsch->schq.max; tl2++) {
- 		/* skip the smq(flush) TL2 */
--		if (tl2 == smq_flush_ctx->tl2_schq)
-+		if (tl2 == tl2_schq)
- 			continue;
- 		/* skip unused TL2s */
- 		if (TXSCH_MAP_FLAGS(txsch->pfvf_map[tl2]) & NIX_TXSCHQ_FREE)
- 			continue;
- 		/* skip if PF_FUNC doesn't match */
- 		if ((TXSCH_MAP_FUNC(txsch->pfvf_map[tl2]) & ~RVU_PFVF_FUNC_MASK) !=
--		    (TXSCH_MAP_FUNC(txsch->pfvf_map[smq_flush_ctx->tl2_schq] &
-+		    (TXSCH_MAP_FUNC(txsch->pfvf_map[tl2_schq] &
- 				    ~RVU_PFVF_FUNC_MASK)))
- 			continue;
- 		/* enable/disable XOFF */
-@@ -2361,10 +2361,12 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
- 			 int smq, u16 pcifunc, int nixlf)
- {
- 	struct nix_smq_flush_ctx *smq_flush_ctx;
-+	int err, restore_tx_en = 0, i;
- 	int pf = rvu_get_pf(pcifunc);
- 	u8 cgx_id = 0, lmac_id = 0;
--	int err, restore_tx_en = 0;
--	u64 cfg;
-+	u16 tl2_tl3_link_schq;
-+	u8 link, link_level;
-+	u64 cfg, bmap = 0;
- 
- 	if (!is_rvu_otx2(rvu)) {
- 		/* Skip SMQ flush if pkt count is zero */
-@@ -2388,16 +2390,38 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
- 	nix_smq_flush_enadis_xoff(rvu, blkaddr, smq_flush_ctx, true);
- 	nix_smq_flush_enadis_rate(rvu, blkaddr, smq_flush_ctx, false);
- 
--	cfg = rvu_read64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq));
--	/* Do SMQ flush and set enqueue xoff */
--	cfg |= BIT_ULL(50) | BIT_ULL(49);
--	rvu_write64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq), cfg);
--
- 	/* Disable backpressure from physical link,
- 	 * otherwise SMQ flush may stall.
- 	 */
- 	rvu_cgx_enadis_rx_bp(rvu, pf, false);
- 
-+	link_level = rvu_read64(rvu, blkaddr, NIX_AF_PSE_CHANNEL_LEVEL) & 0x01 ?
-+			NIX_TXSCH_LVL_TL3 : NIX_TXSCH_LVL_TL2;
-+	tl2_tl3_link_schq = smq_flush_ctx->smq_tree_ctx[link_level].schq;
-+	link = smq_flush_ctx->smq_tree_ctx[NIX_TXSCH_LVL_TL1].schq;
-+
-+	/* SMQ set enqueue xoff */
-+	cfg = rvu_read64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq));
-+	cfg |= BIT_ULL(50);
-+	rvu_write64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq), cfg);
-+
-+	/* Clear all NIX_AF_TL3_TL2_LINK_CFG[ENA] for the TL3/TL2 queue */
-+	for (i = 0; i < (rvu->hw->cgx_links + rvu->hw->lbk_links); i++) {
-+		cfg = rvu_read64(rvu, blkaddr,
-+				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
-+		if (!(cfg & BIT_ULL(12)))
-+			continue;
-+		bmap |= (1 << i);
-+		cfg &= ~BIT_ULL(12);
-+		rvu_write64(rvu, blkaddr,
-+			    NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link), cfg);
-+	}
-+
-+	/* Do SMQ flush and set enqueue xoff */
-+	cfg = rvu_read64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq));
-+	cfg |= BIT_ULL(50) | BIT_ULL(49);
-+	rvu_write64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq), cfg);
-+
- 	/* Wait for flush to complete */
- 	err = rvu_poll_reg(rvu, blkaddr,
- 			   NIX_AF_SMQX_CFG(smq), BIT_ULL(49), true);
-@@ -2406,6 +2430,17 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
- 			 "NIXLF%d: SMQ%d flush failed, txlink might be busy\n",
- 			 nixlf, smq);
- 
-+	/* Set NIX_AF_TL3_TL2_LINKX_CFG[ENA] for the TL3/TL2 queue */
-+	for (i = 0; i < (rvu->hw->cgx_links + rvu->hw->lbk_links); i++) {
-+		if (!(bmap & (1 << i)))
-+			continue;
-+		cfg = rvu_read64(rvu, blkaddr,
-+				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
-+		cfg |= BIT_ULL(12);
-+		rvu_write64(rvu, blkaddr,
-+			    NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link), cfg);
-+	}
-+
- 	/* clear XOFF on TL2s */
- 	nix_smq_flush_enadis_rate(rvu, blkaddr, smq_flush_ctx, true);
- 	nix_smq_flush_enadis_xoff(rvu, blkaddr, smq_flush_ctx, false);
--- 
-2.34.1
+I would suggest finding one more user of this and making the
+wakeup-source an enum - either string or integer with defines in a header.
+
+Best regards,
+Krzysztof
 
 
