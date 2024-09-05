@@ -1,175 +1,133 @@
-Return-Path: <linux-kernel+bounces-316520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5F096D0AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:45:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69F496D0A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7586A1F264AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F16FB23E8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9258C156C49;
-	Thu,  5 Sep 2024 07:45:15 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D0C193428;
+	Thu,  5 Sep 2024 07:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tDFw401i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB768F66;
-	Thu,  5 Sep 2024 07:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEDE192D70;
+	Thu,  5 Sep 2024 07:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725522315; cv=none; b=jUwbtGuew0bKSAxkJov7DcPLXGt58nVWeb6dTjD26fHydtD43laAjLqXaw8p9BuzpIrbhUq7Sys+l07zd8zdARSJkpYPG6pZxmJGQnDXuwyOl/ewaOQb40gwfHBd0WAqvP4Ci0E8qau6piSdrLpeaM1uRihxCq5oIn46m0sRQf0=
+	t=1725522239; cv=none; b=QY8YcvBrca1Ho5/vaaqh2TvqY9gAn3CUx9uo/uGk2MWIw7cUFnlGyUvTbMmxsD7OJmgAkIpKstSXwICVZ+UHz8LDc2/qSJaNRWRq0as1gREb9AbxDgp5eqR7CJGcMk9Gtc9VEJwN0ZGWTd59h9PUSpowwR5idS87gZA7wc8AC+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725522315; c=relaxed/simple;
-	bh=h0OTqGfhNCXvfaFbeXGSSplXcyXSTKxgIxAK76gFYZI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWknOtdlZJDbcbmqENH3WJHXkSxMG97lx0swGY6dM/L38ED+xmL54yGzu7AbvDuORVz0xe8ADcXv/70ltEblTIpFgYqWqP7DyGzqJA67iJUorYtoiScAKceflkILm5U+gKvyXvdxw7vRAtOl4LjvhylBORerCEWr4IMegK1eM8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 4857iRWZ035132
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 5 Sep 2024 15:44:27 +0800 (+08)
-	(envelope-from hongchi.peng@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4WzrwV4lC1z7ZMhp;
-	Thu,  5 Sep 2024 15:44:26 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 5 Sep 2024 15:44:26 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 15:44:26 +0800
-Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
- (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
- Transport; Thu, 5 Sep 2024 15:44:26 +0800
-From: kimriver liu <kimriver.liu@siengine.com>
-To: <jarkko.nikula@linux.intel.com>
-CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
-        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kimriver.liu@siengine.com>
-Subject: [PATCH] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
-Date: Thu, 5 Sep 2024 15:42:11 +0800
-Message-ID: <20240905074211.2278-1-kimriver.liu@siengine.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725522239; c=relaxed/simple;
+	bh=S8/TtXkZj7uHoxHpMVYmtyHnnkcgrFhlb9iCKy4r99Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKvWnzlqjFndcb1Xez0/wteLciCGKAmAERI+TSS7AACB4BO+ug46E8mZQ60/W79o//GYcsthGrZ5mPPPRqJvmqFfhOfkximJpL21XINFkZurmkpSOFVjPhf5W2B9q3MMfC9E46xs8W8F77Wjll2AjrLoAy92vgzw+4q3t94/8Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tDFw401i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97229C4CEC4;
+	Thu,  5 Sep 2024 07:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725522239;
+	bh=S8/TtXkZj7uHoxHpMVYmtyHnnkcgrFhlb9iCKy4r99Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tDFw401iokMtFH2bA5JxkYOmfH1nCuTNu1/4QFFmaScBfbMGEiNimT5yp2hNNzmmx
+	 0UolQCF/sZ+mBWHcafzAKthmfhQ2HCfmQSzoZGWIX+tgj3TakdiWr0ocp1pgRClPCY
+	 nfZHoB8AIgJhG7HLUA1OMbIghKa8aOtwFFH42I2w=
+Date: Thu, 5 Sep 2024 09:43:55 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 5.10, 5.4] net: set SOCK_RCU_FREE before inserting socket
+ into hashtable
+Message-ID: <2024090543-itinerary-marina-3814@gregkh>
+References: <2024072924-CVE-2024-41041-ae0c@gregkh>
+ <0ab22253fec2b0e65a95a22ceff799f39a2eaa0a.camel@oracle.com>
+ <2024090305-starfish-hardship-dadc@gregkh>
+ <CANn89iK5UMzkVaw2ed_WrOFZ4c=kSpGkKens2B-_cLhqk41yCg@mail.gmail.com>
+ <2024090344-repave-clench-3d61@gregkh>
+ <64688590d5cf73d0fd7b536723e399457d23aa8e.camel@oracle.com>
+ <2024090401-underuse-resale-3eef@gregkh>
+ <004b3dec44fe2fe6433043c509d52e72d8a8ca9d.camel@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 4857iRWZ035132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <004b3dec44fe2fe6433043c509d52e72d8a8ca9d.camel@oracle.com>
 
-From: "kimriver.liu" <kimriver.liu@siengine.com>
+On Wed, Sep 04, 2024 at 01:06:45PM +0000, Siddh Raman Pant wrote:
+> [ Upstream commit 871019b22d1bcc9fab2d1feba1b9a564acbb6e99 ]
+> 
+> We've started to see the following kernel traces:
+> 
+>  WARNING: CPU: 83 PID: 0 at net/core/filter.c:6641 sk_lookup+0x1bd/0x1d0
+> 
+>  Call Trace:
+>   <IRQ>
+>   __bpf_skc_lookup+0x10d/0x120
+>   bpf_sk_lookup+0x48/0xd0
+>   bpf_sk_lookup_tcp+0x19/0x20
+>   bpf_prog_<redacted>+0x37c/0x16a3
+>   cls_bpf_classify+0x205/0x2e0
+>   tcf_classify+0x92/0x160
+>   __netif_receive_skb_core+0xe52/0xf10
+>   __netif_receive_skb_list_core+0x96/0x2b0
+>   napi_complete_done+0x7b5/0xb70
+>   <redacted>_poll+0x94/0xb0
+>   net_rx_action+0x163/0x1d70
+>   __do_softirq+0xdc/0x32e
+>   asm_call_irq_on_stack+0x12/0x20
+>   </IRQ>
+>   do_softirq_own_stack+0x36/0x50
+>   do_softirq+0x44/0x70
+> 
+> __inet_hash can race with lockless (rcu) readers on the other cpus:
+> 
+>   __inet_hash
+>     __sk_nulls_add_node_rcu
+>     <- (bpf triggers here)
+>     sock_set_flag(SOCK_RCU_FREE)
+> 
+> Let's move the SOCK_RCU_FREE part up a bit, before we are inserting
+> the socket into hashtables. Note, that the race is really harmless;
+> the bpf callers are handling this situation (where listener socket
+> doesn't have SOCK_RCU_FREE set) correctly, so the only
+> annoyance is a WARN_ONCE.
+> 
+> More details from Eric regarding SOCK_RCU_FREE timeline:
+> 
+> Commit 3b24d854cb35 ("tcp/dccp: do not touch listener sk_refcnt under
+> synflood") added SOCK_RCU_FREE. At that time, the precise location of
+> sock_set_flag(sk, SOCK_RCU_FREE) did not matter, because the thread calling
+> __inet_hash() owns a reference on sk. SOCK_RCU_FREE was only tested
+> at dismantle time.
+> 
+> Commit 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
+> started checking SOCK_RCU_FREE _after_ the lookup to infer whether
+> the refcount has been taken care of.
+> 
+> Fixes: 6acc9b432e67 ("bpf: Add helper to retrieve socket in BPF")
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Stanislav Fomichev <sdf@google.com>
+> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> [Resolved conflict for 5.10 and below.]
+> Signed-off-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+> ---
+>  net/ipv4/inet_hashtables.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Failure in normal Stop operational path
+Now  queued up, thanks.
 
-This failure happens rarely and is hard to reproduce. Debug trace
-showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-immediately disable ENABLE bit that can result in
-IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
-
-Failure in ENABLE bit is disabled path
-
-It was observed that master is holding SCL low and the IC_ENABLE is
-already disabled, Enable ABORT bit and ENABLE bit simultaneously
-cannot take effect.
-
-Check if the master is holding SCL low after ENABLE bit is already
-disabled. If SCL is held low, The software can set this ABORT bit only
-when ENABLE is already set，otherwise,
-the controller ignores any write to ABORT bit. When the abort is done,
-then proceed with disabling the controller.
-
-These kernel logs show up whenever an I2C transaction is attempted
-after this failure.
-i2c_designware e95e0000.i2c: timeout in disabling adapter
-i2c_designware e95e0000.i2c: timeout waiting for bus ready
-
-The patch can be fix the controller cannot be disabled while SCL is
-held low in ENABLE bit is already disabled.
-
-Signed-off-by: kimriver.liu <kimriver.liu@siengine.com>
----
- drivers/i2c/busses/i2c-designware-common.c | 12 +++++++++++
- drivers/i2c/busses/i2c-designware-master.c | 23 +++++++++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index e8a688d04aee..54acf8554582 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 
- 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
- 	if (abort_needed) {
-+		if (!(enable & DW_IC_ENABLE_ENABLE)) {
-+			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-+			enable |= DW_IC_ENABLE_ENABLE;
-+
-+			/*
-+			 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
-+			 * is already set by the driver (for 400KHz this is 25us)
-+			 * as described in the DesignWare I2C databook.
-+			 */
-+			fsleep(25);
-+		}
-+
- 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
- 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
- 					       !(enable & DW_IC_ENABLE_ABORT), 10,
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index c7e56002809a..aba0b8fdfe9a 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -253,6 +253,26 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
- 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
- }
- 
-+static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
-+{
-+	u32 status;
-+	int ret;
-+
-+	regmap_read(dev->map, DW_IC_STATUS, &status);
-+	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-+		return true;
-+
-+	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-+			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-+			1100, 20000);
-+	if (ret) {
-+		dev_err(dev->dev, "i2c master controller not idle %d\n", ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
- {
- 	u32 val;
-@@ -796,7 +816,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	 * additional interrupts are a hardware bug or this driver doesn't
- 	 * handle them correctly yet.
- 	 */
--	__i2c_dw_disable_nowait(dev);
-+	if (i2c_dw_is_master_idling(dev))
-+		__i2c_dw_disable_nowait(dev);
- 
- 	if (dev->msg_err) {
- 		ret = dev->msg_err;
--- 
-2.17.1
-
+greg k-h
 
