@@ -1,139 +1,204 @@
-Return-Path: <linux-kernel+bounces-317770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689EF96E388
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF51B96E37D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AE81C21E5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7351F27581
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1F71B252D;
-	Thu,  5 Sep 2024 19:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452701A42C7;
+	Thu,  5 Sep 2024 19:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnUud2d9"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMNGR/Wv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA0C1B1D56;
-	Thu,  5 Sep 2024 19:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F4E1A2566;
+	Thu,  5 Sep 2024 19:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725565792; cv=none; b=C1k5TULDvVe2F8NtMYyiwtbSU3bTmIybRC1cYEu2xYwzaM8ylIdKq23Oi+Q02/Mdky2gdD0fnTuEVBLcku3Gs0N3C6fmb9Ve9V0KprVn0I77fPeA34GvUWRnyJTC/pc7Xi11Xio4nIExe5QL8RacSxmlWLQpE43CL5pV/Klds0g=
+	t=1725565785; cv=none; b=EPG5Q5GM2Us0wZoRNHqT6XXaYNzfuLQdwIogZSBx44C49yHPxq/Ya4Mv3WSCeJ7O5IKrte6c7CkwqqUkUEzwS7UNXId6wdxbD/SE6PvzV/duJkit0NYre8Gg+pVbFFOjU4pfekmOplxlsVDcm9eZq4w/Y4ZiroIiCoDxsqKxfgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725565792; c=relaxed/simple;
-	bh=2GOpH4dUCx/6xWlhBaz7YrfPlaGzpswMvi5hNvCJby8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HTCjM64/XvKYLBnAalLb0jyHxQGJuTf2xQq1LujQd0p5cO0evHa+RZWed71TNSVAJtyztWdXslKdLSYtYBZQQ7Ef0jOjCsZTehf+E4/a2slAThKAzbm9bK3Y2H+AGr6OeRBYlJErrms7bHsmX1lou9EpgYD8k01Gj7mqfwBxK5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnUud2d9; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7d4ed6158bcso975916a12.1;
-        Thu, 05 Sep 2024 12:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725565789; x=1726170589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zNs22ZVDs5twPg/KlrxF0LCZVcyK0csurONNSh5++RQ=;
-        b=PnUud2d9oJLGyWSxjVi8plNAmKHEzNVgEoNPJw79dnSNjCBgd597Y96V/2FOlDAkNd
-         XM66vWt0lKAAzGjCGN6uceu/6xiv9lBUCR2FocV566TVN5yhDBbu1kdCc1nZJxwkKJOr
-         ce5AnZb7mj+AgqigAabMtgxqb6BQLmDl5grHGxkoZnwD/yu/vYfjMq9/intNUaVbxFlH
-         Iec0j9Y8F47zIL3jkE0MVvaMf3R+jEKQwzdfos1uNf+ggRvFv0+oazXl3DSzBpA4Tocz
-         hlD+cZk3wk5vO4oX2yPjn3Sco/QKp9X0CVpBI7I0GHa2b/5rMy50o6QEA0KPUIGGPzrI
-         N/oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725565789; x=1726170589;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zNs22ZVDs5twPg/KlrxF0LCZVcyK0csurONNSh5++RQ=;
-        b=LK6li6kA21wghs6CP6M8RHvL0rHLVWKV+8wBs3c7391AhnmFiM+1fKjv9S4/8erw9J
-         rx82SbzehY9avSwpDH8+9BJF4L60s7x2C0ZopnCERGIFYsZ0/kWQgpnSNE7EaymsKoFn
-         yHonUhiqQCwhT9UPD59A6Eut/9EcvUuX7GZnPyA/LPG3fmKeC/8Qo6QlLgy5rFx5s1nj
-         jd43FcY6WtsCPbs2l8CeA4BiTJznEZgI3t5ClpEWTueyRPbl2DhFCr9ckXGxPbxzd5Xw
-         1W0f5XDKCAsXjeb46gnWrjSfTCn0nXzQXADN95THqL81uebXYim9Tq3QEPvhxVYgrHDH
-         cITg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDhXMopTgWz+M0a5BH7Fwfjsi8hlBUzyovQmlM/DNd2OTkQeLckTONpJisT8nbJ2sli4krdXXV+TPNpf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVJNVj45mke0ytL9v4rJSG6PmKkdCNrE1QDzRq1StR/gN5MWK0
-	WRKfEsk6rSELh4rdBKqMnt1p9lM2W3iygzorwiARU5mtimHprmhOFe5ugbX6
-X-Google-Smtp-Source: AGHT+IF7Fjja6lcHracGAiX78aEJBVbbb5iBkbfsZCeCi1ty1jlysw2uk26qAYLHVE9ySf9nmO8wmg==
-X-Received: by 2002:a05:6a20:d50b:b0:1ca:db51:85df with SMTP id adf61e73a8af0-1cf1d05cc9dmr88446637.8.1725565789594;
-        Thu, 05 Sep 2024 12:49:49 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71791e54585sm1248410b3a.182.2024.09.05.12.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 12:49:49 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: [PATCHv2 net-next 7/7] net: ag71xx: disable napi interrupts during probe
-Date: Thu,  5 Sep 2024 12:49:38 -0700
-Message-ID: <20240905194938.8453-8-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240905194938.8453-1-rosenp@gmail.com>
-References: <20240905194938.8453-1-rosenp@gmail.com>
+	s=arc-20240116; t=1725565785; c=relaxed/simple;
+	bh=g++tlSmFgkUcGXn5wSV2RC0cbFRDfnVvSQTJtE59uHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9xtWb+MBCPLVY59xRad+qNsS6OjuYe4Z+8oXCIUfSSq5/Go5ytg42IV7TCj/eCiuR41qgiFTnRLSEVSXUqq95skCTtwTypuWtdGdI4KIx09m4epfzRIJAR1AS3aMqkmgFYlUYuw0RXZpx++Bd9Jk9ayd8VBCXyUdVtzrKMWwHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMNGR/Wv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B1FC4CEC3;
+	Thu,  5 Sep 2024 19:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725565785;
+	bh=g++tlSmFgkUcGXn5wSV2RC0cbFRDfnVvSQTJtE59uHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VMNGR/Wveojllz63Q9LpvBEiR2sC5FqSAVMQtKrvZenAbpZe/7blxQ1NacbgW4y/n
+	 bS880vKyuqmDQQmQP8fhMUQU8uXvJFQi+GJOeOFyT5PsVOFRBf/XaQnx5uvnLd8kBn
+	 aVybT00ru55mwTs5JbkXiGHqt9i59jHHUvPGQnR0g5BTbi9z42T3Pju+cNUP4QelY8
+	 foW6442Nnz9LedUu7koNSp7E+wKRgj27S7Vts/4PxEcO9F8lk48maDMOLDDAlm/sbM
+	 R6TuFfXZ2C+eGEG2nxxCffMpF05o+H21cdgOkMSrVJKntV6Y4j9jGnl96ISsbIN8wt
+	 xmnO17SjdSfiQ==
+Date: Thu, 5 Sep 2024 21:49:42 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: kimriver liu <kimriver.liu@siengine.com>
+Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
+	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
+ ENABLE bit is disabledg
+Message-ID: <yc43jizchnn4johokgc2xyr2g4yyxf4strt6vvtzye6zzor46r@dvgqo4k6q437>
+References: <20240905074211.2278-1-kimriver.liu@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240905074211.2278-1-kimriver.liu@siengine.com>
 
-From: Sven Eckelmann <sven@narfation.org>
+Hi Kimriver,
 
-ag71xx_probe is registering ag71xx_interrupt as handler for gmac0/gmac1
-interrupts. The handler is trying to use napi_schedule to handle the
-processing of packets. But the netif_napi_add for this device is
-called a lot later in ag71xx_probe.
+On Thu, Sep 05, 2024 at 03:42:11PM GMT, kimriver liu wrote:
+> From: "kimriver.liu" <kimriver.liu@siengine.com>
 
-It can therefore happen that a still running gmac0/gmac1 is triggering the
-interrupt handler with a bit from AG71XX_INT_POLL set in
-AG71XX_REG_INT_STATUS. The handler will then call napi_schedule and the
-napi code will crash the system because the ag->napi is not yet
-initialized.
+Is there any reason to have "kimriver.liu" instead of "Kimriver
+Liu"?
 
-The gmcc0/gmac1 must be brought in a state in which it doesn't signal a
-AG71XX_INT_POLL related status bits as interrupt before registering the
-interrupt handler. ag71xx_hw_start will take care of re-initializing the
-AG71XX_REG_INT_ENABLE.
+> Failure in normal Stop operational path
+> 
+> This failure happens rarely and is hard to reproduce. Debug trace
+> showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
+> immediately disable ENABLE bit that can result in
+> IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
+> 
+> Failure in ENABLE bit is disabled path
+> 
+> It was observed that master is holding SCL low and the IC_ENABLE is
+> already disabled, Enable ABORT bit and ENABLE bit simultaneously
+> cannot take effect.
+> 
+> Check if the master is holding SCL low after ENABLE bit is already
+> disabled. If SCL is held low, The software can set this ABORT bit only
+> when ENABLE is already set，otherwise,
+> the controller ignores any write to ABORT bit. When the abort is done,
+> then proceed with disabling the controller.
+> 
+> These kernel logs show up whenever an I2C transaction is attempted
+> after this failure.
+> i2c_designware e95e0000.i2c: timeout in disabling adapter
+> i2c_designware e95e0000.i2c: timeout waiting for bus ready
+> 
+> The patch can be fix the controller cannot be disabled while SCL is
+> held low in ENABLE bit is already disabled.
 
-This will become relevant when dual GMAC devices get added here.
+I'm sorry, but this commit log is difficult to understand. Could
+you please polish it, fix the grammar and the punctuation and
+make it more understandable?
 
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/atheros/ag71xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> Signed-off-by: kimriver.liu <kimriver.liu@siengine.com>
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index e28a4b018b11..96a6189cc31e 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -1850,6 +1850,12 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	if (!ag->mac_base)
- 		return -ENOMEM;
- 
-+	/* ensure that HW is in manual polling mode before interrupts are
-+	 * activated. Otherwise ag71xx_interrupt might call napi_schedule
-+	 * before it is initialized by netif_napi_add.
-+	 */
-+	ag71xx_int_disable(ag, AG71XX_INT_POLL);
-+
- 	ndev->irq = platform_get_irq(pdev, 0);
- 	err = devm_request_irq(&pdev->dev, ndev->irq, ag71xx_interrupt,
- 			       0x0, dev_name(&pdev->dev), ndev);
--- 
-2.46.0
+As I said above, would be nicer to have "Kimriver Liu" rather
+than "kimriver.liu".
 
+I'm wondering if we need the Fixes: tag here. If this is not a
+frequent issue then we can probably omit it.
+
+> ---
+
+Andy already pointed out that you are missing versioning (is this
+v2? v3?) and changelog.
+
+>  drivers/i2c/busses/i2c-designware-common.c | 12 +++++++++++
+>  drivers/i2c/busses/i2c-designware-master.c | 23 +++++++++++++++++++++-
+>  2 files changed, 34 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+> index e8a688d04aee..54acf8554582 100644
+> --- a/drivers/i2c/busses/i2c-designware-common.c
+> +++ b/drivers/i2c/busses/i2c-designware-common.c
+> @@ -453,6 +453,18 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+>  
+>  	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+>  	if (abort_needed) {
+> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
+> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
+> +			enable |= DW_IC_ENABLE_ENABLE;
+> +
+> +			/*
+> +			 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
+> +			 * is already set by the driver (for 400KHz this is 25us)
+> +			 * as described in the DesignWare I2C databook.
+> +			 */
+> +			fsleep(25);
+> +		}
+> +
+>  		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+>  		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+>  					       !(enable & DW_IC_ENABLE_ABORT), 10,
+> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+> index c7e56002809a..aba0b8fdfe9a 100644
+> --- a/drivers/i2c/busses/i2c-designware-master.c
+> +++ b/drivers/i2c/busses/i2c-designware-master.c
+> @@ -253,6 +253,26 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
+>  	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
+>  }
+>  
+> +static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
+> +{
+> +	u32 status;
+> +	int ret;
+> +
+> +	regmap_read(dev->map, DW_IC_STATUS, &status);
+> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
+> +		return true;
+> +
+> +	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> +			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> +			1100, 20000);
+> +	if (ret) {
+> +		dev_err(dev->dev, "i2c master controller not idle %d\n", ret);
+
+Please be a bit more descriptive. It's not an error for the i2c
+master not to be idle, it is if you try to disable the adapter.
+
+Besides, it makes sense to me that this print is done in the
+i2c_dw_xfer function rather than here. The task of this function
+is only to check whether the controller is idling or active.
+
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
+>  {
+>  	u32 val;
+> @@ -796,7 +816,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+>  	 * additional interrupts are a hardware bug or this driver doesn't
+>  	 * handle them correctly yet.
+>  	 */
+
+Please update the comment according to your change.
+
+> -	__i2c_dw_disable_nowait(dev);
+> +	if (i2c_dw_is_master_idling(dev))
+
+Please print the error message here.
+
+Thanks for your patch,
+Andi
+
+> +		__i2c_dw_disable_nowait(dev);
+>  
+>  	if (dev->msg_err) {
+>  		ret = dev->msg_err;
+> -- 
+> 2.17.1
+> 
 
