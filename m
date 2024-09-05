@@ -1,251 +1,149 @@
-Return-Path: <linux-kernel+bounces-317970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B012196E665
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:39:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D568896E661
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD25C1C23094
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:39:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB101F24DBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46721B86D2;
-	Thu,  5 Sep 2024 23:39:11 +0000 (UTC)
-Received: from trager.us (trager.us [52.5.81.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276171B581C;
+	Thu,  5 Sep 2024 23:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iY4uZdU9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720F65381B;
-	Thu,  5 Sep 2024 23:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBC31A727D;
+	Thu,  5 Sep 2024 23:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725579551; cv=none; b=XaxDKm/Byf/W1bCt3B+WgjUq82+kgeNd8t70YtwkduLTGcQu9YegIlhhZGaILDq7kn9HiCRPMtRbpzOwGShTZ43R4SBmrCO4vGtt15J+eqH8LEPXzwZvRnRt20etBoap0hAyISKfNxcR5xUh+oLq/EnsrwjQvNcjf12mgZor/q4=
+	t=1725579512; cv=none; b=YShxIfDKer6dK0rxblskt6MyLza+MNlVfdXTiTGpU2epdik0YtSjeL6F/uhL3N6xam2H+X+BKwfc/TxLcJHn9glJeadjfVNlKKDTqg96ZQUCT0ZkGK104GkEhMPFcExKVPFak8/65PuUys9Rw0Xu4Tm/nHdmtb9ctAbRtYkn7uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725579551; c=relaxed/simple;
-	bh=cQQmJ5AgekB3x6oTYMEqlDF58JG5FJt2/c46w/qfVsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=stSRxcqex+VOUlv1GOIGfXUf4AwUR2twnxf/DLAMlBwTVL44Rogs4vx4sWphupVuOhPmHP4iZMd8an+wmBL4PYYDhJw6AHV+orgrDM1MWbJuLhYZgXSZArpe0q4m7ur6FlZ5tJbJUM6abrx0WNe0wrioL55gFEuo2kMpqMO5kTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
-Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=localhost)
-	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92.3)
-	(envelope-from <lee@trager.us>)
-	id 1smM44-00024n-O4; Thu, 05 Sep 2024 23:39:01 +0000
-From: Lee Trager <lee@trager.us>
-To: netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexander Duyck <alexanderduyck@fb.com>,
-	kernel-team@meta.com,
-	Shinas Rasheed <srasheed@marvell.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Phani Burra <phani.r.burra@intel.com>,
-	Lee Trager <lee@trager.us>,
-	Joshua Hay <joshua.a.hay@intel.com>,
-	Sanman Pradhan <sanmanpradhan@meta.com>
-Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Alan Brady <alan.brady@intel.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] eth: fbnic: Add devlink firmware version info
-Date: Thu,  5 Sep 2024 16:37:51 -0700
-Message-ID: <20240905233820.1713043-1-lee@trager.us>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1725579512; c=relaxed/simple;
+	bh=iTi2JOz97bESOWj8nglttwZgx4x5PfAFi5U36iG7s18=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KIpdAmbE48powI1s4DWPHa31b+ym67B+EDTiGPFjoIunlNvmeX9i8wA9zTFM8gCX6DdMG/ACZW0lJhCv1P9UoXqdvWj1p91zJjzbPqshSuNLIHHtnTGJkQob75QsWMHrZkWsbx1DbInDbCP65sUV9gsisM75y8pCtQUqi73hIfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iY4uZdU9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725579502;
+	bh=Wi/Q4FQqesbnU7Dq4vvMsfLMKI1LTv2tLmn82wfHoWs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iY4uZdU9z/DMryGACyowZOqJ6ylV7hiEwC57rglzKHh5A7ysWHO6PwJJrGxlFuVRs
+	 wOpihwyhRpmdbyAdjZ/h28kfiPuhI4qTQi1jBy4mRF/5AfRbbG0iC3tN2IUFsCpvZ5
+	 TTiZwTpAl9H+ZJyRtAaX7MFQi82oPJ3b9p/32gAQXB4vQpLHGMEf84fcvgvoJOEedz
+	 9OzERIxdTsHWfdgdzQKd8kvw2vA7P0qaSJnrnDYdcOxjNILb6tJK4nIJK9pzTo+myr
+	 t34V6zzXhnDtB2YbeVr4wjBPq6kdXdY2FH2GBZVNyC1EjkrJHS/V6ht9LUIAASddaE
+	 xW1QRUyyj8JxA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0G5B1VKFz4w2Q;
+	Fri,  6 Sep 2024 09:38:22 +1000 (AEST)
+Date: Fri, 6 Sep 2024 09:38:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Steve French
+ <smfrench@gmail.com>
+Cc: CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Steve French
+ <stfrench@microsoft.com>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the cifs
+ tree
+Message-ID: <20240906093821.30c5114e@canb.auug.org.au>
+In-Reply-To: <20240906084637.295241d1@canb.auug.org.au>
+References: <20240906084637.295241d1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/+Plm9A1xqUabYckT13.4P=L";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-This adds support to show firmware version information for both stored and
-running firmware versions. The version and commit is displayed separately
-to aid monitoring tools which only care about the version.
+--Sig_/+Plm9A1xqUabYckT13.4P=L
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Example output:
-  # devlink dev info
-  pci/0000:01:00.0:
-    driver fbnic
-    serial_number 88-25-08-ff-ff-01-50-92
-    versions:
-        running:
-          fw 24.07.15-017
-          fw.commit h999784ae9df0
-          fw.bootloader 24.07.10-000
-          fw.bootloader.commit hfef3ac835ce7
-        stored:
-          fw 24.07.24-002
-          fw.commit hc9d14a68b3f2
-          fw.bootloader 24.07.22-000
-          fw.bootloader.commit h922f8493eb96
-          fw.undi 01.00.03-000
+Hi all,
 
-Signed-off-by: Lee Trager <lee@trager.us>
----
- .../device_drivers/ethernet/index.rst         |  1 +
- .../device_drivers/ethernet/meta/fbnic.rst    | 29 +++++++
- MAINTAINERS                                   |  1 +
- .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 75 +++++++++++++++++++
- 4 files changed, 106 insertions(+)
- create mode 100644 Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
+On Fri, 6 Sep 2024 08:46:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+>=20
+>   fs/smb/client/cifssmb.c
+>=20
+> between commit:
+>=20
+>   a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the same way as =
+SMB2/3")
+>=20
+> from the cifs tree and commit:
+>=20
+>   0fda1f8c6bf8 ("netfs: Speed up buffered reading")
+>=20
+> from the vfs-brauner tree.
+>=20
+> I fixed it up (I used the former as it is (supposedly) a much newer patch)
+> and can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-diff --git a/Documentation/networking/device_drivers/ethernet/index.rst b/Documentation/networking/device_drivers/ethernet/index.rst
-index 6932d8c043c2..6fc1961492b7 100644
---- a/Documentation/networking/device_drivers/ethernet/index.rst
-+++ b/Documentation/networking/device_drivers/ethernet/index.rst
-@@ -44,6 +44,7 @@ Contents:
-    marvell/octeon_ep
-    marvell/octeon_ep_vf
-    mellanox/mlx5/index
-+   meta/fbnic
-    microsoft/netvsc
-    neterion/s2io
-    netronome/nfp
-diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-new file mode 100644
-index 000000000000..32ff114f5c26
---- /dev/null
-+++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-@@ -0,0 +1,29 @@
-+.. SPDX-License-Identifier: GPL-2.0+
-+
-+=====================================
-+Meta Platforms Host Network Interface
-+=====================================
-+
-+Firmware Versions
-+-----------------
-+
-+fbnic has three components stored on the flash which are provided in one PLDM
-+image:
-+
-+1. fw - The control firmware used to view and modify firmware settings, request
-+   firmware actions, and retrieve firmware counters outside of the data path.
-+   This is the firmware which fbnic_fw.c interacts with.
-+2. bootloader - The firmware which validate firmware security and control basic
-+   operations including loading and updating the firmware. This is also known
-+   as the cmrt firmware.
-+3. undi - This is the UEFI driver which is based on the Linux driver.
-+
-+fbnic stores two copies of these three components on flash. This allows fbnic
-+to fall back to an older version of firmware automatically in case firmware
-+fails to boot. Version information for both is provided as running and stored.
-+The undi is only provided in stored as it is not actively running once the Linux
-+driver takes over.
-+
-+devlink dev info provides version information for all three components. In
-+addition to the version the hg commit hash of the build is included as a
-+separate entry.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index baf88e74c907..fae13f784226 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14819,6 +14819,7 @@ M:	Alexander Duyck <alexanderduyck@fb.com>
- M:	Jakub Kicinski <kuba@kernel.org>
- R:	kernel-team@meta.com
- S:	Supported
-+F:	Documentation/networking/device_drivers/ethernet/meta/
- F:	drivers/net/ethernet/meta/
+The fixup ended up being as below.
 
- METHODE UDPU SUPPORT
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-index e87049dfd223..ef05ae8f5039 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-@@ -10,6 +10,56 @@
+--=20
+Cheers,
+Stephen Rothwell
 
- #define FBNIC_SN_STR_LEN	24
+diff --cc fs/smb/client/cifssmb.c
+index cfae2e918209,04f2a5441a89..790b3f5ea64b
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@@ -1261,16 -1261,6 +1261,15 @@@ openRetry
+  	return rc;
+  }
+ =20
+ +static void cifs_readv_worker(struct work_struct *work)
+ +{
+ +	struct cifs_io_subrequest *rdata =3D
+ +		container_of(work, struct cifs_io_subrequest, subreq.work);
+ +
+- 	netfs_subreq_terminated(&rdata->subreq,
+- 				(rdata->result =3D=3D 0 || rdata->result =3D=3D -EAGAIN) ?
+- 				rdata->got_bytes : rdata->result, true);
+++	rdata->subreq.transferred +=3D rdata->got_bytes;
+++	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, true);
+ +}
+ +
+  static void
+  cifs_readv_callback(struct mid_q_entry *mid)
+  {
 
-+static int fbnic_version_running_put(struct devlink_info_req *req,
-+				     struct fbnic_fw_ver *fw_ver,
-+				     char *ver_name)
-+{
-+	char running_ver[FBNIC_FW_VER_MAX_SIZE];
-+	int err;
-+
-+	fbnic_mk_fw_ver_str(fw_ver->version, running_ver);
-+	err = devlink_info_version_running_put(req, ver_name, running_ver);
-+	if (err)
-+		return err;
-+
-+	if (strlen(fw_ver->commit) > 0) {
-+		char commit_name[FBNIC_SN_STR_LEN];
-+
-+		snprintf(commit_name, FBNIC_SN_STR_LEN, "%s.commit", ver_name);
-+		err = devlink_info_version_running_put(req, commit_name,
-+						       fw_ver->commit);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fbnic_version_stored_put(struct devlink_info_req *req,
-+				    struct fbnic_fw_ver *fw_ver,
-+				    char *ver_name)
-+{
-+	char stored_ver[FBNIC_FW_VER_MAX_SIZE];
-+	int err;
-+
-+	fbnic_mk_fw_ver_str(fw_ver->version, stored_ver);
-+	err = devlink_info_version_stored_put(req, ver_name, stored_ver);
-+	if (err)
-+		return err;
-+
-+	if (strlen(fw_ver->commit) > 0) {
-+		char commit_name[FBNIC_SN_STR_LEN];
-+
-+		snprintf(commit_name, FBNIC_SN_STR_LEN, "%s.commit", ver_name);
-+		err = devlink_info_version_stored_put(req, commit_name,
-+						      fw_ver->commit);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
- static int fbnic_devlink_info_get(struct devlink *devlink,
- 				  struct devlink_info_req *req,
- 				  struct netlink_ext_ack *extack)
-@@ -17,6 +67,31 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
- 	struct fbnic_dev *fbd = devlink_priv(devlink);
- 	int err;
+--Sig_/+Plm9A1xqUabYckT13.4P=L
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-+	err = fbnic_version_running_put(req, &fbd->fw_cap.running.mgmt,
-+					DEVLINK_INFO_VERSION_GENERIC_FW);
-+	if (err)
-+		return err;
-+
-+	err = fbnic_version_running_put(req, &fbd->fw_cap.running.bootloader,
-+					DEVLINK_INFO_VERSION_GENERIC_FW_BOOTLOADER);
-+	if (err)
-+		return err;
-+
-+	err = fbnic_version_stored_put(req, &fbd->fw_cap.stored.mgmt,
-+				       DEVLINK_INFO_VERSION_GENERIC_FW);
-+	if (err)
-+		return err;
-+
-+	err = fbnic_version_stored_put(req, &fbd->fw_cap.stored.bootloader,
-+				       DEVLINK_INFO_VERSION_GENERIC_FW_BOOTLOADER);
-+	if (err)
-+		return err;
-+
-+	err = fbnic_version_stored_put(req, &fbd->fw_cap.stored.undi,
-+				       DEVLINK_INFO_VERSION_GENERIC_FW_UNDI);
-+	if (err)
-+		return err;
-+
- 	if (fbd->dsn) {
- 		unsigned char serial[FBNIC_SN_STR_LEN];
- 		u8 dsn[8];
---
-2.43.5
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaQO0ACgkQAVBC80lX
+0Gwc6wf/SD+cCKYhktm1h9tl1N6HWkP584MpHEr4u9jwHyn8totB5OkAYhdWWZh9
+Nu245wl7YZgs33j931BCHMyzSFOZTLN+Z8AcepASnDCQZG9ik2v9TRZ30spBzImm
+3JXKw6AI5LsHtiXMxbToQh2CKbJTlzK3GB1S0k0S/Mapl5A3ziMVjzq25qEKQLq5
+C/gCnramFoVULqsDcLFCKGfBlxamR2WcyMUvJ+ueTS5598AvjigRt/5ko+IPMVQV
+Fn0Ocpz2QagRjuIX8cqKHW9qHpNHAjCYvSNdqmtY1L0R4FTh5Hn2Auh9kVRMKraM
+AkbqVQDWLWRRSwZr8+d+4nUC1fTiEQ==
+=tlCG
+-----END PGP SIGNATURE-----
+
+--Sig_/+Plm9A1xqUabYckT13.4P=L--
 
