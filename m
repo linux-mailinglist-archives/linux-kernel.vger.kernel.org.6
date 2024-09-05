@@ -1,138 +1,225 @@
-Return-Path: <linux-kernel+bounces-317815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D577F96E408
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:26:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B296E40B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74DB0B229FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:26:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F102F1F23853
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E8C1A38E6;
-	Thu,  5 Sep 2024 20:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61081A42C7;
+	Thu,  5 Sep 2024 20:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxv3xHFf"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="FlpHb8kz"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3855B1A2570;
-	Thu,  5 Sep 2024 20:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D6D1A3022
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 20:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725567886; cv=none; b=dN1Ty88hEyX7C3RdyjVsmhHg52tirdyRrV4mweGe+SlM1vw2SeDG+S2vP2mvjBDzhQ9TpmBah+Y3Ks4AdjGJfNpTU7aRuS88vqeJK1pGDoHc6YLumzRTrpP9Xf/PN5/1REyX4mea2br2WVDG3d3K7kkkM8/Jnsm7Qg1Yno/XNso=
+	t=1725567899; cv=none; b=l2Xl6eYcY8tWbWBNz1T1zta70UMX/6RNk3mQcduqWrR1IFkoCV/ABVUf2Q8m/6rqeRir9N6T0ULHXEXkJUvFxfL3g5CWLClzTWW8b9Tvh0gUXvsuZtjVGQDo9N3d+mVXho/HaZsgv0WN1lh+Mfrmf6R9wqiJGA2jbfcw5pyZLzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725567886; c=relaxed/simple;
-	bh=NGrGPC9AVmfunJ8pKBfuV1Bxb+MuSbLY2pWcUM2wSGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nYb1aAoJGsjqfP53edR5/oCfaC88KQj0MDnsNuRDp1Cb7HB8pQwhC20fOsOuV5hZj+XpTGwq2O8OWAYc6ebueeANtHKwwtXe4Ph/u+epOUr1WiQ4W4njkBwzheSiDIHIujLgVUTAVQgWqn2HD2bQZevqNGG6/aXFGL+dAUUJDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxv3xHFf; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8b679d7f2so966339a91.1;
-        Thu, 05 Sep 2024 13:24:44 -0700 (PDT)
+	s=arc-20240116; t=1725567899; c=relaxed/simple;
+	bh=wvJODaIBgD1jUPLAQ4kNOzQaEXZUpgapfSzeNtFOXRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mhTjDUFZTnVRV4jnRlSwzWY3BZYqwAZ1+1m+pMuB+2Zk1rs13JVaFiOPnCyi3g86Zq3RfHBU+MwUn3bItGr1nN0aN9pz81Ot64NiPnWK9HzPpk7nypFEDuPv9rXkvOrfYq9w/K/nm4AxRwzyfiq33y6xvhkHipZFZR/BOcoNGHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=FlpHb8kz; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d87f34a650so889330a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 13:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725567884; x=1726172684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q4pnjKyhCClrvRPv4sgZ/czxqPIQCouh8o4w6WwCf+E=;
-        b=fxv3xHFfGiyiwlVmDhTYvS2LsGCaxh5Em7PKOh3KrlSBLz0NP5PPkys1+0khi7VsOD
-         AAChy03/6kSA5Z6asg4N0bCmN2SVwQ+SA+3/i/gs6A4FjKqH++LkM/odJBmYs4ACjaF2
-         tH3Jw1IF3Mh+sJVVqf5pJrp5I0ARyrqCiJlDm+veu1rLuNwYS/3ZCPMFoSybocKpHxk7
-         UHWCs0yRI92uPYuIkOrLkRMkbNOyLyToJtrewlYTDooJivt4Xh4PJhFf/kQKwRAS+QBf
-         hx5hxGqaVQ1nGoVbR/HvJFB99o3pI1S1PH5tLiGd0D/YLjGXyUplESJQW4nAp7Ks0RRU
-         iIDQ==
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1725567897; x=1726172697; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MFqtA/E7v5gQ+W6lQ8y6AL+BzpP0eM4/rxOM2YdHIlk=;
+        b=FlpHb8kzYDORq0QbPZFkH11NHAZgFVQBw4+9gvAZPatfjnoxjH/5LcJmbMid07hDUg
+         WRFzLMRdxTv9L8MsK8L4EqqnAEC/VtjBF3qILWt5XKnH4qCy5GQoxRMKfFdK5dMZ0i+8
+         acKxa9ilDb94rEPRa+/OfNeVit0U5Bfk8+13UeBox92eLC4fNq1C/743ZSDPgkolCpb1
+         CwkTevUn0beRFFvyDvcWAez/PwotWT0ELIz/H+xUSlg8lNXY0ZQ7OOYGPuqerKa1WDfu
+         nUtgj4GiVE3ooXiwGzpYBNZkZ+VWxfnGvUzWVeb1X3kE0xIhCuPvb9zSvqESeJmdJ0F9
+         uJtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725567884; x=1726172684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q4pnjKyhCClrvRPv4sgZ/czxqPIQCouh8o4w6WwCf+E=;
-        b=nKGN/uhKmR+3a/NHMGv4q2Yh+Lb7WR/xBbqEYd6NMnfUv1kLfg320tYaowirpdHCe7
-         hRu5lWkuN7eyYlBy/372gshbXBNAgV+E86wH41FrxMmVkb159py0QzCYQlMdnPSpHTRE
-         1YHsLDGpXy6rmtgbZ3BHZiPFFxl1veY2IeXCaQiGSqr4/DrVNmdDFTWWqSkuBSkoV+cF
-         RlzDEzmaZkk3z/oC7PlE2JiIhIEds97+HpBnIE4+F0UeKM8lwW0kDtwbalmbSrMl7Md7
-         qa1PvFFalzDVZQABZoLZ//CvzV24zJ91wSMr/B4awvURKjn5RXcey60cuFC4AB7RdFg/
-         7erA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRJ1YRiDfdB11ylBh72oCqEyMP9JaMLnEQYut1xHhJ5eMqyPQVKwJLWP5Pc3LPuFRekSk=@vger.kernel.org, AJvYcCXh7HCk/RxNQmS06LG6gYnAxF/9rJiOJKLoILj2nTtCXSCoII7R+BpH6LdWuhKP3HkVpcUJiDbZ2zKBfpeOyB6s@vger.kernel.org, AJvYcCXov13Ybg6Xa9IbkV9iziSJqKdXuh2j7ivw5KBsTG/KqMKjxnCLqamTe9UPDsgk4Xzf5XT44IeidZoVGvG4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFpsoxw+gx8jFS7F+B+aWFf2nvQjz/6440FJxW68Xu3tN+x2ud
-	iDWENYOF0mRyBseU+CviVsKmXliKlTyCmb8KYWxrxDawo1NWColWg++xLBzcpXw9zgCfnuYEB3r
-	QO12fRda21Xd7atvg8Xy4xFZcp4k=
-X-Google-Smtp-Source: AGHT+IFaowFZoH0YDD5Pt3eVuHrWmY+KINCZryxJVws2NSDg8A8Teh1D20XPO+Kc8YrkA2CTKXroThwMfgJOetYAr9c=
-X-Received: by 2002:a17:90a:8a15:b0:2d8:99c4:3cd9 with SMTP id
- 98e67ed59e1d1-2dad4de1392mr593624a91.3.1725567884435; Thu, 05 Sep 2024
- 13:24:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725567897; x=1726172697;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MFqtA/E7v5gQ+W6lQ8y6AL+BzpP0eM4/rxOM2YdHIlk=;
+        b=iFDJ334IOUe0Hpu2g9Nhx3Jrfv/4Tzans1TWCLVX2mqPUQo8KVBSoN5+t85XvpaGnx
+         lz/6KyBCJDl3LkRwQPYryFizcX8uWY4V/qOKZ5NSjs0IZC1YggHtdS+MJaHzN1EJevuJ
+         ftAmqOwPBgNMEyO+hssTAhL99SnyU3QVzmquOxIduL63yi3nfWGfWxMDvHbP6LKMIkxX
+         zQT3zk5WozDRQjHTy1t5BbB3nRGUjaDM1ArbvquPbgBUNWkInQiwtd1eNSh7yx2cxQRu
+         HSgqcg9pUZ3UlMW/lZA1TqC49lK/+L2pEeTDxRIrnycTpD2zSaDWeyUjO0N6a+IHOo6b
+         PzRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUICYI641M0xcerPTQYkXn4H267AUBZVk9a8RaG1Ed375lRtLcKMLxEyh1/2cCE9EoBi7lzvFFk36VbTj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEtID/+Qw0nzN/HqN7NyPUteRITt+nKv/RaIC/KYOSD7/JGgl7
+	tttj6TLtV5P4Xe6qP0eDUxQIosj+UcX8x032oeoxWmj1PLQxkUdmt21TC9ESWQ==
+X-Google-Smtp-Source: AGHT+IHWsZrJ/0FG7b8hwchFVze0z1FJkzK5dQbSnSTMfUnlfMdkkmNUaojAuy0wmGiazF8Xhwp4mQ==
+X-Received: by 2002:a17:90b:3cce:b0:2c9:6abd:ca64 with SMTP id 98e67ed59e1d1-2dad506f880mr762344a91.9.1725567896838;
+        Thu, 05 Sep 2024 13:24:56 -0700 (PDT)
+Received: from [172.16.118.100] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8d38ffff9sm9454416a91.39.2024.09.05.13.24.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2024 13:24:56 -0700 (PDT)
+Message-ID: <dfb5b79f-4241-4507-8aaa-3c57f3038c3f@beagleboard.org>
+Date: Fri, 6 Sep 2024 01:54:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828121706.1721287-1-yikai.lin@vivo.com>
-In-Reply-To: <20240828121706.1721287-1-yikai.lin@vivo.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 5 Sep 2024 13:24:31 -0700
-Message-ID: <CAEf4BzbfBQZqy2w4TiTBR9mi4AMQkWKk8Un8Lp21ELQBgsgcvQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 0/2] selftests/bpf: Enable vmtest for
- cross-compile arm64 on x86_64 host, and fix some issues.
-To: Lin Yikai <yikai.lin@vivo.com>
-Cc: andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, 
-	shuah@kernel.org, terrelln@fb.com, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Vaishnav M A <vaishnav@beagleboard.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
+ robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
+ <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org>
+ <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
+ <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
+ <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
+ <CAL_Jsq+6ruu23UrwJ=NUUrh-9R_E5tKREv1AyU24op_uUigpNg@mail.gmail.com>
+ <2d3fd95f-6f4d-49d9-a473-b4c5631a4fee@beagleboard.org>
+ <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <CAL_JsqLEfBGQsJw6Vn2FnCrMOEmwhTq9ro2Qca7bBAM_UKZ6-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 5:17=E2=80=AFAM Lin Yikai <yikai.lin@vivo.com> wrot=
-e:
->
-> These two patch enable the use of "vmtest.sh" for cross-compile arm64 on =
-x86_64 host.
-> This is essential for utilizing BPF on Android (arm64),
-> as the compilation server is running on Ubuntu (x86).
->
-> Following previous guidance from V1, the two changes are as follow:
->
-> V2:
-> - patch 2:
->    - [1/2] In Makefile, use $(SRCARCH) to get target arch's uapi.
->            Therefore, there is no longer a need to compile "make headers_=
-install".
->    - [2/2] Regard "LDLIBS +=3D -lzstd" as a separate patch for static com=
-pile.
->
-> v1:
->    Link: https://lore.kernel.org/bpf/20240827133959.1269178-1-yikai.lin@v=
-ivo.com/
-> - patch 2:
->    - [1/2] Update "vmtest.sh" for cross-compile arm64 on x86_64 host.
->    - [2/2] Fix cross-compile issue for some files and a static compile is=
-sue for "-lzstd"
->
-> Lin Yikai (2):
->   selftests/bpf: Enable vmtest for cross-compile arm64 on x86_64 host,
->     and fix some related issues.
->   selftests/bpf: fix static cross-compile error for liblstd.a linking.
->
->  tools/testing/selftests/bpf/Makefile   |  8 +++++-
->  tools/testing/selftests/bpf/README.rst | 11 +++++++-
->  tools/testing/selftests/bpf/vmtest.sh  | 37 +++++++++++++++++++++-----
->  3 files changed, 48 insertions(+), 8 deletions(-)
->
-> --
-> 2.34.1
->
->
+On 9/4/24 23:19, Rob Herring wrote:
 
-Given that [0] series was just applied and it also has some bits that
-address cross-compilation, can you please rebase and re-check what
-sort of changes you still need on top of that?
+> On Wed, Sep 4, 2024 at 12:09 PM Ayush Singh <ayush@beagleboard.org> wrote:
+>>>> gpio-map is what you are looking for. It's documented in the DT spec.
+>>>> It was created exactly for this purpose of remapping GPIO lines on a
+>>>> connector.
+>>>>
+>>>> Rob
+>>
+>> Hi. I found docs on nexus nodes [1] and tried using it for mikroBUS, but
+>> it does not seem to be working. Here is my connector:
+>>
+>> ```
+>>
+>>       mikrobus_gpio0: mikrobus-gpio0 {
+>>           #gpio-cells = <2>;
+>>           gpio-map =
+>>           <0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
+>>           <2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
+>>           <4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
+>>           <6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
+>>           <8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
+>>           <10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
+>>           gpio-map-mask = <0xf 0x0>;
+>>           gpio-map-pass-thru = <0x0 0x1>;
+>>       };
+>>
+>> ...
+>>
+>> &main_uart5 {
+>>       status = "okay";
+>>       pinctrl-names = "default";
+>>       pinctrl-0 = <&mikrobus_uart_pins_default>;
+>>
+>>       gnss {
+>>           compatible = "u-blox,neo-8";
+>>           reset-gpios = <&mikrobus_gpio0 10 GPIO_ACTIVE_LOW>;
+>>       };
+>> };
+>>
+>> ```
+>>
+>>
+>> After some fdtdump, I can see that at least the dtc compiler does not
+>> seem to do the forwarding at dt compile time. Here is the dump:
+> dtc knows nothing about it.
+>
+>> ```
+>>
+>> mikrobus-gpio0 {
+>>           #gpio-cells = <0x00000002>;
+>>           gpio-map = <0x00000000 0x00000000 0x00000025 0x0000000b
+>> 0x00000000 0x00000001 0x00000000 0x00000025 0x00000009 0x00000000
+>> 0x00000002 0x00000000 0x00000025 0x00000018 0x00000000 0x00000003
+>> 0x00000000 0x00000025 0x00000019 0x00000000 0x00000004 0x00000000
+>> 0x00000025 0x00000016 0x00000000 0x00000005 0x00000000 0x00000025
+>> 0x00000017 0x00000000 0x00000006 0x00000000 0x00000025 0x00000007
+>> 0x00000000 0x00000007 0x00000000 0x00000025 0x00000008 0x00000000
+>> 0x00000008 0x00000000 0x00000025 0x0000000e 0x00000000 0x00000009
+>> 0x00000000 0x00000025 0x0000000d 0x00000000 0x0000000a 0x00000000
+>> 0x00000025 0x0000000c 0x00000000 0x0000000b 0x00000000 0x00000025
+>> 0x0000000a 0x00000000>;
+>>           gpio-map-mask = <0x0000000f 0x00000000>;
+>>           gpio-map-pass-thru = <0x00000000 0x00000001>;
+>>           phandle = <0x0000000e>;
+>>       };
+> You might need "gpio-controller" here. Though if you do, I think
+> that's a mistake in the kernel. It should work like interrupt-map and
+> generally you have either interrupt-controller or interrupt-map, but
+> not both (though that is allowed now too).
+>
+>> ...
+>>
+>> serial@2850000 {
+>>               compatible = "ti,am64-uart", "ti,am654-uart";
+>>               reg = <0x00000000 0x02850000 0x00000000 0x00000100>;
+>>               interrupts = <0x00000000 0x000000b7 0x00000004>;
+>>               power-domains = <0x00000003 0x0000009c 0x00000001>;
+>>               clocks = <0x00000002 0x0000009c 0x00000000>;
+>>               clock-names = "fclk";
+>>               status = "okay";
+>>               pinctrl-names = "default";
+>>               pinctrl-0 = <0x0000000d>;
+>>               phandle = <0x00000081>;
+>>               gnss {
+>>                   compatible = "u-blox,neo-8";
+>>                   reset-gpios = <0x0000000e 0x0000000a 0x00000001>;
+>>               };
+>>    };
+>>
+>> ```
+>>
+>>
+>> So I am a bit unsure. Is the dtc parser in the kernel supposed to do the
+> No such thing as "dtc parser in the kernel".
+>
+>> mapping, or is it supposed to be done by `dtc` at compile time?
+> No.
+>
+>> Maybe we
+>> do not have support for it in upstream kernel yet?
+> Yes, there is upstream support. Grep for of_parse_phandle_with_args_map.
+>
+> Rob
 
-  [0] https://lore.kernel.org/all/20240905081401.1894789-1-pulehui@huaweicl=
-oud.com/
+
+So, after a bit of troubleshooting, it seems that a nexus node should 
+not be present at root level (unless it also has an actual driver). If 
+the nexus node is a root node without an actual driver, anything 
+referring to the node is deferred.
+
+
+I am still a bit unsure if I should make the `mikrobus-connector` itself 
+a nexus node or if I should have a subnode named `mikrobus_gpio`, but at 
+least things seem to be working now. So, thanks for your help.
+
+
+Ayush Singh
+
 
