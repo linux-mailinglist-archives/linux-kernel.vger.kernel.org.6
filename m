@@ -1,177 +1,159 @@
-Return-Path: <linux-kernel+bounces-316940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609BA96D74B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:36:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A95F96D755
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB14281A81
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90DCD1F240D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34482199E9E;
-	Thu,  5 Sep 2024 11:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CB2199E94;
+	Thu,  5 Sep 2024 11:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n62G6JuP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l88QK/a3"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7F719342A;
-	Thu,  5 Sep 2024 11:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92BC19342A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 11:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725536166; cv=none; b=lWq+2iv7QyEDAqNcP80iOko3+PcRiAGLoBDQupa/oAVM6C9KLsZvMr1k5gw+TvPj9CbAevysQLjmKidQR+bvV1K25Yhbi6FJHRw3xrMU2/uBUxq126jeHKkocUm7fjOQlC7212yX+HfmfNELT3Pld8Ij/LalX6Qo1QdBvA6yf8s=
+	t=1725536346; cv=none; b=H1lfoicD54+662nJgpXtjoLTtmjjJKiUjW9b2RRDJRmHVL8CqhJbWCOT1+6avp5ggu92UwT7l1IhUZqgZyZoyNUDz8ikBrRkNXnBGOE2XJunNiX89//dopPswJ/DI/RnmkzMomiWRtnnHtpOrl/LnXOS2e+8U14Sc9GkCJYzXD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725536166; c=relaxed/simple;
-	bh=T+4ZZIcX79/JHfYELeyG3pX+pz0BFgc2EUGDMCkbgis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4SdpLv/rToRz+jp/KpiCm9dO3MJAJ+Whm9mumnnsZbgG070J+zxR8XaQg3Sdlt7ktjBBuONklOJfrPaNNsY3tr5CjYaGyCjwri6DlP0ot1PwQWpfGBrEWQOsp/2H7t/FrnUlrZ2ZXWyiL/ulfBtDFQv5HS0RaIHYjnEBoonacc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n62G6JuP; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725536165; x=1757072165;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T+4ZZIcX79/JHfYELeyG3pX+pz0BFgc2EUGDMCkbgis=;
-  b=n62G6JuPCvun4LbIDxAzM7rBlxw63OUaJarCCXsqsfHFHrEDfPxy59dK
-   iNyF6Y2UGOumjlNA0uR8f52PMV5yxbKJwc0q6P/JNLjG6tDX2L3s8eQ+P
-   NYn0FRv+DehNt7aEq1JdMZXo8kgUlliqMEDtwLFicOUFE4Ojpyxlg0cNC
-   mT0xAyk/wpHne/w3YnTArv5VJ5qTzMll/Xkd5qKDnFIic094EawArOSM2
-   LGEMMngmcl3oqJAqTbFjxjgXc0tCYhKTn+8V/HUWqQRRozU1Tyy4jgjin
-   y+HlY69jfkQSa4ug7Ng4nhyaOKXASZbX3qS15fuQRnWk+c54LXa5shxgo
-   w==;
-X-CSE-ConnectionGUID: EIN7+d2aSNq1OUp9Jno7aw==
-X-CSE-MsgGUID: mgUuiLwUS0KBPUakOPSMQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24362395"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="24362395"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 04:36:04 -0700
-X-CSE-ConnectionGUID: yqeSQoKbSVmLnyW3gb00bg==
-X-CSE-MsgGUID: SaU0FK/HSCKxfm+mSXleAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="66117639"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa007.jf.intel.com with SMTP; 05 Sep 2024 04:36:01 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 05 Sep 2024 14:36:00 +0300
-Date: Thu, 5 Sep 2024 14:36:00 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Parth Pancholi <parth105105@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Parth Pancholi <parth.pancholi@toradex.com>
-Subject: Re: [PATCH v2] usb: typec: tcpci: support edge irq
-Message-ID: <ZtmXoG1t2SZLDug2@kuha.fi.intel.com>
-References: <20240905065328.7116-1-parth105105@gmail.com>
+	s=arc-20240116; t=1725536346; c=relaxed/simple;
+	bh=7dThSnBD4jy2w+lNK4sQoHqZorzmpN8yffl06pPHXfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tOQrTarB6nEr+6SuPnWceF+bAjnjG/niaT5CmRf1sX/mb8mUiN+qnIlMpw/UWYT+HgrdSj6mdiq69T7KWfXr2MbaoQL/HcKLS3YKaaaHTOdcneX/mdsZOpHEJzT/FYx72WafO43nrj241bxJE9HIypYQihF/ePKmZ0GMXPkcaFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l88QK/a3; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a7e54b898so766160276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 04:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725536344; x=1726141144; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jLrIko9Z9MxBDc0IDBCABFFMewp6y0UOpPNBPOn2Xow=;
+        b=l88QK/a3fjAjpOG6VwKD1oPLrRaiyGRA7dUiVdGCXGQWF71DhFj68YBAfZ6HKcXbkQ
+         ygIuyhdvImkdKzCjGZUw0kDRiUxh09i7TlfhTGHVqMzx33B4OxlfkYEH0hbMi9cQzeCJ
+         wNAyF8LS4MAigFDB4RFVbUYeb6FyjZn31M1Kn241mv9w3avzKR+nA3/Z94fEUs4I5Vo6
+         Es13IMNYPd5bDWdIbrkB8fiJ7YQccKW2C2tRgC23H8VZYOoQq69sbREiJUFK8MkQPzEM
+         egXilzak+nTL0u3D9+ZzazX28Zzg7G6+MI+0cCBN8kfO0UjTb3gV8/0jQtZIgfQiEZXN
+         q8lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725536344; x=1726141144;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jLrIko9Z9MxBDc0IDBCABFFMewp6y0UOpPNBPOn2Xow=;
+        b=Nfi+6mesFFWTji3kDgAxXS7tRHednMYZ7Xy1nQ6L4E3Tz4jtiyY27qDVnK4xop8RJx
+         J1RxmDZ/Z7ajfbiCpA3s/kbE7mIqSrh0YYqKSbuwsu6bBT5KJq2+zkxbRqvQqLGhznlY
+         0ilvtDVtJR1YLFUiEuxp6aNwmz4Z1lp1o3L1LJX1DIWB2BFUNHCHbcQQfgAGgtdmZz5v
+         0ep5CYA3PSxszz4VFiumpnSq7eHr/o+DtNQtYB8U8c6cCJ7D0u59faq2ugXVnHVz4EAW
+         pfIKTxdkuEu73dLC0OzSaswstWXcl8uZkoF2ouyaVmkJMKQ3YCaNb/6XF6EFWjPXD+g6
+         EulQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBNxMGjk1Jj5T7y26KYi15awlJ/2GF5eaEd184m/FmUHl+OwJPdtCosH8dLROULZ6oaYWYWgp6tudW3Zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlUbnrjQbD80g2OjuQQEdD/1YWYr2NeQ1M2MemHak8xlByqbud
+	TXjz48w5sn2eE0wXNTj5yXGpCh9+Of+HD84w6r85o6fElaZXfAFK+6ntBwVjRHnk2sNMA8gI0Su
+	ifjDGIKiECHxTk1a6oXIX8KzsFo4sNKg8GbLn0A==
+X-Google-Smtp-Source: AGHT+IG2scPjtVAXf9nEKI3l/EN+JmBquZI8G7Ofzyty/BbMRzaMcLv0Q0Cuw4yoEG/OI+Q41jbqYX6lsRoODakwg1Q=
+X-Received: by 2002:a05:6902:2601:b0:e1a:b168:8053 with SMTP id
+ 3f1490d57ef6-e1ab16881a3mr15652183276.17.1725536343783; Thu, 05 Sep 2024
+ 04:39:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905065328.7116-1-parth105105@gmail.com>
+References: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
+In-Reply-To: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 5 Sep 2024 13:38:27 +0200
+Message-ID: <CAPDyKFrFX_UeYWuZtQPoxHbZb0CwpLRA=QcMFsALwuiFTY3T5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] pmdomain: ti_sci: collect and send low-power mode constraints
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
+	Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 05, 2024 at 08:53:28AM +0200, Parth Pancholi wrote:
-> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> 
-> TCPCI USB PHY - PTN5110 could be used with SOCs that only support
-> the edge-triggered GPIO interrupts such as TI's K3 device AM69.
-> Move the interrupt configuration to the firmware which would
-> allow to accommodate edge triggered interrupts for such SOCs.
-> In order to support the edge interrupts, register irq line in advance
-> and keep track of occurrence during port registering.
-> 
-> When the edge interrupts are used, it is observed that some of the
-> interrupts are missed when tcpci_irq() is serving the current
-> interrupt. Therefore, check the status register at the end of
-> tcpci_irq() and re-run the function if the status is not clear
-> i.e. pending interrupt.
-> 
-> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+On Tue, 20 Aug 2024 at 02:00, Kevin Hilman <khilman@baylibre.com> wrote:
+>
+> The latest (10.x) version of the firmware for the PM co-processor (aka
+> device manager, or DM) adds support for a "managed" mode, where the DM
+> firmware will select the specific low power state which is entered
+> when Linux requests a system-wide suspend.
+>
+> In this mode, the DM will always attempt the deepest low-power state
+> available for the SoC.
+>
+> However, Linux (or OSes running on other cores) may want to constrain
+> the DM for certain use cases.  For example, the deepest state may have
+> a wakeup/resume latency that is too long for certain use cases.  Or,
+> some wakeup-capable devices may potentially be powered off in deep
+> low-power states, but if one of those devices is enabled as a wakeup
+> source, it should not be powered off.
+>
+> These kinds of constraints are are already known in Linux by the use
+> of existing APIs such as per-device PM QoS and device wakeup APIs, but
+> now we need to communicate these constraints to the DM.
+>
+> For TI SoCs with TI SCI support, all DM-managed devices will be
+> connected to a TI SCI PM domain.  So the goal of this series is to use
+> the PM domain driver for TI SCI devices to collect constraints, and
+> communicate them to the DM via the new TI SCI APIs.
+>
+> This is all managed by TI SCI PM domain code.  No new APIs are needed
+> by Linux drivers.  Any device that is managed by TI SCI will be
+> checked for QoS constraints or wakeup capability and the constraints
+> will be collected and sent to the DM.
+>
+> This series depends on the support for the new TI SCI APIs (v10) and
+> was also tested with this series to update 8250_omap serial support
+> for AM62x[2].
+>
+> [1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
+> [2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
+>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 > ---
-> v2: Re-enable irq irrespective of tcpci_register_port() return status which was disabled before this call
+> Changes in v2:
+>
+> - To simplify this version a bit, drop the pmdomain ->power_off()
+>   changes.  Constraints only sent during ->suspend() path.  The pmdomain
+>   path was an optimization that may be added back later.
+> - With the above simplification, drop the extra state variables that
+>   had been added to keep track of constraint status.
+> - Link to v1: https://lore.kernel.org/r/20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com
+>
 > ---
->  drivers/usb/typec/tcpm/tcpci.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-> index a2651a2a7f2e..ed32583829be 100644
-> --- a/drivers/usb/typec/tcpm/tcpci.c
-> +++ b/drivers/usb/typec/tcpm/tcpci.c
-> @@ -707,10 +707,13 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
->  {
->  	u16 status;
->  	int ret;
-> +	int irq_ret;
->  	unsigned int raw;
->  
->  	tcpci_read16(tcpci, TCPC_ALERT, &status);
-> +	irq_ret = status & tcpci->alert_mask;
->  
-> +process_status:
->  	/*
->  	 * Clear alert status for everything except RX_STATUS, which shouldn't
->  	 * be cleared until we have successfully retrieved message.
-> @@ -783,7 +786,12 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
->  	else if (status & TCPC_ALERT_TX_FAILED)
->  		tcpm_pd_transmit_complete(tcpci->port, TCPC_TX_FAILED);
->  
-> -	return IRQ_RETVAL(status & tcpci->alert_mask);
-> +	tcpci_read16(tcpci, TCPC_ALERT, &status);
-> +
-> +	if (status & tcpci->alert_mask)
-> +		goto process_status;
-> +
-> +	return IRQ_RETVAL(irq_ret);
->  }
->  EXPORT_SYMBOL_GPL(tcpci_irq);
->  
-> @@ -915,20 +923,22 @@ static int tcpci_probe(struct i2c_client *client)
->  
->  	chip->data.set_orientation = err;
->  
-> -	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
-> -	if (IS_ERR(chip->tcpci))
-> -		return PTR_ERR(chip->tcpci);
-> -
->  	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
->  					_tcpci_irq,
-> -					IRQF_SHARED | IRQF_ONESHOT | IRQF_TRIGGER_LOW,
-> +					IRQF_SHARED | IRQF_ONESHOT,
->  					dev_name(&client->dev), chip);
-> -	if (err < 0) {
-> -		tcpci_unregister_port(chip->tcpci);
-> +	if (err < 0)
->  		return err;
-> -	}
->  
-> -	return 0;
-> +	/*
-> +	 * Disable irq while registering port. If irq is configured as an edge
-> +	 * irq this allow to keep track and process the irq as soon as it is enabled.
-> +	 */
-> +	disable_irq(client->irq);
-> +	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
-> +	enable_irq(client->irq);
-> +
-> +	return PTR_ERR_OR_ZERO(chip->tcpci);
->  }
->  
->  static void tcpci_remove(struct i2c_client *client)
-> -- 
-> 2.34.1
+> Kevin Hilman (3):
+>       pmdomain: ti_sci: add per-device latency constraint management
+>       pmdomain: ti_sci: add wakeup constraint management
+>       pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
+>
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+> ---
+> base-commit: ad7eb1b6b92ee0c959a0a6ae846ddadd7a79ea64
+> change-id: 20240802-lpm-v6-10-constraints-pmdomain-f33df5aef449
+>
+> Best regards,
+> --
+> Kevin Hilman <khilman@baylibre.com>
 
--- 
-heikki
+Besides a couple of minor things that I have commented on for each
+patch, this looks okay to me!
+
+Taking into account the other series that this depends on, what is the
+best merging strategy? Is it safe for me to take it through my
+pmdomain tree?
+
+Kind regards
+Uffe
 
