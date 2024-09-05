@@ -1,109 +1,107 @@
-Return-Path: <linux-kernel+bounces-317363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCE696DD14
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C81C96DD12
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00081C23063
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA65B20C5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E704F19FA87;
-	Thu,  5 Sep 2024 15:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5B4126F1E;
+	Thu,  5 Sep 2024 15:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bU0IpBTM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RHbw8TcM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D91213C8F0;
-	Thu,  5 Sep 2024 15:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A7F61FFE
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 15:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548422; cv=none; b=Fv+bg1Vi4pg+gW/NlxYITVt3IV82X1n9ckCcoR6yPHXH7a2vpdtKYROjzciuYR2YwJjBUwn+NwgbS2MxjnkXxK3Ft6GsMLsSMOlLjrNRgZepZGzp9SQooFwswNS694YoFdsqZvll3NTwwnyEYQAzzss7kTHAvpGcCQnC1KISLJY=
+	t=1725548418; cv=none; b=d4jU9emtRvx72MjSGkV2MFCIcSaaZgulLP8ktggwIS1l+U7T8NRNyqJ+dFz4bJLo8SNl6Q+cgUxukSp+5IhYqQ89N6jjN46R2KqyY6dQKv5pepZGQG1V1zH+3+4OxKwYJBZDO/G6VdkKeToGTFnfO3TGPkXUm00pjb9hvWyK3/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548422; c=relaxed/simple;
-	bh=bnCo/rn97a40j7SezFlC511CH4VQCMOzgpdPx6Adums=;
+	s=arc-20240116; t=1725548418; c=relaxed/simple;
+	bh=/Om5JQEN1MDMTszU6+n5rrCoTrswg7FUbLZS1sBERO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o5kBgnkGwJJHADPmD87W79GARmFj+WsrhCyNNjoKTaF0Jax2oh9Q/04qcnH0We/ybBKNgUFgxPjRxQMUfBsi/J3rXclu3PUwV3/EeFopyG+0Z/Shec2GuYj7mzGpnjOpSU8dYhMMiAzlZaUA9Byf6B1Bcn2tpvhXAmMBlPV/wgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bU0IpBTM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BF25440E0198;
-	Thu,  5 Sep 2024 15:00:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zRiLxf_HpXVN; Thu,  5 Sep 2024 15:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725548412; bh=izxcSifsjm6Enwf2h8N9L3CVMTNiwfjfZrR+OAJBlP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bU0IpBTMDajwBaxIXkUmUftirbn3oa9/clIaBDnR44ePT13fCcc9i60yRyeWsuyvU
-	 sTO6rZZ1m/9JvVUkP3QFBOX9TN4py07i8/C1yyTN9jOTWUwWp1ysersH6XKWiLhnbi
-	 z0mEM3ajd3jDGNCYv4AhIqYoVizJsz2UBkjjl51wiTnBuTpeTKsrwWgghvSQ3x143q
-	 2dWNHWpPozB07DiM1ZPIdVMua7kRxMmY6d0cUX7jwoVkNJkuwlsom1JzgZ3VMinkYN
-	 rQ9z8jhzcLDMd2gV6neeDJFpMM2lTlkU3D4ZtZP3iAd2lGNyijihCpt+63ha5RVOuD
-	 c4BIWFgO5e27QIY6tnLtSVQF8DSQqXglRae9DMgyUE+Xl9qscWUEUFRlHyE55S+wGp
-	 jykzRfolrmcNIAzhrTHQGtTBGlSpBGWHdQmiYDKcRW1SUxn8UG+U9+dhX8cKhOjo69
-	 1BvI30LD5TNTTrYpXZComE4C6uNrIjnqLdwo5TZKy9/yLyi0Nwd6w5bF69JhDu4j6i
-	 CWDVO1tqYoBFi9qLUqnv2HIxVnhDjQKyjDKbm3bFoZLqODKWCp2mQRBKutg4TWjvqB
-	 Zpbjg8sUCjUPlBMAVwdwIQ0l9pcmwTbMYxtbggl1jJiWgmUFIab4f+sCDCcOXlzTdn
-	 UCAS8wP1f0mTbiCkjyxg8Kw0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31D3440E01A2;
-	Thu,  5 Sep 2024 15:00:03 +0000 (UTC)
-Date: Thu, 5 Sep 2024 17:00:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Subject: Re: [PATCH] EDAC: Drop obsolete PPC4xx driver
-Message-ID: <20240905150002.GEZtnHchev0n6cVqZ_@fat_crate.local>
-References: <20240904192224.3060307-2-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUrZyWX+2Oii21RY6U811vTZarNiPiP7K9kN03s/Xu7naMeo3Iu8TT93mTRQOYzpbmqwZcVptfCL3r08JYIiDDtiTB7VcyjNv/GmGNc94bdyQJD0TRSL3dEJFpmkpmwRBdQBdkKKF9iAQcK654W9DX+A9sDZC+AdwFlBDKXWRkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RHbw8TcM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lXp9LvNk4O+h8/7i8pZgOZHOhKIKwqlhJBsD9NIMphg=; b=RHbw8TcMMqfg9PfH9TkQGajMhG
+	4u7Sz7lgh0jUQiE6ZWPEXPoH3qdEZ8jmoAGDQ9X+PE4sJhVow67DFpEXHddci65PGKNvJfOETferL
+	fFut9rqvCfTUcTT64TOTSR6IpE+P1vDwUY7iw6iktnVfW3R8WvtZrsycZqLfaP/O1jsaKGq4GMtfT
+	VMMz+V+SzyUXryXP3gwT8QVBiUkF2MVAu6FM69kZl6iNQ8qXhhvi3gBokifW0rRq5Ufdf5Loj0Sis
+	ZVOjoekjEeJC28PE3yEzImmJiNfGqcZBbLezIVBSl7ao8Nt/XsT29zpEV+mhSNZXmJGrh83fRZ0SY
+	Rsc7Tu0Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1smDy0-00000000VCh-1vhn;
+	Thu, 05 Sep 2024 15:00:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1E8EE300599; Thu,  5 Sep 2024 17:00:12 +0200 (CEST)
+Date: Thu, 5 Sep 2024 17:00:12 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Handle cases where
+ pick_task_scx() is called without preceding balance_scx()
+Message-ID: <20240905150012.GF4928@noisy.programming.kicks-ass.net>
+References: <Ztj_h5c2LYsdXYbA@slm.duckdns.org>
+ <20240905092858.GA15400@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904192224.3060307-2-robh@kernel.org>
+In-Reply-To: <20240905092858.GA15400@noisy.programming.kicks-ass.net>
 
-On Wed, Sep 04, 2024 at 02:22:22PM -0500, Rob Herring (Arm) wrote:
-> Since commit 47d13a269bbd ("powerpc/40x: Remove 40x platforms.")
-> support for PPC40x platforms has been removed. While the EDAC driver
-> also mentions PPC440 and PPC460 processors, the driver refuses to
-> probe on anything other than PPC405. It's unlikely support will ever be
-> added at this point for these other old platforms, so the driver can be
-> removed.
+On Thu, Sep 05, 2024 at 11:28:58AM +0200, Peter Zijlstra wrote:
+> On Wed, Sep 04, 2024 at 02:47:03PM -1000, Tejun Heo wrote:
+> > sched_ext dispatches tasks from the BPF scheduler from balance_scx() and
+> > thus every pick_task_scx() call must be preceded by balance_scx(). While
+> > this usually holds, there are rare cases where a higher sched class's
+> > balance() returns true indicating that it has tasks to run on the CPU and
+> > thus terminating balance() calls but fails to actually find the next task to
+> > run when pick_task() is called. 
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/edac/Kconfig       |    9 -
->  drivers/edac/Makefile      |    1 -
->  drivers/edac/ppc4xx_edac.c | 1425 ------------------------------------
->  drivers/edac/ppc4xx_edac.h |  167 -----
->  4 files changed, 1602 deletions(-)
->  delete mode 100644 drivers/edac/ppc4xx_edac.c
->  delete mode 100644 drivers/edac/ppc4xx_edac.h
+> Oh cute. Which class in particular did you see this do?
+> 
+> Looking at balance_fair() / sched_balance_newidle() I suppose we could
+> verify we actually have a runnable task once we've re-acquired the
+> rq-lock and have pulled_task > 0.
+> 
+> 
+> Tightening all that up would probably be better than trying to deal with
+> the fallout like this, hmm?
 
-Applied, thanks.
+Something like so. Haven't yet looked at the rt/dl classes.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 11e890486c1b..7db42735d504 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12716,6 +12716,12 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+ 	if (this_rq->cfs.h_nr_running && !pulled_task)
+ 		pulled_task = 1;
+ 
++	/*
++	 * We pulled a task, but it got stolen before we re-acquired rq->lock.
++	 */
++	if (!this_rq->cfs.h_nr_running && pulled_task)
++		pulled_task = 0;
++
+ 	/* Is there a task of a high priority class? */
+ 	if (this_rq->nr_running != this_rq->cfs.h_nr_running)
+ 		pulled_task = -1;
 
