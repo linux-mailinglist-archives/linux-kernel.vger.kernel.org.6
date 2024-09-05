@@ -1,193 +1,115 @@
-Return-Path: <linux-kernel+bounces-317653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0419396E17C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258A996E180
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292DF1C230C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7EC1F25319
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1950417A599;
-	Thu,  5 Sep 2024 18:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A374617B4E5;
+	Thu,  5 Sep 2024 18:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xhaE1xtv"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fN1m8IJ7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF16F15ADB4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 18:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75441C2E;
+	Thu,  5 Sep 2024 18:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725559525; cv=none; b=tAIiEoy71W34ocRiyXGq6VqHVirr0D+DrmMzdYb5t8Q9HNA9qC8JXmI+HsV/njeimF4KZgyMbyVEUpMlehAhodr+YVXag6dTA50XYr76WIuBcCWG09AGMAFDVgA10Oo+gkUrkpd7U5BF7PMP+h7LhstAKrVCurfbK1ku8KqPEZs=
+	t=1725559595; cv=none; b=EtbpZ57u2JdifRnXXPNy/gBJobmWOvKmw+Yc4cjqcRj9/RtoGcBeuQq+5p8DMdnSVZIz4cPrSvKiaxQqvkLFWLoxOh2tlaMVVfh+YSC8CiuXkXBqX8qXL/gM6dGVfTAvvBkGEsO9BU55Aykax+57qRC6XBovlJKRW9v+MVEdLGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725559525; c=relaxed/simple;
-	bh=fwuuqbt3N9ugUJJfYfPVVFnFlJUxa8Rgv1DY93ny0PA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SCsB/vRp/Jo/8P9I8ZOorkAMeMkAHqpzz6xCPhcJazmzH8QuA/nyaHwxzstuKGbSNCWCj46Q5D/6YmRd27xBm2sInBkrcN9lc1hS1HgGqtbJqmrHU+oHTGR732i78gZLZ0fbt8XdBcRrPGr+DscTgOPaEqq548M25IGjrYjo8KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xhaE1xtv; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a018296fffso4209245ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 11:05:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725559523; x=1726164323; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JACy3LsEORLfoHEGD7EKNLc5Lwvyz2oKImXIztt5wps=;
-        b=xhaE1xtvmnE22YaBuEsb9bBmHzgbW3Z1TImd2tXwewHjZbJKGiiBjVuMGW/Lizwsvg
-         1N9SO9EEp/tH52Yv85LHfIOg+rOpjVlQMOJK8qbWqs+YtXSrHybYVG3zwfH0rk1vyRFn
-         Rdyf8fFQfo6ndhduh2JM9P5sLGMAwppIlS5QOsBpsj5iYzytuPPewt8eN1QjYRsyiWu7
-         dHf4mdgt+dWqeehLZeMcRFE+su7EH+4KFPyZQx5uYZk1t6r0p6UsNKIRIJSgtW71e+hB
-         +jlsg60FsQwB7WgZyYIaKUirtHOyUPQy6Cr3SSjwUgNBktg5EEMkk/sqfU9SUlOo5dtE
-         Y91g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725559523; x=1726164323;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JACy3LsEORLfoHEGD7EKNLc5Lwvyz2oKImXIztt5wps=;
-        b=iHEfo5rqCFNXVyQi9hrnVVFtEV8/utAZ/qlt57+dC6BkZPQI1euOUaJ1sT2wtCkqIt
-         WSmNvEaU1T4e/7slwyDj/Z22yhBNlAGI4YbY162ARQXYLIY+xUVe7uZ1MmZDWckR7utw
-         FJQPgQQ7hiZ7mMOA7eUDXmvS5EeZeryVlNkj7yBWt+inFA+U2s9zvSpXJQ1YejTwiV9W
-         9etLT0fVr0s8zV85pLJYtjmjGAcNeYIrSVCwCkjsFfI8riWP3bq/4z7TFykYQlKp3/XK
-         AeSVShCcNTXVfqN6KdlDnBXJ90//kS0sy9l/sUQsOPeyQ4x4H27Zr4T6Lw6Ra0q3GKmC
-         FgiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU30m5RQHnqpDAC8iI6AmCQuxfiVF0NFz8+lGFfyRZj8i3iBwMyYxQv3ik5VIJRGOJQ7aFplNahkk4NxWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmRzhrzHxSKseisBptOxu2qZ2D4jcdgloCrdvV6tQofQZppqxw
-	+X7V/DLfVZE6gnpWBZ54kXt1jxDpGWBPYgRI+0kJ9x4kr1mKMgerMBUPKBGFVw==
-X-Google-Smtp-Source: AGHT+IFw+wD+B0uqAGFnbHubKac3f2t2ytAlhpUog4fT3ny3a9crryvc6Qd33jM6Y3o1nron34LN/g==
-X-Received: by 2002:a05:6e02:1569:b0:3a0:1828:31d9 with SMTP id e9e14a558f8ab-3a018283360mr66660025ab.24.1725559522462;
-        Thu, 05 Sep 2024 11:05:22 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d5119668aasm510809a12.1.2024.09.05.11.05.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 11:05:21 -0700 (PDT)
-Date: Thu, 5 Sep 2024 11:05:09 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Usama Arif <usamaarif642@gmail.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, hannes@cmpxchg.org, 
-    riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
-    david@redhat.com, npache@redhat.com, baohua@kernel.org, 
-    ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org, 
-    cerasuolodomenico@gmail.com, ryncsn@gmail.com, corbet@lwn.net, 
-    linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-    kernel-team@meta.com, Shuang Zhai <zhais@google.com>
-Subject: Re: [PATCH v5 1/6] mm: free zapped tail pages when splitting isolated
- thp
-In-Reply-To: <1ffdf94d-ce3f-4dac-8ed3-0681f98beebf@gmail.com>
-Message-ID: <5efa255b-3689-0c91-1980-c0f0562d84e9@google.com>
-References: <20240830100438.3623486-1-usamaarif642@gmail.com> <20240830100438.3623486-2-usamaarif642@gmail.com> <1d490ab5-5cf8-4c16-65d0-37a62999fcd5@google.com> <1ffdf94d-ce3f-4dac-8ed3-0681f98beebf@gmail.com>
+	s=arc-20240116; t=1725559595; c=relaxed/simple;
+	bh=3oEzgN+dyaaIsu2U/WHl2Pv34y+McqVjSPxZyvbVgk0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ep/j27NRSb6AOfDkXRPu4/Ppz9pQ3DnuhVj5v3SfzhD7jYgh3nVeG5GpFsQFXsHZOMQgbIn3KGQlk2TayKg+JOMqBSSJ31cis2u5MKVmAQQ29hC4of8ABNEDvBQvQHLlNSVIC2kODj9IE7zZEKhn97Nt5qzdnqokA7WEaR5QRsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fN1m8IJ7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485973mi016135;
+	Thu, 5 Sep 2024 18:06:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=B+/sMp0kcLMp95ORzvfWS1
+	UqCl9q+KWtHsX5fROP7fQ=; b=fN1m8IJ7FQUD+7IW8al6/TLKUR2AF2MsGEQVNW
+	CFHiZJJyQVwvriXhplNUG26VUoGgbc6XvIUPHHkX+okY2ET9cxma/fTsVBfqJng2
+	DNkNjwU1HB5WR8fd8W/s2rdpVkoXT93yZVg/FcXg9nCsWa7M4qTE2KPuWwshdAjR
+	KS6i0MXdOPBmtJ+jWZkP1x9eZdl3uLc3sVYVhw48gNpxSrm+AXFiQlW2OZdgQo7M
+	xF8KjyXwPHFAHIUqKNsfHdRvHBnkq7+Av+26OPhbiaV24aOcuQtfGLuW/8vty3vS
+	RBh4ezJW8/McvF5ipooLrpEGHv7oCqiv2rDLF/WYa4qC7XDg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41egmrnbew-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 18:06:30 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485I6Tw3013117
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 18:06:29 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 11:06:26 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>
+Subject: [PATCH v3 0/2] Add support for Qualcomm SA8255p SoC
+Date: Thu, 5 Sep 2024 11:05:54 -0700
+Message-ID: <20240905180556.3737896-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: he0LnfuIpGFght9jSg9yjfPK14BiMD5g
+X-Proofpoint-ORIG-GUID: he0LnfuIpGFght9jSg9yjfPK14BiMD5g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_12,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 mlxlogscore=598 priorityscore=1501
+ spamscore=0 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050134
 
-On Thu, 5 Sep 2024, Usama Arif wrote:
-> On 05/09/2024 09:46, Hugh Dickins wrote:
-> > On Fri, 30 Aug 2024, Usama Arif wrote:
-> > 
-> >> From: Yu Zhao <yuzhao@google.com>
-> >>
-> >> If a tail page has only two references left, one inherited from the
-> >> isolation of its head and the other from lru_add_page_tail() which we
-> >> are about to drop, it means this tail page was concurrently zapped.
-> >> Then we can safely free it and save page reclaim or migration the
-> >> trouble of trying it.
-> >>
-> >> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> >> Tested-by: Shuang Zhai <zhais@google.com>
-> >> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> >> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> > 
-> > I'm sorry, but I think this patch (just this 1/6) needs to be dropped:
-> > it is only an optimization, and unless a persuasive performance case
-> > can be made to extend it, it ought to go (perhaps revisited later).
-> > 
-> 
-> I am ok for patch 1 only to be dropped. Patches 2-6 are not dependent on it.
-> 
-> Its an optimization and underused shrinker doesn't depend on it.
-> Its possible that folio->new_folio below might fix it? But if it doesn't,
-> I can retry later on to make this work and resend it only if it alone shows
-> a significant performance improvement.
-> 
-> Thanks a lot for debugging this! and sorry it caused an issue.
-> 
-> 
-> > The problem I kept hitting was that all my work, requiring compaction and
-> > reclaim, got (killably) stuck in or repeatedly calling reclaim_throttle():
-> > because nr_isolated_anon had grown high - and remained high even when the
-> > load had all been killed.
-> > 
-> > Bisection led to the 2/6 (remap to shared zeropage), but I'd say this 1/6
-> > is the one to blame. I was intending to send this patch to "fix" it:
-> > 
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -3295,6 +3295,8 @@ static void __split_huge_page(struct pag
-> >  			folio_clear_active(new_folio);
-> >  			folio_clear_unevictable(new_folio);
-> >  			list_del(&new_folio->lru);
-> > +			node_stat_sub_folio(folio, NR_ISOLATED_ANON +
-> > +						folio_is_file_lru(folio));
-> 
-> Maybe this should have been below? (Notice the folio->new_folio)
-> 
-> +			node_stat_sub_folio(new_folio, NR_ISOLATED_ANON +
-> +						folio_is_file_lru(new_folio));
+This series adds support for Qualcomm SA8255p SoC.
 
-Yes, how very stupid of me (I'm well aware of the earlier bugfixes here,
-and ought not to have done a blind copy and paste of those lines): thanks.
+These patches were originally sent with other patches in series[1], 
+which was advised to be split per subsystem basis.
 
-However... it makes no difference. I gave yours a run, expecting a
-much smaller negative number, but actually it works out much the same:
-because, of course, by this point in the code "folio" is left pointing
-to a small folio, and is almost equivalent to new_folio for the
-node_stat calculations.
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
 
-(I say "almost" because I guess there's a chance that the page at
-folio got reused as part of a larger folio meanwhile, which would
-throw the stats off (if they weren't off already).)
+---
+Changes in v3:
+	- Removed the patches from original series
+Changes in v2:
+	- Added Reviewed-by tag
 
-So, even with your fix to my fix, this code doesn't work.
-Whereas a revert of this 1/6 does work: nr_isolated_anon and
-nr_isolated_file come to 0 when the system is at rest, as expected
-(and as silence from vmstat_refresh confirms - /proc/vmstat itself
-presents negative stats as 0, in order to hide transient oddities).
+Nikunj Kela (2):
+  dt-bindings: arm: qcom: add the SoC ID for SA8255P
+  soc: qcom: socinfo: add support for SA8255P
 
-Hugh
+ drivers/soc/qcom/socinfo.c         | 1 +
+ include/dt-bindings/arm/qcom,ids.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-> 
-> >  			if (!folio_batch_add(&free_folios, new_folio)) {
-> >  				mem_cgroup_uncharge_folios(&free_folios);
-> >  				free_unref_folios(&free_folios);
-> > 
-> > And that ran nicely, until I terminated the run and did
-> > grep nr_isolated /proc/sys/vm/stat_refresh /proc/vmstat
-> > at the end: stat_refresh kindly left a pr_warn in dmesg to say
-> > nr_isolated_anon -334013737
-> > 
-> > My patch is not good enough. IIUC, some split_huge_pagers (reclaim?)
-> > know how many pages they isolated and decremented the stats by, and
-> > increment by that same number at the end; whereas other split_huge_pagers
-> > (migration?) decrement one by one as they go through the list afterwards.
-> > 
-> > I've run out of time (I'm about to take a break): I gave up researching
-> > who needs what, and was already feeling this optimization does too much
-> > second guessing of what's needed (and its array of VM_WARN_ON_ONCE_FOLIOs
-> > rather admits to that).
-> > 
-> > And I don't think it's as simple as moving the node_stat_sub_folio()
-> > into 2/6 where the zero pte is substituted: that would probably handle
-> > the vast majority of cases, but aren't there others which pass the
-> > folio_ref_freeze(new_folio, 2) test - the title's zapped tail pages,
-> > or racily truncated now that the folio has been unlocked, for example?
-> > 
-> > Hugh
+
+base-commit: ad40aff1edffeccc412cde93894196dca7bc739e
+-- 
+2.34.1
+
 
