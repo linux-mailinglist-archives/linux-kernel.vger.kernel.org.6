@@ -1,238 +1,102 @@
-Return-Path: <linux-kernel+bounces-316906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A911896D6C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:09:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A1F96D6C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 635C7282B6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:09:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C280E1F2159B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1114A1991DB;
-	Thu,  5 Sep 2024 11:09:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB3A194A60;
-	Thu,  5 Sep 2024 11:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D119923A;
+	Thu,  5 Sep 2024 11:09:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1782F197A95;
+	Thu,  5 Sep 2024 11:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725534569; cv=none; b=WojObSFA1B2zy3WIikLVTuRv24nPglzOsEjr7qrHtkelb4GuUi0m9HckRDISnwCDPnO8FXl+WfadcnPi1yF6iLO4fW5P4yd1l8KREistFegTrbQPNmoDi8ohQCAcl3shKZ86NJmdgtcNTP37Bfl3CjndsA29n6SolSL911PXDrg=
+	t=1725534592; cv=none; b=FcIVj5lqjkFdLTPJ6gdQKchfAyTrDBIbIHzoGfHLrZgZzxEQM+AYnzsXMkbR8nWLFqMddJybQ0chDQ210JNNpkzX68qQiGaQt8GIMXslZTFrkQvAcCnJv+PBGIUQxrBNZUjlJrM1dlxb/FFA8nEomfoUokrgKbP8jbglwa3CiOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725534569; c=relaxed/simple;
-	bh=7FzOATlUdnA8x/joYv3T7DNPeyQm+4xp7x3a8N5qNxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d9I8ZsZvF9lhWc8+B7vLs8TLxEZtg49mZ5EERH1E0c1bJ0lB//hMXTDjC/bD7y95tr+tBklKSayqQmi/tpCBgSWGEKge9gCcXhstkxJQc3sXfPFSllAfq4NYJZNEgQcS07sNbAu06L4nmPTQmamBfQCmAZI4PUk8jgp3Ijk99AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2830C4CEC3;
-	Thu,  5 Sep 2024 11:09:26 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] LoongArch: Improve hardware page table walker
-Date: Thu,  5 Sep 2024 19:09:07 +0800
-Message-ID: <20240905110907.2919268-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1725534592; c=relaxed/simple;
+	bh=A2hc+vsL27uqFzsXHm/VUr96bo32AqMtbs3ZDihMcLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GDxwz/ApK1CcK3/zzMD7RGuUE29FHUx49FFJZmkh4KmmYXIFuvicyOkMgJ1Uw7kcYw2s4ibt7xLLJAlzNmA7sf9baZ/caykkck2M/dbBQpL8yXZnc40mVUW7mKXLIFr6aQuSv5WKHkU+0ZMhAooWGS4zzdnjirMXgZ/dlutofTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC988FEC;
+	Thu,  5 Sep 2024 04:10:16 -0700 (PDT)
+Received: from [10.1.32.66] (e127648.arm.com [10.1.32.66])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B16F33F73B;
+	Thu,  5 Sep 2024 04:09:48 -0700 (PDT)
+Message-ID: <e4aa650b-707b-4ba4-91b5-8cd021054b12@arm.com>
+Date: Thu, 5 Sep 2024 12:09:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, tglx@linutronix.de, daniel.lezcano@linaro.org,
+ linux-pm@vger.kernel.org
+References: <20240819154259.215504-1-axboe@kernel.dk>
+ <20240904142841.GL4723@noisy.programming.kicks-ass.net>
+ <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
+ <CAJZ5v0hVghgKgv0zqabL1m2FT6wou8-tW_9Mm-_9=0-3yhMb3A@mail.gmail.com>
+ <20240905093607.GB15400@noisy.programming.kicks-ass.net>
+ <3efadac3-1aa0-4747-b140-3fb6f267586e@arm.com>
+ <20240905110006.GF15400@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240905110006.GF15400@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-LoongArch has similar problems explained in commit 7f0b1bf04511348995d6
-("arm64: Fix barriers used for page table modifications"), when hardware
-page table walker (PTW) enabled, speculative accesses may cause spurious
-page fault in kernel space. Theoretically, in order to completely avoid
-spurious page fault we need a "dbar + ibar" pair between the page table
-modifications and the subsequent memory accesses using the corresponding
-virtual address. But "ibar" is too heavy for performace, so we only use
-a "dbar 0b11000" in set_pte(). And let spurious_fault() filter the rest
-rare spurious page faults which should be avoided by "ibar".
+On 9/5/24 12:00, Peter Zijlstra wrote:
+> On Thu, Sep 05, 2024 at 11:31:09AM +0100, Christian Loehle wrote:
+>> On 9/5/24 10:36, Peter Zijlstra wrote:
+>>> On Wed, Sep 04, 2024 at 05:18:57PM +0200, Rafael J. Wysocki wrote:
+>>>
+>>>> To be more precise, there are two different uses of "iowait" in PM.
+>>>>
+>>>> One is the nr_iowait_cpu() call in menu_select() and the result of it
+>>>> is used for two purposes: (1) select different sets of statistics
+>>>> depending on whether or not this number is zero and (2) set a limit
+>>>> for the idle state's exit latency that depends on this number (but
+>>>> note that it only takes effect when the "iowait" statistics are used
+>>>> in the first place).  Both of these are arguably questionable and it
+>>>> is unclear to me whether or not they actually help and how much.
+>>>
+>>> So this one is very dubious, it relies on tasks getting back on the CPU
+>>> they went to sleep on -- not guaranteed at all.
+>>>
+>>>> The other use is boosting CPU frequency in schedutil and intel_pstate
+>>>> if SCHED_CPUFREQ_IOWAIT is passed to them which in turn depends on the
+>>>> p->in_iowait value in enqueue_task_fair().
+>>>
+>>> This one is fine and makes sense. At this point we know that p is going
+>>> to run and where it is going to run.
+>>
+>> On any even remotely realistic scenario and hardware though the boost
+>> isn't effective until the next enqueue-dequeue-cycle, so if your above
+>> objection is based on that, I would object here too, using your argument.
+> 
+> That is a quality of implementation issue with schedutil no?
 
-Besides, we replace the llsc loop with amo in set_pte() which has better
-performace, and adjust switch_mm_irqs_off() to avoid branch instructions
-between the writing of CSR.ASID and CSR.PGDL.
-
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/include/asm/atomic.h      |  2 ++
- arch/loongarch/include/asm/mmu_context.h | 17 +++++++---
- arch/loongarch/include/asm/pgtable.h     | 32 ++++++++----------
- arch/loongarch/mm/fault.c                | 41 ++++++++++++++++++++++++
- 4 files changed, 69 insertions(+), 23 deletions(-)
-
-diff --git a/arch/loongarch/include/asm/atomic.h b/arch/loongarch/include/asm/atomic.h
-index 99af8b3160a8..c86f0ab922ec 100644
---- a/arch/loongarch/include/asm/atomic.h
-+++ b/arch/loongarch/include/asm/atomic.h
-@@ -15,6 +15,7 @@
- #define __LL		"ll.w	"
- #define __SC		"sc.w	"
- #define __AMADD		"amadd.w	"
-+#define __AMOR		"amor.w		"
- #define __AMAND_DB	"amand_db.w	"
- #define __AMOR_DB	"amor_db.w	"
- #define __AMXOR_DB	"amxor_db.w	"
-@@ -22,6 +23,7 @@
- #define __LL		"ll.d	"
- #define __SC		"sc.d	"
- #define __AMADD		"amadd.d	"
-+#define __AMOR		"amor.d		"
- #define __AMAND_DB	"amand_db.d	"
- #define __AMOR_DB	"amor_db.d	"
- #define __AMXOR_DB	"amxor_db.d	"
-diff --git a/arch/loongarch/include/asm/mmu_context.h b/arch/loongarch/include/asm/mmu_context.h
-index 9f97c3453b9c..97c7a64d0d9a 100644
---- a/arch/loongarch/include/asm/mmu_context.h
-+++ b/arch/loongarch/include/asm/mmu_context.h
-@@ -74,6 +74,17 @@ init_new_context(struct task_struct *tsk, struct mm_struct *mm)
- 	return 0;
- }
- 
-+static inline void atomic_update_pgd_asid(unsigned long asid, unsigned long pgdl)
-+{
-+	__asm__ __volatile__(
-+	"csrwr %[pgdl_val], %[pgdl_reg] \n\t"
-+	"csrwr %[asid_val], %[asid_reg] \n\t"
-+	: [asid_val] "+r" (asid), [pgdl_val] "+r" (pgdl)
-+	: [asid_reg] "i" (LOONGARCH_CSR_ASID), [pgdl_reg] "i" (LOONGARCH_CSR_PGDL)
-+	: "memory"
-+	);
-+}
-+
- static inline void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 				      struct task_struct *tsk)
- {
-@@ -83,12 +94,10 @@ static inline void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *
- 	if (!asid_valid(next, cpu))
- 		get_new_mmu_context(next, cpu);
- 
--	write_csr_asid(cpu_asid(cpu, next));
--
- 	if (next != &init_mm)
--		csr_write64((unsigned long)next->pgd, LOONGARCH_CSR_PGDL);
-+		atomic_update_pgd_asid(cpu_asid(cpu, next), (unsigned long)next->pgd);
- 	else
--		csr_write64((unsigned long)invalid_pg_dir, LOONGARCH_CSR_PGDL);
-+		atomic_update_pgd_asid(cpu_asid(cpu, next), (unsigned long)invalid_pg_dir);
- 
- 	/*
- 	 * Mark current->active_mm as not "active" anymore.
-diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
-index 85431f20a14d..9965f52ef65b 100644
---- a/arch/loongarch/include/asm/pgtable.h
-+++ b/arch/loongarch/include/asm/pgtable.h
-@@ -331,29 +331,23 @@ static inline void set_pte(pte_t *ptep, pte_t pteval)
- 		 * Make sure the buddy is global too (if it's !none,
- 		 * it better already be global)
- 		 */
-+		if (pte_none(ptep_get(buddy))) {
- #ifdef CONFIG_SMP
--		/*
--		 * For SMP, multiple CPUs can race, so we need to do
--		 * this atomically.
--		 */
--		unsigned long page_global = _PAGE_GLOBAL;
--		unsigned long tmp;
--
--		__asm__ __volatile__ (
--		"1:"	__LL	"%[tmp], %[buddy]		\n"
--		"	bnez	%[tmp], 2f			\n"
--		"	 or	%[tmp], %[tmp], %[global]	\n"
--			__SC	"%[tmp], %[buddy]		\n"
--		"	beqz	%[tmp], 1b			\n"
--		"	nop					\n"
--		"2:						\n"
--		__WEAK_LLSC_MB
--		: [buddy] "+m" (buddy->pte), [tmp] "=&r" (tmp)
--		: [global] "r" (page_global));
-+			/*
-+			 * For SMP, multiple CPUs can race, so we need
-+			 * to do this atomically.
-+			 */
-+			__asm__ __volatile__(
-+			__AMOR "$zero, %[global], %[buddy] \n"
-+			: [buddy] "+ZB" (buddy->pte)
-+			: [global] "r" (_PAGE_GLOBAL)
-+			: "memory");
-+
-+			DBAR(0b11000); /* o_wrw = 0b11000 */
- #else /* !CONFIG_SMP */
--		if (pte_none(ptep_get(buddy)))
- 			WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(buddy)) | _PAGE_GLOBAL));
- #endif /* CONFIG_SMP */
-+		}
- 	}
- }
- 
-diff --git a/arch/loongarch/mm/fault.c b/arch/loongarch/mm/fault.c
-index 97b40defde06..deefd9617d00 100644
---- a/arch/loongarch/mm/fault.c
-+++ b/arch/loongarch/mm/fault.c
-@@ -31,11 +31,52 @@
- 
- int show_unhandled_signals = 1;
- 
-+static int __kprobes spurious_fault(unsigned long write, unsigned long address)
-+{
-+	pgd_t *pgd;
-+	p4d_t *p4d;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+	pte_t *pte;
-+
-+	if (!(address & __UA_LIMIT))
-+		return 0;
-+
-+	pgd = pgd_offset_k(address);
-+	if (!pgd_present(pgdp_get(pgd)))
-+		return 0;
-+
-+	p4d = p4d_offset(pgd, address);
-+	if (!p4d_present(p4dp_get(p4d)))
-+		return 0;
-+
-+	pud = pud_offset(p4d, address);
-+	if (!pud_present(pudp_get(pud)))
-+		return 0;
-+
-+	pmd = pmd_offset(pud, address);
-+	if (!pmd_present(pmdp_get(pmd)))
-+		return 0;
-+
-+	if (pmd_leaf(*pmd)) {
-+		return write ? pmd_write(pmdp_get(pmd)) : 1;
-+	} else {
-+		pte = pte_offset_kernel(pmd, address);
-+		if (!pte_present(ptep_get(pte)))
-+			return 0;
-+
-+		return write ? pte_write(ptep_get(pte)) : 1;
-+	}
-+}
-+
- static void __kprobes no_context(struct pt_regs *regs,
- 			unsigned long write, unsigned long address)
- {
- 	const int field = sizeof(unsigned long) * 2;
- 
-+	if (spurious_fault(write, address))
-+		return;
-+
- 	/* Are we prepared to handle this kernel fault?	 */
- 	if (fixup_exception(regs))
- 		return;
--- 
-2.43.5
-
+Is it? So there is a latency from requesting a new frequency and actually
+running on it, for both x86 and arm platforms out there that should still
+be a few usecs at least during which the task is running. The task will
+dequeue quite soon (otherwise it will build up utilization and then it's
+not one we consider problematic wrt to this io utilization problem anyway).
+Just to be clear, I'm assuming fast_switch here and then I think schedutil's
+implementation isn't the problem, rather the premise of the underlying
+problem is.
+I have tried to elaborate on that in the RFC I've posted and linked though.
 
