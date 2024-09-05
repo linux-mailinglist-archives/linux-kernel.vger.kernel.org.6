@@ -1,170 +1,187 @@
-Return-Path: <linux-kernel+bounces-316781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726B796D4D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:56:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1440496D4DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D2E1F28E0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:56:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E021B26CB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4E5192D73;
-	Thu,  5 Sep 2024 09:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E0194AC7;
+	Thu,  5 Sep 2024 09:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="xH90HT2i";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iadQwMJ7"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RRY+0NJz"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6740119413B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4252F192D73;
+	Thu,  5 Sep 2024 09:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725530199; cv=none; b=JksCIgcIWS6lsIvzrSIYYoLTMYhHrA+mXPyHA5jhLm56DppHagwgSYtcixdT9ahkp7wHUMcR10yQDqfgKkdfKS4Lw19oPkPTkb0vztP4+pbjw7lfOr9JuoFVVpZ8kTvfZHIcUOs/ipGuz6T4FHfsEzqbu2f+opKaTEiCPdvKouM=
+	t=1725530227; cv=none; b=PymOaRKd4TB96RRsyOmLnDy/sjl1kEejru0basqJ6raOfwW1jHWnRibboYDUu7c8Rykxrncj3lQrBO5B3hUYYtl724aOMPpCwQqA19n9f614XkuwVbr4pIDDCUuaZkYkMmHipdnr69sktyTiZej7vOvx0V4jYmhIUT3ULrIGVl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725530199; c=relaxed/simple;
-	bh=Hzz2twul5J5zhZNCAGX+lWkNskeCMNj/ZBdlAjXyJOQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BO+NWUtuJgnlWopSJ83bWWZ+gq63mquYx8xY+ajx/C2KZYdoKZfgPa53uxiqgeLN21Y3dxl87NLFYB3F8jq3IpjLCj+RoQaFL/kX8vXa3hsvmwZlXE1aR1jBQOYaZjTxSMk92cXmw5xNyGAnjMWK2CyDCGSJgz2MP8wtTt9OUuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=xH90HT2i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iadQwMJ7; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7C5EB138030C;
-	Thu,  5 Sep 2024 05:56:36 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Thu, 05 Sep 2024 05:56:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725530196;
-	 x=1725616596; bh=fpvXW45cCFPUgOD1UbFx3JsvBCsvIRuOMB9z0xPbXo0=; b=
-	xH90HT2ihv337ZTOdSoekBd0rTQjMIirKJmltllKuRZUJTbWNLRF8jnNoGgrnKpB
-	86k40oXh8nHhWqp+kBgPf4NGnv9ITmKQTMnW0MIDVVYTk4zjNycXe9RGJxTbuqfW
-	Q2vdv45fOsgZzBV1rRxoImHH3tZS5WCGgjCSw+CwmJjEFrOWf+HzTQKrkHYZ0u7W
-	7VmRUWtWwi/DlNQgXNRQp4TeIjHcl+6SPXo9C60nwdGmc0P0f1WJ63SI8ZJNBKxb
-	4Z6E+AIcV+8xpKom+OOSOithfTorQWZu6upFLsbV5RjC3kA8EeenLN1GyqWfuNly
-	Lp7ymjCmXKR6YBymkZbKaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725530196; x=
-	1725616596; bh=fpvXW45cCFPUgOD1UbFx3JsvBCsvIRuOMB9z0xPbXo0=; b=i
-	adQwMJ7bCR9L7mBRpnUZfn+kJYI9K835jSrJm22P060khYlnbvmbTJzzvadb5v65
-	/ZGfMy6qQhnfXuhLwt5y0mHJSwVh8OEbfx1lVTosu60CZVt+mWSOwPgBnLiEAfX5
-	D7xjA1XPdqTurrtRkVus8ZN4S+uVEzfCH4Zg4eWXyzrv9x2TcyWRMIcx37MOJKsB
-	u/apcWr+Nr3UueCOWEzEuLh6Ifr+xgbTtdaJXcPKjJOBD0cWcqODaz8pjhH2BSrQ
-	mW45nR7LvgH7Q8QLf9rjvHlg10FCFht+H+nnCP+elt/CBZdAk+TikSgzvcpUzOe/
-	iNIKPFn9ZjeeYOJfSjLcg==
-X-ME-Sender: <xms:U4DZZlJKRNK1Myy3fi7pUqfwtgTcsUjgvZnPO6ypnM1-bS1IW8Z2GQ>
-    <xme:U4DZZhJtZ8m6cftICVM0SAYW4BtDTZ3SHLYdVx0B6aTr9a4z5KVHE0Sbh5ES6A5NP
-    vc-Mi81aV0ApTSH1wg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepvdfhtdelleeggeefudejveef
-    feejhfektdeilefhhfeigfdugfffgfeiuddvteelnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghdptddurdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigv
-    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihgh
-    horghtrdgtohhmpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpth
-    htoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehovgdqkhgsuhhilhguqdgr
-    lhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepmhgrtghrohesohhrtg
-    grmhdrmhgvrdhukhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:U4DZZtv0_8zGN_cz6V665UB4jA6k7eWUOMf7mPmIJ-ElbKAbqSZAmg>
-    <xmx:U4DZZmZvvyegcSyX6RfmDcCw9SAn5lAMwaA9DlmW24SJ1R4ES1J47Q>
-    <xmx:U4DZZsbW40yh3ymnfi-IUEWCKFA4wxCVrayIHAOg_T1Ls5dASUrRkQ>
-    <xmx:U4DZZqDyZqNWeKhfSKoLnxkAam9jMG4tBD7VvzVkZnlWWkpSUoYAzw>
-    <xmx:VIDZZjU92oN8nFXLzZxbjAExBc-erMcR7cLl_cO2KoAIe3UOS_XlaLXn>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C99551C207BB; Thu,  5 Sep 2024 05:56:35 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725530227; c=relaxed/simple;
+	bh=8qoKR4OXZ7Wgy4H3AAmtUwklGSIL4J9Jd0IV6fK4sOc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T0cv1mbN5PuSjGF3Pu5U0z5zT+4OnoKRkTzPOsOL620lCnj8tD5PNtfpuCgSv0t+eSu99F/Z2jOPEQIc4Pm5j7S5HDZgZexy/oFxBbTbsnIqzT7co6Bvp+c1aRyzxn7o4xVtmPMPhvjgWxI1eQ+w1xGVWWVajql3MLA3WdLNhU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RRY+0NJz; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725530225; x=1757066225;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8qoKR4OXZ7Wgy4H3AAmtUwklGSIL4J9Jd0IV6fK4sOc=;
+  b=RRY+0NJzF0I9L3ligRbLCQW4TCjhXBk4BW3A8xTS/oIqgzk63pg6qikG
+   f7aAyEH2SBsbV6s6WQYJlFcmVeleIWfKTPZISIbmvoBniLJP/TmfzH9oj
+   bCZBKftRZ7gFJHNrMMcAFRnT5i7Y+611vrPrhtkk4sqqEzcbAxJDEjq3L
+   iHwMOvQHbI01ZJYNjHoh1jmXZ6hmV3HXtILRMNQuQ/FI7BLsLZirKpfg6
+   IGc/cbp9JlyIhw0NC7CnQhSrBG4GLXeVTT9iBAuShH0vewOPszjsN4puA
+   8lJmQSI0G8FVv2z9r9Mx3NPHSMgb9yyMObVp5Gwoe3ohPTwIBksWd+SaC
+   Q==;
+X-CSE-ConnectionGUID: 8AyyTrCqQSGMj104kSMPQw==
+X-CSE-MsgGUID: jpWvbnd4T1yvQ3SdJQSknQ==
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="34458244"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Sep 2024 02:57:03 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 5 Sep 2024 02:56:40 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 5 Sep 2024 02:56:37 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>
+CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
+	<andrei.simion@microchip.com>
+Subject: [PATCH] ASoC: atmel: mchp-i2s-mcc: Improve maxburst calculation for better performance
+Date: Thu, 5 Sep 2024 12:56:33 +0300
+Message-ID: <20240905095633.113784-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 05 Sep 2024 10:56:15 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "kernel test robot" <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Message-Id: <f661ed7e-5d69-403c-bfc8-7581eb8a6e76@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2409051011570.1802@angie.orcam.me.uk>
-References: <202408310705.y2OPq3Xs-lkp@intel.com>
- <alpine.DEB.2.21.2409051011570.1802@angie.orcam.me.uk>
-Subject: Re: error: ABI 'o32' is not supported on CPU 'mips64'
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
+The period size represents the size of the DMA descriptor. To ensure all
+DMA descriptors start from a well-aligned address, the period size must
+be divided by (sample size * maxburst), not just by maxburst.
+This adjustment allows for computing a higher maxburst value, thereby
+increasing the performance of the DMA transfer.
+Previously, snd_pcm_lib_period_bytes() returned 0 because the runtime HW
+parameters are computed after the hw_params() callbacks are used.
+To address this, we now use params_*() functions to compute the period
+size accurately. This change optimizes the DMA transfer performance by
+ensuring proper alignment and efficient use of maxburst values.
 
-=E5=9C=A82024=E5=B9=B49=E6=9C=885=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8A=E5=
-=8D=8810:22=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
-> On Sat, 31 Aug 2024, kernel test robot wrote:
->
->> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
-x.git master
->> head:   fb24560f31f9dff2c97707cfed6029bfebebaf1c
->> commit: 2326c8f2022636a1e47402ffd09a3b28f737275f MIPS: Fix fallback m=
-arch for SB1
->> date:   7 weeks ago
->> config: mips-randconfig-r121-20240830 (https://download.01.org/0day-c=
-i/archive/20240831/202408310705.y2OPq3Xs-lkp@intel.com/config)
->> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project =
-8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
->> reproduce: (https://download.01.org/0day-ci/archive/20240831/20240831=
-0705.y2OPq3Xs-lkp@intel.com/reproduce)
->>=20
->> If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202408310705.y2OPq3Xs=
--lkp@intel.com/
->>=20
->> All errors (new ones prefixed by >>):
->>=20
->> >> error: ABI 'o32' is not supported on CPU 'mips64'
->> >> error: error: ABI 'o32' is not supported on CPU 'mips64'
->>    ABI 'o32' is not supported on CPU 'mips64'
->>    make[3]: *** [scripts/Makefile.build:117: scripts/mod/devicetable-=
-offsets.s] Error 1
->>    make[3]: *** [scripts/Makefile.build:244: scripts/mod/empty.o] Err=
-or 1
->>    make[3]: Target 'scripts/mod/' not remade because of errors.
->>    make[2]: *** [Makefile:1207: prepare0] Error 2
->>    make[2]: Target 'prepare' not remade because of errors.
->>    make[1]: *** [Makefile:240: __sub-make] Error 2
->>    make[1]: Target 'prepare' not remade because of errors.
->>    make: *** [Makefile:240: __sub-make] Error 2
->>    make: Target 'prepare' not remade because of errors.
->
->  This is a compiler bug.  The MIPS64 ISA does certainly support the o3=
-2=20
-> ABI, so they need to fix their "CPU 'mips64'" definition.
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+[andrei.simion@microchip.com: Reword commit message and commit title.
+Add macros with values for maximum DMA chunk size allowed.
+Add DMA_BURST_ALIGNED preprocessor function to check the alignment of the
+DMA burst]
+Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+---
+ sound/soc/atmel/mchp-i2s-mcc.c | 38 +++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
-Just for record, this has been fixed in LLVM-17 [1], while the bit is st=
-ill
-on LLVM 15.
+diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
+index 193dd7acceb0..35a56b266b8d 100644
+--- a/sound/soc/atmel/mchp-i2s-mcc.c
++++ b/sound/soc/atmel/mchp-i2s-mcc.c
+@@ -221,6 +221,15 @@
+ #define MCHP_I2SMCC_MAX_CHANNELS		8
+ #define MCHP_I2MCC_TDM_SLOT_WIDTH		32
+ 
++/*
++ * ---- DMA chunk size allowed ----
++ */
++#define MCHP_I2SMCC_DMA_8_WORD_CHUNK			8
++#define MCHP_I2SMCC_DMA_4_WORD_CHUNK			4
++#define MCHP_I2SMCC_DMA_2_WORD_CHUNK			2
++#define MCHP_I2SMCC_DMA_1_WORD_CHUNK			1
++#define DMA_BURST_ALIGNED(_p, _s, _w)		!(_p % (_s * _w))
++
+ static const struct regmap_config mchp_i2s_mcc_regmap_config = {
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+@@ -504,12 +513,30 @@ static int mchp_i2s_mcc_is_running(struct mchp_i2s_mcc_dev *dev)
+ 	return !!(sr & (MCHP_I2SMCC_SR_TXEN | MCHP_I2SMCC_SR_RXEN));
+ }
+ 
++static inline int mchp_i2s_mcc_period_to_maxburst(int period_size, int sample_size)
++{
++	int p_size = period_size;
++	int s_size = sample_size;
++
++	if (DMA_BURST_ALIGNED(p_size, s_size, MCHP_I2SMCC_DMA_8_WORD_CHUNK))
++		return MCHP_I2SMCC_DMA_8_WORD_CHUNK;
++	if (DMA_BURST_ALIGNED(p_size, s_size, MCHP_I2SMCC_DMA_4_WORD_CHUNK))
++		return MCHP_I2SMCC_DMA_4_WORD_CHUNK;
++	if (DMA_BURST_ALIGNED(p_size, s_size, MCHP_I2SMCC_DMA_2_WORD_CHUNK))
++		return MCHP_I2SMCC_DMA_2_WORD_CHUNK;
++	return MCHP_I2SMCC_DMA_1_WORD_CHUNK;
++}
++
+ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 				  struct snd_pcm_hw_params *params,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	unsigned long rate = 0;
+ 	struct mchp_i2s_mcc_dev *dev = snd_soc_dai_get_drvdata(dai);
++	int sample_bytes = params_physical_width(params) / 8;
++	int period_bytes = params_period_size(params) *
++		params_channels(params) * sample_bytes;
++	int maxburst;
+ 	u32 mra = 0;
+ 	u32 mrb = 0;
+ 	unsigned int channels = params_channels(params);
+@@ -519,9 +546,9 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 	int ret;
+ 	bool is_playback = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
+ 
+-	dev_dbg(dev->dev, "%s() rate=%u format=%#x width=%u channels=%u\n",
++	dev_dbg(dev->dev, "%s() rate=%u format=%#x width=%u channels=%u period_bytes=%d\n",
+ 		__func__, params_rate(params), params_format(params),
+-		params_width(params), params_channels(params));
++		params_width(params), params_channels(params), period_bytes);
+ 
+ 	switch (dev->fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+@@ -630,11 +657,12 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 	 * We must have the same burst size configured
+ 	 * in the DMA transfer and in out IP
+ 	 */
+-	mrb |= MCHP_I2SMCC_MRB_DMACHUNK(channels);
++	maxburst = mchp_i2s_mcc_period_to_maxburst(period_bytes, sample_bytes);
++	mrb |= MCHP_I2SMCC_MRB_DMACHUNK(maxburst);
+ 	if (is_playback)
+-		dev->playback.maxburst = 1 << (fls(channels) - 1);
++		dev->playback.maxburst = maxburst;
+ 	else
+-		dev->capture.maxburst = 1 << (fls(channels) - 1);
++		dev->capture.maxburst = maxburst;
+ 
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S8:
 
-Thanks
-[1]: https://github.com/llvm/llvm-project/commit/7983f8aca82e258174849f1=
-cc6a70029353e9887
+base-commit: fdadd93817f124fd0ea6ef251d4a1068b7feceba
+-- 
+2.34.1
 
->
->   Maciej
-
---=20
-- Jiaxun
 
