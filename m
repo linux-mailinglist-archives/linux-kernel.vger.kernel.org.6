@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-317881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4437696E502
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9FB96E506
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7E0FB247E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:24:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06C57B24DA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A291AD277;
-	Thu,  5 Sep 2024 21:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F891AD5CB;
+	Thu,  5 Sep 2024 21:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB3qGyo3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Twk1vTSj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8574186E40;
-	Thu,  5 Sep 2024 21:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0125E56E;
+	Thu,  5 Sep 2024 21:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725571440; cv=none; b=qMcEQaqXE5mTLJXFv3l9u4zoV9B/Xb8ieh8ZZYWg6B/VUjQ3RC2SZ4KQMJIUkc3mUfms4MUaoIcBOUSxCpJoiZyD/8s6e14CDf4zqsXSF1VhRklJZTtxZs2l1f4nxEs5aoLWTaodKpqjzLpaknivLfmmwzJ5V3BhQ7QAs1tPyAQ=
+	t=1725571491; cv=none; b=AsFHtUPJWFRrX76/p4MRRXeUSSosT/OI4xmWcY7ayTrIz5r6LYVL8mdu3ZK4b8IEInB5R68AIqFgkl432/05YJT7OiiGQyK+LNr0uZqVEgCg5Yk7xGARai298WzElFDERhuev0Yp8EvMKFe4X5mw5gsGPZwRJiWYFuyh+sWH92o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725571440; c=relaxed/simple;
-	bh=b3ULdFogwoeI0XvlpVirzfRUhuJ43tY9H/6dFn25c6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ElSYsESSN/Y2qv9j+/aPQBu0LK4s94J+3h5FRw4nTd0cnYOv/LdsY5U0o8QQV4G1thVTaJT8o1fllbgtawtd+fg9tsqUUNlJODUzvLnOJB3FIZry5U3cnGBntaJcP2yYB+PEUOtdWhlMi9xljt0cObYvKZtBJJow8drCEx1Okhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB3qGyo3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 726F7C4CEC3;
-	Thu,  5 Sep 2024 21:23:59 +0000 (UTC)
+	s=arc-20240116; t=1725571491; c=relaxed/simple;
+	bh=iczN0xwyi9XKG0AABw4GW1BOx4Vco7z3WMqm0R+NJq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EEtesUiIkLUBet6u1a/pZo53tIgkPzmSAPmTR8mdpA+OCBdB3AgUBYnKmDODExXgAkxvmEfsl7UhMZ4zEGXf2KA+ufeAbyalU4YWAqBvQjhkfM/WRQlSTrXbjjvnKjLsVxqRSOckaBv7Kp0oyQEypmxn340xwmq3PxmZN8+to/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Twk1vTSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5AC9C4CEC3;
+	Thu,  5 Sep 2024 21:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725571440;
-	bh=b3ULdFogwoeI0XvlpVirzfRUhuJ43tY9H/6dFn25c6w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vB3qGyo35LrR5C41h10LIV33t3xyDtceS/qKSEAHhWj1WDAH7+lAjcSvT7wJOdMTZ
-	 gu0VqPYo7BEEGeq4qjd0vvVuRFUoX0TUgUn35MI5LjJfQAUncHYCYOcoCxQ997V8WX
-	 49sn5PdSFqnZEUbGWquG7epp6wRZnXrkpIgX11wPAtxJ8ooJf6wJ5LEOYHI2iOnzWD
-	 mJnMvjhgbTduP1YutUQ6oGYsni/GJtxOam6Plc3ohf8fA3WcI5nxun01OxDUG1Drz6
-	 37tfxXxFLK9YIhv28cmAFJCr0AWmdnINNxQPR8RFu0CbemhsLB1UHN0nXSHX57JnrG
-	 SSI1MwV9twtJw==
-Date: Thu, 5 Sep 2024 23:23:56 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
-	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] i2c: npcm: restore slave addresses array length
-Message-ID: <o4vds7grtpvgn34afke5vbkb5ymqqglvudi2hdb4oekz52ujs6@ymuhslhr5oh7>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
- <20240830034640.7049-2-kfting@nuvoton.com>
+	s=k20201202; t=1725571491;
+	bh=iczN0xwyi9XKG0AABw4GW1BOx4Vco7z3WMqm0R+NJq0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Twk1vTSjqPS5Ya/B59unFPNIVF/jPfUvzEx+In+T1zb8hO16h9lOtvGHXvsrw7lRQ
+	 VumV0uN+i04T6H2eIGXbmbL46XAAQjmOryamGzM3HKlOAO03cyrCJCa5p5c6A+mGaW
+	 7UznuBwin/ZGJFsTkpgTdAImDUfLOAgZP2S9NHdsIPKgvIFrgGbMgHgEL5n8vDDtCv
+	 crceQeB4tbm/fgQhyMO0LG5JXpd0pUkUbYFFBFSSazbDIITse8J1WWfSJisbUaNPpo
+	 p1c1l1fu5DQ2eq6iKppEr7cdJxNRZgr+p1fqyeaEdDxDqz/qYc/QN3sgAsU9Pf+FGK
+	 xIp7vcadZTlYA==
+Message-ID: <5583af24-1f35-4979-8ad6-60a0b2d0580e@kernel.org>
+Date: Thu, 5 Sep 2024 23:24:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240830034640.7049-2-kfting@nuvoton.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: soc: qcom: aoss-qmp: document support for
+ SA8255p
+To: Nikunj Kela <quic_nkela@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240905192328.3778542-1-quic_nkela@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240905192328.3778542-1-quic_nkela@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tyrone,
-
-On Fri, Aug 30, 2024 at 11:46:34AM GMT, Tyrone Ting wrote:
-> The smatch check warning is "buffer overflow 'npcm_i2caddr' 2 <= 9".
-> The original design supports 10 slave addresses although only 2
-
-please remember that the "slave" term has been replaced by the
-"target" term. I will change it when applying the patch.
-
-> addresses are required for current implementation.
+On 05/09/2024 21:23, Nikunj Kela wrote:
+> Add compatible for AOSS QMP representing support on SA8255p.
 > 
-> Restore the npcm_i2caddr array length to fix the smatch warning.
-> 
-> Fixes: 47d506d1a28f ("i2c: npcm: Remove own slave addresses 2:10")
-
-I don't think the Fixes tag is necessary here. This change is
-primarily addressing a static analyzer warning. While some cases
-come close to a buffer overflow, it couldn’t have occurred in
-practice since we don't actually have the devices listed in
-npcm_i2caddr[].
-
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408130818.FgDP5uNm-lkp@intel.com/
-> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
 > ---
->  drivers/i2c/busses/i2c-npcm7xx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-> index 2fe68615942e..bbcb4d6668ce 100644
-> --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> @@ -136,11 +136,13 @@ enum i2c_addr {
->   * Since the addr regs are sprinkled all over the address space,
->   * use this array to get the address or each register.
->   */
-> -#define I2C_NUM_OWN_ADDR 2
-> +#define I2C_NUM_OWN_ADDR 10
->  #define I2C_NUM_OWN_ADDR_SUPPORTED 2
->  
->  static const int npcm_i2caddr[I2C_NUM_OWN_ADDR] = {
-> -	NPCM_I2CADDR1, NPCM_I2CADDR2,
-> +	NPCM_I2CADDR1, NPCM_I2CADDR2, NPCM_I2CADDR3, NPCM_I2CADDR4,
-> +	NPCM_I2CADDR5, NPCM_I2CADDR6, NPCM_I2CADDR7, NPCM_I2CADDR8,
-> +	NPCM_I2CADDR9, NPCM_I2CADDR10,
-
-Looks a bit hacky, but serves the purpose.
-
-The core issue in "npcm_i2c_slave_enable()" is the lack of an
-upper boundary check, which could potentially lead to a buffer
-overflow. In practice, we rely on the assumption that these
-addresses don’t exist in the real world.
-
-An easier fix could have been:
-
-@@ -629,7 +629,7 @@ static int npcm_i2c_slave_enable(struct npcm_i2c *bus, enum i2c_addr addr_type,
-        if (addr_type > I2C_SLAVE_ADDR2 && addr_type <= I2C_SLAVE_ADDR10)
-                dev_err(bus->dev, "try to enable more than 2 SA not supported\n");
-
--       if (addr_type >= I2C_ARP_ADDR)
-+       if (addr_type > I2C_SLAVE_ADDR2)
-                return -EFAULT;
-
-        /* Set and enable the address */
-
-But yours is a bit more robust, so that I'm going to take this
-patch.
-
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-
-Thanks,
-Andi
-
->  };
->  #endif
->  
-> -- 
-> 2.34.1
+> Changes in v3:
+> 	- Removed the patch from original series[1]
 > 
+> Changes in v2:
+> 	- Added Reviewed-by tag
+> 
+> [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
+
+Why are you splitting same subsystem patches into multiple patchsets? I
+asked you to split per subsystem. Not per file. How subsystem maintainer
+is supposed to pick it up?
+
+Best regards,
+Krzysztof
+
 
