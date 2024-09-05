@@ -1,191 +1,101 @@
-Return-Path: <linux-kernel+bounces-317234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D951B96DB3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D16C496DB43
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1180E1C24E43
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBC41C23B16
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A365319E80F;
-	Thu,  5 Sep 2024 14:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150C819DFB4;
+	Thu,  5 Sep 2024 14:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="edkBSa94"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gwZ9jRjO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2hRokJ0V"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1057A19E7E2
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282A919923A;
+	Thu,  5 Sep 2024 14:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545399; cv=none; b=owwrIbPdHDnib9Xh1zw0DlY3/LaHiHryAgXJujfgVueDUa1MuS1gbf0HdECHDM/A2cV3fTWkzNdfZy6aW9IHjqZYR6Jzt4Ktse3QRKrgMLPsHz7LNtox2dKrOGFoppjIo4EJpBYP5RcgBTJrl5N/WOMf2OBv685usQzj6RNciw0=
+	t=1725545556; cv=none; b=KmPxAqVYCel5ZZsTNgdLHoYa0QY6pwkZB0PLkK0M2sa4vbYPWdg+cI9lvvlkhCqrb6Q1lg+SOWf+NgSBPVoba+ZZ01AtLYAjiOiIeezG2UfAxe7Df1iNXWzuwVzs9QuNPUxX6rSol/GnBZLzOp+6tFlh1nKapsMSZRWZGpf9mUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545399; c=relaxed/simple;
-	bh=26I3CCN1xk1tflNeHygcv2g3UJ01SvA+yYFIQvJ2Ux4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/jWQ45BTkJJH9QFcbKfqew4rA6GzS5BDa7icqzYhB+a14IaoKityS+1J0X8kloqz5JfWMX0WMfZKatT5eCn7Fu6stdaA9EGHEhlGWRBc5hqejtFc3eXny5uGc6qle9hu5OLbxSq4Bj1uEnDoqDD0OGXVCpdO2tsRjyLNRbkRqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=edkBSa94; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e3cc6c1f-97f4-45f1-a909-00cf986cd465@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725545395;
+	s=arc-20240116; t=1725545556; c=relaxed/simple;
+	bh=jgJLqQ5aUW1GtlCByoTB0kURD9IZ5ZOc/YkwJwwd8p0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DDzGAgm//U+MF1OrA5fBJSn07tD3pdamFAJ4O3KilzzsDgroWZUCJHHXg9KWnuREY2QFP7r2ZPmQh/i0Z7tqVCVpMyb2simC2SKLt65rUgeagSivf+akMF5r2NojFQ9ijAp8N4xcsfCOrTIUJ/fX75oguWgjY8+GyzgVXWysFIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gwZ9jRjO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2hRokJ0V; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725545553;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MW3j9iwJ2dsJQ38vKTBplOuhuzXGBXMoOjy8GycZgz0=;
-	b=edkBSa94lZRP/tSBPcbC+2j5ggoI+MRWOpPEBoC8N73+RyYHYXh8XVmQTTNDawAV+p+tDY
-	USJzBsLCMfplQwL4okOKEVoZ88BYRG5Gke9MSPoOtPUKh3l19Cn9u5xd+ltf6F1kXT2KE4
-	YmsW+T/8ASEU++Zli5P6zjheAzPYT98=
-Date: Thu, 5 Sep 2024 10:09:51 -0400
+	bh=mX9sRy7qflqbJGwYCotHLR/2Vyut02DomVqWS3hqAW8=;
+	b=gwZ9jRjO1UIrP0E6OYbmbiX0Pv5Dp+rFKarjwUAKNcVCIqepRQ1ViFlWidIJOP+pAwpUdd
+	BesdEFLjDBV2xrUhuIQFiN1TvLvAX32dJ7xjJHFfvFXPeJx+ZvyrPn7kZM59jH/FOgOGvt
+	n5PGX8SlGnpmTooiF654yAHu90lcQ3Lo5PLEqNhlUl+SCbmM6MnIyAsq5pxmu6MTtK8Lx8
+	FVaj3oQVkQGLg+li4YFJeOoFpvZVr5SoXAxy9uORZ4LGfO+5BLjaEWh2ooFUZFohzA+wxF
+	k8AgJgoUTwGwPZhvd+RpZpTkPdOz5jqDT8KMymqpP0+7ixdY4piGWVuu4wk5Yg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725545553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mX9sRy7qflqbJGwYCotHLR/2Vyut02DomVqWS3hqAW8=;
+	b=2hRokJ0VqPq3yflQpnMXpsUt2DnkAM34ll/veuwvPF0vMDZJJlHDk8w7BkTR4laHeQVc8D
+	xif1gj99saIKM3Dg==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Tony Lindgren
+ <tony@atomide.com>, "Paul E. McKenney" <paulmck@kernel.org>, Uwe
+ =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Ilpo
+ =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Serge Semin <fancer.lancer@gmail.com>,
+ Rengarajan S <rengarajan.s@microchip.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Florian Fainelli
+ <f.fainelli@gmail.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, Lino
+ Sanfilippo <l.sanfilippo@kunbus.com>, Derek Barbosa <debarbos@redhat.com>
+Subject: Re: [PATCH tty-next v1 0/2] convert 8250 to nbcon
+In-Reply-To: <2024090554-mating-humiliate-292b@gregkh>
+References: <20240905134719.142554-1-john.ogness@linutronix.de>
+ <2024090554-mating-humiliate-292b@gregkh>
+Date: Thu, 05 Sep 2024 16:18:31 +0206
+Message-ID: <87cyli2nqo.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] net: xilinx: axienet: Remove unused checksum
- variables
-To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "Simek, Michal" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240903184334.4150843-1-sean.anderson@linux.dev>
- <20240903184334.4150843-2-sean.anderson@linux.dev>
- <MN0PR12MB595303AE2C49E45A0CF435A1B79C2@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <MN0PR12MB595303AE2C49E45A0CF435A1B79C2@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On 9/4/24 13:03, Pandey, Radhey Shyam wrote:
->> -----Original Message-----
->> From: Sean Anderson <sean.anderson@linux.dev>
->> Sent: Wednesday, September 4, 2024 12:14 AM
->> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; David S .
->> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
->> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>;
->> netdev@vger.kernel.org
->> Cc: Simek, Michal <michal.simek@amd.com>; linux-arm-
->> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Sean Anderson
->> <sean.anderson@linux.dev>
->> Subject: [PATCH 1/3] net: xilinx: axienet: Remove unused checksum variables
+On 2024-09-05, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> On Thu, Sep 05, 2024 at 03:53:17PM +0206, John Ogness wrote:
+>> The recent printk rework introduced a new type of console NBCON
+>> that will perform printing via a dedicated kthread during
+>> normal operation. For times when the kthread is not available
+>> (early boot, panic, reboot/shutdown) the NBCON console will
+>> print directly from the printk() calling context (even if from
+>> NMI).
 >> 
->> These variables are set but never used. Remove them
->> 
-> 
-> Nit - Missing "." at the end.
+>> Futher details about NBCON consoles are available here [0].
+>
+> Really?  That link calls them "NOBKL", is that the same thing?
 
-Will fix if I send a v2.
+Sorry. Yes, they are the same thing. It was renamed because NOBKL did
+not look nice.
 
-> Also, just curious how you found these unused vars ? 
-> using some tool or in code walkthrough?
+NBCON stands for "No BKL Console".
 
-I read the code and noticed it :)
-
---Sean
-
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> 
-> Rest seems fine.
-> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> 
-> 
->> ---
->> 
->>  drivers/net/ethernet/xilinx/xilinx_axienet.h      |  5 -----
->>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 12 ------------
->>  2 files changed, 17 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> b/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> index c301dd2ee083..b9d2d7319220 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> @@ -527,8 +527,6 @@ struct skbuf_dma_descriptor {
->>   *		  supported, the maximum frame size would be 9k. Else it is
->>   *		  1522 bytes (assuming support for basic VLAN)
->>   * @rxmem:	Stores rx memory size for jumbo frame handling.
->> - * @csum_offload_on_tx_path:	Stores the checksum selection on TX
->> side.
->> - * @csum_offload_on_rx_path:	Stores the checksum selection on RX
->> side.
->>   * @coalesce_count_rx:	Store the irq coalesce on RX side.
->>   * @coalesce_usec_rx:	IRQ coalesce delay for RX
->>   * @coalesce_count_tx:	Store the irq coalesce on TX side.
->> @@ -606,9 +604,6 @@ struct axienet_local {
->>  	u32 max_frm_size;
->>  	u32 rxmem;
->> 
->> -	int csum_offload_on_tx_path;
->> -	int csum_offload_on_rx_path;
->> -
->>  	u32 coalesce_count_rx;
->>  	u32 coalesce_usec_rx;
->>  	u32 coalesce_count_tx;
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> index fe6a0e2e463f..60ec430f3eb0 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> @@ -2631,38 +2631,26 @@ static int axienet_probe(struct platform_device
->> *pdev)
->>  	if (!ret) {
->>  		switch (value) {
->>  		case 1:
->> -			lp->csum_offload_on_tx_path =
->> -				XAE_FEATURE_PARTIAL_TX_CSUM;
->>  			lp->features |= XAE_FEATURE_PARTIAL_TX_CSUM;
->>  			/* Can checksum TCP/UDP over IPv4. */
->>  			ndev->features |= NETIF_F_IP_CSUM;
->>  			break;
->>  		case 2:
->> -			lp->csum_offload_on_tx_path =
->> -				XAE_FEATURE_FULL_TX_CSUM;
->>  			lp->features |= XAE_FEATURE_FULL_TX_CSUM;
->>  			/* Can checksum TCP/UDP over IPv4. */
->>  			ndev->features |= NETIF_F_IP_CSUM;
->>  			break;
->> -		default:
->> -			lp->csum_offload_on_tx_path =
->> XAE_NO_CSUM_OFFLOAD;
->>  		}
->>  	}
->>  	ret = of_property_read_u32(pdev->dev.of_node, "xlnx,rxcsum",
->> &value);
->>  	if (!ret) {
->>  		switch (value) {
->>  		case 1:
->> -			lp->csum_offload_on_rx_path =
->> -				XAE_FEATURE_PARTIAL_RX_CSUM;
->>  			lp->features |= XAE_FEATURE_PARTIAL_RX_CSUM;
->>  			break;
->>  		case 2:
->> -			lp->csum_offload_on_rx_path =
->> -				XAE_FEATURE_FULL_RX_CSUM;
->>  			lp->features |= XAE_FEATURE_FULL_RX_CSUM;
->>  			break;
->> -		default:
->> -			lp->csum_offload_on_rx_path =
->> XAE_NO_CSUM_OFFLOAD;
->>  		}
->>  	}
->>  	/* For supporting jumbo frames, the Axi Ethernet hardware must
->> have
->> --
->> 2.35.1.1320.gc452695387.dirty
-> 
-
+John
 
