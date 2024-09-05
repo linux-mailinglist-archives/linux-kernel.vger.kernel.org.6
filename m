@@ -1,148 +1,210 @@
-Return-Path: <linux-kernel+bounces-316351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6E096CE56
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:15:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E3196CE5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815611C225CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE33A1F234D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AC3156883;
-	Thu,  5 Sep 2024 05:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2199A156676;
+	Thu,  5 Sep 2024 05:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oj8Fx0C1"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E/bGPOw3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5712F149013;
-	Thu,  5 Sep 2024 05:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DF31372;
+	Thu,  5 Sep 2024 05:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725513295; cv=none; b=ECj7exbqQqEYIEhtZP+m4Qk7P5EmZI84BvIh4j5to7BwcYxxGTOKOrY381fm9uO07X7RAteXJrV3hcKccMNscleSrM5CnPXuBb74obTVz4zubmbfkdfVWhCROEErtD6S38Ysu/qBSPBTTv1ygQR8g/K04e7ZkiPwKFK/jKzAtj8=
+	t=1725513499; cv=none; b=p9+eLFCBJUjWndRDhQVOywneOhOhy1d6dq/rVi/xU0kWmSgsifKSpYzebPNBOn7mGUSziCZ5CcjdLcQNgL+LBNnjTQvQRlIxNlznmyR5gE7yjYfFWOS/9PNFv9LUQ+VQlG6XIq40A56YnJV6rE+cNiNEQLBfBZ3+QKwxKCLGd1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725513295; c=relaxed/simple;
-	bh=aG+evR3+/5qIXwTAJgFCZS/zyQH8AV2X8iY2rmN/CA0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=HMCkZM8VsDrdd8OEd2AiqZCx9S7cb3JDFuo3Ju/OFEzoThddkS/lmYUnJhNYI22t9fwRdnPqN9y8jtu55fDOFbuOsLc6h2HrSNJ1qn4GGypg5gCiFhIzWWHEn4lKGYnjjTWnns0Tj5kHNtKm98IefCEj82T2/XhkSg1Dm71Kt4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oj8Fx0C1; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4855Em5a109414;
-	Thu, 5 Sep 2024 00:14:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725513288;
-	bh=T/EmD+I0Gk0axmSOCLnZzBv2wRZ3H10IZiSBl3yeiWs=;
-	h=From:Date:Subject:To:CC;
-	b=oj8Fx0C1GDa1Y8zWdBZ5mWWRgOI5i6/PD4vxLq2R7SlF2FsCxvwqEXmBM2xVQBsTK
-	 vmigXpGm6y7QW0/Gycnzr/tdk/7sFKBMKJvqK3qFgqZ6oM/zsDa33O6BgYGAdQwZZq
-	 PfUEhRa92J0TlbesPF50shuhZ3f3vuDIaJveTkl4=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4855EmNH037404;
-	Thu, 5 Sep 2024 00:14:48 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
- Sep 2024 00:14:48 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 5 Sep 2024 00:14:48 -0500
-Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.68] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4855EiKw040071;
-	Thu, 5 Sep 2024 00:14:45 -0500
-From: Dhruva Gole <d-gole@ti.com>
-Date: Thu, 5 Sep 2024 10:44:32 +0530
-Subject: [PATCH v2] dt-bindings: opp: operating-points-v2-ti-cpu: Describe
- opp-supported-hw
+	s=arc-20240116; t=1725513499; c=relaxed/simple;
+	bh=xtIkfUy4hTlC/FKrRENn52PpHcU6UfejqdvtDUAQQhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMeBiqAps7Tguhtne6t1MXXra2juJQgtYbrlYkNEg+S60tx4nBPr3d94xpy/Ek4nREDMl1diaj+jB6N0hv3SNmo7DBdAez7V0al3b8CviyGcVWTanvEXN4oGkW4CCvmkpi+UcA0GVsjdimDssCIGVatoURlFF+UNS3F49iaTlkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E/bGPOw3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61ABCC4CEC4;
+	Thu,  5 Sep 2024 05:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725513498;
+	bh=xtIkfUy4hTlC/FKrRENn52PpHcU6UfejqdvtDUAQQhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E/bGPOw3m4qXtRnauouPMk6XW69KDRJ7QCGzl++e3REOQGrBkyL4W6gO6S/eKIiKw
+	 4NYj0sv4jNOJkFXx20WwMPqUsGSvtZ535nE2zyD6VfFKttKeA9ZG62REzrPExLu/Ms
+	 uLKgygUZSBFRyoBN4gUY3ClNnHE+6a8Op/3CWozY=
+Date: Thu, 5 Sep 2024 07:18:10 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, jorge.lopez2@hp.com,
+	acelan.kao@canonical.com, platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 2/2] platform/x86/hp: Avoid spurious wakeup on HP ProOne
+ 440
+Message-ID: <2024090510-repaying-disrupt-e568@gregkh>
+References: <20240905042447.418662-1-kai.heng.feng@canonical.com>
+ <20240905042447.418662-2-kai.heng.feng@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240905-b4-opp-dt-binding-fix-v2-1-1e3d2a06748d@ti.com>
-X-B4-Tracking: v=1; b=H4sIADc+2WYC/4WNSw7CIBRFt9K8sc8ApT9H7sN0YAu0byAQIETTs
- HexG3B4TnLPPSDqQDrCrTkg6EyRnK0gLg2s+9NuGklVBsGEZBNrcZHovEeVcCGryG5o6I1Du/a
- jmIaOKwF164Ou+uw+5so7xeTC57zJ/Gf/FTNHhmbQfOxl16vJ3BNdV/eCuZTyBQJ9Fue3AAAA
-To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Viresh Kumar <viresh.kumar@linaro.org>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dhruva Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725513284; l=2568;
- i=d-gole@ti.com; s=20240902; h=from:subject:message-id;
- bh=aG+evR3+/5qIXwTAJgFCZS/zyQH8AV2X8iY2rmN/CA0=;
- b=LkCqPjg3unfYAuZU/6ZBUvp8D3NacezwVDYTn8T2pqvDNKDcGULhOtIu5JR0sep0MtqgTLcV7
- gwDhndcGsuiAgsehtB9pFBwuS7uip3ZeTwZ5DU5hPywWM1DrZAlQ9ni
-X-Developer-Key: i=d-gole@ti.com; a=ed25519;
- pk=yOC9jqVaW3GN10oty8eZJ20dN4jcpE8JVoaODDmyZvA=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905042447.418662-2-kai.heng.feng@canonical.com>
 
-It seems like we missed migrating the complete information from the old
-DT binding where we had described what the opp-supported-hw is supposed
-to describe. Hence, bring back the description from the previous binding
-to the current one along with a bit more context on what the values are
-supposed to be.
+On Thu, Sep 05, 2024 at 12:24:47PM +0800, Kai-Heng Feng wrote:
+> The HP ProOne 440 has a power saving design that when the display is
+> off, it also cuts the USB touchscreen device's power off.
+> 
+> This can cause system early wakeup because cutting the power off the
+> touchscreen device creates a disconnect event and prevent the system
+> from suspending:
+> [  445.814574] hub 2-0:1.0: hub_suspend
+> [  445.814652] usb usb2: bus suspend, wakeup 0
+> [  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, portsc: 0x202a0
+> [  445.824639] xhci_hcd 0000:00:14.0: resume root hub
+> [  445.824651] xhci_hcd 0000:00:14.0: handle_port_status: starting usb1 port polling.
+> [  445.844039] xhci_hcd 0000:00:14.0: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x20 returns -16
+> [  445.844058] xhci_hcd 0000:00:14.0: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x1c0 returns -16
+> [  445.844072] xhci_hcd 0000:00:14.0: PM: failed to suspend async: error -16
+> [  446.276101] PM: Some devices failed to suspend, or early wake event detected
+> 
+> So add a quirk to make sure the following is happening:
+> 1. Let the i915 driver suspend first, to ensure the display is off so
+>    system also cuts the USB touchscreen's power.
+> 2. If the touchscreen is present, wait a while to let the USB disconnect
+>    event fire.
+> 3. Since the disconnect event already happened, the xhci's suspend
+>    routine won't be interrupted anymore.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/platform/x86/hp/hp-wmi.c | 104 ++++++++++++++++++++++++++++++-
+>  1 file changed, 103 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+> index 876e0a97cee1..80fc3ee4deaf 100644
+> --- a/drivers/platform/x86/hp/hp-wmi.c
+> +++ b/drivers/platform/x86/hp/hp-wmi.c
+> @@ -30,6 +30,9 @@
+>  #include <linux/rfkill.h>
+>  #include <linux/string.h>
+>  #include <linux/dmi.h>
+> +#include <linux/delay.h>
+> +#include <linux/pci.h>
+> +#include <linux/usb.h>
+>  
+>  MODULE_AUTHOR("Matthew Garrett <mjg59@srcf.ucam.org>");
+>  MODULE_DESCRIPTION("HP laptop WMI driver");
+> @@ -1708,6 +1711,52 @@ static void __exit hp_wmi_bios_remove(struct platform_device *device)
+>  		platform_profile_remove();
+>  }
+>  
+> +static int hp_wmi_suspend_handler(struct device *device)
+> +{
+> +	acpi_handle handle;
+> +	struct acpi_device *adev;
+> +	struct device *physdev;
+> +	struct usb_port *port_dev;
+> +	struct usb_device *udev;
+> +	acpi_status status;
+> +	bool found = false;
+> +
+> +	/* The USB touchscreen device always connects to HS11 */
+> +	status = acpi_get_handle(NULL, "\\_SB.PC00.XHCI.RHUB.HS11", &handle);
+> +	if (ACPI_FAILURE(status))
+> +		return 0;
+> +
+> +	adev = acpi_fetch_acpi_dev(handle);
+> +	if (!adev)
+> +		return 0;
+> +
+> +	physdev = get_device(acpi_get_first_physical_node(adev));
+> +	if (!physdev)
+> +		return 0;
+> +
+> +	port_dev = to_usb_port(physdev);
 
-Fixes: e576a9a8603f ("dt-bindings: cpufreq: Convert ti-cpufreq to json schema")
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
-Changes in v2:
-- Drop the patch where I updated Maintainers since it's already picked
-  by Viresh.
-- Add more details of how to populate the property based on device
-  documents like TRM/ datasheet.
-- Link to v1: https://lore.kernel.org/r/20240903-b4-opp-dt-binding-fix-v1-0-f7e186456d9f@ti.com
----
- .../bindings/opp/operating-points-v2-ti-cpu.yaml         | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+That's a brave cast, how do you "know" this is this device type?
 
-diff --git a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-index 02d1d2c17129..fd260b20c59c 100644
---- a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-+++ b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-@@ -45,7 +45,21 @@ patternProperties:
-       clock-latency-ns: true
-       opp-hz: true
-       opp-microvolt: true
--      opp-supported-hw: true
-+      opp-supported-hw:
-+        description: |
-+          Two bitfields indicating:
-+            1. Which revision of the SoC the OPP is supported by.
-+            This can be easily obtained from the datasheet of the
-+            part being ordered/used. For eg. it will be 0x01 for SR1.0
-+            2. Which eFuse bits indicate this OPP is available.
-+            The device datasheet has a table talking about Device Speed Grades.
-+            If one were to sort this table and only retain the unique elements
-+            of the MAXIMUM OPERATING FREQUENCY starting from the first row
-+            which tells the lowest OPP, to the highest. The corresponding bits
-+            need to be set based on N elements of speed grade the device supports.
-+            So, if there are 3 possible unique MAXIMUM OPERATING FREQUENCY
-+            in the table, then BIT(0), (1) and (2) will be set, which means
-+            the value shall be 0x7.
-       opp-suspend: true
-       turbo-mode: true
- 
+> +	if (port_dev->state == USB_STATE_NOTATTACHED)
+> +		return 0;
+> +
+> +	udev = port_dev->child;
+> +
+> +	if (udev) {
+> +		usb_get_dev(udev);
+> +		if (le16_to_cpu(udev->descriptor.idVendor) == 0x1fd2 &&
+> +		    le16_to_cpu(udev->descriptor.idProduct) == 0x8102) {
+> +			dev_dbg(&hp_wmi_platform_dev->dev, "LG Melfas touchscreen found\n");
+> +			found = true;
+> +		}
+> +		usb_put_dev(udev);
+> +
+> +		/* Let the xhci have time to handle disconnect event */
+> +		if (found)
+> +			msleep(200);
 
----
-base-commit: ecc768a84f0b8e631986f9ade3118fa37852fef0
-change-id: 20240903-b4-opp-dt-binding-fix-73c6829751d2
+why 200?
 
-Best regards,
--- 
-Dhruva Gole <d-gole@ti.com>
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int hp_wmi_resume_handler(struct device *device)
+>  {
+>  	/*
+> @@ -1745,7 +1794,7 @@ static int hp_wmi_resume_handler(struct device *device)
+>  	return 0;
+>  }
+>  
+> -static const struct dev_pm_ops hp_wmi_pm_ops = {
+> +static struct dev_pm_ops hp_wmi_pm_ops = {
+>  	.resume  = hp_wmi_resume_handler,
+>  	.restore  = hp_wmi_resume_handler,
+>  };
+> @@ -1871,6 +1920,57 @@ static int hp_wmi_hwmon_init(void)
+>  	return 0;
+>  }
+>  
+> +static int lg_usb_touchscreen_quirk(const struct dmi_system_id *id)
+> +{
+> +	struct pci_dev *vga, *xhci;
+> +	struct device_link *vga_link, *xhci_link;
+> +
+> +	vga = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, NULL);
+> +
+> +	xhci = pci_get_class(PCI_CLASS_SERIAL_USB_XHCI, NULL);
+> +
+> +	if (vga && xhci) {
+> +		xhci_link = device_link_add(&hp_wmi_platform_dev->dev, &xhci->dev,
+> +				      DL_FLAG_STATELESS);
+> +		if (xhci_link)
+> +			dev_info(&hp_wmi_platform_dev->dev, "Suspend before %s\n",
+> +				 pci_name(xhci));
 
+When drivers work properly, they are quiet, was this ment to be
+dev_dbg()?
+
+> +		else
+> +			return 1;
+> +
+> +		vga_link = device_link_add(&vga->dev, &hp_wmi_platform_dev->dev,
+> +					   DL_FLAG_STATELESS);
+> +		if (vga_link)
+> +			dev_info(&hp_wmi_platform_dev->dev, "Suspend after %s\n",
+> +				 pci_name(vga));
+
+Same here.
+
+thanks,
+
+greg k-h
 
