@@ -1,152 +1,111 @@
-Return-Path: <linux-kernel+bounces-316224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DD796CCCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:47:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C40796CCCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154601F27244
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92721F27357
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B6C13BAE3;
-	Thu,  5 Sep 2024 02:47:41 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F4113CFB8;
+	Thu,  5 Sep 2024 02:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9XAks84"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2451FDA;
-	Thu,  5 Sep 2024 02:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0301E18E25
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725504461; cv=none; b=Iem3gCNzwNKsorjRDKp8GqRiejnPebrrS6gKLjO4RK62mIvyB2sGUZ39F3gm0B2BM3iUJcvGkJp+YvQT8Z3QEbvAe1hlnqo/EuninpD+eGkUc7mIchu84Dfptp8zguhB+O4Pkmy2ViGlaOFS+ukGl6rkEPtVVdOJLQp90XCYdEg=
+	t=1725504485; cv=none; b=fItifL4ZrGFStDMDP5pNkMeR8EMk2rFOpg7bYP2Uk8BrfiF8VxfGYenQDAvHCy0hAuGWMsc1QTtDZ/ZdFeGpAJuLPdUKHipBnGWfgaA/naPghLp3iU7hPjE9kDJ5vOzemI41m5tEFL+lUMpjrVR6I0+LSPVBDBAR5cBh+QaMVV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725504461; c=relaxed/simple;
-	bh=DhoDKVBAUT8AgXJcIdb7+HLGvgvn5SxTmdfVpZP4jPM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cAsxjpQB6gFfJ57Y8zWIX3F+c17QopYEvCbI6aA00XA6gmGNNgEB/TdrsvgWgvcPy0DwP597CoHUpXTNh0NvBUJQKeWKhHS4hT2l6SFd+CGnE1P3z9iuo87Vo/RQbCEPJJ1OMtnMqFyGIIYbmkoIFNZ4pIrKkrCicYIijfG+mLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 4852kmOG089921
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 5 Sep 2024 10:46:48 +0800 (+08)
-	(envelope-from kimriver.liu@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4WzkK33wj6z7ZMtc;
-	Thu,  5 Sep 2024 10:46:47 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 5 Sep 2024 10:46:48 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 10:46:47 +0800
-Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
- SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
- 15.02.1544.011; Thu, 5 Sep 2024 10:46:47 +0800
-From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "jsd@semihalf.com" <jsd@semihalf.com>,
-        "andi.shyti@kernel.org"
-	<andi.shyti@kernel.org>,
-        "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?u9i4tDogW1BBVENIXSBpMmM6IGRlc2lnbndhcmU6IGZpeCBtYXN0ZXIgaXMg?=
- =?gb2312?Q?holding_SCL_low_while_ENABLE_bit_is_disabled?=
-Thread-Topic: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Thread-Index: AQHa/pXqYN5O6bu3D02ZGK2PUsfYN7JHECeAgAFrduA=
-Date: Thu, 5 Sep 2024 02:46:47 +0000
-Message-ID: <5d0dd59f21bc44c582b18db99a3d7672@siengine.com>
-References: <20240904064224.2394-1-kimriver.liu@siengine.com>
- <ZthYwQfj3Vy6dU-S@smile.fi.intel.com>
-In-Reply-To: <ZthYwQfj3Vy6dU-S@smile.fi.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725504485; c=relaxed/simple;
+	bh=LxRKzOknfNVgr/nZkfxVsvIlTTUg446Hy3DXGGEcM8Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=odsVOBrFIan0Re/emPQ1bXtNXC5Vqc5ddllZVqDu4tJg4/wppJG3TkAdJBd1/KQOT3NUG09/KkLrzh8WAiV3yTmhHx7kkG+ZB6d0+5WA67iZrfVTy724meuiOFhasDtAS9BF6gnmLyu4gldHssay4k5A+XGARdp0OarDqI5Nkc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9XAks84; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b2249bf2d0so5743047b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 19:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725504483; x=1726109283; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eFYjJd8iNrtb63t18R0exGEJbYCH+p9Iky0tcx/gIcw=;
+        b=M9XAks84H7CkibWwGVd92v+9IFfvSxCHAkndAx+pHOLGS8dsKt0pFARXRN4aoqHjDF
+         5+jTye78K97RVSMtzJRR20ZulnxGGI7dAifCPI6yzj0qt4ysMWSvZp2E2BIOyjyNClFZ
+         m2jvl7HHtuXGO1w5bao+KeCTsU8zw+6Fbc36FJu+WWB+j5ELc1RDp5/er2J7gfpiyhhU
+         vSoP1/dUhiiZPTR7xqZFlnzpsrjmAp5Op8i7qP5iPGJ3Px4e+8kq2aWGpRF5G5rhd7PZ
+         735J1/RXz9HoLTZ6Llr9RLcjgJD6IncVaZggtFR8gxDN0uky1OpYaI2gjI7im/KKc8eY
+         5S7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725504483; x=1726109283;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eFYjJd8iNrtb63t18R0exGEJbYCH+p9Iky0tcx/gIcw=;
+        b=WLW/wqBjLPnj3/D2GTm1z829mRpbMIqq2XngUmCytIOwOalQ/Xm62msDQDeSruL169
+         YueM3Kq3/1eqwUISw/gKloEURldZC2NyrwHauxLcwBwVRM23ekmIae0dTfwJg44YdECy
+         gpMt8KFidDwqIg2M324sqEX7i2qAPS8LKf5SkFgGAGWE2ASzFGnRpinf10qbrlPW56o0
+         tj+SDf2ujTHdihar+JbWwsc/7NvFciFsBS6AzBDbmmhknexGoJFaWOAJY94+y9VAU1iO
+         EezsrEIojGedopg6HGnAXLsCsl5VX/FK3LB4OAsctKMsiOZgO3DA/ofB0ujDfmPoYZl3
+         JsIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsdNrBu3Z6ZMkYarOMVdc6CLyjRlMThWzNM/AgUPhSo97gcDyAE2U4p4vZVTR3zioljMnQx0kYnDP6nJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPG8l8ztMZK3wwxRB6/3oyK2962WWjk3FC9fsGUK7tynoKprLa
+	NfHki/Ss9/NQUsJkLhnZYf/tGLpaa/zvEF6LLGfJ7DA4RMbY32Gx7IJGxHZxfi6WpG19ByB68i6
+	z10wZEHVxfA==
+X-Google-Smtp-Source: AGHT+IGNLR4PLf7J72aG+yfi5fxLOJ/FPaMyP1DQR34ZJJHiCNMx7yxbuaDtk4sqGOMejduCxj/wf6O5zO1URw==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a05:690c:dc4:b0:6d5:b062:4c05 with SMTP
+ id 00721157ae682-6d5b0625124mr7902037b3.4.1725504482897; Wed, 04 Sep 2024
+ 19:48:02 -0700 (PDT)
+Date: Thu,  5 Sep 2024 10:47:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 4852kmOG089921
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240905024757.3600609-1-davidgow@google.com>
+Subject: [PATCH] kunit: Fix missing kerneldoc comment
+From: David Gow <davidgow@google.com>
+To: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Kees Cook <kees@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-CVRoYW5rcyBmb3IgeW91ciBzdWdnZXN0aW9uLiBJIHdpbGwgcmV2aXNlIGl0IGFjY29yZGluZyB0
-byB5b3VyIHN1Z2dlc3Rpb25zIA0KYW5kIHJlc2VuZCB0aGUgcGF0Y2guDQoNCkJlc3QgUmVnYXJk
-cw0KDQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7IyzogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXku
-c2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+IA0Kt6LLzcqxvOQ6IDIwMjTE6jnUwjTI1SAyMDo1
-NQ0KytW8/sjLOiBMaXUgS2ltcml2ZXIvwfW98LrTIDxraW1yaXZlci5saXVAc2llbmdpbmUuY29t
-Pg0Ks63LzTogamFya2tvLm5pa3VsYUBsaW51eC5pbnRlbC5jb207IG1pa2Eud2VzdGVyYmVyZ0Bs
-aW51eC5pbnRlbC5jb207IGpzZEBzZW1paGFsZi5jb207IGFuZGkuc2h5dGlAa2VybmVsLm9yZzsg
-bGludXgtaTJjQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K
-1vfM4jogUmU6IFtQQVRDSF0gaTJjOiBkZXNpZ253YXJlOiBmaXggbWFzdGVyIGlzIGhvbGRpbmcg
-U0NMIGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkDQoNCk9uIFdlZCwgU2VwIDA0LCAy
-MDI0IGF0IDAyOjQyOjI0UE0gKzA4MDAsIGtpbXJpdmVyIGxpdSB3cm90ZToNCj4gRnJvbTogImtp
-bXJpdmVyLmxpdSIgPGtpbXJpdmVyLmxpdUBzaWVuZ2luZS5jb20+DQo+IA0KPiBGYWlsdXJlIGlu
-IG5vcm1hbCBTdG9wIG9wZXJhdGlvbmFsIHBhdGgNCj4gDQo+IFRoaXMgZmFpbHVyZSBoYXBwZW5z
-IHJhcmVseSBhbmQgaXMgaGFyZCB0byByZXByb2R1Y2UuIERlYnVnIHRyYWNlIA0KPiBzaG93ZWQg
-dGhhdCBJQ19TVEFUVVMgaGFkIHZhbHVlIG9mIDB4MjMgd2hlbiBTVE9QX0RFVCBvY2N1cnJlZCwg
-DQo+IGltbWVkaWF0ZWx5IGRpc2FibGUgRU5BQkxFIGJpdCB0aGF0IGNhbiByZXN1bHQgaW4gDQo+
-IElDX1JBV19JTlRSX1NUQVQuTUFTVEVSX09OX0hPTEQgaG9sZGluZyBTQ0wgbG93Lg0KPiANCj4g
-RmFpbHVyZSBpbiBFTkFCTEUgYml0IGlzIGRpc2FibGVkIHBhdGgNCj4gDQo+IEl0IHdhcyBvYnNl
-cnZlZCB0aGF0IG1hc3RlciBpcyBob2xkaW5nIFNDTCBsb3cgYW5kIHRoZSBJQ19FTkFCTEUgaXMg
-DQo+IGFscmVhZHkgZGlzYWJsZWQsIEVuYWJsZSBBQk9SVCBiaXQgYW5kIEVOQUJMRSBiaXQgc2lt
-dWx0YW5lb3VzbHkgDQo+IGNhbm5vdCB0YWtlIGVmZmVjdC4NCj4gDQo+IENoZWNrIGlmIHRoZSBt
-YXN0ZXIgaXMgaG9sZGluZyBTQ0wgbG93IGFmdGVyIEVOQUJMRSBiaXQgaXMgYWxyZWFkeSANCj4g
-ZGlzYWJsZWQuIElmIFNDTCBpcyBoZWxkIGxvdywgVGhlIHNvZnR3YXJlIGNhbiBzZXQgdGhpcyBB
-Qk9SVCBiaXQgb25seSANCj4gd2hlbiBFTkFCTEUgaXMgYWxyZWFkeSBzZXSjrG90aGVyd2lzZSwN
-Cj4gdGhlIGNvbnRyb2xsZXIgaWdub3JlcyBhbnkgd3JpdGUgdG8gQUJPUlQgYml0LiBXaGVuIHRo
-ZSBhYm9ydCBpcyBkb25lLCANCj4gdGhlbiBwcm9jZWVkIHdpdGggZGlzYWJsaW5nIHRoZSBjb250
-cm9sbGVyLg0KPiANCj4gVGhlc2Uga2VybmVsIGxvZ3Mgc2hvdyB1cCB3aGVuZXZlciBhbiBJMkMg
-dHJhbnNhY3Rpb24gaXMgYXR0ZW1wdGVkIA0KPiBhZnRlciB0aGlzIGZhaWx1cmUuDQo+IGkyY19k
-ZXNpZ253YXJlIGU5NWUwMDAwLmkyYzogdGltZW91dCBpbiBkaXNhYmxpbmcgYWRhcHRlciANCj4g
-aTJjX2Rlc2lnbndhcmUgZTk1ZTAwMDAuaTJjOiB0aW1lb3V0IHdhaXRpbmcgZm9yIGJ1cyByZWFk
-eQ0KPiANCj4gVGhlIHBhdGNoIGNhbiBiZSBmaXggdGhlIGNvbnRyb2xsZXIgY2Fubm90IGJlIGRp
-c2FibGVkIHdoaWxlIFNDTCBpcyANCj4gaGVsZCBsb3cgaW4gRU5BQkxFIGJpdCBpcyBhbHJlYWR5
-IGRpc2FibGVkLg0KDQouLi4NCg0KPiAgCWFib3J0X25lZWRlZCA9IHJhd19pbnRyX3N0YXRzICYg
-RFdfSUNfSU5UUl9NU1RfT05fSE9MRDsNCj4gIAlpZiAoYWJvcnRfbmVlZGVkKSB7DQo+ICsJCWlm
-ICghZW5hYmxlKSB7DQo+ICsJCQlyZWdtYXBfd3JpdGUoZGV2LT5tYXAsIERXX0lDX0VOQUJMRSwg
-RFdfSUNfRU5BQkxFX0VOQUJMRSk7DQo+ICsJCQllbmFibGUgfD0gRFdfSUNfRU5BQkxFX0VOQUJM
-RTsNCg0KPiArCQkJdXNsZWVwX3JhbmdlKDI1LCAxMDApOw0KDQpmc2xlZXAoKQ0KDQpBbmQgYWRk
-IGEgc2hvcnQgY29tbWVudCB0byBleHBsYWluIHRoZSBjaG9zZW4gdmFsdWUuDQoNCj4gKwkJfQ0K
-DQouLi4NCg0KPiArc3RhdGljIGludCBpMmNfZHdfY2hlY2tfbXN0X2FjdGl2aXR5KHN0cnVjdCBk
-d19pMmNfZGV2ICpkZXYpIHsNCj4gKwl1MzIgc3RhdHVzID0gMDsNCj4gKwlpbnQgcmV0ID0gMDsN
-Cj4gKw0KPiArCXJlZ21hcF9yZWFkKGRldi0+bWFwLCBEV19JQ19TVEFUVVMsICZzdGF0dXMpOw0K
-PiArCWlmIChzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSB7DQo+ICsJCXJl
-dCA9IHJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwgRFdfSUNfU1RBVFVTLCBzdGF0
-dXMsDQo+ICsJCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSwNCj4g
-KwkJCQkxMTAwLCAyMDAwMCk7DQo+ICsJCWlmIChyZXQpDQo+ICsJCQlkZXZfZXJyKGRldi0+ZGV2
-LCAiaTJjIG1zdCBhY3Rpdml0eSBub3QgaWRsZSAlZFxuIiwgcmV0KTsNCj4gKwl9DQo+ICsNCj4g
-KwlyZXR1cm4gcmV0Ow0KDQpUaGlzIGNhbiBiZSByZXdyaXR0ZW4gYXMNCg0KCXUzMiBzdGF0dXMg
-PSAwOw0KCWludCByZXQ7DQoNCglyZWdtYXBfcmVhZChkZXYtPm1hcCwgRFdfSUNfU1RBVFVTLCAm
-c3RhdHVzKTsNCglpZiAoIXN0YXR1cyAmIERXX0lDX1NUQVRVU19NQVNURVJfQUNUSVZJVFkpKQ0K
-CQlyZXR1cm4gMDsNCg0KCXJldCA9IHJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwg
-RFdfSUNfU1RBVFVTLCBzdGF0dXMsDQoJCQkhKHN0YXR1cyAmIERXX0lDX1NUQVRVU19NQVNURVJf
-QUNUSVZJVFkpLA0KCQkJMTEwMCwgMjAwMDApOw0KCWlmIChyZXQpDQoJCWRldl9lcnIoZGV2LT5k
-ZXYsICJpMmMgbXN0IGFjdGl2aXR5IG5vdCBpZGxlICVkXG4iLCByZXQpOw0KDQoJcmV0dXJuIHJl
-dDsNCg0KPiArfQ0KDQouLi4NCg0KPiArCXJldCA9IGkyY19kd19jaGVja19tc3RfYWN0aXZpdHko
-ZGV2KTsNCj4gKwlpZiAoIXJldCkNCj4gKwkJX19pMmNfZHdfZGlzYWJsZV9ub3dhaXQoZGV2KTsN
-Cg0KLi4uYnV0IGxvb2tpbmcgYXQgdGhlIHVzYWdlLCBJIHRoaW5rIHRoZSBwcm9wZXIgaXMgdG8g
-aGF2ZSB0aGUgYWJvdmUgdG8gcmV0dXJuIGJvb2xlYW4uIEFuZCBhbHNvIHVwZGF0ZSB0aGUgbmFt
-ZSB0byBmb2xsb3cgdGhlIHVzdWFsIHBhdHRlcm4gZm9yIGJvb2xlYW4gaGVscGVycy4NCg0Kc3Rh
-dGljIGJvb2wgaTJjX2R3X2lzX21zdF9pZGxpbmcoc3RydWN0IGR3X2kyY19kZXYgKmRldikgLi4u
-DQoJaWYgKGkyY19kd19pc19tc3RfaWRsaW5nKGRldikpDQoJCV9faTJjX2R3X2Rpc2FibGVfbm93
-YWl0KGRldik7DQoNCi4uLg0KDQpBbHNvIHdoYXQgZG9lcyB0aGUgaGVjayAibXN0IiBzdGFuZCBm
-b3I/IFBsZWFzZSwgdXNlIGRlY3J5cHRlZCB3b3JkcyBpbiBmdW5jdGlvbiBuYW1lcyBhbmQgZXJy
-b3IgbWVzc2FnZXMuLg0KDQotLQ0KV2l0aCBCZXN0IFJlZ2FyZHMsDQpBbmR5IFNoZXZjaGVua28N
-Cg0KDQo=
+Add a missing kerneldoc comment for the 'test' test context parameter,
+fixing the following warning:
+
+include/kunit/test.h:492: warning: Function parameter or struct member 'test' not described in 'kunit_kfree_const'
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/lkml/20240827160631.67e121ed@canb.auug.org.au/
+Fixes: f2c6dbd22017 ("kunit: Device wrappers should also manage driver name")
+Signed-off-by: David Gow <davidgow@google.com>
+---
+ include/kunit/test.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index 5ac237c949a0..34b71e42fb10 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -484,6 +484,7 @@ static inline void *kunit_kcalloc(struct kunit *test, size_t n, size_t size, gfp
+ 
+ /**
+  * kunit_kfree_const() - conditionally free test managed memory
++ * @test: The test context object.
+  * @x: pointer to the memory
+  *
+  * Calls kunit_kfree() only if @x is not in .rodata section.
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
