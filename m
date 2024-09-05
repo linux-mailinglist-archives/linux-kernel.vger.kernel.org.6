@@ -1,109 +1,137 @@
-Return-Path: <linux-kernel+bounces-317577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2730F96E0A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:59:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C60896E0A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2B29B20FBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027511F24D46
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02271A2652;
-	Thu,  5 Sep 2024 16:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8660919D8B5;
+	Thu,  5 Sep 2024 17:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMLs3gNF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EGoN38GO"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4C41A2559;
-	Thu,  5 Sep 2024 16:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DB21A0AF4;
+	Thu,  5 Sep 2024 17:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725555561; cv=none; b=G+cPBNkdC/BYUmLUmVkL3MT+xJiCYd0lzDmrvv9/Xv+2p3HD6rbs91DIN+5D/gl5hcM+kBOFZkTefkNPeOXHW10YpRBo9/N7gmZZnu5ru1SiKkVD2mmtr+bkY60xaXIyFvHXknzbfCV/8ctGDh+aR6Su1MgPE8PXMl0B/pYWxO0=
+	t=1725555608; cv=none; b=n5KIoBrSq8N1uICnFKtFKfgdXCEtap8xTvr4aCOZh/uTZ5YLz0J1HyVDYvfUX0nRzIl6iVSBwH7RjpxDWLgh+yBdx9XL/5hQn0AiAsgiuoFU0aFtY8VZQ86660MN3Atrx3O87AUEJ0GiNPEXwSAupJfVwQCUGeGA+R2x2YblTzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725555561; c=relaxed/simple;
-	bh=b/RoyH2fpqJy/6V5fQZBvn2ucu8QGt9PcR14NPSjqzQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EfegiYaDVv0Q36ynVtRXpY9Gr+45ySRWgz+/bDh3Ka9aQhtCjE8maHU1XOEEPYydWZIZ3oU9q07sjg/olLCfe3AufDse5OpHM3FR5/3q80YN3R0Csqd5TMN2oGZjGs81T6fVft4S0Oi9AM4GyfkiKqheIvAbPXqv8JMIHualIdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMLs3gNF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9514CC4AF09;
-	Thu,  5 Sep 2024 16:59:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725555560;
-	bh=b/RoyH2fpqJy/6V5fQZBvn2ucu8QGt9PcR14NPSjqzQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sMLs3gNFTsAHf72BdBsl7em9OUMOFdc6ztP5C0RtwdvBTqxZ8uS2IBTYoVnpFCDqM
-	 Sm9bFMGC1VU4hxtHkDkfyC4X4UM7zO4PSQY4DNAQ9EVDoc5wQry6Wc/Mf8cyRGfgVJ
-	 730QfADELtQVtT3jir1YpfwzjgkjOgr9NTkJu/NcQOuSo46+JIPx4GP/jLo3FALwZ5
-	 u++rE8oUZYSnnXbeCESefLFeIOL/r+OSgfBOzvxDoI5g+SO8+Y6Twz5pykEs6Iu+13
-	 psLwKiup5AGJ9J6OpNr7n2WkOcbTyQyQUTGiD/2tuQlxdlsLhxXxD5uoPdgn+OUYPm
-	 aK262VPCstq8Q==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53436e04447so940372e87.1;
-        Thu, 05 Sep 2024 09:59:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUaBg9j8jPnjOyESsdipjTbDF9iJJI9GxtqcqvypSbo5t68Q1oyz9JyNtDJLprPBdznR59Pu0h4fFNNV1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlE/XI8dopFoLWwVWtn3yXUm2oAuVGL2wuRkVA/pLDCIJGZttj
-	XtwdaXWCEshjuKcemnZpS1u6dIYdcXLsnNJo0iWZFdHMORZSfUsrxp5SCo/uI9ED1yF4Fy4jgxw
-	Ya480MVLBAEOzR0Raaluf1rwVCw==
-X-Google-Smtp-Source: AGHT+IFoFAONGYXdOGvO/9NwY/+sjcHA8u2Plrb0DEdo/+9Cta74IxJpeHkXH5lG6W0ziF8QBkQKZEwG/gQjy39DFww=
-X-Received: by 2002:a05:6512:1116:b0:52e:fa08:f0f5 with SMTP id
- 2adb3069b0e04-53567678b33mr2248269e87.13.1725555558903; Thu, 05 Sep 2024
- 09:59:18 -0700 (PDT)
+	s=arc-20240116; t=1725555608; c=relaxed/simple;
+	bh=kUKvlt9oQSc6GPz4Rg0Q1sVBZUSpr7XakOpAwQN1cdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uPAcsCt4gQwCeQvBkWsDHgoPJdkgDOdS2vRRjaQO4Dog0FU4ZWzeuUVL9hMVq24DemVj5Qwsalj5P2O9cetvvyQJlfhNaaI06zPfpFFOXcmqTjUQBDy1/AXfLJYdQ/w2NI5afLuKimH8R5hLCsRXzTZ6eCFItkeVCQXr1FYEqEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EGoN38GO; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3559cb54-b19a-4650-afc0-fcfb261dd876@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725555602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gWNOpx6m4x/ajgnWUaYsJDrWvzMaA+fdW54bnTwX/Yw=;
+	b=EGoN38GO6M9zHBXiuq121lA5BBZ+Sr3PpplTj3KGRFBSgvNKzxXEJ5ANgHTpO1mYeu2qSG
+	TITC4D+AgCNp8uFDhGUZFZ6TJXPjoGZfdOdfWf9L9xiOVhZSSg+LepRsby7/GHYBP+dysM
+	Urq63M6XIWrUsxlHqhx6HeD88Usc2dM=
+Date: Thu, 5 Sep 2024 12:59:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904200253.3112699-1-robh@kernel.org>
-In-Reply-To: <20240904200253.3112699-1-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 5 Sep 2024 11:59:06 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLY-vNNMMRJvn5oBD8Rk2eJCq73NYuEoZKYyDYc9v6G_w@mail.gmail.com>
-Message-ID: <CAL_JsqLY-vNNMMRJvn5oBD8Rk2eJCq73NYuEoZKYyDYc9v6G_w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: incomplete-devices: And another batch of compatibles
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3] dma: Trace API
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org
+References: <20240826203240.2234615-1-sean.anderson@linux.dev>
+ <20240829041912.GB4408@lst.de>
+ <4c2c6b24-aee1-495f-ab47-662e1e818f4b@linux.dev>
+ <20240903072512.GA1521@lst.de> <20240903092154.5f0bfafe@gandalf.local.home>
+ <d8936bfc-1ea3-4142-8035-0dfb8e491c31@linux.dev>
+ <20240903205322.69d7638c@gandalf.local.home>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240903205322.69d7638c@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 4, 2024 at 3:03=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org> =
-wrote:
->
-> Another batch of compatibles unlikely to ever be documented. It's
-> mostly old PowerMAC stuff found in DT compatible API calls.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/incomplete-devices.yaml          | 101 ++++++++++++++++++
->  1 file changed, 101 insertions(+)
+On 9/3/24 20:53, Steven Rostedt wrote:
+> On Tue, 3 Sep 2024 10:36:29 -0400
+> Sean Anderson <sean.anderson@linux.dev> wrote:
+> 
+>> This doesn't apply for arrays:
+>> 
+>> 	field:__data_loc u64[] addrs;	offset:12;	size:4;	signed:0;
+>> 
+>> Here the size is not for the data type but for the array. And so the
+>> type is parsed by process_sizeof in src/event-parse.c.
+> 
+> Ah, I see what you are talking about:
+> 
+> +	TP_printk("%s dir=%s phys_addrs=%s attrs=%s",
+> +		__get_str(device),
+> +		decode_dma_data_direction(__entry->dir),
+> +		__print_array(__get_dynamic_array(addrs),
+> +			      __get_dynamic_array_len(addrs) /
+> +				sizeof(unsigned long long), sizeof(unsigned long long)),
+> +		decode_dma_attrs(__entry->attrs))
+> 
+> That part.
+> 
+> Yeah, the "sizeof()" parsing is somewhat of a hack. It would be trivial to
+> add u64 and all the variants to that.
+> 
+> This should do. I could get it into the next minor version.
+> 
+> diff --git a/src/event-parse.c b/src/event-parse.c
+> index ddeb3b9909c0..73563c8e9dea 100644
+> --- a/src/event-parse.c
+> +++ b/src/event-parse.c
+> @@ -3571,6 +3571,23 @@ process_sizeof(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+>  			/* The token is the next token */
+>  			token_has_paren = true;
+>  		}
+> +
+> +	} else if (strcmp(token, "__u64") == 0 || strcmp(token, "u64") == 0 ||
+> +		   strcmp(token, "__s64") == 0 || strcmp(token, "s64") == 0) {
+> +		arg->atom.atom = strdup("8");
+> +
+> +	} else if (strcmp(token, "__u32") == 0 || strcmp(token, "u32") == 0 ||
+> +		   strcmp(token, "__s32") == 0 || strcmp(token, "s32") == 0) {
+> +		arg->atom.atom = strdup("4");
+> +
+> +	} else if (strcmp(token, "__u16") == 0 || strcmp(token, "u16") == 0 ||
+> +		   strcmp(token, "__s16") == 0 || strcmp(token, "s16") == 0) {
+> +		arg->atom.atom = strdup("2");
+> +
+> +	} else if (strcmp(token, "__u8") == 0 || strcmp(token, "u8") == 0 ||
+> +		   strcmp(token, "__s8") == 0 || strcmp(token, "s8") == 0) {
+> +		arg->atom.atom = strdup("1");
+> +
+>  	} else if (strcmp(token, "REC") == 0) {
+>  
+>  		free_token(token);
 
-Found a few more to add. I added them and applied this.
+The above patch fixes the issue for me. Feel free to add
 
- 1682m-gpio
- CBEA,platform-open-pic
- CBEA,platform-spider-pic
- gpio-mdio
- hawk-bridge
- IBM,CBEA
- ibm,axon-msic
- mai-logic,articia-s
- mpc10x-pci
- nintendo,flipper
- nintendo,flipper-exi
- nintendo,flipper-pi
- nintendo,flipper-pic
- nintendo,hollywood
- nintendo,hollywood-pic
- PA6T-1682M
- pasemi,1682m-iob
- pasemi,localbus
- pasemi,nemo
- pasemi,pwrficient
- pasemi,rootbus
- pasemi,sdc
- sti,platform-spider-pic
- i2cpcf,8584
- gpio-virtuser
+Tested-by: Sean Anderson <sean.anderson@linux.dev>
+
+when you send it.
+
+--Sean
 
