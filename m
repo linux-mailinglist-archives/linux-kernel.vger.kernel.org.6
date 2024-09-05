@@ -1,313 +1,325 @@
-Return-Path: <linux-kernel+bounces-316737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BFD96D34E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77F196D350
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE16228943B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B751F28BE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F351991B0;
-	Thu,  5 Sep 2024 09:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0AF1993B4;
+	Thu,  5 Sep 2024 09:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b="iRqTJgvD"
-Received: from mx0b-00549402.pphosted.com (mx0b-00549402.pphosted.com [205.220.178.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="V467m0Od"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0106D194AF3;
-	Thu,  5 Sep 2024 09:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528611; cv=fail; b=ZWPLuAk4s9P354QG4Bz/ZS30i2vm2crJ4bZpw5AiZiUdRnU7MxRrPSnjyOBOfWCsPyd8a6esvOqo7qZw3AZkipO3Qiigo1zT2HeK7sM0dq7CGBaKvP8ZtQe9hns6evmdMkQT+rE0beGzsu20FwvZ5qytjuxLzne/717Jb1SToVA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528611; c=relaxed/simple;
-	bh=Sw99WEgEaBHxwU6z4Hs4Br1OU4z5AXxt6yVF2B4Oj4E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Pfb5zMvKaA5fmzOFXocucme8Iwt/+CPO1ehd1NF6HPExldpxqt8Pg520caBfqeHnWKSLtHQvUoenfX5i/v5z4j7xm9pl14poZJkfE8ijD/zoYo/DQq08F1zoMRVUdHHPLM9Feh2c8DJCbMvuHRDziJVGL0uSZVsSxAKA5MWbZOg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com; spf=pass smtp.mailfrom=tdk.com; dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b=iRqTJgvD; arc=fail smtp.client-ip=205.220.178.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tdk.com
-Received: from pps.filterd (m0233779.ppops.net [127.0.0.1])
-	by mx0b-00549402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484MZm2S007592;
-	Thu, 5 Sep 2024 09:30:04 GMT
-Received: from fr5p281cu006.outbound.protection.outlook.com (mail-germanywestcentralazlp17012052.outbound.protection.outlook.com [40.93.78.52])
-	by mx0b-00549402.pphosted.com (PPS) with ESMTPS id 41bvhk3t3b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 09:30:03 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Uje35792XjiPEYqbotl43C+P6YOYq4xtrYZWGGHPaFAB0syIBAkNP7RCCF0cGW2XhPa9cajITvi3OI40gk2eSSZaOB3adLr59LNTV0Y5oZn72fxurDVxYwwmd6UaoJAkVruESr28vVV8ZVTFcn0KoJwYrRc097f3nzKvvBaBP1hYLtlei6opyrNDyIXvezlrMlC2sGeEv9ejH+tXazCJOQnYhLRdSvS3lTFUULadMNQ0+d6c4j8dILwdhtYgrrfwiFjCet4IvOMbTqjgKXwq7Y0rmi2s4k4D/84CIfR1D11xrcJI1OOTg6fDSV2fzSl3p16TDs4m/ajFDdUXYB2Umg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SxGuLs+MOxjtnlF/pvc2Qmb/VCoBP2fJvgsa3g9QbcQ=;
- b=COZgk04EOjk5NpmIn4mbSIwUQQLw9Sd11Knl4M4hOGghI6yoB7AYOlQhZxDC4hPVla3LEgp1Cb93GH0aPxEUqiHPLChplrfjeATa2O6u+vVPWoeRG8jndZBFvuXhG1tXc26cYS1LEMviPUfvFJQUHhf8EmootcnNZTkJfTOPX+VmX9eMg42i7KTYNNGQVs6+ilZ5bAGS8yrIYYzct1b6XBNQtINEOlYwI689qB9uji+FhP7osyS4ioLXxLtxYKqfKgFBiBUVlPVv6d2rU7E9lfdFkLtFk6Im25Xi0qmRct8BOYrwvTKBZcMwGoW0lEZgMzp4h4vNhei08aF3jHDopg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=tdk.com; dmarc=pass action=none header.from=tdk.com; dkim=pass
- header.d=tdk.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tdk.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SxGuLs+MOxjtnlF/pvc2Qmb/VCoBP2fJvgsa3g9QbcQ=;
- b=iRqTJgvDuLRXwspt9q+WhVhtGK2aBlMgTr1fE7hPbx0I0E1qcqaAXUkli7ygw+pox9mtzDljoCjibhLWeQNewnvkS+FKvxlHLKer3k205BNjLaZZt8/Yu/2tNiabVfLxgmmg7Iu26jl8CXESqZzDeNmtv+niZ5Vt9DTk6lQysA1ihhZjLD7HmdUqgSKW8fIG3/ms+jL2WgVsjbiDYkHqwS/Tn5yemTGXUYx97iFcoPeXFC2sBF0Qu1ibNeyFpe38LrReYz2C0Sd0+3Eht0fmfRucC/zsuWbTyMdu4/EHaHRvh234UvCs0/NSLJZ2g7KFwHgDVCJMs/5PG5ainwlKTw==
-Received: from FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:7c::11)
- by FR5P281MB4246.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:117::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Thu, 5 Sep
- 2024 09:30:00 +0000
-Received: from FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
- ([fe80::53a6:70d:823f:e9ac]) by FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
- ([fe80::53a6:70d:823f:e9ac%4]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 09:30:00 +0000
-From: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-To: Gyeyoung Baek <gye976@gmail.com>, "jic23@kernel.org" <jic23@kernel.org>
-CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: imu: inv_mpu6050: Move setting 'wom_bits' to probe
- function
-Thread-Topic: [PATCH] iio: imu: inv_mpu6050: Move setting 'wom_bits' to probe
- function
-Thread-Index: AQHa/h8F3ggf8XRdBEat2H7IesL0qbJI7vKF
-Date: Thu, 5 Sep 2024 09:29:58 +0000
-Message-ID:
- <FR3P281MB1757A2ECAB94077B8E250314CE9D2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-References: <20240903163302.105268-1-gye976@gmail.com>
-In-Reply-To: <20240903163302.105268-1-gye976@gmail.com>
-Accept-Language: en-US, fr-FR
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: FR3P281MB1757:EE_|FR5P281MB4246:EE_
-x-ms-office365-filtering-correlation-id: 7c79995f-cb5c-47f4-5816-08dccd8d4f3e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|3613699012|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?Vo1v0Xnh7kZGUkoVJcQS8qBw9tXSccg0SC17PPqLDotZBc3GEsmL0NrzKL?=
- =?iso-8859-1?Q?mNvoK85NaVtjwjLa+sIuFbcc/d/c9U7Z9jS7KVtKLh+rVtzFejsbpk+9Dw?=
- =?iso-8859-1?Q?J0x9/+5WrKXyc0gCVQkxfmiwVlY0s6HCJ0AKpB9F7bdYskzbmm0qBjyzsR?=
- =?iso-8859-1?Q?/vPQFKF88oEDWoKIUwcwkk6KHYR49PCRL+s9W1XpGklEw43soYLgmoLKAv?=
- =?iso-8859-1?Q?VtCNTCsv05SgYVzF2CgHvwTuw0gIGPeQxfWvDR9Ojls43+emBea+LyfUsb?=
- =?iso-8859-1?Q?GGeKPL1l7dkGt0LUVTkIDI/q7xzOzSD7yqRh4MNWiAWbfW82oI9GCSyA10?=
- =?iso-8859-1?Q?aHOCUb3gTqssLpXHD3amcxzXBh+Q2JecvALK/LTMQKlPGW/9Cne+hBvP0/?=
- =?iso-8859-1?Q?cUCfLQ+1VE5phrbgQorEhcs4XE/A6GX2uHe4DkpIN+2GfJeQk1MEk8JKFx?=
- =?iso-8859-1?Q?LgSL4GQSKeJHGRvMq05+mnk+9EFTa7E6KIbVzWCXStR/l2cDfXRmd5S3v+?=
- =?iso-8859-1?Q?Sx1cL3myd5FQCPvZjGzu8p1wdqox21iYQyAWdxo1lu5UMv5Q8ePcxAkHaS?=
- =?iso-8859-1?Q?nBXqRpBQ9EZYUQTPrOQxmI2uKfAtCTwX+b5nNlq5R+wnGMGBj88yfJTYp6?=
- =?iso-8859-1?Q?1Sd3S5AnQ2CBr7MN5LPSictmZKb2Csbp6dilG0ILoUESfRQtqwf/Ky6Toz?=
- =?iso-8859-1?Q?z5E58tibv3T3eAGwShW8eYBQXhr4qzLJJGnOA+s8XrHtHS6A2ppOpCvUju?=
- =?iso-8859-1?Q?Tw8yazFxUYTRhtnNHCrkU/C05RwziY5vNV6HJ53SG8IjfWkQHbYJzxrPzx?=
- =?iso-8859-1?Q?LGH2KmvWsyDZEdaYWdDTjx4ta+tQ6iMoZ8H2Q+bcHf2/SLlXKjm/ELxZTi?=
- =?iso-8859-1?Q?N/LyaOKPUOXJ3pOV9NYG0QTvxuc27xx9Sx25pGTioJCyGa+wTa94FW7lV/?=
- =?iso-8859-1?Q?ADIOHhZLxH87YSgp4oGszKA6FX5KQSwGgq1B8ewDeUz57J41jitxahYaPr?=
- =?iso-8859-1?Q?1VbqozLZyQT6x7mL3xFYug4BXqSH1Z0HeKDxWAZcwVYezo8TFuY2wPptaK?=
- =?iso-8859-1?Q?5WUSbmM9Zwok3L5NRRmRM4xzXJ4yKsKT1ntCVMPZqgeAe5Q29/xpmj/8bw?=
- =?iso-8859-1?Q?HEyPi68k1/mKVYW8O8PxUclDgsVsxfxbf3cragDyNucefzoPDzPqewq/pc?=
- =?iso-8859-1?Q?6Lb/O+amjn8oAW6gBu53yZ+RU1HW7B/mhj6ToyDmwAMJiag5vGYTCRLIsb?=
- =?iso-8859-1?Q?zneVyzGTSXS+yjmGsoIR/chO35pwGOZzYd97s+e6RMmIzVqXxdw4LqKmPx?=
- =?iso-8859-1?Q?w/KaqBhVAJpvruH+pGo8GyyBQWUPRz4e55LwwScNO7R72N96N3WdAfATCh?=
- =?iso-8859-1?Q?hkHMUNW/pSY0FeFX1MF0IkwDbiim0kUFv1QxYdxdicG1OPeCknyW6RqxMK?=
- =?iso-8859-1?Q?g4hJiBtcBSgIPzPmA/MO11mA9fbFLLwiBC72xidQ0qBeoFZtKYcVtCw1ih?=
- =?iso-8859-1?Q?Q=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(3613699012)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?sDF6e56x5wqAx/4Q8GQuJTnaQR8jMYq+y7gHqE5XaSjkdMAJvTyh2fur45?=
- =?iso-8859-1?Q?L6GZaXxBza0UCRT1WbALb8zp6VWack1qZwOnT3vTVma6wbOUH+mHZbPz6z?=
- =?iso-8859-1?Q?veTDCmTnNMiLT++AW6HbQPN9llCQWNqKNVPIROIAA4u1CmqxJ8pU0eMSxK?=
- =?iso-8859-1?Q?57ys1qiGZkpZdIB5qvo4BSMnXHdnbK1kGQ6usDacVg2YFrowAPKo40Ajcz?=
- =?iso-8859-1?Q?JzL2LoWh/ySQU75QCLeJilzVsFI9+0KlgO3dCA1dA3FkX9/Hsyyqz4QxR3?=
- =?iso-8859-1?Q?cT37NjSEl0NaDVSuvpp8ZpZRmEWwt8bxBB45J44I3e2e2phD/oJhoDNWSj?=
- =?iso-8859-1?Q?XPcIbb6/c4gxltEXvHTR+j2zVYJ25ETBK4i+CjHdbo4wZzRtD15hLwel7l?=
- =?iso-8859-1?Q?ZkUzhcV41LVwMRmlOlaljKjl7venBqh4u8/3Wn4QxcQMTR6Z1qNP4s3hTo?=
- =?iso-8859-1?Q?P1ok/c6BmDUnkSAbliA/CKoGA0qLTXXBDDfyuTkrclizuu9la/K5steywu?=
- =?iso-8859-1?Q?IDNxlEY3QplxqzZa2BoCoWA/musKSxlC3ghVdxvofm4Hx7LVHsxdF7j9EL?=
- =?iso-8859-1?Q?b6fqyul/iUTGlcVf8Ge0TFvtYsqbhxs4hNFvKQn6m5vbeGzK7G+UvGoz3R?=
- =?iso-8859-1?Q?KA3e+6oP1ttACtSY3IdBWj+pLlKQAsBe31i90Q7z3YqwGl79a3oEpe7Eig?=
- =?iso-8859-1?Q?LcY5BGPfuYJycKXrQfwd9R8bzAfSfSG+wvKi6gUxODxVLRlmW/ke0FuCdB?=
- =?iso-8859-1?Q?++W5t7MzrR7Y2Jqf0Cj4iQpaNGV1oPM/XRelxlbarxG/bS6KWteL2aBK/z?=
- =?iso-8859-1?Q?dXe67B88PagsvWuoJhG9DACVt+jdu+wtrKMI9GTlignBTtWsO6g4AwQGUA?=
- =?iso-8859-1?Q?QNt+QoGhqXOFlE4ReIepX45F+nlrvvwPgbXC9ANSLhX39qALqEm/QtHZ7h?=
- =?iso-8859-1?Q?GHdqDoXtAfizJ+X3f5tO/XYWXynVhejwsUQoEMrlToBJTfhjDG8zWf68bP?=
- =?iso-8859-1?Q?xGVxo0XF0tyswodZtkpFcCa2JUJpi33z9Ye5Ha0ziCUcsKPmZlJnbNkoQW?=
- =?iso-8859-1?Q?D8EB/XxuwW//Mfm+4q3u5DvqTNJj1c5wOn0+poDrUowbVwMKrdLQbp6off?=
- =?iso-8859-1?Q?u1P9T87dUjZxB1edIiyXTK09VnaHbGD7qe2m2fzF3GqiJ2xFxfSBU641Qi?=
- =?iso-8859-1?Q?5PnBNpUKUPe1QtdptgJNpeEZW327lvRCHnYwsE0jvSX68r7psrqV8UPMOa?=
- =?iso-8859-1?Q?1rutYKnOaOKtmBqAWQpo2pnZH242y+ojA92WB9KpuA2iGiDTNyOTIm08UR?=
- =?iso-8859-1?Q?OUR5CmQO0w2k3ifC6vdJDTryRQ1F3FNa4tMArOVG5dkBFhNndDheZ+zG41?=
- =?iso-8859-1?Q?RiS7ie8mB+9VmzwFs/nJ1EdobgqrwoNLgC49q73TKpQQAPVPPXs6WoeAMx?=
- =?iso-8859-1?Q?6e1JbotxBt42inTfX2KEXUM+EhkKtlnSGhdCpxz1raw/ZSoSeHa9Vtn+IY?=
- =?iso-8859-1?Q?56xZK3TqPS8udx/t6Y9BMBRr4ErOcKwaagwRzu5fuAutN3q8ST5ftxPRvk?=
- =?iso-8859-1?Q?zjxeS4pnqpOrkN+cV4H4kfkLwzWT0mvaR2OqSRchezyUzgaaEciNtYJ05k?=
- =?iso-8859-1?Q?3nuI1JjmvjXxjZS0mo2AWx8lqJLQq/F1wL/9NI/q1JYn3var1+3JhsXQ?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD87A197A66
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725528614; cv=none; b=uq0SCUhP4UXLu3rRMoqMlG0bYyqcqunHXSp6WGlPSEo9ZUSYJLefUGEaZy8kD6yA2SQsckh1t6Igjsv023MW7OwzNTV02cptwF+h/isJVHERHfqA49irwqJ7BBS4aohAw8IIq+zOthBjxPIqWAGcA63qNg0j5go6DRRgOgu9Yng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725528614; c=relaxed/simple;
+	bh=BIEPT+Rk+syxTQDK8Qn83q595Z0imWtP8hRz6lolNu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCkm/QHfZej5NB2gnZdjvZsBvk1xO3e9EA5otqBWPyKp3/ZnFOoVWqjb9R/A4A7z+tYXP0YJzNscIV71dBHIEFaTF5EDFUru136KxpU+puAZYzinkQiqhNIPBXya8rYK1k1vs5Byc2GpMS+6lwpR+9UFOTkvVyTlQCrt0SOcrFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=V467m0Od; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374b25263a3so246030f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 02:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725528610; x=1726133410; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rnfGNzsio9WsnKuTPmYdKjJ/FytqLWVHOJY7ZYl+g7c=;
+        b=V467m0Od8rexrwegmO6dVy/XL1MfNmkGjdlGDNFaaTcaClpbjI0kpjeEsdUD3jJEHh
+         6guo1Gv/QzkozOtpjt/2HkWEBlpPOk2X0R+2fRIShfCWOiQWprxgSv2n4zGEMveqyNyH
+         IZRlShJN1i91OrEb+zFF3TGwAq3x5s/DdtuEc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725528610; x=1726133410;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rnfGNzsio9WsnKuTPmYdKjJ/FytqLWVHOJY7ZYl+g7c=;
+        b=ANZ0wJqiaxxbqvJogajxMllVnNlcPP06v2uJ/j6d5FRimQd0jssGXkr5qVLIUNkmyV
+         pfBLuS2OxWK4anw3bAYV0Wstk7KKQDJCe1Fg/izK1INdMDsurrYQ4piHMiatSiO8H8bx
+         tiM1l8Bz1CYpCdRgKIkKe35x4aQA0PpnEej9IScxjT4Y2AKZ/ABt0JySL4ZUsu45JxNh
+         mB5NxOdeGN/F2jT0U3u8ZyglybG9m5+mMmUNubL2XnKcJK3txBsH9w3R0cSV3nKX1QEO
+         U6ZS/FECPfmjdUR4kdM+hHwS5z1MfLUU2SC6tkdvK7U4VZ29y35fvlxqcq0SdVBZ/daB
+         y2xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqVuce6tMbTRA6pYjJJIiY0aPGy64QeqmfpG3P8tLjEZbNhX1kR/5rqcOs7H9eQualuezmI52LSfZZ2sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhDj6rPr0cyUJu5zl+Hcq0C4FnqcaU/U6E9qj3yQF8mKIlxgZ4
+	4L8Zx9RM7d5Niql+zqT7J6t8zAaNK20dyzfC1fV840GdUqEvuodn9rwvaT8Q17A=
+X-Google-Smtp-Source: AGHT+IE747xRWL68DAdPLQo5IRMBJezfR22InDGsCKLVsGz7YxlgFbO0lpGUvo1Q/K/2aMIGXIPlgA==
+X-Received: by 2002:a5d:5f4a:0:b0:374:c269:df79 with SMTP id ffacd0b85a97d-374c269e0d7mr13363612f8f.22.1725528609371;
+        Thu, 05 Sep 2024 02:30:09 -0700 (PDT)
+Received: from LQ3V64L9R2 (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c9a5eed16sm15222035e9.0.2024.09.05.02.30.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:30:09 -0700 (PDT)
+Date: Thu, 5 Sep 2024 11:30:06 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <Ztl6HvkMzu9-7CQJ@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-6-jdamato@fastly.com>
+ <20240829153105.6b813c98@kernel.org>
+ <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+ <20240830142235.352dbad5@kernel.org>
+ <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+ <Ztjv-dgNFwFBnXwd@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: tdk.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c79995f-cb5c-47f4-5816-08dccd8d4f3e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2024 09:29:58.3188
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7e452255-946f-4f17-800a-a0fb6835dc6c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gaZXrA6osFMbgGfMgjFzzQATR7d5ZS5OIbFB+bOi2W8ajd+1CY2DSEFJZaw1e0Uwdm8Rq3xHIyM7iReFyzwGyUswyFfjfIrCJ6mWCCjrxAg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR5P281MB4246
-X-Proofpoint-GUID: SjfvnycBCWlsouG2dJgl_q2yD7r4sFTz
-X-Proofpoint-ORIG-GUID: SjfvnycBCWlsouG2dJgl_q2yD7r4sFTz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_04,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409050068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ztjv-dgNFwFBnXwd@mini-arch>
 
-Hello,=0A=
-=0A=
-nice improvement, thanks.=0A=
-=0A=
-But beware there is a fix pending in fixes-togreg branch and missing in tes=
-ting branch that is changing this part of code.=0A=
-To avoid a painful merge, it should be better to wait for the fix to be int=
-egrated inside testing.=0A=
-=0A=
-Is that correct Jonathan?=0A=
-=0A=
-And I would prefer the wom_bits being inside the inv_mpu6050_reg_map struct=
-ure.=0A=
-=0A=
-Thanks,=0A=
-JB=0A=
-=0A=
-________________________________________=0A=
-From:=A0Gyeyoung Baek <gye976@gmail.com>=0A=
-Sent:=A0Tuesday, September 3, 2024 18:33=0A=
-To:=A0jic23@kernel.org <jic23@kernel.org>=0A=
-Cc:=A0linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel@v=
-ger.kernel.org <linux-kernel@vger.kernel.org>; Gyeyoung Baek <gye976@gmail.=
-com>=0A=
-Subject:=A0[PATCH] iio: imu: inv_mpu6050: Move setting 'wom_bits' to probe =
-function=0A=
-=A0=0A=
-This Message Is From an Untrusted Sender=0A=
-You have not previously corresponded with this sender.=0A=
-=A0=0A=
-'wom_bits' variable is defined by chip type, =0A=
-and chip type is statically defined by device tree.=0A=
-so 'wom_bits' need to be set once during probe function.=0A=
-=0A=
-but before code set it every time using 'switch statement' during=0A=
-threaded irq handler, so i move that to probe function.=0A=
-=0A=
-Signed-off-by: Gyeyoung Baek <gye976@gmail.com>=0A=
----=0A=
- drivers/iio/imu/inv_mpu6050/inv_mpu_core.c =A0 =A0| 16 +++++++++++++++=0A=
- drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h =A0 =A0 | =A01 +=0A=
- drivers/iio/imu/inv_mpu6050/inv_mpu_trigger.c | 20 ++-----------------=0A=
- 3 files changed, 19 insertions(+), 18 deletions(-)=0A=
-=0A=
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/i=
-nv_mpu6050/inv_mpu_core.c=0A=
-index 14d95f34e981..322ae664adc0 100644=0A=
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c=0A=
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c=0A=
-@@ -2076,6 +2076,22 @@ int inv_mpu_core_probe(struct regmap *regmap, int ir=
-q, const char *name,=0A=
- 		return result;=0A=
- 	}=0A=
- =0A=
-+	switch (chip_type) {=0A=
-+	case INV_MPU6050:=0A=
-+	case INV_MPU6500:=0A=
-+	case INV_MPU6515:=0A=
-+	case INV_MPU6880:=0A=
-+	case INV_MPU6000:=0A=
-+	case INV_MPU9150:=0A=
-+	case INV_MPU9250:=0A=
-+	case INV_MPU9255:=0A=
-+		st->wom_bits =3D INV_MPU6500_BIT_WOM_INT;=0A=
-+		break;=0A=
-+	default:=0A=
-+		st->wom_bits =3D INV_ICM20608_BIT_WOM_INT;=0A=
-+		break;=0A=
-+	}=0A=
-+=0A=
- 	return 0;=0A=
- =0A=
- error_power_off:=0A=
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/in=
-v_mpu6050/inv_mpu_iio.h=0A=
-index e1c0c5146876..a91b9c2b26e4 100644=0A=
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h=0A=
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h=0A=
-@@ -212,6 +212,7 @@ struct inv_mpu6050_state {=0A=
- 	bool level_shifter;=0A=
- 	u8 *data;=0A=
- 	s64 it_timestamp;=0A=
-+	unsigned int wom_bits;=0A=
- };=0A=
- =0A=
- /*register and associated bit definition*/=0A=
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_trigger.c b/drivers/iio/im=
-u/inv_mpu6050/inv_mpu_trigger.c=0A=
-index 84273660ca2e..b19556df1801 100644=0A=
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_trigger.c=0A=
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_trigger.c=0A=
-@@ -243,26 +243,10 @@ static irqreturn_t inv_mpu6050_interrupt_handle(int i=
-rq, void *p)=0A=
- {=0A=
- 	struct iio_dev *indio_dev =3D p;=0A=
- 	struct inv_mpu6050_state *st =3D iio_priv(indio_dev);=0A=
--	unsigned int int_status, wom_bits;=0A=
-+	unsigned int int_status;=0A=
- 	u64 ev_code;=0A=
- 	int result;=0A=
- =0A=
--	switch (st->chip_type) {=0A=
--	case INV_MPU6050:=0A=
--	case INV_MPU6500:=0A=
--	case INV_MPU6515:=0A=
--	case INV_MPU6880:=0A=
--	case INV_MPU6000:=0A=
--	case INV_MPU9150:=0A=
--	case INV_MPU9250:=0A=
--	case INV_MPU9255:=0A=
--		wom_bits =3D INV_MPU6500_BIT_WOM_INT;=0A=
--		break;=0A=
--	default:=0A=
--		wom_bits =3D INV_ICM20608_BIT_WOM_INT;=0A=
--		break;=0A=
--	}=0A=
--=0A=
- 	scoped_guard(mutex, &st->lock) {=0A=
- 		/* ack interrupt and check status */=0A=
- 		result =3D regmap_read(st->map, st->reg->int_status, &int_status);=0A=
-@@ -272,7 +256,7 @@ static irqreturn_t inv_mpu6050_interrupt_handle(int irq=
-, void *p)=0A=
- 		}=0A=
- =0A=
- 		/* handle WoM event */=0A=
--		if (st->chip_config.wom_en && (int_status & wom_bits)) {=0A=
-+		if (st->chip_config.wom_en && (int_status & st->wom_bits)) {=0A=
- 			ev_code =3D IIO_MOD_EVENT_CODE(IIO_ACCEL, 0, IIO_MOD_X_OR_Y_OR_Z,=0A=
- 						 =A0 =A0 IIO_EV_TYPE_ROC, IIO_EV_DIR_RISING);=0A=
- 			iio_push_event(indio_dev, ev_code, st->it_timestamp);=0A=
--- =0A=
-2.34.1=0A=
-=0A=
-=0A=
+On Wed, Sep 04, 2024 at 04:40:41PM -0700, Stanislav Fomichev wrote:
+> On 09/02, Joe Damato wrote:
+> > On Fri, Aug 30, 2024 at 02:22:35PM -0700, Jakub Kicinski wrote:
+> > > On Fri, 30 Aug 2024 11:43:00 +0100 Joe Damato wrote:
+> > > > On Thu, Aug 29, 2024 at 03:31:05PM -0700, Jakub Kicinski wrote:
+> > > > > On Thu, 29 Aug 2024 13:12:01 +0000 Joe Damato wrote:  
+> > > > > > +      doc: Set configurable NAPI instance settings.  
+> > > > > 
+> > > > > We should pause and think here how configuring NAPI params should
+> > > > > behave. NAPI instances are ephemeral, if you close and open the
+> > > > > device (or for some drivers change any BPF or ethtool setting)
+> > > > > the NAPIs may get wiped and recreated, discarding all configuration.
+> > > > > 
+> > > > > This is not how the sysfs API behaves, the sysfs settings on the device
+> > > > > survive close. It's (weirdly?) also not how queues behave, because we
+> > > > > have struct netdev{_rx,}_queue to store stuff persistently. Even tho
+> > > > > you'd think queues are as ephemeral as NAPIs if not more.
+> > > > > 
+> > > > > I guess we can either document this, and move on (which may be fine,
+> > > > > you have more practical experience than me). Or we can add an internal
+> > > > > concept of a "channel" (which perhaps maybe if you squint is what
+> > > > > ethtool -l calls NAPIs?) or just "napi_storage" as an array inside
+> > > > > net_device and store such config there. For simplicity of matching
+> > > > > config to NAPIs we can assume drivers add NAPI instances in order. 
+> > > > > If driver wants to do something more fancy we can add a variant of
+> > > > > netif_napi_add() which specifies the channel/storage to use.
+> > > > > 
+> > > > > Thoughts? I may be overly sensitive to the ephemeral thing, maybe
+> > > > > I work with unfortunate drivers...  
+> > > > 
+> > > > Thanks for pointing this out. I think this is an important case to
+> > > > consider. Here's how I'm thinking about it.
+> > > > 
+> > > > There are two cases:
+> > > > 
+> > > > 1) sysfs setting is used by existing/legacy apps: If the NAPIs are
+> > > > discarded and recreated, the code I added to netif_napi_add_weight
+> > > > in patch 1 and 3 should take care of that case preserving how sysfs
+> > > > works today, I believe. I think we are good on this case ?
+> > > 
+> > > Agreed.
+> > > 
+> > > > 2) apps using netlink to set various custom settings. This seems
+> > > > like a case where a future extension can be made to add a notifier
+> > > > for NAPI changes (like the netdevice notifier?).
+> > > 
+> > > Yes, the notifier may help, but it's a bit of a stop gap / fallback.
+> > > 
+> > > > If you think this is a good idea, then we'd do something like:
+> > > >   1. Document that the NAPI settings are wiped when NAPIs are wiped
+> > > >   2. In the future (not part of this series) a NAPI notifier is
+> > > >      added
+> > > >   3. User apps can then listen for NAPI create/delete events
+> > > >      and update settings when a NAPI is created. It would be
+> > > >      helpful, I think, for user apps to know about NAPI
+> > > >      create/delete events in general because it means NAPI IDs are
+> > > >      changing.
+> > > > 
+> > > > One could argue:
+> > > > 
+> > > >   When wiping/recreating a NAPI for an existing HW queue, that HW
+> > > >   queue gets a new NAPI ID associated with it. User apps operating
+> > > >   at this level probably care about NAPI IDs changing (as it affects
+> > > >   epoll busy poll). Since the settings in this series are per-NAPI
+> > > >   (and not per HW queue), the argument could be that user apps need
+> > > >   to setup NAPIs when they are created and settings do not persist
+> > > >   between NAPIs with different IDs even if associated with the same
+> > > >   HW queue.
+> > > 
+> > > IDK if the fact that NAPI ID gets replaced was intentional in the first
+> > > place. I would venture a guess that the person who added the IDs was
+> > > working with NICs which have stable NAPI instances once the device is
+> > > opened. This is, unfortunately, not universally the case.
+> > > 
+> > > I just poked at bnxt, mlx5 and fbnic and all of them reallocate NAPIs
+> > > on an open device. Closer we get to queue API the more dynamic the whole
+> > > setup will become (read: the more often reconfigurations will happen).
+> > >
+> > 
+> > [...]
+> > 
+> > > > I think you have much more practical experience when it comes to
+> > > > dealing with drivers, so I am happy to follow your lead on this one,
+> > > > but assuming drivers will "do a thing" seems mildly scary to me with
+> > > > limited driver experience.
+> > > > 
+> > > > My two goals with this series are:
+> > > >   1. Make it possible to set these values per NAPI
+> > > >   2. Unblock the IRQ suspension series by threading the suspend
+> > > >      parameter through the code path carved in this series
+> > > > 
+> > > > So, I'm happy to proceed with this series as you prefer whether
+> > > > that's documentation or "napi_storage"; I think you are probably the
+> > > > best person to answer this question :)
+> > > 
+> > > How do you feel about making this configuration opt-in / require driver
+> > > changes? What I'm thinking is that having the new "netif_napi_add()"
+> > > variant (or perhaps extending netif_napi_set_irq()) to take an extra
+> > > "index" parameter would make the whole thing much simpler.
+> > 
+> > What about extending netif_queue_set_napi instead? That function
+> > takes a napi and a queue index.
+> > 
+> > Locally I kinda of hacked up something simple that:
+> >   - Allocates napi_storage in net_device in alloc_netdev_mqs
+> >   - Modifies netif_queue_set_napi to:
+> >      if (napi)
+> >        napi->storage = dev->napi_storage[queue_index];
+> > 
+> > I think I'm still missing the bit about the
+> > max(rx_queues,tx_queues), though :(
+> > 
+> > > Index would basically be an integer 0..n, where n is the number of
+> > > IRQs configured for the driver. The index of a NAPI instance would
+> > > likely match the queue ID of the queue the NAPI serves.
+> > 
+> > Hmmm. I'm hesitant about the "number of IRQs" part. What if there
+> > are NAPIs for which no IRQ is allocated ~someday~ ?
+> > 
+> > It seems like (I could totally be wrong) that netif_queue_set_napi
+> > can be called and work and create the association even without an
+> > IRQ allocated.
+> > 
+> > I guess the issue is mostly the queue index question above: combined
+> > rx/tx vs drivers having different numbers of rx and tx queues.
+> > 
+> > > We can then allocate an array of "napi_configs" in net_device -
+> > > like we allocate queues, the array size would be max(num_rx_queue,
+> > > num_tx_queues). We just need to store a couple of ints so it will
+> > > be tiny compared to queue structs, anyway.
+> > > 
+> > > The NAPI_SET netlink op can then work based on NAPI index rather 
+> > > than the ephemeral NAPI ID. It can apply the config to all live
+> > > NAPI instances with that index (of which there really should only 
+> > > be one, unless driver is mid-reconfiguration somehow but even that
+> > > won't cause issues, we can give multiple instances the same settings)
+> > > and also store the user config in the array in net_device.
+> > > 
+> > > When new NAPI instance is associate with a NAPI index it should get
+> > > all the config associated with that index applied.
+> > > 
+> > > Thoughts? Does that makes sense, and if so do you think it's an
+> > > over-complication?
+> > 
+> > I think what you are proposing seems fine; I'm just working out the
+> > implementation details and making sure I understand before sending
+> > another revision.
+> 
+> What if instead of an extra storage index in UAPI, we make napi_id persistent?
+> Then we can keep using napi_id as a user-facing number for the configuration.
+> 
+> Having a stable napi_id would also be super useful for the epoll setup so you
+> don't have to match old/invalid ids to the new ones on device reset.
+
+Up to now for prototyping purposes: the way I've been dealing with this is
+using a SO_ATTACH_REUSEPORT_CBPF program like this:
+
+struct sock_filter code[] = {
+    /* A = skb->queue_mapping */
+    { BPF_LD | BPF_W | BPF_ABS, 0, 0, SKF_AD_OFF + SKF_AD_QUEUE },
+    /* A = A % n */
+    { BPF_ALU | BPF_MOD, 0, 0, n },
+    /* return A */
+    { BPF_RET | BPF_A, 0, 0, 0 },
+};
+
+with SO_BINDTODEVICE. Note that the above uses queue_mapping (not NAPI ID) so
+even if the NAPI IDs change the filter still distributes connections from the
+same "queue_mapping" to the same thread.
+
+Since epoll busy poll is based on NAPI ID (and not queue_mapping), this will
+probably cause some issue if the NAPI ID changes because the NAPI ID associated
+with the epoll context will suddenly change meaning the "old" NAPI won't be
+busy polled. This might be fine because if that happens the old NAPI is being
+disabled anyway?
+
+At any rate the user program doesn't "need" to do anything when the NAPI ID
+changes... unless it has a more complicated ebpf program that relies on NAPI ID
+;)
+
+> In the code, we can keep the same idea with napi_storage in netdev and
+> ask drivers to provide storage id, but keep that id internal.
+> 
+> The only complication with that is napi_hash_add/napi_hash_del that
+> happen in netif_napi_add_weight. So for the devices that allocate
+> new napi before removing the old ones (most devices?), we'd have to add
+> some new netif_napi_takeover(old_napi, new_napi) to remove the
+> old napi_id from the hash and reuse it in the new one.
+> 
+> So for mlx5, the flow would look like the following:
+> 
+> - mlx5e_safe_switch_params
+>   - mlx5e_open_channels
+>     - netif_napi_add(new_napi)
+>       - adds napi with 'ephemeral' napi id
+>   - mlx5e_switch_priv_channels
+>     - mlx5e_deactivate_priv_channels
+>       - napi_disable(old_napi)
+>       - netif_napi_del(old_napi) - this frees the old napi_id
+>   - mlx5e_activate_priv_channels
+>     - mlx5e_activate_channels
+>       - mlx5e_activate_channel
+>         - netif_napi_takeover(old_napi is gone, so probably take id from napi_storage?)
+> 	  - if napi is not hashed - safe to reuse?
+> 	- napi_enable
+> 
+> This is a bit ugly because we still have random napi ids during reset, but
+> is not super complicated implementation-wise. We can eventually improve
+> the above by splitting netif_napi_add_weight into two steps: allocate and
+> activate (to do the napi_id allocation & hashing). Thoughts?
 
