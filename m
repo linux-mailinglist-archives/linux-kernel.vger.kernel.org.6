@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-316654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3B296D264
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0A796D266
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643BC284851
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5067F1C23ADB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A93194ACB;
-	Thu,  5 Sep 2024 08:42:59 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5188E194AFE;
+	Thu,  5 Sep 2024 08:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwIgyYcB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6C5188A1F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0843188A1F;
+	Thu,  5 Sep 2024 08:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525779; cv=none; b=IunVRca2bXuQ0Y3bgO29LogwyR6yqFUCOemF+KBbDschg5G7GmXU2ETeowkF3eUmwx8eExBqCTNsGmrDptEpxIbQrlbsnqPDdtgbrD5cSZJ1Wz+1/LTrRYSca00hNesp7mJPAdJm9QyPfKFddjRjX0neoM6AuKIxWYY+3rgHdcY=
+	t=1725525863; cv=none; b=D4hiu3YR6q4d1N5Lc69GrkmCwSYWbJO8AfYoHjtqhozH9cBnPZaDEfOVevOgcaCyyp+sWdWWYpFWt57rdKMrRO/2c/Itq04q6sa1uUKC/fQvFGX2E4D3HOJRBDB9cuyXDlTik2ZkaRH8vil9xTD9nleb8H0gPENEYb+0wxyZKh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525779; c=relaxed/simple;
-	bh=ChgFo9eXz1riBlmQc9b0eHc1s4jpQzKcj8FtnnMjiVo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IxUSv9F+pafvCDRJBR7LykAHxEnn/H0Xv/9nm9EiimTSewXEb4Vj4t+Dywe16lqHHxlrTRE1mvX165pTgVkclGOPHOjeEjKEd02+K2PJX75cYAgl5AvQ/lEw3rCFOpQBm1p4edv0H5Db4j6Vke2EluA7ugKntGK6YBabQT8/jew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6c3f1939d12so4082377b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:42:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725525775; x=1726130575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yZSY7FNZtnzQvBIAg02l8scN//ySNS0tayfFTq5jNew=;
-        b=YeJfHbDYuGuxaE4rm8dmQEyMsqa8BTSc6cHP0lYCkUzG9LjpU4oMwWFbXokbuol0Xg
-         N1cpCLITvvctt193A5u0aqd9EhXudnuCK9Z/9dDQeO+DgBdSoZx4xhaVjF9CEk6A7vRL
-         of9yPabbpzeEAfsjHpVvMNKDkHzMezVCRdkcKvFm/vIGeHtYMR4npyT3bWg0R5/WckAd
-         GE3bRh8cMmDPiF3paVMqL0A1RwTzkJNpeM8C7Y6bC1qlKJuQcnBzyESwX5E+SMb/NHfc
-         LRyt6XjbSBysHc7rOrHZCUV4Hpu0mZgTfnQ/r/8Ms7Paz2D1hjU8wT6xhL/mwT7o9W7n
-         KJMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWo+2SlCbLQCzDZTmVbRrvu3EGXeeIpffOTLVo3b2IiwTXlKRydOO3tjZ1MEHMuU49gmWED2l4y5F84PiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqYEm/lkLPKedzGdPxJYVG6CG0G08oqG+EO3aJ9Orhm+sqbTrl
-	Razmy3Ymm7dUQO9sZoxkZJLV7AkFRx8WC9WNCFfERt2h2PiF4jM14cagHKn7
-X-Google-Smtp-Source: AGHT+IGwITUyiDFj3xF7vXmOkGMGCuCz0G/dKF4uZPY+Usw/k2jejJ+a0bGwCqs/HVblhErNRDu9uA==
-X-Received: by 2002:a05:690c:ec1:b0:646:25c7:178e with SMTP id 00721157ae682-6d40d88bc97mr247109957b3.5.1725525775419;
-        Thu, 05 Sep 2024 01:42:55 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d6611acadesm17910057b3.99.2024.09.05.01.42.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 01:42:55 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6c3f1939d12so4082137b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:42:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWPD7g3XpHkw83VTatOgw1iL/43EEvroKwm1nZ8HI8u/duwGp2vRqQ17+H/jqWTi/0JOwHm5CE6PO2RvSI=@vger.kernel.org
-X-Received: by 2002:a05:690c:3386:b0:6ad:91df:8fad with SMTP id
- 00721157ae682-6d40e689319mr248185507b3.26.1725525774394; Thu, 05 Sep 2024
- 01:42:54 -0700 (PDT)
+	s=arc-20240116; t=1725525863; c=relaxed/simple;
+	bh=wZDfJKcN02F1JuFZskcSxH83wZEf2gVxr62h4eHUKUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wygy9O6F1qQiM6tIiVlYQA/mu6QDON1TfVUok3HYIM+QTrHrLbxlR1KC+OTf6/HZxO+/2n98XnbJqD9l4166SV9bTo7kQpf9n50CzBpXHm0RgYR5NQdEHapN9GdEbeWM5peawniiF0ddnIvE7XI4TWKbuhJ72SPUZskFaBh9x5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwIgyYcB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60331C4CEC3;
+	Thu,  5 Sep 2024 08:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725525863;
+	bh=wZDfJKcN02F1JuFZskcSxH83wZEf2gVxr62h4eHUKUI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kwIgyYcBsHANr0fl4YXm8E7M4MfWDU3vif5J0ZumHb9lLtZI7HXZa0GCEJOjnELeE
+	 /1McbMD8XZpI8lM0QdYptsBmKnuctZbjrF+ZkEveN6u+OAsP/5CVGwr8aCU6VQYeae
+	 /z7HgpBKJ6EU0nrKPb0QC+/77lXjzMLGi5K6w/Fpn+PmgAgyiM+h3DG/sadO9Lks4I
+	 7QbDNSEcEe1iph5/ybt2jc8dEB6tPJAPdyPs00W5y2n0gvVcBPdjShSF79YsmTXmqY
+	 YRZIZSyYBdE7IVcDB2obi2MgPULVOoa519G2wbpcj9quV0VrEBc7j4I4auNKunzp5O
+	 qySLlruQL2Zsw==
+Message-ID: <9c82cd9d-84ac-41eb-bceb-43a1a10d80fe@kernel.org>
+Date: Thu, 5 Sep 2024 10:44:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
- <20240904-devel-anna-maria-b4-timers-flseep-v1-3-e98760256370@linutronix.de>
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-3-e98760256370@linutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Sep 2024 10:42:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVZOKCOkrdjbDFRgAxTGdnWKHYN1a8mx=d9Q+gGU+DM9w@mail.gmail.com>
-Message-ID: <CAMuHMdVZOKCOkrdjbDFRgAxTGdnWKHYN1a8mx=d9Q+gGU+DM9w@mail.gmail.com>
-Subject: Re: [PATCH 03/15] Comments: Fix wrong singular form of jiffies
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] arm64: dts: imx8mm-emtop-baseboard: Add Peripherals
+ Support
+To: Tarang Raval <tarang.raval@siliconsignals.io>,
+ "Rob Herring (Arm)" <robh@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>, Sascha Hauer <s.hauer@pengutronix.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240903091720.443091-1-tarang.raval@siliconsignals.io>
+ <172537334994.875077.18308965320836312656.robh@kernel.org>
+ <CAOMZO5BNYopFt=_o5qrK7piwxYwF4E10DzCKPW4oh0k4Yj0hUQ@mail.gmail.com>
+ <20240903-amazing-shaggy-ant-6751f7-mkl@pengutronix.de>
+ <PN3P287MB18295916174A4CC5121A90828B9D2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <PN3P287MB18295916174A4CC5121A90828B9D2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 3:09=E2=80=AFPM Anna-Maria Behnsen
-<anna-maria@linutronix.de> wrote:
-> There are several comments all over the place, which uses a wrong singula=
-r
-> form of jiffies.
->
-> Replace 'jiffie' by 'jiffy'. No functional change.
->
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+On 05/09/2024 10:33, Tarang Raval wrote:
+> Hi,
+> 
+>> On 03.09.2024 11:28:29, Fabio Estevam wrote:
+>>> On Tue, Sep 3, 2024 at 11:26 AM Rob Herring (Arm) <robh@kernel.org> wrote:
+>>>
+>>>> New warnings running 'make CHECK_DTBS=y freescale/imx8mm-emtop-baseboard.dtb' for 20240903091720.443091-1->tarang.raval@siliconsignals.io:
+>>>>
+>>>> arch/arm64/boot/dts/freescale/imx8mm-emtop-baseboard.dtb: /soc@0/bus@30800000/spba->bus@30800000/spi@30830000/can@0: failed to match any schema with compatible: ['microchip,mcp2515']
+>>>
+>>> There is a patch from Frank to address this compatible:
+>>>
+>>> https://lore.kernel.org/lkml/20240814164407.4022211-1-Frank.Li@nxp.com/T/
+>>
+>> It's in net-next (for v6.12) with 09328600c2f9 ("dt-bindings: can:
+>> convert microchip,mcp251x.txt to yaml").
+> 
+> Should I remove the node from my DTS file until the YAML schema patch is applied, or is there an alternative approach you would recommend ?
 
->  arch/m68k/q40/q40ints.c                                      |  2 +-
+There is no need to do anything.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
+Best regards,
+Krzysztof
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
