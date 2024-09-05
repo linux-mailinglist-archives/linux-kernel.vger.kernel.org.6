@@ -1,86 +1,90 @@
-Return-Path: <linux-kernel+bounces-316848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE47D96D619
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:31:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC94596D61D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC7E285A47
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA751C20A1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18E2194A5B;
-	Thu,  5 Sep 2024 10:31:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EFA1EBFEC;
-	Thu,  5 Sep 2024 10:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8146194090;
+	Thu,  5 Sep 2024 10:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQvSMbTV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2AE194A64;
+	Thu,  5 Sep 2024 10:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725532275; cv=none; b=K9mZcKrCDAptf26aj8Uek9JQ4trTvBH6AxQDOIoWSd0oTj+GYwJYc9QBCaZsm3wZu529lCuw9VP6G0fSmqNxy87oOSXnGPW7LkBtQdS5E9s9ZT88dpJy8xveCdL1LQS5Y/iM5W7vIGlylM1rDk2GXhWP0400c7v0a8PAlNvYIhs=
+	t=1725532297; cv=none; b=NmyLwiOxpQdINOXySbKF6QSRCchG9Mhs7PDBeF/m09FWwpe4h1AEGao8tSQC1IMqnBTeUSasNg5U4Qwr9agOMkij86TY8kB+z6Vn2y2QhtM3rIyuR5Fq1xGzjaE58MubbOBaRchdRMF2BhcmSzktJWxP8EUp79Omtiv89nT5kXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725532275; c=relaxed/simple;
-	bh=q8XkERj659XGje1P3sdRFSBqUlmICDPdn8bzik6Z/9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=igqK4M/KEJWxD+FWm3I+Q3ZjgSFWaoBExrdyc7XaBk2GFcnKndcPUKCkRn22LnVO55hh3dmeoX+CmWCkfgE9Se6c6iq2ehx2bNjpsQLGY1z1RA5+45iIZsfcEv42dMCSrXn7fSnYnrP5BfaifdzyCof2rf1TWPe5lFio891rggk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C061FEC;
-	Thu,  5 Sep 2024 03:31:39 -0700 (PDT)
-Received: from [10.1.32.66] (e127648.arm.com [10.1.32.66])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 475423F73F;
-	Thu,  5 Sep 2024 03:31:11 -0700 (PDT)
-Message-ID: <3efadac3-1aa0-4747-b140-3fb6f267586e@arm.com>
-Date: Thu, 5 Sep 2024 11:31:09 +0100
+	s=arc-20240116; t=1725532297; c=relaxed/simple;
+	bh=FNHN5rDOdvLsXhzyTOiUuXK9KeAApeyTuUioHxfoDsM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fMcssHWVJPoG05MRT0MKUXYg8dlTZ6CeLTACi3ULNVG7bM7RxL+pwdBeJ4pq21slvJ9ioCmAtCFPD9B/Mn1DE5vLkC3YRhPQGK7g9Yhz4hB+2V0TfoXpxHMlEnXRvUSwTsv8i2LDLPXjDf4bJzgc7+dNdkpYjRUitl41ptAAL30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQvSMbTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16105C4CEC3;
+	Thu,  5 Sep 2024 10:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725532296;
+	bh=FNHN5rDOdvLsXhzyTOiUuXK9KeAApeyTuUioHxfoDsM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jQvSMbTVAV6AFtMFxWR7+2yEYGqPIad905PZsRKhWYxKwAlmUcbDn9CP8gzL9hT2+
+	 SpZiqJJtWDmZZTXFIqfHrbzU0ubvXiC9MoDC+rawpWx62eb4ynDsS2uw/Ek/TiIIt5
+	 7yxqesmQxvIzNz9SQWZBNzHsiWipIHSub2ymBCAVadKsVD9mJ7gjhPVjQ4emvvFMHH
+	 B7UBZbise/lMdGeph+T65WdAzrvFGcG/HK9/sF7RFa0fo5ldXBaXgJlmCDRItrp0EB
+	 JaL2HE+rw2kAQF875YCkcdzkF1FD3pW/S/4Pd3QFrDtjJ531CfF+1BztJWPI9z1Yv0
+	 HOJvzMGb9mmFw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+ Michael Guralnik <michaelgur@nvidia.com>, Shay Drory <shayd@nvidia.com>, 
+ Leon Romanovsky <leon@kernel.org>
+In-Reply-To: <cover.1725362530.git.leon@kernel.org>
+References: <cover.1725362530.git.leon@kernel.org>
+Subject: Re: [PATCH rdma-next 0/4] Batch of mlx5 MR cache fixes
+Message-Id: <172553229176.1771917.2133057589640587555.b4-ty@kernel.org>
+Date: Thu, 05 Sep 2024 13:31:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-To: Peter Zijlstra <peterz@infradead.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- tglx@linutronix.de, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
-References: <20240819154259.215504-1-axboe@kernel.dk>
- <20240904142841.GL4723@noisy.programming.kicks-ass.net>
- <CAJZ5v0iZqKGG+wCZYrA1t7mXvrW6Fo-Zb3d17Bofg3NSb2kPEg@mail.gmail.com>
- <CAJZ5v0hVghgKgv0zqabL1m2FT6wou8-tW_9Mm-_9=0-3yhMb3A@mail.gmail.com>
- <20240905093607.GB15400@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240905093607.GB15400@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On 9/5/24 10:36, Peter Zijlstra wrote:
-> On Wed, Sep 04, 2024 at 05:18:57PM +0200, Rafael J. Wysocki wrote:
-> 
->> To be more precise, there are two different uses of "iowait" in PM.
->>
->> One is the nr_iowait_cpu() call in menu_select() and the result of it
->> is used for two purposes: (1) select different sets of statistics
->> depending on whether or not this number is zero and (2) set a limit
->> for the idle state's exit latency that depends on this number (but
->> note that it only takes effect when the "iowait" statistics are used
->> in the first place).  Both of these are arguably questionable and it
->> is unclear to me whether or not they actually help and how much.
-> 
-> So this one is very dubious, it relies on tasks getting back on the CPU
-> they went to sleep on -- not guaranteed at all.
-> 
->> The other use is boosting CPU frequency in schedutil and intel_pstate
->> if SCHED_CPUFREQ_IOWAIT is passed to them which in turn depends on the
->> p->in_iowait value in enqueue_task_fair().
-> 
-> This one is fine and makes sense. At this point we know that p is going
-> to run and where it is going to run.
 
-On any even remotely realistic scenario and hardware though the boost
-isn't effective until the next enqueue-dequeue-cycle, so if your above
-objection is based on that, I would object here too, using your argument.
+On Tue, 03 Sep 2024 14:24:46 +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Hi,
+> 
+> This is a batch of mlx5 MR cache fixes.
+> 
+> Thanks
+> 
+> [...]
+
+Applied, thanks!
+
+[1/4] RDMA/mlx5: Drop redundant work canceling from clean_keys()
+      https://git.kernel.org/rdma/rdma/c/291766e6420e72
+[2/4] RDMA/mlx5: Fix counter update on MR cache mkey creation
+      https://git.kernel.org/rdma/rdma/c/cf047a4d734c28
+[3/4] RDMA/mlx5: Limit usage of over-sized mkeys from the MR cache
+      https://git.kernel.org/rdma/rdma/c/24e58150b7c370
+[4/4] RDMA/mlx5: Fix MR cache temp entries cleanup
+      https://git.kernel.org/rdma/rdma/c/8a1e4024cc963c
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
+
 
