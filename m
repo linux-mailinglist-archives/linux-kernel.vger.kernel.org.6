@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-317824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100EC96E429
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:34:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B4296E42C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B968F1F218A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C7E1C23A7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE071A3A89;
-	Thu,  5 Sep 2024 20:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B10D1A38C8;
+	Thu,  5 Sep 2024 20:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2O6pYIB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="fXiZzQEy"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DCF16BE15;
-	Thu,  5 Sep 2024 20:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548F617741;
+	Thu,  5 Sep 2024 20:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725568434; cv=none; b=WI58tXGpeXG6il3geGO3oeKyVWdAB18mGSRN8QgCDRa9jhz4BO9ZisvIbQ/JTR+SK5ZwKJDlBbBa7/U8PzxxPrQP0vCfwIG643WwQv+q/o2CHJ6SpPsOiJoqqK3GbduwD+iJXRAa9MPNTQ9jMXe8lH4yCxAqctGtIOnBbBRQ430=
+	t=1725568544; cv=none; b=f3ik9cFH78Y2JNHFyZdXF7rtehwVxKV1Eo0sUheJcvZW4SC+GTzrAH0ACtELqU2zLOpXJHVkLX/YBBXbXg1OqiaViNboyaxXB5XbPwCId9lMyBoy5E5jTDuJHgyKGOmNUHJ/A18ufpYSh5XYxGf0lxMqcKbTuX937/nfQLQAcrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725568434; c=relaxed/simple;
-	bh=H49BPIC9s3SPzT/V3Ja0oEGR0PhQWoDW/01521CaypU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieye2vDFvbm1XQEYyl5S6wKr1UZULxjfHVCtFhMAgczi/zMeZvv9avKMAIt2AftPzcaR5Q3EIyIkvbIqoMoodF26YxBkIIVFjlIAW/FKxUCcduTtokz8dQzxMm9/K9sMo+xZdli70gZiFzLhWvOj0ZsdxJP+D8PXIMB5V+D6OWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2O6pYIB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C681C4CEC3;
-	Thu,  5 Sep 2024 20:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725568434;
-	bh=H49BPIC9s3SPzT/V3Ja0oEGR0PhQWoDW/01521CaypU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u2O6pYIBtWf7JOB8act6rnR56J4AlqXUypgCXmH/ESWWU6+OhvKbRFxokhuy2lq50
-	 gUUaToEoCTsIk/EpEyS4kc6N8zt8hDvpAVKE/XfTgSceq5m/aPZX1FZn1j2EUx6aX9
-	 Ifoag2Nbe+JSC4TKESBxtxQ/Ym/rrAqeBmtWQzzLzvfAesuLoOFenmi6j6pB8Zr8MZ
-	 35MMl81Fpn1ZSeJtUEcDyD2oAjqQJM+vk1/99ewMB80uRnm1nijIKPliBYh6+nWrVR
-	 De++5WSsivgg/TdRytFRkRlpRzGj3kAcpJSj+5LLBmL03cwfUJytxg94Y94cv+SV32
-	 7kqoA3NEYXumA==
-Date: Thu, 5 Sep 2024 22:33:49 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v7 2/8] i2c: muxes: add support for tsd,mule-i2c
- multiplexer
-Message-ID: <wncr3gah2qsakgvqj5c2rj6ovm5kja3di2ybqemd3t6i6v7hdv@arkg6mvhozxj>
-References: <20240902-dev-mule-i2c-mux-v7-0-bf7b8f5385ed@cherry.de>
- <20240902-dev-mule-i2c-mux-v7-2-bf7b8f5385ed@cherry.de>
- <fvk5u2j7wu7pjrlpbbnggp3vhopotctu2vr3fh77kl2icrvnyt@tukh2ytkiwdz>
- <b12ac5ac-306f-4f36-895a-e1472ff86271@cherry.de>
+	s=arc-20240116; t=1725568544; c=relaxed/simple;
+	bh=V9zzLGI0CJoWL/TyWGq3XKvRDTDaJlt9oN84ZvdjKdU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AH2DtP+yjfgiOSqcHI0HFJCIjnyz/ixZSsK211iHiDDGg0AmzVpo5zJNTNKBLix7GSeLqs02kdZ5w3J0Ja7mJKxp2x+8xEkMWqUuV+MI8nVSoT4be5dwz5TlKj6rxrM1CxEhgDDgjg7g0aViYVrEsr1MihYf6knHlMhN6boiudc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=fXiZzQEy; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1725568544; x=1757104544;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=9iUGMUA7J3qICfhohJxC0ebd8fD9piK6yrYaWXX289k=;
+  b=fXiZzQEyDn7s/WG6Bus4+Yf5lHgCST+84Vwjcdqdx1n6heQy8BrDRwbf
+   A42kIpyw1OFQK5V8rQGzV9QXYHyMAjdXnHfQz8APuolJPfOiYUiizE6c+
+   i1mNfLzWHhlDHmC+R+27+hlyE/n6T4dCNRAbdaa+wd8Yxh2hlFWANiebZ
+   M=;
+X-IronPort-AV: E=Sophos;i="6.10,205,1719878400"; 
+   d="scan'208";a="757063664"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 20:35:38 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:14282]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.90:2525] with esmtp (Farcaster)
+ id c55b94cc-da0e-4245-9cb1-625bfa867e0e; Thu, 5 Sep 2024 20:35:37 +0000 (UTC)
+X-Farcaster-Flow-ID: c55b94cc-da0e-4245-9cb1-625bfa867e0e
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 5 Sep 2024 20:35:37 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.100.51) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 5 Sep 2024 20:35:34 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Thu, 5 Sep 2024 13:35:25 -0700
+Message-ID: <20240905203525.26121-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <e500b808-d0a6-4517-a4ae-c5c31f466115@oracle.com>
+References: <e500b808-d0a6-4517-a4ae-c5c31f466115@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b12ac5ac-306f-4f36-895a-e1472ff86271@cherry.de>
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D032UWA002.ant.amazon.com (10.13.139.81) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi Farouk,
-
-On Wed, Sep 04, 2024 at 12:23:56PM GMT, Farouk Bouabid wrote:
-> On 03.09.24 17:13, Andi Shyti wrote:
-> > > Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
-> > > among which an amc6821 and devices that are reachable through an I2C-mux.
-> > > The devices on the mux can be selected by writing the appropriate device
-> > > number to an I2C config register (amc6821 reg 0xff).
-> > > 
-> > > This driver is expected to be probed as a platform device with amc6821
-> > > as its parent i2c device.
-> > > 
-> > > Add support for the mule-i2c-mux platform driver. The amc6821 driver
-> > Along the driver I expressed some concern about the prefixes.
-> > 
-> > You should avoid prefixes such as mux_* or MUX_* because they
-> > don't belong to your driver. You should always use your driver's
-> > name:
-> > 
-> >   1. mule_*
-> >   2. mule_mux_*
-> >   3. mule_i2c_mux_*
-> > 
-> > You have used the 3rd, I'd rather prefer the 1st. Because when
-> > you are in i2c/muxex/ it's implied that you are an i2c mux
-> > device. But it's a matter of personal taste.
-> > 
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Thu, 5 Sep 2024 13:15:18 -0700
+> On 9/5/2024 12:46 PM, Kuniyuki Iwashima wrote:
+> > From: Shoaib Rao <rao.shoaib@oracle.com>
+> > Date: Thu, 5 Sep 2024 00:35:35 -0700
+> >> Hi All,
+> >>
+> >> I am not able to reproduce the issue. I have run the C program at least
+> >> 100 times in a loop. In the I do get an EFAULT, not sure if that is
+> >> intentional or not but no panic. Should I be doing something
+> >> differently? The kernel version I am using is
+> >> v6.11-rc6-70-gc763c4339688. Later I can try with the exact version.
+> > The -EFAULT is the bug meaning that we were trying to read an consumed skb.
+> >
+> > But the first bug is in recvfrom() that shouldn't be able to read OOB skb
+> > without MSG_OOB, which doesn't clear unix_sk(sk)->oob_skb, and later
+> > something bad happens.
+> >
+> >    socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
+> >    sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT) = 1
+> >    recvmsg(3, {msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
+> >    sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE) = 1
+> >> recvfrom(3, "\21", 125, MSG_DONTROUTE|MSG_TRUNC|MSG_DONTWAIT, NULL, NULL) = 1
+> >    recvmsg(3, {msg_namelen=0}, MSG_OOB|MSG_ERRQUEUE) = -1 EFAULT (Bad address)
+> >
+> > I posted a fix officially:
+> > https://urldefense.com/v3/__https://lore.kernel.org/netdev/20240905193240.17565-5-kuniyu@amazon.com/__;!!ACWV5N9M2RV99hQ!IJeFvLdaXIRN2ABsMFVaKOEjI3oZb2kUr6ld6ZRJCPAVum4vuyyYwUP6_5ZH9mGZiJDn6vrbxBAOqYI$
 > 
-> Are you here referring to the commit log, module name or function prefixes ?
-> (because  later you suggested that we use "mule_i2c_mux_*" for functions)
+> Thanks that is great. Isn't EFAULT,  normally indicative of an issue 
+> with the user provided address of the buffer, not the kernel buffer.
 
-I made a general comment that applies to all the functions,
-defines, and global variables you've made here.
+Normally, it's used when copy_to_user() or copy_from_user() or
+something similar failed.
 
-My suggestion to use mule_i2c_mux_* is based on the fact that
-it's the most commonly used prefix in your code, but you don't
-necessarily need to use it. That's why I listed a few options.
-
-> "Mule" is a chip that requires multiple drivers that will be added later on,
-> and I suppose we don't want conflict with other module names ?
-
-It's an unwritten rule that you should avoid using overly generic
-terms as prefixes in your driver, like "smbus_read()" or
-"i2c_read()". Instead, you should incorporate to the prefix the
-chip identifier as named by the vendor. If this device is called
-'Theobroma Systems Mule,' you should stick to that naming as much
-as possible.
-
-Using the correct prefix might seem like overkill, but it's
-essential for debugging, grepping, and avoiding conflicts in
-cases where other developers haven’t used unique identifiers in
-their modules.
-
-Lastly, if you're working within the i2c/muxes directory, you can
-omit the 'mux' prefix. It’s already clear that you're working
-with an I2C mux device.
-
-Thanks,
-Andi
+But this time, if you turn KASAN off, you'll see the last recvmsg()
+returns 1-byte garbage instead of -EFAULT, so actually KASAN worked
+on your host, I guess.
 
