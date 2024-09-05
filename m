@@ -1,105 +1,101 @@
-Return-Path: <linux-kernel+bounces-316983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E098896D7E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642CC96D7E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4C92899D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E2E1C2302E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EC719AA5D;
-	Thu,  5 Sep 2024 12:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2219AA53;
+	Thu,  5 Sep 2024 12:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AvmuUhWj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Ih+yAQM1"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1D01991B1;
-	Thu,  5 Sep 2024 12:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09F91991B1
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538133; cv=none; b=lUlsdqFWpoy5evLrTZOegxAyY/TA/wfTzdTIbriTYAP59QyOXBZdAB6AHIL2qQ+dN3GhDobC2HtPoJEG9dHfQhyVUUyUMtfkoyOcSeG7033k3C3WFNQb1jItNF4ohATeH/hvamLAbL69g36uBHPjejwOtwxOIBZHoJApnVau2AU=
+	t=1725538182; cv=none; b=IlH9CB2PFFvSuGHW6tuTfdz0sil4xMS2JeRBcO9io2uCscEbJdRujO8XRsapM+FnY4ghTijp4DWeIgmNX5ymIocpWuQVQ4I+GG3gp8/7sJeYNwiU8s/9OyoVSGRWM6gP7r+JmnBIkXGOcb5rVYAEKI+hEiKy0ejW8JvQyd8VjEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538133; c=relaxed/simple;
-	bh=S9Pu+2jNljdpyfjBv9/hdw6x1S6N/3qTCi0O5cd9F8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PoQCvup9OMPEV9hHrKl71uL/mmIXYFmwjlhFtCiuSK2ffMA+wPKimJ3Eu3Yvn7wVsMirYUGMqiWyPnpT2DlUxA0gwJjIr+596uTD/YLRYP1mnEl9NdVNObdfwf6wcVulWnIO84etbWAnm/o/Hu6F742mOuipldJYYO1owKgXeqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AvmuUhWj; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725538131; x=1757074131;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=S9Pu+2jNljdpyfjBv9/hdw6x1S6N/3qTCi0O5cd9F8A=;
-  b=AvmuUhWjKsay6nylvqrvaDvev96c+2Gt9tUfqSCi5KhljWrTFzyP9GiZ
-   wjIqW+xfHX82r+fy2kF6bWwBNlbvx6ZO01r82rsDdVuEpvfqoT327FjMT
-   wJ44yGv6Wyqmr2tSZvN+pRmsPBaFlvReYYWmY7G2H5d+Im8O3QZAbIFPc
-   StLSab9NKO1drjmy8ADUfxivBnC/SIgqQf+Hf6XOOKc92SoFcvmiIBGP5
-   TfKY4TEa5le41w5pZ28MBCQdtOT6aVgmG62KyYbiHDwOlRu6t2rU7smsP
-   wYMhG906htbW48ztLbtVTIJtnvcJndJ0GLq+ScDXPO2c0zCRlYFiCtfB9
-   Q==;
-X-CSE-ConnectionGUID: GhFpK75dQRuF8qAT5aw0jA==
-X-CSE-MsgGUID: OrHkaXCJTpawkCfzbo0pIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27170649"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="27170649"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:08:50 -0700
-X-CSE-ConnectionGUID: vMn+0FUlRrqSZANUCFhj5w==
-X-CSE-MsgGUID: yPPKl3kLQZGeDlybQgb+pA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70198459"
-Received: from hcaldwel-desk1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.43])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:08:49 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kai Huang <kai.huang@intel.com>
-Subject: [PATCH] KVM: VMX: Also clear SGX EDECCSSA in KVM CPU caps when SGX is disabled
-Date: Fri,  6 Sep 2024 00:08:37 +1200
-Message-ID: <20240905120837.579102-1-kai.huang@intel.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725538182; c=relaxed/simple;
+	bh=9xMOOGXA8j/58f3Jw2LSmWZTl9QPCL5BBbMsrpTJn6g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RX+3FEqfN15D6yMwUSu/jG214oa9+LEMlkcBHkSBwNZy6wH1iyCIXwkRtDgVa3rfRWxlczmo4gnEEN/BLHOTVATV2gHW29BdroDt5RW/J8MKLSVdiqjOSKeIxJ+hl8LJ2Jsc4VhY4V2n49+jY35B63YtzvmhVfW6mNy2FUfC2Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Ih+yAQM1; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1725538180;
+	bh=Rc3SdofNHSm0ztQHSD5kFPnnzeRxdv52tEaax1uWW9w=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Ih+yAQM16u93tvaaqocLggQAIZRjV9DJKtuoG2bVaprgaLG0MJihd+ir4tgAyEJSi
+	 pMpNDIa54cNFXZMC40BmnOakIO3AVkHySYYQ3Sa0c9dmeACLx5Qt+ltTn7dMumfg4F
+	 X14JxUN9sCBf9Qbria7H+wDm/HX6zE11ZUs+LBjA=
+Received: from [192.168.124.11] (unknown [113.200.174.101])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 8B8596768E;
+	Thu,  5 Sep 2024 08:09:38 -0400 (EDT)
+Message-ID: <361bf35ccf308d2fbce14f69f156cb42eef0f095.camel@xry111.site>
+Subject: Re: [PATCH v3] LoongArch/percpu: Simplify _percpu_read() and
+ _percpu_write()
+From: Xi Ruoyao <xry111@xry111.site>
+To: Uros Bizjak <ubizjak@gmail.com>, Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, WANG Xuerui
+	 <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>
+Date: Thu, 05 Sep 2024 20:09:35 +0800
+In-Reply-To: <CAFULd4Z4QzS0J_BztD7jDSNwoXM2vF9PWNX5eJBrQZsUbu-gJQ@mail.gmail.com>
+References: <20240905065438.802898-1-ubizjak@gmail.com>
+	 <CAAhV-H7LtPja5K6ZoEbNTgjwjEL_uj-V11Y6Vq9HqTu1+2YMHw@mail.gmail.com>
+	 <CAFULd4Z4QzS0J_BztD7jDSNwoXM2vF9PWNX5eJBrQZsUbu-gJQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-When SGX EDECCSSA support was added to KVM in commit 16a7fe3728a8
-("KVM/VMX: Allow exposing EDECCSSA user leaf function to KVM guest"), it
-forgot to clear the X86_FEATURE_SGX_EDECCSSA bit in KVM CPU caps when
-KVM SGX is disabled.  Fix it.
+On Thu, 2024-09-05 at 14:02 +0200, Uros Bizjak wrote:
+> > If the input value is less than 0xff, then "& 0xff" is meaningless, if
+> > the input value is more than 0xff, this conversion still cannot give a
+> > correct result for the caller. So I think for all sizes it is enough
+> > to just use "((unsigned long) val)".
+>=20
+> This part is used to force unsigned extension, otherwise the compiler
+> will use sign-extension of the possibly signed variable.
 
-Fixes: 16a7fe3728a8 ("KVM/VMX: Allow exposing EDECCSSA user leaf function to KVM guest")
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/kvm/vmx/vmx.c | 1 +
- 1 file changed, 1 insertion(+)
+It's not relevant.  For example when size is 2 __pcpu_op_##size("stx")
+is expanded to stx.h, and stx.h only stores the lower 16 bits of a
+register into MEM[r21 + ptr], the high bits are ignored anyway.
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 594db9afbc0f..98d737e0d416 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7963,6 +7963,7 @@ static __init void vmx_set_cpu_caps(void)
- 		kvm_cpu_cap_clear(X86_FEATURE_SGX_LC);
- 		kvm_cpu_cap_clear(X86_FEATURE_SGX1);
- 		kvm_cpu_cap_clear(X86_FEATURE_SGX2);
-+		kvm_cpu_cap_clear(X86_FEATURE_SGX_EDECCSSA);
- 	}
- 
- 	if (vmx_umip_emulated())
+Thus we can just have
 
-base-commit: 44518120c4ca569cfb9c6199e94c312458dc1c07
--- 
-2.46.0
++#define _percpu_write(size, _pcp, _val)					\
++do {									\
++	if (0) {		                                        \
++		typeof(_pcp) pto_tmp__;					\
++		pto_tmp__ =3D (_val);					\
++		(void)pto_tmp__;					\
++	}								\
++	__asm__ __volatile__(						\
++		__pcpu_op_##size("stx") "%[val], $r21, %[ptr]	\n"	\
++		:							\
++		: [val] "r"(_val), [ptr] "r"(&(_pcp))		\
++		: "memory");						\
++} while (0)
 
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
