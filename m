@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-316776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CB296D468
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:52:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E300296D484
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08B61F237B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A156B28276D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B721991DF;
-	Thu,  5 Sep 2024 09:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1089198E83;
+	Thu,  5 Sep 2024 09:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RRvzrthn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSmMCL7m"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C77D18732F;
-	Thu,  5 Sep 2024 09:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A86198A29
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 09:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725529900; cv=none; b=lHHUbfNgo/WQK8L63Fk7vyB2gbcg8ZJhL7t/BJLXfkcnErDn8rluaL4i3naJUU0unMmcnUml2Yc5OPDGyp+O45ftXeMQxuzFeyxrK3bha/i6ea6CPwfRr2cdq/FVM6aLdw9Dg/LCXFFiPKTTpGwd0VzSmMQQjvdSmOqx7BJlBm0=
+	t=1725529972; cv=none; b=lJLKguGEU8cwkATVojgmrnXZ01PYHK4CKbrwTomjEBq3RTS/hf3VnpRdZ+vwWVw61HKa13xr5Do8wzb2XH/hhGR6DlBQTOkPrYQ5LSeN5wqO+p32EamMyf3N60MBaTPEgj+hnuHMQYtP0sOhBqotFX3UoKwzHnrF2SRZZv3Bl3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725529900; c=relaxed/simple;
-	bh=/aV6ELHH7RSjtnMAdXydDe60k9B7lF5WEKVS3VphtME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Df8Ytt1NpxuVPRsjOPyNjn6khscjk8iOeh2So1drx9Exoq4U7zB8r4sak9HvZKA1rbpFBNOsLp2bp98q9b1QKbMD5EzVAcS7xigohD4lHjpakRnYEuH5yzhBzsuaNuWia4h7geOmXn7PhFfpDwtWEF7ubPyP5o/P7k3QpzryxKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RRvzrthn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=abaPziHXBd4s3RieNdcbjSJLRTYtbh06JX3q+3G3zhE=; b=RRvzrthnRJtWvd6iCRT7PBvRyo
-	/XR3TPA/hGoQgwDoXuVzmURocmBHVE7hwt86s01nAyrlozgWT0zAWtV5E3vYEllyXlAoPhljfdQIB
-	eZcOqFqIqouioeuMaykGYYdIXGsY0NAqZyMOvruXs28iA2kzXTOn4WgeXijqru5krkwt7/fpzmd+M
-	6Zt2cMrJx/0KbmOKaZE4/+oyo1gUtFRdFZp1ug67HM2Bwrqjk1syRGezORcBicKhEJkssg8iC9WI/
-	4DY/9cFCp/nRzh1Am8o7osNeykQY/pTDA8o0AdwpyHeCpUpsQ0FjgFBX3x2cxz8AKlZsrX28LnFlN
-	gYLVVUBQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sm99J-00000002C9z-3UD6;
-	Thu, 05 Sep 2024 09:51:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B0669300599; Thu,  5 Sep 2024 11:51:34 +0200 (CEST)
-Date: Thu, 5 Sep 2024 11:51:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, rafael@kernel.org,
-	daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-Message-ID: <20240905095134.GC15400@noisy.programming.kicks-ass.net>
-References: <20240819154259.215504-1-axboe@kernel.dk>
- <20240904142841.GL4723@noisy.programming.kicks-ass.net>
- <30eeae06-0d8a-4968-ba57-d723162a0782@kernel.dk>
+	s=arc-20240116; t=1725529972; c=relaxed/simple;
+	bh=gzngvDwluLEe7lCSNkT8HVUCMDTsmzHiq1kOL2zStvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EuoD+rxreiQZrZZR2/McDd97TU9gv6VMoA9r0bqVLWjVvBfbLpEhAwzB+SiGlY0+L2MpCvRhLA+maBipqYp8JmI1uXzqTIlHg66xt38SXptCBsXR3V2AhmWwa4h6iU2ZkdtOLOzTfmn5f1CD3CJtVm+pQT5A/9PLLv59jZQ4xVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSmMCL7m; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2055136b612so6308145ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 02:52:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725529970; x=1726134770; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=02/uy/7+25tcFKpRbeJa3Z8eQolu7MZ4cB3OwstXuO8=;
+        b=FSmMCL7mZti3t9CZH+bc+7Ua7+UrEl6kRMByYrBVlS/ApBd+S/DizvA1ynmB1A/9DW
+         hyVkkri4tQbh+48K5p2YKK0VIUSJBkGVe/kRKcPkTd87q60/KSI87IDIONRPYINQ/Mcu
+         x+vG0liz9WX0FEZiIclhui0oa9/b9EgonrIaRMveIVCpa2/UWLXIr4QjbF2VlyZehH/L
+         AN+d0mpcAdI8Odh5Aij07LI4RZXmtDNLvDLPvbZm0z5tyjacB7UqWpnAu6u6LtcXEuMu
+         Oxzi2vbXyACR7LkZlhC8lp8mPrh4QNDwkRVjsXDKEkJVeB6j9ZeA8CyAyifsoFJ7Tz7n
+         UMYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725529970; x=1726134770;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=02/uy/7+25tcFKpRbeJa3Z8eQolu7MZ4cB3OwstXuO8=;
+        b=iKDj+7jUbeAs6Yglo6v0fy5Sxj1hA215gbfD3jjdSEfZnADn/nnYbx9bg9PhIQ6+Lg
+         XXi0wXD71LQ5UWnLZo4fwUMPpYlOcQVF7KyO/m8sT3Lvw6sHXaxwjJrtUGHw3W4L2mfO
+         pLBvVnWfyWpYal/D1awVxm7J4ijcHs9FdMZhBoaTG2TwSBXFlGomjxUDw/XjHD3HTaq+
+         tsbYKAEN55LyXAJyEEopBijMXrEkLeiKfWm1QeDe8qoYsHAexrCMF8L9/mTDolfQ7XAs
+         tBDoZy4hB9SJ9/dDVDjcYq5tKuhX9fibStypARPkX4LtnOIBwR2ngoThZTBvA0R64EM5
+         yCfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIipQUVesmp0m8tyDhh3nhKE+UOiwqoG+5xF5+UcA4Gn4kgpROaa9WltNTsn+YZwOc8TvWqWSlPdxqMOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkCxajWmfkOpLILIXTv0NaehMIPwnYor4vpMwBuZ8Vdt30U5i4
+	LwIPomocR+tXGJnpQZ7aYn+NzAlkd3i7u1dACrIvk0a9L0FtaKSt
+X-Google-Smtp-Source: AGHT+IF1TQGvQ9Uw4JQocrRBj7ITBar+56VGGpVhL/etHwEFalxxKCYcL/geA5TzhpYyWBlN2mI1Gw==
+X-Received: by 2002:a17:902:f690:b0:206:a239:de67 with SMTP id d9443c01a7336-206a239fb32mr71910745ad.18.1725529970181;
+        Thu, 05 Sep 2024 02:52:50 -0700 (PDT)
+Received: from localhost.localdomain ([123.124.208.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea556f8sm25578455ad.198.2024.09.05.02.52.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 02:52:49 -0700 (PDT)
+From: Wang Yibo <lcnwed@gmail.com>
+X-Google-Original-From: Wang Yibo <wangyibo@uniontech.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	trivial@kernel.org,
+	Wang Yibo <wangyibo@uniontech.com>
+Subject: [PATCH] mm: move bad zone checking before getting it
+Date: Thu,  5 Sep 2024 17:52:16 +0800
+Message-Id: <20240905095216.7888-1-wangyibo@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30eeae06-0d8a-4968-ba57-d723162a0782@kernel.dk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 04, 2024 at 08:41:23AM -0600, Jens Axboe wrote:
+When flags from gfp_zone() has an error combination, VM_BUG_ON() should firt know it before use it.
 
-> > Yeah, but *WHY* !?!? I have some vague memories from last time around,
-> > but patches should really keep this information.
-> 
-> To decouple the frequency boost on short waits from the accounting side,
-> as lots of tooling equates iowait time with busy time and reports it as
-> such. Yeah that's garbage and a reporting issue, but decades of
-> education hasn't really improved on that. We should've dumped iowait
-> once we moved away from 1-2 processor system or had preemptible kernels,
-> but alas we did not and here we are in 2024.
+Signed-off-by: Wang Yibo <wangyibo@uniontech.com>
+---
+ include/linux/gfp.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-There's 'WAIT' in the name, what broken piece of garbage reports it as
-busy time? That has *NEVER* been right. Even on UP systems where IO-wait
-is actually a sensible number, it is explicitly the time it *could* have
-been busy, if only the IO were faster.
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index f53f76e0b17e..ca61b2440ab3 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -133,10 +133,11 @@ static inline enum zone_type gfp_zone(gfp_t flags)
+ {
+ 	enum zone_type z;
+ 	int bit = (__force int) (flags & GFP_ZONEMASK);
++	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+ 
+ 	z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+ 					 ((1 << GFP_ZONES_SHIFT) - 1);
+-	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
++
+ 	return z;
+ }
+ 
+-- 
+2.20.1
 
-And are we really going to make the whole kernel situation worse just
-because there's a bunch of broken userspace?
-
-> >> Patches 1..3 are prep patches, changing the type of
-> >> task_struct->nr_iowait and adding helpers to manipulate the iowait counts.
-> >>
-> >> Patch 4 does the actual splitting.
-> >>
-> >> This has been sitting for a while, would be nice to get this queued up
-> >> for 6.12. Comments welcome!
-> > 
-> > Ufff, and all this because menu-governor does something insane :-(
-> > 
-> > Rafael, why can't we simply remove this from menu? All the nr_iowait*()
-> > users are basically broken and I would much rather fix broken rather
-> > than work around broken like this.
-> > 
-> > That is, from where I'm sitting this all makes the io-wait situation far
-> > worse instead of better.
-> 
-> IMHO what we need is a way to propagate expected wait times for a
-> sleeper. Right now iowait serves this purpose in a very crude way, in
-> that it doesn't really tell you the expected wait, just that it's a
-> short one.
-
-Expected wait time is one thing, but you then *still* have no clue what
-CPU it will get back on. Very typically it will be another CPU in the
-same cache cluster. One that had no consideration of it when it went to
-sleep.
-
-A sleeping task is not associated with a CPU. There is a fundamental
-mismatch there.
-
-Using io-wait for idle state selection is very tricky because of this.
-
-> If we simply remove iowait frequency boosting, then we'll have big
-> regressions particularly for low/sync storage IO.
-
-The frequency boosting thing I don't object to. That happend on wakeup
-after we know that and where a task is going to run.
 
