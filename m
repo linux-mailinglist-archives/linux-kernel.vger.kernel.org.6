@@ -1,185 +1,941 @@
-Return-Path: <linux-kernel+bounces-317496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A3E396DF1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:05:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85EC196DF25
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D484B213D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CCC1F21C3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A78719E836;
-	Thu,  5 Sep 2024 16:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E99B19EEBF;
+	Thu,  5 Sep 2024 16:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ryjZAvHi"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mfMITQ4I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hYkqe2ZO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C8919AA63;
-	Thu,  5 Sep 2024 16:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552310; cv=fail; b=bZhAU03ygOcULUlJpohRr+2iC7OJRfs25nW3AkPAX0ou52wBDP9IhXVTG2RJglAzp8KAXagUgnQo75T//UCyGmD22m4+p5LArxxE0NZHQZWs9DRjFtUNO0BZ2vOrnWhrNUZNKARWywCtdKeEEJl3U0xPac1b21WdDrdBJUarneM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552310; c=relaxed/simple;
-	bh=bsWX2CGjjsAZzOtx5FWlLYxgCXLpJgUOjeq8ziJHIbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Vkm/9p3aGfU7E8IGs8uV//MstYzTcaxp6O7vgpJ5aPVouMjtWhCUBFTQqxp4Z973aq4bYNm+rAnO5ge2SUvIscfT0O0oOP37Ws3GX9dxcRynx+AlPZPj2G5ax3TCyFJVdkwGwxgVQRBiQRZ7iWlup9dyg6W5sOsig8vxaJYWGR8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ryjZAvHi; arc=fail smtp.client-ip=40.107.92.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nK0G8KdP2HveFm7T4fBRUUuI+Ko7jiXZsVGeSGPuGAb1V/FcDmbO1c3wFua4IwpqMo3S9EYi15+2v/G28EOcFBvJ0P+QRspLTcw4LyDYNL3zBfbra5tAAnGDkmZ1c668pMqRx0nZaPliK4zSKpC45ZMbRpBAV9yu20rZyvTh17kEzwbHQtQTcQZ/QE5Uy0mgBrHiId7oMm2lz3nA4Ap2gtkJv51KL1ofPpm+weUB4WrtwNuuaxamQDLkrcT9GVERtX5bNC90qtdycQXo3hlhocZF4kQCvMUPrg86RAIY7QD6Cfn5Aa198vJ3yL0Qaztng8/qSfuPtvBb5kEX+Xowvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w3uLjvYVv9caHuZIpGX+LlN6v5j5cnAToY46Jsu1S5c=;
- b=tro1uANV+5Yt8uRdVxoR1qtyyg9jwrbbvPxEUJ6G9h6tgXye+wfQB/ESye3ddWXvsKiYUvpoT429hNhS7OJZkahOgbHxwXtqXje7KXiwpuqujwdzBuTi4wxAfivQfVWifiltE70Z5wwDj+ZvcX6o8PtP8vU+GipsItswbBZcMroeeIo5qnUMRN+fnEa60mPJkL+I6FxACnicqdtSzAtgD/MX279MNDJ8DIHQmCQaqr7jpiJkS4TkG1Zzm5NmPg0UVMpHHO8jqbOu4f6D3xtpsf+dJa5VZIfx+d/PcMun3twbdltK80bOrrr0jNWRz/61roAbMYiIpbwBTDtVEzAS2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w3uLjvYVv9caHuZIpGX+LlN6v5j5cnAToY46Jsu1S5c=;
- b=ryjZAvHiiJtkZ418c92grpez3V7Y5EhjlfEt3LbDoum/SN7M7Ub0r/gZHaAk6/+atm1D13889uhXAd7O6qvQpRc9r75ddERTDu9GxNYFcnWve7/BRuW4kivuPj6QPvWOjxXq0N+3AinQ3GmpgTh03BLK/87iFvSVdCHtKRSrCm6YKAVANV+edNBdelrB/d1jv5YiY6x/IRZkm44mwK6jZanj6TEkEVFPtUAPwBfiohiKZNUO5b6XgBVtQRptOABijaan0mAVDBF4slAhNOGzXv39IjvMXFjHi7p/nvAntxf5zuZQIo/X5ThVVU7e+lCKBulmF0TErlATPGoq1FiHBg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
- by MW4PR12MB6825.namprd12.prod.outlook.com (2603:10b6:303:20d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Thu, 5 Sep
- 2024 16:05:05 +0000
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 16:05:05 +0000
-Date: Thu, 5 Sep 2024 13:05:04 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com
-Subject: Re: [PATCH v2 08/19] iommufd/viommu: Add cache_invalidate for
- IOMMU_VIOMMU_TYPE_DEFAULT
-Message-ID: <20240905160504.GQ1358970@nvidia.com>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <224732696abf91f220585bb26fa44314d7d2f425.1724776335.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <224732696abf91f220585bb26fa44314d7d2f425.1724776335.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BLAPR03CA0045.namprd03.prod.outlook.com
- (2603:10b6:208:32d::20) To CH3PR12MB7763.namprd12.prod.outlook.com
- (2603:10b6:610:145::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ABD4AEF5;
+	Thu,  5 Sep 2024 16:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725552429; cv=none; b=J5aqqDRfcJJjvjn1fqwuWlIi9aT7WVXWuUc7ojNeifLJ4dWMIQdQYbYHrQvC8CyEsxVsi4g1K8gxbigHbSSQl8qQh17U9Pq1nIqsM7/XIzzzuPyilxLPFH0FmghmvPtKrIsPwGaPkyO4RUILIi34xfsPp6FMhJsOS3amtb23j+s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725552429; c=relaxed/simple;
+	bh=FKIUe6ROyuAZld3RYI0wuZyQp2WcS/MahutfvjYVD0E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WPJB8XuVFrHD4AaduOeINLn4RIJO9gszNy6GH5EMZp3AdjUybZ2yp6Xn2rkKxUB5MU2xYavYI/M25+F8GPvFwPpc9YEaGeE8iFzSjUegXQyl/N++HBJ3jdC0HVd381Rq29NBbVc5b8mcuWIK1ZuUCVt+XDXfLHsbEEmcs93GPlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mfMITQ4I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hYkqe2ZO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725552425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YuosW2xFF76k7znp1kriu5k7tuP1jiOYxwAXWSFhr/o=;
+	b=mfMITQ4IBwTILBRT0F9TI/4949JTWFcoAs++N6lHvZRa2y/gU5HkEWz03DFLIEBbzdIgmJ
+	Q9cbJriLyC4W38x9UPsDQWO12FYquHQecON4fMUFZjaFHq/sXj+7OQZeMD7UK7Msfg/McY
+	2Pr29fJrCC2WYOjaOE3bBzuosArbnsFqHo9hxt8tyQkreAlXKzmhicIdt92akr1O33GChF
+	PfJ1fPF+PXNFWhGyloAzVw9jgMiwgLeEJqqwhI5beflCgGth+Qa7aG1xLy5CNdNVg8JP6D
+	oDoD/r7d3AcOro/guMDS4bsROAImXWAuyHZCkvhofxuIcH+qY6oEh+8QALSASw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725552425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YuosW2xFF76k7znp1kriu5k7tuP1jiOYxwAXWSFhr/o=;
+	b=hYkqe2ZOxrmNgnVw7vGgRZCA8CkgeE+CwmAzDMNGqyDGVczKVSRC8AtALhBBefCt0PuLr4
+	247bjHqKckJHfyDw==
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael
+ J. Wysocki" <rafael@kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Andrew Morton <akpm@linuxfoundation.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>
+Subject: Re: [PATCH 06/15] timers: Update function descriptions of
+ sleep/delay related functions
+In-Reply-To: <87frqe60xj.ffs@tglx>
+References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
+ <20240904-devel-anna-maria-b4-timers-flseep-v1-6-e98760256370@linutronix.de>
+ <87frqe60xj.ffs@tglx>
+Date: Thu, 05 Sep 2024 18:07:04 +0200
+Message-ID: <8734me5bkn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|MW4PR12MB6825:EE_
-X-MS-Office365-Filtering-Correlation-Id: a610e0c3-21f0-43b7-7310-08dccdc48175
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7eVEXbID3xhEfKCCW1FbMiLzr7+jf4W22nG/hASP4IFCsQe/zuzwBHg/FZbJ?=
- =?us-ascii?Q?GoKQaOtIQemiqDE5PvGhWYPsY89HGWWnaeqXU5bkhrz1DOMO1AGnOhAgYSAN?=
- =?us-ascii?Q?1WJRU7eMzhRHk4P+DoEcZp6S4kqAr8UuMCFwmzjScexpRR6XEZPctj+MCuWa?=
- =?us-ascii?Q?aNqAk4HXlPBGF9kIj4EERPpKRcgKidfoK8+je5Hp34FtQS9uXISvJ87jUPp6?=
- =?us-ascii?Q?6gq+pPSWgGfpc/h/++Zhp+p+7672y82/SteRHd8GV1FFaRSx4eXw8AKwH1aQ?=
- =?us-ascii?Q?+RWXFo1NZBgOyvOY0Rjobj/YTqD8x8NaT8Bd38GUdG/T38qL79xVgJqwfLTt?=
- =?us-ascii?Q?rbgJY8qCztwXXgODexT24efw6f81+nBGYHeWIvv26vcdeIUNRT+WGQFp2dmW?=
- =?us-ascii?Q?VklHKluiXnMCF1QWoOpuam3dM/Fs4U1vlELdlVrZhTTHHvXdt38ZXkExZD1H?=
- =?us-ascii?Q?w+81V62vRGYH1vI4heijVWleNsu7D/gaHClXFuAtWMJmNpv69A5iSBLSeR9X?=
- =?us-ascii?Q?RbfgckryprCBmoD1ixSGyr6xVZ3/1zy6SW8jmO4f8+vTgf/yAtq3K33FTULH?=
- =?us-ascii?Q?EnfSpGbyca3IWvr8jlCqLathaO6yQ1LHbpC6joNSw9PLP0ODxEgYErGMN8T7?=
- =?us-ascii?Q?+89rHHdMztLl3m2uMVOS9qsd2rJjRGhNJMy0vcYL+eSyt4ELjVQhrBNXmc0j?=
- =?us-ascii?Q?Mo0TcLQ7UG+LFsJtY1Btu2OYW/oAYZiHP0oiwlcfYJWEPuiQB8x5DhasNa9p?=
- =?us-ascii?Q?Ne7MWRAw4UGkls7lHR5F5WBz91xIvtKNX6bNZ+tcJJcYJixVMaxtLxMgrExw?=
- =?us-ascii?Q?/N1RZLe+L6PTdkYKCypDOs9kFEL6FNwPugLElc0dPlQVw2/pOZzFJ9UKz9ZR?=
- =?us-ascii?Q?LMrGS4JwagUwDjfB4ZZFlX8JRmlAjhvcPVYO4P5GZncSfMsuUp363/CV4Lys?=
- =?us-ascii?Q?X5GZvgswHRBg/EzgVwm604GY9oRHyXyeRTTyyuY/iL/E8q/UwNmNehwVAQOF?=
- =?us-ascii?Q?K64U7r+gldf9NGnKaKlwEupXVWpul3WlqcRIqNoPx0hfBQGRJ4XHnbir0frV?=
- =?us-ascii?Q?OR906orqQR8XKQxcpVjDDCGyfMYwOte/3mDF7BLs7D9LXEjmcPcTxYJ9HU7/?=
- =?us-ascii?Q?cOVQ/oEFOk7VqnTM9JVUhxtfxjN6B2mmr9kx5vaVsd9S7mYoa4y6F/Mdmyvu?=
- =?us-ascii?Q?EdJ1w13X/qcZtAA2ISDlAyD5KuYteoL3O8U4/UDo31P26fIHjQPzLfuxavF0?=
- =?us-ascii?Q?12x+K6ywNsN64yVBU9dZQ/sgNiUQx6cu0DB23rQVq4A2EIzGf4jt5eeTMy53?=
- =?us-ascii?Q?7GjoPn7ZVNGyIwSNTdoIeia9R03Mf1Ri2S0O2Xmv4AQSCA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YSOlPZod70XQWO9U8BX8sEkjiHF8Gc7/pYMXNmuKeXN/Ja04d/SWAt+WkLzy?=
- =?us-ascii?Q?W/eJ0mrcSJVwDK+vUlFc+Vld81aG7znBf1Lhfoq1aRHZk/0bmrI9K17t7aYz?=
- =?us-ascii?Q?ozE4pcOB2wIh/bifAO757VyE3nj3ZhWcl9ciHcgxKgjYt1BplT+7siYArU1A?=
- =?us-ascii?Q?K5Nbrz9rsGijw9vNXNVSMzQAMXZqo+fgwiso5hi+7aXBNgwgJQw8xyVcFyCF?=
- =?us-ascii?Q?jc2x6jRweSiGny2elTTnmjtzrY3qc18iu5PKKQs/vON4qKN8eCQHWk6WRIXE?=
- =?us-ascii?Q?dFq8mAi4B2EeFHWUnlBmQq6R3U25lsjbISegYu8MSvaSUe35/MDJWvDntURp?=
- =?us-ascii?Q?Zn9BHpIj2lw5DZ6cNkU+xr8IGzVh5BijXDGio0ybusG2EhWxiabLJJdK7CZY?=
- =?us-ascii?Q?W8EubfchtrK85Txd5ey3j6QMfJ22a4WIeTCeL8zplQVey8UxkcktMiRn/4Xx?=
- =?us-ascii?Q?r35l3fIWxpFuL0U/dUh3P9bMZM8qDAf/XhLd+vokvF5u4wl+kXHU0lvNkSo6?=
- =?us-ascii?Q?wlpF0C4IeJLC0YIEB4rpO14c0HulV8/lPfr3NBConEVahUfXJWOqG8FBOg3p?=
- =?us-ascii?Q?QgjCNg6n50K5i5+U50TrebHYdJlI/hG2lenzO+LQ3mKHL790y8s4oKeW9DK1?=
- =?us-ascii?Q?u9UC/adlZlRsNU5K1Jxk2MsGCyX7wpdp+2Cj3KxHP7onKpAFCnjo9rYkbdME?=
- =?us-ascii?Q?s2WLhmM/YWkq5XYTWBRHCiq5DapfuGEgM3BoHdZcZOdYTfiZuKmvQrEAIhoZ?=
- =?us-ascii?Q?+VFQkAO8q+WzGdv+YWjg4Pr4TwiGRxbVt+SZSd9YuxDR3MVOJoZ0+G834nts?=
- =?us-ascii?Q?mQU5/u0L+H6dSEjJMjV28EglY+ZMrZvhpGkSQZL0vGiKCOUY80BGCGtWl+O/?=
- =?us-ascii?Q?trME/gdk6oYGmIZ1Z4AU60u+eHkx2YFDG6IXbMNNMnuPU/EUzq9AjwmMjetI?=
- =?us-ascii?Q?1/6sO2UKWeTbPuQwuTKy4NZgFfMeHReU4Qimhrw2Fa0tOmtYTiKoaSqF6NXF?=
- =?us-ascii?Q?d2UbCqbjc3YrZHo+2cwJxL1JUswEmcwqRirq5fFUiDAIs8d9hsLL58A14SEs?=
- =?us-ascii?Q?1im9ctrG1heUkSZPCf4V1IB+plxMc88kHaVZYxaUU24N29hEi0DWyvr0iJer?=
- =?us-ascii?Q?mP1leEnrEGdvIAvCo4rVsui8bULDK0ZU84curaZFlGBl+gN3fX/IlIPUH9B+?=
- =?us-ascii?Q?I8umgVii46/F7Ze+4xEfNLGcxRLutf6zp2cqeLHLVhLnlvJxRQwLrouCPMWU?=
- =?us-ascii?Q?zrMz30PEmdg5c28fdq1OYOXfP2y8z+Hvwj70FOpZdQoL14KBqqJ8gmHpZF/k?=
- =?us-ascii?Q?bOP1x5mFknmX5kx5Pyc5318OHdpp7XA/6Zfaed2IOWQErI9usGHgRl6+Exzv?=
- =?us-ascii?Q?CrHP668u0S+axUVbLAEfwPre2zfFGDNs6DNnsSmFQ6kbDWz65NT6FdgGMlpJ?=
- =?us-ascii?Q?ByYekk/75mJYdfMcTBGeX9mNGDxMbEY7FbUQEYK0oWVEheuoaqghtBXo8Hnq?=
- =?us-ascii?Q?vieQuBDVdCBhS/16Mp564BfieS0i1pklR+mq2wJ7lkviyA0/Fzdmum29lOL2?=
- =?us-ascii?Q?pnRT2sMrkVeO/7GZe7+v50n/629jxipdkdQpFNnN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a610e0c3-21f0-43b7-7310-08dccdc48175
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 16:05:05.0229
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hMEPEHP8i6sRo9mAiJp5cqSX/m7Dnrg+7cHd6U8SMh4Hpw5cW6q0cwelBzGAskKO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6825
+Content-Type: text/plain
 
-On Tue, Aug 27, 2024 at 09:59:45AM -0700, Nicolin Chen wrote:
-> Add a default_viommu_ops with a new op for cache invaldiation, similar to
-> the cache_invalidate_user op in structure iommu_domain_ops, but wider. An
-> IOMMU driver that allocated a nested domain with a core-managed viommu is
-> able to use the same viommu pointer for this cache invalidation API.
-> 
-> ARM SMMUv3 for example supports IOTLB and ATC device cache invaldiations.
-> The IOTLB invalidation is per-VMID, held currently by a parent S2 domain.
-> The ATC invalidation is per device (Stream ID) that should be tranlsated
-> by a virtual device ID lookup table. Either case fits the viommu context.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommufd/iommufd_private.h |  3 +++
->  drivers/iommu/iommufd/viommu.c          |  3 +++
->  include/linux/iommu.h                   |  5 +++++
->  include/linux/iommufd.h                 | 19 +++++++++++++++++++
->  4 files changed, 30 insertions(+)
+On Thu, Sep 05 2024 at 08:59, Thomas Gleixner wrote:
+> On Wed, Sep 04 2024 at 15:04, Anna-Maria Behnsen wrote:
+> However, instead of proliferating this voodoo can we please convert it
+> into something comprehensible?
+>
+> /*
+>  * The microseconds delay multiplicator is used to convert a constant
+>  * microseconds value to a <INSERT COHERENT EXPLANATION>.
+>  */
+> #define UDELAY_CONST_MULT  ((unsigned long)DIV_ROUND_UP(1ULL << 32, USEC_PER_SEC))
+>
+> /*
+>  * The maximum constant udelay value picked out of thin air
+>  * to avoid <INSERT COHERENT EXPLANATION>.
+>  */
+> #define UDELAY_CONST_MAX   20000
+>
+> /**
+>  * udelay - .....
+>  */
+> static __always_inline void udelay(unsigned long usec)
+> {
+>         /*
+> 	 * <INSERT COHERENT EXPLANATION> for this construct
+>          */
+> 	if (__builtin_constant_p(usec)) {
+> 		if (usec >= UDELAY_CONST_MAX)
+> 			__bad_udelay();
+> 		else
+> 			__const_udelay(usec * UDELAY_CONST_MULT);
+> 	} else {
+> 		__udelay(usec);
 
-It looks OK
+And of course a these magic numeric constants have been copied all over
+the place. git grep '__const_udelay(' arch/ .... Just SH managed to use
+0x10c6 instead of 0x10c7. 
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+ARM has it's own udelay implementation:
 
-Jason
+#define udelay(n)							\
+	(__builtin_constant_p(n) ?					\
+	  ((n) > (MAX_UDELAY_MS * 1000) ? __bad_udelay() :		\
+			__const_udelay((n) * UDELAY_MULT)) :		\
+	  __udelay(n))
+
+Amazingly this uses the same comparison construct which was in the
+generic udelay implementation... Same for arc, m68k and microblaze.
+
+Plus the default implementation for mdelay() in linux/delay.h:
+
+#define mdelay(n) (\
+	(__builtin_constant_p(n) && (n)<=MAX_UDELAY_MS) ? udelay((n)*1000) : \
+	({unsigned long __ms=(n); while (__ms--) udelay(1000);}))
+
+Oh well....
+
+What's truly amazing is that all __udelay() implementations, which
+invoke __const_udelay() under the hood, do:
+
+       __const_udelay(usec * 0x10c7);
+
+So we have an arbitrary range limit for constants, which makes the build
+fail. But the variable based udelays can hand in whatever they want and
+__udelay() happily ignores it including the possible multiplication
+overflow.
+
+That's all really consistently copy and pasted voodoo. The other
+architecture implementations are not much better in that regard.  The
+main difference is their cutoff value for __const_udelay() and the
+multiplication factors.
+
+The below uncompiled and untested pile is an attempt to consolidate this
+mess as far as it goes. There is probably more to mop up, but for a
+start this makes already sense.
+
+Thanks,
+
+        tglx
+---
+ arch/Kconfig                        |    3 
+ arch/arc/include/asm/delay.h        |   43 ------------
+ arch/arm64/Kconfig                  |    1 
+ arch/arm64/lib/delay.c              |   29 --------
+ arch/csky/Kconfig                   |    1 
+ arch/csky/lib/delay.c               |   22 ------
+ arch/loongarch/Kconfig              |    1 
+ arch/loongarch/include/asm/delay.h  |   16 ----
+ arch/loongarch/lib/delay.c          |   23 ------
+ arch/microblaze/Kconfig             |    1 
+ arch/microblaze/include/asm/delay.h |   48 --------------
+ arch/mips/Kconfig                   |    1 
+ arch/mips/include/asm/delay.h       |   18 ++---
+ arch/mips/lib/delay.c               |   29 +-------
+ arch/nios2/Kconfig                  |    1 
+ arch/nios2/lib/delay.c              |   22 ------
+ arch/openrisc/Kconfig               |    1 
+ arch/openrisc/lib/delay.c           |   22 ------
+ arch/sh/Kconfig                     |    1 
+ arch/sh/kernel/sh_ksyms_32.c        |    4 -
+ arch/sh/lib/delay.c                 |   23 +-----
+ arch/x86/Kconfig                    |    1 
+ arch/x86/include/asm/delay.h        |    9 ++
+ arch/x86/lib/delay.c                |   23 ------
+ arch/x86/um/delay.c                 |   24 -------
+ include/asm-generic/delay.h         |  120 +++++++++++++++++++++++++++---------
+ 26 files changed, 145 insertions(+), 342 deletions(-)
+
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -55,6 +55,9 @@ config HOTPLUG_PARALLEL
+ 	bool
+ 	select HOTPLUG_SPLIT_STARTUP
+ 
++config GENERIC_DELAY
++	bool
++
+ config GENERIC_ENTRY
+ 	bool
+ 
+--- a/arch/arc/include/asm/delay.h
++++ b/arch/arc/include/asm/delay.h
+@@ -14,11 +14,6 @@
+ #ifndef __ASM_ARC_UDELAY_H
+ #define __ASM_ARC_UDELAY_H
+ 
+-#include <asm-generic/types.h>
+-#include <asm/param.h>		/* HZ */
+-
+-extern unsigned long loops_per_jiffy;
+-
+ static inline void __delay(unsigned long loops)
+ {
+ 	__asm__ __volatile__(
+@@ -27,43 +22,11 @@ static inline void __delay(unsigned long
+ 	"	nop			\n"
+ 	"1:				\n"
+ 	:
+-        : "r"(loops)
+-        : "lp_count");
++	: "r"(loops)
++	: "lp_count");
+ }
+ 
+-extern void __bad_udelay(void);
+-
+-/*
+- * Normal Math for computing loops in "N" usecs
+- *  -we have precomputed @loops_per_jiffy
+- *  -1 sec has HZ jiffies
+- * loops per "N" usecs = ((loops_per_jiffy * HZ / 1000000) * N)
+- *
+- * Approximate Division by multiplication:
+- *  -Mathematically if we multiply and divide a number by same value the
+- *   result remains unchanged:  In this case, we use 2^32
+- *  -> (loops_per_N_usec * 2^32 ) / 2^32
+- *  -> (((loops_per_jiffy * HZ / 1000000) * N) * 2^32) / 2^32
+- *  -> (loops_per_jiffy * HZ * N * 4295) / 2^32
+- *
+- *  -Divide by 2^32 is very simply right shift by 32
+- *  -We simply need to ensure that the multiply per above eqn happens in
+- *   64-bit precision (if CPU doesn't support it - gcc can emaulate it)
+- */
+-
+-static inline void __udelay(unsigned long usecs)
+-{
+-	unsigned long loops;
+-
+-	/* (u64) cast ensures 64 bit MPY - real or emulated
+-	 * HZ * 4295 is pre-evaluated by gcc - hence only 2 mpy ops
+-	 */
+-	loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
+-
+-	__delay(loops);
+-}
++#include <asm-generic/delay.h>
+ 
+-#define udelay(n) (__builtin_constant_p(n) ? ((n) > 20000 ? __bad_udelay() \
+-				: __udelay(n)) : __udelay(n))
+ 
+ #endif /* __ASM_ARC_UDELAY_H */
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -138,6 +138,7 @@ config ARM64
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_CPU_VULNERABILITIES
++	select GENERIC_DELAY
+ 	select GENERIC_EARLY_IOREMAP
+ 	select GENERIC_IDLE_POLL_SETUP
+ 	select GENERIC_IOREMAP
+--- a/arch/arm64/lib/delay.c
++++ b/arch/arm64/lib/delay.c
+@@ -15,13 +15,8 @@
+ 
+ #include <clocksource/arm_arch_timer.h>
+ 
+-#define USECS_TO_CYCLES(time_usecs)			\
+-	xloops_to_cycles((time_usecs) * 0x10C7UL)
+-
+-static inline unsigned long xloops_to_cycles(unsigned long xloops)
+-{
+-	return (xloops * loops_per_jiffy * HZ) >> 32;
+-}
++#define USECS_TO_CYCLES(time_usecs)				\
++	(usec * DELAY_MULT_LPJ * UDELAY_MULT) >> UDELAY_SHIFT)
+ 
+ void __delay(unsigned long cycles)
+ {
+@@ -37,7 +32,7 @@ void __delay(unsigned long cycles)
+ 		wfit(end);
+ 		while ((get_cycles() - start) < cycles)
+ 			wfet(end);
+-	} else 	if (arch_timer_evtstrm_available()) {
++	} else if (arch_timer_evtstrm_available()) {
+ 		const cycles_t timer_evt_period =
+ 			USECS_TO_CYCLES(ARCH_TIMER_EVT_STREAM_PERIOD_US);
+ 
+@@ -49,21 +44,3 @@ void __delay(unsigned long cycles)
+ 		cpu_relax();
+ }
+ EXPORT_SYMBOL(__delay);
+-
+-inline void __const_udelay(unsigned long xloops)
+-{
+-	__delay(xloops_to_cycles(xloops));
+-}
+-EXPORT_SYMBOL(__const_udelay);
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x10C7UL); /* 2**32 / 1000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__ndelay);
+--- a/arch/csky/Kconfig
++++ b/arch/csky/Kconfig
+@@ -48,6 +48,7 @@ config CSKY
+ 	select DMA_DIRECT_REMAP
+ 	select IRQ_DOMAIN
+ 	select DW_APB_TIMER_OF
++	select GENERIC_DELAY
+ 	select GENERIC_IOREMAP
+ 	select GENERIC_LIB_ASHLDI3
+ 	select GENERIC_LIB_ASHRDI3
+--- a/arch/csky/lib/delay.c
++++ b/arch/csky/lib/delay.c
+@@ -15,25 +15,3 @@ void __aligned(8) __delay(unsigned long
+ 		: "0"(loops));
+ }
+ EXPORT_SYMBOL(__delay);
+-
+-void __const_udelay(unsigned long xloops)
+-{
+-	unsigned long long loops;
+-
+-	loops = (unsigned long long)xloops * loops_per_jiffy * HZ;
+-
+-	__delay(loops >> 32);
+-}
+-EXPORT_SYMBOL(__const_udelay);
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x10C7UL); /* 2**32 / 1000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__ndelay);
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -82,6 +82,7 @@ config LOONGARCH
+ 	select GENERIC_CMOS_UPDATE
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_DEVICES
++	select GENERIC_DELAY
+ 	select GENERIC_ENTRY
+ 	select GENERIC_GETTIMEOFDAY
+ 	select GENERIC_IOREMAP if !ARCH_IOREMAP
+--- a/arch/loongarch/include/asm/delay.h
++++ b/arch/loongarch/include/asm/delay.h
+@@ -7,20 +7,8 @@
+ 
+ #include <linux/param.h>
+ 
+-extern void __delay(unsigned long cycles);
+-extern void __ndelay(unsigned long ns);
+-extern void __udelay(unsigned long us);
++#define DELAY_LPJ_MULT	lpj_fine
+ 
+-#define ndelay(ns) __ndelay(ns)
+-#define udelay(us) __udelay(us)
+-
+-/* make sure "usecs *= ..." in udelay do not overflow. */
+-#if HZ >= 1000
+-#define MAX_UDELAY_MS	1
+-#elif HZ <= 200
+-#define MAX_UDELAY_MS	5
+-#else
+-#define MAX_UDELAY_MS	(1000 / HZ)
+-#endif
++#include <asm-generic/delay.h>
+ 
+ #endif /* _ASM_DELAY_H */
+--- a/arch/loongarch/lib/delay.c
++++ b/arch/loongarch/lib/delay.c
+@@ -17,26 +17,3 @@ void __delay(unsigned long cycles)
+ 		cpu_relax();
+ }
+ EXPORT_SYMBOL(__delay);
+-
+-/*
+- * Division by multiplication: you don't have to worry about
+- * loss of precision.
+- *
+- * Use only for very small delays ( < 1 msec).	Should probably use a
+- * lookup table, really, as the multiplications take much too long with
+- * short delays.  This is a "reasonable" implementation, though (and the
+- * first constant multiplications gets optimized away if the delay is
+- * a constant)
+- */
+-
+-void __udelay(unsigned long us)
+-{
+-	__delay((us * 0x000010c7ull * HZ * lpj_fine) >> 32);
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long ns)
+-{
+-	__delay((ns * 0x00000005ull * HZ * lpj_fine) >> 32);
+-}
+-EXPORT_SYMBOL(__ndelay);
+--- a/arch/microblaze/Kconfig
++++ b/arch/microblaze/Kconfig
+@@ -16,6 +16,7 @@ config MICROBLAZE
+ 	select DMA_DIRECT_REMAP
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CPU_DEVICES
++	select GENERIC_DELAY
+ 	select GENERIC_IDLE_POLL_SETUP
+ 	select GENERIC_IRQ_PROBE
+ 	select GENERIC_IRQ_SHOW
+--- a/arch/microblaze/include/asm/delay.h
++++ b/arch/microblaze/include/asm/delay.h
+@@ -33,53 +33,9 @@ static inline void __delay(unsigned long
+  * (which corresponds to ~3800 bogomips at HZ = 100).
+  * -- paulus
+  */
+-#define __MAX_UDELAY	(226050910UL/HZ)	/* maximum udelay argument */
+-#define __MAX_NDELAY	(4294967295UL/HZ)	/* maximum ndelay argument */
+ 
+-extern unsigned long loops_per_jiffy;
++#define UDELAY_ARCH_MULT	(19 * 226)
+ 
+-static inline void __udelay(unsigned int x)
+-{
+-
+-	unsigned long long tmp =
+-		(unsigned long long)x * (unsigned long long)loops_per_jiffy \
+-			* 226LL;
+-	unsigned loops = tmp >> 32;
+-
+-/*
+-	__asm__("mulxuu %0,%1,%2" : "=r" (loops) :
+-		"r" (x), "r" (loops_per_jiffy * 226));
+-*/
+-	__delay(loops);
+-}
+-
+-extern void __bad_udelay(void);		/* deliberately undefined */
+-extern void __bad_ndelay(void);		/* deliberately undefined */
+-
+-#define udelay(n)						\
+-	({							\
+-		if (__builtin_constant_p(n)) {			\
+-			if ((n) / __MAX_UDELAY >= 1)		\
+-				__bad_udelay();			\
+-			else					\
+-				__udelay((n) * (19 * HZ));	\
+-		} else {					\
+-			__udelay((n) * (19 * HZ));		\
+-		}						\
+-	})
+-
+-#define ndelay(n)						\
+-	({							\
+-		if (__builtin_constant_p(n)) {			\
+-			if ((n) / __MAX_NDELAY >= 1)		\
+-				__bad_ndelay();			\
+-			else					\
+-				__udelay((n) * HZ);		\
+-		} else {					\
+-			__udelay((n) * HZ);			\
+-		}						\
+-	})
+-
+-#define muldiv(a, b, c)		(((a)*(b))/(c))
++#include <asm-generic/delay.h>
+ 
+ #endif /* _ASM_MICROBLAZE_DELAY_H */
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -34,6 +34,7 @@ config MIPS
+ 	select GENERIC_ATOMIC64 if !64BIT
+ 	select GENERIC_CMOS_UPDATE
+ 	select GENERIC_CPU_AUTOPROBE
++	select GENERIC_DELAY if !CAVIUM_OCTEON_SOC
+ 	select GENERIC_GETTIMEOFDAY
+ 	select GENERIC_IOMAP
+ 	select GENERIC_IRQ_PROBE
+--- a/arch/mips/include/asm/delay.h
++++ b/arch/mips/include/asm/delay.h
+@@ -11,22 +11,22 @@
+ #ifndef _ASM_DELAY_H
+ #define _ASM_DELAY_H
+ 
+-#include <linux/param.h>
++#ifdef CONFIG GENERIC_DELAY
++void __delay_loops(unsigned long long delay);
+ 
++#define __delay_loops		__delay_loops
++#define DELAY_MULT_LPJ		1
++#define UDELAY_ARCH_SHIFT	0
++
++#include <asm-generic/delay.h>
++
++#else
+ extern void __delay(unsigned long loops);
+ extern void __ndelay(unsigned long ns);
+ extern void __udelay(unsigned long us);
+ 
+ #define ndelay(ns) __ndelay(ns)
+ #define udelay(us) __udelay(us)
+-
+-/* make sure "usecs *= ..." in udelay do not overflow. */
+-#if HZ >= 1000
+-#define MAX_UDELAY_MS	1
+-#elif HZ <= 200
+-#define MAX_UDELAY_MS	5
+-#else
+-#define MAX_UDELAY_MS	(1000 / HZ)
+ #endif
+ 
+ #endif /* _ASM_DELAY_H */
+--- a/arch/mips/lib/delay.c
++++ b/arch/mips/lib/delay.c
+@@ -38,31 +38,12 @@ void __delay(unsigned long loops)
+ }
+ EXPORT_SYMBOL(__delay);
+ 
+-/*
+- * Division by multiplication: you don't have to worry about
+- * loss of precision.
+- *
+- * Use only for very small delays ( < 1 msec).	Should probably use a
+- * lookup table, really, as the multiplications take much too long with
+- * short delays.  This is a "reasonable" implementation, though (and the
+- * first constant multiplications gets optimized away if the delay is
+- * a constant)
+- */
+-
+-void __udelay(unsigned long us)
+-{
+-	unsigned int lpj = raw_current_cpu_data.udelay_val;
+-
+-	__delay((us * 0x000010c7ull * HZ * lpj) >> 32);
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long ns)
++void __delay_loops(unsigned long long delay)
+ {
+-	unsigned int lpj = raw_current_cpu_data.udelay_val;
++	unsigned long lpj = raw_current_cpu_data.udelay_val;
++	unsigned long xloops = (delay * lpj) >> 32;
+ 
+-	__delay((ns * 0x00000005ull * HZ * lpj) >> 32);
++	__delay(++xloops);
+ }
+-EXPORT_SYMBOL(__ndelay);
+-
++EXPORT_SYMBOL(__delay_loops);
+ #endif
+--- a/arch/nios2/Kconfig
++++ b/arch/nios2/Kconfig
+@@ -12,6 +12,7 @@ config NIOS2
+ 	select TIMER_OF
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CPU_DEVICES
++	select GENERIC_DELAY
+ 	select GENERIC_IRQ_PROBE
+ 	select GENERIC_IRQ_SHOW
+ 	select HAVE_ARCH_TRACEHOOK
+--- a/arch/nios2/lib/delay.c
++++ b/arch/nios2/lib/delay.c
+@@ -16,25 +16,3 @@ void __delay(unsigned long cycles)
+ 		cpu_relax();
+ }
+ EXPORT_SYMBOL(__delay);
+-
+-void __const_udelay(unsigned long xloops)
+-{
+-	u64 loops;
+-
+-	loops = (u64)xloops * loops_per_jiffy * HZ;
+-
+-	__delay(loops >> 32);
+-}
+-EXPORT_SYMBOL(__const_udelay);
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x10C7UL); /* 2**32 / 1000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__ndelay);
+--- a/arch/openrisc/Kconfig
++++ b/arch/openrisc/Kconfig
+@@ -17,6 +17,7 @@ config OPENRISC
+ 	select GPIOLIB
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select SPARSE_IRQ
++	select GENERIC_DELAY
+ 	select GENERIC_IRQ_CHIP
+ 	select GENERIC_IRQ_PROBE
+ 	select GENERIC_IRQ_SHOW
+--- a/arch/openrisc/lib/delay.c
++++ b/arch/openrisc/lib/delay.c
+@@ -35,25 +35,3 @@ void __delay(unsigned long cycles)
+ 		cpu_relax();
+ }
+ EXPORT_SYMBOL(__delay);
+-
+-inline void __const_udelay(unsigned long xloops)
+-{
+-	unsigned long long loops;
+-
+-	loops = (unsigned long long)xloops * loops_per_jiffy * HZ;
+-
+-	__delay(loops >> 32);
+-}
+-EXPORT_SYMBOL(__const_udelay);
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x10C7UL); /* 2**32 / 1000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__ndelay);
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -18,6 +18,7 @@ config SUPERH
+ 	select DMA_DECLARE_COHERENT
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CMOS_UPDATE if SH_SH03 || SH_DREAMCAST
++	select GENERIC_DELAY
+ 	select GENERIC_IDLE_POLL_SETUP
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_LIB_ASHLDI3
+--- a/arch/sh/kernel/sh_ksyms_32.c
++++ b/arch/sh/kernel/sh_ksyms_32.c
+@@ -12,9 +12,7 @@ EXPORT_SYMBOL(memcpy);
+ EXPORT_SYMBOL(memset);
+ EXPORT_SYMBOL(memmove);
+ EXPORT_SYMBOL(__copy_user);
+-EXPORT_SYMBOL(__udelay);
+-EXPORT_SYMBOL(__ndelay);
+-EXPORT_SYMBOL(__const_udelay);
++EXPORT_SYMBOL(__delay_loops);
+ EXPORT_SYMBOL(strlen);
+ EXPORT_SYMBOL(csum_partial);
+ EXPORT_SYMBOL(csum_partial_copy_generic);
+--- a/arch/sh/lib/delay.c
++++ b/arch/sh/lib/delay.c
+@@ -30,25 +30,10 @@ void __delay(unsigned long loops)
+ 		: "t");
+ }
+ 
+-inline void __const_udelay(unsigned long xloops)
++void __delay_loops(unsigned long long delay)
+ {
+-	xloops *= 4;
+-	__asm__("dmulu.l	%0, %2\n\t"
+-		"sts	mach, %0"
+-		: "=r" (xloops)
+-		: "0" (xloops),
+-		  "r" (cpu_data[raw_smp_processor_id()].loops_per_jiffy * (HZ/4))
+-		: "macl", "mach");
+-	__delay(++xloops);
+-}
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x000010c6);  /* 2**32 / 1000000 */
+-}
++	unsigned long lpj = cpu_data[raw_smp_processor_id()].loops_per_jiffy;
++	unsigned long xloops = (delay * lpj) >> 32;
+ 
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x00000005);
++	__delay(++xloops);
+ }
+-
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -156,6 +156,7 @@ config X86
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_CPU_VULNERABILITIES
++	select GENERIC_DELAY
+ 	select GENERIC_EARLY_IOREMAP
+ 	select GENERIC_ENTRY
+ 	select GENERIC_IOMAP
+--- a/arch/x86/include/asm/delay.h
++++ b/arch/x86/include/asm/delay.h
+@@ -2,9 +2,16 @@
+ #ifndef _ASM_X86_DELAY_H
+ #define _ASM_X86_DELAY_H
+ 
+-#include <asm-generic/delay.h>
+ #include <linux/init.h>
+ 
++void __delay_loops(unsigned long long delay);
++
++#define __delay_loops		__delay_loops
++#define DELAY_MULT_LPJ		1
++#define UDELAY_ARCH_SHIFT	0
++
++#include <asm-generic/delay.h>
++
+ void __init use_tsc_delay(void);
+ void __init use_tpause_delay(void);
+ void use_mwaitx_delay(void);
+--- a/arch/x86/lib/delay.c
++++ b/arch/x86/lib/delay.c
+@@ -204,28 +204,11 @@ void __delay(unsigned long loops)
+ }
+ EXPORT_SYMBOL(__delay);
+ 
+-noinline void __const_udelay(unsigned long xloops)
++void __delay_loops(unsigned long long delay)
+ {
+ 	unsigned long lpj = this_cpu_read(cpu_info.loops_per_jiffy) ? : loops_per_jiffy;
+-	int d0;
+-
+-	xloops *= 4;
+-	asm("mull %%edx"
+-		:"=d" (xloops), "=&a" (d0)
+-		:"1" (xloops), "0" (lpj * (HZ / 4)));
++	unsigned long xloops = (delay * lpj) >> 32;
+ 
+ 	__delay(++xloops);
+ }
+-EXPORT_SYMBOL(__const_udelay);
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x000010c7); /* 2**32 / 1000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x00005); /* 2**32 / 1000000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__ndelay);
++EXPORT_SYMBOL(__delay_loops);
+--- a/arch/x86/um/delay.c
++++ b/arch/x86/um/delay.c
+@@ -30,28 +30,10 @@ void __delay(unsigned long loops)
+ }
+ EXPORT_SYMBOL(__delay);
+ 
+-inline void __const_udelay(unsigned long xloops)
++void __delay_loops(unsigned long long delay)
+ {
+-	int d0;
+-
+-	xloops *= 4;
+-	asm("mull %%edx"
+-		: "=d" (xloops), "=&a" (d0)
+-		: "1" (xloops), "0"
+-		(loops_per_jiffy * (HZ/4)));
++	unsigned long xloops = (delay * loops_per_jiffy) >> 32;
+ 
+ 	__delay(++xloops);
+ }
+-EXPORT_SYMBOL(__const_udelay);
+-
+-void __udelay(unsigned long usecs)
+-{
+-	__const_udelay(usecs * 0x000010c7); /* 2**32 / 1000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__udelay);
+-
+-void __ndelay(unsigned long nsecs)
+-{
+-	__const_udelay(nsecs * 0x00005); /* 2**32 / 1000000000 (rounded up) */
+-}
+-EXPORT_SYMBOL(__ndelay);
++EXPORT_SYMBOL(__delay_loops);
+--- a/include/asm-generic/delay.h
++++ b/include/asm-generic/delay.h
+@@ -2,44 +2,104 @@
+ #ifndef __ASM_GENERIC_DELAY_H
+ #define __ASM_GENERIC_DELAY_H
+ 
++#include <vdso/time64.h>
++
+ /* Undefined functions to get compile-time errors */
+ extern void __bad_udelay(void);
+ extern void __bad_ndelay(void);
+ 
+-extern void __udelay(unsigned long usecs);
+-extern void __ndelay(unsigned long nsecs);
+-extern void __const_udelay(unsigned long xloops);
+ extern void __delay(unsigned long loops);
+ 
++#ifdef CONFIG_GENERIC_UDELAY
++#ifndef UDELAY_ARCH_MULT
++# define UDELAY_ARCH_MULT	1ULL
++#endif
++
++#ifdef UDELAY_ARCH_SHIFT
++# define UDELAY_SHIFT		UDELAY_ARCH_SHIFT
++#else
++# define UDELAY_SHIFT		32
++#endif
++
++#define __UDELAY_MULT	((unsigned long long)UDELAY_ARCH_MULT * HZ)
++#define UDELAY_MULT	((unsigned long)DIV_ROUND_UP(__UDELAY_MULT << 32, USEC_PER_SEC))
++#define NDELAY_MULT	DIV_ROUND_UP(UDELAY_MULT, NSEC_PER_USEC)
++
+ /*
+- * The weird n/20000 thing suppresses a "comparison is always false due to
+- * limited range of data type" warning with non-const 8-bit arguments.
++ * Generous upper bound for loops per jiffy assuming a maximal CPU
++ * frequency of 8GHz and 1 cycle per loop.
+  */
++#define LPJ_MAX			((8ULL * NSEC_PER_SEC) / HZ)
+ 
+-/* 0x10c7 is 2**32 / 1000000 (rounded up) */
+-#define udelay(n)							\
+-	({								\
+-		if (__builtin_constant_p(n)) {				\
+-			if ((n) / 20000 >= 1)				\
+-				 __bad_udelay();			\
+-			else						\
+-				__const_udelay((n) * 0x10c7ul);		\
+-		} else {						\
+-			__udelay(n);					\
+-		}							\
+-	})
+-
+-/* 0x5 is 2**32 / 1000000000 (rounded up) */
+-#define ndelay(n)							\
+-	({								\
+-		if (__builtin_constant_p(n)) {				\
+-			if ((n) / 20000 >= 1)				\
+-				__bad_ndelay();				\
+-			else						\
+-				__const_udelay((n) * 5ul);		\
+-		} else {						\
+-			__ndelay(n);					\
+-		}							\
+-	})
++/*
++ * The maximum usec value depends on the multiplication factor and the
++ * maximum upper bound for loops_per_jiffy to guarantee that there is
++ * no multiplication overflow when __delay_loops() multiplies the
++ * argument with the actual loops_per_jiffy value.
++ */
++#define UDELAY_CONST_MAX	(unsigned long)(U64_MAX / (LPJ_MAX * UDELAY_MULT))
++#define NDELAY_CONST_MAX	(UDELAY_CONST_MAX * NSEC_PER_USEC)
++
++#ifndef DELAY_MULT_LPJ
++#define DELAY_MULT_LPJ		loops_per_jiffy
++#endif
++
++#ifndef __delay_loops
++#define __delay_loops(x)	__delay(x)
++#endif
++
++static __always_inline void __udelay(unsigned long usec)
++{
++	/* FIXME: Add a debug sanity check for usec > UDELAY_CONST_MAX */
++	__delay_loops((usec * DELAY_MULT_LPJ * UDELAY_MULT) >> UDELAY_SHIFT);
++}
++
++static __always_inline void __ndelay(unsigned long nsec)
++{
++	/* FIXME: Add a debug sanity check for usec > NDELAY_CONST_MAX */
++	__delay_loops((nsec * DELAY_MULT_LPJ * NDELAY_MULT) >> UDELAY_SHIFT);
++}
++
++#define __const_udelay_wrapper(usec, mult)	__udelay(usec)
++#define __const_ndelay_wrapper(usec, mult)	__ndelay(usec)
++
++#else
++/* Does any of this make sense? No. */
++#define UDELAY_CONST_MULT	((unsigned long)DIV_ROUND_UP((1ULL << 32), USEC_PER_SEC))
++#define NDELAY_CONST_MULT	(UDELAY_CONST_MULT / NSEC_PER_USEC)
++#define UDELAY_CONST_MAX	20000
++#define NDELAY_CONST_MAX	20000
++extern void __const_udelay(unsigned long xloops);
++extern void __udelay(unsigned long usecs);
++extern void __ndelay(unsigned long nsecs);
++#define __const_udelay_wrapper(usec)	__const_udelay(usec * UDELAY_CONST_MULT)
++#define __const_ndelay_wrapper(nsec)	__const_udelay(nsec * NDELAY_CONST_MULT)
++#endif
++
++static __always_inline void _udelay(unsigned long usec)
++{
++	if (__builtin_constant_p(usec)) {
++		if (usec >= UDELAY_CONST_MAX)
++			__bad_udelay();
++		else
++			__const_udelay_wrapper(usec);
++	} else {
++		__udelay(usec);
++	}
++}
++#define udelay(x) _udelay(x)
++
++static __always_inline void _ndelay(unsigned long usec)
++{
++	if (__builtin_constant_p(usec)) {
++		if (usec >= NDELAY_CONST_MAX)
++			__bad_ndelay();
++		else
++			__const_ndelay_wrapper(usec);
++	} else {
++		__ndelay(usec);
++	}
++}
++#define ndelay(x) _ndelay(x)
+ 
+ #endif /* __ASM_GENERIC_DELAY_H */
+
+
+
+
+
 
