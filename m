@@ -1,93 +1,145 @@
-Return-Path: <linux-kernel+bounces-316925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D8F96D714
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:30:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D1C96D71E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758B41C25086
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE232874B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 11:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60D619995A;
-	Thu,  5 Sep 2024 11:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB67199FAD;
+	Thu,  5 Sep 2024 11:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4IMUPIM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7GKr78v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FAD19939E;
-	Thu,  5 Sep 2024 11:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC827199E88;
+	Thu,  5 Sep 2024 11:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725535829; cv=none; b=ZvXRgTRBoDtNIaswAQ9HGYW2x/h+4nmerZyVrL1XPeDDAp5L0B7AM38oXfPqS27VUNqIaShD9mmoEcADs6s/P75e4hYlVBaoNrtoATVoL8AOysio1rwn+AQg2DunzuHsvnZZkrn93L/FjnRhYMyNw0syo1auuQvH1m9PEbqCnko=
+	t=1725535861; cv=none; b=P3iGQPd6weBtBghUi3vOJRrsovJaddphKTdrq6R+AibnbMafsA82ojtyQ+GBKPQUDjDzHYDyM0Gv3uph/sbIbi3g3Kq5SK5ZRE8hg5HGKZfE/Dj0bQKFbDVzsSCBfwwya6CviSF+Xg/LJs2rskaCCVxd8cZENfqiczMAegNYAg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725535829; c=relaxed/simple;
-	bh=V3aQYb06Y4IyuD1PCa9DkPBcelE1mSeH5yx7iUUfkWk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YFshkLosvHOmF92x9V2+wHvw+aFUoHcl1QVUJN8lxSCsR3c4bgYcGz/mthz7WH8UVxcFliI92wf62CGt5950/ys7mhW6Y9KS2XS+xemFKsGHmq7ehb3/2mLmJAvkINNq3pxX1B//WzRapYjeLicZROmR8mFqkkYG8QlJs9tIFK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4IMUPIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6409C4CEC3;
-	Thu,  5 Sep 2024 11:30:28 +0000 (UTC)
+	s=arc-20240116; t=1725535861; c=relaxed/simple;
+	bh=aTcY6lnCeCXuN+hBR/lTjApexCcG5nl9Skw7Ca45bF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NxM+GTcKCpfZZQRk46TPSy+x5CAnSQyk9C+mGLA7QzJQ1tmWAKVSDQEwah3IvS176UztJZ2qG2k29bCn6NpIBSaoz3KpAPpZz53vrLGyw/wL4QKkbWXsPOIpHVTW8Umm+FZDlfizfY8bDvAjqyLC+OgqbuG1qyzaGue6FJJYL4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7GKr78v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E207C4CEC3;
+	Thu,  5 Sep 2024 11:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725535828;
-	bh=V3aQYb06Y4IyuD1PCa9DkPBcelE1mSeH5yx7iUUfkWk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=R4IMUPIMjGwZggRu35FnphIxTvB2ev9pEfeauoo3UT1EP2n3vtQVkeTsitfBXAfwd
-	 /is9tikDV9CTB6I6yokHDYVvHPMPzzPM4TVm3dtedfe2bqGX4+gBgo6o8tg4ueEUz0
-	 Ts1iqf9HExtmnu2ujGgQ5YIMLA9t9pAFuPOEA6QX/ENj0iuH9CwGxarnTbeV665Ikk
-	 VfNt4IxuNYWheYOIyNXbH5rJ07PAlM2Tai45DURGFm6Blno5ahUFtDGx3djnK7h/9u
-	 GMGx+0MfLcqqE2wqWo+0ZiGZofRhh051oACvhFuWkl77dle1VuhCtEByoFFahDjeSz
-	 MEHQYoYmWKYeA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE04A3806644;
-	Thu,  5 Sep 2024 11:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725535860;
+	bh=aTcY6lnCeCXuN+hBR/lTjApexCcG5nl9Skw7Ca45bF0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X7GKr78v0KZSNjtPief4MGOvOX4Z7dQlMmWRBIpTU1p13LSzit5Su1pTaielep1O7
+	 nFVcp3oxh6jjpSMAIINYxPiRmE+AKjLiCo1KluI7uRmpH8IM8bjm+5uOgWvRRrW34Q
+	 SEIl6tqmJE+99KgmZZBjoJXm5YYjbvB9/+xlkE6SVOSYibxY33HZlmGVFMhg/ePM25
+	 AqHzGdkKE2cumqW4AGDK7UMY1dK/zM/1MfbPQGBPXFfTi/LMxxRJ22WQ+u97zxcsUS
+	 PT/P9fsSxWW9VT8MvPSPcrSawtpyg+Eaqh7U5bZdYSpr5RcoMaiZaDa94gU6n0rCC2
+	 J4BIvJw8awzOQ==
+Message-ID: <d5e338fe-bd38-49f7-b69f-fc27f9f87495@kernel.org>
+Date: Thu, 5 Sep 2024 13:30:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] ptp: ptp_idt82p33: Convert comma to semicolon
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172553582949.1653140.9180836026100992686.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Sep 2024 11:30:29 +0000
-References: <20240904015003.1065872-1-nichen@iscas.ac.cn>
-In-Reply-To: <20240904015003.1065872-1-nichen@iscas.ac.cn>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: richardcochran@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/19] dt-bindings: power: rpmpd: Add QCS8300 power
+ domains
+To: Jingyi Wang <quic_jingyw@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, Shazad Hussain <quic_shazhuss@quicinc.com>,
+ Tingguo Cheng <quic_tingguoc@quicinc.com>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <20240904-qcs8300_initial_dtsi-v1-6-d0ea9afdc007@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240904-qcs8300_initial_dtsi-v1-6-d0ea9afdc007@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Wed,  4 Sep 2024 09:50:03 +0800 you wrote:
-> Replace comma between expressions with semicolons.
+On 4.09.2024 10:33 AM, Jingyi Wang wrote:
+> From: Shazad Hussain <quic_shazhuss@quicinc.com>
 > 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
+> Add compatible and constants for the power domains exposed by the RPMH
+> in the Qualcomm QCS8300 platform.
 > 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
+> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+>  .../devicetree/bindings/power/qcom,rpmpd.yaml         |  1 +
+>  include/dt-bindings/power/qcom-rpmpd.h                | 19 +++++++++++++++++++
+>  2 files changed, 20 insertions(+)
 > 
-> [...]
+> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+> index 929b7ef9c1bc..be1a9cb71a9b 100644
+> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+> @@ -32,6 +32,7 @@ properties:
+>            - qcom,msm8998-rpmpd
+>            - qcom,qcm2290-rpmpd
+>            - qcom,qcs404-rpmpd
+> +          - qcom,qcs8300-rpmhpd
+>            - qcom,qdu1000-rpmhpd
+>            - qcom,qm215-rpmpd
+>            - qcom,sa8155p-rpmhpd
+> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+> index 608087fb9a3d..7dd7b9ebc480 100644
+> --- a/include/dt-bindings/power/qcom-rpmpd.h
+> +++ b/include/dt-bindings/power/qcom-rpmpd.h
+> @@ -4,6 +4,25 @@
+>  #ifndef _DT_BINDINGS_POWER_QCOM_RPMPD_H
+>  #define _DT_BINDINGS_POWER_QCOM_RPMPD_H
+>  
+> +/* QCS8300 Power Domain Indexes */
+> +#define QCS8300_CX	0
+> +#define QCS8300_CX_AO	1
+> +#define QCS8300_DDR	2
+> +#define QCS8300_EBI	3
+> +#define QCS8300_GFX	4
+> +#define QCS8300_LCX	5
+> +#define QCS8300_LMX	6
+> +#define QCS8300_MMCX	7
+> +#define QCS8300_MMCX_AO	8
+> +#define QCS8300_MSS	9
+> +#define QCS8300_MX	10
+> +#define QCS8300_MX_AO	11
+> +#define QCS8300_MXC	12
+> +#define QCS8300_MXC_AO	13
+> +#define QCS8300_NSP0	14
+> +#define QCS8300_NSP1	15
+> +#define QCS8300_XO	16
 
-Here is the summary with links:
-  - [net-next,v2] ptp: ptp_idt82p33: Convert comma to semicolon
-    https://git.kernel.org/netdev/net-next/c/335cc75ce3d8
+Some time ago we moved RPM*h*pd to common defines.. we should
+definitely do the same here. Please reuse the RPMPD_xxx definitions
+from [1] and credit Rohit in the commit message, as he did some
+processing on that to make sure they're ordered based on usage
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Konrad
 
-
+[1] https://lore.kernel.org/all/1688647793-20950-2-git-send-email-quic_rohiagar@quicinc.com/
 
