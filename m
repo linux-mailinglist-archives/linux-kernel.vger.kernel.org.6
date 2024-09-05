@@ -1,155 +1,133 @@
-Return-Path: <linux-kernel+bounces-317136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7858D96D9CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:06:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E72696D9DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380B5281EFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66471F22FD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FA019C56E;
-	Thu,  5 Sep 2024 13:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694919B5BE;
+	Thu,  5 Sep 2024 13:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DPytj8+Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="ClwoRogj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g4/XoqNW"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D203A198E84
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE7219923F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725541574; cv=none; b=Uui68M94J83V5W3ck8DOdlMubtHsLmiHSXbcg/K/oGqeU/6cvByAIH6Y1C9Hv9gG1oeUYTFb2ATKvn3duqr+jOGXhz+saUJ0htdY0QnjVfSFLNGEAKu1XcOoTitaIbuhR69zLD6yxDGxvLxqdoJdMjlf4I99wWK4NXHTIco59/E=
+	t=1725541837; cv=none; b=JOuryrbfE7VlCIprwh3yntqeMp6QEJEGyugf/0voj7kvm9qxvgkBIbMsXvtwC068saptXy58pOHnHbLbtFIFeVoSQquedLG0XR28BulNeCfZKRXxQcTQmiAQW6xAjt30y6df4Z8jWsjMq0tJ001bXvKkl/CIG9XLqvnIW6+iq1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725541574; c=relaxed/simple;
-	bh=g1SQN7j55UMlCekE8jx808qYJxlM2mhzf/HdquuSpmo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LeW/Az/Bg4HaRUAMvbz1qlu+2RTZEehIluZpFFWVC3kp9PRNLOvkulQrUglqiI5m2VRrFQEdncB49L/0EMJJcuCoNTiFl8aEcHNJiC6ONrd1C1rYLdeOPns6mmZ1Kor3Y8R4cL2T7GlzqJpoWmboNuD5qpTOYyfYxSxnT6kUIjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DPytj8+Z; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725541573; x=1757077573;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=g1SQN7j55UMlCekE8jx808qYJxlM2mhzf/HdquuSpmo=;
-  b=DPytj8+ZrQj+66sfTsEowfNnDrBEWzdiuDML8jRrY0aiUnSdWpmvECfa
-   BQgbPySGNC6lNtmq4GufQuLHLsnbDUv/rvMNN/X+0/c6sYppyt/1Gtvi9
-   5+QtufgFdGFiM8f+rMaTtjUzdAkPUrBlIy+trA610rSrnmikAg8ros897
-   FhHyI+JJCvS3asXt9OIG4AFcXsk76vEHCB9PjGYakxWZaaU413+lTPaUF
-   WDSn8/DSNUhO+o5MfvBlVlmiLVP4iKlN9McEh6rrWyfssdjD7OBOHpJkM
-   BhDJ7p4SSsbbgXpBx5SQZP98nMDDcLe05XOt+xpItt5hazG/vO2psPMmi
-   g==;
-X-CSE-ConnectionGUID: hhIJnHdzT5ioyINstPFiIQ==
-X-CSE-MsgGUID: u7W4Xw2QR8inv58B6e5WUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="27177037"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="27177037"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 06:06:12 -0700
-X-CSE-ConnectionGUID: D6YR5lCgSHyhMajcqYWpcQ==
-X-CSE-MsgGUID: ARXOi5PXRXiTHFtQOtIKOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="70210401"
-Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.160])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 06:06:09 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 02/18] drm/i915/selftests: Include <linux/prandom.h>
- instead of <linux/random.h>
-In-Reply-To: <20240905122020.872466-3-ubizjak@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240905122020.872466-1-ubizjak@gmail.com>
- <20240905122020.872466-3-ubizjak@gmail.com>
-Date: Thu, 05 Sep 2024 16:06:06 +0300
-Message-ID: <871q1yqmgx.fsf@intel.com>
+	s=arc-20240116; t=1725541837; c=relaxed/simple;
+	bh=ZEsEGjEskPAf0X1wkClscPyQ1zk3d7SqAGW84VjkDr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fPWPbzW3S4GIONmvm3sDejpbOdytETcjXdvYPpoaJm6/kL3CePvCSXDrxfXHO4gP7YOklLj7pMfiVhkIJLP4VnrJFyK6XTcaXIhBTho5S3MSvkwFjD3l+ZhQxwqxvgtOFvqilcPIBJ/6dKDglyo17uZ9Zq4a3ka+hS10vW8DyCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=ClwoRogj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g4/XoqNW; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 648241140273;
+	Thu,  5 Sep 2024 09:10:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 05 Sep 2024 09:10:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1725541834; x=1725628234; bh=mECBbq8SLa
+	UTywVVUUZTVtpP3ufj6mxHVK9noi6AziY=; b=ClwoRogjF6MhifPzTJuH6QRObr
+	pVZRgyFEDvmxdeCgRvS430y5nkwSb/0dmAi3+10QQ+i1kjBTSMoTVZKSvue28cLa
+	xHLISwr4MmskNZWPbH5uo2gfBCi9w/SzJIF+dfFtEn6l6DSLgNXJXBzcaTu6msNf
+	szhxvhxxcpzxa0iiZvWwKX2fnMEql4mjUpDxF6GkvBD1dE37Z1xW6KdzSdVWJOPA
+	pmUvWRsLztFwN7/dfa4VE6Th9DzNJ/ya4ES1rIjfqf+tKV9tXp3zLSLkvoKuhLdE
+	I++hMCGoYArV/dY/FupYouExujEZWSduHa4BNhbsvamTuqiKTuYO85r341WQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725541834; x=1725628234; bh=mECBbq8SLaUTywVVUUZTVtpP3ufj
+	6mxHVK9noi6AziY=; b=g4/XoqNWetmRsYwaQPURTTf9stoOuQLU98AE5eZzfXvR
+	yv0gpmE5HIhMk05mD8j3iX8VgPaDdtunxyuRNXnJC1RaMdcMw9EkKhrmxCbngtBD
+	aDIQ+HC9vpX5yl5A7RbXTI5AmxyTgIz5RoY7e/XIjY/2RGX6kyalZLAPBuFKsplX
+	lmA02ZhognxHe3ZEwIv7UC+mzcHSlyi7uti3ebTtQnBRcnSIomqqUizyVqmkZNyr
+	mDSADiYzLovI0tWm2/ztU/3oMCZ7PVGt0Xjphv0RscczbPfpilbCM58O7TFzzON6
+	er2wzT1yH0C6iSmLm8cxSmYLtAE9G26JtnMtWm5CIw==
+X-ME-Sender: <xms:yq3ZZt2-SL7e6mBTz6xiQl6cjgzxRsHveceP_lUmKw3matVw0277PA>
+    <xme:yq3ZZkHuJUJqeR7JP7PwInbPxvjo6W2iuTRDJ-4gw265p2mPE1F8jhocNA6FVR5vX
+    H21GSqCTRW5b1h_nHM>
+X-ME-Received: <xmr:yq3ZZt4vgTcWa6iB_0vYemk0buDBFwO2daKSvPtEg2PM2XnkRvv4BxSZCZp9abB8wOEZZQBFThydVqh2SuQ_S8vNDyVUWJ-GcvKwRhwlVd2w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgieduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhfetjedu
+    ffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggt
+    hhhirdhjphdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfhhorhhg
+    vgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehtihifrghisehsuhhsvgdruggv
+X-ME-Proxy: <xmx:yq3ZZq1Bjpw5RBC46rK_Rmoc8UbnsGxBSEt5cY_uL9UwPT1N9IKMxg>
+    <xmx:yq3ZZgEpU0Vyb13z1kafJlIVWpS8-DH-vsOID9fc8ECO9SsX0ce2Sw>
+    <xmx:yq3ZZr_3EWegdmX4t7zyfqBTnNpBYm4ZXR5rNvrsfDzloa1Rh68xGQ>
+    <xmx:yq3ZZtmn7X_h4t_MkYA7KGCuzwqeBI1aruBfq-Jf1FVRzkt4FsQJUQ>
+    <xmx:yq3ZZkD2c8cIDDT-irj8z8T9g7J2Z_mBZeXlxBpOUDNkn5j_buI7CsWO>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Sep 2024 09:10:32 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH] firewire: core: use WARN_ON_ONCE() to avoid superfluous dumps
+Date: Thu,  5 Sep 2024 22:10:29 +0900
+Message-ID: <20240905131029.6433-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 05 Sep 2024, Uros Bizjak <ubizjak@gmail.com> wrote:
-> Usage of pseudo-random functions requires inclusion of
-> <linux/prandom.h> header instead of <linux/random.h>.
->
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: intel-gfx@lists.freedesktop.org
-> Cc: dri-devel@lists.freedesktop.org
+It is enough to notify programming mistakes to programmers just once.
 
-LGTM,
+Suggested-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-iso.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
+index af76fa1823f1..a249974a0f87 100644
+--- a/drivers/firewire/core-iso.c
++++ b/drivers/firewire/core-iso.c
+@@ -220,7 +220,7 @@ int fw_iso_context_flush_completions(struct fw_iso_context *ctx)
+ 	might_sleep();
+ 
+ 	// Avoid dead lock due to programming mistake.
+-	if (WARN_ON(current_work() == &ctx->work))
++	if (WARN_ON_ONCE(current_work() == &ctx->work))
+ 		return 0;
+ 
+ 	disable_work_sync(&ctx->work);
+@@ -244,7 +244,7 @@ int fw_iso_context_stop(struct fw_iso_context *ctx)
+ 	might_sleep();
+ 
+ 	// Avoid dead lock due to programming mistake.
+-	if (WARN_ON(current_work() == &ctx->work))
++	if (WARN_ON_ONCE(current_work() == &ctx->work))
+ 		return 0;
+ 
+ 	err = ctx->card->driver->stop_iso(ctx);
+-- 
+2.43.0
 
-for merging via whichever tree suits you best.
-
-> ---
->  drivers/gpu/drm/i915/selftests/i915_gem.c    | 2 +-
->  drivers/gpu/drm/i915/selftests/i915_random.h | 2 +-
->  drivers/gpu/drm/i915/selftests/scatterlist.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_gem.c b/drivers/gpu/drm/=
-i915/selftests/i915_gem.c
-> index 61da4ed9d521..0727492576be 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/selftests/i915_gem.c
-> @@ -4,7 +4,7 @@
->   * Copyright =C2=A9 2018 Intel Corporation
->   */
->=20=20
-> -#include <linux/random.h>
-> +#include <linux/prandom.h>
->=20=20
->  #include "gem/i915_gem_internal.h"
->  #include "gem/i915_gem_pm.h"
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_random.h b/drivers/gpu/d=
-rm/i915/selftests/i915_random.h
-> index 05364eca20f7..70330a2e80f2 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_random.h
-> +++ b/drivers/gpu/drm/i915/selftests/i915_random.h
-> @@ -26,7 +26,7 @@
->  #define __I915_SELFTESTS_RANDOM_H__
->=20=20
->  #include <linux/math64.h>
-> -#include <linux/random.h>
-> +#include <linux/prandom.h>
->=20=20
->  #include "../i915_selftest.h"
->=20=20
-> diff --git a/drivers/gpu/drm/i915/selftests/scatterlist.c b/drivers/gpu/d=
-rm/i915/selftests/scatterlist.c
-> index 805c4bfb85fe..7e59591bbed6 100644
-> --- a/drivers/gpu/drm/i915/selftests/scatterlist.c
-> +++ b/drivers/gpu/drm/i915/selftests/scatterlist.c
-> @@ -22,7 +22,7 @@
->   */
->=20=20
->  #include <linux/prime_numbers.h>
-> -#include <linux/random.h>
-> +#include <linux/prandom.h>
->=20=20
->  #include "i915_selftest.h"
->  #include "i915_utils.h"
-
---=20
-Jani Nikula, Intel
 
