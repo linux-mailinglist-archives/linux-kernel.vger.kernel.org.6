@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-316582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A3796D18C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0451496D181
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19432280E15
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0AF28105A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DE519B581;
-	Thu,  5 Sep 2024 08:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F29E19ADA6;
+	Thu,  5 Sep 2024 08:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgV101gV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxLC40y4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B68195383;
-	Thu,  5 Sep 2024 08:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1484197A6C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523717; cv=none; b=MMD2J+c2AYXb/hf4fZOVy+CuJ4VmpO971b5hHf6fvmtVXlWfeOr0Pmkbx9xf8CV5yg23hkmhIo6mUoyGXXRoXzPbuO0tXyZRI6+mXO4A1+cVpPdheRQWjwZ6aBagThFQGK0P+xS+Ti5si4GqVxWlyYHS3KUG7NZO4uMw2E3SSx4=
+	t=1725523704; cv=none; b=NMsEYogAuzakPy0nfkrudRp1vthk6JS/MLgjyRAHFzFr8zlxS3nzOGjOah8XjnketCcX2rw5eFaIN4yxc8O9em4N0QhTE+B4Ztvy6YxGf1XmZfeVvPWCbWWc5oBhMmoN9UoHgUYEbJZLLavU6Ag+iL7fSxBIndXs+KAkItb1CWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523717; c=relaxed/simple;
-	bh=aiphdbxj3rcUgPpWhtlfJXWQb0TZKkWpIjwS9KXxsyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmwueMvoqUMAyZcUcATvFcZ1vOubQuYwKle49OB6t2q5+Ia+it/6d4lnHodO5kLkcuOn9LDWJL3eQ0wW/pzgvsTF8EsJv7qJo/AuGDYJtX1DzUuH7uAHXBaHSONvPCCLijVmqWkVCGqONgRoGKnZRI/FOZKREyqTg5jk9gZuBJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgV101gV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFFA2C4CEC3;
-	Thu,  5 Sep 2024 08:08:18 +0000 (UTC)
+	s=arc-20240116; t=1725523704; c=relaxed/simple;
+	bh=pq4mgLOgPtjR7988qotE7KO6q3NyEFvajJ+jBZy0/Sw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YoSX+GeI4x4CZj09s61iVc1XFj+U1qBZhOVDtOkW4W+fzvQi5FP0uF2c9+dbOlU9lSlg1Wocs5Ae10MqzRAX6NMPXv/BY5nif+zrLZVi/I4v0IAAHCeBb4J7fGBMDn/HYezpBgPgOm9cCsBVTySoZ3FnMpC7BOivqKBXrUKZDAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxLC40y4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1E6BC4CEC7;
+	Thu,  5 Sep 2024 08:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725523716;
-	bh=aiphdbxj3rcUgPpWhtlfJXWQb0TZKkWpIjwS9KXxsyU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IgV101gVFNa+QlilZYeRlxcVUR4HIRey0h1QGP79l71+0qxn7LlHbbUdL/ZhQGXB+
-	 fAzBjCtC0rGwG61ZbL50mKH7FmRYgMSlVAgKgLFrf9E9rJ0gbqv7JhBBqdnAJccY6i
-	 LLRPHZ+pztwWhJsfc1XsoWog9dvsK0IYfYmAIJzXjlBjfi+b4pq8Tv5Sup0Bwupidh
-	 e94qTEW78eFYLQ4p/KskOzZJXiXc9GYGIDXVvmXiwHy8dr8gwG7xX7EDciRPzfCCB4
-	 Wk9CYH7+J1+DOaGLpT6aqsToRlpsaCAfLg6WegGPNGj6UdXychiBhiOoEYmi7p5uX/
-	 v4PpATCbuhAcw==
-Message-ID: <156bbd40-bfa6-4b81-bbc6-bdd019a1b585@kernel.org>
-Date: Thu, 5 Sep 2024 10:08:16 +0200
+	s=k20201202; t=1725523704;
+	bh=pq4mgLOgPtjR7988qotE7KO6q3NyEFvajJ+jBZy0/Sw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=HxLC40y4Wy5DCF2zi8WOTcbrT1aMCw3+A+bRHtHlZ7BbCgLQgSbIDVsIKa4dcCy+z
+	 42bxu4Uc5+QPtkiLXeBhBbvvIv/dvKO7yZIuadnkPq7skPgUHkkl+qgJz5LW8U13DI
+	 aVSwXa/yOuq0FZmOZdL/Dj4fZHQb0LeCjVO+Tw4ZfG+egaVYJEP7rj3auRRBWniqiy
+	 amLD77Mt+gyeZAlC7hW66Qjcr2dwi8H+PdG6orWprIsFW61O40w3QnOVdoI6h6ykeh
+	 +ruH9YxPdXL0YpWxKKMocr8y77BpjqMLWfPNhjgcCsWqntGhUdrh88fbCLDkr325GU
+	 FdqxQrjyA3Z3g==
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 05 Sep 2024 01:08:17 -0700
+Subject: [PATCH v2] mm: vmscan.c: fix OOM on swap stress test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/21] dt-bindings: serial: document support for
- SA8255p
-To: Andrew Lunn <andrew@lunn.ch>, Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org,
- viresh.kumar@linaro.org, herbert@gondor.apana.org.au, davem@davemloft.net,
- sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
- will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org,
- cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
- wim@linux-watchdog.org, linux@roeck-us.net, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@quicinc.com, quic_psodagud@quicinc.com,
- Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-18-quic_nkela@quicinc.com>
- <db4cb31f-b219-4ee8-b519-fdec7f7b8760@kernel.org>
- <634ab05e-3b8c-4cc1-bf23-0c68c1d28484@quicinc.com>
- <f42fe73d-1579-4fa1-89ed-9d2a4b7c7f6e@lunn.ch>
- <c9255fe1-dc62-44f4-a105-54e94abde915@quicinc.com>
- <b64d3425-e7e9-4b28-bd47-ca6f99b39707@lunn.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b64d3425-e7e9-4b28-bd47-ca6f99b39707@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240905-lru-flag-v2-1-8a2d9046c594@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPBm2WYC/23MQQ7CIBCF4as0sxYDFNC68h6mC9IOlEioGZRoG
+ u4udu3yf3n5NshIATNcug0IS8hhTS3koYNpsckjC3NrkFwqPnDFIr2Yi9YzaZ10g9YnxRHa/UH
+ ownunbmPrJeTnSp9dLuK3/kGKYIL1xvTn2Vgt1XS9IyWMx5U8jLXWLxKtoimhAAAA
+To: Andrew Morton <akpm@linux-foundation.org>, yangge <yangge1116@126.com>
+Cc: Yu Zhao <yuzhao@google.com>, David Hildenbrand <david@redhat.com>, 
+ Hugh Dickins <hughd@google.com>, baolin.wang@linux.alibaba.com, 
+ Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, Chris Li <chrisl@kernel.org>
+X-Mailer: b4 0.13.0
 
-On 04/09/2024 23:54, Andrew Lunn wrote:
->> No one is born with experience. You learn as you go. Please note that
->> this series has gone through internal review before I posted it in
->> upstream.
-> 
-> Then i'm surprise you were not told to submit lots of smaller
-> patchsets, one per subsystem, which are complete.
+I found a regression on mm-unstable during my swap stress test,
+using tmpfs to compile linux. The test OOM very soon after
+the make spawns many cc processes.
 
-We did... multiple times. We gave examples how entire new Qualcomm SoC
-should be upstreamed, how this process should be organized. We gave
-trainings. Some listen, some not. Sometimes people do not even come to a
-training (for free). But there will be always an excuse for patchset
-doing something entirely different than community expects...
+It bisects down to this change: 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
+(mm/gup: clear the LRU flag of a page before adding to LRU batch)
 
-The patchset here is a result of some misconceptions and not
-understanding what is the dependency (claiming there is while there is
-no) and what are the maintainer trees.
+Yu Zhao propose the fix: "I think this is one of the potential side
+effects -- Huge mentioned earlier about isolate_lru_folios():"
 
-> 
-> I get nobody is born with experience, but for a company the size of
-> Qualcomm, they can easily hire a few experienced mainline developers
-> who can mentor you, rather than having overloaded Maintainers teach
-> you the basics, and getting frustrated in the process.
+I test that with it the swap stress test no longer OOM.
+
+Link: https://lore.kernel.org/r/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZUmErNAXoXmw@mail.gmail.com/
+Fixes: 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding to LRU batch")
+Suggested-by: Yu Zhao <yuzhao@google.com>
+Suggested-by: Hugh Dickins <hughd@google.com>
+Tested-by: Chris Li <chrisl@kernel.org>
+Closes: https://lore.kernel.org/all/CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com/
+Signed-off-by: Chris Li <chrisl@kernel.org>
+---
+Changes in v2:
+- Add Closes tag suggested by Yu and Thorsten.
+- Link to v1: https://lore.kernel.org/r/20240904-lru-flag-v1-1-36638d6a524c@kernel.org
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index a9b6a8196f95..96abf4a52382 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4323,7 +4323,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
+ 	}
+ 
+ 	/* ineligible */
+-	if (zone > sc->reclaim_idx) {
++	if (!folio_test_lru(folio) || zone > sc->reclaim_idx) {
+ 		gen = folio_inc_gen(lruvec, folio, false);
+ 		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
+ 		return true;
+
+---
+base-commit: 756ca36d643324d028b325a170e73e392b9590cd
+change-id: 20240904-lru-flag-2af2f955740e
 
 Best regards,
-Krzysztof
+-- 
+Chris Li <chrisl@kernel.org>
 
 
