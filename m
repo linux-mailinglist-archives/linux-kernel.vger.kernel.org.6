@@ -1,148 +1,93 @@
-Return-Path: <linux-kernel+bounces-317032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0323B96D86C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A48696D873
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236921C2569F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7D51C22B9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB4619D063;
-	Thu,  5 Sep 2024 12:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C76719D8A9;
+	Thu,  5 Sep 2024 12:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sjnpjkLu"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qIprDKky"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A6E19B3F9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F215919D894
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 12:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725538906; cv=none; b=TbJy9/RZQcNBPTNgWe3Vcn190QCec9L+YGab9v3dxThNpceFTtTw+3+6mIxXSIz7FDkAz3ccs1z81lQhJHC+YA2QS7Jxd37an/YehYNjCqTjEdIjI9T5zrwctQMn/pkI0OvTxplWzUSBlSo/TjUpuR47zZNFPyXYMKXqPF84mjk=
+	t=1725539029; cv=none; b=OgtaNvdugjE255WajVw+0NK71oy1+zYfEez0UulJL31CvwlYXH7UINCCVK0z0uF8Fi3ctgk90stLsmFIiFZAIM9Hc38NodUc3OZkN2HVvI8cUeK+1y25B1lG5orAxFSwc6zrJHmwqzndtIL0RTWz434oKmfcGvZb35kaRD+LNlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725538906; c=relaxed/simple;
-	bh=F01XbYYcnFz3IrGJAZEt/h6KlLzKcoJy+krrnv7pnJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UPbtfnR9tn8+/ZpIEAPMpw6dv1qdYjzQGsY/4I/ZjmlpDT/tqU2mzpyqezzNh4mnVAfrixzrvq0s5IYlrBveVn1tKJ4R/8APsncZdPIXqPgU/W/kYYsOrwfOYefR6pXikafqbtPSD9o9kyWefOq6wwXG6vPQuFQ+7F1mOzDBHk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sjnpjkLu; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5353cd2fa28so822962e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 05:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725538903; x=1726143703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TACxCNrG/DopYef41PGhbtqig8LKMsOnKp3kgyqsYHs=;
-        b=sjnpjkLuw1INmoHTo4VwdOPWr86OrPYTHyFc/HZSTGlqSL6+lE7mj9xYlg75bPN8HZ
-         kzEjJLRDJiWSdnIN1+h+vysHjaN0eg5g+8sesDdqTd/0SCR2K8aCH0mCk++/fKkYUlvK
-         Kn3QfRNFsEpaMbjYffJiYlj/lCGEZ2wrhRMOeVV/oduW6/CQozNRJmqwitRz/1FF/JZ8
-         NoH7rVr1owoHGNkcpNCl2fSlAmznjPLahN+AK70aQCYIzrM/V4E7Yw6OmgzKejP5ahIx
-         TnrL547DbyQFevjgVs4vF/oPJObQD2oKnGr9Gyd8XWe1t2kcYzq4FT12R9hYGL70Rw0Z
-         zo1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725538903; x=1726143703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TACxCNrG/DopYef41PGhbtqig8LKMsOnKp3kgyqsYHs=;
-        b=fu01v2c1zJfrNDwdeWwxP7YWP3KcMsJXBM0BxsQkj4yYfpP7ceZubgTod8UXF+kono
-         4XOWFMtO94DECfIA5uEw688ZEHFoBmcwblS6O+PP0LLsjbU22DWEZL7jgkvCXVlOwwWd
-         Ewj5xPNQGpGNnNYpt/hqflOvausoi9H3W8Eq8yoYdxTu+6qAcaK2IyxRkOQQOB9im8sa
-         lIEkL2G5RWcsCy8Zq9BH0fXqkqx1blZx9JNM4020zpxQSjfHYGl7ljxujV5/ns9ifJ5/
-         wBJRuFX+ryDKGomC6uSXkexp1m1DLscCO0q4motqR7yJp9VYLW7T6RXQrDeP6K5CR8zM
-         4ikg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOTxm6jpG7z31gyGp5mH/K/C7yDEW8Cg/RedlhZt8NpwZ7hcZwaNG5B943m1NPQWzMrAeHy2GaeiZOk8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfTpYQhhkWYlfnqKNwaRTxT3Gnkfbt4ZSYdmKw1R0gw42LufsF
-	9dECxOpf0yRxwAQ4AP45kKU89P0dBxfnquWspsQW1IRqWU+JhHmYxDjsQBumW3yXOa6NeJxr1Qp
-	R6oXLYgykcc5plvzrISrURI18D3JclNOzHqZ3LgZDE80AyY34
-X-Google-Smtp-Source: AGHT+IFcMMTAuv+S+5/9hcRxIAh41Pmij3mBunr6XibOfsaQXElI+A3yPmhY2q3bx6emgGpGca4XjRlTGGn+3XPVLNc=
-X-Received: by 2002:a05:6512:3e06:b0:52c:dfa0:dca0 with SMTP id
- 2adb3069b0e04-53546ba0eabmr12703593e87.43.1725538901776; Thu, 05 Sep 2024
- 05:21:41 -0700 (PDT)
+	s=arc-20240116; t=1725539029; c=relaxed/simple;
+	bh=lNgmZ9wvfpxtqOFCCn4QeF4q00ACoBThTb81J0cvJUE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=IbtZAeZsCwJn46pvg7B+Efh4w0Cmq4EoOfxUR3rWgstogRxItqIEkigJMoE/A4TP/HYPUWoJ+SWxYWxxCMOhDDCoysZdiZkrWlc4SkBNWg4N1dqAouBy7XMyHAjVydp/Q20/g546ZrTG3DJ8FVea1lvtOv/TaugRHzmDCznxRD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qIprDKky; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725539026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lLByLv8rw/zOL3j4lfqH8Y8PpLKTX3K0pHjcs2rvP4s=;
+	b=qIprDKky84jYBcTOlWU0VsCg3PCkUABBoUNoabNnPl/kHYtmLYn6JrjyHwQZD2PlANABeN
+	SWQT3EbNY1AeZs6F/KKpmrJh7OKyFFzsvYVx4NEjaerCpC5YiPojpdrWYArdGSJX3H6yJE
+	rdLsViLeoTGcKRE4dGRvnpDBrtxgxck=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240903093629.16242-1-brgl@bgdev.pl> <20240903093629.16242-4-brgl@bgdev.pl>
- <lpjfpgnbhrp3u4rqczoouf2kvktdigisi3sjhfstanw4t5g2sc@fvqana5gftds>
-In-Reply-To: <lpjfpgnbhrp3u4rqczoouf2kvktdigisi3sjhfstanw4t5g2sc@fvqana5gftds>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Sep 2024 14:21:30 +0200
-Message-ID: <CAMRc=McmnXe83bsRf+uivV05Z_dv8V9ox5Rx3kGH9O1eDpka1A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: sc8280xp-x13s: model the PMU of
- the on-board wcn6855
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Steev Klimaszewski <steev@kali.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v3 12/14] mm: multi-gen LRU: walk_pte_range() use
+ pte_offset_map_rw_nolock()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20240904084022.32728-13-zhengqi.arch@bytedance.com>
+Date: Thu, 5 Sep 2024 20:23:05 +0800
+Cc: David Hildenbrand <david@redhat.com>,
+ Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+ akpm@linux-foundation.org,
+ rppt@kernel.org,
+ vishal.moola@gmail.com,
+ peterx@redhat.com,
+ ryan.roberts@arm.com,
+ christophe.leroy2@cs-soprasteria.com,
+ linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <6867F624-A83C-4A3C-947D-ECFA4925130F@linux.dev>
+References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
+ <20240904084022.32728-13-zhengqi.arch@bytedance.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 3, 2024 at 4:18=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Tue, Sep 03, 2024 at 11:36:28AM GMT, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Add a node for the PMU of the WCN6855 and rework the inputs of the wifi
-> > and bluetooth nodes to consume the PMU's outputs.
-> >
-> > Tested-by: Steev Klimaszewski <steev@kali.org> # Thinkpad X13s
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 98 ++++++++++++++++---
-> >  1 file changed, 86 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts=
- b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > index 6a28cab97189..88b31550f9df 100644
-> > --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > @@ -400,6 +400,67 @@ usb1_sbu_mux: endpoint {
-> >                       };
-> >               };
-> >       };
-> > +
-> > +     wcn6855-pmu {
-> > +             compatible =3D "qcom,wcn6855-pmu";
-> > +
-> > +             pinctrl-0 =3D <&wlan_en>;
-> > +             pinctrl-names =3D "default";
-> > +
-> > +             wlan-enable-gpios =3D <&tlmm 134 GPIO_ACTIVE_HIGH>;
-> > +             bt-enable-gpios =3D <&tlmm 133 GPIO_ACTIVE_HIGH>;
-> > +
-> > +             vddio-supply =3D <&vreg_s10b>;
-> > +             vddaon-supply =3D <&vreg_s12b>;
-> > +             vddpmu-supply =3D <&vreg_s12b>;
-> > +             vddrfa0p95-supply =3D <&vreg_s12b>;
-> > +             vddrfa1p3-supply =3D <&vreg_s11b>;
-> > +             vddrfa1p9-supply =3D <&vreg_s1c>;
-> > +             vddpcie1p3-supply =3D <&vreg_s11b>;
-> > +             vddpcie1p9-supply =3D <&vreg_s1c>;
->
-> As the WiFi is now properly using the PMU, should we also remove some of
-> the regulator-always-on properties?
->
 
-I added a separate patch that doesn't seem to impact anything with the
-PMU changes applied but will be easy to revert if something does
-break.
 
-Bart
+> On Sep 4, 2024, at 16:40, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> 
+> In walk_pte_range(), we may modify the pte entry after holding the ptl, so
+> convert it to using pte_offset_map_rw_nolock(). At this time, the
+> pte_same() check is not performed after the ptl held, so we should get
+> pmdval and do pmd_same() check to ensure the stability of pmd entry.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-> > +
->
-> --
-> With best wishes
-> Dmitry
+Reviewed-by: Muchun Song <muchun.song@linux.dev>
+
+Thanks.
+
 
