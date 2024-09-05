@@ -1,124 +1,119 @@
-Return-Path: <linux-kernel+bounces-317583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A27596E0B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B76DA96E0C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6E2283A07
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720DE286119
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D80B1A256F;
-	Thu,  5 Sep 2024 17:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8121A256F;
+	Thu,  5 Sep 2024 17:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6UXDToR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f3hgaQx4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922A4152166;
-	Thu,  5 Sep 2024 17:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D1D54F87;
+	Thu,  5 Sep 2024 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725555705; cv=none; b=dMp7L54uWaXhGmUZQypxeMKsHcnQVhGopiEGHJqQj2GfEdGhz1Ky2EttXiKCCGuFKM71wMieouFz3iIVtHTd7cbov5nzURovf4K3SMmcEphtiH4OvQMSYmXhDzhSDBhOREnj/SXSwDdhA9QMQ35JP7hl8Mf0DbeuOkOWLaMegJE=
+	t=1725555896; cv=none; b=gSrPGdEVdo+CITEHQI8IftGgx4/SPBe5G9eec+Ecq+d5Fyb5XEUyvJhC4sAsZdZxog+NQG47OggZR0XJp/0DyAXW4HcjA3SumsrCWkwwD+2eE7Ll8kdNSkW8Mz1VDUT24tjZh3fIdsx+eaq+l6uKrcYl3mNXkIkpyZ497R5srXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725555705; c=relaxed/simple;
-	bh=I2aLsGM4UA8tXVU8NUIgkVmGUKqzg6oLq0e+na0fwaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPEXUP8065pSUIp+WDFYwbnwEly9+HeNOh/R4wgOWcJmYSOxusbQK5KVXqrrTHe/YtVeTzytZNOehxiOrfO09igpckR8lL3b4unfChiSAw5nKvj9MKwue+kYC8meLQxocMJfZxa5oKDTVds9xxP8aT8MWHuO5jSZoqQYaypenOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6UXDToR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DBEAC4CEC7;
-	Thu,  5 Sep 2024 17:01:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725555705;
-	bh=I2aLsGM4UA8tXVU8NUIgkVmGUKqzg6oLq0e+na0fwaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t6UXDToRx19DeweM+gELpbq7G4BaiDgIqaJt+PUVa6pTkQVLBGqGEl1b/5ufsa/Pz
-	 WYprHY7gXzGZZcq+24is6naQgZ/kCaAy4A9QCd/ICCJi7LdwRLtZJDeRhtYh0+LNXA
-	 6ii6cqywnwvFnNeJFrZ4jI6t/QiTnl8h4PVBQzfcXbpxKJzw8NbBXe5JKtcl1gjEyc
-	 wJnG369qQXfIoGUKxdxxFHvevJgNGaQTWOvP6mA68264T8z63mYP72gyG9PUcWpaB1
-	 gPsEC3fDnsZxytSBKLiScdpXni/YZ8rvotyZxC84Oy2fdHzqcseF9KqGjz5G0MDAXT
-	 MaF7pBkN1PL+g==
-Date: Thu, 5 Sep 2024 19:01:42 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	bpf@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS frames
-Message-ID: <Ztnj9ujDg4NLZFDm@lore-desk>
-References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
- <20240903135158.7031a3ab@kernel.org>
- <ZteAuB-QjYU6PIf7@lore-desk>
+	s=arc-20240116; t=1725555896; c=relaxed/simple;
+	bh=dszasaLQ5F2bOpdRX6ozfhPf0Kh1rM87y0FL2yxR4h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YlK63jEKMu4urJL2iW9rNXuiYA5xuj5QushuFlJeL4ypSzvgzLy4kai71hh3yIUwjhhq83XzKS4iJ75MWu5nTWEKPKdezMWqa1OnM1JIfSTUhUfQkrtBFPgBJdQ0wAnl+d+rNnPrY2ENQA23QZYh4saWwF3GiL392yEzpjYQC1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f3hgaQx4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48597LPe026135;
+	Thu, 5 Sep 2024 17:02:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dszasaLQ5F2bOpdRX6ozfhPf0Kh1rM87y0FL2yxR4h8=; b=f3hgaQx4NdOewLhD
+	hhaHl2ZN1VHZHeP3W6Ts/wlyKkLxO287pf5DJ57U02vt+LjCIW99qsQhHl98ltVv
+	s9Kfz83W8E3/mxf0Z5QZWltukw0oZQ/wKfXqelC14ueojYROEWqRPUUzbnPmdU2u
+	sNC7VCGCvvcyN8ek6SbJSwyW7r6BOWRcvbS8mE+u0vCY9vQdBkfRQcHuPyR5qkcK
+	sYFI6efbP0OC0B6Pven119lJ7pJIL20DL0IBbkb4K5mt8IVpw6QnBCXYOZOdpQD5
+	dSk1d94nLG01U9llv17kiiugw226nY7C+qtwZH5AcMnEKzNPxCGzpE1WyLPFfysM
+	v+ASWw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe93ud-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 17:02:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485H23qG015981
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 17:02:03 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 10:02:03 -0700
+Message-ID: <c6ac95bd-df49-4db7-8f5c-1281a9f95ecd@quicinc.com>
+Date: Thu, 5 Sep 2024 10:02:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l9MehyyWogdUZuSk"
-Content-Disposition: inline
-In-Reply-To: <ZteAuB-QjYU6PIf7@lore-desk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 13/14] selftests/digest_cache: Add selftests for the
+ Integrity Digest Cache
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, <zohar@linux.ibm.com>,
+        <dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
+        <corbet@lwn.net>, <akpm@linux-foundation.org>, <paul@paul-moore.com>,
+        <jmorris@namei.org>, <serge@hallyn.com>, <shuah@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
+CC: <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <wufan@linux.microsoft.com>,
+        <pbrobinson@gmail.com>, <zbyszek@in.waw.pl>, <hch@lst.de>,
+        <mjg59@srcf.ucam.org>, <pmatilai@redhat.com>, <jannh@google.com>,
+        <dhowells@redhat.com>, <jikos@kernel.org>, <mkoutny@suse.com>,
+        <ppavlu@suse.com>, <petr.vorel@gmail.com>, <mzerqung@0pointer.de>,
+        <kgold@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
+ <20240905150543.3766895-14-roberto.sassu@huaweicloud.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240905150543.3766895-14-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IWHkMbE2UMqP4SDX7b2uvUjjfPgW9-Pc
+X-Proofpoint-ORIG-GUID: IWHkMbE2UMqP4SDX7b2uvUjjfPgW9-Pc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_12,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1011
+ impostorscore=0 spamscore=0 mlxlogscore=983 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409050127
 
+On 9/5/24 08:05, Roberto Sassu wrote:
+...
+> +module_init(digest_cache_test_init);
+> +module_exit(digest_cache_test_fini);
+> +MODULE_LICENSE("GPL");
 
---l9MehyyWogdUZuSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Missing MODULE_DESCRIPTION()
 
-> > On Fri, 30 Aug 2024 18:24:59 +0200 Alexander Lobakin wrote:
-> > > * patch 4: switch cpumap from a custom kthread to a CPU-pinned
-> > >   threaded NAPI;
-> >=20
-> > Could you try to use the backlog NAPI? Allocating a fake netdev and
-> > using NAPI as a threading abstraction feels like an abuse. Maybe try
-> > to factor out the necessary bits? What we want is using the per-cpu=20
-> > caches, and feeding GRO. None of the IRQ related NAPI functionality
-> > fits in here.
->=20
-> I was thinking allocating a fake netdev to use NAPI APIs is quite a common
-> approach, but sure, I will looking into it.
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+description is missing"), a module without a MODULE_DESCRIPTION() will
+result in a warning when built with make W=1. Recently, multiple
+developers have been eradicating these warnings treewide, and very few
+are left, so please don't introduce a new one :)
 
-=46rom a first glance I think we could use the backlog NAPI APIs here in
-order to avoid allocating a dummy netdev. We could implement a similar
-approach I used for the cpumap + gro_cell here [0].
-In particular, the cpumap kthread pinned on cpu 'n' can schedule the
-backlog NAPI associated to cpu 'n'. However according to my understanding
-it seems the backlog NAPI APIs (in process_backlog()) do not support GRO,
-right? Am I missing something?
-
-Regards,
-Lorenzo
-
-[0] https://github.com/LorenzoBianconi/bpf-next/commit/a4b8264d5000ecf016da=
-5a2dd9ac302deaf38b3e
-
->=20
-> Regards,
-> Lorenzo
-
-
-
---l9MehyyWogdUZuSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZtnj9gAKCRA6cBh0uS2t
-rPhvAQCcJlALWoAIGD5Ieeph+OGf2ZgYDMnLIXI9vU3124la1AEAnSfznUtaico9
-o6d3QTXyboMYq1+K+m8Y/oCM3w/9OQE=
-=SQw9
------END PGP SIGNATURE-----
-
---l9MehyyWogdUZuSk--
 
