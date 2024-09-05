@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-317676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E1096E206
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6581D96E209
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E4928553C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3EC284481
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFA017C9B5;
-	Thu,  5 Sep 2024 18:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF36183CB8;
+	Thu,  5 Sep 2024 18:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HAn9v7zF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+RAfAm5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A08821;
-	Thu,  5 Sep 2024 18:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707F48821;
+	Thu,  5 Sep 2024 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725561043; cv=none; b=ujGbOPjp8ESizaUpTnbxgnQs+meZlkuEZFlqbK3Pw/ERMPC6VJPpIoTXc/V5q8PrOCNH67O6LxSrNWXLQhLXN+vUZu5nbzIAgoaCi76ssBVpNrwzxVSxiZ2EeAbuGE/pHGdzfl/l5/WgL+CTtm7xuyGWjbbvaIw7msd4EVIU21E=
+	t=1725561074; cv=none; b=ePusA8AdqpfdrpuR6v1UBYb9U4oKxugbmkt5W/46QJSFUvzd6uhxXTCenuLAcJ4lvXzMsPvnPWxwocYnHGdZ8/5T2VTbp8OU9BfumqsicV60p+muJw+xwb0GtJ+VpcmGglkyeNiDUc5sIIkyky/PplCIilY9rjLDp3JSfNaOlKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725561043; c=relaxed/simple;
-	bh=fxHMu2N5hdVBD9qAE8xGbq8KqtZLqQr+bI/uKSVf7QE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q8v/BvDCl/MgUe9KxIlJMswF9bhigkoa9VdUV1USpfF2BxT2ryfuFe+hUsK7TThL+UKWCWttmQiq69ELcEb5JDMVY2SZRJia4j4YHXkDSID9wSIOv7L14dsC/IyiKLTCfY3hq1vCnpTrmQ2K0qUF2BR6B1teew2YIH9Amjle57o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HAn9v7zF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQ3FF021768;
-	Thu, 5 Sep 2024 18:30:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=cCAWQgpWPzQfAzsGmKl+nr
-	m4pjFAtmkpOTeM2++UzCA=; b=HAn9v7zF61X4xOZQf8HT4VPnOhZ1Iq/8FEbUr/
-	4SFnQLozxfInT3NJOEukduFstTzlZgMM2E46QCc0783GflYA+YZigeACefc8fRtI
-	y7ZZCQqd5XXzsN8sS40tWj+C6FhTynDGW7J7+eZUm8YXFH756hd3KYmJnzl1XJN9
-	XWcb2YXddLv9NNo0S6M7A2BXmUruWU1ipqCcC5OzV7vTImRRWqlXk0jjO7U/8mbz
-	xqGnBX5Yk9Um/m+duWetvsmEbNXptd0rWY6OaOkZSvYpWy/8Xi0PXdJSVXSeQgD1
-	Lrc1RxmF8jAJ5beNJwDBOG8K35wFhaIkZh393H0ZOyFVvX9A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu0095-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Sep 2024 18:30:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485IUXpQ013997
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Sep 2024 18:30:33 GMT
-Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 11:30:29 -0700
-From: Nikunj Kela <quic_nkela@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3] dt-bindings: firmware: qcom,scm: document support for SA8255p
-Date: Thu, 5 Sep 2024 11:30:16 -0700
-Message-ID: <20240905183016.3742735-1-quic_nkela@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725561074; c=relaxed/simple;
+	bh=GwzqxSiTBCO2xewW5t4Ce9dzQXimbeoRoVoQ9B8E/ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g/3xXogL1Efgy1KPYIEOTz2dhZFAcH6GxNQVLECDb61kzgRqZkWqqRjgbN54HcTrnri2tzb5AWMaumlaXyddS3uvYWT1Z6Lr809Nsni/6xJ4eH1XlwlfwXzpmFyEQ/eMogvh1qW0jblmm6YHN7rZHV8vzJoYWQoUiFTOgCyaEkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+RAfAm5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 285D9C4CEC3;
+	Thu,  5 Sep 2024 18:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725561074;
+	bh=GwzqxSiTBCO2xewW5t4Ce9dzQXimbeoRoVoQ9B8E/ak=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=E+RAfAm5cQBVNXZdMrsjq6gwsZuC3EWvdoUmfw9T2Wkf6vVSOMa2KE16cVTZIGxG8
+	 EJOSkzuFTXtZBBnTXupoTZaUMiZGDGw5z6EBml0jzmX7turzzjVOtWnSvN7jDMhTDN
+	 ZhPsV32kElFn1dYVfnqT+ojyg4OsZtBmyemb8JoIORxHdSCXNLS2wHte0VI7YdlEZb
+	 Aa/ncee9R/jifzXi5e/KoCtHcw1tCapb3BEeAmggImskDS1WFh88mRy/5aayN02/my
+	 pl+XwT+Dr+nYK0dQ4sMddKBHJi54+EfxX/KuS+wJZz04n0LHpDYwpc1FVHvqIHk68y
+	 28rMhFYEk3n9w==
+Date: Thu, 5 Sep 2024 19:31:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: wangshuaijie@awinic.com
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ andy.shevchenko@gmail.com, liweilei@awinic.com, kangjiajun@awinic.com
+Subject: Re: [PATCH V10 2/2] iio: proximity: aw96103: Add support for
+ aw96103/aw96105 proximity sensor
+Message-ID: <20240905193105.16a4a060@jic23-huawei>
+In-Reply-To: <20240904113555.1538635-3-wangshuaijie@awinic.com>
+References: <20240904113555.1538635-1-wangshuaijie@awinic.com>
+	<20240904113555.1538635-3-wangshuaijie@awinic.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: B7Dwgm8y67CDJY-3F_OGYC_qOGpoikYf
-X-Proofpoint-ORIG-GUID: B7Dwgm8y67CDJY-3F_OGYC_qOGpoikYf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_12,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0
- impostorscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409050137
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add a compatible for the SA8255p platform's Secure Channel Manager
-firmware interface.
+On Wed,  4 Sep 2024 11:35:55 +0000
+wangshuaijie@awinic.com wrote:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
----
+> From: shuaijie wang <wangshuaijie@awinic.com>
+> 
+> AW96103 is a low power consumption capacitive touch and proximity controller.
+> Each channel can be independently config as sensor input, shield output.
+> 
+> Channel Information:
+>   aw96103: 3-channel
+>   aw96105: 5-channel
+> 
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
+Once a series had been applied, send patches on top.
+That means if you want to adopt Andy's suggestions then break
+it up into a series where each patch is a particular type of change.
 
-Changes in v3:
-	- Removed the patch from original series[1]
+That allows rapid review in comparison with sending the thing
+all over again. As such I've just fixed the early return issue directly.
 
-Changes in v2:
-	- Added Reviewed-by tag
 
-[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
----
- Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Some of the changes would be rejected.
+> +
+> +#define FAR			0x00
+> +#define TRIGGER_TH0		BIT(24)
+> +#define TRIGGER_TH1		(BIT(24) | BIT(16))
+> +#define TRIGGER_TH2		(BIT(24) | BIT(16) | BIT(8))
+> +#define TRIGGER_TH3		(BIT(24) | BIT(16) | BIT(8) | BIT(0))
+> +#define TRIGGER_TH_MASK		(BIT(24) | BIT(16) | BIT(8) | BIT(0))
+No. If you want to use BIT then each BIT needs a meaningful define.
+If the bit's on their own convey no useful meaning then define these
+differently.
 
-diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-index 2cc83771d8e7..65057f5c8972 100644
---- a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-+++ b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-@@ -43,6 +43,7 @@ properties:
-           - qcom,scm-msm8998
-           - qcom,scm-qcm2290
-           - qcom,scm-qdu1000
-+          - qcom,scm-sa8255p
-           - qcom,scm-sa8775p
-           - qcom,scm-sc7180
-           - qcom,scm-sc7280
-@@ -204,6 +205,7 @@ allOf:
-           compatible:
-             contains:
-               enum:
-+                - qcom,scm-sa8255p
-                 - qcom,scm-sa8775p
-     then:
-       properties:
--- 
-2.34.1
+Jonathan
+
 
 
