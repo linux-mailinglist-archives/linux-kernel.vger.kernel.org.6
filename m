@@ -1,102 +1,98 @@
-Return-Path: <linux-kernel+bounces-317291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA0D96DBF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4F996DBBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAFA1C212A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:37:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E951C20BA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7241A1B977;
-	Thu,  5 Sep 2024 14:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5802F870;
+	Thu,  5 Sep 2024 14:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="zQvz90zW"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RUUKKGQn"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF56817C69;
-	Thu,  5 Sep 2024 14:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B141DDF5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725547021; cv=none; b=MEwRyQTeygDblTCk394DooOKNNZw+lAI+0JL+bLwAeCsSG5ITvXD/46B4CUN+7C8/dNuX7QH4dI7KSWI4kP7NP99VFLEFRHr3CiD5lUIcD/eyzIUfdyd1bCCYkHcP+b6mJ6JWOS//B/roPmkC7rRK33qmFcCpnFSL6eJ9Ua3ShQ=
+	t=1725546430; cv=none; b=GkbpflR2DapGWEqiT5x40H4+YpOjICs11oDqY9MT8SdVWtj6yHy5uDJFyWp4oG+7pfXmp8jwAodf8hvP9iImhnoKmfVq12jWsJnZf+UqJRg+8tGHh5qrvAlIDVv6OYEeH3amJvwb+Wucs9+LfaEkFfgGmqUB8XLt2Onjmj5iTRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725547021; c=relaxed/simple;
-	bh=3jMXTiNdWHZiQ7dXI7nYaFZUC0owo1rFk1Gy77YaZK0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZE7KpGIFKTIdqM28GKSoa4juBAnV+BBbkUKmPlOGN2gyMOZ7uxz5p1g7MeeOWGXQBY4//EU9ZQGJN1Gv9jSB4fxH1nYNduFl+qJUEwuf9LlV8T8evLzgctLk5/TtWgLdDK77OXEPIE8v0VY3+r4045A+v/BVt2WGDJ2H4i4Gfrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=zQvz90zW; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1725546412; bh=3jMXTiNdWHZiQ7dXI7nYaFZUC0owo1rFk1Gy77YaZK0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References;
-	b=zQvz90zWQ8dwrhEe4N+FvPh/rADHV9771Wz97P2S6JCub0LzV62lWnBkLIkoxdbnn
-	 EHJfVcZtpoSh4mVQjZvOerP4DVoVjTaoqRkCpyODbi7UJvM//y2AkTp/NKKvwcWDr2
-	 9hcdUdv67/HEKV2p66CL/oBHKNf5o/lraNm8A3dE=
-Date: Thu, 05 Sep 2024 16:26:49 +0200
-From: Luca Weiss <luca@lucaweiss.eu>
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Fabien Parent <fabien.parent@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_arm64=3A_dts=3A_qcom=3A_msm89?=
- =?US-ASCII?Q?39=3A_revert_use_of_APCS_mbox_for_RPM?=
-In-Reply-To: <2a15105f-67e2-42f6-b624-562485b0bee2@kernel.org>
-References: <20240904-msm8939-rpm-apcs-fix-v1-1-b608e7e48fe1@linaro.org> <2a15105f-67e2-42f6-b624-562485b0bee2@kernel.org>
-Message-ID: <46D2A6F9-B524-47A3-A61E-5DA910F3A957@lucaweiss.eu>
+	s=arc-20240116; t=1725546430; c=relaxed/simple;
+	bh=3k+74O6+/02mugm3J4gvCVu7ZvKYOuy9N/M3e+OyQvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rW4Q6B7phEO0nHY4ujlOniulNzfv/HXPxWhNOQR4IQBFfMiokLkclSFaPXsNbeKHWkKq4AApdBWDFFY5hzcDhbFupu1pTjl5ROra/cJ4hWI07AGz+8ZUxTaI14+xN4HgmuEbh5ItiMbWzRnWeKPnPYN8Uqd9/W1oJEWGjx6T4kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RUUKKGQn; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d2470924-78a2-4905-a24f-afb127644d70@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725546427;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FsQk6z3HEBxGfR6MpE4YothAxzaD5ug0Mh6OH+yVUjs=;
+	b=RUUKKGQnv8uB849iNLPKm92xmx+iHZQGUdonlJPhlHsrZGhB88iEGJxyTUgD4ep038lnYY
+	GpCnrHfPYjGvgA3LyGULP0yZHo7emvAjajdrgD7emlR8G9RorkEE+XgXcIiEa5vLwRQ+fd
+	z8ml8I3DYTkosQCLArX5FmQmft9p4oQ=
+Date: Thu, 5 Sep 2024 10:27:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next 0/2] net: xilinx: axienet: Enable adaptive IRQ
+ coalescing with DIM
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Michal Simek <michal.simek@amd.com>, Heng Qi <hengqi@linux.alibaba.com>
+References: <20240903192524.4158713-1-sean.anderson@linux.dev>
+ <20240904163503.GA1722938@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240904163503.GA1722938@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-FWIW msm8226 has a similar problem but there it is enough to provide <&xo_b=
-oard> instead of the equivalent &rpmcc reference to gcc, which is what was =
-done in a recent patch for msm8226=2Edtsi=2E
+On 9/4/24 12:35, Simon Horman wrote:
+> On Tue, Sep 03, 2024 at 03:25:22PM -0400, Sean Anderson wrote:
+>> To improve performance without sacrificing latency under low load,
+>> enable DIM. While I appreciate not having to write the library myself, I
+>> do think there are many unusual aspects to DIM, as detailed in the last
+>> patch.
+>> 
+>> This series depends on [1].
+>> 
+>> [1] https://lore.kernel.org/netdev/20240903180059.4134461-1-sean.anderson@linux.dev/
+> 
+> Hi Sean,
+> 
+> Unfortunately the CI doesn't understand dependencies,
+> and so it is unable to apply this patchset :(
+> 
+> I would suggest bundling patches for the same driver for net-next
+> in a single patchset. And in any case, only having one active
+> at any given time.
+> 
 
-But in the end clk and mailbox drivers should probably be split so that th=
-is dependency cycle can be broken=2E But I haven't looked into this further=
- yet=2E
+Well, I would normally do so, but that patch is a fix and this series is
+an improvement. So that one goes into net and this one goes into net-next.
 
-Regards
-Luca
+I've been advised in the past to split up independent patches so they can be
+reviewed/applied individually.
 
-Konrad Dybcio <konradybcio@kernel=2Eorg> schreef op 5 september 2024 14:38=
-:53 CEST:
->On 4=2E09=2E2024 8:26 PM, Fabien Parent wrote:
->> Commit 22e4e43484c4 ("arm64: dts: qcom: msm8939: Use mboxes
->> properties for APCS") broke the boot on msm8939 platforms=2E
->>=20
->> The issue comes from the SMD driver failing to request the mbox
->> channel because of circular dependencies:
->> 	1=2E rpm -> apcs1_mbox -> rpmcc (RPM_SMD_XO_CLK_SRC) -> rpm=2E
->> 	2=2E rpm -> apcs1_mbox -> gcc -> rpmcc (RPM_SMD_XO_CLK_SRC) -> rpm
->> 	3=2E rpm -> apcs1_mbox -> apcs2 -> gcc -> rpmcc (RPM_SMD_XO_CLK_SRC) -=
-> rpm
->>=20
->> To fix this issue let's switch back to using the deprecated
->> qcom,ipc property for the RPM node=2E
->>=20
->> Fixes: 22e4e43484c4 ("arm64: dts: qcom: msm8939: Use mboxes properties =
-for APCS")
->> Signed-off-by: Fabien Parent <fabien=2Eparent@linaro=2Eorg>
->> ---
->
->This is fine as a stopgap solution, Bjorn can we push it in -fixes?
->
->This platform is admittedly not of top importance=2E=2E but fixing this
->eventually would be nice
->
->#regzbot introduced: 22e4e43484c4
->
->Konrad
+--Sean
 
