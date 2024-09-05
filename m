@@ -1,220 +1,239 @@
-Return-Path: <linux-kernel+bounces-317330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC196DC9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:53:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB74196DC9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C72AB210F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56D128A0FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997E51A00CE;
-	Thu,  5 Sep 2024 14:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F618148302;
+	Thu,  5 Sep 2024 14:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+ayb5X+"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUDElVvp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EE919F478;
-	Thu,  5 Sep 2024 14:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF3212D744;
+	Thu,  5 Sep 2024 14:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725547906; cv=none; b=lUz1waSWxh+fz53lWFEhwurkZQwDup/L1OjkVy6t1to1IVsMbJ3rM4t+SZ2MRb5q9Jbl+eYj5vP9foR/ZJ0xR2KBsXm6W6ui+uAm304b8V8n7pkf/kkpeCmiyHcp9w3myRRmkpPQW3hu05zGjoGkEXIh4Ta96v+ioxLPB+WsVYk=
+	t=1725547913; cv=none; b=Spap22hqMn/iOnlgqhU15AenEdBeYG9XdfqEepfY68bYo4kw0+JcKQcw2dxsqRraJ6iiZTgne/XilyvExbaR/WdQNY+QMBIeyoIHGIIK0gYvZGehlR4R/FC9G55Dl40t90OFRD73xRXDm0n62Wq4R4tRVdCchu1upe1i9gEcoAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725547906; c=relaxed/simple;
-	bh=roRdoUA06OSktfkT3cuEuaM2HtScD0650/8+GaZZFy4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Skb2Z7TO4U0li4ms4oLGT22+EYPbHTzUeLkKncH8NUmudSHn2PbKEqXWL7m/SS7d38xmKZPbzdMGTiXp2Qi7nt3M8AKUDQIJpD8ZimbGsxPUc+d6lo0phE/a5kngRuepWvW40QkfmAkHWjkgpMKvAIhRoe6t5JVkOeqh51j7K9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+ayb5X+; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f4f2868621so11041281fa.0;
-        Thu, 05 Sep 2024 07:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725547903; x=1726152703; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bo/Q+fVB0c2N2S+2tO3u0tNQvOs02ddpFS55PdIBqiM=;
-        b=C+ayb5X+KRqb1Gwy66FBW4pWSgwh9KZ7KYU1HyYeFJzk/e+ZZZ+bYJSJ+G6VNzZqdt
-         y3iXtvKz743077fjJLIc/mQheK3x2tNCN9ietCAkooiLpB3SO8XEOKdYN/lvusbFUCjg
-         ii/j/D8mBhvIVrOOKp7We9F9o5JnvTuqyJTi0VVksHllZHrhTROrbaKwYHVBUUUlJ/Zi
-         zQWf57Q/w+bXtPpiktY5qev/Z0h5KoR15bIX5/813Q/rG7prepkl1jEHKnaz7CKRFa1M
-         I9vZmQW4PaOi5CD8Pd0/A/PdRQ1yDXkRyNI2K7WpSHWxEoo5gHNdE0Nt6oo5dyeG/W+t
-         JTew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725547903; x=1726152703;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bo/Q+fVB0c2N2S+2tO3u0tNQvOs02ddpFS55PdIBqiM=;
-        b=ExIN5Jlf9eJN1bC07RRgRr1dUgVVi2sEKbsyHk/T6ThmevYENWUTa6OpMvQYltFoKz
-         0+AVjlB2CH9PzcZv2pPNJNJoR9+dIh3qDPpmNxjavaE42QHNdabvmudTxNszqwopvFiF
-         a9dZsXtPhz5KDcqzofot8NtzX7rC0SUnkthLQcp2TjUtcJohiBGzh2D+BZDzSzEodj9q
-         w55tydLJWUl+ahVwQ5fggS1VXaA00qqFl4JIIXm+PrzRzIFM/MxJ7lJFRE+kkBZyrllh
-         6fYgoCR8k2HcO0yAgywYjuL1dhpCvYvaWC601OE942LzbLXLv8KJhkXhTv90MaSVT/2A
-         wD/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmKEaQZRbv11cvaJLf/u1HyQD0O87vqAH73vUFALij47USyNX0t4ejoXnwbkzSAvu7V/9gISM23fc=@vger.kernel.org, AJvYcCXQLFU2o0tEYjE7Hr8sdx+24j0f+I69ky2C6+/zNdcpHHFZXZxot5FnY11qdy21tmPKvVDpaWIoWeQ5yAXE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKEDWHN29dwynKzalkZ5vXuFuAyk2YUN5SrJEVGxD2Fi4GBOAB
-	xvuOuXiVFGcM71NNOVomXolmU+izc2hImleb59WIPc/Mf/pIA9qQ
-X-Google-Smtp-Source: AGHT+IGuPSaDOOzl5M61bxO8FKoqKEAItniyjvNvH62n6EZFEByJgMRdkOBGNp3EvBqMEAena5Btxw==
-X-Received: by 2002:a05:651c:2110:b0:2ec:568e:336e with SMTP id 38308e7fff4ca-2f62902e09dmr128043041fa.1.1725547902821;
-        Thu, 05 Sep 2024 07:51:42 -0700 (PDT)
-Received: from [192.168.1.17] (host-87-16-167-153.retail.telecomitalia.it. [87.16.167.153])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc52b376sm1320732a12.7.2024.09.05.07.51.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 07:51:42 -0700 (PDT)
-From: Antonino Maniscalco <antomani103@gmail.com>
-Date: Thu, 05 Sep 2024 16:51:28 +0200
-Subject: [PATCH v3 10/10] Documentation: document adreno preemption
+	s=arc-20240116; t=1725547913; c=relaxed/simple;
+	bh=N0d2mJRWgRXzrbGvKWjRFhDjBODQMq/WvMS8CuDFjWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BL94WDVtXkQ5mMs1WKoUc9uoF/5yxWv6obvemAmBzzAvUdZr8Ho7ncCe7mWqgLJ0wlcoYxMffnLXJGsSWK0sOwE4lrt/5/bLFEQJSt8kSDiTqUZP4YxdKq/GRw1QmJrYrnnHVxJWZaF0l/muoGMguqdcZ9WIoOkHkzT86yhv5DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUDElVvp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA5EC4CEC5;
+	Thu,  5 Sep 2024 14:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725547912;
+	bh=N0d2mJRWgRXzrbGvKWjRFhDjBODQMq/WvMS8CuDFjWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MUDElVvp7iijifLplsp06Oeubx7jv5yvltau1NqV2JpvuKV+eu9iQNQlR2zYe5XkP
+	 HBsYTJL0VvMHyXCo/gnsD2WXkp4Xi6KkWIQPMBsGWKH0rpA06fynXmjS1X08DXDQ98
+	 5eRayCTUDSkT943AojkS2PmvM3QyYISmu0aKRj+Zn4rXe/u5a/OL+whFEA/3Df6Igy
+	 8lHr4EBXX0a09+6/vOPeG0mfkLzFrat1uhToKdMRTWfothIhaBdRZKNkgQp1IAuFmD
+	 9zrpsyY6F/93j0lYDmw+HAFv23L2zX5o/ut0fWaHeO+IzLebC5ku7yN+ZuPUUE5aoQ
+	 BoFpyLebP63cg==
+Date: Thu, 5 Sep 2024 16:51:48 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Jiri Kosina <jikos@kernel.org>, 
+	Marcus Folkesson <marcus.folkesson@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/14] HID: lg: constify fixed up report descriptor
+Message-ID: <66uyx73trgi4m5iybuee5ka4vbulh433o4jpqc4uu4teaflaex@av7xsfwjypy5>
+References: <20240828-hid-const-fixup-2-v1-0-663b9210eb69@weissschuh.net>
+ <20240828-hid-const-fixup-2-v1-13-663b9210eb69@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240905-preemption-a750-t-v3-10-fd947699f7bc@gmail.com>
-References: <20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com>
-In-Reply-To: <20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725547882; l=4842;
- i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
- bh=roRdoUA06OSktfkT3cuEuaM2HtScD0650/8+GaZZFy4=;
- b=QW4juILS2+hUj7OzGRCDv+2zILYSjdYY4WOupFWtFfsuGztTwEVdeQ6Lc1jvJLggSOMn8wLFJ
- TECzDyaNCakCB6Xq8gOJRDKWYLSg2l4XfHWzsG/983yxs/1AVuccCJV
-X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
- pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240828-hid-const-fixup-2-v1-13-663b9210eb69@weissschuh.net>
 
-Add documentation about the preemption feature supported by the msm
-driver.
+As you can see in the b4 reply, I've now applied all of the patches but
+this one. Please see below.
 
-Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
----
- Documentation/gpu/msm-preemption.rst | 98 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+On Aug 28 2024, Thomas Weiﬂschuh wrote:
+> Now that the HID core can handle const report descriptors,
+> constify them where possible.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+>  drivers/hid/hid-lg.c | 31 +++++++++++++++++--------------
+>  1 file changed, 17 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-lg.c b/drivers/hid/hid-lg.c
+> index a9be918e2b5c..c1feeb1dd077 100644
+> --- a/drivers/hid/hid-lg.c
+> +++ b/drivers/hid/hid-lg.c
+> @@ -58,7 +58,7 @@
+>   * These descriptors remove the combined Y axis and instead report
+>   * separate throttle (Y) and brake (RZ).
+>   */
+> -static __u8 df_rdesc_fixed[] = {
+> +static const __u8 df_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),                   */
+>  0x09, 0x04,         /*  Usage (Joystick),                       */
+>  0xA1, 0x01,         /*  Collection (Application),               */
+> @@ -124,7 +124,7 @@ static __u8 df_rdesc_fixed[] = {
+>  0xC0                /*  End Collection                          */
+>  };
+>  
+> -static __u8 dfp_rdesc_fixed[] = {
+> +static const __u8 dfp_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),                   */
+>  0x09, 0x04,         /*  Usage (Joystick),                       */
+>  0xA1, 0x01,         /*  Collection (Application),               */
+> @@ -172,7 +172,7 @@ static __u8 dfp_rdesc_fixed[] = {
+>  0xC0                /*  End Collection                          */
+>  };
+>  
+> -static __u8 fv_rdesc_fixed[] = {
+> +static const __u8 fv_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),                   */
+>  0x09, 0x04,         /*  Usage (Joystick),                       */
+>  0xA1, 0x01,         /*  Collection (Application),               */
+> @@ -239,7 +239,7 @@ static __u8 fv_rdesc_fixed[] = {
+>  0xC0                /*  End Collection                          */
+>  };
+>  
+> -static __u8 momo_rdesc_fixed[] = {
+> +static const __u8 momo_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),               */
+>  0x09, 0x04,         /*  Usage (Joystick),                   */
+>  0xA1, 0x01,         /*  Collection (Application),           */
+> @@ -285,7 +285,7 @@ static __u8 momo_rdesc_fixed[] = {
+>  0xC0                /*  End Collection                      */
+>  };
+>  
+> -static __u8 momo2_rdesc_fixed[] = {
+> +static const __u8 momo2_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),               */
+>  0x09, 0x04,         /*  Usage (Joystick),                   */
+>  0xA1, 0x01,         /*  Collection (Application),           */
+> @@ -333,7 +333,7 @@ static __u8 momo2_rdesc_fixed[] = {
+>  0xC0                /*  End Collection                      */
+>  };
+>  
+> -static __u8 ffg_rdesc_fixed[] = {
+> +static const __u8 ffg_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),               */
+>  0x09, 0x04,         /*  Usage (Joystik),                    */
+>  0xA1, 0x01,         /*  Collection (Application),           */
+> @@ -379,7 +379,7 @@ static __u8 ffg_rdesc_fixed[] = {
+>  0xC0                /*  End Collection                      */
+>  };
+>  
+> -static __u8 fg_rdesc_fixed[] = {
+> +static const __u8 fg_rdesc_fixed[] = {
+>  0x05, 0x01,         /*  Usage Page (Desktop),               */
+>  0x09, 0x04,         /*  Usage (Joystik),                    */
+>  0xA1, 0x01,         /*  Collection (Application),           */
+> @@ -431,6 +431,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		unsigned int *rsize)
+>  {
+>  	struct lg_drv_data *drv_data = hid_get_drvdata(hdev);
+> +	const __u8 *ret = NULL;
 
-diff --git a/Documentation/gpu/msm-preemption.rst b/Documentation/gpu/msm-preemption.rst
-new file mode 100644
-index 000000000000..c1203524da2e
---- /dev/null
-+++ b/Documentation/gpu/msm-preemption.rst
-@@ -0,0 +1,98 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:orphan:
-+
-+=============
-+MSM Preemtion
-+=============
-+
-+Preemption allows Adreno GPUs to switch to an higher priority ring when work is
-+pushed to it, reducing latency for high priority submissions.
-+
-+When preemption is enabled 4 rings are initialized, corresponding to different
-+priority levels. Having multiple rings is purely a software concept as the GPU
-+only has registers to keep track of one graphics ring.
-+The kernel is able to switch which ring is currently being processed by
-+requesting preemption. When certain conditions are met, depending on the
-+priority level, the GPU will save its current state in a series of buffers,
-+then restores state from a similar set of buffers specified by the kernel. It
-+then resumes execution and fires an IRQ to let the kernel know the context
-+switch has completed.
-+
-+This mechanism can be used by the kernel to switch between rings. Whenever a
-+submission occurs the kernel finds the highest priority ring which isn't empty
-+and preempts to it if said ring is not the one being currently executed. This is
-+also done whenever a submission completes to make sure execution resumes on a
-+lower priority ring when a higher priority ring is done.
-+
-+Preemption levels
-+-----------------
-+
-+Preemption can only occur at certain boundaries. The exact conditions can be
-+configured by changing the preemption level, this allows to compromise between
-+latency (ie. the time that passes between when the kernel requests preemption
-+and when the SQE begins saving state) and overhead (the amount of state that
-+needs to be saved).
-+
-+The GPU offers 3 levels:
-+
-+Level 0
-+  Preemption only occurs at the submission level. This requires the least amount
-+  of state to be saved as the execution of userspace submitted IBs is never
-+  interrupted, however it offers very little benefit compared to not enabling
-+  preemption of any kind.
-+
-+Level 1
-+  Preemption occurs at either bin level, if using GMEM rendering, or draw level
-+  in the sysmem rendering case.
-+
-+Level 2
-+  Preemption occurs at draw level.
-+
-+Level 1 is the mode that is used by the msm driver.
-+
-+Additionally the GPU allows to specify a `skip_save_restore` option. This
-+disables the saving and restoring of certain registers which lowers the
-+overhead. When enabling this userspace is expected to set the state that isn't
-+preserved whenever preemption occurs which is done by specifying preamble and
-+postambles. Those are IBs that are executed before and after
-+preemption.
-+
-+Preemption buffers
-+------------------
-+
-+A series of buffers are necessary to store the state of rings while they are not
-+being executed. There are different kinds of preemption records and most of
-+those require one buffer per ring. This is because preemption never occurs
-+between submissions on the same ring, which always run in sequence when the ring
-+is active. This means that only one context per ring is effectively active.
-+
-+SMMU_INFO
-+  This buffer contains info about the current SMMU configuration such as the
-+  ttbr0 register. The SQE firmware isn't actually able to save this record.
-+  As a result SMMU info must be saved manually from the CP to a buffer and the
-+  SMMU record updated with info from said buffer before triggering
-+  preemption.
-+
-+NON_SECURE
-+  This is the main preemption record where most state is saved. It is mostly
-+  opaque to the kernel except for the first few words that must be initialized
-+  by the kernel.
-+
-+SECURE
-+  This saves state related to the GPU's secure mode.
-+
-+NON_PRIV
-+  The intended purpose of this record is unknown. The SQE firmware actually
-+  ignores it and therefore msm doesn't handle it.
-+
-+COUNTER
-+  This record is used to save and restore performance counters.
-+
-+Handling the permissions of those buffers is critical for security. All but the
-+NON_PRIV records need to be inaccessible from userspace, so they must be mapped
-+in the kernel address space with the MSM_BO_MAP_PRIV flag.
-+For example, making the NON_SECURE record accessible from userspace would allow
-+any process to manipulate a saved ring's RPTR which can be used to skip the
-+execution of some packets in a ring and execute user commands with higher
-+privileges.
+Not really happy about this, usually "ret" is an int, and this makes
+things slightly harder to read.
 
--- 
-2.46.0
+>  
+>  	if ((drv_data->quirks & LG_RDESC) && *rsize >= 91 && rdesc[83] == 0x26 &&
+>  			rdesc[84] == 0x8c && rdesc[85] == 0x02) {
+> @@ -453,7 +454,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == FG_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Wingman Formula GP report descriptor\n");
+> -			rdesc = fg_rdesc_fixed;
+> +			ret = fg_rdesc_fixed;
 
+can't you just return fg_rdesc_fixed after setting *rsize, like you did
+in the other patches?
+
+(same for all of the other branches)
+
+>  			*rsize = sizeof(fg_rdesc_fixed);
+>  		} else {
+>  			hid_info(hdev,
+> @@ -466,7 +467,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == FFG_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Wingman Formula Force GP report descriptor\n");
+> -			rdesc = ffg_rdesc_fixed;
+> +			ret = ffg_rdesc_fixed;
+>  			*rsize = sizeof(ffg_rdesc_fixed);
+>  		}
+>  		break;
+> @@ -476,7 +477,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == DF_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Driving Force report descriptor\n");
+> -			rdesc = df_rdesc_fixed;
+> +			ret = df_rdesc_fixed;
+>  			*rsize = sizeof(df_rdesc_fixed);
+>  		}
+>  		break;
+> @@ -485,7 +486,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == MOMO_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Momo Force (Red) report descriptor\n");
+> -			rdesc = momo_rdesc_fixed;
+> +			ret = momo_rdesc_fixed;
+>  			*rsize = sizeof(momo_rdesc_fixed);
+>  		}
+>  		break;
+> @@ -494,7 +495,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == MOMO2_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Momo Racing Force (Black) report descriptor\n");
+> -			rdesc = momo2_rdesc_fixed;
+> +			ret = momo2_rdesc_fixed;
+>  			*rsize = sizeof(momo2_rdesc_fixed);
+>  		}
+>  		break;
+> @@ -503,7 +504,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == FV_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Formula Vibration report descriptor\n");
+> -			rdesc = fv_rdesc_fixed;
+> +			ret = fv_rdesc_fixed;
+>  			*rsize = sizeof(fv_rdesc_fixed);
+>  		}
+>  		break;
+> @@ -512,7 +513,7 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		if (*rsize == DFP_RDESC_ORIG_SIZE) {
+>  			hid_info(hdev,
+>  				"fixing up Logitech Driving Force Pro report descriptor\n");
+> -			rdesc = dfp_rdesc_fixed;
+> +			ret = dfp_rdesc_fixed;
+>  			*rsize = sizeof(dfp_rdesc_fixed);
+>  		}
+>  		break;
+> @@ -529,6 +530,8 @@ static const __u8 *lg_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		break;
+>  	}
+>  
+> +	if (ret)
+> +		return ret;
+>  	return rdesc;
+>  }
+>  
+> 
+> -- 
+> 2.46.0
+> 
+
+Cheers,
+Benjamin
 
