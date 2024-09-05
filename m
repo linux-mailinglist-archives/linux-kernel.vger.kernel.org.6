@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-316556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AFF96D132
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF5C96D135
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBFDB1C21906
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79981F23CAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98123194138;
-	Thu,  5 Sep 2024 08:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7841194152;
+	Thu,  5 Sep 2024 08:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nyZsjO4J"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0vuRPbqp"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B181925B0
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80D0193430
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523457; cv=none; b=lRIyNiaShFoNLjNWRyh34eHC53CEZ/kXVmAz2EVHXxC+ShjLHUPLqviPkuH/BMBLYo2eid3I35mN2VroN4FmXU4xlebSv2YZ190pMwtfe4Mj0q/zedu7pJWu0SD8NaN7ORMmhI1ovo5ldVEvMV4nwciUesddXoGAD2/ht5EPDqQ=
+	t=1725523469; cv=none; b=fGC63CeNcEVMdAcQHpW1Pg1xZuUWW4HRPcrCCfyv6nyRQ6l9vD6zrarFXcOZ0Aht1wUcfoSxKfgIUCz5YdUtaA3b4V0WixDArxzJ5sIvVV3rb+w8AMQPBrA12/M/3c0sMZyHkVi8mOdhkbJ1ukTk66kuYHJJKklbNZ2SLj/1V+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523457; c=relaxed/simple;
-	bh=2pLfpYslB2ZuYauJSQQHIlJZPnMxW6xOF3LASls58OE=;
+	s=arc-20240116; t=1725523469; c=relaxed/simple;
+	bh=nhjzPhbZdOIwhS4V+wg8CJkF4W2mZ8bF0vqcfEg02aw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CIy58/iBy0p4PiPAJRwKbHQ1Z+MGl/+o32791Pcexz6JLIOJlG2UjS7pESfBanEItFCrUPCUpxqTcu7RjUGajPtYSUD3R/KDCm8NsmRmtM4g40aHW90PrRUqHuAfUGUfbWewGyveHM8YhPd8VE2oBcsALh/lopzRQj0cbh5L/kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nyZsjO4J; arc=none smtp.client-ip=209.85.221.54
+	 To:Cc:Content-Type; b=pOsRfx5/WIS9uMS5LMYPv+Fg2RiXvuhvJLOkmWSGCqN7y+kN92hhq/UreHeZd8J7QXqGz7V3rTK5++wexoUoKoJ+UzatpZk8Ny6VaZ8b2fTO6aDtacVPllJ5/kHVWMII6c11hp15D4ORxJXj8lCDp4B7lX8rIHuxcO4d/CkYfI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0vuRPbqp; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c3400367so316307f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:04:15 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53567b4c3f4so407543e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725523454; x=1726128254; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725523466; x=1726128266; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2pLfpYslB2ZuYauJSQQHIlJZPnMxW6xOF3LASls58OE=;
-        b=nyZsjO4JciQ53pQq3ygNaUBzN9d1JdOpmSukInG++EadQDE6RmK/980V5nRQPDJBeg
-         XwjW2MURW5D/OOmqAdmPyHmpzusMB3l3Wgx16kVA2EemHdqOFwoT4TKTBqRraU+nhufS
-         I1WmtkrcfBgsylIX3DRfxH284O+lZAv48+OqBMDp7I3HyWwSdlzdd9eWOQjgFj0VEDjV
-         BrliXH3Q/YZLGB3kAGIDWI+nM5TCYqrQHCLd+7vUfxinDiavsQXgMhtsAJoOA/vhJpJZ
-         HJuIVdYdSymn3jrRktkf9i6W170c0+NctnEP2Sb1cnwLI5hK7kXMSUG2i9kEXTmJQGfw
-         0YQw==
+        bh=azQkhYEOWQVBIINHFNC61+ioeVjCS9tbpuO3iLtCThM=;
+        b=0vuRPbqpbhkswQRteJAQaG8BjgvALoFw4TV9SgNBFF6MB8HdKTno6oOH2tGv0vHGRQ
+         Ddptj2w2PO2foezkY0hjwMZVXLM+JqI96bMVSwRqYg4s1xXz5RyhXLW/uJgxYQH+aMyV
+         x4fKcPE3EfcTc/45YEPAO0fwuI67R7mA5dppDTqkjKKHKiCMBBwEXxPEU6XGOfF+20aP
+         LyEmLKPP3PCquyOhmdWENvRsYX6kksNMstotKXAyt69u5V20O8siE8EwO4KP4f4VMOdY
+         WTnPU/y9onp5ONDlfGnN6qnckqYwC+2MHhNGHCweMDBNruubC7H/03Je8uunuqO02ATv
+         mcbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523454; x=1726128254;
+        d=1e100.net; s=20230601; t=1725523466; x=1726128266;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2pLfpYslB2ZuYauJSQQHIlJZPnMxW6xOF3LASls58OE=;
-        b=aTY64rIrZv25/pnVEnv9ordgNok71QMGQVozHlnZqC45Euy80kJabvP70psYOiudxf
-         kf1Q+NjqiEfJ5XQWrf7h9dsY1sHVqkMJOsoC0w/ell9pPtm+Qgp1+dFsE8wCZfXS4+1T
-         pm2aObQakswMOgFmxmg5VBNAi+tPHwMzwagj3ZVG/Q7CemB0BDwwJlaug2nX1YhEzEdN
-         +oT+Ndsxkb/lePIyDJLgknCpOk0+KbK3pStglfLb+yUE1/Pe6WH3+6DIPtCFkUm9RLb4
-         MdD4kWMLPSfHPgrKErb3NflkZxkKD4hfKZEp4dwkaOgdVbdg/r3f0GOSVbFYP/aqAv3D
-         tx0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXmwgtNvLRs3HDKrwSCw5AxwPzzRaHqhgSxZNtIpxbztu5YZ4DvGe10Op2twU4YGPjXVz2bBdtA16rGuuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyetlF7k+U68QL2/4sSuXcU+4GYSpCpZ7E730asapRQFVeaw7YC
-	5d4nrKPs5V7j989e06IE0HAg1fcFUkdddtMsz+dlx1/g9TQY/Qi+/8CEGX3/lstNsPjM2mp07Oy
-	JyFS+VPk9qrTPfS6C4nO36Cf1YRv0FxnhEgDL
-X-Google-Smtp-Source: AGHT+IFXkQuUA6GvCxWiY5ZV2+dZ7ObdZQnAmrohv7u/9rzMrCvrlFR1MGRiX+3aUn2jzxx2iuNDgsCy59mtYNh8lQA=
-X-Received: by 2002:a05:6000:c8e:b0:367:9903:a91 with SMTP id
- ffacd0b85a97d-3749b526808mr19134357f8f.11.1725523453475; Thu, 05 Sep 2024
- 01:04:13 -0700 (PDT)
+        bh=azQkhYEOWQVBIINHFNC61+ioeVjCS9tbpuO3iLtCThM=;
+        b=JEVv9at9SBstO5wAEwSLnDlrJ1UWbOImm911NXp3RVRsZCCgfBEWF8hhHE2m5TC/nY
+         Uxq9zYmLQ/ejp8pd5tVQR+zaEvzxFst1M6jRQit/xZTek97jHWDkQysz4EOmV/dsNTA3
+         GoGifsUc5EWWcjPmX3nP3V95R+2gpJoWS26DJhd/uHBgmimWQldc64A9F2Q2l/O9J9/4
+         WmFmme2ORqaP7KZHvFc/ErzqgCR3Yv8G9OzUBQJJnUx97RurKcqwM/c5fmJ4GTHBxqbq
+         Fu89M7C2ahU9F13l1jRvdZ5/WSaNkJ75WwTBii3H1dkpaJ2Vb6dTMQdQvVuHuGO3tOHm
+         X8fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMvbfen3rsW0ikJYPRkgQS98a56kAhZ4ZFyxkVIx8vTDs/mZf1WAwYIdjvVZG6aBOkggiiCPwe0mgvmcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+W102zaMbpq3hUD3XknAlhqSGvPrqJ5yMPt+D8zoVmFb+X+Kt
+	dtI26ADzLzvKntDTaoXLC9iVPpOsvuLFp0J1xbh8os8Er9rWm3WvNR9jcgKROk6XxWSuoL1/64G
+	1c/wOwPC+onz9vMRiXYUNQD6s/DSsH7uSzvPr
+X-Google-Smtp-Source: AGHT+IHR8HiUyJmdstJJcxGU2MOFKXxOOMDEFMh2vAfGxn+gzsWBtmLSd6+8Sol6Rv06L+OF6VRRSxcZX4WXteQVlew=
+X-Received: by 2002:a05:6512:3b2b:b0:533:71f:3a53 with SMTP id
+ 2adb3069b0e04-53546b053admr17779245e87.19.1725523464706; Thu, 05 Sep 2024
+ 01:04:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-5-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-5-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Sep 2024 10:04:01 +0200
-Message-ID: <CAH5fLgjOA7pNtQYTuRy5WAbxJd+uDv2Eh4Z3u6QxSJvd-xcBNg@mail.gmail.com>
-Subject: Re: [PATCH 04/19] rust: enable `clippy::undocumented_unsafe_blocks` lint
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <00000000000083b05a06214c9ddc@google.com> <CANn89iKt9Z7rOecB_6SgcqHOMOqhAen6_+eE0=Sc9873rrqXzg@mail.gmail.com>
+ <f6443f4c-c3ab-478e-ba1d-aedecdcb353f@oracle.com> <13a58eb5-d756-46a3-81f0-aba96184b266@oracle.com>
+In-Reply-To: <13a58eb5-d756-46a3-81f0-aba96184b266@oracle.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 5 Sep 2024 10:04:10 +0200
+Message-ID: <CANn89iLfdNpdibU=kWZKgHPAeMSpekePovmBNbaox4d=Zyr+OA@mail.gmail.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in
+ unix_stream_read_actor (2)
+To: Shoaib Rao <rao.shoaib@oracle.com>
+Cc: syzbot <syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>, 
+	davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 10:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Thu, Sep 5, 2024 at 9:35=E2=80=AFAM Shoaib Rao <rao.shoaib@oracle.com> w=
+rote:
 >
-> Checking that we are not missing any `// SAFETY` comments in our `unsafe`
-> blocks is something we have wanted to do for a long time, as well as
-> cleaning up the remaining cases that were not documented [1].
->
-> Back when Rust for Linux started, this was something that could have
-> been done via a script, like Rust's `tidy`. Soon after, in Rust 1.58.0,
-> Clippy implemented the `undocumented_unsafe_blocks` lint [2].
->
-> Even though the lint has a few false positives, e.g. in some cases where
-> attributes appear between the comment and the `unsafe` block [3], there
-> are workarounds and the lint seems quite usable already.
->
-> Thus enable the lint now.
->
-> We still have a few cases to clean up, so just allow those for the moment
-> by writing a `TODO` comment -- some of those may be good candidates for
-> new contributors.
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/351 [1]
-> Link: https://rust-lang.github.io/rust-clippy/master/#/undocumented_unsaf=
-e_blocks [2]
-> Link: https://github.com/rust-lang/rust-clippy/issues/13189 [3]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> >
+> Hi All,
+>
+> I am not able to reproduce the issue. I have run the C program at least
+> 100 times in a loop. In the I do get an EFAULT, not sure if that is
+> intentional or not but no panic. Should I be doing something
+> differently? The kernel version I am using is
+> v6.11-rc6-70-gc763c4339688. Later I can try with the exact version.
+
+
+Have you selected ASAN in your kernel build ?
+
+CONFIG_KASAN=3Dy
+CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=3Dy
+CONFIG_KASAN_GENERIC=3Dy
+CONFIG_KASAN_INLINE=3Dy
+CONFIG_KASAN_STACK=3Dy
+CONFIG_KASAN_VMALLOC=3Dy
+
+>
+> [rshoaib@turbo-2 debug_pnic]$ gcc cause_panic.c -o panic_sys
+> [rshoaib@turbo-2 debug_pnic]$ strace -f ./panic_sys
+> execve("./panic_sys", ["./panic_sys"], 0x7ffe7d271d38 /* 63 vars */) =3D =
+0
+> brk(NULL)                               =3D 0x18104000
 
