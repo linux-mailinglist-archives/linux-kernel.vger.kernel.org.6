@@ -1,111 +1,155 @@
-Return-Path: <linux-kernel+bounces-316853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E2796D63A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:38:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E8A96D579
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EEEA1F22038
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:38:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 648CAB2314A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6D1957FC;
-	Thu,  5 Sep 2024 10:37:48 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A45D197A92;
+	Thu,  5 Sep 2024 10:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="SBXP+IbJ"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325A91990C2;
-	Thu,  5 Sep 2024 10:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDD81494DB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725532667; cv=none; b=DIp7myBjxvqoQ3jht+XQAjoAc33SpNVu1xN9nmiaQAUcDukkMLaFZ0fJ3MRa2Pxim74x0AJ3IsTTixgC+a8iQkXrXpTRJz/Fx4oYpR7/rTqhtGuX6UT76u3sCWVtmfmal4OkhfZxIHb7KllrccJBfZRGVxFirN/c7ygslPXn68o=
+	t=1725530769; cv=none; b=Im6jo7pOgVxW+EqvM8YBUialDM35j2naTqiinL6qtRu+3iIaQOgBXdfs+2yTmf2jz5uWl3qLF+TP4vih59FdHhqaGc7endIcSiyKxvZEwA6J3HEuuVm1F4+XiOypV+klw6PeVtSb22LjxDiTr6gNGJaSQXr3KN4g0arMwUYWEjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725532667; c=relaxed/simple;
-	bh=UKdFntwj2tZYLkndUiE61WGUx3Ut1uVqOBsBQZ/zs+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R0aiGjMxb2cX17P+67QsNGUW5hw2robn2c64jbn+SdrG9O7UBpszfPB5xVjxJ6RlDdQOcWfAGBgT6hQYLofAi5k1qZ4wS7u26wwHavU1BCQ6+ZxOtnz7TDcKVVOf88NWdF1KF5i2tHBpginrsVEdIJFCTRPHfbeOC5YXaCU4uqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [119.122.212.181])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id CD08A7E01C6;
-	Thu,  5 Sep 2024 18:01:03 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: bigfoot@classfun.cn
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dsimic@manjaro.org,
-	heiko@sntech.de,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: add dts for Ariaboard Photonicat RK3568
-Date: Thu,  5 Sep 2024 18:01:00 +0800
-Message-Id: <20240905100100.348444-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <010a9c5e-205b-40b9-9655-9e168b2def97@classfun.cn>
-References: <010a9c5e-205b-40b9-9655-9e168b2def97@classfun.cn>
+	s=arc-20240116; t=1725530769; c=relaxed/simple;
+	bh=ZlbdctOsUdrPdNxFA4u0cAuMT1cQ038QEqSiHn+sz3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2hZYRLFThpVYiUeyYwgqKDXxHjMiqWeoo9OxbmyJuXbyQZ0NgZu+QVFoWW0DPerow3ErwKMBGMi5dxUYFwUehJ4Tr7cYlDLYYe6xY9PSPnlou3Me0o8zquO8eMBkLHlUbcKntywDMzekNjtT762HALctmvlZ4yGt3ln6RkmJcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=SBXP+IbJ; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a7fd79ff63so37115685a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1725530764; x=1726135564; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FssOZMkL4EI9Dg7029SIMlcBVh5AI88igqnT1wzgpi8=;
+        b=SBXP+IbJUp6CeEohBjE1ADW+TQEp2OuN/oPdNWChJ268u1dSaav4VMQSk0BL3AZZ7N
+         nIGB/tGqnb/BGrILayOetq7akoS0jMahQpVVHvMsHp8GNbJfeNERxIYw09heO8mQaT6q
+         FuFcQ2O/8OuRFPzo4K5NMfLM+heTLwJX1GIX7lzWSC9yGFuJ+P8srZvjLNlZS2lIdNEY
+         CjrubTRDeP/tQpuy0bikP6hXja06d4lzv7DLQoFvDLC/9pFApnc3SRGBnvr4vh/93OZL
+         jTN3eE2/x46L0diAOesVpe19QtBSHex6gOjTl4hX1fGtCv5/joK3VUpOS7m96CmYy21F
+         wZBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725530764; x=1726135564;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FssOZMkL4EI9Dg7029SIMlcBVh5AI88igqnT1wzgpi8=;
+        b=o82hd4HeN7RahHrakisL+oI6jf3fypRwOdCN+nGpsBs79Aj8gDze3vgsZgOhkcGtDu
+         sOwcKIfoMDvE5TXP+2z+qnE0G+ia7xGWV8zdsSTbDrC3LT9jZCLP5QtRSt3alQnUHa8c
+         PMarSe/h7qtcBAZik1Nnrcse0Nu0nbMLapruUPfYA/PzNhvbhAZpfZc4tWPW8xJNrvEr
+         oGaw2IHhBp0TV/dsJqxDAvif9IC0VrV1/j1QmyyKoD1UNX3/YwVVQUqMBdGAYQE2ECis
+         gNlYmwPUzW4WAlxKeTTMgxGU7a20lqMLZn/9UwBv2mva950IvvBPtYPfP+Zuq+xk6nGT
+         hhPA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0JYrxcxYA+sQvn1jegCvJM+GnO81wWPscRDESclWZu7JDDTgWN6v77w3gdHu3zFWz2iPZOv2qYoeIX5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk+xg+Z+E3UE9LJPjK/Q/g6ZR8P/gMnS84O9m47y4v+mvgJVoU
+	UBXIZo3QNjIL++w5CtTgD4b6dTvo3dVF0+kds5+unU2mTE0Z2K05ge7RBT20Kik=
+X-Google-Smtp-Source: AGHT+IFqlUnb0R4Tnf7fLDfR9u43Xt0rwLhVu8SYQjcg8VJmKtyiXjLAvjhl0Q1+nPJDIOI+VCzqpQ==
+X-Received: by 2002:a05:6214:5b09:b0:6c5:1707:7159 with SMTP id 6a1803df08f44-6c517077d53mr70665036d6.33.1725530764171;
+        Thu, 05 Sep 2024 03:06:04 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c52019407fsm6350906d6.0.2024.09.05.03.06.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 03:06:03 -0700 (PDT)
+Date: Thu, 5 Sep 2024 06:05:57 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>, Nhat Pham <nphamcs@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Chris Down <chris@chrisdown.name>, loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: z3fold: deprecate CONFIG_Z3FOLD
+Message-ID: <20240905100557.GA2748692@cmpxchg.org>
+References: <20240904233343.933462-1-yosryahmed@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSExCVkNJGExPSk8dTU5IT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSVVKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSEpMTElVSktLVU
-	pCS0tZBg++
-X-HM-Tid: 0a91c1a15f7303a2kunmcd08a7e01c6
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PEk6ASo5DDIxSjopQzQMFxVN
-	GEwKCS9VSlVKTElOTkhLT01PTk5LVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpJVUpDSllXWQgBWUFJSU5DNwY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904233343.933462-1-yosryahmed@google.com>
 
-Hi Junhao,
+On Wed, Sep 04, 2024 at 11:33:43PM +0000, Yosry Ahmed wrote:
+> The z3fold compressed pages allocator is rarely used, most users use
+> zsmalloc. The only disadvantage of zsmalloc in comparison is the
+> dependency on MMU, and zbud is a more common option for !MMU as it was
+> the default zswap allocator for a long time.
+> 
+> Historically, zsmalloc had worse latency than zbud and z3fold but
+> offered better memory savings. This is no longer the case as shown by
+> a simple recent analysis [1]. That analysis showed that z3fold does not
+> have any advantage over zsmalloc or zbud considering both performance
+> and memory usage. In a kernel build test on tmpfs in a limited cgroup,
+> z3fold took 3% more time and used 1.8% more memory. The latency of
+> zswap_load() was 7% higher, and that of zswap_store() was 10% higher.
+> Zsmalloc is better in all metrics.
+> 
+> Moreover, z3fold apparently has latent bugs, which was made noticeable
+> by a recent soft lockup bug report with z3fold [2]. Switching to
+> zsmalloc not only fixed the problem, but also reduced the swap usage
+> from 6~8G to 1~2G. Other users have also reported being bitten by
+> mistakenly enabling z3fold.
+> 
+> Other than hurting users, z3fold is repeatedly causing wasted
+> engineering effort. Apart from investigating the above bug, it came up
+> in multiple development discussions (e.g. [3]) as something we need to
+> handle, when there aren't any legit users (at least not intentionally).
+> 
+> The natural course of action is to deprecate z3fold, and remove in a few
+> cycles if no objections are raised from active users. Next on the list
+> should be zbud, as it offers marginal latency gains at the cost of huge
+> memory waste when compared to zsmalloc. That one will need to wait until
+> zsmalloc does not depend on MMU.
+> 
+> Rename the user-visible config option from CONFIG_Z3FOLD to
+> CONFIG_Z3FOLD_DEPRECATED so that users with CONFIG_Z3FOLD=y get a new
+> prompt with explanation during make oldconfig. Also, remove
+> CONFIG_Z3FOLD=y from defconfigs.
+> 
+> [1]https://lore.kernel.org/lkml/CAJD7tkbRF6od-2x_L8-A1QL3=2Ww13sCj4S3i4bNndqF+3+_Vg@mail.gmail.com/
+> [2]https://lore.kernel.org/lkml/EF0ABD3E-A239-4111-A8AB-5C442E759CF3@gmail.com/
+> [3]https://lore.kernel.org/lkml/CAJD7tkbnmeVugfunffSovJf9FAgy9rhBVt_tx=nxUveLUfqVsA@mail.gmail.com/
+> 
+> Acked-by: Chris Down <chris@chrisdown.name>
+> Acked-by: Nhat Pham <nphamcs@gmail.com>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
->>> +	vcc5v0_usb_modem: regulator-5v0-vcc-usb-modem {
->> 
->> Are you sure this regulator is 5v?
->> 
->
-> It should actually be 3.3V, I will fix it and rename
-> to vcc3v3_usb_modem
+zsmalloc's CONFIG_MMU requirement was a concern in the past, but
+z3fold appears so bitrotted at this point that it's simply not a
+usable option anymore.
 
-I prefer vcc3v3_rf or vcc3v3_ngff,
-this is closer to the schematics.
+> I think it should actually be fine to remove z3fold without deprecating
+> it first, but I am doing the due diligence.
 
->>> +	pinctrl-names = "default";
->>> +	pinctrl-0 = <&pcie30x2m1_pins>;
->> 
->> These are actually pcie30x1m0_pins.
->
-> pcie30x1m0_pins seems to conflict with sdmmc0,
-> I changed it to pcie30x1m1_pins
+Yeah, you never know for sure if users exist. Deprecating it for a few
+cycles is the safer option.
 
-This is obviously incorrect. I didn't notice that
-your pinctrl for sdmmc0 is wrong.
-(Because the cd pin are different)
-The sdmmc0 node should be like this:
-
-&sdmmc0 {
-	bus-width = <4>;
-	cap-sd-highspeed;
-	cd-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_LOW>;
-	disable-wp;
-	no-1-8-v;
-	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd>;
-	vmmc-supply = <&vcc3v3_sd>;
-	vqmmc-supply = <&vcc_3v3>;
-	status = "okay";
-};
-
--- 
-2.25.1
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
