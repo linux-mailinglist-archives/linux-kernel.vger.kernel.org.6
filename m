@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-317183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0204A96DA93
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:44:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF1596DA99
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BCA1C210AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:43:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0F2284651
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5518419D88B;
-	Thu,  5 Sep 2024 13:43:53 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307FB19D8A9;
+	Thu,  5 Sep 2024 13:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIVMffKc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F44619D081;
-	Thu,  5 Sep 2024 13:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9B419925B;
+	Thu,  5 Sep 2024 13:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725543833; cv=none; b=Rc1xDr1EP5QyC4syTkC1uEz1Ti63+ICO5h49ARPj3rABmjeU1c7bm547akPXLpF7QJNF8sWdqaVhU9qapRNulizM985rqXFxcEDpuJDD8bawUTrR8gign033CVWx1DFpyAlyTgu+JludpbIL9IAc67opzpcva6+qoFX/8E7ob/A=
+	t=1725543872; cv=none; b=ZeYXJW6NXZ1UyNZFWvg9wzEDD8xCV9AkgMLBaE4M7jJI6ZKcDp6Rs0snKV6I7qHmx9/veNUVsuh0OOBuMI9uTVOb4mtw9kh7n46wx9qDzD6AW4Oxmd8+1McEAXgRwdkGpfjrCsvBXtfkcN0AQESrx6Xy067WD5JBhAiq7ccHzMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725543833; c=relaxed/simple;
-	bh=PkNt6kHkJvTmmkhz7Ij2z36xJivzgPBWs53QH8fsNcc=;
+	s=arc-20240116; t=1725543872; c=relaxed/simple;
+	bh=b9acX5IhkohSbskqXXvGeItLmD2/cfBjvS2Wfhcu7XM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBedVoxSN3eJroOKIZxu3FEl6clsUd8km47gq24KdJuk6xygaJVDG39bNMFH1YIl7TgZWNtcyY4bjDA5PtkuS28+47yhgrgqhKlFzKrvm280T06UQQUt8SeOSrs7XV9tGKDlkcQiQZryXNBwhUFKnn5yBKFvpGF8tfRxD9q8ehE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 51F951C009D; Thu,  5 Sep 2024 15:43:43 +0200 (CEST)
-Date: Thu, 5 Sep 2024 15:43:42 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/184] 6.10.9-rc1 review
-Message-ID: <Ztm1jiYCcv8cUEwG@duo.ucw.cz>
-References: <20240905093732.239411633@linuxfoundation.org>
- <CA+G9fYsppY-GyoCFFbAu1q7PdynMLKn024J3CenbN12eefaDwA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwLj1OPqk+p8eJugqALldeKyexpH2ncpwjc72/+LNZV82fgA2WBPj0CnOc+sqMzpR7NOM4VJGlPDTBsoNMR8GspOVfzDIcCMKToJ/Iuh5XVDg45oBAnmFnBX1mWgnXVEr/LjVttG38Z+VLORamWGqhHVXX7xmgIOt2pTI9quXe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIVMffKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2709C4CEC3;
+	Thu,  5 Sep 2024 13:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725543870;
+	bh=b9acX5IhkohSbskqXXvGeItLmD2/cfBjvS2Wfhcu7XM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uIVMffKcqsMxDOvKmpQ/o52EIXtFaMD2p2GliETZD9N0Dk4ATVa7h8aY7R3arCYMp
+	 6PEOjR1bq/MdcLyU9jcyTwzMWMRPlsX+J/UIMUYK7RKvPwFssxhdY4iVx2DY4c0Z7s
+	 uue4s4wk1gtXDdxkJet5ojFq8gd9VObkCdj0dTyHH57NfvWZ5V2GcbYjNN4Zn+06uQ
+	 EzMbC3xKlj7V45GE7t/TPviuOx7NkOFlIil6D3lPT+VE0ZjrR6uPchXtQ0cvPHDUyH
+	 wdIw6zQPG6/KSBHdFcAAp18fvvQcsOIsAXX2GSUbcoLchhW8ng4EhXQUVAUZ21rsoH
+	 CzGYdGtYtvYfQ==
+Date: Thu, 5 Sep 2024 08:44:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	Dinh Nguyen <dinguyen@kernel.org>
+Subject: Re: [PATCH 02/15] kbuild: split device tree build rules into
+ scripts/Makefile.dtbs
+Message-ID: <20240905134428.GA1517132-robh@kernel.org>
+References: <20240904234803.698424-1-masahiroy@kernel.org>
+ <20240904234803.698424-3-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yE2BAdk9sXh2yg0j"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsppY-GyoCFFbAu1q7PdynMLKn024J3CenbN12eefaDwA@mail.gmail.com>
-
-
---yE2BAdk9sXh2yg0j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240904234803.698424-3-masahiroy@kernel.org>
 
-Hi!
+On Thu, Sep 05, 2024 at 08:47:38AM +0900, Masahiro Yamada wrote:
+> scripts/Makefile.lib is included not only from scripts/Makefile.build
+> but also from scripts/Makefile.{modfinal,package,vmlinux,vmlinux_o},
+> where DT build rules are not required.
+> 
+> Split the DT build rules out to scripts/Makefile.dtbs, and include it
+> only when necessary.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  drivers/of/fdt.c       |   2 +-
+>  drivers/of/unittest.c  |   4 +-
+>  scripts/Makefile.build |  25 +++-----
+>  scripts/Makefile.dtbs  | 142 +++++++++++++++++++++++++++++++++++++++++
+>  scripts/Makefile.lib   | 115 ---------------------------------
+>  5 files changed, 153 insertions(+), 135 deletions(-)
+>  create mode 100644 scripts/Makefile.dtbs
 
-> > This is the start of the stable review cycle for the 6.10.9 release.
-> > There are 184 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 07 Sep 2024 09:36:50 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patc=
-h-6.10.9-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-6.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->=20
-> The following build errors noticed on arm64 on
-> stable-rc linux.6.6.y and linux.6.10.y
->=20
-> drivers/ufs/host/ufs-qcom.c: In function 'ufs_qcom_advertise_quirks':
-> drivers/ufs/host/ufs-qcom.c:862:32: error:
-> 'UFSHCD_QUIRK_BROKEN_LSDBS_CAP' undeclared (first use in this
-> function); did you mean 'UFSHCD_QUIRK_BROKEN_UIC_CMD'?
->   862 |                 hba->quirks |=3D UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
->       |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                                UFSHCD_QUIRK_BROKEN_UIC_CMD
->=20
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-We see that one, too, on 6.10 and 6.6. 6.1 does not seem to have this
-problem.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---yE2BAdk9sXh2yg0j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZtm1jgAKCRAw5/Bqldv6
-8l42AKCPzC7rb972sEduGGeEaN+8NDsSgQCgqev5wrwNyTkvtRKHLa1s7oHPu5s=
-=OwmN
------END PGP SIGNATURE-----
-
---yE2BAdk9sXh2yg0j--
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
