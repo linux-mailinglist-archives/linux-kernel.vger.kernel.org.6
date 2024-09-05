@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-316625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F2696D214
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:27:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCCB096D248
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12DD41C22F5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DDEAB216B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787931946B9;
-	Thu,  5 Sep 2024 08:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808CC1953B9;
+	Thu,  5 Sep 2024 08:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJ2naRM5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="QZizFzOc"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD81B17BEC3;
-	Thu,  5 Sep 2024 08:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEA7194ACF
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524850; cv=none; b=HK8lwFLFRI/qLZJXi4VAtgDsdW0Vi0teiKBPNMpR9arAM/6FpTxmy0z07J5A81NOMHfw49m5eSrKXRTb2ukj5ghn0UGYtOC5luNu7R1ea+y8bzTROJTwg1W3F5WFm33viknxWOLc0q3ljHehOBgB7bG6Xf/9Un1SK0pXQ/qinaI=
+	t=1725525393; cv=none; b=t2mqiEpVO8e7T+oJylP8Fs+wPbEZH2FhakByFuSRuAIWZRxnpn+ec0Q7Oz4WeW2JeOFhMdmBkTmVpNkIplYpoNF5EC2Dj7n0CKtQUBWZ1bqGy0R2FRFZPvYkPcuLfVsWjdlgGeIU2SPFLLrRJwmK+hWQbN/NqB61Yq4l3YU09tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524850; c=relaxed/simple;
-	bh=mDRmlYv0tDeprnoX96ok+o80PS3A7XkapTYPBwOYLS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RsBLqKIWqD2V5BxEDCa1JT6K5vSPSdxT74t/QfdyfBYAgIzaI5LGRjwWkDhCi97qLMFvw5SzGiSOEqzbyuvG/Nfhob7iJqkYtUy3LU8DC2XvcjM8/CVg42jiwci/5bTMkBQvccNH1fhSd62gTLVa88MDztBJPEu1eVGE8BFURSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJ2naRM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0D2C4CEC3;
-	Thu,  5 Sep 2024 08:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725524850;
-	bh=mDRmlYv0tDeprnoX96ok+o80PS3A7XkapTYPBwOYLS8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AJ2naRM5y5nhVllzUKsnj+d1cOJcJ2+1uOoeYIVsGvYmBiUoZrwRJDORjzaQ6xgH6
-	 lZsbZ02QTPQMaNTyt6W7YK1OXChTJThV+yrrNqCZB9ehV0VdwRK6HAK/mr+4RGkmMg
-	 fUzIFzYABlktxdrpJaNvRPTnS36o2XOJotVZIaIG+O42Sg78mm4XzIYs1PMjUTPuAk
-	 6dNrSRJR0p7mKLBxjQ0tqDwNIyNjJGXRDBX8dnryaQq0P8M4VSy1KAbFIxjFu57bfh
-	 SVk9e+5mm3o433fIVap/8gklg/2zhdZCxx5DpvU3klz4Ts4cF6T5XDkRNcJiQHsuxT
-	 /ZdqNwYGTAsgA==
-Message-ID: <78f8469c-9ea9-4cfc-a601-f3e861b73258@kernel.org>
-Date: Thu, 5 Sep 2024 10:27:24 +0200
+	s=arc-20240116; t=1725525393; c=relaxed/simple;
+	bh=gVM0XX9Umwe02JqDTo37mjuy1LRAybBpAVyRtLijO0E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GvAlUUUKSxmLwWD9ZimmKg+RdAhgSvTQAPSnBNIDa/WZTdbYUzMOlg3OAAnxnW4VrCg6igB14Qvf9xK7aWlfleCAmqlv+jP9O/KfChgidcsdRUEeW5KUul6OxZj1uAWZ3e4HgBhjkpzyMIco1Tx8nfZcr32VrGP7z6nuF392iTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=QZizFzOc; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1725524909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QGbYTu2hqsFggew3uw7+862rMPLb1SOuJtmtRUbdkcQ=;
+	b=QZizFzOcelRH+iBInyBr3yjcET0dYugZ0HXQiTXga278uMJ83t9l5ZWHMqzGIfNmmm8ZgI
+	4ZzUaZ8pByTw0FYX9ReO40DywXxUrutj0NaWHV2KfoxJfh/+bQcFIRqtRuDe7RhV7IWcK1
+	Xl2Nst472A8tQ6oy3C6eSdLD0qxFJiQygaOU8ttWJktgfR4pO7F7MmG8sGovVaMRxR5snS
+	1DXOZjFaTNdd8rCNKKAY705oFiS93+75CVGYqYucF50I+KtCyjdl/kiIYzEKy/bvjLHKBX
+	rdxSnOrqZGdfqilmfGmqlDnnlR5ga2t8qtdfnf62oYH9/uRgi2JbJbPLCBA5iQ==
+To: linux-rockchip@lists.infradead.org,
+	linux-phy@lists.infradead.org
+Cc: vkoul@kernel.org,
+	kishon@kernel.org,
+	heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Improve error handling in Rockchip Inno USB 2.0 PHY driver
+Date: Thu,  5 Sep 2024 10:28:21 +0200
+Message-Id: <cover.1725524802.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: add docs for
- AD7606C-{16,18} parts
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-References: <20240905082404.119022-1-aardelean@baylibre.com>
- <20240905082404.119022-8-aardelean@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240905082404.119022-8-aardelean@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 05/09/2024 10:24, Alexandru Ardelean wrote:
-> The driver will support the AD7606C-16 and AD7606C-18.
-> This change adds the compatible strings for these devices.
-> 
-> The AD7606C-16,18 channels also support these (individually configurable)
-> types of channels:
->  - bipolar single-ended
->  - unipolar single-ended
->  - bipolar differential
-> 
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+This is a small series that improves error handling in the probe path
+of the Rockchip Innosilicon USB 2.0 PHY driver, by returning the actual
+error code in one place and by using dev_err_probe() properly in multiple
+places.  It also performs a bunch of small, rather trivial code cleanups,
+to make the code neater and a bit easier to read.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Changes in v3:
+  - Collected Reviewed-by tags from Heiko for patches 1/3 and 2/3
+  - Brought back one empty line as a separator of dissimilar operations
+    in patch 1/3, as suggested by Heiko [2]
+  - Dropped one backward conversion of dev_err_probe() to dev_err() in
+    patch 3/3, as suggested by Heiko, [3] and adjusted the summary and
+    description of patch 3/3 accordingly
 
-Best regards,
-Krzysztof
+Changes in v2:
+  - Expanded into a small series, after a suggestion from Heiko [1] to
+    use dev_err_probe(), because it all happens in the probe path
+
+Link to v2: https://lore.kernel.org/linux-phy/cover.1724225528.git.dsimic@manjaro.org/T/#u
+Link to v1: https://lore.kernel.org/linux-phy/5fa7796d71e2f46344e972bc98a54539f55b6109.1723551599.git.dsimic@manjaro.org/T/#u
+
+[1] https://lore.kernel.org/linux-phy/4927264.xgNZFEDtJV@diego/
+[2] https://lore.kernel.org/linux-phy/5307900.6fTUFtlzNn@diego/
+[3] https://lore.kernel.org/linux-phy/6073817.31tnzDBltd@diego/
+
+Dragan Simic (3):
+  phy: phy-rockchip-inno-usb2: Perform trivial code cleanups
+  phy: phy-rockchip-inno-usb2: Handle failed extcon allocation better
+  phy: phy-rockchip-inno-usb2: Use dev_err_probe() in the probe path
+
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 56 +++++++------------
+ 1 file changed, 21 insertions(+), 35 deletions(-)
 
 
