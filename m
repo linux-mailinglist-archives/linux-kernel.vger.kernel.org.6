@@ -1,137 +1,241 @@
-Return-Path: <linux-kernel+bounces-316281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4A196CD71
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:38:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BE296CD83
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 05:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4945BB216D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820F4289EC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66EA1494DB;
-	Thu,  5 Sep 2024 03:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DMQy8RxO"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448271494CF;
+	Thu,  5 Sep 2024 03:57:50 +0000 (UTC)
+Received: from mail-m102.netease.com (mail-m102.netease.com [154.81.10.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A528413D53F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 03:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C710E9;
+	Thu,  5 Sep 2024 03:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725507495; cv=none; b=KWrUgE1DtMLDfZ5kKKkD70d1P0J2SE0dPAf20Jem5HAB/+juQ3R/GEtxsajXvT5IzspOd8WolrHAYzbsI7iEoC9+p0p1yWURFxdVveIQT0nPKDqtzMaDMJ6LVH6WXMyMlH8Z2yXwFwG9C6cqOs05i5sC3rGbNtu1uaEuI9xOB7c=
+	t=1725508669; cv=none; b=Nrx47o90Vb/kJ1xYmGQfkSDXdvDA+LZORzQnrMkR4WljHSvgHcCH457Qtjf2Q8wgyUgZoHnxd0cayyEEHbZh5m73EiP+nJh1WrEsRjFWB2Zuv0vxkH2OgCVq4tJvWm/90W+eXImmYWVdfJ4uHM6yZVSheQsRbL2ixNMH9G8xsYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725507495; c=relaxed/simple;
-	bh=mmiaJAbhrJN/bNqpFuO9uFl1R/zzhkIVpCzlW51fYOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOIHTOMuiXSYwn4C2rFcB4fBlSeKSXoeKlHfKDnBrtWER5BeRrIT+0HQBt/mIuJ7BqMcvedaGSHxrp1qbygBULwFqhVcoODLzuNMPbgtUfmQxcFuMTnMCc5jQ3s50fjG7vSGy2O9XVoWPtvnK+fiIolvF+EJ/KnqQUDERth85/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=DMQy8RxO; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-205909afad3so3389965ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2024 20:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1725507493; x=1726112293; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=08wuXpe7nVswzOQ+7NVFPT0XGolvX7IJ38IQQv3iN0o=;
-        b=DMQy8RxOFlOTY6aka1Zvsnn2KjBFC5XZ37ShZaqY0IRv2U1vp0edmkvA3iW6qRYi6o
-         PIyGYKG6B4WMrPDidbGd/JHwj6boLj6OUBwnOY3uSsPLiU/TgI3g5l36w4Co9PPcXVoa
-         FLjtvtjLHCGa283kgKsFP3ovA/DXCbOcZHzaCI2TbjfvW6oORBtts3PXmRNzmbFJloH/
-         42wOmBNC0PdVowUqu62rPNrPT00uc8Ow8hSnysXpF570Uve/klrSBeTGceKN1pQWo9Oy
-         H9vHq7FL01C1yU7KbdmKUkq5ydLMIfKTVF4dWJ2AaW/zNGJnTI3gM96WYmFKyHiFI/u8
-         Dgzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725507493; x=1726112293;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=08wuXpe7nVswzOQ+7NVFPT0XGolvX7IJ38IQQv3iN0o=;
-        b=de5B0aEa+Ts8F45gcSut8uS32H6Amgtp/+hHw2qThOJZTpDFdU4jvMDrO4UiVUiyVR
-         ORiTScEYCrsTOs5+Ze3qPHCXtAX5BMwnGD3Sc0NgiPrVWWfsWn3nbVCtsdtRIH0gwdyy
-         Y5hFURsWW3wWKrMb5YK711W3B1dC+8Nt+cAJrdixyxzVgse+YNH8jeBYbSDIotmsrAfr
-         SKA8W2RHMvz9feRnXQj8ueuQRi5z7S7J+aO68Y+5gGJ9fjG06qu4dgo3S27mK91WGhmi
-         U9ZtetH+CUYByrWcxEQRVJZ4iWetbMEyry+v+SNRFwko0IJZOmHtfj7lBPdLbCdTeddC
-         kOQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXC+vYZ38kvVxJoNOUxUPYOKT4f726nkchHPI9o9OT+mAEL+UQyyblGx/2xZtTeSCs+OUFzjnlWSQ5jBBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuOOkw2lGQw+/vfH1ExXDoecVnbjuUg4A8D6dw3FEkqur/fFky
-	81m/4NQ4/uiWBBGEbPko22PKrxeWnnh23N5bxTYuRWTaJebVT18U5WscsZpMyUM=
-X-Google-Smtp-Source: AGHT+IHH3Lqn5on1g4RFU57JfQl06v4zJ/wLxbY8TMC7VJqZlFOf/eV3r5+jBfeS2045uWs4FbawQg==
-X-Received: by 2002:a17:902:ce82:b0:205:4e4a:72d9 with SMTP id d9443c01a7336-2054e4a795emr184195425ad.7.1725507493010;
-        Wed, 04 Sep 2024 20:38:13 -0700 (PDT)
-Received: from medusa.lab.kspace.sh (c-98-207-191-243.hsd1.ca.comcast.net. [98.207.191.243])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-206aea38539sm20130665ad.130.2024.09.04.20.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 20:38:12 -0700 (PDT)
-Date: Wed, 4 Sep 2024 20:38:11 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Moshe Shemesh <moshe@nvidia.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, yzhong@purestorage.com,
-	Shay Drori <shayd@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH v2 0/1] net/mlx5: Added cond_resched() to crdump
- collection
-Message-ID: <ZtknozCovDvK7-bL@ceto>
-References: <20240829213856.77619-1-mkhalfella@purestorage.com>
- <ZtELQ3MjZeFqguxE@apollo.purestorage.com>
- <43e7d936-f3c6-425a-b2ff-487c88905a0f@intel.com>
- <36b5d976-1fcb-45b9-97dd-19f048997588@nvidia.com>
+	s=arc-20240116; t=1725508669; c=relaxed/simple;
+	bh=d7rDZxzeOZ7ybHx7fCJfeza0Hj8Jzsr7IIcsy0otlGU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mDlgiVlPtP+KoudIcWHBQx5OVUH8fxYsoyN5MRVN4N8NpXkzOhr0L2ZDCnVLeOqddfUXBILGgxgykW0VVDgmsqaOGEB96hQjdnHsfKELnOObhj7MzJ4jkB/zCZeQfndEmBuMQWuNCbIdAZ5HPmeIY+ysmguoFv3nqF/lxlDQU4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=154.81.10.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [119.122.212.181])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 1A1F47E018A;
+	Thu,  5 Sep 2024 11:40:12 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: bigfoot@classfun.cn
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dsimic@manjaro.org,
+	heiko@sntech.de,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: add dts for Ariaboard Photonicat RK3568
+Date: Thu,  5 Sep 2024 11:40:09 +0800
+Message-Id: <20240905034009.28124-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240904111456.87089-4-bigfoot@classfun.cn>
+References: <20240904111456.87089-4-bigfoot@classfun.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <36b5d976-1fcb-45b9-97dd-19f048997588@nvidia.com>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSk0ZVkseH04dTRpISUkdTFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSVVKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSEpMTElVSktLVU
+	pCS0tZBg++
+X-HM-Tid: 0a91c044aed003a2kunm1a1f47e018a
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6KxQ6Myo6PjIzOEI4AhkqUSwY
+	IQxPCzNVSlVKTElOTktMTUpJQ0tDVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpJVUpDSllXWQgBWUFPTExJNwY+
 
-On 2024-08-30 12:51:43 +0300, Moshe Shemesh wrote:
-> 
-> 
-> On 8/30/2024 10:08 AM, Przemek Kitszel wrote:
-> 
-> > 
-> > On 8/30/24 01:58, Mohamed Khalfella wrote:
-> >> On 2024-08-29 15:38:55 -0600, Mohamed Khalfella wrote:
-> >>> Changes in v2:
-> >>> - Removed cond_resched() in mlx5_vsc_wait_on_flag(). The idea is that
-> >>>    usleep_range() should be enough.
-> >>> - Updated cond_resched() in mlx5_vsc_gw_read_block_fast every 128
-> >>>    iterations.
-> >>>
-> >>> v1: 
-> >>> https://lore.kernel.org/all/20240819214259.38259-1-mkhalfella@purestorage.com/
-> >>>
-> >>> Mohamed Khalfella (1):
-> >>>    net/mlx5: Added cond_resched() to crdump collection
-> >>>
-> >>>   drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c | 4 ++++
-> >>>   1 file changed, 4 insertions(+)
-> >>>
-> >>> -- 
-> >>> 2.45.2
-> >>>
-> >>
-> >> Some how I missed to add reviewers were on v1 of this patch.
-> >>
-> > 
-> > You did it right, there is need to provide explicit tag, just engaging
-> > in the discussion is not enough. v2 is fine, so:
-> > Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> 
-> Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
-> And fixes tag should be:
-> Fixes: 8b9d8baae1de ("net/mlx5: Add Crdump support")
+Hi Junhao,
 
-Will add the tag in v3.
+> ...
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568-ariaboard-photonicat.dts
+
+This should be 'rk3568-photonicat.dts',
+e.g. "Radxa ROCK 3A" -> rk3568-rock-3a.dts
+
+> ...
+> +	model = "Ariaboard Photonicat RK3568";
+> +	compatible = "ariaboard,photonicat", "rockchip,rk3568";
+
+The official model name does not include 'RK3568'.
+
+> ...
+> +	firmware {
+> +		optee: optee {
+> +			compatible = "linaro,optee-tz";
+> +			method = "smc";
+> +		};
+> +	};
+> +
+> ...
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		ramoops: ramoops@110000 {
+> +			compatible = "ramoops";
+> +			reg = <0 0x110000 0 0xf0000>;
+> +			console-size = <0x80000>;
+> +			ftrace-size = <0x00000>;
+> +			pmsg-size = <0x50000>;
+> +			record-size = <0x20000>;
+> +		};
+> +	};
+
+Maybe these can be moved to rk356x.dtsi?
+
+> ...
+> +	vcca1v8: regulator-1v8-vcca {
+
+schematics: VCCA_1V8
+
+> ...
++	vcc3v3_pcie: regulator-3v3-vcc-pcie {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pcie_enable_h>;
+
+schematics: pcie_pwren_h
+vcc_syson -> vcc3v3_pi6c
+vcc_syson -> vcc3v3_pcie
+
+> +		regulator-always-on;
+> +		regulator-boot-on;
+
+No need.
+
+> ...
+> +	vcc5v0_sys: regulator-5v0-vcc-sys {
+
+There is no vcc5v0_sys, but vcc_syson.
+
+vcc_syson (5v) -> vcc3v3_sys
+vcc_sysin (5v) - (mcu) -> vcc_syson
+vccin_5v -> vcc_sysin
+
+> ...
+> +	vcc5v0_usb_host: regulator-5v0-vcc-usb-host {
+
+schematics: VCC5V0_USB30_OTG0 and usb_host_pwren_h
+It's a little weird, but that's what they're calling it.
+Also: VCCIN_5V -> VCC5V0_USB30_OTG0
+
+> ...
+> +	vcc5v0_usb_modem: regulator-5v0-vcc-usb-modem {
+
+Are you sure this regulator is 5v?
+
+> ...
+> +	vdda0v9: regulator-0v9-vdda {
+
+schematics: VDDA_0V9
+
+> +	wifi_pwrseq: wifi-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wifi_enable_h>;
+
+schematics: wifi_reg_on_h
+Also you need to enable the clk:
+
+		clocks = <&pmucru CLK_RTC_32K>;
+		clock-names = "ext_clock";
+		pinctrl-names = "default";
+		pinctrl-0 = <&wifi_reg_on_h &clk32k_out1>;
+
+> +		post-power-on-delay-ms = <200>;
+> +		reset-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_LOW>;
+> +	};
+
+> ...
+> +&pcie30phy {
+> +	phy-supply = <&vcc3v3_pcie>;
+
+phy-supply = <&vcc3v3_pi6c>;
+
+> ...
+> +&pcie3x2 {
+> +	max-link-speed = <1>;
+> +	num-lanes = <1>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie30x2m1_pins>;
+
+These are actually pcie30x1m0_pins.
+
+> ...
+> +&pmugrf {
+> +	reboot-mode {
+
+Maybe these can be moved to rk356x.dtsi?
+
+> ...
+> +&sdhci {
+
+Missing mmc-hs200-1_8v;
+
+> ...
+> +&sdmmc0 {
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+
+Why does sdcard need cap-mmc-highspeed?
+
+> +	max-frequency = <150000000>;
+> +	sd-uhs-sdr104;
+
+The sdcard does not have 1.8v io voltage,
+so this is wrong, please add no-1-8-v;
+
+> +&sdmmc1 {
+> +	bus-width = <4>;
+> +	cap-sd-highspeed;
+> +	cap-sdio-irq;
+> +	disable-wp;
+
+sdio wifi does not need disable-wp.
+
+> +	qca_wifi: qca-wifi@1 {
+> +		compatible = "qcom,ath10k";
+
+ath10k does not need compatible.
+
+> ...
+> +&uart1 {
+> ...
+> +		clocks = <&pmucru CLK_RTC_32K>;
+> +		enable-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&bt_enable_h>;
+
+schematics: bt_reg_on_h
+Missing clock-names = "lpo";
+
+-- 
+2.25.1
+
 
