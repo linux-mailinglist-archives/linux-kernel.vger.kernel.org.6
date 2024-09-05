@@ -1,72 +1,47 @@
-Return-Path: <linux-kernel+bounces-316883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C2F96D67F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:56:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272B596D685
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17FA3B233BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51B1284AD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6F61990CE;
-	Thu,  5 Sep 2024 10:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84481991CA;
+	Thu,  5 Sep 2024 10:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lTOykkDp"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A/cKexi0"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332D9198E9B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841031990BC;
+	Thu,  5 Sep 2024 10:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725533783; cv=none; b=BBN0ZDPy4ey+/fPLrSa00h+ql1oumMvmycQ9xTM9+t9g4ZB1SSOjOBak2C7JLi2h6yKbn4yAGDQXdri2AQ5wg7yerRlHbscf2e5qL/ReaSLIilf1ftBqe0N05+aVONSRiyyjOwmkDmxlx7jdLxKyjOkVSybviSEi2jwiME9l4eQ=
+	t=1725533864; cv=none; b=qlBQX0ZqQ4tj/wPn3+WpWIx/p72oGT5L1rX8e2CRZL0c5pH7I0SeKd6LLYSbmXIo0lbk8KjmA3s1MHtzouyCBATROp7fQiaBDT34FgRvNJ0nvuZBo9jwItHaGxojomDVEzRXO4WmCV/wlsWG28NiVFAjgQGZGJg5cnd5Frp1bQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725533783; c=relaxed/simple;
-	bh=JQVHGS+/u4y5usFp3Q4hM7h7PUsjd09BzTFUGJkjqJ8=;
+	s=arc-20240116; t=1725533864; c=relaxed/simple;
+	bh=4lcWVFFe95tKLdrn4zflmv1HKktKQEoGhVTAo3Nh+Cs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PTsc2tpbJds1vlvAkscvPslyEzg2FoxGNt3zsblupKFqE4KcefWhBp0BZtPxuIOsHnZxJr98KDd5E//zmbeiHwrCykiHiJqfMt57e07xAZwW5yvLDxDsprmOA5FCw/n90Xa1nRHhPXGNXzyE0L57yOkToGR+QL3gZ3i15b0H/Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lTOykkDp; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d86f713557so405192a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1725533780; x=1726138580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4DJPppfvsq3bVrU8OAZnr57xaqKDJESryIS8WamVFSc=;
-        b=lTOykkDpUSpOcaPpyneEEZCGE4pQLMBdyWu3lRyXcnWnVZKIdiGoZgACvY+9cvMLpW
-         jgw1sacc8rNSGWUysZg/brBrVeX/7/d+Mio8kIWbUpgDDY9Zn0xz4tEVwkWv5YIGgzHr
-         TlX9OBw+t9DDXm/SsNYXboMrLw1edp6luRZttJYX+o2Q7a9DS8XkoOvWwDKvoLQ3wDeb
-         jVfPN15Jtz9l24IyqNT8vUdLE+qeewrZKX2Xak9bzOCuYF5JMk9UDHtUPlqGFfM0Vg9e
-         kereiEJw9/MEAx4VnkMHDa+TH5/RTxWzr/mWOIozKFF5yjnPUZujvoO4/YaU++WwMCDo
-         t80Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725533780; x=1726138580;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4DJPppfvsq3bVrU8OAZnr57xaqKDJESryIS8WamVFSc=;
-        b=xUWYjfoDQUFPOM4z+aoXM4ZOh4C9WhQoErkK2GU9LVCoQZ0+78JLL/xEKelCmztiXY
-         jdgTVFvXOsY7ieqWrMtmZ7vEGvkrqKn39KgCeUvXiSdG0/36vTzyKpW9xpz1zc43ExJN
-         vkqZT6tn663CacPFOg2NT+lfh8wCENNKnRaoO8LE5PTtblezY6MxaSKkWuqgsDD3lKUI
-         YUe5GEXX6KsnL3QNyJAxi1MutRvL0I9h7LuC1yf/qzs/SCb5gcTK7sBsueojLz9pOy7t
-         3pjdAmSMaY7qWbhgAlcuFSMFBB9P8ZlPOKowJ21GQHD1tvoEmYNspYFiCvetPw/Av/1p
-         5L0g==
-X-Gm-Message-State: AOJu0Yxe5hgBM/8ye3opeIlprirCeVY7/etMx64Hfq4m0KBd7Ak7VNl/
-	iyd8XRdshmY1x7n7hvM9a6blYbEtRr6vm9+0jp3q3hbkzNWWyWv4UavSIj8+lFc=
-X-Google-Smtp-Source: AGHT+IHilYsBgfadCapwrPljiidrpCa41K0Hyb98p/0x3xNpGLLwKBsqtfV83jJC0DRLwz+P6VWrRQ==
-X-Received: by 2002:a17:90a:de8c:b0:2d8:7307:3f73 with SMTP id 98e67ed59e1d1-2d8906204f6mr17130275a91.39.1725533780409;
-        Thu, 05 Sep 2024 03:56:20 -0700 (PDT)
-Received: from [10.4.59.158] ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b8fe1f68sm9312094a91.31.2024.09.05.03.56.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 03:56:20 -0700 (PDT)
-Message-ID: <cccc16ad-21fb-4c99-8c49-91ee15c202cc@bytedance.com>
-Date: Thu, 5 Sep 2024 18:56:14 +0800
+	 In-Reply-To:Content-Type; b=CQUz0Yty6qRalKvyKKvyNjVCla9WVhw52MQ7NgPZdnPQbmlKzkyphMt9hzr/VTR6uEiHeNCnGxLnDJDLoUAwGMo0s/1/0Iypz5z2LGixqiC1FXS2qNmwKBw4EPa9i2rinwPKC15MdSmWVra9jBjBf7VJrjW20Rv2fWbSd5peNRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A/cKexi0; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 38D57AD0;
+	Thu,  5 Sep 2024 12:56:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725533786;
+	bh=4lcWVFFe95tKLdrn4zflmv1HKktKQEoGhVTAo3Nh+Cs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=A/cKexi0iRE2TsNd6nG6S4gnpjSvSRaAkFfvWSk+maG+uKxRhfFZm7RpWagwHZqQV
+	 dVLJ/WvJJljpBsueBIH+4axvl2UQckj9ZcjXkguJ9UQRrIwVPZdoWC4RAtByPY/Tuf
+	 KQfFpMjPNSXJDwKoHKYIUbR1RiPrxCdvB1Dh9H5c=
+Message-ID: <1eead6a9-87c7-409d-abd6-32c4d0dafe05@ideasonboard.com>
+Date: Thu, 5 Sep 2024 13:57:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,92 +49,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/14] mm: mremap: move_ptes() use
- pte_offset_map_rw_nolock()
+Subject: Re: [RFC PATCH 00/12] media: ov5645: Add support for streams
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240904210719.52466-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <3eeae62a-e22b-443a-aad4-f1a384c0a3f7@ideasonboard.com>
+ <514490a2-181a-42ac-bc54-7a700e8d1bb9@ideasonboard.com>
+ <CA+V-a8v0s8Unk3pNhR1wgBk_wqkua__Dumq3KT=n-cXUwq=6Bw@mail.gmail.com>
+ <c928e09a-751e-45af-8e57-f105b41df2be@ideasonboard.com>
+ <CA+V-a8svfVrjEjYbSko4eh6z_9kEkfwMHr0YHwaxEPWLKJBPyg@mail.gmail.com>
 Content-Language: en-US
-To: Muchun Song <muchun.song@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
-References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
- <20240904084022.32728-10-zhengqi.arch@bytedance.com>
- <1b03a7de-1278-4e36-8068-885dd1c29742@linux.dev>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <1b03a7de-1278-4e36-8068-885dd1c29742@linux.dev>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <CA+V-a8svfVrjEjYbSko4eh6z_9kEkfwMHr0YHwaxEPWLKJBPyg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/9/5 17:25, Muchun Song wrote:
+On 05/09/2024 13:51, Lad, Prabhakar wrote:
+> Hi Tomi,
 > 
-> 
-> On 2024/9/4 16:40, Qi Zheng wrote:
->> In move_ptes(), we may modify the new_pte after acquiring the new_ptl, so
->> convert it to using pte_offset_map_rw_nolock(). Since we may free the PTE
->> page in retract_page_tables() without holding the read lock of mmap_lock,
->> so we still need to do a pmd_same() check after holding the PTL.
-> 
-> retract_page_tables() and move_ptes() are synchronized with
-> i_mmap_lock, right?
-
-Right, will remove the pmd_same() check in v4. Thanks!
-
-> 
-> Muchun,
-> Thanks.
-> 
+> On Thu, Sep 5, 2024 at 11:29 AM Tomi Valkeinen
+> <tomi.valkeinen@ideasonboard.com> wrote:
 >>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> ---
->>   mm/mremap.c | 20 ++++++++++++++++++--
->>   1 file changed, 18 insertions(+), 2 deletions(-)
+>> On 05/09/2024 13:27, Lad, Prabhakar wrote:
+>>> Hi Tomi,
+>>>
+>>> On Thu, Sep 5, 2024 at 10:11 AM Tomi Valkeinen
+>>> <tomi.valkeinen@ideasonboard.com> wrote:
+>>>>
+>>> <snip>
+>>>>> I think you actually want 1/0->0/0 routing. The error says that the sink
+>>>>> side device has routing which does not have a stream at stream ID 1, or
+>>>>> no routing support at all, which implies a single stream at stream ID 0.
+>>>>
+>>>> Looking at patch 12, there's something wrong with the approach here. Are
+>>>> you perhaps trying to define the CSI-2 VC with the streams?
+>>>>
+>>> Yes, based on the previous feedback received, I am implementing
+>>> virtual channels as streams. If this isn't the correct approach can
+>>> you please guide me on what we should be using to support virtual
+>>> channels?
 >>
->> diff --git a/mm/mremap.c b/mm/mremap.c
->> index 24712f8dbb6b5..16e54151395ad 100644
->> --- a/mm/mremap.c
->> +++ b/mm/mremap.c
->> @@ -143,6 +143,7 @@ static int move_ptes(struct vm_area_struct *vma, 
->> pmd_t *old_pmd,
->>       spinlock_t *old_ptl, *new_ptl;
->>       bool force_flush = false;
->>       unsigned long len = old_end - old_addr;
->> +    pmd_t pmdval;
->>       int err = 0;
->>       /*
->> @@ -175,14 +176,29 @@ static int move_ptes(struct vm_area_struct *vma, 
->> pmd_t *old_pmd,
->>           err = -EAGAIN;
->>           goto out;
->>       }
->> -    new_pte = pte_offset_map_nolock(mm, new_pmd, new_addr, &new_ptl);
->> +    /*
->> +     * Since we may free the PTE page in retract_page_tables() without
->> +     * holding the read lock of mmap_lock, so we still need to do a
->> +     * pmd_same() check after holding the PTL.
->> +     */
->> +    new_pte = pte_offset_map_rw_nolock(mm, new_pmd, new_addr, &pmdval,
->> +                       &new_ptl);
->>       if (!new_pte) {
->>           pte_unmap_unlock(old_pte, old_ptl);
->>           err = -EAGAIN;
->>           goto out;
->>       }
->> -    if (new_ptl != old_ptl)
->> +    if (new_ptl != old_ptl) {
->>           spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
->> +
->> +        if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(new_pmd)))) {
->> +            pte_unmap_unlock(new_pte, new_ptl);
->> +            pte_unmap_unlock(old_pte, old_ptl);
->> +            err = -EAGAIN;
->> +            goto out;
->> +        }
->> +    }
->> +
->>       flush_tlb_batched_pending(vma->vm_mm);
->>       arch_enter_lazy_mmu_mode();
+>> Can you describe what kind of hardware you have and how the VCs are
+>> supposed to be configured and used there?
+>>
 > 
+>   __________________                       ______________
+>      _____________________
+> |                                     |                     |
+>                  |                   |
+>        |
+> | OV5645   Sensor        |                     |  RZ/G2L CSI2   |
+>               |  RZ/G2L CRU                 |
+> | 1ch out of 4x VC         |---------------> |   4x VC
+> |-------------->|  1Ch capture out 4xVC  |
+> |__________________|                      |_____________|
+>       |____________________|
+
+The formatting there is quite broken, but afaiu you have a standard 
+setup with single stream. Then it should be as I wrote earlier: a single 
+hardcoded 1/0->0/0 route in the sensor, and .get_frame_desc() returns VC 
+0 and a suitable DT for that stream.
+
+When you say "implementing virtual channels as streams", what is the 
+feature/requirement you are looking at? Do you have some specific need 
+to use other VCs than 0?
+
+  Tomi
+
 
