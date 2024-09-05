@@ -1,240 +1,238 @@
-Return-Path: <linux-kernel+bounces-316165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8AC96CC09
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:06:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9199096CC32
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CDA1F2497A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D511C2245E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15A6BE5D;
-	Thu,  5 Sep 2024 01:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AD7B661;
+	Thu,  5 Sep 2024 01:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGhoOA6F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="KcjvczhZ"
+Received: from skyblue.cherry.relay.mailchannels.net (skyblue.cherry.relay.mailchannels.net [23.83.223.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120F2B661
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725498408; cv=none; b=idWEQODZO1whvl2RJIrh4KuD+Kp29rbaqg5iW/2yOMr5duKsDZtHnLoytkezFLiny4QPuyFfE16gTy196jTTvA5xsIU+RaLwMhtq/LXAQ7Sa66JBVAx3m16eXNx/NJ5yG7T3yBSQOj/B7gDZif84aiXUMbCh/KOBH2N6k4FRc6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725498408; c=relaxed/simple;
-	bh=OjSgoO9oN8sGczK0arFHjxbqWTdLcYmFj3s0vOgXXaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxHR7F+MX6MJRZdEaHBLpKGorwdGnPFrnNCbmu0ccmN6zYSd0BzexvbdJuppjfa/ZYeZFbszpuYTdC5/z0Q+inl6ntDlWxjXGQ5c98ldB6xMY+zBkBvvkon81+tBIM6u7djhlyojdQD0S0FkKqGI1HTaBU9AKof34n/J0b03ptg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGhoOA6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47937C4CEC2;
-	Thu,  5 Sep 2024 01:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725498407;
-	bh=OjSgoO9oN8sGczK0arFHjxbqWTdLcYmFj3s0vOgXXaY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EGhoOA6FU94z6rtuMOMLqvI800jzraJk7Z0jLpY2/DitoF+XJmNL4I2Re5cm976Jn
-	 9QZOTc06E1G/wuV+lMEKtKliCa+XtcZYr4TFJFjFYVJc/HucnggP1pNLOPPg8rKLD3
-	 xhYxX3CbpL9bcq3bGcQvlfu3r5PsXg5zjEhe72YGhYcoG/BNTzPZCm6yihFXyMF908
-	 Mi3M523RU3HgyU4ZmcyTCINnUum7+m4Rc41ux7gVDPqo8XTyJ+GGcTwseti2VLkwE0
-	 PCkXG9I2TE/AAiojoTwPNdaNtmpe7eL/Zhj4HuaFDRzIhYgNgSxBppPu3Flyo8meOv
-	 loHI5hFu8mSig==
-Message-ID: <b2b6db47-07c6-4fd5-b2cb-30ddefcdd98e@kernel.org>
-Date: Thu, 5 Sep 2024 09:06:43 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8908F7D
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.83.223.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725499429; cv=fail; b=F9ACj/skcEw7Eu44rIYd/0gU32rAZuVSDUJi8S9ylpjbHo5Mjr0C5F7oURLvIkCqsKtZE0KO6QjCrlnMtC/c4hxgQZbMgq7Ag0Hf+c0Wqlx6ctbjBZVdWSmRlgMqVFdO3FcpKMbVfbKPj3stt2/Rjjw4wIm54SfIuldkAWIA7M4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725499429; c=relaxed/simple;
+	bh=ZzfYZqACgthquqTa5yEnv0G+jvgg/CO1OZ9MHpeX1mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLlcRKhmjsh4cvpdjAmDJWfYPsGqwKUPzSXHeaNTyg+qvsOPrymSCK7oJSkaqeUR6Ex92eEbMuczCLHmwsmMf431htsm8fl4c+INiDomJDmE1BM69PJj0fdhxVxYnwXzQT6vMu+iiB83qKRatvd7mfrxiciXLx4djOl1f4QoMtk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=KcjvczhZ; arc=fail smtp.client-ip=23.83.223.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 8DF10C77BF;
+	Thu,  5 Sep 2024 01:08:10 +0000 (UTC)
+Received: from pdx1-sub0-mail-a310.dreamhost.com (unknown [127.0.0.6])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 07F60C75B2;
+	Thu,  5 Sep 2024 01:08:10 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1725498490; a=rsa-sha256;
+	cv=none;
+	b=I7pmC918ScggNcVYkv9qja4dn46JsAhOFZVbCgguPd3MQ3gxYJi/pTdkVLRrLGlZgSmtkv
+	uvAQNOfkkfHUzjqwjIyHB0uDKz6WTTXNwBXDrIQI2Fl8dEh37vIPBKreZFkQvU03E7JBoV
+	WXKXZ9MJf93RQM1uqCh80jJkbySM5PfC/TdnK+J9fYgshPsvQFEdtxCyx+k/gRNnzbgXwb
+	Ox25qpXHOlPhtH0pbRjtG600kJG3Doq7ccXzbGK5SM8UvmLQtDBEJgaWORmORnophFbKV1
+	ZEDYndhhvQcBJlvdYDSP8qYQ8aLh7S7pRQBWFNhU5i0WzBewWKwSVtIupK+qtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1725498490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=9GEj4OM/a2qb4uz3i0fngIpeBJBLKnbIBwE1moCNumc=;
+	b=xKl2G/GYHiJflz4W/uNO5aDH3R1MZWrf9TZQt9IDECi4fPA4i4JR9RRQ0zjd9fcM61l+wi
+	P/AfUtY2CxDRVOYzoxFrytYP+WIPM/lNHZi/+FFyUH2O/sDSPZX0IeJX3BSpALqeiO8BdA
+	zXTn/5mZkREtjLvuFNthApMKA8Qd26Q57XNzTugtH6X69isG0v3FKPy5WnmiwlLxPjySET
+	bHoKC7sedCNkkD0Om4GO6vUPcrZ+W1V/slIXxb+L1/EbS26tf8dDoK3NCh1ptqaSJJNThr
+	9yOafy1a81h+83ENLF8l5gZ12wI+6u1bUfhEYldWVIGyVqFOdGxFkLeqJoKJ3w==
+ARC-Authentication-Results: i=1;
+	rspamd-85dcd79db4-h6mk5;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Attack-Print: 2eed196d76f6f3a6_1725498490397_2196151604
+X-MC-Loop-Signature: 1725498490397:669959050
+X-MC-Ingress-Time: 1725498490397
+Received: from pdx1-sub0-mail-a310.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.125.55.150 (trex/7.0.2);
+	Thu, 05 Sep 2024 01:08:10 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a310.dreamhost.com (Postfix) with ESMTPSA id 4Wzh7F0WkrzKl;
+	Wed,  4 Sep 2024 18:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1725498489;
+	bh=LKY+eXNh+b8+ANsTonvdMbko2ru5DwhYm9x7uRWa5wQ=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=KcjvczhZ97oGMqoz5+R7HitoZ5hENAKtTGSk8TsLzra/tW1uCkv1pc+9uZd6U0Cm5
+	 weddqZBIm0d4RtygWsSxkty0zfsr1jDum4U2VYp+EOIDR9ViybThHv5LQxO1ixNn4N
+	 tKnMwuPONWU01ZTXOvzVBbpVfoz/HUvopu3/BW6hVy6njJ1VRhQR86iiBWpmVjlSR+
+	 jxKYMd0Q2cElU+kNM3Ujs0iuVmNTPf2SYSfI7Or13XJn21ch6UCFOtzm6myWLyDQyR
+	 tpkRyUJzkBAGR+8oKtIxKxN4OhkZERWUuld8WrM6DISllJ8umdQ5rlVRDV40zqu3WF
+	 zH+codBc7GPLQ==
+Date: Wed, 4 Sep 2024 18:08:05 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, mhocko@kernel.org, rientjes@google.com, 
+	yosryahmed@google.com, hannes@cmpxchg.org, almasrymina@google.com, 
+	roman.gushchin@linux.dev, gthelen@google.com, dseo3@uci.edu, a.manzanares@samsung.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: introduce per-node proactive reclaim interface
+Message-ID: <nwutv6cuuyajmakiiznb3hoao6jfhrs2clpqi76xomqbc6yymg@n7inzwjcskhf>
+Mail-Followup-To: Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm@kvack.org, mhocko@kernel.org, rientjes@google.com, yosryahmed@google.com, 
+	hannes@cmpxchg.org, almasrymina@google.com, roman.gushchin@linux.dev, 
+	gthelen@google.com, dseo3@uci.edu, a.manzanares@samsung.com, 
+	linux-kernel@vger.kernel.org
+References: <20240904162740.1043168-1-dave@stgolabs.net>
+ <20240904131811.234e005307f249ef07670c20@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH] f2fs: prevent atomic file from being dirtied
- before commit
-To: Daeho Jeong <daeho43@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
-References: <20240826202352.2150294-1-daeho43@gmail.com>
- <45a8a9f3-27b8-433e-a0ac-e457f4cdf1eb@kernel.org>
- <CACOAw_xMipooJy3GrZTc2CSpMoSs9FsErdxjqMWXVQ6iDiEZ0Q@mail.gmail.com>
- <d4f218ad-7a01-4b5b-a438-c0e4e14bbc96@kernel.org>
- <CACOAw_zvNyD3cmMpJsidEMyrtnZYU4kR4BmE_cygroPyYoiGvA@mail.gmail.com>
- <5c7b34d8-6efa-4716-ab89-a0b7b7583cb2@kernel.org>
- <CACOAw_w3Tn6HL9hZXFgpjpgu9ySvE_0FbTWMMBuZKgRFBYXXLA@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CACOAw_w3Tn6HL9hZXFgpjpgu9ySvE_0FbTWMMBuZKgRFBYXXLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240904131811.234e005307f249ef07670c20@linux-foundation.org>
+User-Agent: NeoMutt/20240425
 
-On 2024/9/4 22:56, Daeho Jeong wrote:
-> On Tue, Sep 3, 2024 at 8:35 PM Chao Yu <chao@kernel.org> wrote:
+On Wed, 04 Sep 2024, Andrew Morton wrote:\n
+>On Wed,  4 Sep 2024 09:27:40 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+>
+>> This adds support for allowing proactive reclaim in general on a
+>> NUMA system. A per-node interface extends support for beyond a
+>> memcg-specific interface, respecting the current semantics of
+>> memory.reclaim: respecting aging LRU and not supporting
+>> artificially triggering eviction on nodes belonging to non-bottom
+>> tiers.
 >>
->> On 2024/9/4 10:52, Daeho Jeong wrote:
->>> On Tue, Sep 3, 2024 at 7:26 PM Chao Yu <chao@kernel.org> wrote:
->>>>
->>>> On 2024/9/4 1:07, Daeho Jeong wrote:
->>>>> On Mon, Sep 2, 2024 at 3:08 AM Chao Yu <chao@kernel.org> wrote:
->>>>>>
->>>>>> On 2024/8/27 4:23, Daeho Jeong wrote:
->>>>>>> From: Daeho Jeong <daehojeong@google.com>
->>>>>>>
->>>>>>> Keep atomic file clean while updating and make it dirtied during commit
->>>>>>> in order to avoid unnecessary and excessive inode updates in the previous
->>>>>>> fix.
->>>>>>>
->>>>>>> Fixes: 4bf78322346f ("f2fs: mark inode dirty for FI_ATOMIC_COMMITTED flag")
->>>>>>> Signed-off-by: Daeho Jeong <daehojeong@google.com>
->>>>>>> ---
->>>>>>>      fs/f2fs/f2fs.h    |  3 +--
->>>>>>>      fs/f2fs/inode.c   | 10 ++++++----
->>>>>>>      fs/f2fs/segment.c | 10 ++++++++--
->>>>>>>      3 files changed, 15 insertions(+), 8 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>> index 465b2fd50c70..5a7f6fa8b585 100644
->>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>> @@ -801,7 +801,7 @@ enum {
->>>>>>>          FI_COMPRESS_RELEASED,   /* compressed blocks were released */
->>>>>>>          FI_ALIGNED_WRITE,       /* enable aligned write */
->>>>>>>          FI_COW_FILE,            /* indicate COW file */
->>>>>>> -     FI_ATOMIC_COMMITTED,    /* indicate atomic commit completed except disk sync */
->>>>>>> +     FI_ATOMIC_DIRTIED,      /* indicate atomic file is dirtied */
->>>>>>>          FI_ATOMIC_REPLACE,      /* indicate atomic replace */
->>>>>>>          FI_OPENED_FILE,         /* indicate file has been opened */
->>>>>>>          FI_MAX,                 /* max flag, never be used */
->>>>>>> @@ -3042,7 +3042,6 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
->>>>>>>          case FI_INLINE_DOTS:
->>>>>>>          case FI_PIN_FILE:
->>>>>>>          case FI_COMPRESS_RELEASED:
->>>>>>> -     case FI_ATOMIC_COMMITTED:
->>>>>>>                  f2fs_mark_inode_dirty_sync(inode, true);
->>>>>>>          }
->>>>>>>      }
->>>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>>>>> index 1eb250c6b392..5dd3e55d2be2 100644
->>>>>>> --- a/fs/f2fs/inode.c
->>>>>>> +++ b/fs/f2fs/inode.c
->>>>>>> @@ -35,6 +35,11 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
->>>>>>>          if (f2fs_inode_dirtied(inode, sync))
->>>>>>
->>>>>> It will return directly here if inode was dirtied, so it may missed to set
->>>>>> FI_ATOMIC_DIRTIED flag?
->>>>>
->>>>> Is it possible for it to be already dirty, since we already made it
->>>>> clean with f2fs_write_inode() when we started the atomic write?
->>>>
->>>> Some ioctl interfaces may race w/ atomic write? e.g. set_pin_file won't
->>>> check atomic_file status, and may dirty inode after we started atomic
->>>> write, so we'd better detect such race condition and break ioctl to
->>>> avoid ruin atomic write? and maybe we can add f2fs_bug_on() in
->>>> f2fs_mark_inode_dirty_sync() to detect any other missing cases?
->>>>
->>>
->>> How about exchanging the positions of f2fs_write_inode() and
->>> set_inode_flag() in f2fs_ioc_start_atomic_write()?
->>>
->>> ...
->>>           f2fs_write_inode(inode, NULL);
->>>
->>>           stat_inc_atomic_inode(inode);
->>>
->>>           set_inode_flag(inode, FI_ATOMIC_FILE);
->>> ...
+>> This patch allows userspace to do:
 >>
->> Oh, I'm not sure I've got your point, after exchanging we still may suffer
->> below race condition, right?
->>
->> - f2fs_ioc_start_atomic_write
->>    - set_inode_flag(inode, FI_ATOMIC_FILE)
->>    - f2fs_write_inode(inode, NULL)
->>                                          - f2fs_ioc_set_pin_file
->>                                           - set_inode_flag(inode, FI_PIN_FILE)
->>                                            - __mark_inode_dirty_flag()
->                                                   => This attempt will
-> be blocked by the below condition.
-> 
-> +       if (f2fs_is_atomic_file(inode)) {
-> +               set_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> +               return;
-> +       }
+>>      echo 512M swappiness=10 > /sys/devices/system/node/nodeX/reclaim
+>
+>One value per sysfs file is a rule.
 
-Oh, yes, FI_ATOMIC_DIRTIED will be tagged once inode becomes dirty.
+I wasn't aware of it as a rule - is this documented somewhere?
 
-Thanks,
+I ask because I see some others are using space-separated parameters, ie:
 
-> 
-> Plz, refer to the above comment.
-> 
->> - f2fs_ioc_commit_atomic_write
->>
->> So that I proposed a fix for this:
->> https://lore.kernel.org/linux-f2fs-devel/20240904032047.1264706-1-chao@kernel.org
->>
->> Thanks,
->>
->>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>                  return;
->>>>>>>
->>>>>>> +     if (f2fs_is_atomic_file(inode)) {
->>>>>>> +             set_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>>>>>> +             return;
->>>>>>> +     }
->>>>>>> +
->>>>>>>          mark_inode_dirty_sync(inode);
->>>>>>>      }
->>>>>>>
->>>>>>> @@ -653,10 +658,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
->>>>>>>          ri->i_gid = cpu_to_le32(i_gid_read(inode));
->>>>>>>          ri->i_links = cpu_to_le32(inode->i_nlink);
->>>>>>>          ri->i_blocks = cpu_to_le64(SECTOR_TO_BLOCK(inode->i_blocks) + 1);
->>>>>>> -
->>>>>>> -     if (!f2fs_is_atomic_file(inode) ||
->>>>>>> -                     is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
->>>>>>> -             ri->i_size = cpu_to_le64(i_size_read(inode));
->>>>>>> +     ri->i_size = cpu_to_le64(i_size_read(inode));
->>>>>>>
->>>>>>>          if (et) {
->>>>>>>                  read_lock(&et->lock);
->>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>> index 78c3198a6308..2b5391b229a8 100644
->>>>>>> --- a/fs/f2fs/segment.c
->>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>> @@ -196,9 +196,12 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
->>>>>>>                  truncate_inode_pages_final(inode->i_mapping);
->>>>>>>
->>>>>>>          release_atomic_write_cnt(inode);
->>>>>>> -     clear_inode_flag(inode, FI_ATOMIC_COMMITTED);
->>>>>>>          clear_inode_flag(inode, FI_ATOMIC_REPLACE);
->>>>>>>          clear_inode_flag(inode, FI_ATOMIC_FILE);
->>>>>>> +     if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
->>>>>>> +             clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>>>>>> +             f2fs_mark_inode_dirty_sync(inode, true);
->>>>>>> +     }
->>>>>>>          stat_dec_atomic_inode(inode);
->>>>>>>
->>>>>>>          F2FS_I(inode)->atomic_write_task = NULL;
->>>>>>> @@ -365,7 +368,10 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
->>>>>>>                  sbi->revoked_atomic_block += fi->atomic_write_cnt;
->>>>>>>          } else {
->>>>>>>                  sbi->committed_atomic_block += fi->atomic_write_cnt;
->>>>>>> -             set_inode_flag(inode, FI_ATOMIC_COMMITTED);
->>>>>>> +             if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
->>>>>>> +                     clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
->>>>>>> +                     f2fs_mark_inode_dirty_sync(inode, true);
->>>>>>> +             }
->>>>>>>          }
->>>>>>>
->>>>>>>          __complete_revoke_list(inode, &revoke_list, ret ? true : false);
->>>>>>
->>>>
->>
+/sys/bus/usb/drivers/foo/new_id
 
+... or colons. What would be acceptable? echo "512M:10" > ... ?
+
+>> +What:		/sys/devices/system/node/nodeX/reclaim
+>> +Date:		September 2024
+>> +Contact:	Linux Memory Management list <linux-mm@kvack.org>
+>> +Description:
+>> +		This is write-only nested-keyed file which accepts the number of
+>
+>"is a write-only".
+>
+>What does "nested keyed" mean?
+
+Will re-phrase.
+
+>
+>> +		bytes to reclaim as well as the swappiness for this particular
+>> +		operation. Write the amount of bytes to induce memory reclaim in
+>> +		this node. When it completes successfully, the specified amount
+>> +		or more memory will have been reclaimed, and -EAGAIN if less
+>> +		bytes are reclaimed than the specified amount.
+>
+>Could be that this feature would benefit from a more expansive
+>treatment under Documentation/somewhere.
+
+Sure.
+
+>
+>>
+>> ...
+>>
+>> +#if defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
+>> +
+>> +enum {
+>> +	MEMORY_RECLAIM_SWAPPINESS = 0,
+>> +	MEMORY_RECLAIM_NULL,
+>> +};
+>> +
+>> +static const match_table_t tokens = {
+>> +	{ MEMORY_RECLAIM_SWAPPINESS, "swappiness=%d"},
+>> +	{ MEMORY_RECLAIM_NULL, NULL },
+>> +};
+>> +
+>> +static ssize_t reclaim_store(struct device *dev,
+>> +			     struct device_attribute *attr,
+>> +			     const char *buf, size_t count)
+>> +{
+>> +	int nid = dev->id;
+>> +	gfp_t gfp_mask = GFP_KERNEL;
+>> +	struct pglist_data *pgdat = NODE_DATA(nid);
+>> +	unsigned long nr_to_reclaim, nr_reclaimed = 0;
+>> +	unsigned int nr_retries = MAX_RECLAIM_RETRIES;
+>> +	int swappiness = -1;
+>> +	char *old_buf, *start;
+>> +	substring_t args[MAX_OPT_ARGS];
+>> +	struct scan_control sc = {
+>> +		.gfp_mask = current_gfp_context(gfp_mask),
+>> +		.reclaim_idx = gfp_zone(gfp_mask),
+>> +		.priority = DEF_PRIORITY,
+>> +		.may_writepage = !laptop_mode,
+>> +		.may_unmap = 1,
+>> +		.may_swap = 1,
+>> +		.proactive = 1,
+>> +	};
+>> +
+>> +	buf = strstrip((char *)buf);
+>> +
+>> +	old_buf = (char *)buf;
+>> +	nr_to_reclaim = memparse(buf, (char **)&buf) / PAGE_SIZE;
+>> +	if (buf == old_buf)
+>> +		return -EINVAL;
+>> +
+>> +	buf = strstrip((char *)buf);
+>> +
+>> +	while ((start = strsep((char **)&buf, " ")) != NULL) {
+>> +		if (!strlen(start))
+>> +			continue;
+>> +		switch (match_token(start, tokens, args)) {
+>> +		case MEMORY_RECLAIM_SWAPPINESS:
+>> +			if (match_int(&args[0], &swappiness))
+>> +				return -EINVAL;
+>> +			if (swappiness < MIN_SWAPPINESS || swappiness > MAX_SWAPPINESS)
+>> +				return -EINVAL;
+>
+>Code forgot to use local `swappiness' for any purpose?
+
+Bleh, yeah sc.proactive_swappiness needs to be set here.
+
+>
+>> +			break;
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+>> +
+>>
+>> ...
+>>
 
