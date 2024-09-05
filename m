@@ -1,93 +1,68 @@
-Return-Path: <linux-kernel+bounces-316648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CA596D256
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C996D250
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7671F2A6FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD751C227FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A8C197A68;
-	Thu,  5 Sep 2024 08:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VuuhuP0V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518C7194C78;
+	Thu,  5 Sep 2024 08:37:00 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C835194AD6;
-	Thu,  5 Sep 2024 08:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EFF1898E4;
+	Thu,  5 Sep 2024 08:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725525445; cv=none; b=J5NL5kR9TsKBoGpz0r3oWDL9N7/KyRCdKu5a5R69IExZaQ9UGCzelA14RNNP5VnhvQFdbvj0a9pd1V9i7ym9lWdlgBFFoOl4QaszQCS1hYjYCHJ7l71Z97RKfATznFUut47GQfygPt20IQWEk6I3EZQ75BeKIWT6X27bbgRl4vo=
+	t=1725525420; cv=none; b=f8mW0vQWhZkI2DWJsW1ymU2ToIadXAmsDly1N21fYEMvykMHFneIpBYmvYVb7Pze94O4XeX9elJJA9YaoxWD5OlGZT48NYN2CV7gryjvjVovMwhzJmVdd1OwXH88xN7AQg/BVRFfs4S12vTaIwaJVTIRlBvd5bF3OGnRYsZw2B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725525445; c=relaxed/simple;
-	bh=F5C21PIoGFyLC+pKtL4lE/ToVZLQW4ZouSefyGjoU2c=;
+	s=arc-20240116; t=1725525420; c=relaxed/simple;
+	bh=HL3AFN93sVAtyqwAiq4TtJ5qBuNx8F4k3i/pvUwbjec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CscUONv8nYCExKbZdZI5r/qOSJGg13s2QoO55s3tlSJ5N2yByDlYPztI+/v2vRjSfoNKCBY+xNz8GmfhjGaLDi6NHWC5rvIhieoZbzch6VLOmBWif6VjkXynBiTr/rQIDrhIR5apAxd/RzIppTwVV4ePjIly89c9RoIu1OzRsw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VuuhuP0V; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725525444; x=1757061444;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F5C21PIoGFyLC+pKtL4lE/ToVZLQW4ZouSefyGjoU2c=;
-  b=VuuhuP0V641OchdPRPl0Z215e8O23kVqaeg56FJW5RtwniTzuhf99Wv+
-   0CqxCnNqV8elF6wgE58HqtqUGXCA/aNqMhMsL1MtQV8pukFG5Vy/4SonJ
-   a52PHAs2AZvSeuwJha7MC8AVm4DY6iXXsgozW8GNhmOi4aKcJ0jATU7dU
-   YJGHN120NrOmN661C61naaee3ObbQJ71S9TAuNa/7CxHAIcIEUIBTrKLa
-   foLLO//b4fY461Ym0EKhARhpi7NCu0rhxnxiNw+ptgGkU28bOvDpMcnKi
-   xHsHIrz56Jd+3iD52WgiFqem0BO7QT895dw+hAon6t6JTN3et5hDVi9UW
-   g==;
-X-CSE-ConnectionGUID: X7B/WBsiQWCjTwYjlA2eRg==
-X-CSE-MsgGUID: Bjf964P7S1aCTV6SukQE4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="28114418"
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjIjPAB3HAWOsg+avjGnubmy52Tcgfh1fpQf17gJ4eeX0RHk7lw0QnLN+oyZF88+bQ117X1N5hDXhNwTo6CAFVsyUZtZ+1yTjs98ipjmmO7/nON88ZeYem/zmO94fNQT29RKe1+2LI00uO3fiXNXHk49R4Gvcust8pCdbxqMR2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: jo54b/OYR3yHxLG96C4q5g==
+X-CSE-MsgGUID: c56P0ZUXStOLFcq2yMcV8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24091413"
 X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="28114418"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:37:23 -0700
-X-CSE-ConnectionGUID: pCSgSKXsTdecISYNnEkeTw==
-X-CSE-MsgGUID: 2PD3EamKQQWA/nMxb+0W+w==
+   d="scan'208";a="24091413"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:36:57 -0700
+X-CSE-ConnectionGUID: 3tJ2ZgUWQLqcvfYD66K1/g==
+X-CSE-MsgGUID: odFxv4WuT0+tyjkIJTL2Iw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="65392071"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 05 Sep 2024 01:37:17 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sm7zO-00097V-0g;
-	Thu, 05 Sep 2024 08:37:14 +0000
-Date: Thu, 5 Sep 2024 16:36:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, abel.vesa@linaro.org,
-	johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v6 1/4] PCI: dwc: Rename 'dw_pcie::link_gen' to
- 'dw_pcie::max_link_speed'
-Message-ID: <202409051650.UA8WoHFz-lkp@intel.com>
-References: <20240904-pci-qcom-gen4-stability-v6-1-ec39f7ae3f62@linaro.org>
+   d="scan'208";a="65867733"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:36:55 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1sm7z1-00000005KmM-1cGK;
+	Thu, 05 Sep 2024 11:36:51 +0300
+Date: Thu, 5 Sep 2024 11:36:51 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Gergo Koteles <soyer@irl.hu>, platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ike Panhc <ike.pan@canonical.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
+ scope_guard() clear of its scope
+Message-ID: <Ztlto06GyFxLXz1y@smile.fi.intel.com>
+References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
+ <8a106cfe-f7cd-4660-983a-feba627cdcab@redhat.com>
+ <ZtjAmavK5tr4mvka@surfacebook.localdomain>
+ <8d35db80-5bf3-40ca-b041-8a94e76739c7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,101 +71,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240904-pci-qcom-gen4-stability-v6-1-ec39f7ae3f62@linaro.org>
+In-Reply-To: <8d35db80-5bf3-40ca-b041-8a94e76739c7@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Manivannan,
+On Thu, Sep 05, 2024 at 10:33:22AM +0200, Hans de Goede wrote:
+> On 9/4/24 10:18 PM, Andy Shevchenko wrote:
+> > Wed, Sep 04, 2024 at 08:14:53PM +0200, Hans de Goede kirjoitti:
+> >> On 8/29/24 6:50 PM, Andy Shevchenko wrote:
 
-kernel test robot noticed the following build errors:
+> >>> First of all, it's a bit counterintuitive to have something like
+> >>>
+> >>> 	int err;
+> >>> 	...
+> >>> 	scoped_guard(...)
+> >>> 		err = foo(...);
+> >>> 	if (err)
+> >>> 		return err;
+> >>>
+> >>> Second, with a particular kernel configuration and compiler version in
+> >>> one of such cases the objtool is not happy:
+> >>>
+> >>>   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end of section
+> >>>
+> >>> I'm not an expert on all this, but the theory is that compiler and
+> >>> linker in this case can't understand that 'result' variable will be
+> >>> always initialized as long as no error has been returned. Assigning
+> >>> 'result' to a dummy value helps with this. Note, that fixing the
+> >>> scoped_guard() scope (as per above) does not make issue gone.
+> >>>
+> >>> That said, assign dummy value and make the scope_guard() clear of its scope.
+> >>> For the sake of consistency do it in the entire file.
+> >>>
+> >>> Fixes: 7cc06e729460 ("platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands")
+> >>> Reported-by: kernel test robot <lkp@intel.com>
+> >>> Closes: https://lore.kernel.org/oe-kbuild-all/202408290219.BrPO8twi-lkp@intel.com/
+> >>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> >> Thank you for your patch, I've applied this patch to my review-hans 
+> >> branch:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+> > 
+> > Have you had a chance to go through the discussion?
+> 
+> Yes I did read the entire discussion.
+> 
+> > TL;DR: please defer this. There is still no clear understanding of the root
+> > cause and the culprit.
+> 
+> My gist from the discussion was that this was good to have regardless of
+> the root cause.
+> 
+> IMHO the old construction where the scoped-guard only guards the function-call
+> and not the "if (ret)" on the return value of the guarded call was quite ugly /
+> convoluted / hard to read and this patch is an improvement regardless.
 
-[auto build test ERROR on 47ac09b91befbb6a235ab620c32af719f8208399]
+Okay, if you think it's good to go, you are welcome!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manivannan-Sadhasivam-via-B4-Relay/PCI-dwc-Rename-dw_pcie-link_gen-to-dw_pcie-max_link_speed/20240904-151354
-base:   47ac09b91befbb6a235ab620c32af719f8208399
-patch link:    https://lore.kernel.org/r/20240904-pci-qcom-gen4-stability-v6-1-ec39f7ae3f62%40linaro.org
-patch subject: [PATCH v6 1/4] PCI: dwc: Rename 'dw_pcie::link_gen' to 'dw_pcie::max_link_speed'
-config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20240905/202409051650.UA8WoHFz-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051650.UA8WoHFz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409051650.UA8WoHFz-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pci/controller/dwc/pcie-spear13xx.c: In function 'spear13xx_pcie_probe':
->> drivers/pci/controller/dwc/pcie-spear13xx.c:236:20: error: 'struct dw_pcie' has no member named 'link_gen'
-     236 |                 pci->link_gen = 1;
-         |                    ^~
-
-
-vim +236 drivers/pci/controller/dwc/pcie-spear13xx.c
-
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  190  
-a43f32d64727302 drivers/pci/host/pcie-spear13xx.c           Matwey V. Kornilov     2015-02-19  191  static int spear13xx_pcie_probe(struct platform_device *pdev)
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  192  {
-6a43a425a074afc drivers/pci/host/pcie-spear13xx.c           Bjorn Helgaas          2016-10-06  193  	struct device *dev = &pdev->dev;
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  194  	struct dw_pcie *pci;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  195  	struct spear13xx_pcie *spear13xx_pcie;
-6a43a425a074afc drivers/pci/host/pcie-spear13xx.c           Bjorn Helgaas          2016-10-06  196  	struct device_node *np = dev->of_node;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  197  	int ret;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  198  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  199  	spear13xx_pcie = devm_kzalloc(dev, sizeof(*spear13xx_pcie), GFP_KERNEL);
-20f9ece101d8793 drivers/pci/host/pcie-spear13xx.c           Jingoo Han             2014-11-12  200  	if (!spear13xx_pcie)
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  201  		return -ENOMEM;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  202  
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  203  	pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  204  	if (!pci)
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  205  		return -ENOMEM;
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  206  
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  207  	pci->dev = dev;
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  208  	pci->ops = &dw_pcie_ops;
-442ec4c04d1235f drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  209  
-c0464062bfea9cd drivers/pci/dwc/pcie-spear13xx.c            Guenter Roeck          2017-02-25  210  	spear13xx_pcie->pci = pci;
-c0464062bfea9cd drivers/pci/dwc/pcie-spear13xx.c            Guenter Roeck          2017-02-25  211  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  212  	spear13xx_pcie->phy = devm_phy_get(dev, "pcie-phy");
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  213  	if (IS_ERR(spear13xx_pcie->phy)) {
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  214  		ret = PTR_ERR(spear13xx_pcie->phy);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  215  		if (ret == -EPROBE_DEFER)
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  216  			dev_info(dev, "probe deferred\n");
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  217  		else
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  218  			dev_err(dev, "couldn't get pcie-phy\n");
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  219  		return ret;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  220  	}
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  221  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  222  	phy_init(spear13xx_pcie->phy);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  223  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  224  	spear13xx_pcie->clk = devm_clk_get(dev, NULL);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  225  	if (IS_ERR(spear13xx_pcie->clk)) {
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  226  		dev_err(dev, "couldn't get clk for pcie\n");
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  227  		return PTR_ERR(spear13xx_pcie->clk);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  228  	}
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  229  	ret = clk_prepare_enable(spear13xx_pcie->clk);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  230  	if (ret) {
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  231  		dev_err(dev, "couldn't enable clk for pcie\n");
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  232  		return ret;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  233  	}
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  234  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  235  	if (of_property_read_bool(np, "st,pcie-is-gen1"))
-39bc5006501cc31 drivers/pci/controller/dwc/pcie-spear13xx.c Rob Herring            2020-08-20 @236  		pci->link_gen = 1;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  237  
-9bcf0a6fdc5062e drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  238  	platform_set_drvdata(pdev, spear13xx_pcie);
-9bcf0a6fdc5062e drivers/pci/dwc/pcie-spear13xx.c            Kishon Vijay Abraham I 2017-02-15  239  
-ffe82fa66afb19c drivers/pci/host/pcie-spear13xx.c           Bjorn Helgaas          2016-10-06  240  	ret = spear13xx_add_pcie_port(spear13xx_pcie, pdev);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  241  	if (ret < 0)
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  242  		goto fail_clk;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  243  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  244  	return 0;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  245  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  246  fail_clk:
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  247  	clk_disable_unprepare(spear13xx_pcie->clk);
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  248  
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  249  	return ret;
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  250  }
-51b66a6ce12570e drivers/pci/host/pcie-spear13xx.c           Pratyush Anand         2014-02-11  251  
+Thanks!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
