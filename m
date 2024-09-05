@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-317146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF4896D9F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB0A96D9FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3D01C23CD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99952843DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23F819CD1B;
-	Thu,  5 Sep 2024 13:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88EF19D06E;
+	Thu,  5 Sep 2024 13:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBlaSm6k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbf53t1H"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BA5189518;
-	Thu,  5 Sep 2024 13:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFEF189518
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542155; cv=none; b=mhtiuORjIvGJFXGqlOWViLluivFrSMzUK1STIZKa5O0guxfwLN8Fu0MwWhLSzSinvUcRXE6YsED/JGpXcAZt8ThCe3bFKfR6MA1gyqtuhmfckBjIiGqykkg1vI/Muc8L9gSMZw39ScEpMtYCi9QVvp6AWMSQi/Nmm4HsZ8CORVk=
+	t=1725542224; cv=none; b=pWELW9eNgLPkx0teo7R5dmhe9KXYnRmeenKuFdBKfiFNuuTdDuudT6bXPjnkmGrT77ffsHhihUGCrd94oxIPLOiZ/cUXTxQDfW1icwaqfUhGS8lCXhIznp4+DzNG4H1a7s51zTrChJ9TgbrD1hNjZtWkEpN91YBpYK8v8wV8fNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542155; c=relaxed/simple;
-	bh=Lf2xQW1ofXEMIE9aLfyIWBIYBuE6JOqUklSS1JNkfRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=isoG2HN0WWsf38odM+WciJu9z5F/BG08xYCsm1pp89hke/XSdKWqwG5ellcWefvzR9muPQn2NwimKGqNnfIYIf+kyju6dhIhjNXD2FvzidTk4FNZElRzmLM+Si0dmJWhEcX1wK425SG9gMIqaVi0qJ1nVFy2YvkG2Bh+hlvlvvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBlaSm6k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E8B3C4CEC3;
-	Thu,  5 Sep 2024 13:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725542154;
-	bh=Lf2xQW1ofXEMIE9aLfyIWBIYBuE6JOqUklSS1JNkfRc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nBlaSm6kpDzLUDxCZ71M6xQhbnx76/gsUW2GfJcOST0V1Iga4wCMOfuoQ73srgmuP
-	 L6vphRtnHgPwGiSeNPY+9CvpMwGw2FX/2Okbd15Eqj6TysW7ssIhM/syMMigVSiG3N
-	 ogXUeLYIEBtDToSzdvm06Yos9aZgT742UKn7xcv+L+H23Aw74A7zir/1wmPno145GT
-	 Qn4F8sE2XD3o5TkJt6hyBluyuLIO+bO3g9tOEYcC2MTt4X21wUSIviHCNStBOg2Yv7
-	 O+yR97gmEtDm81qxx9nGZprRM8IPE5CUy+wQcOoQzL5AHIo5ka7y5Nkh6U0gV06i+7
-	 1/JalMq/MU9+A==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533461323cdso864887e87.2;
-        Thu, 05 Sep 2024 06:15:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWHz3jMQ05/nQ/Kqe57a23apjbMITNtSzypFqDal4hXYnFHufUPrDPvtddEbVL1oi5nSekgXOjVycTE@vger.kernel.org, AJvYcCWlD68tGXzk7nNxK2qrKpuN3RL3ImNWQ8/9An86dX+Ain8/i5entphbm9qspzwTt56GrN0Ih2GgGEAgZISL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9JtJLzyevgaWe2MJeFWarGUNr+BVV3jGIOxVfUnsXqOvmqAjc
-	QjRnRbnF2WurVrCvVlatKGHBLUDl2GncgbIWamuIPvuy2G7jRT2LrT/xo/XHyoysd4xIKnmntaH
-	pKOYC4o59ct4snkuhIuVkcIKYPQ==
-X-Google-Smtp-Source: AGHT+IGU5DPvcNbP2W6NzPukJioHxIAJmFJkA9MqD/JGq2c/Acyj73ET0Fu5aoBNoss4Zsr+y1VT8eBngeqeqV4+vH4=
-X-Received: by 2002:ac2:4e07:0:b0:530:d088:233f with SMTP id
- 2adb3069b0e04-53546b69383mr13680962e87.40.1725542153018; Thu, 05 Sep 2024
- 06:15:53 -0700 (PDT)
+	s=arc-20240116; t=1725542224; c=relaxed/simple;
+	bh=BMTo3carnvYp9GhWjQhnE96UE0W8/j+fbBiWuyJ/RUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O9Iw0Y9dv8vO5GCrhno1V9/W1xMMc+xbYM0hh8yXnUUlAmDXKQcei0LIoC338qOaD7I77mefpi9ft8ibIAc5Xwtte93Mx9295PFNwMHVXdeBJkzllhx3msHKMp2YFRNpFGuGKhaP6ghmUEf3DWFc+GA3amZnqAeDn6+oBHL92G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbf53t1H; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c1120a32so439531f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 06:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725542220; x=1726147020; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AVGZO5DUGSRAZiLVSjLJKdfhQDqbVUzzhoobR/BWTM0=;
+        b=fbf53t1H2Z5RqfcjQ+SP6pkMw3AYFU3cecY8Ix8tlDv+mlyUS1HcqX2LYR3Acxy5ov
+         f2DSATaC8W+7myNjIV16bIKUoPoLrkVdzO9RlJvHkqopvoPC7zWf8QQqjy34EhP06f+4
+         0jVQ0IvehHxS4d6Bn99GqjixXdFE4LUKEC21mmLgYQUmTmQNASIQZRH8eiYOAebLGBGz
+         yZh9wvl8CHoGYE5Cj/DmCsnivQ1oO1PEDw1W+TfuQsg6NdUlEc5yeybVRzwAs3Xynt46
+         95lrW3N8XCvPaz2OFKqwDAYGa78YfCKTyi/ckeugHZdEdVqhFgpKMmRJGKtJFoEcWEfm
+         ae6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725542220; x=1726147020;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AVGZO5DUGSRAZiLVSjLJKdfhQDqbVUzzhoobR/BWTM0=;
+        b=geQZ/zXANoiRKtsiMDeRIOQGwBO9GErz3ICDV2cdOssasXJdpo6+GJiHUorgeHUq3p
+         2i9swqWdvqwrxNMsUUz8E2kHVPxLRvr/6y50voN8YC91B2Uxngm+SPZ57NidZJ3QJxLs
+         zB6oPKJdH7DS3mwkumZlZvtPDRaUPRZGsZWFALUrqFu2D9CdyMkXt2lynYX8FkFmH9MT
+         p5JY61s906g6ywe7khIk7Kog/BtrKuAqcB0vQbZRTHYAx+D+3ckzKc5R7n5gTKeQWino
+         HHzv021ZECBaEoEx5OcTcmJw8W62QN/I2sHrHfy3YEGT97c2UfxC83+7QVLBWF65Hdh3
+         fLSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrJmLk6ifg/xKEOep0Oh0ITBVQbhjZYZ1XxFzpEgCO1iEuy2lkXf3Qtbu5RLThk8sTDh/fXh7ZiIEg2u0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJm6WJGL9RqCD2H1hFxc0QIw8dkjF9o2rxBJyCAJv3ozsW7eP0
+	hKrrYyS7pMf++RdFqIbkL+Yq57R9o8ECx3bE4bT+xsZcyz7ise88fMCA5ftMtl8=
+X-Google-Smtp-Source: AGHT+IHXGHeVl08sm0U4IEIbIKLtRMyu+iDC3lyWmyaA7RnL33Vci6SlP3CfCB7hLVvFD9z0PpmXjA==
+X-Received: by 2002:a5d:590d:0:b0:367:8383:6305 with SMTP id ffacd0b85a97d-374bcff3aaamr11078324f8f.55.1725542219822;
+        Thu, 05 Sep 2024 06:16:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4ac81sm19250718f8f.14.2024.09.05.06.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 06:16:59 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:16:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform: cznic: turris-omnia-mcu: Fix error check in
+ omnia_mcu_register_trng()
+Message-ID: <2b10f2e1-82d1-4f33-92c4-e0cb28b9edac@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905-of-resource-overflow-v1-1-0cd8bb92cc1f@linutronix.de>
-In-Reply-To: <20240905-of-resource-overflow-v1-1-0cd8bb92cc1f@linutronix.de>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 5 Sep 2024 08:15:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ=7kX6DL_HBJMrWuhjZEmPUL++BvJ9tg3BDD9-e+b6Xw@mail.gmail.com>
-Message-ID: <CAL_JsqJ=7kX6DL_HBJMrWuhjZEmPUL++BvJ9tg3BDD9-e+b6Xw@mail.gmail.com>
-Subject: Re: [PATCH] of: address: Report error on resource bounds overflow
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Sep 5, 2024 at 2:46=E2=80=AFAM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> The members "start" and "end" of struct resource are of type
-> "resource_size_t" which can be 32bit wide.
-> Values read from OF however are always 64bit wide.
-> Avoid silently truncating the value and instead return an error value.
->
-> This can happen on real systems when the DT was created for a
-> PAE-enabled kernel and a non-PAE kernel is actually running.
-> For example with an arm defconfig and "qemu-system-arm -M virt".
+The gpiod_to_irq() function never returns zero.  It returns negative
+error codes or a positive IRQ number.  Update the checking to check
+for negatives.
 
-A nice follow-up would be to make of_pci_range_to_resource() use
-overflows_type() as well instead of open coding it.
+Fixes: 41bb142a4028 ("platform: cznic: turris-omnia-mcu: Add support for MCU provided TRNG")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+For more information about the history of IRQ return values see my blog:
+https://staticthinking.wordpress.com/2023/08/07/writing-a-check-for-zero-irq-error-codes/
+The gpiod_to_irq() function was modified to not return zero in 2016.
 
-> Link: https://bugs.launchpad.net/qemu/+bug/1790975
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> Tested-by: Nam Cao <namcao@linutronix.de>
-> Reviewed-by: Nam Cao <namcao@linutronix.de>
-> ---
->  drivers/of/address.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index d669ce25b5f9..7e59283a4472 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -8,6 +8,7 @@
->  #include <linux/logic_pio.h>
->  #include <linux/module.h>
->  #include <linux/of_address.h>
-> +#include <linux/overflow.h>
->  #include <linux/pci.h>
->  #include <linux/pci_regs.h>
->  #include <linux/sizes.h>
-> @@ -1061,7 +1062,11 @@ static int __of_address_to_resource(struct device_=
-node *dev, int index, int bar_
->         if (of_mmio_is_nonposted(dev))
->                 flags |=3D IORESOURCE_MEM_NONPOSTED;
->
-> +       if (overflows_type(taddr, r->start))
-> +               return -EOVERFLOW;
->         r->start =3D taddr;
+ drivers/platform/cznic/turris-omnia-mcu-trng.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It looks odd that "r->start" is used before it is set, but I guess
-overflows_type isn't using the value and the compiler would warn
-otherwise.
+diff --git a/drivers/platform/cznic/turris-omnia-mcu-trng.c b/drivers/platform/cznic/turris-omnia-mcu-trng.c
+index ad953fb3c37a..9a1d9292dc9a 100644
+--- a/drivers/platform/cznic/turris-omnia-mcu-trng.c
++++ b/drivers/platform/cznic/turris-omnia-mcu-trng.c
+@@ -70,8 +70,8 @@ int omnia_mcu_register_trng(struct omnia_mcu *mcu)
+ 
+ 	irq_idx = omnia_int_to_gpio_idx[__bf_shf(OMNIA_INT_TRNG)];
+ 	irq = gpiod_to_irq(gpio_device_get_desc(mcu->gc.gpiodev, irq_idx));
+-	if (!irq)
+-		return dev_err_probe(dev, -ENXIO, "Cannot get TRNG IRQ\n");
++	if (irq < 0)
++		return dev_err_probe(dev, irq, "Cannot get TRNG IRQ\n");
+ 
+ 	/*
+ 	 * If someone else cleared the TRNG interrupt but did not read the
+-- 
+2.45.2
 
-Applied, thanks.
-
-Rob
 
