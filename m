@@ -1,86 +1,109 @@
-Return-Path: <linux-kernel+bounces-317184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF1596DA99
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD32E96DAA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0F2284651
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B2B1F21FB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307FB19D8A9;
-	Thu,  5 Sep 2024 13:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867151991A9;
+	Thu,  5 Sep 2024 13:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIVMffKc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxC3sF/k"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9B419925B;
-	Thu,  5 Sep 2024 13:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DD219ABDE
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725543872; cv=none; b=ZeYXJW6NXZ1UyNZFWvg9wzEDD8xCV9AkgMLBaE4M7jJI6ZKcDp6Rs0snKV6I7qHmx9/veNUVsuh0OOBuMI9uTVOb4mtw9kh7n46wx9qDzD6AW4Oxmd8+1McEAXgRwdkGpfjrCsvBXtfkcN0AQESrx6Xy067WD5JBhAiq7ccHzMw=
+	t=1725543963; cv=none; b=YTLqCPWO/OEPVTHRuqErIj1MSmSSDOTmUUbzpFpqDgEoG4FTPhwfRfRgX4EWSluuLXbt7H1xosQ/K9u+YlPYlCP1euyBN445gRmUEWQ25NQ/v56zGkGIs90uLtnANweupc6J63KduOGPNGWnIrNVTNd36f5SvELlfjou873lssw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725543872; c=relaxed/simple;
-	bh=b9acX5IhkohSbskqXXvGeItLmD2/cfBjvS2Wfhcu7XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwLj1OPqk+p8eJugqALldeKyexpH2ncpwjc72/+LNZV82fgA2WBPj0CnOc+sqMzpR7NOM4VJGlPDTBsoNMR8GspOVfzDIcCMKToJ/Iuh5XVDg45oBAnmFnBX1mWgnXVEr/LjVttG38Z+VLORamWGqhHVXX7xmgIOt2pTI9quXe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIVMffKc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2709C4CEC3;
-	Thu,  5 Sep 2024 13:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725543870;
-	bh=b9acX5IhkohSbskqXXvGeItLmD2/cfBjvS2Wfhcu7XM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uIVMffKcqsMxDOvKmpQ/o52EIXtFaMD2p2GliETZD9N0Dk4ATVa7h8aY7R3arCYMp
-	 6PEOjR1bq/MdcLyU9jcyTwzMWMRPlsX+J/UIMUYK7RKvPwFssxhdY4iVx2DY4c0Z7s
-	 uue4s4wk1gtXDdxkJet5ojFq8gd9VObkCdj0dTyHH57NfvWZ5V2GcbYjNN4Zn+06uQ
-	 EzMbC3xKlj7V45GE7t/TPviuOx7NkOFlIil6D3lPT+VE0ZjrR6uPchXtQ0cvPHDUyH
-	 wdIw6zQPG6/KSBHdFcAAp18fvvQcsOIsAXX2GSUbcoLchhW8ng4EhXQUVAUZ21rsoH
-	 CzGYdGtYtvYfQ==
-Date: Thu, 5 Sep 2024 08:44:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	Dinh Nguyen <dinguyen@kernel.org>
-Subject: Re: [PATCH 02/15] kbuild: split device tree build rules into
- scripts/Makefile.dtbs
-Message-ID: <20240905134428.GA1517132-robh@kernel.org>
-References: <20240904234803.698424-1-masahiroy@kernel.org>
- <20240904234803.698424-3-masahiroy@kernel.org>
+	s=arc-20240116; t=1725543963; c=relaxed/simple;
+	bh=m5IMTqd7YUvgmJ7vSwi2nF/paIY7e6NZR8sqtfCd/m4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kIaoPfIcsrJobzvg5YyYd42tlUV+U9WYc98Pv0FG/z3Ot3dQCUhLJo6dZtsUfEkA0MaVjhDn3mhieqJC4cM4Eg9ck0jLBzHaeKq5weD+hQeV43MjZ36EQ9f22URuV9Xc/iJpjZhzzUQquGUKtAC+//6DM+TofF2iY3I1J7Y/WWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxC3sF/k; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-717839f9eb6so88506b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 06:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725543961; x=1726148761; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zLrIGtrjGMvYCAPgpSbeYnDN/jGY3WpFtOUDcb9b6FM=;
+        b=TxC3sF/kznag/Bwu12Kv35usq5o6E8OM/qgDU0ltjgfV9qEh5ufBTjoZfNxlLrAJOA
+         /RMHwcRoK8bXuQz3mf0KABbvgQVnkyCmVoEFAn9bAZ2pqKkuTq/7VyhY1lZL2V8ozMJ1
+         Zd9g+StgEZDVu+HUCkIemVHEe+Fb5PGUI9xlKngV7SHzxlEJm+N2IbHrpfNyxDaFf/bD
+         OIFmhWuB2DHwk3sY4nh8HJW+a7rGHiVxz20pdD90CsAH8LfOdGiAjHDln/5h5WPC6Dg9
+         e0OszMNBAwnqB3ANxHcBl9Ie/xIG6ueqS+fbtWfgllDChneIztBgt0/2iby1OuztL4lO
+         k9pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725543961; x=1726148761;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zLrIGtrjGMvYCAPgpSbeYnDN/jGY3WpFtOUDcb9b6FM=;
+        b=uwdj2qIvyrF/i51S8EXkWwTV9+Q2N5E8lprC6Zr9xxXvKAORaPhoG3CIdwxhjtPRiq
+         stSZ3SsXmBmPr9kY7j5VILgNUTvFnDfXC7DppTnxRqZaNS948ffQGCHbS7XHxLe55MXP
+         KDLk9zum1RbhGlvJzwM47zWluGdh1rnJq4A8N60gcEVgi+M94FuC5pRrz5E7XYw5TMD7
+         xzeicRdBbSEwXBYfOlqA9HH6zg0PeVg07E0o8wO4qwD9QZFN67/5JlCEeIpoR9ogZH98
+         U7CU7F6K7jrdOIt3M404OHD4kXDrpj7qy9eb5PzplOYUCkz7kxQy+zcKDWAbziZnfBZQ
+         rdMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxcoUlBimjjChF0viCyZzIqM9hKsh6y3J0spgOkN4802dp/toOEm9CsRok6RZgzzFmASEZQM1l3OQ3JVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1hZ+POfLW/zyw3jg/hIgMSgrw7o9kfjDyrpKRyd0Idtey3/8R
+	LuLUfo2EffUEEhJm5il6LbvpPVbbqM3WmGjMPLQaCd1Xg8H+oYQt
+X-Google-Smtp-Source: AGHT+IHTG6m5a+YqgJ378/nJai2f+IufcP4BKwMpjbBW2YiqD+QLiySRaTR200H30C/v3pS/TmUCYw==
+X-Received: by 2002:a05:6a00:2d92:b0:714:2051:89ea with SMTP id d2e1a72fcca58-717305c80b4mr12306175b3a.1.1725543960712;
+        Thu, 05 Sep 2024 06:46:00 -0700 (PDT)
+Received: from ubuntukernelserver.. ([110.44.116.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177858bfd5sm3224500b3a.133.2024.09.05.06.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 06:46:00 -0700 (PDT)
+From: Roshan Khatri <topofeverest8848@gmail.com>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: include: Fix spelling mistake in rtw_event.h
+Date: Thu,  5 Sep 2024 19:30:36 +0545
+Message-Id: <20240905134536.4364-1-topofeverest8848@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904234803.698424-3-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 05, 2024 at 08:47:38AM +0900, Masahiro Yamada wrote:
-> scripts/Makefile.lib is included not only from scripts/Makefile.build
-> but also from scripts/Makefile.{modfinal,package,vmlinux,vmlinux_o},
-> where DT build rules are not required.
-> 
-> Split the DT build rules out to scripts/Makefile.dtbs, and include it
-> only when necessary.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  drivers/of/fdt.c       |   2 +-
->  drivers/of/unittest.c  |   4 +-
->  scripts/Makefile.build |  25 +++-----
->  scripts/Makefile.dtbs  | 142 +++++++++++++++++++++++++++++++++++++++++
->  scripts/Makefile.lib   | 115 ---------------------------------
->  5 files changed, 153 insertions(+), 135 deletions(-)
->  create mode 100644 scripts/Makefile.dtbs
+This patch fixes spelling mistake to increase code readability
+and searching.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+---
+ drivers/staging/rtl8723bs/include/rtw_event.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8723bs/include/rtw_event.h b/drivers/staging/rtl8723bs/include/rtw_event.h
+index d48bae5416fe..62e0dec249ad 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_event.h
++++ b/drivers/staging/rtl8723bs/include/rtw_event.h
+@@ -28,7 +28,7 @@ struct surveydone_event {
+ };
+ 
+ /*
+-Used to report the link result of joinning the given bss
++Used to report the link result of joining the given bss
+ 
+ 
+ join_res:
+-- 
+2.34.1
+
 
