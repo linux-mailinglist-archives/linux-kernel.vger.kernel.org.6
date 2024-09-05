@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-317114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A36996D963
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5473C96D964
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA242B23805
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22E41F23DB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53CF19B3F9;
-	Thu,  5 Sep 2024 12:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ggbh6AQr"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A997319B3E4;
+	Thu,  5 Sep 2024 12:52:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DAB1991A1;
-	Thu,  5 Sep 2024 12:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F77617C990;
+	Thu,  5 Sep 2024 12:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540659; cv=none; b=bRRvojyau0QVAzNFoRTpb9Li32iA1Fdhfp4R2/dwXCxiHZu8xsTZcVqaZPjhWhJQZVX5fI+frA37PKUZzP8KD8KZjUPJJodeg0ZbNVAJgHto/gVniNahc8PdmBe64fq4xq60uBpbewqZ8wzCLAkq7e96LPIk9QwEPuCktOvRS4c=
+	t=1725540749; cv=none; b=T8qPH4ZYF2ySvQjllucXsfpiNCUbFbBYdqKrEeT77RPr6hpQWGJtL9YgkTPiF1NFohoDwj4VGr+4MtodpX0MqtxvBVWonKnCLav58zshxxXH3BqTYMk5pHc58OOCnSeEsocI77xjf0SPphQKwSE+QcxSB1bfXIopdCx939oxu+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540659; c=relaxed/simple;
-	bh=3bJXQ5TFk6MHX6XlTBxAbtfrWz++1pomFmu2WzecI7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEVmHlS6kaY2Np/dCkaunTwhCL5j6u6kd9LPxiyd8gr/VA5agja/lllX0roEwIxGa8TpyJ4nN+mwvvYxDPSLQlK+uU4eSfB3VWPfFOiHulPDgCCM1ySLIqOwIl52Je/vEePpvMy7Yjat7yjK/5UTtPhIzS0lGbHCiQWqYHK3aK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ggbh6AQr; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53568ffc525so960331e87.0;
-        Thu, 05 Sep 2024 05:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725540656; x=1726145456; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=smQkwEh3oi8LovVsekW2eY1Pija9c8K31DlJAty2Ygc=;
-        b=Ggbh6AQrK1na92HOD2B9VGIP71OuUCnth+I16dgVLL+OblhkzsgebWIIeYeFY22/nF
-         NL3vCzjBZRBbGmNKhKo3v/EETFRNQVW41hGHZl7YPw6gcmp2RYRG3gboNuvqYaNBKqOu
-         Pp6/Btj5Cm0osRTb9fnYEkmhWhgDzDtfkNZxzuQtz6lap0RqCaPOnY2vIa/uu9Ct+z5N
-         lMBmqvlxUqF7imaNWkrzSfljh9nRGOgk+BCiS5RPTb2nKoV73SDq4ei9X64t0jqndtU7
-         ynrHVVqOsYuDmR79p950bmMnZ0NZ+HVGSWvKSaURLm362KDqjt6Ti8QveQOK+Iabkyfn
-         LcSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725540656; x=1726145456;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=smQkwEh3oi8LovVsekW2eY1Pija9c8K31DlJAty2Ygc=;
-        b=vjkFBQeobYiRXuQaYXxZzEnsPQycdqhu8tJdLhbisE03kz5irbB/cGlcLpw1+QxThH
-         kX0XMASOtxkwrKi6bde8TA7Nf9lpbDWDp98TP6Lb90Ap3HD2SiwhCG6v0xzqLv7D+8PR
-         KzCfBhPKlr6TqxoxnD92pkdlLnOXbKqP+qPUsVzTEq1zTOFekXXJ2P4VpmaCFz09KR/s
-         SscuJ6TUdEWbQgmAdi+GDx3I6FvH680hvYO57f0MrdMI+4Imd05CVGscw/o65EFHc1Xq
-         qC70L7ymU+EAatyy9s/yx4NzZW+BDHBvZ2fC+hqQhkgVdLPf4xvzS4y0riTf3K/eWehN
-         ARBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFEBHO79tKYO1/h47vRWVYrl6gvA7/47XaY950nRDn6moplgfvjUfugyIVxsxPO/19mslq5oneoMTTE2Av@vger.kernel.org, AJvYcCV8+Hu8OURaGWJsOcARe6154NhCVJPnTfH//Lr9sjZ41/iMxRE0WzuSlCVSMxPP5ie5uvTypSCqH85NvrwecA==@vger.kernel.org, AJvYcCXin1LcBD5+sBlUZeKgtc91wr/6GJ5ysPbXUhY/AhQXnY1AIAb4zZKhilir3pbbfboWtKRxD41CyiLJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi+OMxW7B1+obEuB1uBL5txNzXUvAGdIFVnu87Ws3W5mD4reul
-	NFD283tiHepmYj6/MslrNSuaCQDwzxVk4nPjerTSyIXKJsLu3e8VFzBgESQU
-X-Google-Smtp-Source: AGHT+IGYJmcIi3kdEiVpdk8WVDNNUhjB0wUtV+UnfsPg/hVGXeeAUhd/9g28Qpq56lBbCCjVbX3HBg==
-X-Received: by 2002:a05:6512:4025:b0:533:4b70:8722 with SMTP id 2adb3069b0e04-53546b033f5mr14685461e87.15.1725540654838;
-        Thu, 05 Sep 2024 05:50:54 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53652bd3dcesm164372e87.10.2024.09.05.05.50.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 05:50:54 -0700 (PDT)
-Date: Thu, 5 Sep 2024 15:50:53 +0300
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
- the on-board wcn6855
-Message-ID: <6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek>
-References: <20240905122023.47251-1-brgl@bgdev.pl>
- <20240905122023.47251-2-brgl@bgdev.pl>
+	s=arc-20240116; t=1725540749; c=relaxed/simple;
+	bh=tN28YwSlwQtG46KzjQc8IJ4igXiJsYG+1FA/9ItvSmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eyxQRhnK9AjDPj262iC/HL5jBjfUD+BewXad69XcEKTDKldAJT5XxW2J53wKfE02dheK6OFCPRBogk1umrOWpb20xZ3/ULV3R1jzgV3gAPFqA4A3QFHxvQsroEePVK8VIAIWSKGu6YVLVLmCOTRcHtrg3+FmY99dAoeCzKe4ykk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230CDC4CEC3;
+	Thu,  5 Sep 2024 12:52:28 +0000 (UTC)
+Date: Thu, 5 Sep 2024 08:53:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Luis Claudio R. Goncalves"
+ <lgoncalv@redhat.com>, Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH v2] tracing/timerlat: Only clear timer if a kthread exists
+Message-ID: <20240905085330.45985730@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905122023.47251-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05, 2024 at 02:20:19PM GMT, Bartosz Golaszewski wrote:
-> From: Konrad Dybcio <konradybcio@kernel.org>
-> 
-> Add nodes for the WCN6855 PMU, the WLAN module and relevant regulators
-> and pin functions to fully describe how the wifi is actually wired on
-> this platform.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
-> [Bartosz:
->   - write the commit message,
->   - rebase Konrad's commit,
->   - fix one of the supplies' name]
-> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts | 108 ++++++++++++++++++++++
->  1 file changed, 108 insertions(+)
-> 
-> @@ -583,6 +668,23 @@ &pcie4_phy {
->  	status = "okay";
->  };
->  
-> +&pcie4_port0 {
-> +	wifi@0 {
-> +		compatible = "pci17cb,1103";
-> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +
-> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
-> +		vddaon-supply = <&vreg_pmu_aon_0p8>;
-> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
-> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
+From: Steven Rostedt <rostedt@goodmis.org>
 
-As you are going to post another revision, please also add
+The timerlat tracer can use user space threads to check for osnoise and
+timer latency. If the program using this is killed via a SIGTERM, the
+threads are shutdown one at a time and another tracing instance can start
+up resetting the threads before they are fully closed. That causes the
+hrtimer assigned to the kthread to be shutdown and freed twice when the
+dying thread finally closes the file descriptors, causing a use-after-free
+bug.
 
-qcom,ath11k-calibration-variant
+Only cancel the hrtimer if the associated thread is still around. Also add
+the interface_lock around the resetting of the tlat_var->kthread.
 
-> +	};
-> +};
-> +
->  &pmc8280c_lpg {
->  	status = "okay";
->  };
+Note, this is just a quick fix that can be backported to stable. A real
+fix is to have a better synchronization between the shutdown of old
+threads and the starting of new ones.
 
+Link: https://lore.kernel.org/all/20240820130001.124768-1-tglozar@redhat.com/
+
+Cc: stable@vger.kernel.org
+Fixes: e88ed227f639e ("tracing/timerlat: Add user-space interface")
+Reported-by: Tomas Glozar <tglozar@redhat.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20240903111642.35292e70@gandalf.local.home
+
+- Added taking the interface_lock around the tlat_var_reset code.
+
+ kernel/trace/trace_osnoise.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index 66a871553d4a..fc227a386077 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -252,6 +252,11 @@ static inline struct timerlat_variables *this_cpu_tmr_var(void)
+ 	return this_cpu_ptr(&per_cpu_timerlat_var);
+ }
+ 
++/*
++ * Protect the interface.
++ */
++static struct mutex interface_lock;
++
+ /*
+  * tlat_var_reset - Reset the values of the given timerlat_variables
+  */
+@@ -259,14 +264,20 @@ static inline void tlat_var_reset(void)
+ {
+ 	struct timerlat_variables *tlat_var;
+ 	int cpu;
++
++	/* Synchronize with the timerlat interfaces */
++	mutex_lock(&interface_lock);
+ 	/*
+ 	 * So far, all the values are initialized as 0, so
+ 	 * zeroing the structure is perfect.
+ 	 */
+ 	for_each_cpu(cpu, cpu_online_mask) {
+ 		tlat_var = per_cpu_ptr(&per_cpu_timerlat_var, cpu);
++		if (tlat_var->kthread)
++			hrtimer_cancel(&tlat_var->timer);
+ 		memset(tlat_var, 0, sizeof(*tlat_var));
+ 	}
++	mutex_unlock(&interface_lock);
+ }
+ #else /* CONFIG_TIMERLAT_TRACER */
+ #define tlat_var_reset()	do {} while (0)
+@@ -331,11 +342,6 @@ struct timerlat_sample {
+ };
+ #endif
+ 
+-/*
+- * Protect the interface.
+- */
+-static struct mutex interface_lock;
+-
+ /*
+  * Tracer data.
+  */
+@@ -2579,7 +2585,8 @@ static int timerlat_fd_release(struct inode *inode, struct file *file)
+ 	osn_var = per_cpu_ptr(&per_cpu_osnoise_var, cpu);
+ 	tlat_var = per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+ 
+-	hrtimer_cancel(&tlat_var->timer);
++	if (tlat_var->kthread)
++		hrtimer_cancel(&tlat_var->timer);
+ 	memset(tlat_var, 0, sizeof(*tlat_var));
+ 
+ 	osn_var->sampling = 0;
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
