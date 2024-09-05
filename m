@@ -1,122 +1,98 @@
-Return-Path: <linux-kernel+bounces-316543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ACAD96D0F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:57:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F06196D10A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C688B2279A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD911C22EAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6431946A9;
-	Thu,  5 Sep 2024 07:57:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31E91953BD;
+	Thu,  5 Sep 2024 07:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="biNdxn/R"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6414EBE4A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79D11946C3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523024; cv=none; b=lTVaDtpTb4rl+o+UL1GMrFLssyv13xXlgK9mrxzumyz4JF8kOl2aGFnTZN9jL41FjWgbWnmzvwfnCXNG3hvFnoEBf/7pAzhfOU8c6fLSl1nHNBfBEsi9Da2i4ToTh7koUOcKvGwuQAlGFHnOQzKxFuBqdDsYdt9TF12rpXjoZ8U=
+	t=1725523071; cv=none; b=T6ghX5deRCPrH/ieuVYiiQ/2dLqthMUgfcQ37j4sYn4NBp0iFmw+6mEMhPYh+u6rUKYGjbJVQdFfhvKpILaw7A1qPej/lR1RiN31drwpKu8xRnzZlsmaiDhPxttaErOKvHbPV52N/WLtc0he0Kywb/buNdT6I61srcpULt0Zhd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523024; c=relaxed/simple;
-	bh=hqQEZmtDxYnRFaRXYxmmExpheVlMmkQEBD9FWInRZi4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V01PbO5+DHymsaALRE/2n6EKhIQWaC+B4n+M0tcXHiNyeIX5kxaGQmlVEhzdwsfXFr8NHwL+DDbFZXSK/CL3p3wNVymbZkm23Do+IKtyEuYtbePd7nUbMfSMp9w2CTzUcYUzj/GONefH8XSv2V/ANWmO/08+y+6c4fnB6ABaTao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a206312eeso86916739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:57:03 -0700 (PDT)
+	s=arc-20240116; t=1725523071; c=relaxed/simple;
+	bh=uzqoXNG3+qdG4fZg0Gqs2RhJ7NCXI4GO3eiiknmlaNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C60XQgAYe5iCDlq3TaOSqOylIsTlXJb3utB/N9fjTBp5a3pg71HKF3GfrjNCLlfvGY8345EmBFh7qHTDh5zIc6fA4IX87tfFhOJ093F6y+XvQ8R+Yqe82ZGbxAj/7RnrKACKKqMh4LqbWnw284py/bc8H3y+SFqRR0KG68f2QCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=biNdxn/R; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c6187b6eso263862f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725523068; x=1726127868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uzqoXNG3+qdG4fZg0Gqs2RhJ7NCXI4GO3eiiknmlaNE=;
+        b=biNdxn/RMiYcU5zUJyf9c3MiMf2rWAX0GkmH0Ug2zdW/mJKPq+8Yckt+pmiPv+CINF
+         oGbD34Xi7YsCzzWE23y0Z7F+juwg6/n7MdTnVR3GQ7zCd/UFK4MFNwgPHy0qYh5+vpK5
+         Yt5QKpNoO/B8kH6Y2DXyX31zsGjyg0W64evJh3X5SUOo7mQb5gZUvuIyuabPhUOKoOeg
+         6Fd6f/9J8Hl6qyaQOtIDyyPAU4/7XYqBQMFLHHIsW+Xfw8fa/FlrGpAG5RRkoDW0PNcg
+         GIcOXPNT9AK8n9+Su9NID2j2OWB57SSAqJY8LoUGCT1ZfplbFNzomp3JipripIbqUsMN
+         DLyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523022; x=1726127822;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pWFRUKiYjgZhgwMHAzZEuCfAEAt5tf6gCveF2TlOveU=;
-        b=PnJgP3z+X6DrZIXaGYuDszWygOLRldcwigiiIHJR/4LqjWoxchqeXPMijwQhljEkal
-         yQ5xOgZ5PdIRYliPD8Dys10rROjtyScvH8oESXZYsLlukPKhrZFdRtkGZTPr5CqWCXKV
-         ZGvLhXb488ZDXUEe78Qhh+NcIFtQX96hMUQHCVpg82zYPwGfvb/cCqMbEZZJBvR1IU/i
-         spxmB4a+mPB6jQbBg+3KGKJknX0GAGIq84ii8cEvLhAggxGBXi/y7PmOrsXVJEYM7HUm
-         BbwURkH0k2eaR8Oiayp97QkmwaXgtEobTf1yQwW9FDZu4YLv4hEpOI7HRnuo3wsMJ6PF
-         IWRg==
-X-Gm-Message-State: AOJu0YyyhI1GKs+tbohL9EId/yeolqqZ46EDhuXkLTwzfgkn1nWvIbqt
-	40rBDFHDdVJABilwgnOsBYk66M+o9c52NJOdsfKLqiXiTuS6Pdhrkly0/zlaK42SA2GqQ34x3Zb
-	4bXaCpKrjIQzW/Zkc/IGEGTgvUxJSV3wl4clzCAKlfxG+2NuTekakbDc=
-X-Google-Smtp-Source: AGHT+IFwpBwBPgWDZN6ZbEnqVTl8zRIgYLM9s0heMikl6f1B1ghfOzcI4FJtZ4KIuaDuHVSkLL3QQo5/KVpHa9wy5mk05WMSBfLt
+        d=1e100.net; s=20230601; t=1725523068; x=1726127868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uzqoXNG3+qdG4fZg0Gqs2RhJ7NCXI4GO3eiiknmlaNE=;
+        b=KHF/Tzn8LDrCkewbOFnCOqGvkPtcgyLKVAD5Blh4hdeozNEq1rWrHKvt8Ea7zA4A6V
+         VyjBZOCnE2Bu+5YDdEOiQH0UU9yDj/FSlj5IXDzVRkAjAAcWzSs4PpSHqjHfSRFMvLFi
+         oDBIszn+Kgk29bljB6K44v46NYCBBJvzamrlVA3WSBYNdS0jErPteeyn7IwzsPPUo1cS
+         7ZMnGbo+lokvCfGZXTLkEj9DBpqmFAFEPL63fc6uYExg2L8dzXAqCm8USbDrWkN4g6kd
+         CUxMUzb2QKJ8UgHKrTY8Scy2ef+vM5UdjrpkaoDCkqoeTBfNzZc87O4KbgcuHM5TQp0y
+         YBIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPRyThGCGXNt/on+o77+FwhvRpsVJ/uFTROTCiV7fZrmOU41szDxJwV7hDPKhxoaEjGEuFq8w9JUfTtAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmsV0XEvleUtX2+M1qQJ3uO0pp16O8Athga/bZJj4ELpwwF4sg
+	SImJeBtx+WF6JemYmcmnRmgb6noZNXdoyiS/g3/DPGKKNrWoUz9Vtc4fLLswqLeu/t9U0o4GP3o
+	xOCnOGmIxKEYPY0E3iVyEhskmmivihBjMYc/9
+X-Google-Smtp-Source: AGHT+IHTjzNnIL5A1Fd+8dZPOcunE+C0lDt4qQ8dgmGxe28nKfdYYnM8VoMndW494oUXHykAwYo0jir5Q6p0G0T9D5E=
+X-Received: by 2002:a05:6000:4013:b0:374:c621:62a6 with SMTP id
+ ffacd0b85a97d-374c62164damr10875495f8f.47.1725523067641; Thu, 05 Sep 2024
+ 00:57:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8720:b0:4bf:2453:3a48 with SMTP id
- 8926c6da1cb9f-4d017edce7cmr714653173.5.1725523022588; Thu, 05 Sep 2024
- 00:57:02 -0700 (PDT)
-Date: Thu, 05 Sep 2024 00:57:02 -0700
-In-Reply-To: <20240905071112.1621278-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d03df706215aa23c@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-3-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-3-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 5 Sep 2024 09:57:35 +0200
+Message-ID: <CAH5fLgjte9RYaRMHeKfRpefPBkXuSYp8FnCq=9Ftr9eV+V3S2Q@mail.gmail.com>
+Subject: Re: [PATCH 02/19] rust: sort global Rust flags
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Sep 4, 2024 at 10:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Sort the global Rust flags so that it is easier to follow along when we
+> have more, like this patch series does.
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: kernel-usb-infoleak in usbtmc_write
-
-=====================================================
-BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
- usb_submit_urb+0x597/0x2350 drivers/usb/core/urb.c:430
- usbtmc_write+0xc4f/0x1240 drivers/usb/class/usbtmc.c:1607
- vfs_write+0x493/0x1550 fs/read_write.c:588
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4188
- kmalloc_noprof include/linux/slab.h:681 [inline]
- usbtmc_create_urb drivers/usb/class/usbtmc.c:757 [inline]
- usbtmc_write+0x3d3/0x1240 drivers/usb/class/usbtmc.c:1547
- vfs_write+0x493/0x1550 fs/read_write.c:588
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x306a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Byte 15 of 16 is uninitialized
-Memory access of size 16 starts at ffff88810a6a0000
-
-CPU: 0 UID: 0 PID: 6214 Comm: syz.3.81 Not tainted 6.11.0-rc6-syzkaller-00070-gc763c4339688-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
-
-
-Tested on:
-
-commit:         c763c433 Merge tag 'bcachefs-2024-09-04' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13324667980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15a7fd29980000
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
