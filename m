@@ -1,303 +1,262 @@
-Return-Path: <linux-kernel+bounces-317865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5121896E4B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:14:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B147096E4C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14691F23781
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:14:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AACBB20BDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992891AAE1A;
-	Thu,  5 Sep 2024 21:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACE31AD9DD;
+	Thu,  5 Sep 2024 21:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WsvKZLnt"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2062.outbound.protection.outlook.com [40.107.101.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="kisrC/mL"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DC6165F0E;
-	Thu,  5 Sep 2024 21:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725570873; cv=fail; b=Hi6TKERZTsQkeWrVBwFWjEBpYQAaZe83w1j0HK3i788U6QwDp72HmZVlgEyOerQUO5bNkDE1MHwFjLMK+4Vn5gjlY2wDcSqaEtEaVxcRMNTAcxiMJWc/7+D+q3OAXNdLuJZE5MrhTd+FvdwV408bySqgm8u4RzW82TCqcJwdDns=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725570873; c=relaxed/simple;
-	bh=TpVYGzflAHQttFJr+5LHrx58iMYRTtFkzVuycCpZ/BY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sOktws3PKdKO1iWxp5DdvRrGoUZmoTef9z7Ed++CSTeamNx++mu3veDbPccqYMOzSrZr1zFPb556saku5H4Ig7W80r7IEOAilwg/gJVK8JOXKw24GjvImurLSXEaYdOS2ntNNspETj6Stz4NKr29zWgZI468L+kdIRaWbPlw7uA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WsvKZLnt; arc=fail smtp.client-ip=40.107.101.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WTlO69fbXJZg6OZZi7bMIY/3er8W40EDMPm+FQCYv8IkdPj15xwMD6Omsv/qMBcO+vyS9oSkp80tF/MpOZJ/vRekqvArZSvUDAwcMrjeHT+2Mb8tINHrd8uHAwpwAR3Y7S4cd3Ba45InJNk8YsKxm2AEEe8GQC7y7Z06g87xxiHYXmxsIOzy0aDZ3tGVAsbTBG/9ltoeaG0rXcd0T0eopIrHWxiUsbLKysoSXN/W7cWcKH45qPtnfgIDVQRSpP1KIila2x4HdOVi1HRjJNselmQWl8SlIjTiTwizB5tpLIxDDiO5LLcAgNdx/SKfp4dmP8tWUrU7UIVZ1tLlheZOlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ez1ZU456IITWhUKH+MSTFDh1+Qn0sPmfcHg7ORsYlIs=;
- b=Zkq6/DYL0jsD3fT798pJsZqHPJBv6YyYq6jXzFMPdwIGnZ2tPVrCT0XszLdHV+NgvL7Tkiq4yJs72IEUZejErDudX5OjWG7YbrwURW2d0P3XpjfknmcT1anEfTm8gx3Fq3s47ecMTLSjqEyadjt/hdGowgcRzjRhu3C6tSwCgMwzbimyBZf3SI+OfUsg7t1cP61vS+wbPqkX2gF424RDE3SRPCmFcycoAXWGEhQ2c4VThtJDmXPcIopQk0W+AUV42oG0EfGXu36JBEpYi/tDdLmGrtcMOYr8cIZ2Eq2stPm8P3xGZpDoqxkUnUjkLhZKX4ifN1yw/0xiDeQa7nBmtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ez1ZU456IITWhUKH+MSTFDh1+Qn0sPmfcHg7ORsYlIs=;
- b=WsvKZLnt51Kzlva+oQS0m1CaKyOWQq9M7HF49Y1UxHXmE5f7NVJvl3bbskf8Tzur80oLZWDMjCKTCAa0EEPHSC+dvxipUxMbzsaadHvRiB6iKAyNxgmNB+yY6TlNAVDMU0BPv5deQiGqwEVSu5t5j6jG+RZWygbKrnS+Y1Fx1Sg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by DS0PR12MB7770.namprd12.prod.outlook.com (2603:10b6:8:138::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Thu, 5 Sep
- 2024 21:14:29 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 21:14:29 +0000
-Message-ID: <be2d96b0-63a6-42ea-a13b-1b9cf7f04694@amd.com>
-Date: Thu, 5 Sep 2024 16:14:26 -0500
-User-Agent: Mozilla Thunderbird
-Subject: linux-6.6.y regression on amd-pstate
-To: "Jones, Morgan" <Morgan.Jones@viasat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sasha Levin <sashal@kernel.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- David Arcari <darcari@redhat.com>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
- "rafael@kernel.org" <rafael@kernel.org>,
- "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
- "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>,
- "perry.yuan@amd.com" <perry.yuan@amd.com>,
- "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
- "li.meng@amd.com" <li.meng@amd.com>, "ray.huang@amd.com"
- <ray.huang@amd.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240702081413.5688-1-Dhananjay.Ugwekar@amd.com>
- <20240702081413.5688-3-Dhananjay.Ugwekar@amd.com>
- <bb09e7e8-5824-4bc1-9697-1929a4cf717e@amd.com>
- <d6392b1af4ab459195a1954e4e5ad87e@viasat.com>
- <bb49cd31-a02f-46f9-8757-554bd7783261@amd.com>
- <66f08ce529d246bd8315c87fe0f880e6@viasat.com>
- <645f2e77-336b-4a9c-b33e-06043010028b@amd.com>
- <2e36ee28-d3b8-4cdb-9d64-3d26ef0a9180@amd.com>
- <d6477bd059df414d85cd825ac8a5350d@viasat.com>
- <d6808d8e-acaf-46ac-812a-0a3e1df75b09@amd.com>
- <7f50abf9-e11a-4630-9970-f894c9caee52@amd.com>
- <f9085ef60f4b42c89b72c650a14db29c@viasat.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <f9085ef60f4b42c89b72c650a14db29c@viasat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN6PR04CA0105.namprd04.prod.outlook.com
- (2603:10b6:805:f2::46) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECFA194C69
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 21:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725570976; cv=none; b=L2WJpddFFzEcLtIQP9Sd7+ktT/JPB6lkAlQ5SeoYVuBcK6Py/MW3+rjdHEZ9RCM6Iwn7kaGSUAo5xf0qBRVGdV0vFXuh++ltUEc6syO+cIvV7G4lmkUlocCvHYyZQUIe4UzLQr1Fq37cW3/970beMGwis7g46K4VwUa1MoFK9hM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725570976; c=relaxed/simple;
+	bh=8yDjUN3v9pzHbAJkU962KdEeNCXYhTKg/kSM+xczGS8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=asY31eC1gh3MgcQ/Zs2v9tQGDY0ygrA72X/HEYB37Y/M+/SrPRtASRBsjFn83pZWj5d6fWxM3Y6phlZo7gEjdhVPHMN78DUJXx4X7zpjtPNe7Ddcs4mORKW92dVtepcUNAtGDm17cmXEhEdV6nEhngoK1UFeBx9RGWcSWvfE8mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=kisrC/mL; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-709339c91f9so878321a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 14:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725570972; x=1726175772; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h1RxVlhkB8p72E7vZJvb+Ijp4614DvwE9gm+Vso2ack=;
+        b=kisrC/mLw8lCuh+JqTNjjJfT6h8MChHgSDHURlVJv6zqSLvr0wnUh2olY1J7IFPTRZ
+         mYjOuPrTSw8eBSxh0w++i796jR7psU0xiJQkIlAtaZfsyTwx6cKFQjwC6uK9piL1cOor
+         eWyGroGze34kMNcIUf9RDnCN/e0/J+0Slg/ALhMfCnq1Ony4Pr2XSL4Ji8dxHOu/fdgT
+         Y7OOYzJfft1zSejnVHCp/cMltWBNTxsFKg1qaF9jmHV/336hF/d7SWqMnRjpdPKjApQ/
+         mkT9/IpfvN4oVQvjRiEfzWfE6tkk5+iN9JVaGu+IN6d2aEbts4ltBYj4nXrulr5JT/88
+         +IMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725570972; x=1726175772;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h1RxVlhkB8p72E7vZJvb+Ijp4614DvwE9gm+Vso2ack=;
+        b=jPNTc6B1QnWbT/ma29RWnAt+yD+QFm6xA566g+zOK0qV1A8wxJRNUqxR1J/AR5bc3w
+         Nzy5GkDwpuXMLInoU5nBrmPsu3RxcRSJyiiWYBnu83Mt6MRH7RAFDu+PBvT4GJt7Za86
+         DyPMftWfsyM6YIrxaqnHfAIoBJnxIwr3sVwYDsB/jkS+xOx0m6OrHA840m1MpTMyee/G
+         3D86MwHTPnqW1GNIYVh7bMxGsNpIz4X5mMcdCNiSF+hcB7BNgtlCxqk4Bj++rUT2OS20
+         2CdRtbo7Flx3Qk6EqfkZQ9ziN09u+6vbt6xveqYdKgPAoX40F7DEagqTEvQd9myfpM8H
+         abqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfuWTkN1bCQtMNSscm8Ujc7slG5xGf6hny1Y32KrTYiGHp3Zwf3OQm7b0J+sQadL7g3KzglEh3/ZUlqo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBNW2YlsuEhBgStaUAvF3TDRIQ6SvP1GCnMonI+kZkAhJffaO0
+	uK895kQUl1cIuyW2EJ0F8hUR1Pm9O3Pw3q1gfT1RC/qpBvfVT/aftrUiYjXPoJI=
+X-Google-Smtp-Source: AGHT+IFUGglg1gI40db05Oyw57X6jum9/dYSwirPMN5y+AFduyw81mLgzW8++XC4iGt5jarfSGqHMg==
+X-Received: by 2002:a05:6358:4709:b0:1b8:3498:5ab2 with SMTP id e5c5f4694b2df-1b8386e10e6mr71603755d.18.1725570972065;
+        Thu, 05 Sep 2024 14:16:12 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbda7abesm3775746a12.61.2024.09.05.14.16.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 14:16:11 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH RFC v3 0/2] mm: Introduce ADDR_LIMIT_47BIT personality flag
+Date: Thu, 05 Sep 2024 14:15:50 -0700
+Message-Id: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS0PR12MB7770:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e340b05-95c9-41c8-94a8-08dccdefbab0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aWlRMlc3bXp1L0dXZFo5NTNmSUFCOUhXMEpFREEzZUpIeTZuZFFBY0hxVDdi?=
- =?utf-8?B?TE1XZk9EWUpCSXZWU0g3Tkd2dXdzaWdZSXgrRU55clN2dmFIVVZBdytJV3Nv?=
- =?utf-8?B?bnBBSlZrc2VHT2JMbnFCTVFscmxlbjBJMGJ1WmRQcWEyOVc4anlsaUhHOUha?=
- =?utf-8?B?dHlCdlM2RUk1Y2pIemZ1QkRiamRIVS9yUEpTVmcydlhTdjlQYmFCejF2WVRQ?=
- =?utf-8?B?d0J3OHRNaHV2a3M3NDQrT2tFNWY5TWR1bVVvYTBrVGxFK1B5VEYxOHZRMVlt?=
- =?utf-8?B?WkJQRlB2TlNvNS9nRlJzTTkybDdNQ05aZFl4STNHdWJIeXVGQnRRZGJEZlhz?=
- =?utf-8?B?cTczb0JhVVlKb1dnc1BUVjFXOFRCOHJONE1VSTRvaUIzRFRDRzBOTGliMXFs?=
- =?utf-8?B?OUJpSDBCL3E2TEdKYjd1VGlTZW9mS1FlbU1kUmJMNGhhRHFmbExyQk1pd0J1?=
- =?utf-8?B?NXpUenRhZm9vWVdkTldPVHdDK3hSRmRQSkZWb204ZnVONWZoTEtIYnBqWW5G?=
- =?utf-8?B?T2RSNFVVNFpsZFpldzNnd1FRM2p5YkZ2TmVIV3NuRHMwaVlNWGt3d2kyRktH?=
- =?utf-8?B?RFBiNmMzWkZ4aDFXUlIzYXVYblV3RUlpRG5LbW5ocW1oY2xrL09YY1NOWjd2?=
- =?utf-8?B?ZmZDaHRoOEpFZTRMdVNiKzdvUlpxakFFc082cXdlcHRNK0RSbU1XdTJDM29L?=
- =?utf-8?B?bEUvTGZqSWVUMGZ6MjFsbmF4ZE9LUXVXOE5LMTY0UEpaMHdPaFhGU1VCNThv?=
- =?utf-8?B?Q1dYMGZDdE1JSXpiaFVVeDNrbVNHYnZYYUdpb1BtaWRUWGIyaEgwU2NVSHcw?=
- =?utf-8?B?NkoxTzZIN0pJSGhKUU8xdUxRdlAzNFhpdmNVVlNENWRMQm8rUVBuTENuMnJn?=
- =?utf-8?B?VjV5c0cxK3JPQmVpam9aZVdMVGJnR1FrNXBNRk1rYlZRVFBUOWdJVlRsSkkv?=
- =?utf-8?B?cjRvTU1GNmRKZ0h4L21BZHBGRU1kOXZTYmlKRmdqdjBDa2QwRWxHV256RmYz?=
- =?utf-8?B?Y0xvdFBlTGlrREhQUmNyQzdLeUQ2N283bG41d2RhSm9HcFJqTERHMGkvUVh6?=
- =?utf-8?B?RFZoUmJWZmRGNm12OGZDMkdkYzhVMkgwZndkR3NMZ29LNW84OFlJR09acEY5?=
- =?utf-8?B?aVcyUmIyYnlyUU5oRWZNa1RoV1RmUTdKWW82RkUxRFVOYm9LUHByYUJFdzZS?=
- =?utf-8?B?bGZ4cW9obU1RVnhrY0VWUjIrSUFJSStGckdrNzRjbnZEemZiVlhzRlZrcWtO?=
- =?utf-8?B?V1d3bVNsTUtqSmF1cU4yaDhvd1FuMzRSSHZNRXZJb3VodEh4UGpMajg4aHdT?=
- =?utf-8?B?TmZMQllYR3BRUFdYR2N5bHFZOFVaU0NaMDZYblR6dW9IOEllQWQybHAxRlBw?=
- =?utf-8?B?SDlmNnBhS1BBdGFIVmdrWG11cTFmbU5qeDhZaFpXOU4wN3R4Uld4ZzZEMGQ1?=
- =?utf-8?B?SDFoQnBFejljaGRmNzVCMmJTTjV2emZJWUtLWjFidTBVZmZYOVBHcjdmWml3?=
- =?utf-8?B?M2tLN3lvY09PaUlmVDV2eW9TQW92RkpBb0l6ZC9TdFdjbjlBYWdJNWw3R0F5?=
- =?utf-8?B?UTFaYUhpSi9TS0dUZ2xCUStsVXZjcndUbHlPaC9VVnRJeHFJajB6TS8zaHRr?=
- =?utf-8?B?TFdWRy9HK0NDcFo3Ynl4QVBnVE1UQ0dmRkVjQUhleVNzNjNvQUk5N0o0VGp1?=
- =?utf-8?B?SmN3MmMrS21kT3Z0VXNNUlpxdVVqV3hjOWNpUTV4RzhWVzdmNS9neEthRzJZ?=
- =?utf-8?Q?LmMGcuhMCl6jawbgxs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U0R0TmhMc1hKZUx3UXMyZnRhbWFWb1pjcE9aNHUvWktBY0h0V05RRDNVUzNi?=
- =?utf-8?B?QXJNRnN3Q2J6WncrSnpVMkdsZjVjVFhHbnpPYkZDZVp4aFdqYlNUSVVQU3Vp?=
- =?utf-8?B?aDRKbEtNWXg5U3lER21VZzNDSm5UM0dRMFRHQlZNM1liM0JOVVUwZk9aNXRM?=
- =?utf-8?B?d3FGblFKeUx3YnoxcjdwYW91SjlickxhampjY3U3SmZPcG5kc0t3ZndLNzRL?=
- =?utf-8?B?UUJLTHFPdlEvbUxVQit6dHhaZmRmRW1DVWxFK2ZxNkFtS0NLeGxCQXRLS0VY?=
- =?utf-8?B?UEd0TlB6VUpGSm9aWTE5alNqMDZFbGtXMkhYTVB1cGdIYnA0VU5kQlJUclNq?=
- =?utf-8?B?WGlFYUtGYk96YmZzMnNyMjh5dWYyYzBNenFkN1ZmZHFJZ0RYNThQb2xibXN0?=
- =?utf-8?B?Q1VITjZyaWtGd1JXeUpQWVBYK0R3eWdKVXFUZk9BV01SQjJtN2J3WklwL1oz?=
- =?utf-8?B?QmdkbXRDcHcxNjRhcUVDOGVXK1BwdS9ydFJOR0FWend3eE1Da3B5SXNncDhm?=
- =?utf-8?B?VXJobDRyTWdGU3FGc1YvM0dpaXV1TCtMMDdldk9WM2RMOVYrcDJhTlVPUWly?=
- =?utf-8?B?aXFXOTJ1OStkbmpUa25SdjY1dVdWQWtrSG5zSk1ETHEzVE9TcUpUNUUwY25P?=
- =?utf-8?B?aEpxeGVTY252N3dzWnFITGNmQjR2bmdnYmg1UE5mcVVCMzZObTdIM0RqajRZ?=
- =?utf-8?B?Tzk2TVJxZm9oZ1YxbFpDU0ZlZTlXTitIMUFZQ3BsdFNmS05FbnZ5RDFSclJI?=
- =?utf-8?B?SkQwdE5nb0NLS0Q0Q2ZlWng3RHNNOVpHeXFCaWxZcW1DYWMvTVFjaC9rY3E3?=
- =?utf-8?B?aml1K0ZGSEVkbXdhblQ3Mld5M3ljbzlFN0xvaVRjTXpzb3pEV2JncHA2ZmZB?=
- =?utf-8?B?ZDgwN2dEME5EU0h6Q0FmZVR6Syt4ZldpbkhlMnNnYlhjTHpvSC9uc3orcnlH?=
- =?utf-8?B?V1Zlc0FRWGVGY2dKZG5pNTh6emVFcDFYVnc1QldEUGJQd2kwQnFIcW1kZnJV?=
- =?utf-8?B?NCtHNVBKZHQ3c2JDZklOWGRwS1lOdStSQmtYWE5ya0x1S0U3TEV5YjR0Zmor?=
- =?utf-8?B?d3hzRmhUMndPQUF6cis3UmJ3Z0ZPS2dndjgrOHhqL3JMYjJXZFZjVFhRZXNn?=
- =?utf-8?B?QS90c0JxSnZPYVJVditEUDJ0M2hod2JKZzZmTmlyOWVHRFk2eW5aUlE3ZkdK?=
- =?utf-8?B?Q1NhWldTWEl5L2x0UDVLZUNnK1FBSzlzQWtMeVJYdGRnd3M4K1p0cjFQcVps?=
- =?utf-8?B?ek94Rm9jeHhra1NMOWlxRUE2bGlQOGxmdCttL21VcWpHYkVVZ1pBb0tBQUUx?=
- =?utf-8?B?UFRCL3dxRnNRTmNwbUJud0d3dTRLaHcrOTlRUnNGemJ0WkhaeitYdFpEbGkw?=
- =?utf-8?B?WlByOTdkT2N0UTY3L1dZdWJpWXJiQkVuc0oxWFREL2lBNWNhWHJ2WCs4L2ZE?=
- =?utf-8?B?M1FGbzFXVmEwdk9id1l6Q0djalpXbjBhMkg1WVUvTitDZ3NNTEZUanlZcVMz?=
- =?utf-8?B?TTNzWWNVYVV5dGxTV3BGSExIYmMxR1pQL3ZWTC9tLy92T0oxRG9ubWhyM21y?=
- =?utf-8?B?aVM3Y2R6cCsySm1JVWdPV2JURnhKelo4Q3B1emxQTzY2UEJEbEl0YU5GT0VI?=
- =?utf-8?B?RTJKcWs5TjkwdzNRUHk0bk9pM3IvNDd0M2wreFR3L0hHY3hNclE1TUhxbm1H?=
- =?utf-8?B?NllML01RYWprOWhPT3M0R0IveGZ1Wmh2MkRhVFpWVHBwSVpFMERlcXNscG5K?=
- =?utf-8?B?M0VDVCtLdi9BRitkdXhwWUtkTjFwZEplS2RqYW94RFhIaUVDSmI0Vlczbi9n?=
- =?utf-8?B?OHVDQm91Q3Jremlzdzh4UmJjWUZId2VKcGxhak9OUU9YWnFRSnptYkRCa3BH?=
- =?utf-8?B?NjNtLy9BS01TenNsZGJPN3JQQjFjVDFYTHZiMjZrS3FyQUxiaDR4NEF2UUIr?=
- =?utf-8?B?OSt5VFp5ME5aR3l6REJ0SzkrVUNiSjlEcG9pWnVxeVRyU1pvcWR5Q2tqeVV1?=
- =?utf-8?B?bFhKaGdtakMwb0E2WUgrRkZrZ3drVDBqeTdaS3BDMkcvdEE4VlhPMyswTVFl?=
- =?utf-8?B?YWY5dU5Ua1FpNTUwaHhLMTF2SUhnN21ZdVViMzZGYXdyN1lJeWk2NldHZVl3?=
- =?utf-8?Q?DCN3WR1eSWidlEtU8rNmxiXJe?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e340b05-95c9-41c8-94a8-08dccdefbab0
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 21:14:29.4353
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bXEiaisDxeE0yr5OhLWRDABS8xmLtedsBw6PXvT8kk2WU7UW6Pn/41EV4VhuzwUmsla9kJvQxsIfqX8mOw9wCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7770
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIYf2mYC/4XNTQrCMBAF4KtI1kaS6b8rQfAAbkVKmk7NgG1KU
+ qJSendDVyKIyzeP+d7MPDpCz/abmTkM5MkOMSTbDdNGDTfk1MbMQEAqSij4qCZt0PMG7/ZRGxq
+ muu/VyBuZtEWlUOosY/F7dNjRc5Uv7Hw6sms8GvKTda91Lci1+gsHyQVP864DbCoB0B4cBetp0
+ Dtt+5UN8ElVvymIVJ6UCsq2QoXii1qW5Q0BYjuXEQEAAA==
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Richard Henderson <richard.henderson@linaro.org>, 
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+ Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
+ Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, 
+ Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>, 
+ Christoph Hellwig <hch@infradead.org>, Michal Hocko <mhocko@suse.com>, 
+ "Kirill A. Shutemov" <kirill@shutemov.name>, 
+ Chris Torek <chris.torek@gmail.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+ sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+ linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5488; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=8yDjUN3v9pzHbAJkU962KdEeNCXYhTKg/kSM+xczGS8=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9ot+f6nvpcl97tY5XM5HRGwunrS/1hN4Jrc4J63aWdPl
+ kkz5fzoKGVhEONgkBVTZOG51sDceke/7Kho2QSYOaxMIEMYuDgFYCIbvBgZfjQZPtnyo0T8l+3r
+ pTc0r/6LOCzwZu3XBXX7mfYvU6k4cI2R4YF4V0iLZoGQYvmDbN1ZIvanHjMsmvbgwI2pnto/ozc
+ e4gMA
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-+ stable
-+ regressions
-New subject
+Some applications rely on placing data in free bits addresses allocated
+by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+address returned by mmap to be less than the 48-bit address space,
+unless the hint address uses more than 47 bits (the 48th bit is reserved
+for the kernel address space).
 
-Great news.
+The riscv architecture needs a way to similarly restrict the virtual
+address space. On the riscv port of OpenJDK an error is thrown if
+attempted to run on the 57-bit address space, called sv57 [1].  golang
+has a comment that sv57 support is not complete, but there are some
+workarounds to get it to mostly work [2].
 
-Greg, Sasha,
+These applications work on x86 because x86 does an implicit 47-bit
+restriction of mmap() address that contain a hint address that is less
+than 48 bits.
 
-Can you please pull in these 3 commits specifically to 6.6.y to fix a 
-regression that was reported by Morgan in 6.6.y:
+Instead of implicitly restricting the address space on riscv (or any
+current/future architecture), provide a flag to the personality syscall
+that can be used to ensure an application works in any arbitrary VA
+space. A similar feature has already been implemented by the personality
+syscall in ADDR_LIMIT_32BIT.
 
-commit 12753d71e8c5 ("ACPI: CPPC: Add helper to get the highest 
-performance value")
-commit ed429c686b79 ("cpufreq: amd-pstate: Enable amd-pstate preferred 
-core support")
-commit 3d291fe47fe1 ("cpufreq: amd-pstate: fix the highest frequency 
-issue which limits performance")
+This flag will also allow seemless compatibility between all
+architectures, so applications like Go and OpenJDK that use bits in a
+virtual address can request the exact number of bits they need in a
+generic way. The flag can be checked inside of vm_unmapped_area() so
+that this flag does not have to be handled individually by each
+architecture. 
 
-Further details are below.
+Link:
+https://github.com/openjdk/jdk/blob/f080b4bb8a75284db1b6037f8c00ef3b1ef1add1/src/hotspot/cpu/riscv/vm_version_riscv.cpp#L79
+[1]
+Link:
+https://github.com/golang/go/blob/9e8ea567c838574a0f14538c0bbbd83c3215aa55/src/runtime/tagptr_64bit.go#L47
+[2]
 
-Thanks!
+To: Arnd Bergmann <arnd@arndb.de>
+To: Richard Henderson <richard.henderson@linaro.org>
+To: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+To: Matt Turner <mattst88@gmail.com>
+To: Vineet Gupta <vgupta@kernel.org>
+To: Russell King <linux@armlinux.org.uk>
+To: Guo Ren <guoren@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+To: WANG Xuerui <kernel@xen0n.name>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+To: Helge Deller <deller@gmx.de>
+To: Michael Ellerman <mpe@ellerman.id.au>
+To: Nicholas Piggin <npiggin@gmail.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Naveen N Rao <naveen@kernel.org>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+To: Vasily Gorbik <gor@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>
+To: Sven Schnelle <svens@linux.ibm.com>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: Rich Felker <dalias@libc.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: David S. Miller <davem@davemloft.net>
+To: Andreas Larsson <andreas@gaisler.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Ingo Molnar <mingo@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+To: x86@kernel.org
+To: H. Peter Anvin <hpa@zytor.com>
+To: Andy Lutomirski <luto@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Muchun Song <muchun.song@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Liam R. Howlett <Liam.Howlett@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Shuah Khan <shuah@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+To: Michal Hocko <mhocko@suse.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Chris Torek <chris.torek@gmail.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-alpha@vger.kernel.org
+Cc: linux-snps-arc@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-csky@vger.kernel.org
+Cc: loongarch@lists.linux.dev
+Cc: linux-mips@vger.kernel.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-abi-devel@lists.sourceforge.net
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-On 9/5/2024 16:09, Jones, Morgan wrote:
-> Mario,
-> 
-> Confirmed. Thank you for the help! Slightly different refs on my end:
-> 
-> Remotes:
-> 
-> next    https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (fetch)
-> next    https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (push)
-> origin  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (fetch)
-> origin  git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git (push)
-> superm1 https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git/ (fetch)
-> superm1 https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git/ (push)
-> torvalds        git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git (fetch)
-> torvalds        git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git (push)
-> 
-> Patches:
-> 
-> git format-patch 12753d71e8c5^..12753d71e8c5
-> git format-patch f3a052391822b772b4e27f2594526cf1eb103cab^..f3a052391822b772b4e27f2594526cf1eb103cab
-> git format-patch bf202e654bfa57fb8cf9d93d4c6855890b70b9c4^..bf202e654bfa57fb8cf9d93d4c6855890b70b9c4
-> 
-> Results:
-> 
-> Linux redact 6.6.48 #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan  1 00:00:00 UTC 1980 x86_64 GNU/Linux
-> 
-> analyzing CPU 56:
->    driver: amd-pstate-epp
->    CPUs which run at the same hardware frequency: 56
->    CPUs which need to have their frequency coordinated by software: 56
->    maximum transition latency:  Cannot determine or is not supported.
->    hardware limits: 400 MHz - 3.35 GHz
->    available cpufreq governors: performance powersave
->    current policy: frequency should be within 400 MHz and 3.35 GHz.
->                    The governor "performance" may decide which speed to use
->                    within this range.
->    current CPU frequency: Unable to call hardware
->    current CPU frequency: 2.09 GHz (asserted by call to kernel)
->    boost state support:
->      Supported: yes
->      Active: yes
->      AMD PSTATE Highest Performance: 255. Maximum Frequency: 3.35 GHz.
->      AMD PSTATE Nominal Performance: 152. Nominal Frequency: 2.00 GHz.
->      AMD PSTATE Lowest Non-linear Performance: 115. Lowest Non-linear Frequency: 1.51 GHz.
->      AMD PSTATE Lowest Performance: 31. Lowest Frequency: 400 MHz.
-> 
-> And our builds are back to being fast with `amd_pstate=active amd_prefcore=enable amd_pstate.shared_mem=1`.
-> 
-> Morgan
-> 
-> -----Original Message-----
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> Sent: Thursday, September 5, 2024 8:12 AM
-> To: Jones, Morgan <Morgan.Jones@viasat.com>
-> Cc: linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; David Arcari <darcari@redhat.com>; Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>; rafael@kernel.org; viresh.kumar@linaro.org; gautham.shenoy@amd.com; perry.yuan@amd.com; skhan@linuxfoundation.org; li.meng@amd.com; ray.huang@amd.com
-> Subject: Re: [EXTERNAL] Re: [PATCH v2 2/2] cpufreq/amd-pstate: Fix the scaling_max_freq setting on shared memory CPPC systems
-> 
-> Hi Morgan,
-> 
-> Please apply these 3 commits:
-> 
-> commit 12753d71e8c5 ("ACPI: CPPC: Add helper to get the highest performance value") commit ed429c686b79 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support") commit 3d291fe47fe1 ("cpufreq: amd-pstate: fix the highest frequency issue which limits performance")
-> 
-> The first two should help your system, the third will prevent introducing a regression on a different one.
-> 
-> Assuming that works we should ask @stable to pull all 3 in to fix this regression.
-> 
-> Thanks,
-> 
-> On 9/4/2024 08:57, Mario Limonciello wrote:
->> Morgan,
->>
->> I was referring specfiically to the version that landed in Linus' tree:
->> https://urldefense.us/v3/__https://git.kernel.org/torvalds/c/8164f7433
->> 264__;!!C5Asm8uRnZQmlRln!aIZEDEbIUKD7OrxN0b0KjoqKYDL2yMkwk4EK7x_oSnyHQ
->> 6MEq7yt6JHjd0TD9DgEYEWDcF58OKL8c7G11bT3dSqL8eM$
->>
->> But yeah it's effectively the same thing.  In any case, it's not the
->> solution.
->>
->> We had some internal discussion and suspect this is due to missing
->> prefcore patches in 6.6 as that feature landed in 6.9.  We'll try to
->> reproduce this on a Rome system and come back with our findings and
->> suggestions what to do.
->>
->> Thanks,
->>
-> 
+Changes in v2:
+- Added much greater detail to cover letter
+- Removed all code that touched architecture specific code and was able
+  to factor this out into all generic functions, except for flags that
+  needed to be added to vm_unmapped_area_info
+- Made this an RFC since I have only tested it on riscv and x86
+- Link to v1: https://lore.kernel.org/r/20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com
+
+Changes in v3:
+- Use a personality flag instead of an mmap flag
+- Link to v2: https://lore.kernel.org/r/20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com
+
+---
+Charlie Jenkins (2):
+      mm: Add personality flag to limit address to 47 bits
+      selftests/mm: Create ADDR_LIMIT_47BIT test
+
+ include/uapi/linux/personality.h                   |  1 +
+ mm/mmap.c                                          |  3 ++
+ tools/testing/selftests/mm/.gitignore              |  1 +
+ tools/testing/selftests/mm/Makefile                |  1 +
+ tools/testing/selftests/mm/map_47bit_personality.c | 34 ++++++++++++++++++++++
+ 5 files changed, 40 insertions(+)
+---
+base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+change-id: 20240827-patches-below_hint_mmap-b13d79ae1c55
+-- 
+- Charlie
 
 
