@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-317123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D2D96D97B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FBC96D979
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416251F2A96D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D594C1F2A8D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4782A19CC23;
-	Thu,  5 Sep 2024 12:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B1E19CD12;
+	Thu,  5 Sep 2024 12:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJTtVrsj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="A9I5x1EB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F5519B3FF;
-	Thu,  5 Sep 2024 12:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C0319CC17;
+	Thu,  5 Sep 2024 12:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725540998; cv=none; b=K+Yl25eHHd6WPoYz7oGpB2hPlmmXkZhvYLxJry9ijPBXVAeGWI9/QmDo5BiHnPj5PMGYTKCg7R1jpDkkqwS41tx9PUabpnkG1dkBOZ9dA+RUM/RQgzO1KsASiiqV3FPh9167YdusS2OyLkDv5K0lxlHmCFogYI8/uL24VmNyWr4=
+	t=1725540992; cv=none; b=csClEaXrFn7gJeHV5QyyiSud4a71TSa9ZtuCBWbjONE9DuB8FuJKaYZ+Tvi2oHM/mPnzbsAtGIaxufeI9TwownG/NdJSUC7BWtKQ+wa0jk+uIW0olj2co/8MKg7pquv0HVnDNnRyPntfZRxVy8S5dUAEssWP7vxqYZGRYfiWNlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725540998; c=relaxed/simple;
-	bh=xYIh/bt8ATiDqQSVPUkjd8FviXEE9vSnRc0D+1k9vd4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LO7LYC0wBp9RRjgfr5Pup0itrrbgX/zJDPmyCvmivH6jumv0gKL7M3Sry3HnjLfb3P8DVnOhgJRX6rX3VhKci2lNQpWqSydED6QNDRRQdwQCB0oFjQ4EYkm1T1spqcgi6e5ccMOzwosG9Hr7/j4FCveqNZkke5RRP/a43e0qzd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJTtVrsj; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725540997; x=1757076997;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=xYIh/bt8ATiDqQSVPUkjd8FviXEE9vSnRc0D+1k9vd4=;
-  b=ZJTtVrsjzsRUmv7N86h5YUpFDSI/G8h0Hcf6F906YBkpKDmypJ3Eorun
-   3twViT2Tw+uXBgUhh7zvAl4Q9VHdwc31aKdVHLUYqS86hkp8uCZnhkydy
-   xeY+w1PqcZUSMq6F7iUKAzXe6rbZoW4CwUFJF03y2BGS9UEJAvuGDCiKK
-   q3Ttga8RhP26Cav3xlVnt5SRpVIH8FgyHTOfQQKSdP44sJbiL6MlNyiIR
-   kkHthlSm6I304Odo4E0mHJ9QNfWGbOh+VFDJNC1nIpXCmL9+ptsQCm697
-   SPEx/ctZ/Rh9my/y7UhJaSpfRMXQ2bTd2RUvPrUnANLIguO1kjxp+4C5J
-   Q==;
-X-CSE-ConnectionGUID: 0+baM3MMS3yvEjuFHsruJA==
-X-CSE-MsgGUID: myMQNxpFTiGAqls9Hm5VVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="34824749"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="34824749"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:56:24 -0700
-X-CSE-ConnectionGUID: Kcq00DTNSRi7kb1B3Ot7/A==
-X-CSE-MsgGUID: hGncXF15RLS/t5l/n59BHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="96361175"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 05:56:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smC28-00000005Omw-36OX;
-	Thu, 05 Sep 2024 15:56:20 +0300
-Date: Thu, 5 Sep 2024 15:56:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] pinctrl: nomadik: Use string_choices API instead
- of ternary operator
-Message-ID: <ZtmqdP6Q92vRWh_I@smile.fi.intel.com>
-References: <20240826095723.1421065-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725540992; c=relaxed/simple;
+	bh=m+5iopGLNzFqbjrMALwt0zwA8EVzJc9BNnAEJ6KONhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KvCA3xucDNkrvfMgoV/1PX/ekqNY2gRy9kgbVxCAjm8/sUzv6svVgyCWgbsMpzuLeC/K6iFvamvhG0qNaReFd8dqWWsHDzmpUckZqbPKvIWNSwP/qbP2mN4pb9k2SXtvI+AdizmckvCFN9a7VacpSpb1V6Py+OQJY7e0LtAgNg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=A9I5x1EB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B06BC4CEC7;
+	Thu,  5 Sep 2024 12:56:29 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="A9I5x1EB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725540987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6MTRMH1950H7pYJdyL+qM9S+/x9T4aarJ3EpbvZXG0c=;
+	b=A9I5x1EBzjWpsyVHdJmPYjDYEuQpDwByqVQ89KOcyYwjwC/5UglJ7bOVFCORH/KKdLDSsj
+	hE0+FEYI1HzmSRsLBGvjoYX+tvf6Yr6IvTYdDzNBFgQnOfkYAjE0L/FEuSL0rfcnnK/EpH
+	wvrGrZzEfhJC/aKxpXKjrA1SYDA0ufM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 83f56dc6 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 5 Sep 2024 12:56:27 +0000 (UTC)
+Date: Thu, 5 Sep 2024 14:56:22 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH v5 0/5] Wire up getrandom() vDSO implementation on powerpc
+Message-ID: <Ztmqdr01_idiz64-@zx2c4.com>
+References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+ <Zthr1nB_RJ56YD3O@zx2c4.com>
+ <87frqe5m5b.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240826095723.1421065-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <87frqe5m5b.fsf@mail.lhotse>
 
-On Mon, Aug 26, 2024 at 12:57:23PM +0300, Andy Shevchenko wrote:
-> Use modern string_choices API instead of manually determining the
-> output using ternary operator.
+On Thu, Sep 05, 2024 at 10:18:40PM +1000, Michael Ellerman wrote:
+> There is an existing comment in the a/p/vdso/Makefile about the
+> fixed-r30 thing, tldr is it's a workaround to avoid breaking old
+> versions of Go.
 
-Linus, do you have any comment on this?
-
-I had sent two patches of similar changes (different drivers, thoug),
-one got applied and this is not. Anything should I do about it?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks. Indeed, following Christophe's links yesterday, I tumbled down
+that rabbit hole for a bit. Interesting how ABIs ossify unintentionally.
 
 
+> For the series:
+> 
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+
+Excellent, queued up now.
+
+> If you can include Maddy's test results from Power9 in the change log
+> for patch 5 that'd be nice.
+
+Was my plan exactly. I replaced the QEMU result with the PowerNV one.
+
+Jason
 
