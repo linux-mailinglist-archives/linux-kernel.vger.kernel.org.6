@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-317587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1F996E0C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:03:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0324496E0C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18231C24C84
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:03:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F923B22508
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D9A1A0B06;
-	Thu,  5 Sep 2024 17:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AA01A0AF4;
+	Thu,  5 Sep 2024 17:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8oxi/AJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A7OQSDtM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9C19FA8E;
-	Thu,  5 Sep 2024 17:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B331A072C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725555822; cv=none; b=cejyqbeVm++LFquUnjASNVhkf2FVyLmtrimG7QLBRGQudIUbMLIFVFsEex+N5AY+09g5BRQea7sRzmVgZXZHjw+9+jsSs7gSdlHIg3HGntDcuygMJjvsuyXRpgk/9wJxeALc4byXogbcfFJtkLvv8UDzzgA0307PtLsMAdNIwws=
+	t=1725555848; cv=none; b=AIu6W1cboRT1cQoVxiHpoagxk2V+AU2Y2+FDKGE4oR8VLxIv/onAJ5liXHYJbljHS6Qh0kZaVYxI4c02xnbOcqvd5PQ8pkooAxt90HhhT3GnLHYv2vG7MK9tzCCXfOxL2PmY6kgWgDHVoOjWW7sRHI6WnAN4LCzyaSK726GoLT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725555822; c=relaxed/simple;
-	bh=nJr8UA9brtZt8MAxTeFaBGCFlqvqywHjYo6H6YDX4GQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUcaSXG1gngBBDadnmckMhgR90LhPNoagSM3HGMLETlN6JKkjUilO5mUwTS3bTO6K2DLS2w00b7B9fpUFJ/zHQPRc26Sgkzgcl9XGXfr8cr1QGQMGBDk7I6T9v16mwtYgzRcybh/KWmkDCzs9zdAiC3Q8dX7NWJ+PCwxS9MF+qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=S8oxi/AJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2114C4CEC3;
-	Thu,  5 Sep 2024 17:03:39 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8oxi/AJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725555817;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2WPPczzM5fWySeHC6qCU5mJN44nYuMHACOhNso4EGCc=;
-	b=S8oxi/AJO3vG5kC0wYzvPcvwfn+o0kCttzDIhQelVpgwHEjGgAUGSmBmhwbhPa1WeQUBkb
-	zu10fm2SriimEK0oAC9nBbD2fdcQS3U5JLuIJ3Yt6a4wdt2cJhjM7HSPHPV5+s0R7BSnJa
-	90zYJO/+yld5Pdz8ajTRqlFukUnSKxg=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 27c37213 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 5 Sep 2024 17:03:37 +0000 (UTC)
-Date: Thu, 5 Sep 2024 19:03:34 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
+	s=arc-20240116; t=1725555848; c=relaxed/simple;
+	bh=je+24oM+vGkAb1L4ZYV6lFCDT8JiS8JKuowtm9MBI5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z66R7/qAeRElfKIckQcoZFAkPZZz6wfcc/6Xg33M7SAgVOO0QMui2IO0T8WFBPVbUdScv6/f1mQklTFNZvAI06eObdDq8nhplOvZhm2pievTan+qrihlXajnint1dvfltSoqrZYkqHxtDLeKBLThndLmCPYe+xY/AWEbtrgYIbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A7OQSDtM; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725555847; x=1757091847;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=je+24oM+vGkAb1L4ZYV6lFCDT8JiS8JKuowtm9MBI5E=;
+  b=A7OQSDtMZHSkiyEM8RjFvPkV0lCh/xhSS0wnVkGg48LAmhOd1UH4cIef
+   UPLJ6io7+HnuR2rmNX8l3YjbVjRo7zw16oo2q9JQ15GQZ4PwjfxRwkUc4
+   OWN4hCVbQZD3Nc3C3OOTeYWyvZLUE79k1lj7g3TplBU34d4T6+kZIaPEE
+   JHJ4bQbn7U0kmqFZX/nGcqFf3yUEl+DlJLUzRLtZaMJ+6iI73a5d5R64b
+   up5jfjgAM9zLBKapEyzE6s3WZD63iEWEya+TGmiS2HrOIuC17grC0kTkj
+   2r8IlAI+9q4zxyzhEWJNVD2HtM+vgiDre4RukVWHOXiotJJIYp9Wk+A/q
+   w==;
+X-CSE-ConnectionGUID: 4R17Smn4QwmUy10d/OMZUQ==
+X-CSE-MsgGUID: 85Mv6CM3Rw2s4PEE4pARow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="41768505"
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="41768505"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 10:04:06 -0700
+X-CSE-ConnectionGUID: TKnBCRQUTi6EZs+5cC5WTg==
+X-CSE-MsgGUID: XPdBFsaiRWepUjq4r3nKxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
+   d="scan'208";a="65678413"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 05 Sep 2024 10:04:00 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id B66AF31E; Thu, 05 Sep 2024 20:03:58 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	Nathan Chancellor <nathan@kernel.org>,
 	Nick Desaulniers <ndesaulniers@google.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v5 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on VDSO32
-Message-ID: <ZtnkZsHJESAqU-FH@zx2c4.com>
-References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
- <1f49c2ce009f8b007ab0676fb41187b2d54f28b2.1725304404.git.christophe.leroy@csgroup.eu>
- <ZtnYqZI-nrsNslwy@zx2c4.com>
- <85c02620-e8b2-4c97-9905-685a9a4e556d@csgroup.eu>
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when comparing in percpu_add_op()
+Date: Thu,  5 Sep 2024 20:03:56 +0300
+Message-ID: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <85c02620-e8b2-4c97-9905-685a9a4e556d@csgroup.eu>
 
-On Thu, Sep 05, 2024 at 06:55:27PM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 05/09/2024 à 18:13, Jason A. Donenfeld a écrit :
-> >> +/*
-> >> + * The macro sets two stack frames, one for the caller and one for the callee
-> >> + * because there are no requirement for the caller to set a stack frame when
-> >> + * calling VDSO so it may have omitted to set one, especially on PPC64
-> >> + */
-> >> +
-> >> +.macro cvdso_call funct
-> >> +  .cfi_startproc
-> >> +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
-> >> +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
-> >> +	mflr		r0
-> >> +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
-> >> +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
-> >> +	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> >> +  .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
-> >> +	get_datapage	r8
-> >> +	addi		r8, r8, VDSO_RNG_DATA_OFFSET
-> >> +	bl		CFUNC(DOTSYM(\funct))
-> >> +	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> >> +	cmpwi		r3, 0
-> >> +	mtlr		r0
-> >> +	addi		r1, r1, 2 * PPC_MIN_STKFRM
-> >> +  .cfi_restore lr
-> >> +  .cfi_def_cfa_offset 0
-> >> +	crclr		so
-> >> +	bgelr+
-> >> +	crset		so
-> >> +	neg		r3, r3
-> >> +	blr
-> >> +  .cfi_endproc
-> >> +.endm
-> > 
-> > You wrote in an earlier email that this worked with time namespaces, but
-> > in my testing that doesn't seem to be the case.
-> 
-> Did I write that ? I can't remember and neither can I remember testing 
-> it with time namespaces.
+When percpu_add_op() is used with unsigned argument, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
-It's possible I confused you with someone else? Hum. Anyway...
+net/ipv4/tcp_output.c:187:3: error: result of comparison of constant -1 with expression of type 'u8' (aka 'unsigned char') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
+  187 |                 NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPACKCOMPRESSED,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  188 |                               tp->compressed_ack);
+      |                               ~~~~~~~~~~~~~~~~~~~
+...
+arch/x86/include/asm/percpu.h:238:31: note: expanded from macro 'percpu_add_op'
+  238 |                               ((val) == 1 || (val) == -1)) ?            \
+      |                                              ~~~~~ ^  ~~
 
-> >  From my test harness [1]:
-> > 
-> > Normal single thread
-> >     vdso: 25000000 times in 12.494133131 seconds
-> >     libc: 25000000 times in 69.594625188 seconds
-> > syscall: 25000000 times in 67.349243972 seconds
-> > Time namespace single thread
-> >     vdso: 25000000 times in 71.673057436 seconds
-> >     libc: 25000000 times in 71.712774121 seconds
-> > syscall: 25000000 times in 66.902318080 seconds
-> > 
-> > I'm seeing this on ppc, ppc64, and ppc64le.
-> 
-> What is the command to use to test with time namespace ?
+Fix this by casting -1 to the type of the parameter and then compare.
 
-Look at the C in the commit I linked.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/include/asm/percpu.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index c55a79d5feae..e525cd85f999 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -234,9 +234,10 @@ do {									\
+  */
+ #define percpu_add_op(size, qual, var, val)				\
+ do {									\
+-	const int pao_ID__ = (__builtin_constant_p(val) &&		\
+-			      ((val) == 1 || (val) == -1)) ?		\
+-				(int)(val) : 0;				\
++	const int pao_ID__ =						\
++		(__builtin_constant_p(val) &&				\
++			((val) == 1 ||					\
++			 (val) == (typeof(val))-1)) ? (int)(val) : 0;	\
+ 									\
+ 	if (0) {							\
+ 		typeof(var) pao_tmp__;					\
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
