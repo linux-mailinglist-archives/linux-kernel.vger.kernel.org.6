@@ -1,104 +1,169 @@
-Return-Path: <linux-kernel+bounces-316493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A0B96D058
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFE296D05B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 09:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9011F23213
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A2602863B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 07:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B0193065;
-	Thu,  5 Sep 2024 07:25:46 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CAF193069;
+	Thu,  5 Sep 2024 07:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T7k4wX0R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D7283CC1;
-	Thu,  5 Sep 2024 07:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B173C1925BE
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 07:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725521145; cv=none; b=DacIcui1I2sy1CxecwqenV1GRjJnHAxZ9oWez/Oc5E11Ogr//Kf30mRbvJ6qk868IqsuI9NByXMImUMBbN8BiQexkkARA4hW9i8lks+69sqGVzrMjgKPyEhZ0D+8V4DkRwrmaJwDvb0E8M9amU917REdx8hkYyIFUt+IW6K9T6c=
+	t=1725521188; cv=none; b=PE8+H8Wu7QYjjvAsLtTAfjeAnHyJWTT5hlIOLav8L86dybXJJSgbq1yRgBfIgAoIOo6nDirdkFv+m54K6HI970zulLdMDnzrLUXjyOLC0rsjznxhVfV3y0XN5HKsmEgdK5pdgb424GMekPyBClKeUqH4Qetr8G2CLvn7/HUg6f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725521145; c=relaxed/simple;
-	bh=ExgF/JsMeCuSh6yY7uEjFS2Jx+Qqvu9SyCRzzC744PU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BwYxkcRoerIK2BIN9XEd6Jm1uq2KBdBk0Ndgx4B3Lc6ThtqhXb0S7+nP1COzZIEsBR439L3jFk1tSEpAMVppN771hakNxB5AljlJryPHFb56nD6dZgIAWo4XYXgWiL9Ntoh661dCLW3LTP23YUHIcXGa0zCP2YfJn5Jzxf0VYDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-205909afad3so4869165ad.2;
-        Thu, 05 Sep 2024 00:25:44 -0700 (PDT)
+	s=arc-20240116; t=1725521188; c=relaxed/simple;
+	bh=1E90GDaWcU2dYBUkZZSE7DrGg3MiyzaXBiTYpbewsn8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tf0LdsdELSDyXakgy8Fshk6KqWoWncqtEZUQD5BwC6pgg0cRgC/xRjHo92oZC60JdMdRcLzWYFOnMIPgqN/Gmqz0AvLMtaFx21KLTZm2GxyPJK/5P4DBpQXem7+6uXbeW5v9RLugdkidfx49Rq3+xMjSjAYE/sEv7cOu1OsA2nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T7k4wX0R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725521185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yaOGeMd8w3UisQhL375DuduTAHttyCwkLUEKAc7a4E8=;
+	b=T7k4wX0RMnwP8QyWnAvI1HO0M3V0Liz4UNYNe7NbqcqXEXEYKsjBblW5p9XR3x8InsC5n9
+	QnKYe74swri2kfQFmvSLcA9f3CRMdWedSuPII9iJMzfhWbN66QXkDW6uhCYEL+vaT11esr
+	SCAhgs27fHq1nSuGUcJWdLmZFvaH6j4=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-652-KB8Yh4sAOqqdDUC235Mb9w-1; Thu, 05 Sep 2024 03:26:24 -0400
+X-MC-Unique: KB8Yh4sAOqqdDUC235Mb9w-1
+Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-e035949cc4eso1016945276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 00:26:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725521144; x=1726125944;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aWF3d5CZAE6FQa8cQgLDyunLL5+EiNEmxwaWt34sNTY=;
-        b=cHBS13d38AfJNDQaMOU1hM+jKsHfPw4NQRVRfG/wwVOQOYnViMxnEqKryPqbdExq05
-         m7s7xusbh4CR8F9pePOTKf6ZSZS70XoomhtaAgXoi0POxrHceTxX4JU9INeyA6BxHjP9
-         hANCVwSQeYfhkFhPjKhOijrut810AwNRFu9tvwILG0SgitbwbWu5EjOH3RnboO2xUjlW
-         R30G0f9Nwn5vGsQMp0qo1DeR7XJxSmTwk5/UCxfYdNwlLbHMU6QBzyCzffAdCIMQ8Ouc
-         plqoP/wysv7hKtE6OSkLkxDGu3lX5Q/VnGmcfvva/JOkNXuPSV2Nv070bztA8wXol7Vz
-         rtcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ8K2fiIqs6NiflUMNLxNVxTGlYrIiQGGXniHGdTOnIRdIdN6GIJ5ikeBuSJSN0zVNAprioI7ubWTTTf4x@vger.kernel.org, AJvYcCVhFMko21q/6jur4VUTW5zXKl8cChbPlkpIk9ipKKgzzLJgh/Tpdj3ieoLXCNoTH0AGOLafqnNtzIBdIV2v@vger.kernel.org, AJvYcCX38dTB6z0i/FcExXL1NfFgyVA44mcxRliw8PXlWYpdgeVDTFgpDXrXXk5Q1Q2nbDvUKQph0uNywdFSug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsBQM9P5UXQ2eQn4scXKk85mAyL9wj1MSvIuorvl1pVbe8zSVG
-	CmOJVqyBDxlMCp5LtTqOutw7j8Jezo6J9o5vjtNICq8P5Yl6Orrr
-X-Google-Smtp-Source: AGHT+IFMnOvpW82/5MfGgSUynTFsXrs4aTyyIzgK4cEezwML2xWL6vrWpxzCX6SNUHQHvPrWg6EbMw==
-X-Received: by 2002:a17:903:1245:b0:1fc:6c23:8a3b with SMTP id d9443c01a7336-2050c354a4bmr257050595ad.17.1725521143483;
-        Thu, 05 Sep 2024 00:25:43 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea67c98sm23282035ad.252.2024.09.05.00.25.42
+        d=1e100.net; s=20230601; t=1725521184; x=1726125984;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yaOGeMd8w3UisQhL375DuduTAHttyCwkLUEKAc7a4E8=;
+        b=sfW+CRhy+3ocnyiBst+EQRlpFtbc0vW801n40JhXr0wNvlYoWUn8sCh+OgZqCfHosK
+         b/wbp1TTwJ3aGWZyAKvEtoc1dH5ULJ9d0ObQOofaDK26Cj7IZXGYJ/bbRVkSCebImS+H
+         vXMIvpZus+HlJ2WgSOTD3HA82huN4AX7VhD72wAlvquYOH3/zf4Z3w/TCaH2RiL3eiCJ
+         doimMa1y7mkZ1fBC7xK6B3MMyE/n0Nana3QPeK54zMUBVehCTr+K9GhUkxVB3rPWI3yU
+         GHHyk7M/akWfLtR1bO47E4vWwFWC/nYYdkdIafApoTKi+l/P18sv3US0QZJeS6SX6yMW
+         I+ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXactoMdy6x4cVE3fHFPL682P2ARH4x3jiLYbdGFHFzgMmtTHZbIaiyKFLbnYzYTserRSVwHv95boPuWyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRo5nPzMdqCufBsyIq4GsiwbhEFVfZO6SzZMbQgEUDwycXZPAl
+	Q4XZbdC19HGUP0hESjyNy+yLcPxEXNvOFfK6b7XCie9Hr0Z8icSc1616Kkcq/FBU6fW6XtMYACD
+	JnzTJYTzVDZCLNtForHqSQns1AGaEeinI6vlpXiqfB2z64W7OD2EC80s9OdrTnMENYs76FQ==
+X-Received: by 2002:a05:6902:120d:b0:e16:55cc:215c with SMTP id 3f1490d57ef6-e1a79fe3948mr26285990276.6.1725521183779;
+        Thu, 05 Sep 2024 00:26:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfflzeoBEgBEeoMRSumn4e17QiyfLrzWs8/iJJXxkGrbsKpnb66lp9FuBKXH+zZQwHmz9aOQ==
+X-Received: by 2002:a05:6902:120d:b0:e16:55cc:215c with SMTP id 3f1490d57ef6-e1a79fe3948mr26285971276.6.1725521183238;
+        Thu, 05 Sep 2024 00:26:23 -0700 (PDT)
+Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c5201defd8sm5404376d6.24.2024.09.05.00.26.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 00:25:43 -0700 (PDT)
-Date: Thu, 5 Sep 2024 07:25:27 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, deller@gmx.de, gpiccoli@igalia.com,
-	mikelley@microsoft.com, linux-hyperv@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fbdev/hyperv_fb: Convert comma to semicolon
-Message-ID: <Ztlc52c6fIz3azbn@liuwe-devbox-debian-v2>
-References: <20240902074402.3824431-1-nichen@iscas.ac.cn>
+        Thu, 05 Sep 2024 00:26:23 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH v2] PCI: Fix potential deadlock in pcim_intx()
+Date: Thu,  5 Sep 2024 09:25:57 +0200
+Message-ID: <20240905072556.11375-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902074402.3824431-1-nichen@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 03:44:02PM +0800, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> Fixes: d786e00d19f9 ("drivers: hv, hyperv_fb: Untangle and refactor Hyper-V panic notifiers")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+commit 25216afc9db5 ("PCI: Add managed pcim_intx()") moved the
+allocation step for pci_intx()'s device resource from
+pcim_enable_device() to pcim_intx(). As before, pcim_enable_device()
+sets pci_dev.is_managed to true; and it is never set to false again.
 
-Applied to hyperv-fixes, thanks!
+Due to the lifecycle of a struct pci_dev, it can happen that a second
+driver obtains the same pci_dev after a first driver ran.
+If one driver uses pcim_enable_device() and the other doesn't,
+this causes the other driver to run into managed pcim_intx(), which will
+try to allocate when called for the first time.
 
-> ---
->  drivers/video/fbdev/hyperv_fb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
-> index 8fdccf033b2d..7fdb5edd7e2e 100644
-> --- a/drivers/video/fbdev/hyperv_fb.c
-> +++ b/drivers/video/fbdev/hyperv_fb.c
-> @@ -1189,7 +1189,7 @@ static int hvfb_probe(struct hv_device *hdev,
->  	 * which is almost at the end of list, with priority = INT_MIN + 1.
->  	 */
->  	par->hvfb_panic_nb.notifier_call = hvfb_on_panic;
-> -	par->hvfb_panic_nb.priority = INT_MIN + 10,
-> +	par->hvfb_panic_nb.priority = INT_MIN + 10;
->  	atomic_notifier_chain_register(&panic_notifier_list,
->  				       &par->hvfb_panic_nb);
->  
-> -- 
-> 2.25.1
-> 
+Allocations might sleep, so calling pci_intx() while holding spinlocks
+becomes then invalid, which causes lockdep warnings and could cause
+deadlocks:
+
+========================================================
+WARNING: possible irq lock inversion dependency detected
+6.11.0-rc6+ #59 Tainted: G        W
+--------------------------------------------------------
+CPU 0/KVM/1537 just changed the state of lock:
+ffffa0f0cff965f0 (&vdev->irqlock){-...}-{2:2}, at:
+vfio_intx_handler+0x21/0xd0 [vfio_pci_core] but this lock took another,
+HARDIRQ-unsafe lock in the past: (fs_reclaim){+.+.}-{0:0}
+
+and interrupts could create inverse lock ordering between them.
+
+other info that might help us debug this:
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               local_irq_disable();
+                               lock(&vdev->irqlock);
+                               lock(fs_reclaim);
+  <Interrupt>
+    lock(&vdev->irqlock);
+
+ *** DEADLOCK ***
+
+Have pcim_enable_device()'s release function, pcim_disable_device(), set
+pci_dev.is_managed to false so that subsequent drivers using the same
+struct pci_dev do implicitly run into managed code.
+
+Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+Reported-by: Alex Williamson <alex.williamson@redhat.com>
+Closes: https://lore.kernel.org/all/20240903094431.63551744.alex.williamson@redhat.com/
+Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+Tested-by: Alex Williamson <alex.williamson@redhat.com>
+---
+@Bjorn:
+This problem was introduced in the v6.11 merge window. So one might
+consider getting it into mainline before v6.11.0 gets tagged.
+
+P.
+---
+ drivers/pci/devres.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+index 3780a9f9ec00..c7affbbf73ab 100644
+--- a/drivers/pci/devres.c
++++ b/drivers/pci/devres.c
+@@ -483,6 +483,8 @@ static void pcim_disable_device(void *pdev_raw)
+ 
+ 	if (!pdev->pinned)
+ 		pci_disable_device(pdev);
++
++	pdev->is_managed = false;
+ }
+ 
+ /**
+-- 
+2.46.0
+
 
