@@ -1,95 +1,142 @@
-Return-Path: <linux-kernel+bounces-316197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C4996CC79
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F268096CC46
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 03:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4CE1F2622A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39C1288D11
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 01:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273BF199B8;
-	Thu,  5 Sep 2024 02:04:34 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FBA946F;
+	Thu,  5 Sep 2024 01:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rejBnJm5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB3DEAF6
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 02:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB2346B5
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 01:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725501873; cv=none; b=ssL8MSgHi0ZAqC5Tw9rFkqlLuj1I6Wa+mJmH6M+1fomiHY56uzW2OWt43Iwg+iBnuTXaxlu7BL9YL00kCNA1dAAX/v6fqb2dRRThtGDD6uzjcLFMC8C+Jr4z/W4v2XoxDHUyolN6ShoMsEpHf+dY7fdOCSjoCmPTnzUN4KBUxJI=
+	t=1725499797; cv=none; b=ozehiniQgnABWao4GqnCh1j5J5/nBLzVJ1wHDQIYpnk6fTQtVEQt146Fp5EDYdrom+6Jkcq1YyFGnIFFRxUqBZ0AZ/s/6VhxBO5t1rxyfB8EtdNpysH3PGlQ75pppExOvswAMnV7coyVQEcpHH7/ZJjQ6jFJn7F8/lzky0mrUCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725501873; c=relaxed/simple;
-	bh=kNQ7Mwk2uf8a/cem3BgB8VQdIXbBlpCEl5nav2AgZuU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nuaETHwscMeL4rrRF0DjLaEBR4148m5hVtl6pSxOULt+UFfTlD0T9t4s2YZL/EBT40CEkQDCK44YONetMyaFrrip26nP/NrfjqIvuVd4o+56/85VW6O7ABsknAmhhk2I7xdt7TvJbC7O32XdpV9qrfgUKFbW2nyQIsRg2U57JfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 9AB00121752;
-	Thu,  5 Sep 2024 01:28:24 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id F3D1220025;
-	Thu,  5 Sep 2024 01:28:21 +0000 (UTC)
-Message-ID: <61936c29ad056ac72c142600f6414c6dba0b6136.camel@perches.com>
-Subject: Re: [PATCH 10/15] checkpatch: Remove broken sleep/delay related
- checks
-From: Joe Perches <joe@perches.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jonathan
- Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Andy Whitcroft <apw@canonical.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>
-Date: Wed, 04 Sep 2024 18:28:21 -0700
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-10-e98760256370@linutronix.de>
-References: 
-	<20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
-	 <20240904-devel-anna-maria-b4-timers-flseep-v1-10-e98760256370@linutronix.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725499797; c=relaxed/simple;
+	bh=isoZFrkj3HFjQpOArSk4EpDG37UlOrHX9AepiwxVVE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VBCC5vuUYOjKFCzYkqEsdtVswI7sNNcOsZur6B7uTaWRJsa4LwA7GYUpmVPg6ApohXw1KNn2mIKnbxcRVyHX9aFCSDqLL+F3TTdiAa1Re9Am7zsTRzh3il6fXM/qhiPQNu0wZB6m8oWyVGvlygOGRgzqB0/EMTRNGuIrDjYYeUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rejBnJm5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA817C4CEC2;
+	Thu,  5 Sep 2024 01:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725499797;
+	bh=isoZFrkj3HFjQpOArSk4EpDG37UlOrHX9AepiwxVVE8=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=rejBnJm5VPnPwJixHXNKoh6ESVI3dl/HzrUTe8Qpcze1fFcmLmXE2pTwypYa3hf+C
+	 z91RzTxUaRoxtnPnhE4YMpPPoPWDcaz5ttcHlpL9BUEeLkjEcB303uz/IYOcW36Nc6
+	 cvSBsoj2JF6RIpOO/NDYAUdEdlmOFCl/WbaDEu2EXiFNSFcL8FqboOo8JbUN2mccmB
+	 ZlDzoG3P8aEYF2cFdK4Jg2HyDreq07tyWyAifPNhsAuPcGWJCJ2klvHxxExuzaJa3h
+	 DKVFugQWdT9nMZntK3uLq0IpxgWDwjoy7nZNGraxoKRfc/9YMUi4t/3+uc6JJytcGr
+	 A/wpPaCdIt0Hw==
+Message-ID: <d4106e72-8a88-42d4-9300-233751e239bb@kernel.org>
+Date: Thu, 5 Sep 2024 09:29:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: F3D1220025
-X-Stat-Signature: e3s9eocsos4hkafnmzabf7jksa1xqdqm
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19iqdq+YW0yNRdLs6+Z/wtiOZ75Pv8O6EM=
-X-HE-Tag: 1725499701-653848
-X-HE-Meta: U2FsdGVkX1/5YnpmdE7YF+haWSWsy0s9vqfaBoomJILktJfVbgNQKbc6Rr7KnvHDvZAGfwx6PiO2ydm4x7YspU6t8/KJ6LqyKwEPT0gwgOBjfygwZ7MZkMSFS5NQx8+r0RyrRjLpUxDrQ+3LYss6X6BsEY0dO0IEudpahJ0TnOCoQEl1oAGWYv852oA9D+1f4hatMh/FzdJM4/4xsSWqxqAk/AnjHh9t33o5eBkHyKdWoLucB8EwRG5/AmBYpQJ37RLFTXlNwzk425XOK/I288hhXCJquMu8xZE6b1wFm3aO1BPzsqFkdYyUYFhZfAmo0Dmj95c0CLybcARUprT84Fm0KfdmqBFU1TPibrT2DqHZ6QIuLOtWcMpmZiS/kygFVYkYjAKXfhcm67UL28Wy6w==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
+ in f2fs_ioc_start_atomic_write
+To: syzbot <syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <0000000000007dfbdb061fa35855@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <0000000000007dfbdb061fa35855@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-09-04 at 15:05 +0200, Anna-Maria Behnsen wrote:
-> checkpatch.pl checks for several things related to sleep and delay
-> functions. In all warnings the outdated documentation is referenced. All
-> broken parts are listed one by one in the following with an explanation w=
-hy
-> this check is broken. For a basic background of those functions please al=
-so
-> refere to the updated function descriptions of udelay(), nsleep_range() a=
-nd
-> msleep().
-[]
-> - Check: ($1 < 20)
->   Message: "msleep < 20ms can sleep for up to 20ms;
->             see Documentation/timers/timers-howto.rst\n"
->   Why is the check broken: The message is simply wrong. msleep() will not
->                            sleep (and never did it before)
+#syz fix: f2fs: atomic: fix to forbid dio in atomic_file
 
-While it might have changed, the "never did it before" is
-not correct.
+On 2024/8/14 19:51, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    9e6869691724 Add linux-next specific files for 20240812
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1431e405980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+> dashboard link: https://syzkaller.appspot.com/bug?extid=733300ca0a9baca7e245
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120ed77d980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130e0ef3980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/disk-9e686969.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vmlinux-9e686969.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98a/bzImage-9e686969.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/08b48c782593/mount_0.gz
+> 
+> The issue was bisected to:
+> 
+> commit 374a8881ce4ccf787f5381a39f825cb17a3f6b14
+> Author: Chao Yu <chao@kernel.org>
+> Date:   Tue Jun 25 03:13:51 2024 +0000
+> 
+>      f2fs: atomic: fix to forbid dio in atomic_file
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10741429980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12741429980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14741429980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com
+> Fixes: 374a8881ce4c ("f2fs: atomic: fix to forbid dio in atomic_file")
+> 
+> F2FS-fs (loop0): Found nat_bits in checkpoint
+> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
+> syz-executor312: attempt to access beyond end of device
+> loop0: rw=10241, sector=45096, nr_sectors = 8 limit=40427
+> ================================================
+> WARNING: lock held when returning to user space!
+> 6.11.0-rc3-next-20240812-syzkaller #0 Not tainted
+> ------------------------------------------------
+> syz-executor312/5227 is leaving the kernel with locks still held!
+> 1 lock held by syz-executor312/5227:
+>   #0: ffff8880695aa0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
+>   #0: ffff8880695aa0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x2ed/0xac0 fs/f2fs/file.c:2163
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-https://lore.kernel.org/all/15327.1186166232@lwn.net/
-
-> Remove all broken checks. Remove also no longer required checkpatch
-> documentation section about USLEEP_RANGE.
-
-It'd be useful to remove the appropriate now unnecessary
-verbose sections from Documentation/dev-tools/checkpatch.rst
 
