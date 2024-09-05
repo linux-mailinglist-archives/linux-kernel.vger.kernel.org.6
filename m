@@ -1,157 +1,393 @@
-Return-Path: <linux-kernel+bounces-317491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A285F96DF0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:01:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9C496DF15
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E671F2553D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:01:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB261F260AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AEA19F479;
-	Thu,  5 Sep 2024 16:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F6A19E7D8;
+	Thu,  5 Sep 2024 16:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hoomji14"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fiG0O4z/"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCE619E82C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB2417C9B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 16:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725552061; cv=none; b=WMp3pcSIyqCiLhwXbXfKCbr1goRqDkibe9QfxvLAWoIAy9ich7rbvJiVMD/5x+TeXeASUqmKqzqkhxewxg8MZY+KzMdfZeyVCxbqxJRtDdH1UpoY4yhZC5Zbn4soI1hz0mIuHdIIkbc74G9/x1JgyX38w18Co7pxu3zY7iO7uAg=
+	t=1725552188; cv=none; b=U75ENCuBcGA6xSLoX8v2bqPwDC4n0uAodnn1tmiB138sIPqaYozGKiCv/uoDDJ8KabURVhpyWsOsYkEuRpfB1hUWOJPYfL9/VVge/lhbqyvJu+hal+eDpdnsZiK6ueKEkXxW2GPK70AkdyBNJjLhITtiRB/GWN4w+noV/dMzRK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725552061; c=relaxed/simple;
-	bh=Sf2H0pfrE9E267/+P/2+hCZdeQu4EoaUhRD5j7PnoGo=;
+	s=arc-20240116; t=1725552188; c=relaxed/simple;
+	bh=jSEuUZjcp8/rMF65PChZ6aZD2yBciVNc5VVQVXUzAMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BmQ/czh3HVxJZA5GHorOBG3aBWUqnXJJn5faTW9pP/DlXjLHWjL5XrL1W7ytdRls0wYbr6E4Y5KQTW8s4D27hFZpFhtR7Bmnqo6i5C8Rds10hYzTChQ6a2OM/gOQQdNEa5+Bawx82tHqLrdm3JK21LEEOhhpAM00kcbd/tsSuNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hoomji14; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725552059; x=1757088059;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Sf2H0pfrE9E267/+P/2+hCZdeQu4EoaUhRD5j7PnoGo=;
-  b=hoomji14eohQFA64yvc5pAXvO0QkutjtpJWrHBaQSjTblAYYBLLdhpzB
-   CBOflq+nmm4w940LGh9wcmW9/M7oDiPaItjUAtmGI/ATrWXECj9jbbd8H
-   50VWw61VRKbFkYDdVTlJiTaci3VtwyFecLO4vTLJyzi0E0xwMV8Vp5Wvv
-   HJ4yo0+RcR62wE+5Op21lVy3W6G1QwxDr/TDLW5NV2UoLxnuym0DGmJ7H
-   UennIpKt5CmjCF6hd8L1x+Zq+TBOE5O+hrX/Tt6bmM4kCglryOSa5OKyt
-   Ld6STVAbUamIyx0LJwIW1IO9APen4fMF2ye3Uk5zJG4Mu4cQYOIxNlS5d
-   w==;
-X-CSE-ConnectionGUID: xlHzhciBT8S7FN7MMpMS+w==
-X-CSE-MsgGUID: HlC3hUQWQy+INQydtcbmsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35666013"
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="35666013"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:59 -0700
-X-CSE-ConnectionGUID: gl709AT7S6GaieBeYcgDhQ==
-X-CSE-MsgGUID: a7rQtfz4RNOAedfdHDtXow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="69816301"
-Received: from bllerma-mobl2.amr.corp.intel.com (HELO desk) ([10.125.147.102])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 09:00:59 -0700
-Date: Thu, 5 Sep 2024 09:00:57 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com
-Subject: [PATCH v6 3/3] x86/bugs: Use stack segment selector for VERW operand
-Message-ID: <20240905-fix-dosemu-vm86-v6-3-7aff8e53cbbf@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tonpe9Awo0Nd1spEcVgKPtE9YLHSY9OjJVVLiKmrJ0XWAT9zmxC0TGKF+0l/mcNicqL5gcwLjFZTQ5uag4/62YFb/YQVQWo/onGLoSyghUlioKqO78szCOuFUvRP7xK6C2yswEOGcekdgEDoINAhgNv9pxgA9XKMf4Xy7ndpk2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fiG0O4z/; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so108608966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 09:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725552184; x=1726156984; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0lO/webuLu6zbfLMn41bIDlXtl84yaoWf4AkCT6f/2o=;
+        b=fiG0O4z/ofqujDWDkyf1DnUQTpAorCA5wBrPCDBKEv9Zzu56SIjG6l2xn1yLGo0A+/
+         Kup06TVbk/CXPLJ6BrpBtQxLD04U8h2G4xDU8wD6B2tb9/B1SczgF+2kqLkw+UEGQYV/
+         7c6BavH8FTMbaeOJW4VT/Env06KKCBrNW8OXqKDo3J5n2MpzSBM1ZcA3ZnPsvhn3Keye
+         8Y78ZEO6aLmkQa7YwfNbeUEyPcoPk+yQgg7jK2NmlUFooP6jWaSrdzNiSUvTtHfnu0Cc
+         GL3tM3/4wVIPWl+K8fBzxP4EGzbGlOd6qDPB5scRxAjaFeozOn0d1zM+b3c6j6CksylJ
+         EnPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725552184; x=1726156984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0lO/webuLu6zbfLMn41bIDlXtl84yaoWf4AkCT6f/2o=;
+        b=JibdtiWFf8ddEUNxCymgE/B/VgxkuckuDKXgVQzLe7Z97cRaFoF2DzWPfqnWqBPvRk
+         XQkCg7YZTyI2SLS/2mTQxFh/SCWQaCXMtC0kzQ+TBUIz1e1tQic/kNMqZ3CupSmzQjha
+         OwNH+Dl4jr7y7M8/pQXoslnhsd5G+36548w95grfw0s51GB2pIQdwZ5sjidjK+gNqHyn
+         50qcKYARhHv9mvbNqL6K+aop7GAOkDTcFDIwNXd6u28jFjvx/ULhM2FvJKQDEUy0SiUA
+         Quai8w6VRtGF36cQbLG2iL10jD3iEviVttTeF0MEmYmNzjdBPNB/pnb5ermS0ut8PeP+
+         hxtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaFwBl8wGyGXvsRCKIREUdNSCL9zE7IzObbF/EHBB0heTbgrFbdzLdYwvWKkAn7yGUWSOcjK/O8G083Zc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcMuHSwJBw2pk9RPtN67k5oiJbycU18hBRc7X2qBDWNMUhbAoX
+	TwDZ2Hdwyruk22h93lJ4ScBNp5AM4RVrLiIpp3XoFgaShmVWqpUsDSgkHlaH3MLGHiZP3OOTUeR
+	H
+X-Google-Smtp-Source: AGHT+IG82zLauo7lsJQpVygAALA/UdkzGiyhIyE7hYYTStEpjuYBLEED9W8uQGP+TnDec4CXAxc0Qg==
+X-Received: by 2002:a17:907:7286:b0:a7a:afe8:1013 with SMTP id a640c23a62f3a-a8a42fb1287mr714977766b.1.1725552183568;
+        Thu, 05 Sep 2024 09:03:03 -0700 (PDT)
+Received: from localhost (p200300f65f01db004d6a46a6454a1385.dip0.t-ipconnect.de. [2003:f6:5f01:db00:4d6a:46a6:454a:1385])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d16fsm153245266b.99.2024.09.05.09.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 09:03:02 -0700 (PDT)
+Date: Thu, 5 Sep 2024 18:03:01 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	unicorn_wang@outlook.com, inochiama@outlook.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, 
+	chunzhi.lin@sophgo.com
+Subject: Re: [PATCH 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
+Message-ID: <id7arbp2z5ui3krscder6vrv5g7v3rvjxpde2eyg7pn5lxjvha@fdishk36pt35>
+References: <cover.1725536870.git.unicorn_wang@outlook.com>
+ <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ovkkq3mcs5nbjldh"
+Content-Disposition: inline
+In-Reply-To: <3985690b29340982a45314bdcc914c554621e909.1725536870.git.unicorn_wang@outlook.com>
+
+
+--ovkkq3mcs5nbjldh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-Robert Gill reported below #GP in 32-bit mode when dosemu software was
-executing vm86() system call:
+Hello,
 
-  general protection fault: 0000 [#1] PREEMPT SMP
-  CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
-  Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
-  EIP: restore_all_switch_stack+0xbe/0xcf
-  EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
-  ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
-  DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
-  CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
-  Call Trace:
-   show_regs+0x70/0x78
-   die_addr+0x29/0x70
-   exc_general_protection+0x13c/0x348
-   exc_bounds+0x98/0x98
-   handle_exception+0x14d/0x14d
-   exc_bounds+0x98/0x98
-   restore_all_switch_stack+0xbe/0xcf
-   exc_bounds+0x98/0x98
-   restore_all_switch_stack+0xbe/0xcf
+On Thu, Sep 05, 2024 at 08:10:42PM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+>=20
+> Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
+>=20
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  drivers/pwm/Kconfig             |   9 ++
+>  drivers/pwm/Makefile            |   1 +
+>  drivers/pwm/pwm-sophgo-sg2042.c | 148 ++++++++++++++++++++++++++++++++
+>  3 files changed, 158 insertions(+)
+>  create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
+>=20
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 3e53838990f5..6287d63a84fd 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -577,6 +577,15 @@ config PWM_SL28CPLD
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-sl28cpld.
+> =20
+> +config PWM_SOPHGO_SG2042
+> +	tristate "Sophgo SG2042 PWM support"
+> +	depends on ARCH_SOPHGO || COMPILE_TEST
+> +	help
+> +	  PWM driver for Sophgo SG2042 PWM controller.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pwm_sophgo_sg2042.
+> +
+>  config PWM_SPEAR
+>  	tristate "STMicroelectronics SPEAr PWM support"
+>  	depends on PLAT_SPEAR || COMPILE_TEST
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 0be4f3e6dd43..ef2555e83183 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -52,6 +52,7 @@ obj-$(CONFIG_PWM_RZ_MTU3)	+=3D pwm-rz-mtu3.o
+>  obj-$(CONFIG_PWM_SAMSUNG)	+=3D pwm-samsung.o
+>  obj-$(CONFIG_PWM_SIFIVE)	+=3D pwm-sifive.o
+>  obj-$(CONFIG_PWM_SL28CPLD)	+=3D pwm-sl28cpld.o
+> +obj-$(CONFIG_PWM_SOPHGO_SG2042)	+=3D pwm-sophgo-sg2042.o
+>  obj-$(CONFIG_PWM_SPEAR)		+=3D pwm-spear.o
+>  obj-$(CONFIG_PWM_SPRD)		+=3D pwm-sprd.o
+>  obj-$(CONFIG_PWM_STI)		+=3D pwm-sti.o
+> diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2=
+042.c
+> new file mode 100644
+> index 000000000000..cf11ad54b4de
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-sophgo-sg2042.c
+> @@ -0,0 +1,148 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Sophgo SG2042 PWM Controller Driver
+> + *
+> + * Copyright (C) 2024 Sophgo Technology Inc.
+> + * Copyright (C) 2024 Chen Wang <unicorn_wang@outlook.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +
+> +#include <asm/div64.h>
+> +
+> +/*
+> + * Offset RegisterName
+> + * 0x0000 HLPERIOD0
+> + * 0x0004 PERIOD0
+> + * 0x0008 HLPERIOD1
+> + * 0x000C PERIOD1
+> + * 0x0010 HLPERIOD2
+> + * 0x0014 PERIOD2
+> + * 0x0018 HLPERIOD3
+> + * 0x001C PERIOD3
+> + * Four groups and every group is composed of HLPERIOD & PERIOD
+> + */
+> +#define REG_HLPERIOD	0x0
+> +#define REG_PERIOD	0x4
+> +
+> +#define REG_GROUP	0x8
+> +
+> +#define SG2042_PWM_CHANNELNUM	4
+> +
+> +/**
+> + * struct sg2042_pwm_chip - private data of PWM chip
+> + * @base:		base address of mapped PWM registers
+> + * @base_clk:		base clock used to drive the pwm controller
+> + */
+> +struct sg2042_pwm_chip {
+> +	void __iomem *base;
+> +	struct clk *base_clk;
+> +};
+> +
+> +static inline
+> +struct sg2042_pwm_chip *to_sg2042_pwm_chip(struct pwm_chip *chip)
+> +{
+> +	return pwmchip_get_drvdata(chip);
+> +}
+> +
+> +static void pwm_sg2042_config(void __iomem *base, unsigned int channo, u=
+32 period, u32 hlperiod)
+> +{
+> +	writel(period, base + REG_GROUP * channo + REG_PERIOD);
+> +	writel(hlperiod, base + REG_GROUP * channo + REG_HLPERIOD);
+> +}
 
-This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
-are enabled. This is because segment registers with an arbitrary user value
-can result in #GP when executing VERW. Intel SDM vol. 2C documents the
-following behavior for VERW instruction:
+I suggest to use the following instead:
 
-  #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
-	   FS, or GS segment limit.
+	#define SG2042_HLPERIOD(chan) ((chan) * 8 + 0)
+	#define SG2042_PERIOD(chan) ((chan) * 8 + 4)
 
-CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
-space. Use %ss selector to reference VERW operand. This ensures VERW will
-not #GP for an arbitrary user %ds.
+	...
 
-Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-Cc: stable@vger.kernel.org # 5.10+
-Reported-by: Robert Gill <rtgill82@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
-Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Suggested-by: Brian Gerst <brgerst@gmail.com> # Use %ss
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- arch/x86/include/asm/nospec-branch.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+	static void pwm_sg2042_config(void __iomem *base, unsigned int chan, u32 p=
+eriod, u32 hlperiod)
+	{
+		writel(period, base + SG2042_PERIOD(chan));
+		writel(hlperiod, base + SG2042_HLPERIOD(chan));
+	}
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index ff5f1ecc7d1e..aa5ed1a59cde 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -318,12 +318,14 @@
- /*
-  * Macro to execute VERW instruction that mitigate transient data sampling
-  * attacks such as MDS. On affected systems a microcode update overloaded VERW
-- * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
-+ * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %ss
-+ * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
-+ * 32-bit mode.
-  *
-  * Note: Only the memory operand variant of VERW clears the CPU buffers.
-  */
- .macro CLEAR_CPU_BUFFERS
--	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-+	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
- .endm
- 
- #ifdef CONFIG_X86_64
+The (subjective?) advantage is that the definition of SG2042_HLPERIOD
+contains information about all channel's HLPERIOD register and the usage
+in pwm_sg2042_config is obviously(?) right.
 
--- 
-2.34.1
+(Another advantage is that the register names have a prefix unique to
+the driver, so there is no danger of mixing it up with some other
+hardware's driver that might also have a register named "PERIOD".)
 
+Is this racy? i.e. can it happen that between the two writel the output
+is defined by the new period and old duty_cycle?
 
+How does the hardware behave on reconfiguration? Does it complete the
+currently running period? Please document that in a comment at the start
+of the driver like many other drivers do. (See=20
+
+	sed -rn '/Limitations:/,/\*\/?$/p' drivers/pwm/*.c
+
+)
+
+> +static int pwm_sg2042_apply(struct pwm_chip *chip, struct pwm_device *pw=
+m,
+> +			    const struct pwm_state *state)
+> +{
+> +	struct sg2042_pwm_chip *sg2042_pwm =3D to_sg2042_pwm_chip(chip);
+> +	u32 hlperiod;
+> +	u32 period;
+> +	u64 f_clk;
+> +	u64 p;
+> +
+> +	if (!state->enabled) {
+> +		pwm_sg2042_config(sg2042_pwm->base, pwm->hwpwm, 0, 0);
+> +		return 0;
+> +	}
+
+Here you're missing (I guess):
+
+	if (state->polarity =3D=3D PWM_POLARITY_INVERSED)
+		return -EINVAL;
+
+> +	/*
+> +	 * Period of High level (duty_cycle) =3D HLPERIOD x Period_clk
+> +	 * Period of One Cycle (period) =3D PERIOD x Period_clk
+> +	 */
+> +	f_clk =3D clk_get_rate(sg2042_pwm->base_clk);
+> +
+> +	p =3D f_clk * state->period;
+
+This might overflow.
+
+> +	do_div(p, NSEC_PER_SEC);
+> +	period =3D (u32)p;
+
+This gets very wrong if p happens to be bigger than U32_MAX.
+
+If you ensure f_clk <=3D NSEC_PER_SEC in .probe() (in combination with a
+call to clk_rate_exclusive_get()), you can do:
+
+	period_cycles =3D min(mul_u64_u64_div_u64(f_clk, state->period, NSEC_PER_S=
+EC), U32_MAX);
+	duty_cycles =3D min(mul_u64_u64_div_u64(f_clk, state->duty_cycle, NSEC_PER=
+_SEC), U32_MAX);
+
+This would also allow to store the clkrate in the driver private struct
+and drop the pointer to the clk from there.
+
+> +	p =3D f_clk * state->duty_cycle;
+> +	do_div(p, NSEC_PER_SEC);
+> +	hlperiod =3D (u32)p;
+> +
+> +	dev_dbg(pwmchip_parent(chip), "chan[%d]: period=3D%u, hlperiod=3D%u\n",
+> +		pwm->hwpwm, period, hlperiod);
+
+pwm->hwpwm is an unsigned int, so use %u for it.
+
+> +	pwm_sg2042_config(sg2042_pwm->base, pwm->hwpwm, period, hlperiod);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pwm_ops pwm_sg2042_ops =3D {
+> +	.apply		=3D pwm_sg2042_apply,
+
+No .get_state() possible? Please use a single space before =3D.
+
+> +};
+> +
+> +static const struct of_device_id sg2042_pwm_match[] =3D {
+> +	{ .compatible =3D "sophgo,sg2042-pwm" },
+> +	{ },
+
+Please drop the , after the sentinel entry.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, sg2042_pwm_match);
+> +
+> +static int pwm_sg2042_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct sg2042_pwm_chip *sg2042_pwm;
+> +	struct pwm_chip *chip;
+> +	int ret;
+> +
+> +	chip =3D devm_pwmchip_alloc(&pdev->dev, SG2042_PWM_CHANNELNUM, sizeof(*=
+sg2042_pwm));
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +	sg2042_pwm =3D to_sg2042_pwm_chip(chip);
+> +
+> +	chip->ops =3D &pwm_sg2042_ops;
+> +
+> +	sg2042_pwm->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(sg2042_pwm->base))
+> +		return PTR_ERR(sg2042_pwm->base);
+> +
+> +	sg2042_pwm->base_clk =3D devm_clk_get_enabled(&pdev->dev, "apb");
+> +	if (IS_ERR(sg2042_pwm->base_clk))
+> +		return dev_err_probe(dev, PTR_ERR(sg2042_pwm->base_clk),
+> +				     "failed to get base clk\n");
+> +
+> +	ret =3D devm_pwmchip_add(&pdev->dev, chip);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "failed to register PWM chip\n");
+> +
+> +	platform_set_drvdata(pdev, chip);
+
+This is unused and should/can be dropped.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver pwm_sg2042_driver =3D {
+> +	.driver	=3D {
+> +		.name	=3D "sg2042-pwm",
+> +		.of_match_table =3D of_match_ptr(sg2042_pwm_match),
+> +	},
+> +	.probe =3D pwm_sg2042_probe,
+> +};
+> +module_platform_driver(pwm_sg2042_driver);
+
+Please use a single space before =3D.
+
+> +MODULE_AUTHOR("Chen Wang");
+> +MODULE_DESCRIPTION("Sophgo SG2042 PWM driver");
+> +MODULE_LICENSE("GPL");
+> --=20
+> 2.34.1
+>=20
+
+Best regards
+Uwe
+
+--ovkkq3mcs5nbjldh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbZ1jMACgkQj4D7WH0S
+/k5GnQgAl62Yk2r77cgUH8x8m4JwTMuj2lYh2Xd+lLWn6zOk047Iw1zcN7YNTFqa
+Ou7f8v5+rTxmHRThrMe5SPWVwiFNCMxLt0zcqy6/RUs1BWGtgX9l7FVLqemJ2L/m
+vB8musR7QCpENLQI9Kty0G8RN84H7wAX7tMXScj7vwRrJgXzGPyZ7+PmLNro2bkH
+hNs25W+wVEGUOzgsJ1bQl0aMKBbokYoJNBpCSJMQqa4z18Y5sKkduprGv63qcp97
+V0tl4eoKJukWlnHkNepWngppSJ83VddOkvlepzeGbecCcQAw57nt0MXPldVnqEH8
+rLVKVd9uS/h9vy3WnuDR9pPGHuWGwQ==
+=lRuO
+-----END PGP SIGNATURE-----
+
+--ovkkq3mcs5nbjldh--
 
