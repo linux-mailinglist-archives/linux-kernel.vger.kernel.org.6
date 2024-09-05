@@ -1,94 +1,143 @@
-Return-Path: <linux-kernel+bounces-317262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4CB96DBAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:22:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7688C96DBAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63EFFB2617F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97961C2550F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 14:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB1FFC0B;
-	Thu,  5 Sep 2024 14:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A51195FCE;
+	Thu,  5 Sep 2024 14:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BQ3CKMIJ"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGWHg4Pe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E43CA6B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 14:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB5C39FD6;
+	Thu,  5 Sep 2024 14:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725546107; cv=none; b=cTFTjRR6DkL76dh8gU651zjGT+h8+qzs99dbPC61wNtyf8ImPlJtpHD6qwcWUAvKGAOAiv1d42aQADtqtoGJQ6A9yKBmYjuxP1iq9+gqjWD7ztvthxvorWO3Mx7XTxvDIf/WVrKOGysTLFfdp9sSMVDmZ2jSO4JZkjjKK+zJzIc=
+	t=1725546119; cv=none; b=Nue8AiOdG3R2ngQ7P1uWHHBb7VpMVpbWW+pzUbzC9K4HrbbSHoaZ1xUoMbfARMKEmhaf5vsKMIXw6ZLlZk0XNFnK6yi1zaeaaPv+i1lOtR1egKuOyCB4OGn0JgSxWh8AKSmiW4CMLOVFhzKS1YH0KDnEKQIpwfpYdY7bbGteXEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725546107; c=relaxed/simple;
-	bh=soe4lSBt3n/0AW0IvOwAvfTmHxrYurlhVZOxeGsvUzY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Oa3U3XMq5mA2rykyiSf6Fcb/CrtmzrksqRvylCQYpW+fxrw96OcyUpKPoeedHfOKCMYU0A3BcLG8GolJNIUvli0bdKb+D8kWcp1zwdry3m2Rm8Yfr8V111qcOYOK8wixm1EjDJitf9LQeJeSSnbneZtfjPiRUItefBsILOxNxmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BQ3CKMIJ; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725546101; bh=ijlHayz1ulziNTvGeLOjpuJ9VgH6XzHM9AqcFIyjmjk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BQ3CKMIJcIMbUSPVJsg+J608Sckj7P+MK+mZjzOB50lnCqSgEOF2JA8sVhtu5861X
-	 h5gsRTjkw3ZmawgAu19sk3A8nEGkjOJuuD1IAqt/Zzlg1vjQ1CP7Pd0xkemBkkilFg
-	 XD9pHxRTitCdlpXPXEfxCf1ulBb/ORKgVlXYg+/U=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 5672282C; Thu, 05 Sep 2024 22:21:39 +0800
-X-QQ-mid: xmsmtpt1725546099tj1b4ns5n
-Message-ID: <tencent_BBD3CC8A27DA46FB12D0C64E89AD2ECDEE06@qq.com>
-X-QQ-XMAILINFO: N9rp9v+OMEj5mN4gLYlMmDyyQay1oG1bhPaMSkJTOSXHhR5MHmU9M8v5aqY/Wx
-	 bXq7AWO0GveB9SJm9pwLoXZeBON+/aqzFhUA2nqCd/l4CQ4xxf4+2H0Q8rFFO3+vVnOfaBk+Qck5
-	 3u3BcoTlAdHDIFMKFLfw57mDXrKuh1bDhDC0MRYMP1OhzWqNoMILUSZSRMFR8CF1DzcFOOwuo4/w
-	 GoK4LeklKw9urCDWFnGgSUElNAp7W8L1CUniSmqu5zKGJ8a92MswR/G5pA6o5K8x6pMGAmleQiD1
-	 03cSxP59ihppxUB8/ccH8NtHk1aMO1HVCO52a1Paabl6ki5/hm7j1W8zKmYskOH+RRCqL0G4CIRs
-	 c61QDH/ntS3tvgdO3AgPth64Mzhg0EZJcIWgamy5jEoSXiAzTUBlsrOgf+ta5Oihk1hUnNpH//Dj
-	 iRJj0U3893htuJymrUHJh4hhl2NnVTPGYtvZs6yOtY/x+Tgn1VBCstSMt0xJ5kxDxkRGz2mHjaqE
-	 Ak9H3z3Z88V2dpnFu64WSlZ7r+vlGLEnts9Tmc5PDFzR82iSYeOX5kdKgSR5r5LJdt4TnPNPJsgL
-	 yeMGooOaTJ5/3eRs0YX04ZwAKdu/1ojf8XvJ0BArpMXuMGz5kYjgI+bm8Q2KDeSAnKX/Vz7HPzJI
-	 qdLc0RUSRyq6FrPewCoulLer15lHq+ReVw1ufugP9fZYjz+2ktWYNGBrixsKVHDRWcId7VTx3bNk
-	 Wr0ecmD7J1WDQTdNwqGrWRh+iJUHSoOsBSdAtv1DrVtzPjb5gY6BBIFSm7XmN/PHntUisPqhbdSF
-	 zudBSHMdyH4G8QHTae5Bkr/WzoY3HT9Tp92vYmRCtyB2UeW/3GyTL/skvipQ6j6CFxIkm0XqxcIr
-	 Om0tdoQkCeTlrakAcyptOVTrhMYmLCh6mDjT0J9/M9Y/tR+jrnzNBAvF4xh2EAr3vjhaYBuc9MZX
-	 sMzB4k7Qkt/Nz3bdSyhvvwbZ+eb6fG4Jtj5hTadMRA39pQ9Cg2rw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-Date: Thu,  5 Sep 2024 22:21:39 +0800
-X-OQ-MSGID: <20240905142138.203122-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <000000000000a338d6062149eb22@google.com>
-References: <000000000000a338d6062149eb22@google.com>
+	s=arc-20240116; t=1725546119; c=relaxed/simple;
+	bh=Zb7oHMprDtfjoUgEL0nk+8rkRgsGaBfl/DbNtiqtvFk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=fIwnyoi15wHQtYd1Cr5nkk7USvJDOLrfl9gbM3fTPDWK8oOEoytr90K6Qym7Dn9NnAUjwrWztdJAet1vxrcNhb0BhlLdV5aC+xHjG7EbDQiG6DwSri+Tg2v8xMmZpZwImLhLIbQij0xriT3E4XqiTWhbKcsI9SpepoZE40iIjIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGWHg4Pe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2E8C4CEC3;
+	Thu,  5 Sep 2024 14:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725546118;
+	bh=Zb7oHMprDtfjoUgEL0nk+8rkRgsGaBfl/DbNtiqtvFk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tGWHg4Pe+q91TU3NaDHi0MHO9SI7seZNIPCQ7KMQ5AQzPlkJWADSPD79wgIeplXq0
+	 38HMfv7yLEnycDqxLfhPa00gHvv4QL93W855rvYyD+cGHnY0ZHQhEa7PYKfn/evy2F
+	 BHqW2z0767J7CEdFhPGn/3BqntJloJ+iSJzoFr7x8lZZYXbkE9P0s18pi86KFEjL/o
+	 y+fk69KSAtN5Xb1erxXMpamVPKzQBHSbJ1wKoA/kyLI6TS4Hq2Iv7xZAXPxOUhnZUu
+	 TUMTsrW0Xj76Vk0k4HgyYBY5c3ddlIp2xJz3/lEfgTgVtxNvhZCAVTAYaSMotWyl4T
+	 iFS57r6C6frVQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 05 Sep 2024 17:21:54 +0300
+Message-Id: <D3YF1PO93RI0.2V31UQ4D620TT@kernel.org>
+Subject: Re: [PATCH v2 1/2] x86/sgx: Fix deadlock in SGX NUMA node search
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Aaron Lu" <aaron.lu@intel.com>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, "Kai Huang" <kai.huang@intel.com>
+Cc: "Molina Sabido, Gerardo" <gerardo.molina.sabido@intel.com>, "Zhimin Luo"
+ <zhimin.luo@intel.com>, <linux-sgx@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240905080855.1699814-1-aaron.lu@intel.com>
+ <20240905080855.1699814-2-aaron.lu@intel.com>
+In-Reply-To: <20240905080855.1699814-2-aaron.lu@intel.com>
 
-clear save user data buf before copying data from user.
+On Thu Sep 5, 2024 at 11:08 AM EEST, Aaron Lu wrote:
+> When the current node doesn't have an EPC section configured by firmware
+> and all other EPC sections are used up, CPU can get stuck inside the
+> while loop that looks for an available EPC page from remote nodes
+> indefinitely, leading to a soft lockup. Note how nid_of_current will
+> never be equal to nid in that while loop because nid_of_current is not
+> set in sgx_numa_mask.
+>
+> Also worth mentioning is that it's perfectly fine for the firmware not
+> to setup an EPC section on a node. While setting up an EPC section on
+> each node can enhance performance, it is not a requirement for
+> functionality.
+>
+> Rework the loop to start and end on *a* node that has SGX memory. This
+> avoids the deadlock looking for the current SGX-lacking node to show up
+> in the loop when it never will.
+>
+> Fixes: 901ddbb9ecf5 ("x86/sgx: Add a basic NUMA allocation scheme to sgx_=
+alloc_epc_page()")
+> Reported-by: "Molina Sabido, Gerardo" <gerardo.molina.sabido@intel.com>
+> Tested-by: Zhimin Luo <zhimin.luo@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/main.c | 27 ++++++++++++++-------------
+>  1 file changed, 14 insertions(+), 13 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/mai=
+n.c
+> index 1a000acd933a..694fcf7a5e3a 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -475,24 +475,25 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+>  {
+>  	struct sgx_epc_page *page;
+>  	int nid_of_current =3D numa_node_id();
+> -	int nid =3D nid_of_current;
+> +	int nid_start, nid;
+> =20
+> -	if (node_isset(nid_of_current, sgx_numa_mask)) {
+> -		page =3D __sgx_alloc_epc_page_from_node(nid_of_current);
+> -		if (page)
+> -			return page;
+> -	}
+> -
+> -	/* Fall back to the non-local NUMA nodes: */
+> -	while (true) {
+> -		nid =3D next_node_in(nid, sgx_numa_mask);
+> -		if (nid =3D=3D nid_of_current)
+> -			break;
+> +	/*
+> +	 * Try local node first. If it doesn't have an EPC section,
+> +	 * fall back to the non-local NUMA nodes.
+> +	 */
+> +	if (node_isset(nid_of_current, sgx_numa_mask))
+> +		nid_start =3D nid_of_current;
+> +	else
+> +		nid_start =3D next_node_in(nid_of_current, sgx_numa_mask);
+> =20
+> +	nid =3D nid_start;
+> +	do {
+>  		page =3D __sgx_alloc_epc_page_from_node(nid);
+>  		if (page)
+>  			return page;
+> -	}
+> +
+> +		nid =3D next_node_in(nid, sgx_numa_mask);
+> +	} while (nid !=3D nid_start);
+> =20
+>  	return ERR_PTR(-ENOMEM);
+>  }
 
-#syz test
+Looks good to me:
 
-diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-index e9ddaa9b580d..19bfe25e675c 100644
---- a/drivers/usb/class/usbtmc.c
-+++ b/drivers/usb/class/usbtmc.c
-@@ -1586,6 +1586,7 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
- 		aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;
- 	}
- 
-+	memset(&buffer[USBTMC_HEADER_SIZE], 0, aligned - USBTMC_HEADER_SIZE);
- 	if (copy_from_user(&buffer[USBTMC_HEADER_SIZE], buf, transfersize)) {
- 		retval = -EFAULT;
- 		up(&file_data->limit_write_sem);
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
+BR, Jarkko
 
