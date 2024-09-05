@@ -1,239 +1,156 @@
-Return-Path: <linux-kernel+bounces-317618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8583C96E122
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:32:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B19396E123
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F87287A7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05EFD1F24F97
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B411A38E1;
-	Thu,  5 Sep 2024 17:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EA91A42DB;
+	Thu,  5 Sep 2024 17:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zb/Pg07G"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TN/U1ppe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA92119CCFC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420EB19CCFC
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557539; cv=none; b=HkDkeMDGHAwg7YWZHwHzflVbRDw9dBm6nzWF3QC6jaiG/dTgIkUg9kyaIt2e5tozfm7fubxy1mo6QzyuHo3eTIgz20xV/Aup+WOf5N5cI5XOjg01K/ckTB1WxZ7EAW0MGFrFiCMo6B06VGRFg0un8DD1IiRFFeCJEeAAYKfWJnA=
+	t=1725557545; cv=none; b=gUaQamBkcrZNXXb/GcJvGL4y9mxMspdeNDeTWtiQ7mdH4bZRvHCzuYbNEe/QsdC92OQmaNgTTaCBSG4h6BvuW5B0+JNgjG8iBQw2nB323WOGpQfXxedfG3pIRmKt9i3+GGj+W9u97nEnM2XGL2WQdOnSWIxigWSCPCiuU0UXRzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557539; c=relaxed/simple;
-	bh=K0BVq6SjvECar05inDGHUNgLBdnK/PfskwK3F0OFvIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HpMisO/7sYODqoM0sxDtEec/JZC3xQUv6wu9/eq50+M/yU9ocIzXTdKijbzX02GKZjDk+KbcA3vboxTH7sKWIiscJMNXAh01bdqWOj2YR3lOq8pVwu4r96d5ENBHFx87g43XmYr9BgUPN8PEpOHtKYMGZ3PpbubxBlp2OZlxMqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zb/Pg07G; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c26852af8fso1144626a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 10:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725557536; x=1726162336; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=La3gWx3dLLSUBsyYmKlxjF/BBx5o3oL64jxWJcre0cY=;
-        b=zb/Pg07GOtyJTvOI1PDM0agDsFzdjCuVIPSiLlEnmY00/K+CyqWTGpGP+01Dtht29s
-         koLh5W2R5ExdFiPwnEODXVGfW46mlfcgYLHBfLfTjmWgJ/mqCtUQreiiyX2M+wycprft
-         LXdOdmA9oEFSUhKdTjVzPC0GnmubAggyFzZRDa0BczPcNRZbyngKMphpSJ2dcS8uEZzG
-         obx/lLxk0+W8IyD1ptKtPyE8rWmxCBZqzPcNYcyuZhlOI8Bb37dx4AOOJkBOUh99+I7V
-         sFm+PYbo1d7bE8B41wRiAYx+rSCV8r620htMwqXGIWa8pNNjaQcaWZLhrfB1rSSsBRhh
-         cmNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725557536; x=1726162336;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=La3gWx3dLLSUBsyYmKlxjF/BBx5o3oL64jxWJcre0cY=;
-        b=W9Xn1d9+1+BNQB7HgVLhovE76u7Nvj9afTxlc82Hkb/ZrjecX1K4o0KXBfgQ6s6nmh
-         t5dBdAZS6c2BCbrnqdsVhJQuOFbsYeqJ9s+ipXwhvP0suVdmJiSBO4fVrcu2cleW6NnP
-         EVwvBookOYkSuyJLG4xCaBr3HOmy5ZOch3cdnOAS3Qoac/se3ofmQ9N5TnfSZ/V3XI4L
-         X83jGhBQ57/EYTckKVE/sfotBkjEQesn7s5L0IOZHkMIPTKEftEvRX33kNu+IQ5w66Oe
-         nGcg7feBz358mxAIY7fPF52z2H+GLJjS/hjxd98Ljc9fEtDVCOBiPMHxKVf0Die9SJpq
-         H0Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9U3b5+8UAPu1wC+OID+Ddtkc/ork/O6TOu+Jv/XR8MRBu9cZ7eO5IqTpELuzqM3YwDhuFlw2OaTgka8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz5wSp93rB0oF7AatYwxHlUeuUNYrHJxU4Bjhg8/w+5dNwEk/9
-	N0JltOZ/3IKchoDy9CzDuOnuoNuPm70iUWuUZxtBF4yfBYGT+yLeWYehANX0A2p8Glzc+2DOVu+
-	bs2eOApRkFs0APFLWm7yThWEPyeQ08QH6xa1p
-X-Google-Smtp-Source: AGHT+IHuEHg6iFJmi96ZdHpr/erJcBCYC0Xlx/zvHuaYnuSuywkb734wF9h4NCsjsZ87amd8NqQi2xJ/YplnroqMhL8=
-X-Received: by 2002:a17:907:ea3:b0:a86:a12b:2cea with SMTP id
- a640c23a62f3a-a897fad6ff4mr2128470966b.67.1725557535314; Thu, 05 Sep 2024
- 10:32:15 -0700 (PDT)
+	s=arc-20240116; t=1725557545; c=relaxed/simple;
+	bh=E9JNNYrKeDcVb+V2+6qDgy4oDKCiXT4wTm1jLXev99Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Eq4ffrdbShqkHTek8XKK6IUewTdazH5I5Dd1i1t98P/BV49YOZpBSqZqLexPrtbFB0bTpJRHAlCFS9/n8frcHpiXiRg1JX2/salqoow0917ZyxpG4QimUTC+LWaXbfK013BB1017uFgBjXTY4W0KYSYJt0R+1oLvfRH/kQDHAjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=TN/U1ppe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40676C4CEC3;
+	Thu,  5 Sep 2024 17:32:24 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TN/U1ppe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725557542;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=02CKnOIEn3lKah0jL3h+96k4GwxXO5HBYvFKPHV3Ups=;
+	b=TN/U1ppe9SPhTT34p4mThxbOt/KnB6Sr2YVgSLVsMG+i9D6Ymd6TulQpn33PuY8kCQ3V4m
+	mqaAx+pENRvyiSUA9Oqv/Kev1BOWz7V2o+sr75HYGrHhSkqj/5K+QsOF9L7J4kAtP0yZje
+	AJ1x/coyVtrIuUJw3nU6EGftWIJbm/8=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e0eb1edd (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 5 Sep 2024 17:32:22 +0000 (UTC)
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: linux-kernel@vger.kernel.org,
+	christophe.leroy@csgroup.eu,
+	adhemerval.zanella@linaro.org,
+	xry111@xry111.site
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] selftests: vDSO: ensure vgetrandom works in a time namespace
+Date: Thu,  5 Sep 2024 19:31:39 +0200
+Message-ID: <20240905173220.2243959-1-Jason@zx2c4.com>
+In-Reply-To: <ZtnnZMa_Yi-UwhHT@zx2c4.com>
+References: <ZtnnZMa_Yi-UwhHT@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
- <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com> <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org>
-In-Reply-To: <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 5 Sep 2024 10:31:37 -0700
-Message-ID: <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	mfleming@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-[..]
-> >> @@ -299,6 +301,67 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
-> >>          spin_unlock_irq(&cgroup_rstat_lock);
-> >>   }
-> >>
-> >> +static inline bool cgroup_is_root(struct cgroup *cgrp)
-> >> +{
-> >> +       return cgroup_parent(cgrp) == NULL;
-> >> +}
-> >> +
-> >> +/**
-> >> + * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
-> >> + * @cgrp: target cgroup
-> >> + *
-> >> + * Function return value follow trylock semantics. Returning true when lock is
-> >> + * obtained. Returning false when not locked and it detected flushing can be
-> >> + * skipped as another ongoing flusher is taking care of the flush.
-> >> + *
-> >> + * For callers that depend on flush completing before returning a strict option
-> >> + * is provided.
-> >> + */
-> >> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp, bool strict)
-> >> +{
-> >> +       struct cgroup *ongoing;
-> >> +
-> >> +       if (strict)
-> >> +               goto lock;
-> >> +
-> >> +       /*
-> >> +        * Check if ongoing flusher is already taking care of this.  Descendant
-> >> +        * check is necessary due to cgroup v1 supporting multiple root's.
-> >> +        */
-> >> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
-> >> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing))
-> >> +               return false;
-> >
-> > Why did we drop the agreed upon method of waiting until the flushers
-> > are done? This is now a much more intrusive patch which makes all
-> > flushers skip if a root is currently flushing. This causes
-> > user-visible problems and is something that I worked hard to fix. I
-> > thought we got good results with waiting for the ongoing flusher as
-> > long as it is a root? What changed?
-> >
->
-> I disagree with the idea of waiting until the flusher is done.
-> As Shakeel have pointed out before, we don't need accurate stats.
-> This caused issues and 'completions' complicated the code too much.
+After verifying that vDSO getrandom does work, which ensures that the
+RNG is initialized, test to see if it also works inside of a time
+namespace. This is important to test, because the vvar pages get
+swizzled around there. If the arch code isn't careful, the RNG will
+appear uninitialized inside of a time namespace.
 
-I think Shakeel was referring specifically to the flush in the reclaim
-path. I don't think this statement holds for all cgroup flushers,
-especially those exposed to userspace.
+Because broken code implies that the RNG appears initialized, test that
+everything works by issuing a call to vgetrandom from a fork in a time
+namespace, and use ptrace to ensure that the actual syscall vgetrandom
+doesn't get called. If it doesn't get called, then the test succeeds.
 
->
-> When multiple (12) kswapd's are running, then waiting for ongoing
-> flusher will cause us to delay all other kswapd threads, for on my
-> production system approx 24 ms (see attached prod graph).
-> Matt (Cc) is currently[1] looking into page alloc failures that are
-> happening across the fleet, when NIC RX packets as those allocs are
-> GFP_ATOMIC.  So, basically kswapd isn't reclaiming memory fast enough on
-> our systems, which could be related to this flush latency.  (Quick calc,
-> prod server RX 1,159,695 pps, thus in 24 ms period 27,832 packets are
-> handled, that exceed RX ring size 1024).
->
->   [1]
-> https://lore.kernel.org/all/CAGis_TWzSu=P7QJmjD58WWiu3zjMTVKSzdOwWE8ORaGytzWJwQ@mail.gmail.com/
->
-> For this reason, I don't want to have code that waits for ongoing
-> flushers to finish.  This is why I changed the code.
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ .../selftests/vDSO/vdso_test_getrandom.c      | 41 ++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
 
-My understanding was that the previous versions solved most of the
-problem. However, if it's not enough and we need to completely skip
-the flush, then I don't think this patch is the right way to go. This
-affects all flushers, not just the reclaim path, and not even just the
-memcg flushers. Waiting for ongoing flushers was a generic approach
-that should work for all flushers, but completely skipping the flush
-is not.
+diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
+index 8866b65a4605..dfda5061f454 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
++++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
+@@ -16,8 +16,11 @@
+ #include <sys/mman.h>
+ #include <sys/random.h>
+ #include <sys/syscall.h>
++#include <sys/ptrace.h>
++#include <sys/wait.h>
+ #include <sys/types.h>
+ #include <linux/random.h>
++#include <linux/ptrace.h>
+ 
+ #include "../kselftest.h"
+ #include "parse_vdso.h"
+@@ -239,9 +242,10 @@ static void fill(void)
+ static void kselftest(void)
+ {
+ 	uint8_t weird_size[1263];
++	pid_t child;
+ 
+ 	ksft_print_header();
+-	ksft_set_plan(1);
++	ksft_set_plan(2);
+ 
+ 	for (size_t i = 0; i < 1000; ++i) {
+ 		ssize_t ret = vgetrandom(weird_size, sizeof(weird_size), 0);
+@@ -250,6 +254,41 @@ static void kselftest(void)
+ 	}
+ 
+ 	ksft_test_result_pass("getrandom: PASS\n");
++
++	assert(unshare(CLONE_NEWUSER) == 0 && unshare(CLONE_NEWTIME) == 0);
++	child = fork();
++	assert(child >= 0);
++	if (!child) {
++		vgetrandom_init();
++		child = getpid();
++		assert(ptrace(PTRACE_TRACEME, 0, NULL, NULL) == 0);
++		assert(kill(child, SIGSTOP) == 0);
++		assert(vgetrandom(weird_size, sizeof(weird_size), 0) == sizeof(weird_size));
++		_exit(0);
++	}
++	for (;;) {
++		struct ptrace_syscall_info info = { 0 };
++		int status, ret;
++		assert(waitpid(child, &status, 0) >= 0);
++		if (WIFEXITED(status)) {
++			if (WEXITSTATUS(status) != 0)
++				exit(KSFT_FAIL);
++			break;
++		}
++		assert(WIFSTOPPED(status));
++		if (WSTOPSIG(status) == SIGSTOP)
++			assert(ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_TRACESYSGOOD) == 0);
++		else if (WSTOPSIG(status) == SIGTRAP | 0x80) {
++			assert(ptrace(PTRACE_GET_SYSCALL_INFO, child, sizeof(info), &info) > 0);
++			if (info.entry.nr == __NR_getrandom &&
++			    (info.entry.args[0] == (uintptr_t)&weird_size && info.entry.args[1] == sizeof(weird_size)))
++				exit(KSFT_FAIL);
++		}
++		assert(ptrace(PTRACE_SYSCALL, child, 0, 0) == 0);
++	}
++
++	ksft_test_result_pass("getrandom timens: PASS\n");
++
+ 	exit(KSFT_PASS);
+ }
+ 
+-- 
+2.46.0
 
-If your problem is specifically the flush in the reclaim path, then
-Shakeel's patch to replace that flush with the ratelimited version
-should fix your problem. It was already merged into mm-stable (so
-headed toward v6.11 AFAICT).
-
->
->
-> > You also never addressed my concern here about 'ongoing' while we are
-> > accessing it, and never responded to my question in v8 about expanding
-> > this to support non-root cgroups once we shift to a mutex.
-> >
->
-> I don't think we should expand this to non-root cgroups.  My production
-> data from this V10 shows we don't need this for non-root cgroups.
-
-Right, because you are concerned with the flush in the kswapd path
-specifically. This patch touches affects much more than that.
-
->
->
-> > I don't appreciate the silent yet drastic change made in this version
-> > and without addressing concerns raised in previous versions. Please
-> > let me know if I missed something.
-> >
->
-> IMHO we needed a drastic change, because patch was getting too
-> complicated, and my production experiments showed that it was no-longer
-> solving the contention issue (due to allowing non-root cgroups to become
-> ongoing).
-
-I thought we agreed to wait for the ongoing flusher to complete, but
-only allow root cgroups to become the ongoing flusher (at least
-initially). Not sure what changed.
-
->
-> Production servers with this V10 patch applied shows HUGE improvements.
-> Let me grab a graf showing level-0 contention events being reduced from
-> 1360 event/sec to 0.277 events/sec.  I had to change to a log-scale graf
-> to make improvement visible.  The wait-time is also basically gone.  The
-> improvements are so convincing and highly needed, that we are going to
-> deploy this improvement.  I usually have a very strong upstream first
-> principle, but we simply cannot wait any-longer for a solution to this
-> production issue.
-
-Of course there is a huge improvement, you are completely skipping the
-flush :) You are gaining a lot of performance but you'll also lose
-something, there is no free lunch here. This may be an acceptable
-tradeoff for the reclaim path, but definitely not for all flushers.
-
->
->
-> >> +
-> >> +       /* Grab right to be ongoing flusher */
-> >> +       if (!ongoing && cgroup_is_root(cgrp)) {
-> >> +               struct cgroup *old;
-> >> +
-> >> +               old = cmpxchg(&cgrp_rstat_ongoing_flusher, NULL, cgrp);
-> >> +               if (old) {
-> >> +                       /* Lost race for being ongoing flusher */
-> >> +                       if (cgroup_is_descendant(cgrp, old))
-> >> +                               return false;
-> >> +               }
-> >> +               /* Due to lock yield combined with strict mode record ID */
-> >> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, current);
-> >
-> > I am not sure I understand why we need this, do you mind elaborating?
->
-> Let me expand the comment. Due to lock yield an ongoing (root) flusher
-> can yield the lock, which would allow a root flush in strict mode to
-> obtain the lock, which then in the unlock call (see below) will clear
-> cgrp_rstat_ongoing_flusher (as cgrp in both cases have "root" cgrp ptr),
-> unless it have this flush_ID to tell them apart.
-
-The pointers should be different for different roots though, right?
-Why do we need the ID to tell them apart? I am not sure I follow.
 
