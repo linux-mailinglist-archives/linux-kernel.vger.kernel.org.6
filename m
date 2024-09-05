@@ -1,121 +1,199 @@
-Return-Path: <linux-kernel+bounces-317130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8D696D99D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:01:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A54096D9A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 15:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757C22826DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD17B1C22D3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 13:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D1A19B5AA;
-	Thu,  5 Sep 2024 13:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5A319992C;
+	Thu,  5 Sep 2024 13:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+AoRmli"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="EdBfqLfJ"
+Received: from ci74p00im-qukt09090102.me.com (ci74p00im-qukt09090102.me.com [17.57.156.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB97198E84;
-	Thu,  5 Sep 2024 13:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8A5199240
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 13:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.156.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725541290; cv=none; b=o3UJloid6xVQeDmXza50HN3tx7jo8qecZ1URkC0oKCKgCB1O8Hiuo2FQmfMs4m+zmuQUoMqVE25/9FZ67u31wN5yUhBPtgnTWLBuKgn4Y22AyIKPh+R/XsqUDJH2P1xRFR94fbR7mXhQa/ppmhKVKTSvyDI8BpLA0+to82Sn2r8=
+	t=1725541390; cv=none; b=JXT4l48pRCcI//S/CzwsO1rz9Y3Bb7VM6TFMo4guu3iE+dludz3Ssk/RfTwY+ZLf4SCQY0TFluKJrG7ceI4Ytv07K+1Yk83/TiStkBetteOUEMOTs6NOq02EhroitorM81/x4K73bK1k4h39bczcfC5CGEuAIKlvFrcYScuExBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725541290; c=relaxed/simple;
-	bh=tkxHU7hZVDfRA8rd2YekS1j0GoIwf/WYcslyJtMoVXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THk8G/Ha76OWgcqNDn9UGZ2f4uY5S9DV2+SgyTpBLRHk4DQHlrJUwcEyNMM4dap3RcnxOnVIOFJSVsCg5iDMLmy6Dz9jQ72I69ibDxP+dpNBZghXmCBYWSDAi1uJe1zkBXAxOdIl3clsBrTPILMNqWaJOBoUQk7L+E+GFruuzE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U+AoRmli; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2021c08b95cso15402105ad.0;
-        Thu, 05 Sep 2024 06:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725541288; x=1726146088; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=b9ROrOIM9enPhK0yrnMuxFWN8TPFgN2Dmn5612MJ8mg=;
-        b=U+AoRmlifAVQQYhYMstggA+CGCGeck7iFIeOiyDepImqD5bFv7amCoPRo9L9CyooUq
-         C4sIG3MQoqYtjjJHfn1xEHqXNftcVJK5nfl7FgAejGCwams7qkhYXqvC+djOsTNzCpkz
-         xovq0vs8cCbzd8K0CXDmTx08npBZvuGJA0VkIYE5DLEefgW+1bXYl22fCtr1s0XbXp05
-         P500RsfgJCGQVpzACR9PWkf1F0IotIcezrqxmnqGfK9RL7w6zjPyv0atLhrwJXlU7qi6
-         TZ0SuTXkkLRD0ntHM7LggSkvzKoeRQe59APa4U8mavBffJR1/+eLw2U+NN6a4ol/KL2G
-         mCCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725541288; x=1726146088;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9ROrOIM9enPhK0yrnMuxFWN8TPFgN2Dmn5612MJ8mg=;
-        b=UBeaxhPkkePUbFbhh8VYZty/x1SbUke2/CMViE5iSE+ljvAAtepTZIGgR62Jwrtr8n
-         GqbfajYnBRbFm/nhYhfW+6gsJfvZ3D1isORS4GyDxzf6wISTBauhgciuyByXIcB6PadW
-         TYtxETESyny2+m6AC4RcMJGYZiOXi35MRsj8LGhXkg0E/F4zUdjBkqSLAOoDVw6VgCLN
-         LEMd0zjw4WcBfvvEkoN20HQMuu6LsE6qjp7U+htxIzVlHXeiZbsrZnnm+cJinejUUDH+
-         hQkRgy04WavcEnGLGgM8KuZ/beM4I8qfbqjSFp6Pgs4Z/pq3y/toUyYKHb5ReCKmmpZE
-         5CpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbLls9PBvsmzaJKTqsFRAk1JYwBTi8rxCBy6V5vr1n7wVtqV6ME8q7c/d95x2h5Q/2D6cLVmWDdf3jrZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBLsugodvH7CAapsm03p561aRLoRqDR76c2CDcsNll3WP+l3Zm
-	0EUpSNKTkxdJ4IP/uHlCX4OcXWJ7nEQvBKZrqDBajty2wAXQEGDW
-X-Google-Smtp-Source: AGHT+IEmli1rNfjUdTgqJY6ZDnm2bVAcwPRt/sBwOd6M9bWhnrxa6kByqOINAVR9Dm3QLQlHDiQWmg==
-X-Received: by 2002:a17:902:da91:b0:205:7b03:ec3f with SMTP id d9443c01a7336-206b835fc61mr81218615ad.19.1725541288374;
-        Thu, 05 Sep 2024 06:01:28 -0700 (PDT)
-Received: from rigel ([203.63.211.120])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae913df2sm28301605ad.41.2024.09.05.06.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 06:01:27 -0700 (PDT)
-Date: Thu, 5 Sep 2024 21:01:21 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] gpiolib: cdev: use !mem_is_zero() instead of
- memchr_inv(s, 0, n)
-Message-ID: <20240905130121.GA166185@rigel>
-References: <20240904090743.1204593-1-andy.shevchenko@gmail.com>
- <172552177868.28435.4071190094207246356.b4-ty@linaro.org>
+	s=arc-20240116; t=1725541390; c=relaxed/simple;
+	bh=Gy5mWK6LxwI/0NuTLhsqYHhodN9ViqHz2JElQa0aLvw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=stv7lpe1xG4Qx802bYtwG7qRRyEL3FJZ0kwnNEnngbNStJzM9DBGq0jhTtwGk/N8pCjQGlkc2ztypnoqVxQC8lsbQoe9tVCs83cp+Y1RCtMp5lpWEKCuUXBfSmxA16dJ5jVjdMsaiLpZiOdBNUn4WEdi1BEexLLpSIkGnYdbpqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=EdBfqLfJ; arc=none smtp.client-ip=17.57.156.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725541388;
+	bh=bnoOmXI6avdPPfQGkv4d4OEelImbpwyUa/01maOEGrM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=EdBfqLfJDL/kB4k/t/HptlQdVZBgOM3oGW1YVVvvLhgkxGhtj1REsdr0NRaSUAKXd
+	 GxWLulyMYM1q+Mtajp8WgNTczyJzBqG6OO7CYezoBg+OX4ELROWQIv6PkSu6epVwTa
+	 cunfnb4J8ArtJgVUpQoXj7mMfcYK91RR9s5spzMSC4H3PGcbkQUgseIpQabyrxuvlg
+	 +rQnNUPGsQxahFSo+EEPYTaUKmYHGjrBwn8oCmKfg9AbWQECNy9XHjbuCgNmkTM6it
+	 JT2X3ybQ9GNg0+qGoxmSZdZnNKr/+JMX+X83cmJz9ppY3g1f1/c3sKdgKdnL0uHL3f
+	 vfRt2RhJZHK3w==
+Received: from [192.168.1.26] (ci77p00im-dlb-asmtp-mailmevip.me.com [17.57.156.26])
+	by ci74p00im-qukt09090102.me.com (Postfix) with ESMTPSA id AFAE13C00487;
+	Thu,  5 Sep 2024 13:03:01 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Thu, 05 Sep 2024 21:02:27 +0800
+Subject: [PATCH v2] cxl/region: Fix bad logic for finding a free switch cxl
+ decoder
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <172552177868.28435.4071190094207246356.b4-ty@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240905-fix_cxld-v2-1-51a520a709e4@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOKr2WYC/22MQQ7CIBBFr9LMWgxgS8WV9zCNwenUTqJUQUlNw
+ 93Frl2+/1/eApECU4RDtUCgxJEnX0BvKsDR+SsJ7guDlrqWVu7EwPMZ51sv6sE0beOsNMpC0R+
+ ByremTl3hkeNrCp+1nNRv/RNJSihhlMOLa5XdOzo+34zscYvTHbqc8xdaVL+WogAAAA==
+To: Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Dan Williams <dan.j.williams@intel.com>, Ben Widawsky <bwidawsk@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Zijun Hu <zijun_hu@icloud.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-cxl@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: 9Lw1bpLcfH68NP7i-aWjwUNHGk-gs2Gr
+X-Proofpoint-GUID: 9Lw1bpLcfH68NP7i-aWjwUNHGk-gs2Gr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_08,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 clxscore=1015 mlxscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409050096
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On Thu, Sep 05, 2024 at 09:36:20AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
->
-> On Wed, 04 Sep 2024 12:07:43 +0300, Andy Shevchenko wrote:
-> > Use the mem_is_zero() helper where possible.
-> >
-> >
->
-> Applied, thanks!
->
-> [1/1] gpiolib: cdev: use !mem_is_zero() instead of memchr_inv(s, 0, n)
->       commit: b1da870ba36b3f525aee9be35b2f08a1feec61a7
->
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-As per my other mail, mem_is_zero() is not defined in gpio/for-next yet.
-So how does this work?
+It is bad for current match_free_decoder()'s logic to find a free switch
+cxl decoder as explained below:
 
-If I build for-next I get:
+ - If all child decoders are sorted by ID in ascending order, then
+   current logic can be simplified as below one:
 
-drivers/gpio/gpiolib-cdev.c: In function ‘gpio_v2_line_config_validate’:
-drivers/gpio/gpiolib-cdev.c:1334:14: error: implicit declaration of function ‘mem_is_zero’; did you mean ‘xa_is_zero’? [-Werror=implicit-function-declaration]
- 1334 |         if (!mem_is_zero(lc->padding, sizeof(lc->padding)))
-      |              ^~~~~~~~~~~
-      |              xa_is_zero
+   static int match_free_decoder(struct device *dev, void *data)
+   {
+	struct cxl_decoder *cxld;
 
+	if (!is_switch_decoder(dev))
+		return 0;
 
-Cheers,
-Kent.
+	cxld = to_cxl_decoder(dev);
+	return cxld->region ? 0 : 1;
+   }
+   dev = device_find_child(&port->dev, NULL, match_free_decoder);
+
+   which does not also need to modify device_find_child()'s match data.
+
+ - If all child decoders are NOT sorted by ID in ascending order, then
+   current logic are wrong as explained below:
+
+   F: free, (cxld->region == NULL)    B: busy, (cxld->region != NULL)
+   S(n)F : State of switch cxl_decoder with ID n is Free
+   S(n)B : State of switch cxl_decoder with ID n is Busy
+
+   Provided there are 2 child decoders: S(1)F -> S(0)B, then current logic
+   will fail to find a free decoder even if there are a free one with ID 1
+
+Anyway, current logic is not good, fixed by finding a free switch cxl
+decoder with minimal ID.
+
+Fixes: 384e624bb211 ("cxl/region: Attach endpoint decoders")
+Closes: https://lore.kernel.org/all/cdfc6f98-1aa0-4cb5-bd7d-93256552c39b@icloud.com/
+Cc: stable@vger.kernel.org
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Correct title and commit message
+- Link to v1: https://lore.kernel.org/r/20240903-fix_cxld-v1-1-61acba7198ae@quicinc.com
+---
+ drivers/cxl/core/region.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 21ad5f242875..b9607b4fc40b 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -797,21 +797,26 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
+ static int match_free_decoder(struct device *dev, void *data)
+ {
+ 	struct cxl_decoder *cxld;
+-	int *id = data;
++	struct cxl_decoder *target_cxld;
++	struct device **target_device = data;
+ 
+ 	if (!is_switch_decoder(dev))
+ 		return 0;
+ 
+ 	cxld = to_cxl_decoder(dev);
+-
+-	/* enforce ordered allocation */
+-	if (cxld->id != *id)
++	if (cxld->region)
+ 		return 0;
+ 
+-	if (!cxld->region)
+-		return 1;
+-
+-	(*id)++;
++	if (!*target_device) {
++		*target_device = get_device(dev);
++		return 0;
++	}
++	/* enforce ordered allocation */
++	target_cxld = to_cxl_decoder(*target_device);
++	if (cxld->id < target_cxld->id) {
++		put_device(*target_device);
++		*target_device = get_device(dev);
++	}
+ 
+ 	return 0;
+ }
+@@ -839,8 +844,7 @@ cxl_region_find_decoder(struct cxl_port *port,
+ 			struct cxl_endpoint_decoder *cxled,
+ 			struct cxl_region *cxlr)
+ {
+-	struct device *dev;
+-	int id = 0;
++	struct device *dev = NULL;
+ 
+ 	if (port == cxled_to_port(cxled))
+ 		return &cxled->cxld;
+@@ -849,7 +853,8 @@ cxl_region_find_decoder(struct cxl_port *port,
+ 		dev = device_find_child(&port->dev, &cxlr->params,
+ 					match_auto_decoder);
+ 	else
+-		dev = device_find_child(&port->dev, &id, match_free_decoder);
++		/* Need to put_device(@dev) after use */
++		device_for_each_child(&port->dev, &dev, match_free_decoder);
+ 	if (!dev)
+ 		return NULL;
+ 	/*
+
+---
+base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+change-id: 20240903-fix_cxld-4f6575a90619
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
