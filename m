@@ -1,49 +1,73 @@
-Return-Path: <linux-kernel+bounces-317930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8B996E5AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9C796E5B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7987B21AB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1C41F23AAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826E61B4C51;
-	Thu,  5 Sep 2024 22:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18BD1AD9FA;
+	Thu,  5 Sep 2024 22:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEtlwGH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gOB6O3HR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0C019EEC8;
-	Thu,  5 Sep 2024 22:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836278F54;
+	Thu,  5 Sep 2024 22:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725574237; cv=none; b=qG/y6+aCbDFIlodnqBA6zoZ0r0dMgdwaefw4tJaMPrg+yMsN3j3c/BTZdJdz6Wqr2mAr5s8Ody27YpidQhg1jtGmssan6LOuJ9/Mv7y6V+npPY4xxPYRDwKUMB5Mb6wdaBFMeukPEa/EgJeM/OD45xffpWMO5NxneOLLv0xj29M=
+	t=1725574308; cv=none; b=KlpWipZ7acVDIhsetv1pCuc4X+rOHIdfh/BrOkZMU755nY/QaXJrjlImwTXK6plmPdxpXce5my78XJcQwWwUUwtWKx74F3reirKH2pOoFXo5oBfn5vbXPpjj4Tpfon8VoQng68Hw9AoT9logp4Mmb0PRCa/W8l3O7cZMQOt7VdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725574237; c=relaxed/simple;
-	bh=p5VMs64NJzqCs9tiHDeAgq9x7XJTzxC7nHOkCZ5q1u8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WO1Jt6yPUlB/grux4Y0YmMTgO+/6yqRFxlPOZo2JX0uo3aNOo3y/Q3yIbyGkLYhg6J7NomOy3lnZbu+8zonmxdEc715lUs/dd2tBEpUcnUNlPNlNSXPVf8gRcTWx0XW1CvIBr9FUGkPwLlBAfuaNFxMxnv09JOyUO8nf7jnIBHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEtlwGH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2F3C4CEC7;
-	Thu,  5 Sep 2024 22:10:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725574236;
-	bh=p5VMs64NJzqCs9tiHDeAgq9x7XJTzxC7nHOkCZ5q1u8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FEtlwGH/ceZt2U4TtpoTHhrd3h/DFtmxG77DkzG00yCOB/R2dAp2cKIqEASw9iNvx
-	 04N6hLJl/mNxQ2Izkfu+BpMPU2OxzyqhSLXWVN3bzKhmBsUWM3XvlLVQQ49A3N4CDt
-	 oY2s37V55jy2x/X4xJf0JlroPtdWYC+gFQFzLHw5KVv1tJeN9n/eVy7jLZWBUD3JaY
-	 BbhlM5D9GVGz8O5byfUH9inkL6ZlHra9DOp6ZQ61VHRlapp31LqtGAcynVG63pXUnQ
-	 2jJXIhylSnvzBJcQ9TpHmU9k/J0kYFN262ORD4fRi1XUP9nA8/ad2D4VczvV9SDZYt
-	 1rV7GnVmYnj/w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E8F3806654;
-	Thu,  5 Sep 2024 22:10:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725574308; c=relaxed/simple;
+	bh=hc8QsJI0fp7OH3Vr4PxRn9wS0WhnMTxv9+T+8Hcn9+4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3s+Uk+Y/YduzyeQVh1qpSC0k6vi7DN9zUeJYUPXrxbvbyWJy7JFh/jCZ8dLMBe1IaU0aoAdjHcVYZ+fjWos0a2gn85R37ctgdpcqu8bsLcOeff2GITcs+52E+eYf8wnCDAqQzEC4X5v4LZaI8wUB+KpqS5vIJV1LS+aTu9MGcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gOB6O3HR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQ4tE021829;
+	Thu, 5 Sep 2024 22:11:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=uICJMqyMR9W+E3c9itZUvA
+	6mXI7wrkEBgAc0kuDayVk=; b=gOB6O3HRPNsmvvFF5aAPh8+fO2ixKdHakSU6cn
+	HcmhohiTtxvRS7PE9KhO3lbBT21A0mqivUg6tQH3pEb37rxBMTHfQTfuhwjATRPi
+	kcFvelXdQozHc1Ik/VVVm6M8m8ITIDl/456PbWFP5bMGc5iSZ5G1xnxd5SIlb1mb
+	vFqrHzw1raeVtpBa9Ba/I8Ndyv+js7th+zKYN29LX+gWYnkxcb4Sl1/sofELxQus
+	cr6jWUt0/nR03s1v7f53a1/g+8ZLLU9LdM8jAgoTHWjInlo7X5GSRuJEFzlwAMOJ
+	Y94VHXl0PYyD4MQN0uUhX4yt4Vm5QgYgA6bTbSsIhNnrib8w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhws0des-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 22:11:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 485MBZP9023114
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 22:11:35 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 5 Sep 2024 15:11:35 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: <dri-devel@lists.freedesktop.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <quic_jesszhan@quicinc.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] drm: allow encoder mode_set even when connectors change for crtc
+Date: Thu, 5 Sep 2024 15:11:24 -0700
+Message-ID: <20240905221124.2587271-1-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +75,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] selftests: net: enable bind tests
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172557423699.1859883.10700910912228977828.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Sep 2024 22:10:36 +0000
-References: <5a009b26cf5fb1ad1512d89c61b37e2fac702323.1725430322.git.jamie.bainbridge@gmail.com>
-In-Reply-To: <5a009b26cf5fb1ad1512d89c61b37e2fac702323.1725430322.git.jamie.bainbridge@gmail.com>
-To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, kuniyu@amazon.com,
- joannelkoong@gmail.com, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Hvr95TcNMYKnzGZA-s50aOaSpSO56NQC
+X-Proofpoint-GUID: Hvr95TcNMYKnzGZA-s50aOaSpSO56NQC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 adultscore=0 bulkscore=0 clxscore=1011
+ suspectscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409050165
 
-Hello:
+In certain use-cases, a CRTC could switch between two encoders
+and because the mode being programmed on the CRTC remains
+the same during this switch, the CRTC's mode_changed remains false.
+In such cases, the encoder's mode_set also gets skipped.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Skipping mode_set on the encoder for such cases could cause an issue
+because even though the same CRTC mode was being used, the encoder
+type could have changed like the CRTC could have switched from a
+real time encoder to a writeback encoder OR vice-versa.
 
-On Wed,  4 Sep 2024 16:12:26 +1000 you wrote:
-> bind_wildcard is compiled but not run, bind_timewait is not compiled.
-> 
-> These two tests complete in a very short time, use the test harness
-> properly, and seem reasonable to enable.
-> 
-> The author of the tests confirmed via email that these were
-> intended to be run.
-> 
-> [...]
+Allow encoder's mode_set to happen even when connectors changed on a
+CRTC and not just when the mode changed.
 
-Here is the summary with links:
-  - [net] selftests: net: enable bind tests
-    https://git.kernel.org/netdev/net/c/e4af74a53b7a
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are awesome, thank you!
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index fb97b51b38f1..8dc50dd2481d 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1376,7 +1376,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		mode = &new_crtc_state->mode;
+ 		adjusted_mode = &new_crtc_state->adjusted_mode;
+ 
+-		if (!new_crtc_state->mode_changed)
++		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+ 			continue;
+ 
+ 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.44.0
 
 
