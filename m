@@ -1,281 +1,91 @@
-Return-Path: <linux-kernel+bounces-317911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AC896E555
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:54:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32DA96E556
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3C1287259
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:54:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63DDFB21A48
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265371AF4EA;
-	Thu,  5 Sep 2024 21:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DFD1AD5D7;
+	Thu,  5 Sep 2024 21:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="00dnFIal"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="srcp3mkF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EMuvnRnB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51D51A01AD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 21:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CEF1A3026
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 21:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725573249; cv=none; b=NfCY83ZuKV/VHRHLg6t+onZKd8mS/OO8wmwS7ovQJbU1+ZMocJm5kTrkZfuAxSoaztJV0hDH09/U3xW8ShNtcYjriDDwzoKyqV6SXAm/GBsSixNeTGvN1IsbJBLnzKNSlwvqdaD5YEepT8L5rTl2mRZMDtq6DnVCGd1vTVEddOM=
+	t=1725573359; cv=none; b=kArAq/y0xOQPEMRsfBlzp7LYvhFs1U34sqvmgQUczi0UEPVXRDzNTpB6FZQ5P4xn/o0XWFvVG6t87fVzn2tV8KWlHWXEYnfRHlbI92fS8eEs3ENSMdxKhHe2abX8wx54ggy8oAdm6p9fjtR5aoGpGnbD713sRgcZSATFASuv03U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725573249; c=relaxed/simple;
-	bh=2be7+SAEsXZEHHbsITHBviHjHD1nBNMd/+akYCgd/xU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIh4KkcpPRJ0tM4k+PnUTaSsCYzX1c6KzTh4zwbJjE4hkzI2r8chYv8AetAdYWR14hR6cBiELN3AkFN+JLm6nLih4G6ikZLStn1eZLoslQhSeb2N4P+kkujW/uesukqp/pGRfJ1Elq1sFSyvem4IWlCB29ieVq2kSIP/g3rfuQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=00dnFIal; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3df0b748e08so844022b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 14:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725573246; x=1726178046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j5PXpqr7I3C1dpRV4jeptr83ssBb8rr0BKLDBjsIpqo=;
-        b=00dnFIalQHkAZX9XaVfHAzrSZAxPylPqstEGNYyBBui5BJX+UMqJ6OVV44kp1k1rHr
-         XRDy6W5IoC7tFC4KIYakcllQeh+LIhmM6rRfzqnENo72L0MnGLTYJ4pe0IUeU4cQJjrH
-         pOYLvdyvxPfVITi/BtRNpxXp/jRq80sYb5ZxZ2752jN53X8NInbKSv9hXLRZTOOUNY18
-         SWwIv9kd1nl7D4GYPmJHQswprkQ1qwXDPEQnON/lv9IwgTYfkxDmpbPEMj9CyaDhd3s9
-         Bpn4wbw8vNFoMnyxLWykp7T579Q99580MxEWdIxhELX6q1SUq7Mp9RYyFSrVcMl5AzG6
-         MRZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725573246; x=1726178046;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j5PXpqr7I3C1dpRV4jeptr83ssBb8rr0BKLDBjsIpqo=;
-        b=WaDm5+MGiINigavD2bfik8djBYmAICeXaf2ezNQMObdFCyZV1rrVy5CBXy1UPEifNM
-         FsO8QKOpp20wvf5wNbwLMrmceOafQr+d+zsuZadOdAMBSl3pL/AWz3MESsqma+o6an6R
-         7iWej3XY0CbHg4Y010TXjGl8d2FZkq1NoD6CaeWbdMP3bdzjwNg+/dM1LyrVk63YqDFi
-         JWiZErgmbeKiry1jo07RjfAasSCXX9iw5Vb2U1eV7sxeYecQy7kBJ+auoRQGToNbeve0
-         X/P2uj1Nle4DpTL1D/qcoQlapp5s9cdhwtoN2ya9ZZebje9UvlQkggOxN1FhV0NqaycM
-         3v2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWE0pdgUl4N6YoTS118JWip8VTRSLPYkLPLUvj+j9KXsYHDaQuVhXkxpY6hCAYhASk3OeSkZhTeZgbKgqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+/fTv2WMFM7TxURCDxdZQ2485Ga92ZRu02E9cWyAaiqor682+
-	RPB+WGq3yBcDPNl5Cc23O0ejoPK6g1vZu7rRThv3ij7h1WtFRh0wf+CHUSNnBNo=
-X-Google-Smtp-Source: AGHT+IFINzzmQn5LG/KJc+I+Z8f9j4UVRPr0mAD92YX73mUUr5FWrlhp5t4SIuOPmueRdVpzgiaEZQ==
-X-Received: by 2002:a05:6808:14c3:b0:3dd:43c3:2c3c with SMTP id 5614622812f47-3e0134155bamr3355381b6e.8.1725573245756;
-        Thu, 05 Sep 2024 14:54:05 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3df11865deesm3375153b6e.46.2024.09.05.14.54.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 14:54:05 -0700 (PDT)
-Message-ID: <4f522d0c-7ed8-4dd4-83ae-f400d6958c6f@baylibre.com>
-Date: Thu, 5 Sep 2024 16:54:04 -0500
+	s=arc-20240116; t=1725573359; c=relaxed/simple;
+	bh=DKg2J2VUGUtYiNmS4dXWfWS5wxBXc6+j3tzetDyDm00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1bhLcBQd1bE2DXgc3I12F6WchJBGI1pHpIrCfbSHrEhhdi9VbkuY8xu5ACx5mbSDl6Vx8SHymg1khj0J8nZ6hDMT5BwwzaVTXqNsOWb5UBKb0aJvy2URg50p7RU+yD6f+rh/gozEKy7fXPi50+Sb/STrbv07kAfcMvgJCcg9hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=srcp3mkF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EMuvnRnB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 5 Sep 2024 23:55:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725573355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pEM9gGlpQQWWBHAcLa/gZM6Ih/LFyxbonn9OJ6Yciks=;
+	b=srcp3mkFfNQiwhScFEaugg95R8wXB8TiiSHkpQKwQ3kksWfCSQtsp8g9CnX/jDufcrkFKr
+	kAFhx8pNkvOD1hqaUGAZekkVPKZ1zzVot9tdQXScni12HyjwyPC8rHX8FyCA71WY2ZBj5u
+	rkTr5ZVRabzcSn2/92m0XiXj2D6TwgEVRYVZvwWSb6gV6O5Mm7VlEkFTujh22/hOnsxgpV
+	pGqm//FP7MQ4bsXT9YzUypSEeapwj0rjNI8/BsGDADudR83cutagKaAqNgW54jLPNVgCMq
+	1Uaf1sSyUC6MteQgALEgJCiYTBfjEtWD8B1gJVc78robSug72qpoRNSxKv1Y7w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725573355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pEM9gGlpQQWWBHAcLa/gZM6Ih/LFyxbonn9OJ6Yciks=;
+	b=EMuvnRnB4hX40WSXb2CgBJyDVCOVLLYsx4YOKIqOICX0hejn1lLw5kS3tifCNfHLHv2SG3
+	Dmw+e21O3OtNsiAA==
+From: Nam Cao <namcao@linutronix.de>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [PATCH -fixes v2] drivers: perf: Fix smp_processor_id() use in
+ preemptible code
+Message-ID: <20240905215550.cegYWVFe@linutronix.de>
+References: <20240829090034.15777-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: add docs for
- AD7606C-{16,18} parts
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-References: <20240905082404.119022-1-aardelean@baylibre.com>
- <20240905082404.119022-8-aardelean@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240905082404.119022-8-aardelean@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829090034.15777-1-alexghiti@rivosinc.com>
 
-On 9/5/24 3:24 AM, Alexandru Ardelean wrote:
-> The driver will support the AD7606C-16 and AD7606C-18.
-> This change adds the compatible strings for these devices.
+On Thu, Aug 29, 2024 at 11:00:34AM +0200, Alexandre Ghiti wrote:
+> As reported in [1], the use of smp_processor_id() in
+> pmu_sbi_device_probe() must be protected by disabling the preemption, so
+> simply use get_cpu()/put_cpu() instead.
 > 
-> The AD7606C-16,18 channels also support these (individually configurable)
-> types of channels:
->  - bipolar single-ended
->  - unipolar single-ended
->  - bipolar differential
-> 
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> ---
->  .../bindings/iio/adc/adi,ad7606.yaml          | 109 ++++++++++++++++++
->  1 file changed, 109 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> index 69408cae3db9..57537ab0ec82 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> @@ -14,6 +14,8 @@ description: |
->    https://www.analog.com/media/en/technical-documentation/data-sheets/AD7605-4.pdf
->    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606_7606-6_7606-4.pdf
->    https://www.analog.com/media/en/technical-documentation/data-sheets/AD7606B.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-16.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606c-18.pdf
->    https://www.analog.com/media/en/technical-documentation/data-sheets/AD7616.pdf
->  
->  properties:
-> @@ -24,11 +26,19 @@ properties:
->        - adi,ad7606-6
->        - adi,ad7606-8  # Referred to as AD7606 (without -8) in the datasheet
->        - adi,ad7606b
-> +      - adi,ad7606c-16
-> +      - adi,ad7606c-18
->        - adi,ad7616
->  
->    reg:
->      maxItems: 1
->  
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
->    spi-cpha: true
->  
->    spi-cpol: true
-> @@ -114,6 +124,46 @@ properties:
->        assumed that the pins are hardwired to VDD.
->      type: boolean
->  
-> +patternProperties:
-> +  "^channel@[1-8]$":
-> +    type: object
-> +    $ref: adc.yaml
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          The channel number, as specified in the datasheet (from 1 to 8).
-> +        minimum: 1
-> +        maximum: 8
-> +
-> +      diff-channels:
-> +        description:
-> +          Each channel can be configured as a differential bipolar channel.
-> +          The ADC uses the same positive and negative inputs for this.
-> +          This property must be specified as 'reg' (or the channel number) for
-> +          both positive and negative inputs (i.e. diff-channels = <reg reg>).
-> +        items:
-> +          minimum: 1
-> +          maximum: 8
-> +
-> +      bipolar:
-> +        description:
-> +          Each channel can be configured as a unipolar or bipolar single-ended.
-> +          When this property is not specified, it's unipolar, so the ADC will
-> +          have only the positive input wired.
-> +          For this ADC the 'diff-channels' & 'bipolar' properties are mutually
-> +          exclusive.
-> +
-> +    required:
-> +      - reg
-> +
-> +    oneOf:
-> +      - required:
-> +          - diff-channels
-> +      - required:
-> +          - bipolar
+> Reported-by: Andrea Parri <parri.andrea@gmail.com>
+> Reported-by: Nam Cao <namcao@linutronix.de>
+> Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linutronix.de/ [1]
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-The datasheet (ad7606c-18.pdf) lists the following combinations:
+Tested-by: Nam Cao <namcao@linutronix.de>
 
-* Bipolar single-ended
-* Unipolar single-ended
-* Bipolar differential
-
-The logic in the oneOf: doesn't match this.
-
-This I think this would be sufficient:
-
-- if:
-    required: [diff-channels]
-  then:
-    required: [bipolar]
-
-> +
->  required:
->    - compatible
->    - reg
-> @@ -170,6 +220,17 @@ allOf:
->          adi,conversion-start-gpios:
->            maxItems: 1
->  
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            enum:
-> +              - adi,ad7606c-16
-> +              - adi,ad7606c-18
-> +    then:
-> +      patternProperties:
-> +        "^channel@[1-8]$": false
-> +
->  unevaluatedProperties: false
->  
->  examples:
-> @@ -202,4 +263,52 @@ examples:
->              standby-gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
->          };
->      };
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        adc@0 {
-> +            compatible = "adi,ad7606c-18";
-> +            reg = <0>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            spi-max-frequency = <1000000>;
-> +            spi-cpol;
-> +            spi-cpha;
-> +
-> +            avcc-supply = <&adc_vref>;
-> +            vdrive-supply = <&vdd_supply>;
-> +
-> +            interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-> +            interrupt-parent = <&gpio>;
-> +
-> +            adi,conversion-start-gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
-> +            reset-gpios = <&gpio 27 GPIO_ACTIVE_HIGH>;
-> +            adi,first-data-gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
-> +            standby-gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
-> +
-> +            adi,sw-mode;
-> +
-> +            channel@1 {
-> +                reg = <1>;
-> +                diff-channels = <1 1>;
-
-                   bipolar;
-
-> +            };
-> +
-> +            channel@3 {
-> +                reg = <3>;
-> +                bipolar;
-> +            };
-> +
-> +            channel@8 {
-> +                reg = <8>;
-> +                diff-channels = <8 8>;
-
-                   bipolar;
-
-> +            };
-> +
-> +        };
-> +    };
->  ...
-
+Best regards,
+Nam
 
