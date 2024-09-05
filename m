@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-317901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7254D96E53F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A4096E543
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 23:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC761C22D3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:43:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2181C230EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C831AD9E4;
-	Thu,  5 Sep 2024 21:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEF01AD5F4;
+	Thu,  5 Sep 2024 21:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RK8Rgy8L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGO+eM4C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189831AB6D9;
-	Thu,  5 Sep 2024 21:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47961823DE;
+	Thu,  5 Sep 2024 21:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725572615; cv=none; b=C1RfCRq/Nc8lZ6drt7bAlSkPS4KRBXFuT62HKezYvLfC2fNvKv9q44X7XrONWpdwddcKppQVzOeVqyMm1vYHcvYyhmJE88K/19F82bQhtO+H1JBFK1GuW6EHqvYhnJxkTg0HGL/qK6UU1RIqbltwQqMpCg9abSqaBxWlxMnnrcU=
+	t=1725572834; cv=none; b=jENodQHECv9DbWEl5g/0tSta5BHz1kPdGMDEQeSyyg7axGzZpjRhDDYEuSH+5kEkt16Ylo74KnoG9K+gABOlxZZzANVWXSPn22CmG5ydGddiT1+hfefRwyU8PAuMgKLPPwoip2TxT9QZHtU/rVkOvjBq4TR9yrfyRS3eDNWZ/lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725572615; c=relaxed/simple;
-	bh=7lGyC41JD4CgqMu6iaebpgliZkHn/0RJMVcb4xV6/LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hif5LQiaWTL0iqocnqcLaDwXwvY7Q6p6ddj6XqTA27GPTMSoCgDRd7HJY52CcUQ4NsF6nazog06NxHLA1eLJpEAMr/2Z+KPAWx0w7KyiBP3w5fa6FysK7UKX2cfLImmH7SA+HPoWyIue3ABxjsTEhY/jTP9amUYKS7M8c9FK6b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RK8Rgy8L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B879C4CEC3;
-	Thu,  5 Sep 2024 21:43:33 +0000 (UTC)
+	s=arc-20240116; t=1725572834; c=relaxed/simple;
+	bh=uhgK5Fgg1EVK3uIYtD9j5KLSTSz7iQLddBiXKhSxejo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hObd/VdY4EwHESWADen7r4CubvO5ZQTKmBBvyNnu2wnAJNlOhSn+SGGmKWL4zxCSn15I1c3q6Kp8VX2eEFsT7TynAxB4zmR0UuSbp8mnnB9bngVInKPJJbXUbg0Vy0nYJ/Sn9Fmp+e5QdTvJlW1JQm/MDDOd6hv3lXZ/rby1cfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGO+eM4C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93920C4CEC3;
+	Thu,  5 Sep 2024 21:47:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725572614;
-	bh=7lGyC41JD4CgqMu6iaebpgliZkHn/0RJMVcb4xV6/LU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RK8Rgy8L4M8VPqnHXtCNjNZzJYUQMHhFNgadI4HCB2qnjCfakIt1VHLnK7OeAwyAy
-	 0MUR0y8nNf4Q7OuTt5W77DjJc47m+LqhHiIkRIghJ0TpCpZY2L4VhW/P60cOujiwHD
-	 dctaJPuu4FPy5Boxka8YvsYEDVIq6vpokjLbWQCoqenxyRfmJI3Vd4LS967SSQBHnQ
-	 Gr1XZQQE99eCsEeYirkfLepcqxIxtuBymzOOVO8NIhmeEoQx71JYiIBb0dU+X4aeto
-	 4lAgK0yrbx9C7iQo3oFPN7aXkHS4cSnL2UA6tiFWWEVfw/Y+MX+tOFhrcmHiVFdgti
-	 YDR6ixRvRkghw==
-Date: Thu, 5 Sep 2024 23:43:30 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
-	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] i2c: npcm: use i2c frequency table
-Message-ID: <3wz36hrpicogoakqhmveppcrt6s52zmlcgjpio3wwpil3rdwdi@ft7tloqqf2zt>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
- <20240830034640.7049-7-kfting@nuvoton.com>
+	s=k20201202; t=1725572833;
+	bh=uhgK5Fgg1EVK3uIYtD9j5KLSTSz7iQLddBiXKhSxejo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TGO+eM4C2yRU3rdIGPnW7bMrhAOMyGVNQcsOeOmaB/s4IAgZM+RL0aUQfuezmIOsF
+	 exqSGiF6a0ExffFottQrBRpNr35TIk2VLt3XP9/kmJCEVHEec4Di8qfTO6w0mEpArE
+	 FGflG6cx3svcMuTRjdY72B3g2tHWypymBxK2PVhsYjKHJ+Nc9F/ZBr4CEFajIvGKV4
+	 c6t+avUGeoBsfzChJzuOOlXCxYteX2hB3R/4AiN4LdAngaV/mUld7rlddb+IYwzP+a
+	 S4cwLvo0isKHBzJXjU5PRYT3/6pfuWEf6Ma4UVKsMuNeCKbvLtBpl2P3yoJX4+Y3RZ
+	 0Q0vWx/b8z0+A==
+Date: Thu, 5 Sep 2024 14:47:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: ftgmac100: Enable TX interrupt to avoid TX timeout
+Message-ID: <20240905144712.6492ca9b@kernel.org>
+In-Reply-To: <20240904103116.4022152-1-jacky_chou@aspeedtech.com>
+References: <20240904103116.4022152-1-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830034640.7049-7-kfting@nuvoton.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Wed, 4 Sep 2024 18:31:16 +0800 Jacky Chou wrote:
+> Currently, the driver only enables RX interrupt to handle RX
+> packets and TX resources. Sometimes there is not RX traffic,
+> so the TX resource needs to wait for RX interrupt to free.
+> This situation will toggle the TX timeout watchdog when the MAC
+> TX ring has no more resources to transmit packets.
+> Therefore, enable TX interrupt to release TX resources at any time.
 
-On Fri, Aug 30, 2024 at 11:46:39AM GMT, Tyrone Ting wrote:
-> Modify i2c frequency from table parameters
-> for NPCM i2c modules.
-> 
-> Supported frequencies are:
-> 
-> 1. 100KHz
-> 2. 400KHz
-> 3. 1MHz
+Please answer Andrew's question (preferably send a v2 with the answer
+as part of the commit message). Add a fixes tag, I think this is where
+the bug was added?
 
-I agree with Andy, please add a good explanation for this change.
+Fixes: 10cbd6407609 ("ftgmac100: Rework NAPI & interrupts handling")
 
-> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
-> ---
->  drivers/i2c/busses/i2c-npcm7xx.c | 230 +++++++++++++++++++------------
->  1 file changed, 144 insertions(+), 86 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-> index 67d156ed29b9..cac4ea0b69b8 100644
-> --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> @@ -263,6 +263,121 @@ static const int npcm_i2caddr[I2C_NUM_OWN_ADDR] = {
->  #define I2C_FREQ_MIN_HZ			10000
->  #define I2C_FREQ_MAX_HZ			I2C_MAX_FAST_MODE_PLUS_FREQ
->  
-> +struct SMB_TIMING_T {
-
-Please run checkpatch.pl before sending the patches.
-
-Thanks,
-Andi
+And when you send v2, please make sure to CC the author (Benjamin).
+-- 
+pw-bot: cr
 
