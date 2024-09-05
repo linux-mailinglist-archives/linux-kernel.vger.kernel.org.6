@@ -1,100 +1,153 @@
-Return-Path: <linux-kernel+bounces-316215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071F096CCAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:36:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEC096CCB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 04:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A5C1C229E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8800B1C2187B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 02:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21F342AAA;
-	Thu,  5 Sep 2024 02:35:54 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C3E137747;
+	Thu,  5 Sep 2024 02:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S7UBwNW6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5117D1FDA;
-	Thu,  5 Sep 2024 02:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748111FDA;
+	Thu,  5 Sep 2024 02:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725503754; cv=none; b=C/vKEzbVih685VGGgPaGv70Xvkk0Ls6eX5OnxvrDmK8lWj/RoK+998vbX8+/9HNs8qDcP+TlpZ2OggdjQZPDlH9B9VtXFQhaB6yOMdz2n2Eh+d3LPPtIr9ZCaaCtveMYBfXyXlMAa1KzFUkZaftkqpzKLIC3yJDqP/T2xKzMMcs=
+	t=1725503869; cv=none; b=HYi3UyEt7SC6v8lWU3DSBZPOiNeBZy9Orb4dgMWy3uB+HlM7Tg4KYzEh6ky1KgcYCPfHDR34Tu0sGhN+3t3pWn4DUrSSfpvSZg9X8yCqViqOMiLIUI89EuaHh0stDezkwLdidCsSX3v9PoO3b8qursD4kKhgKZsYzCo+4mOaFEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725503754; c=relaxed/simple;
-	bh=JtgM5zR8Dpo0Gd3F3WSNXLiQwiL+8n7eU4oMY0eh77g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BLonokGjmxR5UZx2qePbkEG7YmxycMSGGcjP866hANXgeNQgsZdzOhBVQkT3DS9IWdyGfx80yf4hk4FDGsNWFw+S8DaZtEFDw+zZSkrHCw/rjuoB9oVR+no3gOq5SOIIvBQUbGbzUo5xCUdK/91NAH8YrcPX87/2axbO9ctgaIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowADnzSAEGdlmLilaAQ--.10052S2;
-	Thu, 05 Sep 2024 10:35:48 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] scsi: pmcraid: Convert comma to semicolon
-Date: Thu,  5 Sep 2024 10:35:21 +0800
-Message-Id: <20240905023521.1642862-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725503869; c=relaxed/simple;
+	bh=M7204XcpStheL79uuy8gXm6TLMtxcnyMQMjGKf3csFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dBw1YGC3hZxAoeeHXzIh0Kv0N14kqBgDiB4uzCyeXiBAMNf4kztlIUDAkhH/HvecXFCLrmVZEXrN0jdZLgpVk0asfkE40tnAyl8ckyCBw+HCnohXqJZtIHHKKU8hXRGxYAsgFbAPkHT8+/JNVx99MMlNM3bMcQUfFzd2Tttf714=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S7UBwNW6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484LsmuU006270;
+	Thu, 5 Sep 2024 02:37:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7z1n3WzCFDzaPiKb+fSXodr+w/IDY1h61mmxvBrfB7o=; b=S7UBwNW6WOPYtPku
+	T4oj//xhcFdSwbaTDgHV4LtbPKw84EfLIscVfaJHIfDmIUc9wVrApdzQVVJO39M5
+	hR0fihyY7WuPtnacyG7ZCre+L5TOCE1BsT94WjpiAio14g+xCNeV2LtMCHIajKI7
+	Pmz7IdDEfLLWy3BHzWT0Rw+9Q6YRoe2yYPY6ddzlwZFbUYCnDO1swTHfceacTQUE
+	l6bLqe3SXRSkvSt/OMaYRa3t8JOV6Zx2jpBiVdwIqHLMjyvjoj0pg3+bli5B4w+0
+	gaNP5T614jbjQq0E4YRjHRn3Y0TCzmA26wWHnJQOrOLoPN92hydlyeIE6YhDi7W2
+	gayVYw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41enbwj8ya-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 02:37:39 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4852bbc7005643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 5 Sep 2024 02:37:37 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
+ 19:37:34 -0700
+Message-ID: <fb1c979d-1296-44ce-a985-5906a6d4a296@quicinc.com>
+Date: Thu, 5 Sep 2024 10:37:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnzSAEGdlmLilaAQ--.10052S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWDCrbEgr
-	1jq347AF1jq343KF15uw47Zr90gF1qvF4I9r42qay3A3y7XrZ8W3ZYvrs8Aw1fWr45Kry5
-	C3s0qFnI9wn3ujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7
-	v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS
-	14v26r126r1DMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUqfO7UUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/19] dt-bindings: phy: Add QMP UFS PHY comptible for
+ QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        "Xin
+ Liu" <quic_liuxin@quicinc.com>, <linux-arm-msm@vger.kernel.org>
+References: <20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com>
+ <20240904-qcs8300_initial_dtsi-v1-3-d0ea9afdc007@quicinc.com>
+ <e7qsuk3xoqgywubrkejoy3dztae2comlfn3mu6t226mvfvpfof@mlnj5s2xcsjf>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <e7qsuk3xoqgywubrkejoy3dztae2comlfn3mu6t226mvfvpfof@mlnj5s2xcsjf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8IBpnBWEVoiCJSENErM_5dxWIr4DhY1x
+X-Proofpoint-GUID: 8IBpnBWEVoiCJSENErM_5dxWIr4DhY1x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_01,2024-09-04_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=794 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409050018
 
-Replace comma between expressions with semicolons.
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
-
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/scsi/pmcraid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index a2a084c8075e..8f7307c4d876 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -1946,7 +1946,7 @@ static void pmcraid_soft_reset(struct pmcraid_cmd *cmd)
- 	}
- 
- 	iowrite32(doorbell, pinstance->int_regs.host_ioa_interrupt_reg);
--	ioread32(pinstance->int_regs.host_ioa_interrupt_reg),
-+	ioread32(pinstance->int_regs.host_ioa_interrupt_reg);
- 	int_reg = ioread32(pinstance->int_regs.ioa_host_interrupt_reg);
- 
- 	pmcraid_info("Waiting for IOA to become operational %x:%x\n",
--- 
-2.25.1
-
+On 9/4/2024 6:55 PM, Dmitry Baryshkov wrote:
+> On Wed, Sep 04, 2024 at 04:33:44PM GMT, Jingyi Wang wrote:
+>> From: Xin Liu <quic_liuxin@quicinc.com>
+>>
+>> Document the QMP UFS PHY compatible for QCS8300 to support physical
+>> layer functionality for USB found on the SoC.
+> 
+> So this is talking about USB, but the patch changes UFS. Please adjust.
+> 
+Thanks for review, will fix this.
+>>
+>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+>> index f9cfbd0b2de6..a3540f7a8ef8 100644
+>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+>> @@ -18,6 +18,7 @@ properties:
+>>      enum:
+>>        - qcom,msm8996-qmp-ufs-phy
+>>        - qcom,msm8998-qmp-ufs-phy
+>> +      - qcom,qcs8300-qmp-ufs-phy
+>>        - qcom,sa8775p-qmp-ufs-phy
+>>        - qcom,sc7180-qmp-ufs-phy
+>>        - qcom,sc7280-qmp-ufs-phy
+>> @@ -85,6 +86,7 @@ allOf:
+>>            contains:
+>>              enum:
+>>                - qcom,msm8998-qmp-ufs-phy
+>> +              - qcom,qcs8300-qmp-ufs-phy
+>>                - qcom,sa8775p-qmp-ufs-phy
+>>                - qcom,sc7180-qmp-ufs-phy
+>>                - qcom,sc7280-qmp-ufs-phy
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+Thanks,
+Jingyi
 
