@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-317546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563FE96DFCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA6A96DFA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 18:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08FAE1F24C3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C55B1C23CDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 16:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B0B1B2EC2;
-	Thu,  5 Sep 2024 16:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE0B1A01DB;
+	Thu,  5 Sep 2024 16:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry35W/6q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcHbhQaR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DBE1B12DF;
-	Thu,  5 Sep 2024 16:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC1A1A01C4;
+	Thu,  5 Sep 2024 16:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725553830; cv=none; b=Ilh+mEaInwhy8PaQGBdPlLCTOys4pXNUi5xn6dRPIQtGYReQpa8tEQweQBjZMeQ1b0h/Vb3pMo0xHidWcViyhVXcYauzJSR8FLjAfkNzl6dSSbRsJJIYa/3Fe6NHda2xz4L5Nv4L5OSyetuepqSIu0VJms2GMufVzVbauCa62K0=
+	t=1725553810; cv=none; b=gPSnk6wkWfmZpwPykdc3d8R9tePJVkbwsFCHPn0Dh37tIqc3/U2OfVvqQOfUTdGdn5NvZ8PN9gd16lZEgp319/E2Kz3y/1olfl8axGW5YsyVuhOPm6pkyOHQHPPYqPLVsYT73SmVVkuQBO46Zdj326Z9Rx9Nh/NZa2xJMcDvt6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725553830; c=relaxed/simple;
-	bh=XZ7K6Q+GJiNQh7jOC8M+XdWVBVAC/1BxSYrJDHfXPXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r2DIZqGSEjM8dD08I15I/01A7rTTrqHsX54HOcRV+R9hvkVN/wtTxymgIKzUEMI2X6UiSp9G56/ysh3aF/zHZPFxcd+XgP/++byk8q/xb0gWHvncm9b1ZMB8c0VRZI4sUh89Tw2pkL41RJ3Ms66mNfzUYTVGqxHuEWeg+Kexzm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry35W/6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ECC1C4CEC5;
-	Thu,  5 Sep 2024 16:30:29 +0000 (UTC)
+	s=arc-20240116; t=1725553810; c=relaxed/simple;
+	bh=GqVOC0GMXs7NGw5ABXco7veHYyALr0nKN7/CFsvIxNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CO71ykuIrbE4FbP30NljsyL1yj7ISzRX5DygcEydd4vZTD8dl0yo04caufq4wfizdT1mTJiEP4ciDnDA5D9GgHjQTHYHiT0PZZeVzpP0H3TTjmDdKfGemw6VW/7eg2e7p29G7Xk1xii7gqzsS+kSVC/tnCAVBWvrVEuYGCujunk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcHbhQaR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2449C4CEC5;
+	Thu,  5 Sep 2024 16:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725553830;
-	bh=XZ7K6Q+GJiNQh7jOC8M+XdWVBVAC/1BxSYrJDHfXPXQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ry35W/6quC7b4BBuc2q3MVv+P1Gy74ff9eX3m9FFLrQ/8sk+SXVUDYFE5ks4QTB4u
-	 1XlBMu7+WEW6j9soNmWYITemPs/0kaJPxTo8Vogs9M2+NXCg61XjWkg+E0PqeNY+jH
-	 7lFCS20Zo8RbNZmb/RqoJl6yKcU28y3aXipkOylKj91xI24//FjrRVRF7xBhKOxSJi
-	 xPp+JOOBKhR/w5DH0DYNjHA020DVhSqZOX2XJrAT8eyHxdyF811IG+wwCv+4s9UtkM
-	 SzHmYb/sArMNUzmFHGnRHRJZb2ThazTOkN4qKf5DxReJURdpQEHAVjtVAX25pSCiCI
-	 i918ESuJBSWXg==
-From: Mario Limonciello <superm1@kernel.org>
-To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	linux-acpi@vger.kernel.org (open list:ACPI),
-	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v3 11/11] amd-pstate: Add missing documentation for `amd_pstate_prefcore_ranking`
-Date: Thu,  5 Sep 2024 11:30:07 -0500
-Message-ID: <20240905163007.1350840-12-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240905163007.1350840-1-superm1@kernel.org>
-References: <20240905163007.1350840-1-superm1@kernel.org>
+	s=k20201202; t=1725553810;
+	bh=GqVOC0GMXs7NGw5ABXco7veHYyALr0nKN7/CFsvIxNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DcHbhQaR/KKsNa2OfBBKl64QAFtSHVVIQ6ueqIlm3bUmcBPofPbuRC9bVUqyufV+/
+	 88dxsgtZ6pGpGFm9hrhPld6SZeGjTbbMkRFHVzSxg03Kcyn7iA96YGmql91BtgL1fi
+	 KPyctGHD/a3W7R2Fas7b3JmLEEYQC9Iz+RkLt7tYIbfCUwRqYf4p89gqS7Edak1swS
+	 bQ1GMVZubdhv6cJn9J4kkzq+jzZIlCGtrHiOSQHQXd8vnY0SKOm4CVV9MUtDdksy59
+	 FASr/edXmjkKgtWgkb3QUEv/By0MooYHIOM8oYPeAHeZuL6kRp9UDmgni+MGJegLDw
+	 UVTBIUBeLny8g==
+Date: Thu, 5 Sep 2024 09:30:08 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: zhang warden <zhangwarden@gmail.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jikos@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+Message-ID: <20240905163008.kjlavrw6k6eb6aqu@treble>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <20240904044807.nnfqlku5hnq5sx3m@treble>
+ <AAD198C9-210E-4E31-8FD7-270C39A974A8@gmail.com>
+ <20240904071424.lmonwdbq5clw7kb7@treble>
+ <1517E547-55C1-4962-9B6F-D9723FEC2BE0@gmail.com>
+ <20240904180648.fni3xeqkdrvswgcx@treble>
+ <5B13628F-755E-4081-9E12-EB2F2441BBDF@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5B13628F-755E-4081-9E12-EB2F2441BBDF@gmail.com>
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+On Thu, Sep 05, 2024 at 10:03:52PM +0800, zhang warden wrote:
+> >>Here I can give you an example.
+> We are going to fix a problem of io_uring.
+> Our team made a livepatch of io_sq_offload_create.
+> This livepatch module is deployed to some running servers.
+> 
+> Then, another team make some change to the same function and deployed it to the same cluster.
+> 
+> Finally, they found that there are some livepatch module modifying the same function io_sq_offload_create. But none of them can tell which version of io_sq_offload_create is now exactly running in the system.
+> 
+> We can only use crash to debug /proc/kcore to see if we can get more information from the kcore.
+> 
+> If livepatch can tell which version of the function is now running or going to run, it will be very useful.
+> 
+> >>>>>>
+> What's more, the scenario we easily face is that for the confidential environment, the system maintenance mainly depends on SREs. Different team may do bug fix or performance optimization to kernel function. 
+> 
+> Here usually some SREs comes to me and ask me how to make sure which version is now actually active because tow teams make tow livepatch modules, both of them make changes to one function. 
+> 
+> He wants to know if his system is under risk, he want the system run the right version of the function because one module is a bug fix and the other is just a performance optimization module, at this time, the bug fix version is much more important. dmesg is too long, he find it hard to find out the patch order from dmesg.
+> 
+> With this patch, he can just cat /sys/kernel/livepatch/<module>/<object>/<function>/using and get his answer.
 
-`amd_pstate_prefcore_ranking` reflects the dynamic rankings of a CPU
-core based on platform conditions.  Explicitly include it in the
-documentation.
+Thanks for the details, and sorry if I missed it before.  This would
+have been helpful to have in the cover letter.
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v2->v3:
- * Add tag
----
- Documentation/admin-guide/pm/amd-pstate.rst | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+But again I want to stress that livepatching should be done with care.
+Having different teams applying patches without coordination is not
+recommended.  The teams' processes and/or tooling really need to be
+improved.
 
-diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
-index d5c050ea390dc..210a808b74ec2 100644
---- a/Documentation/admin-guide/pm/amd-pstate.rst
-+++ b/Documentation/admin-guide/pm/amd-pstate.rst
-@@ -252,7 +252,8 @@ In some ASICs, the highest CPPC performance is not the one in the ``_CPC``
- table, so we need to expose it to sysfs. If boost is not active, but
- still supported, this maximum frequency will be larger than the one in
- ``cpuinfo``. On systems that support preferred core, the driver will have
--different values for some cores than others.
-+different values for some cores than others and this will reflect the values
-+advertised by the platform at bootup.
- This attribute is read-only.
- 
- ``amd_pstate_lowest_nonlinear_freq``
-@@ -268,6 +269,12 @@ This attribute is read-only.
- Whether the platform supports the preferred core feature and it has been
- enabled. This attribute is read-only.
- 
-+``amd_pstate_prefcore_ranking``
-+
-+The performance ranking of the core. This number doesn't have any unit, but
-+larger numbers are preferred at the time of reading. This can change at
-+runtime based on platform conditions. This attribute is read-only.
-+
- ``energy_performance_available_preferences``
- 
- A list of all the supported EPP preferences that could be used for
+> > Have you considered other solutions,
+> > like more organized patch management in user space?
+> 
+> User space solutions seems unreliable. What we need is just the enabling version of target function. The order of livepatch module enable mainly from dmesg, which is easily flush away or being cleaned.
+
+journalctl -b ?
+
+> If we use an user space program to maintain the information of patch order, once the program is killed, the information is loss either.
+
+Store the state in a file in /var/run?
+
 -- 
-2.43.0
-
+Josh
 
