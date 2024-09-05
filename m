@@ -1,137 +1,273 @@
-Return-Path: <linux-kernel+bounces-316845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511A296D611
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E778796D607
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 12:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10532287BEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F84288303
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2242F1991C9;
-	Thu,  5 Sep 2024 10:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA919CCFC;
+	Thu,  5 Sep 2024 10:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HdKN1RKM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGvQW2Ld"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35F197A76
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 10:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BF1198A3E;
+	Thu,  5 Sep 2024 10:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725532071; cv=none; b=Wcmfp9t2nPRib26qRP8vE0PReVLRMIm3rM1qiX9BdHtb67b7Asukubjdxpp4GDb7DEsNmCNGzRRGDh9KhxutDOJKaMQXeEDGbVX+Tw6VfVcVhRz+MrVFUDkAQH8xxO9jBacrUr1dW07aX0wNKn/vB8QC2IPTjT7IHBAfWUFoxD0=
+	t=1725531888; cv=none; b=A0FZ7ZuunZF3aabmNavz2xY7Vk1j+RMKFSfTY3X/rlZIWVaIfeM6nhj1SJlL/KdV78Rtx558Wc1Bp22BRHZsXvR1LFgh/anlVC8G+nitQyM1RDHVYWmdmbq2oAYoqhbnM7g/lcahpXn2hN0rOavARk22MR5P/LLhpQBPnThD6kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725532071; c=relaxed/simple;
-	bh=fLnaSEMwTToqbULVT0rbA5FWXK2jDlM8vTXItsk0pPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d7zSsiGzQZppsiOOyvE8dmWuCaaYPE5y/Ib+/EVmCRzib4o43g0iyHfarc2RyXQ0zv/nzgNWcd5u+YZWkPxsuHRvrVZaOJn+UsthhnCwLtJf1dfOxGE7Xvo0pQd4nJU6bL7EbfwTh5fvHPnIOvTkzPjUudjF0/HmgTftveQBCtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HdKN1RKM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725532068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HPZY07hdzZVf0G40Y7mAQP+lGDT6ud+TjaZvwKM2DVk=;
-	b=HdKN1RKMP1o5er+tInbkj/Pu4LvbJPU9g/3CJGFeF4OxhmjCrQC+ZCjwoADYRhXOIhVd98
-	srL02x/e6XanIrJUgdHyFA4+6gv7D22AoTILVUUNoeuN7qT4coC3jdq3OZlpqFE0BU65eJ
-	ILgkHOuzrU2E/qZGvgQs0r4IDbPvwuY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-Yh8Ecu-PMSyYUa0rkVA_Og-1; Thu, 05 Sep 2024 06:27:47 -0400
-X-MC-Unique: Yh8Ecu-PMSyYUa0rkVA_Og-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374c79bf194so418979f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 03:27:47 -0700 (PDT)
+	s=arc-20240116; t=1725531888; c=relaxed/simple;
+	bh=ymFcbMYD51eRn07YRHO/UDdIB9t+HQX0ow25KGMtxx8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bDsQ0CYj9zKREREvI4Qj54wCXeFuQrUvCbywVogRXE7ZGxYraVEgogkUPrWkpCXaZjAhdoNKdhSO5lwX1WPrCIaPHkDIxSp4f6HEpEiOqxXNB6jsvV0oiNClLupqb7H30o7vR8CWz/Vkx3CjC7jiE9WJszKcA5PtjNyEgeI2x44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGvQW2Ld; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26852af8fso660329a12.2;
+        Thu, 05 Sep 2024 03:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725531885; x=1726136685; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KD5e8iLAs44FdlnMrUVKychwWaQXORD8FkLl/XxSu6A=;
+        b=RGvQW2LdS+IXmrpIcexw4nKRqB6GGCxxFrU69WQDixnwVQZDYRSdlG181jCgI+DzP0
+         Un+44eAKjjvKwv0cp31aJY8ZvJIN+nQ4NWZp2VYhfrnarXRXIeLhPx1dA2+tR9p636kT
+         uimLzz8ioUy3Ny6pcZkfhpzFolteyA3jyDSzYI3l72fGzQRqv2MLjfE9IIxHORJWzbKb
+         uYncuRko2eNCu1QXVpFhIbsq/DtJ2N0ugOZDmjRQUQzyHjV9qhZe7A5fuYYbaozb/B+g
+         hHybwgY89mC9xu64nu0AGd/FpfQRN04JWEf672I821+yziGnYeMs0qVcPflzKz+3orkO
+         V9vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725532066; x=1726136866;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HPZY07hdzZVf0G40Y7mAQP+lGDT6ud+TjaZvwKM2DVk=;
-        b=DoLl43xrZQHHaU1xNVrcHc9tbHg1T2CqTRB/EhS+kalO0lluXXfidJZWHVLX31b6ve
-         JYu4WtK2nrwMEXzuIOCczgu3Yr4I304O/93Rdod7zsXzZHMtfhByS8k2Gc+wKB7lrq45
-         BX9GLgbtxlpfVj6EZlEBaIX7Bl0WE83RSjFvRZQvUkDJaOp0JuJJVfTLVWG9NgbT77EK
-         aJseaylZPHf2W5vvDcWG16Y3RxbOl8Ou4TLfplSHHgqIyAJP5Tn3X4NqgDs1qVLSN2Vd
-         nzDP490S6y1uRj3PBbQ/xDuVI+yfRvCQL4N6J5F2QGU8LxEcPfo2FzG6QcuF7YS7x7ib
-         dEiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcfPP177gzLP7n2vBuvl9GEaWW4D55yvWnNhyRfa8Su2uys8jQfsm2bWUoRcFv2VP/C98BzFf5LBUgC9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKIZ3+cLXdPGAHpcmg1jZdqvY50sWZaXJmgqYw4qhONwmCFTen
-	38th/0kl4yGABOH1cJkwrh/LQV3r5bYUa5clReKTSqHyDZfx0xvIpTYd8M8VUb9BJBj+nuoGbwG
-	l0ykssEdWJ9XYC1RtiFa7vygBO/qjzYKNqlnnO9nomsayMY8rxrpsd3Tu4D5Pmw==
-X-Received: by 2002:adf:db4b:0:b0:371:9149:dc54 with SMTP id ffacd0b85a97d-374bce97a6emr11563795f8f.3.1725532066632;
-        Thu, 05 Sep 2024 03:27:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IELrkDTki7RK2Sj/ftb+YWjMBHGRyt5865Zm3SuZ0YuC1n53erV/zIV711siGKvaK8a5Qowxg==
-X-Received: by 2002:adf:db4b:0:b0:371:9149:dc54 with SMTP id ffacd0b85a97d-374bce97a6emr11563768f8f.3.1725532066073;
-        Thu, 05 Sep 2024 03:27:46 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-55-250.dyn.eolo.it. [146.241.55.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ba593876sm15319716f8f.5.2024.09.05.03.27.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 03:27:45 -0700 (PDT)
-Message-ID: <8fe1d9da-40cc-4537-80ce-6a2855c2dec4@redhat.com>
-Date: Thu, 5 Sep 2024 12:27:43 +0200
+        d=1e100.net; s=20230601; t=1725531885; x=1726136685;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KD5e8iLAs44FdlnMrUVKychwWaQXORD8FkLl/XxSu6A=;
+        b=uR9ML1nbt++CBFsfyzGSKbcGLG7tbHg/nlo3JbxN+tvwcOUeF5eW5vFdUzQvpYqM3I
+         5q/gNkhBkKWD0YV4VMJ4gIJ25oAiA9q5vzbP2ACWo3BYXx5Tkq8oppVUkSY2jeR18s89
+         eFBzAqjWO6Z1D4Y5nt/w6mTksK06IKcd/yBDoTNbfZFc7+5joSA5qlgeao8oM3kkFY8j
+         J8iz0HtG7Qx39ltBpKako3noEV8GEo7K6dNC3hMEv6B46OhXcllNb5MwhrwQchYECbQM
+         zjC1VP89ca17o8fqoJlbD84a15C7WaQT7yCKtrRPCB3zpabbloc8nb3KBo+AEdMxGBP/
+         Zcag==
+X-Forwarded-Encrypted: i=1; AJvYcCU0aRgmNh/6T2j1uNy/u6BUy4uTQI5jD0IGw2Ayr3VanvW5/pkR4/New7J80dCUbpTznspdFTXkIx7QoNlC@vger.kernel.org, AJvYcCUS7xiuYkVaVaTydtzU6SxyFxjiAFuOGMz2WCAjuCojaiR4osYAlxoPmEgSX0/sAzDoumrdF9NJC9as@vger.kernel.org, AJvYcCUWn05zn28mvjNuXubRL30F46NRObA17ajO+6kNwn/F1Yo/cRYqyE79MpSs4uG9qc3Hhl0SAqb38hd4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUwSXl7r3k6MnXeDqt7+GPWv+9+cpwf2ByNyAS2iHbbfxMzYgp
+	B1oy0rxzS6bPWF3yJUltR8d4MESZhwb/7xahyNNMvVh/yVDKFGh8RwCRx4r7
+X-Google-Smtp-Source: AGHT+IH9QD8IgY98uB7SOYLpUoQEDlELekqA8jpzQSGk5y6R3sXTSHAUSEqr3MRXF1xYtE5tiPaKTw==
+X-Received: by 2002:a05:6402:13cc:b0:5a4:6dec:cd41 with SMTP id 4fb4d7f45d1cf-5c21ed89d15mr19180363a12.28.1725531884208;
+        Thu, 05 Sep 2024 03:24:44 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc56a897sm1050958a12.47.2024.09.05.03.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 03:24:43 -0700 (PDT)
+Message-ID: <f2568dd151efc2da76659fea4300fa7b3610d1e1.camel@gmail.com>
+Subject: Re: [PATCH RFC 2/8] iio: backend: extend features
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Jonathan Cameron
+	 <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com
+Date: Thu, 05 Sep 2024 12:28:51 +0200
+In-Reply-To: <4826097d-b575-4895-9335-f587bbf3bc89@baylibre.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	 <20240829-wip-bl-ad3552r-axi-v0-v1-2-b6da6015327a@baylibre.com>
+	 <20240831122313.4d993260@jic23-huawei>
+	 <0fbe1321-cc67-4ade-8cbb-cbbaa40d2ca1@baylibre.com>
+	 <20240903201157.5352ec04@jic23-huawei>
+	 <4826097d-b575-4895-9335-f587bbf3bc89@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net-next 8/8] net: ibm: emac: remove all waiting code
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, horms@kernel.org,
- sd@queasysnail.net, chunkeey@gmail.com
-References: <20240903194312.12718-1-rosenp@gmail.com>
- <20240903194312.12718-9-rosenp@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240903194312.12718-9-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 9/3/24 21:42, Rosen Penev wrote:
-[...]
->   static int emac_wait_deps(struct emac_instance *dev)
+On Wed, 2024-09-04 at 14:01 +0200, Angelo Dureghello wrote:
+> Hi Jonathan,
+>=20
+> On 03/09/24 9:11 PM, Jonathan Cameron wrote:
+> > On Mon, 2 Sep 2024 16:03:22 +0200
+> > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> >=20
+> > > Hi Jonathan,
+> > >=20
+> > > thanks for the feedbacks,
+> > >=20
+> > > On 31/08/24 1:23 PM, Jonathan Cameron wrote:
+> > > > On Thu, 29 Aug 2024 14:32:00 +0200
+> > > > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> > > > =C2=A0=20
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > >=20
+> > > > > Extend backend features with new calls needed later on this
+> > > > > patchset from axi version of ad3552r.
+> > > > >=20
+> > > > > A bus type property has been added to the devicetree to
+> > > > > inform the backend about the type of bus (interface) in use
+> > > > > bu the IP.
+> > > > >=20
+> > > > > The follwoing calls are added:
+> > > > >=20
+> > > > > iio_backend_ext_sync_enable
+> > > > > 	enable synchronize channels on external trigger
+> > > > > iio_backend_ext_sync_disable
+> > > > > 	disable synchronize channels on external trigger
+> > > > > iio_backend_ddr_enable
+> > > > > 	enable ddr bus transfer
+> > > > > iio_backend_ddr_disable
+> > > > > 	disable ddr bus transfer
+> > > > > iio_backend_set_bus_mode
+> > > > > 	select the type of bus, so that specific read / write
+> > > > > 	operations are performed accordingly
+> > > > > iio_backend_buffer_enable
+> > > > > 	enable buffer
+> > > > > iio_backend_buffer_disable
+> > > > > 	disable buffer
+> > > > > iio_backend_data_transfer_addr
+> > > > > 	define the target register address where the DAC sample
+> > > > > 	will be written.
+> > > > > iio_backend_bus_reg_read
+> > > > > 	generic bus read, bus-type dependent
+> > > > > iio_backend_bus_read_write
+> > > > > 	generic bus write, bus-type dependent
+> > > > >=20
+> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > ---
+> > > > > =C2=A0=C2=A0 drivers/iio/industrialio-backend.c | 151
+> > > > > +++++++++++++++++++++++++++++++++++++
+> > > > > =C2=A0=C2=A0 include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 24 ++++++
+> > > > > =C2=A0=C2=A0 2 files changed, 175 insertions(+)
+> > > > >=20
+> > > > > diff --git a/drivers/iio/industrialio-backend.c
+> > > > > b/drivers/iio/industrialio-backend.c
+> > > > > index a52a6b61c8b5..1f60c8626be7 100644
+> > > > > --- a/drivers/iio/industrialio-backend.c
+> > > > > +++ b/drivers/iio/industrialio-backend.c
+> > > > > @@ -718,6 +718,157 @@ static int __devm_iio_backend_get(struct de=
+vice
+> > > > > *dev, struct iio_backend *back)
+> > > > > =C2=A0=C2=A0=C2=A0	return 0;
+> > > > > =C2=A0=C2=A0 }
+> > > > =C2=A0=20
+> > > > > +
+> > > > > +/**
+> > > > > + * iio_backend_buffer_enable - Enable data buffering
+> > > > Data buffering is a very vague term.=C2=A0 Perhaps some more detail=
+ on what
+> > > > this means?
+> > > for this DAC IP, it is the dma buffer where i write the samples,
+> > > for other non-dac frontends may be something different, so i kept it
+> > > generic. Not sure what a proper name may be, maybe
+> > >=20
+> > > "Enable optional data buffer" ?
+> > How do you 'enable' a buffer?=C2=A0 Enable writing into it maybe?
+>=20
+> for the current case, this is done using the custom register
+> of the AXI IP, enabling a "stream".
+>=20
+> return regmap_set_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI_DAC_STREAM_ENABLE);
+>=20
+> Functionally, looks like dma data is processed (sent over qspi)
+> when the stream is enabled.
+>=20
+> Maybe a name as "stream_enable" would me more appropriate ?
+> "Stream" seems less generic btw.
+>=20
 
-Possibly rename the function to something else, as it does not wait anymore?
+Yes, stream enable is very specific for this usecase. This is basically
+connected to typical IIO buffering. So maybe we could either:
 
-> @@ -2419,26 +2397,25 @@ static int emac_wait_deps(struct emac_instance *dev)
->   		deps[EMAC_DEP_MDIO_IDX].phandle = dev->mdio_ph;
->   	if (dev->blist && dev->blist > emac_boot_list)
->   		deps[EMAC_DEP_PREV_IDX].phandle = 0xffffffffu;
-> -	bus_register_notifier(&platform_bus_type, &emac_of_bus_notifier);
-> -	wait_event_timeout(emac_probe_wait,
-> -			   emac_check_deps(dev, deps),
-> -			   EMAC_PROBE_DEP_TIMEOUT);
-> -	bus_unregister_notifier(&platform_bus_type, &emac_of_bus_notifier);
-> -	err = emac_check_deps(dev, deps) ? 0 : -ENODEV;
-> +
-> +	err = emac_check_deps(dev, deps);
-> +	if (err)
-> +		return err;
-> +
->   	for (i = 0; i < EMAC_DEP_COUNT; i++) {
->   		of_node_put(deps[i].node);
-> -		if (err)
-> -			platform_device_put(deps[i].ofdev);
-> -	}
-> -	if (err == 0) {
-> -		dev->mal_dev = deps[EMAC_DEP_MAL_IDX].ofdev;
-> -		dev->zmii_dev = deps[EMAC_DEP_ZMII_IDX].ofdev;
-> -		dev->rgmii_dev = deps[EMAC_DEP_RGMII_IDX].ofdev;
-> -		dev->tah_dev = deps[EMAC_DEP_TAH_IDX].ofdev;
-> -		dev->mdio_dev = deps[EMAC_DEP_MDIO_IDX].ofdev;
-> +		platform_device_put(deps[i].ofdev);
+1) Embed struct iio_buffer_setup_ops in the backend ops struct;
+2) Or just define directly the ones we need now in backend ops.
+=20
+> > >=20
+> > > > > + * @back: Backend device
+> > > > > + *
+> > > > > + * RETURNS:
+> > > > > + * 0 on success, negative error number on failure.
+> > > > > + */
+> > > > > +int iio_backend_buffer_enable(struct iio_backend *back)
+> > > > > +{
+> > > > > +	return iio_backend_op_call(back, buffer_enable);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
+> > > > > +
+> > > > > +/**
+> > > > > +/**
+> > > > > + * iio_backend_bus_reg_read - Read from the interface bus
+> > > > > + * @back: Backend device
+> > > > > + * @reg: Register valule
+> > > > > + * @val: Pointer to register value
+> > > > > + * @size: Size, in bytes
+> > > > > + *
+> > > > > + * A backend may operate on a specific interface with a related =
+bus.
+> > > > > + * Read from the interface bus.
+> > > > So this is effectively routing control plane data through the offlo=
+aded
+> > > > bus?=C2=A0 That sounds a lot more like a conventional bus than IIO =
+backend.
+> > > > Perhaps it should be presented as that with the IIO device attached
+> > > > to that bus? I don't fully understand what is wired up here.
+> > > > =C2=A0=20
+> > > Mainly, an IP may include a bus as 16bit parallel, or LVDS, or simila=
+r
+> > > to QSPI as in my case (ad3552r).
+> > ok.
+> >=20
+> > If this is a bus used for both control and dataplane, then we should re=
+ally
+> > be presenting it as a bus (+ offload) similar to do for spi + offload.
+> >=20
 
-I'm likely lost, but AFAICS after the patch, on success 
-platform_device_put() is invoked unconditionally on each deps[] entry, 
-while before it was called only on failure?!?
+Yes, indeed. In this case we also use the axi-dac core for controlling the
+frontend device (accessing it's register) which is fairly weird. But not su=
+re
+how we can do it differently. For the spi_engine that is really a spi contr=
+oller
+with the extra offloading capability. For this one, it's now "acting" as a =
+spi
+controller but in the future it may also "act" as a parallel controller (th=
+e
+axi-adc already is in works for that with the ad7606 series).
 
-/P
+I was also very skeptical when I first saw these new functions but I'm not
+really sure how to do it differently. I mean, it also does not make much se=
+nse
+to have an additional bus driver as the register maps are the same. Not sur=
+e if
+turning it in a MFD device, helps...
 
+FWIW, I still don't fully understand why can't we have this supported by th=
+e
+spi_engine core. My guess is that we need features from the axi-dac (for th=
+e
+dataplane) so we are incorporating the controlplane on it instead of going
+spi_engine + axi-dac.
+
+Also want to leave a quick note about LVDS (that was mentioned). That inter=
+face
+is typically only used for data so I'm not seeing any special handling like=
+ this
+for that interface.
+
+- Nuno S=C3=A1
+> >=20
 
