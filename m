@@ -1,156 +1,183 @@
-Return-Path: <linux-kernel+bounces-316416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1748996CF4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:32:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E4096CF56
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82EB282E6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6D01F223B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 06:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C7718A94F;
-	Thu,  5 Sep 2024 06:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290C118C345;
+	Thu,  5 Sep 2024 06:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHNm/R6k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RLu7mycF"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F073E8172D;
-	Thu,  5 Sep 2024 06:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DF2187FFC
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 06:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725517939; cv=none; b=lqnO9heRgIgRiwOAk9rr9I88DOg6xuCMxhf8Rhd8v3ibvxg8eLlmOkxlEPsuIPQZ1iMnTjSV2Poh/w4jIQfezjO0XMH7duxOYGgdk1ijZ95odqZq8v+vwXEt9DIKHcutDiPsmaP1okgE74WX6qdAJIh+TW8Pm4p+l1VyqVMgG3s=
+	t=1725518014; cv=none; b=UKwoto5RiDmD6BBxRx74eY4aJyAvQlpjWk/7qyD8DbZ+bnicqGnEW4edsC92Yi1uEOaXEjX01Ply4ZuHcVQIIUh07Gx935D6p8K+ry+o1exONh5ER/rz4l1MxD5T/u4qmQXSrB51Yh3eQFsekJEAaG7Emb8hb/mS5OIRKYnSy40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725517939; c=relaxed/simple;
-	bh=bswJI0INa4QP0cOD6yGYJrJgq5RpJomBx8ZpD0WO+jM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BYADfIWwpttqljLh2axk+wqF3KYuwT4DB0u6mCRBsGKAtmxtCDSlLYrBIc4hjI5yPtGgdBm84moMtie0+Br5WkqfEub5jw7bS1Wt7xa6Lk3o1mEDfpl7Ij4Sh+FbAMlxtqEy7a6UYtNrY+nIKKY6T1HWJQ9uQzeQkQc6HnhvDTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHNm/R6k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5D6C4CEC4;
-	Thu,  5 Sep 2024 06:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725517938;
-	bh=bswJI0INa4QP0cOD6yGYJrJgq5RpJomBx8ZpD0WO+jM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VHNm/R6keVImrgjyT9SHPou0b3eQrjzYQusCfft71QGcv+qSAinstwpUt5SGRo8BG
-	 IDNdwSeIeJ/PepplDf/vM1IcwkVZzwQtPtcyhACryyKG7KJnQGYBJ1XmevukMm++Al
-	 YXKdL4xv235AXFXwJk7g3Gm1KJFPVH7gU12AG2JupDQSo/ghdc/SRo8hv+xvtHqADd
-	 IIpVEYDnWttxbS8hffQS7IG38wOMBRm7OBYKT4WhfCWYfGCiKV/szzGS//G3+yOPAQ
-	 BVYWFKyO8tdVhFiozKPIbrJt97QL8K14feyHnG2oajiAzjz43I4TV9W2uKzfImxKxv
-	 ns30VYLjN/VUg==
-Date: Thu, 5 Sep 2024 08:32:15 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Bao Cheng Su <baocheng.su@siemens.com>, 
-	Hua Qian Li <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
-Message-ID: <t2mqfu62xx5uztlintofp4pquv6jalzace6w5jpymyyarb2wmn@vvo23e4cmu57>
-References: <cover.1725444016.git.jan.kiszka@siemens.com>
- <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+	s=arc-20240116; t=1725518014; c=relaxed/simple;
+	bh=YcPCgQYRELZvl2kjL3rdrZSA+jEpwRFWGaRBLNwMsiU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=XIUvP5bYdsfN3sa+TZMz3bofofCnuiwC4sVlxJYXtEAhmkkqS/uMA/sT5eibctHbRxlchKxh1jrE9k1MovS7VLwHTVf9wU/hCire2/lkysRo1Pdw8gQ2x/uu3gwNEc4GE87JqsYcr4P9svhjbDHkiQgT3pnIoU1p5sn9YkA5rzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RLu7mycF; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725518009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ksx22GPeHsqr/AARD3Kz3GMedfunDXYI9hMA6uigG5g=;
+	b=RLu7mycFOgF59AgkyN6sSQyBId6kbznssyisAv642gvR8ipqt29Lkad550xwM3XC5i0xuy
+	w6vXjYG+TmTANMF23rlD1fddyYK7eqC0z5dDGe19Hl9oqA7jJgbrpuYJ7VxlJVwrKc2DzX
+	9JP+wn68fbsvBkV8OiiriUiBUa01AUs=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v2 07/14] mm: khugepaged: collapse_pte_mapped_thp() use
+ pte_offset_map_rw_nolock()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <cd137540-ae01-46a1-93d2-062bc21b827c@bytedance.com>
+Date: Thu, 5 Sep 2024 14:32:48 +0800
+Cc: David Hildenbrand <david@redhat.com>,
+ Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Mike Rapoport <rppt@kernel.org>,
+ Vishal Moola <vishal.moola@gmail.com>,
+ Peter Xu <peterx@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ christophe.leroy2@cs-soprasteria.com,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <28d31a14fe9cc1867f023ebaddd6074459d15e40.1725444016.git.jan.kiszka@siemens.com>
+Message-Id: <05955456-8743-448A-B7A4-BC45FABEA628@linux.dev>
+References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+ <c377dab2bf55950e6155ea051aba3887ed5a2773.1724310149.git.zhengqi.arch@bytedance.com>
+ <24be821f-a95f-47f1-879a-c392a79072cc@linux.dev>
+ <cd137540-ae01-46a1-93d2-062bc21b827c@bytedance.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 04, 2024 at 12:00:11PM +0200, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+
+
+> On Aug 30, 2024, at 14:54, Qi Zheng <zhengqi.arch@bytedance.com> =
+wrote:
 >=20
-> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
-> to specific regions of host memory. Add the optional property
-> "memory-regions" to point to such regions of memory when PVU is used.
 >=20
-> Since the PVU deals with system physical addresses, utilizing the PVU
-> with PCIe devices also requires setting up the VMAP registers to map the
-> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
-> mapped to the system physical address. Hence, describe the VMAP
-> registers which are optionally unless the PVU shall used for PCIe.
 >=20
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
-> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> CC: "Krzysztof Wilczy=C5=84ski" <kw@linux.com>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> CC: linux-pci@vger.kernel.org
-> ---
->  .../bindings/pci/ti,am65-pci-host.yaml        | 52 ++++++++++++++-----
->  1 file changed, 40 insertions(+), 12 deletions(-)
+> On 2024/8/29 16:10, Muchun Song wrote:
+>> On 2024/8/22 15:13, Qi Zheng wrote:
+>>> In collapse_pte_mapped_thp(), we may modify the pte and pmd entry =
+after
+>>> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). =
+At
+>>> this time, the write lock of mmap_lock is not held, and the =
+pte_same()
+>>> check is not performed after the PTL held. So we should get pgt_pmd =
+and do
+>>> pmd_same() check after the ptl held.
+>>>=20
+>>> For the case where the ptl is released first and then the pml is =
+acquired,
+>>> the PTE page may have been freed, so we must do pmd_same() check =
+before
+>>> reacquiring the ptl.
+>>>=20
+>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>>> ---
+>>>  mm/khugepaged.c | 16 +++++++++++++++-
+>>>  1 file changed, 15 insertions(+), 1 deletion(-)
+>>>=20
+>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>> index 53bfa7f4b7f82..15d3f7f3c65f2 100644
+>>> --- a/mm/khugepaged.c
+>>> +++ b/mm/khugepaged.c
+>>> @@ -1604,7 +1604,7 @@ int collapse_pte_mapped_thp(struct mm_struct =
+*mm, unsigned long addr,
+>>>      if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
+>>>          pml =3D pmd_lock(mm, pmd);
+>>> -    start_pte =3D pte_offset_map_nolock(mm, pmd, haddr, &ptl);
+>>> +    start_pte =3D pte_offset_map_rw_nolock(mm, pmd, haddr, =
+&pgt_pmd, &ptl);
+>>>      if (!start_pte)        /* mmap_lock + page lock should prevent =
+this */
+>>>          goto abort;
+>>>      if (!pml)
+>>> @@ -1612,6 +1612,9 @@ int collapse_pte_mapped_thp(struct mm_struct =
+*mm, unsigned long addr,
+>>>      else if (ptl !=3D pml)
+>>>          spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>>> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
+>>> +        goto abort;
+>>> +
+>>>      /* step 2: clear page table and adjust rmap */
+>>>      for (i =3D 0, addr =3D haddr, pte =3D start_pte;
+>>>           i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SIZE, pte++) {
+>>> @@ -1657,6 +1660,16 @@ int collapse_pte_mapped_thp(struct mm_struct =
+*mm, unsigned long addr,
+>>>      /* step 4: remove empty page table */
+>>>      if (!pml) {
+>>>          pml =3D pmd_lock(mm, pmd);
+>>> +        /*
+>>> +         * We called pte_unmap() and release the ptl before =
+acquiring
+>>> +         * the pml, which means we left the RCU critical section, =
+so the
+>>> +         * PTE page may have been freed, so we must do pmd_same() =
+check
+>>> +         * before reacquiring the ptl.
+>>> +         */
+>>> +        if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
+>>> +            spin_unlock(pml);
+>>> +            goto pmd_change;
+>> Seems we forget to flush TLB since we've cleared some pte entry?
 >=20
-> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml =
-b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
-> index 0a9d10532cc8..d8182bad92de 100644
-> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
-> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
-> @@ -19,16 +19,6 @@ properties:
->        - ti,am654-pcie-rc
->        - ti,keystone-pcie
-> =20
-> -  reg:
-> -    maxItems: 4
-> -
-> -  reg-names:
-> -    items:
-> -      - const: app
-> -      - const: dbics
-> -      - const: config
-> -      - const: atu
+> See comment above the ptep_clear():
+>=20
+> /*
+> * Must clear entry, or a racing truncate may re-remove it.
+> * TLB flush can be left until pmdp_collapse_flush() does it.
+> * PTE dirty? Shmem page is already dirty; file is read-only.
+> */
+>=20
+> The TLB flush was handed over to pmdp_collapse_flush(). If a
 
+But you skipped pmdp_collapse_flush().
 
-Nothing improved here.
-
-> -
->    interrupts:
->      maxItems: 1
-> =20
-> @@ -84,12 +74,48 @@ if:
->        enum:
->          - ti,am654-pcie-rc
->  then:
-> +  properties:
-> +    reg:
-> +      minItems: 4
-> +      maxItems: 6
-> +
-> +    reg-names:
-> +      minItems: 4
-> +      items:
-> +        - const: app
-> +        - const: dbics
-> +        - const: config
-> +        - const: atu
-> +        - const: vmap_lp
-> +        - const: vmap_hp
-> +
-> +    memory-region:
-> +      minItems: 1
-
-Missing maxItems
-
-> +      description: |
-> +        phandle to one or more restricted DMA pools to be used for all d=
-evices
-> +        behind this controller. The regions should be defined according =
-to
-> +        reserved-memory/shared-dma-pool.yaml.
-> +      items:
-> +        maxItems: 1
-
-And this feels redundant.
-
-Best regards,
-Krzysztof
+> concurrent thread free the PTE page at this time, the TLB will
+> also be flushed after pmd_clear().
+>=20
+>>> +        }
+>>>          if (ptl !=3D pml)
+>>>              spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>>>      }
+>>> @@ -1688,6 +1701,7 @@ int collapse_pte_mapped_thp(struct mm_struct =
+*mm, unsigned long addr,
+>>>          pte_unmap_unlock(start_pte, ptl);
+>>>      if (pml && pml !=3D ptl)
+>>>          spin_unlock(pml);
+>>> +pmd_change:
+>>>      if (notified)
+>>>          mmu_notifier_invalidate_range_end(&range);
+>>>  drop_folio:
 
 
