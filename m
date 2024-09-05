@@ -1,76 +1,65 @@
-Return-Path: <linux-kernel+bounces-317625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964C896E133
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:36:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B2E96E126
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D37ABB25DDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A1B1C22C35
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 17:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259401A4AB3;
-	Thu,  5 Sep 2024 17:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CAA1A3A9B;
+	Thu,  5 Sep 2024 17:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="DqX9BpED"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aegBcYsH"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2721A42D6
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725557747; cv=pass; b=AqHRMIYuJHg6MCPC38YN3tnjy9cDkzMgjfYr76slnu39Lst6x4TQWLHovcmdGo8mdVHqutLAWIN0n1L4ut0lto1o3uwOuoOY71i+B0A2t012DRmUC3IYmicA60arjTMs/oUxh0YE2CQrRS+4h9f62JFJekYWP+9L0LDVlpD+g+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725557747; c=relaxed/simple;
-	bh=iTrhtpe7eqgwgPCJM6MKaIlEfGInrrKGjcg5/cxVi44=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XeBzWlWbbHqaOmif7La30FpTroU2+i3Z2uD1XDWR6/02u9MOnpiVZ5+bRAGpEcOr5TwSoAeZNBNMDe+Qc1dS1VwaafsQJntsbO9THNAiONDayyZ9vYRQaqCuOIS0Ty37JWwD1eYK3lyXzYI5I4vQ/rlUI13Ee+oQqOwQ6R8a2zE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=DqX9BpED; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: boris.brezillon@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725557729; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AMYGfRo7vJVHx6piKS9c61oF8jSPkUCEGlA4q7zzZOhc3R6R6U7abB57tltTjwU/CQLG5OeVnTPW5aZdQqx5DnNtvjdsvHhHzMmsaQ3hWhk+4BLJChzRdRTY40lnUr33V5J2xNtvn//tiHG4yOA18Dx2JxI4iK7rwz14N4RNmmU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725557729; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=YBxW50ooKYwzSELObYl4BCGBYO/zZdlGmtetqXK1rn8=; 
-	b=kAQBZqun3oS27SSU3QWZP0aK12QrdBsroEprbtkh6+jpS+HAMqghuOKGwsaMGVKQVOYzBbf6QD0VWMFpIfxPYl0ilaB8+nTJL63hX954V1UqfvR9gz87madS3eRl/Cf5r/zqofF0hqcMJOgIKXzmDH0I32faaQFIMyNBVoXVfQE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
-	dmarc=pass header.from=<mary.guillemard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725557729;
-	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=YBxW50ooKYwzSELObYl4BCGBYO/zZdlGmtetqXK1rn8=;
-	b=DqX9BpEDs6dM8hmeM2LF+yOxHdn0ROKDB3/aiua4TATmkD95L4r0R5o0Ef5LtGwh
-	YpHvj6WNNExBKFG5d4Oh5Sdq4LUojoaASjVNGfk2PWIHaCZKRo1ExYMWxqZjlgCNMrA
-	HJA0QZVDAscHYDO0VcZEUoCPPLpkmc3w/fCK39WE=
-Received: by mx.zohomail.com with SMTPS id 1725557727401558.2064842389682;
-	Thu, 5 Sep 2024 10:35:27 -0700 (PDT)
-From: Mary Guillemard <mary.guillemard@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Christopher Healy <healych@amazon.com>,
-	kernel@collabora.com,
-	Mary Guillemard <mary.guillemard@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 2/2] drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO dev query
-Date: Thu,  5 Sep 2024 19:32:23 +0200
-Message-ID: <20240905173222.252641-4-mary.guillemard@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240905173222.252641-2-mary.guillemard@collabora.com>
-References: <20240905173222.252641-2-mary.guillemard@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C341953A3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 17:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725557686; cv=none; b=dHyGYuII1GpgS/WERIge8xCT0R8GydJiVp0ZuWVooy6qF3GM5Wji1K54ek3+MkTi/ucs0IpYPwZkT7vqvM2u0rkkbwDdJKec2jH65VDhgbVjaX3Fv3F1bom7LzcV5F6o/QeWF9MulTBPbkTmX5FR306ybjQTSFQDc9EHjJjCIZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725557686; c=relaxed/simple;
+	bh=JYGCoDyAfXE6plY3BCD9/n2Am3fSVZ48MjXRX1ACfA0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nwG9oOxYs9dyjgnGeHY0DD8M9Gs1jPo5x0yFh5r+gX9rF9+u/Fv1MyDPjjVFL+8jwJeo/a4arsPgzQr7m26J9uOjXIC198SgazxhImgtIjyLkWBohuNyRnUDuX4fNm49sccc4ngSpyA/LWRtOBha4l5H3cv8Lp4IVI7hqmrEwvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aegBcYsH; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725557681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YsvYqCVKQQkfAV/dC9DA9+PClCN3nQT/ynwnzjufDVo=;
+	b=aegBcYsHS8vohzjzv56rTBm9b+tJe0FfwUNSBZtxslHOz5vEU+Ubqi2eUBNxUb4IIc38KH
+	qExVrqXElq3QqvYjkTUAxmlM2zAT1hP2DFYq5jA7usxMMXUr8N1diwinRFFk4v0CYPEafA
+	jZRZsg0WzdTX6/K3r7Al0Az4MwJhpSU=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Rientjes <rientjes@google.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v4] memcg: add charging of already allocated slab objects
+Date: Thu,  5 Sep 2024 10:34:22 -0700
+Message-ID: <20240905173422.1565480-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,187 +67,221 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-Migadu-Flow: FLOW_OUT
 
-Expose allowed group priorities with a new device query.
+At the moment, the slab objects are charged to the memcg at the
+allocation time. However there are cases where slab objects are
+allocated at the time where the right target memcg to charge it to is
+not known. One such case is the network sockets for the incoming
+connection which are allocated in the softirq context.
 
-This new uAPI will be used in Mesa to properly report what priorities a
-user can use for EGL_IMG_context_priority.
+Couple hundred thousand connections are very normal on large loaded
+server and almost all of those sockets underlying those connections get
+allocated in the softirq context and thus not charged to any memcg.
+However later at the accept() time we know the right target memcg to
+charge. Let's add new API to charge already allocated objects, so we can
+have better accounting of the memory usage.
 
-Since this extends the uAPI and because userland needs a way to
-advertise priorities accordingly, this also bumps the driver minor
-version.
+To measure the performance impact of this change, tcp_crr is used from
+the neper [1] performance suite. Basically it is a network ping pong
+test with new connection for each ping pong.
 
-v2:
-- Remove drm_panthor_group_allow_priority_flags definition
-- Document that allowed_mask is a bitmask of drm_panthor_group_priority
+The server and the client are run inside 3 level of cgroup hierarchy
+using the following commands:
 
-Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+Server:
+ $ tcp_crr -6
+
+Client:
+ $ tcp_crr -6 -c -H ${server_ip}
+
+If the client and server run on different machines with 50 GBPS NIC,
+there is no visible impact of the change.
+
+For the same machine experiment with v6.11-rc5 as base.
+
+          base (throughput)     with-patch
+tcp_crr   14545 (+- 80)         14463 (+- 56)
+
+It seems like the performance impact is within the noise.
+
+Link: https://github.com/google/neper [1]
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- drivers/gpu/drm/panthor/panthor_drv.c | 61 ++++++++++++++++++---------
- include/uapi/drm/panthor_drm.h        | 22 ++++++++++
- 2 files changed, 64 insertions(+), 19 deletions(-)
+v3: https://lore.kernel.org/all/20240829175339.2424521-1-shakeel.butt@linux.dev/
+Changes since v3:
+- Add kernel doc for kmem_cache_charge.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 7b1db2adcb4c..f85aa2d99f09 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -170,6 +170,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_group_priorities_info, pad), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
-@@ -777,11 +778,41 @@ static int panthor_query_timestamp_info(struct panthor_device *ptdev,
- 	return 0;
- }
- 
-+static int group_priority_permit(struct drm_file *file,
-+				 u8 priority)
-+{
-+	/* Ensure that priority is valid */
-+	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
-+		return -EINVAL;
-+
-+	/* Medium priority and below are always allowed */
-+	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
-+		return 0;
-+
-+	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
-+	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+		return 0;
-+
-+	return -EACCES;
-+}
-+
-+static void panthor_query_group_priorities_info(struct drm_file *file,
-+						struct drm_panthor_group_priorities_info *arg)
-+{
-+	int prio;
-+
-+	for (prio = PANTHOR_GROUP_PRIORITY_REALTIME; prio >= 0; prio--) {
-+		if (!group_priority_permit(file, prio))
-+			arg->allowed_mask |= 1 << prio;
-+	}
-+}
-+
- static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
- {
- 	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
- 	struct drm_panthor_dev_query *args = data;
- 	struct drm_panthor_timestamp_info timestamp_info;
-+	struct drm_panthor_group_priorities_info priorities_info;
- 	int ret;
- 
- 	if (!args->pointer) {
-@@ -798,6 +829,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
- 			args->size = sizeof(timestamp_info);
- 			return 0;
- 
-+		case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
-+			args->size = sizeof(priorities_info);
-+			return 0;
-+
- 		default:
- 			return -EINVAL;
- 		}
-@@ -818,6 +853,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
- 
- 		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
- 
-+	case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
-+		panthor_query_group_priorities_info(file, &priorities_info);
-+		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1037,24 +1076,6 @@ static int panthor_ioctl_group_destroy(struct drm_device *ddev, void *data,
- 	return panthor_group_destroy(pfile, args->group_handle);
- }
- 
--static int group_priority_permit(struct drm_file *file,
--				 u8 priority)
--{
--	/* Ensure that priority is valid */
--	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
--		return -EINVAL;
--
--	/* Medium priority and below are always allowed */
--	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
--		return 0;
--
--	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
--	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
--		return 0;
--
--	return -EACCES;
--}
--
- static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
- 				      struct drm_file *file)
- {
-@@ -1436,6 +1457,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
-  * PanCSF driver version:
-  * - 1.0 - initial interface
-  * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
-+ * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
-+ *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
-  */
- static const struct drm_driver panthor_drm_driver = {
- 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-@@ -1449,7 +1472,7 @@ static const struct drm_driver panthor_drm_driver = {
- 	.desc = "Panthor DRM driver",
- 	.date = "20230801",
- 	.major = 1,
--	.minor = 1,
-+	.minor = 2,
- 
- 	.gem_create_object = panthor_gem_create_object,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index 011a555e4674..87c9cb555dd1 100644
---- a/include/uapi/drm/panthor_drm.h
-+++ b/include/uapi/drm/panthor_drm.h
-@@ -263,6 +263,11 @@ enum drm_panthor_dev_query_type {
- 
- 	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
- 	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
-+
-+	/**
-+	 * @DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO: Query allowed group priorities information.
-+	 */
-+	DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO,
- };
- 
- /**
-@@ -399,6 +404,23 @@ struct drm_panthor_timestamp_info {
- 	__u64 timestamp_offset;
- };
+v2: https://lore.kernel.org/all/20240827235228.1591842-1-shakeel.butt@linux.dev/
+Change since v2:
+- Add handling of already charged large kmalloc objects.
+- Move the normal kmalloc cache check into a function.
+
+v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
+Changes since v1:
+- Correctly handle large allocations which bypass slab
+- Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
+
+RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
+Changes since the RFC:
+- Added check for already charged slab objects.
+- Added performance results from neper's tcp_crr
+
+
+ include/linux/slab.h            | 20 ++++++++++++++
+ mm/slab.h                       |  7 +++++
+ mm/slub.c                       | 49 +++++++++++++++++++++++++++++++++
+ net/ipv4/inet_connection_sock.c |  5 ++--
+ 4 files changed, 79 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index eb2bf4629157..68789c79a530 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -547,6 +547,26 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+ 			    gfp_t gfpflags) __assume_slab_alignment __malloc;
+ #define kmem_cache_alloc_lru(...)	alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
  
 +/**
-+ * struct drm_panthor_group_priorities_info - Group priorities information
++ * kmem_cache_charge - memcg charge an already allocated slab memory
++ * @objp: address of the slab object to memcg charge.
++ * @gfpflags: describe the allocation context
 + *
-+ * Structure grouping all queryable information relating to the allowed group priorities.
++ * kmem_cache_charge is the normal method to charge a slab object to the current
++ * memcg. The objp should be pointer returned by the slab allocator functions
++ * like kmalloc or kmem_cache_alloc. The memcg charge behavior can be controller
++ * through gfpflags parameter.
++ *
++ * There are several cases where it will return true regardless. More
++ * specifically:
++ *
++ * 1. For !CONFIG_MEMCG or cgroup_disable=memory systems.
++ * 2. Already charged slab objects.
++ * 3. For slab objects from KMALLOC_NORMAL caches.
++ *
++ * Return: true if charge was successful otherwise false.
 + */
-+struct drm_panthor_group_priorities_info {
-+	/**
-+	 * @allowed_mask: Bitmask of the allowed group priorities.
-+	 *
-+	 * Each bit represents a variant of the enum drm_panthor_group_priority.
-+	 */
-+	__u8 allowed_mask;
++bool kmem_cache_charge(void *objp, gfp_t gfpflags);
+ void kmem_cache_free(struct kmem_cache *s, void *objp);
+ 
+ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
+diff --git a/mm/slab.h b/mm/slab.h
+index dcdb56b8e7f5..9f907e930609 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -443,6 +443,13 @@ static inline bool is_kmalloc_cache(struct kmem_cache *s)
+ 	return (s->flags & SLAB_KMALLOC);
+ }
+ 
++static inline bool is_kmalloc_normal(struct kmem_cache *s)
++{
++	if (!is_kmalloc_cache(s))
++		return false;
++	return !(s->flags & (SLAB_CACHE_DMA|SLAB_ACCOUNT|SLAB_RECLAIM_ACCOUNT));
++}
 +
-+	/** @pad: Padding fields, MBZ. */
-+	__u8 pad[3];
-+};
+ /* Legal flag mask for kmem_cache_create(), for various configurations */
+ #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
+ 			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
+diff --git a/mm/slub.c b/mm/slub.c
+index c9d8a2497fd6..3f2a89f7a23a 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2185,6 +2185,41 @@ void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
+ 
+ 	__memcg_slab_free_hook(s, slab, p, objects, obj_exts);
+ }
++
++static __fastpath_inline
++bool memcg_slab_post_charge(void *p, gfp_t flags)
++{
++	struct slabobj_ext *slab_exts;
++	struct kmem_cache *s;
++	struct folio *folio;
++	struct slab *slab;
++	unsigned long off;
++
++	folio = virt_to_folio(p);
++	if (!folio_test_slab(folio)) {
++		return folio_memcg_kmem(folio) ||
++			(__memcg_kmem_charge_page(folio_page(folio, 0), flags,
++						  folio_order(folio)) == 0);
++	}
++
++	slab = folio_slab(folio);
++	s = slab->slab_cache;
++
++	/* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
++	if (is_kmalloc_normal(s))
++		return true;
++
++	/* Ignore already charged objects. */
++	slab_exts = slab_obj_exts(slab);
++	if (slab_exts) {
++		off = obj_to_index(s, slab, p);
++		if (unlikely(slab_exts[off].objcg))
++			return true;
++	}
++
++	return __memcg_slab_post_alloc_hook(s, NULL, flags, 1, &p);
++}
++
+ #else /* CONFIG_MEMCG */
+ static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
+ 					      struct list_lru *lru,
+@@ -2198,6 +2233,11 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+ 					void **p, int objects)
+ {
+ }
++
++static inline bool memcg_slab_post_charge(void *p, gfp_t flags)
++{
++	return true;
++}
+ #endif /* CONFIG_MEMCG */
+ 
+ /*
+@@ -4062,6 +4102,15 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+ }
+ EXPORT_SYMBOL(kmem_cache_alloc_lru_noprof);
+ 
++bool kmem_cache_charge(void *objp, gfp_t gfpflags)
++{
++	if (!memcg_kmem_online())
++		return true;
++
++	return memcg_slab_post_charge(objp, gfpflags);
++}
++EXPORT_SYMBOL(kmem_cache_charge);
 +
  /**
-  * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
-  */
+  * kmem_cache_alloc_node - Allocate an object on the specified node
+  * @s: The cache to allocate from.
+diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+index 64d07b842e73..3c13ca8c11fb 100644
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -715,6 +715,7 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
+ 	release_sock(sk);
+ 	if (newsk && mem_cgroup_sockets_enabled) {
+ 		int amt = 0;
++		gfp_t gfp = GFP_KERNEL | __GFP_NOFAIL;
+ 
+ 		/* atomically get the memory usage, set and charge the
+ 		 * newsk->sk_memcg.
+@@ -731,8 +732,8 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
+ 		}
+ 
+ 		if (amt)
+-			mem_cgroup_charge_skmem(newsk->sk_memcg, amt,
+-						GFP_KERNEL | __GFP_NOFAIL);
++			mem_cgroup_charge_skmem(newsk->sk_memcg, amt, gfp);
++		kmem_cache_charge(newsk, gfp);
+ 
+ 		release_sock(newsk);
+ 	}
 -- 
-2.46.0
+2.43.5
 
 
