@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-317835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E6096E44C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62DA96E450
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 22:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F25ABB2108A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F78C284535
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 20:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83B88F54;
-	Thu,  5 Sep 2024 20:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADB1193400;
+	Thu,  5 Sep 2024 20:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ba/2vJiQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/WN+0ji"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D0419FA81;
-	Thu,  5 Sep 2024 20:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE7D17BBF;
+	Thu,  5 Sep 2024 20:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725569012; cv=fail; b=QLZCALmA8RltqRXEUwXhCcfoFWekyoBCdFteiV045qRq0lzcw0TIaGUm7noHZ/jJe2yMbW6ffARnZs0DChc1aYJbHNQi7L9XEIXOhE7vCAs3S6n6fbXlPfHo0rFi6dWljxvwI6Jn93YSPrSwFk/lzY0OMWaOaf3AEmElmMukjR4=
+	t=1725569146; cv=fail; b=fxPEM615aqmGccieTOkm4PgZmK+dVEmPGJ4ITs46tEf7si3UGEU5p3GoXnCHS/EEB8ROzXEJMXOprNKtM2GRRwU35fsDHgiwrTBC0xyQZsuN+Gq5Yd46mh9QguUQ2hbLTl1DkYFd1D9qrYxk2s9cDPLBa0CGRBFCR1svbZhRZ2A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725569012; c=relaxed/simple;
-	bh=HV9KOJMYBAvMQi0/7UsqjxYELDJx2tDIf/eCS3cwoEU=;
+	s=arc-20240116; t=1725569146; c=relaxed/simple;
+	bh=3wPeSF6dCk6xZlkXdHnBhZLaZL7/LAaHcW+yM64ZsE8=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IvFmIepfSdMkPB7pLae7bhVeadKFGiIcYOSlImc7JndTh2AxRA+PnlKVJZCNQ1Y2hAdZ1upVt13bcRkjHwqeMJpZX3bgrH49W7cbWr0FNpH6x+lPzrgJS37ubFhsa4SfQgtmy6CuWlcIkudAamuN6x7pJjJeag0yt1bGR5dgumA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ba/2vJiQ; arc=fail smtp.client-ip=198.175.65.9
+	 Content-Type:MIME-Version; b=Im5cwlKPGv4Wg+UJxG/pHCzZMhf/UDdvPGiW4AUD0TEhpv8H03MLTBWRt+/V8IwNaIwZh35SyQQbdZ3dNcrzeS+oh8W/4fDI+vcNzGRcx5GWOfKVyOU4VdMGswZ5onH734dAXXY/k+CEVxJMZwBNy1l0iJ6kH5JzLo7mj5RpxuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/WN+0ji; arc=fail smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725569011; x=1757105011;
+  t=1725569145; x=1757105145;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=HV9KOJMYBAvMQi0/7UsqjxYELDJx2tDIf/eCS3cwoEU=;
-  b=ba/2vJiQ5rlK5fNQfkXeC28yGQtt7QdP2VD8usVMLikM0Cq8+Mzfw448
-   uW+SWwzRxdux/4UXF6UxUzGAA9NM7rANM5tfwSBXICJMpvwvxtlKQT8c0
-   CSeByxXFLjO9QssvG4Z/Nrmk+SlyJRCWye6LFnJkz9OefpsHfbatQm0Mb
-   jDtorPH5fYD6dFWIfKxpanVjtmAf3zFuT01FVJ6B7sgQE0beEoOaxl/x5
-   CFg5BIMZsBFpg/MfCGPvAvdkVSwR/9vKIoQcfONjAdBXK9Eve8iVe3J3p
-   y4Tx92GYxHewtPg1peXo/+QrJFQmqI0hyLG+yKkwbqr9v7eVAOScp3/Z7
-   Q==;
-X-CSE-ConnectionGUID: trJPK0kmTtuSzUY5gZavzQ==
-X-CSE-MsgGUID: ha/ogA8YTTat64cBjdF14g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="46842711"
+  bh=3wPeSF6dCk6xZlkXdHnBhZLaZL7/LAaHcW+yM64ZsE8=;
+  b=K/WN+0jiYBT8J8TtwOTvgrP9fyVy0H+bzI86W8yYHBwJhS4ez5SP8QcA
+   bC5fUCm1rGYbILcrmZfCudX6yDGFPXn2OGTsSkAxTHHevDcmgiW5JNR/k
+   waQzO89U3N9ISbcR50/NwdVZQAS7xrRSMvlc907Qlp5LoWjyNwPdlvres
+   17ILQKkivu+1h20j956oozE8fNG8XyjWtekjXQiH5cWk6v/ZcXNR3E7Zg
+   mgk+4I10gEqhNDUInsOQ69EaTh9BrMjoeNybfCD4O7t5sE36V6hENscw0
+   kKXVgfPKNkar/4f7jxsO4JA0rphEJ/3YxI58EbJB1VcgwRF6k7wbZhAVA
+   A==;
+X-CSE-ConnectionGUID: lyM/wLxAQHGJFazbImyXHQ==
+X-CSE-MsgGUID: BJQjYQJvRmSvKSplnoB9qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="27239720"
 X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="46842711"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 13:43:30 -0700
-X-CSE-ConnectionGUID: 2wQas0AITZWmxzzvTvVEPw==
-X-CSE-MsgGUID: 2X+Gjho8SM2DyEv/3WeFVw==
+   d="scan'208";a="27239720"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 13:45:44 -0700
+X-CSE-ConnectionGUID: sF3YyN7mQsGVFz0r6ckYsA==
+X-CSE-MsgGUID: IdDi24ROQ9K76pvogLnpnQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,205,1719903600"; 
-   d="scan'208";a="70312269"
+   d="scan'208";a="70549991"
 Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Sep 2024 13:43:30 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Sep 2024 13:45:44 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
  fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 5 Sep 2024 13:43:30 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 5 Sep 2024 13:43:29 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ 15.1.2507.39; Thu, 5 Sep 2024 13:45:43 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
  fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 5 Sep 2024 13:43:29 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.175)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ 15.1.2507.39; Thu, 5 Sep 2024 13:45:43 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 5 Sep 2024 13:45:43 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 5 Sep 2024 13:43:29 -0700
+ 15.1.2507.39; Thu, 5 Sep 2024 13:45:42 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GrD7KD88YyLDwgYdbnTOuMywvUO1y62VZ29drxhaWUFq/9YQUPOcpRiSamB7K6CNmBcWkRaBsmJQ3wX9hrJCYfbckwr5wUqmnBz2g0v+5qhzoqBr2nw7e6x8eRk0crsuOOKNylxOfNbhzTbH3GSljuKDdqYD5rkhoWfLAALBdVL6EDrCJEoz0xVqSpr38pkqe4nX0TUdS6W2EbqeB09rDxJR6+LVi4vL+MTlgSZdOX7qMJPLiY3UP2dfr3hCVXUjCtEpTO1AA8GXU8KrHhJIz3yooLKNw1oG8hCJZevGsbUpn9U/1Nrf2Rbs39rXSgooBfbAab9e4BLUNQ+eNgHIiA==
+ b=UsV2p3dt7/IZ0JHoC6yZoORwd/cU32slGXTX5AnUWmig7vk7lrLRLeWh7Puu3A0SisbjThaN8SPgyGjSlr0jg5/YpNy/tnhQyKGBIZ+ElmtdjDcIjCEpwt/aEtsAt3+Y5lXbR6fNRfmR2/6qVuqy9e7eDw77BNEbyUy7/f7o2nXIU505Jy3Y2Uj81IUiEyuxKSYMMaJ0E4PgvTPNCTqpbv4uQlI/MC/KupyofPWgjbNU5QGM3rhi1RDROVj2E+Axw4qDDr6xNIfFj+dkWD0zT9hgZjfXyQ1gXKy7DwVOPTRatBz2mpgd9uNLqrp1AGLSQFgVwPr3MXpLVtcDUpFlKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xVO1jS4VGqZnjZjYovU8UljG+gmuRy1H7DhMBpcDRFY=;
- b=q8fkb+qRDamTNhFAJImSPMKeUHqof3Gfp68v2VVKbnakmimNDLmSSzahr5hheUzSYbWWQaXAw8aG8o0uxx4RwyvsDvHzP/G2g/YKmg+sbZMsukhBAvKlAmjxN/jB2qLnVNqIJJ9+SiktJFq4ztAY+0B/L/dSorsBmMQNlXwjqusNot9K4GonxTwEWZshK+35cL2t/XVDqOHq91cCaXhnHzQAZvy8Aq8nC5UI5YFJG8OktK0go9XkUIu3vjXifXBHP03PMBRvnICD7+XORNcmpWTT4j6lb3aG8XMHlA48Z3QhUNTtktgpaDYXLzW5DaCudBopozuiXGmsTnNa40SQzg==
+ bh=hgt7vBxUpXnERGw6t8YF3AKr5UEADN+8K1+4dHpI400=;
+ b=EdqnXK+gZLTlVk2UuzSMiV8ugTvfD92+K2kNy0W27B16tDEopQjpxpD4i6u1UfmeRmWrJRUtS4/I2Lz7kCm9t6JP9h9+O72N7yvB5St7yRGu0rI6ZN7SswtQvGt/8Vhq2dPGCJpoQ5I+BOahj0Sy9hRlUYwTDvGEEjVXUIvxBkGEs950967ZaArqep4qPmGMTlUiVZOP3rg0IbaWQ9eXKX88xuxsZSkXQaO8ZEE4CAwy018Fwba9Ge0m5Jevi0vR2JY/IQqQ+iulE0U/pHF88gz/S7ySt6pAhOuyQO6RHPe86OKAs47F6I/VrYjk++mZTMOah2UoGd4ft7ym1XaKWQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CY8PR11MB6963.namprd11.prod.outlook.com (2603:10b6:930:58::10) with
+ by CY5PR11MB6391.namprd11.prod.outlook.com (2603:10b6:930:38::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Thu, 5 Sep
- 2024 20:43:26 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Thu, 5 Sep
+ 2024 20:45:35 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7918.024; Thu, 5 Sep 2024
- 20:43:26 +0000
-Message-ID: <1e7c1609-342f-404e-b5eb-87528ee1b4f0@intel.com>
-Date: Thu, 5 Sep 2024 13:43:24 -0700
+ 20:45:34 +0000
+Message-ID: <2af94be4-95f1-48c9-a552-88352cd5d44d@intel.com>
+Date: Thu, 5 Sep 2024 13:45:33 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] selftests: Fix cpuid / vendor checking build
- issues
-To: Shuah Khan <skhan@linuxfoundation.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: Muhammad Usama Anjum <usama.anjum@collabora.com>, Shuah Khan
-	<shuah@kernel.org>, <linux-kselftest@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Fenghua Yu <fenghua.yu@intel.com>, =?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?=
-	<maciej.wieczor-retman@intel.com>
-References: <20240903144528.46811-1-ilpo.jarvinen@linux.intel.com>
- <eadb7bc7-a093-4229-90f0-88b730087666@linuxfoundation.org>
- <d2a4ca5c-3352-e570-687c-9d7ec90dbe33@linux.intel.com>
- <b4b7147f-64cf-4244-a896-07a88f08d0f1@linuxfoundation.org>
- <d8ffc136-876b-db3f-fc87-a1442e53a451@linux.intel.com>
- <f65237fe-a1b9-4d63-9a06-dd7a49765c9f@linuxfoundation.org>
-From: Reinette Chatre <reinette.chatre@intel.com>
+Subject: Re: [PATCH] selftests:resctrl: Fix build failure on archs without
+ __cpuid_count()
+To: Shuah Khan <skhan@linuxfoundation.org>, <shuah@kernel.org>,
+	<fenghua.yu@intel.com>, <ilpo.jarvinen@linux.intel.com>,
+	<usama.anjum@collabora.com>
+CC: <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240905180231.20920-1-skhan@linuxfoundation.org>
 Content-Language: en-US
-In-Reply-To: <f65237fe-a1b9-4d63-9a06-dd7a49765c9f@linuxfoundation.org>
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20240905180231.20920-1-skhan@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR02CA0005.namprd02.prod.outlook.com
- (2603:10b6:303:16d::14) To SJ2PR11MB7573.namprd11.prod.outlook.com
+X-ClientProxiedBy: MW3PR06CA0004.namprd06.prod.outlook.com
+ (2603:10b6:303:2a::9) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -127,233 +119,199 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY8PR11MB6963:EE_
-X-MS-Office365-Filtering-Correlation-Id: ababd2cf-6e80-4aff-4119-08dccdeb646a
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY5PR11MB6391:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8633e597-2269-4831-19e7-08dccdebb0df
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YXFMYkNXL0NES0pyc2g0ZTg0ZW1YOUQ5OHFTUGNxem1NMmlydkZWSTJlcUpt?=
- =?utf-8?B?MFMrZ2pXSVdkL3pRbUZPV2JLNjlGNGxuL0laMUMvTFEwVkZHYXBvQTEzOHZC?=
- =?utf-8?B?bTNESUtyOHl6cVloZUlsK2dRV0hkS2gxSmpyR2ZFMk1HSUh6VzNGaERxeVRx?=
- =?utf-8?B?QlBUazRzRFE3Q2xtNW5GOUlFOFFoTUdXSUQzSHI1UEJwR1AweEtMOHNsTjhM?=
- =?utf-8?B?VHA2SzRQVWgxUU5zNnRuSFpDNW51bnhGTStnZ2wzQW9PVTFHcU8wUFNjYjZn?=
- =?utf-8?B?OUFUVGpQNC90UGxiMi9aNDJ0N1g4TENvc3QvVEZsNWFGQW1VUWw1bWphYVpB?=
- =?utf-8?B?NWlhNTlwRjlmQ2s2UUFiQXk5SDl4MEN3akJiZ3hPODJsd3BvZHJaUFZDL0FI?=
- =?utf-8?B?T3lha0ljZThsay9DVytIQVAwMmZmeXhMbWM5dnlYckRIUXlIM2dNaDhsUTRa?=
- =?utf-8?B?TDV4cUFMR3BlQTRVVmZnSzlQVURDYjFoWW5VRFFpdVNINjQxM0NhUTF6anNI?=
- =?utf-8?B?elFDdXpLWGZIbEJ2SFB6R0ZkOERKbGRjMFMzS2ZrbTNBUlVxTHJkVHVNa2lw?=
- =?utf-8?B?cG84a08vT1hIdjRxajFTaWtNNWxtYmMwZDlSRnVmcnhBU0VUM3hDV2w2NDI3?=
- =?utf-8?B?dVJTYUY1QkdDcjNWQ1o1RXN4L2pON1FPcExvVjJHM0FYTGxVbFZBNGVuckNI?=
- =?utf-8?B?U2k5K3lURUt0bmwxeE5ZcGFveEkzNlZTR2R3TG93TlZBUnpNUzR5QlA3U0VH?=
- =?utf-8?B?N3VUV05rNHBjOHFvVDJaMSszMkY0ZUp6YUhtTHowYk1pNnZkZ283aHFmQ2E1?=
- =?utf-8?B?ZXBPMHpDSENlZVAwMkRHSGZIR25xMG92T3dKVGFycWprTHJTdkxYNUdUZzl0?=
- =?utf-8?B?L2F1WjZIN2FLMlgwd1A2Z0FuaGh2TlppUlpWcmVETUcvcTRzelpUVXRwcFR4?=
- =?utf-8?B?MjZzSTNubEFsLzBoS0R4a0Y1anhCV2tldTg5R2k4cGVySkFGeTVwSUQ5UGVt?=
- =?utf-8?B?b2MvbkJtMCtFS0tMelVJVjFCaWl4WFMyZTZVNDkrT1I4V1JZUWxVTjNFWm9O?=
- =?utf-8?B?WnBXbUlPLzVRREQrc2RYUXE1VEhKZW9yZGxvOHVrL1BGTlJKRzRrUENnVmxJ?=
- =?utf-8?B?Q3F6NjZuZUxaaFo1T0pzYmRZVWZjZFA5UkVhSyt1VmZ6cGJoalZDUi9PK0pz?=
- =?utf-8?B?L2ZLNm8wd3VEK2M3djk0WjNMUElHNHN0MDVQQnpLR1FCMFkvbi9XVnoyOGF0?=
- =?utf-8?B?eTZvdVpJS3lxUWg3VFpQUUtBVGN3RDdUb0JzVVkyc0FHTm1DMk90bFppdk1V?=
- =?utf-8?B?QTQvTWlicFhDektxZUQ3cmFJSDNtU2RqZWZNNUZZdDB1ckhCZnVMa2dxQzBO?=
- =?utf-8?B?a3hDNzl3c1lBUjM2S2Q1bHc3M2F0UHdyYXZtdTVIbGlGc0IyU2JoWmliWVhG?=
- =?utf-8?B?R0l1NE1FTUxmakZQYUp1UmxYMjFqTGsxdW02SXN2YU93amVSQVUrenJVVUwv?=
- =?utf-8?B?THllYmQ2eVFhYmdNZThLM21mS2tycFpYaWdWTHp0YzRKdk5aeC96NEFFRVRl?=
- =?utf-8?B?c2diaWM2VG56a2grYXdVUWdsZW05WWh6ZkxCYVByU0w4bEM5UVlXWm92ekM0?=
- =?utf-8?B?eFJBeW1WbmdGeGxibExxejgva204SEVWWU4wYy9qeE0vamQzMlp5S2RiZnhs?=
- =?utf-8?B?cEYzbzNFcFdGY3dLWktWbktlN3U4NTdkM1RaMDFBdTVuYng0TmdVbnh6V1NV?=
- =?utf-8?B?blBlb3F1OENLUlFqNGtsZ2lsQjdac2lGWFdXQk5uSFhYTUJ2L0Fzcm5ZSjk2?=
- =?utf-8?B?U3ozY0JSbU9sMXFxbkd5QT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bXdCQWJ3Szd0aXY5b20vV3U5VWQrcXV3dWVuOExydkJrbWFkZGVKcmRoWEpo?=
+ =?utf-8?B?ZC81MWwxaVJQZ1QvakJRNTdDUzRTTU9YVDY4akp3cnNuUU1ucmlOTnVWNnRq?=
+ =?utf-8?B?YjFGQ0hYY2lQNnFqZndxSVVHRmR4bFEvdUZVbFdaaDFSbm1xcUk4TGVENktF?=
+ =?utf-8?B?eEQ2RW1YK1laNThTL1MxY0lSK29tcjgzeVJrd3VvcXd2VHZvZDNKS294VDNC?=
+ =?utf-8?B?UXVhNTZPQlEvSnJtWHNhUm5oeTZlOUJlajhXekw0UENabU56ZVRlbDl3SThl?=
+ =?utf-8?B?RmtMUDlieFhRaGVhd3BXOFkzNTJZU2s0by80cDBUWHBpNVFid0lPUm9CejNB?=
+ =?utf-8?B?aUdVWXdPUVlndUU1MTZtWkdSYTkvTXdHZEg3WjRNMmlIcjhsdjhtSHRYcjJB?=
+ =?utf-8?B?cVQ3Q1VmQmd3ZFJVbTJCQVNlNDNaN3FhNFByempBUUpLOW5Gc1phNUJRRXQ1?=
+ =?utf-8?B?YWgyYVZuQVZ0OEFSTmVWekNMdU1SS1Jmb2xXZ3VJY25LVVFkWG5OdmQ4QmJD?=
+ =?utf-8?B?NU54bzB1cHlJSmpnTFhya1h5VnhnSnlxbjlnbTM5empYNDNnV2k2cktaSEdu?=
+ =?utf-8?B?TFdjWFRONkd4WnZ0UnovNTZ1V0NkODBFTFJRWklzcE0yQ05QSWx5aXZFWkcz?=
+ =?utf-8?B?WGxqT3Jvbm15Z2tBUnZoaHVzRFBIYVlkTEwzQVJnRnk1cTN1K1dOTnpRRi9v?=
+ =?utf-8?B?KzYvclZBNEFOWm9wSUtpbjBrS1NKM1BCKzN0QnNmZXdqZzFwS09RdWxPNUE5?=
+ =?utf-8?B?QzhGNVRZaXBPblQ2Z3hRQ3VmaVRpYmsvcTROSElqZ2NWQzNuejEyRXFoa2JM?=
+ =?utf-8?B?RzhjSGhmUEhjMGtyMWlCVWJNVUZSdDRyRlpwS3lHdWhXaWRXdnRZMmtzNith?=
+ =?utf-8?B?MjZpc2twOWMrdG5TRHBBNm5kdUtiUHcrOGdMRFg1YVlyalIyQ3dIL1VmMHVY?=
+ =?utf-8?B?RU9xdm5nTnorWjdFd2xWc2szSGYzYmEwamFLbnZzZWJQUGFRYjFHZFljNGlD?=
+ =?utf-8?B?aGFYQjhOY0V5UVh2ZGJjMFlDSklzTHFNQlU3ZTllSG93NjJ3bUZuaHNaR0M3?=
+ =?utf-8?B?K2lFcjE2RHBOblRtOUgvdVJ3WVNzSGcyQWRzQjhZVGxPUkNTNGY5NEJQQ05p?=
+ =?utf-8?B?cXZncnlDTWMxZGx6RWt6dHNNZzBzTFkwYmJYdEJsRGthWkEzTWtRYUx4eXhH?=
+ =?utf-8?B?V0ZnZDNmZGlzV0ttRkJLenI3TCt6K29ZOWVJdjBPYUpKaUVWSTBONERZSzl5?=
+ =?utf-8?B?eU9BVDFKSlBidzRmZEJzcEp6cnh5eFJaNnJhREt0a25xTHVETGo1cXBMS2c4?=
+ =?utf-8?B?WlJFbm93TExRQXNpa3B6cnVXWUNySkxkd3l1U1RxZmlsTGUrYU1OWUNib1FQ?=
+ =?utf-8?B?NnVJem9EY2wwVG9wQldpQ3BhYkhTclhTTWFXd05YVUt5bGJKMFNNY1J0SFFR?=
+ =?utf-8?B?M2VMRXZQUXFqZWMzL3Fsd0JSWWkvd0t4WTRXaVpUSHArUjdLSW1JOVppM1l2?=
+ =?utf-8?B?OG4vUTFkSHZBeitUcG1LdXNRREdlanRsRnFCRTlSeXB6VlYzRjhGYllnZVRK?=
+ =?utf-8?B?UkthWFAzZTdIbTUvU2pPbTQ3VHZJdVNSUStkNkZZbUFlYlM5YlBIVWkxR2lo?=
+ =?utf-8?B?aHkzZEptdXdDMU5saG0zYVk3L3MxTkE0enl3MlNDaDRzcFBMNmVRZW5YN1R6?=
+ =?utf-8?B?Ty9yRE1GcmRBZ05GTGNkNXZUbEZiVTZiSDZ2YzN3SFFSNjVkTXJFV1NpTmd3?=
+ =?utf-8?B?cFNLTm45Ni9qbEptcy81d1g3Nm8xSkRaSWp5M1dRNHBSaTF0dDRhM1JEd3Fj?=
+ =?utf-8?B?ZTdVZDZBZ0RZcTRyU2xaZz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NEx2WU9ORlJaQ01zRTljdzhneU5BSE9GNzFoUjkvUzViNXR6VkRKTEZ3VTRM?=
- =?utf-8?B?QXpxRm1Cd1M4KzA2STUwOEMvb3EzZHNicTZzMnE0Z2VtdDFnZzhSYlRZOVBv?=
- =?utf-8?B?NW43emRNNElXQlF2VUhTRVJrZ3JtVE9FWDdhTXZVV2k0WlU4ZytHLzdVU01S?=
- =?utf-8?B?ZGZtWHJ6b2NxQWJvQytjNEtPYnlYZFBDZ2Rnb25EYmlRbnFZamFOSExKd2xu?=
- =?utf-8?B?MCthSUZ1RFRtVEp5L3FNUkdIL3NGb09nemtFc2lmZ2hYSU9obUpaZDlydEdh?=
- =?utf-8?B?clZrdjdDUUJZS3p0SlBoTUVvWnRKU25QWHZ0SDhVWXFzYWlLNzkrZ0NmQlhx?=
- =?utf-8?B?RkU4Q1NjTFI4Q3Q4R3YwNmloS3BiMUNBQ3FyMWF4TG0xcEE2SjBGU3B3MDhS?=
- =?utf-8?B?ZW1Mc1pUeHpYM3FSbkovN0piTXdUcW5MYmhHbGZhVmtpUnVISm1nYUptWUpT?=
- =?utf-8?B?dnZNaytYR3FZY3M2d3B2Tm9WblExTW01VXBUTDh3MjdtZzhWaUt6TWRzZ2t1?=
- =?utf-8?B?VG5hdUYxUTFFNFRXKzY0NjdEZG1LVGNVN3hUeHc3WHZtVUhKUmd5WE85bDBS?=
- =?utf-8?B?NVVoSW9uSWl0YzliS3RQdnFTMjV4Q3I2UTkrb3RwZGxONlk4Y0FkdTNtalhD?=
- =?utf-8?B?SkVsNDI3eCtxOWpKaGNJeW5BZXlaRHA1WHg0Qk15cVJNcTRyUGlrN1VlTFox?=
- =?utf-8?B?MnRERlpIaFZjeG5KNldGVGtIUkEyNE1waUhXYVN0eUZ5UllIbm1XbEJObEJ5?=
- =?utf-8?B?aWxqVGJSRGhjaUN4UFg2czRqNmFucFNtMjZWUHhlZ0U1QUZwTE5Nd2pHNzRF?=
- =?utf-8?B?RUtlaDlmd2lVeDFhL0ZSdm84bldJYm1pZVdXWEE4bS9QZlY0SkFNa203OGlv?=
- =?utf-8?B?UUJBczJHd2t1Mnd3bkdzeVBKMGgwOGZMdFgxMXBvQkZiUFYwbmFWRit2Mldy?=
- =?utf-8?B?emtFakp5d3BlcitpRlhvWU9yRzhkbkV0dlJ4QU9uOG93bVdkamZObURPNzFT?=
- =?utf-8?B?M0pHOTlvK1k3VXZqTTN4NDViMEFUUVRIbEpmbnByNHlxTm5zc3phQlBzeEdw?=
- =?utf-8?B?YmJVQ1ljcWV2QWp6ZHBhR25RdExISFViODAwcHBEeGUzcmFGSEJjUnc4eEFm?=
- =?utf-8?B?ZVZPRTRBSDZmMG1aOWFQdTVWWGE3bzR3aVZ2Z2VpY2t5V1ZQaWIwR1JQd2RB?=
- =?utf-8?B?WVQzVjF2WDU5T1o4MHZXU3U5cXU0RUFVNU9VSXRtNExBbER6TEVMTWF5VzRV?=
- =?utf-8?B?OXA3ei9QelAyUEVKczR5LzVCTVEwbXREcVZxZktCTEJUekVUamJUNUpVeDBj?=
- =?utf-8?B?NGtMdXJYUHNjSVNqTkh4Ti93em5DMnJkbndIV1NtN1R3QXRjYjRJb1k4Z2Zy?=
- =?utf-8?B?VUgwSm81ak13NXAxL0NlNnhONHhMbmIrNHQ2VlJjeFhwS2IxeHEwbHRvMzJB?=
- =?utf-8?B?MUZORnhMNll0S1lZdStUeW5QZHNhNGZTN3llMW9KVHpsamNOM3pESFUycHh0?=
- =?utf-8?B?WHIvejVaUmYyandXTS9RMWlmWmJuQUNRbDF1ZWowRnNUZ0JpNjBqejh2czJu?=
- =?utf-8?B?ekJCeEU4eEJBbFRCdFhkcGtmVjZxY2FVU2tLWTI1TjN6MzExQUtXdnlxTXVn?=
- =?utf-8?B?Yi93cFVwdFIxT1AwWTl3MmFtUmYyNFd3RWFnYlpKaVpkbjVYVW5jbFU0UElD?=
- =?utf-8?B?aFZHTUduVHg2M013TVhxd2NFR2JCWmgrYmVBTHlvVWdEV0IrZ000NnU4S3No?=
- =?utf-8?B?M3hLYUR2c1JYRlBsR0g5aVhFOHpaakJDRm9tUXpsb3gvSnNhMVVQaVBUTzhj?=
- =?utf-8?B?OUJSaVZFQlk5aTJTOHdUTzZaN2VsbjJSSHRCQnYxUzd5TTF2dm9TUFdhQjFI?=
- =?utf-8?B?Nm44VkxvalR1YWZWV2pGZ0hjVlFVdE5PL05iQUI1bmt4WlI2OGErRWRxcTRi?=
- =?utf-8?B?OUQ4L1QwSGdFM1BOTTlycllEbTZ6NzlId0hQbUdKc0NiNE1weUxqT0txNnlK?=
- =?utf-8?B?c2RUTGJWTGJ3c09Wd1Yxbkg0MHJmWkFNSDRSTUQrWDJKUjZkdlhMV0g0UktL?=
- =?utf-8?B?S3hMd0FTVnRWWFR3cTdQajFWZzFQUm5SM3lON2NGR2g2d2Z3MjROVG12M0l5?=
- =?utf-8?B?d2p4eVRPNHVHQVhDSTJTQTRYZ0owOXB2VjF3K25LMm9CY2JSQ1JKdzF3djVT?=
- =?utf-8?B?K3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ababd2cf-6e80-4aff-4119-08dccdeb646a
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y0taKytFdXBOaWI5YlNkaWdEMEh0N0ZoeFJYMzRZRG1mMkJmZDFwTjVTbzFC?=
+ =?utf-8?B?cnFYV2p0L2M0ZGxhOWEzamRGY3hsczFmdnFITUU1N1NRSUkrbm0yd25nUFBw?=
+ =?utf-8?B?dDJTOHNnODg1SExVcHpJcU1aZEIydkRHandNd3FoU0lCaUJBYWhidk9CT2hZ?=
+ =?utf-8?B?cHhRNVJSMU5uck5OK0NYRWRhcU40eEg4RzVrUFozb2VPZ090Q1Qxc2ZSWk1D?=
+ =?utf-8?B?OGp3aU44RG9SakFBMUp2QlpIVVpibWhNNkJjUUxmVFVwMnhCL0V2V1ErYnA0?=
+ =?utf-8?B?SWFDOThHMnhHWS9XemVxdHlRaU9PME9RcFBDeVl2VUlTcmVEU1ZiWlloQUFE?=
+ =?utf-8?B?NWV5QjQxVm8vSmxnMG5VTmdXQnZwam5NanloajlNekNjYVNvSGFBcDAyeER1?=
+ =?utf-8?B?L0M0TEQ2dDkyL211cW54UXNqZ2VNbzV0QXVlZHA5UVFpTFdpUkhqbDllSGx3?=
+ =?utf-8?B?WHJBalBYVW5xZkhKVlFTTzEyRzhvY1BHVmtRSDVhYTBhVDdmQ3FPeXdNK2dz?=
+ =?utf-8?B?NE9BUHhVTkR6Wkd0RWtPRUNGbjJTOUJCVlpTOEE3OW1oZEtzREFGUGdMMlBl?=
+ =?utf-8?B?VnJ5RE8vcWtFZ0FiMzJpOU4zb0tFZUZ5UFJHNTcyK2xRZEZRZmc1dVVvSmhB?=
+ =?utf-8?B?VXZWM3hEV1VmbWZJdXlGeW1UUlU0dkQ2NjhGRlV3Q0htYjNiZmxta3BseVll?=
+ =?utf-8?B?ZzdiVWdobVVUZFVuMUZTcXViT3pRWDBlNm5rR0trSXJwZVNYR3pROUFMRjV1?=
+ =?utf-8?B?QmZqcElZL0dGRko5YzBaWlVwYi9hOU51T1hORGJ6cWJiTlRhemVVMXVtQ1VV?=
+ =?utf-8?B?MDN3dUxjalZmMXR6WUFmTWhlRy81K05wRXZaVDJTZ0tBUis5dE9tamtrUW5O?=
+ =?utf-8?B?TkNOSW43Yjh2RnkwUDMrZTRaZGNrajRPamJJOW45eE5iTi9DU2ZtM3dOYjdP?=
+ =?utf-8?B?Mld1UFNPdmtlOS9kYVZnOVZzQ3Y4S2kyZGZoaXZQdDdZR0dzS1hkdkZNNDFI?=
+ =?utf-8?B?N3gwRmVGN1hJOE01RVkreVZveGNwTXhFNTF2K3RTbGhoMzl3U21zTTVhaVlv?=
+ =?utf-8?B?UFZGSG41SkQ1OGlPNmFTc1pTU2VqRERoYWRnYUpNK3VTL1FHRHZkMlJ6OEkv?=
+ =?utf-8?B?dUtJamVCay9jQnVYWG04Q3FvbitLaTg2L2tFbFhuZUlpbzhjWWZEN29yUHFs?=
+ =?utf-8?B?NmUrSGJJM2w3QnFsM2kxd2kzUHdEemVJVllwa1BSZlVIMis0ME1FU2JXRk5N?=
+ =?utf-8?B?bXFGVEN0UGFNcVlsSkRKOXZ1c0t5TmxRK2o1UDRhOUZ1MGVQVXM1alpoZURZ?=
+ =?utf-8?B?c3BQTStTdkFCSXpGdGtoWW5hT28zNWFza2dqK2dlUFRoNmd3Q0dmUjhHSUNl?=
+ =?utf-8?B?dnF2OFcvSzA2aDE2cmw0ZWMrSDZCbFdxNzBvTjJKSnJka2dHb2hjQ0tjcW4v?=
+ =?utf-8?B?aWZ2MlhPSS80NSt2OFpVTmlvNWhXVGd5Zlg0c0wvVldIK2N2Uk9MN1Z5ZERD?=
+ =?utf-8?B?WUxhZTYzWTM2VnF4NmVUYkcyaHpZSHgvaUJITmQ0VnNQRzdUZmFDejRrWkpW?=
+ =?utf-8?B?TXp6MWhjcUd1Q3NDQjZFRUxlVDNnRnNlRmNPZ0Q5Zk9SZXdkMXlXaGc5aVhm?=
+ =?utf-8?B?MmVYVkVtb3lKcHNVYUdycDR6NGkrcW1DY243a2dsTElCRGFZOWNFZVgzOXhH?=
+ =?utf-8?B?Q0F4dk5taGRqYnMrS2dKa0xOZUppWmg3TjhmS29jY1ZDRVp4WHErbDRmcHBX?=
+ =?utf-8?B?bUxLMzQzNWNhenp2UnMwNmJTVlYzc2RnVUFndXhrVlh0SzhpZmdCTHl0aStS?=
+ =?utf-8?B?L0tEek5zQlNQSVRDcFB1MEpNdjJxSk50OUcvQlQ3eDY1cWRzTUZuRzVpZVNr?=
+ =?utf-8?B?ejM3SlhON2VWemhBS3BSeDRaUTNJMXUvNE80NE4zQW4zNklVbVgxZ1dSQjFp?=
+ =?utf-8?B?K3VuSERGUmZhZW9ENzZjSDcwcm5rdlZKeVFUQncwMnp4N0NaTXVBd1p0bmw4?=
+ =?utf-8?B?elQ1c0hxU3VUT200Mmp2ZHh6NWlDT0xsVjhLUndLaWowcUxwR1lFc21wWnE0?=
+ =?utf-8?B?VnM2ay9VRzc4b2tySjhxV1VVSUJQTzZYWnNtV2FRQjB3VWVkSjIzV0VXS3Vq?=
+ =?utf-8?B?b3Z1dVNpYms5eXEwbVc3Y3VMQnBsUS9OTjdtZEFtMDZJd29Pa0orOXpvN2M3?=
+ =?utf-8?B?R3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8633e597-2269-4831-19e7-08dccdebb0df
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 20:43:26.6641
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2024 20:45:34.9233
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VjS+Ym/zHMn8tiAl01ogYMf4VuznMNVcLcNN/AzRWUM+a5BldOBPRjXYpx6jYy7t3XuvoWpUk9c5Zq9pLSDrCGm3AhrjHbGfotxBtqAGNNg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6963
+X-MS-Exchange-CrossTenant-UserPrincipalName: XzTQHfPZHEyO0eUKrw7UxDpoHFa8oFavpzIt94I8vztkh4wUsTVnGU9odK73yBil5ezLH2AE1YFCVnumHycnj+/Ipa4wN5pFTmBTY8s6TME=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6391
 X-OriginatorOrg: intel.com
 
 Hi Shuah,
 
-On 9/5/24 11:06 AM, Shuah Khan wrote:
-> On 9/4/24 06:54, Ilpo Järvinen wrote:
->> On Wed, 4 Sep 2024, Shuah Khan wrote:
->>
->>> On 9/4/24 06:18, Ilpo Järvinen wrote:
->>>> On Tue, 3 Sep 2024, Shuah Khan wrote:
->>>>
->>>>> On 9/3/24 08:45, Ilpo Järvinen wrote:
->>>>>> This series first generalizes resctrl selftest non-contiguous CAT check
->>>>>> to not assume non-AMD vendor implies Intel. Second, it improves
->>>>>> selftests such that the use of __cpuid_count() does not lead into a
->>>>>> build failure (happens at least on ARM).
->>>>>>
->>>>>> While ARM does not currently support resctrl features, there's an
->>>>>> ongoing work to enable resctrl support also for it on the kernel side.
->>>>>> In any case, a common header such as kselftest.h should have a proper
->>>>>> fallback in place for what it provides, thus it seems justified to fix
->>>>>> this common level problem on the common level rather than e.g.
->>>>>> disabling build for resctrl selftest for archs lacking resctrl support.
->>>>>>
->>>>>> I've dropped reviewed and tested by tags from the last patch in v3 due
->>>>>> to major changes into the makefile logic. So it would be helpful if
->>>>>> Muhammad could retest with this version.
->>>>>>
->>>>>> Acquiring ARCH in lib.mk will likely allow some cleanup into some
->>>>>> subdirectory makefiles but that is left as future work because this
->>>>>> series focuses in fixing cpuid/build.
->>>>>
->>>>>>
->>>>>> v4:
->>>>>> - New patch to reorder x86 selftest makefile to avoid clobbering CFLAGS
->>>>>>      (would cause __cpuid_count() related build fail otherwise)
->>>>>>
->>>>> I don't like the way this patch series is mushrooming. I am not
->>>>> convinced that changes to lib.mk and x86 Makefile are necessary.
->>>>
->>>> I didn't like it either what I found from the various makefiles. I think
->>>> there are many things done which conflict with what lib.mk seems to try to
->>>> do.
->>>>
->>>
->>> Some of it by desig. lib.mk offers framework for common things. There
->>> are provisions to override like in the case of x86, powerpc. lib.mk
->>> tries to be flexible as well.
->>>
->>>> I tried to ask in the first submission what test I should use in the
->>>> header file as I'm not very familiar with how arch specific is done in
->>>> userspace in the first place nor how it should be done within kselftest
->>>> framework.
->>>>
->>>
->>> Thoughts on cpuid:
->>>
->>> - It is x86 specific. Moving this to kselftest.h was done to avoid
->>>    duplicate. However now we are running into arm64/arm compile
->>>    errors due to this which need addressing one way or the other.
->>>
->>> I have some ideas on how to solve this - but I need answers to
->>> the following questions.
->>>
->>> This is a question for you and Usama.
->>>
->>> - Does resctrl run on arm64/arm and what's the output?
->>> - Can all other tests in resctrl other tests except
->>>    noncont_cat_run_test?
->>> - If so send me the output.
->>
->> Hi Shuah,
->>
->> As mentioned in my coverletter above, resctrl does not currently support
->> arm but there's an ongoing work to add arm support. On kernel side it
->> requires major refactoring to move non-arch specific stuff out from
->> arch/x86 so has (predictably) taken long time.
->>
->> The resctrl selftests are mostly written in arch independent way (*) but
->> there's also a way to limit a test only to CPUs from a particular vendor.
->> And now this noncont_cat_run_test needs to use cpuid only on Intel CPUs
->> (to read the supported flag), it's not needed even on AMD CPUs as they
->> always support non-contiguous CAT bitmask.
->>
->> So to summarize, it would be possible to disable resctrl test for non-x86
->> but it does not address the underlying problem with cpuid which will just
->> come back later I think.
->>
->> Alternatively, if there's some a good way in C code to do ifdeffery around
->> that cpuid call, I could make that too, but I need to know which symbol to
->> use for that ifdef.
->>
->> (*) The cache topology may make some selftest unusable on new archs but
->> not the selftest code itself.
->>
->>
-> 
-> I agree that suppressing resctrl build is not a solution. The real problem
-> is is in defining __cpuid_count() in common code path.
-> 
-> I fixed it and send patch in. As I was testing I noticed the following on
-> AMD platform:
-> 
-> - it ran the L3_NONCONT_CAT test which is expected.
-> 
-> # # Starting L3_NONCONT_CAT test ...
-> # # Mounting resctrl to "/sys/fs/resctrl"
-> # ARCH_AMD - supports non-contiguous CBM
-> # # Write schema "L3:0=ff" to resctrl FS
-> # # Write schema "L3:0=fc3f" to resctrl FS
-> # ok 5 L3_NONCONT_CAT: test
-> 
-> - It went on to run L2_NONCONT_CAT - failed
+Thank you very much for looking into this.
 
-It is not intended to appear as a failure but instead just skipping of
-a test since the platform does not support the feature being tested.
-
+On 9/5/24 11:02 AM, Shuah Khan wrote:
+> When resctrl is built on architectures without __cpuid_count()
+> support, build fails. resctrl uses __cpuid_count() defined in
+> kselftest.h.
 > 
-> # ok 6 # SKIP Hardware does not support L2_NONCONT_CAT or L2_NONCONT_CAT is disabled
-
-The output looks as intended. When I run the test on an Intel system without
-L2 CAT the output looks the same.
-
+> Even though the problem is seen while building resctrl on aarch64,
+> this error can be seen on any platform that doesn't support CPUID.
 > 
-> Does it make sense to run both L3_NONCONT_CAT and L2_NONCONT_CAT
-> on AMD? Maybe it is? resctrl checks L3 or L2 support on Intel.
-
-The selftests test the features as exposed by the generic resctrl kernel
-subsystem instead of relying on its own inventory of what features
-need to be checked for which vendor. selftests will thus only
-test L3 or L2 if resctrl kernel subsystem indicates it is supported on
-underlying platform. Only afterwards may it use platform specific
-knowledge to help validate the feature.
-In this scenario resctrl indicated that L2 CAT is not supported
-by underlying platform and the test was skipped. It looks good
-to me.
-
+> CPUID is a x86/x86-64 feature and code paths with CPUID asm commands
+> will fail to build on all other architectures.
 > 
-> Anyway - the problem is fixed now. Please review and test.
+> All others tests call __cpuid_count() do so from x86/x86_64 code paths
+> when _i386__ or __x86_64__ are defined. resctrl is an exception.
+> 
+> Fix the problem by defining __cpuid_count() only when __i386__ or
+> __x86_64__ are defined in kselftest.h and changing resctrl to call
+> __cpuid_count() only when __i386__ or __x86_64__ are defined.
+> 
+> In file included from resctrl.h:24,
+>                   from cat_test.c:11:
+> In function ‘arch_supports_noncont_cat’,
+>      inlined from ‘noncont_cat_run_test’ at cat_test.c:326:6:
+> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
+>     74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
+>        |         ^~~~~~~
+> cat_test.c:304:17: note: in expansion of macro ‘__cpuid_count’
+>    304 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+>        |                 ^~~~~~~~~~~~~
+> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
+>     74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
+>        |         ^~~~~~~
+> cat_test.c:306:17: note: in expansion of macro ‘__cpuid_count’
+>    306 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
 > 
 
-Thank you very much. Will do.
+If needing to know where this fix is needed, there can be a:
+Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
+
+> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
+Perhaps:
+Closes: https://lore.kernel.org/lkml/20240809071059.265914-1-usama.anjum@collabora.com/
+
+> Reported-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> ---
+>   tools/testing/selftests/kselftest.h        | 2 ++
+>   tools/testing/selftests/resctrl/cat_test.c | 6 ++++--
+>   2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+> index b8967b6e29d5..e195ec156859 100644
+> --- a/tools/testing/selftests/kselftest.h
+> +++ b/tools/testing/selftests/kselftest.h
+> @@ -61,6 +61,7 @@
+>   #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+>   #endif
+>   
+> +#if defined(__i386__) || defined(__x86_64__) /* arch */
+>   /*
+>    * gcc cpuid.h provides __cpuid_count() since v4.4.
+>    * Clang/LLVM cpuid.h provides  __cpuid_count() since v3.4.0.
+> @@ -75,6 +76,7 @@
+>   			      : "=a" (a), "=b" (b), "=c" (c), "=d" (d)	\
+>   			      : "0" (level), "2" (count))
+>   #endif
+> +#endif /* end arch */
+>   
+>   /* define kselftest exit codes */
+>   #define KSFT_PASS  0
+> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
+> index 742782438ca3..ae3f0fa5390b 100644
+> --- a/tools/testing/selftests/resctrl/cat_test.c
+> +++ b/tools/testing/selftests/resctrl/cat_test.c
+> @@ -290,12 +290,12 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
+>   
+>   static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+>   {
+> -	unsigned int eax, ebx, ecx, edx;
+> -
+>   	/* AMD always supports non-contiguous CBM. */
+>   	if (get_vendor() == ARCH_AMD)
+>   		return true;
+>   
+> +#if defined(__i386__) || defined(__x86_64__) /* arch */
+> +	unsigned int eax, ebx, ecx, edx;
+>   	/* Intel support for non-contiguous CBM needs to be discovered. */
+>   	if (!strcmp(test->resource, "L3"))
+>   		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> @@ -305,6 +305,8 @@ static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+>   		return false;
+>   
+>   	return ((ecx >> 3) & 1);
+> +#endif /* end arch */
+> +	return false;
+>   }
+>   
+>   static int noncont_cat_run_test(const struct resctrl_test *test,
+
+Thank you very much.
+
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
 
 Reinette
 
