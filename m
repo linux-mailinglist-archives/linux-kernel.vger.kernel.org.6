@@ -1,174 +1,120 @@
-Return-Path: <linux-kernel+bounces-316604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E1596D1D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AB296D1DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0651C24B2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C531F2BF40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9AF624;
-	Thu,  5 Sep 2024 08:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAB9198822;
+	Thu,  5 Sep 2024 08:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWyeyYtc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RbWOCf0z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB0027735;
-	Thu,  5 Sep 2024 08:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1A01925A6;
+	Thu,  5 Sep 2024 08:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725524272; cv=none; b=TBIWN17IN7D8zSO707NK4keCwie+p/QJ/nR4Wy/mxLtTKMIMRP9Gayry2/dDcqWyR58R9eHze/5Rp1cohu5lDtjBnMYv9YHfK5El/+VpDn0dynJhE6WrW/XotEs9XekBpDe4KnOMULf3bl/3K8bduqpX7l7zAPmY39oXYqBUmyU=
+	t=1725524306; cv=none; b=s8ul5FRrQyKm2eLJ5LGfXOQ6FUPvgcc9bk6FV2YwRXXBWVNw4aVRoye34oe3sd6pRm5t6ycNk5Lo1Ib5EGzfZRH2anwn/043bqQnQKRsg8ZUxvWeyh/z/CuCXeqeibreJfjzJI5Lwq/YIyNcDt9sZ115gCk4tn5mJHg6m3PCAc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725524272; c=relaxed/simple;
-	bh=4BgpG7pyrHOCPPJY6stTA1hZpalX0Vyz6jSvDtEs21k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZvKXiNNuohBJzFNBh2oNHejf2rbo3n7NHxpmgqjbVCes4b+WInaQBDuxeSF1eRpwjN5s3qEvvKZQRwjSH9OS1EL2OVoDw3Ce5wkxwBMrSuKVn7t5a8urA5uCCQFxWNG2saYaHwIBDJbf/MUXJ6bYeIumxjglUSbA9mOrrg9goM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWyeyYtc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01043C4CEC6;
-	Thu,  5 Sep 2024 08:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725524272;
-	bh=4BgpG7pyrHOCPPJY6stTA1hZpalX0Vyz6jSvDtEs21k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WWyeyYtcPUUdm/2HfEdk3D8kxVLsWtQ/nWkjwM9J6Y/elUalWvhJ7Mp2OBGhQVQxN
-	 MpVZ3TSNFobeWrxwDPNgJ/a4uLzuh/G7762jrsVXNM/g3Xe1qicjmGnLyS+gBvJIsN
-	 PqJbIHV+HCpLAc782dyqiZEopKjxo3NuWAQpTAM5yvxQOiIUdZESIfgBYXpRBkasBp
-	 J96jA9wuYLcy8E7//xMlT6TUc7Iq2xcXaYZuG2w6wGOCpRQKlJ2SuvIyMiw9m6HSao
-	 u2+aDQfskgGQpLtOAf2hD3BeNeyb+nOwQQ51V3glA43pRPwDagbd7bmI0taw1UFBKl
-	 BaajngYl/5dCw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sm7gb-009rov-Fa;
-	Thu, 05 Sep 2024 09:17:49 +0100
-Date: Thu, 05 Sep 2024 09:17:49 +0100
-Message-ID: <86jzfqv7iq.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Tangnianyao <tangnianyao@huawei.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	<oliver.upton@linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>,
-	"guoyang (C)"
-	<guoyang2@huawei.com>
-Subject: Re: Question on get random long worse in VM than on host
-In-Reply-To: <bdf1471e-56aa-893c-0336-81828c8cb5c1@huawei.com>
-References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
-	<86zfotuoio.wl-maz@kernel.org>
-	<CAMj1kXGocnZPe4EfzsB6xd2QZacp-a45R5f5f6FDpVtVEXCcGQ@mail.gmail.com>
-	<86y14dun1f.wl-maz@kernel.org>
-	<CAMj1kXF3JrDs=xvRmvTxS9du1F-gjSVe5qVZrPO5JLT5ho0riA@mail.gmail.com>
-	<f39ccb21-cc28-b878-bf5e-e81e378a299e@huawei.com>
-	<CAMj1kXGyJSwD=ok=Ag11mMh3d6onQkN0b_-iVwVDdyrwk5rj6Q@mail.gmail.com>
-	<bdf1471e-56aa-893c-0336-81828c8cb5c1@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725524306; c=relaxed/simple;
+	bh=MxbG1NFAO2hA0Y81lnNJT1+jSGtQoe5Vz9VbrJuDz5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=klfIVnh783b8Getoq+PeutTX7+3z7AxTbAtvqcrWZjsXwIpeycZvA89xDKJ4Mp5pOm962dFDrtfHFIGgMTvi69h27g5/LJN/DEn7QIg7V52QqbeMWxHBMuad/jStWxBTgnGm/8sK35hUSl4DYdKLOnaeYeVBMUpZfe2oFcCLE8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RbWOCf0z; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725524306; x=1757060306;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MxbG1NFAO2hA0Y81lnNJT1+jSGtQoe5Vz9VbrJuDz5M=;
+  b=RbWOCf0zlHu9mzAfpffAKif9gEAVyE6l/sahEeqTtkWhXoad6SKvotzM
+   B1ay6NWX0uzkbqNwTYMsHzGdVSXRwRZ8183CLqVhqGMJU6ErMGwhhTke/
+   dq6XVzq4D1FR08hxywpqUEyV/P/F4vtsfMlj0V7FoVE8V4co2HNOvRM85
+   Ky1rRSyVEGXq0UV7PFC/gJ6bQjBks0J/6gFAGZ/4OdMX2iLDzYqHdGCqL
+   slpJUHtif6VdjDQyS5E5v9AQ+UXUPLEavW1PXCNcWaQMItecaWN1eocsl
+   K8mysfHbVAmUniJL4W9WOz8v+Bi/97JOUZjsO0gd7ZicW1/lGa0DfF0O5
+   g==;
+X-CSE-ConnectionGUID: yCpuFiYVRciI4kcF83NInA==
+X-CSE-MsgGUID: 2wY6n/g5QfeFcwBnOeUDxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24383584"
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="24383584"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 01:18:24 -0700
+X-CSE-ConnectionGUID: zUECY1JsTCytv0zNGU91zg==
+X-CSE-MsgGUID: 3BzHH7e7Syqb+WqtcOa6iA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
+   d="scan'208";a="65242627"
+Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Sep 2024 01:18:16 -0700
+Message-ID: <6cbdf44e-7346-4463-a622-7810706d5419@linux.intel.com>
+Date: Thu, 5 Sep 2024 11:18:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, ardb@kernel.org, will@kernel.org, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, guoyang2@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] i2c: designware: Group all DesignWare drivers
+ under a single option
+To: Andi Shyti <andi.shyti@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Dinh Nguyen <dinguyen@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou
+ <mengyuanlou@net-swift.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-riscv@lists.infradead.org, UNGLinuxDriver@microchip.com,
+ linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-snps-arc@lists.infradead.org
+References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
+ <3phynd24wmymhqugikbdwdzoa6vlzxwv5a6n6bk4446atbf7nu@c2kb766j3pcc>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <3phynd24wmymhqugikbdwdzoa6vlzxwv5a6n6bk4446atbf7nu@c2kb766j3pcc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 05 Sep 2024 04:12:42 +0100,
-Tangnianyao <tangnianyao@huawei.com> wrote:
+On 9/4/24 12:01 AM, Andi Shyti wrote:
+> Hi Jarkko, Andy,
 > 
-> 
-> 
-> On 9/3/2024 23:04, Ard Biesheuvel wrote:
-> > On Tue, 3 Sept 2024 at 03:39, Tangnianyao <tangnianyao@huawei.com> wrote:
-> >>
-> >>
-> >> On 9/3/2024 5:26, Ard Biesheuvel wrote:
-> >>> On Sat, 31 Aug 2024 at 10:14, Marc Zyngier <maz@kernel.org> wrote:
-> >>>> On Sat, 31 Aug 2024 08:56:23 +0100,
-> >>>> Ard Biesheuvel <ardb@kernel.org> wrote:
-> >>>>> As for RNDR/RNDRRS vs TRNG: the former is not a raw entropy source, it
-> >>>>> is a DRBG (or CSPRNG) which provides cryptographically secure random
-> >>>>> numbers whose security strength is limited by the size of the seed.
-> >>>>> TRNG does not have this limitation in principle, although non-p KVM
-> >>>>> happily seeds it from the kernel's entropy pool, which has the same
-> >>>>> limitation in practice.
-> >>>> Is that something we should address? I assume that this has an impact
-> >>>> on the quality of the provided random numbers?
-> >>>>
-> >>> To be honest, I personally find the distinction rather theoretical - I
-> >>> think it will be mostly the FIPS fetishists who may object to the
-> >>> seeding of a DRBG of security strength 'n' from the kernel entropy
-> >>> pool without proving that the sample has 'n' bits of entropy.
-> >>>
-> >>> For pKVM, the concern was that the untrusted host could observe and
-> >>> manipulate the entropy and therefore the protected guest's entropy
-> >>> source, which is why the hypervisor relays TRNG SMCCC calls directly
-> >>> to the secure firmware in that case. The quality of the entropy was
-> >>> never a concern here.
-> >>>
-> >>> .
-> >>>
-> >> Thank you for reply.
-> >>
-> >> In case that EL3 firmware not support SMCCC TRNG, host and guest can only
-> >> get randomness from DRBG-based RNDRRS, right?
-> >>
-> > There are other, non-architected ways too to get entropy and/or
-> > randomness. There are many hardware random number generator
-> > peripherals that the OS can drive directly, and there are vendor
-> > specific EL3 services too that a system might use.
-> >
-> > RNDR/RNDRRS does not exist yet in practical terms - there are very few
-> > SOCs that actually implement that used in the field.
-> >
-> >> In this case, guest get DRBG-based randomness via HVC and host, but the
-> >> randomness returned by host kvm is not really backed by EL3 SMCCC TRNG,
-> >> and actually get from DRBG-based RNDRRS.
-> >> Is this hvc process is redundancy?
-> >>
-> > I don't understand this question. How the host obtains its entropy
-> > and/or randomness and how the guest does it are completely separate
-> > concerns.
-> >
-> > .
-> >
-> 
-> Process is different between host and guest in arch/arm64, arch_get_random_seed_longs.
-> (1) In host , smccc_trng_available is false, it get randomness from RNDRRS.
-> 
-> (2) In guest, smccc_trng_available is true, because kvm emulate it. Guest use smccc trng
-> and hvc, and trap to host kvm. Then in host call stack:
-> kvm_smccc_call_handler
-> kvm_trng_call
-> kvm_trng_do_rnd
-> get_random_long
 > ...
-> arch_get_random_seed_longs
 > 
-> host get randomness as (1) and return random u64 to guest.
-> So the randomness guest finally get is from RNDRRS too.
-> Can we let guest get randomness directly from RNDRRS, not using hvc first?
-> The process for guest like (1):
-> 1) kvm not emulated smccc trng for guest
-> 2) guest check smccc trng, and get smccc_trng_available=false
-> 3) guest get randomness from RNDRRS
+>> Heikki Krogerus (7):
+>>    ARC: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
+>>    ARM: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
+>>    arm64: defconfig: enable I2C_DESIGNWARE_CORE with
+>>      I2C_DESIGNWARE_PLATFORM
+>>    mips: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
+>>    RISC-V: configs: enable I2C_DESIGNWARE_CORE with
+>>      I2C_DESIGNWARE_PLATFORM
+>>    net: txgbe: Fix I2C Kconfig dependencies
+>>    i2c: designware: Group all DesignWare drivers under a single option
+> 
+> I believe you know this code already, do you mind giving it an
+> ack?
+> 
+To the patches 1-7/7 in this set:
 
-I think I gave you the answer to this in my first reply [1].
-
-	M.
-
-[1] https://lore.kernel.org/all/86zfotuoio.wl-maz@kernel.org/
-
--- 
-Without deviation from the norm, progress is not possible.
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
