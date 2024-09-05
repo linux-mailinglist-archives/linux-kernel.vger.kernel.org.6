@@ -1,128 +1,113 @@
-Return-Path: <linux-kernel+bounces-317724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D024496E2C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:09:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EA696E2E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 21:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1651F214F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:09:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F7DB260EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 19:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E9318D627;
-	Thu,  5 Sep 2024 19:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C8918CC0A;
+	Thu,  5 Sep 2024 19:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNgLQUUg"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFDQ+Aev"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE37D188017;
-	Thu,  5 Sep 2024 19:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7718E18A6B0;
+	Thu,  5 Sep 2024 19:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725563337; cv=none; b=RKM3AB4sfDjfvY8vB0f+nJPQJMpkFGFR6iIhTeqTV5+xaY0xSk+HVp+ywJhThWb268O/zel5+PH+bHdq1Es6lQjXWdGoGKZAIn8cKWILe1UC0PVngpHW5tZDfY9fFfNsegGFJZ8R9ClGTaoWAiWpCWef5JebhQpXO03UdocpERA=
+	t=1725563466; cv=none; b=SVEx/++lyxKXXOjwCaO4BInyGIX9v1iwIh775Sf01VDlUuPF4Tyd2kVDGnw9Ocpb97OhPXRnjN32WHGRzCwiYsD0ZfGnpBaLBeLuLbsyo9B8oBJG9kaVOqpWXsVRncDz51U2piYI+eEWauDjD7qmu87/Ze8Bpj9wLzkVmqL5bpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725563337; c=relaxed/simple;
-	bh=q1Fy017CFb6Bbpx7ghXm1lRoJCLBeFToPzSL430Hgh4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EmHUEV2c6IkMQB+ks3lkbC/GAntVcd0L95N6LbbDgj+8GpmtS02QV5Qks0FzUVGnfl8MrfPjQH6iDpL5LDD046ggmPxcQ5XReXF1nIi85B2V1RXxclxCcUhC9Rkd43/Q6vKcSGu1Df7p08e2A1nU/VrrZ5aOq2v7V+3M0w0goDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNgLQUUg; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71798a15ce5so433411b3a.0;
-        Thu, 05 Sep 2024 12:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725563335; x=1726168135; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ktRJzR4qJmV7Uc7ETcluo4W/n/wNjkmgtnZv3eXOJQY=;
-        b=BNgLQUUgMykdAH+yHdY22gyRgVRhpHvZzsCpd33J3ktZGne5H+tqkN1wlCBfCzlyyj
-         +BGzx2Ed6waxNLa+wYAUiqlElX8pc48V6c7xsjbdVe/C6KHhQY3jQDGcy3vrZUq63bEq
-         MfIwnSMDwejeGHXS/rqMqo97R2ldAlBpBsaBDeXG+UaoVpP/ISu0F5qGNJiwBw3jS2gO
-         nOatRncG96Kkt8iB93JsMMqWHpAfZ2a+w0RDD96uYUgJslPE6Q+b1fJCaxZ+BGT5BzGv
-         bYwSRDFG6VxLbz5e8YFbXKuG9vyTtP161NaFQrQrMuOL52c5v6ISefSz37kpK/7bts6F
-         wcSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725563335; x=1726168135;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ktRJzR4qJmV7Uc7ETcluo4W/n/wNjkmgtnZv3eXOJQY=;
-        b=oua8XunWQlN1FOgvtdcvUjuSEDmctK1WgyU7hrDftD6U7eP86AjEVdZOEknims1YhJ
-         vdWcSTD+IwMvdTT/JG5x98qxS1mlDG8nTBE8Q3NEwLnM3hsjeZrBflk/PMgz6QTyoVzy
-         R3wL7lBrN+mSu7MD6F/4Ac/bT5L7iIs3oThIMgJ6c3Dv0babFSEYekvzJvDMMbERMHxq
-         CtSrebc2Cb1Zoop2ANTQQ7gsrHALaF5lIfmm8kENXfEu6t9nXbdKUeACFE51L/HQahgR
-         yMKDhoMI6pxMDMBHqCLcJkGu0gAqmp0qKhV/EB+1lYGTUmssmfozS40PYhQ8YAq3UeLe
-         P8KA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiw7vM/Lh5XZ84/BONuQmrybM1UO5eml6r9EyCrE+IM9D9K1lPegEv8jZpXqE/c3G+0Q4ShIYL+ZNGfDDf@vger.kernel.org, AJvYcCUpvil8UdS1IWJXvNUCt3cSc6OlkRbt2gUlBNB1gtIc2KqSXEERLnr/mIAAqu7cfBa3HQM=@vger.kernel.org, AJvYcCVjNARCdcNAQCojYYsSwqbuqy28d0U8B12vXQ2TlSnoH8Ys8R7wJesc3ep9V7mHBr+7xpHUETJN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVt7HS0NAbMoUXbPEjZjkOUqpIyDBIYcEt4eLxjVXwHwEE+5Mm
-	+y19ls+nYkL2ohEg4cEFZ/297G/n0b9rc4734exyTgWbveAqGw+5
-X-Google-Smtp-Source: AGHT+IEK2QM0fU2Xp+jErQWrjhElHAJPMpe2WJ+fM2XLXEzFeC3RWFMokRzrCOQpIrJAmH10hvhRcQ==
-X-Received: by 2002:a05:6a20:b096:b0:1c0:f114:100c with SMTP id adf61e73a8af0-1cf1c1090d2mr404005637.17.1725563334805;
-        Thu, 05 Sep 2024 12:08:54 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71797f6f668sm584658b3a.47.2024.09.05.12.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 12:08:54 -0700 (PDT)
-Message-ID: <2911a33d8c9f408cc8d5863c54ea0ad1eba5de38.camel@gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: use type_may_be_null() helper for
- nullable-param check
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, bpf@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,  Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Vernet
- <void@manifault.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-  kernel test robot <lkp@intel.com>
-Date: Thu, 05 Sep 2024 12:08:49 -0700
-In-Reply-To: <20240905055233.70203-1-shung-hsi.yu@suse.com>
-References: <20240905055233.70203-1-shung-hsi.yu@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725563466; c=relaxed/simple;
+	bh=a+2l3lUJXsVo9C6MHsAUuRf8wIiXOv+aWoA+7tw5gHs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OHnmE1u4Ysh6XGuvtrTnlbUYHivUYg1WM+wxYD/6C9QPuhD2h8Ie40jHU1PiiMt/23vt7tiPtbsFDsqbmLipWy+gtmG1BU0gRtGdcFdt32TdK5hO0c/zfIOJ1I+mTMGoCLfy6d/uOjT3aA7arj7T7PYoYfW9smBiiGNevEww/x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFDQ+Aev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9152DC4CEC3;
+	Thu,  5 Sep 2024 19:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725563466;
+	bh=a+2l3lUJXsVo9C6MHsAUuRf8wIiXOv+aWoA+7tw5gHs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BFDQ+Aevsz0K7BTHQ6JbJLC5GHetlcJxA7JEcZdPBzG7oqn29PrB7N1j5AXqPf0vr
+	 sKYREc99tBsQMl+erfVtIWyN16G3UxeloA4GZx24d/4jndRwfw6uvearDUdIwfT4F/
+	 DslnihxyUGBUnXXKY5UQp2EK19TMt9F/SfTUXtUWxmULT1RIfilWrlhiunefu0C+7L
+	 0tOPHUo4/fFhCXUKcGEELrIitMua4SwI2s0+zbrh9IqiuRf4aPFN8/8ffS+PsojuJJ
+	 dnsEYEAcILwHSl5so07LdgRf3gprI7aNqrJuTpAt/7OJbV7b0mQ9FRBqkatNP/AyuO
+	 LDxa4fTtcudzQ==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 05 Sep 2024 12:10:56 -0700
+Subject: [PATCH] KVM: x86: Avoid clang -Wimplicit-fallthrough in
+ kvm_vm_ioctl_check_extension()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240905-kvm-x86-avoid-clang-implicit-fallthrough-v1-1-f2e785f1aa45@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAD8C2mYC/x2NzQqDMBAGX0X23IUYf7B9leIhxNV8NBpJbBDEd
+ 2/ocWCYuShJhCR6VRdFyUgIW4H6UZF1ZluEMRUmrXSrnqrjT175HHo2OWBi64vDWHcPi4Nn4/3
+ hYvgujnvdDtIY2zW6ppLbo8w4/6v3eN8/SJLeknoAAAA=
+To: Sean Christopherson <seanjc@google.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: Tom Dohrmann <erbse.13@gmx.de>, kvm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, patches@lists.linux.dev, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1350; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=a+2l3lUJXsVo9C6MHsAUuRf8wIiXOv+aWoA+7tw5gHs=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGm3mDw72FxMTS58WrLP4attWd16I94jh++8/Zpvbf6Xx
+ T3vbmNrRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAZjIrzyGf2rad9gux4Wo9W7s
+ CVk+NfJ7zJRztxMNi3c63phwpGtXVwYjw9uyWT8Zcjn12U4Gf5plqMJ41tL4TFjshQK1qkuXS0X
+ 6WAA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Thu, 2024-09-05 at 13:52 +0800, Shung-Hsi Yu wrote:
-> Commit 980ca8ceeae6 ("bpf: check bpf_dummy_struct_ops program params for
-> test runs") does bitwise AND between reg_type and PTR_MAYBE_NULL, which
-> is correct, but due to type difference the compiler complains:
->=20
->   net/bpf/bpf_dummy_struct_ops.c:118:31: warning: bitwise operation betwe=
-en different enumeration types ('const enum bpf_reg_type' and 'enum bpf_typ=
-e_flag') [-Wenum-enum-conversion]
->     118 |                 if (info && (info->reg_type & PTR_MAYBE_NULL))
->         |                              ~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~
->=20
-> Workaround the warning by moving the type_may_be_null() helper from
-> verifier.c into bpf_verifier.h, and reuse it here to check whether param
-> is nullable.
->=20
-> Fixes: 980ca8ceeae6 ("bpf: check bpf_dummy_struct_ops program params for =
-test runs")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202404241956.HEiRYwWq-lkp@i=
-ntel.com/
-> Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-> ---
+Clang warns (or errors with CONFIG_WERROR):
 
-Thank you for this fix.
-Replacing other uses of PTR_MAYBE_NULL suggested by Matt seems like a
-good idea, but it does not preclude merge for this patch.
+  arch/x86/kvm/x86.c:4819:2: error: unannotated fall-through between switch labels [-Werror,-Wimplicit-fallthrough]
+   4819 |         default:
+        |         ^
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Clang is a little more pedantic than GCC, which does not warn when
+falling through to a case that is just break or return. Clang's version
+is more in line with the kernel's own stance in deprecated.rst, which
+states that all switch/case blocks must end in either break,
+fallthrough, continue, goto, or return. Add the missing break to silence
+the warning.
 
-[...]
+Fixes: d30d9ee94cc0 ("KVM: x86: Only advertise KVM_CAP_READONLY_MEM when supported by VM")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ arch/x86/kvm/x86.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0f801804150e..c983c8e434b8 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4816,6 +4816,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		break;
+ 	case KVM_CAP_READONLY_MEM:
+ 		r = kvm ? kvm_arch_has_readonly_mem(kvm) : 1;
++		break;
+ 	default:
+ 		break;
+ 	}
+
+---
+base-commit: 59cbd4eea48fdbc68fc17a29ad71188fea74b28b
+change-id: 20240905-kvm-x86-avoid-clang-implicit-fallthrough-6248e3ac5321
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
 
