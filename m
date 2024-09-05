@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-316590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-316591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC8496D198
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:15:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A6F96D199
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 10:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01741F29D1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AABE1F29F42
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2024 08:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE221991CE;
-	Thu,  5 Sep 2024 08:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D24199231;
+	Thu,  5 Sep 2024 08:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FzrxKmaY"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yto2ZNSi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3F5194C91
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2024 08:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2D3198A2A;
+	Thu,  5 Sep 2024 08:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725523857; cv=none; b=bz+lyb6olRJt3qnA5KL7vhY0kH++/IlalCsxrvJDn6M1Xmisj0JWOEkxDRRmhbboNB9KT8WFM2puuexrlnA2IhQFFjmqH0X0gOBfZAEevxPhouqg4cF7rZ9gh1p7VK8vbzMDJFmbg97J89QSsrd5snnvaR8BD2vZcLT0k3qdV/Q=
+	t=1725523875; cv=none; b=WzgqS9czp+/DOP0cDt9No9q3HvK2wkD9mkggLcQWLL6SwmVsEu5rmdsL1B1lexEjkZWPN1yuL7UnVoB6+/MOKjxvR0xrnSbjzKYVSJLcWa5W+3bWrDIhHH1L74ZQ6RfkFSud11f+ECxEXD3MiegUnMUHOAPXePiIq43Du6obTBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725523857; c=relaxed/simple;
-	bh=qvUtuea05V6qpDBt2oe0KDZfHbwdwIfCyNjizCTTsKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bPoxVgcPCbfNjkVYsPSlQ0mkZmPWLDmT2UxkXRp2nZlCDX4/tK95mB8K0pjM3ZKU4u1bYTOZ+5PGSAt7uSk1S26f2k5tmg3Y65Nn+D+pbzsl4ANrpPUg5imXhIQAuzNABILfpaYUIwv2YqwHjJCIORFxAWuWKailx4RQkeQSdEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FzrxKmaY; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374d29ad870so252479f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 01:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725523854; x=1726128654; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qvUtuea05V6qpDBt2oe0KDZfHbwdwIfCyNjizCTTsKY=;
-        b=FzrxKmaYMiAHn+Rw53wgwnU7lcKWLB4oX9uvZkxITWgXlj+AOgMdjo0FeLDC2X2ikq
-         hDRHOJP6h1wD4U9xJZjr29hY7ueebULxmCMuXSIF9pnDzn+jJAgjOB4qONzDYQSzpkPK
-         F0vjnqIc3kdjn+7bh5ef/stEvuMtecQCrblYZr9l9JS5rY6fjR3H0WeoWV8kfFvSZAHB
-         aigIuYfYedAEByGlN8xgLsfxKCEcUnXPdppNMXOFLYSf402hu9rK2i0esn9wAAo9s0US
-         W0WQWYIEegiUKRyGkBPtwH9tuo4XzLX2GuKjrQvLym6uH0QANvHHUYtHj6yDeV7HL7ZB
-         fWTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725523854; x=1726128654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qvUtuea05V6qpDBt2oe0KDZfHbwdwIfCyNjizCTTsKY=;
-        b=NGs8qgMC2i6q8fPiVZWPYcTXZtXVRPHUuUahCKmDH6MMV2PaKD05SxL4YVv7e++9ib
-         ABdt7zjJjqzdHVM7EDKJgPL6VzjXrISEL27hhaJ1dsnkDPD3aVb3nEVcNKcBzFjPoOP5
-         w/iPyB4kwtMDsmPyrAS46zIC54hlBXAtSGqC9Pj2i70jmPZAzCGQNTxXV4Q8rXg0s+wH
-         kKF/hT9CM46UOb1e4LIb+60G8tj4LxNtElN8k34qYUElI/3iTV+lRU05R6k350+5gTCc
-         9I8BCB/C/ZezvCzU8DsxAo2XlPSYZcv3D6wPKwv93s7zhToX40pOzapf4fyclWjfIUC8
-         po1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0kdEdfXHkxK//6SDTIZw2ac7PNKzNYMRXFd2dQOTxN5SkrjlWtO3tKsJ/D0+T75gqqxa2TzSuw6TVJuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm64o2k3bUw4BPGW2Gm669OtjYu+pfngLvZQvPh396NRBDoPpe
-	npcXyWmm+i2QqpNmlOJBfzwkk1eTTy8irrQmFSTzBaHOcFTcGK25hnKdI6k5PmRoPvgMIcsGvb+
-	/wmyZcAjnstxLu1cn5RB1hJ6e/cdyRRBLmFXs
-X-Google-Smtp-Source: AGHT+IGfQnv/7eMNeNLrFaPjeyN14SUVsxlIgWd7D4uZKrPENQ9PlDRsjJlnUzvNYsFrUT1h9gvgun7V/HGRHxTT+m8=
-X-Received: by 2002:a05:6000:178d:b0:374:af19:7992 with SMTP id
- ffacd0b85a97d-374bef397c9mr14232382f8f.7.1725523853771; Thu, 05 Sep 2024
- 01:10:53 -0700 (PDT)
+	s=arc-20240116; t=1725523875; c=relaxed/simple;
+	bh=eUD04zlafn+wiXqeYlufuTdlxuxhQPQinUvJdRHnqy0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qLYYqQC0Um8SmIXDyQb3n5swLiFoCYKDFCMTKln4ZnJ68tXmTh0PulvKqsY5wjVrszd1I09ZgBfmDNDfi/063beTLkKZDvhQze6a8XHNV+8+K2pwilwJhwWeFHOPDI/f6WKgWNmbxdn8svLZzU9+ik7MTnOLbY4KnwfwXsYF5mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yto2ZNSi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824FBC4CEC4;
+	Thu,  5 Sep 2024 08:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725523874;
+	bh=eUD04zlafn+wiXqeYlufuTdlxuxhQPQinUvJdRHnqy0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yto2ZNSiJbYgqNuZgAF8BVoVKlFLn3SWpT+2IdwIHG10gmH6rRxOGOuaBuFoLsKQy
+	 EiQghyh9NOAHk52FjbzPgUzXdj24+OFD+CW916ZIvzs/8VFrSlivW2e3qycekYeIvK
+	 EjiptqE66af0nt322Gd978d2WHAPl36ZZPoVFP6THed3CRxPFnS6+XYt0rY5QhgPSl
+	 2jR+ENyHGjFn4N4D4dF003yLHrav7DcMhKJqOHTVErWv/S2hVyuXE5Igu5FJ5UJtgG
+	 MeoN2gS4Htj26o5FkszjqwycGI5gHpHBKlHv4yLAvLUFvzpS1d9/wzBeUq/GQ1ULnR
+	 lGnSccPjqXsWA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sm7aB-009rdr-Jj;
+	Thu, 05 Sep 2024 09:11:11 +0100
+Date: Thu, 05 Sep 2024 09:11:11 +0100
+Message-ID: <86mskmv7ts.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: qixiang.xu@outlook.com
+Cc: oliver.upton@linux.dev,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] KVM: arm64: Make nVHE ASLR conditional on nokaslr
+In-Reply-To: <SEZPR04MB631983048A8586896CEFE8829E9D2@SEZPR04MB6319.apcprd04.prod.outlook.com>
+References: <20240905061659.3410362-1-qixiang.xu@outlook.com>
+	<20240905063026.3411766-1-qixiang.xu@outlook.com>
+	<SEZPR04MB631983048A8586896CEFE8829E9D2@SEZPR04MB6319.apcprd04.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-11-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-11-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 5 Sep 2024 10:10:40 +0200
-Message-ID: <CAH5fLgjwzGhrQ3xCV+VkdUmOG0ffpRhss-Lici0YoHk2ax=zXw@mail.gmail.com>
-Subject: Re: [PATCH 10/19] rust: sync: remove unneeded `#[allow(clippy::non_send_fields_in_send_ty)]`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qixiang.xu@outlook.com, oliver.upton@linux.dev, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Sep 4, 2024 at 10:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Rust 1.58.0 (before Rust was merged into the kernel) made Clippy's
-> `non_send_fields_in_send_ty` lint part of the `suspicious` lint group for
-> a brief window of time [1] until the minor version 1.58.1 got released
-> a week after, where the lint was moved back to `nursery`.
->
-> By that time, we had already upgraded to that Rust version, and thus we
-> had `allow`ed the lint here for `CondVar`.
->
-> Nowadays, Clippy's `non_send_fields_in_send_ty` would still trigger here
-> if it were enabled.
->
-> Moreover, if enabled, `Lock<T, B>` and `Task` would also require an
-> `allow`. Therefore, it does not seem like someone is actually enabling it
-> (in, e.g., a custom flags build).
->
-> Finally, the lint does not appear to have had major improvements since
-> then [2].
->
-> Thus remove the `allow` since it is unneeded.
->
-> Link: https://github.com/rust-lang/rust/blob/master/RELEASES.md#version-1=
-581-2022-01-20 [1]
-> Link: https://github.com/rust-lang/rust-clippy/issues/8045 [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On Thu, 05 Sep 2024 07:30:26 +0100,
+qixiang.xu@outlook.com wrote:
+> 
+> From: Qxiang Xu <qixiang.xu@outlook.com>
+> 
+> The random tag of hyp VA is determined by the `CONFIG_RANDOMIZE_BASE`
+> option, so even if `nokaslr` is set in the cmdline, KASLR cannot be
+> disabled for hyp VA. To align with kernel behavior, disable KASLR if
+> the kernel cmdline includes `nokaslr`.
+> 
+> Link: https://lore.kernel.org/r/20240905061659.3410362-1-qixiang.xu@outlook.com
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+I get a 404.
+
+> Signed-off-by: Qxiang Xu <qixiang.xu@outlook.com>
+> ---
+>  arch/arm64/kvm/va_layout.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/va_layout.c b/arch/arm64/kvm/va_layout.c
+> index 91b22a014610..bebb4b1ddc82 100644
+> --- a/arch/arm64/kvm/va_layout.c
+> +++ b/arch/arm64/kvm/va_layout.c
+> @@ -72,7 +72,7 @@ __init void kvm_compute_layout(void)
+>  	va_mask = GENMASK_ULL(tag_lsb - 1, 0);
+>  	tag_val = hyp_va_msb;
+>  
+> -	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && tag_lsb != (vabits_actual - 1)) {
+> +	if (kaslr_enabled() && tag_lsb != (vabits_actual - 1)) {
+>  		/* We have some free bits to insert a random tag. */
+>  		tag_val |= get_random_long() & GENMASK_ULL(vabits_actual - 2, tag_lsb);
+>  	}
+
+This is a change in behaviour that would leave the 2 implementations
+affected by Spectre-v3a unmitigated and leaking information to
+*guests*, while they would have been safe until this change. Is this
+what we really want to do?
+
+This is also not disabling the whole thing, since we still do the
+indirect vector dance.
+
+So while I'm not opposed to having an option that disables the
+randomisation, it has to match two requirements:
+
+- it has to be a *new* option -- changing an existing behaviour is not
+  acceptable,
+
+- it has to disable both the VA alteration and the vector indirection.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
