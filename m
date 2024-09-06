@@ -1,76 +1,63 @@
-Return-Path: <linux-kernel+bounces-318107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08D596E86A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C3896E865
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E34D285796
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D1C1F24A94
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130474174C;
-	Fri,  6 Sep 2024 03:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193542AB5;
+	Fri,  6 Sep 2024 03:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lutN4P2F"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="g4scRZWa"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7722E822
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 03:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21F738DE0;
+	Fri,  6 Sep 2024 03:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725594671; cv=none; b=LIhq38A5zARlT6fp3otwURfGNbMvwk3FoMkMdfLe+NRNt5/U4Ko1fzWJLbZjHj/Zcinq7AvAbAnW2+MYinVD1JU5wVk9pc/3wUXs0iNVb0DD1XG0eHF5ACVDN2uD0ZgIjZzDAFd//n7IdTIKgPKMhlvMOmHl6tBjv494Zv612Qg=
+	t=1725594428; cv=none; b=kFsEBNW94Qv5d7g9hA72mIk9KRFsjBYZBtVBgjl7/wqiQo0w67tY2HOc9X0HlTQocCYtdA6ufKClWVQSTbJ+asYgzSk4AkuBGJu8rz/bg5EouwPDTB/maJsYWpvWINwziNmggxGk/Qb8qRlWROJ7RZJMF1TDc6PeGktNIavJJfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725594671; c=relaxed/simple;
-	bh=+l/PCGk2Tso9ruIPDtTprkBjfTvhfvDJKqYg2TwvZ9g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m68ZfYkIT8rTh86PqdgDnMYMcdLxe5cKW9aq1tnqjRfa9vPR3FkgjMV2kt9xxvauT6z0qhyQOgweGM2on37RMJHP5/m/KKq/93xTqpPbzDh+YpmhS/Xltdj5jcOs7a5T5OR86mmHm1OCyIyiqQZ+hzfsKbT22htZvcYj9Ia978Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lutN4P2F; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5dc93fa5639so1002631eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 20:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725594669; x=1726199469; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iAqeypQfhkuhTUZIBtelAtfJusBm2y6UIbBZ4nA8cGs=;
-        b=lutN4P2Fhv8cPcaVh9fs7HZmbTQJDuFV9oQ+j9W2ayisEIjaltS8OPhmDYtr+A0Gen
-         2pHO994QTDHbLGQe4byb88sPM3PraQr00y7iRZXGDk74Ay2ggWy9FscwjJERGuvntS8e
-         BcBmPt4edqSmyZCPYD7DQuT/zc3lna1+VWR4s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725594669; x=1726199469;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iAqeypQfhkuhTUZIBtelAtfJusBm2y6UIbBZ4nA8cGs=;
-        b=u4kr0o4vID1TcN5akJ0jR5mnHv4hehNryCRShvjV2GpEK9R1YZYkE5yrT9dWd5gnYn
-         ic/j7cldABtdN/W34+2fljZm7DwQ4jDOooWqxC53RKuuxlSl1sGqWG5jLnQrvH8BlMbR
-         ILj/qqBVUT2zlUDcJfaMLDTR0TlTHWQLds+r9kgPybEcxbd8zKMJF3v1iUuklbNwVt8S
-         u91d7wU7XbWIkEDF9HGzwq/uMthI58ZfLyzgJbn2XjE2wQ6frwniNYNTWMtg/R0gikbV
-         ElGBaqTqvDd7deTTM01Ul9NXll72b4tyyK9ftXPcoUSG4cfHr3eU5q8wPakuizJSaoIN
-         PMTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvIxRIiGK92H0l/Mf6m2vaQba4kuFO79L/ADxx2XwfjU9naMXIO+TCDN1IwbII0WCgaTCoFjS1J8u0pi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoQ3uKrLI39Bnniwm01PlfLZtFZbIe7KOdT6yPxgWGLeK6zxmG
-	oTrmEYdp5CG9GtouCLglf3NlsQxjjTZkKGyQF4QnMi1Q3lcxVIZC+z63BjoY3A==
-X-Google-Smtp-Source: AGHT+IGxujtVNLgTvAFObL24ByIGxrPw1YyqA9moK76Vv3qCoroKoAFrwI5Oaw6ioAAzZdAb1HxuHg==
-X-Received: by 2002:a05:6870:1697:b0:277:f722:45e1 with SMTP id 586e51a60fabf-27b82e5d645mr1631172fac.17.1725594668906;
-        Thu, 05 Sep 2024 20:51:08 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:734f:d85:4585:b52d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718db3b043bsm60307b3a.101.2024.09.05.20.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 20:51:08 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Minchan Kim <minchan@kernel.org>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1725594428; c=relaxed/simple;
+	bh=gvY8AH4a88MP1lz2m4OgJjyz6KDbapZwsTzDMYuixg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y4GdmUNcsb088/Jh1HeBQm2FWdl9N4d8P9DPLY6i1HJ+1yJNzTWGFePtj6Gl8CFYsJQmnm7fk8EI3oY9lzpYHTZFq0Ubwi8CCVRGUfeDXJHW4GD+IRXZQSoxPZq6JV1KvKPc0cYi1kWhzA3E6P6ePf3yIBoqrfIBmf4SqsAGgSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=g4scRZWa; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1725594380;
+	bh=BHo9Isz2T8wnA4FQQqg3YttItu9Af8Lpgwwo2oZ48CY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=g4scRZWawW7IHe+xqpM2KulTnkm2i6wNfOONB8yF/RRu+hB5EpNcQE61RKRzOT/Ta
+	 6U4aZpzfsQ79BkUnFAgwHA1erZE/MptI5PgJCEntC09KH3VLyMdpGcSp6hn6tzn4CG
+	 Hl0We5VnzWnMExj165JhpxEG5tJFxD6RaVnfxpbg=
+X-QQ-mid: bizesmtp90t1725594372tauikl58
+X-QQ-Originating-IP: +xTdcMwz1y4V1nr4HP4Mev0zaP4TBymkPMdR552yAxM=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 06 Sep 2024 11:46:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 2951222773783350106
+From: WangYuli <wangyuli@uniontech.com>
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	tsbogend@alpha.franken.de
+Cc: linux-crypto@vger.kernel.org,
+	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv2] zsmalloc: use unique zsmalloc caches names
-Date: Fri,  6 Sep 2024 12:45:44 +0900
-Message-ID: <20240906035103.2435557-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+	WangYuli <wangyuli@uniontech.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Guan Wentao <guanwentao@uniontech.com>
+Subject: [RESEND. PATCH v2] MIPS: crypto: Clean up useless assignment operations
+Date: Fri,  6 Sep 2024 11:46:05 +0800
+Message-ID: <AB62DAB2DB1B854E+20240906034605.359512-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,99 +65,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Each zsmalloc pool maintains several named kmem-caches for
-zs_handle-s and  zspage-s.  On a system with multiple zsmalloc
-pools and CONFIG_DEBUG_VM this triggers kmem_cache_sanity_check():
+When entering the "len & sizeof(u32)" branch, len must be less than 8.
+So after one operation, len must be less than 4.
+At this time, "len -= sizeof(u32)" is not necessary for 64-bit CPUs.
 
-  kmem_cache of name 'zspage' already exists
-  WARNING: at mm/slab_common.c:108 do_kmem_cache_create_usercopy+0xb5/0x310
-  ...
+After that, replace `while' loops with equivalent `for' to make the
+code structure a little bit better by the way.
 
-  kmem_cache of name 'zs_handle' already exists
-  WARNING: at mm/slab_common.c:108 do_kmem_cache_create_usercopy+0xb5/0x310
-  ...
-
-We provide zram device name when init its zsmalloc pool, so we can
-use that same name for zsmalloc caches and, hence, create unique
-names that can easily be linked to zram device that has created
-them.
-
-So instead of having this
-
-cat /proc/slabinfo
-slabinfo - version: 2.1
-zspage                46     46    ...
-zs_handle            128    128    ...
-zspage             34270  34270    ...
-zs_handle          34816  34816    ...
-zspage                 0      0    ...
-zs_handle              0      0    ...
-
-We now have this
-
-cat /proc/slabinfo
-slabinfo - version: 2.1
-zspage-zram2          46     46    ...
-zs_handle-zram2      128    128    ...
-zspage-zram0       34270  34270    ...
-zs_handle-zram0    34816  34816    ...
-zspage-zram1           0      0    ...
-zs_handle-zram1        0      0    ...
-
-Fixes: 2e40e163a25a ("zsmalloc: decouple handle and object")
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2406281713040.43454@angie.orcam.me.uk/
+Signed-off-by: Guan Wentao <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- mm/zsmalloc.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ arch/mips/crypto/crc32-mips.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 73a3ec5b21ad..16a07def09c9 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -54,6 +54,7 @@
- #include <linux/vmalloc.h>
- #include <linux/preempt.h>
- #include <linux/spinlock.h>
-+#include <linux/sprintf.h>
- #include <linux/shrinker.h>
- #include <linux/types.h>
- #include <linux/debugfs.h>
-@@ -293,17 +294,27 @@ static void SetZsPageMovable(struct zs_pool *pool, struct zspage *zspage) {}
- 
- static int create_cache(struct zs_pool *pool)
+diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
+index ec6d58008f8e..3a80b7576ec3 100644
+--- a/arch/mips/crypto/crc32-mips.c
++++ b/arch/mips/crypto/crc32-mips.c
+@@ -77,36 +77,29 @@ static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
  {
--	pool->handle_cachep = kmem_cache_create("zs_handle", ZS_HANDLE_SIZE,
--					0, 0, NULL);
-+	char *name;
-+
-+	name = kasprintf(GFP_KERNEL, "zs_handle-%s", pool->name);
-+	if (!name)
-+		return -ENOMEM;
-+	pool->handle_cachep = kmem_cache_create(name, ZS_HANDLE_SIZE,
-+						0, 0, NULL);
-+	kfree(name);
- 	if (!pool->handle_cachep)
--		return 1;
-+		return -EINVAL;
+ 	u32 crc = crc_;
  
--	pool->zspage_cachep = kmem_cache_create("zspage", sizeof(struct zspage),
--					0, 0, NULL);
-+	name = kasprintf(GFP_KERNEL, "zspage-%s", pool->name);
-+	if (!name)
-+		return -ENOMEM;
-+	pool->zspage_cachep = kmem_cache_create(name, sizeof(struct zspage),
-+						0, 0, NULL);
-+	kfree(name);
- 	if (!pool->zspage_cachep) {
- 		kmem_cache_destroy(pool->handle_cachep);
- 		pool->handle_cachep = NULL;
--		return 1;
-+		return -EINVAL;
+-#ifdef CONFIG_64BIT
+-	while (len >= sizeof(u64)) {
++#if IS_ENABLED(CONFIG_64BIT)
++	for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+ 		u64 value = get_unaligned_le64(p);
+-
+ 		CRC32(crc, value, d);
+-		p += sizeof(u64);
+-		len -= sizeof(u64);
  	}
  
- 	return 0;
+ 	if (len & sizeof(u32)) {
+ #else /* !CONFIG_64BIT */
+-	while (len >= sizeof(u32)) {
++	for (; len >= sizeof(u32); len -= sizeof(u32)) {
+ #endif
+ 		u32 value = get_unaligned_le32(p);
+-
+ 		CRC32(crc, value, w);
+ 		p += sizeof(u32);
+-		len -= sizeof(u32);
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
+ 		u16 value = get_unaligned_le16(p);
+-
+ 		CRC32(crc, value, h);
+ 		p += sizeof(u16);
+ 	}
+ 
+ 	if (len & sizeof(u8)) {
+ 		u8 value = *p++;
+-
+ 		CRC32(crc, value, b);
+ 	}
+ 
+@@ -117,38 +110,32 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+ {
+ 	u32 crc = crc_;
+ 
+-#ifdef CONFIG_64BIT
+-	while (len >= sizeof(u64)) {
++#if IS_ENABLED(CONFIG_64BIT)
++	for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+ 		u64 value = get_unaligned_le64(p);
+-
+ 		CRC32C(crc, value, d);
+-		p += sizeof(u64);
+-		len -= sizeof(u64);
+ 	}
+ 
+ 	if (len & sizeof(u32)) {
+ #else /* !CONFIG_64BIT */
+-	while (len >= sizeof(u32)) {
++	for (; len >= sizeof(u32); len -= sizeof(u32)) {
+ #endif
+ 		u32 value = get_unaligned_le32(p);
+-
+ 		CRC32C(crc, value, w);
+ 		p += sizeof(u32);
+-		len -= sizeof(u32);
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
+ 		u16 value = get_unaligned_le16(p);
+-
+ 		CRC32C(crc, value, h);
+ 		p += sizeof(u16);
+ 	}
+ 
+ 	if (len & sizeof(u8)) {
+ 		u8 value = *p++;
+-
+ 		CRC32C(crc, value, b);
+ 	}
++
+ 	return crc;
+ }
+ 
 -- 
-2.46.0.469.g59c65b2a67-goog
+2.43.4
 
 
