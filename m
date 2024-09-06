@@ -1,182 +1,218 @@
-Return-Path: <linux-kernel+bounces-319425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36DA96FC77
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:59:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BD996FC7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48ABAB26658
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B93D284E2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07191D5CFD;
-	Fri,  6 Sep 2024 19:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5305A1D45F3;
+	Fri,  6 Sep 2024 20:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RIzC9UgD"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="Ud0GCsTa"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2114.outbound.protection.outlook.com [40.107.21.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5622113C9A6
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725652773; cv=none; b=REXZdTpOv925MW/pzeQtgrUzWGwN07VifFni+HG94g+EuB7JSV0WEP9XrupzIOjzEEbFZq8TMsAy0uvsplOhglzSUSgixSKOMTNXZpfcS06k9mwjk8zkplggekSgJJ5k9RdTH0khPsXtrA7CgkkC7WR9a1w3AKxGmtmzT06gwwg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725652773; c=relaxed/simple;
-	bh=zSzs9XF+x/1KkoRiNGi5kV1jCEh/iJ2kEJcFjq7VkbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d96DY6RkL6w0wE2UDRAssM+yABZCE/NFjJ9PIfB9aJZoLTmrcqF59QKgIZUlROHfOMces22+5J3FmWcaiL3G5k6LkeEs5qFgGJl8UXaey6rImQf2mJ/VQngheSNPkmJUEENCll5ZhsuyjeHc5U4fPjVl4XN6quNbpXpcX9E9Mt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RIzC9UgD; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71798a15ce5so1405400b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 12:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725652770; x=1726257570; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yJtGxt1Yxmajuv7Da4bpt3HLYkbYaQ0buhDsfmlEWxo=;
-        b=RIzC9UgDI/i1PlMjn622dB5CP8YpUNn+SXd+rdUQNE1rA9+FPuq9GwTWMApIRDX13X
-         p0e2Y0FptcfSaOi4YxUW28bXscbZUosz4kZXQQvvf4Whmaz5DZLN0AW55dl0rZDTwsY4
-         VIB3DLguzhH9F6Fq/8ZK3AR2qrKPdnaQuO4SE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725652770; x=1726257570;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJtGxt1Yxmajuv7Da4bpt3HLYkbYaQ0buhDsfmlEWxo=;
-        b=S9OBi+qEUlN1ldeG85lzRBAlseTd1fCcXaIy39i6Pa2e47e2jRjm1AOFtOC4draeoQ
-         dpRqcJEXrobsX2G6wvTXPINdYC1hI8gY/tTrNZiQjhakmQAKM/io1dCntCFvAXKuJpCu
-         tDQsEjjwwW8brek4zKu2staYU362BYdH3ZgF1JwLuaeNtqHEMyNIIZDUr0o6L6YIfVOg
-         i76dfOBpgXosdiDlmrWLvXRnXslXXjNXXIMrs6dVWpCGQ5YL4BddpM1SrRFhUJ/0/Plu
-         SnFO3I95KGlwoRrWNHnOWetewJ7kBZhfl8UCsivIWUzFDMeNyoJ2IgEavCNDit7QAoco
-         Osww==
-X-Forwarded-Encrypted: i=1; AJvYcCWiPWboFyo2gdKCBRh280A7QITMo7vTrseb2sLLIHBmGlQKulq8xblA3iBhPnU83O8zSrWj+k7yvuVrAGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziPJTkFgRXReq7+qmAxuglwIroNBraEYVp21Kau2sBaEFtAyuX
-	YOAl/yUdXBjS12TkBL0+M9D2tmoRsqG58Ezl2+Lkm1TzrW/8mFOkfLwpaQEM83w=
-X-Google-Smtp-Source: AGHT+IG/UUgsagncAjg6+2NJnLOtzlWH0jzdVTx3NQ2SWB89VvDiS/cA4xYkFEVW0sjolGl/5jvZNw==
-X-Received: by 2002:a05:6a21:7108:b0:1cf:12aa:4cf7 with SMTP id adf61e73a8af0-1cf1bf7db2emr6031827637.3.1725652770281;
-        Fri, 06 Sep 2024 12:59:30 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e3ee88dfsm100978b3a.199.2024.09.06.12.59.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 12:59:29 -0700 (PDT)
-Message-ID: <fcdbd8bc-9986-497e-8de4-86d3e619ca73@linuxfoundation.org>
-Date: Fri, 6 Sep 2024 13:59:28 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9347B6A33C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.114
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725652902; cv=fail; b=G7HBHfPNV/JgBZk9JWSuWAcZYg1UvUiN4+e2UrBIYWXHJVAD2+QX1diW87fvWCNhdXbqILaIU1/O7oy3gJGGEAhVJzsmJSwx+Ri7gFgKjgTvZDjbx8W6qGcnMfYA+/wRgAZqesjK1/IqYpWdHp14SzdqqDEv/7PRx8wrPau1LNE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725652902; c=relaxed/simple;
+	bh=VehnYloh5D6Coccf5ojFB3RsmlSGy7GtvTjiYsu7+oU=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=m5yl6Hzbu9DjMUTxr4upfzzOK5r9Rpi0nJ5+g4XhrCOIsgjSOgHtDEwgWjAE4+AzEgs4lnzKtdfT4TcTGV3GPH2yLE1StMn8PMxUBNAqTpfoPxRolArmezPCrg6SvmMVALCTyOZqbHJ4yEI5IKHGqwq3vfLpmIYRfC6o14NVCLw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=Ud0GCsTa; arc=fail smtp.client-ip=40.107.21.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NThFI5QD+k8DRTnDy3uEBT28zKHygY+O9fWL6mlF7DzYOyY9e+KcOCdC0FbM5+PwdlqA9WRN5je2W9tHgz3THmNhGHs4i9D6hy2maf+0rEAAa0naRq55u4SpkNuQBV6/fxLjRWDaCo9e1qRq0MyynPTdGRYwtW2eQ/eZLtVDjinEKNGqoEaHQoYKu0/4LfZQjQaW63O0421j4SwZSivmpohA6c9jHW255A1zC6oAb0Fsg35r83gLhz/jDFQ+HKUYdk2V4h7SEoZVol/MAgO308aQFL3K7GFsAmIRHUsnwpQBUJMEujp6uhzyjpfHAwOVFJ1WxGyppVhZl+0sFwKUQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LwNJqQ1ftLT2XAp0Lckwzg/atiYCuhWrWJziEuOSf88=;
+ b=CEnsCv4GNUdKgZkhJ/ksJR9utoWQuLsgQmhjrKB8g2bL3i5Xi5u+n11oauC+ZQV01IAHFCK7+vbwCpBbkLoSWvHPNxM5JeA0+oJUAdlZ6U1sLAA3GtIJaaXLqOFrZTYmMcPycq458/dsQhE7HGv+zuREK+xOomqbcAYwJ4RTTbZZRLPnoEyBvfg+WAJOqo3bVhMSZio0Fff5O1hHz7rz5lc8MG1cJ7ljOyFZeh3fVwTDH4Nk9CMmIp0wJ5PW6q5wGBd7HqJuOPPr8IOyaDexMOUOQEA0u0Z2DHCCvH7BUzGR1qpSWCImGv/2zQgdM+8I6IWWO/msaLl+rzlKebrMXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LwNJqQ1ftLT2XAp0Lckwzg/atiYCuhWrWJziEuOSf88=;
+ b=Ud0GCsTayf8zTOPRRhWOU5nPqJkdRRsbKTWFkPpl4+fhY4O1Nf+GFN4ireVysreZxmrbqY6jFCP0D4KsgU/IGSrJ7ohdHq/X0J7O26R0gh8jQLgFxekRH12bkVZ3AvfD3P2XfkC4cJSIK6jBRQyOben2porrNc21oKQUTqbf1sQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by AS8PR10MB6389.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:536::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
+ 2024 20:01:36 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%7]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 20:01:36 +0000
+Message-ID: <01d578b9-e42e-4767-a33f-b0892a602e23@kontron.de>
+Date: Fri, 6 Sep 2024 22:01:34 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: i.MX8MP IMX-LCDIF Underrun Question(s)
+To: Adam Ford <aford173@gmail.com>, imx@lists.linux.dev,
+ Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Dominique MARTINET <dominique.martinet@atmark-techno.com>
+References: <CAHCN7xLL4hrTK1OqsqUa78cdp9ZcG0sC+cO5QKC3x_Y9-QVzSA@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <CAHCN7xLL4hrTK1OqsqUa78cdp9ZcG0sC+cO5QKC3x_Y9-QVzSA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0228.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e9::9) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] selftests: Rename sigaltstack to generic signal
-To: Dev Jain <dev.jain@arm.com>, shuah@kernel.org, oleg@redhat.com
-Cc: mingo@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
- ryan.roberts@arm.com, broonie@kernel.org, suzuki.poulose@arm.com,
- Anshuman.Khandual@arm.com, DeepakKumar.Mishra@arm.com,
- aneesh.kumar@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, sj@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240822121415.3589190-1-dev.jain@arm.com>
- <20240822121415.3589190-2-dev.jain@arm.com>
- <714f8eb4-b226-48f6-ab0d-75bdfbf83364@linuxfoundation.org>
- <42d0fa4b-eb67-42fd-a8e1-05d159d0d52f@arm.com>
- <806e4be0-4b1f-4818-806f-a844d952d54e@arm.com>
- <fff2b685-a7a5-4260-a293-f2abf55d9ce4@linuxfoundation.org>
- <514713eb-235c-40ee-8c25-f1f3e1ca7f7a@arm.com>
- <d5dc1bd9-4473-405f-99fc-192691f41c4f@linuxfoundation.org>
- <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <0b3af60f-0449-48a1-b228-f26618b9d50a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AS8PR10MB6389:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28488c5a-1e17-496c-18ef-08dcceaeb68b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aCtYaVA2TVA5dURBaFRCdG9TSXhLaE5UMGNLaklMZ0dCM0FjNDRYSEFxckY5?=
+ =?utf-8?B?UGlVczBid0NoOFQwWkdlQXkvWi9jQUNKWWtqeUYwb3ZnOWlRQk9lTXM4bDE2?=
+ =?utf-8?B?RTFqYVEwUkFkQUVUVFExZlRkNXk0SStqUGFHYVhYcnd5N1pwbVhWa01hdHlz?=
+ =?utf-8?B?SEFwS3RLMmZCM3JnTVJFUGlHUGwxR0NsT1paWmlZNW44elBGRkF1dFRpM21I?=
+ =?utf-8?B?ekMxTTZlWXg4eVFFNDk1VEFSSXp3dk9idzhFUXdOQ0dvY204YzJKNTFsY2dU?=
+ =?utf-8?B?byt0dmMvUTRiMXhZU1J1MmlLU1VqV0p4SWp1c25JVVIzVUlQZ3RvWVpCc0Fx?=
+ =?utf-8?B?ZDNqRk9CRDJ2Nm93eFpmWW5MSTVrRUVUOUtvWWJnajNGM1FZV0pNalhmOEJa?=
+ =?utf-8?B?VSt3WVF5cS9ieGdIOXR0UVJCdW5rME5wVFlMNGIzeWZZeGhCa09YMkxlTmhk?=
+ =?utf-8?B?Z3dtckRsV0pzQTFGUHRXRlNBQzd4NTVzRzdFcktHeXRwdUErNVRPMDBZNnEv?=
+ =?utf-8?B?emFObWNqSUNwRzJhbDcyZ3dnSDNYMFducS9SZUVxb1VodjVzUlZ3dmFmNHZD?=
+ =?utf-8?B?d3JCcHcvYUVndFlENkhRUFpGV3p3MnZndVJpaVFKazZFQ1lleWUrdjBIRVEx?=
+ =?utf-8?B?elBqVDRYb2NXUktYeEVCZVZkMlJCZ3FyY1k1Vnc5V2s2c2NEb1VUWitlVDc2?=
+ =?utf-8?B?RlBJRWs2cE9QTERIdk5Xa3JDN3BmWTkvQ2gvb3ZIWlQzMzlzWmVFek8rQjRU?=
+ =?utf-8?B?a2s3ZEZwRmVmTnF4c05oWnlJZTJHbTF5YW1JbzZyeEp2TGV4eFhVaGlGL2tG?=
+ =?utf-8?B?WklSMjR6R0JqK25UWGZ0VjZlREZBUUhpdE45YlRYY1ExK0FreTFtUFpyazBh?=
+ =?utf-8?B?OStHZXRKL0V6VlZRaDFIVmF2OFlZaGVjU0ttalAxUkxvb1djL1RCcWxPV1d1?=
+ =?utf-8?B?Yno2S0d6Qi9wQ2xMSnVGc0N1cUZ4akFaTlJnMzZFMllBbzVmZERVRDZDeHVE?=
+ =?utf-8?B?Y1h4VVg4RCtHeERSbUE2KzBCcGNyWkRvaUlCNVpwY0NjbDhtYTRqTHJFSS9w?=
+ =?utf-8?B?NUUycjd2RkozMXQ3UGk2Ri9BcW5IL0daSitoOWlzOVRmM3FnZ3lnL0tRODVn?=
+ =?utf-8?B?Y21ETENOSS9FU0hHSFFpZGFzdGlDQmpULzZsZjdSWU9TeG5sN21oRlJKRDNN?=
+ =?utf-8?B?UkJLSzJ1czBMYmhCRlo2TDYwR0Qrd01PYXBZblZHbVlVcmoxRFVNYXB3d2Js?=
+ =?utf-8?B?c2hMTnRobVM1em80VlppWGZRNE5JRmJWM3RONkRZdEtwU0sxdDV2d0lZVGNz?=
+ =?utf-8?B?NXNIRWhScTk0RTRoVEtKMHlmenphMUVMUyszajhFSHkyRE4vRWtWSDNjaHJN?=
+ =?utf-8?B?SmdMOWEwZ3ZHanBFbDRsU0dTUjQ2bWlWZHptSU4rNVkvd0JPNTdNZnBRRXpv?=
+ =?utf-8?B?SklOZGdveURnUHNVeFg1Ny9hMzR5dnVLZUlYaW52VzlsQzJqOHN6WnF6UkhD?=
+ =?utf-8?B?T1BFUy9DN0doeXhBV0tTUTVYa0hoT2x0WGdHSTk2M0V5MHBZR2tlUmhTVEJC?=
+ =?utf-8?B?SExXZE4vWEcxZkNIdDJwaVcvVjFCRWIzeE9mNWppSmg4aDRHOFd1NFIrYkZE?=
+ =?utf-8?B?ZW13dXFBM2hWamhQUkdISk5oTXV1Um1PS1lRbkhUUlJ4eHlBTlFrZWhxS29Y?=
+ =?utf-8?B?S3N4QlJ0aFZpUmhFUkpGZ2hlVDE3K21mSVFZYlkrajZIL1dNWG9YU0pzTFMr?=
+ =?utf-8?B?Q3J0Mk82YTFRWE1mcVNIK2puMzh3RVhYRU5CWFJzMUYxSlN6VnNHcUk4aUFt?=
+ =?utf-8?B?VGRGWXJjUG1nN3FuRExaN2p4c281NnFyN2RZSmF3ZXhMTnl5TW14Zk5FNmQr?=
+ =?utf-8?Q?3V6SCyI3dgQ/I?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?elIzdW44NzN6SFQwRDJsdTRJMGtvbzI3bUY4SjU4aUVHS25OUnpLTGt2emg5?=
+ =?utf-8?B?SS9pdXVmblNvc3FTV3NDdUpBMFJnV1R2REdUa21nUFZJQzhnTGZDYkFCZnFQ?=
+ =?utf-8?B?L3NxN0xZWjFhRUdQRkE1NG04NEg1NnJRcG9Ya0ZoSXhNN1cra2VRbm01aktX?=
+ =?utf-8?B?ZlBBNEowL2hvWlJaWktEUlh6YnVNaDFUeDBRM0NkQ1g2ajExN1c0NzExMlJr?=
+ =?utf-8?B?YUZZQVJNSGt2S2xyVENxUzlMN2dmOUxLSWNUcEZER1RRSUl4QWdtL2poVk5o?=
+ =?utf-8?B?dXFTRFd2c3JmWS82UmFqTXdiRWtZbVJhTlAzbkZRaHRJaDhrY2FpV1pEN1B1?=
+ =?utf-8?B?eDlmZHp4NGUzQ1BKelpWbHRlWmV6R3d0RWo3S1F1VDB1TkZhcnp2OHE2YjhQ?=
+ =?utf-8?B?ZEs1TUhuVWNxZzZ4emlNMXV3RWNCZFM1SU8vU0gwNEkrNUQxNVV0UThqSHNK?=
+ =?utf-8?B?NGtEdVNETWtHbHZjN2FpcnRUTWJzcUFVU3pPWnFESithSkxGMVUrUzl6engv?=
+ =?utf-8?B?LzV5UlhQcGtuS3BsOTVIVXhybUozYW9Ebk1JRE1YWCtabkhwVnVUM0tZVE1K?=
+ =?utf-8?B?bkZiT3M3WDN6NUdqTjlBVnUweEF0cnZuckptN251UEZiclluZWczakpOdHRH?=
+ =?utf-8?B?aEdrOEtWTVhpdldtZXJSQVhxalJRZDB6akJJaUZMNFJ1T0kwNHo1R2dNVzVt?=
+ =?utf-8?B?UnVETkI1QzJRUzFjYnEzZWtOT25YV29oWTV5ZWNSSkdKRGpTZ2k1VVgyL1NE?=
+ =?utf-8?B?OG5sdFZpVkFBWUc0TGM3cERsNlAwQ3NHT1dvL2YxbFBxc2lMYUtDTGhZMzZP?=
+ =?utf-8?B?Ri9ld254M1pnekc3RTZYb2lXVlhBY0Y4QXFDcEI4SHJQaGhTRXprZ2RPclVE?=
+ =?utf-8?B?U3ZCOGQ0c2RTcDFLWHczTEtyU0tWeUFoK1RQcTJ5WVExQmR4RWlDNllhZThR?=
+ =?utf-8?B?b05URUdXUWpPZE1nclBHakQyS0d1NjdPTzFreHlBbXVQd3RCSElyZ3FlZ245?=
+ =?utf-8?B?UnpQNzNEcFpuTEVRVjYxWFRKRU40cTJoWmM2bzJZNjhYd2hocWp5SEVobXlw?=
+ =?utf-8?B?TVo2WDFMK1JPT3VmNmVabkdDaFhTZjF6cHFuYmREZzdHMk0zclpJZWxRNnBx?=
+ =?utf-8?B?SlIxc2xKcGdYNGxwd2I5OGlUSGxPUlB6elNYcTZPd1RUVmVGTW9ocDc1dFRn?=
+ =?utf-8?B?RVVHZGQvbVZBckV2S2o4b0VlbTNsemlpT2JmOGZld0JWQkJlb21TTU1iNFlh?=
+ =?utf-8?B?SjlYWHFpOHBEUFJaVEo3ZmNGUXRneURXYkZVcVdwcWpvVzVBZ1FuQ09HVmtB?=
+ =?utf-8?B?dE1pYnRhZkljSC9PdjU5ZHhlYWJwZ3E1NXBxaTVaeVRyZzYrdWNVUU5Ia3R0?=
+ =?utf-8?B?RmlEWE9uSlByZWtPVHg2UkMvT0Z5aWVRaVllQ3Z2b1oyYm1mOENDenEzd2hN?=
+ =?utf-8?B?V2p4OFVLVUlRcndVeUE2MzhoQ1YzN28rUjYzUXYyTGV2dTNibUdna0RkWGUx?=
+ =?utf-8?B?TTNUV2JjRTZGYW96aDBPQmRhZDdPM25aOEQwVEc0Tm9QVm0wbW1VYWhpalRS?=
+ =?utf-8?B?NzFXdmRLejR6a1ZRb0N2VVpsYXozVmppVEozUmFaRzRwcWdkODNtM3I3NVVE?=
+ =?utf-8?B?TXhuQXpmcGhoT3ZlbFp6QUFIeEJZQndxMFJGdU5jZVlBV2pHS3JISnJlcDJw?=
+ =?utf-8?B?ZmJlVnNVNDRZTE1EUFY4a1M3TGI2TDIrRDZURTJGbWROMmowK1JFaithZkFZ?=
+ =?utf-8?B?Tk1sYXF1NmMzd0UyeVFCU2QzOFVOVGxzcTBpU1NoMW43dERBWmxxd21CNjRN?=
+ =?utf-8?B?Ync3SmIvdW95eCtyVDQ5ZUVoMHlobDRBNC9tUzJyRlBKWDlmVE8yQ3JZSkh3?=
+ =?utf-8?B?VnpLWGdRT2pRTW5xU0NwQ3dTaTdQeVVlbFBLM05NZW83UW1XNUcwRmI2OVNJ?=
+ =?utf-8?B?U0FXMTY1TGFuamhqMkNmOHNVMmFxdm1qWGRRdm5vNmhUUjBXSktwWnRydVVl?=
+ =?utf-8?B?UlBrVXFTR1c5S0M3YjVxcXVvbUhVeS9ZdHRheW15c0FzL3MzeXFTN1pRSGRn?=
+ =?utf-8?B?TmhkSWFBeHk1UmlmelU3RXE1RWVTRXlRZ01FTVRtaVM2djM1Z3dmMmFhM1Zk?=
+ =?utf-8?B?THp4QnFtbzJGRzBUaTRTSzRrcWxQUmM3SXBFaHJRUW1zdGk2aXUrWVYwY0cv?=
+ =?utf-8?B?K0E9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28488c5a-1e17-496c-18ef-08dcceaeb68b
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 20:01:36.3081
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0pQrLDyFpHHjI74sD+7pfPwM1si0hcKgzmsV8Zzb+RdNXJNG9O5N2pBNlrZ6C+6l/LtvsY+XMBqUbR9tlWzyoqgzh0PRdqABc/2SwH424v8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6389
 
-On 9/4/24 23:56, Dev Jain wrote:
+On 06.09.24 3:46 AM, Adam Ford wrote:
+> I have been testing various settings on the HDMI out of the i.MX8MP.
 > 
-> On 9/4/24 22:35, Shuah Khan wrote:
->> On 9/3/24 22:52, Dev Jain wrote:
->>>
->>> On 9/4/24 03:14, Shuah Khan wrote:
->>>> On 8/30/24 10:29, Dev Jain wrote:
->>>>>
->>>>> On 8/27/24 17:16, Dev Jain wrote:
->>>>>>
->>>>>> On 8/27/24 17:14, Shuah Khan wrote:
->>>>>>> On 8/22/24 06:14, Dev Jain wrote:
->>>>>>>> Rename sigaltstack to generic signal directory, to allow adding more
->>>>>>>> signal tests in the future.
->>>>>>>
->>>>>>> Sorry - I think I mentioned I don't like this test renamed. Why are you sending
->>>>>>> this rename still included in the patch series?
->>>>>>
->>>>>> I am not renaming the test, just the directory. The directory name
->>>>>> is changed to signal, and I have retained the name of the test -
->>>>>> sas.c.
->>>>>
->>>>> Gentle ping: I guess there was a misunderstanding; in v5, I was
->>>>> also changing the name of the test, to which you objected, and
->>>>> I agreed. But, we need to change the name of the directory since
->>>>> the new test has no relation to the current directory name,
->>>>> "sigaltstack". The patch description explains that the directory
->>>>> should be generically named.
->>>>>
->>>>
->>>> Right. You are no longer changing the test name. You are still
->>>> changing the directory name. The problem I mentioned stays the
->>>> same. Any fixes to the existing tests in this directory can no
->>>> longer auto applied to stables releases.
->>>
->>> I understand your point, but commit baa489fabd01 (selftests/vm: rename
->>> selftests/vm to selftests/mm) is also present. That was a lot bigger change;
->>> sigaltstack contains just one test currently, whose fixes possibly would have
->>> to be backported, so I guess it should not be that much of a big problem?
->>>
->>>>
->>
->> So who does the backports whenevenr something changes? You are adding
->> work where as the automated process would just work without this
->> change. It doesn't matter if there is another test that changed
->> the name.
->>
->>>> Other than the desire to rename the directory to generic, what
->>>> other value does this change bring?
->>>
->>> Do you have an alternative suggestion as to where I should put my new test then;
->>> I do not see what is the value of creating another directory to just include
->>> my test. This will unnecessarily clutter the selftests/ directory with
->>> directories containing single tests. And, putting this in "sigaltstack" is just
->>> wrong since this test has no relation with sigaltstack.
->>>
->>
->> If this new test has no relation to sigaltstack, then why are you changing
->> and renaming the sigaltstack directory?
+> I noticed that sometimes my monitor would not sync, but sometimes it
+> would on the same resolution/refresh rate.  Frieder noted the LCDIF
+> was sometimes underflowing, so read up on it a little bit.
 > 
-> Because the functionality I am testing is of signals, and signals are a superset
-> of sigaltstack. Still, I can think of a compromise, if semantically you want to
-> consider the new test as not testing signals, but a specific syscall "sigaction"
-> and its interaction with blocking of signals, how about naming the new directory "sigaction"?
->> Adding a new directory is much better
->> than going down a path that is more confusing and adding backport overhead.
->>
+> In the comments of the LCDIF driver, it's noted:
+>     Set FIFO Panic watermarks, low 1/3, high 2/3 .
+> 
+> However, in the downstream kernels, NXP changes the threshold to 1/2
+> and 3/4 on the LCDIF that drives the HDMI, while leaving the other
+> LCDIF interfaces at the default.
+> 
+> When I increased the threshold to 1/2 and 3/4, it appeared that
+> several resolutions that my monitor was struggling to sync started
+> working, and it appeared to sync faster.  I don't have an HDMI
+> analyzer, so I cannot verify much beyond knowing if my monitor can or
+> cannot sync.
 
-Okay - they are related except that you view signalstack as a subset
-of signals. I saw Mark's response as well saying sigaction isn't
-a good name for this.
+For me this change doesn't seem to cause any improved behavior. My
+monitor still fails to sync every few times I run "modetest -s" .
 
-Rename usually wipe out git history as well based on what have seen
-in the past.
+Also we have a downstream kernel based on 6.1 with backported HDMI
+support and I don't see the issues there. But I need to make some
+further tests to make any reliable statements.
 
-My main concern is backports. Considering sigstack hasn't changed
-2021 (as Mark's email), let's rename it.
-
-I am reluctantly agreeing to the rename as it seems to make sense
-in this case.
-
-thanks,
--- Shuah
-
+> 
+> Could the threshold and underrun cause this monitor intermittent
+> issue, or would this be something else?
+> 
+> Does it make sense to have a flag or device tree option to override
+> the default thresholds to change the panic level?
+> 
+> adam
 
