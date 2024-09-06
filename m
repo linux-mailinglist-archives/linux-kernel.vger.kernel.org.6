@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-317984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B20C96E6B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:17:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EECB96E6B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11BE8286C66
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9361C232C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2A2946C;
-	Fri,  6 Sep 2024 00:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE88D531;
+	Fri,  6 Sep 2024 00:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GeRzsSGl"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MaakXBQ6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2216179BC
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 00:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD372F32;
+	Fri,  6 Sep 2024 00:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725581849; cv=none; b=P+WRpTfH2h7+Tzt4MZ/rroAh5QhpTzx4637ew5R79Ppd8ZWzyD3noP7wltR52v0Ov36VZ/qroC7d/8+6t1zqzFPDC9AJ3ygOB9VTlmirUjjNH1zETrm1MXKifp0fCevkt2WyUdj+paejsXR7DEmhfXOD8wSUhtlAYwkMbqrbgrY=
+	t=1725581979; cv=none; b=cuXRoSjQzPRcro4Y2cCseJR06sVY++8HxzbVYEriCz0mXhBdW9HMJCI1FHHlJQTtwHSGV5FTY48fTGTjzQ4Bw7h0Xb9EthCjV7UUmY898MlWh4VoDGTRMiytlBtrUDvEMAaIIWng/zcoSEphyCKyNMtjE4puywbWeNeoiiAGrTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725581849; c=relaxed/simple;
-	bh=OwpzBiS5Rmhz+J+NmaXY/hNNGB2eyD7rp4WviQc0kwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mYIxRAZ2F3HRNhUm9V+7A2+sikEiMsHekBH7GJG/my4yEhZGTKuKkuyXyW6t2jHfnivj1OySEGeItbDin2eOjToVplkzecIeZzZ37/TGLHDP/AJoysaM0/YgaDmVHUmJ7Jz9whnfPOd7Nu8vZ7oz+299osn3GzfsnB0aIWaVxJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GeRzsSGl; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a20efed34so65526639f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 17:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725581847; x=1726186647; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CJk6oTxSmxqwstN1cixMUi88869s8uO6pmgB1F/UNZI=;
-        b=GeRzsSGldEguin5THKeroY8QLzU0CVajzB5mHSiWYW+1tQlH3GjbKegvkaYpecjQrS
-         ELpR5eD3rgQw0qrpZDIG6NHm2OuSwbSIfEeahSgqFKHCYlYZHEWm8vSNls2ZKg/Eoxom
-         DNaRNIamM/VS7qlu1EQ8UjpPM/z0yszZOHWJ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725581847; x=1726186647;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJk6oTxSmxqwstN1cixMUi88869s8uO6pmgB1F/UNZI=;
-        b=FSuuZgkpxBwJoLAJCMyWTbj9NKGz9esypM0d2M0b1CrjWHcS/HnkMYJiPDecQsevZ5
-         LxjBvs7Nbs8/lejTaUmPutn9GwVXmofwU35uawhvtEHEhwCXx9ky/bOhsQWknXO+HG4M
-         sjH23ycirOZFJGUIKQRTDYCVaedpSJ89pC2tF/wIK1kCBUo65aNUsW28PPyMUdEzZ8li
-         eDyvI+itSylJ3IQ+amS7+I8l7n2GCsx/6umMskiAW3Yl9YNlaMmXucXL4h6mQ9ZYK9cz
-         F1gxhujl6glSL+CGoOgHUSniLg8kkhBDtcUJ6qyanCPGOfISbOhmJsXcpgy+9CzMi3Ik
-         /ozg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVHVyalEx2L7W5GUOb9cH5h6YsAGYJRC9zs0eeJVAwnnjgrfycXxDckPk8yZvMBdyQChAluHkrzkilkzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEUKzfXgsSXaXKgloKMjZkCbI316VXnI4oy687GrLI4A0h4rtP
-	+Xdg0IeAJKiUQebo0n2VDjunVJHDS0t8ZrNiXjw+oYPhfsHtmdycO0QoHt33D7k=
-X-Google-Smtp-Source: AGHT+IEXq8EGlVXVAtKtQBZ7pubAV4csPUqD77cw2zVgWsBW729E+ZBWLC7j0DysrCw72mbjJsdPlw==
-X-Received: by 2002:a05:6602:26cc:b0:82a:173a:3cd0 with SMTP id ca18e2360f4ac-82a962494b2mr85462339f.16.1725581846670;
-        Thu, 05 Sep 2024 17:17:26 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d07b01fbb5sm376826173.123.2024.09.05.17.17.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 17:17:26 -0700 (PDT)
-Message-ID: <c808dd82-248f-46c6-a902-02d3527879f0@linuxfoundation.org>
-Date: Thu, 5 Sep 2024 18:17:25 -0600
+	s=arc-20240116; t=1725581979; c=relaxed/simple;
+	bh=DApWteau5L6e7Nfm/JUijj4CIhQSNjmJ6cu/FjlbURk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HJFa6Ov0oJAE8D/vHYvQLrxl2Ja16ol4uUaH18tx6qfE1beNX3zsuvDdMPMX4kzekCh4Foa0IyJDV1bZa5osiRwCKiAQRpBzZkHgarPSiNBegdJpm/chlSLFGHGtaHeZigOATpuibCiocUbzz0T/oyH9M+Ojis3viMwlxTqrAyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MaakXBQ6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQ16d019686;
+	Fri, 6 Sep 2024 00:19:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Fif+WdWuY0TPK05I2EWfRBaK9MDCbSukT+BvyfFoqoQ=; b=MaakXBQ6TrpP4DdT
+	TMsdZVHeb5HX0HsNDogkAh+1bGZgw7qopVhYVXphKQL5Qx7k4xPsNQSpEbOgoi8v
+	i5TuuvCtB9Rsd58f7WXpVkaXV0qVS3vnDecG+ke+0sSHpprRvmNqpmBzcRdMBsMd
+	C1eP27TCFsy1LVJF8HIxt+NkGcI73n3tSWPLgbNs8r49lcZuSM/EiTb/fW7omWxM
+	OcnjDCd4SqYZq+ObirH1cRE7F7zMOIUeH7kjmY8D38UDPigx2MiRvgZtdjfwQm0G
+	GrGI8QUaEn+XubK++XXnrlIG/esm3R/DPQsiIxQk5bGaXBSL+Pd8fxMEhtMES3he
+	TG6y+A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu0kaw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 00:19:33 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4860JXiQ005676
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 00:19:33 GMT
+Received: from [10.231.216.207] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 17:19:30 -0700
+Message-ID: <87a1a50f-f485-4a4f-91fc-34fa19312519@quicinc.com>
+Date: Fri, 6 Sep 2024 08:19:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,46 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/184] 6.10.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240905093732.239411633@linuxfoundation.org>
+Subject: Re: [PATCH] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
+To: Dmitry Baryshkov <dbaryshkov@gmail.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
+        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
+        <stanimir.k.varbanov@gmail.com>
+References: <20240905064817.3885953-1-quic_miaoqing@quicinc.com>
+ <d6mt6i4a6xa3juvn4gzytuhsot2kx7dn4wmm3kmgwywfj2hcau@leecyxx36wql>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240905093732.239411633@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+In-Reply-To: <d6mt6i4a6xa3juvn4gzytuhsot2kx7dn4wmm3kmgwywfj2hcau@leecyxx36wql>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DvasUYBtezgIvAPLwA95qf_CJMJ_rdG5
+X-Proofpoint-GUID: DvasUYBtezgIvAPLwA95qf_CJMJ_rdG5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
+ clxscore=1011 mlxscore=0 mlxlogscore=819 phishscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409060000
 
-On 9/5/24 03:38, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.9 release.
-> There are 184 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 07 Sep 2024 09:36:50 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+On 9/5/2024 8:49 PM, Dmitry Baryshkov wrote:
+> On Thu, Sep 05, 2024 at 02:48:17PM GMT, Miaoqing Pan wrote:
+>> Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
+>> board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
+>>
+>> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 119 +++++++++++++++++++++
+>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
+>>   2 files changed, 120 insertions(+), 1 deletion(-)
+>>
+>> @@ -837,3 +939,20 @@ &usb_2_hsphy {
+>>   &xo_board_clk {
+>>   	clock-frequency = <38400000>;
+>>   };
+>> +
+>> +&pcieport0 {
+>> +	wifi@0 {
+>> +		compatible = "pci17cb,1101";
+>> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+>> +
+>> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+>> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
+>> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+>> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
+>> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+>> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+>> +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
+>> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
+>> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+> 
+> Please add
+> 
+> qcom,ath11k-calibration-variant = "name";
 
-thanks,
--- Shuah
+No need, here the WiFi node is for 'drivers/pci/pwrctl', not ath11k driver.
+
 
