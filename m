@@ -1,102 +1,160 @@
-Return-Path: <linux-kernel+bounces-318317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0708496EBAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD55D96EBB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB755285803
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767B41F265E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133B214AD24;
-	Fri,  6 Sep 2024 07:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CE214AD3D;
+	Fri,  6 Sep 2024 07:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Gg/mr5XL"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cUXTBiRw"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B86145B11
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04F417736;
+	Fri,  6 Sep 2024 07:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725606679; cv=none; b=fvB07SaMlvim0bUj0SiC6dIrYalazm+X+ftRL16oCxwiznnozJNUwejiMi/i9as5tFQqNgEpto/8XimcbVGSvV6rmA74El7HFdNpEEBImFcod3o0RY1L3QRfAcGO+lj6gGgbgZxsMrEC+P4BclGp3SeAasQ3kGcf5WvLJcV6+QU=
+	t=1725606766; cv=none; b=Qylf05CRCm6xeKn0H3cWokJivKzedfPIHjOZ6XAcZGN/tIMjnwh092nKHpjaAy0iKqkYtCCIvlj/oBzWw5zenuu7GRtl8ZmGo1VygAz0pflm5tSio2gG20Xh2jp9RQOg3OJJf/J7TLUXklTrQ9VMtp8IuT9kM6j/74B9G9dDwds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725606679; c=relaxed/simple;
-	bh=MAXYm/fj1yP8lVOTQpdtw+CtvCrS1ey6DECPR81Pfik=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c9ZxhGZcMZ9meWoLCdKZ/E0Omz27VySKwzWD5092Us6QX1LIA/mfRQxX1asvvy3fYDfboyqHPxlYF5PCqonQuSfXDsDxw+BMV5Mm6zgFWaiSeFPqd8XqCXheJwrNepCNTJeu7HNal6zHlyXS6OJ+idMBmhGtUOlntP+1Egdrg50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Gg/mr5XL; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso12535415e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:11:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725606676; x=1726211476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBb1m70RMv6UJKegzoNSHZhoQzpn0mL5Ktd2C9pGgiA=;
-        b=Gg/mr5XLF3GDW0gPVc31C11u6SPMeVJhr2sjpcyu3NtoYKSpr4dJmp3jNFyiYn4gW/
-         WRrsH7BUK53WJn+qODNRiGsCVK/rqvKShVq8L13NIDFNnc6GwMJXV9r+/b1zdxx1XK0i
-         T0hL2k6Ny+ovoNZj2jPchpGaCIjFEfvFj+RLjciVjiutEYU7kPpTkxix0wfSPqt8Prf/
-         NMmVONswFxFsxEElbENi7MzHNMQwP0P1+nPaMnFV493HxA2u5QKLzFTTlmkBRcJBdI7R
-         L9+87xqPk1BIpnuRXR2oyPCX3wVooDt/AzlksHT7QRwI/JZkttHUOr5lCfuzKnpIAuJH
-         y0zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725606676; x=1726211476;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mBb1m70RMv6UJKegzoNSHZhoQzpn0mL5Ktd2C9pGgiA=;
-        b=V9je3b4d5s8xrS4Gm8mtGtNvkBuZf8PpdFs77vkYtV66M3tseKEPdOT95V2FJsMl3g
-         N7+x8IcyfCkRDemsU9qLKb+bRXqp3ndDkdy9cZW7PZi/oiYBG+x3+BilNyBQptFFa5nz
-         ZXHQfCStCtaW9lqUBHKYlHp/LCeLjW38TxBrvXwtohQrxFbUzrPfbySs/+24XRgP0Uum
-         6iph29fcfqwDj6JVgyg+nmQ2vaFxJWpyC0dnSkRJb09BXpKK3Zb6b8FVm+MUMDX58jRa
-         qedwLQ+6I8ZnBXfGww5YLAlmz6YMtY+zwDE3wW+MXDJq3wOD379qkDuhbN1YUZKR+q0L
-         AlPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl+9l4WMtxoh5s5LNxsrcP1P9Wfa4UX5iOxiqDE3mzoGrhd3a58q2P9hBceuufxkYVnjZKxBoTPZV4bWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLeA5HMAhBDyVNOFHQ9EgdEwDi4ZBpVQQFDUGxWctJbHYo8WfD
-	X1lX8OUmY1zZG4JtyX50gsSfWM/V2kgYe4GOhpphxWKjB6CfPazEMo0TuGlpyms=
-X-Google-Smtp-Source: AGHT+IEqdAHSLSbZ7AHGnt96PMoqalKMoCEpht5Cea7Y/2LmhbcK43F8Fn45vpBv/QCzJQC9a1kDYw==
-X-Received: by 2002:a05:600c:154c:b0:426:5416:67de with SMTP id 5b1f17b1804b1-42c9f9d7059mr9170495e9.30.1725606675422;
-        Fri, 06 Sep 2024 00:11:15 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-374ca94e002sm12596485f8f.72.2024.09.06.00.11.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 00:11:15 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Chuan Liu <chuan.liu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-Subject: Re: (subset) [PATCH 0/4] clk: meson: Fix an issue with inaccurate
- hifi_pll frequency
-Message-Id: <172560667467.2965402.16362697378487101558.b4-ty@baylibre.com>
-Date: Fri, 06 Sep 2024 09:11:14 +0200
+	s=arc-20240116; t=1725606766; c=relaxed/simple;
+	bh=IzF5rIihL7lJxT8lfy15erRULdwXboRy5WHT1NJSPpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=F+ysRyyBQ+iVtQOQrIEgF42m/visf39azCz/8NJkwWu9decNzu6UwsYNiJXM91wF6aj7WnRRaN+EB5L3Uox6ZKJcf/xy5I2BkmyLZjRTssb7Gg0T/zerRXlFVXepBgXoGGDJ4iwcnUUBvsn5Hg+nZPxeIrt+OPw7cM533OgbGes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cUXTBiRw; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725606760;
+	bh=8q3cxdvnLjQG/zDmWqsIQdVklQCDMrLC+Rd6gb/pySY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cUXTBiRwBNhqwvRKzlputPnyfe1sNmTn/EcR2Xi0IRVydxaBicIVZ0PRmZnypxvUJ
+	 iC+8b6Bf5VHBMy6bFHSUu1235EaMp3o59V1Mwj7X2tICRcXiXBRCUIW6i6gNLO3SQ0
+	 KYHA7qwqo2vmhpIZcE80a9/mIIhOskvWNi4sbHYcTaBxzaTtaFKqUJiNfNoFejoZBc
+	 +PupFBAmd77VXnsZNo/5W6rbKkC0bi0CXHASFx5i7Zqp3dOIiPaND9qPRPQ2JKUB1S
+	 838oLojHUVgkPxqHY2uzvWqT6pIvSxbafXgh6wm0iZVWMsJBd9uX8n0+pvGThxPcif
+	 SprVVE5ojoh6Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0S9M3Jtzz4x11;
+	Fri,  6 Sep 2024 17:12:39 +1000 (AEST)
+Date: Fri, 6 Sep 2024 17:12:38 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Hongbo Li <lihongbo22@huawei.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kspp tree
+Message-ID: <20240906171238.07709365@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: multipart/signed; boundary="Sig_/2PW2Gyzoh0UwpXVslscubvp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Applied to clk-meson (clk-meson-next), thanks!
+--Sig_/2PW2Gyzoh0UwpXVslscubvp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[3/4] clk: meson: s4: pll: hifi_pll support fractional multiplier
-      https://github.com/BayLibre/clk-meson/commit/80344f4c1a1e
+Hi all,
 
-Best regards,
---
-Jerome
+After merging the kspp tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+In file included from include/linux/string_helpers.h:7,
+                 from include/linux/seq_file.h:7,
+                 from include/linux/cgroup.h:18,
+                 from include/linux/memcontrol.h:13,
+                 from include/linux/swap.h:9,
+                 from include/linux/suspend.h:5,
+                 from arch/powerpc/kernel/asm-offsets.c:21:
+include/linux/string_choices.h:74:27: error: redefinition of 'str_true_fals=
+e'
+   74 | static inline const char *str_true_false(bool v)
+      |                           ^~~~~~~~~~~~~~
+include/linux/string_choices.h:68:27: note: previous definition of 'str_tru=
+e_false' with type 'const char *(bool)' {aka 'const char *(_Bool)'}
+   68 | static inline const char *str_true_false(bool v)
+      |                           ^~~~~~~~~~~~~~
+
+Caused by commit
+
+  6ff4cd1160af ("lib/string_choices: Add str_true_false()/str_false_true() =
+helper")
+
+interacting with commit
+
+  32cebfe1cc21 ("lib/string_choices: add str_true_false()/str_false_true() =
+helper")
+
+from the mm-nonmm-unstable branch of the mm tree.
+
+Git inserted both definitions in my merge.
+
+I have applied the following merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 6 Sep 2024 17:08:52 +1000
+Subject: [PATCH] fix up for "lib/string_choices: Add
+ str_true_false()/str_false_true() helper'
+
+merging badly with "lib/string_choices: add
+str_true_false()/str_false_true() helper" from the mm tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/string_choices.h | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
+index ef2bb6826919..120ca0f28e95 100644
+--- a/include/linux/string_choices.h
++++ b/include/linux/string_choices.h
+@@ -71,12 +71,6 @@ static inline const char *str_true_false(bool v)
+ }
+ #define str_false_true(v)		str_true_false(!(v))
+=20
+-static inline const char *str_true_false(bool v)
+-{
+-	return v ? "true" : "false";
+-}
+-#define str_false_true(v)		str_true_false(!(v))
+-
+ /**
+  * str_plural - Return the simple pluralization based on English counts
+  * @num: Number used for deciding pluralization
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2PW2Gyzoh0UwpXVslscubvp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaq2YACgkQAVBC80lX
+0GzsEQf9ET9MSDCnmFfe+0B5/6XKT2Ayk+zjHMaeweOYwVi2e2npDTyuVMD84A57
+AdcGkrj94MppS1jX5aCwns0lG057/plJvKZsiwLpZRvMGr9W6Y9limgzzdeIxM3Q
+YTngqPEHxCEikCp/++tjvqUQwQ4Ak0RF8JluMU4aIacdqJFsgJCGS7YCyKnu9r06
+LFb/2Zn3tPf7Vr5kqh4r/GFxfyEVaFcG348LZ5sLtePE0F5gYl/b4H5ItA7uNyhH
+axVCbyrb1hQ8+xKUtI5esHNNJCJJ2YgSBgxvIDB2AxE2Ta50H/P3WhIYuJ5V1Yro
+EHmCPPKUKfKF8ZIbG6KtGDj8yJkjvg==
+=7fad
+-----END PGP SIGNATURE-----
+
+--Sig_/2PW2Gyzoh0UwpXVslscubvp--
 
