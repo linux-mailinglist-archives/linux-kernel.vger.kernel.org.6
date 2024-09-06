@@ -1,406 +1,121 @@
-Return-Path: <linux-kernel+bounces-318963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586DA96F5BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2867B96F5C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11104282B92
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63752829E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C9C1CE710;
-	Fri,  6 Sep 2024 13:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B4E1CF5C4;
+	Fri,  6 Sep 2024 13:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="slXiQ1vO"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aZdMBloW"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7173E2747B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674891CEE93
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630445; cv=none; b=W7v/7xO5+vZUpYwMfxE2fpxenED4zCuqOcgne8yek/JCuJ/OemyVb2QKhsEUIyUcK83FnsVDu5DYkP/XPTxhXZOf+8xSMf1kbesWwB0BFVDEl3pSfNy8GpKy4oSeAGf0jQvKJSfJLORGQtk55+ca8DDHiBF0PKcT4MnG5AMGPOU=
+	t=1725630449; cv=none; b=K8q/lIpnKcgyebOqWQETczL8mFjnjX5eBZICfbw9v8txhYRTXoFEIgPheLO5DptvKzQZYs1cb5QlfBYL9CxM5V8k7IuqLVq6hRVMnhogI0vzRIy0WzKI4CBXvPS+K3GqeV7EZFYqhb4auYkNv5uuD/dsO62jraYyPQq075Oyn9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630445; c=relaxed/simple;
-	bh=9Fii7C3wJ5HOKVpOc+h5v/H9vdj6SIw/y3MyilqnpTA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WRGiHDo3+kg+oyPtILsFLhteHMSr0szjYSbJaNdd9vtxWfD6d+YuykLCi0P+F00OrI5jI+gYWWisNHX0ZZJMHRynNF8dGerkfbDFp3w9AXcziRKXFJwn1FHpjiVNgaGJ8kzJlAKA73lFD5cVNYtNYp3sfabiU/9KxQVBL9FiY2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=slXiQ1vO; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f75129b3a3so11659841fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 06:47:23 -0700 (PDT)
+	s=arc-20240116; t=1725630449; c=relaxed/simple;
+	bh=pIgf+7SsOpHo9YgmHRtwComDBR+t56JNvOlWZHxXxrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EEJ1BdiioJ0KmseDSb3p1ZMUctwa6Iuip5kzcOCMI5bRURtw9zwcc5K02wgeBJYkgAoyOzCAA1mWd0kTNhR427kIeMV7wZQDZUU2bGavDqLDEEYpaf+Rd1LcQb/0IjhFP/HfYCV0POqyPosIRrnqqtVUTWMIVBrDUa8gKjYHdLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aZdMBloW; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71790ed8c2dso1569280b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 06:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1725630441; x=1726235241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MyIgjVyNLuy7v/J1PmGLAVmufrVz8lPICFlawlzFkQY=;
-        b=slXiQ1vOurL2IQF83EKYzsYpRRBOOq8myGzHJO1mTkQXkVvno9SwfXwhOjYo359I41
-         XMy2PIg2yrx1fsWQxZ1Zzn7CXuLgg6zTYso3oZM3v5ZtZOqenge2aNsb/vn6W0/0/QQD
-         yGrbSTXno960d4sR/pUau3Dy8j4GylEbjvsTdkvW78TDiIAjzL967ecBXJzP7JBDBs5L
-         kUG2uELUGinH55iSp01Og+YgP2if0ulEWe1SxwrQ9gsxJ7umZM9mpNTiG7zuKAovIN8z
-         xhPItN1NBsP6VKnTwtRJqspUUICtezQk0otF4FrACB46wHXsXUo9bvmK7Ca1x2MYCLgj
-         Xnig==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725630447; x=1726235247; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MAKWGI3sm1Oxm3Ppx/VjAwW9wnluKyU080i1F7eUq9Q=;
+        b=aZdMBloWeznHIM0HdBMmmf4UEX9ohprYJhTnM38zYldGeJJiumR85Sz0Bzk2mO+QMl
+         UydGJssjPgir/FdI8rMcCDrslMjlgxtEuZpm8ZbcsH4N7/3yn60zxDRMJl4LTnKh1PT/
+         jojncpTmxcXvK/wFgJMoxf6J6rCIrdfSdGG9EyMZOjyOZ05XP8U1UqWGEB/p0DQlUOSQ
+         3pA0HnVVVn9pOXKK1LDQd95Tn7omz3ZjoNqcU4kwvy3le3hy9FHr4WTXrGiN54KneTyz
+         EO1IgKn0kyf2DmH2FGF20WMglcLMFp0cGKjKJqCc+gLDcHnzsd+papsrIFj48lEzqJaP
+         f2xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725630441; x=1726235241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MyIgjVyNLuy7v/J1PmGLAVmufrVz8lPICFlawlzFkQY=;
-        b=VwXqH+GDdTXwY0XFufi4Zk4C7xG9KnoB8a+D2g3HAK1xolQSLRHTHgxoqkID/kYyl/
-         P/isSSn/rEA5yh7VQDgtVWVNtg0bQrl3efg+ushWVpuS2jXbBNoFNpsIrONRgl13RGfn
-         jWZZ56xZ74NSgej75V2nJLCUNB4L2WVHDHTdBJFlcFOC4I36SozDp/nsMpwFBdIDHYqn
-         HBsY53Mlk6qBa6jV6qh9b7PqqM6iLfWBshx2VlKgTCNrtk9A3zcaqRFGq3BGa+wn0Aur
-         KSY/ZLEsYlP4fBpMwC+85YufS3TJmX4xU6qVk0Em8oTYlHNsyKyRKL77EEQq+m4KJJhH
-         bT4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXWJxdceesAx/8AyqlP7xkZsYg90E7vZHs+xO9TlS37a5CqJxTD+eUMChVMZ+YSOWOXN1ebuojgzCyj6z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYAJIka04ctL8oEMv5C/q6dz71ffnmTDnNRySv98f7xkCuyJtE
-	A1D0QSy1cgDLCjpg4/11B4REQDDbRrJdoTk7PNKmYyyjsczATSG29v/npS5CLdgnLanXfA4G5pM
-	9AL8WmfjYmyqi0gDweuEBbGjSi9LseQMOsCZ4TLhwt/R6/u00
-X-Google-Smtp-Source: AGHT+IEVk82Gw9NMohINIx8Q0rOltqL8EnktY8Wp5BqCJ1ObuBr6XZKNgTRutEcUXoFVTXYFPbq1cOQ48kj28T62zlk=
-X-Received: by 2002:a2e:9dc5:0:b0:2f6:5868:808a with SMTP id
- 38308e7fff4ca-2f751ef74c4mr17062161fa.19.1725630441176; Fri, 06 Sep 2024
- 06:47:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725630447; x=1726235247;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAKWGI3sm1Oxm3Ppx/VjAwW9wnluKyU080i1F7eUq9Q=;
+        b=Gg6qDL1HPwlnrPSq2XynSP72jRHTzO+730w7TUMnTjwEhjEpOVRyRHVES4gtXcPbgS
+         73CIseIZIV8f/QbSuhvLXYxxC2k65saSICVWUJExvsAAiwX13VFpg2JvZsWqfzlRwP5o
+         Gu8Zt54YlDCLhMHKc/aBbYLBuXUz3J6qAaipLMtHL1AX9phRGjA9SKTOuHK49FMoUy3K
+         sKjFlv/lwWGUJ9JGo8rZeHDMKGFlnweVz6FBJ63prv6/830/d4C0zpiveuLNi1JSMPYG
+         0rTvg+EKA+7xc0P5vzFiQ2v18QPy1KUYUa2KjWwEIClZ6HvRjElfWSiZQyVCtxomxwxA
+         WNcQ==
+X-Gm-Message-State: AOJu0YxWsD+UWsvluTJ35VSdEQSbwpRIdmbbpfUPsWgSkmDr6lqKVpXA
+	GZB/m8q1gQzBFKMkJpVBHoxG71Tr+HGjN2MQE3Gr6O5eXUhuSw7/WRyE+sRiw1E=
+X-Google-Smtp-Source: AGHT+IFD4gaiCGNzSKi4CCQRh2XEyeaqBw4cxt3VsxUJUalI/hpnCOD/4KuNqnTydRpX3hVW6teqzQ==
+X-Received: by 2002:a05:6a21:3994:b0:1cf:126c:3f6a with SMTP id adf61e73a8af0-1cf1d1c0a4fmr3303021637.27.1725630446742;
+        Fri, 06 Sep 2024 06:47:26 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe829asm1572850a91.3.2024.09.06.06.47.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 06:47:26 -0700 (PDT)
+Message-ID: <8633f306-f5e0-42f8-a4c6-f6f34b85844d@kernel.dk>
+Date: Fri, 6 Sep 2024 07:47:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org> <20240506-tc358775-fix-powerup-v1-7-545dcf00b8dd@kernel.org>
-In-Reply-To: <20240506-tc358775-fix-powerup-v1-7-545dcf00b8dd@kernel.org>
-From: Daniel Semkowicz <dse@thaumatec.com>
-Date: Fri, 6 Sep 2024 15:47:10 +0200
-Message-ID: <CAHgnY3=JKUCRvTtw6NzLvm+hy_GeNigj0tjOmbFupEs+=8f6ZQ@mail.gmail.com>
-Subject: Re: [PATCH 07/20] drm/bridge: tc358775: use regmap instead of open
- coded access functions
-To: Michael Walle <mwalle@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Vinay Simha BN <simhavcs@gmail.com>, Tony Lindgren <tony@atomide.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring/sqpoll: inherit cpumask of creating process
+To: Felix Moessbauer <felix.moessbauer@siemens.com>, asml.silence@gmail.com
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ cgroups@vger.kernel.org, dqminh@cloudflare.com, longman@redhat.com,
+ adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com,
+ stable@vger.kernel.org
+References: <20240906134433.433083-1-felix.moessbauer@siemens.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240906134433.433083-1-felix.moessbauer@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Michael,
+On 9/6/24 7:44 AM, Felix Moessbauer wrote:
+> The submit queue polling threads are "kernel" threads that are started
 
-Thank you for the patch!
+It's not a kernel thread, it's a normal userland thread that just never
+exits to userspace.
 
-On Mon, May 6, 2024 at 3:35=E2=80=AFPM Michael Walle <mwalle@kernel.org> wr=
-ote:
->
-> The DSI bridge also supports access via DSI in-band reads and writes.
-> Prepare the driver for that by converting all the access functions to
-> regmap. This also have the advantage that it will make tracing and
-> debugging easier and we can use all the bit manipulation helpers from
-> regmap.
->
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
->  drivers/gpu/drm/bridge/tc358775.c | 150 +++++++++++++++++---------------=
-------
->  1 file changed, 68 insertions(+), 82 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/tc358775.c b/drivers/gpu/drm/bridge/t=
-c358775.c
-> index 7ae86e8d4c72..b7f15164e655 100644
-> --- a/drivers/gpu/drm/bridge/tc358775.c
-> +++ b/drivers/gpu/drm/bridge/tc358775.c
-> @@ -16,6 +16,7 @@
->  #include <linux/media-bus-format.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
-> +#include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->
-> @@ -238,7 +239,7 @@ enum tc3587x5_type {
->  };
->
->  struct tc_data {
-> -       struct i2c_client       *i2c;
+> from the userland. In case the userland task is part of a cgroup with
+> the cpuset controller enabled, the poller should also stay within that
+> cpuset. This also holds, as the poller belongs to the same cgroup as
+> the task that started it.
+> 
+> With the current implementation, a process can "break out" of the
+> defined cpuset by creating sq pollers consuming CPU time on other CPUs,
+> which is especially problematic for realtime applications.
+> 
+> Part of this problem was fixed in a5fc1441 by dropping the
+> PF_NO_SETAFFINITY flag, but this only becomes effective after the first
+> modification of the cpuset (i.e. the pollers cpuset is correct after the
+> first update of the enclosing cgroups cpuset).
+> 
+> By inheriting the cpuset of the creating tasks, we ensure that the
+> poller is created with a cpumask that is a subset of the cgroups mask.
+> Inheriting the creators cpumask is reasonable, as other userland tasks
+> also inherit the mask.
 
-The 'i2c' node is removed here,
+Looks fine to me.
 
-> +       struct regmap           *regmap;
->         struct device           *dev;
->
->         struct drm_bridge       bridge;
-> @@ -309,42 +310,6 @@ static void tc_bridge_post_disable(struct drm_bridge=
- *bridge)
->         usleep_range(10000, 11000);
->  }
->
-> -static void d2l_read(struct i2c_client *i2c, u16 addr, u32 *val)
-> -{
-> -       int ret;
-> -       u8 buf_addr[2];
-> -
-> -       put_unaligned_be16(addr, buf_addr);
-> -       ret =3D i2c_master_send(i2c, buf_addr, sizeof(buf_addr));
-> -       if (ret < 0)
-> -               goto fail;
-> -
-> -       ret =3D i2c_master_recv(i2c, (u8 *)val, sizeof(*val));
-> -       if (ret < 0)
-> -               goto fail;
-> -
-> -       pr_debug("d2l: I2C : addr:%04x value:%08x\n", addr, *val);
-> -       return;
-> -
-> -fail:
-> -       dev_err(&i2c->dev, "Error %d reading from subaddress 0x%x\n",
-> -               ret, addr);
-> -}
-> -
-> -static void d2l_write(struct i2c_client *i2c, u16 addr, u32 val)
-> -{
-> -       u8 data[6];
-> -       int ret;
-> -
-> -       put_unaligned_be16(addr, data);
-> -       put_unaligned_le32(val, data + 2);
-> -
-> -       ret =3D i2c_master_send(i2c, data, ARRAY_SIZE(data));
-> -       if (ret < 0)
-> -               dev_err(&i2c->dev, "Error %d writing to subaddress 0x%x\n=
-",
-> -                       ret, addr);
-> -}
-> -
->  /* helper function to access bus_formats */
->  static struct drm_connector *get_connector(struct drm_encoder *encoder)
->  {
-> @@ -358,12 +323,33 @@ static struct drm_connector *get_connector(struct d=
-rm_encoder *encoder)
->         return NULL;
->  }
->
-> +static const struct reg_sequence tc_lvmux_vesa24[] =3D {
-> +       { LV_MX0003, LV_MX(LVI_R0, LVI_R1, LVI_R2, LVI_R3) },
-> +       { LV_MX0407, LV_MX(LVI_R4, LVI_R7, LVI_R5, LVI_G0) },
-> +       { LV_MX0811, LV_MX(LVI_G1, LVI_G2, LVI_G6, LVI_G7) },
-> +       { LV_MX1215, LV_MX(LVI_G3, LVI_G4, LVI_G5, LVI_B0) },
-> +       { LV_MX1619, LV_MX(LVI_B6, LVI_B7, LVI_B1, LVI_B2) },
-> +       { LV_MX2023, LV_MX(LVI_B3, LVI_B4, LVI_B5, LVI_L0) },
-> +       { LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_DE, LVI_R6) },
-> +};
-> +
-> +/* JEIDA-24/JEIDA-18 have the same mapping */
-> +static const struct reg_sequence tc_lvmux_jeida18_24[] =3D {
-> +       { LV_MX0003, LV_MX(LVI_R2, LVI_R3, LVI_R4, LVI_R5) },
-> +       { LV_MX0407, LV_MX(LVI_R6, LVI_R1, LVI_R7, LVI_G2) },
-> +       { LV_MX0811, LV_MX(LVI_G3, LVI_G4, LVI_G0, LVI_G1) },
-> +       { LV_MX1215, LV_MX(LVI_G5, LVI_G6, LVI_G7, LVI_B2) },
-> +       { LV_MX1619, LV_MX(LVI_B0, LVI_B1, LVI_B3, LVI_B4) },
-> +       { LV_MX2023, LV_MX(LVI_B5, LVI_B6, LVI_B7, LVI_L0) },
-> +       { LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_DE, LVI_R0) },
-> +};
-> +
->  static void tc_bridge_enable(struct drm_bridge *bridge)
->  {
->         struct tc_data *tc =3D bridge_to_tc(bridge);
->         u32 hback_porch, hsync_len, hfront_porch, hactive, htime1, htime2=
-;
->         u32 vback_porch, vsync_len, vfront_porch, vactive, vtime1, vtime2=
-;
-> -       u32 val =3D 0;
-> +       unsigned int val =3D 0;
->         u16 dsiclk, clkdiv, byteclk, t1, t2, t3, vsdelay;
->         struct drm_display_mode *mode;
->         struct drm_connector *connector =3D get_connector(bridge->encoder=
-);
-> @@ -386,28 +372,29 @@ static void tc_bridge_enable(struct drm_bridge *bri=
-dge)
->         htime2 =3D (hfront_porch << 16) + hactive;
->         vtime2 =3D (vfront_porch << 16) + vactive;
->
-> -       d2l_read(tc->i2c, IDREG, &val);
-> +       regmap_read(tc->regmap, IDREG, &val);
->
->         dev_info(tc->dev, "DSI2LVDS Chip ID.%02x Revision ID. %02x **\n",
->                  (val >> 8) & 0xFF, val & 0xFF);
->
-> -       d2l_write(tc->i2c, SYSRST, SYS_RST_REG | SYS_RST_DSIRX | SYS_RST_=
-BM |
-> -                 SYS_RST_LCD | SYS_RST_I2CM);
-> +       regmap_write(tc->regmap, SYSRST,
-> +                    SYS_RST_REG | SYS_RST_DSIRX | SYS_RST_BM | SYS_RST_L=
-CD |
-> +                    SYS_RST_I2CM);
->         usleep_range(30000, 40000);
->
-> -       d2l_write(tc->i2c, PPI_TX_RX_TA, TTA_GET | TTA_SURE);
-> -       d2l_write(tc->i2c, PPI_LPTXTIMECNT, LPX_PERIOD);
-> -       d2l_write(tc->i2c, PPI_D0S_CLRSIPOCOUNT, 3);
-> -       d2l_write(tc->i2c, PPI_D1S_CLRSIPOCOUNT, 3);
-> -       d2l_write(tc->i2c, PPI_D2S_CLRSIPOCOUNT, 3);
-> -       d2l_write(tc->i2c, PPI_D3S_CLRSIPOCOUNT, 3);
-> +       regmap_write(tc->regmap, PPI_TX_RX_TA, TTA_GET | TTA_SURE);
-> +       regmap_write(tc->regmap, PPI_LPTXTIMECNT, LPX_PERIOD);
-> +       regmap_write(tc->regmap, PPI_D0S_CLRSIPOCOUNT, 3);
-> +       regmap_write(tc->regmap, PPI_D1S_CLRSIPOCOUNT, 3);
-> +       regmap_write(tc->regmap, PPI_D2S_CLRSIPOCOUNT, 3);
-> +       regmap_write(tc->regmap, PPI_D3S_CLRSIPOCOUNT, 3);
->
->         val =3D ((L0EN << tc->num_dsi_lanes) - L0EN) | DSI_CLEN_BIT;
-> -       d2l_write(tc->i2c, PPI_LANEENABLE, val);
-> -       d2l_write(tc->i2c, DSI_LANEENABLE, val);
-> +       regmap_write(tc->regmap, PPI_LANEENABLE, val);
-> +       regmap_write(tc->regmap, DSI_LANEENABLE, val);
->
-> -       d2l_write(tc->i2c, PPI_STARTPPI, PPI_START_FUNCTION);
-> -       d2l_write(tc->i2c, DSI_STARTDSI, DSI_RX_START);
-> +       regmap_write(tc->regmap, PPI_STARTPPI, PPI_START_FUNCTION);
-> +       regmap_write(tc->regmap, DSI_STARTDSI, DSI_RX_START);
->
->         /* Video event mode vs pulse mode bit, does not exist for tc35877=
-5 */
->         if (tc->type =3D=3D TC358765)
-> @@ -431,42 +418,28 @@ static void tc_bridge_enable(struct drm_bridge *bri=
-dge)
->         vsdelay =3D (clkdiv * (t1 + t3) / byteclk) - hback_porch - hsync_=
-len - hactive;
->
->         val |=3D TC358775_VPCTRL_VSDELAY(vsdelay);
-> -       d2l_write(tc->i2c, VPCTRL, val);
-> +       regmap_write(tc->regmap, VPCTRL, val);
->
-> -       d2l_write(tc->i2c, HTIM1, htime1);
-> -       d2l_write(tc->i2c, VTIM1, vtime1);
-> -       d2l_write(tc->i2c, HTIM2, htime2);
-> -       d2l_write(tc->i2c, VTIM2, vtime2);
-> +       regmap_write(tc->regmap, HTIM1, htime1);
-> +       regmap_write(tc->regmap, VTIM1, vtime1);
-> +       regmap_write(tc->regmap, HTIM2, htime2);
-> +       regmap_write(tc->regmap, VTIM2, vtime2);
->
-> -       d2l_write(tc->i2c, VFUEN, VFUEN_EN);
-> -       d2l_write(tc->i2c, SYSRST, SYS_RST_LCD);
-> -       d2l_write(tc->i2c, LVPHY0, LV_PHY0_PRBS_ON(4) | LV_PHY0_ND(6));
-> +       regmap_write(tc->regmap, VFUEN, VFUEN_EN);
-> +       regmap_write(tc->regmap, SYSRST, SYS_RST_LCD);
-> +       regmap_write(tc->regmap, LVPHY0, LV_PHY0_PRBS_ON(4) | LV_PHY0_ND(=
-6));
->
->         dev_dbg(tc->dev, "bus_formats %04x bpc %d\n",
->                 connector->display_info.bus_formats[0],
->                 tc->bpc);
-> -       if (connector->display_info.bus_formats[0] =3D=3D
-> -               MEDIA_BUS_FMT_RGB888_1X7X4_SPWG) {
-> -               /* VESA-24 */
-> -               d2l_write(tc->i2c, LV_MX0003, LV_MX(LVI_R0, LVI_R1, LVI_R=
-2, LVI_R3));
-> -               d2l_write(tc->i2c, LV_MX0407, LV_MX(LVI_R4, LVI_R7, LVI_R=
-5, LVI_G0));
-> -               d2l_write(tc->i2c, LV_MX0811, LV_MX(LVI_G1, LVI_G2, LVI_G=
-6, LVI_G7));
-> -               d2l_write(tc->i2c, LV_MX1215, LV_MX(LVI_G3, LVI_G4, LVI_G=
-5, LVI_B0));
-> -               d2l_write(tc->i2c, LV_MX1619, LV_MX(LVI_B6, LVI_B7, LVI_B=
-1, LVI_B2));
-> -               d2l_write(tc->i2c, LV_MX2023, LV_MX(LVI_B3, LVI_B4, LVI_B=
-5, LVI_L0));
-> -               d2l_write(tc->i2c, LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_D=
-E, LVI_R6));
-> -       } else {
-> -               /* JEIDA-18 and JEIDA-24 */
-> -               d2l_write(tc->i2c, LV_MX0003, LV_MX(LVI_R2, LVI_R3, LVI_R=
-4, LVI_R5));
-> -               d2l_write(tc->i2c, LV_MX0407, LV_MX(LVI_R6, LVI_R1, LVI_R=
-7, LVI_G2));
-> -               d2l_write(tc->i2c, LV_MX0811, LV_MX(LVI_G3, LVI_G4, LVI_G=
-0, LVI_G1));
-> -               d2l_write(tc->i2c, LV_MX1215, LV_MX(LVI_G5, LVI_G6, LVI_G=
-7, LVI_B2));
-> -               d2l_write(tc->i2c, LV_MX1619, LV_MX(LVI_B0, LVI_B1, LVI_B=
-3, LVI_B4));
-> -               d2l_write(tc->i2c, LV_MX2023, LV_MX(LVI_B5, LVI_B6, LVI_B=
-7, LVI_L0));
-> -               d2l_write(tc->i2c, LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_D=
-E, LVI_R0));
-> -       }
-> +       if (connector->display_info.bus_formats[0] =3D=3D MEDIA_BUS_FMT_R=
-GB888_1X7X4_SPWG)
-> +               regmap_multi_reg_write(tc->regmap, tc_lvmux_vesa24,
-> +                                      ARRAY_SIZE(tc_lvmux_vesa24));
-> +       else
-> +               regmap_multi_reg_write(tc->regmap, tc_lvmux_jeida18_24,
-> +                                      ARRAY_SIZE(tc_lvmux_jeida18_24));
->
-> -       d2l_write(tc->i2c, VFUEN, VFUEN_EN);
-> +       regmap_write(tc->regmap, VFUEN, VFUEN_EN);
->
->         val =3D LVCFG_LVEN_BIT;
->         if (tc->lvds_link =3D=3D DUAL_LINK) {
-> @@ -475,7 +448,7 @@ static void tc_bridge_enable(struct drm_bridge *bridg=
-e)
->         } else {
->                 val |=3D TC358775_LVCFG_PCLKDIV(DIVIDE_BY_3);
->         }
-> -       d2l_write(tc->i2c, LVCFG, val);
-> +       regmap_write(tc->regmap, LVCFG, val);
->  }
->
->  /*
-> @@ -617,7 +590,7 @@ static const struct drm_bridge_funcs tc_bridge_funcs =
-=3D {
->
->  static int tc_attach_host(struct tc_data *tc)
->  {
-> -       struct device *dev =3D &tc->i2c->dev;
-> +       struct device *dev =3D tc->dev;
->         struct mipi_dsi_host *host;
->         struct mipi_dsi_device *dsi;
->         int ret;
-> @@ -665,6 +638,14 @@ static int tc_attach_host(struct tc_data *tc)
->         return 0;
->  }
->
-> +static const struct regmap_config tc358775_regmap_config =3D {
-> +       .reg_bits =3D 16,
-> +       .val_bits =3D 32,
-> +       .max_register =3D 0xffff,
-> +       .reg_format_endian =3D REGMAP_ENDIAN_BIG,
-> +       .val_format_endian =3D REGMAP_ENDIAN_LITTLE,
-> +};
-> +
->  static int tc_probe(struct i2c_client *client)
->  {
->         struct device *dev =3D &client->dev;
-> @@ -679,6 +660,11 @@ static int tc_probe(struct i2c_client *client)
->         tc->i2c =3D client;
+-- 
+Jens Axboe
 
-so the assignment above is no longer correct and should
-be also removed. Otherwise, this code will not compile.
 
->         tc->type =3D (enum tc3587x5_type)(unsigned long)of_device_get_mat=
-ch_data(dev);
->
-> +       tc->regmap =3D devm_regmap_init_i2c(client, &tc358775_regmap_conf=
-ig);
-> +       if (IS_ERR(tc->regmap))
-> +               return dev_err_probe(dev, PTR_ERR(tc->regmap),
-> +                                    "regmap i2c init failed\n");
-> +
->         tc->panel_bridge =3D devm_drm_of_get_bridge(dev, dev->of_node,
->                                                   TC358775_LVDS_OUT0, 0);
->         if (IS_ERR(tc->panel_bridge))
->
-> --
-> 2.39.2
->
-
-Kind regards
-Daniel Semkowicz
 
