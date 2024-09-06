@@ -1,166 +1,91 @@
-Return-Path: <linux-kernel+bounces-319548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D80F96FE51
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:10:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A386B96FE53
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAD828535C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:10:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBF81F23A52
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD5F15B125;
-	Fri,  6 Sep 2024 23:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB56215B10D;
+	Fri,  6 Sep 2024 23:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Sq0ajFEr"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Po55viVX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6491B85DC;
-	Fri,  6 Sep 2024 23:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193961B85DC
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 23:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725664244; cv=none; b=JrOvbiEafoYeo32+l4YQO3f4xmtefVVXFHBUiONbdTxvGkAmnJwGI4w9CLmKMxraWEWp046SILvEPo29pM5p3NKPg2O5stxTKIdB5Pq1I7qUvA0fMFPp1ObeXY7WcCwFr2qAhZKA3nDVYdrab3EXCKz4ya3uoAa0ahFIob1eCVI=
+	t=1725664297; cv=none; b=Q3dU16AY1aAvnbhNAEVm0P0hVkkvW/+XkSSyD7OfRh3xp8nZ4R6waQcHahz7M94mBYJxH0gR7OoMWDKzrHPrZVgUe5KK/3wd6zLmIHgwBKcIbtZCpjXo+QnmPQomvqW4p7j2N/HiONevWU8N+nPuKYg2q3H/3tONd+dnazpu3C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725664244; c=relaxed/simple;
-	bh=17e/COF6bpH5iqL0DPpdwjicHShPPCI1pEi7grYzng8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=phcAbnxZBmR1yYqW/YLV+U2Go0DQFJlSpKng+W9HZeRu+CmunU6acq5RGma0ugYU7n2QWtRwi2FZZPqmrizinGMnoI6FYN4nWyo8M9SLjxulYqv7Hn4j/OIXIu+VoGeHjjKsOFGGqR25W93TIdGn2hYNX6RMJ8SkTvtIsYaSbFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Sq0ajFEr; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8ACF03D5;
-	Sat,  7 Sep 2024 01:09:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725664166;
-	bh=17e/COF6bpH5iqL0DPpdwjicHShPPCI1pEi7grYzng8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sq0ajFErjH1q+HR+FifJI9sDjGNN3fNgyGjn6ytUnYpcaqim7dzUzNXlTQ9sum5rU
-	 8hk5gXMDK4Krp9vPjVuqYXxF/UxCiMxI19VoLwwKu+MKOHQRG18P/Bqlw01jqq/je1
-	 /VnT745mO/5UfrEH5wiXZ9e+FJeCkX0Adym5lKRQ=
-Date: Sat, 7 Sep 2024 02:10:38 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/3] media: platform: rzg2l-cru: rzg2l-video: Retrieve
- virtual channel information
-Message-ID: <20240906231038.GC12915@pendragon.ideasonboard.com>
-References: <20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240906173947.282402-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1725664297; c=relaxed/simple;
+	bh=Jm92GTizLR+q2XdM8uwVHTvYGhJOZyIzzzePNtb5tXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GwN58AAhQnBUndWOQBGawvkEVG6D7k6PjGgdsk+gUt8a+8AxrvGttL/1/vpX+99UyeeARksZHvGtb/U8GQwDSkCz4+Rz92zuPliULw47SX3G9Mj8mbW2AYmTWkRoHsLOFXGPS0TETJsNRAT4fSeTihuftPYdaPc94LpO2Yj7G2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Po55viVX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1725664291;
+	bh=HEF6t61oQcZPeWEFUYghSOz/WmQUigaLAqj5lwawg9Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Po55viVX1hlmgK10Q8yQDjvyM2VHZheLwnbXdnxlKNaW/54rsQJsaCNwJQjO1AX3P
+	 WEwGP9gXr6Mfpng9r8/4K1F1BnVNo9dfXHUA+gYiQ7R7rTPT+iQjCXRLVrMH+0aeLE
+	 bO1pQ5VJFH0MgjafH2HAS3Di72fu1PWEmnJsNNY5UIGArOnZ5mAnIvp1GJXMUf59Bz
+	 9Lu2PD2+1F0krDeVAnsFPjuYYyI8+gfs36WPUNvpBU2NuV4bmvgB3cFQLCWPlCdw+k
+	 st3B1BfRpe0lW6TEOmBQkZ4b2+83p43dY5KEczwDl/JI0OPfw3hADpcvERmJb2j9EA
+	 8VMdqgg5LnAEw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0sRl3CtQz4wj1;
+	Sat,  7 Sep 2024 09:11:31 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, nysal@linux.ibm.com
+Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.11-3 tag
+In-Reply-To: <CAHk-=wj6L6Qb10jVk+eHH2D3oHFathTc2nnZRpKKbqKuO3Rkow@mail.gmail.com>
+References: <87ttet3rz9.fsf@mail.lhotse>
+ <CAHk-=wj6L6Qb10jVk+eHH2D3oHFathTc2nnZRpKKbqKuO3Rkow@mail.gmail.com>
+Date: Sat, 07 Sep 2024 09:11:30 +1000
+Message-ID: <87o7504btp.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240906173947.282402-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain
 
-Hi Prabhakar,
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> On Fri, 6 Sept 2024 at 05:08, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> Please pull some more powerpc fixes for 6.11:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-3
+>
+> Hmm. New pgp key? Please don't take me by surprise like this.
 
-Thank you for the patch.
+Yes, sorry. I switched to it a few weeks back but this is the first pull
+request I've sent since.
 
-On Fri, Sep 06, 2024 at 06:39:46PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The RZ/G2L CRU needs to configure the ICnMC.VCSEL bits to specify which
-> virtual channel should be processed from the four available VCs. To
-> retrieve this information from the connected subdevice, the
-> .get_frame_desc() function is called.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index bbf4674f888d..6101a070e785 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -433,12 +433,41 @@ void rzg2l_cru_stop_image_processing(struct rzg2l_cru_dev *cru)
->  	spin_unlock_irqrestore(&cru->qlock, flags);
->  }
->  
-> +static int rzg2l_cru_get_virtual_channel(struct rzg2l_cru_dev *cru)
-> +{
-> +	struct v4l2_mbus_frame_desc fd = { };
-> +	struct media_pad *pad;
-> +	int ret;
-> +
-> +	pad = media_pad_remote_pad_unique(&cru->ip.pads[1]);
+> The key looks fine, I see the signature by Stephen Rothwell, but I get
+> worried when I suddenly see a new signature with no notice and then
+> have to go looking around for it.
 
-It would be nice to use RZG2L_CRU_IP_SOURCE here instead of hardcoding
-the pad number. That would require moving rzg2l_csi2_pads to the shared
-header. You can do that on top.
+It's also signed by my old key.
 
-An now that I've said that, is it really the source pad you need here ?
+I posted it to the keys repo:
+  https://lore.kernel.org/keys/87o75pp2bt.fsf@mail.lhotse/
 
-> +	if (IS_ERR(pad))
-> +		return PTR_ERR(pad);
+But yeah I still should have mentioned it in the pull request.
 
-Can this happen, or would the pipeline fail to validate ? I think you
-can set the MUST_CONNECT flag on the sink pad, then you'll have a
-guarantee something will be connected.
-
-> +
-> +	ret = v4l2_subdev_call(cru->ip.remote, pad, get_frame_desc,
-> +			       pad->index, &fd);
-> +	if (ret < 0 && ret != -ENOIOCTLCMD)
-
-Printing an error message would help debugging.
-
-> +		return ret;
-> +	/* If remote subdev does not implement .get_frame_desc default to VC0. */
-> +	if (ret == -ENOIOCTLCMD)
-> +		return 0;
-> +
-> +	if (fd.type != V4L2_MBUS_FRAME_DESC_TYPE_CSI2)
-
-An error message would help here too I think.
-
-> +		return -EINVAL;
-> +
-> +	return fd.num_entries ? fd.entry[0].bus.csi2.vc : 0;
-
-I think you should return an error if fd.num_entries is 0, that
-shouldn't happen.
-
-> +}
-> +
->  int rzg2l_cru_start_image_processing(struct rzg2l_cru_dev *cru)
->  {
->  	struct v4l2_mbus_framefmt *fmt = rzg2l_cru_ip_get_src_fmt(cru);
->  	unsigned long flags;
->  	int ret;
->  
-> +	ret = rzg2l_cru_get_virtual_channel(cru);
-> +	if (ret < 0)
-> +		return ret;
-> +	cru->csi.channel = ret;
-
-How about passing the value to the function that needs it, instead of
-storing it in cru->csi.channel ? You can do that on top and drop the
-csi.channel field.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +
->  	spin_lock_irqsave(&cru->qlock, flags);
->  
->  	/* Select a video input */
-
--- 
-Regards,
-
-Laurent Pinchart
+cheers
 
