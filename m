@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-319175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84AE696F8F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:03:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B772696F8FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB368B21536
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBF7284A5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAB41D31BA;
-	Fri,  6 Sep 2024 16:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72B91D3637;
+	Fri,  6 Sep 2024 16:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apOz2uug"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="slP+PObl"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DAD374F1;
-	Fri,  6 Sep 2024 16:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2271CFEA7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725638585; cv=none; b=DSCE6nPvh+FZOYQxaE85Hxxy/+lEn+lVrjdVJY0IoSPcn9J0q18Ku+GQRKEYOsmesg/5nqllbEG8zcENKpuO/rKpYfme0zHczKos6omzyVmW5Cx5u52FKstPc/d6d4Rw3GTeE5u1IwD0luTft+DKa2g0PlMHRbM9yfGqThRPdT0=
+	t=1725638644; cv=none; b=EdkinnmeQHG84MoH1x9Mb2IZPduogQSlVq8bRdsv/DP06UZrRTJI27Rit05NMvJVXNyBI3gFkNzde6KJgpLbcjaaW98h2xugQFZ5wCW7sMFakfLbscsG/fdBFmgAMcfPiPNyb8FBFALI6a2NbNb+2A4jjhVPR5LqUH2zKAal08c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725638585; c=relaxed/simple;
-	bh=7fGOQwog3g/mDCj72pI0ZqmoA37xUY+mA00MIYSmcyM=;
+	s=arc-20240116; t=1725638644; c=relaxed/simple;
+	bh=mQDpTkFyLm0odGX34YBM4aZGYFXqn5aH5odSUk4C1WI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHML3r9FPveWK3d/wVqOalySGGLtlTGgkp7Z7x54vRHuwczRkftgCg/AVkVDZomez6nzWKupcSIDkg/80ck4yfoM798MOq2RjO8OkAkB2h8DXxGCwYQHJAvhBuir6+rF0ynzF5+ZlSNGUMdbC5cTh2ZwZBKCUKjnPbG6ywX+CTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apOz2uug; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9733DC4CEC4;
-	Fri,  6 Sep 2024 16:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725638585;
-	bh=7fGOQwog3g/mDCj72pI0ZqmoA37xUY+mA00MIYSmcyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=apOz2uug2ZA9MwvRcWALZgmjLkhT+7+bs3/IItERCNXkKlLK/Te4xIxUPTq+OyEZg
-	 2lImtKo6UA7fCzkmnE+Z+zzYJUvVDJBDkxTD1gLrpufZa0hF13Fr6zvC78U314cKos
-	 +eZe9s8I7CFYCRw6evzzrplamAMHDqEG8aojeR4za0EcAGj/4Fe4Ttwsk918OAbQnk
-	 kMF5WvXIF5oQqVJPCm0t9OHDpAVUWhcO2UsLi6txDpwDweJlvDgLir0zU6zPLWoWF8
-	 SlOTGMtADj23UZddGqSO48sH+kTTomB/KB+B8RqPXUrDg6JB2J4meFnICvOwUUIq4W
-	 4XBHUwV1lxtnw==
-Date: Fri, 6 Sep 2024 18:03:01 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Kimriver Liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
-	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <4xm4v5gq72klvg4xk4fzpyuui7hmmh63gdoflghwmo7pvid4ub@l22jnobt6n5j>
-References: <20240906074731.3064-1-kimriver.liu@siengine.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7Or3ZMlvTGxEYN5yyIQsRXPShLQeYazgJCRwIcdP1PT+HHW4hShDjdXyHRMMOrmIuP41SE2MSuY1hqhCQISaHzQ2faZ1HBQIPbjOiotOAbvUwdzzkG+yQpq8gIiJ6Ok4J4hxjZJAYn8l5tvgz5UEF++7pKD10B9vnpA4douPGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=slP+PObl; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 6 Sep 2024 09:03:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725638638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dTskArZncKt0pUKIN2dkR1HoLoe1rwj7R2FFyS66ktk=;
+	b=slP+POblHpDGNl8D9VDtMWVWaV/xvR+Dsps19NpRz/soVWgyQss3p3S+poZsrB5Mq5O75K
+	nzlMpEl2iuMDlnz8pwrf3rlgy4j2ffh0DLTD3MmD2nOuFVeDm0XwUtc4Pb2HFX4xo4bgSB
+	75tZ+or1hIcU9ftkSGJOxEqfK9sqXdg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Yosry Ahmed <yosryahmed@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, David Rientjes <rientjes@google.com>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Eric Dumazet <edumazet@google.com>, 
+	"David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v4] memcg: add charging of already allocated slab objects
+Message-ID: <oe6avn6iiksrhpon3c7igplcooorjpypaqytppfbu2y4aryz5j@vx727pvwi35n>
+References: <20240905173422.1565480-1-shakeel.butt@linux.dev>
+ <CAJD7tkbWLYG7-G9G7MNkcA98gmGDHd3DgS38uF6r5o60H293rQ@mail.gmail.com>
+ <qk3437v2as6pz2zxu4uaniqfhpxqd3qzop52zkbxwbnzgssi5v@br2hglnirrgx>
+ <572688a7-8719-4f94-a5cd-e726486c757d@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,43 +65,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906074731.3064-1-kimriver.liu@siengine.com>
+In-Reply-To: <572688a7-8719-4f94-a5cd-e726486c757d@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Kimriver,
-
-On Fri, Sep 06, 2024 at 03:47:31PM GMT, Kimriver Liu wrote:
-> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
-> IC_ENABLE is already disabled.
+On Fri, Sep 06, 2024 at 10:52:04AM GMT, Vlastimil Babka wrote:
+> On 9/5/24 20:48, Shakeel Butt wrote:
+> >> > ---
+> >> > v3: https://lore.kernel.org/all/20240829175339.2424521-1-shakeel.butt@linux.dev/
+> >> > Changes since v3:
+> >> > - Add kernel doc for kmem_cache_charge.
+> >> >
+> >> > v2: https://lore.kernel.org/all/20240827235228.1591842-1-shakeel.butt@linux.dev/
+> >> > Change since v2:
+> >> > - Add handling of already charged large kmalloc objects.
+> >> > - Move the normal kmalloc cache check into a function.
+> >> >
+> >> > v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
+> >> > Changes since v1:
+> >> > - Correctly handle large allocations which bypass slab
+> >> > - Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
+> >> >
+> >> > RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
+> >> > Changes since the RFC:
+> >> > - Added check for already charged slab objects.
+> >> > - Added performance results from neper's tcp_crr
+> >> >
+> >> >
+> >> >  include/linux/slab.h            | 20 ++++++++++++++
+> >> >  mm/slab.h                       |  7 +++++
+> >> >  mm/slub.c                       | 49 +++++++++++++++++++++++++++++++++
+> >> >  net/ipv4/inet_connection_sock.c |  5 ++--
+> >> >  4 files changed, 79 insertions(+), 2 deletions(-)
+> >> >
+> >> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> >> > index eb2bf4629157..68789c79a530 100644
+> >> > --- a/include/linux/slab.h
+> >> > +++ b/include/linux/slab.h
+> >> > @@ -547,6 +547,26 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
+> >> >                             gfp_t gfpflags) __assume_slab_alignment __malloc;
+> >> >  #define kmem_cache_alloc_lru(...)      alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
+> >> >
+> >> > +/**
+> >> > + * kmem_cache_charge - memcg charge an already allocated slab memory
+> >> > + * @objp: address of the slab object to memcg charge.
+> >> > + * @gfpflags: describe the allocation context
+> >> > + *
+> >> > + * kmem_cache_charge is the normal method to charge a slab object to the current
 > 
-> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
-> holding SCL low. If ENABLE bit is disabled, the software need
-> enable it before trying to issue ABORT bit. otherwise,
-> the controller ignores any write to ABORT bit.
+> what is "normal method"? 
+
+This is just a copy-paste from kmalloc() documentation.
+
 > 
-> Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
+> >> > + * memcg. The objp should be pointer returned by the slab allocator functions
+> >> > + * like kmalloc or kmem_cache_alloc. The memcg charge behavior can be controller
+> >> 
+> >> s/controller/controlled
+> > 
+> > Thanks. Vlastimil please fix this when you pick this up.
 > 
-> ---
-> V5->V6: restore i2c_dw_is_master_idling() function checking
-> V4->V5: delete master idling checking
-> V3->V4:
->       1. update commit messages and add patch version and changelog
->       2. move print the error message in i2c_dw_xfer
-> V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
-> V1->V2: used standard words in function names and addressed review comments
+> I felt it could be improved more, so ended up with this. Thoughts?
 > 
-> link to V1:
-> https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
+> /**
+>  * kmem_cache_charge - memcg charge an already allocated slab memory
+>  * @objp: address of the slab object to memcg charge
+>  * @gfpflags: describe the allocation context
+>  *
+>  * kmem_cache_charge allows charging a slab object to the current memcg,
+>  * primarily in cases where charging at allocation time might not be possible
+>  * because the target memcg is not known (i.e. softirq context)
+>  *
+>  * The objp should be pointer returned by the slab allocator functions like
+>  * kmalloc (with __GFP_ACCOUNT in flags) or kmem_cache_alloc. The memcg charge
+>  * behavior can be controlled through gfpflags parameter, which affects how the
+>  * necessary internal metadata can be allocated. Including __GFP_NOFAIL denotes
+>  * that overcharging is requested instead of failure, but is not applied for the
+>  * internal metadata allocation.
+>  *
+>  * There are several cases where it will return true even if the charging was
+>  * not done:
+>  * More specifically:
+>  *
+>  * 1. For !CONFIG_MEMCG or cgroup_disable=memory systems.
+>  * 2. Already charged slab objects.
+>  * 3. For slab objects from KMALLOC_NORMAL caches - allocated by kmalloc()
+>  *    without __GFP_ACCOUNT
+>  * 4. Allocating internal metadata has failed
+>  *
+>  * Return: true if charge was successful otherwise false.
+>  */
+>  
 
-You've ignored all of Andy's reviews, and this is not acceptable.
+Yes, this is much better.
 
-You've submitted this patch three times today in a short period,
-and Andy has responded to each one with the same comment, which
-you continue to disregard.
+> >> > +
+> >> > +       /* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
+> >> 
+> >> Is it possible to point to the commit that has the explanation here?
+> >> The one you pointed me to before? Otherwise it's not really obvious
+> >> where the circular dependency comes from (at least to me).
+> >> 
+> > 
+> > Not sure about the commit reference. We can add more text here.
+> > Vlastimil, how much detail do you prefer?
+> 
+> What about:
+> 
+>         /*
+>          * Ignore KMALLOC_NORMAL cache to avoid possible circular dependency
+>          * of slab_obj_exts being allocated from the same slab and thus the slab
+>          * becoming effectively unfreeable.
+>          */
+> 
 
-You must follow up on the reviews. I will accept this patch for
-now, but if you keep ignoring feedback, I will reject future
-patches until you address all reviews from those taking their
-time to review your changes.
+Looks great to me.
 
-Andi
+thanks,
+Shakeel
 
