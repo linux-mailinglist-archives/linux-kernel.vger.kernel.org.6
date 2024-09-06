@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-319462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C973F96FCD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3486796FCD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19650B279E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:37:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0420B23E65
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB29156861;
-	Fri,  6 Sep 2024 20:37:01 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432021D6C78;
+	Fri,  6 Sep 2024 20:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XBpdVShB"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB291B85DA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC831B85F3
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725655021; cv=none; b=EjA/qc2MopKomvWzjEUj/R3BNsEd9/KZJhFkQTejyB36pBDqM55w2dUOYOP+//hlRb9Kxt7gTysiB4Y7b6+e8WZX6eNQOBt+F7RvYdhV+LYZ1OCxQRf7G1R6nv+a+XowO3QDCNBv6pnKHnd+IpPd3jmvYSU4o+wwd50bCsmQGfM=
+	t=1725655520; cv=none; b=JrrGpV2c1NYwRuUMdPP4KhJR0GAtZ+Q6PLbo+ljyyq9y+YNplgg1q5/piokJbx6O1PbewuAulFPSAjMzX9otjcNiix+zSsSc+L3vwpAb+lER+5ynu/NveDvIk+xmjrezU1iTdk37q8O1ScC5RV5icbZIjcBdUPDsIRMZT7C0dXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725655021; c=relaxed/simple;
-	bh=jF+JxXLgBVmgTgH6Y5wMqWNV2mUy6xRkg+tW2uayMw0=;
-	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=c1t51kUUzON2MkGEPaJkukBLln8capOhiQNJNc1WEcWDNwLOcMXKW16rlvXkzwXazp6eZCNBS1+e9us1xVDfnzqnMe2zpo2MRkbSOrvvMzBrcsfazZYq2eio0IeIGzs2rdWSLZ503Z7yLMYsBrkGXUgSFLnQXaV8w8VQaaaThC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.75.14) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 6 Sep
- 2024 23:36:47 +0300
-Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in
- gic_ipi_send_mask()
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
- <87cyli5zj7.ffs@tglx> <86o752v8xs.wl-maz@kernel.org>
- <f0efe812-a77b-9a77-c17c-ece503475923@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <b7d701e1-3cdd-3490-2ee1-70d96fa22703@omp.ru>
-Date: Fri, 6 Sep 2024 23:36:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1725655520; c=relaxed/simple;
+	bh=iRbjlIAPQHgVcCD2c2dVgtd+uOsMNRFeT9Jqbjmu2aM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HNz1+9N4TEqMSwqT2aBekyMddNawBcWAy9J7PMty5G9MqJvtbdEXB8Fg4whl21OHp0esCQqesaiCIBguxTB6lWanleI7mJgmMu+rknNC/qFqheMirWAiWczYfC0lEP4qwtryXYCF5ztv3kWT3RKieGe3335Zdp2l99Qil6eb12g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XBpdVShB; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b43e6b9c82so103399527b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 13:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725655518; x=1726260318; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FxzJjxZJGFTOeLvX6J4JiYtbxsEYPquNtnuMoiceNJk=;
+        b=XBpdVShB/pF/+yECBGcbNf8/xt5vGjavHUetyXLUAp/4rBGrKk9ebhoONLlNu8sa6D
+         /XJoXzlqr2Fmu0PX6e8TbGUsvk0KchtRSk+pmm/DPRC0uhC3jQYbwYnLtwO3rpoEYdRx
+         LwstSGA8wrP8iGkFDx6u4dioMZIpukQi2Cc+B/y7K2FKnKu8bxDji+Zx2M3OhLoer2Wu
+         Lr4hX/wTffuf0Ze+QmIdZM/jhbzrz1YqR+JV3g9Jd08meit6ROeKLiFBYtohwA6wCTfK
+         TVaS/cw9Oer5/3+ybKKYat7Kk9hW1S+k5v3TLT3QsRLy1MWm1osSy7wLpHHFuW59X/uM
+         B9pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725655518; x=1726260318;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FxzJjxZJGFTOeLvX6J4JiYtbxsEYPquNtnuMoiceNJk=;
+        b=jUt01YZtX+Vmw+XOdLqAoz0pAfoc/9ckUdhShWpJ2npUU737cnGSvlY34w5/ev4xTn
+         zNqFtsp/q+9ARxK5NBmVOwYKhm9o2g6+6UKtZ+WR6j/W9bJxIPxu5joo2LAqEMtIIVFV
+         4g42UADzIypafsswgzQ9tqiI+7ZdOSk5e33crws4UlN4bU8cJOX5al05SxvFPYbBb5wA
+         4h0Ces5SUWhg/5M/+7VB06gYxg2BRN2HmqUUAH2O+1/pLP14O+jgM0/AFXpeEVXFoZ/e
+         seQV8oXO6JGZzrtjo3C7Wal8MsFjT6o/UJ2UhQiz+EHk3BuUS3hubO2iRg6n7q/I46ad
+         vLKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUG1LPizu6aBz2oNs/RwaCWIhehr/JaucmpiP+wibu8E2U1GShNpnf1ZTpg5p6aIByzKWPD3fJx/JisyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn6suU+pKjMpzJUnZJ40ou4siR/rP9J3d+VqEigE+cXTUQV9EY
+	3Dl8GgGJLnlhyh49p2fCHhIRJZ0PT4co1k7bNjVqg8QeZtY86PGUr/Bylo+XBCvaFkfTItHWDwO
+	7hhbxYw==
+X-Google-Smtp-Source: AGHT+IG0qNAr1lsqNhg4aq0ofiYc3K/zZ3QDiUU/Hyw9lPo1OgXRDXdxAC8vOmf5a0/AcpCbqcFFiNpx7JpQ
+X-Received: from vipin.c.googlers.com ([35.247.89.60]) (user=vipinsh
+ job=sendgmr) by 2002:a05:690c:3081:b0:62c:f976:a763 with SMTP id
+ 00721157ae682-6db44c4cd20mr583677b3.1.1725655518235; Fri, 06 Sep 2024
+ 13:45:18 -0700 (PDT)
+Date: Fri,  6 Sep 2024 13:45:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <f0efe812-a77b-9a77-c17c-ece503475923@omp.ru>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/06/2024 20:17:39
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187598 [Sep 06 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
- 766319f57b3d5e49f2c79a76e7d7087b621090df
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.14 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.75.14
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/06/2024 20:21:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/6/2024 7:13:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240906204515.3276696-1-vipinsh@google.com>
+Subject: [PATCH v3 0/2]  KVM: x86/mmu: Run NX huge page recovery under MMU
+ read lock
+From: Vipin Sharma <vipinsh@google.com>
+To: seanjc@google.com, pbonzini@redhat.com, dmatlack@google.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vipin Sharma <vipinsh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/6/24 11:29 PM, Sergey Shtylyov wrote:
-[...]
+Split NX huge page recovery in two separate flows, one for TDP MMU and
+one for non-TDP MMU.
 
->>>> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
->>>> looking at the GIC driver's irq_set_affinity() method, it seems that the
->>>> passed CPU mask may contain the logical CPU #s beyond 8, and that method
->>>> filters them out before reading gic_cpu_map[], bailing out with
->>>> -EINVAL.
->>>
->>> The reasoning is correct in theory, but in reality it's a non problem.
->>>
->>> Simply because processors which use this GIC version cannot have more
->>> than 8 cores.
->>>
->>> That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
->>> bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
+TDP MMU flow will use MMU read lock and non-TDP MMU flow will use MMU
+write lock. This change unblocks vCPUs which are waiting for MMU read
+lock while NX huge page recovery is running and zapping MMU pages.
 
-[...]
+A Windows guest was showing network latency jitters which was root
+caused to vCPUs waiting for MMU read lock when NX huge page recovery
+thread was holding MMU write lock. Disabling NX huge page recovery fixed
+the jitter issue.
 
->> 33de0aa4bae98, the affinity that the driver gets is narrowed to what
->> is actually *online*.
-> 
->    What I haven't quite understood from my (cursory) looking at the GICv2
-> spec (and the GIC driver) is why only one CPU (with a lowest #) is selected
-> from *mask_val before writing to GICD_GIC_DIST_TARGET, while the spec holds
+So, to optimize NX huge page recovery, it was modified to run under MMU
+read lock, the switch made jitter issue disappear completely and vCPUs
+wait time for MMU read lock reduced drastically. Patch 2 commit log has
+the data from the tool to show improvement observed.
 
-   Sorry, meant to type GIC_DIST_TARGET (or GICD_ITARGETSRn, as the spec
-calls it)...
+Patch 1 splits the NX huge pages tracking into two lists, one for TDP
+MMU and one for shadow and legacy MMU. Patch 2 adds support to run
+recovery worker under MMU read lock for TDP MMU pages.
 
-[...]
+v3:
+- Use pointers in track and untrack NX huge pages APIs for accounting.
+- Remove #ifdefs from v2.
+- Fix error in v2 where TDP MMU flow was using
+  cond_resched_rwlock_write() instead of cond_resched_rwlock_read() 
+- Keep common code for both TDP and non-TDP MMU logic.
+- Create wrappers for TDP MMU data structures to avoid #ifdefs.
 
->> Thanks,
->>
->> 	M.
+v2: https://lore.kernel.org/kvm/20240829191135.2041489-1-vipinsh@google.com/#t
+- Track legacy and TDP MMU NX huge pages separately.
+- Each list has their own calculation of "to_zap", i.e. number of pages
+  to zap.
+- Unaccount huge page before dirty log check and zap logic in TDP MMU recovery
+  worker. Check patch 4 for more details.
+- 32 bit build issue fix.
+- Sparse warning fix for comparing RCU pointer with non-RCU pointer.
+  (sp->spt == spte_to_child_pt())
 
-MBR, Sergey
+
+v1: https://lore.kernel.org/kvm/20240812171341.1763297-1-vipinsh@google.com/#t
+
+Vipin Sharma (2):
+  KVM: x86/mmu: Track TDP MMU NX huge pages separately
+  KVM: x86/mmu: Recover TDP MMU NX huge pages using MMU read lock
+
+ arch/x86/include/asm/kvm_host.h |  13 +++-
+ arch/x86/kvm/mmu/mmu.c          | 116 ++++++++++++++++++++++----------
+ arch/x86/kvm/mmu/mmu_internal.h |   8 ++-
+ arch/x86/kvm/mmu/tdp_mmu.c      |  73 ++++++++++++++++----
+ arch/x86/kvm/mmu/tdp_mmu.h      |   6 +-
+ 5 files changed, 164 insertions(+), 52 deletions(-)
+
+
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
