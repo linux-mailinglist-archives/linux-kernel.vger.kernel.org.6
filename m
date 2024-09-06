@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-318272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB9296EAF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:48:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703F496EAFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393F01F256F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30104285A01
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE51411DE;
-	Fri,  6 Sep 2024 06:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D0213D8B0;
+	Fri,  6 Sep 2024 06:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AOIczusQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieZ3sIBa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8346F3EA71;
-	Fri,  6 Sep 2024 06:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C6487A5;
+	Fri,  6 Sep 2024 06:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605325; cv=none; b=syZh5iWg916vIkdKs9NGX6Sg/m3nuIlPTU+rVE5DC5cqh5Khb3TfXUVBQehGIn/fgkfuP7Af/N60sHoRlOAgpA7G6iPPKlczVbNX7yTtBYdx74vsAWM5ixvBXvEUoOsjLyFwRzOFwdkWHWnhg1xrdOrfIwL+uB4nrEGGmMvXjGc=
+	t=1725605378; cv=none; b=LXJq/TBmOP0e0WFEEJ6hLgHVTg6dEJsO92+ZrmJXUoeOczc4oCT76lNZArFu5oFANh5XsS3yhNEuVB+EMqyTZke6FvKMKW3h8FKtk3iwY+1PFKYd1zIdbjg64WaFDSXu6jtxCCFoBmrAQ6xo9hi1DmCGBqXIcPABiaESoqQfrhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605325; c=relaxed/simple;
-	bh=nGb8XxbR7FTLc/dIcFXasGyv/0FcYxflx3mwiODWW0c=;
+	s=arc-20240116; t=1725605378; c=relaxed/simple;
+	bh=wVe2H+YZx1oFFNE2aps61z6iCEsuBfKsWQT7fmZvhQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWVy31iUps0rLH4PDLLYpNKtm7jpP6D0XZ/iFTG67s9ZW9a0wGLRHPkcivrSeVXtpOMLv/nbhrQWIDp7r4AeePuIoPZ9DsY4kgN2gcj4jAcbJfUF6DjehKevjysOF47xmIbJ1C/ztg88Bmqm7PbAq631UZ7xbc4anSoAHgOuKj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AOIczusQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05D76C4CEC4;
-	Fri,  6 Sep 2024 06:48:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EY9jrNvGIFMVNU4ntya9RbiuTDR61pB2+2bxspe9SFsF7K06OKXKsLV4g3LFShKjtxT+9CL14IP/tDWkDOAdcFl1YpbhaW6V63Wtp5c4Y2am0E7h7EDZ6GA7WX6BHpQaNVvWPZ6jCoAnM9tAJ8LsaHJ6UQVsV+gPuikRafgcKCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieZ3sIBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA78C4CEC4;
+	Fri,  6 Sep 2024 06:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725605325;
-	bh=nGb8XxbR7FTLc/dIcFXasGyv/0FcYxflx3mwiODWW0c=;
+	s=k20201202; t=1725605378;
+	bh=wVe2H+YZx1oFFNE2aps61z6iCEsuBfKsWQT7fmZvhQ8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AOIczusQjztFmfGBOGL8PH/zIGGSMEuyk0eGnLJwDxbhKs3NtjKDUtyi7s9Dbw+GI
-	 Mb5BTIF50Nu8L7y6Lfzsd1RoqTP5zG5jS6J1I3Q/zyXZ3SrIIOsFt+HbBhvYFyARVB
-	 u518shT9HZk1jzZq0270PBjkrb2jnN/rikfE3sQEyf2l0girKC1NnyZN47AZauzdzG
-	 IRo2YzVITl1tCYYwMnOYPnepCcBo3sia1aVd6u4vwF24Ipcnus5ZR69FL6zBOSUDjg
-	 G0Pcv2+6Swf32EIlEldguVu3F5gtO2VrPfrs/rRZRn4giUfIA2IyY4Yc+p+4VB0gQk
-	 vHpQC9Tysfhow==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1smSmF-000000004Ee-3z23;
-	Fri, 06 Sep 2024 08:49:04 +0200
-Date: Fri, 6 Sep 2024 08:49:03 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	abel.vesa@linaro.org, johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Subject: Re: [PATCH v6 3/4] PCI: qcom: Add equalization settings for 16.0 GT/s
-Message-ID: <Ztql31KXrBQ1I5JV@hovoldconsulting.com>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
- <20240904-pci-qcom-gen4-stability-v6-3-ec39f7ae3f62@linaro.org>
- <ZtgqvXGgp2sWNg5O@hovoldconsulting.com>
- <20240905152742.4llkcjvvu3klmo6j@thinkpad>
- <Ztnb-GauC_8D8N-i@hovoldconsulting.com>
- <20240905173437.hm3hegv5zolaj7gj@thinkpad>
+	b=ieZ3sIBaP6W6HdLd9cuQnJLtVztyD5rfZ7EfodpDe7swaP+aHwSUbq6XnCfXuj49p
+	 9TBF+ww51mTKGrizE2EE6kv9yUpnj1ev/zaJfoIAlBPA/vIDRbX5C5kBE7v8Iq/f8S
+	 v0Ho0J2PnuoiZ/r5Q2Xj/U9E00S1YYKgJFj5c2HYV7PCYu9RCI/vaAzd7SF8GNeYaK
+	 e2eGx0jZ6nM+T4ir3zT74sqJZG15hCS82qyp+lwu9ANKfOyLVE4uEID+W9B3Cy5WNl
+	 dbksTA+23TiJolQjKMh2Lpjy05isspdtxUnpLa/wCRc3t2ZragUwO5kfrZBVoElkMv
+	 PUmastBT8allw==
+Date: Fri, 6 Sep 2024 08:49:34 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
+	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] i2c: npcm: restore slave addresses array length
+Message-ID: <ej6aqrruosoxx4a4cfic4ml7hngbxdy4ba65vwtardmwrkraro@elpng6eotflg>
+References: <20240830034640.7049-1-kfting@nuvoton.com>
+ <20240830034640.7049-2-kfting@nuvoton.com>
+ <xdaufg4bju3iq5fqeo2gdej3yaxyufhuaiuyixnla234l2ej3r@fmvann767tib>
+ <CACD3sJYt12H3DNqRwOU0ULDwJj2TbqUR5NhYWxBgvFggqKVyGw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240905173437.hm3hegv5zolaj7gj@thinkpad>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACD3sJYt12H3DNqRwOU0ULDwJj2TbqUR5NhYWxBgvFggqKVyGw@mail.gmail.com>
 
-On Thu, Sep 05, 2024 at 11:04:37PM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Sep 05, 2024 at 06:27:36PM +0200, Johan Hovold wrote:
-> > On Thu, Sep 05, 2024 at 08:57:42PM +0530, Manivannan Sadhasivam wrote:
- 
-> > > Perhaps we can just get rid of the Kconfig entry and build it by default for
-> > > both RC and EP drivers? I don't see a value in building it as a separate module.
-> > > And we may also move more common code in the future.
-> > 
-> > It is already built by default for both drivers. I'm not sure what
-> > you're suggesting here.
+Hi Tyrone,
+
+On Fri, Sep 06, 2024 at 10:28:30AM GMT, Tyrone Ting wrote:
+> Hi Andy:
 > 
-> Right now it is selected by both drivers using a Kconfig symbol. But I'm
-> thinking of building it by default as below:
+> Thank you for your comments.
 > 
-> -obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
-> -obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o
-> +obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o pcie-qcom-common.o
-> +obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o pcie-qcom-common.o
+> Andi Shyti <andi.shyti@kernel.org> 於 2024年9月6日 週五 上午5:36寫道：
+> >
+> > Hi Tyrone,
+> >
+> > On Fri, Aug 30, 2024 at 11:46:34AM GMT, Tyrone Ting wrote:
+> > > The smatch check warning is "buffer overflow 'npcm_i2caddr' 2 <= 9".
+> > > The original design supports 10 slave addresses although only 2
+> > > addresses are required for current implementation.
+> > >
+> > > Restore the npcm_i2caddr array length to fix the smatch warning.
+> > >
+> > > Fixes: 47d506d1a28f ("i2c: npcm: Remove own slave addresses 2:10")
+> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > Closes: https://lore.kernel.org/r/202408130818.FgDP5uNm-lkp@intel.com/
+> > > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> >
+> > your email used in From: is different that your e-mail used the
+> > SoB. Is this done in purpose? If so I will keep it as it is, no
+> > problem for me, otherwise I can fix it while applying it.
+> >
 > 
-> A separate Kconfig symbol is not really needed here as this file contains common
-> code required by both the drivers.
+> I'll add the option "--from kfting@nuvoton.com", same as the patch
+> author's email while using the tool "git send-email"
+> in the next patch set.
 
-But the separate Kconfig symbol will only be enabled via either PCI
-driver's option (e.g. can't be enabled on its own).
+don't worry, I will apply this patch number '1' because it's
+independent from the rest of the series. I will do all the
+changes you agreed with me.
 
-I'm also not sure if the above works if you build one driver as a module
-and the other into the kernel (yes, I still intend to resubmit my patch
-for making the rc driver modular).
+When you resend this series you don't need to include this patch,
+just rebase on top of i2c/i2c-hostp[*].
 
-Johan
+Thanks,
+Andi
+
+[*] git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
+
+> > Andi
+> 
+> Have a nice day.
+> 
+> Thank you.
+> 
+> Regards,
+> Tyrone
 
