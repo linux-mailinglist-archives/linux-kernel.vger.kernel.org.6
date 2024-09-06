@@ -1,115 +1,82 @@
-Return-Path: <linux-kernel+bounces-318817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678AB96F3AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A9196F3C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3CE2B25C8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EE01F25DEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05251CC8AF;
-	Fri,  6 Sep 2024 11:52:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E771CC147;
-	Fri,  6 Sep 2024 11:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA87C1CDA20;
+	Fri,  6 Sep 2024 11:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="U5p5gFX7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A641CC179
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623579; cv=none; b=bK31wh/r2RLors3SGupwrfwC20rUpq6UZjSS0KD9MNe8pLeWU5k+x5tlKz9WNeX31OOjkAhZ3BVY3xsmCNHRO/MyTfokruvW2krCFl6YZal+HBoTbf8Y37hQ2wvRDO3Hellxd+JnHnnlPvh3nxwKFtp+jXiK05ay+eMu1Nqb+Dw=
+	t=1725623735; cv=none; b=XHGjwRo2t12IPHDJXktYuy5wUJoK4JyeIf8gR+JcqtPwIynlVc4a0FAF7EduXfOJ00sfAqb90IHbNQQVRTS5fKOandR8BIzFLdlIClHZ/gIRFKBv6dC9wHnK5OgLn/iIYoF/6j9XCpRnw7Tkd3mveuwnCL6CfMvAwGzMd2RNruE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623579; c=relaxed/simple;
-	bh=IKrZnhFDxnXq31XmUBrR57Qz8ZUzXA7i1uyXXW3VBPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TIO/zIzLEvLo5B9MmZqt/6kKq/Mxesu6zarXx1yNzWWFIrfCba+mx4HAfld6WUMF5FwER/5yHyywMNHfTbwT+RNycX0kOoIyvrSd30tm8M4+oBbVzTwG3WExTgEuvJFbgLHl603CIRDj/eFQ+P7VfvVBp6s8rFpQqS5q24wyqEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34291113E;
-	Fri,  6 Sep 2024 04:53:24 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 612893F73B;
-	Fri,  6 Sep 2024 04:52:54 -0700 (PDT)
-Message-ID: <72f3d6cf-a03b-4a16-9983-77d3dd70b0ea@arm.com>
-Date: Fri, 6 Sep 2024 12:52:52 +0100
+	s=arc-20240116; t=1725623735; c=relaxed/simple;
+	bh=wXZaFjdvYvos1chhDx3sbfIN2qjDFppXe4hB1KfFomg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZCrZnbuRaNHiUDSyE5eNF8e6lJrj/oI5ckTG1k033+WD8odk4TPlqqTSkhShmIwyJjLL686hXiZ3SVZHP3P2gNB8kQi6f+ThHRGDIVi/M5oH7XA04UYP2fLKJrzOOZpjHAqRBV0+yNjVMjWBb7YiQs3A1ddYzl7r1HoR6mcR+DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=U5p5gFX7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1725623731;
+	bh=DbMztvvaFPoOtSRqVj+TzOFz2xGU/sv7nl4ktpugczI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=U5p5gFX7B72T6vilbey+jJoTLmSbQx7c23SCrWmgP1za3RogGR3OF6ZFseL8Qb7YS
+	 C6F0U76hceuSe3AGIhulZAE3SqOt4Zy4YHJI7HAAvJbGdveco2Xrn4/4K/gwstul8J
+	 4ZFgebXNa7idllP29yQT3+f6N9cAenz1tz/r5kOSeu8I/vFZyw78hvjXu6j1sA4ICT
+	 skozskyEwyJM3r8jqaxZMv7ON5tkeo5bOtf0yfeDhTLqw/TpBBjuJUypfGKV1eTqEj
+	 MxYY5+uICD8qySjCIvgyuOpQx6rrJotKcs6vSd803i4K4xciAoxOmnbFu0eXR/LBM9
+	 u0u0HK6VlacEw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0ZRk6qSlz4x8c;
+	Fri,  6 Sep 2024 21:55:30 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <2439d50b019f758db4a6d7b238b06441ab109799.1724156805.git.christophe.leroy@csgroup.eu>
+References: <2439d50b019f758db4a6d7b238b06441ab109799.1724156805.git.christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH v2] powerpc/32: Implement validation of emergency stack
+Message-Id: <172562357202.467568.4678514155829068407.b4-ty@ellerman.id.au>
+Date: Fri, 06 Sep 2024 21:52:52 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] vdso: Modify getrandom to include the correct
- namespace
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-10-vincenzo.frascino@arm.com>
- <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-
-
-On 04/09/2024 18:26, Christophe Leroy wrote:
+On Tue, 20 Aug 2024 14:26:54 +0200, Christophe Leroy wrote:
+> VMAP stack added an emergency stack on powerpc/32 for when there is
+> a stack overflow, but failed to add stack validation for that
+> emergency stack. That validation is required for show stack.
+> 
+> Implement it.
 > 
 > 
-> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-...
+> [...]
 
-> 
-> Now build fails on powerpc because struct vgetrandom_opaque_params is unknown.
-> 
-> x86 get it by chance via the following header inclusion chain:
-> 
-> In file included from ./include/linux/random.h:10,
->                  from ./include/linux/nodemask.h:98,
->                  from ./include/linux/mmzone.h:18,
->                  from ./include/linux/gfp.h:7,
->                  from ./include/linux/xarray.h:16,
->                  from ./include/linux/radix-tree.h:21,
->                  from ./include/linux/idr.h:15,
->                  from ./include/linux/kernfs.h:12,
->                  from ./include/linux/sysfs.h:16,
->                  from ./include/linux/kobject.h:20,
->                  from ./include/linux/of.h:18,
->                  from ./include/linux/clocksource.h:19,
->                  from ./include/clocksource/hyperv_timer.h:16,
->                  from ./arch/x86/include/asm/vdso/gettimeofday.h:21,
->                  from ./include/vdso/datapage.h:164,
->                  from arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
->                  from arch/x86/entry/vdso/vgetrandom.c:7:
-> 
-> 
-> 
-> 
+Applied to powerpc/next.
 
-This tells me very little ;)
+[1/1] powerpc/32: Implement validation of emergency stack
+      https://git.kernel.org/powerpc/c/dca5b1d69aea36ab559d9ca13729370007c60df1
 
-Can you please provide more details? e.g. What is the error you are getting? How
-do I reproduce it?
-
-I am happy to include the required change as part of this series.
-
-Overall, the reason why I am doing this exercise it to sanitize the headers for
-all the architectures so that in future we do not have issues. It is good we
-find problems now.
-
--- 
-Regards,
-Vincenzo
+cheers
 
