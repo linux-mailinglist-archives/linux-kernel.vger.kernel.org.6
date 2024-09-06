@@ -1,142 +1,144 @@
-Return-Path: <linux-kernel+bounces-318520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B8B96EF1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:26:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8904596EF20
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52E08283976
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ACD1F246DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E4F1C871D;
-	Fri,  6 Sep 2024 09:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949AA158DC1;
+	Fri,  6 Sep 2024 09:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+8q2f2H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgnI2meK"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392DD1C7B9E;
-	Fri,  6 Sep 2024 09:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EDE1C7B93;
+	Fri,  6 Sep 2024 09:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725614753; cv=none; b=SS7pRB+GST7aG9irWLDpu8iT/LQQzIzQMt7+6J/0iYE+B6Y861PwjGh2mAqkfMWjxbfFhClkQVplS1dFJDjy7fwEpgiue0KuplEj6t8OssA2FzjjoMp479A0g9/lhRKZ8tDIxNoACBvDRYPEP02Pq6+5CWIuhqHjfwaPj32t294=
+	t=1725614768; cv=none; b=mRn2i9fmA7f3yEZlMpXZpze7cOEwF/nPhdKGF5BoD6zjON6FtdEgHLQdFFCI84cMximtdPhRa7oWy9Uz5m2dVW1iqwFmsU+HurbV+DtaLuGGutXYoxhXPA8SUa9qIRjbGXeDFkX79GHmitCO/41AfNWnunrQ5eeMVg8If2FjtCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725614753; c=relaxed/simple;
-	bh=OOZSVtYZonld9Ebpwx/Lw4siE3C2Su5fEHkakh+h7ak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X/fsS8+grBP267ewBzTpuPzFXp5h8qSBH+a6f6Ccu7r5RcsTZkRCHDXg4to/f15pNHhYlYXr2+DNfnCCEDSrZiHv4YaXUhJAzm6zmppmHNA8akrEGrLpK5FdFTxUgzI7xvfvweIikBdxamBGV6omuYKo+VVMGEgEEnruAqjwBKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+8q2f2H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46100C4CEC4;
-	Fri,  6 Sep 2024 09:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725614752;
-	bh=OOZSVtYZonld9Ebpwx/Lw4siE3C2Su5fEHkakh+h7ak=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O+8q2f2HrkfXgFbZlGWft6UKkC7fsxyD0X2mLuBx9zIW97HiFVxFKJtra2ddkLdS7
-	 hTIAMtlQvoQs+jLhSvjJ0I8rWgIRaIFLUP4A2uSrUW+Jj0M6/btx8zF4Ja5OvX+Xx4
-	 zsoJcDeFmjG6VngnYEJoDd92qMj/5jIYTULbT1F4YvDjlAmsKSI+c25zDuABqDw9A5
-	 WBpWjgnnnyjTBQlNJNgt2zjeXr8oFaMskZlv24raWeTIlHCgY/tx+RAA9mDuC0JcaZ
-	 bKJBuVPYc/gFLRYR2ncMoehmC9UL6xCaPJ1klyYRFpk9LJ7oaJs9dd6Mw4kMvu7fNu
-	 2tKtHPtFnln8A==
-Message-ID: <3d791a58-e311-4837-bc3f-f988bb5c085e@kernel.org>
-Date: Fri, 6 Sep 2024 11:25:46 +0200
+	s=arc-20240116; t=1725614768; c=relaxed/simple;
+	bh=1rf4cNFUJy8d8/dUnLrOK9aVtm01X8NuHJxBam5tXis=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWOvCM2oN5iHTEnbxyD+SyBDudAhIW1RUoNxf0SVzztnWLwuLaTsGTzvaundxwz6gT4jqS3FMrYg45VuqPSuXQWEp83LXF06js02u1U4CgXXYmqwojCBy0uuF4qNRCaaNxzVuuFgIuqu/Mbn268TFGLLoRb4BtF9OCHM7nAfWHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AgnI2meK; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5010a36e69dso627549e0c.0;
+        Fri, 06 Sep 2024 02:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725614765; x=1726219565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Gv7O8iFsLmZOem+ZGCytIr9AEh8K7CayQ/E2g4S4Is=;
+        b=AgnI2meKT1OmFG6qTn1lTqwdkAc29RHZSu/HeUcXnSv/5aALiMv4xemhRiQ0I8TQv+
+         fT5zsDOCzij6DJNbDvANpixh8w4KOMCdvunlM2u6v6k8odgJlQ9BT61Xo/QufBA33umo
+         Cj0bjFTEpbk9PNqoAwMNMTfpA3WF31rgXDvBIyO8XvgCXMiHxhrmJaQBwXYBK3vDhaCa
+         gvWexb1hz1ABDFt4rvD40b05+NdfOby4OBxlkN+Ek3BYGcGUMwfIydcjv5O+JNzyFv5A
+         pHx+9yPnLFAu9210eVP+AdIN53asco+AZb2K5aqEIdRcOYWbaBiUwxe1yxR4mWsMKDAN
+         BD5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725614765; x=1726219565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Gv7O8iFsLmZOem+ZGCytIr9AEh8K7CayQ/E2g4S4Is=;
+        b=Y7h4YQHChNIM2YXUmvChEOIrwrgN34kT9ufrVDdt8chiYFXZHrnIDYJn7bCJ/RmNbj
+         73qaXkVKec5gKX7i8hYJr6AlJJFlHJ/MrH9RqbLGvoTNUCowU8K0kGqTObx2xM3u1LBH
+         mVx1KoTzRyI9L3qP8CQ18gcqmrtuUdztSSoMUw4VyiQiOcn7RkitETDqIvSC7UxgxfXM
+         zMDvavPnvXIrAm85orlikQAQoCcmI/NKfyACZSxyz5jiAc3JR5pSnCpZntEKwCzmjr9R
+         M06zU3d7oXKj5J1TJok61H3JDmd86MnnbVw5SNHnz0P6B4Z1TMMBhUXB9MIlLsbqCHSv
+         RoJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqMWm49DmyULLEcbTws67elQ28w74x38BnN/pl6jbXBViF5w/n7MU6uMrziG/YwN6lS/7t03BDT+b/G/uO@vger.kernel.org, AJvYcCXQ+jF+1gtLMnnexRtPT0EV/M3G6Ivw5Xe6J7QEZ7x5XBSCh7JHXQEUhkzQCwbwnV0cVLD93C45FHotJRvN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1RmwAwPt08I89GDmpzn7ASm0ca9y2kTzvGkFBSzLV9x16Jxjd
+	RgwQ8IPPZBcFJx5+2fpMHKnE99qfGBKSrFT819avZXqtoIILhUKd4O9Z8hHVKz+rKms+bwSMH1j
+	/wL+XmZp3rlezv5q4fljLdVfK6Wk=
+X-Google-Smtp-Source: AGHT+IEr/n+On170K0HW3Vn/ODvTisQwHHgr+zwDAYrGpv66t5zLaAjYy+fbepob8nfgh0T596y+2+5ItisBjEe+9hU=
+X-Received: by 2002:a05:6122:1da2:b0:4f6:e87d:5160 with SMTP id
+ 71dfb90a1353d-502142567e3mr1764345e0c.9.1725614765322; Fri, 06 Sep 2024
+ 02:26:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 26/32] ARM: dts: aspeed: yosemite4: add MP5990 support
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com>
- <20240906062701.37088-27-Delphine_CC_Chiu@wiwynn.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240906062701.37088-27-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240906080047.21409-1-hailong.liu@oppo.com>
+In-Reply-To: <20240906080047.21409-1-hailong.liu@oppo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 6 Sep 2024 21:25:50 +1200
+Message-ID: <CAGsJ_4yAp=VF4c12soA0U5dzX-ksb3FV4UnC5e7Jtp+D6BO4iw@mail.gmail.com>
+Subject: Re: [PATCH] seq_file: replace kzalloc() with kvzalloc()
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/09/2024 08:26, Delphine CC Chiu wrote:
-> Add MP5990 in yosemite4 DTS.
+On Fri, Sep 6, 2024 at 8:06=E2=80=AFPM Hailong Liu <hailong.liu@oppo.com> w=
+rote:
+>
+> __seq_open_private() uses kzalloc() to allocate a private buffer. However=
+,
+> the size of the buffer might be greater than order-3, which may cause
+> allocation failure. To address this issue, use kvzalloc instead.
 
-It's already there.
+In general, this patch seems sensible, but do we have a specific example
+of a driver that uses such a large amount of private data?
+Providing a real-world example of a driver with substantial private data co=
+uld
+make this patch more convincing:-)
 
-> 
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+>
+> Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
 > ---
->  .../dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> index 03a1e41312e3..f139f426099e 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> @@ -356,7 +356,7 @@ gpio@24 {
->  	};
->  
->  	power-sensor@40 {
-> -		compatible = "adi,adm1281";
-> +		compatible = "adi,adm1281", "mps,mp5990";
-
-No, you keep sending same buggy patches.
-
-
-
-
-Best regards,
-Krzysztof
-
+>  fs/seq_file.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/seq_file.c b/fs/seq_file.c
+> index e676c8b0cf5d..cf23143bbb65 100644
+> --- a/fs/seq_file.c
+> +++ b/fs/seq_file.c
+> @@ -621,7 +621,7 @@ int seq_release_private(struct inode *inode, struct f=
+ile *file)
+>  {
+>         struct seq_file *seq =3D file->private_data;
+>
+> -       kfree(seq->private);
+> +       kvfree(seq->private);
+>         seq->private =3D NULL;
+>         return seq_release(inode, file);
+>  }
+> @@ -634,7 +634,7 @@ void *__seq_open_private(struct file *f, const struct=
+ seq_operations *ops,
+>         void *private;
+>         struct seq_file *seq;
+>
+> -       private =3D kzalloc(psize, GFP_KERNEL_ACCOUNT);
+> +       private =3D kvzalloc(psize, GFP_KERNEL_ACCOUNT);
+>         if (private =3D=3D NULL)
+>                 goto out;
+>
+> @@ -647,7 +647,7 @@ void *__seq_open_private(struct file *f, const struct=
+ seq_operations *ops,
+>         return private;
+>
+>  out_free:
+> -       kfree(private);
+> +       kvfree(private);
+>  out:
+>         return NULL;
+>  }
+> --
+> 2.30.0
+>
+>
 
