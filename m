@@ -1,78 +1,155 @@
-Return-Path: <linux-kernel+bounces-318065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BB596E7EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266F796E7EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22785B23B56
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:53:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9102B22D4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F37E4437A;
-	Fri,  6 Sep 2024 02:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4003938DD1;
+	Fri,  6 Sep 2024 02:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tHBXgEgW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0uSUxFv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1EF3398E;
-	Fri,  6 Sep 2024 02:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D80434CC4
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 02:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725591197; cv=none; b=iirF4UlilE2fDLl9lv43WptC8PpV0RGnopZODAkTuVjGUwpKq9GLQSWb8VU+2ltw2QSfxhBN35xBa+9Ty7UmDPJpYn6N/8eiQW1G9yr3Ytlc7jh7xYcZ0b1LzomhEXsNfENFyczLFB3kdPjZn8430ZAqjdohqN33y4LylyIaFQU=
+	t=1725591370; cv=none; b=ppGoR19Zdt30bBkC9y+vNPNULW/v8yPmb0UnmBlqDBCPMfuEB9K/lkHRHR6vKSaq8wCkTEdQt0M9+D0dZHbf3SFJkA2JeISmdyJ/QsL5WgrEEGx80uKj5U4+S2kOXHhcOOR9VtBeTyxR75+JftmDBOJDL7nDQmajLPBdB+cd4AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725591197; c=relaxed/simple;
-	bh=hy/7yuKesZKIgpJtLl44wd71KjA5hcfynPA4cAqNpcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnh0HX4Gg3iaIwn6c25g3adMFFI/rQfQm3+bkzBA2ASIB3Ap2z+LebWO9sEfVolbr1fr7d4fjlLOy5AiHEl1AsyQIYMthsjzVoSfn5A8PA5rLq7Xg5qAk6yV+v7tXBMgyFDg364yKbYGvcV9mpd9OIghzdP1b0IjNX3j08pIUYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tHBXgEgW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R3yitP7rIZah4D+LGgszj519jFATzuXRw+5pj8t1oM4=; b=tHBXgEgWM0tgNgMx27xqaVknYk
-	hr0AkeAc4bg4WYQGvqWnHQGWjXM4ixMiNVPNok760reZAf8xDo8p6Y6CtSWj9UWZqpIEW9gLwuJ3t
-	abiwghx+lJ63SU0lzIm/f1yzri6DyQ3WjaGQG5Ntb0HFitnmLN/ZckT4ZJIWGqxP6VVbLuxGLHk03
-	xW7aQGU7NOd9WxVCNiuzGGo1VBrQG2Sal9KQxN9v63VXZH19N2ilMH7J3RL3d9Afg/j33plNKKe5p
-	fni+VQyMWAgK1tSx73V7Xu52KqoAubzjXeBhmZrfSUUN9e6vEcBUQ0pRlbs6tEBrfBpsfiYalA/t3
-	DdUKyx7w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1smP5y-00000003IVd-2BzR;
-	Fri, 06 Sep 2024 02:53:10 +0000
-Date: Fri, 6 Sep 2024 03:53:10 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Hui Guo <guohui.study@gmail.com>
-Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chengming Zhou <zhouchengming@bytedance.com>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG in reiserfs_update_sd_size
-Message-ID: <ZtpulsSN09aMn48N@casper.infradead.org>
-References: <CAHOo4gL8UJnY=zZOHVioLsemBfA7eZSK+utxWLd7TBCz89X=3w@mail.gmail.com>
+	s=arc-20240116; t=1725591370; c=relaxed/simple;
+	bh=qgnvsxHpCz4EVBPco1NOjE/FCNHMlw/IPYRztBb49aY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RT6CDp01/4zodRcBaVWp593jPKq2pjOuGILYWArnTXGi4m6NpRicefKfmJyP4h4/UsTGLdG2ry2N+P20GyadhU8Se6aDGMg0GfSXVIS6T4TcJBd7yXFOlAjWzEN1oaOgZf0MdJl7jlxn0Kd5ljhOKle9fV56d11eXuCWuUuYeXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0uSUxFv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E264EC4CEC3;
+	Fri,  6 Sep 2024 02:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725591370;
+	bh=qgnvsxHpCz4EVBPco1NOjE/FCNHMlw/IPYRztBb49aY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z0uSUxFvjxemebFIt78o6fDrJCp8BCtbUae6TTI7RWpZH8sOpIgm+1pqE6OZ4+4Kr
+	 oBBs3P/Cj1Dl42a8vE2TTl+ihni6Z+nB8B29dbTskrIC8FxPxLzaW21x15Dl5jtZTD
+	 ai5xzcfiRSIvPRy24gwZLhz7iHDeqqk5ck4e7kgdSR2PFoVBKYcc+ZiYK1I3vyMrhF
+	 RUVHjh8px5ceccf38golfl39VGFzgpxPHUFJuZR63LKZS56hjMuvRTSW5mLgSzg9e7
+	 vman8HjnhMCzRitB8Yd60JowQyuK39RC8Iwff2XmFfMNOkjNpwj8S4vx/D91Fetiln
+	 A6Z65OjtQ9IrA==
+Message-ID: <501416af-b08c-448b-881d-0915575e22f5@kernel.org>
+Date: Fri, 6 Sep 2024 10:56:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHOo4gL8UJnY=zZOHVioLsemBfA7eZSK+utxWLd7TBCz89X=3w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [f2fs-dev] [PATCH 2/7] f2fs: read summary blocks with the correct
+ amount for migration_granularity
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+References: <20240829215242.3641502-1-daeho43@gmail.com>
+ <20240829215242.3641502-2-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240829215242.3641502-2-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 06, 2024 at 10:30:58AM +0800, Hui Guo wrote:
-> Hi Kernel Maintainers,
-> we found a crash "kernel BUG in reiserfs_update_sd_size" in upstream,
-> and reproduced it successfully:
-> by this report "https://groups.google.com/g/syzkaller-bugs/c/3HUP6xnzjo0/m/bP0j4x9rBAAJ",
-> this bug have been triggered before and fixed, but it can still be
-> triggered now, .
+On 2024/8/30 5:52, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> Now we do readahead for a full section by not considering
+> migration_granularity and it triggers unnecessary read. So, make it read
+> with the correct amount.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+>   fs/f2fs/gc.c | 33 ++++++++++++++++++++-------------
+>   1 file changed, 20 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 46e3bc26b78a..b5d3fd40b17a 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1708,24 +1708,33 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>   	struct blk_plug plug;
+>   	unsigned int segno = start_segno;
+>   	unsigned int end_segno = start_segno + SEGS_PER_SEC(sbi);
+> +	unsigned int sec_end_segno;
+>   	int seg_freed = 0, migrated = 0;
+>   	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+>   						SUM_TYPE_DATA : SUM_TYPE_NODE;
+>   	unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
+>   	int submitted = 0;
+>   
+> -	if (__is_large_section(sbi))
+> -		end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
+> +	if (__is_large_section(sbi)) {
+> +		sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
+>   
+> -	/*
+> -	 * zone-capacity can be less than zone-size in zoned devices,
+> -	 * resulting in less than expected usable segments in the zone,
+> -	 * calculate the end segno in the zone which can be garbage collected
+> -	 */
+> -	if (f2fs_sb_has_blkzoned(sbi))
+> -		end_segno -= SEGS_PER_SEC(sbi) -
+> +		/*
+> +		 * zone-capacity can be less than zone-size in zoned devices,
+> +		 * resulting in less than expected usable segments in the zone,
+> +		 * calculate the end segno in the zone which can be garbage
+> +		 * collected
+> +		 */
+> +		if (f2fs_sb_has_blkzoned(sbi))
+> +			sec_end_segno -= SEGS_PER_SEC(sbi) -
+>   					f2fs_usable_segs_in_sec(sbi, segno);
+>   
+> +		if (gc_type == BG_GC)
+> +			end_segno = start_segno + sbi->migration_granularity;
+> +
+> +		if (end_segno > sec_end_segno)
+> +			end_segno = sec_end_segno;
+> +	}
+> +
+>   	sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
+>   
+>   	/* readahead multi ssa blocks those have contiguous address */
+> @@ -1762,9 +1771,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>   
+>   		if (get_valid_blocks(sbi, segno, false) == 0)
+>   			goto freed;
+> -		if (gc_type == BG_GC && __is_large_section(sbi) &&
+> -				migrated >= sbi->migration_granularity)
 
-Nobody cares.  It's a reiserfs bug on a corrupted filesystem.  Don't
-waste anybody's time with reiserfs.
+It seems we change the logic from migrating "migration_granularity" segments which
+has valid blocks to scanning "migration_granularity" segments and try migrating
+valid blocks in those segments.
+
+IIUC, when background GC recycle sparse zone, it will take gc thread more round,
+it seems low efficient. How do you think of keeping previous implementation?
+
+Thanks,
+
+> -			goto skip;
+>   		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+>   			goto skip;
+>   
+> @@ -1803,7 +1809,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>   
+>   		if (__is_large_section(sbi))
+>   			sbi->next_victim_seg[gc_type] =
+> -				(segno + 1 < end_segno) ? segno + 1 : NULL_SEGNO;
+> +				(segno + 1 < sec_end_segno) ?
+> +					segno + 1 : NULL_SEGNO;
+>   skip:
+>   		f2fs_put_page(sum_page, 0);
+>   	}
+
 
