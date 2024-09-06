@@ -1,246 +1,204 @@
-Return-Path: <linux-kernel+bounces-318619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A18A96F0D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3334196F0DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5C73285672
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40EF1F24572
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C4B1C9DFC;
-	Fri,  6 Sep 2024 10:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999D61C9DF1;
+	Fri,  6 Sep 2024 10:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGUm+fYO"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T9JLdVyy"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557CD17ADEE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445CE1BFE0C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725617027; cv=none; b=C1meZwMGV2PXxekhsmFuAEI64RuJ8mezwcdYT1uqg94tNVlWDcXgycqzs4qOiiqDV/f6mV0EvZ2Zoh915m3L67QUQIGR3CnmXj3aFdyJqCBV9L0Y78WMp5I+P4t4I009GntO5YZ5B2MijIK3xZVCrxHdOQr3RU40gkailJJNRtg=
+	t=1725617058; cv=none; b=ZwEE3n9Lc1FXluTrOJx1Pq6NPC8YK9COE/mJ0TvB0CzkVgV+XANr0QZk50nDegSx8WyXEFp04UH0kzCliXtTOcz7dbkIhqdrsq8XsyIzJ0L+ilvkWO/AF/eaneQ2AkQJMVp/ZSaX2l5XHRwiXSnLZp+R7LQ7guqjpFww24y7ZdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725617027; c=relaxed/simple;
-	bh=ykjZT1qCQJJJ3XZcbbAY68b6WbmlbW47/0CikETw7zo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARKztBM3HY7kDukhWHRCGTmWzP6hG5MtvYy5Hlyk0ZFWcanyBMb1zMDtEgIZnwvjwZ6ki20m30LYgi5TbJd8Rfp9nydtOUp39u77I0tqRtIbXnwMry1nYeK1xm11TlEeF3/ojJq5WCSymOWzEziQNN3WTh3/qO1sbwAL6lK+ejQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGUm+fYO; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-82a24deca03so73630839f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:03:46 -0700 (PDT)
+	s=arc-20240116; t=1725617058; c=relaxed/simple;
+	bh=2RPun1GvohKXhE5aoSasUbi/UHlKYzrsMqoeCmnres0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkzHHYWRm9iHQC8taNoxqvUAhyI8DMWixZqv81tgIq1phyiwXm85BR8w0CMpBdjzzkanZ4zB5krkqanFvxqjIeVWAxG2/XUCT4xQdqBsUmkc7xihWpLaDAL+ef1DZT+dDPMcT05BFEx2TmnUUfOEmcyaMbto6ZzbrHtiZ+oFLOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T9JLdVyy; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42c7a384b18so14678445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:04:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725617025; x=1726221825; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ykjZT1qCQJJJ3XZcbbAY68b6WbmlbW47/0CikETw7zo=;
-        b=gGUm+fYOuQUBQMIBgbySopOqadfh+91h/hanBxqlO/d8hGQm/kLrtZOVi6WTku4/Sc
-         qZMmS2cMzBf0YFkdmFd/p7DZHect7r28KKqKVCwlTfb6wWoWXLr6CI8hZ75jww1H6uV2
-         698wtTV0+QIpk1YFFx9i8WEgqcATSJAYlHSKqyvPr2KsDzpHEYYPqdOc8Ne5jOGAMgdX
-         mz6D2lu1gFDFojAVZ64aZlOlmJRrP23gVpJ1nqC03ztQ3ATiPDF1Bmpv+c4P/VCoGnU4
-         Vzix93d3zQYA3fkbxNcKToKwf4XFoSKawC3mhds8zWienorfU0dJmgdAgLRo4ToXpJNH
-         VRVA==
+        d=linaro.org; s=google; t=1725617056; x=1726221856; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ICGVfQquZxLUdv4qyof+VD005fvK34/ue8aLmEnx0Hs=;
+        b=T9JLdVyyDdR/p9VbJxJsA9DEAwURNHXiz8vyIg+hZcRFAo7+0uDcXl44T0XENCWnKN
+         uG50KXtGKQCZ8LzCnys4RaxJ0A0Wg0nhFQCatjyPBYMI7q1ibquHCcdonxJ2qxLKqGhM
+         dSPG3j0HoAgTmu4xkx5s7X97OrRzycWxYcapsEzzouGJIqroKplMprM6WZ1VBzdaseMk
+         2enMtQKMQUwKPdOztI12b5dXXQ1qWWO7fqAUKDoascaboP+2tWniEMEJ0DvWVrMuTfpR
+         9y9LM8WVD6MlE13A3s2OxgPUxR+xPn2qYF3c64z1CNzIAb9lJcWs0VhWonzFKe0WvkKU
+         oDUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725617025; x=1726221825;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ykjZT1qCQJJJ3XZcbbAY68b6WbmlbW47/0CikETw7zo=;
-        b=TCUNBq8IEBHX6s9A7bDlKIDJf/IehkeHGvthZy+jCMnSMTkRlGXFlRo1UJY5rHtayJ
-         u9FhthutwLnf8xrVb5w08394cKLt0uJWAQhFTWriBFTU5Q1qv9pGIDV+XgpZ7gFmEmSy
-         du7HNNGC2algEhbNT/2JIDiZR7liZQbD5r1V+c3m1S2c+hU6cmBUBGAsXjnh1bZSgIBv
-         fj8Z9keYFFi4VCW4kCeMyNlHi0l40GDK+CXgIQ5+5nn41T2Sfvqf88UEwy1cadonkp/r
-         bqjYkCuaxCfI7rCeK7KsfCyc/daAgRcbXYeD0HM5dfI6XNQh0yaCt8wWkq7CFsDoCT5Y
-         /QOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUREUf0zxTQNwK2963xO7uPIxnzHUoQzaU+oRGB+bvGBTXtsOCwGs16jF16RRJk9RfiNaTHuLxCFHKm0x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1dgJSum4jGByqbyA9AH+poyVXMp1cNCLaiAEfRDrK5VfYxIoC
-	FJrsFVNI+6yD/Dfb24LRWDx8AlYq9xhFkLU+phq4w1H907YY8/FNqubhw5duljvtMpP3OGuGCQU
-	7T3UqtqdSTsdfNWXh6a/bmeBPaXM=
-X-Google-Smtp-Source: AGHT+IGLblbDznwhi5XUsCBXP3kvWOxgvI9Avhj1BOw/3MxSBfTG6kXQJMxY10TRpORM3B+wCoLF5/kEQFKlTUUAsJU=
-X-Received: by 2002:a05:6e02:1a6d:b0:3a0:4d1f:51a4 with SMTP id
- e9e14a558f8ab-3a04f082fa3mr20737635ab.13.1725617025015; Fri, 06 Sep 2024
- 03:03:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725617056; x=1726221856;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ICGVfQquZxLUdv4qyof+VD005fvK34/ue8aLmEnx0Hs=;
+        b=mK441/BJM8zv93/ROFs5LGgeJwFOOvlc54Li/Or/eZcRYkLVzMxzdtluGCWFlInWcc
+         CA3Auzm22F8RG3Zbc7SZuP5Pz59B1m4zJyo6l1a+dyCshAnlJ3PrTotj2f7yW6CQ6Qz6
+         QiQl38punKksHUXOFNGA0Yocmgn91NhJJ82RWuUpi8pGD0WXTfd158nQIj+Mu1Le4iNk
+         YEOICQrFa/R2cOkTj8dDBTmV0+iaxvprmf/DdR/Bs5eOCpVHnZt0e4wKtGO1sJLNm7U2
+         dSqHAbFpw5HBig1c9dkcoJiubB9tKcIO95z7oIUK1HR6i65kRSQ49QBaiLRlsRN8zbqf
+         1uEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIWH8ZyAr+LYjbFs4PrIc+uf5noPzevb2q12iA3SX7vsJr6qm8NExMXUz8+2H1QswEMz6MB0zP3k0/hy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx2Pg3l+Vf4CEBQ7+CltMD6vNs4y0EQIu7T+6sFzVWFngdRn0O
+	Fw9hCGqfZEOUgm3nAiHF2P6HwWMq7Jx3Um7T/gVugXg/CMICW//5fo/Ns9UcjWY=
+X-Google-Smtp-Source: AGHT+IEa0EFSzTSab9skgszp2VXJgV7bSagVjGqTmtvznhN6ryAHPGAPBLObB1eCrJcsSNSidlyLFQ==
+X-Received: by 2002:a05:6000:b92:b0:371:8dcc:7f9e with SMTP id ffacd0b85a97d-378895c6306mr1366536f8f.2.1725617055371;
+        Fri, 06 Sep 2024 03:04:15 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-374bd0ce240sm17104161f8f.70.2024.09.06.03.04.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 03:04:15 -0700 (PDT)
+Message-ID: <2c7f43b1-48e7-48f2-bbe2-c0006ac6e0e7@linaro.org>
+Date: Fri, 6 Sep 2024 12:04:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822070944.GA13716@didi-ThinkCentre-M930t-N000>
- <720FE0AC-FFB4-4236-9A29-9BE8C5D27C07@didiglobal.com> <CAD=FV=Vw1fG9sUiG4R6LiKnR2fgnt5Wr4QKzRg+v8MC15pWUEg@mail.gmail.com>
-In-Reply-To: <CAD=FV=Vw1fG9sUiG4R6LiKnR2fgnt5Wr4QKzRg+v8MC15pWUEg@mail.gmail.com>
-From: Yuanhan Zhang <zyhtheonly@gmail.com>
-Date: Fri, 6 Sep 2024 18:03:33 +0800
-Message-ID: <CAEQmJ=gCZBv1Mg6dxvWe5fRpFnrL9A_JM-1pB+eX9M-5v4xH7A@mail.gmail.com>
-Subject: Re: [PATCH] watchdog: when watchdog_enabled is 0, let
- (soft,nmi)switch remain 1 after we read them in proc
-To: Doug Anderson <dianders@chromium.org>
-Cc: =?UTF-8?B?5byg5YWD54CaIFRpbyBaaGFuZw==?= <tiozhang@didiglobal.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"zyhtheonly@yeah.net" <zyhtheonly@yeah.net>, 
-	"john.ogness@linutronix.de" <john.ogness@linutronix.de>, 
-	"lizhe.67@bytedance.com" <lizhe.67@bytedance.com>, "mcgrof@kernel.org" <mcgrof@kernel.org>, 
-	"linux@weissschuh.net" <linux@weissschuh.net>, "kjlx@templeofstupid.com" <kjlx@templeofstupid.com>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>, 
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>, 
-	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>, 
-	"bsegall@google.com" <bsegall@google.com>, "mgorman@suse.de" <mgorman@suse.de>, 
-	"bristot@redhat.com" <bristot@redhat.com>, "vschneid@redhat.com" <vschneid@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] drivers/thermal/exynos: improve
+ sanitize_temp_error
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz
+ <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Anand Moon <linux.amoon@gmail.com>
+References: <CGME20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e@eucas1p2.samsung.com>
+ <20240903071957.2577486-1-m.majewski2@samsung.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240903071957.2577486-1-m.majewski2@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Doug,
+On 03/09/2024 09:19, Mateusz Majewski wrote:
+> Hello :)
+> 
+>> May I suggest to convert this function to a specific soc ops to be put
+>> in the struct exynos_tmu_data ?
+> 
+> Like this?
+> 
+> static void exynos4210_sanitize_temp_error(struct exynos_tmu_data *data,
+> 					   u32 trim_info)
+> {
+> 	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+> 	if (!data->temp_error1 ||
+> 	    (data->min_efuse_value > data->temp_error1) ||
+> 	    (data->temp_error1 > data->max_efuse_value))
+> 		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
+> 	WARN_ON_ONCE(data->cal_type == TYPE_TWO_POINT_TRIMMING);
+> }
+> 
+> static void exynos5433_sanitize_temp_error(struct exynos_tmu_data *data,
+> 					   u32 trim_info)
+> {
+> 	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+> 	if (!data->temp_error1 ||
+> 	    (data->min_efuse_value > data->temp_error1) ||
+> 	    (data->temp_error1 > data->max_efuse_value))
+> 		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
+> 
+> 	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+> 		data->temp_error2 = (trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+> 				    EXYNOS_TMU_TEMP_MASK;
+> 		if (!data->temp_error2)
+> 			data->temp_error2 = (data->efuse_value >>
+> 					     EXYNOS_TRIMINFO_85_SHIFT) &
+> 					    EXYNOS_TMU_TEMP_MASK;
+> 	}
+> }
+> 
+> static void exynos7_sanitize_temp_error(struct exynos_tmu_data *data,
+> 					u32 trim_info)
+> {
+> 	data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+> 	if (!data->temp_error1 ||
+> 	    (data->min_efuse_value > data->temp_error1) ||
+> 	    (data->temp_error1 > data->max_efuse_value))
+> 		data->temp_error1 = data->efuse_value & EXYNOS7_TMU_TEMP_MASK;
+> 	WARN_ON_ONCE(data->cal_type == TYPE_TWO_POINT_TRIMMING);
+> }
+> 
+> static void exynos850_sanitize_temp_error(struct exynos_tmu_data *data,
+> 					   u32 trim_info)
+> {
+> 	data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+> 	if (!data->temp_error1 ||
+> 	    (data->min_efuse_value > data->temp_error1) ||
+> 	    (data->temp_error1 > data->max_efuse_value))
+> 		data->temp_error1 = data->efuse_value & EXYNOS7_TMU_TEMP_MASK;
+> 
+> 	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+> 		data->temp_error2 = (trim_info >> EXYNOS7_TMU_TEMP_SHIFT) &
+> 				    EXYNOS7_TMU_TEMP_MASK;
+> 		if (!data->temp_error2)
+> 			data->temp_error2 = (data->efuse_value >>
+> 					     EXYNOS7_TMU_TEMP_SHIFT) &
+> 					    EXYNOS_TMU_TEMP_MASK;
+> 	}
+> }
 
-Doug Anderson <dianders@chromium.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=885=E6=
-=97=A5=E5=91=A8=E5=9B=9B 03:39=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi,
->
-> On Wed, Sep 4, 2024 at 2:23=E2=80=AFAM =E5=BC=A0=E5=85=83=E7=80=9A Tio Zh=
-ang <tiozhang@didiglobal.com> wrote:
-> >
-> > Hi,
-> >
-> > Ping :)
-> >
-> > // get_maintainer.pl does not tell who are the maintainers or reviewers=
- of kernel/watchdog.c
-> > Add commit signers and sched maintainers to the CC list.
->
-> FWIW, people in the Linux community usually don't like "top posting"...
->
-> In any case, I saw your original patch but I struggled to make sense
-> of the explanation and so I left it for later and then never got back
-> to it. I suspect that the explanation needs to be a little clearer.
+Yes, something like that but may be with more code factoring, like a 
+common routine to pass the temp_mask and the specific chunk of code.
 
-Thanks for your time reviewing and sorry for my poor explanation,
-I update the explanation with an example to reproduce the issue.
-Please see [patch v2]
+> Or maybe we could put tmu_temp_mask and tmu_85_shift in data instead,
+> and have one function like this:
 
->
->
-> > =EF=BB=BFOn 8/22/24 =E4=B8=8B=E5=8D=883:09, "=E5=BC=A0=E5=85=83=E7=80=
-=9A Tio Zhang" <tiozhang@didiglobal.com <mailto:tiozhang@didiglobal.com>> w=
-rote:
-> >
-> >
-> > For users set "watchdog_user_enabled=3D0" but remaining
-> > "(soft,nmi)watchdog_user_enabled=3D1". Watchdog threads(,nmi watchdog)
-> > rework only if users reset "watchdog_user_enabled=3D1" without printing
-> > those watchdog swicthes. Otherwise (soft,nmi)watchdog_user_enabled
-> > will turn to 0 because of printing their values (It makes sense to prin=
-t 0
-> > since they do not work any more, but it does not make sense to let user=
-'s
-> > swicthes change to 0 only by prints).
-> >
-> >
-> > And after that, watchdog only should work again by doing:
-> > (soft,nmi)watchdog_user_enabled=3D1
-> > *** can't print, or everything go back to 0 again ***
-> > watchdog_user_enabled=3D1
-> >
-> >
-> > So this patch fixes this situation:
-> >
-> >
-> > | name | value
-> > |----------------------------|--------------------------
-> > | watchdog_enabled | 0
-> > |----------------------------|--------------------------
-> > | nmi_watchdog_user_enabled | 1
-> > |----------------------------|--------------------------
-> > | soft_watchdog_user_enabled | 1
-> > |----------------------------|--------------------------
-> > | watchdog_user_enabled | 0
-> > |----------------------------|--------------------------
-> >
-> >
-> > cat /proc/sys/kernel/*watchdog
-> > |
-> > |
-> > V
-> > | name | value
-> > |----------------------------|--------------------------
-> > | watchdog_enabled | 0
-> > |----------------------------|--------------------------
-> > | nmi_watchdog_user_enabled | 0
-> > |----------------------------|--------------------------
-> > | soft_watchdog_user_enabled | 0
-> > |----------------------------|--------------------------
-> > | watchdog_user_enabled | 0
-> > |----------------------------|--------------------------
-> >
-> >
-> >
-> >
-> > Signed-off-by: Tio Zhang <tiozhang@didiglobal.com <mailto:tiozhang@didi=
-global.com>>
-> > ---
-> > kernel/watchdog.c | 10 ++++++++++
-> > 1 file changed, 10 insertions(+)
-> >
-> >
-> > diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-> > index 51915b44ac73..42e69e83e76d 100644
-> > --- a/kernel/watchdog.c
-> > +++ b/kernel/watchdog.c
-> > @@ -995,8 +995,18 @@ static int proc_watchdog_common(int which, struct =
-ctl_table *table, int write,
-> > * On read synchronize the userspace interface. This is a
-> > * racy snapshot.
-> > */
-> > + old =3D READ_ONCE(*param);
->
-> Given that the first thing that both the "if" and "else" case do now
-> is to set "old" then it feels like it could move outside the "if"
-> statement.
+Either way
 
-Done in [patch v2]
+It would be nice if the code can be commented to explain how the sensor 
+works in order to understand what means "sanitize the temp error"
 
->
-> Even though the existing code does it, I'm also a little doubtful that
-> a READ_ONCE() is really needed here. You're protected by a mutex so
-> you don't need to worry about other CPUs and it would be really
-> confusing to me if the compiler could optimize things in a way that
-> the READ_ONCE() was needed.
+> static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+> {
+> 	data->temp_error1 = trim_info & data->tmu_temp_mask;
+> 	if (!data->temp_error1 || (data->min_efuse_value > data->temp_error1) ||
+> 	    (data->temp_error1 > data->max_efuse_value))
+> 		data->temp_error1 = data->efuse_value & data->tmu_temp_mask;
+> 
+> 	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+> 		data->temp_error2 = (trim_info >> data->tmu_85_shift) &
+> 				    data->tmu_temp_mask;
+> 		if (!data->temp_error2)
+> 			data->temp_error2 =
+> 				(data->efuse_value >> data->tmu_85_shift) &
+> 				data->tmu_temp_mask;
+> 	}
+> }
+> 
+> Thank you,
+> Mateusz
 
-I'm also confused, the only reason I keep 'READ_ONCE' is to align with
-existing code. I remove 'READ_ONCE' in [patch v2].
 
->
->
-> > *param =3D (watchdog_enabled & which) !=3D 0;
-> > err =3D proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> > + /*
-> > + * When "old" is 1 and watchdog_enabled is 0,
-> > + * it should not be change to 0 for printing
-> > + * nmi_watchdog_user_enabled or soft_watchdog_user_enabled.
-> > + * So after we print it as 0,
-> > + * we should recover it to 1.
-> > + */
-> > + if (old && !watchdog_enabled)
-> > + *param =3D old;
->
-> I'm confused. Why all this extra logic? This should just
-> _unconditionally_ restore "*param" to "old", right? The only reason
-> the code hacked "*param" in the first place was so that it could use
-> the common proc_dointvec_minmax() helper function. Aside from the
-> common helper function working there is never a reason to muck with
-> "*param" if "!write" so it should just always restore.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Yes actually the if statement is useless, my original purpose writing this
-is trying to make the explanation more clear...
-Remove in [patch v2]
-
->
-> -Doug
-
-Thanks,
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
