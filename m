@@ -1,206 +1,192 @@
-Return-Path: <linux-kernel+bounces-319222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284FC96F972
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6593496F96E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457091C21C4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3DE1F245F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E43A1D4177;
-	Fri,  6 Sep 2024 16:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8241D365D;
+	Fri,  6 Sep 2024 16:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCIIdh7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="POH+XU6u"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEDD1D4145;
-	Fri,  6 Sep 2024 16:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725640708; cv=none; b=h5Te7y35m4i+yYA1XPOGgKyWqhk/P7d4asWa8Zu6zb3fLk06QPVQ5HV3QKi5OpH309NYGieCtdnPwDBjiS03ZvlC7+GXlkNvg0+Dj/j5+PrSECEIa+nfJBq+uB4eyjBXVJeMa8x4sTr6qjf0fUzT8ulAXSHgcAWR9KW+Vf/imeI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E968322A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725640708; cv=fail; b=clCb17qiTddu/J4TU3ZYGHc3yJKc0kveIMRpaS71AlKdpeUN5EDSwtNQ4bcJ/3OsRFLjPWnKB5u9YR7GH1BTWHGUg27ZB678Rtl28fu48xSGKZORKU+ykvDijvUKMF3sZZuScY9EWLp3tSPXn8/FC1hVx+WaCCPaVk2fFm9qFu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725640708; c=relaxed/simple;
-	bh=bvsWP8QC/2FZO+T3JPXm/ONQRKmq8PJC1ELStc9NY4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDoaPSHL/ESkPpwRSd/lb8XhhDq6V9z0N1M0UEQav2FINow98HE9UxGhKyZJakiMp8I9ZOMm9UqnODezwjGAYKMGOfKE7ikVDKpdbxCrFj1RoDVQxdXbjBGxxEpqELiIvdFMv6pOwvEAE+3GF/wwi2Ril01fn1fy6GatMztriLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCIIdh7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BAD3C4AF09;
-	Fri,  6 Sep 2024 16:38:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725640708;
-	bh=bvsWP8QC/2FZO+T3JPXm/ONQRKmq8PJC1ELStc9NY4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HCIIdh7Ma1BEcvP2K/3J5YMG9UzNL2TnfVrtivcwz3eGOFVMlA8M7FNPIGB18I54b
-	 SQ5huGQl0RfbPYKlXe/DTIDyG5TgU5C3wnJ7VPpRTPym0mhvu87V2uC9JZix8mE+yJ
-	 zWVpbCcU6iKgUrXSsfT7+pMk1wCmTrPAZrqI2Ux9vIyOuXPeGhgVczDFDRwq102ikL
-	 K0Bmdo9Q0FJIyV4sFwzWx/G0rD/IAJv8Z9z1q0VupsAHAQAPi9ofYuPT+krlIPrD6J
-	 JNqukKhQ33MWx64hxBFCfsLl8nEbmUkH0E2/q0nu1k36DiohQvQh8Kk0cX2Z+CKdli
-	 IhhJVCnc3UBiw==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365b6bd901so730222e87.2;
-        Fri, 06 Sep 2024 09:38:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAqvvM1lEX/xDYdz5q9ByG10UrTJ/ElfMv6VUUz654ykGCVYOTHrHroxFXVSM2GzDlHBqqJlw7gw==@vger.kernel.org, AJvYcCWpLY/gCjiT4ZE8hALzFpvX+tgmlD52An6EwdDpeY99i0Dd/pj3Dtex7FRRyZxMGED+q4knd7nnwi6nzI0=@vger.kernel.org, AJvYcCXUy97XxGv0BZ2GgvzM1Pm9hwhV+rLTcjKTna8A7vGn5+0bYcWq69Zb5K7brpCMoe70wmtqGrh7RLvXEtS1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+dg3/ymp1P30nwyQ7RfIKWPt3G1vPaYkFtYy6EbhkjmkuH95V
-	cmG0wHGyTtCDQgaPu0WHac9Aya1EyQlM4IpgaDtKCT56PuQnDRyYi9nnhzBwX3HpyezWgouS41h
-	FoHoLr6UKqmu4Xkab2kc/Vm8YSlw=
-X-Google-Smtp-Source: AGHT+IFkxq/M3vN+/bT3TWHiK7+zQR98ApNs19FcjlfYZ8ntgKUkLGmgGHPEQWPLfformvQV+hdejlFH7HUIafAl4G4=
-X-Received: by 2002:a05:6512:2348:b0:52e:7542:f469 with SMTP id
- 2adb3069b0e04-536585730a7mr2198159e87.0.1725640707029; Fri, 06 Sep 2024
- 09:38:27 -0700 (PDT)
+	bh=0utlssiF2+TZxkkQN9fOaTZKnTjmpo7sHTuAWGwZHEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RQUIgY1DyE8EEXFU1qcMKj9mkOP0O2Q1c+Zfx+N5TOEwkLYNXEGtK+fagM1Tbli9UPc0uFQZlNfNxBB7v+rBNKRguaycnPV8JnahLWmum2/3VvkTdwkNhTY00DbqzTROjYHZQUSCIF86VDOn2vGwociCOYJLFeFp7cryinKVd+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=POH+XU6u; arc=fail smtp.client-ip=40.107.223.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j8uU32NJ7ikon6WtYZPAfQ4eeP3jGI2PXyLzyyXm5E7Ps7uncE2+a9HLzt86EkMRwfXqWxm30DXEMNGBAGiAMmGnfqTeyVct+HTt1UipwHXZOuwhKnqvC0yzmiSx/Ot5ZxYehsoLkDJQbQXxwcBLWjCS+xABD1f5qmk1YWNfeWfXmdL3WvbHsVQDpjHQdgIpyib9UoLsnwckt4RGd8vX3KY1yjlB3BMCB04joQuWfhC0qNsycPVV78w/YcOC3NmySuLW9EiuczBziRuD2LMbFBMaJSg8mw4Jnqb8s2kCpWXpgTpJEw7LfKpNpvbg0tSaY24NFpohMMiXtR2T7qHs3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CNvP9reWkgp6qoNYWLWBf9DnPGkHv5bnterm6Snfp2I=;
+ b=qvEWk1d2HdD7EKToe2ibHH+SHkvObHtCbx0QFdWSyiadPEpCfUD3VI/8wvw6tmEDiuy8HAbQdlJQLzreFPL/nk+cIEQ6nH55rZBe2rZ5iEqCYxesiB/oDeHTZntzJ1GP0QLDzYwLZVdpqxbidV5jT6+E2KWgW4uyrXrmCRwhUscimir2uCSyUtkaRFfR9iV3z8Ak3j9gRr6sfl3pv2pUBAkGzFyR0Gnk9W7oZfAEPKTFpMkdrFVtrkO/7ZhglnEK4PIl14XXOMmdICYhzpZ1/UDWvRW5AzMcHN+LTx8vaoZYcAz/fLBtkUFN8bn43OMs7yaQqO7/R7jjJ1KBERqRDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CNvP9reWkgp6qoNYWLWBf9DnPGkHv5bnterm6Snfp2I=;
+ b=POH+XU6uecd0wp4ggrL+yzVwgrYyQI4GVfSuTSlrtSTP1IP0rc9fn8ttH+oqAWppAdswU7UlAUQIh11QuKL/DLaSAiTpb9zsB+8hSd4QawAocNYYGKl0OOsyw+K7sZDsPE+7j3vXQyV+BC0/aeRtDgnL0Xnhq59rlknR4+394qCkJlYt42GmT57FOIxrSkWkge2ttE7G4BS5ZEKOCeBkbir9Ud8OITJ2IBj420IUTDC2M69umPz5sSwOF2Xkkow5k5qulF5f1fAz+mMigM4PEMo5w+QcNDYw2h9SajP+8xq7XUCTlEtviEECwia4mseautx5TWQwgiSIiVD1iluI0w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by DM6PR12MB4338.namprd12.prod.outlook.com (2603:10b6:5:2a2::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
+ 2024 16:38:19 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 16:38:19 +0000
+Date: Fri, 6 Sep 2024 13:38:18 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, ubizjak@gmail.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+	kumaranand@google.com
+Subject: Re: [PATCH v3 1/5] iommu/amd: Disable AMD IOMMU if CMPXCHG16B
+ feature is not supported
+Message-ID: <20240906163818.GK1358970@nvidia.com>
+References: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
+ <20240906121308.5013-2-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906121308.5013-2-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: MN2PR20CA0048.namprd20.prod.outlook.com
+ (2603:10b6:208:235::17) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809122007.1220219-3-masahiroy@kernel.org>
- <3447459d08dd7ebb58972129cddf1c44@paul-moore.com> <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
- <CAHC9VhSz+kwYOnkfWPHOmoKCRfOjm3_L5xMLeSGVNxq5g=ikww@mail.gmail.com>
- <CAK7LNARj7mx9ZkucABBKujEmwggqZvn+8PZ1e-_ofaa43pfz0Q@mail.gmail.com> <CAHC9VhRhUPTwg2-wsLzGGpbhG_4sH9K5o6Z5D_aLiiO98LgaJQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRhUPTwg2-wsLzGGpbhG_4sH9K5o6Z5D_aLiiO98LgaJQ@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 7 Sep 2024 01:37:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS2M5XsXJ39RS2yQKRiEwZpA8oYQ8u4LipoL1YMHane8w@mail.gmail.com>
-Message-ID: <CAK7LNAS2M5XsXJ39RS2yQKRiEwZpA8oYQ8u4LipoL1YMHane8w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selinux: move genheaders to security/selinux/
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|DM6PR12MB4338:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff1dd0c3-4a86-4933-e294-08dcce9250b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hEmhhHb2GSRAIVmyMe1do7DXMaW3vyAl/q45zddPbBeC8b+E8yNsqiswBaeb?=
+ =?us-ascii?Q?3GYPJ8Got58/tpNKPrmxwFggFKhQP8PGBH26sWFe7uwQNYFhlnz82NXVUn02?=
+ =?us-ascii?Q?Bg82Fki8Ti38jF5z7gutCggU5r/bSdEBQgy6ynTpF5a2ipWaKf+VMVeU4tpY?=
+ =?us-ascii?Q?CSsJwWc1HBTipS/jtpNqTgWyUwnedmdiId61VrcJa+flzfw+gEc7O5RlTSYT?=
+ =?us-ascii?Q?silnF8qtoIhbkfPGVtCm52/RlMDgT63LOQ+8y7xA7ebo52FCLWP/YJpAVV9x?=
+ =?us-ascii?Q?yZGoGbUapxxR699FCoLM8dC9icUu8scSy2zGfDu7AZ5zpyZhrCl3OVy5eZW8?=
+ =?us-ascii?Q?2Ck7X4AMJnJqn7Zzme5T3W4V/eaqmL/B9qnH0fT4B8Hlt5wQSAGKrNWLXSP0?=
+ =?us-ascii?Q?z+HVBAqQr2/QxpOxC2Ezv/5/YBpgNjjEgvBudSb/omUuqbPby08KRz+1zsMm?=
+ =?us-ascii?Q?dIbutPVDfYL7aNDt0nOtW8R9j9jsz+NgUFNZvSLFL/Y+JLfRHdOyxSm60sNX?=
+ =?us-ascii?Q?5MNBbyfIlpp9GEo/gjGnyloJS4n+LILFcEeMNLCHOECHywFGqDh6wP1i+zaK?=
+ =?us-ascii?Q?UsFP5xvx1lG5CSF9Gv8zdHAydhku+MWZuOxrJKw5Lp/xm/Kxdjxhcq9EQGbx?=
+ =?us-ascii?Q?3k4iYcu7x794J9zILCbItN1iPtIMYy46XS1Fong5BI+sxgfQYZOhHPMmg8ha?=
+ =?us-ascii?Q?v8Pw/jkHKTL1p7dwst2Kgl00thThpc3/imF70TKMIYE8PArt3AxjHdh7H1Et?=
+ =?us-ascii?Q?8AnDNDEeyjHRyIdEwnF/gzOlmgs9Nwkr5RBnlz8564l7NAbSKCFkogTEdXFo?=
+ =?us-ascii?Q?CGVeuIGH1Ubhe5xKd9WDq2aD0OL8frIsq5nMYDralnXg2RH5uRhiiLFnpM3N?=
+ =?us-ascii?Q?tssLzdGT6nEPtq+8FJPjlFSEId1Ln0N+eVW3Hn87lCzSM30inUqpdq/dI5Ve?=
+ =?us-ascii?Q?w3cA2ZRzv0amq/TH62NQm59mPbsCRb6q6V8+QyQhIyXPmedfO+LBhnPyD5C+?=
+ =?us-ascii?Q?BNpRt8azQyY0WGmG8yvXJqd1n3izFeVLHwHhL1+ferN6ahZ7DoAiuglkhMDE?=
+ =?us-ascii?Q?v7ivQqU3sniH+HzbcqpduAt640Mv/Nzi0+5owmIofenMls6iHbc6Ycf2fAyX?=
+ =?us-ascii?Q?b8ZZs8IOKuG7rpFyKjIJ7P9BZ1yUd/fig1mHYXSh4t/eAlfmWgcoBdpVbsVS?=
+ =?us-ascii?Q?2BHt0fcvGyx3Bx10s/mGHMXIeXMlpM2jwX4TPjZmAF/gM03FuDbdmxvmMIuY?=
+ =?us-ascii?Q?N47md8tlJitgfvCvGqq+WEscfEIfMwpl+nTZ8B9AZ+Wq85q/SJQrc8aA0sHQ?=
+ =?us-ascii?Q?qnENMriglgAF+9aRicYk9E3RvbhSHM9i+q+lS1aoryX4bA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HkO/Ze4tsfD7vO0X3QuA24d87HHymKuHyiBu8Ah/PkTKzPhOh4nC2dXvpVHn?=
+ =?us-ascii?Q?8kkqJ4EolSVvGFkKLDSJTPUhwMQ9PA88ztmBSgI5KuHzCaiRRHUvaDJLXNgZ?=
+ =?us-ascii?Q?KaZOdQnBsY0yd97fAGU/0XrC/+yvncR1C48YVNAWy+P5/rO171PeTnBelfDt?=
+ =?us-ascii?Q?E0G7GjyhEGgn+4vUOZUhn1YHEqDyhhqQyt18w9Q1CjSON4CN8aaDD0IqO/ms?=
+ =?us-ascii?Q?+PtrVJwuWyFAqtvVl37Lj94PYMYjhoHkXqcGF7ceq053ekdQQ8CnQm9CJAO+?=
+ =?us-ascii?Q?hVdURV16bQEGXdqizl9arWrS1kYdADKQXCllGKsknNR0RPRX/XAr1/wpoXfI?=
+ =?us-ascii?Q?a4ZYgyzVAGjfeV8IpbkmJnaEPpNh8ZkXUnXfIyNi9V2DpmNgwStxKyjzEfIT?=
+ =?us-ascii?Q?2ASc5q2yMraLb6nupCsrDIdNJx4jMyzLjjPXozSGDzd5iJ/4u13Y2gMWVRlf?=
+ =?us-ascii?Q?PMlsScsHZF3dZoGoIWYxJafaxjd9xFKwkTY9xugNJMqSuTMzjEolF3hN+TS/?=
+ =?us-ascii?Q?BC/5fgIs+SB/BBSDROpkRranD5aEjdR+lcO9E3sMzr5mLlau4rJajr9373qz?=
+ =?us-ascii?Q?Vb9uLMmcWkbsPg8cqiZEAD94I5anTmIRAo4yoSRxcuGqb41wGmrFwS3sa99k?=
+ =?us-ascii?Q?LuIJA3ZPRQgWhA77d0AuycGTbMTibUmLkgFUuwzLZqsVoolmAG8G5WHLgCil?=
+ =?us-ascii?Q?FNxj0r70TKm57X3EdeXta4PwDV91Phn9r+BYflUjpzfssKTs10iKpiwQSoef?=
+ =?us-ascii?Q?Sax0wjWMiZddluxl4s9+HiyP+9Afn+XaAFzBR4XWr5RBbMIsUjt4JimdhKtr?=
+ =?us-ascii?Q?BJhT1wrj8PEAeZLhjYLx8QgvLThWk/OsaqtLPkAydNwZwaVZO/kyHo2elCmH?=
+ =?us-ascii?Q?vxk54LaPtq1GdqvSn1FmcQM4wBbm2Ad9b28kE4VfDCagrCzKYeH55+sUg8mZ?=
+ =?us-ascii?Q?rck8tmAHlriW4T4ngDfwk8SVCj8WU0lTAV69YUF50KJSb9vwcuIlqf6GLAnD?=
+ =?us-ascii?Q?d3y934sSHWyZvqoq6wh6oCAkJ+ZklWxGmXAcruegkk5ZX9ZvBtJPJxBaNCTj?=
+ =?us-ascii?Q?S4B9CCwztI7lkl/ty6CKvAfZAbYs9aOOG19JzeD9PZXQptzAJ77bbwFx4Op4?=
+ =?us-ascii?Q?P14YPO5gezxmaOpaMQnzxa8gT547Ev6YP/2t54p/ylUS9fOHm1BpGcya3E2I?=
+ =?us-ascii?Q?e2xvAPFnQ/LR0kqjEvrQvb8sE5KFDeOqTZGoxfHBmym0tMDU3bVlRfbxnltp?=
+ =?us-ascii?Q?53kpFNjq05e9jLQJuAic/aPAA7LdlOV/APqJIvyaOjn52Z4UN+bYZw+cwEh8?=
+ =?us-ascii?Q?ShEMWVTeFsnWtBCMKkSsbn91xkQ94xVf6RY24Hf8bB35rPcJCFcAEKdhV0Wi?=
+ =?us-ascii?Q?/a0t3jLOOsOdMmtAHjDJ+c705PFmwzlqjoYCt6naff4o4PRteMVi41yItenU?=
+ =?us-ascii?Q?lTL8puNT0WJUEo/OYsZwJGNn7gqZAHSfmSlOEI1TNWBS2zia0RP/sfQtGGkE?=
+ =?us-ascii?Q?cMQLHZsRxZobCkcsBcrVDMCiq6Cx+Leu0S2hAB8nBHvIezKlFFOo3GG0wEKQ?=
+ =?us-ascii?Q?ZG8GiPuecDHYx2SAdutlbuRITR9TMqAdq8WR+G5T?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff1dd0c3-4a86-4933-e294-08dcce9250b5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 16:38:19.6193
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iOX7+qu+d+WvOsxGOeVoliIY+mJPqQycbCTF55Q9g3Cc9q0OSKwY4uHtCnfvejXg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4338
 
-On Sat, Sep 7, 2024 at 1:23=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Fri, Sep 6, 2024 at 12:06=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
-.org> wrote:
-> > On Sat, Sep 7, 2024 at 12:37=E2=80=AFAM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Fri, Sep 6, 2024 at 11:19=E2=80=AFAM Masahiro Yamada <masahiroy@ke=
-rnel.org> wrote:
-> > > > On Tue, Aug 27, 2024 at 6:22=E2=80=AFAM Paul Moore <paul@paul-moore=
-.com> wrote:
-> > > > > On Aug  9, 2024 Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > > > >
-> > > > > > This tool is only used in security/selinux/Makefile.
-> > > > > >
-> > > > > > There is no reason to keep it under scripts/.
-> > > > > >
-> > > > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > > > ---
-> > > > > >  scripts/remove-stale-files                                 | 3=
- +++
-> > > > > >  scripts/selinux/Makefile                                   | 2=
- +-
-> > > > > >  scripts/selinux/genheaders/.gitignore                      | 2=
- --
-> > > > > >  scripts/selinux/genheaders/Makefile                        | 3=
- ---
-> > > > > >  security/selinux/.gitignore                                | 1=
- +
-> > > > > >  security/selinux/Makefile                                  | 7=
- +++++--
-> > > > > >  .../selinux/genheaders =3D> security/selinux}/genheaders.c   |=
- 0
-> > > > > >  7 files changed, 10 insertions(+), 8 deletions(-)
-> > > > > >  delete mode 100644 scripts/selinux/genheaders/.gitignore
-> > > > > >  delete mode 100644 scripts/selinux/genheaders/Makefile
-> > > > > >  rename {scripts/selinux/genheaders =3D> security/selinux}/genh=
-eaders.c (100%)
-> > > > >
-> > > > > As long as there is no harm in keeping genheaders under scripts/s=
-elinux,
-> > > > > and based on your cover letter it would appear that there is no p=
-roblem
-> > > > > with the current location, I would prefer to keep it where it cur=
-rently
-> > > > > lives.
-> > > >
-> > > > 'make clean' is meant to clean up the tree, but keep
-> > > > build artifacts necessary for building external modules.
-> > > >
-> > > > See the help message:
-> > > >
-> > > >   clean           - Remove most generated files but keep the config=
- and
-> > > >                     enough build support to build external modules
-> > > >
-> > > > 'make clean' does not clean up under scripts/
-> > > > because tools located scripts/ are used in tree-wide
-> > > > and often used for external modules as well.
-> > > >
-> > > > So, scripts/selinux/genheaders/genheaders is left over.
-> > > >
-> > > > genheaders is locally used in security/selinux/.
-> > > >
-> > > > 'make clean' will properly clean up security/selinux/genheaders.
-> > >
-> > > Your last sentence is confusing and doesn't align with the rest of
-> > > your email, please clarify.
-> >
-> > I do not understand what was unclear.
->
-> Near the start of your email you stated: "'make clean' does not clean
-> up under scripts/".  However you ended your email with "'make clean'
-> will properly clean up security/selinux/genheaders" which seems
-> contradictory to your initial statement; I was guessing that you were
-> implying that moving the genheaders script will allow `make clean` to
-> work properly, but you explicitly included the old/existing location
-> of security/selinux/genheaders directory in your comment which didn't
-> support that guess.
+On Fri, Sep 06, 2024 at 12:13:04PM +0000, Suravee Suthikulpanit wrote:
+> According to the AMD IOMMU spec, the IOMMU reads the entire DTE either
+> in two 128-bit transactions or a single 256-bit transaction. 
 
+.. if two 128-bit transaction on the read side is possible then you
+need flushing! :(
 
-OK, now I understand.
+For instance this:
 
+  IOMMU         CPU
+Read [0]    
+              Write [0]
+              Write [1]
+Read [1]
 
-I meant this:
+Will result in the iommu seeing torn incorrect data - the Guest paging
+mode may not match the page table pointer, or the VIOMMU data may
+become mismatched to the host translation.
 
+Avoiding flushing is only possible if the full 256 bits are read
+atomically.
 
-  With this patch applied, 'make clean' will properly clean up
-  security/selinux/genheaders.
+> It is recommended to update DTE using 128-bit operation followed by
+> an INVALIDATE_DEVTAB_ENTYRY command when the IV=1b or V=1b.
 
+This advice only works when going from non-valid to valid.
 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> ---
+>  drivers/iommu/amd/init.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
 
-> Your latest reply makes it a bit more clear.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-
-
-So, are you ok with the following commit description,
-which I proposed in another thread?
-
-
-
---------------->8--------------------
-selinux: move genheaders to security/selinux/
-
-This tool is only used in security/selinux/Makefile.
-
-Move it to security/selinux/ so that 'make clean' can clean it up.
-
-Please note 'make clean' does not visit scripts/ because tools under
-scripts/ are often used for external module builds. Obviously, genheaders
-is not the case here.
---------------->8--------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+Jason
 
