@@ -1,191 +1,258 @@
-Return-Path: <linux-kernel+bounces-319054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1899596F717
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:41:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE15196F719
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C614B2862CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68055286322
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EBB1D1741;
-	Fri,  6 Sep 2024 14:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B67D1D1732;
+	Fri,  6 Sep 2024 14:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="LlmEtahG"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A14+mym2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oLC4YA6I"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2068156880;
-	Fri,  6 Sep 2024 14:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CE4156880;
+	Fri,  6 Sep 2024 14:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633654; cv=none; b=e7HUiMXJjn9AGp7pmFXdnOBm+geUtn13/GdgNG/l4LESa/aq3g/JjIciuBrQptbkGhGqCvszaaVczswDrH+S8WJCZ893E7FOwXjKmHa2wQ4b7D0HBw1t/NjQP20icLAco1xafexiO5v0U8jdNXcMg0CthHgasEDWyYxxv9ujG/o=
+	t=1725633679; cv=none; b=sPQG5+b7bdyne1Cwtiz81v4WMAflJ4vv4Ig3Pp7hIg8keEmoIKCVXX4adugH41wxJmHKCfNbQn/PrNbiPL5/NC5It9Ph8MEYBeb9e9hQsRGf5siJvEvcDQCKu1QJxnvQhV4/x7RKuZ7v19diugSf0PMiWSVULtdHSIxi8bLJdq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633654; c=relaxed/simple;
-	bh=RNNKstjMPAiuuKozO5yPRYS1HARNRnneasAfawWOtMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hj6yx2BOHcG5w4DtnyPFI71/VpxAjt0lmtop0MOezdHwYK3Sd0sVUOd5+BmdGUoYbMO5hFrC60TL9aXCo5m3MlpFLs632Mm25etp2xaizI2Uf+TQWGLLgt3pQ0yjeIVkGvzA1zc3fYb3vE0JhhT+p+WUFRT7zbQaju40Nt1oZeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=LlmEtahG; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 13EFF1F9DF;
-	Fri,  6 Sep 2024 16:40:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725633641;
-	bh=l7Ni2p8AvtexQEK46PBSAU7NhUGNeYQJss2Ku2vjkws=; h=From:To:Subject;
-	b=LlmEtahGerQXCR1FfgAkwadc3+sw7zeI34hDD3YJXZvN9ii4lDI7ZBvDUHCl0sVKc
-	 rFS+WxBcrOm17s5oG9RMlShaKc1yjQAg3xt6i6gC3C/4U5noMF7IoOBfN610sL90o6
-	 1p93NaBJLNKeQBCYXFa8d4x0OxFOuyg4vo8CmZJzjMIfUPEoP4UAjOOmnlrZVv5RPK
-	 DQYxH4CbWQHFrs0ykqBROCcUFMun5Oj2ZtXeSqc1X7O2JpV/XUUW/WRUXRwHBCgBKP
-	 hcLCGvsH5jrg1CvBWMkNsBAu93n58qRZDczgYpNaIY2Dlwc4sgj3wH3bx+Kn7vCwKN
-	 5CEcphTHQoTug==
-Date: Fri, 6 Sep 2024 16:40:36 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 02/12] wifi: mwifiex: fix MAC address handling
-Message-ID: <20240906144036.GA45399@francesco-nb>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
- <20240826-mwifiex-cleanup-1-v1-2-56e6f8e056ec@pengutronix.de>
+	s=arc-20240116; t=1725633679; c=relaxed/simple;
+	bh=VlO7EeZd3KPAQTxO05Pn/zw/Zimdne90HKTSzKmF8mw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=U9RNzTTwkGpa8Fq70XC+EkZu5djSMRsQQlb+ZDfRV1/jQO/n1+tyq00I9wxMUqw06hwT2PWVq0r/HpG3lDqYRYcemboOUKUhWImmmPIyVDeqCQXT4SbLl7zpITQYb1Re2OSV6ysWNojdKp3qiT8f+cKCiv0egD/c80yHz0Y1oTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A14+mym2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oLC4YA6I; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 06 Sep 2024 14:41:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725633675;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVS+0uXrWpJOYDz8cFvZ81KUZyiMf56A8YI5YcIMhcM=;
+	b=A14+mym2iaXEkh/HYK46sZ5l4evOxCZJ8nqOoBUCCo8xNfQLZYOIJO8DTEGmkCqRVCHdjr
+	YS2DYRHrOJYjUF2x9EaX8k3doVAo6Mrgip1B6xvT0lqmkDt8wBlKwxO0h1Lt/r1VKTGZMQ
+	UNzdHL7mh+ABO28s2p+pJ/EK41Mv5kRRhjqqzsTdujo1MLKSCz3WBpAf6u5egEqMaYaJC8
+	8uIV5EBbNsFIWuhJQ+bSscRrItGzPsTqjlOypFx0kxv7CmZ4oVafEg5e62zfAcTi6J2HLU
+	CaHgBwOF+qGi3V2jZztLpueW+rI7DRBj6oemEnSr1yCYuUeTKdq39BKY1I7j/g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725633675;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVS+0uXrWpJOYDz8cFvZ81KUZyiMf56A8YI5YcIMhcM=;
+	b=oLC4YA6IDTjvPQiCYhB+E3Kr6xKHeN9N1ePUgzsp3cymr7Pk1bqAvMZJHiHvRVaUaVIW/A
+	DeJmX7XOEaQlV/DQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/urgent] jump_label: Fix static_key_slow_dec() yet again
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <875xsc4ehr.ffs@tglx>
+References: <875xsc4ehr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-mwifiex-cleanup-1-v1-2-56e6f8e056ec@pengutronix.de>
+Message-ID: <172563367463.2215.5542972042769938731.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 01:01:23PM +0200, Sascha Hauer wrote:
-> The mwifiex driver tries to derive the MAC addresses of the virtual
-> interfaces from the permanent address by adding the bss_num of the
-> particular interface used. It does so each time the virtual interface
-> is changed from AP to station or the other way round. This means that
-> the devices MAC address changes during a change_virtual_intf call which
-> is pretty unexpected by userspace.
+The following commit has been merged into the locking/urgent branch of tip:
 
-Is this the only reason for this patch or there are other reasons?
-I'd like to understand the whole impact, to be sure the backport to
-stable is what we want.
+Commit-ID:     de752774f38bb766941ed1bf910ba5a9f6cc6bf7
+Gitweb:        https://git.kernel.org/tip/de752774f38bb766941ed1bf910ba5a9f6cc6bf7
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 07 Aug 2024 16:03:12 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Fri, 06 Sep 2024 16:29:22 +02:00
 
-> Furthermore the driver doesn't use the permanent address to add the
-> bss_num to, but instead the current MAC address increases each time
-> we do a change_virtual_intf.
-> 
-> Fix this by initializing the MAC address once from the permanent MAC
-> address during creation of the virtual interface and never touch it
-> again. This also means that userspace can set a different MAC address
-> which then stays like this forever and is not unexpectedly changed
-> by the driver.
-> 
-> It is not clear how many (if any) MAC addresses after the permanent MAC
-> address are reserved for a device, so set the locally admistered
-> bit for all MAC addresses modified from the permanent address.
+jump_label: Fix static_key_slow_dec() yet again
 
-I wonder if we should not just use the same permanent mac address whatever
-the virtual interface is. Do we have something similar in other wireless
-drivers?
+While commit 83ab38ef0a0b ("jump_label: Fix concurrency issues in
+static_key_slow_dec()") fixed one problem, it created yet another,
+notably the following is now possible:
 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/net/wireless/marvell/mwifiex/cfg80211.c |  4 +-
->  drivers/net/wireless/marvell/mwifiex/init.c     |  1 -
->  drivers/net/wireless/marvell/mwifiex/main.c     | 54 ++++++++++++-------------
->  drivers/net/wireless/marvell/mwifiex/main.h     |  5 ++-
->  4 files changed, 30 insertions(+), 34 deletions(-)
-> 
-...
+  slow_dec
+    if (try_dec) // dec_not_one-ish, false
+    // enabled == 1
+                                slow_inc
+                                  if (inc_not_disabled) // inc_not_zero-ish
+                                  // enabled == 2
+                                    return
 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
-> index 96d1f6039fbca..46acddd03ffd1 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/main.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/main.c
-> @@ -971,34 +971,16 @@ mwifiex_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
->  }
->  
->  int mwifiex_set_mac_address(struct mwifiex_private *priv,
-> -			    struct net_device *dev, bool external,
-> -			    u8 *new_mac)
-> +			    struct net_device *dev, u8 *new_mac)
->  {
->  	int ret;
-> -	u64 mac_addr, old_mac_addr;
-> +	u64 old_mac_addr;
->  
-> -	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
-> +	netdev_info(dev, "%s: old: %pM new: %pM\n", __func__, priv->curr_addr, new_mac);
->  
-> -	if (external) {
-> -		mac_addr = ether_addr_to_u64(new_mac);
-> -	} else {
-> -		/* Internal mac address change */
-> -		if (priv->bss_type == MWIFIEX_BSS_TYPE_ANY)
-> -			return -EOPNOTSUPP;
-this was the only usage of MWIFIEX_BSS_TYPE_ANY, correct? Did it had any
-reason before?
+    guard((mutex)(&jump_label_mutex);
+    if (atomic_cmpxchg(1,0)==1) // false, we're 2
 
-> -
-> -		mac_addr = old_mac_addr;
-> -
-> -		if (priv->bss_type == MWIFIEX_BSS_TYPE_P2P) {
-> -			mac_addr |= BIT_ULL(MWIFIEX_MAC_LOCAL_ADMIN_BIT);
-> -			mac_addr += priv->bss_num;
-> -		} else if (priv->adapter->priv[0] != priv) {
-> -			/* Set mac address based on bss_type/bss_num */
-> -			mac_addr ^= BIT_ULL(priv->bss_type + 8);
-> -			mac_addr += priv->bss_num;
-> -		}
-> -	}
-> +	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
->  
-> -	u64_to_ether_addr(mac_addr, priv->curr_addr);
-> +	ether_addr_copy(priv->curr_addr, new_mac);
->  
->  	/* Send request to firmware */
->  	ret = mwifiex_send_cmd(priv, HostCmd_CMD_802_11_MAC_ADDRESS,
-> @@ -1015,6 +997,26 @@ int mwifiex_set_mac_address(struct mwifiex_private *priv,
->  	return 0;
->  }
->  
-> +int mwifiex_set_default_mac_address(struct mwifiex_private *priv,
-> +				    struct net_device *dev)
-> +{
-> +	int priv_num;
-> +	u8 mac[ETH_ALEN];
-> +
-> +	ether_addr_copy(mac, priv->adapter->perm_addr);
-> +
-> +	for (priv_num = 0; priv_num < priv->adapter->priv_num; priv_num++)
-> +		if (priv == priv->adapter->priv[priv_num])
-> +			break;
-> +
-> +	if (priv_num) {
-> +		eth_addr_add(mac, priv_num);
-> +		mac[0] |= 0x2;
-> +	}
+                                slow_dec
+                                  if (try-dec) // dec_not_one, true
+                                  // enabled == 1
+                                    return
+    else
+      try_dec() // dec_not_one, false
+      WARN
 
-Please see my concern on this in the beginning of the email.
+Close this by creating two distinct operations, one dec_not_one()-like
+for the fast path and one dec_and_test()-like for the slow path. Both
+also taking the magic -1 value into account.
 
-> @@ -1364,10 +1366,6 @@ void mwifiex_init_priv_params(struct mwifiex_private *priv,
->  	priv->assocresp_idx = MWIFIEX_AUTO_IDX_MASK;
->  	priv->gen_idx = MWIFIEX_AUTO_IDX_MASK;
->  	priv->num_tx_timeout = 0;
-> -	if (is_valid_ether_addr(dev->dev_addr))
-> -		ether_addr_copy(priv->curr_addr, dev->dev_addr);
-> -	else
-> -		ether_addr_copy(priv->curr_addr, priv->adapter->perm_addr);
+Thomas provided the more readable version with comments on.
 
-With this change, when mfg_mode is true, priv->curr_addr will be not
-initialized. Wanted? 
+Fixes: 83ab38ef0a0b ("jump_label: Fix concurrency issues in static_key_slow_dec()")
+Reported-by: "Darrick J. Wong" <djwong@kernel.org>
+Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/875xsc4ehr.ffs@tglx
+---
+ kernel/jump_label.c | 83 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 54 insertions(+), 29 deletions(-)
 
-Francesco
-
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 6dc76b5..0881fd2 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -168,8 +168,8 @@ bool static_key_slow_inc_cpuslocked(struct static_key *key)
+ 		jump_label_update(key);
+ 		/*
+ 		 * Ensure that when static_key_fast_inc_not_disabled() or
+-		 * static_key_slow_try_dec() observe the positive value,
+-		 * they must also observe all the text changes.
++		 * static_key_dec() observe the positive value, they must also
++		 * observe all the text changes.
+ 		 */
+ 		atomic_set_release(&key->enabled, 1);
+ 	} else {
+@@ -250,49 +250,74 @@ void static_key_disable(struct static_key *key)
+ }
+ EXPORT_SYMBOL_GPL(static_key_disable);
+ 
+-static bool static_key_slow_try_dec(struct static_key *key)
++static bool static_key_dec(struct static_key *key, bool dec_not_one)
+ {
+-	int v;
++	int v = atomic_read(&key->enabled);
+ 
+-	/*
+-	 * Go into the slow path if key::enabled is less than or equal than
+-	 * one. One is valid to shut down the key, anything less than one
+-	 * is an imbalance, which is handled at the call site.
+-	 *
+-	 * That includes the special case of '-1' which is set in
+-	 * static_key_slow_inc_cpuslocked(), but that's harmless as it is
+-	 * fully serialized in the slow path below. By the time this task
+-	 * acquires the jump label lock the value is back to one and the
+-	 * retry under the lock must succeed.
+-	 */
+-	v = atomic_read(&key->enabled);
+ 	do {
+ 		/*
+-		 * Warn about the '-1' case though; since that means a
+-		 * decrement is concurrent with a first (0->1) increment. IOW
+-		 * people are trying to disable something that wasn't yet fully
+-		 * enabled. This suggests an ordering problem on the user side.
++		 * Warn about the '-1' case; since that means a decrement is
++		 * concurrent with a first (0->1) increment. IOW people are
++		 * trying to disable something that wasn't yet fully enabled.
++		 * This suggests an ordering problem on the user side.
++		 *
++		 * Warn about the '0' case; simple underflow.
+ 		 */
+-		WARN_ON_ONCE(v < 0);
+-		if (v <= 1)
+-			return false;
++		if (WARN_ON_ONCE(v <= 0))
++			return v;
++
++		if (dec_not_one && v == 1)
++			return v;
++
+ 	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
+ 
+-	return true;
++	return v;
++}
++
++/*
++ * Fastpath: Decrement if the reference count is greater than one
++ *
++ * Returns false, if the reference count is 1 or -1 to force the caller
++ * into the slowpath.
++ *
++ * The -1 case is to handle a decrement during a concurrent first enable,
++ * which sets the count to -1 in static_key_slow_inc_cpuslocked(). As the
++ * slow path is serialized the caller will observe 1 once it acquired the
++ * jump_label_mutex, so the slow path can succeed.
++ *
++ * Notably 0 (underflow) returns success such that it bails without doing
++ * anything.
++ */
++static bool static_key_dec_not_one(struct static_key *key)
++{
++	int v = static_key_dec(key, true);
++
++	return v != 1 && v != -1;
++}
++
++/*
++ * Slowpath: Decrement and test whether the refcount hit 0.
++ *
++ * Returns true if the refcount hit zero, i.e. the previous value was one.
++ */
++static bool static_key_dec_and_test(struct static_key *key)
++{
++	int v = static_key_dec(key, false);
++
++	lockdep_assert_held(&jump_label_mutex);
++	return v == 1;
+ }
+ 
+ static void __static_key_slow_dec_cpuslocked(struct static_key *key)
+ {
+ 	lockdep_assert_cpus_held();
+ 
+-	if (static_key_slow_try_dec(key))
++	if (static_key_dec_not_one(key))
+ 		return;
+ 
+ 	guard(mutex)(&jump_label_mutex);
+-	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
++	if (static_key_dec_and_test(key))
+ 		jump_label_update(key);
+-	else
+-		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+ }
+ 
+ static void __static_key_slow_dec(struct static_key *key)
+@@ -329,7 +354,7 @@ void __static_key_slow_dec_deferred(struct static_key *key,
+ {
+ 	STATIC_KEY_CHECK_USE(key);
+ 
+-	if (static_key_slow_try_dec(key))
++	if (static_key_dec_not_one(key))
+ 		return;
+ 
+ 	schedule_delayed_work(work, timeout);
 
