@@ -1,114 +1,138 @@
-Return-Path: <linux-kernel+bounces-319023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A6C96F69C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:24:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3620A96F6A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26F12855CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:24:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4D1C21B52
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3781CEAC9;
-	Fri,  6 Sep 2024 14:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC771D1F5C;
+	Fri,  6 Sep 2024 14:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yj6CScOJ"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqJCXL2A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA9D1CDA1B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2757E1D1F4C;
+	Fri,  6 Sep 2024 14:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725632683; cv=none; b=jFC96BSM2AktVxhpVfrRiKjibyJlRGcZvqj2hOr5zkBT5JEJnh+UkSaK4RBrm9vUf5RB2ExsTCruZe2vGXDFHRIM6S15zlnxJO+TnYoEGDdSXU+0wW1YSxUCRgwhS1f3Ewf1PwMrSCJIjizT7r4NDV6r2b+FyDT0G5h75Sbf/ms=
+	t=1725632691; cv=none; b=MjJ3fS+LnlJRpDWcbr/wN4Pq6dWeu+bmTV/yLbUi1fztovLZCKw+D4JYyNb4JUnudqkifPxEMjydzIGjUQ0sK+bGagq4gN2wXM94T0bEZr2FN5BLYb5FDI/oijCQuxqqkOUV7dKe6kReQMN0qjZP2/NX2j3LiEC9k0ZmZDf5rTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725632683; c=relaxed/simple;
-	bh=wv6kJxYCqCengvLTHChe0c4KVEVeRveBWFTYnyGvtSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lF8XICyMbhngqlEMPBPzl2Q4acbZqGb5r2sCGg6uTODUlwziimnyY5N/t//T1jarjo4Fqp8eMcmlytEJgPlmrfLxApSxEzGJBjiT5xRSaLWSVVkTlbCCXtJ4cviWFEmpEf8xaSxTMvkCP+wXJumu1X2+8XKhsL29SX9tdivvYSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yj6CScOJ; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6c3f1939d12so18618817b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725632681; x=1726237481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VNbaUU5vwP/wbzjKIGwlz0vt3Em9od+pl2HUlcVAsXU=;
-        b=Yj6CScOJz17tA7YwqspISU2T+w/zx3UzhDhQTd5RTp5Xk/lZC0KGpkIaqJeDJUREUz
-         bMYBhallnnSR61nMBttbYWPfY49hgeoK+k3/teTlY88Bt90G7dyUHZ6UEi6wDawO7hCp
-         XYXxS8rX3QKFZCACHpBNS0QnqHmurPRa3yJkjHIya2B3/Cx17P4hK5oA6I2p3l4zo+9o
-         B3wuyiA7ZxZucGUGd/ze0Lx2gPf8fWaifP49S6ZUQjrChkWaJBDtr6CjtHX3BTd+xvka
-         svBPpnh+38xV2fQs9jWm5OhI+lO4FG+TLk/Fjk6fmQLYp2zDtH+BAmfvruUjCf+BFWct
-         Dt4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725632681; x=1726237481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VNbaUU5vwP/wbzjKIGwlz0vt3Em9od+pl2HUlcVAsXU=;
-        b=WFzJE3s7YsELMi3RHSUoPMpEbAzcdmEShlvRSN9CxZJ0BL5HokyBlTAO0Ou88762xn
-         DVSVHPpfi10p714UUWyc2rg7oSbQE3YIIyKLZ+pcr/GBQV89ZC66bQVLGiTBSY6w8Ymx
-         P/NfBkdYyfKg0eQKndgmxV4WuwHiLCDDk/BhcWFHILEmfGA3stBrhhAtqm2cZkSu/XX8
-         xhNuitlD2Kse15sHZIQ4da3fqY+GtONJ4LRRySBlYbEzgIjPKLbRkVjNZbBhOcNzUk0+
-         tpMRX4BuF8fiDitcKFWhejbWrNZCXB6k4NP5wBYNJ4sDSvGeTqA953/J0EK25h9lrEvb
-         /4jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVaf497T3XbjrrmkLPz6PrkNXnQHCJGOOsQtcJaykaCbwe2nnnPjWHKxGuh0pqGhj17x+onfv6x0FLDX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbZY0L3Xrzz8PC9XPJ+sknlU8jMBxLASU5ipLkQtXYnc5c974/
-	akOIc5T5otcnn8w1Q4IHI7PhkXbDwl92d93LFngKrKVPyQrf6yS1pmnKzg968k8HFBN6zWi8oE6
-	P+0AthQx94hTEgZ5hdoQTV7wx8cppM3DZPAYo
-X-Google-Smtp-Source: AGHT+IHkwUfgBd2GCUq4Ewk11aR7nvtoUcy0CcLvqAJSfxsI0EpdJKKQsnFEMsEDRxPJNpbCavId6DYQUks2DIdCYS4=
-X-Received: by 2002:a05:690c:4604:b0:6ae:2f25:8bc4 with SMTP id
- 00721157ae682-6db44f2c242mr27205497b3.16.1725632680764; Fri, 06 Sep 2024
- 07:24:40 -0700 (PDT)
+	s=arc-20240116; t=1725632691; c=relaxed/simple;
+	bh=qHBHB2kdrNFDSiFJgTc2SnouAy6yPXOIwzYtL6xR0lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=npUvs3OUHdrN3Zv8eY2bcmVqLc86o4+MhJG2k2HTB2Z9PctUmCnlt1tw27eNvEnQozGT1z1oqqY+8J8fZA0G7PlKbwyi64L6gCAzRZAA2UyJF+mUvQ2KvU6z1zQVk99U6zkmaFYEt3V5C2FYwn2wNh+N452EpWHDDISoU/zfgYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqJCXL2A; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725632690; x=1757168690;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qHBHB2kdrNFDSiFJgTc2SnouAy6yPXOIwzYtL6xR0lw=;
+  b=hqJCXL2AL2hsyMjqLIAFhuZCxHWFbfjbOUpeJh6Uu28ck2lGtnFUac0m
+   XlcI7FNdzxsRecwOgZx7Iz6BMrVi046KlMzPoxVKSxtHHUzBiASiehTvr
+   tHPCFAkJPHdmM+h7b5qUB1VQkVo69HL2Am6V75kf2P9JMf0Nk08RDskwJ
+   cCs2d35egeWZG8Junx8jGIPXXDBuOABZeQV2RNFKEvzkbtAGJq7P24ybs
+   XHInSj7ZQmjqv0TNWkeGv0CIpX50FTn8rBCVKpn28fCChguZG1DvEBIM4
+   DOn21EbFbvR7oW8pfr9yltFOfWsEPOCgqgFMcWbqP8GAJGDHdjN7INBh/
+   A==;
+X-CSE-ConnectionGUID: tKOtkQqeR/OC2OXfIBeVMQ==
+X-CSE-MsgGUID: KGNzHPUrTECS9xGGuEIqGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35778570"
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="35778570"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:24:49 -0700
+X-CSE-ConnectionGUID: f8pegL7PQz6Jb13k4USfxg==
+X-CSE-MsgGUID: ObgZyOa6SPurGhtR4M+cAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="70771114"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:24:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smZtF-00000005pGm-0Clu;
+	Fri, 06 Sep 2024 17:24:45 +0300
+Date: Fri, 6 Sep 2024 17:24:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
+Message-ID: <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
+References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
+ <20240503143303.15bf82bc@SWDEV2.connecttech.local>
+ <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
+ <20240906095141.021318c8@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
- <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com> <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
-In-Reply-To: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 6 Sep 2024 10:24:30 -0400
-Message-ID: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
-Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me, 
-	tomoyo-users-en@lists.osdn.me, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906095141.021318c8@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 6, 2024 at 3:43=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2024/09/04 23:23, Paul Moore wrote:
-> > On Wed, Sep 4, 2024 at 3:10=E2=80=AFAM Tetsuo Handa
-> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
+> On Fri, 6 Sep 2024 15:46:51 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
+> > > On Fri,  3 May 2024 20:15:52 +0300
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > > After a rework for CONNTECH was done, the driver may need a bit of
+> > > > love in order to become less verbose (in terms of indentation and
+> > > > code duplication) and hence easier to read.
+> > > >
+> > > > This clean up series fixes a couple of (not so critical) issues and
+> > > > cleans up the recently added code. No functional change indented by
+> > > > the cleaning up part.
+> > > >
+> > > > Parker, please test this and give your formal Tested-by tag
+> > > > (you may do it by replying to this message if all patches are
+> > > >  successfully tested; more details about tags are available in
+> > > >  the Submitting Patches documentation).
+> > >
+> > > I was able to test the Connect Tech related code and everything is
+> > > work as expected. I can't test the non-CTI related changes but they
+> > > are pretty minor.
+> > >
+> > > Tested-by: Parker Newman <pnewman@connecttech.com>
+> >
+> > Sorry for blast from the past, but I have some instersting information
+> > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
+> > used from others via software nodes, can you consider updating your code
+> > to replace custom bitbanging along with r/w ops by the instantiating the
+> > respective drivers?
+> 
+> Hi Andy,
+> The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
+> They have a dedicated "EEPROM interface" which is accessed by the
+> REGB (0x8E) register. It is a very simple bit-bang interface though,
+> one bit per signal.
+> 
+> I guess in theory I could either add  GPIO wrapper to toggle these bits
+> and use the spi-gpio driver but I am not sure if that really improves things?
+> Maybe using the spi-bitbang driver directly is more appropriate?
+> What do you think?
 
-...
+Yes, spi-bitbang seems better in this case.
 
-> If you ignore my concern, I have to NACK the static call changes you are
-> going to send in the upcoming merge window.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I'm not ignoring your concern, I've responded to your emails and
-patches on the topic over, and over, and over, and over again by
-trying to explain to you that your goal of supporting out-of-tree LSMs
-regardless of the impact to the upstream LSM effort is not something
-that is acceptable to the upstream LSM effort, or the Linux kernel in
-general.
 
-I've already recorded your NACK on several patches on two of the four
-static call commits, if you like I can add it to the other two please
-let me know and I'll be sure to do that.  I've recorded your NACKs on
-other patches in the past and mentioned those NACKs to Linus when
-sending the pull request, and I will do so again during this upcoming
-merge window.
-
---=20
-paul-moore.com
 
