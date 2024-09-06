@@ -1,156 +1,128 @@
-Return-Path: <linux-kernel+bounces-318762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B368A96F2EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:23:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F79596F2F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074BB2815E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85D31F239EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065691CBE82;
-	Fri,  6 Sep 2024 11:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AFC1CB322;
+	Fri,  6 Sep 2024 11:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nE54EPjy"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PvZXtmKL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1305C1CB157
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE7F1A2C39
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725621785; cv=none; b=Doh7e2BD2r0wRxgabe9PbfcDS4pJUQC0QDncG0Z6X0aWz1UJ3rkFKYDWStF3F2owy8gHMDL7EAbd4x9l/x1R4lz3Ja7a2Itt5F8T3WWnzYVaNLIXGPGk49qqATIEPYtVqpsPjTEcowP/OEJ7ldUY8lzICOmqpP9u4pj2GjW+GJ8=
+	t=1725621850; cv=none; b=pCygH9jsOIofSH3GlNTixo+Q7J0Z0Ql1CyneQV8ld5lib9TSG2g/HhBeVGlsTG0U4rmV4wBMAmWyz0RfYPOb54B0mXAVZIoAY8iLgzs9+b4nU9k8Y0I/xVDPtu4H/m78K5N4HdMAqmeo0lNJm5OFat5S0iY+UekCTRzKkmUOSds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725621785; c=relaxed/simple;
-	bh=Wmp19ZLbe2P0V0jL2Ao3BXfy40ExCrN8gOpbuS8Jyqs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lB0r38XNoelghdCf6fO2P2rs83mzwJZ3nFTtdKzirSt2+a6T0epxSq/uREQYLZXJoYI+vHgK58EZphD9RtUE44l0Vd/3XGExNDevZTQQq0BcTCxv3twWpIe4S8KPAJp2N7J+SNAzgJD1tOflFDrM+EVTABaJcErD8Ds5MJ751j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nE54EPjy; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c7a384b18so15334605e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 04:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725621779; x=1726226579; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=92+67uwDsO1hQyzhgte48I/CNhtegYeJx45/P0oF94Y=;
-        b=nE54EPjyF0jn2m0WwJAF3FlM27kyBnolT58IuawqnrzmwnaO3xTnxt1HiJRK16o9F0
-         qAFQvhpfWPXmR1RrUjg7swJApKC8n0JmvI6kXE//WxwSqlgJ0jiovBWjdQzMbTySdKJ8
-         b/zcJpSh4sshb5U62dpOZhGfiFQjii2r7P8gzk2yMXTk+FaNQ/2Kin0T5YRLsXh9YbtK
-         GX/01lYngS4RxRwAJs9/O0WmPz5BuDYHKB8biENXnTDt9kdHFHiC75xw8CNFelMmL5A8
-         fjVplw+3mvpOs6V2a+w1I3YIO0PtyTtuRLJOYsBUGlQCK9sZx1Izvwff0EVjbeaPjX+V
-         E9NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725621779; x=1726226579;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=92+67uwDsO1hQyzhgte48I/CNhtegYeJx45/P0oF94Y=;
-        b=R09dXGVl84GjknYikOsUzfPgjetBURz0l9ntNeZ7OlVd5szhjR8hX3rD2fmOFEmp16
-         b/oah6DVgyDEmgmlsYqoaEUNSvW3UAGpiujHS9DrxY+1cKR6qAfOJs+B0iP49Np8QDiD
-         HHe59xkjkDXx5G2Lg6+EAkwIDNXkgiiSATMl916uxtnMkpWurA9rSI3uS4FFrvT37k8h
-         tVLglanEg21u4oMKfOB/QDkIblbGJAGyJx9strlQjKt/i7mkNgPgUEJdaTF71CFl/cth
-         hqj8fH8D/QKuJeu2NElvW61H/COEewh6flu+vdNgA1LIqSpbAEEwpaH6fZaA6l7oF+Qx
-         i7sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcObQxFFYZ+PuonwXCgxK68Hc3EGlRoKrKl7sW/BqU+yMjXFtrk36FRoD+hAbm3bXlyC4r2fJz96mjsCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFZuk1yvxqG0xBWSTCrHveb8w3WrLtGafc473OaAiQGMqxq2Aa
-	xHRgG8CdZPras2J94rw7o+qoqppm8CeKm7EJ7GeuxQfbKFynhYwBw50Oh863kqw=
-X-Google-Smtp-Source: AGHT+IFj6cn2VhPIBLzycX7f8yDdpZxCP0fnyLUp+RAmxAnbmLYkKHqCh+9DjZxSWH8mgvyVVR5CDA==
-X-Received: by 2002:adf:cd0d:0:b0:371:93eb:78a4 with SMTP id ffacd0b85a97d-378895c5b22mr1505513f8f.9.1725621778667;
-        Fri, 06 Sep 2024 04:22:58 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b0ad:b504:10d4:481d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b34725desm18835563f8f.81.2024.09.06.04.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 04:22:58 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: meson: Support PLL with fixed fractional
- denominators
-In-Reply-To: <20240906-fix_clk-v2-1-7a3941eb2cdf@amlogic.com> (Chuan Liu via's
-	message of "Fri, 06 Sep 2024 18:34:40 +0800")
-References: <20240906-fix_clk-v2-0-7a3941eb2cdf@amlogic.com>
-	<20240906-fix_clk-v2-1-7a3941eb2cdf@amlogic.com>
-Date: Fri, 06 Sep 2024 13:22:57 +0200
-Message-ID: <1jjzfpqb5a.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1725621850; c=relaxed/simple;
+	bh=quQ02BPzKwGeHMB5/HiXQA1AThxnySxCLemaeN85UCQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=aMSGJGc1HpgyMFraXj7rNjEvbDcf9xbPnaf0YGU2Pv1PLEwqtOU7GmNXnWRNFDQ1U07Hk2iulTtOHE1LYMB+eoXXB2sjQYNUj+pRw/KZxUCp4Ffav7RRzBwikvQjwXfMpENbDJNRUsfHjND0Xd2Kdn0eigjBKR9s6sMCj0gaMiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PvZXtmKL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725621848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Sh7NNRzd/yNJ6l4v6+y7Ry9bwNbYl8mvsIbShOjOiw=;
+	b=PvZXtmKL5OHx8EjTNXEvuVeUzcfbStZ4q/YL9WOY3DTHVhIezUPE9ZSf4c7KVRsUW5vP1q
+	2NNdo00HBkIRQryzqYNiZyq75tya506/Q6C3or7PLekVdTQSO6DMjpsuG+VuYvrLL96ZAX
+	tCLG+nCK84Zp26XUQTwKyuhk2m0SjlU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-599-YoqNuUw4N1KYGO138DZNNQ-1; Fri,
+ 06 Sep 2024 07:24:05 -0400
+X-MC-Unique: YoqNuUw4N1KYGO138DZNNQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 389EB1955F68;
+	Fri,  6 Sep 2024 11:24:03 +0000 (UTC)
+Received: from [10.45.224.222] (unknown [10.45.224.222])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 096C23000236;
+	Fri,  6 Sep 2024 11:23:59 +0000 (UTC)
+Date: Fri, 6 Sep 2024 13:23:57 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+cc: Mike Snitzer <snitzer@kernel.org>, Eric Biggers <ebiggers@kernel.org>, 
+    dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
+    Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org, Sami Tolvanen <samitolvanen@google.com>, 
+    linux-nfs@vger.kernel.org
+Subject: Re: sharing rescuer threads when WQ_MEM_RECLAIM needed? [was: Re:
+ dm verity: don't use WQ_MEM_RECLAIM]
+In-Reply-To: <ZtpcI-Qv_Q6g0Q6Z@slm.duckdns.org>
+Message-ID: <9d380772-6287-b75d-2d4d-e1c9a69ea981@redhat.com>
+References: <20240904040444.56070-1-ebiggers@kernel.org> <086a76c4-98da-d9d1-9f2f-6249c3d55fe9@redhat.com> <20240905223555.GA1512@sol.localdomain> <ZtpATbuopBFAzl89@kernel.org> <ZtpcI-Qv_Q6g0Q6Z@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri 06 Sep 2024 at 18:34, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-> From: Chuan Liu <chuan.liu@amlogic.com>
->
-> Some PLLS with fractional multipliers have fractional denominators with
-> fixed values, instead of the previous "(1 << pll-> frc.width)".
->
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 8 +++++---
->  drivers/clk/meson/clk-pll.h | 1 +
->  2 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index bc570a2ff3a3..a141ab450009 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -57,12 +57,13 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
->  					  struct meson_clk_pll_data *pll)
->  {
->  	u64 rate = (u64)parent_rate * m;
-> +	unsigned int frac_max = unlikely(pll->frac_max) ? pll->frac_max
-> :
-                                 ^ Please don't play with this unless
-                                 you've got justification a for it.
 
-By justification, I mean actual numbers showing the difference it makes
-and not just for the platforms listed in this series, but all the
-platforms supported by this driver.
+On Thu, 5 Sep 2024, Tejun Heo wrote:
 
-> +							  (1 << pll->frac.width);
->  
->  	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
->  		u64 frac_rate = (u64)parent_rate * frac;
->  
-> -		rate += DIV_ROUND_UP_ULL(frac_rate,
-> -					 (1 << pll->frac.width));
-> +		rate += DIV_ROUND_UP_ULL(frac_rate, frac_max);
->  	}
->  
->  	return DIV_ROUND_UP_ULL(rate, n);
-> @@ -100,7 +101,8 @@ static unsigned int __pll_params_with_frac(unsigned long rate,
->  					   unsigned int n,
->  					   struct meson_clk_pll_data *pll)
->  {
-> -	unsigned int frac_max = (1 << pll->frac.width);
-> +	unsigned int frac_max = unlikely(pll->frac_max) ? pll->frac_max :
-> +							  (1 << pll->frac.width);
->  	u64 val = (u64)rate * n;
->  
->  	/* Bail out if we are already over the requested rate */
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 7b6b87274073..949157fb7bf5 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -43,6 +43,7 @@ struct meson_clk_pll_data {
->  	unsigned int init_count;
->  	const struct pll_params_table *table;
->  	const struct pll_mult_range *range;
-> +	unsigned int frac_max;
->  	u8 flags;
->  };
+> Hello,
+> 
+> On Thu, Sep 05, 2024 at 07:35:41PM -0400, Mike Snitzer wrote:
+> ...
+> > > I wonder if there's any way to safely share the rescuer threads.
+> > 
+> > Oh, I like that idea, yes please! (would be surprised if it exists,
+> > but I love being surprised!).  Like Mikulas pointed out, we have had
+> > to deal with fundamental deadlocks due to resource sharing in DM.
+> > Hence the need for guaranteed forward progress that only
+> > WQ_MEM_RECLAIM can provide.
 
--- 
-Jerome
+I remember that one of the first thing that I did when I started at Red 
+Hat was to remove shared resources from device mapper :) There were shared 
+mempools and shared kernel threads.
+
+You can see this piece of code in mm/mempool.c that was a workaround for 
+shared mempool bugs:
+        /*
+         * FIXME: this should be io_schedule().  The timeout is there as a
+         * workaround for some DM problems in 2.6.18.
+         */
+        io_schedule_timeout(5*HZ);
+
+> The most straightforward way to do this would be simply sharing the
+> workqueue across the entities that wanna be in the same forward progress
+> guarantee domain. It shouldn't be that difficult to make workqueues share a
+> rescuer either but may be a bit of an overkill.
+> 
+> Taking a step back tho, how would you determine which ones can share a
+> rescuer? Things which stack on top of each other can't share the rescuer cuz
+> higher layer occupying the rescuer and stall lower layers and thus deadlock.
+> The rescuers can be shared across independent stacks of dm devices but that
+> sounds like that will probably involve some graph walking. Also, is this a
+> real problem?
+> 
+> Thanks.
+
+It would be nice if we could know dependencies of every Linux driver. But 
+we are not quite there. We know the dependencies inside device mapper, but 
+when you use some non-dm device (like md, loop), we don't have a dependecy 
+graph for that.
+
+Mikulas
+
 
