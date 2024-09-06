@@ -1,399 +1,291 @@
-Return-Path: <linux-kernel+bounces-318589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB0696F03A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:52:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7741896F03D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612541F29A92
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:52:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D624281698
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2621C8FA5;
-	Fri,  6 Sep 2024 09:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20461C8FA3;
+	Fri,  6 Sep 2024 09:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMFXEiSW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M36rJfB1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A15C603;
-	Fri,  6 Sep 2024 09:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22A9158862
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725616328; cv=none; b=OkyvqnaDvjJ9c/HPaNyTuyF96jb009hHWLXy4x50V9obuYClgQ3M7VG8UN9l6j1CjLvzpuhNtYxPLZtmxUdlfGNVGbWG6V2bUUPefNBYpxZCtEV7WCz0NJ7FN8/gVuHnAshuZXKwwXGFSirE4ZKyP66V8JS8Bow4FGRLVhZERzU=
+	t=1725616343; cv=none; b=TVz4QxqYqm4kW6DGBmHW41hCcMYcqAj9nDo4atihObJ4xiRybHcH1u9Zy/Xdrns9+yk9fO/5xec6IgwuXOlC4sHmxpYJFKQ5p0+mw68Xr0hCi9l6VW84UWT4guY2FBhOTxONpMHwJrkLbTYRPKQgCPGnN/gxu3LopKpdpZRqglg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725616328; c=relaxed/simple;
-	bh=zlPe96qEkYTI2oOKTLt2ru4+cI3fHrOB1XnOtIqa46c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iuybONoUX5xp8LQPJVeJ5PF3x/Dsl8LbAMctGzehEUkqS/mkF2YxGBM/neFur86VnZ0OyuqpOquVLphJhjN9pqJ7r1YziW0hNbKqvjAV4vuczsFd9L5emUCH8IFTq6znM2t19vJ6awzTyj6zvIDPsWAYEvWhWz46QD/nXBnRXTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMFXEiSW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 574A7C4CEC5;
-	Fri,  6 Sep 2024 09:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725616327;
-	bh=zlPe96qEkYTI2oOKTLt2ru4+cI3fHrOB1XnOtIqa46c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oMFXEiSWY2Gdc6v5SGUXnEqwwCtdBs0E97TS2iKPWUC5T739RhbBJZRLLMle24zVt
-	 pbSeaPWwtb+gvswzNd4PRApEeE2KToG2YjYTpPgYJphVKVywwDuM9o1lf+HarJQm0n
-	 dp+HuePYLJDm+IwT4ivrq3I6AdhzyyaZBAEjgGiZ6wm6C2H23xU0xQAMEa0B9bV688
-	 2VTppoOGmaaPmPYhcrc4OO/XQCohJrL+9/4vO8D39Cv/3Wo7w7ooOEsa0iVYhUlAD7
-	 nVYZKiV0CB1ZSb26GJFHBwRH7MXQz3JJVWlzvi96skhD9RXo0cWMYkx4SFI3TCdXCV
-	 A5I6W+4Q5iGYQ==
-Message-ID: <dbc6af20-886a-46fb-a16c-dbcb5861478c@kernel.org>
-Date: Fri, 6 Sep 2024 11:51:59 +0200
+	s=arc-20240116; t=1725616343; c=relaxed/simple;
+	bh=+WdmdLJ++ntQszSER6H97BLGPbEr4RkygG4KQMAXQ1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uojYxwiIzawYm4KGjO5ZWQG+NcymRCSGQHJZSnRP7YiVoTlA0YtZU5+i5la3AkH9zfAOKyQFNhj20//a/rHFCAm2sN25V8UIsqC2qeddEJVTVXxkyvW+RGqS2hng7nAiuGVS5EbKc5eLR+Yz3dKgAAiSMZh8OCjrNgHgog3/4cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M36rJfB1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725616340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RAhjvdU69DweMTukvqKoSI0bouOhm5I8VZurmeZkx/4=;
+	b=M36rJfB1DvwOfpVjAJXtEUOgbwNsiq1WuMcjPyZAQ/GJYQJqmYz6pDg2ODBT6ohzSGGEqt
+	wt8f7JNvLGIAvyGkUMSdEx9tAUANCN4IbIRQFvlD55Z8x5LwZDOepgos2swzVvHJYnzskf
+	lyKAfK93SK+l9Oink6ZvrJk38O0f7AM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-462-8ukbaxr9MiC6oL7f8qRlrA-1; Fri, 06 Sep 2024 05:52:19 -0400
+X-MC-Unique: 8ukbaxr9MiC6oL7f8qRlrA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c881282cfso14876065e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:52:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725616337; x=1726221137;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RAhjvdU69DweMTukvqKoSI0bouOhm5I8VZurmeZkx/4=;
+        b=oPMfRILH0+2rCYp1l+76oJkw2IuD2XM+zish2Gl0CZliQ6nbF+nUiTbV6cIr5olpq5
+         7A7UvZczsw3D3rysg5TVet2gcbT+1w7w3GAM9Hsx66necoAifco5s6ETiqPsxZI/ojUe
+         /9wQBuItM4cCEqD3ar9Szog1Xakaq+ymGaFRFMc7PyxeZZjyVAXYOo3Guf/OuRPnBNSl
+         5Vz29+u/UTWjyXrxlwQj4UR+Ab2RhpbwmWxhbC4VGl8Pz9y5tMxAHRtCAMAGfa87Zofb
+         /jQebxzjuMq4FqLbsG0lGPd2HhiA9GdezyhEDzlCnFNgkRve2s3z2KeA08F57I1cq/MI
+         sXEA==
+X-Gm-Message-State: AOJu0YxH/e6JrVErTB0TQd0SdsGwt+T59yFwH7praZvgHY1d3DCfM1g/
+	CaVtoEdoGJglSsZABvnErmzDPZt+nyCtLpN9cOgU28Ycn/WzuIu/4poaaEeSx8q2h59T76QnCAQ
+	e+i5u4HbfJZoalZHEIVSctoZMkNTr1yuwD3FPdEibDJhoyx55sKR/kvouWlneWabKWXQ+M+mKDx
+	HTLREadmFb7gJMGV410/QFbPH1XU4BUBQ4EQVtL6jWiA==
+X-Received: by 2002:a7b:cbd7:0:b0:42c:a036:576b with SMTP id 5b1f17b1804b1-42ca036586amr11549565e9.10.1725616336942;
+        Fri, 06 Sep 2024 02:52:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPfNW5ZNIYZ6ySGbDxAjGN5cljZH32PkDUkAXC+kNVw9arDO3UpGRYu+jTSJTgwTIdviRLJw==
+X-Received: by 2002:a7b:cbd7:0:b0:42c:a036:576b with SMTP id 5b1f17b1804b1-42ca036586amr11549105e9.10.1725616336099;
+        Fri, 06 Sep 2024 02:52:16 -0700 (PDT)
+Received: from redhat.com ([155.133.17.165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374cd905b7csm11808511f8f.74.2024.09.06.02.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 02:52:15 -0700 (PDT)
+Date: Fri, 6 Sep 2024 05:52:12 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
+	Darren Kenny <darren.kenny@oracle.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [RFC PATCH v2 0/7] Revert "virtio_net: rx enable premapped mode by
+ default"
+Message-ID: <cover.1725616135.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] dt-bindings: Add documentation for Photonicat PMU
-To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
- Chukun Pan <amadeus@jmu.edu.cn>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-9-bigfoot@classfun.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240906093630.2428329-9-bigfoot@classfun.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
-On 06/09/2024 11:36, Junhao Xie wrote:
-> Add device tree binding documentation for Photonicat PMU MFD, LEDs,
-> hardware monitor, power off, power supply, real-time clock watchdog.
-> 
-> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
-> ---
->  .../hwmon/ariaboard,photonicat-pmu-hwmon.yaml |  40 +++++++
->  .../leds/ariaboard,photonicat-pmu-leds.yaml   |  41 +++++++
->  .../mfd/ariaboard,photonicat-pmu.yaml         | 107 ++++++++++++++++++
->  .../ariaboard,photonicat-pmu-poweroff.yaml    |  34 ++++++
->  .../ariaboard,photonicat-pmu-supply.yaml      |  55 +++++++++
->  .../rtc/ariaboard,photonicat-pmu-rtc.yaml     |  37 ++++++
->  .../ariaboard,photonicat-pmu-watchdog.yaml    |  37 ++++++
->  7 files changed, 351 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/ariaboard,photonicat-pmu-hwmon.yaml
->  create mode 100644 Documentation/devicetree/bindings/leds/ariaboard,photonicat-pmu-leds.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/ariaboard,photonicat-pmu.yaml
->  create mode 100644 Documentation/devicetree/bindings/power/reset/ariaboard,photonicat-pmu-poweroff.yaml
->  create mode 100644 Documentation/devicetree/bindings/power/supply/ariaboard,photonicat-pmu-supply.yaml
->  create mode 100644 Documentation/devicetree/bindings/rtc/ariaboard,photonicat-pmu-rtc.yaml
->  create mode 100644 Documentation/devicetree/bindings/watchdog/ariaboard,photonicat-pmu-watchdog.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ariaboard,photonicat-pmu-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/ariaboard,photonicat-pmu-hwmon.yaml
-> new file mode 100644
-> index 000000000000..c9b1bab20c31
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/ariaboard,photonicat-pmu-hwmon.yaml
-> @@ -0,0 +1,40 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/ariaboard,photonicat-pmu-hwmon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Photonicat PMU Hardware Monitor
-> +
-> +maintainers:
-> +  - Junhao Xie <bigfoot@classfun.cn>
-> +
-> +description:
-> +  Board temperature sensor on the Photonicat PMU MCU
-> +
-> +properties:
-> +  compatible:
-> +    const: ariaboard,photonicat-pmu-hwmon
-> +
-> +  label:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: Label for hwmon device
+Note: Xuan Zhuo, if you figure out all the issues, pls post an alternative
+patch.
 
-No resources here. Fold it into parent binding.
+Note2: untested, Darren, pls test and confirm.
 
-> +
-> +required:
-> +  - compatible
-> +  - label
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +      serial {
-> +          mcu {
-> +              compatible = "ariaboard,photonicat-pmu";
+Turns out unconditionally enabling premapped 
+virtio-net leads to a regression on VM with no ACCESS_PLATFORM, and with
+sysctl net.core.high_order_alloc_disable=1
 
-Drop, no need.
+where crashes and scp failures were reported (scp a file 100M in size to VM):
 
-> +
+[  332.079333] __vm_enough_memory: pid: 18440, comm: sshd, bytes: 5285790347661783040 not enough memory for the allocation
+[  332.079651] ------------[ cut here ]------------
+[  332.079655] kernel BUG at mm/mmap.c:3514!
+[  332.080095] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+[  332.080826] CPU: 18 PID: 18440 Comm: sshd Kdump: loaded Not tainted 6.10.0-2.x86_64 #2
+[  332.081514] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-4.module+el8.9.0+90173+a3f3e83a 04/01/2014
+[  332.082451] RIP: 0010:exit_mmap+0x3a1/0x3b0
+[  332.082871] Code: be 01 00 00 00 48 89 df e8 0c 94 fe ff eb d7 be 01 00 00 00 48 89 df e8 5d 98 fe ff eb be 31 f6 48 89 df e8 31 99 fe ff eb a8 <0f> 0b e8 68 bc ae 00 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+[  332.084230] RSP: 0018:ffff9988b1c8f948 EFLAGS: 00010293
+[  332.084635] RAX: 0000000000000406 RBX: ffff8d47583e7380 RCX: 0000000000000000
+[  332.085171] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  332.085699] RBP: 000000000000008f R08: 0000000000000000 R09: 0000000000000000
+[  332.086233] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8d47583e7430
+[  332.086761] R13: ffff8d47583e73c0 R14: 0000000000000406 R15: 000495ae650dda58
+[  332.087300] FS:  00007ff443899980(0000) GS:ffff8df1c5700000(0000) knlGS:0000000000000000
+[  332.087888] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  332.088334] CR2: 000055a42d30b730 CR3: 00000102e956a004 CR4: 0000000000770ef0
+[  332.088867] PKRU: 55555554
+[  332.089114] Call Trace:
+[  332.089349] <TASK>
+[  332.089556]  ? die+0x36/0x90
+[  332.089818]  ? do_trap+0xed/0x110
+[  332.090110]  ? exit_mmap+0x3a1/0x3b0
+[  332.090411]  ? do_error_trap+0x6a/0xa0
+[  332.090722]  ? exit_mmap+0x3a1/0x3b0
+[  332.091029]  ? exc_invalid_op+0x50/0x80
+[  332.091348]  ? exit_mmap+0x3a1/0x3b0
+[  332.091648]  ? asm_exc_invalid_op+0x1a/0x20
+[  332.091998]  ? exit_mmap+0x3a1/0x3b0
+[  332.092299]  ? exit_mmap+0x1d6/0x3b0
+[  332.092604] __mmput+0x3e/0x130
+[  332.092882] dup_mm.constprop.0+0x10c/0x110
+[  332.093226] copy_process+0xbd0/0x1570
+[  332.093539] kernel_clone+0xbf/0x430
+[  332.093838]  ? syscall_exit_work+0x103/0x130
+[  332.094197] __do_sys_clone+0x66/0xa0
+[  332.094506]  do_syscall_64+0x8c/0x1d0
+[  332.094814]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.095198]  ? audit_reset_context+0x232/0x310
+[  332.095558]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.095936]  ? syscall_exit_work+0x103/0x130
+[  332.096288]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.096668]  ? syscall_exit_to_user_mode+0x7d/0x220
+[  332.097059]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.097436]  ? do_syscall_64+0xba/0x1d0
+[  332.097752]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.098137]  ? syscall_exit_to_user_mode+0x7d/0x220
+[  332.098525]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.098903]  ? do_syscall_64+0xba/0x1d0
+[  332.099227]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.099606]  ? __audit_filter_op+0xbe/0x140
+[  332.099943]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.100328]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.100706]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.101089]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.101468]  ? wp_page_reuse+0x8e/0xb0
+[  332.101779]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.102163]  ? do_wp_page+0xe6/0x470
+[  332.102465]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.102843]  ? __handle_mm_fault+0x5ff/0x720
+[  332.103197]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.103574]  ? __count_memcg_events+0x4d/0xd0
+[  332.103938]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.104323]  ? count_memcg_events.constprop.0+0x26/0x50
+[  332.104729]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.105114]  ? handle_mm_fault+0xae/0x320
+[  332.105442]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.105820]  ? do_user_addr_fault+0x31f/0x6c0
+[  332.106181]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  332.106576] RIP: 0033:0x7ff43f8f9a73
+[  332.106876] Code: db 0f 85 28 01 00 00 64 4c 8b 0c 25 10 00 00 00 45 31 c0 4d 8d 91 d0 02 00 00 31 d2 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 b9 00 00 00 41 89 c5 85 c0 0f 85 c6 00 00
+[  332.108163] RSP: 002b:00007ffc690909b0 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+[  332.108719] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff43f8f9a73
+[  332.109253] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+[  332.109782] RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ff443899980
+[  332.110313] R10: 00007ff443899c50 R11: 0000000000000246 R12: 0000000000000002
+[  332.110842] R13: 0000562e56cd4780 R14: 0000000000000006 R15: 0000562e800346b0
+[  332.111381]  </TASK>
+[  332.111590] Modules linked in: rdmaip_notify scsi_transport_iscsi target_core_mod rfkill mstflint_access cuse rds_rdma rds rdma_ucm rdma_cm iw_cm dm_multipath ib_umad ib_ipoib ib_cm mlx5_ib iTCO_wdt iTCO_vendor_support intel_rapl_msr ib_uverbs intel_rapl_common ib_core crc32_pclmul i2c_i801 joydev virtio_balloon i2c_smbus lpc_ich binfmt_misc xfs sd_mod t10_pi crc64_rocksoft sg crct10dif_pclmul mlx5_core virtio_net ahci net_failover mlxfw ghash_clmulni_intel virtio_scsi failover libahci sha512_ssse3 tls sha256_ssse3 pci_hyperv_intf virtio_pci libata psample sha1_ssse3 virtio_pci_legacy_dev serio_raw dimlib virtio_pci_modern_dev qemu_fw_cfg dm_mirror dm_region_hash dm_log dm_mod fuse aesni_intel crypto_simd cryptd
+[  332.115851] ---[ end trace 0000000000000000 ]---
 
-Messed indentation.
+and another instance splats:
 
-Entire example is redundant. Merge it to parent binding.
+BUG: Bad page map in process PsWatcher.sh  pte:9402e1e2b18c8ae9 pmd:10fe4f067
+[  193.046098] addr:00007ff912a00000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8ec28047eeb0 index:200
+[  193.046863] file:libtinfo.so.6.1 fault:xfs_filemap_fault [xfs] mmap:xfs_file_mmap [xfs] read_folio:xfs_vm_read_folio [xfs]
+[  193.049564] get_swap_device: Bad swap file entry 3803ad7a32eab547
+[  193.050902] BUG: Bad rss-counter state mm:00000000ff28307a type:MM_SWAPENTS val:-1
+[  193.758147] Kernel panic - not syncing: corrupted stack end detected inside scheduler
+[  193.759151] CPU: 5 PID: 22932 Comm: LogFlusher Tainted: G B              6.10.0-rc2+ #1
+[  193.759764] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-4.module+el8.9.0+90173+a3f3e83a 04/01/2014
+[  193.760435] Call Trace:
+[  193.760624]  <TASK>
+[  193.760799]  panic+0x31d/0x340
+[  193.761033]  __schedule+0xb30/0xb30
+[  193.761283]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.761605]  ? enqueue_hrtimer+0x35/0x90
+[  193.761883]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.762207]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.762532]  ? hrtimer_start_range_ns+0x121/0x300
+[  193.762856]  schedule+0x27/0xb0
+[  193.763083]  futex_wait_queue+0x63/0x90
+[  193.763354]  __futex_wait+0x13d/0x1b0
+[  193.763610]  ? __pfx_futex_wake_mark+0x10/0x10
+[  193.763918]  futex_wait+0x69/0xd0
+[  193.764153]  ? pick_next_task+0x9fb/0xa30
+[  193.764430]  ? __pfx_hrtimer_wakeup+0x10/0x10
+[  193.764734]  do_futex+0x11a/0x1d0
+[  193.764976]  __x64_sys_futex+0x68/0x1c0
+[  193.765243]  do_syscall_64+0x80/0x160
+[  193.765504]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.765834]  ? __audit_filter_op+0xaa/0xf0
+[  193.766117]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.766437]  ? audit_reset_context.part.16+0x270/0x2d0
+[  193.766895]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.767237]  ? syscall_exit_to_user_mode_prepare+0x17b/0x1a0
+[  193.767624]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.767972]  ? syscall_exit_to_user_mode+0x80/0x1e0
+[  193.768309]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.768628]  ? do_syscall_64+0x8c/0x160
+[  193.768901]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.769225]  ? audit_reset_context.part.16+0x270/0x2d0
+[  193.769573]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.769901]  ? restore_fpregs_from_fpstate+0x3c/0xa0
+[  193.770241]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.770561]  ? switch_fpu_return+0x4f/0xd0
+[  193.770848]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.771171]  ? syscall_exit_to_user_mode+0x80/0x1e0
+[  193.771505]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.771830]  ? do_syscall_64+0x8c/0x160
+[  193.772098]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.772426]  ? syscall_exit_to_user_mode_prepare+0x17b/0x1a0
+[  193.772805]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.773124]  ? syscall_exit_to_user_mode+0x80/0x1e0
+[  193.773458]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.773781]  ? do_syscall_64+0x8c/0x160
+[  193.774047]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.774376]  ? task_mm_cid_work+0x1c1/0x210
+[  193.774669]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  193.775010] RIP: 0033:0x7f4da640e898
+[  193.775270] Code: 24 58 48 85 c0 0f 88 8f 00 00 00 e8 f2 2e 00 00 89 ee 4c 8b 54 24 38 31 d2 41 89 c0 40 80 f6 80 4c 89 ef b8 ca 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 ff 00 00 00 44 89 c7 e8 24 2f 00 00 48 8b
+[  193.776404] RSP: 002b:00007f4d797f2750 EFLAGS: 00000282 ORIG_RAX: 00000000000000ca
+[  193.776893] RAX: ffffffffffffffda RBX: 00007f4d402c1b50 RCX: 00007f4da640e898
+[  193.777355] RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f4d402c1b7c
+[  193.777813] RBP: 0000000000000000 R08: 0000000000000000 R09: 00007f4da6ece000
+[  193.778276] R10: 00007f4d797f27a0 R11: 0000000000000282 R12: 00007f4d402c1b28
+[  193.778732] R13: 00007f4d402c1b7c R14: 00007f4d797f2840 R15: 0000000000000002
+[  193.779189]  </TASK>
+[  193.780419] Kernel Offset: 0x13c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  193.781097] Rebooting in 60 seconds..
 
+Even in premapped mode with use_dma_api, in virtnet_rq_alloc(), 
+skb_page_frag_refill() can return order-0 page if
+high order page allocation is disabled. But in current code
 
-> +              hwmon {
-> +                  compatible = "ariaboard,photonicat-pmu-hwmon";
-> +                  label = "pcat_board";
-> +              };
-> +          };
-> +      };
-> diff --git a/Documentation/devicetree/bindings/leds/ariaboard,photonicat-pmu-leds.yaml b/Documentation/devicetree/bindings/leds/ariaboard,photonicat-pmu-leds.yaml
-> new file mode 100644
-> index 000000000000..6ccb0e691b09
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/ariaboard,photonicat-pmu-leds.yaml
-> @@ -0,0 +1,41 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/ariaboard,photonicat-pmu-leds.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Photonicat PMU LEDs
-> +
-> +maintainers:
-> +  - Junhao Xie <bigfoot@classfun.cn>
-> +
-> +description:
-> +  LEDs on the Photonicat PMU MCU
-> +
-> +allOf:
-> +  - $ref: common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: ariaboard,photonicat-pmu-leds
+       alloc_frag->offset += size;
 
-Your compatibles per device do not make much sense. You organized
-bindings per drivers, but that's not what we want.
+gets accounted irrespective of the actual page size returned (dma->len). 
+And virtnet_rq_unmap() seems to only work with high order pages.
 
-> +
-> +  label: true
-
-Drop
-
-> +
-> +required:
-> +  - compatible
-> +  - label
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +      serial {
-> +          mcu {
-> +              compatible = "ariaboard,photonicat-pmu";
-> +
-> +              leds-status {
-> +                  compatible = "ariaboard,photonicat-pmu-leds";
-> +                  label = "net-status";
-> +              };
-> +          };
-> +      };
-> diff --git a/Documentation/devicetree/bindings/mfd/ariaboard,photonicat-pmu.yaml b/Documentation/devicetree/bindings/mfd/ariaboard,photonicat-pmu.yaml
-> new file mode 100644
-> index 000000000000..df16d9507821
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ariaboard,photonicat-pmu.yaml
-> @@ -0,0 +1,107 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/ariaboard,photonicat-pmu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Ariaboard Photonicat PMU
-> +
-> +maintainers:
-> +  - Junhao Xie <bigfoot@classfun.cn>
-> +
-> +description:
-> +  Driver for the Power Management MCU in the Ariaboard Photonicat,
-
-Bindings are for hardware, not drivers. Drop it everywhere and explain
-hardware.
-
-> +  which provides battery and charger power supply, real-time clock,
-> +  watchdog, hardware shutdown.
-> +
-> +properties:
-> +  compatible:
-> +    const: ariaboard,photonicat-pmu
-
-That's the only compatible you should have. Drop all others.
-
-> +
-> +  current-speed:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 115200
-> +    description: PMU Serial baudrate
-> +
-> +  local-address:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 127
-> +    default: 1
-> +    description: CPU board address
-
-Address of what? In which notation? It's part of this hardware.
+Suggest reverting for now, unfortunately this implies reverting
+the xsk enhancements. Try again next merge window.
 
 
-> +
-> +  remote-address:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 127
-> +    default: 1
-> +    description: PMU board address
+Michael S. Tsirkin (7):
+  Revert "virtio_net: xsk: rx: support recv merge mode"
+  Revert "virtio_net: xsk: rx: support recv small mode"
+  Revert "virtio_net: xsk: rx: support fill with xsk buffer"
+  Revert "virtio_net: xsk: bind/unbind xsk for rx"
+  Revert "virtio_net: rx remove premapped failover code"
+  Revert "virtio_net: big mode skip the unmap check"
+  Revert "virtio_ring: enable premapped mode whatever use_dma_api"
 
-Eee, no. Your board knows its address. You do not have to tell it.
+ drivers/net/virtio_net.c     | 633 ++++-------------------------------
+ drivers/virtio/virtio_ring.c |   7 +-
+ 2 files changed, 80 insertions(+), 560 deletions(-)
 
-> +
-> +  hwmon:
-> +    $ref: /schemas/hwmon/ariaboard,photonicat-pmu-hwmon.yaml
-> +
-> +  poweroff:
-> +    $ref: /schemas/power/reset/ariaboard,photonicat-pmu-poweroff.yaml
-> +
-> +  rtc:
-> +    $ref: /schemas/rtc/ariaboard,photonicat-pmu-rtc.yaml
-> +
-> +  watchdog:
-> +    $ref: /schemas/watchdog/ariaboard,photonicat-pmu-watchdog.yaml
-> +
-> +patternProperties:
-> +  '^leds-(status)':
-
-That's not a pattern.
-
-> +    $ref: /schemas/leds/ariaboard,photonicat-pmu-leds.yaml
-> +
-> +  '^supply-(battery|charger)$':
-> +    $ref: /schemas/power/supply/ariaboard,photonicat-pmu-supply.yaml
-
-Why two nodes?
-
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +      serial {
-> +          photonicat-pmu {
-> +              compatible = "ariaboard,photonicat-pmu";
-> +              current-speed = <115200>;
-> +              local-address = <1>;
-> +              remote-address = <1>;
-> +
-> +              supply-battery {
-> +                  compatible = "ariaboard,photonicat-pmu-supply";
-> +                  label = "battery";
-
-Nope, drop label.
-
-> +                  type = "battery";
-
-No, there is no type property.
-
-Missing monitored battery.
-
-> +              };
-> +
-> +              supply-charger {
-> +                  compatible = "ariaboard,photonicat-pmu-supply";
-> +                  label = "charger";
-> +                  type = "charger";
-> +              };
-> +
-> +              hwmon {
-> +                  compatible = "ariaboard,photonicat-pmu-hwmon";
-> +                  label = "pcat_board";
-> +              };
-> +
-> +              leds-status {
-> +                  compatible = "ariaboard,photonicat-pmu-leds";
-> +                  label = "net-status";
-> +              };
-> +
-> +              poweroff {
-> +                  compatible = "ariaboard,photonicat-pmu-poweroff";
-> +              };
-> +
-> +              rtc {
-> +                  compatible = "ariaboard,photonicat-pmu-rtc";
-> +              };
-> +
-> +              watchdog {
-> +                  compatible = "ariaboard,photonicat-pmu-watchdog";
-> +              };
-
-These are seriously redundant and useless nodes.  There is nothing
-beneficial from the nodes above - they are all empty, without resources.
-Drop all of them.
-
-I finish the review here.
-
-Best regards,
-Krzysztof
+-- 
+MST
 
 
