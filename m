@@ -1,180 +1,290 @@
-Return-Path: <linux-kernel+bounces-318469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC4196EE73
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:44:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B995696EE77
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C882873D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:44:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66901C22E5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095A7158534;
-	Fri,  6 Sep 2024 08:44:13 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08011158538;
+	Fri,  6 Sep 2024 08:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lcXOh/ZS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52820156887;
-	Fri,  6 Sep 2024 08:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE32BE6C;
+	Fri,  6 Sep 2024 08:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725612252; cv=none; b=A+IzveJ3xMGH07tVww+QOcc1S5PpEn6tU81Znl5X1ZIDLgz7qxEWhcBShqw7wVWuB7rN5DIi+MlSzHBshTtnQ4RLxaLwqwtLKwuq7qoG9HD667B/CKjBgeaQqY9cXS3tpK1MiuY0dwjw/3duAyiJ9SICvIkKESQajrN7Lere3gM=
+	t=1725612298; cv=none; b=VTZ/6DUjXTEf4E64cAVL2qWYHZzrv0qXZjIilD2XZN5lhgToH9gz3htBZU6aMzUxOtnWcMr0irnnXj6mNyQMoOZrFSXacwWyrsqtHQdpXqEiUtNZfXc7A+oyNFV9ZCCYHXKpo1b/XkINuUd61SBdhDz+cOjvbKwtMAawYHv4PtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725612252; c=relaxed/simple;
-	bh=y9dnPvC36xO+z9EToCzGrlnSVPtP/LEMuO1W8WGXtIo=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=N0fipSB3K187P8fqO5/hh7/nwxrfDNWiO3yV7RClUgmDoQCZTIA9ayky3Hc3ECRaGngRdobF4B/xI/6Fh/02/hD9FWCHL7wBKm2qRM0tkTsZ8HkuLstP8UAONM3qnwxIsCP2mOCX4f+G8SffVHjTcFtI8zzzc6wVDmRiaU5OPek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X0V9k2ZGPzyR72;
-	Fri,  6 Sep 2024 16:43:06 +0800 (CST)
-Received: from dggpeml500002.china.huawei.com (unknown [7.185.36.158])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8CC2F1800F2;
-	Fri,  6 Sep 2024 16:44:06 +0800 (CST)
-Received: from [10.67.120.218] (10.67.120.218) by
- dggpeml500002.china.huawei.com (7.185.36.158) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 6 Sep 2024 16:44:06 +0800
-Subject: Re: [PATCH] perf metrics: Fixes stat cmd cannot parse sys metrics
- when cpus MIDR mismatch
-To: Yicong Yang <yangyicong@huawei.com>, <irogers@google.com>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
-References: <20240807040002.47119-1-hejunhao3@huawei.com>
- <00b3d618-628f-3366-7195-2300468eb450@huawei.com>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<jonathan.cameron@huawei.com>, <linuxarm@huawei.com>,
-	<prime.zeng@hisilicon.com>
-From: hejunhao <hejunhao3@huawei.com>
-Message-ID: <9a2dd2ea-c38d-ba3d-99b4-d377250060bd@huawei.com>
-Date: Fri, 6 Sep 2024 16:44:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1725612298; c=relaxed/simple;
+	bh=Do3eogBIraN2nqI3zYsHTW0qBnw6yjfECUNnh11v5/0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JbcoNo9GcMxpt3N3P3WGFU4EJSk6a4/lN2iwGbF3IDHYbQVmpCyZNpsxD3oLfribbK0IqXGhc+o2XBy1C2sjeVwb787FNaEetxImX2vEIRsohGcVA3pWW6hxOcM5P6fRjfZpRz15NeMy4q2ujVsuKBVMG+QW/Ho1XRbOHg5pmHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lcXOh/ZS; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725612296; x=1757148296;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Do3eogBIraN2nqI3zYsHTW0qBnw6yjfECUNnh11v5/0=;
+  b=lcXOh/ZSBu3ZdFb9LiDUog464EFSAESWNp7vGE6YEOLD1BhcnsypU9k+
+   22yO9RBV8fj0LIp++QlJ4fHvXfcouyQZN4baiNIrz3Xv5CYpsnbb1vGnt
+   Fhc4VACP3uexPjkZW5Bj/DR7CUOA7Zh/dKubN30vMx9+n6x8BoHnwgBgx
+   j4l+JO5AilsTQzEgJa2YpTkMDSqSNLbg850NHUfNrg07ysIQ8ITTdFHFs
+   xooDadnZhk4ObPGhHz6DLEdPvH8ZkN0l3RjASXfy4nZlF2UxtXwgsoThq
+   tDTz4WK4jo1PY6owg5MkWv/aJh/dSiF4aGLEqZaG/WDDHrkYRgSrAcNpB
+   Q==;
+X-CSE-ConnectionGUID: oNIBhgsLScCu8bH90+wg2w==
+X-CSE-MsgGUID: LG40UaDXSNeJE3FQK6nnLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24519453"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="24519453"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:44:56 -0700
+X-CSE-ConnectionGUID: e+d0lGLyS9u7XVBU85y1sQ==
+X-CSE-MsgGUID: yNIZMS5RTu6xOXT5V/A+dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="66126590"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.157])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:44:52 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 6 Sep 2024 11:44:48 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/6] selftests/resctrl: Do not compare performance counters
+ and resctrl at low bandwidth
+In-Reply-To: <43b71606-be6a-495f-bec7-279bb812d4c8@intel.com>
+Message-ID: <c3aa4289-40aa-c158-8fde-8a35a6002783@linux.intel.com>
+References: <cover.1724970211.git.reinette.chatre@intel.com> <9bbefa3b9a62319698907d10e8b78f1b999c311b.1724970211.git.reinette.chatre@intel.com> <5d063290-9da4-c9ca-e5c5-cb0083d7483f@linux.intel.com> <87e4788c-6407-41a8-b201-e3f05064e5a6@intel.com>
+ <238af9fe-0d7b-9bc1-9923-35ef74aad360@linux.intel.com> <9b2da518-89ce-4f9b-92f2-d317ed892886@intel.com> <1903ac13-5c9c-ef8d-78e0-417ac34a971b@linux.intel.com> <43b71606-be6a-495f-bec7-279bb812d4c8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <00b3d618-628f-3366-7195-2300468eb450@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500002.china.huawei.com (7.185.36.158)
+Content-Type: multipart/mixed; boundary="8323328-1988363065-1725612288=:1053"
 
-Hi, Yicong
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1988363065-1725612288=:1053
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Thanks for your comments.
+On Thu, 5 Sep 2024, Reinette Chatre wrote:
+> On 9/5/24 4:45 AM, Ilpo J=C3=A4rvinen wrote:
+> > On Wed, 4 Sep 2024, Reinette Chatre wrote:
+> > > On 9/4/24 4:43 AM, Ilpo J=C3=A4rvinen wrote:
+> > > > On Fri, 30 Aug 2024, Reinette Chatre wrote:
+> > > > > On 8/30/24 4:42 AM, Ilpo J=C3=A4rvinen wrote:
+> > > > > > On Thu, 29 Aug 2024, Reinette Chatre wrote:
+> > > > > >=20
+> > > > > > > The MBA test incrementally throttles memory bandwidth, each t=
+ime
+> > > > > > > followed by a comparison between the memory bandwidth observe=
+d
+> > > > > > > by the performance counters and resctrl respectively.
+> > > > > > >=20
+> > > > > > > While a comparison between performance counters and resctrl i=
+s
+> > > > > > > generally appropriate, they do not have an identical view of
+> > > > > > > memory bandwidth. For example RAS features or memory performa=
+nce
+> > > > > > > features that generate memory traffic may drive accesses that=
+ are
+> > > > > > > counted differently by performance counters and MBM respectiv=
+ely,
+> > > > > > > for instance generating "overhead" traffic which is not count=
+ed
+> > > > > > > against any specific RMID. As a ratio, this different view of
+> > > > > > > memory
+> > > > > > > bandwidth becomes more apparent at low memory bandwidths.
+> > > > > >=20
+> > > > > > Interesting.
+> > > > > >=20
+> > > > > > I did some time back prototype with a change to MBM test such t=
+hat
+> > > > > > instead
+> > > > > > of using once=3Dfalse I changed fill_buf to be able to run N pa=
+sses
+> > > > > > through
+> > > > > > the buffer which allowed me to know how many reads were perform=
+ed by
+> > > > > > the
+> > > > > > benchmark. This yielded numerical difference between all those =
+3
+> > > > > > values
+> > > > > > (# of reads, MBM, perf) which also varied from arch to another =
+so it
+> > > > > > didn't end up making an usable test.
+> > > > > >=20
+> > > > > > I guess I now have an explanation for at least a part of the
+> > > > > > differences.
+> > > > > >=20
+> > > > > > > It is not practical to enable/disable the various features th=
+at
+> > > > > > > may generate memory bandwidth to give performance counters an=
+d
+> > > > > > > resctrl an identical view. Instead, do not compare performanc=
+e
+> > > > > > > counters and resctrl view of memory bandwidth when the memory
+> > > > > > > bandwidth is low.
+> > > > > > >=20
+> > > > > > > Bandwidth throttling behaves differently across platforms
+> > > > > > > so it is not appropriate to drop measurement data simply base=
+d
+> > > > > > > on the throttling level. Instead, use a threshold of 750MiB
+> > > > > > > that has been observed to support adequate comparison between
+> > > > > > > performance counters and resctrl.
+> > > > > > >=20
+> > > > > > > Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> > > > > > > ---
+> > > > > > >     tools/testing/selftests/resctrl/mba_test.c | 7 +++++++
+> > > > > > >     tools/testing/selftests/resctrl/resctrl.h  | 6 ++++++
+> > > > > > >     2 files changed, 13 insertions(+)
+> > > > > > >=20
+> > > > > > > diff --git a/tools/testing/selftests/resctrl/mba_test.c
+> > > > > > > b/tools/testing/selftests/resctrl/mba_test.c
+> > > > > > > index cad473b81a64..204b9ac4b108 100644
+> > > > > > > --- a/tools/testing/selftests/resctrl/mba_test.c
+> > > > > > > +++ b/tools/testing/selftests/resctrl/mba_test.c
+> > > > > > > @@ -96,6 +96,13 @@ static bool show_mba_info(unsigned long
+> > > > > > > *bw_imc,
+> > > > > > > unsigned long *bw_resc)
+> > > > > > >       =09=09avg_bw_imc =3D sum_bw_imc / (NUM_OF_RUNS - 1);
+> > > > > > >     =09=09avg_bw_resc =3D sum_bw_resc / (NUM_OF_RUNS - 1);
+> > > > > > > +=09=09if (avg_bw_imc < THROTTLE_THRESHOLD || avg_bw_resc <
+> > > > > > > THROTTLE_THRESHOLD) {
+> > > > > > > +=09=09=09ksft_print_msg("Bandwidth below threshold (%d
+> > > > > > > MiB).
+> > > > > > > Dropping results from MBA schemata %u.\n",
+> > > > > > > +=09=09=09=09=09THROTTLE_THRESHOLD,
+> > > > > > > +=09=09=09=09=09ALLOCATION_MAX -
+> > > > > > > ALLOCATION_STEP *
+> > > > > > > allocation);
+> > > > > >=20
+> > > > > > The second one too should be %d.
+> > > > > >=20
+> > > > >=20
+> > > > > hmmm ... I intended to have it be consistent with the ksft_print_=
+msg()
+> > > > > that
+> > > > > follows. Perhaps allocation can be made unsigned instead?
+> > > >=20
+> > > > If you go that way, then it would be good to make the related defin=
+es
+> > > > and
+> > > > allocation in mba_setup() unsigned too, although the latter is a bi=
+t
+> > > > scary
+> > >=20
+> > > Sure, will look into that.
+> > >=20
+> > > > because it does allocation -=3D ALLOCATION_STEP which could underfl=
+ow if
+> > > > the
+> > > > defines are ever changed.
+> > > >=20
+> > >=20
+> > > Is this not already covered in the following check:
+> > > =09if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)
+> > > =09=09return END_OF_TESTS;
+> > >=20
+> > > We are talking about hardcoded constants though.
+> >=20
+> > Borderline yes. It is "covered" by the allocation > ALLOCATION_MAX but
+> > it's also very non-intuitive to let the value underflow and then check =
+for
+> > that with the > operator.
+>=20
+> My understanding is that this is the traditional way of checking overflow
+> (or more accurately wraparound). There are several examples of this patte=
+rn
+> in the kernel and it is also the pattern that I understand Linus referred
+> to as "traditional" in [1]. Even the compiler's intrinsic overflow checke=
+rs
+> do checking in this way (perform the subtraction and then check if it
+> overflowed) [2].
 
-On 2024/9/5 11:16, Yicong Yang wrote:
-> On 2024/8/7 12:00, Junhao He wrote:
->> On some platforms that do not use cpu MIDR mapping, such as hisilicon
->> HIP09 platform. The list cmd can display the CPA metrics, but the stat
->> cmd cannot work well to parse of CPA metrics.
->>
->>    $ perf list metric
->>    Metrics:
->>      cpa_p0_avg_bw
->>           [Average bandwidth of CPA Port 0]
->>      cpa_p1_avg_bw
->>           [Average bandwidth of CPA Port 1]
->>    $ perf stat -M cpa_p0_avg_bw --timeout 1000 --> No error messages output
->>    $ echo $?
->>    234
->>
->> Currently, the metricgroup__parse_groups() expects to find an cpu metric
->> table, but the hisilicon/hip09 doesn't uses cpus MIDR to map json events
->> and metrics, so pmu_metrics_table__find() will return NULL, than the cmd
->> run failed.
->> But in metricgroup__add_metric(), the function parse for each sys metric
->> and add it to metric_list, which also will get an valid sys metric table.
->> So, we can ignore the NULL result of pmu_metrics_table__find() and to use
->> the sys metric table.
->>
->> metricgroup__parse_groups
->>   -> parse_groups
->>       -> metricgroup__add_metric_list
->>           -> metricgroup__add_metric
->>               -> pmu_for_each_sys_metric   --> We've got the sys metric
->>
->> Testing:
->>    [root@localhost ~]# perf stat -M cpa_p0_avg_bw --no-merge --timeout 1000
->>
->>     Performance counter stats for 'system wide':
->>
->>     CPU0        1,001,121,239      cpa_cycles [hisi_sicl0_cpa0]     #     0.00 cpa_p0_avg_bw
->>     CPU0                    0      cpa_p0_wr_dat [hisi_sicl0_cpa0]
->>     CPU0                    0      cpa_p0_rd_dat_64b [hisi_sicl0_cpa0]
->>     CPU0                    0      cpa_p0_rd_dat_32b [hisi_sicl0_cpa0]
->>     CPU0        1,001,094,851      cpa_cycles [hisi_sicl2_cpa0]     #     0.00 cpa_p0_avg_bw
->>     CPU0                    0      cpa_p0_wr_dat [hisi_sicl2_cpa0]
->>     CPU0                    0      cpa_p0_rd_dat_64b [hisi_sicl2_cpa0]
->>     CPU0                    0      cpa_p0_rd_dat_32b [hisi_sicl2_cpa0]
->>
->>         1.001306160 seconds time elapsed
->>
->> Signed-off-by: Junhao He <hejunhao3@huawei.com>
-> Tested-by: Yicong Yang <yangyicong@hisilicon.com>
+Fair enough. I've never come across that kind of claim before.
+
+> > You're correct that they're constants so one would need to tweak the
+> > source to end up into this condition in the first place.
+> >=20
+> > Perhaps I'm being overly pendantic here but I in general don't like
+> > leaving trappy and non-obvious logic like that lying around because one
+> > day one of such will come back biting.
+>=20
+> It is not clear to me what is "trappy" about this. The current checks wil=
+l
+> catch the wraparound if somebody changes ALLOCATION_STEP in your scenario=
+, no?
 >
-> The changes looks fine to me, I'd prefer to add some documents for this. See below.
->
->> ---
->>   tools/perf/util/metricgroup.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
->> index 69f6a46402c3..fa62fb3418b6 100644
->> --- a/tools/perf/util/metricgroup.c
->> +++ b/tools/perf/util/metricgroup.c
->> @@ -1123,7 +1123,7 @@ static int metricgroup__add_metric_sys_event_iter(const struct pmu_metric *pm,
->>   
->>   	ret = add_metric(d->metric_list, pm, d->modifier, d->metric_no_group,
->>   			 d->metric_no_threshold, d->user_requested_cpu_list,
->> -			 d->system_wide, d->root_metric, d->visited, d->table);
->> +			 d->system_wide, d->root_metric, d->visited, d->table ?: table);
->>   	if (ret)
->>   		goto out;
->>   
->> @@ -1239,7 +1239,7 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
->>   	int ret;
->>   	bool has_match = false;
->>   
->> -	{
->> +	if (table) {
-> may add a comment here. If !table then the metrics may belong to a system PMU.
+> > So, if a variable is unsigned and we ever do subtraction (or adding
+> > negative numbers to it), I'd prefer additional check to prevent ever
+> > underflowing it unexpectedly. Or leave them signed.
+>=20
+> To support checking at the time of subtraction we either need to change t=
+he
+> flow of that function since it cannot exit with failure if that subtracti=
+on
+> fails because of overflow/wraparound, or we need to introduce more state =
+that
+> will be an additional check that the existing
+> "if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)"
+> would have caught anyway.
+>=20
+> In either case, to do this checking at the time of subtraction the ideal =
+way
+> would be to use check_sub_overflow() ... but it again does exactly what
+> you find to be non-intuitive since the implementation in
+> tools/include/linux/overflow.h uses the gcc intrinsics that does subtract=
+ion
+> first and then checks if overflow occurred.
 
-Yes, I will do that.
+It's trappy because by glance, that check looks unnecessary since=20
+allocation starts from max and goes downwards. Also worth to note,
+the check is not immediately after the decrement but done on the next=20
+iteration.
 
->>   		struct metricgroup__add_metric_data data = {
->>   			.list = &list,
->>   			.pmu = pmu,
->> @@ -1696,8 +1696,6 @@ int metricgroup__parse_groups(struct evlist *perf_evlist,
->>   {
->>   	const struct pmu_metrics_table *table = pmu_metrics_table__find();
->>   
->> -	if (!table)
->> -		return -EINVAL;
-> may add a debug message to mention we're parsing metrics of system PMUs.
->
-> Thanks.
+The risk here is that somebody removes allocation > ALLOCATION_MAX check.
 
-Yes, I will do that.
+Something called check_sub_overflow() is not subject to a similar risk=20
+regardless of what operations occur inside it.
 
-Best regards,
-Junhao.
+> It is not clear to me what problem you are aiming to solve here. If the
+> major concern is that the current logic is not obvious, perhaps it can
+> be clarified with a comment as below:
+>=20
+>  =09if (runs_per_allocation++ !=3D 0)
+>  =09=09return 0;
+>  +=09/*
+> +=09 * Do not attempt allocation outside valid range. Safeguard
+> +=09 * against any potential wraparound caused by subtraction.
+> +=09 */
+>  =09if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)
+>  =09=09return END_OF_TESTS;
 
->
->>   	if (hardware_aware_grouping)
->>   		pr_debug("Use hardware aware grouping instead of traditional metric grouping method\n");
->>   
->>
-> .
->
+That would probably help but then it seems Linus is against such attempts
+and considers this hole in the cheese (i.e., representing something that=20
+is clearly a negative number with a positive number) "traditional".
 
+--=20
+ i.
+
+--8323328-1988363065-1725612288=:1053--
 
