@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-318773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F7D96F326
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F55796F331
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B9561C20E19
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A4461C23800
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931FA1CB323;
-	Fri,  6 Sep 2024 11:35:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9531715852B;
-	Fri,  6 Sep 2024 11:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F271CBE99;
+	Fri,  6 Sep 2024 11:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PRyNf0fW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CB01CB337;
+	Fri,  6 Sep 2024 11:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622531; cv=none; b=hsqpx8TAo5K6l2VoEYwDimfVU6y9tV1vDlHw5MUwS8z1y5Upzy3wL/qRUach4bKfU4JfjiwoCLnbUwF20WA7W3R1SddRDn5D/zwtenrqnCF+RWyln7VEIMp5zAyYYXOtyZAweBvzjHjdMrnIDX7n+3mpkEAqNTciM0/qrzgceFY=
+	t=1725622641; cv=none; b=dTGIF0XzWI6aI77lmdkOLdaTec/xInO6aFubakOvdleaOnteXB+y3Hh1rT1l3B6tqCsFcTGlTU5pKb6sYknuC1IFce/6IUsYrJ3MwV2pWqr4ImDEvyOCqOvF9qVSgbLKJpJm9fihFyBf3VTpmt9yCq3o2k2Rr22wwy3ZkeOyxjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622531; c=relaxed/simple;
-	bh=cP5H11M94mDRYEtC3KilSyKz8vdV//0EuGPxUnLCELc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnGc/xRNmaMZzkR0NaSqwMo6KZnlXcf1r+squPtA9QjuCwm88CtXafK0Bl7+oE887l2pAefD2PzZCECi0I/N/dGtEDC5Q0wkvEc5vyr4r+qdFUsYho+Y0qxkAe6/CFxCyVo9NMAxLWfWXnn0g7OJnOY+7EN3rVw7vKYXJ5jGPts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 033B7FEC;
-	Fri,  6 Sep 2024 04:35:56 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25FE53F73B;
-	Fri,  6 Sep 2024 04:35:25 -0700 (PDT)
-Message-ID: <23a1c751-d957-4785-b54d-7e0b03b9117f@arm.com>
-Date: Fri, 6 Sep 2024 12:35:25 +0100
+	s=arc-20240116; t=1725622641; c=relaxed/simple;
+	bh=GC2rniu5DbilxHwobuGJfaMkWvjHQnyWPA6c+4gCoJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uMztO0oYSvnZ/iWJFY2+kXQa5OpZGz2uokucJxL9vfHsD2DLMMxGyLkcpmHsjk/W73QNItmKhericCFfCFjdwwNnfFrnJpq+MAxX0jljXK5xJj216YHDkcKWBH+1AoEoe1t+V1N74gUzg4uqfobgBeXlcHckm9PqRb7YlQAK/3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PRyNf0fW; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725622640; x=1757158640;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GC2rniu5DbilxHwobuGJfaMkWvjHQnyWPA6c+4gCoJs=;
+  b=PRyNf0fW3636TC4yKuy/R0h5770K0d5fTIq7mutyHEu5b8To5vZD2cP7
+   EXa3YC+aa5lA2tAlxs8HfeCuML1XllTB1ckI4GIOpQRh0P+VnLcYK6cO0
+   20ddvapCFO35Z0R6ZiRPac7dsy+Whh0XZ5IjHSZy0fyRcqBWTc0PuzHRH
+   /H1JFSPxoMLyyWlEykXP9xktx4tnNEn/mhSyZuRdABG5Y8fgTVUtqv2u0
+   icxVwLV2vSUKURBX8ca4T7xuNLX1ePO2wIimatdx7ZgypkylTaeBi3UY8
+   VNJpKUSb8oleSEEOWqze87aSdcNv0mNSusxymrDPy4J2pfKAbbFBGtc00
+   g==;
+X-CSE-ConnectionGUID: lJ0xIkwUT9mZoQT1RwR3yw==
+X-CSE-MsgGUID: cSl6uRkERSaodF3KRSQy5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="34952542"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="34952542"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:37:17 -0700
+X-CSE-ConnectionGUID: R+W6z3PBR/qAz7PK8lpZ2w==
+X-CSE-MsgGUID: oSX/Apc7RWS68IkSKzyltQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="70729674"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 06 Sep 2024 04:37:16 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 32AF7197; Fri, 06 Sep 2024 14:37:13 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 0/3] pinctrl: intel: Replace ifdeffery by pm_sleep_ptr() macro Andy Shevchenko
+Date: Fri,  6 Sep 2024 14:36:05 +0300
+Message-ID: <20240906113710.467716-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] vdso: Introduce vdso/page.h
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-5-vincenzo.frascino@arm.com>
- <18bcf426-b0a8-486b-b9f7-8418d401bb70@csgroup.eu>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <18bcf426-b0a8-486b-b9f7-8418d401bb70@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Christophe,
+There are two benefits of this series:
+1) no more ugly ifdeffery in the code;
+2) the PM callbacks are all being synchronised via using the same macro,
+i.e. pm_sleep_ptr() everywhere.
 
-On 04/09/2024 18:16, Christophe Leroy wrote:
-> 
-> 
-> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
->> The VDSO implementation includes headers from outside of the
->> vdso/ namespace.
->>
->> Introduce vdso/page.h to make sure that the generic library
->> uses only the allowed namespace.
->>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->> ---
->>   include/vdso/page.h | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>   create mode 100644 include/vdso/page.h
->>
->> diff --git a/include/vdso/page.h b/include/vdso/page.h
->> new file mode 100644
->> index 000000000000..f18e304941cb
->> --- /dev/null
->> +++ b/include/vdso/page.h
->> @@ -0,0 +1,7 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef __VDSO_PAGE_H
->> +#define __VDSO_PAGE_H
->> +
->> +#include <asm/vdso/page.h>
-> 
-> I can't see the benefit of that, the generic library can directly include
-> asm/vdso/page.h
-> 
+v2:
+- made the code readable again (Mika)
 
-I think you agree that any discussion we can have on this point will be made
-obsolete by the fact that we will end up defining PAGE_SIZE/PAGE_MASK in
-vdso/page.h.
+Andy Shevchenko (3):
+  pinctrl: intel: Replace ifdeffery by pm_sleep_ptr() macro
+  pinctrl: baytrail: Replace ifdeffery by pm_sleep_ptr() macro
+  pinctrl: cherryview: Replace ifdeffery by pm_sleep_ptr() macro
 
->> +
->> +#endif    /* __VDSO_PAGE_H */
+ drivers/pinctrl/intel/pinctrl-baytrail.c   | 21 ++++++++++++++-------
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 20 +++++++++++++-------
+ drivers/pinctrl/intel/pinctrl-intel.c      |  5 +----
+ drivers/pinctrl/intel/pinctrl-intel.h      | 14 ++++++++++++++
+ 4 files changed, 42 insertions(+), 18 deletions(-)
 
 -- 
-Regards,
-Vincenzo
+2.43.0.rc1.1336.g36b5255a03ac
+
 
