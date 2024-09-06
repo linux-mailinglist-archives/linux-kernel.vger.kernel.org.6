@@ -1,225 +1,203 @@
-Return-Path: <linux-kernel+bounces-319229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AFD96F985
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:45:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0CD96F986
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A6A1F23B12
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7B7283762
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E1D1D45F1;
-	Fri,  6 Sep 2024 16:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310201D460D;
+	Fri,  6 Sep 2024 16:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eraJdLCC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="MWYUc1zl"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7701D416C;
-	Fri,  6 Sep 2024 16:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AAF1D4615
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725641103; cv=none; b=eU9aIp/pf0AVmegezHMkaxruII4XnvDPNAgZWIgxmcCiUPlwpC/qqjwrBVdo0aWk/IV6Nhwu5nz2VKrQohVPgwcPR0ATGjxvjOfRz1CKaghRPBEW2a0e8J6C2+EryVL2sPOC0A+VAKk/8gcl5yId04YRiSnqjNOVJvQ8SbGTT0w=
+	t=1725641108; cv=none; b=Ti21AOdxKAHicS+UygwSU/5aDn+guhWo4P6AEQfYhUNCHnhKYbxAuscoFlhhKQbXKs6K4pnn+R9Kv1IKWQdWpXHO+g03cWoyBbGl/74lb0AJWwJSfBJeNqd2k78i3jzRgjoehn7TDuf4sMuUoswWV1gFoYcXZfD66X4R6+0fqJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725641103; c=relaxed/simple;
-	bh=2uhNnes4FjRqavBuFxJ3e3Y+klClO2izzRgc6IZT1kA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G3984jNfbZeyMH+5C1d+cvL2iJsafFr1Fqr1oROEvgxwQt3Vj7vc92w8R64IRzWVp31rD/j8t/zWBVJuGg4p8juI1S3sW7rCuIcjXwTDNgV6fj6jBJA7GNB17/RhyVTGxhUA7VppWsNNQsjgkIrl850mhoxqgJdBTdVhBA9m4oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eraJdLCC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9648C4CEC4;
-	Fri,  6 Sep 2024 16:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725641102;
-	bh=2uhNnes4FjRqavBuFxJ3e3Y+klClO2izzRgc6IZT1kA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eraJdLCClgYu1q8aBhE3A9qeHL5Wp149Zx/KMtgoaWtFsDjAUjCSnIw2/Fyn7pE6z
-	 t9M3owhLrpKGvT4pGrY6uM0cJMDCu7kzBXUR5v0QxjEgW0EZUoS+pYmmH5c2dSNz0v
-	 9KQQFgHwHY1Tv12SvVIU6o1tcxG5XzV16wnRR+NZo7hWfx2IZrXQPZADKG+yT3I/uE
-	 8X8wxsEUcyMmedGtRc8a5RAbSss+IGDAF2XydQejPKLiCcI3Qwljn8Ousz8dDrH3va
-	 wYxQlk94BlWFD6hxtO0JL+WYyLEqKkFJWsLhqVBZ3MghuB4emyCNC1/hkqDXZpgePJ
-	 wSWT7VYuzwCgA==
-Message-ID: <624d5232-1659-4f74-9dc0-c7112d50be45@kernel.org>
-Date: Fri, 6 Sep 2024 18:44:54 +0200
+	s=arc-20240116; t=1725641108; c=relaxed/simple;
+	bh=7Y0fGfd8gtNGKjpca54ENKOe9FY3ANpfvPZyDr8Enbg=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=jaABKMV6zV55hdxs3P8DiYYAuBHXnZ04vkPZ+xs8Yp0WeBge/F7DaDlIb9PXsJPK02EYjGdYdfjSd2woArBXOkVRLgXneVIIqbALQV7rj7kD81IH82DWxCT5Ma9cSaXu/kdBxlNxClvdkVOlAJJI0aXu6+MgkY17E6zYJFdEEnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=MWYUc1zl; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725641104; x=1725900304;
+	bh=DpW7uHBkGNqx684nG4+xHcawHofHObHuMW3c0eCE9gg=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=MWYUc1zlW+q1gzui59qWGcdDaOuaUq0eGocx/FpkUcycWIVrQ38b1rMaoP3veFFr6
+	 29c5MqY0k6GjggMmutHcwtfaW6Mp30QDC+yuX37GsV4HM7TNqtQiXk1hbZm9y6xyeb
+	 4NB2ldIvAQrTcC20HutXzQxBVjXdc1/g24a5RB3YuvlUpOwG3FRwyUf2PfAOorGSAq
+	 eB3m6Ug7GDofexxguGDKVduHU8fr0y317y6XwvALmVHLpU8dnqm3W/M1KSXS97xQ46
+	 bBkq7kVvcYpz5YsZjHuhCxwr86Fb9XG/IxIKBblW9nGbImtHFzoE8l8rY7rGlTr3uF
+	 7M8xMb5A+s94A==
+Date: Fri, 06 Sep 2024 16:44:57 +0000
+To: a.hindborg@samsung.com, alex.gaynor@gmail.com, alexmantel93@mailbox.org, aliceryhl@google.com, aswinunni01@gmail.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, kernel@valentinobst.de, linux-kernel@vger.kernel.org, nells@linux.microsoft.com, ojeda@kernel.org, paddymills@proton.me, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com, yakoyoku@gmail.com
+From: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH 1/2] rust doc: make section names plural
+Message-ID: <20240906164448.2268368-1-paddymills@proton.me>
+Feedback-ID: 45271957:user:proton
+X-Pm-Message-ID: 5c01377fedcf91852b22d426e2ef770ef2bcff29
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] dt-bindings: iio: dac: add ad3552r axi-dac
- compatible
-To: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <noname.nuno@gmail.com>, Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
- <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-5-87d669674c00@baylibre.com>
- <boahpvyzzmocnnpae2u6meub34yvqr2q3v5pzf2egp2fretlwk@ibas62hdypwo>
- <fd3f4874-b410-4e98-acba-d0fac041a40e@baylibre.com>
- <1928d0ce-cad9-4737-880e-3759c47fddbc@kernel.org>
- <058937fa93d484f3e81807d08a39bd8dfd3358e8.camel@gmail.com>
- <47c56239-51a0-4ff2-9db2-0e0184cfb086@kernel.org>
- <a0d213442b4de0b06991be2be1d7b2bb091f2b52.camel@gmail.com>
- <de4718f5-a36f-4e5c-b5e1-f1c6e2484420@baylibre.com>
- <bb25003f-3a30-4d73-9b40-447d2d513fb3@kernel.org>
- <9894666e-30bf-42c0-88a0-18ce2a9300a2@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <9894666e-30bf-42c0-88a0-18ce2a9300a2@baylibre.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------37e878fbfc678cda84bf215366d7de94dccc3b987ee002e06de4a087c40f8a51"; charset=utf-8
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------37e878fbfc678cda84bf215366d7de94dccc3b987ee002e06de4a087c40f8a51
+Content-Type: multipart/mixed;
+ boundary=b2bde32a4f00d4314d60e193f064646a8b12d929a1261d49ef402e4ceba3
+From: Patrick Miller <paddymills@proton.me>
+To: a.hindborg@samsung.com,
+	alex.gaynor@gmail.com,
+	alexmantel93@mailbox.org,
+	aliceryhl@google.com,
+	aswinunni01@gmail.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	kernel@valentinobst.de,
+	linux-kernel@vger.kernel.org,
+	nells@linux.microsoft.com,
+	ojeda@kernel.org,
+	paddymills@proton.me,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	wedsonaf@gmail.com,
+	yakoyoku@gmail.com
+Subject: [PATCH 1/2] rust doc: make section names plural
+Date: Fri,  6 Sep 2024 12:44:48 -0400
+Message-ID: <20240906164448.2268368-1-paddymills@proton.me>
+X-Mailer: git-send-email 2.46.0
+MIME-Version: 1.0
+
+--b2bde32a4f00d4314d60e193f064646a8b12d929a1261d49ef402e4ceba3
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 06/09/2024 18:42, David Lechner wrote:
-> On 9/6/24 11:36 AM, Krzysztof Kozlowski wrote:
->> On 06/09/2024 16:04, David Lechner wrote:
->>> On 9/6/24 8:52 AM, Nuno Sá wrote:
->>>> On Fri, 2024-09-06 at 14:13 +0200, Krzysztof Kozlowski wrote:
->>>>> On 06/09/2024 13:53, Nuno Sá wrote:
->>>>>> On Fri, 2024-09-06 at 11:37 +0200, Krzysztof Kozlowski wrote:
->>>>>>> On 06/09/2024 11:11, Angelo Dureghello wrote:
->>>>>>>> Hi Krzysztof,
->>>>>>>>
->>>>>>>> On 06/09/24 9:22 AM, Krzysztof Kozlowski wrote:
->>>>>>>>> On Thu, Sep 05, 2024 at 05:17:35PM +0200, Angelo Dureghello wrote:
->>>>>>>>>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>>>>>>>>
->>>>>>>>>> Add a new compatible for the ad3552r variant of the generic DAC IP.
->>>>>>>>>>
->>>>>>>>>> The ad3552r DAC IP variant is very similar to the generic DAC IP,
->>>>>>>>>> register map is the same, but some register fields are specific to
->>>>>>>>>> this IP, and also, a DDR QSPI bus has been included in the IP.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>>>>>>>>> ---
->>>>>>>>>>   Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 1 +
->>>>>>>>>>   1 file changed, 1 insertion(+)
->>>>>>>>>>
->>>>>>>>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>>>>>>>> b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>>>>>>>> index a55e9bfc66d7..c0cccb7a99a4 100644
->>>>>>>>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>>>>>>>> @@ -24,6 +24,7 @@ properties:
->>>>>>>>>>     compatible:
->>>>>>>>>>       enum:
->>>>>>>>>>         - adi,axi-dac-9.1.b
->>>>>>>>>> +      - adi,axi-dac-ad3552r
->>>>>>>>> I am sorry, but what is the product here? It looks like either wrong
->>>>>>>>> order or even completely redundant. What is ad3552r?
->>>>>>>>>
->>>>>>>>> And why versions are mixed with real products but without any
->>>>>>>>> compatibility. What does the version express in such case?
->>>>>>>>
->>>>>>>> dac-ad3552r IP (fpga) is a variant of the dac IP, very similar,
->>>>>>>> about the version, it still reads as 9.1.b
->>>>>>>>
->>>>>>>> so i can eventually change it to:
->>>>>>>>
->>>>>>>> adi,axi-dac-ad3552-9.1.b
->>>>>>>>
->>>>>>>> Should be more correct.
->>>>>>>
->>>>>>> No. First ad3552r is the product, so axi-dac is redundant. Second why
->>>>>>> adding versions if you have product names? Versioning was allowed
->>>>>>> because apparently that's how these are called, but now it turns out it
->>>>>>> is not version but names.
->>>>>>>
->>>>>>
->>>>>> Let me try to explain on how this whole thing works...
->>>>>>
->>>>>> We have a generic FPGA IP called axi-dac (same story is true for the other axi-
->>>>>> adc
->>>>>> IP) which adds some basic and generic capabilities like DDS (Direct digital
->>>>>> synthesis) and the generic one is the compatible existing now. This IP is a so
->>>>>> called
->>>>>> IIO backend because it then connects to a real converter (in this case DACs)
->>>>>> extending it's capabilities and also serving as an interface between another
->>>>>> block
->>>>>> (typical DMA as this is used for really high speed stuff) and the device. Now,
->>>>>> depending on the actual device, we may need to add/modify some features of the IP
->>>>>> and
->>>>>> this is what's happening for the ad3552r DAC (it's still build on top of the 
->>>>>
->>>>> What is "ad3552"? DAC right? Then as I said axi-dac is redundant. We do
->>>>> not call ti,tmp451 a ti,sensor-tmp451, right?
->>>>>
->>>>
->>>> Yes, I agree the DAC part is redundant. But I think the axi prefix (or suffix) is
->>>> meaningful to differentiate it from the bindings for the device itself.
->>>>
->>> The binding is for this [1] IP core. The documentation calls the core
->>> "AXI AD3552R", so I agree that "adi,axi-ad2552r" is the most sensible
->>> compatible name.
->>>
->>> http://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
->>
->> I don't see any AXI here:
->> https://www.analog.com/en/products/ad3552r.html
->> Neither here:
->> https://www.analog.com/media/en/technical-documentation/data-sheets/ad3552r.pdf
->>
->> Are these different?
-> 
-> 
-> Yes, they are different. AD2553R is the DAC chip itself. But "AXI AD2553R" is an
-> FPGA IP block designed specifically for use with that chip.
+Fixes rust documentation section headers to be plural.
 
-OK, this makes sense now. The commit msg said nothing about it. No
-distinction and rather confusing "The ad3552r DAC IP".
+Signed-off-by: Patrick Miller <paddymills@proton.me>
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1110
 
-Best regards,
-Krzysztof
+---
+ rust/kernel/init.rs     | 2 +-
+ rust/kernel/list/arc.rs | 2 +-
+ rust/kernel/sync/arc.rs | 2 +-
+ rust/macros/lib.rs      | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index a17ac8762d8f..98889ddf9828 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -746,7 +746,7 @@ macro_rules! try_init {
+ /// Asserts that a field on a struct using `#[pin_data]` is marked with `#[pin]` ie. that it is
+ /// structurally pinned.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// This will succeed:
+ /// ```
+diff --git a/rust/kernel/list/arc.rs b/rust/kernel/list/arc.rs
+index d801b9dc6291..611ce07cd290 100644
+--- a/rust/kernel/list/arc.rs
++++ b/rust/kernel/list/arc.rs
+@@ -464,7 +464,7 @@ im
+pl<T, U, const ID: u64> core::ops::DispatchFromDyn<ListArc<U, ID>> for ListArc
+ 
+ /// A utility for tracking whether a [`ListArc`] exists using an atomic.
+ ///
+-/// # Invariant
++/// # Invariants
+ ///
+ /// If the boolean is `false`, then there is no [`ListArc`] for this value.
+ #[repr(transparent)]
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3021f30fd822..3d3c100b0c0d 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -436,7 +436,7 @@ fn from(item: Pin<UniqueArc<T>>) -> Self {
+ /// There are no mutable references to the underlying [`Arc`], and it remains valid for the
+ /// lifetime of the [`ArcBorrow`] instance.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// ```
+ /// use kernel::sync::{Arc, ArcBorrow};
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index a626b1145e5c..3879e1162866 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -307,7 +307,7 @@ pub fn pinned_drop(args: TokenStream, input: TokenStream)
+ -> TokenStream {
+ /// literals (lifetimes and documentation strings are not supported). There is a difference in
+ /// supported modifiers as well.
+ ///
+-/// # Example
++/// # Examples
+ ///
+ /// ```ignore
+ /// use kernel::macro::paste;
+-- 
+2.46.0
+
+
+--b2bde32a4f00d4314d60e193f064646a8b12d929a1261d49ef402e4ceba3
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="publickey - paddymills@proton.me
+ - 0xDCA74891.asc"; name="publickey - paddymills@proton.me - 0xDCA74891.asc"
+Content-Type: application/pgp-keys; filename="publickey -
+ paddymills@proton.me - 0xDCA74891.asc"; name="publickey -
+ paddymills@proton.me - 0xDCA74891.asc"
+
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tClZlcnNpb246IEdvcGVuUEdQIDIu
+Ny40CkNvbW1lbnQ6IGh0dHBzOi8vZ29wZW5wZ3Aub3JnCgp4ak1FWWs0UnNSWUpLd1lCQkFIYVJ3
+OEJBUWRBU1FhVy9FUmQ4dGZncXNNSHQweTY3ZFdRTEU3UnV2T3gzanphCmdhRWI0c0xOSzNCaFpH
+UjViV2xzYkhOQWNISnZkRzl1TG0xbElEeHdZV1JrZVcxcGJHeHpRSEJ5YjNSdmJpNXQKWlQ3Q2p3
+UVFGZ29BSUFVQ1lrNFJzUVlMQ1FjSUF3SUVGUWdLQWdRV0FnRUFBaGtCQWhzREFoNEJBQ0VKRUp0
+UgpHcnN1cjU0UkZpRUUzS2RJa1N2VW5DdmU4MDFtbTFFYXV5NnZuaEZpcUFFQXQwVCtwZ3AwUm9X
+d0lmbURQRlRuCjNsbVRRcVA0dUEreDRnNXB2OG5SSHBJQS8xVU1YLzh3akZlK24wZUM0V0pqeTRu
+NS9OZUtxMXovOFBKdFlhdXMKZVZnT3pqZ0VZazRSc1JJS0t3WUJCQUdYVlFFRkFRRUhRRi9mTnBE
+ZmxsRFJuSEhyZUh2VHRJdEZ3dURMM0taQQphaDhZd3dxV0FyNFJBd0VJQjhKNEJCZ1dDQUFKQlFK
+aVRoR3hBaHNNQUNFSkVKdFJHcnN1cjU0UkZpRUUzS2RJCmtTdlVuQ3ZlODAxbW0xRWF1eTZ2bmhH
+R2Z3RUFuWkFzR3BvTDdRaTlWQ05PcGNrcjB2OE41S3hic2xJTGZlUCsKMmNJU0hlY0Erd1RxWDNs
+Z3dnNVJDN1lBT1MvUTBDc3EwY2tPSTBKbnNMS1VaU3I4TlJvQgo9VzE4bgotLS0tLUVORCBQR1Ag
+UFVCTElDIEtFWSBCTE9DSy0tLS0t
+--b2bde32a4f00d4314d60e193f064646a8b12d929a1261d49ef402e4ceba3--
+
+--------37e878fbfc678cda84bf215366d7de94dccc3b987ee002e06de4a087c40f8a51
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnUEARYIACcFAmbbMYkJEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
+nhEAAHYnAP4+B84s8F02tu+c9sxz4hFoorfiXQ+y8tWvTT24EDroRwD+Iqgb
+ziqZzBlL7DKStP5T8p8jPBU1qTHyGhAMA93gEQU=
+=w993
+-----END PGP SIGNATURE-----
+
+
+--------37e878fbfc678cda84bf215366d7de94dccc3b987ee002e06de4a087c40f8a51--
 
 
