@@ -1,183 +1,104 @@
-Return-Path: <linux-kernel+bounces-318716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3304296F1F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:55:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5700E96F1F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5BE1C23651
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834B81C23DC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F201D1CB125;
-	Fri,  6 Sep 2024 10:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VI8QyMV7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA771CB12A;
+	Fri,  6 Sep 2024 10:55:40 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42FE1CA6AF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39934158866;
+	Fri,  6 Sep 2024 10:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620105; cv=none; b=DmHcL9FDuCuWFVhdBAq0pysxryxdli5Y1PZaKqU9oAtPIuX4ykE9HG2lRQeEqzIhBCtDX4h0qIabyO67+QsAB1mABGS+9XX6IVyEPguRcr8rUZwID6ARKlsjvn2FW7RCPuwPGII+YYVhOFeeStel3ffQYgIeijLHtgrx8r3Y/qE=
+	t=1725620140; cv=none; b=GEUiE8fP+WaQNiGyHTJ5WXIDKQh4pKy3FqvM0IgTByCGo9on/htRRRSvftWNDQ+fE0KN7c8iOBXpXtgG8KgBD4lhJt9wdqFgLtudpsNDiZb57Lu2sLLm+CyfWKR3QU1T4+zXrX6kEk7Tw4HaRa/Xv9KruuV2/ff8hZvpSugtjuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620105; c=relaxed/simple;
-	bh=jp4O9LW8IWcYH8uH5bziRTDZTtx57L9dUd6pC68Qnjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZksVcxZ/x14MtBvcaqSDqJ4ZoTdufqP602+yr3PAJBU07QSzyPen1DrkhFMC7VYlczdDzR4+2seilkiQ/jiXDCawr7NHklFYHXKWfyrrxgAvEIAliulEeXkY6afTpEk2+dyezo7foZduPM/SRec1t3bpnat1XDivg2TZ+ZZCm2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VI8QyMV7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725620102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bz2nJuvJfSC/E6iHvxzgQOTw9UEW2x/G2ibR8rkxWXo=;
-	b=VI8QyMV7TsDvIrryUMIvJWaroo+/oV3hNWmj8L052NuCg6JN7ePc3OfBwprILc2N+5kraO
-	UNxyjKWKHyL3BhksKlkNNkYulipDk48XZWWgYT8hr8OERVXt48bFH2TfQP8mHe5uc5dnkD
-	cy9VuuRuhd6a4Bi5eLFtKAJu2frHIXo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-408-qM2hcHPQPPWgr4iBH0cb6Q-1; Fri,
- 06 Sep 2024 06:54:57 -0400
-X-MC-Unique: qM2hcHPQPPWgr4iBH0cb6Q-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40AB81956048;
-	Fri,  6 Sep 2024 10:54:55 +0000 (UTC)
-Received: from rotkaeppchen (unknown [10.39.193.186])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 377013000238;
-	Fri,  6 Sep 2024 10:54:46 +0000 (UTC)
-Date: Fri, 6 Sep 2024 12:54:38 +0200
-From: Philipp Rudo <prudo@redhat.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Pingfan Liu <piliu@redhat.com>, Jan Hendrik Farr <kernel@jfarr.cc>,
- Lennart Poettering <mzxreary@0pointer.de>, Jarkko Sakkinen
- <jarkko@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Baoquan He
- <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, Mark Rutland
- <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-Message-ID: <20240906125438.1e54c5f6@rotkaeppchen>
-In-Reply-To: <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
-References: <20240819145417.23367-1-piliu@redhat.com>
-	<CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
-Organization: Red Hat inc.
+	s=arc-20240116; t=1725620140; c=relaxed/simple;
+	bh=f5CVM95HAlNZ0W1E7w+xU0t7ZVGWHVxVJ9L8LEll9Vg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pmyzLeCZ4K6zgU0vqR4UmVxI5yfKy0AZRiYpkCI18kPq+AIDLL6x+XVy8aUvee53rLNpRykQtSaDW5oM6U5ZJUFQizg3ULm5FjDDIj0qjD9ok4aEj8ugCwOZWNlzex2Nn+R0nUPuHSS8IlIKkyJb7Wida9dV8zdu6tQl7MGJXAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav315.sakura.ne.jp (fsav315.sakura.ne.jp [153.120.85.146])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 486AtUFp073718;
+	Fri, 6 Sep 2024 19:55:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav315.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp);
+ Fri, 06 Sep 2024 19:55:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 486AtUf9073715
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 6 Sep 2024 19:55:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <939e984a-8c5d-456d-a986-26e242e45488@I-love.SAKURA.ne.jp>
+Date: Fri, 6 Sep 2024 19:55:30 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
+        tomoyo-users-en@lists.osdn.me,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+ <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Ard,
-Hi Jan,
+On 2024/09/06 16:43, Tetsuo Handa wrote:
+> On 2024/09/04 23:23, Paul Moore wrote:
+>> Patches that add complexity to the LSM framework without any benefit
+>> to the upstream, in-tree LSMs, or the upstream kernel in general, are
+>> not good candidates for inclusion in the upstream kernel.
 
-On Wed, 28 Aug 2024 19:08:14 +0200
-Ard Biesheuvel <ardb@kernel.org> wrote:
+This patch adds a clear value for Linux users that people get more chances to
+use LSM modules which match their needs.
 
-[...]
+Quoting from [1]:
 
-> Thanks for putting this RFC together. This is useful work, and gives
-> us food for thought and discussion.
-> 
-> There are a few problems that become apparent when going through these changes.
-> 
-> 1. Implementing UEFI entirely is intractable, and unnecessary.
-> Implementing the subset of UEFI that is actually needed to boot Linux
-> *is* tractable, though, but we need to work together to write this
-> down somewhere.
->   - the EFI stub needs the boot services for the EFI memory map and
-> the allocation routines
->   - GRUB needs block I/O
->   - systemd-stub/UKI needs file I/O to look for sidecars
->   - etc etc
-> 
-> I implemented a Rust 'efiloader' crate a while ago that encapsulates
-> most of this (it can boot Linux/arm64 on QEMU and boot x86 via GRUB in
-> user space **). Adding file I/O to this should be straight-forward -
-> as Lennart points out, we only need the protocol, it doesn't need to
-> be backed by an actual file system, it just needs to be able to expose
-> other files in the right way.
-> 
-> 2. Running the UEFI emulator on bare metal is not going to scale.
-> Cloning UART driver code and MMU code etc is a can of worms that you
-> want to leave closed. And as Lennart points out, there is other
-> hardware (TPM) that needs to be accessible as well. Providing a
-> separate set of drivers for all hardware that the EFI emulator may
-> need to access is not a tractable problem either.
-> 
-> The fix for this, as I see it, is to run the EFI emulator in user
-> space, to the point where the payload calls ExitBootServices(). This
-> will allow all I/O and memory protocol to be implemented trivially,
-> using C library routines. I have a crude prototype** of this running
-> to the point where ExitBootServices() is called (and then it crashes).
-> The tricky yet interesting bit here is how we migrate a chunk of user
-> space memory to the bare metal context that will be created by the
-> kexec syscall later (in which the call to ExitBootServices() would
-> return and proceed with the boot). But the principle is rather
-> straight-forward, and would permit us, e.g., to kexec an OS installer
-> too.
+  Regarding CONFIG_MODULES=y,
+  "Vendor-A enables module-A" == "Vendor-A provides support for module-A" and
+  "Vendor-B enables module-B" == "Vendor-B provides support for module-B".
 
-I mostly agree on what you have wrote. But I see a big problem in
-running the EFI emulator in user space when it comes to secure boot.
-The chain of trust ends in the kernel. So it's the kernel that needs to
-verify that the image to be loaded can be trusted. But when the EFI
-runtime is in user space the kernel simply cannot do that. Which means,
-if we want to go this way, we would need to extend the chain of trust
-to user space. Which will be a whole bucket of worms, not just a can.
+  Regarding CONFIG_SECURITY=y (namely in the RH world),
+  "Distributor-A enables LSM-A" == "Distributor-A provides support for LSM-A".
+  However, "Distributor-A does not enable LSM-B" == "Some vendor is impossible to
+  provide support for LSM-B".
 
-That's why I tend more to Jan's suggestion to include the EFI runtime
-in the kernel. Alas, that comes with it's own problem, as that requires
-to run code in the kernel that was never intended to run in kernel
-context. So even when we can trust the code not to be malicious, we
-cannot trust it to not accidentally change the system state in a way
-the kernel doesn't expect...
+  "Distributor-A does not enable module-B" == "Distributor-A is not responsible for
+  providing support for module-B" and "Vendor-B enables LSM-B" == "Vendor-B provides
+  support for LSM-B" are what I expect.
 
-Let me throw an other wild idea in the ring. Instead of implementing
-a EFI runtime we could also include a eBPF version of the stub into the
-images. kexec could then extract the eBPF program and let it run just
-like any other eBPF program with all the pros (and cons) that come with
-it. That won't be as generic as the EFI runtime, e.g. you couldn't
-simply kexec any OS installer. On the other hand it would make it
-easier to port UKIs et al. to non-EFI systems. What do you think?
+  Current LSM interface does not allow LSM-B to exist in Distributor-A's systems.
+  The "enable" == "support" model should be allowed for LSM interface as well.
+  What a strange asymmetry rule!
 
-Thanks
-Philipp
+Your "any benefit to in-tree LSMs" is completely ignoring Linux users.
+LSM is for all Linux users, LSM is not only for LSM developers.
 
-> 3. We need to figure out how to support TPM and PCRs in the context of
-> kexec. This is a fundamental issue with verified boot, given that the
-> kexec PCR state is necessarily different from the boot state, and so
-> we cannot reuse the TPM directly if we want to pretend that we are
-> doing an ordinary boot in kexec. The alternative is to leave the TPM
-> in a state where the kexec kernel can access its sealed secrets, and
-> mock up the TCG2 EFI protocols using a shim that sits between the TPM
-> hardware (as the real TCG2 protocols will be long gone) and the EFI
-> payload. But as I said, this is a fundamental issue, as the ability to
-> pretend that a kexec boot is a pristine boot would mean that verified
-> boot is broken.
-> 
-> 
-> As future work, I'd like to propose to collaborate on some alignment
-> regarding a UEFI baseline for Linux, i.e., the parts that we actually
-> need to boot Linux.
-> 
-> For this series in particular, I don't see a way forward where we
-> adopt this approach, and carry all this code inside the kernel.
-> 
-> Thanks.
-> Ard.
-> 
+
+
+Link: https://lkml.kernel.org/r/c2a3279d-451d-23df-0911-e545d21492e6@I-love.SAKURA.ne.jp [1]
 
 
