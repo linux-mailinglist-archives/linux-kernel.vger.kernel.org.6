@@ -1,82 +1,125 @@
-Return-Path: <linux-kernel+bounces-319545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C95396FE4B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:02:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE88C96FE4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA811C213A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946771F23373
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A4115B10C;
-	Fri,  6 Sep 2024 23:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9AB15B10F;
+	Fri,  6 Sep 2024 23:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHUoICWt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UwaGGXZk"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F5D1B85DC;
-	Fri,  6 Sep 2024 23:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241C715A4B0
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 23:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725663731; cv=none; b=TOM5cdnJ2a4ZfnBkWArIB1Bez92yXVoNVQoMjt/lDuMtD5NijhXsnauPFAxtT91mzza4Oj3loVpx8M6nieolLTqxfD/JmruswZceq9Yl0Ak7+i6/DpX80IsGy34LxYIgTD0+BxY0uu3DTlmRBOcgW93wEj4QNHftgahzu2KS2TY=
+	t=1725663937; cv=none; b=Zqis2qzyJDVOm9ehfgnkwIzpZowqYvYGEr8L7PShvDitMR4ic3+UZzoXkyeitD3Gya0fg8Z9PT8EHt5HtureGw/BRBcnd3Os93o8xg8Qgp9DFFbz9EDnPM2bB7isZB8hTpWSpY3moGdYF9o/u4hcrQaR/Lum/qma/CKnPrDRptY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725663731; c=relaxed/simple;
-	bh=ldflI04Ts9BSmUuRhFXFjpTFI7d5OrKXMZDtQeiJu+k=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=qi734IPygjejboKA9NJyWtyvY30XjK7iyYp5JYuLflGnkRzRzygLzoF+PotmwO46VgB3a5MuyhlQ8895SAhXIKdGb5FyfYEjWGhcXc4bUYDW6J5W2ivfAK503a63RCdPYFwNlewMONVc50/GD2hs/S/fhwIzr/wpUOv3hUGjHOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHUoICWt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4F0C4CEC5;
-	Fri,  6 Sep 2024 23:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725663730;
-	bh=ldflI04Ts9BSmUuRhFXFjpTFI7d5OrKXMZDtQeiJu+k=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=oHUoICWtCtwGqLgYdGmyD7Ju3yflh55yITURS00j6N3pfj4WeVnawdt9gwXlExhRb
-	 nQVWElBJa+7LSNjsiIAQD4ZefcamFbwjfAwhOWd9Jj8i87bsfTsOYqpen2scJEpV+x
-	 it6MlCsWeQT6Fdq4SDovdESx8h7eHxHHcen8GNoMYES1fVfMFgU6zxbWD0t67j2/hk
-	 vkPNaf75x/KQpJtrSvwO7mwaaVc+rxjqjVpB5d7TtmI3DHjq8DqlVJgXoduUptF9FJ
-	 GNA8D5JDHOZVD0T4j6sJZAuCX8DqzuFLCShteQN2d7ouZcg4oHOYAvk79vgi8GHDkh
-	 65bUcAV0YtX4A==
-Message-ID: <91eca16a2453514123e8ffd5346297eb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725663937; c=relaxed/simple;
+	bh=jTUoZYycIeut4S8sadLlwjtbwK1QvoH+O7/jgdB1c9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VfxxtP8EfyDrY38THOcVp3PrjIj+cTxaxGlPj/+kjul9sQHHMvNISsvXm+hxwRl0Ql82fB6SDouRlPndBgQKC+tz4JlgVbXsUgnK7Dn7N0l//DUbF0FqsoWKInOPZu2y80MD5nHgfBCFOodcqsdC4ARbqthahZKm0j7zqhOBdZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UwaGGXZk; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725663930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UXsA7JIUtdewb9efDW2qtqZcJCZNaaCVs6rSPdPNFlk=;
+	b=UwaGGXZksKdpWGS/XwT8uzeptMqy69/DEemlXIe3a0cnaLw4fR6ucXBGs67wwJgfBv4umB
+	QGyr36p8W/4UutTAmBMO1FAkadXRxsBmSUa53FAV7DjfBgfJSdEUA08gUPhl4MdjwFuBDU
+	K0RNWcV7rQDJ7YA+rEER0FyisbeiATc=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] mm: replace xa_get_order with xas_get_order where appropriate
+Date: Fri,  6 Sep 2024 16:05:12 -0700
+Message-ID: <20240906230512.124643-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5168975.haC6HkEk0m@diego>
-References: <20240828101503.1478491-1-heiko@sntech.de> <20240828101503.1478491-5-heiko@sntech.de> <9b92b5f03632e8793253ba75fc00f6e3.sboyd@kernel.org> <5168975.haC6HkEk0m@diego>
-Subject: Re: [PATCH v3 4/5] clk: clk-gpio: add driver for gated-fixed-clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>, mturquette@baylibre.com
-Date: Fri, 06 Sep 2024 16:02:08 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Heiko St=C3=BCbner (2024-09-05 15:48:35)
-> Am Mittwoch, 28. August 2024, 20:30:51 CEST schrieb Stephen Boyd:
-> > Quoting Heiko Stuebner (2024-08-28 03:15:02)
->=20
-> [leaving out all the "will fix" parts :-) ]
->=20
-> > > +static struct platform_driver gated_fixed_clk_driver =3D {
-> > > +       .probe          =3D clk_gated_fixed_probe,
-> > > +       .driver         =3D {
-> > > +               .name   =3D "gated-fixed-clk",
-> > > +               .of_match_table =3D gated_fixed_clk_match_table,
-> > > +       },
-> > > +};
-> > > +builtin_platform_driver(gated_fixed_clk_driver);
-> >=20
-> > The comment above builtin_platform_driver says "Each driver may only use
-> > this macro once". Seems that we need to expand the macro.
->=20
-> each _driver_, not each file is the important point I think.
+The tracing of invalidation and truncation operations on large files
+showed that xa_get_order() is among the top functions where kernel
+spends a lot of CPUs. xa_get_order() needs to traverse the tree to reach
+the right node for a given index and then extract the order of the
+entry. However it seems like at many places it is being called within an
+already happening tree traversal where there is no need to do another
+traversal. Just use xas_get_order() at those places.
 
-Ok!
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+---
+ mm/filemap.c | 6 +++---
+ mm/shmem.c   | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 070dee9791a9..7e3412941a8d 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2112,7 +2112,7 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
+ 			VM_BUG_ON_FOLIO(!folio_contains(folio, xas.xa_index),
+ 					folio);
+ 		} else {
+-			nr = 1 << xa_get_order(&mapping->i_pages, xas.xa_index);
++			nr = 1 << xas_get_order(&xas);
+ 			base = xas.xa_index & ~(nr - 1);
+ 			/* Omit order>0 value which begins before the start */
+ 			if (base < *start)
+@@ -3001,7 +3001,7 @@ static inline loff_t folio_seek_hole_data(struct xa_state *xas,
+ static inline size_t seek_folio_size(struct xa_state *xas, struct folio *folio)
+ {
+ 	if (xa_is_value(folio))
+-		return PAGE_SIZE << xa_get_order(xas->xa, xas->xa_index);
++		return PAGE_SIZE << xas_get_order(xas);
+ 	return folio_size(folio);
+ }
+ 
+@@ -4297,7 +4297,7 @@ static void filemap_cachestat(struct address_space *mapping,
+ 		if (xas_retry(&xas, folio))
+ 			continue;
+ 
+-		order = xa_get_order(xas.xa, xas.xa_index);
++		order = xas_get_order(&xas);
+ 		nr_pages = 1 << order;
+ 		folio_first_index = round_down(xas.xa_index, 1 << order);
+ 		folio_last_index = folio_first_index + nr_pages - 1;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 866d46d0c43d..4002c4f47d4d 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -893,7 +893,7 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ 		if (xas_retry(&xas, page))
+ 			continue;
+ 		if (xa_is_value(page))
+-			swapped += 1 << xa_get_order(xas.xa, xas.xa_index);
++			swapped += 1 << xas_get_order(&xas);
+ 		if (xas.xa_index == max)
+ 			break;
+ 		if (need_resched()) {
+-- 
+2.43.5
+
 
