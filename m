@@ -1,92 +1,126 @@
-Return-Path: <linux-kernel+bounces-318419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D009796ED91
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:17:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091CC96ED98
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA1991C20A91
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFBD283989
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA03115749A;
-	Fri,  6 Sep 2024 08:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FF3158524;
+	Fri,  6 Sep 2024 08:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RcHa/+l+";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="VTzYYLNu"
-Received: from a7-44.smtp-out.eu-west-1.amazonses.com (a7-44.smtp-out.eu-west-1.amazonses.com [54.240.7.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAMcbQZ0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637B0156F4C;
-	Fri,  6 Sep 2024 08:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD3157476;
+	Fri,  6 Sep 2024 08:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725610660; cv=none; b=dXgNgjNIOve5dJgJnQ82NM8IotTow/kgHHQ6/DtifMLbZhOMPeiU7GJ2x2DDfF+58GdDL3fMJSSHOv8JiVfNFtaA2nJznqEQpsoio6UQ6HIjdpIchyVTf9+YpHpHQr+aMz8tCH1YDg2IcPf1S+FhDCK3+USFi63We8qmp9XkrJ4=
+	t=1725610680; cv=none; b=IlEI7sqCJyDyvDjGQmrHpDs8ad8Q2AEkuEADo1LX9T0ujU9RBC94qmzZt2/rVZfyRNNQZg5LnSbRAB/GkX//4rmzDpTnVeBf8tNqXuHHgWTehnV6lXJ+vZSG4Ez2kwzfHvElQcjRtbPTAg4Kp7A6hm0PcbjfZs5+hw3u5eZRv+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725610660; c=relaxed/simple;
-	bh=5Wb8fP1SEMFE6J1hco629bsm8w9ZG7Mlhn8OcjaJNVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ogNAIY81vtrxSK413GQHVvsiwM/zOaZecR6zCGXPxs9sTB2D4T9XGM1t3aHhnyNrx2V609EnoIA4GQTqTZ/X7tSO80EPjr7urFWXP+3IGgdZ1U0++6YS9Am/OMD+KYgSA9DGxXYzh6tvH9/Vs6nFyTvEeoXtfHu17R6j24ES6HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RcHa/+l+; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=VTzYYLNu; arc=none smtp.client-ip=54.240.7.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725610656;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=5Wb8fP1SEMFE6J1hco629bsm8w9ZG7Mlhn8OcjaJNVo=;
-	b=RcHa/+l+DOBAVoa5TU8sKEbZ2RoOrayZl6FYJIZpncFsGRSW6hkVqo8X0X5pbg/c
-	ySnV1UBHh71xdIlqyh+C1ZpotRBts8tbHFwD3Z0T+UZeAcFCMdatoJG1BBrHmOOSLnW
-	UKmp1gD5Z6NdMmpZhjjKU5bnTMK17twPYiZY+HmY5gJy0Lbgng9lqFnLtrZt81J0MrH
-	ZQDQsLIguCzeS7E8mJBNi7bh96LLLSa7XIQ5C3VM/sibaWjSQhAiP7ZRiWrWohwPb9k
-	Imk8Adthfr/s/egcEx7iPaPN97ZCW/uoWF/TtsO+heNo7EH3A7ySj58bsd0TkZiU6SN
-	dnD8pPNtmQ==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725610656;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=5Wb8fP1SEMFE6J1hco629bsm8w9ZG7Mlhn8OcjaJNVo=;
-	b=VTzYYLNuMnj343jmhvymhUF3UBDLYeg0IHWy/sjm2BenIgksQrOOtJ7rXr8A5LON
-	pn0/0SDI8fGzrMP87AZ1WscwGB7B96cneacJ2giOcf6v71S9RNqeYJ/368NJHIKvVg7
-	9hgxLLKYn1AKxHZd7YqGlB+IzrzG+L/FmTIW9VDw=
-Message-ID: <01020191c669040b-0320e5c0-d4b2-4241-a403-09ec32f7ef35-000000@eu-west-1.amazonses.com>
-Date: Fri, 6 Sep 2024 08:17:36 +0000
+	s=arc-20240116; t=1725610680; c=relaxed/simple;
+	bh=QBOG/88G3YRcY9zMff+guhNTY4exVsPsjtw718pEeHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgPWQRjy6mpwnKqdeYPYPoNKMokBwiufJKlkQachBAHGocq/hRfDdiAXLJej/nD1GQobtfpslbhmwxVt9Vup5t9l+3UwxvJVet+ELZB55y59+DlWGAb42t/uEj1Mkh/UTQ0JQsf3Vww/Rmt6J3DcyZ1BTs27Yg91rrTlmL7z4ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAMcbQZ0; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725610679; x=1757146679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QBOG/88G3YRcY9zMff+guhNTY4exVsPsjtw718pEeHA=;
+  b=NAMcbQZ0260tZH2Y3M128miw4/sr5Cb3vOuOwdJW3+8coutfiZtxZI1v
+   qXzNRjF7e7sUpMgwwmow4sp+KdPqwvmxn7th/kHoCmQwauZEE8BADovRt
+   Iegkhku++54FFreuErm352bOU/ANiLJ8aZBA7XcXoq+b4pvx8NvICwbF1
+   QEwpfK6eysqIWWkmdWCas3h5oG5VWBqkQ4Ue8Pi96AD6FguyGDvnpxZNg
+   URceiH+DnzUvb7lYSd9rYYO8f6tW3HdCl6QNAODIOrwIt0zytVbMRZdTR
+   6bnbiWWAiyJuBsmEpAQszTPuluviUnNGZZ2BTSsG5ByKL/5796FrfKOoc
+   Q==;
+X-CSE-ConnectionGUID: SegKC2RYQ9q1k9KZDSTupQ==
+X-CSE-MsgGUID: dm9IQkg6Sc2xUDwfeZqYww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="41843318"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="41843318"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:17:58 -0700
+X-CSE-ConnectionGUID: 8+bx6dJfS1aiPuSPNOyLIw==
+X-CSE-MsgGUID: KLkjRvucRxiT6qU7fMgjQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="70308868"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
+  by fmviesa005.fm.intel.com with ESMTP; 06 Sep 2024 01:17:56 -0700
+Date: Fri, 6 Sep 2024 16:17:55 +0800
+From: Yuan Yao <yuan.yao@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Yuan Yao <yuan.yao@intel.com>
+Subject: Re: [PATCH v2 05/22] KVM: x86: Retry to-be-emulated insn in "slow"
+ unprotect path iff sp is zapped
+Message-ID: <20240906081755.okkq3hlrm6wibfxy@yy-desk-7060>
+References: <20240831001538.336683-1-seanjc@google.com>
+ <20240831001538.336683-6-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] soc: mediatek: cmdq: Remove cmdq_pkt_finalize()
- helper function
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Moudy Ho <moudy.ho@mediatek.com>, 
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20240901143259.16849-1-chunkuang.hu@kernel.org>
- <20240901143259.16849-4-chunkuang.hu@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240901143259.16849-4-chunkuang.hu@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.06-54.240.7.44
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240831001538.336683-6-seanjc@google.com>
+User-Agent: NeoMutt/20171215
 
-Il 01/09/24 16:32, Chun-Kuang Hu ha scritto:
-> In order to have fine-grained control, use cmdq_pkt_eoc() and
-> cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
-> 
-> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+On Fri, Aug 30, 2024 at 05:15:20PM -0700, Sean Christopherson wrote:
+> Resume the guest and thus skip emulation of a non-PTE-writing instruction
+> if and only if unprotecting the gfn actually zapped at least one shadow
+> page.  If the gfn is write-protected for some reason other than shadow
+> paging, attempting to unprotect the gfn will effectively fail, and thus
+> retrying the instruction is all but guaranteed to be pointless.  This bug
+> has existed for a long time, but was effectively fudged around by the
+> retry RIP+address anti-loop detection.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/x86.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 966fb301d44b..c4cb6c6d605b 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -8961,14 +8961,14 @@ static bool retry_instruction(struct x86_emulate_ctxt *ctxt,
+>  	if (ctxt->eip == last_retry_eip && last_retry_addr == cr2_or_gpa)
+>  		return false;
+>
+> +	if (!vcpu->arch.mmu->root_role.direct)
+> +		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2_or_gpa, NULL);
+> +
+> +	if (!kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa)))
+> +		return false;
+> +
 
-I'll pick this one after the media patches will be mainlined to avoid issues.
+Reviewed-by: Yuan Yao <yuan.yao@intel.com>
 
-In the meanwhile, mainly as a self-reminder:
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+>  	vcpu->arch.last_retry_eip = ctxt->eip;
+>  	vcpu->arch.last_retry_addr = cr2_or_gpa;
+> -
+> -	if (!vcpu->arch.mmu->root_role.direct)
+> -		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2_or_gpa, NULL);
+> -
+> -	kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa));
+> -
+>  	return true;
+>  }
+>
+> --
+> 2.46.0.469.g59c65b2a67-goog
+>
 
