@@ -1,369 +1,162 @@
-Return-Path: <linux-kernel+bounces-318471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8AE96EE79
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:46:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDAE96EE7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FAD1C21397
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC45B22942
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455E815852E;
-	Fri,  6 Sep 2024 08:46:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2371FAA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BFD158559;
+	Fri,  6 Sep 2024 08:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hGVoWrkR"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB5D158DCA
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725612361; cv=none; b=dOE/jW6Cz5mB9zFdmhGZy2zsvqmkNcgqo61HTl5S+wh/vGd9MtQpzB4vebE/WS3Q/dk260F+mls6XIWClbl3uJu+/KeNSNAH+MvFCcmFZLNyO+sOOoG2ylWOxwrbk2TPzFSa5PRbsPVYBEeWeUSAl3BNy9AQ8XCFhtk+ZgFWd+g=
+	t=1725612373; cv=none; b=OupCrcC3pQ1BHI5eo/+vXHy/i5kiKVij2OMCATCex6qSTgel7qEGOR5Gqhor3mXkJEuqcLARsv9ZE6BTK5JcYzdLtP0tn3MQKhx39yJL4pV6YV1PSK7SlfpGpAzgtJealnGsDfphH1zl8uMgfPER3UkFQhRzAG7fKyhIS91QG4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725612361; c=relaxed/simple;
-	bh=QBu7fWTJAHy4NtCr74VZ3nOeUtP/bNmsjC4HvOCif3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjtdwvHvD4AP+Q8e+uTaw7v6APNKGieslxPaVWDWXLv2rPE9oHPz7cVbd6ic8l9JmFTKUU3e2Uc83IAPmMlH0+FVuu7cJxxXjYYi2ax1v9beBCOqxDyGA5o5fsAzQEXK1itRGQW9OEOLCl5M/UNBKfNbvnTrVImGZ32UCaEtmVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 928ADFEC;
-	Fri,  6 Sep 2024 01:46:25 -0700 (PDT)
-Received: from [10.162.41.22] (e116581.arm.com [10.162.41.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EEF33F66E;
-	Fri,  6 Sep 2024 01:45:50 -0700 (PDT)
-Message-ID: <efc2f4c8-d853-4197-8f38-1ea274b888c5@arm.com>
-Date: Fri, 6 Sep 2024 14:15:47 +0530
+	s=arc-20240116; t=1725612373; c=relaxed/simple;
+	bh=CRJ+948422gSmOkKKC6UAzas1zOJwwcbdHp4kT73wc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AXPxXPNfeBiUXhU9r3Y4efbsOUBXKGpTl3oHebtwbYDTmiRgULM6oOnnUv8kmfGZ+FQrMr/jY2KV4ayvi2xeIkeUIC4h5mc/eK+jXCGuS5gcMUknnk9sexBIDlP1gErvmKv2qJEU3QnCHAJUYI9F3UA2e4k8HHhL/Z7aZQq+cx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hGVoWrkR; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e613a10so23205461fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 01:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725612369; x=1726217169; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fgt2a9Fpo8526ioTRsH9RdBLj1tKIs+IfpbrT2TF+Xg=;
+        b=hGVoWrkRhgsfdIkojsbImhdN+07VC5dmpEY9Yc5zNGd8Hjpn1zzdjX/+01H8st41pP
+         hZNVHnFBgpn7SfKeh0RJ8fFdNdMxV0HMYvIZBxicJNtoIe65GEZ/EzNnzHm4G8lq1fpC
+         DDqqwRvRpKNitTL7IzcDNJArykux9nztUxXc81oqfgJxv3ozrmdB9qEkWPertqeshurt
+         egMyv45tme7f54twAVAz/ZV/aKTA3JJ33zAJ8scXluOGswswZknVI7QJGd/h0SnAlBCf
+         8YtROiFPo48uYFwoPBHwUC1ea3JDMQ6ivcpjHHeEUlRPRSw4pVhAkWshm5Z/lSEwk6zB
+         4cVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725612369; x=1726217169;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fgt2a9Fpo8526ioTRsH9RdBLj1tKIs+IfpbrT2TF+Xg=;
+        b=iYl8O4pGj0nP0CPodJ8yZyhxlbYLSPWxVyjPKF+SkUsQM2xeywa8el+aOt5ELxMJng
+         Qqz/nUi/bfrGrpq6oG6aAXnHxZHO5dMXJ5a2zxwDfQHjJG+epEVhXe/0c0/J+xEUlqh2
+         i7oiWrY1Otf6Wo400lN/2LHpG8vrPEta06cfCDKRMMMOvXKA9VBZstAvTdze369Hjdvt
+         PQBLxsGrFT/E31uDfsQJLvtjxYZ7oBz4nstgIA7RotSxsYTD5OXv80yFcN5WiktDE85b
+         8W3otZr3NqaZ6NekXxJGu6wek2iY5hmrmU7+cWbhm0AWMOxLUwoN/6/oAzKi6/qPDrcH
+         lXqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVq0s38XpGbgNHTHB3opDIvZs+F5MstvwFaeL06vUxOi/gErNxTvvDeE84r+YY6KLEF2rmUrBWQe8X8j+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmIzJuYNXPX5XbgELa17HNAs35kQ1ytKGwUj7VPyjQDBxw5Nyi
+	Ci2IQDfeZrrhQEW0OurXP0BrtkYPihH9yUaWTvzobUSFdIa4jIoGElsfidqJLJw=
+X-Google-Smtp-Source: AGHT+IH29lsA/EaNVs2aoMXeuKn6ISNGmQxGAiUZhuylkrdYTrKsuCzeyv3JVlWvIo9dxH4s1fcmgQ==
+X-Received: by 2002:a05:651c:154b:b0:2f3:f256:aeec with SMTP id 38308e7fff4ca-2f6106d8e1dmr256112241fa.19.1725612368773;
+        Fri, 06 Sep 2024 01:46:08 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d527sm244627866b.135.2024.09.06.01.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 01:46:08 -0700 (PDT)
+Date: Fri, 6 Sep 2024 10:46:06 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pwm@vger.kernel.org, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pwm: Fix an off-by-one in the stm32 driver
+Message-ID: <25x74hglxoyb33fphdrtxrpmvsqe5227d7vy6uo6ez77hjbrn6@dh637q6cvzax>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: Abstract THP allocation
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-2-dev.jain@arm.com>
- <336ce914-43dc-4613-a339-1a33f16f71ad@arm.com>
- <10aea3c3-42be-4f82-8961-75d5142a9653@arm.com>
- <60f1577f-314d-4ac9-85b3-068111594845@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <60f1577f-314d-4ac9-85b3-068111594845@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="j3eeqydzopyjpjod"
+Content-Disposition: inline
 
 
-On 9/6/24 13:58, Ryan Roberts wrote:
-> On 06/09/2024 06:42, Dev Jain wrote:
->> On 9/5/24 16:38, Ryan Roberts wrote:
->>> On 04/09/2024 11:09, Dev Jain wrote:
->>>> In preparation for the second patch, abstract away the THP allocation
->>>> logic present in the create_huge_pmd() path, which corresponds to the
->>>> faulting case when no page is present.
->>>>
->>>> There should be no functional change as a result of applying
->>>> this patch.
->>>>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>> ---
->>>>    mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
->>>>    1 file changed, 67 insertions(+), 43 deletions(-)
->>>>
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 67c86a5d64a6..58125fbcc532 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -943,47 +943,89 @@ unsigned long thp_get_unmapped_area(struct file *filp,
->>>> unsigned long addr,
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->>>>    -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
->>>> -            struct page *page, gfp_t gfp)
->>>> +static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct
->>>> vm_area_struct *vma,
->>> Is there a reason for specifying order as a parameter? Previously it was
->>> hardcoded to HPAGE_PMD_ORDER. But now, thp_fault_alloc() and
->>> __thp_fault_success_stats() both take order and map_pmd_thp() is still
->>> implicitly mapping a PMD-sized block. Unless there is a reason you need this
->>> parameter in the next patch (I don't think there is?) I suggest simplifying.
->> If I am not wrong, thp_fault_alloc() and __thp_fault_success_stats()
->> will remain the same in case of mTHP?
-> No, its a bit different for smaller-than-pmd THP - that's handled in
-> alloc_anon_folio() in memory.c. It deals with fallback to smaller orders (inc
-> order-0. Potentially alloc_anon_folio() could be refactored to use your new
-> functions in future but I'm sure there would be a number of subtlties to
-> consider and in any case you would want to make that a separate change. The
-> order param would be added as part of that future change.
+--j3eeqydzopyjpjod
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Okay.
+Hello Linus,
 
->
->> I chose to pass order so that these
->> functions can be used by others in the future.
-> It's not valuable to have an internal interface with no users. My advice is to
-> keep it simple and only extend it when a user pops up.
+the following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Makes sense. In that case, should I call it pmd_thp_fault_alloc() to enforce that
-this is not a non-PMD THP?
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
->
->> Therefore, these two functions
->> can be generically used in the future while map_pmd_thp() (as the name suggests)
->> maps only a PMD-mappable THP.
->>
->>>> +                  unsigned long haddr, struct folio **foliop,
->>> FWIW, I agree with Kirill's suggestion to just return folio* and drop the output
->>> param.
->> As I replied to Kirill, I do not think that is a good idea. If you do a git grep on
->> the tree for "foliop", you will find several places where that is being used, for
->> example, check out alloc_charge_folio() in mm/khugepaged.c. The author intends to
->> do the stat computation and setting *foliop in the function itself, so that the
->> caller is only concerned with the return value.
-> By having 2 return params, you open up the possibility of returning an invalid
-> combination (e.g. ret==FALLBACK, folio!=NULL). You avoid that by having a single
-> return param, which is either NULL (failure) or a valid pointer.
+are available in the Git repository at:
 
-Okay, I agree with this in a generic sense.
+  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/p=
+wm/for-6.11-rc7-fixes
 
->
->> Also, if we return the folio instead of VM_FAULT_FALLBACK from thp_fault_alloc(),
->> then you will have two "if (unlikely(!folio))" branches, the first to do the stat
->> computation in the function, and the second branch in the caller to set ret =
->> VM_FAULT_FALLBACK
->> and then goto out/release.
-> There are already 2 conditionals, that doesn't change.
->
->> And, it is already inconsistent to break away the stat computation and the
->> return value
->> setting, when the stat computation name is of the form
->> "count_vm_event(THP_FAULT_FALLBACK)"
->> and friends, at which point it would just be better to open code the function.
-> I don't understand this.
->
->> If I am missing something and your suggestion can be implemented neatly, please
->> guide.
-> This looks cleaner/simpler to my eye (also removing the order parameter):
->
-> static folio *thp_fault_alloc(gfp_t gfp, struct vm_area_struct *vma,
-> 			      unsigned long haddr, unsigned long addr)
-> {
-> 	const int order = HPAGE_PMD_ORDER;
-> 	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->
-> 	if (unlikely(!folio)) {
-> 		count_vm_event(THP_FAULT_FALLBACK);
-> 		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
-> 		goto out;
-> 	}
->
-> 	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
-> 	if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
-> 		folio_put(folio);
-> 		count_vm_event(THP_FAULT_FALLBACK);
-> 		count_vm_event(THP_FAULT_FALLBACK_CHARGE);
-> 		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
-> 		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-> 		goto out;
-> 	}
-> 	folio_throttle_swaprate(folio, gfp);
->
-> 	folio_zero_user(folio, addr);
-> 	/*
-> 	 * The memory barrier inside __folio_mark_uptodate makes sure that
-> 	 * folio_zero_user writes become visible before the set_pmd_at()
-> 	 * write.
-> 	 */
-> 	__folio_mark_uptodate(folio);
-> out:
-> 	return folio;
-> }
->
->
-> static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
-> {
-> 	vm_fault_t ret = VM_FAULT_FALLBACK;
-> 	...
->
-> 	folio = thp_fault_alloc(gfp, vma, haddr, vmf->address);
-> 	if (unlikely(!folio))
-> 		goto release;
-> 	...
-> }
->
+for you to fetch changes up to 10c48e9a8fd5e524d37559cf4a06039b4c25db48:
 
-Thanks for your help. I will switch to this, just that, ret should still
-be initialized to zero in case we spot the pmd changes after taking the lock.
-So I'll set it in the case of !folio.
+  pwm: stm32: Use the right CCxNP bit in stm32_pwm_enable() (2024-09-05 11:=
+12:01 +0200)
 
->
->>> Thanks,
->>> Ryan
->>>
->>>> +                  unsigned long addr)
->>>>    {
->>>> -    struct vm_area_struct *vma = vmf->vma;
->>>> -    struct folio *folio = page_folio(page);
->>>> -    pgtable_t pgtable;
->>>> -    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->>>> -    vm_fault_t ret = 0;
->>>> +    struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->>>>    -    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->>>> +    *foliop = folio;
->>>> +    if (unlikely(!folio)) {
->>>> +        count_vm_event(THP_FAULT_FALLBACK);
->>>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>> +        return VM_FAULT_FALLBACK;
->>>> +    }
->>>>    +    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->>>>        if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
->>>>            folio_put(folio);
->>>>            count_vm_event(THP_FAULT_FALLBACK);
->>>>            count_vm_event(THP_FAULT_FALLBACK_CHARGE);
->>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>>>            return VM_FAULT_FALLBACK;
->>>>        }
->>>>        folio_throttle_swaprate(folio, gfp);
->>>>    -    pgtable = pte_alloc_one(vma->vm_mm);
->>>> -    if (unlikely(!pgtable)) {
->>>> -        ret = VM_FAULT_OOM;
->>>> -        goto release;
->>>> -    }
->>>> -
->>>> -    folio_zero_user(folio, vmf->address);
->>>> +    folio_zero_user(folio, addr);
->>>>        /*
->>>>         * The memory barrier inside __folio_mark_uptodate makes sure that
->>>>         * folio_zero_user writes become visible before the set_pmd_at()
->>>>         * write.
->>>>         */
->>>>        __folio_mark_uptodate(folio);
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
->>>> +{
->>>> +    count_vm_event(THP_FAULT_ALLOC);
->>>> +    count_mthp_stat(order, MTHP_STAT_ANON_FAULT_ALLOC);
->>>> +    count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>>> +}
->>>> +
->>>> +static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>>> +            struct vm_area_struct *vma, unsigned long haddr,
->>>> +            pgtable_t pgtable)
->>>> +{
->>>> +    pmd_t entry;
->>>> +
->>>> +    entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
->>>> +    entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>>> +    folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>>> +    folio_add_lru_vma(folio, vma);
->>>> +    pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>>> +    set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>>> +    update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>>> +    add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>>> +    mm_inc_nr_ptes(vma->vm_mm);
->>>> +}
->>>> +
->>>> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>>> +{
->>>> +    struct vm_area_struct *vma = vmf->vma;
->>>> +    struct folio *folio = NULL;
->>>> +    pgtable_t pgtable;
->>>> +    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->>>> +    vm_fault_t ret = 0;
->>>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
->>>> +
->>>> +    pgtable = pte_alloc_one(vma->vm_mm);
->>>> +    if (unlikely(!pgtable)) {
->>>> +        ret = VM_FAULT_OOM;
->>>> +        goto release;
->>>> +    }
->>>> +
->>>> +    ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
->>>> +                  vmf->address);
->>>> +    if (ret)
->>>> +        goto release;
->>>>          vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
->>>> +
->>>>        if (unlikely(!pmd_none(*vmf->pmd))) {
->>>>            goto unlock_release;
->>>>        } else {
->>>> -        pmd_t entry;
->>>> -
->>>>            ret = check_stable_address_space(vma->vm_mm);
->>>>            if (ret)
->>>>                goto unlock_release;
->>>> @@ -997,20 +1039,9 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct
->>>> vm_fault *vmf,
->>>>                VM_BUG_ON(ret & VM_FAULT_FALLBACK);
->>>>                return ret;
->>>>            }
->>>> -
->>>> -        entry = mk_huge_pmd(page, vma->vm_page_prot);
->>>> -        entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>>> -        folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>>> -        folio_add_lru_vma(folio, vma);
->>>> -        pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>>> -        set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>>> -        update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>>> -        add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>>> -        mm_inc_nr_ptes(vma->vm_mm);
->>>> +        map_pmd_thp(folio, vmf, vma, haddr, pgtable);
->>>>            spin_unlock(vmf->ptl);
->>>> -        count_vm_event(THP_FAULT_ALLOC);
->>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
->>>> -        count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>>> +        __thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
->>>>        }
->>>>          return 0;
->>>> @@ -1019,7 +1050,8 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct
->>>> vm_fault *vmf,
->>>>    release:
->>>>        if (pgtable)
->>>>            pte_free(vma->vm_mm, pgtable);
->>>> -    folio_put(folio);
->>>> +    if (folio)
->>>> +        folio_put(folio);
->>>>        return ret;
->>>>      }
->>>> @@ -1077,8 +1109,6 @@ static void set_huge_zero_folio(pgtable_t pgtable,
->>>> struct mm_struct *mm,
->>>>    vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>>>    {
->>>>        struct vm_area_struct *vma = vmf->vma;
->>>> -    gfp_t gfp;
->>>> -    struct folio *folio;
->>>>        unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->>>>        vm_fault_t ret;
->>>>    @@ -1129,14 +1159,8 @@ vm_fault_t do_huge_pmd_anonymous_page(struct
->>>> vm_fault *vmf)
->>>>            }
->>>>            return ret;
->>>>        }
->>>> -    gfp = vma_thp_gfp_mask(vma);
->>>> -    folio = vma_alloc_folio(gfp, HPAGE_PMD_ORDER, vma, haddr, true);
->>>> -    if (unlikely(!folio)) {
->>>> -        count_vm_event(THP_FAULT_FALLBACK);
->>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>> -        return VM_FAULT_FALLBACK;
->>>> -    }
->>>> -    return __do_huge_pmd_anonymous_page(vmf, &folio->page, gfp);
->>>> +
->>>> +    return __do_huge_pmd_anonymous_page(vmf);
->>>>    }
->>>>      static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+This gives you just a single fix for a commit from the last merge
+window.
+
+Please pull this for 6.11-rc7.
+
+Thanks
+Uwe
+
+----------------------------------------------------------------
+pwm: Fix an off-by-one in the stm32 driver
+
+Hardware engineers tend to start counting at 1 while the software guys
+usually start with 0. This isn't so nice because that results in drivers
+where pwm device #2 needs to use the hardware registers with index 3.
+
+With the commits
+
+	796b942f6596 ("mfd: stm32-timers: Add some register definitions with a par=
+ameter")
+	7cea05ae1d4e ("pwm-stm32: Make use of parametrised register definitions")
+
+(merged for v6.11-rc1) I tried to improve the situation and make this
+counting mismatch more explicit and transparent. However in one instance
+I failed to add the needed +1.
+
+This was noticed by Fabrice Gasnier (however in a way that made me
+hesitate to add a "Reported-by:" tag, see
+https://lore.kernel.org/linux-pwm/3515a8f3-436e-4d14-9bac-dfe6aa869819@foss=
+=2Est.com),
+thanks to him for catching the issue.
+
+A small patch fixing that mismatch is the only change included here.
+
+----------------------------------------------------------------
+Uwe Kleine-K=F6nig (1):
+      pwm: stm32: Use the right CCxNP bit in stm32_pwm_enable()
+
+ drivers/pwm/pwm-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--j3eeqydzopyjpjod
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbawUwACgkQj4D7WH0S
+/k7fFAgAjQwed2OMbq8y50Ms5vXUJzqqSH23sa6mkO3ZhMlVItE/DE1I7xIdG7PQ
+QOw3dg1oBn8Js85FTCDrxrMcVCM7PqfElKJaU3NqTRru1ZCoYugJAibbEHjwdMDi
+MlGrXCRX+F9s3X4duU8YP8mGeSexXge+RXFC/B4liwe/ZD8YEU8YL2zY8hm4XQ7m
+SSbDeXKTJSOyNeILUqHYikO9cBH4Vf+twdhpB1Ar9NJDg3ij25GBrhkxz6rlGi7a
+RRHjQNEKFMlZQLG2FtEeDNl89h98K1DQN8q8FI+hXjvaFwOpgoo4vcUbsCZAMXJq
+Vyk9zOs3+gCR8Xb9W803y3nPMzGw9A==
+=cYdF
+-----END PGP SIGNATURE-----
+
+--j3eeqydzopyjpjod--
 
