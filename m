@@ -1,153 +1,148 @@
-Return-Path: <linux-kernel+bounces-319152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1981196F898
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F266496F8A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B55286F44
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15C1281F3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE351D3191;
-	Fri,  6 Sep 2024 15:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BforSi7k"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5C31D319F;
+	Fri,  6 Sep 2024 15:51:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090731D1F6F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A072374F1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725637676; cv=none; b=IeXpM5iXqoUUVbTi6hUYrx6PzffKC7cA816pOCLWNR79CxbHwVuEKxFivI6fzNh3egBadPcwFNH7YBByRfzJUlH67iuFzXCobr0k2m0Rb8RC8l1ieFMRAfE8sHdpctyxg/RdZTQCToaHkwXb1R0JzUp+QMuw2dGuOayOo4SJVoE=
+	t=1725637872; cv=none; b=rPBNFeOV398WBBkIwLkrnOKdNq6ukpgG6QwGoMavLPQyUJjpLVR8Yn8nhQwyoipakazfa4/J7tDt9JY2M+I7Qy/nlLmQQodoDlokJsh7o2VR16EgZ80LT4O6qBj6r3Vkv37XrGfqDaNosmOs2BQ1Z403G6YT6clNCAElXRtruqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725637676; c=relaxed/simple;
-	bh=zp+DRchAoSH6nEhGn8NigH/AGNYz0sJ/vBoXvNGXq6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m5B9Yf7oqYORPl6c6f5Ub67TYbDXbVxW4DckuUxF7rQouBmdZFmqer1xYvkRJt9qdmioiTh1uAYUjw9L/qgFUzKUpQ4lnD1Za+Ny8nOk8DOhJEGQ9sxuu6utgT7RYODjpv5QClVxI6bt4vL/iF1fJ0zhcw01MXnPgIjPwfV4Htk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BforSi7k; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-846c59979efso589248241.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725637674; x=1726242474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bhSj9nfZOKGx2oI8Vgr1Z2YFtbWDQo0OdEcOMXGBUVQ=;
-        b=BforSi7k9socR64Te/cpapTn6yC0bYcbN3Sfzw/xTTMSFDrrNJOrW3NKVtJDXi3VfC
-         Zdp4DusPrRw4KlUACysbWt/CCNZ6TjMUPnYa1x12BMyTMm/M0e7Im6erF9YMbIO2IA13
-         +zBR3l7GHLCtnPQ/ySbCofJUlFWf9djWDIELjC4emJTJq+2ihklhinrQF+lYuRyQ11sl
-         yBfVTnMQ5ffdww5Gf1sAL1NXeKHUZwBkFNHQg6jHXO0kXNNeiOko2Faw6mBoao3LXvWZ
-         PaPWPN8fzjtffqPymGsZ2aanuDpdSkR2i+aF9dkP0WrJVt6qKJUDEWwAzBO/1bBgtT7N
-         Nl/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725637674; x=1726242474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bhSj9nfZOKGx2oI8Vgr1Z2YFtbWDQo0OdEcOMXGBUVQ=;
-        b=JgfIVq2QHrIUlmzZFEtI/5PnLI57JIYmVz915PBBL/Fy9IxEgY+uQZjgNPXLJDpYnG
-         XLQlM6I70pwnMCeAaPlORmnHjSCaZqYltZSNI7bnz0Acp9q0u40IUI0uppSaNGD7dmlJ
-         z+/2WfRp7qwinKfAuajT2RmE5E54f+glyA2lrfwbiJnm/usoIqP3LHeQIPbE4g+OqXLQ
-         G5oHRgpW46xTzaQUK6urjpCMvFEEw1FRDy0UTJqEHVNasNZXBkazRHdi1U31iqd7sOl5
-         Wp/7xtRj/3eGhRYtdVbK81/UzeXvszAAk4KYcA3uhZHAR+70RK/Ve+MSJdCXrzNuTp2O
-         4XVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeKOTJaXkrZL1pDdmjtA2VxMSiB8CkK54dAv8u0jqqOID/5+YKldF7JRYXw/F0hLudnvTYq5+OK8Thhtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyjuPV1MPXRnec0yN5a9ckwTHKMCy/8SVoagaHIqyjrhuaQ9cm
-	82YJ1QoBP2MtjW/S9XQSLS+fTLGIKyBJUKDxooAdGTjS7F3Mnetulh1DB2rA+zssvmUXzr4imhz
-	E0Lp8sEy4X896OvPBjmXhs+Xfm+sC1rpxBFgf
-X-Google-Smtp-Source: AGHT+IF7X3uC600GKPCYXtrk3rXSJ/jRYK/ecUEv0Py5v9ieqTUOC1FYqsUcW+C1Bf7xEBaWosXwVByWGbyAX14C8rg=
-X-Received: by 2002:a05:6122:1e16:b0:501:2a26:8ccf with SMTP id
- 71dfb90a1353d-502141df589mr3197102e0c.6.1725637673925; Fri, 06 Sep 2024
- 08:47:53 -0700 (PDT)
+	s=arc-20240116; t=1725637872; c=relaxed/simple;
+	bh=qo8O1h2lAqqv1CX/RzBNtMvvKqsJQzhgLJn7r2wlNX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r2NhwKhOQm9CntEu7vo03SptXjkQYC53yi9jC89yYMdQjqO3oYYftueWpXkWMXSLGIgfvHBigRmhC75PZ0Z6kqlMgSFEEDQAgQf8LRfXsxd4kauzvcFdwd5+pUTP45Ph2si09r52hVaUoLch4faid3CyetLU+yv1I1Al3SA5tBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1smbEb-0007zn-CX; Fri, 06 Sep 2024 17:50:53 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1smbEZ-005ysl-Jh; Fri, 06 Sep 2024 17:50:51 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1smbEZ-00A9vb-1b;
+	Fri, 06 Sep 2024 17:50:51 +0200
+Date: Fri, 6 Sep 2024 17:50:51 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: net: ethernet-phy: Add
+ forced-master/slave properties for SPE PHYs
+Message-ID: <Ztsk23X_0p57KGSS@pengutronix.de>
+References: <20240906144905.591508-1-o.rempel@pengutronix.de>
+ <c08ac9b7-08e1-4cde-979c-ed66d4a252f1@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
- <20240906-macos-build-support-v2-7-06beff418848@samsung.com>
- <CAHC9VhQkstJ8Ox-T+FLU34s9U0gezRba6bMA-tUPs80u6sVh2g@mail.gmail.com> <CAK7LNAQytsDzaJfAJA0nL=KPjxj3DBCRLeuHUwgGDt8fTJ0fTQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAQytsDzaJfAJA0nL=KPjxj3DBCRLeuHUwgGDt8fTJ0fTQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 6 Sep 2024 11:47:43 -0400
-Message-ID: <CAHC9VhS19s9+F2LhagbpxTR6DZPu_A8FADmBw7+BdaFQ6vx=LQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] selinux: move genheaders to security/selinux/
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	speakup@linux-speakup.org, selinux@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c08ac9b7-08e1-4cde-979c-ed66d4a252f1@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2024 at 11:37=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Fri, Sep 6, 2024 at 11:54=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > On Fri, Sep 6, 2024 at 7:01=E2=80=AFAM Daniel Gomez via B4 Relay
-> > <devnull+da.gomez.samsung.com@kernel.org> wrote:
-> > >
-> > > From: Masahiro Yamada <masahiroy@kernel.org>
-> > >
-> > > This tool is only used in security/selinux/Makefile.
-> > >
-> > > There is no reason to keep it under scripts/.
-> > >
-> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > ---
-> > >  scripts/remove-stale-files                                    | 3 ++=
-+
-> > >  scripts/selinux/Makefile                                      | 2 +-
-> > >  scripts/selinux/genheaders/.gitignore                         | 2 --
-> > >  scripts/selinux/genheaders/Makefile                           | 3 --=
--
-> > >  security/selinux/.gitignore                                   | 1 +
-> > >  security/selinux/Makefile                                     | 7 ++=
-+++--
-> > >  {scripts/selinux/genheaders =3D> security/selinux}/genheaders.c | 0
-> > >  7 files changed, 10 insertions(+), 8 deletions(-)
-> >
-> > Did you read my comments on your previous posting of this patch?  Here
-> > is a lore link in case you missed it or it was swallowed by your
-> > inbox:
-> >
-> > https://lore.kernel.org/selinux/3447459d08dd7ebb58972129cddf1c44@paul-m=
-oore.com
-> >
-> > Unless there is an serious need for this relocation, and I don't see
-> > one explicitly documented either in this patchset or the previous, I
-> > don't want to see this patch go upstream.
->
->
-> I commented on the previous thread.
+On Fri, Sep 06, 2024 at 05:11:54PM +0200, Andrew Lunn wrote:
+> On Fri, Sep 06, 2024 at 04:49:05PM +0200, Oleksij Rempel wrote:
+> > Add two new properties, `forced-master` and `forced-slave`, to the
+> > ethernet-phy binding. These properties are intended for Single Pair
+> > Ethernet (1000/100/10Base-T1) PHYs, where each PHY and product may have
+> > a predefined link role (master or slave). Typically, these roles are set
+> > by hardware strap pins, but in some cases, device tree configuration is
+> > necessary.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  .../devicetree/bindings/net/ethernet-phy.yaml | 22 +++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > index d9b62741a2259..af7a1eb6ceff6 100644
+> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> > @@ -158,6 +158,28 @@ properties:
+> >        Mark the corresponding energy efficient ethernet mode as
+> >        broken and request the ethernet to stop advertising it.
+> > 
+> > +  forced-master:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      If set, forces the PHY to operate as a master. This is used in Single Pair
+> > +      Ethernet (1000/100/10Base-T1) where each PHY and product has a predefined
+> > +      link role (master or slave). This property is board-specific, as the role
+> > +      is usually configured by strap pins but can be set through the device tree
+> > +      if needed.
+> > +      This property is mutually exclusive with 'forced-slave'; only one of them
+> > +      should be used.
+> 
+> DT reviewers tend to complain about such mutually exclusive
+> properties.
 
-I already responded there.
+Yes, at this point i was uncertain.
 
---=20
-paul-moore.com
+> What you are effectively adding is support for the ethtool:
+> 
+> ethtool -s [master-slave preferred-master|preferred-slave|forced-master|forced-slave]
+
+ack
+
+> 10Base-T1 often does not have autoneg, so preferred-master &
+> preferred-slave make non sense in this context, but i wounder if
+> somebody will want these later. An Ethernet switch is generally
+> preferred-master for example, but the client is preferred-slave.
+
+Good point.
+
+> Maybe make the property a string with supported values 'forced-master'
+> and 'forced-slave', leaving it open for the other two to be added
+> later.
+> 
+> I've not seen the implementation yet, but i don't think there is much
+> driver specific here. We already have phydev->master_slave_set, it
+> just needs to be set from this property. Can it be done in phylib core
+> somewhere?
+
+Yes, this is the idea.
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
