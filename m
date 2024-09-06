@@ -1,133 +1,80 @@
-Return-Path: <linux-kernel+bounces-318862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F14496F444
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24BB96F446
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3736E1F256FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E47284D30
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A78813AA38;
-	Fri,  6 Sep 2024 12:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62FC13AA38;
+	Fri,  6 Sep 2024 12:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsGAieDv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UtdHbkxU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57021CC179;
-	Fri,  6 Sep 2024 12:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664E71CCB31;
+	Fri,  6 Sep 2024 12:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725625562; cv=none; b=u/lbnY3c1a15lvQP7CPWQhtw7X0DpKSyZRoM6rnpd8T65ke3J75v+L82tTEtFid3rLaZE1XN+N8qmY1+Gxc5ch8Az4cLBGmrD1+JtpWzsAgid4R12KEsCSh/Qv4UTzqCbM7lrv5q9PCmC8utwI62WIm2HvGFFcxSNV9ke1eaiD8=
+	t=1725625574; cv=none; b=siDJvgOeyPAw/pBNIwGiWGyl+Uy5qGvRVXHckWJU6qP3At++4tsMT3f9Kzmh9FVNSpSaxxkIfqM1QyDS57eUA0aPqtNAKLrXcK/VtusY9nqofmx7qegThwS3c9KTVoVrZLyQ4AGAC82J2qd38HVOcYLSyWK3GGDp6QtvXIr7vgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725625562; c=relaxed/simple;
-	bh=HTgyfXZ08GiT+mWhZjz50yynkk6nenvx3sv2iUFDbZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s4WhxHvnHRALKO+JhE0yJhYYRBkT8X5ir5En4xV8/bu0EY9qe/bq394PPxdz0yVOJBmWewXmGJgC/EymLD2TdLU2+zb72FpgMhQTvGLp8/2ZTPC3pclb23n0rnv6YkpV3jWvkSDQSK3/yXc3BcL+drw0uWMufwdLvz5n95uWw80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsGAieDv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E92C4CEC4;
-	Fri,  6 Sep 2024 12:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725625562;
-	bh=HTgyfXZ08GiT+mWhZjz50yynkk6nenvx3sv2iUFDbZQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DsGAieDv2h2cdYlSkyvTnlPfx2CwyTBrxd9Z1Z2UhxX36mLqTxFoRsgbEqa9cqLfo
-	 sB4zMm2EGFAiaspMzFAcCDpXuLilUfUQZnjK5yENZFfFhDuA0svTFqA97AoggfjO7B
-	 t9YZO4KkfYfQ1KoGj6i+qx+ljkFrw15zEdPPae/IpJWNITqhTcK9oX2e/TlZ68G288
-	 VhCx72/ZjiFK1h3HMug2b8ejq9uS46uzYKTUd/GGrzbwImm5/Zo0Yj6bThGgxQuj0d
-	 +FWJzbLsdyNp/BmcHezKb5M6cQCF0LCkQeRv6+8uFUcs57ivcT8C97BrByzvb4yKpq
-	 K1LaNTZXc4OEA==
-Message-ID: <98e7dc28-4413-4247-bad1-98b529f6d62d@kernel.org>
-Date: Fri, 6 Sep 2024 14:25:56 +0200
+	s=arc-20240116; t=1725625574; c=relaxed/simple;
+	bh=wg2DEOUPOH5mY7dbLVlCDoKEcqp7ii0rKBprLLEbrus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLgtWhwBBTxIn1ehOGlIJyb3st1qLjVcI/OwRx5nQC1DMO+VcH4q5VNya0S/qKXDLcINCat+cYqzMEAGkmyQkBDyjiMer8ZRzropmOPwOSG3nI/nBJ7FHoMwezYDIdLEV2hh+2hUNjSxuzfs/qNZX6MwZc9xxwt3JbAaNpPKt9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UtdHbkxU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=mvDngWb2sOxmPJKf6A6lqeBxp2PnJryygTWVHyPedRU=; b=UtdHbkxUAHe6Z3qZz/kpYTToW8
+	hH/b60BHEplFgWgppGWdEdqPNsrcdAgoyNhHdkR5x2/DnamJyDc8g7WWATHNRwHWjerm03DYKcwLU
+	QRblUPzEhQH3AmoPV6w4s2Nk9681R5OVlR7sMIHmF4P/SMpT8qZbLgFwujVogaBJpJyg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1smY2J-006o08-1q; Fri, 06 Sep 2024 14:25:59 +0200
+Date: Fri, 6 Sep 2024 14:25:59 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: saikrishnag@marvell.com, robh@kernel.org, jan.kiszka@siemens.com,
+	dan.carpenter@linaro.org, diogo.ivo@siemens.com,
+	kory.maincent@bootlin.com, hkallweit1@gmail.com, pabeni@redhat.com,
+	kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net-next v2] net: ti: icssg-prueth: Make pa_stats optional
+Message-ID: <47e80a78-58b7-481a-9b54-615a14eb104f@lunn.ch>
+References: <20240906093649.870883-1-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V1 RESEND] arm64: dts: qcom: sa8775p: Add UART node
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
-References: <20240827083252.5817-1-quic_vdadhani@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240827083252.5817-1-quic_vdadhani@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906093649.870883-1-danishanwar@ti.com>
 
-On 27/08/2024 10:32, Viken Dadhaniya wrote:
-> Add missing UART configuration for sa8775.
+On Fri, Sep 06, 2024 at 03:06:49PM +0530, MD Danish Anwar wrote:
+> pa_stats is optional in dt bindings, make it optional in driver as well.
+> Currently if pa_stats syscon regmap is not found driver returns -ENODEV.
+> Fix this by not returning an error in case pa_stats is not found and
+> continue generating ethtool stats without pa_stats.
 > 
-> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 231 ++++++++++++++++++++++++++
->  1 file changed, 231 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index e8dbc8d820a6..0c95a23aecec 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -1,6 +1,7 @@
+> Fixes: 550ee90ac61c ("net: ti: icssg-prueth: Add support for PA Stats")
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Please don't grow the file. At least not with above explanation. There
-is no sa8775p according to what I have been just told.
-
-We achieved consensus allowing sa8775p to stay, but now Qualcomm changes
-point of view and insists on new approach of dropping sa8775p. Therefore
-this change does not make much sense in the new approach.
-
-Best regards,
-Krzysztof
-
+    Andrew
 
