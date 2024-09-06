@@ -1,173 +1,230 @@
-Return-Path: <linux-kernel+bounces-318842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E15A96F40F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:13:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9886A96F40E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B2DD1C243E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:13:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FBB1F22C1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58B81CC882;
-	Fri,  6 Sep 2024 12:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887451CC89C;
+	Fri,  6 Sep 2024 12:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aE1hdCoT"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCAFJP+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775FB1CC179
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624826; cv=fail; b=cs03UAMBSs9qvlhS/oohwL0cOal9n6GbQpQLJv/Vca1q2R10fWRE2fxvWaTzC2c9kcYh7hn3vSroXzlj1H7huttvhF0D7/V2yRyDCE2HsoTQLtJ/BwY8XmSyK25qenHMV/He6FBt5T6P89fVIA33VSvtI1Xa0K9ZuOHBGToVmYg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624826; c=relaxed/simple;
-	bh=kp6iJDWuF0bXT1fVo3lD231uTNC9dY5bBUW1E0cQUTs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RrEEkg4bK6N+Jbj0YK//uxG3QCey8Qkdh9LXy6Leslt2epSvS3ZyC6yTg/eygscd3riZa5MZxz/Lw7mlp6GLULyHIhRuXufsrNiscJ6+1cBBUp96A3H2t4EVZVTM5IxORvuBpyW51ZmDP3L8ytPBFZcC4ac4DukcC0w60i8HaI8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aE1hdCoT; arc=fail smtp.client-ip=40.107.244.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rYNYDbD1d/H9/ma84tTxjXisUgy+jkB40QlFY1F3NbMboZhJcqPnWEkgqT31Ls4VfJClUzVzkg3mUAhOe2jBR9pltoRGZngpIkj1V1do8+wyyuwJhDudmzX+SN+eWOzerxKANtvjSmqABXGlDP0yAm4sZ5r0sN+Mf0+m4aHU2uSCsBW+T4mCx+V0x6wlsQRcqcID3pneez7didsckkEsJ7P7+l/lbcY9oHiRKwBHi1m8xcyb2zyTxH1G6LwV9ElISCojIvG6O1tuxGMbk92uo+WJnvO9j/qLcRVOwkt2tUivQ4k3pfrXcmCxrxfHrjqgQoYGluPNR6Wv+r/XzvbZ8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HRFNkcAx66McAtYgPd+yM5+jbcG8m5ZU9v3gBEzRKl8=;
- b=UzqZopzlJUArmsw7JGbxqlOVN/BDMBWj5RcCSaPB+qOdcEedkYrufzQA+15Xsfb765Xo7ITFJr0Zy9m4oR7bw9I6cTy2hYhNAaTLGCa06yl1WYl2wtFFsWr/UsX7/UiQhnJ4GMitxrvbqL50PKZGzwh+8PukWDe09t9jtpLqkNtJn/oN+TCr7YU+ATc/ApBIzO2FBHkVBlvSxa1d/bfGLm6ikRNXh4aE8FPr42jPkzMibaJpAEREOgLNQCltmdE6ohUsbmoutHYEmjZMzG4CKNyCwHAyflYIUH0jhis/PXoC8KCMFzLir3iP1tQecKIF4UKJWTjvKRYbzdyVPKog6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HRFNkcAx66McAtYgPd+yM5+jbcG8m5ZU9v3gBEzRKl8=;
- b=aE1hdCoTUHfuQLl8rTIBcQIEgAu/9Dh8gVBhGMwVR8x3icuDJO3wVlSa/5TGlra0HJSPY7IriW9pPzYmTvEkVmHFt2g3MIYHDn39o8l33HkheJfv4ocMLPcK2C6tKcUJwkl3pYsQzaX+O4zfn9la1f8FWKrAWrxSsTVj1XGs+NY=
-Received: from MN0PR05CA0003.namprd05.prod.outlook.com (2603:10b6:208:52c::33)
- by SN7PR12MB7180.namprd12.prod.outlook.com (2603:10b6:806:2a8::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Fri, 6 Sep
- 2024 12:13:41 +0000
-Received: from BL6PEPF0001AB57.namprd02.prod.outlook.com
- (2603:10b6:208:52c:cafe::4) by MN0PR05CA0003.outlook.office365.com
- (2603:10b6:208:52c::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.19 via Frontend
- Transport; Fri, 6 Sep 2024 12:13:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF0001AB57.mail.protection.outlook.com (10.167.241.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 12:13:40 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
- 2024 07:13:36 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
-	<ubizjak@gmail.com>, <jgg@nvidia.com>, <jon.grimm@amd.com>,
-	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v3 0/5] iommu/amd: Use 128-bit cmpxchg operation to update DTE
-Date: Fri, 6 Sep 2024 12:13:03 +0000
-Message-ID: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C0115530C;
+	Fri,  6 Sep 2024 12:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725624792; cv=none; b=lm1X9DPGYdTJKVnEI/fuCoVh/RcWNGn62XQbdiQIUnQeSeOBfu/A7raEfcn/RTKrRp625VwwetrBHRt5evbWkkRGJrpEPeAwv+suumlYiDEdDVpN18PMLsko6zmshX3/eZ25J1+WKcGQNwEo61Mqu1AwRTdJNyYisiz6cDq2tKg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725624792; c=relaxed/simple;
+	bh=O4IbQuILTK1wgitJEe6nd9DP8Z9lwZP+g95dPwuV4ZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a5GbfDRV7l8ZoEmqC7NFdwm3Wb8llMVGeobYdT+Py3W4h6VDntwomO/9O/0VSTQ6ZOve0s22qAkFLUfz4LrsQLsolYdlrPe1LGGRRiTQQ5003mN3/7sNgSrR1j7o1Y5LygHQg9DDQLsHyx3xsvbt0tw5r4FHFZnquFGZ+hBcsu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCAFJP+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D359C4CEC4;
+	Fri,  6 Sep 2024 12:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725624792;
+	bh=O4IbQuILTK1wgitJEe6nd9DP8Z9lwZP+g95dPwuV4ZQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lCAFJP+o/aE/K4L43qu+EBP6kCnL0ycLmBdBpAakvJrt4Q5+ohOggJ5kLF4Z+0QKt
+	 WFhATz70OyfvLMQC/fxORVtklFnrMguCgM4HYFVtWZeSrZ/XI11Lqy6ZVveuR5pcIj
+	 0sgLlG4uTCzqnmdFFPqRjVfK+qsVEAHuVe6IHd/eSUsfkCwxFkEEfT3ybuvmzDZJdw
+	 mILSRsm/wzV9XkZ/96Vk/r5IFl0VcrXFeq9Kdn/3YZMCmTgG9joRvV3FSnobqKmqNH
+	 tQh+x9VQj8HQniZpyHoKLjX+CKO2mMpKh3/Um82nf9l2TnyOLolM/ZbKnIRQkMjh5B
+	 jnPJYUvvA+MEQ==
+Message-ID: <47c56239-51a0-4ff2-9db2-0e0184cfb086@kernel.org>
+Date: Fri, 6 Sep 2024 14:13:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/9] dt-bindings: iio: dac: add ad3552r axi-dac
+ compatible
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-5-87d669674c00@baylibre.com>
+ <boahpvyzzmocnnpae2u6meub34yvqr2q3v5pzf2egp2fretlwk@ibas62hdypwo>
+ <fd3f4874-b410-4e98-acba-d0fac041a40e@baylibre.com>
+ <1928d0ce-cad9-4737-880e-3759c47fddbc@kernel.org>
+ <058937fa93d484f3e81807d08a39bd8dfd3358e8.camel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <058937fa93d484f3e81807d08a39bd8dfd3358e8.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
- (10.181.40.144)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB57:EE_|SN7PR12MB7180:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6144539e-42c7-457c-8ce4-08dcce6d5853
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?W7FNpcZAHCpadxWCIKNPj1zNSrQGqjxTgpxh8luP/7CeyDGXsvS+PHUIfs6g?=
- =?us-ascii?Q?QvAaE9qp0NKiBrBwu9IcF8q+nKY2Asv7tUXviBhQyTTKyxiwXNMRAWe4JNa2?=
- =?us-ascii?Q?vAlBwsucjbuL9tgvowIcJWX/h0CCMed2qoH0E8Y7LsQFIP9uDqGLW5956/a3?=
- =?us-ascii?Q?ubJKM7KkxyBMzGj4RtaB6Rjz8oUsQKpCF/jj8JfTX1qvgkefbz5bG++ilVNX?=
- =?us-ascii?Q?NlhGGXrIi1l5sz2TUCrt7ojgcdAKJjqzuJ2lzEP77c0PtPEWpwN3gYebzCxo?=
- =?us-ascii?Q?pYHHM958E2zHB6FDZFRtdeTNaFD6LC3ANnpatoOMzHRKc+ifv+1Zum8LaxN6?=
- =?us-ascii?Q?EuXDLUmAF16rGmjfMzCFiJpsPRyz5JkrbLdSrF9whbzyMmXYm1C0HLvE9d0B?=
- =?us-ascii?Q?XMJg79/rnzOkpU0ONrrgMZImO90JM2/cQE0aRYl3B89zW6wutQHFWmBEcK4Q?=
- =?us-ascii?Q?QDTgGFq9sC82SZwGFArLpgC9tp3jqphAquxONC7ERZ5jpLZw5+/deJ+CnAWa?=
- =?us-ascii?Q?clhZ/33K+HCajI+5sAXbyrDcM7AnpwslPR5qVajjaQD5KkEpQD62bI/NUrN4?=
- =?us-ascii?Q?aBkfiwH1btjH50e7QB8Ph4TkhHCtgw0p6C/b2ukfnrGKz+guzqwRWmEjjnqv?=
- =?us-ascii?Q?5FJ19JvvrMChQbocSLqoLCBU2DmhzBQKRRP+8JIKjtr/2EkJkgE0KPb9ugvd?=
- =?us-ascii?Q?JFeEA+BUc3FjFWbGoBmnzOpwErOxUdoJMAYUlGL2wUZmChmPK2VBycSd9MTs?=
- =?us-ascii?Q?iN2hEL1LDU2uDMPkiM/ZXMCl6/2LahO56wab4rjoL03W+bUJKDA017VrfR4c?=
- =?us-ascii?Q?KAhDlqjeyH/ZYNCmhN/rY5//omZy1qopv7fir6GKDaL3x5+6uanqWPGskO5d?=
- =?us-ascii?Q?4tcX28ZAn/XVcevj/tGg9t8aqVq5fX8Je/brmFsd4GcXXN/rRS466bMpcAt+?=
- =?us-ascii?Q?eOT5c597V1+Mwe8VG3Y2eHIBZcejtAqmlHJE/BHbqB9kkh85aAE/NELZTf1+?=
- =?us-ascii?Q?V93W0pwbPLURoRKGHB8tOKONo09eAUMrbKcfaTR8tl7Ups9U7wzJtiD8349Y?=
- =?us-ascii?Q?4cHyWir9stlKnWYp36AgNluJBmD/nWhvV9kXBEQDKpe8td3HTlvp/zBL03QK?=
- =?us-ascii?Q?Y6g9mYuFuS0XogZHmali7JHAwDC+66XHwJyapJtPMfKiaRp2OIlx9e3q9J+W?=
- =?us-ascii?Q?ygBTxjDmbX1bhuD2GdWucpAw7DmBnaWMalWX1oAfUNd/HD/EiJw6QZqZty38?=
- =?us-ascii?Q?hAA0dh49jlDV7fCa4tnHXLBWR4t5AU5NuRFDQljSo/XwHLJfVqAw8eyjBlgN?=
- =?us-ascii?Q?rebuhZh0H4vCqvpFgkyUKPQVD3Ai5S4eJNw4nITTqnEb/SYUQXrfVCBlwbuK?=
- =?us-ascii?Q?rIXL2Eg6wWFF4C5wD8s54MTQMRs+Atz2qD3k0ZW03crwGUtcna0qVinreS41?=
- =?us-ascii?Q?CpgF6oB/2pSLGIWIws+dsdYQO7L1aGGN?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 12:13:40.7614
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6144539e-42c7-457c-8ce4-08dcce6d5853
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB57.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7180
 
-This series modifies current implementation to use 128-bit cmpxchg to update DTE
-when needed as specified in the AMD I/O Virtualization Techonology (IOMMU)
-Specification.
+On 06/09/2024 13:53, Nuno Sá wrote:
+> On Fri, 2024-09-06 at 11:37 +0200, Krzysztof Kozlowski wrote:
+>> On 06/09/2024 11:11, Angelo Dureghello wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On 06/09/24 9:22 AM, Krzysztof Kozlowski wrote:
+>>>> On Thu, Sep 05, 2024 at 05:17:35PM +0200, Angelo Dureghello wrote:
+>>>>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>>>>
+>>>>> Add a new compatible for the ad3552r variant of the generic DAC IP.
+>>>>>
+>>>>> The ad3552r DAC IP variant is very similar to the generic DAC IP,
+>>>>> register map is the same, but some register fields are specific to
+>>>>> this IP, and also, a DDR QSPI bus has been included in the IP.
+>>>>>
+>>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>>>>> ---
+>>>>>   Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 1 +
+>>>>>   1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+>>>>> b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+>>>>> index a55e9bfc66d7..c0cccb7a99a4 100644
+>>>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+>>>>> @@ -24,6 +24,7 @@ properties:
+>>>>>     compatible:
+>>>>>       enum:
+>>>>>         - adi,axi-dac-9.1.b
+>>>>> +      - adi,axi-dac-ad3552r
+>>>> I am sorry, but what is the product here? It looks like either wrong
+>>>> order or even completely redundant. What is ad3552r?
+>>>>
+>>>> And why versions are mixed with real products but without any
+>>>> compatibility. What does the version express in such case?
+>>>
+>>> dac-ad3552r IP (fpga) is a variant of the dac IP, very similar,
+>>> about the version, it still reads as 9.1.b
+>>>
+>>> so i can eventually change it to:
+>>>
+>>> adi,axi-dac-ad3552-9.1.b
+>>>
+>>> Should be more correct.
+>>
+>> No. First ad3552r is the product, so axi-dac is redundant. Second why
+>> adding versions if you have product names? Versioning was allowed
+>> because apparently that's how these are called, but now it turns out it
+>> is not version but names.
+>>
+> 
+> Let me try to explain on how this whole thing works...
+> 
+> We have a generic FPGA IP called axi-dac (same story is true for the other axi-adc
+> IP) which adds some basic and generic capabilities like DDS (Direct digital
+> synthesis) and the generic one is the compatible existing now. This IP is a so called
+> IIO backend because it then connects to a real converter (in this case DACs)
+> extending it's capabilities and also serving as an interface between another block
+> (typical DMA as this is used for really high speed stuff) and the device. Now,
+> depending on the actual device, we may need to add/modify some features of the IP and
+> this is what's happening for the ad3552r DAC (it's still build on top of the 
 
-Changes in V3:
-  * Patch 2:
-    - Consolidate patch 2 and 3
-    - Change rw_semaphore to spin_lock
-  * Patch 3: Expand locking across 256-bit DTE read and update
-  * Patch 4: Fix clear_dte_entry()
-  * Patch 5: Consolidate amd_iommu_set_dirty_tracking() and set_dte_irq_entry() fixes
+What is "ad3552"? DAC right? Then as I said axi-dac is redundant. We do
+not call ti,tmp451 a ti,sensor-tmp451, right?
 
-v2: https://lore.kernel.org/lkml/20240829180726.5022-1-suravee.suthikulpanit@amd.com/
-v1 :https://lore.kernel.org/lkml/e937e26f-038a-6d01-76a9-76c86760ca4a@gmail.com/T/
+If ad3552 is something else, then the order of naming is not correct.
+Product name is always the first.
 
-Thanks,
-Suravee
 
-Suravee Suthikulpanit (5):
-  iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature is not supported
-  iommu/amd: Introduce helper functions to access and update 256-bit DTE
-  iommu/amd: Modify set_dte_entry() to use 256-bit DTE helpers
-  iommu/amd: Modify clear_dte_entry() to avoid in-place update
-  iommu/amd: Do not update DTE in-place in amd_iommu_set_dirty_tracking
-    and set_dte_irq_entry
+> generic axi-adc). And in this design the IP is also acting as a qspi controller for
+> actually controlling the configuration of the device while, typically, IIO backends
+> are meant to only care about the dataplane. With all of this, there are discussions
+> still happening on the RFC (Angelo was too fast with this version) between using
+> different properties or new compatibles for changes so significant like this on the
+> generic IP. See the thread where Conor is also involved.
 
- drivers/iommu/amd/amd_iommu_types.h |   8 +-
- drivers/iommu/amd/init.c            |  23 +--
- drivers/iommu/amd/iommu.c           | 272 +++++++++++++++++++---------
- 3 files changed, 201 insertions(+), 102 deletions(-)
+1. Then what does it mean for "adi,axi-dac-9.1.b"?
 
--- 
-2.34.1
+2. Is there any real customer product which uses this compatible alone?
+
+If you need to come up with customized compatibles, it means versioned
+one is not enough.
+
+If this is 9.1.b but not usable as 9.1.b ("for changes so significant
+like this on"), then I claim 9.1.b compatible is useless.
+
+> 
+>> Third, versions are useless if you do not use them as fallbacks.
+>>
+> 
+> In this particular case we can't use the generic IP as a fallback since without the
+> bus controller feature the device can't really work. But it can happen we increase
+> the version on the generic core and use the existing version as fallback 
+> 
+>> Something this is really broken and I don't know if the binding or this
+>> patch.
+> 
+> Having said the above, I'm really not sure if what we have is the best approach but
+> these are also early days (upstream) for this so we should still be able to change
+> things if we need too. I'm fairly sure there's still no one relying on this so we
+> should be able to change things in a breaking way (if we need to be that extreme).
+
+DT maintainers consistently (before someone here calls me inconsistent)
+propose not to use versioned compatibles if they map one-to-one to
+products or if they cannot be used alone. Several generic IP blocks like
+Synopsys or Cadence, match the latter - the customization from customer
+is needed, thus snps/cdns IP-block compatible is not usable.
+
+Best regards,
+Krzysztof
 
 
