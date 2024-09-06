@@ -1,85 +1,70 @@
-Return-Path: <linux-kernel+bounces-319285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EDD96FA16
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:46:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B82596FA25
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 010C0B22C2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44601F21F7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F3C1D2F5D;
-	Fri,  6 Sep 2024 17:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gANvLQKJ"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A27E1D86ED;
+	Fri,  6 Sep 2024 17:50:25 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C820B200DE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADA1D86E7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725644772; cv=none; b=RSKwy2eqwiFoWoQNT/mKjXtNFALig0YsrPoJD0K56UMfun91Z7nAsWcuoGqF78nvx1t+L1ttCXfW3eUyyxDyocZaviXPsZzkQ7hBrMU2AluHKRgHGLaUfhSTspDmNjg9DJnDVwtKUzSe4bPAkKp/oC8CVgxEZRBMIUtZ5RtZj7s=
+	t=1725645024; cv=none; b=jPU7DLClH42VVbNBnnJkX1ZL22KycWhTYXnsajo5oHvOQf6IaSF5RFN7M9bIcdMQYodJnNJ+PdYq/qdLj0qtfM++v9M4Om+5KsHxuvbSBWukHPusXArGgtW7Vu/qfUOL2QlvrQP9MfYZ5S12udFexBH/B5Jf8ePHK7Qh6raHff0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725644772; c=relaxed/simple;
-	bh=SPKeOKmKZRFLowFV/zLqa2KvC8mYZLS8DlgV8474r20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QFwOQtZXb/vo3fnFkAyMk2EMIheuGwdB/JngJlnws784z6UJtOhCj/iAEHWJEzg2lTFeONHI66GUk9KOTdxcMk0XEgRY0TpfPERxayjIg1KSCOmI0RNJ0BplEr54z0trsMqw8Lp41PWxrs6ol6Dunm4FoGiwzERAMs7eeQodJTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gANvLQKJ; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725645024; c=relaxed/simple;
+	bh=6lSlcXGV24RJcClyF67i2c6U2rxfSUCrSDPpUpZmPXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2AtIvup8mLwKKu5NCo8Wn7rFoul/1sHTKzVARR6Erekl7biv9AvCzQ5OC+w+FEQWNFGShwMHrObeAhICG5GQd7Ebhn9bZhsAOUOivPillz3f6VtblKMfw2Pim1PpHNsL84Dr7+fBTMzjD95pE6NuW2csG1TAZTAP2Sb0SGIJgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d87f34a650so1645736a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 10:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725644770; x=1726249570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=//GMh5wcWPuvbL5byVeOpp7gx8/ceI9tmF4jI5oBjrY=;
-        b=gANvLQKJqWBF2Yom1eg6miG8eImOdHMGBRRlKkxpn7+BIUFeEcZ7ZxNjhRu0rhWTPq
-         edAAHn7N49eyond9e4AfL0FCCupWz90nuCX6wpqOEn3F4JXk/99agHKv2d5HXePEe/S7
-         gueOnBzTxgZYSOqZfow9TEr+vhoisCxEJ0RYPYTC2MAS2X49bHAgGSTmGHDYxfFMw2Na
-         jjIum8zW5vueKxMdLzbxU96xvt45mINJOcL4fAJAwJmFRDk9o9LtyizCTaDBE99PveUS
-         cZFNt2djuonlpLbKXUgOIz5sKJexbOksrG1TQ7Pz020IUopkfUb5Bpx6LjYIjmDJarko
-         alxg==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bbe809b06so17442965e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 10:50:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725644770; x=1726249570;
+        d=1e100.net; s=20230601; t=1725645022; x=1726249822;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=//GMh5wcWPuvbL5byVeOpp7gx8/ceI9tmF4jI5oBjrY=;
-        b=Rqxgd6bR7Q1sLXGRCzmr90ImduffSY/umqrBZH0PG1HXLsMbd0tevyLXw+iDFgC4nW
-         7B3jvy0XXOs2bSeS/DLYhIUunR7fO04jWdC42nYqoWsHwkboaJWEOeguYuGt+lsesNWG
-         vSi7jQ4aeY3IMlnbqP5IM3Z1D2spcquaeff3AQ2Zk4qlZagnLAfnQRPjnU0SQuxWThvU
-         WjgkuG+rKn0WviDrLYEsaAUJLwZZU3pfGtm/5CCnv8Rkz0+cX2zGQhyVXMUuM9YF6fWO
-         +sdhqGIRWkJJOWZ23NhUmkRreRnN0WZXsmI101VctzdSx2tKeWw1gWHnl8PXNwbdCPty
-         D2oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYf4fyw7SYNybVHeU8F5gpOKC4e9thnjv5hzSgtGuMJa5Bw7XKmTsC1GYFleHZQ7X591NqzoskV+pIZbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Wp7oZbp4dYkgtOqVDPbezvqP07z6Gs6nFaVjpxOsvJG2ReFn
-	f0s01rLtQpTYMZ6veQKFELLMWguXcNX1sYOpBsPdpd0htBfqECu/
-X-Google-Smtp-Source: AGHT+IHl1QwGj6f27gy0SNNX8R4uHPJcDOIVI4Q+cvPI+qzi59HzqJAavBhcgc+seszYKXg3rYCwsg==
-X-Received: by 2002:a17:90b:4c42:b0:2c9:7343:71f1 with SMTP id 98e67ed59e1d1-2dad511c22fmr5252445a91.14.1725644769664;
-        Fri, 06 Sep 2024 10:46:09 -0700 (PDT)
-Received: from fedora.. ([2405:201:d007:50c2:4888:86b4:6f32:9ae])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dab6e5dc04sm1466452a91.1.2024.09.06.10.46.05
+        bh=cBwPrXfQENKYJlILGnwqxaMS8yZZIqO6Bs9phkuiKJY=;
+        b=aoVE7nhs2iJgk7ZiSLHkhcFXYgAlR/dmDh45y7Krbk207QoqG81zVdNT+MZHO+IMNT
+         T6lXbjiR5KFYCy2gOSkB5EoPexU7omxxtOcKKoSd6qu2nxNZW5mg2x9q5iCdL7Nm5zfJ
+         QhmSvYBpo1BaQ+TBNLez0zTw/UcTwoEx1tqxzYUotV1TZxge58OhgO/ZuuOImk2iMYtA
+         ea0dcbl5fXm1bKUSw2abYRaxbb+jNAwSwpbVEjP1o02ijpUfRrJPRggYkK5I2SvfpnBS
+         RHsUdk8xz/FxWdsSLUm5qWzjLexx6SgaAXZ1KQ+SAXMfNqwuIXSqrUx/xhpXuMX3OM89
+         3DUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB7hr5LVbN4wYPYa4ugORFYAbogxpkyktpw4LPs8FsPpYnYq5mSZnDQMoFqehl0GOV+IOGVXHUpnfTrHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIwJemq6WnXddwGaJq9fogp3wiaol2IG9NhZvVU52p7svNmbcu
+	T2Trrv6opfgl6UTR0u775YETu1uhGWYKNjRMwQs3DhRd3jVlddfr
+X-Google-Smtp-Source: AGHT+IFCFQDCipGqICeFJ8E8CGwuoBP8ciZam2q+rs25bUZzeBwA8DyQ8K8CRJvgWbUp8Cr0GJh8vw==
+X-Received: by 2002:a05:6000:10e:b0:376:df1f:1245 with SMTP id ffacd0b85a97d-37892703f37mr11604f8f.39.1725645021469;
+        Fri, 06 Sep 2024 10:50:21 -0700 (PDT)
+Received: from costa-tp.redhat.com ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37891607ccdsm443827f8f.4.2024.09.06.10.50.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 10:46:09 -0700 (PDT)
-From: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: jani.nikula@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	skhan@linuxfoundation.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
+        Fri, 06 Sep 2024 10:50:20 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915/cx0: Use one lane to set power state to ready in DP alt mode
-Date: Fri,  6 Sep 2024 23:16:01 +0530
-Message-ID: <20240906174601.9271-1-vamsikrishna.brahmajosyula@gmail.com>
-X-Mailer: git-send-email 2.46.0
+Cc: ming.lei@redhat.com
+Subject: [PATCH] powerpc/xive: Use cpumask_intersects()
+Date: Fri,  6 Sep 2024 20:49:36 +0300
+Message-ID: <20240906174941.1147197-2-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,43 +73,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In DP alt mode one lane is owned by display and the other by usb
-intel_cx0pll_enable currently performs a power cycle ready on both
-the lanes in all cases.
+Replace `cpumask_any_and(a, b) >= nr_cpu_ids`
+with the more readable `!cpumask_intersects(a, b)`.
 
-Address the todo to perfom power state ready only on the display lane
-when DP alt mode is enabled.
-
-Tested on Meteor Lake-P [Intel Arc Graphics] with DP alt mode.
-
-Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
 ---
- drivers/gpu/drm/i915/display/intel_cx0_phy.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/powerpc/sysdev/xive/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_cx0_phy.c b/drivers/gpu/drm/i915/display/intel_cx0_phy.c
-index 4a6c3040ca15..47aa0418379c 100644
---- a/drivers/gpu/drm/i915/display/intel_cx0_phy.c
-+++ b/drivers/gpu/drm/i915/display/intel_cx0_phy.c
-@@ -2949,9 +2949,13 @@ static void intel_cx0pll_enable(struct intel_encoder *encoder,
+diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
+index fa01818c1972c..a6c388bdf5d08 100644
+--- a/arch/powerpc/sysdev/xive/common.c
++++ b/arch/powerpc/sysdev/xive/common.c
+@@ -726,7 +726,7 @@ static int xive_irq_set_affinity(struct irq_data *d,
+ 	pr_debug("%s: irq %d/0x%x\n", __func__, d->irq, hw_irq);
+ 
+ 	/* Is this valid ? */
+-	if (cpumask_any_and(cpumask, cpu_online_mask) >= nr_cpu_ids)
++	if (!cpumask_intersects(cpumask, cpu_online_mask))
+ 		return -EINVAL;
  
  	/*
- 	 * 3. Change Phy power state to Ready.
--	 * TODO: For DP alt mode use only one lane.
-+	 * For DP alt mode use only one lane.
- 	 */
--	intel_cx0_powerdown_change_sequence(encoder, INTEL_CX0_BOTH_LANES,
-+	if (intel_tc_port_in_dp_alt_mode(dig_port))
-+		intel_cx0_powerdown_change_sequence(encoder, maxpclk_lane,
-+					    CX0_P2_STATE_READY);
-+	else
-+		intel_cx0_powerdown_change_sequence(encoder, INTEL_CX0_BOTH_LANES,
- 					    CX0_P2_STATE_READY);
- 
- 	/*
-
-base-commit: b831f83e40a24f07c8dcba5be408d93beedc820f
 -- 
-2.46.0
+2.45.0
 
 
