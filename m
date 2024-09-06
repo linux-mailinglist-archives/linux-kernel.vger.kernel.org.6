@@ -1,88 +1,57 @@
-Return-Path: <linux-kernel+bounces-318423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8800396ED9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F036D96EDA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318C31F23908
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272121C23B82
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A14156C5E;
-	Fri,  6 Sep 2024 08:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438D2157A41;
+	Fri,  6 Sep 2024 08:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="db5hdR/o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4CxN0OM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BDE156C40;
-	Fri,  6 Sep 2024 08:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998CB156677;
+	Fri,  6 Sep 2024 08:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725610709; cv=none; b=L675XjJKkgTxUXe3UKAe/QcrZHeYNJ6q5A+Lq15HkPUbxD+OYP3mGVBiu3q729zpRFzb4tVSJwatBAwnWiwb0KpmCNOrHaeivdUytScVzZB2+y8zdv88CnNJ25KHvl1SFm0hGIbWLGQ0/SKxzv/q5c1llxffVKSYkwhXidjS6wE=
+	t=1725610737; cv=none; b=HUB3bwoGu3XQQxDhC0IuZHOR/LcGyWwehuQVPR0pVsieP/WUfmnptXXZpOcwRoy9WZsnAl4INvn4rATSq+R4aFXgGqMu+55jdN53gwTMqPvHmwJ7QNncmzOqhLO3m6fljtDAqs6ctWpN9MKrUzHgpMigrei25j/rnmvFX0KPfRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725610709; c=relaxed/simple;
-	bh=P9ijqIiAgO/MrBm843x3Xs7+rP6/2wpXmDlmyoVM9dw=;
+	s=arc-20240116; t=1725610737; c=relaxed/simple;
+	bh=LSJTC7RdTHY1Ox0sqM20UNoiY7XdIiN8dWGwQOog8Nw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+NFdUKE8qB26SqynCbYrV+bo/R3X4Pdxkut8qFUZ1X3RYmtflouT4C34QRMUjsypjHyqwfnWN3NgAYc5dHUNbgY7QOCmnmUgamBYk1mr1iUo3nPIruL+FSA+Ooy2G7eUbQZ965H78vCKstdXrk57g8zqfQDJNCLyaKPIV9e5HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=db5hdR/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2301EC4CEC4;
-	Fri,  6 Sep 2024 08:18:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzuN6vItJZs8ZcRiv96V/yIbZSaPCJHShO6bJSUeP1PAgeMw3yxPQYCAWudWE6vy1EABy+B9ScXR0Q30/x4V75c8PVDvgJhS5Jev/Fg6/ldsv8N1yZ6dxYB4vYfZiRdPvO7rZNeP/EAsWDtQ21rMqTLKNpyG6U0Inz1t1BpdZxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4CxN0OM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA52C4CEC4;
+	Fri,  6 Sep 2024 08:18:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725610708;
-	bh=P9ijqIiAgO/MrBm843x3Xs7+rP6/2wpXmDlmyoVM9dw=;
+	s=k20201202; t=1725610737;
+	bh=LSJTC7RdTHY1Ox0sqM20UNoiY7XdIiN8dWGwQOog8Nw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=db5hdR/o5UoYbI2b7BscGrpbq9xRl/AdUrPSlA/8fOZxDBR1QdSNxnkUtd9QrwnYQ
-	 6pQtPdpljx4ztREQGI0fUOu7ElhyluT3ouzQDIDl7B4k1JJA3nLP2WF6yw2VnRse+4
-	 WbQ7KdTqpR80IKFv3Ktw1YT/pOxcAID/Sbkj9+6IaVE9GZRxTFPxCwgqPXfRrmzMvF
-	 CUXEEoKFKUvVt3XayK9lBqBdEbRKeOOLa33STCZCrXjw1r/joD50JkYuCVKMXSwwjf
-	 kekuTfnzGTCIsKf4wyU4EcQvvHRVXT0de/rhtGwZorbh485sthvIKXxw1T+vNc7jzH
-	 O0Vg4PR9q+y/Q==
-Date: Fri, 6 Sep 2024 08:18:21 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 18/18] platform/chrome: cros_ec_typec: Handle lack of
- HPD information
-Message-ID: <Ztq6zf8n09ZcJNjT@google.com>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-19-swboyd@chromium.org>
- <ZtgqLZXbJbpG65vD@google.com>
- <CAE-0n51w3AAtLPq5M-i8F6z2jSOT3xFw3g8HM1h48xXBSeoZnA@mail.gmail.com>
+	b=J4CxN0OMSdhKQU6KKHa+C/4OzKle2p6EJGK0yoqy703pt0pzEzysrjL+/HzcLvSS5
+	 inYiFfiWmcRycD+88STSiy0/cJsOp1vCFly44gJ+rU8OWLnEOCPPeSR69DKyz0LKEt
+	 pkc2tflP1ELpC2hK95vSxTxWURB7wOVOBcmXUvs430ozLKbrIZU/cAquyzIqQUrzgQ
+	 tlHJuehZP1OW7FNRkS5YYPlBfGGo5J75w8hOkN7G1uPZ6+b/g+zd6/hKC4sSMS2rFw
+	 IDYmXJp9YFvMUnUx2B/jRJcDq2jfhYYqaMUo3lzNVy6wrCk4zYxvpxg50NiHcqDcPw
+	 CLfFen23jzdvw==
+Date: Fri, 6 Sep 2024 09:18:52 +0100
+From: Simon Horman <horms@kernel.org>
+To: Gui-Dong Han <hanguidong02@outlook.com>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2] ice: Fix improper handling of refcount in
+ ice_dpll_init_rclk_pins()
+Message-ID: <20240906081852.GB2097826@kernel.org>
+References: <SY8P300MB0460F0F4B5D0BC6768DCA466C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,75 +60,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE-0n51w3AAtLPq5M-i8F6z2jSOT3xFw3g8HM1h48xXBSeoZnA@mail.gmail.com>
+In-Reply-To: <SY8P300MB0460F0F4B5D0BC6768DCA466C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
 
-On Wed, Sep 04, 2024 at 02:45:36PM -0700, Stephen Boyd wrote:
-> Quoting Tzung-Bi Shih (2024-09-04 02:36:45)
-> > On Sat, Aug 31, 2024 at 09:06:56PM -0700, Stephen Boyd wrote:
-> > > +static void cros_typec_inject_hpd(struct cros_typec_data *typec,
-> > > +                               struct ec_response_usb_pd_mux_info *resp,
-> > > +                               struct cros_typec_port *port)
-> > > +{
-> > [...]
-> > > +     /*
-> > > +      * Only read the mux GPIO setting if we need to change the active port.
-> > > +      * Otherwise, an active port is already set and HPD going high or low
-> > > +      * doesn't change the muxed port until DP mode is exited.
-> > > +      */
-> > > +     if (!typec->active_dp_port) {
-> >
-> > Given that cros_typec_inject_hpd() is called before `typec->active_dp_port`
-> > would be set (from previous patch "platform/chrome: ...  Support DP muxing"),
-> > would it possibly wrongly fall into here at the beginning?  (E.g.:
-> > cros_typec_probe() -> cros_typec_port_update() -> cros_typec_configure_mux()
-> > -> cros_typec_inject_hpd().)
+On Tue, Sep 03, 2024 at 11:48:43AM +0000, Gui-Dong Han wrote:
+> This patch addresses a reference count handling issue in the
+> ice_dpll_init_rclk_pins() function. The function calls ice_dpll_get_pins(),
+> which increments the reference count of the relevant resources. However,
+> if the condition WARN_ON((!vsi || !vsi->netdev)) is met, the function
+> currently returns an error without properly releasing the resources
+> acquired by ice_dpll_get_pins(), leading to a reference count leak.
 > 
-> We wouldn't get here if 'hpd_asserted' is false though. We want to fall
-
-Ack, I overlooked that.
-
-> > > [...]
-> > > +     /* Inject HPD from the GPIO state if EC firmware is broken. */
-> > > +     if (typec->hpd_asserted)
-> > > +             resp->flags |= USB_PD_MUX_HPD_LVL;
-> >
-> > `typec->hpd_asserted` is shared between all typec->ports[...].  Would it be
-> > possible that a HPD is asserted for another port but not current `port`?
-> > E.g.: cros_typec_inject_hpd() for port 2 and cros_typec_dp_bridge_hpd_notify()
-> > gets called due to port 1 at the same time?
+> To resolve this, the check has been moved to the top of the function. This
+> ensures that the function verifies the state before any resources are
+> acquired, avoiding the need for additional resource management in the
+> error path. 
 > 
-> I'd like to avoid synchronizing the hpd notify and this injection code,
-> if that's what you're asking. Thinking about this though, I've realized
-> that it's broken even when HPD is working on the EC. Consider this
-> scenario with two type-c ports C0 and C1:
->
-> [...]
+> This bug was identified by an experimental static analysis tool developed
+> by our team. The tool specializes in analyzing reference count operations
+> and detecting potential issues where resources are not properly managed.
+> In this case, the tool flagged the missing release operation as a
+> potential problem, which led to the development of this patch.
+> 
+> Fixes: d7999f5ea64b ("ice: implement dpll interface to control cgu")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gui-Dong Han <hanguidong02@outlook.com>
+> ---
+> v2:
+> * In this patch v2, the check for vsi and vsi->netdev has been moved to
+> the top of the function to simplify error handling and avoid the need for
+> resource unwinding.
+>   Thanks to Simon Horman for suggesting this improvement.
 
-I understood it more: originally, I was wondering if it needs an array
-`typec->hpd_asserted[...]` for storing HPD for each port.  But, no.
+Thanks for the update,
 
-What cros_typec_dp_bridge_hpd_notify() get is just a connected/disconnected
-signal.  It kicks off cros_typec_port_work() for finding which port is
-supposed to trigger the event (with some logic with `active_dp_port`,
-`mux_gpio`, and `hpd_asserted`).
+I agree with your analysis and that the problem is introduced by
+the cited commit.
 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Curious about one more scenario, is it possible:
-
-Initially, no DP port and no mux is using:
-  active_dp_port = NULL
-  hpd_asserted = false
-  mux_gpio = NULL
-
-CPU A                                        CPU B
-------------------------------------------------------------------------------
-cros_typec_port_work()
-  cros_typec_port_update(port_num=0)
-                                             [C0 connected]
-                                             cros_typec_dp_bridge_hpd_notify()
-                                               hpd_asserted = true
-  cros_typec_port_update(port_num=1)
-    cros_typec_configure_mux(port_num=1)
-      cros_typec_inject_hpd()
-      active_dp_port = C1
 
