@@ -1,111 +1,167 @@
-Return-Path: <linux-kernel+bounces-318953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6D496F590
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:40:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D4396F597
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B782284676
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:40:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27831C23BF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7011CEAD5;
-	Fri,  6 Sep 2024 13:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEE01CF5C7;
+	Fri,  6 Sep 2024 13:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtRUpSdV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D691E49B;
-	Fri,  6 Sep 2024 13:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="U+1eM/4q"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86221CEAD6;
+	Fri,  6 Sep 2024 13:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630011; cv=none; b=TGLMirorWh2MbrXuw9qZ3vGaxuXS4VOv5JgINk7atQsI43GnKHVv45x1e3GXXGlc8M5SWMNZR6zfe8c4vYw0cBd3mJ9Y+e84WywKzkuC5C3rIxMQTYupIIKJ9m8uKIqhMA7A501IT6sOE0R0lXFmhIOXJqThQUNqnpRqcV5KJ2g=
+	t=1725630018; cv=none; b=b8AJN9vVS8LrP7VYjobk7/glQ5DexrjV94DR+HJZ9OxsOgwZQFKphSh08FjZh9ueWy4GzEjP6wnBmiqK+hunWbOiBF/NwbrkB7SM3NDaN6B6FGFZgyEST9kdEYJc4tlZueeF0vg0F28m+iP/5dcqnPcwV/dsgHHuxV+PGniNY94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630011; c=relaxed/simple;
-	bh=3X47wiK7Z53owlSZ6EkvqXjKfYY8m0qVta1OE1ylsh4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rh2+lP+jBlAVfmszO1kC0j8+P/4C3MinHTLREtAph+HAV6r8vJVI5ixcdMhT7nBollIwkOoaA/InQfh4c0EdO+2AFI1/IsYTKU1jM1rM1owMLuRwVYoSR93je8UaQ69s3Egu9AZtPV6O0z5vV4G2K85gwcE3/iVqacbD4P7upss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtRUpSdV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492EDC4CEC5;
-	Fri,  6 Sep 2024 13:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725630010;
-	bh=3X47wiK7Z53owlSZ6EkvqXjKfYY8m0qVta1OE1ylsh4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=QtRUpSdVRoGcXwVENYf8lux421Hr7+xhFIlobZYRJouGo25hZ7hdqr7xAa1vGV+/4
-	 Q886fRhUxmBvmZ+ZNUJK7LbrTjNeidc/pD022y0BS2q9ztrvZ68nDpTehepSgsLTOM
-	 1GtBGQiWbCb/+1nTSIiDKTqwD3QTofSpk8UAWU4402X2k1qwyZ7/ULPEQ6XJrpn55t
-	 T18yqHQsfbOi/N1iflsKaQwmT4BtQs8iBOGUHMd1yffEtRAFov9d9lbAGHDKx9jy8b
-	 TjxvCWNAOxteukoKwcSEDUV/1lzjhB134nfunlRNotn1oUMWfeDD/Fom3OeSVQGjH2
-	 I2CnDYMfz++MA==
+	s=arc-20240116; t=1725630018; c=relaxed/simple;
+	bh=1RLdC7O4/AuL7/4SO2U2uqqpXyawhm+W3oQSmgLTBws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=HewotgwyrozD1tVRjGThffX+jBEdKDKoVO7BA0IKWG6TeflQl+Coih1EZaZ3fhT83a+9kOGgmYoOdvQO68hwvZ6Hsu/Y2E3y9XZHYo65NB490LIIRhxRYCZlBK2qV3jJiHpid78A7G5eDsGGtAS27rFQyQOy+ILNj5NgIEsV6MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=U+1eM/4q; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.155.100.110])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 8E88C789F3;
+	Fri,  6 Sep 2024 21:40:03 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 8E88C789F3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1725630005;
+	bh=THWh+jTU82Bk2jmaEr2jKdyj00Le9PDV8sXnbY3W8pw=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=U+1eM/4q7hMnhB/H/vmuwrkYpiweMg1aAhliFX9aUjFYAPCWIdmQuYDFeLLtYir6Y
+	 B/nfatTkjew4Gbl4eXGwKfR6TGQre/dQbAzqzZV2/Sy/BHl8FjNNO9ov05Q1okXk+j
+	 /UsUdrhs/RISXZ3poemVDMTGg3BLm+eN/rBMsYoE=
+Message-ID: <a1e96682-4eb5-486e-97bf-472634642553@classfun.cn>
+Date: Fri, 6 Sep 2024 21:41:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] watchdog: Add Photonicat PMU watchdog driver
+To: Guenter Roeck <linux@roeck-us.net>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-4-bigfoot@classfun.cn>
+ <8e2cecbe-aa48-4e84-93cc-8c028c5e649e@roeck-us.net>
+Content-Language: en-US
+From: Junhao Xie <bigfoot@classfun.cn>
+Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley,"
+ <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>, Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <8e2cecbe-aa48-4e84-93cc-8c028c5e649e@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 06 Sep 2024 16:40:06 +0300
-Message-Id: <D3Z8S9922SIU.QD22EOW9RGT0@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <wufan@linux.microsoft.com>, <pbrobinson@gmail.com>, <zbyszek@in.waw.pl>,
- <hch@lst.de>, <mjg59@srcf.ucam.org>, <pmatilai@redhat.com>,
- <jannh@google.com>, <dhowells@redhat.com>, <jikos@kernel.org>,
- <mkoutny@suse.com>, <ppavlu@suse.com>, <petr.vorel@gmail.com>,
- <mzerqung@0pointer.de>, <kgold@linux.ibm.com>, "Roberto Sassu"
- <roberto.sassu@huawei.com>
-Subject: Re: [RFC][PATCH v3 01/10] ima: Introduce hook DIGEST_LIST_CHECK
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <corbet@lwn.net>,
- <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
- <eric.snowberg@oracle.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
- <serge@hallyn.com>
-X-Mailer: aerc 0.18.2
-References: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
- <20240905152512.3781098-2-roberto.sassu@huaweicloud.com>
- <D3Z3PDARWOV4.1CBB4U4NW846J@kernel.org>
- <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
-In-Reply-To: <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri Sep 6, 2024 at 2:22 PM EEST, Roberto Sassu wrote:
-> On Fri, 2024-09-06 at 12:41 +0300, Jarkko Sakkinen wrote:
-> > On Thu Sep 5, 2024 at 6:25 PM EEST, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > Introduce a new hook to check the integrity of digest lists.
-> >=20
-> > "Introduce DIGEST_LIST_CHECK, a new hook..."
-> >=20
-> > >=20
-> > > The new hook is invoked during a kernel read with file type
-> >=20
-> > "with the file type"
-> >=20
-> >=20
-> > > READING_DIGEST LIST, which is done by the Integrity Digest Cache when=
- it is
-> > > populating a digest cache with a digest list.
-> >=20
-> > The patch creates a new struct imap_rule_entry instance when it parses
-> > the corresponding rule, which means that there are couple slices of
-> > information missing here:
-> >=20
-> > 1. The commit message does not tell what the code change effectively
-> >    is. I scavenged this information from [1].
->
-> Sorry, to me it seems a bit redundant to state what a IMA hook is. The
-> new hook will be handled by IMA like the other existing hooks.
+On 2024/9/6 19:52, Guenter Roeck wrote:
+> On 9/6/24 02:36, Junhao Xie wrote:
+>> This driver provides access to Photonicat PMU watchdog functionality.
+>>
+[...]
+>> +
+>> +struct pcat_watchdog {
+>> +    struct device *dev;
+> 
+> I don't see what this is used for.
 
-I think with documentation (scoping also to commit messages) it is in
-general a good strategy to put it less rather than more. No
-documentation is better than polluted documentation ;-)
+I used to use this for logging, but now they are gone, I will delete it.
 
-Just remarking what might not be obvious with someone who might not
-be obvious, unless being a pro-active contributor.
+> 
+[...]
+>> +
+>> +static int pcat_wdt_setup(struct pcat_watchdog *data, int timeout)
+>> +{
+>> +    int ret;
+>> +    u8 time = 0;
+> 
+> Unnecessary initialization.
+> 
+>> +    u8 times[3] = { 60, 60, 0 };
+>> +
+>> +    time = MIN(255, MAX(0, timeout));
+>> +
+>> +    ret = pcat_pmu_write_data(data->pmu, PCAT_CMD_WATCHDOG_TIMEOUT_SET,
+>> +                  times, sizeof(times));
+> 
+> Where does this actually send the timeout to the chip ?
+> 
 
-BR, Jarkko
+I forgot to fill in timeout into times[2] during refactoring process, I will fix it.
+
+>> +    if (!ret)
+[...]>> +
+>> +static int pcat_wdt_set_timeout(struct watchdog_device *wdev, unsigned int val)
+>> +{
+>> +    int ret = 0;
+>> +    struct pcat_watchdog *data = watchdog_get_drvdata(wdev);
+>> +
+>> +    data->timeout = val;
+> 
+> This needs to store 'timeout' in wdev. Storing it locally is unnecessary.
+> 
+>> +    if (data->started)
+>> +        ret = pcat_wdt_setup(data, data->timeout);
+> 
+> This is misleading because it would permit setting the timeout to
+> 0 when the watchdog isn't running, and then when the watchdog is started
+> it would not really start it. The code should not use a local "started"
+> variable but call watchdog_active(). It should also not accept "0"
+> as a valid timeout.
+> 
+
+I will fix the pcat_wdt_set_timeout.
+
+>> +
+[...]
+>> +
+>> +    watchdog->dev = dev;
+>> +    watchdog->pmu = dev_get_drvdata(dev->parent);
+>> +    watchdog->wdd.info = &pcat_wdt_info;
+>> +    watchdog->wdd.ops = &pcat_wdt_ops;
+>> +    watchdog->wdd.timeout = 60;
+>> +    watchdog->wdd.max_timeout = U8_MAX;
+>> +    watchdog->wdd.min_timeout = 0;
+> 
+> This effectively lets the user ... kind of ... stop the watchdog
+> by setting the timeout to 0. This is not acceptable.
+> 
+>> +    watchdog->wdd.parent = dev;
+>> +
+>> +    watchdog_stop_on_reboot(&watchdog->wdd);
+>> +    watchdog_set_drvdata(&watchdog->wdd, watchdog);
+>> +    platform_set_drvdata(pdev, watchdog);
+>> +
+> No watchdog_init_timeout() ?
+
+Thanks for your correction, I will fix it.
+
+> 
+>> +    return devm_watchdog_register_device(dev, &watchdog->wdd);
+[...]
+>> +MODULE_LICENSE("GPL");
+> 
+
+Thanks for your review, I will fix all problems in next version!
+
+Best regards,
+Junhao
 
