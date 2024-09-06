@@ -1,76 +1,61 @@
-Return-Path: <linux-kernel+bounces-318799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A29296F387
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04FCD96F386
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2697F1C242D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB511C2442C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141891CBE99;
-	Fri,  6 Sep 2024 11:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2F61CBEA2;
+	Fri,  6 Sep 2024 11:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EmQCSt0v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wmr+/n+O"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81791CBE87
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E28D1C9EB7;
+	Fri,  6 Sep 2024 11:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623324; cv=none; b=SZ2cMq/zkazFU0RgtQ8j5l8iRV7A+l89yPS4BzLV8+AVQalzXnTyg6mFlmomKweCTt9sC5XBunXEiOp8Af7WvJI8QP0EBWxa2J5IOHOjD2hHEhnzsuSvZ7WrkUfWYXpwAQR/p62gjyx2v3nwWWEgdqUCT1vtUo93MpVgFD/gBiE=
+	t=1725623318; cv=none; b=Q8aHLRrYn1LWyLyxUJESHO+Rus5YYwq5ecHanjD6ZSYDOSaVooiq/jg8f59x0a50ZNb9RplL2nSg/wA2TIkaWtNf48sMW16XUmQeTfmF82a+5ttemEI8+auf4DfXDabtxRZZ1J5hzHHS2SXcTsBTUBVCuxcvctwgdFxKWus/9Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623324; c=relaxed/simple;
-	bh=fywag2vK7OzxqnvEmpS65cugeG/uRmsTtDvY5+V69A0=;
+	s=arc-20240116; t=1725623318; c=relaxed/simple;
+	bh=boRqGurXA5pXpB6tT0GBMpD4KtA+S4FzluXv/sX46/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTMdNhceUS2iV9rxsSuTZYkpA4tooJ1qycjh9hPjyzgJgR+FWZyMWLmfAZm6dx939ELSaQTeTT9WMX7dv0zirm94E02KU6tUDzud51wWQ0a0RRsBNilfIiTeMGvrKTqoxB+bEdwUP7cStNIPmpDdSjTeIlaffnujyKc+jE7Z/Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EmQCSt0v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725623321;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rui3JEz9ZYhun7zVk8T0p/50gsRXMw1IJ1IRxY9dZ0c=;
-	b=EmQCSt0v1s9ZxPVrlmaP/X+TjZiQP5gOGlZH3eQSG6n7PSF3DmhUViy4L5WWKvW3QRoQhC
-	KVqAy1JNOqyNTe6a3g3EyGdSC509HutO1VCUO5nalGiuRqssaqhViMBt1PxLVjCGBpkAQ4
-	VwSrXNtjmgMbtCrG+GyDvklSzFth0ag=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-nWpJXiOLMDuP-lkOPQf3HQ-1; Fri,
- 06 Sep 2024 07:48:38 -0400
-X-MC-Unique: nWpJXiOLMDuP-lkOPQf3HQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29FE31953968;
-	Fri,  6 Sep 2024 11:48:36 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.74])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3C31B1955F45;
-	Fri,  6 Sep 2024 11:48:30 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  6 Sep 2024 13:48:25 +0200 (CEST)
-Date: Fri, 6 Sep 2024 13:48:19 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Roman Kisel <romank@linux.microsoft.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240906114819.GA20831@redhat.com>
-References: <20240905212741.143626-1-romank@linux.microsoft.com>
- <20240905212741.143626-2-romank@linux.microsoft.com>
- <20240906112345.GA17874@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeHkf+zb/IGJ4QmAF8E2TLBzV38LGgX2aK/zZlNdmoNNJfDY9Ti7Vn6xFr/PPVn442ETzciHPtXPdwUS+lTG9M+ogiDT3QjtyBp1vszFrZZt9eLJYl2+XsK4PsBtqeSK8G6E+AWVK7w/f1NNgPe2jBTOy36hVauu6eWCuOudWCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wmr+/n+O; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2ivheLk9PpJPW/IdL7OqFA2vAw2jy/QidjUHNBBy73Q=; b=wmr+/n+Oyvf9at8tSA3CQ4BQKI
+	10sZjPHNbZam3Z4pYoZV2hSaGuwVAxOEPZ+ZAlqN2MTUk9RoRChlUZ1Ri+JN4Q+V00yCuwyGLe2Nm
+	tNayxKGlaPnxLp8izAs7qngg563X0M3MnDHgV1eT9FSFiIuPr9TotXcN5G67N0pbQ0t8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1smXRu-006ndk-LP; Fri, 06 Sep 2024 13:48:22 +0200
+Date: Fri, 6 Sep 2024 13:48:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: =?utf-8?B?5Zue6KaGOiBbUEFUQ0g=?= =?utf-8?Q?=5D?= net: ftgmac100:
+ Enable TX interrupt to avoid TX timeout
+Message-ID: <18cfef9e-2ae7-44b6-bfd6-2fe0bba7fbb5@lunn.ch>
+References: <20240904103116.4022152-1-jacky_chou@aspeedtech.com>
+ <80f1cd36-c806-4e09-9eac-a70891f50323@lunn.ch>
+ <SEYPR06MB51345FBC0146F1517B36584B9D9E2@SEYPR06MB5134.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,59 +64,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906112345.GA17874@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <SEYPR06MB51345FBC0146F1517B36584B9D9E2@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
-Forgot to ask...
+On Fri, Sep 06, 2024 at 01:57:56AM +0000, Jacky Chou wrote:
+> Hello,
+> 
+> When I am verifying iperf3 over UDP, the network hangs.
+> Like the log below.
+> 
+> root# iperf3 -c 192.168.100.100 -i1 -t10 -u -b0
+> Connecting to host 192.168.100.100, port 5201
+> [  4] local 192.168.100.101 port 35773 connected to 192.168.100.100 port 5201
+> [ ID] Interval           Transfer     Bandwidth       Total Datagrams
+> [  4]   0.00-20.42  sec   160 KBytes  64.2 Kbits/sec  20
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> [  4]  20.42-20.42  sec  0.00 Bytes  0.00 bits/sec  0
+> - - - - - - - - - - - - - - - - - - - - - - - - -
+> [ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total
+> Datagrams
+> [  4]   0.00-20.42  sec   160 KBytes  64.2 Kbits/sec  0.000 ms  0/20 (0%)
+> [  4] Sent 20 datagrams
+> iperf3: error - the server has terminated The network topology is FTGMAC
+> connects directly to a PC. UDP does not need to wait for ACK, unlike TCP.
+> Therefore, FTGMAC needs to enable TX interrupt to release TX resources instead
+> of waiting for the RX interrupt.
 
-Do you really want the tracer's pid or can PTRACE_TRACER/whatever
-simply return the !!current->ptrace boolean? The changelog should
-probably explain this too.
+Please don't top post.
 
-On 09/06, Oleg Nesterov wrote:
->
-> Add cc's. Perhaps someone else can ack/nack the intent...
->
-> This (trivial) patch is obviously buggy, but fixable. I won't argue
-> if it can help userspace.
->
-> On 09/05, Roman Kisel wrote:
-> >
-> > For debugging, it might be useful to run the debug trap
-> > instruction to break into the debugger. To detect the debugger
-> > presence, the kernel provides the `/proc/self/status` pseudo-file
-> > that needs to be searched for the "TracerPid:" string.
-> >
-> > Provide a prctl command that returns the PID of the tracer if any.
->
-> prctl?
->
-> > That allows for much simpler logic in the user land, and makes it
-> > possible to detect tracer presence even if PROC_FS is not enabled.
->
-> You should probably move the links from 0/1 to the changelog to make
-> it more convincing.
->
-> > +	if (request == PTRACE_TRACER) {
-> > +		rcu_read_lock();
-> > +		tracer = ptrace_parent(current);
-> > +		ret = tracer ? task_pid_nr_ns(tracer,
-> > +					task_active_pid_ns(current->parent)) : -ESRCH;
->
-> The namespace is wrong, we need task_active_pid_ns(current). So this
-> code should simply do task_tgid_vnr(tracer) like sys_getppid() does.
-> And to me it would be better to return 0 if !current->ptrace.
->
-> > +		rcu_read_unlock();
-> > +		goto out;
->
-> Wrong, this code runs after "child = find_get_task_by_vpid(pid);" above.
->
-> And why? perhaps the intent was to check if this child is traced, not
-> current?
->
-> Oleg.
->
+So this does seem like a fix. Please read through:
 
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+
+You need a Fixes: tag, CC: stable tag, use the correct tree, etc.
+
+    Andrew
+
+---
+pw-bot: cr
 
