@@ -1,195 +1,306 @@
-Return-Path: <linux-kernel+bounces-318116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF67A96E8A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A3696E8B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE9F1C21B81
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A011C21CD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347A14962B;
-	Fri,  6 Sep 2024 04:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9614E13D537;
+	Fri,  6 Sep 2024 04:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jf4iS0IX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="E9NnDN2U"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52FE18B04;
-	Fri,  6 Sep 2024 04:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27915137742;
+	Fri,  6 Sep 2024 04:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725597182; cv=none; b=qYoaGmkA0jXurW1DyN3TsNQjtdaBxJ1oEUyfLnclPASZKmbHx7GsmDNFGcs2sXpu7Oyy9WpALU/R+srwmHWPen0VnScKXTPR8p5OU++95JT7UA1qq2Kgm/OYTw/TQaE+6kaNL9hH8JCXnAQ3TLSJukGI7I3XetZtl5YXHW7pnvw=
+	t=1725597267; cv=none; b=fQchPmQJsCaaMC4t+/joV9qj0AiO1Fxe8HVfN1EIl5msozT85pXC2nk4S7s+pFjCGbY7x3Cwl2d2YusSnTpblr7rgZ6ChvfKUaaBT45uCD3IqKa54i5tJYGaBD3MX59jFZSKChLbmYuF5IfV0dhVFdPrY8Z/2Ti7AEDQLYlIDpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725597182; c=relaxed/simple;
-	bh=Fj9dEc+tZpcXOsZKa06MZnv9QMwPhL5d/Rc7J136zYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UIMrAH8Vhv0XLOMr0//76xu/p2zssC7jh0VFjJYRliy5XcGaVzOW7QmgN+Dg6tLHF+BAO3CFNxdocc9BLvJH2m0sxt5xEgtfoxLMtWE/yqHIe2BeZZyzNlrlPS3po9u4tTPtKm5F8Ud9vw9X6arvfbNNOlO2UqkUUlQCKvRnQ2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jf4iS0IX; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725597181; x=1757133181;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Fj9dEc+tZpcXOsZKa06MZnv9QMwPhL5d/Rc7J136zYM=;
-  b=Jf4iS0IXxA7eDmfPwGzqV8CCwrK1sjN0kDqDPXlPjTVF/Fccjogwf/O8
-   puv1bZBrPb2QlLqgLSdsP8B7qOaDZtFFjfA+P5DUsISFgA8/AlDjSYQMN
-   a04AXPeN8VJGa0OU2jmBh+Kt6iP9kT7l1elONX9Ojk+yjX4d1Qu0alQu1
-   A8FOhIi9G9TOVru8fRHlaxPWipLwqI+3jbbsfZAY58dJZPYSaZGzv+PFY
-   gaHpGn3JA7tC0EmdILRQWMrfG/oVJsaZXIk0hZUvCAf7Sg5o79t+51srm
-   Do/n1DcCf92o1NRKCSdH7apD2Eq0x2gPm88rxL4RzCOMhrf8BP9470UsP
-   A==;
-X-CSE-ConnectionGUID: rl9KhhKGQzKjrv7HQflYkA==
-X-CSE-MsgGUID: pgM06nsvS8maNYugJgtAQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35493848"
-X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
-   d="scan'208";a="35493848"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 21:33:00 -0700
-X-CSE-ConnectionGUID: mg1kXCLTTP6Brze7PsIp5w==
-X-CSE-MsgGUID: iJK6NP+HS8mohDc3yr1wjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
-   d="scan'208";a="66171134"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.242])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 21:32:56 -0700
-Date: Fri, 6 Sep 2024 07:32:48 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 14/25] KVM: TDX: initialize VM with TDX specific
- parameters
-Message-ID: <ZtqF8O56_h0_g6oD@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-15-rick.p.edgecombe@intel.com>
- <ZtAU7FIV2Xkw+L3O@yzhao56-desk.sh.intel.com>
- <ZtWUATuc5wim02rN@tlindgre-MOBL1>
- <ZtlWzUO+VGzt7Z89@yzhao56-desk.sh.intel.com>
- <Ztl5muQNXr7eGLWU@tlindgre-MOBL1>
- <Ztp/lQ/SaCe+/4qb@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1725597267; c=relaxed/simple;
+	bh=j7pnlnaoGtslgXFHEvGdggS/xbQ97C5uZx1mWimYBWI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NyrhkhY8U02RBzTHcZsTRBdWq61vHXYqMZn7M9A6OdPFK/YTrHHG2xwbj8BxlEZxbsvBLNHWJfMPafDTV/OVBu2qcUQnXvVHf/Av//VXGZmZx1Blb8ArWRUI+EaivIsoa1QDGkff4pkICSZRDjTnQuUVgvPZHndCuM0CAeeVLV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=E9NnDN2U; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 2317A88CCD;
+	Fri,  6 Sep 2024 06:34:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1725597263;
+	bh=RYodBe71lUINO//4/J0jlGoyrEFetjjzNaRbPz/WXMY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E9NnDN2U7FugNAi0XCScSROSJOch852cHyh+8vvbycZepdgXVY+ps2aanjd/3whup
+	 ySU0yrE0o2BuLTEQQg/Halm7FxZrUvRe0pS4HcjpbErJaoFyh+iSFdD01bCWpZ9Kcf
+	 amfv9vANjRJO9UICeIr/8HQVX4UFYg3KO3MACdQJcNJGKAYPyCX2xXnMSPtODL5uFe
+	 AjZ0lL0Igvb0+FeK0ZThDAcf8B7i4aGwvgqbas/zL/jXnYiH8Joisp/meuD4Owwgdm
+	 cnzR6DLVeC767pVKFaG+8Vr9Clv9b5M+qur7QlsdeIFzb3a9yio4jA3aHrYayTreh7
+	 xXF1veJztXrYA==
+Message-ID: <e14fba9a-87e9-42a3-9be8-b2b48ed08cd0@denx.de>
+Date: Fri, 6 Sep 2024 06:33:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.li@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ pratikmanvar09@gmail.com, francesco@dolcini.it,
+ Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>
+References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com>
+ <20240715-pwm-v2-3-ff3eece83cbb@nxp.com>
+ <CAOMZO5DNmHfHWbLoPj9P=_+JiLLQ4tiDd_90+UX+_psN2o+Knw@mail.gmail.com>
+ <ac922fd5-9438-4f73-9a3d-08cceb1d7409@denx.de>
+ <Ztn+SiBUp0BC5lzy@lizhi-Precision-Tower-5810>
+ <1a5114c5-92d1-4f5a-9ad6-616475f3ba56@denx.de>
+ <ZtoWowx1Vja3yjXc@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <ZtoWowx1Vja3yjXc@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Ztp/lQ/SaCe+/4qb@yzhao56-desk.sh.intel.com>
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Fri, Sep 06, 2024 at 12:05:41PM +0800, Yan Zhao wrote:
-> On Thu, Sep 05, 2024 at 12:27:54PM +0300, Tony Lindgren wrote:
-> > On Thu, Sep 05, 2024 at 02:59:25PM +0800, Yan Zhao wrote:
-> > > On Mon, Sep 02, 2024 at 01:31:29PM +0300, Tony Lindgren wrote:
-> > > > On Thu, Aug 29, 2024 at 02:27:56PM +0800, Yan Zhao wrote:
-> > > > > On Mon, Aug 12, 2024 at 03:48:09PM -0700, Rick Edgecombe wrote:
-> > > > > > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > > > > > 
-> > > > > ...
-> > > > > > +static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
-> > > > > > +{
-> > > > ...
-> > > > 
-> > > > > > +	kvm_tdx->tsc_offset = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_OFFSET);
-> > > > > > +	kvm_tdx->attributes = td_params->attributes;
-> > > > > > +	kvm_tdx->xfam = td_params->xfam;
-> > > > > > +
-> > > > > > +	if (td_params->exec_controls & TDX_EXEC_CONTROL_MAX_GPAW)
-> > > > > > +		kvm->arch.gfn_direct_bits = gpa_to_gfn(BIT_ULL(51));
-> > > > > > +	else
-> > > > > > +		kvm->arch.gfn_direct_bits = gpa_to_gfn(BIT_ULL(47));
-> > > > > > +
-> > > > > Could we introduce a initialized field in struct kvm_tdx and set it true
-> > > > > here? e.g
-> > > > > +       kvm_tdx->initialized = true;
-> > > > > 
-> > > > > Then reject vCPU creation in tdx_vcpu_create() before KVM_TDX_INIT_VM is
-> > > > > executed successfully? e.g.
-> > > > > 
-> > > > > @@ -584,6 +589,9 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
-> > > > >         struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
-> > > > >         struct vcpu_tdx *tdx = to_tdx(vcpu);
-> > > > > 
-> > > > > +       if (!kvm_tdx->initialized)
-> > > > > +               return -EIO;
-> > > > > +
-> > > > >         /* TDX only supports x2APIC, which requires an in-kernel local APIC. */
-> > > > >         if (!vcpu->arch.apic)
-> > > > >                 return -EINVAL;
-> > > > > 
-> > > > > Allowing vCPU creation only after TD is initialized can prevent unexpected
-> > > > > userspace access to uninitialized TD primitives.
-> > > > 
-> > > > Makes sense to check for initialized TD before allowing other calls. Maybe
-> > > > the check is needed in other places too in additoin to the tdx_vcpu_create().
-> > > Do you mean in places checking is_hkid_assigned()?
-> > 
-> > Sounds like the state needs to be checked in multiple places to handle
-> > out-of-order ioctls to that's not enough.
-> > 
-> > > > How about just a function to check for one or more of the already existing
-> > > > initialized struct kvm_tdx values?
-> > > Instead of checking multiple individual fields in kvm_tdx or vcpu_tdx, could we
-> > > introduce a single state field in the two strutures and utilize a state machine
-> > > for check (as Chao Gao pointed out at [1]) ?
-> > 
-> > OK
-> > 
-> > > e.g.
-> > > Now TD can have 5 states: (1)created, (2)initialized, (3)finalized,
-> > >                           (4)destroyed, (5)freed.
-> > > Each vCPU has 3 states: (1) created, (2) initialized, (3)freed
-> > > 
-> > > All the states are updated by a user operation (e.g. KVM_TDX_INIT_VM,
-> > > KVM_TDX_FINALIZE_VM, KVM_TDX_INIT_VCPU) or a x86 op (e.g. vm_init, vm_destroy,
-> > > vm_free, vcpu_create, vcpu_free).
-> > > 
-> > > 
-> > >      TD                                   vCPU
-> > > (1) created(set in op vm_init)
-> > > (2) initialized
-> > > (indicate tdr_pa != 0 && HKID assigned)
-> > > 
-> > >                                           (1) created (set in op vcpu_create)
-> > > 
-> > >                                           (2) initialized
-> > > 
-> > >                                     (can call INIT_MEM_REGION, GET_CPUID here)
-> > > 
-> > > 
-> > > (3) finalized
-> > > 
-> > >                                  (tdx_vcpu_run(), tdx_handle_exit() can be here)
-> > > 
-> > > 
-> > > (4) destroyed (indicate HKID released)
-> > > 
-> > >                                          (3) freed
-> > > 
-> > > (5) freed
-> > 
-> > So an enum for the TD state, and also for the vCPU state?
+On 9/5/24 10:37 PM, Frank Li wrote:
+> On Thu, Sep 05, 2024 at 09:01:06PM +0200, Marek Vasut wrote:
+>> On 9/5/24 8:54 PM, Frank Li wrote:
+>>> On Thu, Sep 05, 2024 at 08:26:34PM +0200, Marek Vasut wrote:
+>>>> On 9/5/24 7:12 PM, Fabio Estevam wrote:
+>>>>> Adding Marek.
+>>>>>
+>>>>> On Mon, Jul 15, 2024 at 5:30â€¯PM Frank Li <Frank.Li@nxp.com> wrote:
+>>>>>>
+>>>>>> From: Clark Wang <xiaoning.wang@nxp.com>
+>>>>>>
+>>>>>> Implement workaround for ERR051198
+>>>>>> (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
+>>>>>>
+>>>>>> PWM output may not function correctly if the FIFO is empty when a new SAR
+>>>>>> value is programmed
+>>>>>>
+>>>>>> Description:
+>>>>>>      When the PWM FIFO is empty, a new value programmed to the PWM Sample
+>>>>>>      register (PWM_PWMSAR) will be directly applied even if the current timer
+>>>>>>      period has not expired. If the new SAMPLE value programmed in the
+>>>>>>      PWM_PWMSAR register is less than the previous value, and the PWM counter
+>>>>>>      register (PWM_PWMCNR) that contains the current COUNT value is greater
+>>>>>>      than the new programmed SAMPLE value, the current period will not flip
+>>>>>>      the level. This may result in an output pulse with a duty cycle of 100%.
+>>>>>>
+>>>>>> Workaround:
+>>>>>>      Program the current SAMPLE value in the PWM_PWMSAR register before
+>>>>>>      updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
+>>>>>>      register. This will ensure that the new SAMPLE value is modified during
+>>>>>>      a non-empty FIFO, and can be successfully updated after the period
+>>>>>>      expires.
+>>>>
+>>>> Frank, could you submit this patch separately ? The 1/3 and 2/3 are
+>>>> unrelated as far as I can tell ?
+>>>>
+>>>>>> ---
+>>>>>> Change from v1 to v2
+>>>>>> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
+>>>>>>      About disable/enable pwm instead of disable/enable irq:
+>>>>>>      Some pmw periphal may sensitive to period. Disable/enable pwm will
+>>>>>> increase period, althouhg it is okay for most case, such as LED backlight
+>>>>>> or FAN speed. But some device such servo may require strict period.
+>>>>>>
+>>>>>> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
+>>>>>>      Using official errata number
+>>>>>>      fix typo 'filp'
+>>>>>>      add {} for else
+>>>>>>
+>>>>>> I supposed fixed all previous issues, let me know if I missed one.
+>>>>>> ---
+>>>>>>     drivers/pwm/pwm-imx27.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
+>>>>>>     1 file changed, 51 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+>>>>>> index 253afe94c4776..e12eaaebe3499 100644
+>>>>>> --- a/drivers/pwm/pwm-imx27.c
+>>>>>> +++ b/drivers/pwm/pwm-imx27.c
+>>>>>> @@ -27,6 +27,7 @@
+>>>>>>     #define MX3_PWMSR                      0x04    /* PWM Status Register */
+>>>>>>     #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
+>>>>>>     #define MX3_PWMPR                      0x10    /* PWM Period Register */
+>>>>>> +#define MX3_PWMCNR                     0x14    /* PWM Counter Register */
+>>>>>>
+>>>>>>     #define MX3_PWMCR_FWM                  GENMASK(27, 26)
+>>>>>>     #define MX3_PWMCR_STOPEN               BIT(25)
+>>>>>> @@ -232,8 +233,11 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>>>>>>     {
+>>>>>>            unsigned long period_cycles, duty_cycles, prescale;
+>>>>>>            struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
+>>>>>> +       void __iomem *reg_sar = imx->mmio_base + MX3_PWMSAR;
+>>>>>>            unsigned long long c;
+>>>>>>            unsigned long long clkrate;
+>>>>>> +       unsigned long flags;
+>>>>>> +       int val;
+>>>>>>            int ret;
+>>>>>>            u32 cr;
+>>>>>>
+>>>>>> @@ -274,7 +278,53 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>>>>>>                    pwm_imx27_sw_reset(chip);
+>>>>>>            }
+>>>>>>
+>>>>>> -       writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+>>>>>> +       /*
+>>>>>> +        * This is a limited workaround. When the SAR FIFO is empty, the new
+>>>>>> +        * write value will be directly applied to SAR even the current period
+>>>>>> +        * is not over.
+>>>>>> +        *
+>>>>>> +        * If the new SAR value is less than the old one, and the counter is
+>>>>>> +        * greater than the new SAR value, the current period will not filp
+>>>>>> +        * the level. This will result in a pulse with a duty cycle of 100%.
+>>>>>> +        * So, writing the current value of the SAR to SAR here before updating
+>>>>>> +        * the new SAR value can avoid this issue.
+>>>>>> +        *
+>>>>>> +        * Add a spin lock and turn off the interrupt to ensure that the
+>>>>>> +        * real-time performance can be guaranteed as much as possible when
+>>>>>> +        * operating the following operations.
+>>>>>> +        *
+>>>>>> +        * 1. Add a threshold of 1.5us. If the time T between the read current
+>>>>>> +        * count value CNR and the end of the cycle is less than 1.5us, wait
+>>>>>> +        * for T to be longer than 1.5us before updating the SAR register.
+>>>>>> +        * This is to avoid the situation that when the first SAR is written,
+>>>>>> +        * the current cycle just ends and the SAR FIFO that just be written
+>>>>>> +        * is emptied again.
+>>>>>> +        *
+>>>>>> +        * 2. Use __raw_writel() to minimize the interval between two writes to
+>>>>>> +        * the SAR register to increase the fastest pwm frequency supported.
+>>>>>> +        *
+>>>>>> +        * When the PWM period is longer than 2us(or <500KHz), this workaround
+>>>>>> +        * can solve this problem.
+>>>>>> +        */
+>>>>>> +       val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+>>>>>> +       if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
+>>>>>> +               c = clkrate * 1500;
+>>>>>> +               do_div(c, NSEC_PER_SEC);
+>>>>>> +
+>>>>>> +               local_irq_save(flags);
+>>>>>> +               if (state->period >= 2000)
+>>>>>> +                       readl_poll_timeout_atomic(imx->mmio_base + MX3_PWMCNR, val,
+>>>>>> +                                                 period_cycles - val >= c, 0, 10);
+>>>>>> +
+>>>>>> +               val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+>>>>>> +               if (!val)
+>>>>>> +                       writel_relaxed(imx->duty_cycle, reg_sar);
+>>>>>> +               writel_relaxed(duty_cycles, reg_sar);
+>>>>>> +               local_irq_restore(flags);
+>>>>>> +       } else {
+>>>>>> +               writel_relaxed(duty_cycles, reg_sar);
+>>>>>> +       }
+>>>>
+>>>> Why so complicated ? Can't this be simplified to this ?
+>>>>
+>>>> const u32 sar[3] = { old_sar, old_sar, new_sar };
+>>>>
+>>>> val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base +
+>>>> MX3_PWMSR));
+>>>>
+>>>> switch (val) {
+>>>> case MX3_PWMSR_FIFOAV_EMPTY:
+>>>> case MX3_PWMSR_FIFOAV_1WORD:
+>>>>     writesl(duty_cycles, sar, 3);
+>>>>     break;
+>>>> case MX3_PWMSR_FIFOAV_2WORDS:
+>>>>     writesl(duty_cycles, sar + 1, 2);
+>>>>     break;
+>>>> default: // 3 words in FIFO
+>>>>     writel(new_sar, duty_cycles);
+>>>> }
+>>>>
+>>>> The MX3_PWMSR_FIFOAV_EMPTY/MX3_PWMSR_FIFOAV_1WORD case will effectively
+>>>> trigger three consecutive 'str' instructions:
+>>>>
+>>>> 1: str PWMSAR, old_sar
+>>>> 2: str PWMSAR, old_sar
+>>>> 3: str PWMSAR, new_sar
+>>>>
+>>>> If the PWM cycle ends before 1:, then PWM will reload old value, then pick
+>>>> old value from 1:, 2: and then new value from 3: -- the FIFO will never be
+>>>> empty.
+>>>>
+>>>> If the PWM cycle ends after 1:, then PWM will pick up old value from 1:
+>>>> which is now in FIFO, 2: and then new value from 3: -- the FIFO will never
+>>>> be empty.
+>>>>
+>>>> The MX3_PWMSR_FIFOAV_2WORDS and default: case is there to prevent FIFO
+>>>> overflow which may lock up the PWM. In case of MX3_PWMSR_FIFOAV_2WORDS there
+>>>> are two words in the FIFO, write two more, old SAR value and new SAR value.
+>>>> In case of default, there must be at least one free slot in the PWM FIFO
+>>>> because pwm_imx27_wait_fifo_slot() which polled the FIFO for free slot
+>>>> above, so there is no danger of FIFO being empty or FIFO overflow.
+>>>>
+>>>> Maybe this can still be isolated to "if (duty_cycles < imx->duty_cycle)" .
+>>>>
+>>>> What do you think ?
+>>>
+>>> Reasonable. Let me test it.
+>> Thank you.
+>>
+>> I have MX8MN locally, so if you need RB/TB for V3, let me know.
+>>
+>> Will I be able to reproduce it on another iMX too? Like MX8MP or MX8MM (they
+>> are a bit easier to work with for me) ?
+>>
+>> Could you include "how to reproduce" in the commit message ? Something easy
+>> like:
+>> - Write this and that sysfs attribute file with old value
+>> - Write this and that sysfs attribute file with new value
+>> - Observe this on a scope
 > 
-> A state for TD, and a state for each vCPU.
-> Each vCPU needs to check TD state and vCPU state of itself for vCPU state
-> transition.
-> 
-> Does it make sense?
+> I will add it at next version. But I found a problem of your method,
+> especially when period is quite long, for example 2s. Assume  FIFO is empty.
+> [old, old, new] will be written to FIFO, new value will takes 2s-6s to make
+> new value effect.
 
-That sounds good to me :)
+You're right, for long PWM periods, the application of changes will take 
+longer.
 
-Regards,
+As far as I can tell, the method implemented in this patch may still 
+suffer from the problem in case of short PWM periods, is that correct ? 
+I think the writesl() might help cover some of that.
 
-Tony
- 
-> > > [1] https://lore.kernel.org/kvm/ZfvI8t7SlfIsxbmT@chao-email/#t
+Maybe for longer PWM periods (like 500ms and longer?) where we can be 
+sure the FIFO won't quickly consume the written data and underflow, we 
+can do writesl() with only two longwords {old_sar, new_sar}, first 
+longword to make sure the FIFO is not empty, second word with the new 
+PWMSAR value ? That could speed the update up ?
+
+> The currect method, most time, the new value will effect at next period.
+Yes, right, I think we may have to handle the longer PWM periods somehow 
+differently.
+
+I would like to avoid local_irq_save()/readl_poll_timeout_atomic() if 
+possible and let the hardware help avoid this, which I think is possible 
+with creative loading of the FIFO with data, hence the writesl() idea.
+
+What do you think about the option above ?
+
+My usecase is mainly display PWM backlight dimming, so those periods 
+there are in some 100..2000 Hz or so.
 
