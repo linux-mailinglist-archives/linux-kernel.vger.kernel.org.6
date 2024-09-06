@@ -1,112 +1,141 @@
-Return-Path: <linux-kernel+bounces-318040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F88D96E784
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:04:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADC696E785
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBE071C22C39
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC4A61C22332
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361C2208A0;
-	Fri,  6 Sep 2024 02:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B846C1EB35;
+	Fri,  6 Sep 2024 02:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gBxVQTOX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYyVfzow"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD6CBE46;
-	Fri,  6 Sep 2024 02:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C401FDD
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 02:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725588283; cv=none; b=gL82hAFzRO+WiIGLdjIcKlXatmPF5lrwQEbFiRP17hhWeiLJe73lgIZKl+kT2sBQQDVeK21YQbURWrqUSVWpY5Xfy+XuzjqU0kjexAlu8lxjBMl0pKHK0BLS9+O3nYqfsAVjhz8GTCFbxP6LNRco0U6bvKzxVhKjRW3LraPGMvc=
+	t=1725588409; cv=none; b=ZI2yUAtv92N10Lr71UB9mQ1GpDPXDvYETe17UcehVUOm9KXP0Wk6VrnVBxZ6n5L6i+nEmRAPqYk//F7xKG2/MRgkGoi3f8DPB5J67gpuhWsED1HNSDbSTP2O975EnLHpFgF8F9veKG3pD+OH+0Iu0ex0IVhmdM+BgmfnFKERrTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725588283; c=relaxed/simple;
-	bh=QU0QMmEGzv/5kEsrnRhoZrQCi/M/pHY74FiECsl3X/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NklVYSzGtjeZfgTHyJ0g+WJK6uDe9TmXLZnV6+dJXbYDcW/QdG9XSij0A/bqE1vL7jiv/uJveldpgOkofNh5zut6zEn6zmxtVOec8QLgzMKCRUUIBtrkisB1rNbt85YUYbMdOAfb/RmqtInvgrKLYCUanAjSIByH9o0kMbXdYlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gBxVQTOX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725588278;
-	bh=7Ae4Eto86QZ67F3It73wMkAKCEdI1wg0Y0r//mCMuBs=;
+	s=arc-20240116; t=1725588409; c=relaxed/simple;
+	bh=w8EOJh7Q0vmzHm+c+IQOyLMNZi7sWZx6oefL4el6QiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y+z53K74/1H5IxRAQLH9hYudJi3FOCRc0dT3E8G9nR0MktGtHbu/0ItbwE6F0ZQSOqTBgtGF3QxJPckOVStOFqmzxrlgGyBcZXrRlNLQR4lq4MnJGD24QZ8+h4XwoYHBIGu5N9kI4XbsniLF/MlGCzlR43TUayInuNA7yrgtZto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYyVfzow; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF4BC4CEC3;
+	Fri,  6 Sep 2024 02:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725588408;
+	bh=w8EOJh7Q0vmzHm+c+IQOyLMNZi7sWZx6oefL4el6QiI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=gBxVQTOXPfMszOm+Mkc5rsktxm9QMgkH3J5Ae+lU3UrWQHn5mcihwC0eE4TL4IZBz
-	 TrCRGV0RhPoOwUp/P6ZIb2Iz0Pfp9dMq4Fle9+Em36E/N0KIxwllZDv643hk/NKVOj
-	 D/KytLEeM8XYdXtleLPLQFdV+5e8huuU4P4+7fk9s2QRkTf+rUG1XiyUN0uKMt8jkq
-	 EOFtqmW2Wn5i46x6OciG9cAKAh6tESa9jfo0YEZPFyYpakVRpgG3GPrE0/qzXdmF/h
-	 9eubkeLeYBCWNWq7bsR0c/YGxhFzlXmXJzbXtN1ehMi8PkqLzhkpd5iUgNuKu3L4F6
-	 lDYAFHRxNpU3g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0KKx32jvz4x7H;
-	Fri,  6 Sep 2024 12:04:37 +1000 (AEST)
-Date: Fri, 6 Sep 2024 12:04:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
- <inochiama@outlook.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the sophgo tree
-Message-ID: <20240906120436.74ffdd06@canb.auug.org.au>
+	b=VYyVfzowTuqloujJTyZU2Zm0fyUvWC0xlQbBEHsMx1IfJpA9NsI7SmuNQCAhdXr/R
+	 aXk0Rwmb8XNpoqiEtgJKGZqNNoF15/Sd6byxVBEQ1vs4RXGPAvyXG0reCBOoZjiupm
+	 E0C+INdqla9bfaR419M1gJhzLXXlp/TYN87cGl9Z9NSXwcvH2LyEC2TjQ0qXYHc4TD
+	 AeVH0LEosga3Uh3X1ANvvwICouuAIhEpdDAFgAJ2VcunuUml4MsrKwyIprubPyGNn8
+	 qTCy7hNs2VYHJSrp4GQSgy3u0TtBuUDNa3x2QB5scLzbGeYmky3nIEgGvc5my+BXal
+	 sNS4bLywL1ROA==
+Date: Thu, 5 Sep 2024 16:06:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH sched/core] sched: Warn if a sched_class says yes on
+ balance() but no on pick_task()
+Message-ID: <Ztpjt5Pz9pJliblL@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6ru6Uu+dOWJDZyBszhJK_9i";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---Sig_/6ru6Uu+dOWJDZyBszhJK_9i
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+If a sched_class says yes on balance() but no on pick_task(),
+__pick_next_task() will end up descending to lower sched classes which
+haven't been balanced. This can lead to sub-optimal scheduling decisions
+and, especially for sched_ext, stalls. Detect the condition and warn.
 
-Hi all,
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+This triggers immedately on the current tip/sched/core. Best to apply after
+fixing the existing issue.
 
-The following commits are also in the arm-soc tree as different commits
-(but the same patches):
+Thanks.
 
-  0014d11186f5 ("riscv: dts: sophgo: Add sdhci0 configuration for Huashan P=
-i")
-  161477baee0f ("riscv: dts: sophgo: Add i2c device support for sg2042")
-  33ae4c56cacf ("riscv: sophgo: dts: add mmc controllers for SG2042 SoC")
-  47e5a8daf0b9 ("dt-bindings: riscv: Add Sipeed LicheeRV Nano board compati=
-bles
-")
-  4f8fb973389d ("riscv: sophgo: dts: add gpio controllers for SG2042 SoC")
-  7f3cf53e4c65 ("riscv: dts: sophgo: Use common "interrupt-parent" for all =
-peri
-pherals for sg2042")
-  c0a4490b120f ("riscv: dts: sophgo: cv18xx: add DMA controller")
-  e8b4716e68ba ("riscv: dts: sophgo: Add mcu device for Milk-V Pioneer")
-  f9cc479ddc8c ("dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic")
+ kernel/sched/core.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6ru6Uu+dOWJDZyBszhJK_9i
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaYzQACgkQAVBC80lX
-0GzAHQf8DPP6aZ6VesgFfNbcT+bXpAEuWcdBEO3+hJp346nKJbxiGi6xWzQuSVEu
-Be1GEXly39VvrAZ2W1Ejt3ZFvONEfAQCIGhe0rZmv3D0Wrb7QdlI20DG+ojIY5Zr
-5F5IWFT6hOp6SGYaEaWWBxtA5ahTriiK4mQl32rgcDoW+xd1wddtGUBn+FLbpzGs
-SCMFrXP2OOWp+M5W2z/GHNs8Ng9VYFjo8jj9rx4WKRiMVMXxZcLHq6pF3GaqzeEz
-uy/MvhDnPgNCOWtBcE85/dIizw/sZqLrqcmIMSqBb9OuRJ7HEHQ3wkYHMpimo8XT
-0qs5sZNFKlmKruX8jQa1z/3ygypOqw==
-=vcA9
------END PGP SIGNATURE-----
-
---Sig_/6ru6Uu+dOWJDZyBszhJK_9i--
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5893,8 +5893,8 @@ static inline void schedule_debug(struct
+ 	schedstat_inc(this_rq()->sched_count);
+ }
+ 
+-static void prev_balance(struct rq *rq, struct task_struct *prev,
+-			 struct rq_flags *rf)
++static const struct sched_class *
++prev_balance(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+ 	const struct sched_class *start_class = prev->sched_class;
+ 	const struct sched_class *class;
+@@ -5919,8 +5919,10 @@ static void prev_balance(struct rq *rq,
+ 	 */
+ 	for_active_class_range(class, start_class, &idle_sched_class) {
+ 		if (class->balance && class->balance(rq, prev, rf))
+-			break;
++			return class;
+ 	}
++
++	return &idle_sched_class;
+ }
+ 
+ /*
+@@ -5929,7 +5931,7 @@ static void prev_balance(struct rq *rq,
+ static inline struct task_struct *
+ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+-	const struct sched_class *class;
++	const struct sched_class *class, *balanced;
+ 	struct task_struct *p;
+ 
+ 	rq->dl_server = NULL;
+@@ -5960,23 +5962,29 @@ __pick_next_task(struct rq *rq, struct t
+ 	}
+ 
+ restart:
+-	prev_balance(rq, prev, rf);
++	balanced = prev_balance(rq, prev, rf);
+ 
+ 	for_each_active_class(class) {
+ 		if (class->pick_next_task) {
+ 			p = class->pick_next_task(rq, prev);
+ 			if (p)
+-				return p;
++				goto picked;
+ 		} else {
+ 			p = class->pick_task(rq);
+ 			if (p) {
+ 				put_prev_set_next_task(rq, prev, p);
+-				return p;
++				goto picked;
+ 			}
+ 		}
+ 	}
+ 
+ 	BUG(); /* The idle class should always have a runnable task. */
++
++picked:
++	WARN_ONCE(sched_class_above(balanced, class),
++		  "%ps->balance() returned true but no task, %ps picked instead\n",
++		  balanced, class);
++	return p;
+ }
+ 
+ #ifdef CONFIG_SCHED_CORE
 
