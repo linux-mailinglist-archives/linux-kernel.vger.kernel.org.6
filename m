@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-318891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F048196F4AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:53:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B91196F4B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA971F281E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:53:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39AEB1C23A15
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089021CDA27;
-	Fri,  6 Sep 2024 12:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151FD1CE718;
+	Fri,  6 Sep 2024 12:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CPU5cGsA"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="E1r6V57U"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89397266AB;
-	Fri,  6 Sep 2024 12:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758181CCB34;
+	Fri,  6 Sep 2024 12:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627207; cv=none; b=aRBPJ8G/WpqjRbPWKt3+h79fSZoGHkp0m7PxPmxARwdbL6ZT003PzlcIJ5m+shvfhjQ7M6DRUA4gGljQeKR10++mfXEvot/yJzDKjYr/fIqQr1d8POjmLrpbV16eskTxafoEn5ewijH6w2k6uUMDXC7xIBI08rhvNBSrB6d5T1I=
+	t=1725627208; cv=none; b=m9L6wqylSce77APxw6JbJ9dfxykpp8W3uRfJNZx/wgy9V+RaJi0svqppmooiMLHhY6gBBiEmvqRpC6zeu40JEJe4VYo9Urr4N4WSQqbpdsLXa8CnV+Bkg5l4ZUjYIzUnOTWRYCgTGqB/yHvVJNxciqSrmcI1qpytAgHYVS2Nlgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627207; c=relaxed/simple;
-	bh=pbm+e8RlELy0SuLLhozJgphfQNaU2znVcUGcpSphMQ0=;
+	s=arc-20240116; t=1725627208; c=relaxed/simple;
+	bh=1AJHRHcGfmD/9YGKz72ENNmKG33hLzSx1mSxJxpOXls=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=bPLMeqPFf06vPK/QyVIPKCuebUJrgtTuiW9Mm+gd6BVAtP4tLfwMqxmzcXrQKWcW1CitjUfbNsGD0qQoGmpuZs5sCU0K7iaDNtIG7Uxr71sMG/f8HY6qMt8sdRGrfveRLo4W8HSo0l9Va3NOSIcFezrlLqye+Io8QbSUA53ovf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CPU5cGsA; arc=none smtp.client-ip=68.232.153.233
+	 In-Reply-To:To:CC; b=J7RlexBumJOKUsIh876v05ccNDxUh9bYECs36CV22DSczmZSFbzsllZNH6oDALIO++zO76BViv49EyuS8m1BMYI05aZmwD0n9Ma2BCu0MxVT1LRHBlftdqfmuAY4ChaWPAjBzanl2icNdIZ3JKG3S0bHCSVnI3qZe3dpdsXyVTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=E1r6V57U; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725627205; x=1757163205;
+  t=1725627206; x=1757163206;
   h=from:date:subject:mime-version:content-transfer-encoding:
    message-id:references:in-reply-to:to:cc;
-  bh=pbm+e8RlELy0SuLLhozJgphfQNaU2znVcUGcpSphMQ0=;
-  b=CPU5cGsAR8vTQ+TOyudK+fP1BZsfAiWF31oVzJMRY5VEqbDK5kO+09a+
-   6RoMrKeoOxUpj9GKe0JNrGRRF2tjsjLpHkjIgyJBGNHjwBuIQLSL1zKGy
-   nouw4H6TmVWJGLO69KlCWwTu1XlAlWSALGurtv0MJZ6qy4tuM2bjGW8x3
-   FPLMJUUPRw0UyEP3wuB+b5QMJFoyYMhqEXMK5QEN9/5Smg03WZt4gnxc7
-   q+6iVRKBY+6+RUsyTKZlk5ld6n7rAR8VadDLWfC8ouDy9TmeslEo0uBT6
-   /xPl+nH9TlkheCqkr39S3bGdX6Em52zQd0F8DmhhQ6upvm3haWHEunFvi
-   Q==;
+  bh=1AJHRHcGfmD/9YGKz72ENNmKG33hLzSx1mSxJxpOXls=;
+  b=E1r6V57ULtBqG7A8QT9zu79UEdSh6HnMI/CVKXhj3Ou6/PKrIkjqrAVt
+   CS3yrJbbB+smYN9SVfOW4rtapKL7xDAIuN1GuC12kZuHTuGO9SiTHnT91
+   Gsti2KhL1pTmHrzTXZ8ChE/dwCiCPobBpU5rMksiZd40u2QAEsL/KA6mf
+   D9adz0E95GMXbUqkZ0gQK3tBvYmwmU4bgzw9Jchk7+PjU2Uk9RdVQdLaX
+   H1Gts83c/SjRi5h/RmH22t8MZyJu4aXRStGVy4Q3hMpaeUg4+mgoW6/ua
+   OXY6svWTwsVWSXxdtSmMJy7xMURmATiSS97SwR9LcwPEXV71mhBoLgUXK
+   w==;
 X-CSE-ConnectionGUID: aks78ZCLRxOyTJZTZgJsDQ==
-X-CSE-MsgGUID: ph61CXWcQ0ySPMEcrCqjug==
+X-CSE-MsgGUID: 2DeEyVSsTsyPQ8Fks5jYjw==
 X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="34534552"
+   d="scan'208";a="34534554"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Sep 2024 05:53:23 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 6 Sep 2024 05:53:15 -0700
+ 15.1.2507.35; Fri, 6 Sep 2024 05:53:17 -0700
 Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 6 Sep 2024 05:53:13 -0700
+ 15.1.2507.35 via Frontend Transport; Fri, 6 Sep 2024 05:53:15 -0700
 From: Daniel Machon <daniel.machon@microchip.com>
-Date: Fri, 6 Sep 2024 14:52:38 +0200
-Subject: [PATCH 1/9] phy: sparx5-serdes: add support for private match data
+Date: Fri, 6 Sep 2024 14:52:39 +0200
+Subject: [PATCH 2/9] phy: sparx5-serdes: add constants to match data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240906-sparx5-lan969x-serdes-driver-v1-1-8d630614c58a@microchip.com>
+Message-ID: <20240906-sparx5-lan969x-serdes-driver-v1-2-8d630614c58a@microchip.com>
 References: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
 In-Reply-To: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
 To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -80,87 +80,66 @@ CC: <linux-phy@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
 X-Mailer: b4 0.14-dev
 
-In order to reuse the existing Sparx5 SERDES driver for lan969x, we add
-support for private match data, with initial fields for the iomap and
-imap_size.
+We need to handle a few different constants that differ for Sparx5 and
+lan969x. Add a new struct: sparx5_serdes_consts for this purpose. We
+populate it with an initial field for the number of SERDES'es: sd_max.
 
 Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
 ---
- drivers/phy/microchip/sparx5_serdes.c | 16 +++++++++++++---
- drivers/phy/microchip/sparx5_serdes.h |  6 ++++++
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ drivers/phy/microchip/sparx5_serdes.c | 7 +++++--
+ drivers/phy/microchip/sparx5_serdes.h | 5 +++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/phy/microchip/sparx5_serdes.c b/drivers/phy/microchip/sparx5_serdes.c
-index 7cb85029fab3..5427e8627a78 100644
+index 5427e8627a78..c3ed028fc74e 100644
 --- a/drivers/phy/microchip/sparx5_serdes.c
 +++ b/drivers/phy/microchip/sparx5_serdes.c
-@@ -2507,6 +2507,11 @@ static struct sparx5_serdes_io_resource sparx5_serdes_iomap[] =  {
- 	{ TARGET_SD_LANE_25G + 7, 0x5c8000 }, /* 0x610dd0000: sd_lane_25g_32 */
+@@ -2510,6 +2510,9 @@ static struct sparx5_serdes_io_resource sparx5_serdes_iomap[] =  {
+ static const struct sparx5_serdes_match_data sparx5_desc = {
+ 	.iomap = sparx5_serdes_iomap,
+ 	.iomap_size = ARRAY_SIZE(sparx5_serdes_iomap),
++	.consts = {
++		.sd_max       = 33,
++	},
  };
  
-+static const struct sparx5_serdes_match_data sparx5_desc = {
-+	.iomap = sparx5_serdes_iomap,
-+	.iomap_size = ARRAY_SIZE(sparx5_serdes_iomap),
-+};
-+
  /* Client lookup function, uses serdes index */
- static struct phy *sparx5_serdes_xlate(struct device *dev,
- 				     const struct of_phandle_args *args)
-@@ -2555,6 +2560,10 @@ static int sparx5_serdes_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, priv);
- 	priv->dev = &pdev->dev;
+@@ -2526,7 +2529,7 @@ static struct phy *sparx5_serdes_xlate(struct device *dev,
+ 	sidx = args->args[0];
  
-+	priv->data = device_get_match_data(priv->dev);
-+	if (!priv->data)
-+		return -EINVAL;
-+
- 	/* Get coreclock */
- 	clk = devm_clk_get(priv->dev, NULL);
- 	if (IS_ERR(clk)) {
-@@ -2579,8 +2588,9 @@ static int sparx5_serdes_probe(struct platform_device *pdev)
- 			iores->name);
- 		return -ENOMEM;
- 	}
--	for (idx = 0; idx < ARRAY_SIZE(sparx5_serdes_iomap); idx++) {
--		struct sparx5_serdes_io_resource *iomap = &sparx5_serdes_iomap[idx];
-+	for (idx = 0; idx < priv->data->iomap_size; idx++) {
-+		const struct sparx5_serdes_io_resource *iomap =
-+			&priv->data->iomap[idx];
+ 	/* Check validity: ERR_PTR(-ENODEV) if not valid */
+-	for (idx = 0; idx < SPX5_SERDES_MAX; idx++) {
++	for (idx = 0; idx < priv->data->consts.sd_max; idx++) {
+ 		struct sparx5_serdes_macro *macro =
+ 			phy_get_drvdata(priv->phys[idx]);
+ 
+@@ -2594,7 +2597,7 @@ static int sparx5_serdes_probe(struct platform_device *pdev)
  
  		priv->regs[iomap->id] = iomem + iomap->offset;
  	}
-@@ -2599,7 +2609,7 @@ static int sparx5_serdes_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id sparx5_serdes_match[] = {
--	{ .compatible = "microchip,sparx5-serdes" },
-+	{ .compatible = "microchip,sparx5-serdes", .data = &sparx5_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sparx5_serdes_match);
+-	for (idx = 0; idx < SPX5_SERDES_MAX; idx++) {
++	for (idx = 0; idx < priv->data->consts.sd_max; idx++) {
+ 		err = sparx5_phy_create(priv, idx, &priv->phys[idx]);
+ 		if (err)
+ 			return err;
 diff --git a/drivers/phy/microchip/sparx5_serdes.h b/drivers/phy/microchip/sparx5_serdes.h
-index 13f94a29225a..128f8c53172f 100644
+index 128f8c53172f..8c27cfde4938 100644
 --- a/drivers/phy/microchip/sparx5_serdes.h
 +++ b/drivers/phy/microchip/sparx5_serdes.h
-@@ -26,11 +26,17 @@ enum sparx5_serdes_mode {
+@@ -26,7 +26,12 @@ enum sparx5_serdes_mode {
  	SPX5_SD_MODE_SFI,
  };
  
-+struct sparx5_serdes_match_data {
-+	const struct sparx5_serdes_io_resource *iomap;
-+	int iomap_size;
++struct sparx5_serdes_consts {
++	int sd_max;
 +};
 +
- struct sparx5_serdes_private {
- 	struct device *dev;
- 	void __iomem *regs[NUM_TARGETS];
- 	struct phy *phys[SPX5_SERDES_MAX];
- 	unsigned long coreclock;
-+	const struct sparx5_serdes_match_data *data;
+ struct sparx5_serdes_match_data {
++	const struct sparx5_serdes_consts consts;
+ 	const struct sparx5_serdes_io_resource *iomap;
+ 	int iomap_size;
  };
- 
- struct sparx5_serdes_macro {
 
 -- 
 2.34.1
