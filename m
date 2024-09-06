@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-317979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0999A96E6A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB85E96E6A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2536A1C21417
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754771F244B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D6D819;
-	Fri,  6 Sep 2024 00:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0A0322A;
+	Fri,  6 Sep 2024 00:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVQdz4yE"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3pLeH+1"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740E48C0B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 00:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305111CA0
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 00:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725581477; cv=none; b=AEfM7d/mbFzXxknXjdWfCRg6NiRDhZ1j6R30jqnOmRirs1vL2tajkBSS8OIUruPTsqQtJvPXphnmztTk1ybKcl/vLksvG66L0t4OyMTSJJNvnHmL50hWWbLGn+Kbp7gSmk/N1wP1wofy2v75jnwrPTulkC7nQOgK/V/BZXpEVgY=
+	t=1725581486; cv=none; b=Awin45dhP/4i0SMfJjyovSxGJH/M+2dRj9+HpC2eMJOVxA9wahqqg9Yrad7IrqU/xq60tAUWn8W33udVKutOMtzEczfmAI0quwqYPN0MS0Wpv8neshgJxO67BwtlJoUth2xCCvFHzGpEMysQvP5ilnCjXqjwbOcM6FCC3wch3kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725581477; c=relaxed/simple;
-	bh=VuyU0xxoXycCoqy3vudJlY21agqDOkdf1ASkP+i+C9U=;
+	s=arc-20240116; t=1725581486; c=relaxed/simple;
+	bh=cQGTDKyTZYbzAmEp36nB/7fT2beTR3QOox6VwozUcW0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LZq8nFApz8v02FYq1TqL+aIz+DpRMKq/p1AzBrAT0rsJ/80RUXY30uf8iT4tAqhlmANvdr/Cyl8QKuJApCcgs8MtJ/z1BtKF5jtotRT1ESuIc1yAj2ua8wFVzxv9z+YuMB90VylFL3bWYvYZseiGOO4G+vT8Qx1v3i9QV4ZE+Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVQdz4yE; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=bH88wHUChpamjq71fE1f4hc99lVVQzsbxCK8g4PWSR5nD9XhIH49z3sjTsjRIDkXotG5kKb7XGh7RvwY0DGkUp4f0G7hsF4RBDnaPXOnjrrR3vfse86hkcqTfbW4ZVH+/ni6RvB1h2mAak1YaI6dtoOZel4Hj53bsRxAtLrXV1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3pLeH+1; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-206bd1c6ccdso14091335ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 17:11:15 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-714287e4083so1189609b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 17:11:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725581475; x=1726186275; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725581484; x=1726186284; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8QXDrXH1Ww24AqoLO4gcy/YnLraR5k8WZQjyiNk/5Pk=;
-        b=YVQdz4yEbY6z59nK9uzWtNLclGYMvJIRQaaWHHl8N+zHAYFk+3s/PSanRA1MakixOU
-         zuTzdZfcogmeXpMy01eyNHI+rRoUzCG8g+S6AFy12Ne5WCr4StkV98JFzA92buvRXmeF
-         s1MK1yGM1/XipZjr9OA8KkGBz223v3qGnMU7a4a4Ax1mvw6BM8svzAWdy17RWlIPbjqH
-         NJg0MWwgf3+AF16ubKwTgoR0d9ua0FodOiKzXxNDeD3Pzsptq4XcTZGsEIrl5GrxjwRx
-         ekv8KpTpth7V9EN2rWZ4TEzWQojkmwOMX3g1G6/QlPHNlVBFqufPr4K1eu8PL0TE0RvS
-         NNuA==
+        bh=ywsxeCwLk01Zemkk/XL229z2/fbHB1/7YpgelTeC42M=;
+        b=f3pLeH+1jb2zUd3TDXTWzQ4jOd+Yq0MZo5VJL4Gtphb9GL6ZCzdOCEX0TM9HzlCzL7
+         rBGbiOdtvzLiax9cgqcERXqb9eB3L1Gu4+YSgXEQKYz2tA+O7urjuquJoXxta87sI067
+         kFqveVk0JldT4191AVUn4t7zg0XmGNUJO6V+uEaYGw2N5SV9izphoFdGoTQ0ZRoXjjjE
+         EbKIu4yXTenTojXwAawGoypvgqylqbPWRut2eORKsZbp6KlTGsp1jhzm4+zwXTd7UVaW
+         4LTVw+5UVJjvhXOCzfCgrY3+L5b4A/IRC/IoXfLzhqKSIeQlCADVY5c4sY2CxywLIdp2
+         FaXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725581475; x=1726186275;
+        d=1e100.net; s=20230601; t=1725581484; x=1726186284;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8QXDrXH1Ww24AqoLO4gcy/YnLraR5k8WZQjyiNk/5Pk=;
-        b=CJxwqFvtXZJuK89YRspNi+41cySdV36+eqOn6p8uqesp+GF5+NYFX5jOFLiSYtAzRx
-         TUcV9OUSkRR5KaDhrbnL7w+Rxhuebf1eYWgOt6BBRMEc8h+eJwXI81GFPGNNCfs66NWQ
-         QbvzBHUsz0KUmzALQIq5WbQaNicI4FCaFOj7L2n+0CqrpGo7Z6lLMUo+f+3xPUT6Z77z
-         MJCY7UsnmusSbm9BNcbzZM2mNe9tJZl1eYXaE6kwk7whdzbNFrEBW3lS3otLo+6UFkEw
-         jJ+WgsANrTRWHWm34cuT9koN8ezKjSUz2uXmCVY03b96yAUaJQi3/16Pgx36Yp+aFYeS
-         4fKg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8adkR79uNsjDKZrzoZp9Gdst43Q0+O2A4TeLm+2cLWl037EBMjQMBnBFn2KtjBdmJYxmtxY1crNTV+ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT1/3AwDzmduPZRoXvDReNbuPtk2g/9D+4uBPWhyPzGqC+1E4s
-	9KU6U5jJ7wWEF5f3lbF3FcEEHChLg6LyPzL6Ag6w90xQCwz7pDZo
-X-Google-Smtp-Source: AGHT+IFvLappnY16i84maiK/47bZsBM5+lg21Pra1SjZeJopowh0cGVj6dcf6eL6EAv/dFBjX036Cw==
-X-Received: by 2002:a17:902:ce81:b0:1fb:1afb:b864 with SMTP id d9443c01a7336-206f049d07amr8865735ad.5.1725581474696;
-        Thu, 05 Sep 2024 17:11:14 -0700 (PDT)
+        bh=ywsxeCwLk01Zemkk/XL229z2/fbHB1/7YpgelTeC42M=;
+        b=ENHfkB9kthOu53hfAH1Hew51XEjzFd8dGLjAG3fOT9tcL8LFKE4hNJQloJcy/yOOdU
+         beXD3pWuXNx0tLw9+Kqjo5oEk7Q5N5aWsNTcSpzYUmwUgsq0TCNESCzGyOpbLtfN3ibo
+         zbkC2begp0OSbOsK2Fj1kCoXpU3dJlR0uZpnE1i3hXqxVLqo+1X3faaZ0LZ3ClnRkjX3
+         XTqB2dIrUn9OEvy+/3La2P4mVCHsdnVmeooqI9JQ09TOMMeQQw2R5dziXSxeUb1q5IYP
+         XYvMM0IN1h59xQcAWeJPWYq+CwvN4+t2JPDAJKJRedlU0Cu3t7wlxn2uxTky5FcmsK1n
+         Fcdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWn1xiCExhyIwrpju1bl/dDMSCde6kN7HzXKgZaQraueLIhNwsEXoziuaN/rD9QyeJD1FtqAs9mZhjXwQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+rOdsgWhdUBnAH4wi2oNwK7rbLQCLtWokR0qLurPKClM+2Ydv
+	Fz9hnNs49M2EfVSs84F/IPQ0WiuOviTHcp3fFH3EzHrcr4TUpuzD
+X-Google-Smtp-Source: AGHT+IFsT4gnjeGJ6BsOu0cQW9p32ygkcd0pzMLcI1W+NEiU9e52v6MkwZke3r/as0onruSbW4ToHQ==
+X-Received: by 2002:a05:6a20:cf83:b0:1ce:d418:a42c with SMTP id adf61e73a8af0-1cf1d0eff88mr747550637.19.1725581484279;
+        Thu, 05 Sep 2024 17:11:24 -0700 (PDT)
 Received: from Barrys-MBP.hub ([2407:7000:8942:5500:cd42:f8ae:5222:5ab7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea3548dsm33447445ad.140.2024.09.05.17.11.05
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea3548dsm33447445ad.140.2024.09.05.17.11.15
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 05 Sep 2024 17:11:14 -0700 (PDT)
+        Thu, 05 Sep 2024 17:11:23 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -92,11 +92,10 @@ Cc: hanchuanhua@oppo.com,
 	willy@infradead.org,
 	xiang@kernel.org,
 	ying.huang@intel.com,
-	yosryahmed@google.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v8 1/3] mm: Fix swap_read_folio_zeromap() for large folios with partial zeromap
-Date: Fri,  6 Sep 2024 12:10:45 +1200
-Message-Id: <20240906001047.1245-2-21cnbao@gmail.com>
+	yosryahmed@google.com
+Subject: [PATCH v8 2/3] mm: add nr argument in mem_cgroup_swapin_uncharge_swap() helper to support large folios
+Date: Fri,  6 Sep 2024 12:10:46 +1200
+Message-Id: <20240906001047.1245-3-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <20240906001047.1245-1-21cnbao@gmail.com>
 References: <20240906001047.1245-1-21cnbao@gmail.com>
@@ -110,143 +109,120 @@ Content-Transfer-Encoding: 8bit
 
 From: Barry Song <v-songbaohua@oppo.com>
 
-There could be a corner case where the first entry is non-zeromap,
-but a subsequent entry is zeromap. In this case, we should not
-let swap_read_folio_zeromap() return false since we will still
-read corrupted data.
+With large folios swap-in, we might need to uncharge multiple entries all
+together, add nr argument in mem_cgroup_swapin_uncharge_swap().
 
-Additionally, the iteration of test_bit() is unnecessary and
-can be replaced with bitmap operations, which are more efficient.
+For the existing two users, just pass nr=1.
 
-We can adopt the style of swap_pte_batch() and folio_pte_batch() to
-introduce swap_zeromap_batch() which seems to provide the greatest
-flexibility for the caller. This approach allows the caller to either
-check if the zeromap status of all entries is consistent or determine
-the number of contiguous entries with the same status.
-
-Since swap_read_folio() can't handle reading a large folio that's
-partially zeromap and partially non-zeromap, we've moved the code
-to mm/swap.h so that others, like those working on swap-in, can
-access it.
-
-Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
-Cc: Usama Arif <usamaarif642@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>
 Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Acked-by: Chris Li <chrisl@kernel.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Gao Xiang <xiang@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kairui Song <kasong@tencent.com>
+Cc: Kairui Song <ryncsn@gmail.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Yang Shi <shy828301@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>
 ---
- mm/page_io.c | 32 +++++++-------------------------
- mm/swap.h    | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+), 25 deletions(-)
+ include/linux/memcontrol.h | 5 +++--
+ mm/memcontrol.c            | 7 ++++---
+ mm/memory.c                | 2 +-
+ mm/swap_state.c            | 2 +-
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 4bc77d1c6bfa..2dfe2273a1f1 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -226,26 +226,6 @@ static void swap_zeromap_folio_clear(struct folio *folio)
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 2ef94c74847d..34d2da05f2f1 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -699,7 +699,8 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
+ 
+ int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
+ 				  gfp_t gfp, swp_entry_t entry);
+-void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry);
++
++void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_pages);
+ 
+ void __mem_cgroup_uncharge(struct folio *folio);
+ 
+@@ -1206,7 +1207,7 @@ static inline int mem_cgroup_swapin_charge_folio(struct folio *folio,
+ 	return 0;
+ }
+ 
+-static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
++static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr)
+ {
+ }
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index bda6f75d22ff..c0d36ca20332 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4559,14 +4559,15 @@ int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
+ 
+ /*
+  * mem_cgroup_swapin_uncharge_swap - uncharge swap slot
+- * @entry: swap entry for which the page is charged
++ * @entry: the first swap entry for which the pages are charged
++ * @nr_pages: number of pages which will be uncharged
+  *
+  * Call this function after successfully adding the charged page to swapcache.
+  *
+  * Note: This function assumes the page for which swap slot is being uncharged
+  * is order 0 page.
+  */
+-void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
++void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_pages)
+ {
+ 	/*
+ 	 * Cgroup1's unified memory+swap counter has been charged with the
+@@ -4586,7 +4587,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
+ 		 * let's not wait for it.  The page already received a
+ 		 * memory+swap charge, drop the swap entry duplicate.
+ 		 */
+-		mem_cgroup_uncharge_swap(entry, 1);
++		mem_cgroup_uncharge_swap(entry, nr_pages);
  	}
  }
  
--/*
-- * Return the index of the first subpage which is not zero-filled
-- * according to swap_info_struct->zeromap.
-- * If all pages are zero-filled according to zeromap, it will return
-- * folio_nr_pages(folio).
-- */
--static unsigned int swap_zeromap_folio_test(struct folio *folio)
--{
--	struct swap_info_struct *sis = swp_swap_info(folio->swap);
--	swp_entry_t entry;
--	unsigned int i;
--
--	for (i = 0; i < folio_nr_pages(folio); i++) {
--		entry = page_swap_entry(folio_page(folio, i));
--		if (!test_bit(swp_offset(entry), sis->zeromap))
--			return i;
--	}
--	return i;
--}
--
- /*
-  * We may have stale swap cache pages in memory: notice
-  * them here and get rid of the unnecessary final write.
-@@ -524,19 +504,21 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+diff --git a/mm/memory.c b/mm/memory.c
+index 42674c0748cb..cdf03b39a92c 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4100,7 +4100,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 					ret = VM_FAULT_OOM;
+ 					goto out_page;
+ 				}
+-				mem_cgroup_swapin_uncharge_swap(entry);
++				mem_cgroup_swapin_uncharge_swap(entry, 1);
  
- static bool swap_read_folio_zeromap(struct folio *folio)
- {
--	unsigned int idx = swap_zeromap_folio_test(folio);
--
--	if (idx == 0)
--		return false;
-+	int nr_pages = folio_nr_pages(folio);
-+	bool is_zeromap;
-+	int nr_zeromap = swap_zeromap_batch(folio->swap, nr_pages, &is_zeromap);
+ 				shadow = get_shadow_from_swap_cache(entry);
+ 				if (shadow)
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index a042720554a7..4669f29cf555 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -522,7 +522,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 	if (add_to_swap_cache(new_folio, entry, gfp_mask & GFP_RECLAIM_MASK, &shadow))
+ 		goto fail_unlock;
  
- 	/*
- 	 * Swapping in a large folio that is partially in the zeromap is not
- 	 * currently handled. Return true without marking the folio uptodate so
- 	 * that an IO error is emitted (e.g. do_swap_page() will sigbus).
- 	 */
--	if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
-+	if (WARN_ON_ONCE(nr_zeromap != nr_pages))
- 		return true;
+-	mem_cgroup_swapin_uncharge_swap(entry);
++	mem_cgroup_swapin_uncharge_swap(entry, 1);
  
-+	if (!is_zeromap)
-+		return false;
-+
- 	folio_zero_range(folio, 0, folio_size(folio));
- 	folio_mark_uptodate(folio);
- 	return true;
-diff --git a/mm/swap.h b/mm/swap.h
-index f8711ff82f84..1cc56a02fb5f 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -80,6 +80,32 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
- {
- 	return swp_swap_info(folio->swap)->flags;
- }
-+
-+/*
-+ * Return the count of contiguous swap entries that share the same
-+ * zeromap status as the starting entry. If is_zeromap is not NULL,
-+ * it will return the zeromap status of the starting entry.
-+ */
-+static inline int swap_zeromap_batch(swp_entry_t entry, int max_nr,
-+		bool *is_zeromap)
-+{
-+	struct swap_info_struct *sis = swp_swap_info(entry);
-+	unsigned long start = swp_offset(entry);
-+	unsigned long end = start + max_nr;
-+	bool start_entry_zeromap;
-+
-+	start_entry_zeromap = test_bit(start, sis->zeromap);
-+	if (is_zeromap)
-+		*is_zeromap = start_entry_zeromap;
-+
-+	if (max_nr <= 1)
-+		return max_nr;
-+	if (start_entry_zeromap)
-+		return find_next_zero_bit(sis->zeromap, end, start) - start;
-+	else
-+		return find_next_bit(sis->zeromap, end, start) - start;
-+}
-+
- #else /* CONFIG_SWAP */
- struct swap_iocb;
- static inline void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
-@@ -171,6 +197,13 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
- {
- 	return 0;
- }
-+
-+static inline int swap_zeromap_batch(swp_entry_t entry, int max_nr,
-+		bool *has_zeromap)
-+{
-+	return 0;
-+}
-+
- #endif /* CONFIG_SWAP */
- 
- #endif /* _MM_SWAP_H */
+ 	if (shadow)
+ 		workingset_refault(new_folio, shadow);
 -- 
 2.34.1
 
