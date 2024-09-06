@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-318838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294F196F408
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1C696F40A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58472830AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:09:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F78E28709F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53301CC171;
-	Fri,  6 Sep 2024 12:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD911CC163;
+	Fri,  6 Sep 2024 12:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SrkJxtGM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVwsgXZi"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97B21CB31D;
-	Fri,  6 Sep 2024 12:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32161C8FC7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624580; cv=none; b=Kvo5mH0cMGizng3TfmMapE1RH2+f7RGRKPW9nUBZkQWE8M3YcpwtFgCf9+dUwojiyvXCQoDj3obdZ0Dab3qy81AfMQEea9nNxK4BohC/W7OYSVgm2szhCiAWmgfvXefwqoGFC0hLcZI/ND4HgxfSd/nnkzK2Pc7uwgHRvlXCCXo=
+	t=1725624618; cv=none; b=uigp87jKM/zn0Y9hAoiN5UioGMaa6w8zYq/DDAUWDEQ69iIZSJFQ9NpjxasujxsrqO8O88Dvasr+PmH/Y9+r8Hxxxqs+ewmpaqGh8/K1C9ZX55HKjEbnGQlrDpoCxg8woEAYV6KrZsU42HFEHsVjASs4y+l2zGUfmD31lDlVrqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624580; c=relaxed/simple;
-	bh=5p+4Bl9mqbxouOtptcDfPPmou1wvxYkLSmiClXxVh3c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lCfacO7Fbo2HvNMsbrZxMBZWDZhhnBiheSzlRJWAAEa46uqs77XTsy7xMSm0oFnMUa4ylVkrCHsLiLwUoLg5wZh8HDmydi8y59VvYAILgNJzWN7fDS19gpJjdp9SwL7jgzHFbZrwfPa7ZoHSI7SynO37ElmqfGTMu/P2iLiJxDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SrkJxtGM; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725624578; x=1757160578;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5p+4Bl9mqbxouOtptcDfPPmou1wvxYkLSmiClXxVh3c=;
-  b=SrkJxtGMHPJiX/RwVQt1DklGBHaJAIo8/yuvjl6J9smHuUb+FFRLDV+m
-   SieNzKCj2vScjQ2+aQJtyB46He7Vb0VYUzA17/JX54ogQj4/aCF5KwhMa
-   63+n4cquFujAImLUp7ctxLVyLlTrNYmqA+rhPlRXBa0q2Zamr17WDDEwO
-   jtHDCmmZawa6vyyKfeXOFaZnqJj2uv0d4bUd9hbjhKhWc+3r9Qrho8IbW
-   G7+Tn2mRfqqgYZTzvGozgb/usnPAYpFkjxMwWsXD/MN3ypPjY5rFg/fMM
-   GvqcCIzZ8HJdvudLj+rGwEG/HxxoI+c5f2Md3cOFCke+coagG1mhncYYf
-   g==;
-X-CSE-ConnectionGUID: djVm1GvPTJ2W5AHWRNbOHQ==
-X-CSE-MsgGUID: 12BQj/ELR1Cd1xsskltAYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24535761"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="24535761"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 05:09:38 -0700
-X-CSE-ConnectionGUID: HprW+X66SaqXRjfUb/ltHQ==
-X-CSE-MsgGUID: mTrxtkOGSAKpg0n5x8l8qA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="70734766"
-Received: from feng-clx.sh.intel.com ([10.239.159.50])
-  by orviesa005.jf.intel.com with ESMTP; 06 Sep 2024 05:09:34 -0700
-From: Feng Tang <feng.tang@intel.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	sparclinux@vger.kernel.org,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Feng Tang <feng.tang@intel.com>
-Subject: [PATCH v3] sched/debug: Dump end of stack when detected corrupted
-Date: Fri,  6 Sep 2024 20:09:33 +0800
-Message-Id: <20240906120933.2176727-1-feng.tang@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725624618; c=relaxed/simple;
+	bh=WUhh0363X9fGW20lVIYg0li96cLsPACT84mpj2/Mo9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oJQbs4OhHY8EgPoWFRZ1ioTMEFoNuGGAcOjeYSRMeYyOxReo0+uizfmFjhZMB88FeFK1GCrF9eUzFvlw3efRZLW96/sNwblWxsGGAriLLznRm43obn4Zp4YBvbdapYUQe+69NQZbd72354OrLurWSCeHBR8JINALtrmR1djsEi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVwsgXZi; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2055136b612so20597445ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 05:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725624616; x=1726229416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3iym/A1qepyuDR+homydvaj92B4Me7ezUdanrsLJlHQ=;
+        b=EVwsgXZi8J330ysk/g8Z1KYZHqXdctsEWTKjejv1eSgRiB97gafSYA4Q2gNIcJ6LpW
+         IQUm2pfhNR/BgFjXq+xCwcNpb3JZgLbEurdXcBDQ5vzhrpxgNi0vcOG50nvgjC+whHjg
+         AXcBVfMzbAfo6x0LAm8mK8uy8TV/qqIaxnSvtvPEglJDfZZ/ASkvHMy1X154ZN6P+z1k
+         +hAxyFAv+fym8Ntlldbhtoyt7n63ahKKc9wn7Z8vlzDz+Q8SaMf+lIc2yAwJ6WkWhu8E
+         /8sv3FUExJweU1Uxr5ptERm9CNPTX+G3zWMe+THV6MnFkCTPmHWQXF4gk1vKDMl1JDaT
+         fw2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725624616; x=1726229416;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3iym/A1qepyuDR+homydvaj92B4Me7ezUdanrsLJlHQ=;
+        b=YahcbehzuT4bvh0XLWgYK7xRvOzl6IjglDfKsOKkSM+56jYRedTlV/aj/LE4hvkawQ
+         dlzojQVa+/M/b7QDfwyEqV2Iap/sM2qNRGP42q1U8w2Zvuzt24qIENiKpmEseABReN96
+         NLS44CwLo6v2/FKsx/KIaTI6foAijI6dMi7i/Q+8vMtEeXo2fEwsUy8A2/5qqBO3sZyw
+         Q1oxkhAjrxLbjhOOQvzEvji2XW24a9CtaYMlivv2Fw7wMom2sqi2IkMOY8ClIgvtDIhN
+         cYFcY+vvj5xwfr+LYudxbZbWMKSdAsKBeLCcZ5RWtKA8/Y0si8aOoIU6pHv5cZCjHyyi
+         BdcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOI93ea1tq4PubpT4rpiaTMzpPdTWnYFvCS4n3sc5hgAztOPBBxPuwQ/MsDPqpmHMP1un9cJTrtENAyAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3KPZf3RY3JUgBJZX3CpibeVBOO1kU9gK0EXyftqeQ9QCNmcaL
+	QyWWxi/weQjahkJ0LAebB7ia3haitlrSAc+Ck0tYUoDpOwbSPefk
+X-Google-Smtp-Source: AGHT+IEdvyyWB7iHuQG+BvOy103NKCj4HYsLON3n1fBoLTFdnoMe4wW9dnKq5lrgL78jgOwq8bM8BA==
+X-Received: by 2002:a17:902:e848:b0:202:3a49:acec with SMTP id d9443c01a7336-206f04c9d8emr22730015ad.11.1725624615948;
+        Fri, 06 Sep 2024 05:10:15 -0700 (PDT)
+Received: from localhost.localdomain ([175.112.156.113])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae951bb5sm42212255ad.78.2024.09.06.05.10.13
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 06 Sep 2024 05:10:14 -0700 (PDT)
+From: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>
+X-Google-Original-From: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
+To: Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ni_routing: Check when the file could not be opened
+Date: Fri,  6 Sep 2024 21:10:08 +0900
+Message-ID: <20240906121009.73799-1-RuffaloLavoisier@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,71 +83,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When debugging a kernel hang during suspend/resume [1], there were random
-memory corruptions in different places like being reported by
-slub_debug+KASAN, or detected by scheduler with error message:
-
-  "Kernel panic - not syncing: corrupted stack end detected inside scheduler"
-
-So dump the corrupted memory around the stack end to give more direct
-hints about how the memory is corrupted:
-
- "
- Corrupted Stack: ff11000122770000: ff ff ff ff ff ff 14 91 82 3b 78 e8 08 00 45 00  .........;x...E.
- Corrupted Stack: ff11000122770010: 00 1d 2a ff 40 00 40 11 98 c8 0a ef 30 2c 0a ef  ..*.@.@.....0,..
- Corrupted Stack: ff11000122770020: 30 ff a2 00 22 3d 00 09 9a 95 2a 00 00 00 00 00  0..."=....*.....
- ...
- Kernel panic - not syncing: corrupted stack end detected inside scheduler
- "
-
-And with it, the culprit was quickly identified to be ethernet driver
-that it frees RX related memory back to kernel in suspend hook, but
-its HW is not really stopped, and still send RX data to those old
-buffer through DMA.
-
-[1]. https://bugzilla.kernel.org/show_bug.cgi?id=217854
-
-Signed-off-by: Feng Tang <feng.tang@intel.com>
-Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Signed-off-by: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
 ---
-Changlog:
+ drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-  since v2:
-    * Change code format (Adrian)
-    * Add Reviewed tag from Adrian
-
-  since v1:
-    * Refine the commit log with more info, and rebase againt 6.8-rc3
-
- kernel/sched/core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f3951e4a55e5..0c5cc3bdc02b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5741,8 +5741,19 @@ static noinline void __schedule_bug(struct task_struct *prev)
- static inline void schedule_debug(struct task_struct *prev, bool preempt)
+diff --git a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
+index d55521b5bdcb..892a66b2cea6 100644
+--- a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
++++ b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
+@@ -140,6 +140,11 @@ int main(void)
  {
- #ifdef CONFIG_SCHED_STACK_END_CHECK
--	if (task_stack_end_corrupted(prev))
-+	if (task_stack_end_corrupted(prev)) {
-+		unsigned long *ptr = end_of_stack(prev);
-+
-+		/* Dump 16 ulong words around the corruption point */
-+#ifdef CONFIG_STACK_GROWSUP
-+		ptr -= 15;
-+#endif
-+		print_hex_dump(KERN_ERR, "Corrupted Stack: ",
-+			DUMP_PREFIX_ADDRESS, 16, 1, ptr,
-+			16 * sizeof(unsigned long), true);
-+
- 		panic("corrupted stack end detected inside scheduler\n");
-+	}
+ 	FILE *fp = fopen("ni_values.py", "w");
  
- 	if (task_scs_end_corrupted(prev))
- 		panic("corrupted shadow stack detected inside scheduler\n");
++	if (fp == NULL) {
++		fprintf(stderr, "Could not open file!");
++		return -1;
++	}
++
+ 	/* write route register values */
+ 	fprintf(fp, "ni_route_values = {\n");
+ 	for (int i = 0; ni_all_route_values[i]; ++i)
 -- 
-2.34.1
+2.43.0
 
 
