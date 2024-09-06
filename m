@@ -1,146 +1,124 @@
-Return-Path: <linux-kernel+bounces-318378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575B296EC94
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD29696EC95
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9743BB21D79
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C82C2817AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C355114AD3A;
-	Fri,  6 Sep 2024 07:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F67114B96E;
+	Fri,  6 Sep 2024 07:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V7JGZger"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ra0jT37T"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E16912EBDB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98AE14A629
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609203; cv=none; b=UQbmvRQFnuVIji2CeFArWdiP+ajo2hJFDOyEyqV7vEDSMWs9Q89ZcU5uPUAT0pDCtzq5JpJWDjCZIuAY378R5ofy4qz5M6vH3TemnpdB2EBWNAXTPlQQ9gTlIPMZ4FNxFdKCHooaYsF6/FeTpVn9E+2XShkiMjuzaVhRY4vfz+s=
+	t=1725609213; cv=none; b=mGRlzPulZomONNoZqWLNl2MXF/zc2KIcskg/rfphEQqXlXCXXeXqul1bziFGVyZtMOpYafucD47dnjH5b0zcC+AAeo92YMFnv13v/+FFGCdpgkmHgfcnUofOw2ZcluZvwMevwUaX8bk8G7egaDBNcIKDGkyscw0MST7f2bxEf4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609203; c=relaxed/simple;
-	bh=7qjZG9EDOOoqyEBA/4jjZCMd9X2HAUeybu3XiF7z1zc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mUMy6aWCmu0o4SjqQOSzz5Qe6rxofDOBSPX0Wp48hU67f+eslq+lI+2L1PS2MYo+UxytCO3xW828l3Ynjni16BSIMzOFLmWLvb1fuWPebj0ZZ8N7EFqLJ2jMXMQsU0cyAsr+mz/JnEF/MkpQpfPfCOIszkCfdnxITPQJKIIaxzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V7JGZger; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1725609213; c=relaxed/simple;
+	bh=pDoHJPiqr2uHxsG5WH6Q4c/4CQBkbqkQjiVwGn4FLVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QESC1xNdQIE7mDcbAezjmsF6fN2Bcp8cVeRD9jUwEwWFTniRgumKYSjxuX4Bco6mroWsCPvtu44zRm/egRtUdmC8kEgY9WEZwSOiPapXXg+SAjXbDLaRKf4nIl0HdoFDgZ6r7OiojLFY48gn7ErX/X7SX86mwirO7TIjTuWP8hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ra0jT37T; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725609200;
+	s=mimecast20190719; t=1725609209;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EfrBxnrPzLfQTGlaHgnw9vHVUirecSOPfSNaim1PSDQ=;
-	b=V7JGZgerA+LmkLAbx+VnygsWnFwHawWnYTG2fudOWW+jz3Bw61tlnFQQ9eefDd/18sPAnu
-	vyUOH+fsXvZeTegXYjU1SKyGZ6EpEwVKtgnbRZRcv4nAKxs/q95xdkUEHza9cYdno8IF9f
-	9QM07X3jo/kBAkbS/BH5dlSK5uKFYEQ=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FLWAMf4F16Cm/iVBIMV8eWypdRb0d5qIVCKf1JBr3N4=;
+	b=Ra0jT37TX+rzKjMsfXtCs2K1RvbvCOUJWNGIoRl3c+TuM7AE/RMxVTeQkKlsMJve2ikh8y
+	0dkOYNcYeZ4LbJgD+TyVsyFqDTQ8xQPe8H2+X9h40sfIe7WVbwOmiN6hr4lZ6h8PJdia3I
+	EpEbEsRw9nxwqrlQjCmohKkJxrHSngc=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-LkmGs2C0Mya9oVkMrfaNRg-1; Fri, 06 Sep 2024 03:53:19 -0400
-X-MC-Unique: LkmGs2C0Mya9oVkMrfaNRg-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-53658eafe8eso480619e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:53:18 -0700 (PDT)
+ us-mta-453-7T9EALPkP_a9U570dBlpvA-1; Fri, 06 Sep 2024 03:53:28 -0400
+X-MC-Unique: 7T9EALPkP_a9U570dBlpvA-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8a8e19833cso31883266b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:53:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725609198; x=1726213998;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EfrBxnrPzLfQTGlaHgnw9vHVUirecSOPfSNaim1PSDQ=;
-        b=Cb+6uaJepxdU+45jz6xQPBFiLzsjfxCF13aBGwel6K2nQOk6P2+Pu6IGcqGSc4CK2x
-         ad+C3V4TmSl0x9ViJ1o4pQrZusR8OvhTqMinvTHVqluoNIdDEJkxCk6wkTuAx+bqaRvC
-         D7ZBkg8uJjjplGfh5l8aYmxJ/6zvY/Tx+osSbbogKNyFes0dOHtBCCHfM3XnwUYLIKWq
-         AWhq2542PKw9I5D4C+WGYKuHBvbzgBrCWZA6cEGCcTHQT72DPdqUphQJoONgYdFk06Iz
-         yOfVmhLJHJ94OOCPEgOhOoYC0W/BMNray6EDFKA/TjuQiqVJYEeAUQuUWIwB/OKfVrpj
-         QrxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoSsX9egkR4gh0lw2hR5sHOYBaz45cvtd5+8JgVHh+bywZIah3gQQWkqUL3jBvhkKBEV6ddTQ/5aOxO80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA9a1RiwI/AkdlBJ2Zra48gDg1OuLL2wo3cpeeyDrG8ic+LiHg
-	6lJvJ+KxKTk9OB7FWLPc+2uFwqVK1PZC8OI5Dw4bkP8uPtmHOOjEfAQ9iBnL+YkXF6e4K1XdZ1P
-	Tf5sjwYkEWZ1SEtjkLevT6M28IAkrUdE/p4BsiBZedFo2e1iD/XtlIL3fIT9g2Q==
-X-Received: by 2002:a05:6512:10cf:b0:535:682a:b6c0 with SMTP id 2adb3069b0e04-5365881a531mr837728e87.61.1725609197610;
-        Fri, 06 Sep 2024 00:53:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOLErZd8sK7pmLsqp9q/TRsiLkxNVpjYLAzoIT78SU68/uGnRWKBXr6Ut84g/XznDsuc7ZtA==
-X-Received: by 2002:a05:6512:10cf:b0:535:682a:b6c0 with SMTP id 2adb3069b0e04-5365881a531mr837705e87.61.1725609197009;
-        Fri, 06 Sep 2024 00:53:17 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca2cfc296sm5949135e9.36.2024.09.06.00.53.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 00:53:16 -0700 (PDT)
-Message-ID: <a421b31b-53ad-4f56-88be-66a7d4c3bb61@redhat.com>
-Date: Fri, 6 Sep 2024 09:53:15 +0200
+        d=1e100.net; s=20230601; t=1725609207; x=1726214007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FLWAMf4F16Cm/iVBIMV8eWypdRb0d5qIVCKf1JBr3N4=;
+        b=gqoudwpzfOVI71a73gfAt5cu6lN4WJ7nrAheDLj1KYqNULX0R29MZbGIHaIXRYmjWB
+         uP2667F9stWqCOzYmOzEG9xcYfNzuWmvc/8z34ZfpKULp3YHRclXBYwpuJPHVzAZgGol
+         zuRjKdYhezf0fkQ889Y8iqSuWvsir5oNk/WXgnRt8F2iX3wFiJlyR7Olc7hzv8WQNt/x
+         7fUNpKkrBFDSXJWHrv4LAEng8JiIn3/jTqm3ydgDXeW7qVbXJy5v9sKTmkMwP6B+aUbZ
+         gDuGzRj6QXb+zrAqSAIPwzBf9Zopd4/XfLx6BIID6UQiS5nlO8yc5xoNwYQ6CulCnnNN
+         n7EA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhV8YE6m38eM/5FVzdEwwx13dqKDo+wajcCqhll6S7G4vLQD5s44FrbIi59p3++XTN6IvawYdClI3Kk+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYf+JtxvKU44yMxxW5dKwX/vPhlXzEq0CQJCGsWCnnJJJNGWfT
+	rzlykbZFt/G/zyxIgknxHzu7+v6EwvHJS3myxWds5OFYeRYIRuknrT1m79EMr5SNBEBYh/woZPH
+	xT38xGlfB07gQhJoD20bw7kTFCE4VSuqoNooeqyXghhBTAiQSoBVFXb5UMCwUlw==
+X-Received: by 2002:a17:907:96a1:b0:a86:a7ef:5c9e with SMTP id a640c23a62f3a-a8a888d048fmr94572066b.59.1725609207047;
+        Fri, 06 Sep 2024 00:53:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFC4LXTl7rqt8bWyFmvt87c820Tjb3KUs14y5WiuLk422+QPG/y6q18RItWc+sk62ze6W26+A==
+X-Received: by 2002:a17:907:96a1:b0:a86:a7ef:5c9e with SMTP id a640c23a62f3a-a8a888d048fmr94569666b.59.1725609206522;
+        Fri, 06 Sep 2024 00:53:26 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a8a141a46sm61126166b.22.2024.09.06.00.53.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 00:53:25 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in U-BOOT ENVIRONMENT VARIABLES
+Date: Fri,  6 Sep 2024 09:53:15 +0200
+Message-ID: <20240906075321.51507-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/3] drm/log: Introduce a new boot logger to draw the
- kmsg on the screen
-To: John Ogness <john.ogness@linutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240801100640.462606-1-jfalempe@redhat.com>
- <20240801100640.462606-4-jfalempe@redhat.com>
- <87o76czfb2.fsf@jogness.linutronix.de>
- <d4412d54-41b1-4671-9733-34ba1423404c@redhat.com>
- <87zfpwxqpc.fsf@jogness.linutronix.de> <87a5gm2khw.fsf@jogness.linutronix.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <87a5gm2khw.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=yes
+Content-Transfer-Encoding: 8bit
 
-On 05/09/2024 17:22, John Ogness wrote:
-> On 2024-08-01, John Ogness <john.ogness@linutronix.de> wrote:
->> On 2024-08-01, Jocelyn Falempe <jfalempe@redhat.com> wrote:
->>> I think I can also register one console for each drm driver, which
->>> will simplify drm_log even further. (currently it would mean having a
->>> circular buffer and work function for each driver which is a bit too
->>> much).
->>
->> Indeed.
->>
->>> Do you know if there is a chance to have write_thread() in 6.12 or
->>> 6.13 ?
-> 
-> FYI: The full NBCON API (with write_thread()) is now available in
-> linux-next.
-> 
-> It would be great to see a version of drm_log that only implements
-> write_thread() and does not do any of its own buffering with workqueue
-> and also does not need to track multiple graphic loggers at the same
-> time.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Thanks for the head-up.
-I will rebase it on top of Linux-next, and adapt to the new 
-write_thread() API, it should be much simpler.
+Commit 2fcea44e1ba1 ("dt-bindings: nvmem: convert U-Boot env to a layout")
+moves u-boot,env.yaml, but does not adjust the file entry in the U-BOOT
+ENVIRONMENT VARIABLES section referring to this file. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
 
+Adjust the file entry after the device-tree binding has been moved.
 
-I also need to adapt to the drm client rework 
-(https://patchwork.freedesktop.org/series/137391/) so that it will be 
-possible to choose on kernel command line between drm_log and fbdev 
-emulation/fbcon.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c28f04234ad1..b4ed239518ae 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23563,7 +23563,7 @@ F:	drivers/media/pci/tw686x/
+ U-BOOT ENVIRONMENT VARIABLES
+ M:	Rafał Miłecki <rafal@milecki.pl>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/nvmem/u-boot,env.yaml
++F:	Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
+ F:	drivers/nvmem/u-boot-env.c
+ 
+ UACCE ACCELERATOR FRAMEWORK
 -- 
-
-Jocelyn
-
-> 
-> John Ogness
-> 
+2.46.0
 
 
