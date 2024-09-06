@@ -1,268 +1,185 @@
-Return-Path: <linux-kernel+bounces-317993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48ABF96E6D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:27:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AED196E6D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6520B1C21A64
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79091F249E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B217579;
-	Fri,  6 Sep 2024 00:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DFE15E96;
+	Fri,  6 Sep 2024 00:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="IDWFoFce"
-Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOwVxMUD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FA4D531
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 00:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD53711CA0;
+	Fri,  6 Sep 2024 00:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725582418; cv=none; b=DBnXkwjGmn2mUmgNAK/nyrmT7DEQGajyaLFc+A7sLHzGNBGpleKhxaNXF2eX7H+2iCfGhzXENyMufiEVgWcU4GdrddGpxFU0FdbfZ8XmcBkDa355hXZRmrB8wpHY8yuo0jYMKjQVFjHEvQegHn4y3vhmCF01Sz+k2htVr2k6OVk=
+	t=1725582472; cv=none; b=H1Zlz56OMFhosKJRflU+IAjMOHLGWRAKlLjKpgJN4pJMQcyDm5jDDkmgB5LoTd38CUEdS2B+TQ3qgPsgfcTfobwyO9UnhZ0izL5ppBUqiBX75uUQOr28lcuqPPCjBHcyzGpsfQjARWOtqDOpxhKz5tqf47s6fG3ZVZ4EWjyacY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725582418; c=relaxed/simple;
-	bh=CT3NVRWc+M60qFnZhXV9s32dBdnmeq2G7C8xXw3YEfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bnsNhjuqqzTeEGzBTXZzX2vI/4Zd1FxO+wv652lc5GVVP6kovvn323YlM6YoVz0vJf6UXlycL0Rrq02PSHoYO8C4Ktwh48VM2e0APU+2+DpWb6PUiDc93KyvOOM6NGLyUbhdzW3rmVEomXFKCZmyTVDb9p2JJxoXN92scMw89SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=IDWFoFce; arc=none smtp.client-ip=35.74.137.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
-Authentication-Results: gw2.atmark-techno.com;
-	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=IDWFoFce;
-	dkim-atps=neutral
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by gw2.atmark-techno.com (Postfix) with ESMTPS id 1DC2C684
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:26:50 +0900 (JST)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d877d7f9b4so1956096a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 17:26:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atmark-techno.com; s=google; t=1725582409; x=1726187209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGTM8z3drlabx5saFMxcrZbEE2LPwIqPrjtUbOYE5m8=;
-        b=IDWFoFceJBE/NemvnCaieLcEDF+8DTRmNvFTcKgn9JK5dabQB1i8f8FB9OXrpIWXZC
-         fB8cCVytKipS57OkonlgGIa3rr+dBNekNIFxrKDd8CYHQPqxyeX30rWEg/TmsnBHn/Ex
-         NkWYTBu33UFjImhXHv6RhzPEMvgg/wRO/I0/bA6AXjfPkBaecWfGf6gYNT0ZvZsgvjH/
-         5lTm1HmXj3iDCokvS7cPApypnpce/5jm6Sn+eXzO++VXL8fb6RIeA6iGojxeuWawviNR
-         ItbFeaoYUlt8uRCCvMboVKNlP+7iYzO6ZoqooZpv4zG2eVvCVnUCddvNpoRlplh6d54q
-         tfeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725582409; x=1726187209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LGTM8z3drlabx5saFMxcrZbEE2LPwIqPrjtUbOYE5m8=;
-        b=UtKf5flMeO5VozvdaJF8O70cMY1qb+8qwjqaBBUnf6TbZ6JgdeXRQ539UIZWWaWxT6
-         l5+oTnM/hMcSsDyFphQg8K14ddvOwdJYtkdMyl0UU4s3oK7DL55xkAnIgiLau30T7eT9
-         jIcUxQR/ueKf6eZX1imS9oATXCU29mxajT5PnEkFJGKFkujhqSKF4YR6HKBjf3QDaGCV
-         QakNhanl7dLNUuLhhe4AEsnC7xsClnQIdC9exb6sk6Sm1tHG5xxEq9AzR1jXz1kwpYTZ
-         9fQ4EXLTf5cygNjKzvo6dm4aqHLAC5uXYkDIGZi1sMDF5zigEwD7WF4DONfAIhamkNtG
-         UJDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEp/whEbeOHcky8XFBQLCN1vp9AvhhXHL+uxlLPnViQru6pFGHEg5sPMSg74QNqoeGIVZOaVJfj9aoRto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY3frnGBsgVepzY4fzlweTx5/lECU+GLcyR9JJzcK3Oqr1V+Jv
-	EjzOE+dMgjvG5BxeNtzCoaYtlRzPmG0GKeLAjEWNpdddTzOkVPrTbuZgenwMtlVCuHFGiPGySmP
-	MaRN428NpPbKVhG/zYyiEEzDnSeN3A63ro0BELXh0CFosLrv5tV26PXiwnBmHoCE=
-X-Received: by 2002:a17:90b:2248:b0:2d3:db91:ee82 with SMTP id 98e67ed59e1d1-2dad513a8d5mr993638a91.40.1725582408955;
-        Thu, 05 Sep 2024 17:26:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGssYkvho2wuTiIV5XqLvj+xnJwXtMw7FK+bKNnXv5/kW4P3Qtr4XZhgQnImulOf/HrOPuE7A==
-X-Received: by 2002:a17:90b:2248:b0:2d3:db91:ee82 with SMTP id 98e67ed59e1d1-2dad513a8d5mr993625a91.40.1725582408574;
-        Thu, 05 Sep 2024 17:26:48 -0700 (PDT)
-Received: from localhost (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc091116sm150733a91.46.2024.09.05.17.26.47
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2024 17:26:48 -0700 (PDT)
-Date: Fri, 6 Sep 2024 09:26:36 +0900
-From: Dominique Martinet <dominique.martinet@atmark-techno.com>
-To: Adam Ford <aford173@gmail.com>
-Cc: linux-phy@lists.infradead.org, linux-imx@nxp.com, festevam@gmail.com,
-	frieder.schrempf@kontron.de, aford@beaconembedded.com,
-	Sandor.yu@nxp.com, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6 4/5] phy: freescale: fsl-samsung-hdmi: Use closest
- divider
-Message-ID: <ZtpMPCHBnEgtkBWp@atmark-techno.com>
-References: <20240904233100.114611-1-aford173@gmail.com>
- <20240904233100.114611-5-aford173@gmail.com>
+	s=arc-20240116; t=1725582472; c=relaxed/simple;
+	bh=K6wrMA4NMaFGP3Sp4vPuMOOJ9z42CsYsjU+yH0k9ZpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fPcebXaHVrWzJLv+seXy56sYciXc3bZ/sNxDsjIubeXhAnOMwLx5ckZ11R8uSAS20t4Q0rfzgXI/IFJaeASu4psk1fi5vGM6q0X5w3IT80cNpBWP466nrP76GlZyDFh/aCEA2JmAdIh7F+PfNHlJK/OZwhoNMJPdoXCqDLFlC0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOwVxMUD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0E1C4CEC3;
+	Fri,  6 Sep 2024 00:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725582472;
+	bh=K6wrMA4NMaFGP3Sp4vPuMOOJ9z42CsYsjU+yH0k9ZpI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rOwVxMUDAoXw5SklKVcoMdydUgoE4tk0T3VLu7rhVnOSII9MTQcVpt3Mq6X4bZb7v
+	 kPPu+HWw2WxGF6UXBpC1fYcQJutF4XD3aOFuan5GSAy529cwBq5zVYnkR+4D5IKnOO
+	 e9MkFI1cRjZ6hUGQyqoPDKY0lZYN6sc8x/WafGh1wdi1HeK6e7LjylwpwqyIXvG0kQ
+	 6RVVoymO+D6WddBCPvgSzjuK609lqstj+BXismhUT9t4LjLH+N83RdD+7DM0sJckxD
+	 S5+vrNVSBlDc23DA3kJYxXe44ac1DgPer1vZCDMOehUT7w7r4NZGHb405u28pWxdTX
+	 6jYGs3ZXqn7kA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f3fea6a0a9so13492721fa.0;
+        Thu, 05 Sep 2024 17:27:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUt8xl16IemRnq1Qbx5vm1/bL5WufGwQ7aEvbpCgx2SKbzWUlk1XHql9WnExx4oKQp/92naiPZrkLtl4w==@vger.kernel.org, AJvYcCVe7prjHu/DOJkKOQCqkHKAoBHIpxc98UA4f0PWlRAxkQZIdIIDdj5RIPXIp5udvvCLDNs169OhR/0fljbpZEw=@vger.kernel.org, AJvYcCVh4w85pFU+o5Ci/0/W93YzYCgygdzOp6Kjm0wdQicFJlMOwXahNLBOQSWk+aAYRnEd3OUHlADz1uK+@vger.kernel.org, AJvYcCWfDMwFf2ZAeJ48Hc7jmOD01/WYJ2Hxo8kmsuJynC7q3Bf3CYa/SYvZTf79cD4o7D9fkQZPJJLGi7t/8syc@vger.kernel.org, AJvYcCWwYARhhnWq17GGFnjgpDwccmPq/GlNlDS6J3pAk9jkiCrB8NFNkTl8YYEMq70WcGIxIcjRlmAGwN7g6g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAzh53mDklLi6ijIq+3Tegk/ctDAyjsxseroSBMy9Q7e5vev8s
+	V1jI+l+iig2D5O9svf5Zf+OLGICxn9yQf5kZPJD0Hkec81shcGt+k4JofAYPKNxHiMGxc8bPVZ1
+	EC3Pw2V75sYJ7pszKd+QiLNTxe+I=
+X-Google-Smtp-Source: AGHT+IECEJXsJFKh8FBdQC2eV1kk62AdTyv6v0z/HVmN55+fHGg4x6UhGG8hEo+Rv28CTDwPO53RFRQNS5OnAybvF2s=
+X-Received: by 2002:a05:651c:545:b0:2f5:66a:627 with SMTP id
+ 38308e7fff4ca-2f657a9793emr24818091fa.0.1725582471070; Thu, 05 Sep 2024
+ 17:27:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240904233100.114611-5-aford173@gmail.com>
+References: <20240904234803.698424-1-masahiroy@kernel.org> <20240904234803.698424-15-masahiroy@kernel.org>
+ <20240905143850.GD1517132-robh@kernel.org>
+In-Reply-To: <20240905143850.GD1517132-robh@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 6 Sep 2024 09:27:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASbhsgMyo--WrvLaUyaJQdAFrpS48L_E=T1MVgvZhB4Bw@mail.gmail.com>
+Message-ID: <CAK7LNASbhsgMyo--WrvLaUyaJQdAFrpS48L_E=T1MVgvZhB4Bw@mail.gmail.com>
+Subject: Re: [PATCH 14/15] kbuild: rename CONFIG_GENERIC_BUILTIN_DTB to CONFIG_BUILTIN_DTB
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-openrisc@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 5, 2024 at 11:38=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Thu, Sep 05, 2024 at 08:47:50AM +0900, Masahiro Yamada wrote:
+> > Now that all architectures have migrated to the generic built-in
+> > DTB support, the GENERIC_ prefix is no longer necessary.
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> >  Makefile                             | 2 +-
+> >  arch/arc/Kconfig                     | 2 +-
+> >  arch/loongarch/Kconfig               | 1 -
+> >  arch/microblaze/Kconfig              | 2 +-
+> >  arch/mips/Kconfig                    | 1 -
+> >  arch/nios2/platform/Kconfig.platform | 1 -
+> >  arch/openrisc/Kconfig                | 2 +-
+> >  arch/riscv/Kconfig                   | 1 -
+> >  arch/sh/Kconfig                      | 1 -
+> >  arch/xtensa/Kconfig                  | 2 +-
+> >  drivers/of/Kconfig                   | 2 +-
+> >  scripts/Makefile.vmlinux             | 2 +-
+> >  scripts/link-vmlinux.sh              | 2 +-
+> >  13 files changed, 8 insertions(+), 13 deletions(-)
+>
+> > diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> > index e1d3e5fb6fd2..70f169210b52 100644
+> > --- a/arch/loongarch/Kconfig
+> > +++ b/arch/loongarch/Kconfig
+> > @@ -388,7 +388,6 @@ endchoice
+> >  config BUILTIN_DTB
+> >       bool "Enable built-in dtb in kernel"
+> >       depends on OF
+> > -     select GENERIC_BUILTIN_DTB
+> >       help
+> >         Some existing systems do not provide a canonical device tree to
+> >         the kernel at boot time. Let's provide a device tree table in t=
+he
+>
+> > diff --git a/arch/nios2/platform/Kconfig.platform b/arch/nios2/platform=
+/Kconfig.platform
+> > index c75cadd92388..5f0cf551b5ca 100644
+> > --- a/arch/nios2/platform/Kconfig.platform
+> > +++ b/arch/nios2/platform/Kconfig.platform
+> > @@ -38,7 +38,6 @@ config NIOS2_DTB_PHYS_ADDR
+> >  config BUILTIN_DTB
+> >       bool "Compile and link device tree into kernel image"
+> >       depends on !COMPILE_TEST
+> > -     select GENERIC_BUILTIN_DTB
+>
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -1110,7 +1110,6 @@ config RISCV_ISA_FALLBACK
+> >  config BUILTIN_DTB
+> >       bool "Built-in device tree"
+> >       depends on OF && NONPORTABLE
+>
+> Humm, maybe this NONPORTABLE option could be common and used to
+> accomplish what I want here...
 
 
-(sorry I meant to send this yesterday but I'm being forced to adjust my
-mail pipeline with work and gmail and it didn't go out -- trying
-again. Sorry if it actually did go through. Hopefully I didn't misfire
-anything else yesterday...)
 
-Adam Ford wrote on Wed, Sep 04, 2024 at 06:30:32PM -0500:
-> Currently, if the clock values cannot be set to the exact rate,
-> the round_rate and set_rate functions use the closest value found in
-> the look-up-table.  In preparation of removing values from the LUT
-> that can be calculated evenly with the integer calculator, it's
-> necessary to ensure to check both the look-up-table and the integer
-> divider clock values to get the closest values to the requested
-> value.  It does this by measuring the difference between the
-> requested clock value and the closest value in both integer divider
-> calucator and the fractional clock look-up-table.
-> 
-> Which ever has the smallest difference between them is returned as
-> the cloesest rate.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+I do not know how this can prevent new architectures from enabling
+BUILTIN_DTB.
 
-b4 (or whatever you're using) probably picked that up from the patch I
-included in my reply to this patch, this sob should go away.
+New architectures can select BUILTIN_DTB together with NONPORTABLE.
 
 
 
-> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> index 4b13e386e5ba..9a21dbbf1a82 100644
-> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> @@ -547,6 +547,16 @@ static unsigned long phy_clk_recalc_rate(struct clk_hw *hw,
->  	return phy->cur_cfg->pixclk;
->  }
->  
-> +static u32 fsl_samsung_hdmi_phy_get_closest_rate(unsigned long rate,
-> +						 u32 int_div_clk, u32 frac_div_clk)
-> +{
-> +	/* The int_div_clk may be greater than rate, so cast it and use ABS */
-> +	if (abs((long)rate - (long)int_div_clk) < (rate - frac_div_clk))
-
-I still think `rate - frac_div_clk` might not always hold in the future
-(because there is no intrinsic reason we'd pick the smaller end in case
-of inexact match and a future improvement might change this to the
-closest value as well), so I'll argue again for having both use abs(),
-but at least there's only one place to update if that changes in the
-future now so hopefully whoever does this will notice...
-
-> +		return int_div_clk;
-> +
-> +	return frac_div_clk;
-> +}
-> +
->  static long phy_clk_round_rate(struct clk_hw *hw,
->  			       unsigned long rate, unsigned long *parent_rate)
->  {
-> @@ -563,6 +573,7 @@ static long phy_clk_round_rate(struct clk_hw *hw,
->  	for (i = ARRAY_SIZE(phy_pll_cfg) - 1; i >= 0; i--)
->  		if (phy_pll_cfg[i].pixclk <= rate)
->  			break;
-> +
-
-(unrelated)
-
->  	/* If the rate is an exact match, return it now */
->  	if (rate == phy_pll_cfg[i].pixclk)
->  		return phy_pll_cfg[i].pixclk;
-> @@ -579,8 +590,7 @@ static long phy_clk_round_rate(struct clk_hw *hw,
->  	if (int_div_clk == rate)
->  		return int_div_clk;
->  
-> -	/* Fall back to the closest value in the LUT */
-> -	return phy_pll_cfg[i].pixclk;
-> +	return fsl_samsung_hdmi_phy_get_closest_rate(rate, int_div_clk, phy_pll_cfg[i].pixclk);
->  }
->  
->  static int phy_clk_set_rate(struct clk_hw *hw,
-> @@ -594,27 +604,37 @@ static int phy_clk_set_rate(struct clk_hw *hw,
->  
->  	/* If the integer divider works, just use it */
-
-I found this comment a bit confusing given the current flow as of this
-patch. Might make more sense immediately before the if?
+> > -     select GENERIC_BUILTIN_DTB
+>
+> > diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> > index 3b772378773f..b09019cd87d4 100644
+> > --- a/arch/sh/Kconfig
+> > +++ b/arch/sh/Kconfig
+> > @@ -648,7 +648,6 @@ config BUILTIN_DTB
+> >       bool "Use builtin DTB"
+> >       default n
+> >       depends on SH_DEVICE_TREE
+> > -     select GENERIC_BUILTIN_DTB
+>
+> > diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> > index 5142e7d7fef8..53a227ca3a3c 100644
+> > --- a/drivers/of/Kconfig
+> > +++ b/drivers/of/Kconfig
+> > @@ -2,7 +2,7 @@
+> >  config DTC
+> >       bool
+> >
+> > -config GENERIC_BUILTIN_DTB
+> > +config BUILTIN_DTB
+> >       bool
+>
+> I'm confused. We can't have the same config option twice, can we?
 
 
->  	int_div_clk = fsl_samsung_hdmi_phy_find_pms(rate * 5, &p, &m, &s) / 5;
-> +	calculated_phy_pll_cfg.pixclk = int_div_clk;
-> +	calculated_phy_pll_cfg.pll_div_regs[0] = FIELD_PREP(REG01_PMS_P_MASK, p);
-> +	calculated_phy_pll_cfg.pll_div_regs[1] = m;
-> +	calculated_phy_pll_cfg.pll_div_regs[2] = FIELD_PREP(REG03_PMS_S_MASK, s-1);
-> +	phy->cur_cfg = &calculated_phy_pll_cfg;
->  	if (int_div_clk == rate) {
->  		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using integer divider\n");
-> -		calculated_phy_pll_cfg.pixclk = int_div_clk;
-> -		calculated_phy_pll_cfg.pll_div_regs[0] = FIELD_PREP(REG01_PMS_P_MASK, p);
-> -		calculated_phy_pll_cfg.pll_div_regs[1] = m;
-> -		calculated_phy_pll_cfg.pll_div_regs[2] = FIELD_PREP(REG03_PMS_S_MASK, s-1);
-> -		/* pll_div_regs 3-6 are fixed and pre-defined already */
-
-nitpick: might want to keep the above comment?
-
-> -		phy->cur_cfg  = &calculated_phy_pll_cfg;
-> +		goto done;
->  	} else {
->  		/* Otherwise, search the LUT */
-> -		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional divider\n");
-> -		for (i = ARRAY_SIZE(phy_pll_cfg) - 1; i >= 0; i--)
-> -			if (phy_pll_cfg[i].pixclk <= rate)
-> +		for (i = ARRAY_SIZE(phy_pll_cfg) - 1; i >= 0; i--) {
-> +			if (phy_pll_cfg[i].pixclk == rate) {
-> +				dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional divider\n");
-
-nitpick: might make sense to print what was picked in case of inexact
-match as well, but these are dbg warning so probably fine either way.
+We can.
 
 
-overall I find the flow of this function hard to read; it's a bit ugly
-flow-wise but jumping in the clock comparison 'if' might help trim this?
-(and if we're going out of our way to factor out the diff, maybe the lut
-lookup could be as well)
+Documentation/kbuild/kconfig-language.rst says:
 
-But I'm probably just being overcritical here, it's fine as is if you
-pefer your version, just writing down this as an illustration of what I
-meant with the above sentence as I'm not sure I was clear -- I'll be
-just as happy to consider this series done so we can do more interesting
-things :P
+  A config option can be defined multiple times with the same
+  name, but every definition can have only a single input prompt and the
+  type must not conflict.
 
-{
-    u32 int_div_clk, frac_div_clk;
-    int i;
-    u16 m;
-    u8 p, s;
-    
-    // (I haven't given up on that *5 to move inside this function...)
-    int_div_clk = fsl_samsung_hdmi_phy_find_pms(rate, &p, &m, &s);
-    if (int_div_clk == rate)
-        goto use_int_clk;
 
-    frac_div_clk = fsl_samsung_hdmi_phy_find_lut(rate, &i);
-    // (not convinced that check actually brings much, but it's not like
-    // it hurts either)
-    if (frac_div_clk == rate)
-        goto use_frac_clk;
-    
-    if (fsl_samsung_hdmi_phy_get_closest_rate(rate, int_div_clk,
-                                              frac_div_clk) == int_div_clk) {
-use_int_clk:
-        dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using integer divider\n");
-        calculated_phy_pll_cfg.pixclk = int_div_clk;
-        calculated_phy_pll_cfg.pll_div_regs[0] = FIELD_PREP(REG01_PMS_P_MASK, p);
-        calculated_phy_pll_cfg.pll_div_regs[1] = m;
-        calculated_phy_pll_cfg.pll_div_regs[2] = FIELD_PREP(REG03_PMS_S_MASK, s-1);
-        /* pll_div_regs 3-6 are fixed and pre-defined already */
-        phy->cur_cfg  = &calculated_phy_pll_cfg;
-    } else {
-use_frac_clk:
-        dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional divider\n");
-        phy->cur_cfg = &phy_pll_cfg[i];
-    }
-    return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
-}
 
--- 
-Dominique
+--=20
+Best Regards
+Masahiro Yamada
 
