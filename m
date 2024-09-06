@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-319367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F6C96FBA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:58:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A5696FBB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849221C20FE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703B82884EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5112E1D935F;
-	Fri,  6 Sep 2024 18:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD951D5CDA;
+	Fri,  6 Sep 2024 18:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wdhFWn+F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r3uAf5EU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iST5gZpV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9F21D79B7;
-	Fri,  6 Sep 2024 18:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFFE1D4611;
+	Fri,  6 Sep 2024 18:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725649021; cv=none; b=h6pk2fSvf8Sou0J8o6sI/kssaJvlXtQJr34sMlsnAyfdk9AaifewXe2SB1AjE0kHCjvLv+IMqSYEI55qWr4HIqi9SNhFgZe1OqD4QWyxY1fnLjyvaiMnkcpvkdXvlC9OaS0oRCYtSScuBfiT+eyefc9H56OciY8pCxTiRqyLDrw=
+	t=1725649137; cv=none; b=XCsuTD/do6LSSWDYi0QgQvh01JoMJ7JnhVq8RubPB42CQezIuKyO0JDYslJMKzUEXYJaeX6L9UN3p5DEJGeWVcGFBAex2kNhiXi3okX7Zs+e9906fmvK7HIcHHZugiuGvHAaRx0tSFwaYlpM7Hw5MemdLt8LYqULDf0BM0Txb0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725649021; c=relaxed/simple;
-	bh=8GZ4IylqyyPKKbKkx8L/HPiVCNqHnyB17N391LuGOMU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=WAn9hgcvGENt2/nmGMXYQtORcWqqXUN4JmEj6Nazc9x+Lkblvr/HK52NJluA67gmLKOrGAr5b3eVsZURnQRcVdZ/xlYoFTPtVUPS6m2krYzAel7NygdPLaZLibpSgVW3IUk3dtVt6pUHHjqyKZSyFeJ/bNPrNRR8Ty5qq/oEtrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wdhFWn+F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r3uAf5EU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 06 Sep 2024 18:56:58 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725649018;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uMA6CS/17rM1x5Uz5lTh7JUD0AcPfaj2BUI2/+O58Y4=;
-	b=wdhFWn+FvH6JkUcFgbrPfvLxJgBHN9e8FZOjLCdhgFVdB7W0/mIOTeNvYWBOFas1kC3Og+
-	ZQY6Grm3lGIf/nbwo0y0s1B6G1MXTVPE0WwGefmKB/aSYNerECr35iyQ/rfWvumF1t8heH
-	5+eQl04oWGP+itrJXOJIuEN8EzNT0bvP2U7rtmT7ZhcuVXLFbwZC830aGBa1j4gBKXWg0t
-	GcA7+bjY24lVfaONMtx/K6KpoOTWAb7Bb+i02XDrVPdf6O8sqo0HfV0/EFdCKDCe2p0EAn
-	73RvvWuFPnlXbY9h7xmrVXWmCFywDHM8ctKuc075IOKK0nCLRCYNBzN0oNToDw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725649018;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uMA6CS/17rM1x5Uz5lTh7JUD0AcPfaj2BUI2/+O58Y4=;
-	b=r3uAf5EUKHe8iassKhiPnXQzWp99U/p6hHRH2ol39n0yjFocpOSsQ7x+9nlVGq3IoJzy9J
-	Fr1J+K6ihPocgFCw==
-From: "tip-bot2 for Detlev Casanova" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] dt-bindings: timer: rockchip: Add rk3576 compatible
-Cc: Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240802214612.434179-9-detlev.casanova@collabora.com>
-References: <20240802214612.434179-9-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1725649137; c=relaxed/simple;
+	bh=K86qHkz4k9f+n37Ufn7RJNnR1F5LFAqXIee8+QUk3iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUhDn5KBrVFbGfZ7QmiswxJhBHhHfa1Zg4T8QfMYxC7m5PA/m/pLVK6y4oXpAUzjkUywZoFxS1rNOSMWfjKP9rEuITvSfTy4sb/NPynlN9s8HjMoMvqXMjOt+Zu50zTG8YYM60fyZLdTTYeoZHw49rAFFJUToyzKdci9X1CShOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iST5gZpV; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725649136; x=1757185136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=K86qHkz4k9f+n37Ufn7RJNnR1F5LFAqXIee8+QUk3iU=;
+  b=iST5gZpVvY4aMbyazjd+w4Z3MdcYeU1CMTuLv/zi1GvR0In0UtqeWQ34
+   Ha4MYbDuGkpbhXCbYHJ5iEG8/gf3f59C1R1KKxnPSHXil5IKpAbY4qCvH
+   156Ae4D1Fywy4TzEkCbaXRgPDf5Bc84q+RtpqfeWwQlw5QPGSrjAR1W9y
+   PaqMkCYdTygFRkK9geGX+ymk6GpSmCjt+kXWY8dY2SrZUPRLmDT0d2bqf
+   uHHUWuboW88Lz82Xrk4NrTd9KQ4bVk/TXnNaHQNGogHHJPeO0pqrVCzZb
+   biaro10TibF5JegcACKGDXN5Ve6B8dNPq+j+n2PanoSn5T7PnDMori9bG
+   w==;
+X-CSE-ConnectionGUID: O1V08nvAS7yqJBn6O2oaIA==
+X-CSE-MsgGUID: kAgiw1sxTeSoOSnVwSaocA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="13414537"
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="13414537"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:58:55 -0700
+X-CSE-ConnectionGUID: MW3h8rjTRkeVw3bXotiyPQ==
+X-CSE-MsgGUID: cvw9WHRnRJS3VAwyDRmA3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="96820651"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 06 Sep 2024 11:58:51 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smeAS-000BcF-2B;
+	Fri, 06 Sep 2024 18:58:48 +0000
+Date: Sat, 7 Sep 2024 02:58:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Carsten =?iso-8859-1?Q?Spie=DF?= <mail@carsten-spiess.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] hwmon: (isl28022) new driver for ISL28022 power
+ monitor
+Message-ID: <202409070217.1YB4gnfd-lkp@intel.com>
+References: <20240906061421.9392-2-Delphine_CC_Chiu@wiwynn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172564901801.2215.10359243983709138633.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906061421.9392-2-Delphine_CC_Chiu@wiwynn.com>
 
-The following commit has been merged into the timers/core branch of tip:
+Hi Delphine,
 
-Commit-ID:     0c87282074be532eedc8d14ff4420c585c5c57fe
-Gitweb:        https://git.kernel.org/tip/0c87282074be532eedc8d14ff4420c585c5c57fe
-Author:        Detlev Casanova <detlev.casanova@collabora.com>
-AuthorDate:    Fri, 02 Aug 2024 17:45:35 -04:00
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Fri, 06 Sep 2024 14:49:20 +02:00
+kernel test robot noticed the following build warnings:
 
-dt-bindings: timer: rockchip: Add rk3576 compatible
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on linus/master v6.11-rc6 next-20240906]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Add compatible string for Rockchip RK3576 timer.
+url:    https://github.com/intel-lab-lkp/linux/commits/Delphine-CC-Chiu/hwmon-isl28022-new-driver-for-ISL28022-power-monitor/20240906-141717
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20240906061421.9392-2-Delphine_CC_Chiu%40wiwynn.com
+patch subject: [PATCH v6 1/3] hwmon: (isl28022) new driver for ISL28022 power monitor
+reproduce: (https://download.01.org/0day-ci/archive/20240907/202409070217.1YB4gnfd-lkp@intel.com/reproduce)
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://lore.kernel.org/r/20240802214612.434179-9-detlev.casanova@collabora.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- Documentation/devicetree/bindings/timer/rockchip,rk-timer.yaml | 1 +
- 1 file changed, 1 insertion(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409070217.1YB4gnfd-lkp@intel.com/
 
-diff --git a/Documentation/devicetree/bindings/timer/rockchip,rk-timer.yaml b/Documentation/devicetree/bindings/timer/rockchip,rk-timer.yaml
-index 19e56b7..6d0eb00 100644
---- a/Documentation/devicetree/bindings/timer/rockchip,rk-timer.yaml
-+++ b/Documentation/devicetree/bindings/timer/rockchip,rk-timer.yaml
-@@ -24,6 +24,7 @@ properties:
-               - rockchip,rk3228-timer
-               - rockchip,rk3229-timer
-               - rockchip,rk3368-timer
-+              - rockchip,rk3576-timer
-               - rockchip,rk3588-timer
-               - rockchip,px30-timer
-           - const: rockchip,rk3288-timer
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+>> Warning: Documentation/hwmon/isl28022.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/isl,isl28022.yaml
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
