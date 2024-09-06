@@ -1,256 +1,139 @@
-Return-Path: <linux-kernel+bounces-319156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0630196F8B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A696F8B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B11CF2861C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F8B1F235C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFF21D31B9;
-	Fri,  6 Sep 2024 15:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC8F1D363C;
+	Fri,  6 Sep 2024 15:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ddhQxWef"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AAF1D27B8
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j5MXDLXw"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232961D0DC6
 	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725638032; cv=none; b=s9iCY1EVQeMLHrfuOyWE/kmI4fDuer0Ezq2G9kH0YIOuP4cykKQw1LSqSnF1GhM/UEn7e/+p2jE0faHi/08WC/OI5kyrcazfQfMz6tZ5azNC3b1obgIgkMaKuJPDvno+sMppsczdjOrEiXq0avtMhxCuFIh/n/asIQxlziZy3aA=
+	t=1725638033; cv=none; b=QERwkjRnm6HlrYt51iLHTBrRh6jkvz+waQGmhJKaoLS+JxytIMH8IsSiyZWd0/DLP7bHR4Ui3kSdtQHSCiH3H5W6zs2RjYU9LVh85abiV3NsaZSftl4Xugo0WxmuDTyDH8A2cfATv7GcNi//GuPs5ym604/t0zRYO/wTeRjxK6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725638032; c=relaxed/simple;
-	bh=3n4uFWmGNrY6fUUHiiFlg861B3W1rHG+cmit8+vyGFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qJ6V4smRjRkWlJbDrlVBpn8WTIUblwNTRSUShJArfdpfXLc69RFbHFUHpXZP6pNYpdwukk2XKo1dmd+JOek1YFJ1Wx9OJ6Jpf0XlP3ubgPEARvyzKjja+nPTMwgHVasDaHkJi3UUERUFg6d68R856RukfzVr+22bfnCG5CKjz0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ddhQxWef; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-0403QTC. (unknown [50.53.30.84])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 736D420B742F;
-	Fri,  6 Sep 2024 08:53:44 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 736D420B742F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1725638024;
-	bh=dhAAxzw1xFRgF69XavoCwMzTfsG/qTXxokC1sfRlo18=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ddhQxWefplbTwLcvAfLUySDnemE6h5j0s+jB74N0VHX7ETyITa/ZLiNYVuu2VbKl/
-	 4FTpB0LgaLTK6PMKfQqaUC7c1ZMGeh0C9JKUD9TMx1A7UKIMq6zJaCAu86BB3049mx
-	 7k+trQ0Q6DTu1wCnyLdzc0lVKhPsaEhdMSYSaHdA=
-Date: Fri, 6 Sep 2024 08:53:43 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
- <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
- <ubizjak@gmail.com>, <jgg@nvidia.com>, <jon.grimm@amd.com>,
- <santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>
-Subject: Re: [PATCH v3 2/5] iommu/amd: Introduce helper functions to access
- and update 256-bit DTE
-Message-ID: <20240906085343.615b9489@DESKTOP-0403QTC.>
-In-Reply-To: <20240906121308.5013-3-suravee.suthikulpanit@amd.com>
-References: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
-	<20240906121308.5013-3-suravee.suthikulpanit@amd.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725638033; c=relaxed/simple;
+	bh=73+bdBPq1AOzINIRfrSoaR2wZA28NZeimBgV3a3wDjg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QFnYPzPdnNsfeT1RVtti2pINJZw2Hn9qRQ+lHSd+KDhrBAkbvtMBQeWa2VRTviTfAz1VTlc9ghSqx4rattGerR3KqnhoO/LYR75ZQKCYp0/G6hrLWwC7cufhuPIWpJpYT0hrksULziS4gwXv/FIcZtM9UAu6eHEJyBM45gpLU+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j5MXDLXw; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-206e614953aso15262825ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725638030; x=1726242830; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=st1kODhvyTXk6TV1RcdKVdBXoGE9hcS/ZZYObHLT4cs=;
+        b=j5MXDLXwakArlruciNjt8Ulzzp4zZPjxfUpRF1/z0RAwo9JxLRRPovK5ED8ZUIW0KT
+         pcgjqtLIQZPajf2D29aLuP+YtQoUFKfrvkCuLUDtbQjXUX8qOeaH5BWeH4wfLN3WxSsl
+         KUzIpgctUquNpcSM1RxG2bgJCbdY7B0sJZYyYyDpkGnH6ediiitOfMFxM80+pUpDJpEQ
+         bnixf4IuZNOuX/CQ3axL+4Z3B1N9IeVw189Af+LqzZWf3Umleo7lMmyp83kY3JUFksXO
+         OncHmY0uZ4qifgO4VbSfFeWbqL+kKh+AyyGX7pjmG/BBG1tgnUMgIPwOfTDAkO57TibS
+         yHDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725638030; x=1726242830;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=st1kODhvyTXk6TV1RcdKVdBXoGE9hcS/ZZYObHLT4cs=;
+        b=JJhj5JQ5DWScf2wWvQHu+UOurKSnNlnuMA14qyfRIWv5nONfvDp5q6xUxJByKto/jI
+         ZvxK29Zdc+yx5y3MjgNjnzQxc95bUR8yFI3adz2txPcM1DrkyetBJ+JVvHZr6ZNWfVmT
+         8xpvljSP1OwdiGqnEKUFHQZvqlcQlJ7JJW6syWAydbNrwjP391lXfwfZgLauLWyngVDQ
+         kHZq4Ujn/0LEmVxt6hNNRUHfnhbTK25Q9SWtRRctdeJVyMoPBiV/ApH1sm6iFMpJRF1n
+         PSu+NvhJ6k8t40WffAqaGDh7dtgFaevepzQpQitB0G46vnHLSFYrn8486acfeUXLtaLm
+         7kgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXR1GLaQK3/oDGSuMQtGj29WmHtxMnXBrByd5Z3P74olDUqoiZuO3gk4KFnnQtKv9qfH6Vd61pa4d0Vhfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWnWLLnK88bnu6tNbxIGyPg/sGdpmadSc7Vz/C8EAYgDuaIU+z
+	fgkI24NVU7aLjHdPoqy+zEtfK3M9n7NZLbU/TMNazvYooZIhRZEfLeDdBlg7yt0=
+X-Google-Smtp-Source: AGHT+IFw9PxcaxQ7+rDmkcLXn+siO6V9uqYxbdPNfcgdVRHimfqKWxh65K7oC05RbvA9mJZ5BZgqIA==
+X-Received: by 2002:a17:902:da90:b0:206:9060:c452 with SMTP id d9443c01a7336-2069060c57dmr180473135ad.33.1725638030419;
+        Fri, 06 Sep 2024 08:53:50 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae94dcc4sm44569565ad.67.2024.09.06.08.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 08:53:49 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan
+ <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur
+ <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, Markus
+ Schneider-Pargmann <msp@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] pmdomain: ti_sci: handle wake IRQs for IO daisy
+ chain wakeups
+In-Reply-To: <CAPDyKFquSHYLGzd288K3JSOF_p+UyRO8GoBP9TGCR_3syGXTDw@mail.gmail.com>
+References: <20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com>
+ <20240905-lpm-v6-10-constraints-pmdomain-v3-3-e359cbb39654@baylibre.com>
+ <CAPDyKFquSHYLGzd288K3JSOF_p+UyRO8GoBP9TGCR_3syGXTDw@mail.gmail.com>
+Date: Fri, 06 Sep 2024 08:53:49 -0700
+Message-ID: <7hfrqcaicy.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi Suravee,
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-On Fri, 6 Sep 2024 12:13:05 +0000
-Suravee Suthikulpanit <suravee.suthikulpanit@amd.com> wrote:
+> On Fri, 6 Sept 2024 at 00:03, Kevin Hilman <khilman@baylibre.com> wrote:
+>>
+>> When a device supports IO daisy-chain wakeups, it uses a dedicated
+>> wake IRQ.  Devices with IO daisy-chain wakeups enabled should not set
+>> wakeup constraints since these can happen even from deep power states,
+>> so should not prevent the DM from picking deep power states.
+>>
+>> Wake IRQs are set with dev_pm_set_wake_irq() or
+>> dev_pm_set_dedicated_wake_irq().  The latter is used by the serial
+>> driver used on K3 platforms (drivers/tty/serial/8250/8250_omap.c)
+>> when the interrupts-extended property is used to describe the
+>> dedicated wakeup interrupt.
+>>
+>> Detect these wake IRQs in the suspend path, and if set, skip sending
+>> constraint.
+>>
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+>> ---
+>>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> index 1ab1e46924ab..747a7a33c0a9 100644
+>> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> @@ -82,6 +82,13 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
+>>         int ret;
+>>
+>>         if (device_may_wakeup(dev)) {
+>> +               /*
+>> +                * If device can wakeup using IO daisy chain wakeups,
+>> +                * we do not want to set a constraint.
+>> +                */
+>> +               if (dev->power.wakeirq)
+>> +                       dev_dbg(dev, "%s: has wake IRQ, not setting constraints\n", __func__);
+>
+> return; ?
+>
 
-> The current implementation does not follow 128-bit write requirement
-> to update DTE as specified in the AMD I/O Virtualization Techonology
-> (IOMMU) Specification.
-> 
-> Therefore, modify the struct dev_table_entry to contain union of u128
-> data array, and introduce two helper functions:
-> 
->   * update_dte256() to update DTE using two 128-bit cmpxchg
->     operations to update 256-bit DTE with the modified structure.
-> 
->   * get_dte256() to copy 256-bit DTE to the provided structrue.
-> 
-> In addition, when access/update 256-bit DTE, it needs to be locked
-> to prevent cmpxchg128 failure and data tearing. Therefore, introduce
-> a per-DTE spin_lock struct dev_data.dte_lock to provide
-> synchronization across get_dte256() and update_dte256().
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  drivers/iommu/amd/amd_iommu_types.h |  6 ++-
->  drivers/iommu/amd/iommu.c           | 80
-> +++++++++++++++++++++++++---- 2 files changed, 76 insertions(+), 10
-> deletions(-)
-> 
-> diff --git a/drivers/iommu/amd/amd_iommu_types.h
-> b/drivers/iommu/amd/amd_iommu_types.h index
-> c9f9a598eb82..1836da2d9e60 100644 ---
-> a/drivers/iommu/amd/amd_iommu_types.h +++
-> b/drivers/iommu/amd/amd_iommu_types.h @@ -833,6 +833,7 @@ struct
-> devid_map { struct iommu_dev_data {
->  	/*Protect against attach/detach races */
->  	spinlock_t lock;
-> +	spinlock_t dte_lock;              /* DTE lock for 256-bit
-> access */ 
->  	struct list_head list;		  /* For
-> domain->dev_list */ struct llist_node dev_data_list;  /* For global
-> dev_data_list */ @@ -883,7 +884,10 @@ extern struct amd_iommu
-> *amd_iommus[MAX_IOMMUS];
->   * Structure defining one entry in the device table
->   */
->  struct dev_table_entry {
-> -	u64 data[4];
-> +	union {
-> +		u64 data[4];
-> +		u128 data128[2];
-> +	};
->  };
->  
->  /*
-> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-> index 87c5385ce3f2..b994e7837306 100644
-> --- a/drivers/iommu/amd/iommu.c
-> +++ b/drivers/iommu/amd/iommu.c
-> @@ -85,6 +85,45 @@ static void set_dte_entry(struct amd_iommu *iommu,
->   *
->   ****************************************************************************/
->  
-> +static void update_dte256(struct amd_iommu *iommu, struct
-> iommu_dev_data *dev_data,
-> +			  struct dev_table_entry *new)
-> +{
-> +	struct dev_table_entry *dev_table = get_dev_table(iommu);
-> +	struct dev_table_entry *ptr = &dev_table[dev_data->devid];
-> +	struct dev_table_entry old;
-> +	u128 tmp;
-> +
-> +	lockdep_assert_held(&dev_data->dte_lock);
-> +
-> +	old.data128[0] = ptr->data128[0];
-> +	old.data128[1] = ptr->data128[1];
-> +
-> +	tmp = cmpxchg128(&ptr->data128[1], old.data128[1],
-> new->data128[1]);
-> +	if (tmp == old.data128[1]) {
-If you are able to deal with the failure, why not use try_cmpxchg128
-for the hi 128 bit also? It is more efficient.
+Oops, I meant to remove the "false" return when changing from bool to
+void, but mistakenly removed the whole line.
 
-> +		if (!try_cmpxchg128(&ptr->data128[0],
-> &old.data128[0], new->data128[0])) {
-> +			/* Restore hi 128-bit */
-> +			cmpxchg128(&ptr->data128[1],
-> new->data128[1], tmp);
-> +			pr_err("%s: Failed. devid=%#x,
-> dte=%016llx:%016llx:%016llx:%016llx\n",
-> +			       __func__, dev_data->devid,
-> new->data[0], new->data[1],
-> +			       new->data[2], new->data[3]);
-> +		}
-> +	}
-> +}
-> +
-> +static void get_dte256(struct amd_iommu *iommu, struct
-> iommu_dev_data *dev_data,
-> +		      struct dev_table_entry *dte)
-> +{
-> +	struct dev_table_entry *ptr;
-> +	struct dev_table_entry *dev_table = get_dev_table(iommu);
-> +
-> +	lockdep_assert_held(&dev_data->dte_lock);
-> +
-> +	ptr = &dev_table[dev_data->devid];
-> +
-> +	dte->data128[0] = ptr->data128[0];
-> +	dte->data128[1] = ptr->data128[1];
-> +}
-> +
->  static inline bool pdom_is_v2_pgtbl_mode(struct protection_domain
-> *pdom) {
->  	return (pdom && (pdom->pd_mode == PD_MODE_V2));
-> @@ -205,6 +244,7 @@ static struct iommu_dev_data
-> *alloc_dev_data(struct amd_iommu *iommu, u16 devid) return NULL;
->  
->  	spin_lock_init(&dev_data->lock);
-> +	spin_lock_init(&dev_data->dte_lock);
->  	dev_data->devid = devid;
->  	ratelimit_default_init(&dev_data->rs);
->  
-> @@ -232,9 +272,11 @@ static struct iommu_dev_data
-> *search_dev_data(struct amd_iommu *iommu, u16 devid 
->  static int clone_alias(struct pci_dev *pdev, u16 alias, void *data)
->  {
-> +	struct dev_table_entry dte;
->  	struct amd_iommu *iommu;
-> -	struct dev_table_entry *dev_table;
-> +	struct iommu_dev_data *dev_data, *alias_data;
->  	u16 devid = pci_dev_id(pdev);
-> +	int ret;
->  
->  	if (devid == alias)
->  		return 0;
-> @@ -243,13 +285,28 @@ static int clone_alias(struct pci_dev *pdev,
-> u16 alias, void *data) if (!iommu)
->  		return 0;
->  
-> -	amd_iommu_set_rlookup_table(iommu, alias);
-> -	dev_table = get_dev_table(iommu);
-> -	memcpy(dev_table[alias].data,
-> -	       dev_table[devid].data,
-> -	       sizeof(dev_table[alias].data));
-> +	/* Get DTE for pdev */
-> +	dev_data = dev_iommu_priv_get(&pdev->dev);
-> +	if (!dev_data)
-> +		return -EINVAL;
->  
-> -	return 0;
-> +	spin_lock(&dev_data->dte_lock);
-> +	get_dte256(iommu, dev_data, &dte);
-> +	spin_unlock(&dev_data->dte_lock);
-> +
-> +	/* Setup for alias */
-> +	alias_data = search_dev_data(iommu, alias);
-> +	if (!alias_data) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	spin_lock(&alias_data->dte_lock);
-> +	update_dte256(iommu, alias_data, &dte);
-> +	amd_iommu_set_rlookup_table(iommu, alias);
-> +	spin_unlock(&alias_data->dte_lock);
-> +out:
-> +	return ret;
->  }
->  
->  static void clone_aliases(struct amd_iommu *iommu, struct device
-> *dev) @@ -583,10 +640,15 @@ static void
-> amd_iommu_uninit_device(struct device *dev) static void
-> dump_dte_entry(struct amd_iommu *iommu, u16 devid) {
->  	int i;
-> -	struct dev_table_entry *dev_table = get_dev_table(iommu);
-> +	struct dev_table_entry dte;
-> +	struct iommu_dev_data *dev_data = find_dev_data(iommu,
-> devid); +
-> +	spin_lock(&dev_data->dte_lock);
-> +	get_dte256(iommu, dev_data, &dte);
-> +	spin_unlock(&dev_data->dte_lock);
->  
->  	for (i = 0; i < 4; ++i)
-> -		pr_err("DTE[%d]: %016llx\n", i,
-> dev_table[devid].data[i]);
-> +		pr_err("DTE[%d]: %016llx\n", i, dte.data[i]);
->  }
->  
->  static void dump_command(unsigned long phys_addr)
+d'oh!, good catch.
 
+Thanks.
+
+Kevin
 
