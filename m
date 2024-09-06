@@ -1,109 +1,242 @@
-Return-Path: <linux-kernel+bounces-319004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553C596F662
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:12:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B6496F65F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBBFB25293
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420261F25111
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D245D1D12E5;
-	Fri,  6 Sep 2024 14:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CC91D0143;
+	Fri,  6 Sep 2024 14:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2094qd3"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D2E1D0496
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="Xk0YC814"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964BE1D1741;
+	Fri,  6 Sep 2024 14:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725631926; cv=none; b=jvw3KR2OGTOH1Vf6oXlrl7L444LstAAz12bz4UAwsVQw92krTjezP7WXQiUnDUbRSFcYwSFUZqkJ6pvSC7VHsqefzUKxJdL79MFRxhNWbmYrX+oG1FmQ52yaN2Eb01VtQv8OIRg4Ye8fWi9o/DmnZpudkSrfoNbYvjojwdV9Yq4=
+	t=1725631882; cv=none; b=hpY9JEA3GlLL4IIIj9gER+5l13m0IpIVb7KdzG0sLBlnis1diWKRtaRcNMc/5ML6YggBXoc1VAi5/rgnFAPJp1xQZEcnKce5T+KvVVfZzEnTUs3jukVbSF37jI2ApeGXoipwOxGtQi6bmAVIoDTb21qyjyhUjcx65srUplqdLnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725631926; c=relaxed/simple;
-	bh=tr0k3udyYHTsb6noIMnXKzGBGum8kb+Pq7RA90sKRMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fp0wfAXJTSVpaOhApZwsXiKkql3SnzT9aqNltxClCvLBBInKeSeLTBDHUhN9U589FblFPotyegGM4jxpyJOGsvquKxm6Y1oCECczepvf8HWYkjRFhml2w+nciWLfaww5SogRRMEIILw664LypLb0JTnk1FoVO7WT39ZKfqWxVPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2094qd3; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc47aef524so1887265ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725631924; x=1726236724; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cB0+7HUocPV6rVpUr8k3hJ2pVw2G7BEadEUj4KIQ8CA=;
-        b=g2094qd3aBoIbZXZkR6/w0S8KuOABvHne1N6Ezy/R2WrCOu0o4sklK8SqGO3HrVZTy
-         nyluMZSI3LtUGQ+5SFZoDsBDyXBsXu4Z9LRwXJbmGSuhkAAi6fQmJXdfazHlNitK1J2b
-         wyX6Kfgzwv6DvM4B1LmLOH9RCpmkAs+fY3Vdc1x3CGBSjJzHn1sJYcEzE8l40um/EI1y
-         I1KszMYGNY/Bh8UTQ8iZTgMIfPz7aeMh0rq1rFOX3RQF23LihQXY46prt5TaCpd5NKG8
-         jv41R/NL1qPfhFP+GXsz24FSOrne7j2jEMAeW/f6pWuDofFoWp/ABroZKDUu+cr1heJE
-         zBLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725631924; x=1726236724;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cB0+7HUocPV6rVpUr8k3hJ2pVw2G7BEadEUj4KIQ8CA=;
-        b=IaoiEySqNQoG7I3Ff45e9Ukjc2gvBVYWDNZwJBMhYGx+h7C3Lpg/rzLfhCUQfMGcK/
-         +fI99nUbOhCG2QPnqizz43DlkzEoUNP+ty0lr9GSRC4YMVyjystadsj0IM6jfJgCMuhA
-         ZLzRBP/3OSSBbRbbVH6fCgeuwc12kzWeEFGjszoZhdZflLBoaX+NsExR4M88VLmxM6PC
-         hxOdPkxdPsjxKIn1sBl1Sy428yKLo6YsZUA3f4IcqDcDjOd/o5hu1wrZRdVKEYOHc0XS
-         UgOw6MY+hPdOlpzNjx9Mm47SF7ectjKVTPU7cYF2jvgKT4IsOk8x6bofjJjv2I7uuBox
-         0vmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCDhDP8Wk9SN46IHxGgwU/kdajmE9DJBz9Z5KsMUsUbTp1LmBUNCoL/darRLhixFOtay/u4FaXwyI+kvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPEB3cxTox0bbEgq6afptjk4AnAw5epOTyZO/EOEmEbPSm83uz
-	jZhzpmp6ol56+io37sxKFxb3XKGtJ6Mudeaj43yHKZe9FZkafWzW
-X-Google-Smtp-Source: AGHT+IE3LHZzIOKXhe+IEWE83z84niJa0kAefJucb9M9xlSY0zVtDuSMLl8ZMO/10JXAKJkERlz4Pg==
-X-Received: by 2002:a17:902:e550:b0:205:40f5:d1a with SMTP id d9443c01a7336-206f060b887mr14174945ad.6.1725631923989;
-        Fri, 06 Sep 2024 07:12:03 -0700 (PDT)
-Received: from ubuntukernelserver.. ([110.44.116.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea5554dsm43493095ad.235.2024.09.06.07.12.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:12:03 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: core: Fix spelling mistake in rtw_xmit.c
-Date: Fri,  6 Sep 2024 19:56:57 +0545
-Message-Id: <20240906141157.10167-1-topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725631882; c=relaxed/simple;
+	bh=41LSjH9fL1APCWgZDuap4GRdxIJs/YJdpe2tR3ss5+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=SeUe8OH3PWypcwN++zHdcIkoQWOkyciLBjd85mQSviFDVXWlxVfr1TbKjhMqk3kcOgvQNyAGyZWJOHaZtFLsVycmuJj+k3WXNMx8IZL/6GRkgGZfEnueH79AHinzB1HbAHDzVq+WxwGusOGv8sfyYfgiKYrjgNjlA3I6gm3PXz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=Xk0YC814; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.155.100.110])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id BE252789F5;
+	Fri,  6 Sep 2024 22:11:15 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn BE252789F5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1725631877;
+	bh=k0VLcrFTCAtKxfm0iaob131MuzN5vsg7K8XcHnszFKg=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=Xk0YC8148UlSEJD35KJNHCvQUpDUCFvmWY6AdrJJlKZZW+Kd3pHAG4dNyArU7FAkB
+	 EEyQn/yWr1arab7gSL3iYHHTUnulcBhY3ZJQgkKY9OKdLMGYhd9UYpkDcEGdocWnGs
+	 9hYQFu9vNEOVt4xfb4eAgydZPuX7ES5uJGIzDuGI=
+Message-ID: <53784a02-087b-4912-94a9-aead49d7abea@classfun.cn>
+Date: Fri, 6 Sep 2024 22:12:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: add dts for Ariaboard
+ Photonicat RK3568
+To: Chukun Pan <amadeus@jmu.edu.cn>
+References: <20240906045706.1004813-4-bigfoot@classfun.cn>
+ <20240906081005.69334-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Junhao Xie <bigfoot@classfun.cn>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
+ FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <20240906081005.69334-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch fixes spelling mistake to increase code readability
-and searching.
+On 2024/9/6 16:10, Chukun Pan wrote:
+> Hi Junhao,
+> 
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+>> @@ -0,0 +1,595 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/input/input.h>
+>> +#include <dt-bindings/leds/common.h>
+>> +#include <dt-bindings/pinctrl/rockchip.h>
+>> +#include <dt-bindings/soc/rockchip,vop2.h>
+>> +#include <dt-bindings/soc/rockchip,boot-mode.h>
+> 
+> No need for input.h, leds/common.h and boot-mode.h.
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will remove them.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index b1965ec0181f..755c1bc86a74 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -45,7 +45,7 @@ s32 _rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
- 	init_completion(&pxmitpriv->terminate_xmitthread_comp);
- 
- 	/*
--	 * Please insert all the queue initializaiton using _rtw_init_queue below
-+	 * Please insert all the queue initialization using _rtw_init_queue below
- 	 */
- 
- 	pxmitpriv->adapter = padapter;
--- 
-2.34.1
+> 
+>> +#include "rk3568.dtsi"
+>> ...
+>> +	vcc3v3_sd: regulator-3v3-vcc-sd {
+>> +		pinctrl-0 = <&vcc_sd_h>;
+> 
+> schematics: sdmmc0_pwren
 
+I will rename vcc_sd_h to sdmmc0_pwren.
+
+> 
+>> ...
+>> +	vcc3v3_rf: regulator-3v3-vcc-rf {
+> 
+> schematics: VCC3V4_RF
+
+I will change it to "vcc3v4_rf: regulator-3v4-vcc-rf {"
+
+> VCCIN_5V -> VCC3V4_RF
+
+Is vccin_5v a new regulator or is it actually vcc_sysin?
+
+> 
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&vcc3v3_rf_pwren_en>;
+> 
+> schematics: RF_PWR_EN
+> 
+>> ...
+>> +	vcc5v0_sysin: regulator-5v0-vcc-sysin {
+> 
+> schematics: VCC_SYSIN
+> 
+>> ...
+>> +	vcc5v0_syson: regulator-5v0-vcc-syson {
+> 
+> schematics: VCC_SYSON
+
+I will rename them.
+
+> 
+>> ...
+>> +	vcc5v0_usb30_otg0: regulator-5v0-vcc-usb-host {
+>> ...
+>> +		vin-supply = <&vcc5v0_syson>;
+> 
+> VCCIN_5V -> VCC5V0_USB30_OTG0
+> 
+>> ...
+>> +&gmac1 {
+>> ...
+>> +	tx_delay = <0x0>;
+>> +	rx_delay = <0x0>;
+> 
+> Please remove the tx_delay and rx_delay, it's useless.
+> I know there is an error log, but please ignore it first.
+
+OK, I will remove them.
+
+> 
+>> ...
+>> +&pinctrl {
+>> ...
+>> +		bt_reg_on_h: bt-enable-h {
+>> +		pcie_pwren_h: pcie-enable-h {
+>> +		wifi_reg_on_h: wifi-enable-h {
+>> +		vcc3v3_rf_pwren_en: vcc5v0-modem-en {
+>> +		usb_host_pwren_h: vcc5v0-host-en {
+> 
+> obviously (
+
+Yes, I forgot to modify them, it looks better like this:
+bt_reg_on_h: bt-reg-on-h {
+pcie_pwren_h: pcie-pwren-h {
+wifi_reg_on_h: wifi-reg-on-h {
+sdmmc0_pwren: sdmmc0-pwren {
+rf_pwren_en: rf-pwren-en {
+usb_host_pwren_h: usb-host-pwren-h {
+
+> 
+>> +	wifi_pwrseq: wifi-pwrseq {
+>> +		compatible = "mmc-pwrseq-simple";
+>> ...
+>> +&pinctrl {
+>> ...
+>> +	sdio-pwrseq {
+> 
+> I tend to write like this:
+
+I will rename them.
+
+> 
+> ```
+> &pinctrl {
+> 	wifi {
+> 		wifi_reg_on_h: wifi-reg-on-h {
+> ```
+> 
+>> +	vcc_sd {
+>> +		vcc_sd_h: vcc-sd-h {
+> 
+> Overwrite original to match `sdmmc0_pwren`
+> 
+> sdmmc0 {
+> 	sdmmc0_pwren: sdmmc0-pwren {
+> 
+>> +			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+>> +		};
+>> +	};
+>> +
+> 
+> Extra blank lines.
+> 
+>> +};
+>> ...
+>> &sdmmc1 {
+>> ...
+>> 	max-frequency = <150000000>;
+> 
+> `max-frequency = <150000000>;` already defined in rk356x.dtsi
+
+Yes, I will remove them.
+
+> 
+>> ...
+>> +&usb_host0_ohci {
+>> ...
+>> +&usb_host0_ehci {
+> 
+> &usb_host0_ehci {
+> &usb_host0_ohci {
+> 
+> Same for usb_host1
+> 
+>> ...
+>> &usb2phy1_host {
+>> 	phy-supply = <&vcc3v3_rf>;
+>> 	status = "okay";
+>> };
+> 
+> Is usb2phy1_host connected?
+
+It looks like usb_host1_ehci, usb_host1_ohci, usb2phy1_host
+are not used by any device.
+I removed them and it still works fine.
+
+> 
+Thanks for your review, I will fix all problems in next version!
+
+Best regards,
+Junhao
 
