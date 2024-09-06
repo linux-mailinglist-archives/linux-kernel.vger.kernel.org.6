@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-318382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5233A96ECF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C6D96ECFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FCCE1C22B0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA21E1F2578C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6E1547DD;
-	Fri,  6 Sep 2024 07:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2A14AD3A;
+	Fri,  6 Sep 2024 07:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Loj1+UQK"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X1ZboXte"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EE11474B5
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C23D1474B5
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609429; cv=none; b=UtiMjy6DGvbHAfuqqeGqerVTkm7cIfNpMK40Zz+LMyGnNDVKI2jbVNbxVDWcjBLmiX35c+45mKJBLZq7ojZv/Obik575NNc/3idyC31FC1NnzX6HJb9rf2Kp4qFWYLJ+o0AK3gkyF1O+zAgYW3X7Hw5c7YzlNqsR8oADBNigi+E=
+	t=1725609557; cv=none; b=BSEtA1wKeVkxMsQ73KMHkmw2K+XIE14GjhyyCy/CsJMYGM8FdlsYu5hq6xG+v41AuRmwXI9+ah0MRGMRQ7/FRUWnMMc+jnxzdVHb/02jrpSes4JBq/9SvdkWAatfRNHq9WoWRFXHI1e6YFv0gJlHp2+imo9ro+Rf0d/VwutRdcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609429; c=relaxed/simple;
-	bh=Wh9SlVbbUmrFXHHWJtHJsESHp2xdw5pRp/k9kgTL2yg=;
+	s=arc-20240116; t=1725609557; c=relaxed/simple;
+	bh=BTvFMqnI3C+fYNMJw9p6O6lpXl43g9qsQMtyE9BXMyk=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f905pMRNsn89g6gBUhH7K+bweCVOpulRB7dZwdGHYKFs/pmocoXfr+Up1UagNsA0je4m7829VT8qeMQ9aoc/BAyMl5xADHds2XKEksRw3fbzNHje/sFu/cAlYj8gXoAYj/ku9GzmDIzCY2J61M9rzO38cNYXQPslKZlYLBeYonI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Loj1+UQK; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=HtJ7Mi5FkLg3eKdlgwtBLlBlKNw+l5z2dsaybvUi8OTSkoiTQpFZ0URSfMFctE+pEtOANX+VyfiZWgSdDnx80SCndFEY9nK0NjU6JUNr8mZGHs6y4H4p8+SwrGFz6EXOMz7uNSXNmEpp16D3F/5+wtE5sL+hg35IvORBphYgS9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X1ZboXte; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42bbd16fcf2so13615355e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:57:07 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42ba9b47f4eso9347525e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725609426; x=1726214226; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725609554; x=1726214354; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zvVkrkpN6j+a38laIGqZJX8O9Gb4gq72X5FJNVHGZIY=;
-        b=Loj1+UQKFzuJENfDiEP2zw7IytUhba182mni8b/+MiXecXaUIJDG1CgM4TocNwkYmh
-         IC4a9gWaqaTWIHyUvhtwIgWMxdF8VK5kA/c3n8bEjh5UXZZFQS3Ttq3aON20kC1DRs/7
-         hfyJZifbmztwADIihDmtvBBshIi2D3lNJqXYkSA57s+Eu1BzGQBGMdNDCCDfkRoyBkeO
-         /I6aMxadOSeJ+RlxAWehMUl0TPIUMXVH+rJURNdodPQdUmWc2kxQhWKyS8DBV+eMk8XV
-         LwQ+T8sGDlO+kpM81U4ZpEBg5Daw6mEqV/IxIUfbYWM/rMhqdQTf5vCrRDGnqPo71xQx
-         nnOA==
+        bh=qsW9dVa3QthW32mNAcUCOJ7lbNZVgGG8E+f9rCL9lAE=;
+        b=X1ZboXteKv/c+52SWyFMu8kLcemIDbGmyJaGlqhwnDqJtU13BuRKpqifpzULwW/9a+
+         b05U3Om/VfIjf93ED6qpW509krEkFGIo3qQgzJFHgefL5VvZHvTNJ+fxHFSG0m7VO1Vb
+         BeSkYtf8HV5p4RLINsTDEgruvP2fXPQQqbkHI4DCUjMFRDjq9XdPpNIbbokRDGpftVrZ
+         JE6HJP02dq+eF+501a0OhKHAGVp6b4RTOc+srSrGlt0u6wc9mGqLrAzXUsHQQZfVZHTT
+         dvF89mkVbhsVDPHqMFOaULN67lJlF6NLCXsdQum/Ui7xI19s+946j96zZCmLNSbugPqR
+         j79A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725609426; x=1726214226;
+        d=1e100.net; s=20230601; t=1725609554; x=1726214354;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=zvVkrkpN6j+a38laIGqZJX8O9Gb4gq72X5FJNVHGZIY=;
-        b=LcZhHT3yV9EXFOPxtjTyUTVGJS/C1y5r4H7xAkd6eGa9pgQSDt19iSdJEh9wBH0GDb
-         KY3Af+QcafijO4VoCp1auGJkFNsrhsEUe7sbOK5uMBpgQ2TumijwC24fM50bG+JftEh7
-         5tOYM3jI/ozR9A0lc1nWhB+7/dHTveAauTM1p0tOJSBmw5VrxIG8+2xihBaV1jIhK02V
-         2K1zbcA6iWqIYlBjupVyPPxUcmcFI8SiTmsXLZZZT7Y3DBb5Y2WVBjN8wpi7CjFsQbJk
-         QfVScYYmTtY2XvOYmU3mMb/Kbu6/GnwLCfHyzcdKGqohu2G0714kERbW3+4V8LidVAlp
-         aOww==
-X-Forwarded-Encrypted: i=1; AJvYcCWBTwoV7fybXqExSagjCsDfzJ9IeyEJFZgXG9SckOfPVakc+xQVZ5+pYaMV7LRNEaUM7mdssj3ns7YGmAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWDFcD5wy9jkOeZCKZ6hrtNH2nXLL0H0jPSbaClmF1+S2Yv3EW
-	eOSCfhKectQ1bBkDCbysG/8lXE5pBZq9yplRWdhFvbIvmQeP3kU7JGe5QCO6kmo=
-X-Google-Smtp-Source: AGHT+IHSybREBxFmsJpzKFaWK/9SX109W2qtCK1HRP856KH1y0kUhbi9NMZgjxRJtRzCZz9Kgex8kQ==
-X-Received: by 2002:a5d:5f4a:0:b0:374:c269:df79 with SMTP id ffacd0b85a97d-374c269e0d7mr16043530f8f.22.1725609425782;
-        Fri, 06 Sep 2024 00:57:05 -0700 (PDT)
+        bh=qsW9dVa3QthW32mNAcUCOJ7lbNZVgGG8E+f9rCL9lAE=;
+        b=foi6NsfhLA0U9UT40xdpw3QxUdmtgUJGXq7r5v1eacwKnE7fbDRyhbRbJuJ9BabtTh
+         lLMyqAtHcw45furI2CjAYBB9m+jG86ZMnOuTRgU13gdwgyQrz8sqYDtKyAJyOKXv4sHr
+         4CAoh2/qwjpXPrg8SpUFz5s7E+3lWw7yKslk/Osw8HNtmLYc1/+my/os89jH+mjBz315
+         orOQTfLL2qCaK8MakW31bpp7OqmD0MpITBebJvjnK/1Sco+2gXeVXgrI/Qh3fD6HXdlo
+         IZgrRlkvGQqxqGaymfYn99xdwdk2QE2NEma8qe32XPujIKnZyl6cOpdw/klkirlwcS+V
+         sV9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX601pQsOYWlXWXTTfw9Nm4WL4RfZwjAoCONlNEaDvvxLATWVpHjNgj/YGhFllQXhm4rLJHNLXlrU+nF70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2zRt5mlZkpZEN650reur72GI8VYjxHjvkcIpnThSdR2143BUY
+	iHCcBpFvKKTy/rL7/VPyEXrA5yxnQ1wQQdulDWvj7lrh0dk83URj0pBMKPwZ84Q=
+X-Google-Smtp-Source: AGHT+IGkYYbpZEyRIOk9qf8USaEB5cXPjBhn4El5LQ8Hfs3zp0T/XSpSsYPXj4TQqa9t1HfFayEtww==
+X-Received: by 2002:a05:600c:154f:b0:426:63bc:f031 with SMTP id 5b1f17b1804b1-42c9f498bb7mr10416615e9.1.1725609554055;
+        Fri, 06 Sep 2024 00:59:14 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:75bf:cfcd:3d88:2a0e? ([2a01:e0a:982:cbb0:75bf:cfcd:3d88:2a0e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b67ff88dsm18204067f8f.26.2024.09.06.00.57.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05ccc27sm11749815e9.13.2024.09.06.00.59.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 00:57:05 -0700 (PDT)
-Message-ID: <c68d7894-501c-414c-8460-3009e2536af6@linaro.org>
-Date: Fri, 6 Sep 2024 09:57:02 +0200
+        Fri, 06 Sep 2024 00:59:13 -0700 (PDT)
+Message-ID: <b4573018-365f-4ce4-9452-6fc7adae3f3e@linaro.org>
+Date: Fri, 6 Sep 2024 09:59:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,12 +81,13 @@ From: neil.armstrong@linaro.org
 Reply-To: neil.armstrong@linaro.org
 Subject: Re: [PATCH] Input: goodix-berlin - Fix VDDIO regulator name according
  to dt-bindings
-To: Danila Tikhonov <danila@jiaxyga.com>, hadess@hadess.net,
- hdegoede@redhat.com, dmitry.torokhov@gmail.com, jeff@labundy.com,
- krzk@kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Danila Tikhonov <danila@jiaxyga.com>
+Cc: hadess@hadess.net, hdegoede@redhat.com, jeff@labundy.com,
+ krzk@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux@mainlining.org
 References: <20240805155806.16203-1-danila@jiaxyga.com>
+ <ZtqTTZizT7nAaYzq@google.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -113,103 +114,38 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240805155806.16203-1-danila@jiaxyga.com>
+In-Reply-To: <ZtqTTZizT7nAaYzq@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 05/08/2024 17:58, Danila Tikhonov wrote:
-> The dt-bindings specify the regulator as "vddio" instead of "iovdd".
-> 
-> This patch fixes the regulator name from "iovdd" to "vddio" in the
-> driver code to align with the dt-bindings. Fixing the dt-bindings
-> would break ABI, hence the fix is made in the driver instead.
-> 
-> There are no users of this regulator сurrently.
-> 
-> Fixes: 44362279bdd4 ("Input: add core support for Goodix Berlin Touchscreen IC")
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->   .../input/touchscreen/goodix_berlin_core.c    | 26 +++++++++----------
->   1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
-> index 0bfca897ce5a..b5d6e6360fff 100644
-> --- a/drivers/input/touchscreen/goodix_berlin_core.c
-> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
-> @@ -165,7 +165,7 @@ struct goodix_berlin_core {
->   	struct device *dev;
->   	struct regmap *regmap;
->   	struct regulator *avdd;
-> -	struct regulator *iovdd;
-> +	struct regulator *vddio;
->   	struct gpio_desc *reset_gpio;
->   	struct touchscreen_properties props;
->   	struct goodix_berlin_fw_version fw_version;
-> @@ -248,22 +248,22 @@ static int goodix_berlin_power_on(struct goodix_berlin_core *cd)
->   {
->   	int error;
->   
-> -	error = regulator_enable(cd->iovdd);
-> +	error = regulator_enable(cd->vddio);
->   	if (error) {
-> -		dev_err(cd->dev, "Failed to enable iovdd: %d\n", error);
-> +		dev_err(cd->dev, "Failed to enable vddio: %d\n", error);
->   		return error;
->   	}
->   
-> -	/* Vendor waits 3ms for IOVDD to settle */
-> +	/* Vendor waits 3ms for VDDIO to settle */
->   	usleep_range(3000, 3100);
->   
->   	error = regulator_enable(cd->avdd);
->   	if (error) {
->   		dev_err(cd->dev, "Failed to enable avdd: %d\n", error);
-> -		goto err_iovdd_disable;
-> +		goto err_vddio_disable;
->   	}
->   
-> -	/* Vendor waits 15ms for IOVDD to settle */
-> +	/* Vendor waits 15ms for VDDIO to settle */
->   	usleep_range(15000, 15100);
->   
->   	gpiod_set_value_cansleep(cd->reset_gpio, 0);
-> @@ -283,8 +283,8 @@ static int goodix_berlin_power_on(struct goodix_berlin_core *cd)
->   err_dev_reset:
->   	gpiod_set_value_cansleep(cd->reset_gpio, 1);
->   	regulator_disable(cd->avdd);
-> -err_iovdd_disable:
-> -	regulator_disable(cd->iovdd);
-> +err_vddio_disable:
-> +	regulator_disable(cd->vddio);
->   	return error;
->   }
->   
-> @@ -292,7 +292,7 @@ static void goodix_berlin_power_off(struct goodix_berlin_core *cd)
->   {
->   	gpiod_set_value_cansleep(cd->reset_gpio, 1);
->   	regulator_disable(cd->avdd);
-> -	regulator_disable(cd->iovdd);
-> +	regulator_disable(cd->vddio);
->   }
->   
->   static int goodix_berlin_read_version(struct goodix_berlin_core *cd)
-> @@ -744,10 +744,10 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->   		return dev_err_probe(dev, PTR_ERR(cd->avdd),
->   				     "Failed to request avdd regulator\n");
->   
-> -	cd->iovdd = devm_regulator_get(dev, "iovdd");
-> -	if (IS_ERR(cd->iovdd))
-> -		return dev_err_probe(dev, PTR_ERR(cd->iovdd),
-> -				     "Failed to request iovdd regulator\n");
-> +	cd->vddio = devm_regulator_get(dev, "vddio");
-> +	if (IS_ERR(cd->vddio))
-> +		return dev_err_probe(dev, PTR_ERR(cd->vddio),
-> +				     "Failed to request vddio regulator\n");
->   
->   	error = goodix_berlin_power_on(cd);
->   	if (error) {
+Hi,
 
-My bad on this one...
+On 06/09/2024 07:29, Dmitry Torokhov wrote:
+> Hi Danila,
+> 
+> On Mon, Aug 05, 2024 at 06:58:06PM +0300, Danila Tikhonov wrote:
+>> The dt-bindings specify the regulator as "vddio" instead of "iovdd".
+>>
+>> This patch fixes the regulator name from "iovdd" to "vddio" in the
+>> driver code to align with the dt-bindings. Fixing the dt-bindings
+>> would break ABI, hence the fix is made in the driver instead.
+>>
+>> There are no users of this regulator сurrently.
+> 
+> If there are no users (and the binding is pretty new) we should consider
+> all options. Do you know the name of the supply in the datasheet?
 
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+The names comes from the downstream driver & bindings, but we don't
+declare them on the Qualcomm platforms using the berlin touch ICs.
+
+Perhaps someone from Goodix or someone with access to datasheet could confirm...
+
+Anyway, this aligns with bindings so it's a correct patch.
+
+Neil
+
+> 
+> Thanks.
+> 
+
 
