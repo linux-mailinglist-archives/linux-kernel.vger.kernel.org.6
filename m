@@ -1,73 +1,129 @@
-Return-Path: <linux-kernel+bounces-319121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DCA96F7FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FB096F800
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208A128556E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 919171F258C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64C51D27B8;
-	Fri,  6 Sep 2024 15:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004751D2F4C;
+	Fri,  6 Sep 2024 15:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="wNmZzNvJ"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GGUpqnQk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7351CBEA1;
-	Fri,  6 Sep 2024 15:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD9C1C7B9B;
+	Fri,  6 Sep 2024 15:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635717; cv=none; b=c47ZH4YiVdn/pdDbE9CW65z7o+65yCt4766KT0sew/bA4D3S9wnMFoKzlsgzWl+IF21kun2TC8pojUZPPjZmAYs9ZATtfivp/fTxOUAi2V1GOlvDYEEjvBk9xk6xrkvJCR8V4JJ68Qm9xX3XOzW/cstPi7I2E69C24syrjpYY+s=
+	t=1725635768; cv=none; b=U/iYp80Rk7Y11J62V3APFQD0n6/5Zd5X3L5hEIDe5PraaVvnW4ZQDUuOyDzp+wgcvHBrGxdohgUg1y4L7ClMWjti2G6mit2fl5dFOUXY39u5I3P3fredK+HLKwtzqLsI+BHFgRlpjlPxOOMohoxt/IYfPVC47+PA0lzNCuQJHag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635717; c=relaxed/simple;
-	bh=Gnc/4KAM4fHA4+upX3cvFTZXBC9ilSaBQYoGOG13GG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nEr7u1DekoI+lw4Bjf4/IuGlFZyGbNONQ4BPhuYFzfMdB1YyutHS1Q/R12kzELybL7Cvqu5CN3yunvHFXxWaEhBPexd/fI0LPY74tSZhd2hxjbKCUDDvTg4gFVUfaLMZ2t66rEB1PHcViB9ha9DQtmuT8akBZ1dT15+rYfulO2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=wNmZzNvJ; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 9253F1F9DF;
-	Fri,  6 Sep 2024 17:15:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725635713;
-	bh=CrABqqyh4+mS8jDbX2WPd72bPfeYdPw2R1LFZwEqFEQ=; h=From:To:Subject;
-	b=wNmZzNvJTqvhw+SnezFKo2QMTd0PrUvBWX0w4wQcwLEYVx9hIfdys+o0yECJNdbay
-	 HSWyGJjYq+8QEoKGCR4c2MFaZee5TwzPRGtzdgQ8leqPSr/HNkPrdQmw3L0teaEfch
-	 ZmE8DDe04JzKv5xUQ46dWgukf+9OpaM0omdhasQDRP+INTuBNovAcyGssD+uTOshIM
-	 k31+meUuO354iL8LCLWso6/+EW8uirxzXN/f/yrZHISti08SM5KSiJHBBxKH4b9mzB
-	 6n3jpkyzEkv9ToVV7C3OWe6BsKDAstpeX97p3qFhONKqYsmnkZAuCw+QAzVNerQYkN
-	 sYrLedEZkKmOw==
-Date: Fri, 6 Sep 2024 17:15:12 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] wifi: mwifiex: fix indention
-Message-ID: <20240906151512.GG45399@francesco-nb>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
- <20240826-mwifiex-cleanup-1-v1-9-56e6f8e056ec@pengutronix.de>
+	s=arc-20240116; t=1725635768; c=relaxed/simple;
+	bh=1nAunJi47huK3qzYEye8Bf4twc5GjV2jAQ+Kua4s658=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Iu3hOV2/3pDXypKwuz5PK2nEpR8zHSam1LZWjsqIKvIcDxNejHf0o4ytXJMpo0y3lK6D8yT4CANQu6jYukomEYz54ZebTkqQPTLTBlzEbLhM5rHwaHPDC172KR9L+hxeOhsozJt+0BmjdzQAur4+KU8002qquSQxKpWV21H/TCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GGUpqnQk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868b7bj019562;
+	Fri, 6 Sep 2024 15:15:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=q9qqn25jt8zRyLOI3YOHZB
+	D2k3nW8hhH/vnrtgUGp/k=; b=GGUpqnQklH1LVlCwzVpOkJzVedLGHO5qc4vbls
+	zXn33P5arIdU2f3bvqCxjS6Bcm3uK6Du1Wk+uZZPF/2B18kxH3e7911kST6KPc85
+	U7hoisIjo88tlVHlGP9JsB6zK+XxSjYcwF+CRoqdDEFViYHsVtP4SptsWROAdfzS
+	S1HuwoaWEqCtmRdKACX1DQZcTtBHSa48a8onwL9OZgEM0r3Fneo16UCvdRsNokQh
+	VUP5LB22r8fFCmKAlI9gh8WfR2bafA9mCclo1t2TPBKSbSRxHcmSXAXnF4k5mwYf
+	8XoJug/4fveY9si/ga3FJGJ2wGyOuH3Pz5SLd7qlUmKrRlXA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu2mrw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 15:15:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486FFsZg028728
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 15:15:54 GMT
+Received: from 79f899fcd02a.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Sep 2024 08:15:49 -0700
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Adam Skladowski
+	<a39.skl@gmail.com>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        "Odelu
+ Kukatla" <quic_okukatla@quicinc.com>,
+        Mike Tipton
+	<quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 0/2] Add interconnect support for QCS8300 SoC
+Date: Fri, 6 Sep 2024 15:15:32 +0000
+Message-ID: <20240906151534.6418-1-quic_rlaggysh@quicinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-mwifiex-cleanup-1-v1-9-56e6f8e056ec@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mJkUkrhl1j-kotK2tQBcKpc5W93E2vab
+X-Proofpoint-GUID: mJkUkrhl1j-kotK2tQBcKpc5W93E2vab
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_03,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
+ clxscore=1011 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409060112
 
-On Mon, Aug 26, 2024 at 01:01:30PM +0200, Sascha Hauer wrote:
-> Align multiline if() under the opening brace.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Add interconnect dtbindings and driver support for Qualcomm QCS8300 SoC.
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Changes since V1:
+ - constify all the array of pointers to structures and provider
+   descriptor structures.
+ - Dropped all empty nodes.
+ - Added reg as required property for all the providers excluding
+   clk-virt and mc-virt in dt-bindings.
+
+Raviteja Laggyshetty (2):
+  dt-bindings: interconnect: Add compatibles for QCS8300 SoC
+  interconnect: qcom: add QCS8300 interconnect provider driver
+
+ .../interconnect/qcom,qcs8300-rpmh.yaml       |   72 +
+ drivers/interconnect/qcom/Kconfig             |   11 +
+ drivers/interconnect/qcom/Makefile            |    2 +
+ drivers/interconnect/qcom/qcs8300.c           | 2088 +++++++++++++++++
+ drivers/interconnect/qcom/qcs8300.h           |  177 ++
+ .../interconnect/qcom,qcs8300-rpmh.h          |  189 ++
+ 6 files changed, 2539 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+ create mode 100644 drivers/interconnect/qcom/qcs8300.c
+ create mode 100644 drivers/interconnect/qcom/qcs8300.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
+
+-- 
+2.39.2
 
 
