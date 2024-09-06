@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-318778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F9596F334
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0764A96F33D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8D31C23424
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB011F22C9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15B51CB32F;
-	Fri,  6 Sep 2024 11:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E431CB33F;
+	Fri,  6 Sep 2024 11:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFisxx+d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nWjxBUa6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E81C870E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAEF15852B;
+	Fri,  6 Sep 2024 11:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622698; cv=none; b=HNPmJSNDy5B61nJZj6BdNg4IXuxRRZ4EmBwCwIbk9WaDgVtYB/L4UEut5VbIX+DTnbk8eLCYc++wCodHdxNYD+1cZgbZInLewYq+R7ZtS/xTCxOAdV7nj59QPoGvLHQDbbOU1sbGYCkdCKpmnbFD0XQ+onNrrv2IunwhBsDJpB8=
+	t=1725622789; cv=none; b=q6Nfh5O9yg9B8H7ULsou/LF8NJlgN3z6G9WUleuwCKJq0uax/0EmmrAi0efsK8WPtzX3wN7qEWxa1ILlGg+PoYtvwrCuZwagQCVvbVXz6lEDgqQrGJUaMausKAUmO45a7H651R/n3BVwP8asCrkW5ExuGPijX1JNyvHamSYU78Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622698; c=relaxed/simple;
-	bh=isfKCo/EJMP0WbCVrPEFfRQBpB4Ab8FpPw1L1SI1k4M=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=IuHJe9EicPucfV0WA/1npt28EhtkwL+xJD5V/LmrAnuJ9ZWKmoptCHKTBKdrZTRnKCcelA8muqtOe/Fsxkwv42q55ZfEIOwaqrHU9YCLxiHEKRfxqlsFM9rEJ48vtI5ojmxMQzF5X9LliRoCfSRO9cmt9NQt1rNqUya3XmSzeJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFisxx+d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725622695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y6AWmXzOPl7WKbXIU5VgiA4pokfrTwMPgrxFCz0ePH8=;
-	b=RFisxx+dkalJYeKaz4Ss/qG20ieW2SSdrj38ha0KsvwwHI3m0WhtR1jS0pbx9j8llgB+A1
-	pBzZLp9P25/aaNL/ZQ9CKjAbj+fQxny1Lg2wtIIhzc7scF9JuNPKO8oiVTkRZS1nd+jSEz
-	1dlc/4SCAtndGNFSujZSbbLVTdSoHA8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-JKlo3Q2CNTmeCTk9_DIIzQ-1; Fri,
- 06 Sep 2024 07:38:14 -0400
-X-MC-Unique: JKlo3Q2CNTmeCTk9_DIIzQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA5141955D55;
-	Fri,  6 Sep 2024 11:38:12 +0000 (UTC)
-Received: from [10.45.224.222] (unknown [10.45.224.222])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90E7E1956086;
-	Fri,  6 Sep 2024 11:38:10 +0000 (UTC)
-Date: Fri, 6 Sep 2024 13:38:07 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Mike Snitzer <snitzer@kernel.org>
-cc: Chen Ni <nichen@iscas.ac.cn>, agk@redhat.com, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: dm integrity: Convert comma to semicolon
-In-Reply-To: <ZtnBjyn8eSygoaT1@kernel.org>
-Message-ID: <d6f3b1b0-130b-f83c-fca1-470d3116b08c@redhat.com>
-References: <20240905022832.1642756-1-nichen@iscas.ac.cn> <ZtnBjyn8eSygoaT1@kernel.org>
+	s=arc-20240116; t=1725622789; c=relaxed/simple;
+	bh=nR2isP9SzO3DZ0IhO9CCigww6hmPc5ghtYeDS7Ux/g8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u7tCm8rifu2HV6kLGqE0eYEfRPndKJdXtyceBbF3FMT5hmvCp+vVPdnRQYjCVNsy8PA8TDXGLrZbXkDBZuBimCS1b72nH7B6RXzHEmoNVjiYQ1zJ0iyyNk85gmQm5O21FvbLUjRcdkYz2vDIFlpKQ7eF/0hCkfTqTHKZsyhZ87I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nWjxBUa6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868eltj009479;
+	Fri, 6 Sep 2024 11:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iKSTQRVXAjAYk0vB+VbvH9
+	XYTepoF7oCutS3spRWovY=; b=nWjxBUa6TZTApa3ESELcTt4zit+bUUSrHwyll/
+	msHWTlPKaTYcu7jKcgzasWmdSSDEOuNJb7xH+pMQPaX/UWEIG7mcf6oiNeJWISjs
+	h48HloHX7dpRfFpNbYkcvjmzdPmqnAQoOnQ01u9QZOzFltvEY+zDKozetuVA4d42
+	3sUPSFdEaw2iFliOY4ieU2N3sUBkumEZpNm7F1pruLRlp3Knp3i+Zy49vL+I47l8
+	0Y144bd827gxUpaox4RgkxIRJgmkEFkz/YKSIPxKzx7CBMVTGqpXD1v2lWqy5cWk
+	Ag59wvX3j3mnLz1VcHlHovLpWOPkVbSNJyypNoG2ui1+ozqQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwrt5p7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 11:39:41 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486Bdegj012913
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 11:39:40 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Sep 2024 04:39:36 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Dan
+ Carpenter" <dan.carpenter@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "kernel
+ test robot" <lkp@intel.com>
+Subject: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
+Date: Fri, 6 Sep 2024 17:09:05 +0530
+Message-ID: <20240906113905.641336-1-quic_skakitap@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: d0yfOX_VjtyYl2xHa4V5VIv2t0LHPGcb
+X-Proofpoint-GUID: d0yfOX_VjtyYl2xHa4V5VIv2t0LHPGcb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_01,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 priorityscore=1501 phishscore=0
+ malwarescore=0 bulkscore=0 mlxscore=0 adultscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409060084
 
+In zonda_pll_adjust_l_val() replace the divide operator with comparison
+operator to fix below build error and smatch warning.
 
+drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
+clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
 
-On Thu, 5 Sep 2024, Mike Snitzer wrote:
+smatch warnings:
+drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn: replace
+divide condition '(remainder * 2) / prate' with '(remainder * 2) >= prate'
 
-> On Thu, Sep 05, 2024 at 10:28:32AM +0800, Chen Ni wrote:
-> > Replace comma between expressions with semicolons.
-> > 
-> > Using a ',' in place of a ';' can have unintended side effects.
-> > Although that is not the case here, it is seems best to use ';'
-> > unless ',' is intended.
-> > 
-> > Found by inspection.
-> > No functional change intended.
-> > Compile tested only.
-> > 
-> > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> 
-> I agree, the use of comma is bizarre.  Not sure how that slipped
-> through but...
-> 
-> Reviewed-by: Mike Snitzer <snitzer@kernel.org>
+Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Applied, thanks.
-
-I don't know why I used ',' there.
-
-Mikulas
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 019713c38f25..f9105443d7db 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
+ 
+ 	quotient = rate;
+ 	remainder = do_div(quotient, prate);
+-	*l = quotient;
+ 
+-	if ((remainder * 2) / prate)
+-		*l = *l + 1;
++	*l = rate + (u32)(remainder * 2 >= prate);
+ }
+ 
+ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.25.1
 
 
