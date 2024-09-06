@@ -1,157 +1,187 @@
-Return-Path: <linux-kernel+bounces-318276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2D596EB01
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB14396EAFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 146D0285B19
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5FA1F22018
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09F513B590;
-	Fri,  6 Sep 2024 06:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD6913D537;
+	Fri,  6 Sep 2024 06:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1etErN7"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B3gDDkq3"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538DC12C475
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 06:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074333B1A2
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 06:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605489; cv=none; b=kqNtI7kRgvbzE+pMSX0vgExxzPcge/M+g+7IvMkcvR5HcKCR6doPmwNY+fvhUujedTkodzNxP4p5Wfi0vsMXKQwZoIHo2W5PG9ZAQGqEC0Ow84RIU7p0rz9iLUpU/I4/V0MvFhUkrnl1YqKZbxzSiPwKAvVflLe8F3vaS1tTfz8=
+	t=1725605481; cv=none; b=fdbtud2K7VmUcAVffR//NTuLow9fyC/XFyHNUpRH9QyDRh4z/tW8IngpXFGhiBAIfciXsGOWABIYXe4DpMfNwUSKVTl7UGa6kFAggXT7vshqn/63oWpSKsue8IbKpHpZZWGi+gOjfhtQcIkDm31U3AgTjw0Se4t6g+G/cJ24oZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605489; c=relaxed/simple;
-	bh=Pecr8WNcW0eNzVqrMuK1IDJVqXPklyBCCPVr9ywYEcw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XnESJjxXQQ6VHIvZptQhgGsqTRsrjItRQDbddgJSm+aJOyPipboCYj+aCpI70ldfCAYkEj149iEjovJzH6VFWthLNck85/h5B6omKqG9uU7vvhlrKEvC+MUYm0HJufocwVU3g5AXN/2CdWiODal5CGvHnOSkujwok3MlEu6j88I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J1etErN7; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d5119d6fedso728397a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 23:51:27 -0700 (PDT)
+	s=arc-20240116; t=1725605481; c=relaxed/simple;
+	bh=dgISMJU/UloEgT58Zmk6Ooz/FxYmL7vxOQUpJEbq+8k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sN93YD8+Tx7ZAEBf93uITDt54aeIPfkyM6JNttGmBOfjLS3b3NhPxWwH4KvGBXIgG39iNRi3ok8vYABxromUhIvVg/c3stsKaktH2Xal9bQDoecK0MQzjIKNBXnL6UTe7AYzcbUozRJR7rh8GK9EUiE2918U3iP2ACTUOQ+gyZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B3gDDkq3; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so13143635e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 23:51:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725605486; x=1726210286; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HGs4J/C2FsNH6b2ZrDNc8NNPoNk/uKcv2JOY/O7tqL8=;
-        b=J1etErN75Iu+DigPtdvljWycwXMpmNnofZ47fEku/9N+bpwcZc/hsWGX5YhpHZfg6p
-         IhPgOIde3VH43pHJu5vMzkQzOTNbRwtfrAyPydUNBAuGp4Xc0yb4RCf3B4LTanYN51Ff
-         VAVRVsVAuQ/JngrlvSrz/J0LYkR++UTlJ/ukPhf+jbVqRNU3q0pAsuIx0nVAf1zNIvLo
-         VyeUBwHh7lTS9QHzWjt4PVhlGtEismUNoftEV/k31yAPHjtU7uvEM7cbRru+TL74Mkek
-         z0a0Wm8eXT3KypqCdGe4snZSMY7sScNJ+mQttUsOKX6xAi4051kS2caG1POdsGL+zfYO
-         JbBg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725605477; x=1726210277; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUwiZqd9TfqNcVUN4h6daMaGyO3lnoY2hjg6KdFRqok=;
+        b=B3gDDkq3glrUH1dzy0pmmvxg55ehhSQz+nWMizf+DZJT3KoOgsw4sbBlCcsTDoHBvY
+         xeDvfz90Jg04V8jW2GfNpaJRYqZBhgdslYVAIpPxDpIIXOUOTu2YzkL5x51jeW5NjrIk
+         DqeIfxVdy6aHEYnMSHNY+tiWvNcj+b2AZUBaojydHS78JngOcnEyTYZu7WNE4C5vfD/r
+         9nAAIunpM4yvK1TUpww/caT5FZ8t6NE7Pd1aouzeevfk2IvBKhWx3X/feStT8DCe7qZ6
+         fTUos1usWFWyQQ/c+euXGjx2Xv3soyrI4Y1h2+5ftpWwXE8S0VoW4w6n5P/6S8wHAlVO
+         CseQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725605486; x=1726210286;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HGs4J/C2FsNH6b2ZrDNc8NNPoNk/uKcv2JOY/O7tqL8=;
-        b=mWODtDZ2LBgU4VegdTToBOgw+WDT4+RPwcoFoOlTBmGfVcpBOVD/K67gJ3jFhXu9zH
-         6ts5lkLCCcsA9GVNkI385dr93TBHnAdjq17DloXWFs85hAiJKU77elol49XaZ482KQj8
-         YaKMCobcw963vQKKOjfOK/bhSHZJJwL7bXLy7pPsc+/SIun2KVDaB4tuSwMZFf41ad9Q
-         BEhWdJ8P+L/Sl5iesTFve2b3QfODIrBjzYs4u7rhLPPAm2GNXgb2kP0eMLQ/PBSIDKIg
-         McflkCRJfNyk5vzisol1pMffWYpjK1JQQ4N0OT/DWQVAcrN+4LbjH6eN5S22Yn7uHA1K
-         22wA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9PmVG66HeRObgI3LPfdD6ssoXoDSWaQ2J2TXvzRSOfyw7PyWXe0Tyf1A/po9CCW0up5supA/IGoRhY1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6dn9/P5lDvQ8cd9DyMjtd1rlOQQLR89etc+vIm2CzgLPR562x
-	5Msh3awHpFWOji9qccdhIpfZ62njbqzz3DGvpaXJhd6cn/HVZIpE+wQhlok0bBnXVTwI+qFVXaL
-	orom4DnDFMOePLauDdjqEz2OY7ZtTdextseXEBw==
-X-Google-Smtp-Source: AGHT+IFN8ldfwrXs3NCPIafvXSdW7e0E9mQT2lNDBEFXw4EaQc2eMsymIjQ5hKRKWUVc1Qi8HlwsJbIAISP989ptvro=
-X-Received: by 2002:a17:90b:3881:b0:2c9:5a71:1500 with SMTP id
- 98e67ed59e1d1-2dad4bfb4c2mr3120395a91.0.1725605486239; Thu, 05 Sep 2024
- 23:51:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725605477; x=1726210277;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZUwiZqd9TfqNcVUN4h6daMaGyO3lnoY2hjg6KdFRqok=;
+        b=FK+4z8VerULJpNppSKNds19n5vWEhtksg6QtLKEEy0ddQKGhWKpbGRqYj1n03JXYgc
+         AZLgsnCci1+9OA57+wofi6z5OguGE02yoY/mQ3Cvhfisz8Fgk5mxOxD9C5quQH0p6Pb/
+         Igl5DTURfZQqi8fAqKuEXRT7S9pxyCcBPznZTLAT1QCwVjM24IFeSDhWJJr248tTiwrX
+         X931g/LgFsqvLe3muQaM/J5F3KdLIjetzXbr5oCTsVBBzpnl6Imd/DhaX318W17jcD5j
+         qkwSiWi5bVf1iAjD9lmFypRt3df2Cm+6Fg2GgW4OR85AwMgrDploL0loubSYQobAZ1kU
+         bTMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnry5LWAaSLKUn3UofKM2QsfPDXXRxsGqPOKLaGzYNO3e1zJlz9f1GFHctcT2F+tbQg8RmTSUPJDyRP6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvgPqrsytGQuHWfI2QPhWLw66ga4/ztlyzAqkYuZGwQCJVYQjP
+	iv6wbitcXYfxqyk2l/s8kpJ5Mtl/k0M3WKlmfuUjoIaw39DEPLRgdewkrkXdh4I=
+X-Google-Smtp-Source: AGHT+IEAQ8+ZbApQ3oMw8V0g6qInfVZypTuRChEdnmRNkaOEzMCP4G/akqQASSKuY+whN0GPsSSR7g==
+X-Received: by 2002:adf:ea09:0:b0:374:c1be:bf2e with SMTP id ffacd0b85a97d-374c1bec8ecmr12950003f8f.62.1725605476525;
+        Thu, 05 Sep 2024 23:51:16 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05c6facsm10144635e9.9.2024.09.05.23.51.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 23:51:16 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: meson: Support PLL with fixed fractional
+ denominators
+In-Reply-To: <20240906-fix_clk-v1-1-2977ef0d72e7@amlogic.com> (Chuan Liu via's
+	message of "Fri, 06 Sep 2024 13:52:33 +0800")
+References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
+	<20240906-fix_clk-v1-1-2977ef0d72e7@amlogic.com>
+Date: Fri, 06 Sep 2024 08:51:15 +0200
+Message-ID: <1j34mds2ak.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-2-vincent.guittot@linaro.org> <a499b2f6-eac3-4c15-bca6-001a724225ff@arm.com>
-In-Reply-To: <a499b2f6-eac3-4c15-bca6-001a724225ff@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 6 Sep 2024 08:51:13 +0200
-Message-ID: <CAKfTPtCaQkzGZdfi_-yoYmYY-49ZD7+nWfrbETryJKg=K-JB3w@mail.gmail.com>
-Subject: Re: [PATCH 1/5] sched/fair: Filter false overloaded_group case for EAS
-To: Hongyan Xia <hongyan.xia2@arm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Mon, 2 Sept 2024 at 11:01, Hongyan Xia <hongyan.xia2@arm.com> wrote:
+On Fri 06 Sep 2024 at 13:52, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+
+> From: Chuan Liu <chuan.liu@amlogic.com>
 >
-> On 30/08/2024 14:03, Vincent Guittot wrote:
-> > With EAS, a group should be set overloaded if at least 1 CPU in the group
-> > is overutilized bit it can happen that a CPU is fully utilized by tasks
-> > because of clamping the compute capacity of the CPU. In such case, the CPU
-> > is not overutilized and as a result should not be set overloaded as well.
-> >
-> > group_overloaded being a higher priority than group_misfit, such group can
-> > be selected as the busiest group instead of a group with a mistfit task
-> > and prevents load_balance to select the CPU with the misfit task to pull
-> > the latter on a fitting CPU.
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >   kernel/sched/fair.c | 12 +++++++++++-
-> >   1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index fea057b311f6..e67d6029b269 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -9806,6 +9806,7 @@ struct sg_lb_stats {
-> >       enum group_type group_type;
-> >       unsigned int group_asym_packing;        /* Tasks should be moved to preferred CPU */
-> >       unsigned int group_smt_balance;         /* Task on busy SMT be moved */
-> > +     unsigned long group_overutilized;       /* No CPU is overutilized in the group */
+> Some PLLs with fractional multipliers have fractional denominators that
+> are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
 >
-> Does this have to be unsigned long? I think a shorter width like bool
-> (or int to be consistent with other fields) expresses the intention.
-
-yes an unsigned int is enough
-
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  drivers/clk/meson/clk-pll.c | 22 +++++++++++++++++++---
+>  drivers/clk/meson/clk-pll.h |  1 +
+>  2 files changed, 20 insertions(+), 3 deletions(-)
 >
-> Also the comment to me is a bit confusing. All other fields are positive
-> but this one's comment is in a negative tone.
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index bc570a2ff3a3..f0009c174564 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -36,6 +36,12 @@
+>  #include "clk-regmap.h"
+>  #include "clk-pll.h"
+>  
+> +/*
+> + * Some PLLs with fractional multipliers have fractional denominators that
+> + * are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
+> + */
+> +#define FIXED_FRAC_MAX			100000
 
-Coming from the 1st way I implemented it but then I forgot to update
-the comment. Should be:
-/* At least one CPU is overutilized in the group */
+When the next arbitrary limit comes around, this will get very ugly.
+Instead, please add frac_max to the pll parameter
 
->
-> >       unsigned long group_misfit_task_load;   /* A CPU has a task too big for its capacity */
-> >   #ifdef CONFIG_NUMA_BALANCING
-> >       unsigned int nr_numa_running;
-> > @@ -10039,6 +10040,13 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
-> >   static inline bool
-> >   group_is_overloaded(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
-> >   {
-> > +     /*
-> > +      * With EAS and uclamp, 1 CPU in the group must be overutilized to
-> > +      * consider the group overloaded.
-> > +      */
-> > +     if (sched_energy_enabled() && !sgs->group_overutilized)
-> > +             return false;
-> > +
-> >       if (sgs->sum_nr_running <= sgs->group_weight)
-> >               return false;
-> >
-> > @@ -10252,8 +10260,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
-> >               if (nr_running > 1)
-> >                       *sg_overloaded = 1;
-> >
-> > -             if (cpu_overutilized(i))
-> > +             if (cpu_overutilized(i)) {
-> >                       *sg_overutilized = 1;
-> > +                     sgs->group_overutilized = 1;
-> > +             }
-> >
-> >   #ifdef CONFIG_NUMA_BALANCING
-> >               sgs->nr_numa_running += rq->nr_numa_running;
+> +
+>  static inline struct meson_clk_pll_data *
+>  meson_clk_pll_data(struct clk_regmap *clk)
+>  {
+> @@ -57,12 +63,17 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+>  					  struct meson_clk_pll_data *pll)
+>  {
+>  	u64 rate = (u64)parent_rate * m;
+> +	unsigned int frac_max;
+>  
+>  	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
+>  		u64 frac_rate = (u64)parent_rate * frac;
+>  
+> -		rate += DIV_ROUND_UP_ULL(frac_rate,
+> -					 (1 << pll->frac.width));
+> +		if (pll->flags & CLK_MESON_PLL_FIXED_FRAC_MAX)
+> +			frac_max = FIXED_FRAC_MAX;
+> +		else
+> +			frac_max = (1 << pll->frac.width);
+> +
+> +		rate += DIV_ROUND_UP_ULL(frac_rate, frac_max);
+>  	}
+>  
+>  	return DIV_ROUND_UP_ULL(rate, n);
+> @@ -100,13 +111,18 @@ static unsigned int __pll_params_with_frac(unsigned long rate,
+>  					   unsigned int n,
+>  					   struct meson_clk_pll_data *pll)
+>  {
+> -	unsigned int frac_max = (1 << pll->frac.width);
+> +	unsigned int frac_max;
+>  	u64 val = (u64)rate * n;
+>  
+>  	/* Bail out if we are already over the requested rate */
+>  	if (rate < parent_rate * m / n)
+>  		return 0;
+>  
+> +	if (pll->flags & CLK_MESON_PLL_FIXED_FRAC_MAX)
+
+Certainly don't need a flag for that. Use a parameter and default to (1
+<< pll->frac.width) if unset.
+
+> +		frac_max = FIXED_FRAC_MAX;
+> +	else
+> +		frac_max = (1 << pll->frac.width);
+> +
+>  	if (pll->flags & CLK_MESON_PLL_ROUND_CLOSEST)
+>  		val = DIV_ROUND_CLOSEST_ULL(val * frac_max, parent_rate);
+>  	else
+> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+> index 7b6b87274073..e996d3727eb1 100644
+> --- a/drivers/clk/meson/clk-pll.h
+> +++ b/drivers/clk/meson/clk-pll.h
+> @@ -29,6 +29,7 @@ struct pll_mult_range {
+>  
+>  #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+>  #define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
+> +#define CLK_MESON_PLL_FIXED_FRAC_MAX	BIT(2)
+
+Remove this.
+
+>  
+>  struct meson_clk_pll_data {
+>  	struct parm en;
+
+-- 
+Jerome
 
