@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-318057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E1D96E7C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:32:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 990DA96E7C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6EC286A0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6701F23BD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DA926AD4;
-	Fri,  6 Sep 2024 02:32:17 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605AB36130;
+	Fri,  6 Sep 2024 02:35:17 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CF22EAE6;
-	Fri,  6 Sep 2024 02:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8886A182B3;
+	Fri,  6 Sep 2024 02:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725589937; cv=none; b=spbUlBlb+htq/FnJcRFH74h+Np4EiG97Wew4xP3sLzny3tluP6gZDS2aNsGTRiQAAoOmL+5xuy2VPWNkkx+YbBeTNUY/eQFL8AD8wEDMNqMjhMECb4eSoZo+oMpoVBJ7YpaheLniiYTY+6xLuPMa4GPQVBRPUnCv5rK5GK3XQFw=
+	t=1725590117; cv=none; b=mBdT4a9iojyV4aoTMLplwqnCKtk1ohE+R3gTr22gVSqryZQanJNlKo0ZzK6XTT636kY2Psw8N/6xEgptC9ArXrZRJVtM7IKd70kBPMi6lZLFgh6ca+uoMC2mAkVEYfslZzn1S5Bi1GWbRxdc1efuqmVCV4I7x6/TEExVpMnYOR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725589937; c=relaxed/simple;
-	bh=fSWYi7Mu27hncJezLTGKPTGSTSS6RuU0aSynLmzcZtk=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bwH+H0/0iIALMgtjKiDlJwPBBdb7io/RRXarC26ybRz0dDqsdlw0D57950F7p9Hb3HX4WWr9IeJp5yj8W/L7lBJBcSLTipuBDwoVfxucegKq3mlJMFnw8ORUJl62oNDLJPe+/68z1fH2RtIAa/yJy1VGDfIHj6/HBGP6+61T3+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1725590117; c=relaxed/simple;
+	bh=WhQeqFtAGTX6XYbCEXQ9ZmWwEhxISb8ziXHJQ0oDfDI=;
+	h=Subject:References:CC:From:To:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Z23a5oZw5yw94Bs4ksokfXcDl8RFKaRdswhgnULjC7vXUppsggfeIRGO14vda3uV3P0+te43405sNxjH3pFs9N4XEta0zx5FB7V6EmBq8QsvsnuCnMPWq/REn7YUX7NPtXhq6thhzfL8gb278jyWpFMCIIuasifaVUXWfRYTDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X0KvJ3dRBzfbnb;
-	Fri,  6 Sep 2024 10:30:04 +0800 (CST)
-Received: from kwepemm600003.china.huawei.com (unknown [7.193.23.202])
-	by mail.maildlp.com (Postfix) with ESMTPS id 83880140452;
-	Fri,  6 Sep 2024 10:32:12 +0800 (CST)
-Received: from [10.174.179.79] (10.174.179.79) by
- kwepemm600003.china.huawei.com (7.193.23.202) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X0KvS2Qykz69Wr;
+	Fri,  6 Sep 2024 10:30:12 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id A052E1800F2;
+	Fri,  6 Sep 2024 10:35:11 +0800 (CST)
+Received: from [10.174.178.75] (10.174.178.75) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 6 Sep 2024 10:32:11 +0800
-Subject: Re: [PATCH] mm: move mm flags to mm_types.h
-To: Matthew Wilcox <willy@infradead.org>
-CC: <akpm@linux-foundation.org>, <mhiramat@kernel.org>, <oleg@redhat.com>,
-	<peterz@infradead.org>, <wangkefeng.wang@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
-References: <20240905152622.1205046-1-sunnanyong@huawei.com>
- <ZtoD9tXJjWaS4liX@casper.infradead.org>
-From: Nanyong Sun <sunnanyong@huawei.com>
-Message-ID: <c207e483-c9f0-1277-8731-7a1d5463061a@huawei.com>
-Date: Fri, 6 Sep 2024 10:32:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ 15.2.1544.11; Fri, 6 Sep 2024 10:35:09 +0800
+Subject: Re: [PATCH v2 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
+References: <CGME20240903033105eucas1p2b9d0b874da268fecb49905d90340de09@eucas1p2.samsung.com>
+ <20240903033011.2870608-1-yukaixiong@huawei.com>
+ <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
+CC: <guohanjun@huawei.com>, <ysato@users.osdn.me>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<kees@kernel.org>, <willy@infradead.org>, <Liam.Howlett@oracle.com>,
+	<vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>,
+	<anna@kernel.org>, <chuck.lever@oracle.com>, <jlayton@kernel.org>,
+	<neilb@suse.de>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
+	<tom@talpey.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+To:
+	<"wangkefeng.wang@huawei.com liushixin2@huawei.com liuyongqiang13@huawei.com tongtiangen@huawei.com sunnanyong@huawei.com mawupeng1@huawei.com zuoze1@huawei.com zhangpeng362@huawei.com tujinjiang@huawei.com yaolulu5"@huawei.com>
+Message-ID: <0a12953b-0d11-00d2-ef0e-454d0e3d98f3@huawei.com>
+Date: Fri, 6 Sep 2024 10:35:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZtoD9tXJjWaS4liX@casper.infradead.org>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600003.china.huawei.com (7.193.23.202)
+In-Reply-To: <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml100009.china.huawei.com (7.185.36.95) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On 2024/9/6 3:18, Matthew Wilcox wrote:
-> On Thu, Sep 05, 2024 at 11:26:22PM +0800, Nanyong Sun wrote:
->> +++ b/include/linux/mm_types.h
->> @@ -1485,4 +1485,85 @@ enum {
->>   	/* See also internal only FOLL flags in mm/internal.h */
->>   };
->>   
->> +/* mm flags */
->> +
->> +/* for SUID_DUMP_* above */
-> But SUID_DUMP aren't above.  They're in a different file.
+
+
+On 2024/9/4 4:38, Joel Granados wrote:
+> On Tue, Sep 03, 2024 at 11:29:56AM +0800, Kaixiong Yu wrote:
+>> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+>> places where they actually belong, and do some related code clean-ups.
+>> After this patch series, all sysctls in vm_table have been moved into its
+>> own files, meanwhile, delete vm_table.
+>>
+>> All the modifications of this patch series base on
+>> linux-next(tags/next-20240902). To test this patch series, the code was
+>> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+>> x86_64 architectures. After this patch series is applied, all files
+>> under /proc/sys/vm can be read or written normally.
+> This move make a lot of sense. The question with these multi-subsystem
+> patchsets is how do they go into mainline. For now I have added this to
+> sysctl-testing to see if it needs more work. I can push this through the
+> sysctl subsystem, but you need to get reviewed-by for all of the commits
+> in different subsystems. I'm also fine with this going in through some
+> other subsys if anyone wants to take it?
 >
+> Best
 >
-> .
-Sorry, I forgot to modify this comment.
-Plan to change it to:
 
-/* core dumpable occupy bit0 and bit1 */
+Thx，Joel!:-)
 
-Do you think this is OK?
-Thanks.
+Hello，everyone!
+
+This patch series has been reviewed by Kees, Jan Kara, Christian 
+Brauner, and acked
+by Anna Schumaker, Paul Moore. As Joel said, this patch series need to 
+get reviewed-by
+for all of the commits in different subsystems. I would appreciate it if 
+you could review
+this patch series as soon as possible !:-)
 
