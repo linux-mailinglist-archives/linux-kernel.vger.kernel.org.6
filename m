@@ -1,366 +1,108 @@
-Return-Path: <linux-kernel+bounces-318696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2596F1C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:41:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B12D96F1A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B711F247C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:41:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49FAF289218
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217011CB140;
-	Fri,  6 Sep 2024 10:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A761C9EBA;
+	Fri,  6 Sep 2024 10:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZBKrL4dt"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="QDfvUoVT"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56513AD2A;
-	Fri,  6 Sep 2024 10:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D121C9DCD;
+	Fri,  6 Sep 2024 10:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725619208; cv=none; b=FExoFYrLsu7ajr8Hyxj9ikCugLO3Ugx395NWP5xE/7UQFANPXXeLBrSfP4J+n5F4lnmGwdQmun308pqah1MrNYhJ3MYTYTvOAxGqf/MlKJlD4Sl73PLzhv5dgY6wC9KixtfGrsb0dXUicFBMmEbzIEGLYEB71HvwEh14Sy4fYEw=
+	t=1725618986; cv=none; b=YR5CG6W6UNCgUvlrYNaNTQgZ3K/+Xg6vM3eBUdIxG6hBaSyFThbojZoPvf8yWhPIjfZyaAQb9SdSjHVB8DKr6ijYyKsadnWOi7SAOX22XKhtf4EQrSNFhIdmxYfuCsnsWDpA7FZbUOjbaxlRMmYIYzNjdtxxlP4w/ioTLzA8btw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725619208; c=relaxed/simple;
-	bh=falXeySc9xotgmzjRxEtCDVHDEGdumFGF1IcqFgUh94=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G8YunQVhc25GPfW58RkL1ar5Q7xc6aXmLV5jqcQbKjIEgW2aQfkPfn6OhB/bGhUnsdC/OFfzV/lRd0gDqkGW1blNgw6ow93IockxEXBSl1PhJCDi8nToNY/zMXdUqd1lcyKunGbnv4BhKe+Nxi3DJ3OSFgj1HtKS8aCd0siErbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZBKrL4dt; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725619206; x=1757155206;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=falXeySc9xotgmzjRxEtCDVHDEGdumFGF1IcqFgUh94=;
-  b=ZBKrL4dtgHJ0d+X4z6TxoZfyIcFpE4qXSAJIXeJ2VO/BVPXJx/WmRIMs
-   j2U4uf7sxxQuh0F1S3xUYdM/h23HMn9OA6GmPTyX1FAzFHNDFf3x7VAfy
-   IysUVSt3dmHq0ks7jAfQnnWzzDmxP9S1CiTNMzxNRMAuCirGPMpkrC0H/
-   0YqBnF+wGkA3EENVlQi9eQqmFEi8r5fV5tJEMgKmBc8k4RH72f2UMiwNG
-   98NdMXt0juvs46cPF/R66sQ/SjAOIZgMVHhPhNb4GYcs0pPFP8p6vYdxN
-   7VzwUivUGoxgQDwLlzSVcVC77Jv1jJD0OCnRZyMrdm1m42U9eJzDDf1Bp
-   w==;
-X-CSE-ConnectionGUID: UpI0o2HbTE2LrKT6BjJJ3A==
-X-CSE-MsgGUID: LnqNaRtHRdyDhR6o88iqoQ==
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="32060704"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Sep 2024 03:39:59 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 6 Sep 2024 03:39:29 -0700
-Received: from HYD-DK-UNGSW21.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 6 Sep 2024 03:39:24 -0700
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: <netdev@vger.kernel.org>
-CC: <davem@davemloft.net>, <linux@armlinux.org.uk>, <kuba@kernel.org>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <richardcochran@gmail.com>,
-	<rdunlap@infradead.org>, <bryan.whitehead@microchip.com>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <maxime.chevallier@bootlin.com>,
-	<linux-kernel@vger.kernel.org>, <horms@kernel.org>,
-	<UNGLinuxDriver@microchip.com>
-Subject: [PATCH net-next V6 5/5] net: lan743x: Add support to ethtool phylink get and set settings
-Date: Fri, 6 Sep 2024 16:05:11 +0530
-Message-ID: <20240906103511.28416-6-Raju.Lakkaraju@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240906103511.28416-1-Raju.Lakkaraju@microchip.com>
-References: <20240906103511.28416-1-Raju.Lakkaraju@microchip.com>
+	s=arc-20240116; t=1725618986; c=relaxed/simple;
+	bh=vZox6jFnLX8SSldfu/LCPU5kPKQh7zknih3TNa5rQy4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JS2piAwvLdgAopJv0d2oLaZEU0N+hndKRDUGQFcSZOxvm8rlz8BPMBM6u6ByusATArXZrn8Cn1pYHt2nzDLPWIsgv6u2xtKKKlYV3g28XjLL2N93a/honB/WB8tPSCOb7jnHOYZwT3XU1hBkdX+j4B7cpHaxigZwJw18DkiDVwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=QDfvUoVT; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1725618981; x=1726223781; i=efault@gmx.de;
+	bh=5XoZSLvcfS+cvLX4G6gOk4GvsFgsNsbNfbyGTErDTRg=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QDfvUoVTSlTK3rBspl76gagQKMKb9F5L7akwygWgYv5/QXzwKDLj/Ym4cMXmo7d8
+	 H8lOCAxasIIsXdp6nAYOZfJ0Fqie0ptmEODY9lJFpH9PiBsVtkKNUMlazjEbq7Z2F
+	 6zAyc3s92dWNnulhdJJr/Rih5WGpueldB90yqVDgppWHLNL/0N9tmCSUi45Tnuk1m
+	 jgPpGWAZTdpkBvMZHrSzmtnVB0CKJNCrkyDCfro05MAUvNa0SUsiRqclFJfvq1vxs
+	 DHX9up1VuNphKXmFhw/eVeUfsevXF93QrBAaI3QEKA5URv96XeRVJywA8mNcjulZJ
+	 YzjbBrnhFkpCeZGiyw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.123]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MTABZ-1scIva0Xj5-00JHqM; Fri, 06
+ Sep 2024 12:36:21 +0200
+Message-ID: <296350ab6981086f2e39377cf59fb4c53971b261.camel@gmx.de>
+Subject: Re: Problems with suspend hanging laptop on 6.11-rc1
+From: Mike Galbraith <efault@gmx.de>
+To: Linux regressions mailing list <regressions@lists.linux.dev>, Steve
+	French <smfrench@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 06 Sep 2024 12:36:20 +0200
+In-Reply-To: <7d44b79b-5d60-4fa6-8b52-a276e2baf15a@leemhuis.info>
+References: 
+	<CAH2r5mtNqn0i5NQSQvMvbHDdRDJxcNQh7iTj76L=90kEhDA7iw@mail.gmail.com>
+	 <f3d4b89c752df94407f7becd37b45a3e418d590e.camel@gmx.de>
+	 <7d44b79b-5d60-4fa6-8b52-a276e2baf15a@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HrWg/Gf26QD5G7Goif6oeLnVWs7QoB5tMxv5R1iWRizOjd+g0xO
+ HmUAmtoBOKQY1uSi9GsMkSRgmsrS3Ud7TMMfppXiXutFTsgL5agYEx6rnnkuyfwzJlMDu4N
+ WpGQBqQx4lbRvPaGsqTy0eY1R53xnOrmOAe/G0GE0WpzoHFnY0q0NBuoHLir9cdkE9VMsqV
+ JAD2/iMsJ1vPxARgL/y/w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZOLMioiH6S0=;M3dtnqWKUXcHd+pRpqXCd3Z0ldI
+ ahY2vU8Ho9QKbI8/Yb+ULjewI7l+APwZUVIhmqsGfFX2VdbWjkqCPeWRhrVipFNr34l8rWWdw
+ hfw2H1xv7HE65308j51e0nJpUdIkG1evEC1WSdMo1fP7/9auJcz0j12rnYotbe1pdXB4oP6R8
+ lGh7gnEpXGtzqvH9J2Z4ni3/OesRtKvxPuo77ZFBgltakDwVAuYQoHitJdGNMIcERwKMIfRZA
+ /GBmI9f4RoLNOBeZbFTG6JkGVoaTSHxmNqTwGI4+lGTQGqEqpzww188XXHEDtSr77qBpUNAi8
+ NSJPawmvzlumZDJ+4VS5lr/r+kN6jAUiM8fGi/mHHGd3mAoaufF4ShrJEYz/mBXe2BsqHpk+R
+ ivR0rxaXSwwFYNtGFDf8cCbhIEfCUf9MilxT98W8g5CtlFEQA8I1fVsEl/RW2J5iYTuCKFnhW
+ B3p8g0oP9VoJIYhNYMY1Vupiv51Xp91HaNhRgqwczeBaObXTAn5rjnSv5YWDkbjir13EXBPa+
+ p885RN4F5oqClD7nFmsMsGSbVYLoIeJjvMS09V09tS59SjBirgRdtKsSbifBVfxrXHdUdgT90
+ HVB2nKS2ajb+WUkcq4rG0mgUjDrdKVcaR8PK74rYBz7uh1lnI+GxKoq4HM53lm9OVL+EoCIpr
+ 8bdcfUNYLqns41CB6MJdmznjbTkbJFHg/BceoRsGL0aBFSDLoe9g6z8dVTxxjc2ugqb7Mi1mL
+ rDJ7jbFgBjgFVKTKA/vdJdcatwMmVTxlsiUQmr7iMLRssixV7E9LswGRdhSRvP/XliCfu70Ji
+ 40RijQwRXU6JZ2c2ok3luHtQ==
 
-Add support to ethtool phylink functions:
-  - get/set settings like speed, duplex etc
-  - get/set the wake-on-lan (WOL)
-  - get/set the energy-efficient ethernet (EEE)
-  - get/set the pause
+On Fri, 2024-09-06 at 11:58 +0200, Linux regression tracking (Thorsten Lee=
+mhuis) wrote:
+> On 01.08.24 16:50, Mike Galbraith wrote:
+> > On Tue, 2024-07-30 at 10:11 -0500, Steve French wrote:
+> > > Has anyone else noticed suspend on 6.11-rc1 hanging the system?
+> >
+> > Yup, my Nvidia GM204 infested desktop box (using nouveau) has it too.
+> > Bisection wandered off into lala-land unfortunately.=C2=A0 I'll try th=
+at
+> > again when I find a round-tuit.
+>
+> Hey you two, there were no further messages about this. I assume those
+> issues vanished?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
----
-Change List:                                                                    
-============                                                                    
-V5 -> V6:
-  - Add EEE enable check before calling lan743x_mac_eee_enable( ) function
-V4 -> V5:
-  - Remove the "phydev->eee_enabled" check to update the MAC EEE                
-    enable/disable
-  - Call lan743x_mac_eee_enable() with true after update tx_lpi_timer.
-  - Add phy_support_eee() to initialize the EEE flags
-V3 -> V4:
-  - Remove the EEE private variables from LAN743x adapter strcture and fix the   
-    EEE's set/get functions
-  - Change lan743x_set_eee( ) to lan743x_mac_eee_enable( )
-  - Fix the EEE's tx lpi counter update
-V2 -> V3:
-  - No change
-V1 -> V2:                                                                       
-  - Fix the phylink changes                                                                  
+Yeah, the problematic commit was reverted for the nonce.
 
- .../net/ethernet/microchip/lan743x_ethtool.c  | 123 +++++++-----------
- drivers/net/ethernet/microchip/lan743x_main.c |  22 ++++
- drivers/net/ethernet/microchip/lan743x_main.h |   1 +
- 3 files changed, 67 insertions(+), 79 deletions(-)
+27ce65f65258 Revert "nouveau: rip out busy fence waits"
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_ethtool.c b/drivers/net/ethernet/microchip/lan743x_ethtool.c
-index 0f1c0edec460..1a1cbd034eda 100644
---- a/drivers/net/ethernet/microchip/lan743x_ethtool.c
-+++ b/drivers/net/ethernet/microchip/lan743x_ethtool.c
-@@ -1054,61 +1054,55 @@ static int lan743x_ethtool_get_eee(struct net_device *netdev,
- 				   struct ethtool_keee *eee)
- {
- 	struct lan743x_adapter *adapter = netdev_priv(netdev);
--	struct phy_device *phydev = netdev->phydev;
--	u32 buf;
--	int ret;
--
--	if (!phydev)
--		return -EIO;
--	if (!phydev->drv) {
--		netif_err(adapter, drv, adapter->netdev,
--			  "Missing PHY Driver\n");
--		return -EIO;
--	}
- 
--	ret = phy_ethtool_get_eee(phydev, eee);
--	if (ret < 0)
--		return ret;
-+	eee->tx_lpi_timer = lan743x_csr_read(adapter,
-+					     MAC_EEE_TX_LPI_REQ_DLY_CNT);
- 
--	buf = lan743x_csr_read(adapter, MAC_CR);
--	if (buf & MAC_CR_EEE_EN_) {
--		/* EEE_TX_LPI_REQ_DLY & tx_lpi_timer are same uSec unit */
--		buf = lan743x_csr_read(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT);
--		eee->tx_lpi_timer = buf;
--	} else {
--		eee->tx_lpi_timer = 0;
--	}
--
--	return 0;
-+	return phylink_ethtool_get_eee(adapter->phylink, eee);
- }
- 
- static int lan743x_ethtool_set_eee(struct net_device *netdev,
- 				   struct ethtool_keee *eee)
- {
--	struct lan743x_adapter *adapter;
--	struct phy_device *phydev;
--	u32 buf = 0;
-+	struct lan743x_adapter *adapter = netdev_priv(netdev);
-+	u32 tx_lpi_timer;
- 
--	if (!netdev)
--		return -EINVAL;
--	adapter = netdev_priv(netdev);
--	if (!adapter)
--		return -EINVAL;
--	phydev = netdev->phydev;
--	if (!phydev)
--		return -EIO;
--	if (!phydev->drv) {
--		netif_err(adapter, drv, adapter->netdev,
--			  "Missing PHY Driver\n");
--		return -EIO;
--	}
-+	tx_lpi_timer = lan743x_csr_read(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT);
-+	if (tx_lpi_timer != eee->tx_lpi_timer) {
-+		u32 mac_cr = lan743x_csr_read(adapter, MAC_CR);
-+
-+		/* Software should only change this field when Energy Efficient
-+		 * Ethernet Enable (EEEEN) is cleared.
-+		 * This function will trigger an autonegotiation restart and
-+		 * eee will be reenabled during link up if eee was negotiated.
-+		 */
-+		lan743x_mac_eee_enable(adapter, false);
-+		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT,
-+				  eee->tx_lpi_timer);
- 
--	if (eee->eee_enabled) {
--		buf = (u32)eee->tx_lpi_timer;
--		lan743x_csr_write(adapter, MAC_EEE_TX_LPI_REQ_DLY_CNT, buf);
-+		if (mac_cr & MAC_CR_EEE_EN_)
-+			lan743x_mac_eee_enable(adapter, true);
- 	}
- 
--	return phy_ethtool_set_eee(phydev, eee);
-+	return phylink_ethtool_set_eee(adapter->phylink, eee);
-+}
-+
-+static int
-+lan743x_ethtool_set_link_ksettings(struct net_device *netdev,
-+				   const struct ethtool_link_ksettings *cmd)
-+{
-+	struct lan743x_adapter *adapter = netdev_priv(netdev);
-+
-+	return phylink_ethtool_ksettings_set(adapter->phylink, cmd);
-+}
-+
-+static int
-+lan743x_ethtool_get_link_ksettings(struct net_device *netdev,
-+				   struct ethtool_link_ksettings *cmd)
-+{
-+	struct lan743x_adapter *adapter = netdev_priv(netdev);
-+
-+	return phylink_ethtool_ksettings_get(adapter->phylink, cmd);
- }
- 
- #ifdef CONFIG_PM
-@@ -1120,8 +1114,7 @@ static void lan743x_ethtool_get_wol(struct net_device *netdev,
- 	wol->supported = 0;
- 	wol->wolopts = 0;
- 
--	if (netdev->phydev)
--		phy_ethtool_get_wol(netdev->phydev, wol);
-+	phylink_ethtool_get_wol(adapter->phylink, wol);
- 
- 	if (wol->supported != adapter->phy_wol_supported)
- 		netif_warn(adapter, drv, adapter->netdev,
-@@ -1162,7 +1155,7 @@ static int lan743x_ethtool_set_wol(struct net_device *netdev,
- 		    !(adapter->phy_wol_supported & WAKE_MAGICSECURE))
- 			phy_wol.wolopts &= ~WAKE_MAGIC;
- 
--		ret = phy_ethtool_set_wol(netdev->phydev, &phy_wol);
-+		ret = phylink_ethtool_set_wol(adapter->phylink, wol);
- 		if (ret && (ret != -EOPNOTSUPP))
- 			return ret;
- 
-@@ -1351,44 +1344,16 @@ static void lan743x_get_pauseparam(struct net_device *dev,
- 				   struct ethtool_pauseparam *pause)
- {
- 	struct lan743x_adapter *adapter = netdev_priv(dev);
--	struct lan743x_phy *phy = &adapter->phy;
- 
--	if (phy->fc_request_control & FLOW_CTRL_TX)
--		pause->tx_pause = 1;
--	if (phy->fc_request_control & FLOW_CTRL_RX)
--		pause->rx_pause = 1;
--	pause->autoneg = phy->fc_autoneg;
-+	phylink_ethtool_get_pauseparam(adapter->phylink, pause);
- }
- 
- static int lan743x_set_pauseparam(struct net_device *dev,
- 				  struct ethtool_pauseparam *pause)
- {
- 	struct lan743x_adapter *adapter = netdev_priv(dev);
--	struct phy_device *phydev = dev->phydev;
--	struct lan743x_phy *phy = &adapter->phy;
--
--	if (!phydev)
--		return -ENODEV;
--
--	if (!phy_validate_pause(phydev, pause))
--		return -EINVAL;
--
--	phy->fc_request_control = 0;
--	if (pause->rx_pause)
--		phy->fc_request_control |= FLOW_CTRL_RX;
- 
--	if (pause->tx_pause)
--		phy->fc_request_control |= FLOW_CTRL_TX;
--
--	phy->fc_autoneg = pause->autoneg;
--
--	if (pause->autoneg == AUTONEG_DISABLE)
--		lan743x_mac_flow_ctrl_set_enables(adapter, pause->tx_pause,
--						  pause->rx_pause);
--	else
--		phy_set_asym_pause(phydev, pause->rx_pause,  pause->tx_pause);
--
--	return 0;
-+	return phylink_ethtool_set_pauseparam(adapter->phylink, pause);
- }
- 
- const struct ethtool_ops lan743x_ethtool_ops = {
-@@ -1413,8 +1378,8 @@ const struct ethtool_ops lan743x_ethtool_ops = {
- 	.get_ts_info = lan743x_ethtool_get_ts_info,
- 	.get_eee = lan743x_ethtool_get_eee,
- 	.set_eee = lan743x_ethtool_set_eee,
--	.get_link_ksettings = phy_ethtool_get_link_ksettings,
--	.set_link_ksettings = phy_ethtool_set_link_ksettings,
-+	.get_link_ksettings = lan743x_ethtool_get_link_ksettings,
-+	.set_link_ksettings = lan743x_ethtool_set_link_ksettings,
- 	.get_regs_len = lan743x_get_regs_len,
- 	.get_regs = lan743x_get_regs,
- 	.get_pauseparam = lan743x_get_pauseparam,
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 2767bfa4bdec..4dc5adcda6a3 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -2966,6 +2966,18 @@ static int lan743x_phylink_2500basex_config(struct lan743x_adapter *adapter)
- 	return lan743x_pcs_power_reset(adapter);
- }
- 
-+void lan743x_mac_eee_enable(struct lan743x_adapter *adapter, bool enable)
-+{
-+	u32 mac_cr;
-+
-+	mac_cr = lan743x_csr_read(adapter, MAC_CR);
-+	if (enable)
-+		mac_cr |= MAC_CR_EEE_EN_;
-+	else
-+		mac_cr &= ~MAC_CR_EEE_EN_;
-+	lan743x_csr_write(adapter, MAC_CR, mac_cr);
-+}
-+
- static void lan743x_phylink_mac_config(struct phylink_config *config,
- 				       unsigned int link_an_mode,
- 				       const struct phylink_link_state *state)
-@@ -3014,7 +3026,11 @@ static void lan743x_phylink_mac_link_down(struct phylink_config *config,
- 					  unsigned int link_an_mode,
- 					  phy_interface_t interface)
- {
-+	struct net_device *netdev = to_net_dev(config->dev);
-+	struct lan743x_adapter *adapter = netdev_priv(netdev);
-+
- 	netif_tx_stop_all_queues(to_net_dev(config->dev));
-+	lan743x_mac_eee_enable(adapter, false);
- }
- 
- static void lan743x_phylink_mac_link_up(struct phylink_config *config,
-@@ -3056,6 +3072,9 @@ static void lan743x_phylink_mac_link_up(struct phylink_config *config,
- 					  cap & FLOW_CTRL_TX,
- 					  cap & FLOW_CTRL_RX);
- 
-+	if (phydev)
-+		lan743x_mac_eee_enable(adapter, phydev->enable_tx_lpi);
-+
- 	netif_tx_wake_all_queues(netdev);
- }
- 
-@@ -3239,6 +3258,9 @@ static int lan743x_netdev_open(struct net_device *netdev)
- 			goto close_tx;
- 	}
- 
-+	if (netdev->phydev)
-+		phy_support_eee(netdev->phydev);
-+
- #ifdef CONFIG_PM
- 	if (adapter->netdev->phydev) {
- 		struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.h b/drivers/net/ethernet/microchip/lan743x_main.h
-index 7f73d66854be..8ef897c114d3 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.h
-+++ b/drivers/net/ethernet/microchip/lan743x_main.h
-@@ -1206,5 +1206,6 @@ void lan743x_hs_syslock_release(struct lan743x_adapter *adapter);
- void lan743x_mac_flow_ctrl_set_enables(struct lan743x_adapter *adapter,
- 				       bool tx_enable, bool rx_enable);
- int lan743x_sgmii_read(struct lan743x_adapter *adapter, u8 mmd, u16 addr);
-+void lan743x_mac_eee_enable(struct lan743x_adapter *adapter, bool enable);
- 
- #endif /* _LAN743X_H */
--- 
-2.34.1
-
+	-Mike
 
