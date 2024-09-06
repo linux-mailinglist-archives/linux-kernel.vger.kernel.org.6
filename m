@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-319349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A38796FB77
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8508C96FB78
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B941C21B54
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:48:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FBE31F230DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94381CE717;
-	Fri,  6 Sep 2024 18:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA462155C98;
+	Fri,  6 Sep 2024 18:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uJqed49R";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GkFvc/6r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="hpmgpssp"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28F01B85CA;
-	Fri,  6 Sep 2024 18:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E61C1B85CA
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725648447; cv=none; b=DlrT6X83K9B3vgV4YOo1AU4dQzHoOcQGk64johAWtS1keFvh7fZs2U1QieLqwxpzzyxxNXHc2SDdlOhT/6iq3v3Hvxm/Ymqpij1Iy489MpAITtJ5yilzx5/2FBMotfxJW/aN7gToRfiLFMB3j+Px/M4T+qnri0f290V4qIC60gc=
+	t=1725648486; cv=none; b=V49f348FdOpLhO6cN/MyT6grtWjz1QJ6fJ0OnwHA8EWy+SR0QsmCS0NuhbLJ/viYr/EgwpqgXt5V6tDnrUUFWX5+Kyu4tvsazT1G2wXRDjuRZaFWRGky6jUvvUJLBGkBByeWyoiRWh3mNhR5QloJF8Jtl2W7w4ba0WFSP3hMpLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725648447; c=relaxed/simple;
-	bh=3d+ZXf/xSm/nN/v5nB+l5Xe8ZmKcrLjpKFIQMkr6+fA=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BBNELC60vp9bYjh2UY3ZmnD/ptIa2Sgq9PrPLQdO2QozryaZThc16IQBlgfgCu72Bq8hVNCS3imDAEIk4b8iZ9zS/0xtF45GZ6mfGg4Q5qGEmCcB7Z1/I87zKkeQv99ts224dGWD2tFz7+Ks6XDI6+i8XIoJ/jqjv2V9l1O0Vww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uJqed49R; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GkFvc/6r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725648444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8Tm800FinU3/T8yilkTveTHCBvpI8WQ9vtzpkJkFbS4=;
-	b=uJqed49RtQsYyAVPvdEI/L+r+DTyZ7zmXQ9YLsmckmWF17ZbjZ3mbCrVSvVwLOw4hKgd0C
-	Q5TbhTxQ7d88r1LIkx3i7fhHcpbYKPfGVkAZ95wvPjb9v5yal9Zq+hTuur5p80SWXlTx5T
-	mfBXMenNHy+MkKBAlSWK0pV0n2R8BKI52WHh3ySL7K5Ac5yMBlgb8Iwqq2r/nyMV1SClnu
-	Ht/XUC9WYlvJt3WoFrLGmcKK007KTeJuT9HE2a5WzbDVwGuqllnvX39tzBmmjhUIO0faAN
-	RVIc5u7FzzIPcCJ7sduosmJZUMpQiV6plvzb/pXkY1R9M9TzIkyMhsN15Ciejg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725648444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8Tm800FinU3/T8yilkTveTHCBvpI8WQ9vtzpkJkFbS4=;
-	b=GkFvc/6rkDMBQ4KoA+IiFadYOo+0SmLlR3sWmZvI9kK0g6B9dctl7y4RzTlT9xEz3E4Qv2
-	a58FYEIFoKxv19BA==
-To: syzbot <syzbot+b3f9c9d700eadf2be3a9@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, luto@kernel.org, netdev@vger.kernel.org,
- peterz@infradead.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] possible deadlock in __run_timer_base
-In-Reply-To: <0000000000006d27bb0621752b84@google.com>
-References: <0000000000006d27bb0621752b84@google.com>
-Date: Fri, 06 Sep 2024 20:47:23 +0200
-Message-ID: <878qw4ei10.ffs@tglx>
+	s=arc-20240116; t=1725648486; c=relaxed/simple;
+	bh=j7wQ7kiUy9PPGbTctIoCqL7je+xOYP7ksvdEFQzeHNc=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=etjsCx3eFKhUl8uEVcr2s3KU1Xw8spZaK3OzKW2MnziZj+VvRbdpJYc5I5YUiJs+v+2bqVl1MBotLJF06PmN3sh6fErrMTjIAUCMyObtHgKSuvnJ/8Pl4I38eEl6KUGW7YixZ0ozXGruYoxSvHBYC63P57fGuq3NPyPK/5zq7W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=hpmgpssp; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d4f8a1626cso1813483a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 11:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1725648484; x=1726253284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KDfjnNTuhJ1M2Y8qERtlchXQOcy0y5eMF9qJKZkx/Vg=;
+        b=hpmgpsspbO1pZFSNRA0IZ22KWbYqbBSrZAXUTTuD7YD3LZs3FZm2iBKbP0FpBRjmCu
+         Sdgs3Zy4lpCk1w4FeJSRUVGmQ11E7myPQUpSHsGdjW7yV/fA8ffo+m/gOcLg2hEM9DJ2
+         pY+zXjy36/emSzvSlf9rYeMVngO+31he7r03J+V+zukA4X+FLITOuKCETw+NEWkO0Es8
+         GSyR/BYrArZMITTcbsgp33rBbK8EwXJlkMTTcPLBPEyyGUApn+eQ3d41XSxXydWqCItj
+         yzURpa0yJmeOLTysOGvRWordcyBYRzwgwBX+9jhPDGcGNNgGn3P+o11RTeY1feT4NpF9
+         ie/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725648484; x=1726253284;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KDfjnNTuhJ1M2Y8qERtlchXQOcy0y5eMF9qJKZkx/Vg=;
+        b=EwYLXAbyXWmddt05vTcKo+yACISQBukK/NrJ2IbSQRsmI/6frIyisYk9UiE+meftfL
+         RKJv5IBln5xO6eioN7GkgfLTGIV+hVryELhYMhnDB5inzSW7GRcwlGf7057EvzNt11P8
+         HK1yvRUKTXdyM10CtsX5MWTzeoHly6AlDe24fgIc8rzgwvhK2FTtqi6idWnpU19EWDDh
+         bUzzd9hiwSYbyDCILiucOdo3AICNnlLal+7Rrj38ECqQt9/SAD4m27bniyuUE2EGQFhA
+         iEvRec1O81qN/dUZpGLA03rtTAa99OSS2yfZp43+BX27SWCzB5mBQWdGGjp/hr944HNm
+         1DaA==
+X-Forwarded-Encrypted: i=1; AJvYcCULFdJdZ3c9NdLY5amfsCacmV9+oWzevn2dJxtZ/YjPR0V9RtQBGrooEvPYDSWeG8YTkuyGb9x6WyHw88A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUkgnkytm/McmpcCGnwX/AJuDcWbVK8QIBZkcGYaOL1cysZab7
+	OkmDi5EnWIVoocat/UIGvyNxeSV/yfeRDI2CrbI2mMnZK4765b0vi4ofWOo/ATw=
+X-Google-Smtp-Source: AGHT+IGSyjqaXLwQc37zez1HA3/9odmd9/yVOWTdmYy4wu/O1qCk3XNwZEvh8HYjK/OdZjH8X2vmFQ==
+X-Received: by 2002:a17:90b:4c4a:b0:2d3:bc5f:715f with SMTP id 98e67ed59e1d1-2dad4df9581mr4811501a91.10.1725648483419;
+        Fri, 06 Sep 2024 11:48:03 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc03700dsm1954913a91.21.2024.09.06.11.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 11:48:03 -0700 (PDT)
+Date: Fri, 06 Sep 2024 11:48:03 -0700 (PDT)
+X-Google-Original-Date: Fri, 06 Sep 2024 11:48:00 PDT (-0700)
+Subject:     Re: [PATCH 3/3] riscv: Allow to enable PREEMPT_RT.
+In-Reply-To: <20240906151324.tVwX6lFy@linutronix.de>
+CC: bigeasy@linutronix.de, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, x86@kernel.org, hpa@zytor.com,
+  aou@eecs.berkeley.edu, bp@alien8.de, Catalin Marinas <catalin.marinas@arm.com>, williams@redhat.com,
+  dave.hansen@linux.intel.com, mingo@redhat.com, john.ogness@linutronix.de,
+  Paul Walmsley <paul.walmsley@sifive.com>, pmladek@suse.com, senozhatsky@chromium.org, rostedt@goodmis.org,
+  Will Deacon <will@kernel.org>
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: namcao@linutronix.de
+Message-ID: <mhng-64eec780-df98-4e8d-bf6c-0aa07a8d85da@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06 2024 at 08:36, syzbot wrote:
-> HEAD commit:    b408473ea01b bpf: Fix a crash when btf_parse_base() return..
-> git tree:       bpf
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10840739980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=eb19570bf3f0c14f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b3f9c9d700eadf2be3a9
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> ------------[ cut here ]------------
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.11.0-rc4-syzkaller-gb408473ea01b #0 Not tainted
-> ------------------------------------------------------
-> syz.2.317/6997 is trying to acquire lock:
-> ffffffff8e813cb8 ((console_sem).lock){-.-.}-{2:2}, at: down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+On Fri, 06 Sep 2024 08:13:24 PDT (-0700), namcao@linutronix.de wrote:
+> On Fri, Sep 06, 2024 at 12:59:06PM +0200, Sebastian Andrzej Siewior wrote:
+>> It is really time.
+>>
+>> riscv has all the required architecture related changes, that have been
+>> identified over time, in order to enable PREEMPT_RT. With the recent
+>> printk changes, the last known road block has been addressed.
+>>
+>> Allow to enable PREEMPT_RT on riscv.
+>>
+>> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 >
-> but task is already holding lock:
-> ffff8880b892a718 (&base->lock){-.-.}-{2:2}, at: expire_timers kernel/time/timer.c:1839 [inline]
-> ffff8880b892a718 (&base->lock){-.-.}-{2:2}, at: __run_timers kernel/time/timer.c:2417 [inline]
-> ffff8880b892a718 (&base->lock){-.-.}-{2:2}, at: __run_timer_base+0x69d/0x8e0 kernel/time/timer.c:2428
+> With the printk patches applied:
 >
-> which lock already depends on the new lock.
+> Tested-by: Nam Cao <namcao@linutronix.de> # Visionfive 2
 
-Right, but that's not the real problem and I fear we can't do much about
-this potential deadlock. The real issue is this:
 
-> WARNING: CPU: 1 PID: 6997 at kernel/time/timer.c:1830 expire_timers kernel/time/timer.c:1830 [inline]
+Thanks.  LMK if you guys want me to take this through the RISC-V tree, 
+but no big deal if you want it somewhere else -- and if there's some 
+dependencies already going in through some sort of RT tree maybe that's 
+just easier.  So
 
-                if (WARN_ON_ONCE(!fn)) {
-                        /* Should never happen. Emphasis on should! */
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-So some code enqueued a timer, which at the time of enqueue must have
-had a timer->function set because there is an explicit check for this.
+I don't have a test setup yet, but I figure it's a new feature so I'll 
+just flip it on as a config post-rc1.  Presumably this just works in the 
+QEMU virt board, or is there some wizardry I'll need to copy?
 
-Now something set timer->function to NULL, which triggers that warning.
-
-That potential deadlock probably cannot be cured, but that warning
-should never happen. So that's a really screwed up situation and trying
-to get the warning out has priority.
-
-No idea how to find the culprit though.
-
-Thanks,
-
-        tglx
+> Best regards,
+> Nam
 
