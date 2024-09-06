@@ -1,172 +1,322 @@
-Return-Path: <linux-kernel+bounces-318459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACCB96EE50
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:38:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE8F96EE57
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EE91F24014
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:38:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3B60B2390D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E94157E99;
-	Fri,  6 Sep 2024 08:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CC115747A;
+	Fri,  6 Sep 2024 08:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKhGu4ym"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mKKfzZmL"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011010.outbound.protection.outlook.com [52.101.129.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B1714B945;
-	Fri,  6 Sep 2024 08:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611920; cv=none; b=LArhmxoNPXK0/gpNhYxzsQuMVUutAuAzqPKqwpzwLfmmUhGZDZ3ARroBL5Y3a8Ym3UpY+GhnTuhGUwef5RCMq2h+ggs7NhLMfZQnGNlKUQ3CtehXWhocD5vqR09yzgLkXMGsDO3wtnM53sSRamfGjTs/UsKKW3gAXe+8JvbHe4Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611920; c=relaxed/simple;
-	bh=8raF76XSM3ymus0m9y5pGxcw01NyiiwG5lE+/gP+Tx8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qnDEOi/Zmu/P3OtDk+sWaQkOpSHM9GEvaXOJy/clNRA0Yru6cOMSylAodSrUSPIiS2UPCNVl63Kt6DFyoptB4Km5NyQ1PiHZxlJOYQPEO2NLMmxusL8At4soqYxvr0OupnE7XcfsdRp3cQR0awOAyGpDNAKg1sF+9XrhcljQbSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKhGu4ym; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374bd0da617so968885f8f.3;
-        Fri, 06 Sep 2024 01:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725611917; x=1726216717; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8raF76XSM3ymus0m9y5pGxcw01NyiiwG5lE+/gP+Tx8=;
-        b=EKhGu4ymbco3pPfSyjzgkE4CAJBTUDPAcX9vkdlMjfpnGBzRPB1sU8xbJib8NJCNfU
-         SAXu8I/Vsh+Ho5LRAfLPGtakV5DnDDjiVsMQRVokQL9noxH5TbQzi/ZFyIMmtXZ2ojEA
-         bnOwhskaGbHd1LPTG2lA14HZbb60MKef223jR0ySnOBRbDDfcoQ9RRUmEHZ0gAidChrE
-         xvPdNSIRwLq0Hyrpcizn5e1M6xWhXU5dvoAS00oCn+H80+lz/BRvGq1isISV40cSUkAa
-         1EceJ1zf+GS9IP3217euktI6/GgopQlMdpXFrrLE6POmwaTnv6DAUxOPHp0WoZHY4/aI
-         PYaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725611917; x=1726216717;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8raF76XSM3ymus0m9y5pGxcw01NyiiwG5lE+/gP+Tx8=;
-        b=lpBnMDh0SFZEz4HRuvrur0mXvVD0DCoraaXhBVLOD61pa9nhOZAn1g94d6f5zYhzo2
-         M6dmm8V9FLXkENzu1rqQwwV+VpXRKuzpyftqnjgPeuAnbTPQjYbLE3PB8dDfW9wIFcKj
-         hvcuZet3l92lhmnYmRE9azkRrYQU5PizM4C/KY9EdrHZJZsPmYfALoaoFnGXjBl/eEAu
-         yeEjctHnjUKSMnJfV+hHAy6igndlVUyz+OMvwjjTmOstOpBnO/o9JMhpU705lb/YHoz1
-         fe9i/qcQe0IeTa5NdxRAfF6X4mu2gqJj0cyoHFbpg93vLHJWKJhI7tRkrovApPNMvyXL
-         4rzw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Ngn3qGpJllAfFAS9ea+S0a9btdRXy83qrBs4D41ek+QfAAsbC3UwfXQp3W6pe5DBMw2+gADLxGoSn1fA@vger.kernel.org, AJvYcCX5leiMbyjrvF6vXdCwLGpIKAs98weofP2hvC4oguqyS+11djB4a4uauN5YB65WrkzVA4XXmjAXjKlpng==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjFJ/OjEXgailcRCGJvw9iayqK2dcRxrdHU4rR61tmBtYcNgJ3
-	1L37cX7/uIG/w8nCLJDzusTbvbr78DUZmS7Q9KhMpC9hA0M04vgN
-X-Google-Smtp-Source: AGHT+IHlzZPjqXmHzA7hhRy6zi9jyU3PnwqZDCEF37RMM/xjAjbI+PygqX50FiXGb0hOo19HX2MVLA==
-X-Received: by 2002:a5d:4088:0:b0:369:9358:4634 with SMTP id ffacd0b85a97d-378895cbb2dmr1224626f8f.19.1725611916464;
-        Fri, 06 Sep 2024 01:38:36 -0700 (PDT)
-Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-375348df4e8sm9494391f8f.115.2024.09.06.01.38.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 01:38:36 -0700 (PDT)
-Message-ID: <9db96c99c805e615ba40ca7fd3632174d1e8d11f.camel@gmail.com>
-Subject: Re: [PATCH] Input: keypad-nomadik-ske - remove the driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Arnd Bergmann
- <arnd@arndb.de>,  Michael Hennerich <michael.hennerich@analog.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, Utsav Agarwal
- <utsav.agarwal@analog.com>
-Date: Fri, 06 Sep 2024 10:38:35 +0200
-In-Reply-To: <ZsNcpom_Fm5uCyEj@google.com>
-References: <Zr-gX0dfN4te_8VG@google.com>
-	 <1bc01e00-7b70-4e90-8060-f3de3ec7afa3@app.fastmail.com>
-	 <ZsNcpom_Fm5uCyEj@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDCE156C40;
+	Fri,  6 Sep 2024 08:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725611942; cv=fail; b=I+JKgnyYpV2b1UNa08eJb3jrT9T9yNi5mEtiTe9b8bovYCcn1AntiIQ+IHlKCT1Kb1+ILaJn0yepbWSdtMi8/faGZPK3Avzn7gyZdkWezPlLD4snZJsCg8JIafqu+0jWuFPEtFQRIVFkWNqvNZ+1jK28fh2ifxg2z1ydVREdl3w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725611942; c=relaxed/simple;
+	bh=ix/LmawE8mgiyWlZl5Qcfb4QS/iAcdWNeLU6hE9jISI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iuiIWkJlhyn4tjxEVWZ7c2Q8CVEnkfqQM1G1Ar70KBWnYl+EsBmE1GcfSKVLdZVlpmXkPrJg+QP8i4fVqq7kDmOMKEZmDx0FOcCZlKd45T1UehxE4CMNfdH6E2obYv3Z0eAqfQN38+n3thR84aEH999gwk2x1QmWxpEHxEyMSY8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mKKfzZmL; arc=fail smtp.client-ip=52.101.129.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uCJrheWd8Isd8iU1kOhduSBnyvt0v/ElHUA4ziVCrVrqWmldXhb7fBca4tVoSvSvS7zjzCqp2/laZImSeUekpW/bo6ZGZ3AqAiVU7RwgdQnWN7Rc8ZWkMDa7fLMSBnReucoc9w+RDMBsyYEKe+2BdW+wkvq0wyx1D7FfEAm2ZC8vWUWz1+q9d/75CndnaybvbSRcWycMME6WA9YX84Uy6gtum6WPBZqmCsLrCR9NoTkcAtizJ8S0+P5aChqo5/XNe5ki+gbAVSvLnG9vRlxY4sXI693qIwGTN54H6TWYxtXNyqWlGZk3RL4sJgfaUYKbzvbVB8YLorrWoRCaO3JP+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A6Hu5MnXOrqtFa8K8m+8OLrjvjxsWDsv9L87TpXdzpI=;
+ b=ev9HBt04iibz85KIeir5LTy+1qWMTm0s2wC87eRH84y9hHkA5+M7j8Bloz4BZGT5LqncmAE3jM5p1tlEAUufIxB2wf67XuTdLKj/I+0FGWuEt0cIzyNNOTqbxa+XOJ3GRxYu3dOoDXo7EhYMooFOsjimfC2/1puZv8EG6RxKCtiv1yBZFSeOy2K3tw9PQiBgh2ONrnw1tH4AY7KLYF5jkK+cUhgFk6i7HYWFYEYIi01Iz8Q7q4pqq3HBYwsXlQxXDyHrZj9MnsiCe2WI7UCMTfV2idXYjKszJH9Ok5MzcnFUIHu2I0yjG60P5Sr1KpF5Uy7CzaLi/X5oAvUyazKvKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A6Hu5MnXOrqtFa8K8m+8OLrjvjxsWDsv9L87TpXdzpI=;
+ b=mKKfzZmL7mMuMjZg4oH6ccOuauTQzUAWq1SJxs0AD9YHDNQOTjSdBA4UhRos6de8ifKleGFKPt4f0mZPUlCs0lYwgDfosIelbwc1P+gMmeTos9Qq9ki7oAS7K/3NUUZeR5TWzWl0k6Qq8WV0BdDdZUGKWWugQ/wFS0cZPUaCOIkAfrrMtE3YG7ET+sHihueSfLVT699XePMOVPPTQd1kglW/KaN+Y6SbW49UPwCophgUlI4hF0esFfUEZNxqch2PGgct7xvGaWXOxPn/qrCEVUzqLvwqne/xpjqLGedGuzf7DVfRVSkPmta4BTz15xtUchjaLZDDILkwtHHCAT6SSQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by TYSPR06MB6501.apcprd06.prod.outlook.com (2603:1096:400:47d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
+ 2024 08:38:56 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
+ 08:38:56 +0000
+Message-ID: <5970129f-5787-424f-ad7c-ee8568a1734b@vivo.com>
+Date: Fri, 6 Sep 2024 16:38:52 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/7] udmabuf: introduce udmabuf init and deinit helper
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240903083818.3071759-1-link@vivo.com>
+ <20240903083818.3071759-6-link@vivo.com>
+ <IA0PR11MB7185D06C33DEB9E1BC05EF95F89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB7185D06C33DEB9E1BC05EF95F89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2P153CA0022.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::9)
+ To PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYSPR06MB6501:EE_
+X-MS-Office365-Filtering-Correlation-Id: f945569b-a34c-400d-aeb2-08dcce4f5886
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0xsV3JJSFF0MTBJUWl5V0cwQXdDaUUvQUFERXNVQ2Q0aWRIUlJENTBaZlBV?=
+ =?utf-8?B?MWlEbkRrVzB6bkhDM3hKLzFXYVlxWHdOTFZuUjhVYlRURzhyWThacEZRV2pW?=
+ =?utf-8?B?MzhJU3FLRk5qcHhrY2x0N01UdFZ2L3VqTG5UUi9Rd013TjNZS2J0V3dmQUd3?=
+ =?utf-8?B?YlVKMEd4MG1rYmVzUVVXUlhBNmFVL245OVJlM0xYelQvSmFMYUtkbHd2bzFn?=
+ =?utf-8?B?R3d5Q2JJVmdXYnhwRytrWmRSRm91dGI3cXJ2eHlWK0RFTitYQTBIZlg2anli?=
+ =?utf-8?B?TWhwNTRsZVFhWVl4elZadmRUdWRaNlFFWk9UZ2QwYzEzYmpRRmRDazFrZDh0?=
+ =?utf-8?B?c0tXSWl2UUpWZUxGTHZzM1lKTjJCL3Q0blZCb216aG5XRlNJdjF5T2VNUDJ4?=
+ =?utf-8?B?ZDZDWmJkbFdiK2hjUVlCTGx1SjljaU1tcnAwb1FsVFA3QkVwYUxKajdxRGRM?=
+ =?utf-8?B?V2g1SERYdWxRZVludVpkUjRZZUtFbHdDNDk4eVZJQTNxK0xReDdaclB0RHY3?=
+ =?utf-8?B?UFNqUGhrRi9aRkdiRG83dHVWc0F5L1ViajFuR2V0dXU3cG93cDIrT1E4eDJo?=
+ =?utf-8?B?WVVxdzJsTlNqeWR0LzRRTTBoalprcmhNa0c1STcrQjJSK0dFOHJOZ1QzV1RG?=
+ =?utf-8?B?Vm0zaWZEYkVRSGRyU0NYOGNWRTRON0xHaGZlTlo1aFFOcmxiRy9NbXBYaVFG?=
+ =?utf-8?B?V3BuVXN3ZWx6ZHVjMGJFNlc5Mmg2VjdqZFhCemY4UlJFOUVSajgyZjNrOCs3?=
+ =?utf-8?B?djhuNzFHYjQrU0ZrcThzQWovWHorT2RsdFR3TUJrclhXSk0rVTAyRkZvTlQ4?=
+ =?utf-8?B?dVBJRDIzWCtYUkUzMmNQUVI0RWxaSUh6VE5TdC9DQnhBbEFuTm90S1EwTnhn?=
+ =?utf-8?B?bGk5bWxyeEt0cFk1K3ZLTStEdk0vWW5HM1J6TXc2cGFnNTBzNHE5Z0xRZldx?=
+ =?utf-8?B?aVdDRE1PeFBMdklGWHpPbndhK3hHQ0RkZk9WVCtuYkFzM0hKTXdqa0J3Y0Fx?=
+ =?utf-8?B?UmVXYTNIWmhpc2pWTFhrSCtIOUtZZVhiRTJCblVLekxTZWxwbWo5MlRkb20z?=
+ =?utf-8?B?N0lpWkwvendnQjlkN3hHajdLK2RtQ2FoNDRNTjA0S01Wc1NOaTNZM0xGVXBr?=
+ =?utf-8?B?TGNxTTdzTENQMWxtNFg4Rm9qRklpcGVYQkJ1bCtGNmI5eTFXOXlCV1Q1b0Fs?=
+ =?utf-8?B?ek5jRVpLVkdTYUtCRS92bTNlMkcwYlFNb2Y5ZER1VkNTTDY2a1R0L1M4ak8y?=
+ =?utf-8?B?U0paSGI2Z0Q3dzdKelZYMGV4UFo1aGFWdTI0RjEwYk9MUGRiSVd4bWlYdjVv?=
+ =?utf-8?B?MXo1V013T0FaUDg3TTZCeGNSUUM3bjMrVVBxY1JmQ05ybDdXVTFsYllEWlFI?=
+ =?utf-8?B?S214RXZxczI0SWZrRlRtY1FYL1dhK0tXZGNGSUxOMGh4UWpDY3BpVWdwaER1?=
+ =?utf-8?B?dnIxa0k0RWV3ZFNXbUFXZ2RDR2U2UEw1WHlpa05tbzFmWFBwZW9GZDQ2akZW?=
+ =?utf-8?B?NlFDOTNyYXo0M3hWbE16b3pQWTREcnN5RUw1ZmFrRjh6SUtCV3NDdXYxZHFL?=
+ =?utf-8?B?WGl5VTd6a2dWSGV0ZUtGWU9PdjcwZTM4MG9aeW9TM09zNHYyM0xpZHgxQkRM?=
+ =?utf-8?B?Qk1jVEtQUG5HTmZDL1lBVWh5V3NLNVZ5WEVrbG1KOFd5MVRKSk1sRDlTZnY3?=
+ =?utf-8?B?V3VoL09IbFlqbEtHUEFpSFpsek1PSGRGV01mTVY3UHYxd0F4VG9XalQ1anVS?=
+ =?utf-8?B?ZkhxL0hCSWNZVlhuYXpzT2gvakk5K1hSWmJLcVVvbHdQWTdFTkFkN2gxN2VR?=
+ =?utf-8?B?Ni95V0tzemkySTNaOVZ0YXZobHhERTQ2eGlTbU1weFB5QTMwTCtRTng1cFBT?=
+ =?utf-8?B?QUFpRGxlU21MSGgwY3pHOUI0N0RLNFJwZlozZ3RxR0g4dkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L2czTkl1amU3VDB3WFdyUGo4UXJwYm5rZDc0ckh0NURoQXlNdFB4U0hSV2lK?=
+ =?utf-8?B?OWh5UHRRNEVuTldWQzNUK0d3OVkxRDJOeWozdW1hWmtvNXAwcUgyYW9lUVhG?=
+ =?utf-8?B?YmsvaVdXTGc2ejBTNGhaNW5KdXcwZnlYQ25YZWpBRmFxa1NrSngyWmVhOEVt?=
+ =?utf-8?B?aE04WlgwV1JiTEx0Z3J3ekh6NGFZZ1pjS3I0TDVZYzV4UTFvemZEclRNdUZw?=
+ =?utf-8?B?dmRma2wzSGpud05tUTNGL0lZZS9BNEgzdVR0WGJMb2hNVDhiaTVSOUF6R0ti?=
+ =?utf-8?B?NGY1b3dEcVkzU3lQYzRveTNEK2cyRytQVStWN2hFK1hLVndza25PVE5ZQzFB?=
+ =?utf-8?B?RDlEbjlrZkJ1R2E5Z1BsaDJMYnRtRWkzRkN6RDZrYndYaDNrUDJ0VWNqN0M5?=
+ =?utf-8?B?V0JyTUxZN2pKL0U3RnBvaEpQb0MyVUlSTmU1UkFYbFpNR2ViSmpGOUZ6YUk5?=
+ =?utf-8?B?eUpEanVFbjc0MGowVFFmSzUzcVdqejM1TVJGTDNOS2hwWHZPZVBadnlRWW1i?=
+ =?utf-8?B?MWtSMnpnc0dWVndVTWJLcmo5SFhtQi9VaXJRRHdXVU5lcUhVSzBKNW1zRVJo?=
+ =?utf-8?B?eEVZUmJiYWhQbHVuZGx2WVREU2loaVcwZ1JLN2R6Z1NOaStSQjJiNHQzVDhZ?=
+ =?utf-8?B?MkV1RGk3dDBtT0xheEs4SlBXZEFTRkFLQ1MrbkpQWGtYbi9HV05BclFNTFlL?=
+ =?utf-8?B?OXBOQ2FDN2czazhxZFEwY0FkUHlheFZZNWlVKy9sZHVoWjdUejRjK2w2ektw?=
+ =?utf-8?B?cFhWSjkvanI3U3ZNaE9CRERvTVNOdjJqMjFQeG9EM3IyS3BFYUlsOVZsWTlZ?=
+ =?utf-8?B?ME5hVndrYTVENTI3Z1pMdG1RL0JCSnpPUUtjMng0UHV1NVRuem1xSGhxcGJH?=
+ =?utf-8?B?QVArQk54MUprRUxYV0FSOFBMRXZsV3lPbk1ENHBXdlZmZHBkT3dpK1g2eURx?=
+ =?utf-8?B?VDdCNE1JQ2dHWkhzOGIzYzdPdyt5SThpZktpdElxR2trbUFwdGlSWXZIVkJk?=
+ =?utf-8?B?dDFMQmJaNE9DM1BPemFoM2Y0cXU4QTRGOWlqa0N3d2VQblJKZGRaM1FjWnZo?=
+ =?utf-8?B?UjJnclNJT0RRTmZYRlJCMWRqREozbjRYRHFscDN1ZDM3WTAzSHoraFROQnFW?=
+ =?utf-8?B?U2xwS1NYdzhaU3pDbmtEQ1pMSTA4bjVQUW9OZUIwa3plZDkzRFF6M1hkZ2lE?=
+ =?utf-8?B?SHhnTHNRN1ZQMVM3S2ZBamdpM3llQUtmcmlSYnFrRGxMRnRCNVZSdkQ3QUVv?=
+ =?utf-8?B?blh0K0YxaGpDbzcrbGZDdnJjSUVYL3dKb2Q1R281SzRBU2xab3ZZdEV5L0pL?=
+ =?utf-8?B?WitobGZzb2gyamMvOEcyRGx2dzVKK1ZVNGVLWjd4WC9FR3dWdjlWWVduTEox?=
+ =?utf-8?B?RkEzbEVLZjZjSnRaNmJoSlU5c2dqRVJzMUpFTFRqS3FsYWdmMWVIbWdacFhU?=
+ =?utf-8?B?UDU3Wnk0RkcvWFdvNE5UTTlHU1lWeCtmTWlNcWJGblE2TWJ5MFJSZE84TDlz?=
+ =?utf-8?B?ZDczTHhSb1BBaEtsQmdYU3gvNFNMcTFkWmVvZVlvMi9sUGttRHV3RDNmYVFR?=
+ =?utf-8?B?bUtBM2g0Wm1tNVMzNDJodDR1V0hFbGhMK2FzMlY2VzY2VHdDc2tWUWNYUHk2?=
+ =?utf-8?B?TDg0TUVDSjBtMGRXd3RrMGQ3dEdHNE55RWxUc3FEa3M0MDg5S2JoUTZZazNI?=
+ =?utf-8?B?dEhjV1pRbm1ETFJ2YnpnaTUzanFEZ3pvdzZFcTRYbEhTQlZWS1dNRmNZdTh2?=
+ =?utf-8?B?WXZzTVJ3S2s2VGhXeVUwT3RVeW50WjF4bVV0YXlPQzBxVjdLMWZidSs4Ymxa?=
+ =?utf-8?B?NHdoVzE4LzMrZG9oSFVwKzhUcVl5dmY2b2pMOXh5SDJtVnY0cXBjd0Y4Yk12?=
+ =?utf-8?B?aGh5aVhvZW11bXcvbEYvSmZLMHMvSkVpTUJ6NGsvRllrTm9BYjU0YXFoYWEv?=
+ =?utf-8?B?WXBEZWp6QmZzaTQwN0hreEx1TGUrbGhNUmNRdWxPUVJpeitIR3dxUGM3NjBs?=
+ =?utf-8?B?eGt0RE4xT3pRNUNXL1Q4ejBDaS82ckhjNWt3ZXlVVXh3R0JhdTB0eW1FZ0d3?=
+ =?utf-8?B?QzM3UHUzaE5JdUFBTllxRFFKc20rNTFxeitPQnJBUnhRTTZNd0pKVU05R0Vn?=
+ =?utf-8?Q?qtraTNPju0GrWmijQr9ZMOh6E?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f945569b-a34c-400d-aeb2-08dcce4f5886
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:38:56.4343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S4S/Uoc211/FWaGLLkG4Ami5FRCLFoALI6pVn2bVsMGEKsq5MIN6rgc5lBsI7/Xpggaqy+ljH8vRBEttCZI1Hg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6501
 
-On Mon, 2024-08-19 at 07:54 -0700, Dmitry Torokhov wrote:
-> On Mon, Aug 19, 2024 at 11:29:32AM +0200, Arnd Bergmann wrote:
-> > On Fri, Aug 16, 2024, at 20:54, Dmitry Torokhov wrote:
-> > > The users of this driver were removed in 2013 in commit 28633c54bda6
-> > > ("ARM: ux500: Rip out keypad initialisation which is no longer used")=
-.
-> > >=20
-> > > Remove the driver as well.
-> > >=20
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > ---
-> > > =C2=A0drivers/input/keyboard/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 11 -
-> > > =C2=A0drivers/input/keyboard/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 -
-> > > =C2=A0drivers/input/keyboard/nomadik-ske-keypad.c=C2=A0=C2=A0 | 378 -=
------------------
-> > > =C2=A0.../linux/platform_data/keypad-nomadik-ske.h=C2=A0 |=C2=A0 50 -=
---
-> > > =C2=A04 files changed, 440 deletions(-)
-> > >=20
-> >=20
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >=20
-> > I have a list of drivers that I determined to be likely
-> > unused as well and found a few more input drivers
-> > that were unused in 2022:
-> >=20
-> > CONFIG_KEYBOARD_ADP5520/CONFIG_PMIC_ADP5520
-> > CONFIG_KEYBOARD_ADP5589
-> > CONFIG_INPUT_AD714X
-> > CONFIG_TOUCHSCREEN_AD7877
-> >=20
-> > As far as I can tell, these all lost their last device
-> > definition, or they never had one and are impossible to
-> > be used with device tree data.
->=20
-> I asked Analog Devices folks (CCed) about 5589 and Nuno said that it is
-> still relevant and promised to do conversion to DT similar to adp5588.
->=20
-> Nuno, Michale, what about the other drivers that Arnd listed?
->=20
 
-Hi Dmitry,
+在 2024/9/6 16:20, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH v5 5/7] udmabuf: introduce udmabuf init and deinit helper
+>>
+>> After udmabuf is allocated, its resources need to be initialized,
+>> including various array structures. The current array structure has
+>> already been greatly expanded.
+>>
+>> Also, before udmabuf needs to be kfree, the occupied resources need to
+>> be released.
+>>
+>> This part is repetitive and maybe overlooked.
+>>
+>> This patch give a helper function when init and deinit, by this,
+>> deduce duplicate code.
+> *reduce
+>
+> If possible, please try to improve the wording and grammatical correctness
+> in the commit messages of other patches as well.
 
-This is not forgotten and I plan to start working on this early next week.
+I'll fix it in next-version
 
-One thing I noticed and I might as well just ask before starting the work, =
-is that
-the platform data allows, in theory, for you to have holes in your keymap [=
-1]. Like
-enabling row 1 and 3 skipping 2. AFAICT, the matrix stuff does not allow th=
-is out of
-the box as we just define the number of rows/cols and then without any othe=
-r property
-we assume (I think) that the map is contiguous.=C2=A0
+>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 52 +++++++++++++++++++++++----------------
+>>   1 file changed, 31 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index ca2b21c5c57f..254d9ec3d9f3 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -226,6 +226,28 @@ static int add_to_unpin_list(struct list_head
+>> *unpin_list,
+>>   	return 0;
+>>   }
+>>
+>> +static __always_inline int init_udmabuf(struct udmabuf *ubuf, pgoff_t
+>> pgcnt)
+>> +{
+>> +	INIT_LIST_HEAD(&ubuf->unpin_list);
+>> +
+>> +	ubuf->folios = kvmalloc_array(pgcnt, sizeof(*ubuf->folios),
+>> GFP_KERNEL);
+>> +	if (!ubuf->folios)
+>> +		return -ENOMEM;
+>> +
+>> +	ubuf->offsets = kvcalloc(pgcnt, sizeof(*ubuf->offsets), GFP_KERNEL);
+>> +	if (!ubuf->offsets)
+>> +		return -ENOMEM;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static __always_inline void deinit_udmabuf(struct udmabuf *ubuf)
+>> +{
+>> +	unpin_all_folios(&ubuf->unpin_list);
+>> +	kvfree(ubuf->offsets);
+>> +	kvfree(ubuf->folios);
+>> +}
+>> +
+>>   static void release_udmabuf(struct dma_buf *buf)
+>>   {
+>>   	struct udmabuf *ubuf = buf->priv;
+>> @@ -234,9 +256,7 @@ static void release_udmabuf(struct dma_buf *buf)
+>>   	if (ubuf->sg)
+>>   		put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
+>>
+>> -	unpin_all_folios(&ubuf->unpin_list);
+>> -	kvfree(ubuf->offsets);
+>> -	kvfree(ubuf->folios);
+>> +	deinit_udmabuf(ubuf);
+>>   	kfree(ubuf);
+>>   }
+>>
+>> @@ -396,33 +416,24 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>   	if (!ubuf)
+>>   		return -ENOMEM;
+>>
+>> -	INIT_LIST_HEAD(&ubuf->unpin_list);
+>>   	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
+>>   	for (i = 0; i < head->count; i++) {
+>>   		if (!PAGE_ALIGNED(list[i].offset))
+>> -			goto err;
+>> +			goto err_noinit;
+>>   		if (!PAGE_ALIGNED(list[i].size))
+>> -			goto err;
+>> +			goto err_noinit;
+>>
+>>   		pgcnt += list[i].size >> PAGE_SHIFT;
+>>   		if (pgcnt > pglimit)
+>> -			goto err;
+>> +			goto err_noinit;
+>>   	}
+>>
+>>   	if (!pgcnt)
+>> -		goto err;
+>> +		goto err_noinit;
+>>
+>> -	ubuf->folios = kvmalloc_array(pgcnt, sizeof(*ubuf->folios),
+>> GFP_KERNEL);
+>> -	if (!ubuf->folios) {
+>> -		ret = -ENOMEM;
+>> +	ret = init_udmabuf(ubuf, pgcnt);
+>> +	if (ret)
+>>   		goto err;
+>> -	}
+>> -
+>> -	ubuf->offsets = kvcalloc(pgcnt, sizeof(*ubuf->offsets), GFP_KERNEL);
+>> -	if (!ubuf->offsets) {
+>> -		ret = -ENOMEM;
+>> -		goto err;
+>> -	}
+>>
+>>   	for (i = 0; i < head->count; i++) {
+>>   		struct file *memfd = fget(list[i].memfd);
+>> @@ -446,9 +457,8 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>   	return ret;
+>>
+>>   err:
+>> -	unpin_all_folios(&ubuf->unpin_list);
+>> -	kvfree(ubuf->offsets);
+>> -	kvfree(ubuf->folios);
+>> +	deinit_udmabuf(ubuf);
+>> +err_noinit:
+> I don't really see the need for this new label, but I guess it makes things a
+> bit clear.
 
-This is just early thinking but one way to support the current behavior wou=
-ld be 2
-custom DT properties that would be 2 u32 arrays specifying the enabled colu=
-mns and
-rows. Out of it, we could build row and col masks and get the total number =
-of cols
-and rows that we could pass to matrix_keypad_build_keymap().
+If not this, each list err will need kfree, I think use this more clear.
 
-The question is... is it worth it? I'm aware that if we just assume a conti=
-guous
-keymap we could break some old users. But I guess it would be only out of t=
-ree ones
-as we don't have any in kernel user of the platform data. On top of it, I g=
-uess it's
-sane to assume that one just wants a contiguous keymap...
+Thank you. :)
 
-[1]: https://elixir.bootlin.com/linux/v6.10.8/source/drivers/input/keyboard=
-/adp5589-keys.c#L630
-
-Thanks!
-- Nuno S=C3=A1
-
+>
+> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>
+>>   	kfree(ubuf);
+>>   	return ret;
+>>   }
+>> --
+>> 2.45.2
 
