@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-318672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4186C96F17A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCB296F182
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38BB1F248C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4E72829AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD451C9EA8;
-	Fri,  6 Sep 2024 10:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C911C8FC7;
+	Fri,  6 Sep 2024 10:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="BK5+1c+o"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgJJBX9y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E6C2D600;
-	Fri,  6 Sep 2024 10:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725618564; cv=pass; b=XwawK7cKEfodTpbHm50iqCpjjHNWVwxQllShfog1D1f4qTjXw2aq9tx/np7PrVPKHrw1HzeFC8ghWM17Sujwuy5oRD8cVGLHMRJ8Y+xL266YeUeJWfGHiEbbem+/ibX8KjTFu4tN0Jpm5UmtZ1spv1KMDj/+h5iBjWZi8PEW3MQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725618564; c=relaxed/simple;
-	bh=F/BQcxFsESJqmAt5OFrJwYn+x8O/EmPn/9RUu+d2WDA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ITBxLrEDf0fpgZEAZ4ugq/LF5XGtHFRLrFFTcA25D6SDdcgAqoDN61mluvIYZNidTZkg5+b9yV10eps1rDx7rZOG6+2DkAmR4ICBgzR30sZmLDZ4c5lfocwzglW1P8Piz3OJzRnAqSSk17ws46KdCTnaqF4i0Ka0ryQZmxWNRk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=BK5+1c+o; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: usama.anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725618546; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QKpgkFb1cGQtZVOiLg+NKbfabgaCTC9KR2F6dNy2WM3rGx2jW3peNeuW8nA0im6xjEnJxdqkA+rT+fz98MH/sbdIiP0F0GC5iAT2kxHqyQ3xT8HodhW2qiHk/BKmasDCl74c93HiiA+AmcTvbRFEZ5fdXWi07Ie1k0/zYNh1rcQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725618546; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2Gc38LrvxgbLYiaU/hFHkxF3fEAn8S+Hl2PRviV5ACE=; 
-	b=HTWePX5KNKbw3vMf3h3bJJy+dJW306u2RCr4BAhknHX+JQL576x5i5plzUZKt3EeL0l6XYqJQWnSbKZeKa+mjNuR0V+IwtbltyixYFv2sHKlgFEFifHA/NL+euLizoIbk6a9SlYGgiqZsYgYtWqFByXTVL32KaIIio3DvYN6/20=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725618546;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=2Gc38LrvxgbLYiaU/hFHkxF3fEAn8S+Hl2PRviV5ACE=;
-	b=BK5+1c+ovhZJFGI4ub2kVPEMEKDaJja7xt5AErrfZ009niKBTbsF0X5Q4jDG1Pkn
-	kk1XTe4PsDLxzsGkjAUztcQBKOmBMfsI0yicZp0ssoBqGxuAuhVHtGyY26ESVefxBa7
-	+4qFQUlplA/sS/KQ8Kq8iwf1mfqYraU/CW4nFBQs=
-Received: by mx.zohomail.com with SMTPS id 1725618544872621.9303265984904;
-	Fri, 6 Sep 2024 03:29:04 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fou: fix initialization of grc
-Date: Fri,  6 Sep 2024 15:28:39 +0500
-Message-Id: <20240906102839.202798-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200F513AD2F;
+	Fri,  6 Sep 2024 10:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725618684; cv=none; b=o20q/Kkymcy3ssVi7WEiMoIwgKwvaBCMbYMdnLNGhYpN4VvNdtunfD3eobPwXUKd2V0YNct940SigQVCV+wv2AYjdSqh7KEvQliYCzcscixXnAgk27m/8jlWrSTRQYv42XEQwEx5Prk51SFgUiYfM+y6zSHwyL3s+YcKs2isnfw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725618684; c=relaxed/simple;
+	bh=A4c7deV6ZIknQWmVX7wV7TaEk2v1931J+nZxYnmgi2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFCoWEUweDIJiBYPBVipkIRL4o2cZJolFhv2DXDYzj9cKc8g7Oe1T37mnXcQXggEe0QeYeeeHcT/4YCwWqtF24cPOzlPv5VSq86+mdrarIqRxyVLnsmWaOshFLBnwszziRVRnZz0bgLoL4Cv++D2YiIs/4rpT+wAU/ZPf5vzfaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgJJBX9y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80830C4CEC4;
+	Fri,  6 Sep 2024 10:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725618683;
+	bh=A4c7deV6ZIknQWmVX7wV7TaEk2v1931J+nZxYnmgi2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mgJJBX9yutVEx2zdLpiQZ2XQR223NBTCKqOzD/EVInroPSXC0eiTARgNwfrTqntzP
+	 WlA6C8USra4b3+cTyHa7+mEpqse4xOvnlX/XWmKYDcnjH0Yy4/BkZQApgM77iAfUYZ
+	 SWOxV8pFHG98kEc0zsyhcDaxiylu5sUbORDBj6eiN2bXod5OgU8PVch4zKlDbkjbVE
+	 FRmisOnwqWp6RLolWa0UjhJbibizzbvfx4KbkHSaVEBAiI/snda7N8fALES0FFCxUm
+	 xfLuLGrQQx2qzfGmAjlz+Ud4baHyszNeuzsMOU2KJVeDOqlGzDYn8/p6YJbK4HGKYL
+	 0BX2kWu7UoUiQ==
+Date: Fri, 6 Sep 2024 12:31:19 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, unicorn_wang@outlook.com, inochiama@outlook.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, chao.wei@sophgo.com, haijiao.liu@sophgo.com, 
+	xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: sophgo: add bindings for sg2042
+Message-ID: <clq2dwmsks56553cythofgd3x5sw4t6pss7cxup2hrvj2n563g@3ishagojtabx>
+References: <cover.1725536870.git.unicorn_wang@outlook.com>
+ <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
 
-The grc must be initialize first. There can be a condition where if
-fou is NULL, goto out will be executed and grc would be used
-uninitialized.
+On Thu, Sep 05, 2024 at 08:10:25PM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Add binding document for sophgo,sg2042-pwm.
 
-Fixes: 7e4196935069 ("fou: Fix null-ptr-deref in GRO.")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- net/ipv4/fou_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+A nit, subject: drop second/last, redundant "bindings for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-diff --git a/net/ipv4/fou_core.c b/net/ipv4/fou_core.c
-index 78b869b314921..3e30745e2c09a 100644
---- a/net/ipv4/fou_core.c
-+++ b/net/ipv4/fou_core.c
-@@ -336,11 +336,11 @@ static struct sk_buff *gue_gro_receive(struct sock *sk,
- 	struct gro_remcsum grc;
- 	u8 proto;
- 
-+	skb_gro_remcsum_init(&grc);
-+
- 	if (!fou)
- 		goto out;
- 
--	skb_gro_remcsum_init(&grc);
--
- 	off = skb_gro_offset(skb);
- 	len = off + sizeof(*guehdr);
- 
--- 
-2.39.2
+Say something useful about hardware instead. The same in commit msg -
+you keep saying obvious and duplicated commit subject.
+
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+> new file mode 100644
+> index 000000000000..10212694dd41
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sophgo SG2042 PWM controller
+> +
+> +maintainers:
+> +  - Chen Wang <unicorn_wang@outlook.com>
+> +
+> +description: |
+
+drop |
+
+> +  This controller contains 4 channels which can generate PWM waveforms.
+> +
+> +allOf:
+> +  - $ref: pwm.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,sg2042-pwm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: apb
+> +
+> +  "#pwm-cells":
+> +    # See pwm.yaml in this directory for a description of the cells format.
+
+Drop
+
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+
+unevaluatedProperties instead
+
+Best regards,
+Krzysztof
 
 
