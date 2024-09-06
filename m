@@ -1,99 +1,169 @@
-Return-Path: <linux-kernel+bounces-318375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BE596EC8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:50:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934FF96EC8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2075F282C99
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:50:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F1D1C25541
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044DE14A4DB;
-	Fri,  6 Sep 2024 07:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162C714264A;
+	Fri,  6 Sep 2024 07:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAOi32KH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EJ6g3j2q"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643FE1B59A;
-	Fri,  6 Sep 2024 07:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781961B59A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609026; cv=none; b=TKMEIZePnrrDu3lSLBRQ88yGKi8D+sy7zft++U4MO+ULeyzVsHMlw2KRWBPSAORp7inHJc16UjsVxpkNuOkzqz+/KdB5tHvb034hi7bjbdax+UT+bI/rsvMs2CX2ffTFHXZgzE9oGhyqNeqWgqtOMM7fF0Djrt5DpRQQBlp24h8=
+	t=1725609059; cv=none; b=uFItWYbcNgp18hci/Oats8KlzUrtPUkUwCyQ7j7rif+o/re58Tlb3MO8c/PU9TJXf3HYEc5opN6K+w1D+PJdWWALnCa6fKTM0C+HQQVWgf21DyLdG/XaqEn6Ij+TBzhEkL4WfrxfHTiUAIuQOi8dd6LH7tOggD/MkwNQCGraXNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609026; c=relaxed/simple;
-	bh=/ZO+W4w3QSloFc2T0mo3E6tWzu7uRretG6nQRvJqnMo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=e3HHvwsC10MOYb8zNGvSDvM7tBT+MNUXM4kLconDZ9m3MmTp4ZsGJTj3ByWIKrZq6FP+awANv6yKPVsqSF637X8fo2EM6aLQw6C3uanSZFTlSTdnDQzD/Ejw1Y+b+exoTaA1YOuCfkkKn+vW9pM8euELvnKYbUnGMk7Ir9QrdSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAOi32KH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBAFC4CEC4;
-	Fri,  6 Sep 2024 07:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725609025;
-	bh=/ZO+W4w3QSloFc2T0mo3E6tWzu7uRretG6nQRvJqnMo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AAOi32KH7j5Y0dYSWtCT9mEv4NJ7aqHMp2lkML7GZc90vPHmw19Du2eIRSsQUcA0E
-	 NByGzqKhTC0S1AdEYFNE4kFIJm/KiBGXAHp3qsvRz/vQQc3YNtQWOhPJWjANSTS25q
-	 nwx05F7JKZWhhNdiUXvrj9eyy1E6Hd9aJ0fm8QvTLZdhWiinTnqrz+6h9aZbFCj77v
-	 kcGuxPuJHL3/y+WvIJ97VtfTpKFLT5wDB6gzGnV6Z/6kegGpKV2PMGUhK7CzzhIn1W
-	 srG6SEgToXbSgVkqhVdoGlF6xY0ULX6HbFL52w1+bh5cyKiAGIOGB0EERT2xEecIWL
-	 QFWQBv1hR4ftA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAECB3806654;
-	Fri,  6 Sep 2024 07:50:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725609059; c=relaxed/simple;
+	bh=wD19amo2g4diYkaR+wM0BDj3uhwHMg7ctui+1OFkYtw=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kTbUdvT/ybG+3loIFj1glXOr+dpxlRT1Vi1L9mjKQEoIcy27ENWXAORwzfZHkgTpq3Hzqhoon0/OJC3CAwyduB4fvYGFUmDjMG0b6tMUlXyPrdqhz6xBxYgL0D3EF8/Fs2n9jTsvXRc4fhaM1Hk68wpJ6mdZEnnx0SaUr82pWRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EJ6g3j2q; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=iho5zugydncillcokazyce2k2y.protonmail; t=1725609053; x=1725868253;
+	bh=VVxmZMlnrbulCOpYgicmWJL7Hjrf6qlakYElzAYVcx8=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=EJ6g3j2ql6dS53qy+DUJpHYtxWeg/k2Q+PdJXM9Dxeh7imx/Y+2pAfa22tIl3XxiD
+	 fHxvw3NckWeDq5vksr0qLvfdySYrsyFo76Z2hy8iAFDuD78ze1EF1tObNg/9Y49cXx
+	 MqvKaDWS89PpSea5jlL7SOxb8w/Ob8B97xRpAo/EtQmrQrIn0o1D3iRSwJuNAJBBFa
+	 2sG6EXkJOyllwnNgpGeE8koXB6GM3BJ7+/UZD1H8ieOTkwdbQ0oPGPC5VW4j5O3L/d
+	 jkV4exXSGWeMCbdHvzbiFIfJs4dhoDh/JfNiQoqx8CJEq7NBSQi9kpDVpvCpyFiRh9
+	 0jIuNoDWwzw7A==
+Date: Fri, 06 Sep 2024 07:50:46 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>, Linus Torvalds <torvalds@linux-foundation.org>
+From: Nathan Owens <ndowens08@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
+Message-ID: <01252d3a-1856-4e9e-a395-3f15c0a3afd0@proton.me>
+Feedback-ID: 104529665:user:proton
+X-Pm-Message-ID: 67c5618fa3ee3272c816ec8cd41028e86b003fd0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4 0/3] net: dsa: microchip: rename and clean ksz8
- series files
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172560902675.2010941.14519744626903062150.git-patchwork-notify@kernel.org>
-Date: Fri, 06 Sep 2024 07:50:26 +0000
-References: <20240904062749.466124-1-vtpieter@gmail.com>
-In-Reply-To: <20240904062749.466124-1-vtpieter@gmail.com>
-To: Pieter <vtpieter@gmail.com>
-Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux@armlinux.org.uk, Arun.Ramadoss@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tristram.Ha@microchip.com,
- o.rempel@pengutronix.de, pieter.van.trappen@cern.ch
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08"; charset=utf-8
 
-Hello:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08
+Content-Type: multipart/mixed;
+ boundary=c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f
+Message-ID: <01252d3a-1856-4e9e-a395-3f15c0a3afd0@proton.me>
+Date: Fri, 6 Sep 2024 02:50:41 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
+ <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
+ <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
+ <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
+ <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
+ <CAHk-=wgpb0UPYYSe6or8_NHKQD+VooTxpfgSpHwKydhm3GkS0A@mail.gmail.com>
+ <wdxl2l4h2k3ady73fb4wiyzhmfoszeelmr2vs5h36xz3nl665s@n4qzgzsdekrg>
+ <CAHk-=wjwn-YAJpSNo57+BB10fZjsG6OYuoL0XToaYwyz4fi1MA@mail.gmail.com>
+ <bczhy3gwlps24w3jwhpztzuvno7uk7vjjk5ouponvar5qzs3ye@5fckvo2xa5cz>
+Content-Language: en-US
+From: Nathan Owens <ndowens08@proton.me>
+In-Reply-To: <bczhy3gwlps24w3jwhpztzuvno7uk7vjjk5ouponvar5qzs3ye@5fckvo2xa5cz>
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+--c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed,  4 Sep 2024 08:27:39 +0200 you wrote:
-> From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
-> 
-> The first KSZ8 series implementation was done for a KSZ8795 device but
-> since several other KSZ8 devices have been added. Rename these files
-> to adhere to the ksz8 naming convention as already used in most
-> functions and the existing ksz8.h; add an explanatory note.
-> 
-> [...]
+Will say both Linus and Kent has their points and reasoning, but I must 
+ask, Kent please stick with the guidelines of submitting fixes, 
+features, etc. I would like that Bcachefs to stay in the kernel and see 
+how well Bcachefs comes along in the future and when it has your 
+features and ideas. One day I would like to maybe switch from BTRFS to 
+Bcachefs when it gets more features and some of the things I would like 
+to be able to do, like restore from snapshot and eventually boot to 
+snapshots to restore a messed up system. If it gets taken out of the 
+tree, less people will know about it, nor likely take the trouble of 
+compiling a kernel for Bcachefs.
 
-Here is the summary with links:
-  - [net-next,v4,1/3] net: dsa: microchip: rename ksz8 series files
-    https://git.kernel.org/netdev/net-next/c/6e65f5f55b7e
-  - [net-next,v4,2/3] net: dsa: microchip: clean up ksz8_reg definition macros
-    https://git.kernel.org/netdev/net-next/c/dcff1c05f283
-  - [net-next,v4,3/3] net: dsa: microchip: replace unclear KSZ8830 strings
-    https://git.kernel.org/netdev/net-next/c/23de126f9248
+This comment is not bash either Linus or you Kent, but just a thought in 
+hopes that more people will possibly switch to it and encourage 
+production keeps happening as well.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+On 8/23/24 10:10 PM, Kent Overstreet wrote:
+> On Sat, Aug 24, 2024 at 10:57:55AM GMT, Linus Torvalds wrote:
+>> On Sat, 24 Aug 2024 at 10:48, K
+ent Overstreet <kent.overstreet@linux.dev> wrote:
+>>> Sure, which is why I'm not sending you anything here that isn't a fix
+>>> for a real issue.
+>> Kent, bugs happen.
+> I _know_.
+>
+> Look, filesystem development is as high stakes as it gets. Normal kernel
+> development, you fuck up - you crash the machine, you lose some work,
+> you reboot, people are annoyed but generally it's ok.
+>
+> In filesystem land, you can corrupt data and not find out about it until
+> weeks later, or _worse_. I've got stories to give people literal
+> nightmares. Hell, that stuff has fueled my own nightmares for years. You
+> know how much grey my beard has now?
+>
+> Which is why I have spent many years of my life building a codebase and
+> development process where I can work productively where I can not just
+> catch but recover from pretty much any fuckup imaginable.
+>
+> Because peace of mind is priceless...
+>
 
+--c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="publickey - ndowens08@proton.me -
+ 0x227C5078.asc"; name="publickey - ndowens08@proton.me - 0x227C5078.asc"
+Content-Type: application/pgp-keys; filename="publickey -
+ ndowens08@proton.me - 0x227C5078.asc"; name="publickey -
+ ndowens08@proton.me - 0x227C5078.asc"
+
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCkNvbW1lbnQ6IGh0dHBzOi8vZ29w
+ZW5wZ3Aub3JnClZlcnNpb246IEdvcGVuUEdQIDIuNy40Cgp4ak1FWmZubzBoWUpLd1lCQkFIYVJ3
+OEJBUWRBRlJwRGNwSFNmUUExMXR4MGpmNWtheFZJVVJydzY0YklIMllZCkdJVFRRTjdOS1c1a2Iz
+ZGxibk13T0VCd2NtOTBiMjR1YldVZ1BHNWtiM2RsYm5Nd09FQndjbTkwYjI0dWJXVSsKd293RUVC
+WUtBRDRGZ21YNTZOSUVDd2tIQ0FtUUhDdWw3M0lpR01FREZRZ0tCQllBQWdFQ0dRRUNtd01DSGdF
+VwpJUVFpZkZCNGppWDY3WU5wYURnY0s2WHZjaUlZd1FBQVdwd0JBTG5oVzd6Snh1MDhiWjAwUE83
+cFZkMk1TQTVQCnozTGMzYWpXYjkzZHkwUzhBUUNiUG4xeTJ6YXVGT1doM2lKNGk5QzRlWC9IWXFi
+b0ZlV3BrVTl4SDlSK0NzNDQKQkdYNTZOSVNDaXNHQVFRQmwxVUJCUUVCQjBBcVNkNVFHVVJWR3F3
+QWNjemlJRTd6SjQxMER6WnIrRkRQVzVLRQpzM2kwWEFNQkNBZkNlQVFZRmdvQUtnV0NaZm5vMGdt
+UUhDdWw3M0lpR01FQ213d1dJUVFpZkZCNGppWDY3WU5wCmFEZ2NLNlh2Y2lJWXdRQUF1RU1CQU1F
+ZGdqRGxVazlNRG5PYzlqaHVGSnEwcC9aenhsMFNGVVpDYW0zazlUMk4KQVA5eHJrZnpKaXhOV1dt
+RUwvdDhaNGNQYldGdHhMUjB4MzFTMXlZckljMGdEZz09Cj1YNjgxCi0tLS0tRU5EIFBHUCBQVUJM
+SUMgS0VZIEJMT0NLLS0tLS0=
+--c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f--
+
+--------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnUEARYIACcFAmbatFUJEBwrpe9yIhjBFiEEInxQeI4l+u2DaWg4HCul73Ii
+GMEAAJO5AQDsuQo4Nv0WUG9zL9MNOWlUwRtsc0BYxfmCNTJK9HS40wD/UjKn
+bh5aQ/fw+v4TJ2E7n17BX+uUpvk/S1ZFTG2a/gA=
+=lifC
+-----END PGP SIGNATURE-----
+
+
+--------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08--
 
 
