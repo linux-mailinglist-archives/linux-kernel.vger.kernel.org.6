@@ -1,451 +1,88 @@
-Return-Path: <linux-kernel+bounces-319521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62D096FDDA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C296FDDC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00011C21B0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D522D1F24303
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77AF15A87A;
-	Fri,  6 Sep 2024 22:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fDavOhNt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C953E155A59;
+	Fri,  6 Sep 2024 22:17:26 +0000 (UTC)
+Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9805B53376
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953E31B85D9
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725660897; cv=none; b=TFFhSJkcbXfJGQyoLfNopZAsOY0rdkeUAop2it0pMd7Xqr4bz0Dx1kQKyxz2pjF1nEY/puZ3ont0kDAL36BnlShOp14KHbZqWDxuVvdGWwll4UZ3HNzhE/SGdEsEH1q7ewwrGNVpadflUDRx6RVPsd3c6FGxgpJNby3cRi8uevU=
+	t=1725661046; cv=none; b=nL2PUtD7FvVLzYi5w55EErJ+4HBGLmUXLJpxXGggCh/M4XYWo/4ZBTmsmum05R2512B2w0ie1hgMxR5tgedlFnui+tGKBc10KyHTMdg/H2czLupurehzNz+VMpF6AUKNsAPjGQYCv/4i2PJFx8f8ws5KVRCv6SEKBgt9bjpxAss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725660897; c=relaxed/simple;
-	bh=B3qQg/nAEXLzy37QehiNb4+HMtvrhBonsaol+otT4MU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FAvW2onqEHn2YEIprWX7UaN4La+prIcq2mlAAeYBSV5xui6fkN2D3Rgf+wM5hAadrTf2eyhlItnz5r3p0hG4UJHmPTZKREGcubBVLf3aLsxMUQk0twv4P95F2b9zwAbVMpQ9LmLMvsYCldcRMwpp9Kc0NVq1sxq389XXo6OnsnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fDavOhNt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486Kk52N007723;
-	Fri, 6 Sep 2024 22:14:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hSIiCkQvRP5eZeoO6yb5SDSK2CGcGEtq3qa8Gf0M7g0=; b=fDavOhNtrWtLk9fV
-	Q/OBILq57Oy8sFh39TY0Uk3uOlSdU6TO5tv9hAo2Y5Ic2TJWAdwZIHgQfBmSVzUp
-	aivX6MGhV0+AqxKeWV2jflbh0eEgPaMOUg0UsXnCoBh4XIyGXDX0KRYXfZvZsBeY
-	Ce6hmRzZdgCgxh0GaqJlvZVU17RAtQadZsZKlFJAOKY/VCWCFUnUFXbk6ZU63K63
-	j3PNDV4Q3CXhtoFRCGFLa2mhFmwpbPfnW6SR+PYq2H4r9u/8miBamyyT4ieh++Vw
-	GWkVEL+XQ8k6lQhFqYjjTAFutENJselIIPOZwSg7c8yPiu3wnsOcSUMExTE8ljQf
-	/f5i3g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu3fqc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 22:14:45 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486MEi0s031827
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 22:14:44 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Sep 2024
- 15:14:43 -0700
-Message-ID: <0bb94cc0-dd72-4da7-b0b6-9e1fe712709b@quicinc.com>
-Date: Fri, 6 Sep 2024 15:14:43 -0700
+	s=arc-20240116; t=1725661046; c=relaxed/simple;
+	bh=CGPUl/gZ50PuyC+ib9ypM0DRXzMScW15aObsCnYi7Xk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Iq4A7zemN+vfNCE/SKB6P/Ft+tIpJeZ5cq5ZObUrmLdt5oG32fqIKW23GC/rvT8/F6b2+UzXmU66ByTSS1koF5p5cIstRpmkqYkmW8Nu7iF14zy3sAb5pJ9pTei1vQ6Znu0BEDIUni4S3keCGClW9L5iN5hvys5xeghtkiGEt3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.69.150])
+	by sina.com (10.185.250.24) with ESMTP
+	id 66DB7F640000370A; Fri, 7 Sep 2024 06:17:10 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9042510748451
+X-SMAIL-UIID: 895FC86F443B417787E1DC98DDBA0694-20240907-061710-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in lockref_get_not_dead (2)
+Date: Sat,  7 Sep 2024 06:16:58 +0800
+Message-Id: <20240906221658.2144-1-hdanton@sina.com>
+In-Reply-To: <000000000000af47d506216f5b6e@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panel: himax-hx83112a: transition to mipi_dsi wrapped
- functions
-To: Tejas Vipin <tejasvipin76@gmail.com>, <neil.armstrong@linaro.org>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>
-CC: <dianders@chromium.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240904141521.554451-1-tejasvipin76@gmail.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240904141521.554451-1-tejasvipin76@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UtV_shrnvIzI2pcQaiFbrFzN5YaqHhDi
-X-Proofpoint-GUID: UtV_shrnvIzI2pcQaiFbrFzN5YaqHhDi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_07,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 clxscore=1011 impostorscore=0 spamscore=0
- mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060165
+Content-Transfer-Encoding: 8bit
 
-
-
-On 9/4/2024 7:15 AM, Tejas Vipin wrote:
-> Changes the himax-hx83112a panel to use multi style functions for
-> improved error handling.
+On Fri, 06 Sep 2024 01:40:23 -0700
+> syzbot found the following issue on:
 > 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> HEAD commit:    9b0874286768 Merge branch 'mctp-serial-tx-escapes'
+> git tree:       net
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1627ab2b980000
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+#syz test
 
-> ---
->   drivers/gpu/drm/panel/panel-himax-hx83112a.c | 297 +++++++++----------
->   1 file changed, 136 insertions(+), 161 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-himax-hx83112a.c b/drivers/gpu/drm/panel/panel-himax-hx83112a.c
-> index 466c27012abf..47bce087e339 100644
-> --- a/drivers/gpu/drm/panel/panel-himax-hx83112a.c
-> +++ b/drivers/gpu/drm/panel/panel-himax-hx83112a.c
-> @@ -56,198 +56,173 @@ static void hx83112a_reset(struct hx83112a_panel *ctx)
->   	msleep(50);
->   }
->   
-> -static int hx83112a_on(struct hx83112a_panel *ctx)
-> +static int hx83112a_on(struct mipi_dsi_device *dsi)
->   {
-> -	struct mipi_dsi_device *dsi = ctx->dsi;
-> -	struct device *dev = &dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->   
->   	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
->   
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETEXTC, 0x83, 0x11, 0x2a);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETPOWER1,
-> -			       0x08, 0x28, 0x28, 0x83, 0x83, 0x4c, 0x4f, 0x33);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDISP,
-> -			       0x00, 0x02, 0x00, 0x90, 0x24, 0x00, 0x08, 0x19,
-> -			       0xea, 0x11, 0x11, 0x00, 0x11, 0xa3);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDRV,
-> -			       0x58, 0x68, 0x58, 0x68, 0x0f, 0xef, 0x0b, 0xc0,
-> -			       0x0b, 0xc0, 0x0b, 0xc0, 0x00, 0xff, 0x00, 0xff,
-> -			       0x00, 0x00, 0x14, 0x15, 0x00, 0x29, 0x11, 0x07,
-> -			       0x12, 0x00, 0x29);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x02);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDRV,
-> -			       0x00, 0x12, 0x12, 0x11, 0x88, 0x12, 0x12, 0x00,
-> -			       0x53);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x03);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDGCLUT,
-> -			       0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
-> -			       0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
-> -			       0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
-> -			       0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
-> -			       0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
-> -			       0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
-> -			       0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
-> -			       0x40);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x02);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDGCLUT,
-> -			       0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
-> -			       0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
-> -			       0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
-> -			       0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
-> -			       0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
-> -			       0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
-> -			       0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
-> -			       0x40);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x01);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDGCLUT,
-> -			       0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
-> -			       0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
-> -			       0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
-> -			       0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
-> -			       0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
-> -			       0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
-> -			       0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
-> -			       0x40);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETDGCLUT, 0x01);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETTCON,
-> -			       0x70, 0x00, 0x04, 0xe0, 0x33, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETPANEL, 0x08);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETPOWER2, 0x2b, 0x2b);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP0,
-> -			       0x80, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x08,
-> -			       0x08, 0x03, 0x03, 0x22, 0x18, 0x07, 0x07, 0x07,
-> -			       0x07, 0x32, 0x10, 0x06, 0x00, 0x06, 0x32, 0x10,
-> -			       0x07, 0x00, 0x07, 0x32, 0x19, 0x31, 0x09, 0x31,
-> -			       0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x08,
-> -			       0x09, 0x30, 0x00, 0x00, 0x00, 0x06, 0x0d, 0x00,
-> -			       0x0f);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x01);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP0,
-> -			       0x00, 0x00, 0x19, 0x10, 0x00, 0x0a, 0x00, 0x81);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP1,
-> -			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
-> -			       0xc0, 0xc0, 0x18, 0x18, 0x19, 0x19, 0x18, 0x18,
-> -			       0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x3f, 0x3f,
-> -			       0x28, 0x28, 0x24, 0x24, 0x02, 0x03, 0x02, 0x03,
-> -			       0x00, 0x01, 0x00, 0x01, 0x31, 0x31, 0x31, 0x31,
-> -			       0x30, 0x30, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP2,
-> -			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
-> -			       0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x19, 0x19,
-> -			       0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x3f, 0x3f,
-> -			       0x24, 0x24, 0x28, 0x28, 0x01, 0x00, 0x01, 0x00,
-> -			       0x03, 0x02, 0x03, 0x02, 0x31, 0x31, 0x31, 0x31,
-> -			       0x30, 0x30, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP3,
-> -			       0xaa, 0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xea,
-> -			       0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xea, 0xab, 0xaa,
-> -			       0xaa, 0xaa, 0xaa, 0xea, 0xab, 0xaa, 0xaa, 0xaa);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x01);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP3,
-> -			       0xaa, 0x2e, 0x28, 0x00, 0x00, 0x00, 0xaa, 0x2e,
-> -			       0x28, 0x00, 0x00, 0x00, 0xaa, 0xee, 0xaa, 0xaa,
-> -			       0xaa, 0xaa, 0xaa, 0xee, 0xaa, 0xaa, 0xaa, 0xaa);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x02);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP3,
-> -			       0xaa, 0xff, 0xff, 0xff, 0xff, 0xff, 0xaa, 0xff,
-> -			       0xff, 0xff, 0xff, 0xff);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x03);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETGIP3,
-> -			       0xaa, 0xaa, 0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
-> -			       0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xff, 0xff, 0xff,
-> -			       0xff, 0xff, 0xaa, 0xff, 0xff, 0xff, 0xff, 0xff);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETTP1,
-> -			       0x0e, 0x0e, 0x1e, 0x65, 0x1c, 0x65, 0x00, 0x50,
-> -			       0x20, 0x20, 0x00, 0x00, 0x02, 0x02, 0x02, 0x05,
-> -			       0x14, 0x14, 0x32, 0xb9, 0x23, 0xb9, 0x08);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x01);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETTP1,
-> -			       0x02, 0x00, 0xa8, 0x01, 0xa8, 0x0d, 0xa4, 0x0e);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x02);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETTP1,
-> -			       0x00, 0x00, 0x08, 0x00, 0x01, 0x00, 0x00, 0x00,
-> -			       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> -			       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
-> -			       0x00, 0x00, 0x00, 0x02, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETBANK, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_UNKNOWN1, 0xc3);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETCLOCK, 0xd1, 0xd6);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_UNKNOWN1, 0x3f);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_UNKNOWN1, 0xc6);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_SETPTBA, 0x37);
-> -	mipi_dsi_dcs_write_seq(dsi, HX83112A_UNKNOWN1, 0x3f);
-> -
-> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(150);
-> -
-> -	ret = mipi_dsi_dcs_set_display_on(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set display on: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(50);
-> -
-> -	return 0;
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETEXTC, 0x83, 0x11, 0x2a);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPOWER1,
-> +				     0x08, 0x28, 0x28, 0x83, 0x83, 0x4c, 0x4f, 0x33);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDISP,
-> +				     0x00, 0x02, 0x00, 0x90, 0x24, 0x00, 0x08, 0x19,
-> +				     0xea, 0x11, 0x11, 0x00, 0x11, 0xa3);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDRV,
-> +				     0x58, 0x68, 0x58, 0x68, 0x0f, 0xef, 0x0b, 0xc0,
-> +				     0x0b, 0xc0, 0x0b, 0xc0, 0x00, 0xff, 0x00, 0xff,
-> +				     0x00, 0x00, 0x14, 0x15, 0x00, 0x29, 0x11, 0x07,
-> +				     0x12, 0x00, 0x29);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDRV,
-> +				     0x00, 0x12, 0x12, 0x11, 0x88, 0x12, 0x12, 0x00,
-> +				     0x53);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT,
-> +				     0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
-> +				     0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
-> +				     0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
-> +				     0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
-> +				     0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
-> +				     0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
-> +				     0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
-> +				     0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT,
-> +				     0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
-> +				     0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
-> +				     0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
-> +				     0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
-> +				     0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
-> +				     0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
-> +				     0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
-> +				     0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT,
-> +				     0xff, 0xfe, 0xfb, 0xf8, 0xf4, 0xf1, 0xed, 0xe6,
-> +				     0xe2, 0xde, 0xdb, 0xd6, 0xd3, 0xcf, 0xca, 0xc6,
-> +				     0xc2, 0xbe, 0xb9, 0xb0, 0xa7, 0x9e, 0x96, 0x8d,
-> +				     0x84, 0x7c, 0x74, 0x6b, 0x62, 0x5a, 0x51, 0x49,
-> +				     0x41, 0x39, 0x31, 0x29, 0x21, 0x19, 0x12, 0x0a,
-> +				     0x06, 0x05, 0x02, 0x01, 0x00, 0x00, 0xc9, 0xb3,
-> +				     0x08, 0x0e, 0xf2, 0xe1, 0x59, 0xf4, 0x22, 0xad,
-> +				     0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETDGCLUT, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTCON,
-> +				     0x70, 0x00, 0x04, 0xe0, 0x33, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPANEL, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPOWER2, 0x2b, 0x2b);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP0,
-> +				     0x80, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x08,
-> +				     0x08, 0x03, 0x03, 0x22, 0x18, 0x07, 0x07, 0x07,
-> +				     0x07, 0x32, 0x10, 0x06, 0x00, 0x06, 0x32, 0x10,
-> +				     0x07, 0x00, 0x07, 0x32, 0x19, 0x31, 0x09, 0x31,
-> +				     0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x08,
-> +				     0x09, 0x30, 0x00, 0x00, 0x00, 0x06, 0x0d, 0x00,
-> +				     0x0f);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP0,
-> +				     0x00, 0x00, 0x19, 0x10, 0x00, 0x0a, 0x00, 0x81);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP1,
-> +				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
-> +				     0xc0, 0xc0, 0x18, 0x18, 0x19, 0x19, 0x18, 0x18,
-> +				     0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x3f, 0x3f,
-> +				     0x28, 0x28, 0x24, 0x24, 0x02, 0x03, 0x02, 0x03,
-> +				     0x00, 0x01, 0x00, 0x01, 0x31, 0x31, 0x31, 0x31,
-> +				     0x30, 0x30, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP2,
-> +				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
-> +				     0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x19, 0x19,
-> +				     0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x3f, 0x3f,
-> +				     0x24, 0x24, 0x28, 0x28, 0x01, 0x00, 0x01, 0x00,
-> +				     0x03, 0x02, 0x03, 0x02, 0x31, 0x31, 0x31, 0x31,
-> +				     0x30, 0x30, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
-> +				     0xaa, 0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xea,
-> +				     0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xea, 0xab, 0xaa,
-> +				     0xaa, 0xaa, 0xaa, 0xea, 0xab, 0xaa, 0xaa, 0xaa);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
-> +				     0xaa, 0x2e, 0x28, 0x00, 0x00, 0x00, 0xaa, 0x2e,
-> +				     0x28, 0x00, 0x00, 0x00, 0xaa, 0xee, 0xaa, 0xaa,
-> +				     0xaa, 0xaa, 0xaa, 0xee, 0xaa, 0xaa, 0xaa, 0xaa);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
-> +				     0xaa, 0xff, 0xff, 0xff, 0xff, 0xff, 0xaa, 0xff,
-> +				     0xff, 0xff, 0xff, 0xff);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETGIP3,
-> +				     0xaa, 0xaa, 0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
-> +				     0xea, 0xaa, 0xaa, 0xaa, 0xaa, 0xff, 0xff, 0xff,
-> +				     0xff, 0xff, 0xaa, 0xff, 0xff, 0xff, 0xff, 0xff);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTP1,
-> +				     0x0e, 0x0e, 0x1e, 0x65, 0x1c, 0x65, 0x00, 0x50,
-> +				     0x20, 0x20, 0x00, 0x00, 0x02, 0x02, 0x02, 0x05,
-> +				     0x14, 0x14, 0x32, 0xb9, 0x23, 0xb9, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTP1,
-> +				     0x02, 0x00, 0xa8, 0x01, 0xa8, 0x0d, 0xa4, 0x0e);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETTP1,
-> +				     0x00, 0x00, 0x08, 0x00, 0x01, 0x00, 0x00, 0x00,
-> +				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
-> +				     0x00, 0x00, 0x00, 0x02, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETBANK, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0xc3);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETCLOCK, 0xd1, 0xd6);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0x3f);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0xc6);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_SETPTBA, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83112A_UNKNOWN1, 0x3f);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 150);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 50);
-> +
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static int hx83112a_disable(struct drm_panel *panel)
->   {
->   	struct hx83112a_panel *ctx = to_hx83112a_panel(panel);
->   	struct mipi_dsi_device *dsi = ctx->dsi;
-> -	struct device *dev = &dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->   
->   	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
->   
-> -	ret = mipi_dsi_dcs_set_display_off(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set display off: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(20);
-> -
-> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(120);
-> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
-> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
->   
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static int hx83112a_prepare(struct drm_panel *panel)
->   {
->   	struct hx83112a_panel *ctx = to_hx83112a_panel(panel);
-> -	struct device *dev = &ctx->dsi->dev;
->   	int ret;
->   
->   	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to enable regulators: %d\n", ret);
-> +	if (ret < 0)
->   		return ret;
-> -	}
->   
->   	hx83112a_reset(ctx);
->   
-> -	ret = hx83112a_on(ctx);
-> +	ret = hx83112a_on(ctx->dsi);
->   	if (ret < 0) {
-> -		dev_err(dev, "Failed to initialize panel: %d\n", ret);
->   		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
->   		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-> -		return ret;
->   	}
->   
-> -	return 0;
-> +	return ret;
->   }
->   
->   static int hx83112a_unprepare(struct drm_panel *panel)
-> -- 
-> 2.46.0
-> 
+--- x/fs/libfs.c
++++ y/fs/libfs.c
+@@ -2234,6 +2234,7 @@ int path_from_stashed(struct dentry **st
+ 	path->dentry = stash_dentry(stashed, dentry);
+ 	if (path->dentry != dentry)
+ 		dput(dentry);
++	dget(dentry);
+ 
+ out_path:
+ 	WARN_ON_ONCE(path->dentry->d_fsdata != stashed);
+@@ -2258,5 +2259,6 @@ void stashed_dentry_prune(struct dentry
+ 	 * already cleared out @dentry and stashed their own
+ 	 * dentry in there.
+ 	 */
+-	cmpxchg(stashed, dentry, NULL);
++	if (dentry == cmpxchg(stashed, dentry, NULL))
++		dput(dentry);
+ }
+--
 
