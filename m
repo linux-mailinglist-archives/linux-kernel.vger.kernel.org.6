@@ -1,135 +1,106 @@
-Return-Path: <linux-kernel+bounces-318785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A509B96F34E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B4396F355
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6D21F2155D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352201F256C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3781CBEA8;
-	Fri,  6 Sep 2024 11:42:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AD11CB338;
-	Fri,  6 Sep 2024 11:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96B51CBE84;
+	Fri,  6 Sep 2024 11:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Oy9QaNOD"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B261CBE8C;
+	Fri,  6 Sep 2024 11:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622928; cv=none; b=W7UFl+1MSaP8oPqB22bChjwv9xPTJVAtpaxjCFToKWtf6rmm+BuDkrr6zfRPq08yZCwhiwq5LbThyWvjHJWqdrkqRScz4Dv0UIEyVpPPEVLXSrUuUbVbkhFUC0cag9xxAIRWtdRdB+tgPVwV9hBJiiVsN83V3sTL5SghEXJcpm8=
+	t=1725623007; cv=none; b=Gm0Ynacz/JfSEB0JMD8sL0ONYpWKQIvD2xMJWTElkZ2sl1HGmSH0X5lxAIGy3mv7wQK7xtrwz1PXxekEV5vtz7hxUeFqpVH8ijvAZx3t+R1pKB8wi7XzcrAYdEcEJ8pHWCvTREe0UIXtARYxPEPcmO4LgulaY3cbTZvwhlo6SU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622928; c=relaxed/simple;
-	bh=n79CBpFhVYSTVoBciUCHzjp+ivBLUAqIR/JPy8AxHVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bovt1Jq9V+IuZ3k62M37kGQp/GjgPv0IohmTcF2BIV02oHZbuCsZNjWXOp5ffFuE2B3gFuRVPyELxMPAVuAxpx1qUqpdFaDIviOEjlFaNQT8uLc0md416Q5GVnS1W7Qaas4FYxMEMmLzGK2vUihZYg+8jQimKZVtl0t+nkqilp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69335113E;
-	Fri,  6 Sep 2024 04:42:33 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B34953F836;
-	Fri,  6 Sep 2024 04:42:03 -0700 (PDT)
-Message-ID: <7490988c-734f-4bfd-9756-a1356bb8b18e@arm.com>
-Date: Fri, 6 Sep 2024 12:42:02 +0100
+	s=arc-20240116; t=1725623007; c=relaxed/simple;
+	bh=zMmCRgFI714ablx/Mlc9+/NWX2/zpqZ8+lqWhw4i/Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7niLd1WxVP5+jdf5kkKEJSAbF2LP3x2aJEVRTIy86PIHRLwJcTLj59aclHWfo1JpL3T39j9ozZHGIveDUMOXp+FsQVqhwnw9VHp/MJDiM6K+4Va9gXp8GtNrq1sr3qANGD2QISD3LLqZNASMkuHVo6+1s3keGFRaj5lCoJq6kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Oy9QaNOD; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 5A6361FBFB;
+	Fri,  6 Sep 2024 13:43:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725622997;
+	bh=zHtMclKF/ryXLIb1oo9T38iNo/P84poCTmamh3tRO3k=; h=From:To:Subject;
+	b=Oy9QaNOD6Pyg9+W5FW/VBPabb2wFRnEq7FACgHXChK6/W3nG7zGOA7TUpb0rqS1bu
+	 pUXOv0ZrRLB0ixZLU7oUszsVDguTEmNF0iFOAlmd1GsltJ2LS6nzYmIicosXJi8Swc
+	 jZaSllKAk8C7QN7tLo8s8u3l8zkX0fk4O99W7Ea7iEAL217gN5cicVcFpdQojsiHbs
+	 gNFk6z68L2USSpod9Ms5ltgCrWVImP1AgCBImNSncONRhaXFBmMQzvl0lrIbiq9yLf
+	 PM4LM6K8XbgIFE0CJImR+wC1DQ/q13JivFxiDAtuhFEksT5RjwvBKPB/k+YvS8mkfw
+	 oa1aSKx1S+UOQ==
+Date: Fri, 6 Sep 2024 13:43:11 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Aradhya Bhatia <a-bhatia1@ti.com>, max.krummenacher@toradex.com
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+Subject: Re: [PATCH v3 0/4] drm/tidss: Add OLDI bridge support
+Message-ID: <20240906114311.GA32916@francesco-nb>
+References: <20240716084248.1393666-1-a-bhatia1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] vdso: Split linux/array_size.h
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-7-vincenzo.frascino@arm.com>
- <8fbb8fed-e8d4-475c-8093-373d0afb62cc@csgroup.eu>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <8fbb8fed-e8d4-475c-8093-373d0afb62cc@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716084248.1393666-1-a-bhatia1@ti.com>
 
++Max
 
+Hello Aradhya,
 
-On 04/09/2024 18:18, Christophe Leroy wrote:
+On Tue, Jul 16, 2024 at 02:12:44PM +0530, Aradhya Bhatia wrote:
+> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need
+> for some major changes for a full feature experience.
 > 
-> 
-> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
->> The VDSO implementation includes headers from outside of the
->> vdso/ namespace.
->>
->> Split linux/array_size.h to make sure that the generic library
->> uses only the allowed namespace.
-> 
-> There is only one place using ARRAY_SIZE(x), can be open coded as
-> sizeof(x)/sizeof(*x) instead.
-> 
+> 1. The OF graph needs to be updated to accurately show the data flow.
+> 2. The tidss and OLDI drivers now need to support the dual-link and the
+>    cloned single-link OLDI video signals.
+> 3. The drivers also need to support the case where 2 OLDI TXes are
+>    connected to 2 different VPs - thereby creating 2 independent streams
+>    of single-link OLDI outputs.
 
-Agreed, as per previous comment on MIN()/MAX(). I will refactor my code accordingly.
+Have you considered/tested the use case in which only single link is used?
+You do not mention it here and to me this is a relevant use case.
 
-> Christophe
-> 
->>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->> ---
->>   include/linux/array_size.h |  8 +-------
->>   include/vdso/array_size.h  | 13 +++++++++++++
->>   2 files changed, 14 insertions(+), 7 deletions(-)
->>   create mode 100644 include/vdso/array_size.h
->>
->> diff --git a/include/linux/array_size.h b/include/linux/array_size.h
->> index 06d7d83196ca..ca9e63b419c4 100644
->> --- a/include/linux/array_size.h
->> +++ b/include/linux/array_size.h
->> @@ -2,12 +2,6 @@
->>   #ifndef _LINUX_ARRAY_SIZE_H
->>   #define _LINUX_ARRAY_SIZE_H
->>   -#include <linux/compiler.h>
->> -
->> -/**
->> - * ARRAY_SIZE - get the number of elements in array @arr
->> - * @arr: array to be sized
->> - */
->> -#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->> +#include <vdso/array_size.h>
->>     #endif  /* _LINUX_ARRAY_SIZE_H */
->> diff --git a/include/vdso/array_size.h b/include/vdso/array_size.h
->> new file mode 100644
->> index 000000000000..4079f7a5f86e
->> --- /dev/null
->> +++ b/include/vdso/array_size.h
->> @@ -0,0 +1,13 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _VDSO_ARRAY_SIZE_H
->> +#define _VDSO_ARRAY_SIZE_H
->> +
->> +#include <linux/compiler.h>
->> +
->> +/**
->> + * ARRAY_SIZE - get the number of elements in array @arr
->> + * @arr: array to be sized
->> + */
->> +#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->> +
->> +#endif  /* _VDSO_ARRAY_SIZE_H */
+There is a workaround for this (use option 2, cloned, even if nothing is
+connected to the second link), but this seems not correct.
 
--- 
-Regards,
-Vincenzo
+We (Max in Cc here) noticed that this specific use case is broken on
+your downstream v6.6 TI branch.
+
+Francesco
+
 
