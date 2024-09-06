@@ -1,180 +1,202 @@
-Return-Path: <linux-kernel+bounces-319397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A8896FC03
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:16:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB7396FC09
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F57B23E8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:16:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAD491C20B55
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738B71CE6F8;
-	Fri,  6 Sep 2024 19:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208B1B85C9;
+	Fri,  6 Sep 2024 19:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNBrTrTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="dP35iIwF"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022094.outbound.protection.outlook.com [52.101.43.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B131C86FB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725650126; cv=none; b=UP686WDEfsRlCBDNc7aTo5H2JwOzuID3tEe03wlWww9dp3Y6YDZBx2UwdluXoS+iBdYzAufW2ngw3dJgrOMtF+VSl37T5VbT+cC9ME7HrCV/pwY1wXyQYnRlcnZ9frwfTStyYFXrBy9hTU4q6yY+UUvOB33ErVT7oYyUqT2NoWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725650126; c=relaxed/simple;
-	bh=8PYtUzBcRzDR+BkqAPJy0YFiShnPQgO2syJSUrN07gE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=th1UpOsTL/KHu742xZIqy/wZYCJ8qWJ5fz4Td7CE+CZ5M3YB0/2tZrmdXT58jxzYj6yew7DBZASK63ELprxKaJ5DCE5XucwCN462MHaM+Wk4HdvNLMUysBBLQ2+RrnSvbwD1buvsaiyms7fezsn76n4vKX/bceFGYVwK8Fk7a7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNBrTrTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F8BC4CECC
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725650126;
-	bh=8PYtUzBcRzDR+BkqAPJy0YFiShnPQgO2syJSUrN07gE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oNBrTrTAYqb5KVvZmDYXr/Tw1x3q2PzUQw1iCxKVBQIGMk9jv/ujH8K6Oz/Xb5lyE
-	 zITJ6p6plvdQZy1zcSOKHAyO4JjvCQy7Y24Yu3n+1+XRIrwr7efRcyEcRD2Cj4ciME
-	 yUOsSxscNyPTcLXk3JreInQAnNknQIuEPzy0YqHvQDl9ZBY/CiFuz3ANmm4nrSMPWV
-	 rTx4TGMdsqZPUB/HVxpY3/Siw92u26oF0PoZTNsZOwQDm40aY64R4Svbaii67UBWsW
-	 cVZxotgdPvCM/1MKM+xF3tv4obg45rv5I4JjZgx24MVlpV4qjuSrDifnDYjRz0XT5Y
-	 dLIAngWfoW4kg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5365c512b00so554712e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 12:15:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXvGkipZNKXuNbvMIRutDptg3oPfcNoBAYKaCXd86/9I9tcXLE/1+9t7q4dXVQyDR5LMzbzz5hglEyz+Gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFXmai09gyZM6OUYMk8cbr/hUg9Y0oEDF4BZV8hD42FEBpM2pK
-	mkAyj8QLPNWH6IpjWPgL9qULD56uvzQ3loAv9txXKY+XHwa+pPO2wIv1L+UjkVUdjV9tiYsln5D
-	KIUw608up7MDnotmY5Ws/ehW9sg==
-X-Google-Smtp-Source: AGHT+IESGdRuCUkts+rxu7pfXA/qAjquHWsXBUeusiW4kkmLl2lNFAhP28jMC+hCB9hG78a+QRBP6Rs8ZXuOucr3RL0=
-X-Received: by 2002:a05:6512:1289:b0:52e:9fda:f18a with SMTP id
- 2adb3069b0e04-536587f5be1mr2777799e87.44.1725650124666; Fri, 06 Sep 2024
- 12:15:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A421B85F0
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725650168; cv=fail; b=EugWl5QcpHu4KMdZB7jpKUnyZJyQrHZTQL67a+jvTxPhy/CG7fNNR7d7avHd2t70YrZ0hgi0UMqGsHMFliB4Dnc6IqtWrqCcvPK4Kn0ovQss5C5Sy/1+OGS0HTspZg4P7R1tlp3ShPY0UoYXP6Nbsu+xZ06lE8R2jMSGNQi6lrk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725650168; c=relaxed/simple;
+	bh=uFXzVQZD9/IbeUmmDO8Uu4orUwtcOesfQdrBnILKZMQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gnVoYBhImpjEnaVEjZQ1E2ATZaiS3fdGtUxNNWYkL0MXuChGfv2BHSvQ7KdqWACI+0ibkooBeSsWnG34DhO5ZkFejKxp3h7m8kjbILOS7DIzd+33bm/94Nj+2oy4XJ3MfmJCdBi48ebhEvpuyWxh902DYOEji3CEBPafMDjMMeA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=dP35iIwF; arc=fail smtp.client-ip=52.101.43.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZXu1dCI9HT/Vr32DUOzSrG7Dy/KyWjUk9iL9Uodrxh7qK8G36iXIN1dIfOScpdkBkvjgtBM8Upvow7YJnsjuLCvqP9t8aV41BUwqIEfrhXxWZp/I2Y/IWJ4FV0emF6sT8/Wg6RvkKa9gPfMqlfQ7An/XWIoHII19dzgUzYIErQ6qkYcZZaNfWDPdFO+68HtXea9pbsck+zUbpzXNtsu9ZZCp4athveZfozPORnl2PvUukGWm3opLF/TIXc3lhigUUOcloSXHW/WVTxK95aT0dJzG0OO7ywm1NIx46gcswBwDwsAWmvghM4vbF3uNSRL7OPqV5hhjnY/ZRs6ShlY/sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G6mCAW33hqgjcgwpBryIP2ae3MxVhnu2w+B9BK9Zpg4=;
+ b=jxvrjurX2Io+40GWnKFaqRdOJkYFuEQUgOwA0EK3dG4JLFAkcIm5Xj9YORfBnkD9L6DDDV7lBvHjtKkJ/t94N75fEj0olGgo4hm0jXVcZx92e8iHH93NGsTrUHIdpqCB0bTubL5XvJ6UngCLJjVcEys49rxYy9YXG5X6LarA0EKxHA5+ldVabIrjP7MuJpH1Z+U36/bW84730d7A9/VQPjTCYASofZtiOaWGfC63HRKIrybhbCoxBvah779k0npOJx0P5ncltHZa5fChqiiUO03lf4F/fDJL4CqtAhJx2oFFRfEnVnPBTtL5LX5F1WOurWWb62vaIqsZgprdjTVQpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G6mCAW33hqgjcgwpBryIP2ae3MxVhnu2w+B9BK9Zpg4=;
+ b=dP35iIwFRFXZuCJnFP5oaKKHqZtPlQx91bBireXeWGG6ztqcVgKxGopD+yghYqApA+8qGZxcphaKRoPyChOpK0xfrI6hgFzWPUULowD+a1fNzoreJcGM3T4ItLOEl3PMGSnAEnihFaitCyqgGu0aSPWZxLPRHmBqal53QZUQlz4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ DM8PR01MB7014.prod.exchangelabs.com (2603:10b6:8:17::12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.26; Fri, 6 Sep 2024 19:16:01 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%6]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 19:16:01 +0000
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	ilkka@os.amperecomputing.com
+Subject: [PATCH v2] perf: arm_pmuv3: Use BR_RETIRED for HW branch event if enabled
+Date: Fri,  6 Sep 2024 12:15:39 -0700
+Message-ID: <20240906191539.4847-1-ilkka@os.amperecomputing.com>
+X-Mailer: git-send-email 2.42.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH5PR02CA0018.namprd02.prod.outlook.com
+ (2603:10b6:610:1ed::20) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731191312.1710417-12-robh@kernel.org> <CAL_JsqKvA0Uw7uqpmdMP7Z4mL3Qsmay5Fqb4M97s=QsBW_Nxyg@mail.gmail.com>
- <CAPY8ntAv3Xpq45ykwX_98WJKFBxqP6Os+6KvD5xzDTFz8a1idQ@mail.gmail.com>
- <CAL_JsqKjRbHCeFoZDE_wss5HMNmt8UBWa+y_8yJ6TC80xxiTOA@mail.gmail.com> <CAPY8ntBJL9nJupadT8T1DGeQHn++MRGKbyH5xSF94a0moqWGYw@mail.gmail.com>
-In-Reply-To: <CAPY8ntBJL9nJupadT8T1DGeQHn++MRGKbyH5xSF94a0moqWGYw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 6 Sep 2024 14:15:11 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKZSk+zY49CAzDisA3kBQf46TOvN-OF+wTH=LGLGwSQUw@mail.gmail.com>
-Message-ID: <CAL_JsqKZSk+zY49CAzDisA3kBQf46TOvN-OF+wTH=LGLGwSQUw@mail.gmail.com>
-Subject: Re: [PATCH] drm: vc4: Use of_property_present()
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Maxime Ripard <mripard@kernel.org>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|DM8PR01MB7014:EE_
+X-MS-Office365-Filtering-Correlation-Id: 481a89a6-572d-4529-73fc-08dccea85814
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AXeKqKDiHQNm0uaOfmO2rNVSJdFPe43m5TX869IJimlXcnLBSyw9l+C7mSoK?=
+ =?us-ascii?Q?gzuEzu1F+zz8v96GEjE8h8KmgRUC1QRwr+ZW0DnwNW5BFBVSmgriSgm4eXHV?=
+ =?us-ascii?Q?BxtOWw98upqdjEp9JHM9gAC34hWN0Nf4+FmA5p/zkaqDipK5lW4Hah8P7a8y?=
+ =?us-ascii?Q?D2PvNPPxQByAsrmnw7YZxbUoCb0LSjIxs7uWQSkDWq+C9DbwjP1LLejKIx6U?=
+ =?us-ascii?Q?XYjGeNjkkiJwDOehXffdsVnqm3ge88xfhhfiIVxQkr+LlRnzyYrCNpuiN0AR?=
+ =?us-ascii?Q?TMAxYUvMZqruRaPFD4ugMc7X+FJxxAMUesGMv5Ok5wYcdRxvwynOVQYeqQJ0?=
+ =?us-ascii?Q?kj7WPgE4mZcQ7HsQQKmLvrN2pJyg3mbNrQfYbn5ynFnwBu5ZmIG7ZZRvrkyD?=
+ =?us-ascii?Q?dUoK8DmwcDT0i4K/fLpHIXnQbz8Y3tRZ1TQK8XogZno1XAe1Wi+4HiZ/aROk?=
+ =?us-ascii?Q?PZsafhC0thLTd7nFGbLqk64twgiwxUxHtFmEvA0K1pc+x2aE6dc2pCB7+bVG?=
+ =?us-ascii?Q?gfclsub1bSYVLdBspwwOrAa/wZuZ3v7XFN5rqzcBTBEKR1vSTVmmZQGnHlW3?=
+ =?us-ascii?Q?qqdogevf6/SKSbaQuKkz9+UQOP6wrclphzsmgUOcw1BbUU58HJGaspDeMWQA?=
+ =?us-ascii?Q?p5hVZjkjPa8//ksWnwi1BYYhFUATmeQTjShDK/R8mQULAFQgGKubXx7of5W4?=
+ =?us-ascii?Q?ztjb5eNlzpkxaFIFt0Amt7mVavc+kRHiBA4RueR8LhHJzt7UjrAWBTLgT1Rm?=
+ =?us-ascii?Q?Yi4NoEmJbOaPO+XHVFiQes9VN9tZ9MoGajuNfaUqmaPXYbIbi/a5/dCUvsC3?=
+ =?us-ascii?Q?iQYiN7RND8nR/+j1TI6cugdYi3PHGsAylVBbCOwkuwF8HuzAJ95B7/CrRFAF?=
+ =?us-ascii?Q?2hJfxplRQaVarGSYK5fgLBdRUwlfM+e6+A6/FuOAoJvuMbzeHWMAflz++gcH?=
+ =?us-ascii?Q?V7xso5YWnzanXQxj1w0yDI31a9mdEgLElxJlFJFRWrCGH/N+9N76+R9yG5yk?=
+ =?us-ascii?Q?X43vHKIbcGpQpwS4U3uP3whbN4Chq+UumGM07Q6fzjgFMCiuoqTRo4iAwZW8?=
+ =?us-ascii?Q?ERUEgHh2/dFz/A7+3nnApWClIT00Y5o4J7IHvy6Gf7u3/yqRjNO54ZCwALOW?=
+ =?us-ascii?Q?yh6zB3n73JHOOMeWiveVMGEQjWFtt6FaitNZN89MF70toWWZ2dWrjKNPNVCR?=
+ =?us-ascii?Q?Se5a7XUujiRnszR1FBnrLdy0Tt/UdvtN8e586SrR6rKxanh14GZc5vKvZVY5?=
+ =?us-ascii?Q?/SdXIDqQW+mB7eo3VJvsgxCzKtyrnpEz5oWL2rllNBTM+t9dfJ7BtjHUeCxf?=
+ =?us-ascii?Q?E57JcmuH/c01WXfYYPItYxn4TxwMp4tU60dL7LcXqWdIi6GBCJO0VpJjgzbj?=
+ =?us-ascii?Q?qLhkg8q35db2iKR54Bc2Pj6Y43UHbI7BggY+lVwyYTFWUj5mCA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YnXtLewCgOU0M+LwqKcTIMuff3c6XCt/o+oSTA9SjRJWI0ecsYJjP0APmd7u?=
+ =?us-ascii?Q?+TPIInb5kDbRFolE2alErR6jWyYjXR2jZBocVJTa2NNT4ts0jHrRvdALGSib?=
+ =?us-ascii?Q?rv1Zu/RB/8n4CyZ61N/aiqUFgwml+IW61XfMfCUc0+BNVLv6xyEorxM4/f43?=
+ =?us-ascii?Q?1Vee4Pkgd6hKlFiYLcpkKRjEKGBm1xMC2f+JARTd9Buk5tR48kF0j7rWc+Bf?=
+ =?us-ascii?Q?BTiG/XxvRDBNlYrEPgisnh6zBFMif/cfKTj9uZfsdKaLrmowwVUsnQ5u6xxk?=
+ =?us-ascii?Q?GflrOAmcQWe83e/4m9QrZvwTu7pVEz/0PMk+lmNfAcT8HzwFRf7MhruZKFPJ?=
+ =?us-ascii?Q?a49j+dh7fKfmh259X/2OP6A2W0vYFPGqzROpFBWzvyQRsZCW07f48mSn3K15?=
+ =?us-ascii?Q?nyxn+CKBr4cnKQFnOTU+LJ8JLK5RettXAdFS633nLv8y2TIW7Rbyl8kq/vFm?=
+ =?us-ascii?Q?CBV9RfWn+1WFAqXZ+IjDpfliAGz4AU1t8jMprvsTHgner17q25R1IbdWr8vZ?=
+ =?us-ascii?Q?4LrjV7uaVRBIQ38q2JYhPdvb7UCfwts9xMUH1G96uyTvV1Chbnr24UvcyMQe?=
+ =?us-ascii?Q?aH/C3CblmZ7gO5PUknoaJTkpd7IFGuh6Csmrj4b9VkDEIjKIpbu6jgyE1EIu?=
+ =?us-ascii?Q?H5mzzlDhUG/j2CybRF9Ah3/wCwt6pSC0AVejimRTyTGU26tmtyTzCbKRME15?=
+ =?us-ascii?Q?+ty0VI+McF3NBeVAGE307u9ATMDdZLqxEdl785CZ+1Kgd6N9lfqwcDZ/07Tv?=
+ =?us-ascii?Q?Ew2MoQDZAJhUenAcbEGAUutvCkGiCd8CBxGFxVSXU8M3d+/rgHcRvntnFA7m?=
+ =?us-ascii?Q?65WpX+gKYPZxAizJyzefSsznn6ICL3MVBvEJyaQVys6chhm4Sf7ycuG9Rflz?=
+ =?us-ascii?Q?SdtG2CjDAl7ArLBeCGfMLypJyddHc6fCoBOU22Njd8I8FUXOxCTTvY3NxeS9?=
+ =?us-ascii?Q?TTNonSMAuVieEM1I988UQgSn1Ef8GfRoIMoGReuaX7iHcUfjwvDdynoW1L9E?=
+ =?us-ascii?Q?oFT53i0HffceQ/Su0fjJ96ux2KuAqeB+ITmuyKdidglZeNbU9D5SV8Lh2RYW?=
+ =?us-ascii?Q?MZxVT1ZB07ZvxOqSV+/ivYMAb6glzQ5LUl64G3FXJHdTFiQ34LnzP2Oa/M+0?=
+ =?us-ascii?Q?LPIZHjwySmpb7SDtqXyOK5q5uAPHlZTTF63FkjocYRT1lLEIc7IRDvN9Cj4i?=
+ =?us-ascii?Q?b46J2caOSFw+JSq1opwJZG+o5udwtZUCUkD1et7X4jOKr9Qh72jwTVeWomyZ?=
+ =?us-ascii?Q?fN/jYEeA5RVQ9W15MzSHyzYPC71auRdg/JXIO8FlzMcI+PSau9uQbae+0J/V?=
+ =?us-ascii?Q?UzIyO8jLDE4p4lBCpO4xVLgsTcTAMxAB/n/Nbge1LBoDPMMiwGdqOpE/QmY9?=
+ =?us-ascii?Q?ilMjkUE7VnCq3LBJrsiovRCWyXytdEB6YRZ0YIV29hRUpwR48Ai+9GBepE5g?=
+ =?us-ascii?Q?JGFXUP+GDZlK3OpMZHBJqU55JWuK0MQIdZbD0BSyClt3H5PuS3Qx0j3EeGtJ?=
+ =?us-ascii?Q?GsIxjN++WFWazhoeBM1csnf731kbU7pJ6ARB0QPTtgPDSotXH/8VtELrqgrz?=
+ =?us-ascii?Q?ZECOV4OLj+cecXEe8H81H+cKZrXqwqtV5yWZYy+b1nDNUk3/12ePCGrB70r8?=
+ =?us-ascii?Q?cu1tLBi9CDL++hOz/Urfw9M=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 481a89a6-572d-4529-73fc-08dccea85814
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 19:16:01.0449
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T/tNSDnGj7vzZagR2Y/LOuzHj5cjAtXFGzPEqF/eRy0C/0i9rcqy3sy4Jh1/Jbs7r8H7nJk+Hb+geBIhKYPKUxM5RmQJlWbF7TyFVp5wB+YGMBtlIF74eGuY7hRraotM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR01MB7014
 
-On Fri, Sep 6, 2024 at 9:24=E2=80=AFAM Dave Stevenson
-<dave.stevenson@raspberrypi.com> wrote:
->
-> On Wed, 4 Sept 2024 at 14:19, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Wed, Sep 4, 2024 at 6:18=E2=80=AFAM Dave Stevenson
-> > <dave.stevenson@raspberrypi.com> wrote:
-> > >
-> > > Hi Rob
-> > >
-> > > On Tue, 3 Sept 2024 at 20:19, Rob Herring <robh@kernel.org> wrote:
-> > > >
-> > > > On Wed, Jul 31, 2024 at 2:13=E2=80=AFPM Rob Herring (Arm) <robh@ker=
-nel.org> wrote:
-> > > > >
-> > > > > Use of_property_present() to test for property presence rather th=
-an
-> > > > > of_find_property(). This is part of a larger effort to remove cal=
-lers
-> > > > > of of_find_property() and similar functions. of_find_property() l=
-eaks
-> > > > > the DT struct property and data pointers which is a problem for
-> > > > > dynamically allocated nodes which may be freed.
-> > > > >
-> > > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > > > ---
-> > > > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > Ping!
-> > >
-> > > Sorry, this fell through the cracks.
-> > >
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4=
-/vc4_hdmi.c
-> > > > > index d57c4a5948c8..049de06460d5 100644
-> > > > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > > > @@ -2211,7 +2211,7 @@ static int vc4_hdmi_audio_init(struct vc4_h=
-dmi *vc4_hdmi)
-> > > > >         struct device *dev =3D &vc4_hdmi->pdev->dev;
-> > > > >         struct platform_device *codec_pdev;
-> > > > >         const __be32 *addr;
-> > > > > -       int index, len;
-> > > > > +       int index;
-> > > > >         int ret;
-> > > > >
-> > > > >         /*
-> > > > > @@ -2234,7 +2234,7 @@ static int vc4_hdmi_audio_init(struct vc4_h=
-dmi *vc4_hdmi)
-> > > > >         BUILD_BUG_ON(offsetof(struct vc4_hdmi_audio, card) !=3D 0=
-);
-> > > > >         BUILD_BUG_ON(offsetof(struct vc4_hdmi, audio) !=3D 0);
-> > > > >
-> > > > > -       if (!of_find_property(dev->of_node, "dmas", &len) || !len=
-) {
-> > > > > +       if (!of_property_present(dev->of_node, "dmas")) {
-> > >
-> > > The existing conditional is true if the property is not present or is=
- 0 length.
-> > > Your new one is only true if the property isn't present, so it isn't =
-the same.
-> >
-> > It is not the kernel's job to validate the DT. It does a terrible job
-> > of it and we have better tools for that now (schemas (though RPi
-> > platforms are in a pretty sad state for schemas)). I'm pretty sure a
-> > zero length or otherwise malformed "dmas" property would also cause a
-> > dtc warning as well. Non-zero length is hardly a complete test
-> > anyways. Any bogus value of "dmas" would pass. Or it can be completely
-> > valid, but the DMA driver is not enabled (whether you even probe
-> > depends on fw_devlinks).
-> >
-> > The kernel should just parse the properties it wants and handle any err=
-ors then.
->
-> I've followed up over the rationale of this.
->
-> The base DT enables HDMI audio.
-> On some systems there is a need to use the DMA channels for other
-> purposes and no need for HDMI audio.
+The PMU driver attempts to use PC_WRITE_RETIRED for the HW branch event,
+if enabled. However, PC_WRITE_RETIRED counts only taken branches,
+whereas BR_RETIRED counts also non-taken ones.
 
-If that's a user decision, I wouldn't use overlays to decide that, but
-make it a run-time OS decision...
+Furthermore, perf uses HW branch event to calculate branch misses ratio,
+implying BR_RETIRED is the correct event to count.
 
-> As we understand it, an overlay can't remove a property from the base
-> DT, but it can set it to being empty. (Please correct us if there is a
-> way to delete an existing property).
+We keep PC_WRITE_RETIRED still as an option in case BR_RETIRED isn't
+implemented.
 
-There isn't currently.
+Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+---
 
-> The current check therefore allows an overlay to disable the HDMI
-> audio that is enabled in the base DT. It doesn't care how long the
-> property actually is, just whether it is totally empty or not as an
-> alternative to being present.
->
-> I understand that you may consider that abuse of DT, but that is the
-> reasoning behind it. We can drop it to a downstream patch if
-> necessary.
+v2: Instead of removing PC_WRITE_RETIRED, keep it as an alternative
 
-I guess it's going to be use of_count_phandle_with_args() instead.
+---
 
-Rob
+ drivers/perf/arm_pmuv3.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+index d246840797b6..f5ee6e2adb30 100644
+--- a/drivers/perf/arm_pmuv3.c
++++ b/drivers/perf/arm_pmuv3.c
+@@ -1089,14 +1089,14 @@ static int __armv8_pmuv3_map_event_id(struct arm_pmu *armpmu,
+ 	if (event->attr.type == PERF_TYPE_HARDWARE &&
+ 	    event->attr.config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS) {
+ 
+-		if (test_bit(ARMV8_PMUV3_PERFCTR_PC_WRITE_RETIRED,
+-			     armpmu->pmceid_bitmap))
+-			return ARMV8_PMUV3_PERFCTR_PC_WRITE_RETIRED;
+-
+ 		if (test_bit(ARMV8_PMUV3_PERFCTR_BR_RETIRED,
+ 			     armpmu->pmceid_bitmap))
+ 			return ARMV8_PMUV3_PERFCTR_BR_RETIRED;
+ 
++		if (test_bit(ARMV8_PMUV3_PERFCTR_PC_WRITE_RETIRED,
++			     armpmu->pmceid_bitmap))
++			return ARMV8_PMUV3_PERFCTR_PC_WRITE_RETIRED;
++
+ 		return HW_OP_UNSUPPORTED;
+ 	}
+ 
+-- 
+2.42.0
+
 
