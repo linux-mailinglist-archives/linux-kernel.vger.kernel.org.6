@@ -1,104 +1,112 @@
-Return-Path: <linux-kernel+bounces-319422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C189C96FC6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:57:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2E296FC6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED16C1C23F25
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C56A286DCF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868EE1D54FC;
-	Fri,  6 Sep 2024 19:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFC81D79A1;
+	Fri,  6 Sep 2024 19:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HPyV9lx4"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLbJE8za"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562BC1E86F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555261CBE8C;
+	Fri,  6 Sep 2024 19:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725652643; cv=none; b=WdpU96FeVOOVHTUeGu842QdQtcUnJhqfg+7gAti9MMcqqz+tnx3dN9qBLSXcQue2oFqAR3mYW7dKxjKtikO7ahx0vodnSyxrHJZlR6hzxT6cdqrgEAJv3KeJklWsGwcJq8sfO2wZXh6YSLl839jnqbi3C2/ouSRk2sv7YMQO3lY=
+	t=1725652653; cv=none; b=e6TffipUFXrspBTd3wl5yLqtInpMdnR2sHf2lNZDOwicMDoCSjY1SmzTvbJj3sdUnBtJtGtBR4w2jqMQ0LlnJ+34QRlETr+PQGAzxALx4WgR655VdjvuCZPOcEuc8VOKlj4wGb04bgX7mgQutg60cUgUiegBXBxLIqDKCX8StnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725652643; c=relaxed/simple;
-	bh=YE4UCqb5sUF/TvNyfmZoEwImAYjajpYidg3OroDYLHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qvl1u+f3eY6FFGPYfT3sRFlmUlluFoZsyVauFmUtqhJrg6+RnMxImh+2/Txy+eUjUbEATCiS7jPJU5kPLUwn4hzf0u8V0fBOx8i0nMd55G6gD0etM3XxPDEbCc+yK7w9c2ULBXozJR/fkJsNc3MzCizBubsJzOoJcKvFBTNM6O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HPyV9lx4; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8692bbec79so327974166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 12:57:21 -0700 (PDT)
+	s=arc-20240116; t=1725652653; c=relaxed/simple;
+	bh=xgb8RdA+IbqrFjakhWLWKazxC3vqtLJDMg7U8lNtgac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bo9JF+1vlnFnTCmGMYy5PJD8eMjEEP0dcOo2sO8sG1lTCdwmFYBz+WULW+EephS/cUhCF1IXCqtbR+ybNtjxe44U+i5Vzc3JTwxg+U2Y6ATtQtYoS2cAjBN4bRSc+W8aeyJmtHZ9bQH0+XzLCI5EXl2hI37Som4ajIth1hdJkD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLbJE8za; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a018296fffso9494205ab.2;
+        Fri, 06 Sep 2024 12:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1725652639; x=1726257439; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iWQmjvgGehAkfMiXMASjrzXv69auHMxCkzvxZZ2Yp7U=;
-        b=HPyV9lx4xtSh9/VdZiANkIHh8IXbrQbyt4RuZWMlK73/uM+5wL5yeGU3XtKMCmPSWq
-         hCIlekCtG0oXTMIrD2WbF/2YXCa0i+sefPjTCWkP7nk8TgL5WcKMAhIpXA5j4WU46A3v
-         CPDaDelVHSv5fy+2jqN7AYpCBNyyuyNc0IbBg=
+        d=gmail.com; s=20230601; t=1725652650; x=1726257450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4H5uqiK1lmCZLuR+QM9RaiOR/S50itqCPBhQCgAPtA=;
+        b=PLbJE8zanNjhYF/3m5niVU4yxZK9MjI2gTYrtUa+16oghxuyOoLBnjgEK22CvZc4Us
+         sqeuggJ/nKO0KjARkn8jkXoTu7AQuNDcYGveTSA31CnFH/88Z2/nCV7kkuCY9FGLw00S
+         4kuSK+mjsldd0alLzVLlTPaTBcfFS1BYqY1sc4rDohq9tWQHTNgeQ3tQ2vwVOToQaEFd
+         fSWYiqCHOzMVpXfIcpHCZKTjpEK+RRG15rc01jn89fpR6Jx04clkBQH/CgucNQnnKx2T
+         /1O0NKfcyeH5Bye/gPiB1PI6btUHUp7BowYf0lJh0id84gwupIWl03hJHUeT6ho6EYTh
+         tEMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725652639; x=1726257439;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725652650; x=1726257450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iWQmjvgGehAkfMiXMASjrzXv69auHMxCkzvxZZ2Yp7U=;
-        b=aPTcmnlCantQ2Q/Ivw7khYnIEPvhogeK8KBLFk0DQ4a5XRJqSWB51j7Usov/xNUUgj
-         eiIhtD8kMesdkNsFuBONghj61wqR287csYQeL02e8GJ8gxW1Z63yQxqPmRm7/EsQJouL
-         UaERoLykbDl1nE74ffdvsbzQUCBFWH2xzSHkkuMVH+ooQiqR4mlP8k15UBV0AsAke9bn
-         M2vmnChLAO7D/DiGJDKF4xd0ul/CJYUhFexPf5EyOpXsb65pjUGWQbpyhTzZo4Hz/U/p
-         TnUUDOuKvCjfFfeKNucpk2yzJWoWQos1IeEvYoRZ6wcykVCgNr191VYwCVE13L9sc6Jq
-         fR6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUixaMJEfIZZAi2FGrWUEgDvWOs4i9B6Siz7PN7817/naMqzMDYFPCa5aMTdO3PKp5Z0D8NyWO4ji/IjT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQRQ1A9IrXivSbNa+K3qvMTZgD45tuXyyeeuas1JIl6mMZijkv
-	vDZxHxy/HFoT1FzDcBvdDH0EaVhgDCccBtPDYuLA9T/lyMCzQhrmzrNuORUwIOZNrXJSF4HagvN
-	KgdBYMg==
-X-Google-Smtp-Source: AGHT+IErs/+say2l/qTPncMoW8aRBwwHeAv9L3+uk6fwnBlRsoaua5ZqAOXTdAmyL4o2zKDnV/onwg==
-X-Received: by 2002:a17:907:930e:b0:a8a:3ece:d073 with SMTP id a640c23a62f3a-a8a885bfdbfmr309337566b.10.1725652639241;
-        Fri, 06 Sep 2024 12:57:19 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a8c4cccc6sm131314166b.148.2024.09.06.12.57.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 12:57:18 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8692bbec79so327968666b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 12:57:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVfkcbGkr+SNjev+rkz5GjdF3iYPvRT3IK+YwhQqefSvZc4AbJzBKQSewa24AgzQXoxaiELJNMlLhW0oic=@vger.kernel.org
-X-Received: by 2002:a17:906:eec7:b0:a7a:9ca6:527 with SMTP id
- a640c23a62f3a-a8a885bfd06mr276682266b.8.1725652638201; Fri, 06 Sep 2024
- 12:57:18 -0700 (PDT)
+        bh=U4H5uqiK1lmCZLuR+QM9RaiOR/S50itqCPBhQCgAPtA=;
+        b=p3z4QdjGfqQXkT9J1mnKNenEav4zOMarMT8+B5hgiCh8HqgpJlgmHPkdHWYmV8Xo0U
+         Nj6c8aZSOhk/WxKgXxBRp0fD7A4jrenneqYYjRwObnpJVrZzoCO3QWLBn8N2utZCywux
+         3ULmDF7HdVEMkqyrMpfLC9HQgVAWKZVoH42eespcuImL2025coaV/ZLfCNP22FHMdLO9
+         EH7c5qa/IwZ6v2t3G4Rk3sAZeD+5MGsDLI5ajEHcpZXPmMJbVwbbhlRYWHeOV6VXxbdv
+         ItHiNkA7t8gq0mEE07VhnmTOjAQJUZfmtmwt6NTOPh5JPDdP4eiwcHhhciZHJlc0hAAN
+         Kj/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVq1GRIv3bd1rmnX1t+EjKnmw7rznzUnqD2FeBEgITA7jxguCBnxRwRBIjOn6cCa7cj/K1bn+XoBSYGWuVEIA==@vger.kernel.org, AJvYcCWAsKUMyvWB9exnOh2XcAOMubjH4iI8MhZdTJm/pAdUj6kHV2EUDbVPuY8bnI5UD0Ej8aS6oBfbaahO@vger.kernel.org, AJvYcCXsOFBGd7xm7qHm6MuAm4VEydUBuoPcK1A9IkRT5BTfMDu40d6pb2TbswU/yVZo2Sx87HjKi+epfjvi66EB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzor8djLdVTXpUNxamVOHjfwM97//PVzrQSZQeGi8mOGMq58Q8z
+	lAMps57mS0GKKB81F2eaPMiBmIAI52WUeKDWfsXkUz23sANDYcfGzaeTWofQ
+X-Google-Smtp-Source: AGHT+IEG8OLXGpAN9hbjGJpcG+GcKeU1qLL0CTyrnUIbcoOfmRVOUN5wKT3GoIhHIczbJuRvohqtMg==
+X-Received: by 2002:a05:6e02:20ce:b0:398:39f:8b4d with SMTP id e9e14a558f8ab-3a05744e20amr5109605ab.5.1725652650221;
+        Fri, 06 Sep 2024 12:57:30 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4d05252ae35sm1968378173.168.2024.09.06.12.57.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 12:57:29 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: kent.overstreet@linux.dev,
+	corbet@lwn.net
+Cc: Dennis Lam <dennis.lamerice@gmail.com>,
+	linux-bcachefs@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs:fs:fixed some spelling mistakes in the bcachefs coding style page
+Date: Fri,  6 Sep 2024 15:57:19 -0400
+Message-ID: <20240906195720.40315-1-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87ttet3rz9.fsf@mail.lhotse>
-In-Reply-To: <87ttet3rz9.fsf@mail.lhotse>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 6 Sep 2024 12:57:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj6L6Qb10jVk+eHH2D3oHFathTc2nnZRpKKbqKuO3Rkow@mail.gmail.com>
-Message-ID: <CAHk-=wj6L6Qb10jVk+eHH2D3oHFathTc2nnZRpKKbqKuO3Rkow@mail.gmail.com>
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.11-3 tag
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, nysal@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 6 Sept 2024 at 05:08, Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Please pull some more powerpc fixes for 6.11:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-3
+---
+ Documentation/filesystems/bcachefs/CodingStyle.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hmm. New pgp key? Please don't take me by surprise like this.
+diff --git a/Documentation/filesystems/bcachefs/CodingStyle.rst b/Documentation/filesystems/bcachefs/CodingStyle.rst
+index 0c45829a4899..b29562a6bf55 100644
+--- a/Documentation/filesystems/bcachefs/CodingStyle.rst
++++ b/Documentation/filesystems/bcachefs/CodingStyle.rst
+@@ -175,7 +175,7 @@ errors in our thinking by running our code and seeing what happens. If your
+ time is being wasted because your tools are bad or too slow - don't accept it,
+ fix it.
+ 
+-Put effort into your documentation, commmit messages, and code comments - but
++Put effort into your documentation, commit messages, and code comments - but
+ don't go overboard. A good commit message is wonderful - but if the information
+ was important enough to go in a commit message, ask yourself if it would be
+ even better as a code comment.
+@@ -183,4 +183,4 @@ even better as a code comment.
+ A good code comment is wonderful, but even better is the comment that didn't
+ need to exist because the code was so straightforward as to be obvious;
+ organized into small clean and tidy modules, with clear and descriptive names
+-for functions and variable, where every line of code has a clear purpose.
++for functions and variables, where every line of code has a clear purpose.
+-- 
+2.46.0
 
-The key looks fine, I see the signature by Stephen Rothwell, but I get
-worried when I suddenly see a new signature with no notice and then
-have to go looking around for it.
-
-                   Linus
 
