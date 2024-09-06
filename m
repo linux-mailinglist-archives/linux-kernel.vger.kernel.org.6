@@ -1,169 +1,188 @@
-Return-Path: <linux-kernel+bounces-318199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D327596E9D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1365D96E9D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08731C235E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B65287410
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7587312CDBF;
-	Fri,  6 Sep 2024 06:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C8E13D2B8;
+	Fri,  6 Sep 2024 06:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NZ/YyJi1"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="fwmfqzsl"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010064.outbound.protection.outlook.com [52.101.128.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5193617BBE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 06:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725603249; cv=none; b=RQ9ieyLju/QMMRF2Js+mvKLyAeBoX2/Ocl0UwpvlDmh0tcBx/cdVf9ES3USvSY7TV67KBcgiM6QhJDXaZwa+kjNsUJSFBkGqQE4r/RJs8eBnTuYpMwPCXnQxkEWZ6twbgU5RFbkbxCIlHof7DrleX8H2MsoT8XUi4mzICABPL9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725603249; c=relaxed/simple;
-	bh=Lx32bnxrpbPjpbgt4VkUy3hGsX6dXtQ2o97E8V7hN9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knMMZBcKBFs9ujVlwbW6dOWH3SCGSETQI2DUh1PTrXaHpZU3lyGTNBe2ppjBkncAEQkcBEdMA7H0B1OJGJC1JuBS482matA59q3n/avrIHk1FFRLMyyObOwJpNjQH6HlR6HoSdhfjZ6TvfjFKN/H2TDsSRnxRWTWMy0VabRf+s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NZ/YyJi1; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d87176316eso2029704a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 23:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725603248; x=1726208048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/gz2DTDYFcWkZtaamsL1Ksg5rPTpuMwBQtW5iRfsoQE=;
-        b=NZ/YyJi1M1wMgBVacnszYV/hOwk3lwKmgpA2Lx+8IhpPNiPZZxdcSfvZvRfk70XWg+
-         IXLmja8QIb3psg8KkA3KHuzYrOqfQ7/3ec4nKaamqWqW8NjGY4BqvmKvhGXd205cRTqP
-         9WWPKEOMvUEZ5qDDWNiWH8gtkYPRNU48A/Y+enfSds8N3+TSSxzzY+7IE816vobkh8ea
-         kMi+/ycrjPiiPd6V0u5BnZQkt48hIp0xZR4hKPihpbSnYmt54hzWAAytagOQYKHn8qbj
-         Ikk/CoTbQK+aFli+786wo2YiBLFDpSFgUHFfHHp+N0RMw63bpT39FDbteaj3yECMV5MH
-         I0RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725603248; x=1726208048;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/gz2DTDYFcWkZtaamsL1Ksg5rPTpuMwBQtW5iRfsoQE=;
-        b=D3v/tsPAuXQDiqEkmVhDK13XL39D2nCDy39X2Q1Tc57JSv1hI7rT3olR20vo1ENlkM
-         hpJiLWSl1Hl1pAbO+JZrFlmvNk2nuGRXF1/lsEpRTU7sl0oXdD35rOL/Kc9McVo/4oc5
-         4WhsaePtg1tSIMh8+A3Tna3ainUtYV3IEcAzwtG7DLxYdYLgRopc9Ye71sTMyCtIMQH5
-         ZdpaHPMJQApWDbuTIq2et1DEDTXZJC/18KKHTrama88TJaozlPNqG0U5Ws2aLunGrxg2
-         pKo4TgBhdgn++shMv2AVQYK9XFY8P5pLfckvzeJAILuF3pIWlf6LirALuxRNDOx4O4Kp
-         UF+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+YVn3NXtr7ZoRcdvsWLlf3YaYoGMzdYxQfxOIoL2QnpEaEz3CiUeCizo76nqW1zlP0W5DyCzg7Fdn53E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmjwFlmzIlGlxaX9Fim1xIzrNmTJsM97YxOS/WRITlxPuBWYqw
-	93jN9BkMjpdWbNUqDXVkfGq33u1QzSWopy6dhL0dtOOLYFyIy57BCvOFmqDjVoQ=
-X-Google-Smtp-Source: AGHT+IHWGzm1aGaGO65+kelTFwC3pwYDkPl5A6OUnpU5ik9G44Sdbn90nWC3l7WB4gmF0230bNlwPw==
-X-Received: by 2002:a17:90a:470f:b0:2d8:7445:7ab2 with SMTP id 98e67ed59e1d1-2dad516fb0bmr2331868a91.20.1725603247595;
-        Thu, 05 Sep 2024 23:14:07 -0700 (PDT)
-Received: from localhost ([122.172.83.237])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0a694fsm658756a91.47.2024.09.05.23.14.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 23:14:07 -0700 (PDT)
-Date: Fri, 6 Sep 2024 11:44:05 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ilia Lin <ilia.lin@kernel.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] OPP/pmdomain: Fix the assignment of the required-devs
-Message-ID: <20240906061405.bz7y3erlz4v5fvvd@vireshk-i7>
-References: <20240902224815.78220-1-ulf.hansson@linaro.org>
- <20240902224815.78220-3-ulf.hansson@linaro.org>
- <20240903071638.bedt3gllqdacf43a@vireshk-i7>
- <CAPDyKFoqEAHns0nrXT6dJR3sRd5VWidK_rzXGHzJiZtk_p0cKw@mail.gmail.com>
- <20240903105321.suosbhkkkylfw4bv@vireshk-i7>
- <CAPDyKFrh4VASFzMxEg3Q8SrhVbt1vH8QJM0rCdfxo+-L1+CN_g@mail.gmail.com>
- <20240904064004.7hwfom4nrqzfkvlo@vireshk-i7>
- <CAPDyKFqZiX=F4oNa3H+fUCO9cRzapxMaAphdx+JFXuR-Tgv3Cw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A7D17BBE;
+	Fri,  6 Sep 2024 06:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725603297; cv=fail; b=YciRJrlIVlx9MD8+xe8UWI/1hy2jgA2HPu18rLmnKS96dIcOmIm+ntooRR33fG06CPmJx92nm/WIDFqFWC6H0xY47uYRkYyoiyo1qNPoX/rz+C6ue66zzKCCQiuCcVO8Pm1qCiT+n7/M4BDyqMI0KpqW789Ckq0PKzwDPM2fZac=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725603297; c=relaxed/simple;
+	bh=s8gt+Wd8Y2tjSFF3oAuJL4z7oyOFNEy+yaFNbuUzeC4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MhrpxM5KVkg310aiDhIjhCS1X7ud7s20Sdgx403i6q0ekg+uVkP4wLKXFl2FRrWmk5RYNShbj5QTsBrbuMDzdTTNvuzVro4cASIu2nxkV/oGoQm1tgtEC4RUTA5fD0BtdjeXRZTtyrvvALb3RSgEtN203o1cDG3AWZcvN46gOZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=fwmfqzsl; arc=fail smtp.client-ip=52.101.128.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oSyv8nJK0X0GFRF0VToSH6r+e1LfU8tOxHWSd1MABm5A27E8dndv17+rKybllSCWOcObNtWz7Q+e40gpK3a8UbnHYIHkE1mQLOwJBVaYxIXnb5ANYz0UmbaIsRI6VtIaUq47DGaxGU5qaToDvvvvLrWr8W4sweQ3V44sJVOCKrFaGfHmsqvRcWvJB9qXNM9hKFIwYT+qlcZNzM6BiNXBXwmOWMt6EY9qMyanxxZUzPRELdq3VcVMwPlTv6p8Z4WTuoYdntoofRBff5vWXz7ZjKYQ6EMkD0xfK2DTkE9r/1kt6GSW1+JrEuvC9qJTWt+abqC/2EkiUo8wScQ11UDiNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b8mBh52ePo0aBwypvOcm0NjdEbgAMwnjQY420EsYpmc=;
+ b=fSg3ociafHDyJ96i80Z8ShGmC+ZS969nhO7/0SpwG8fpGaM/iKZJ1O5VV/KN5w0Bhkg/fsHOtxjo1QTDNxawfDQrxeK0KMN73zt8BGR3e1L21/bT0ZsKhJAsp3g4kIfjCuWNYaf+IqgK7YaNuPVS/Vw+R6pbfBJZr06BFhOLe2a/m7/KDU6N04JcE7WgZ2knZo5sJS4P77wUHwsm3/ZDxAXZHvIGdvAEGPOA66h48MZLPh9Bh06l+mYvbIv0Ygg4nu885jN8QvTWfCBJ3L6Z3FU0qbhH9bIrtkK0zJDvOOsCoIflxRT4i7fZGT0tU3g18lZupkTyopopSWqNIQiX7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b8mBh52ePo0aBwypvOcm0NjdEbgAMwnjQY420EsYpmc=;
+ b=fwmfqzslu2tuBpQUo9rgF8cv+CKIBHclOBuySXoZTQu0j3sPFgtMm8/wQX394i6gtrsZoa76YjubqYt3861i82oU8kae1AvKABvpQ7B/3erUo+ZF/4/y2ftvr98Ql6bDAyZFVQ34NnkCDKUAT6erxhbX2/Qtdf0446w3730A0kByFe6LjFyZ7x4iqClRfXvP182UcYtzGOGDsj04TFmMZbt2/+4cl0WxqJ0lsa5FlBSKidVihIl/TxGOg0OA6rUls73o7tkpF59NNrqbAZAhS2rDBCS1KEjsR4XcgBAjW1OYEoWkQp9Iv8A9kpcPp1nicKVbZhqIaHrnFBN56uLKSA==
+Received: from PS2PR01CA0030.apcprd01.prod.exchangelabs.com
+ (2603:1096:300:58::18) by SEYPR04MB7541.apcprd04.prod.outlook.com
+ (2603:1096:101:1e5::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
+ 2024 06:14:44 +0000
+Received: from HK2PEPF00006FB3.apcprd02.prod.outlook.com
+ (2603:1096:300:58:cafe::cf) by PS2PR01CA0030.outlook.office365.com
+ (2603:1096:300:58::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17 via Frontend
+ Transport; Fri, 6 Sep 2024 06:14:44 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ HK2PEPF00006FB3.mail.protection.outlook.com (10.167.8.9) with Microsoft SMTP
+ Server id 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 06:14:43
+ +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	=?UTF-8?q?Carsten=20Spie=C3=9F?= <mail@carsten-spiess.de>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 0/3] hwmon: (isl28022) new driver for ISL28022 power monitor
+Date: Fri,  6 Sep 2024 14:14:15 +0800
+Message-Id: <20240906061421.9392-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqZiX=F4oNa3H+fUCO9cRzapxMaAphdx+JFXuR-Tgv3Cw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB3:EE_|SEYPR04MB7541:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce4f94db-7ef0-4780-5034-08dcce3b333c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WFExV0h1OVl3QlJFeXFQK1FlNmJHbDRFNnozYnZBNi9hWmhxdTJXRi9lSmdv?=
+ =?utf-8?B?dTU1c1dsZDR6S1JONFdWQm9iVFZmYWRXeGR5RXpUV2JmVWVidVpmTDUyeHJi?=
+ =?utf-8?B?K01GL2FzWE45QnNISWluZXlkUTFteUFBOGYybUZLQXE2dHpQcTFwbmtlVDY3?=
+ =?utf-8?B?QlVKTWhycC91YTE1eXZlcVZUM0JWK2l0WjBSQlBqdnEvTEx4UEpVSDUvMFVi?=
+ =?utf-8?B?bm1rNk5zTkduMEg3ckk3N2t0OEdSd3VZU0pPRXNpb21BTktaYXVIZGhFWlNh?=
+ =?utf-8?B?VThoNUtWQ0xHcDRyOVlETE85a0dOZHlYbmIzbWlMdDdoa3kyMDBlQWV0SnJM?=
+ =?utf-8?B?OTJiemsxUVo3a2dDOFBvUTJpb0hTQ1BnaDJJMUFMeGEzRmgvMnZhSHNRSFpk?=
+ =?utf-8?B?VHZLMk1CbUhsb25pYVpCaGM0Q1pWd1FUc2Fla1ptcExsQlVtMTJjZWNpSmlS?=
+ =?utf-8?B?Q29XcVlyODBsajliQlhIaVVoQy9mK010d2hvdjFaQXlSc2IyZS82ZHRFcnJH?=
+ =?utf-8?B?TnV5bS9SMXdtU3ZDdjBXT3R2MDlZek5QNWpjZERNc0NYMGt6NkNWOWlDRjdj?=
+ =?utf-8?B?UCtFcE1qZklsRkc4WWdGbVg2WU15OG8zaU92a3B0WUJtcjZQTjFlU3BOL1Bu?=
+ =?utf-8?B?b1VnVWtqYTZYRitlWmNLdjdDSnBDUm44aTVURWNUSlFlZGhyOElIdGtpclh4?=
+ =?utf-8?B?V29lWUtKenNlKzNPUUhIUFdJVVhKbUFqNE56MS83VmlMUkVWWExiVlZoT2VM?=
+ =?utf-8?B?OFMyS3dQVUkxOURzMVhQVmM2TzBacmg3MTBQaVVrMTBwK1p5eTJ2ZkpnQlpq?=
+ =?utf-8?B?VFBQVWJoS1VHL0FIY0F0UC9wTTFsbGcyK0U3cXFQMjVWSHhTQTBZSmRZQ0tC?=
+ =?utf-8?B?WXNzbkgyd0JySXdqcS81V0RZcGV3a0tLVngxTC84RG9abFExeUhiUWRBMmZV?=
+ =?utf-8?B?SVpQQlo5aWN5d3NMckZYM2lvcDZ2OUZsLzc4RGdtUHlmc08vY2U5Q0Vmb282?=
+ =?utf-8?B?bjF1M21ndEFEano2SjNwT2xCTkQvellvVFpVaFBOT1FvWjhxS0dRK0FPajVw?=
+ =?utf-8?B?MldRbUNpWmhnODBYOXp6cVJCUkp0a1krUEdRaHpWSlR3WnNIbUxab2U1NXRC?=
+ =?utf-8?B?c3ZrMGUzeTdJVWg1RGZLYXVoNG1aOGdsSm5iZUlNMDArV0ZZSmVQZWxKMUlz?=
+ =?utf-8?B?dzZJMEtNS1QwQWJxbVBDVVJzeFFBanNvQzdYazVGS1h3TTNjcnA1TDlzRGo0?=
+ =?utf-8?B?ekd5ZXBKSzQ5UFJtZjFKb2ZoOGpGcDJOK2VTakg0TzBlQS9ZdzQ1SWtRQ0RG?=
+ =?utf-8?B?WVpDVElLdHU4RC9CV2g2bmxPN0ZiY3YySDZCUnFKYzIvb3VGQXlBeGFQQjJv?=
+ =?utf-8?B?b2g5dVY3enhDb1NKQm5jbTM3MWJNK1dHa0ltUDYxSjdocW5nM0ZpUnlPemxv?=
+ =?utf-8?B?dThHckNtQnFHZzlrYzhxazhaOVozRG5EN01nMnFnSENhN0JoUEU4NWhUYzFs?=
+ =?utf-8?B?VEdLV3lRa2FTMDczSUNqcDBrbHlYREJrLzVrSk4reE5Fd2s3dFltUXhnRHFQ?=
+ =?utf-8?B?bGV6V2ZKbVdPcTVXcmE5K01qYnU3YUJiSm5PZ01DL29mWGNNako4b1FtTk9m?=
+ =?utf-8?B?Q0xzZjAxQzFuUkdNVFpqTUl3T203SlJwNXpCNVZHM1lFaDIzam9Td29DRGVX?=
+ =?utf-8?B?OW4rYWw3TnZKaVdoN2N0ZU5Qc1B4TjFwMHpQSFNlaExIN3pBTlo4cU5vU3d3?=
+ =?utf-8?B?V25GZVZqTFgrWlBTeDMxcVU2YnI1ZEg2eFJRRTFEbkFFNlpmTHlKWFVzeWVi?=
+ =?utf-8?B?QTgvQ2FUMHlUaUYrb3g3UHdkbnI1VlM2VXJ3Z2FyNFp5bFVLampPV1cva3BL?=
+ =?utf-8?B?dXRwekhpVjZlT1FXd3l2eHE3SUFnaW5DM0lWRStJc3NvY1R0TXY3OGpCbzBl?=
+ =?utf-8?Q?qyd+n7CY1wiMTACoSgq7LX4KmZmWA9Ri?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 06:14:43.4782
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce4f94db-7ef0-4780-5034-08dcce3b333c
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB3.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR04MB7541
 
-On 04-09-24, 14:57, Ulf Hansson wrote:
-> > Yeah, I missed that, it doesn't happen via DT but by platform code. I
-> > do see problems where situation would be a bit ambiguous. Your example
-> > with a minor change to your code:
-> >
-> >         opp_table_devA: opp-table-devA {
-> >                 compatible = "operating-points-v2";
-> >
-> >                 opp-devA-50 {
-> >                         opp-hz = /bits/ 64 <2500>;
-> >                         required-opps = <&opp_pd_50, &opp_pd_51>; //corresponds to pd_perf1 and pd_perf0 (in reverse order)
-> >                 };
-> >                ....
-> >
-> >         devA {
-> >                 compatible = "foo,bar";
-> >                 power-domains = <&pd_perf0>, <&pd_perf1>; //both
-> > pd_perf0 and pd_perf1 has OPP tables.
-> >                 power-domain-names = "perf0", "perf1";
-> >                 operating-points-v2 = <&opp_table_devA>;
-> >         };
-> >
-> > Here, I don't think there is a way for us to know which genpd does
-> > opp_pd_50 belongs to and to which one opp_pd_51 does.
-> >
-> > We solve this by sending clock_names and regulator_names in OPP
-> > config structure. That gives the ordering in which required_opps are
-> > present. The same needs to be done for genpd, and then genpd core
-> > would be able to attach the right genpd with right required opp.
-> 
-> No, we don't need this for gend as $subject patch is addressing this
-> problem too. Let me elaborate.
-> 
-> The OPP core holds the information about the devA's required-opps and
-> to what OPP table each required-opps belongs to
-> (opp_table->required_opp_tables[n]).
-> 
-> The genpd core holds the information about the allocated virtual
-> devices that it creates when it attached devA to its power-domains.
-> The virtual device(s) gets a genpd attached to it and that genpd also
-> has an OPP table associated with it (genpd->opp_table).
-> 
-> By asking the OPP core to walk through the array of allocated
-> required-opps for devA and to match it against a *one* of the virtual
-> devices' genpd->opp_table, we can figure out at what index we should
-> assign the virtual device to in the opp_table->required_devs[index].
+Driver for Renesas ISL28022 power monitor chip.
+Found e.g. on Ubiquiti Edgerouter ER-6P
 
-How do we differentiate between two cases where the required-opps can
-be defined as either of these:
+v6: shunt voltage in mV and revise code
+v5: review comments incorporated
+v4: property compatible fixed
+v3: changelog added
+v2: properties reworked
+v2: calculations fixed
+v2: shunt voltage input moved to debugfs
+v2: documentation and devicetree schema reworked
+v1: created
 
-required-opps = <&opp_pd_50, &opp_pd_51>; //corresponds to pd_perf1 and pd_perf0 (in reverse order)
+Carsten Spieß (2):
+  hwmon: (isl28022) new driver for ISL28022 power monitor
+  dt-bindings: hwmon: add renesas,isl28022
 
-OR
+Delphine CC Chiu (1):
+  hwmon: (isl28022) support shunt voltage for ISL28022 power monitor
 
-required-opps = <&opp_pd_51, &opp_pd_50>; //corresponds to pd_perf0 and pd_perf1
-
-I thought this can't be fixed without some platform code telling how
-the DT is really configured, i.e. order of the power domains in the
-required-opps.
+ .../bindings/hwmon/renesas,isl28022.yaml      |  64 +++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/isl28022.rst              |  63 +++
+ MAINTAINERS                                   |   8 +
+ drivers/hwmon/Kconfig                         |  11 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/isl28022.c                      | 510 ++++++++++++++++++
+ 7 files changed, 658 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/renesas,isl28022.yaml
+ create mode 100644 Documentation/hwmon/isl28022.rst
+ create mode 100644 drivers/hwmon/isl28022.c
 
 -- 
-viresh
+2.25.1
+
 
