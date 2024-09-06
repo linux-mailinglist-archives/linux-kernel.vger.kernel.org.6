@@ -1,212 +1,139 @@
-Return-Path: <linux-kernel+bounces-319342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7745796FB5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:40:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948D896FB66
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9493A1C2154D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF2F28B295
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366A11CBE9F;
-	Fri,  6 Sep 2024 18:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2C8140E50;
+	Fri,  6 Sep 2024 18:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJ/Gz7g9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuyyIMLX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF3113C3F2;
-	Fri,  6 Sep 2024 18:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBAD1B85D5;
+	Fri,  6 Sep 2024 18:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725648023; cv=none; b=JRbDioLJ/UY1wF+fHTYCTSjcE/BG98rj/P2/Cn+/LBsKaWpXrKx31fn6Wea04vBXa91sIli2qAxH4YdrScgL4f9pdJzHcwlzdBzE7F31Dt0oUJsbWWm6yhKz8554aI3PX4BSxu15Qwps3EgyBmjnQXFVEA9Om2MeN4FAqsqU2XA=
+	t=1725648383; cv=none; b=ovohUDSNLPtW/LA3klPKEebwZPNle92dTMtVs9P1chYSYZ3ACNKb32ooIBAN7BvdOmMYDRtaGY/iO7S5FBpjQM02efyYtXt8nhA8j8AVNkrRQMTL58sybTRCjZQrEyZykxWmdFNo95/1XPDEOzLi6AyyfBoXuzJJtKMEcZHTIEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725648023; c=relaxed/simple;
-	bh=ByBLS/TgKju3kVxjNGcln0VluWof+FbKlFmQWHtreFs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=i6NYOvLYqK7HmXPnzZOFdmCPkx7q/VQEpysTIxEoPMUEh/iUlKKPatc1gHtchG8Rn2DvQUU8rZmVAd19zJtk9EL4RgJnNjegCPvO7VkqegbLWRSArHXqTuoFcOOlA0wEVmYGcrcDEKHZWD510Mueg7mexf5SWuzDhjmSVKX3ofI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nJ/Gz7g9; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725648022; x=1757184022;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ByBLS/TgKju3kVxjNGcln0VluWof+FbKlFmQWHtreFs=;
-  b=nJ/Gz7g94clH0LuHXny8rUYIEZ6x+O4nFz/9lsdcOipNMNQPY3jH9rgj
-   tXS2UwV2choZoiT3VoN7QBkfFjGbHBxVGuyC2IvE+XOOdwbOCnkkm8ywI
-   QQIPtfh4Gdv1Thkh37sCo4z8PEZmtDCxexDyw6oHdTgJnOrrxtjoSreQr
-   cqNmW7VY8WsZSmEDDXdQ/DmEnjCaPGhSp2c2lEQKaPDbkkRjcF7Xd+S3l
-   09PktvQ6YDFG8VLDeO+1czBLvbpB4vNtQMnT7dwqjGPiws7uXZRFZk1BA
-   VqSBxC1NjvoB31rxuS/P/scJDu3XWysgNI7V6Gi19ALrxHUb00HhATGaK
-   A==;
-X-CSE-ConnectionGUID: LmrNQnZhQFaRmcJCYDg7IQ==
-X-CSE-MsgGUID: xOHVwicRQAmYq/g4VDlH6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="41928408"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="41928408"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:40:21 -0700
-X-CSE-ConnectionGUID: ZmmYJvEYQKWj12aZUXAWYQ==
-X-CSE-MsgGUID: 0Y8eQNHzQt+IcOC5XElDXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="66007696"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO xpardee-desk.hsd1.or.comcast.net) ([10.124.222.182])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:40:20 -0700
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v2] platform/x86:intel/pmc: Ignore all LTRs during suspend
-Date: Fri,  6 Sep 2024 11:40:03 -0700
-Message-ID: <20240906184016.268153-1-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725648383; c=relaxed/simple;
+	bh=/TWWVM3LOtpuoyPVfgax7PiTjbUDXYPw9cdrQ05JEyY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a7japptRUWQqxaKtk8F9f1mEnqltuDtVw0d0X7s1QZV4/HqtYTi3QfejN3tNufDy4YZOgaCQRkKSVSjUnjHFPA4NpGuMf7S53Mbu3S8QPchTXQH/vc431ruZ8X6f7eC3DOtVY4WFKlxwNl9EHSPFM3Za7cEq76xzgmaFn+Vz9rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuyyIMLX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 635EBC4CEC4;
+	Fri,  6 Sep 2024 18:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725648382;
+	bh=/TWWVM3LOtpuoyPVfgax7PiTjbUDXYPw9cdrQ05JEyY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=cuyyIMLX7RFEfVJPtgOj7gTSphB0xfb0k491wxM61WD+CttTIOEug5J7GazISADiF
+	 ybrTlTa+rrGvqoyJ6OXk7EfVgAVo33MscJNK/pKnmQu2Z9oV/7n6czYslL4AY/6udD
+	 7y6r2qFyKYK8kjZzRPRS726+/NmrG1iX4UdwH4IwiNVKRg8JvE/6M20laT+WU/Nrzu
+	 FPstCU2mQsN7D1I18NGpjgmvpXPGiWheaINCDCFJ22WkAMODylkw/8ycxRj0ZSS+AU
+	 I6KKpadeOrSRo3pvYmOM5LuEP/jt9GX/MQ0c7cA90OWRkmsYgN9CbYcsAHMa5gUuzC
+	 OApuLMsxywAwA==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next v2 0/5] selftests: mptcp: add time per subtests in
+ TAP output
+Date: Fri, 06 Sep 2024 20:46:06 +0200
+Message-Id: <20240906-net-next-mptcp-ksft-subtest-time-v2-0-31d5ee4f3bdf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO5N22YC/42NwQqDMBBEf6XsuVuSmIPpqf9RPGhcNVijZLdiE
+ f+9Qei9hzk8hpm3A1MKxHC/7JBoDRzmmMFcL+CHOvaEoc0MRhmrnDIYSXI2wWkRv+DInSC/GyE
+ WlDAR1mXhyduiLZ2FfLMk6sJ2Kp7wW0OVmyGwzOlzuld99v9rVo0KO02tda7WutGPkVKk121OP
+ VTHcXwB1b2raNsAAAA=
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2273; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=/TWWVM3LOtpuoyPVfgax7PiTjbUDXYPw9cdrQ05JEyY=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm20371FkgbH8kqFjiOCr++/l5SUutuGGl1GnQP
+ p3vSMu7p86JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZttN+wAKCRD2t4JPQmmg
+ czE3EACSU/6XzXHCzZb2xzTNxspcEnAAetZpcPzJCxKewkpqNMFwEnw0rxSAOmRQSwohUWmShlh
+ KSfkMcr0JHEvrDKYmkFHCgs65g92TI/uvYuz1XQN1ys/mKogtcJjn5jLdMhLeWp8n30i77iWDzl
+ UpnYWlFNHeefgVPOvELVeq7RvEvG46r4DF9kKB4XyAH571IJ4EHzo68dS2Lqgj7alZ3UHEhS3oW
+ UbiVSpttIJ1XsE9bD+HwQFye2MbsuWVJbEwKM6WgAYSyVbIQBt2jc+uOaeqiqKsUg5V5AU9XmdK
+ aPh5NmuKRsQjmb62a+ARgbMAyfPLsyq25nzBRS+PQKdriQP4SE6cZHC/PjTpO8qX9G1vSiqdVUl
+ +v+aV93NtvKwKCeZb9Q2W+hPR0eLuUCuLNS2qvo8KZphc6sJv+z6qs8A6h93IfDZiz5t7H5Nij2
+ yH3jgN6oWJ41flHSZi6Y2hMIORhgiEUupIU0gbfdRYr+bRML+Oz0uWZtp9DsiQLAGgLzFEeD3Lv
+ JEgSCX9RlFRT3DlFSNLjiMgH0VENZuze1s3Rnj/ZCkeIuLNmToIc1EDJCPTeTbUIq4Esx3GhOks
+ 42hzIilxOBhLjvvoTkRUg9K4KLirHBfIFMlUFl5J7OxEZZzTWSJc++UW1TMkE3yx7vohPP/eoHQ
+ fqKe07DzGmD3FvA==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-From: Xi Pardee <xi.pardee@intel.com>
+Patches here add 'time=<N>ms' in the diagnostic data of the TAP output,
+e.g.
 
-Add support to ignore all LTRs before suspend and restore the previous
-LTR values after suspend. This feature could be turned off with module
-parameter ltr_ignore_all_suspend.
+  ok 1 - pm_netlink: defaults addr list # time=9ms
 
-LTR value is a mechanism for a device to indicate tolerance to access
-the corresponding resource. When system suspends, the resource is not
-available and therefore the LTR value could be ignored. Ignoring all
-LTR values prevents problematic device from blocking the system to get
-to the deepest package state during suspend.
+This addition is useful to quickly identify which subtests are taking a
+longer time than the others, or more than expected.
 
-Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Xi Pardee <xi.pardee@intel.com>
+Note that there are no specific formats to follow to show this time
+according to the TAP 13, TAP 14 and KTAP specifications, but we follow
+the format being parsed by NIPA [1].
 
-v2:
-- Add more details to commit message
-- Fix format: ltr->LTR, S0IX->S0ix, space between name and email
+Patch 1 modifies mptcp_lib.sh to add this support to all MPTCP
+selftests.
+
+Patch 2 removes the now duplicated info in mptcp_connect.sh
+
+Patch 3 slightly improves the precision of the first subtests in all
+MPTCP subtests.
+
+Patches 4 and 5 remove duplicated spaces in TAP output, for the TAP
+parsers that cannot handle them properly.
+
+Link: https://github.com/linux-netdev/nipa/pull/36
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Changes in v2:
+- Typo in the commit message of patch 2 (Jakub)
+- Two additional patches to remove duplicated spaces in TAP output
+- Link to v1: https://lore.kernel.org/r/20240902-net-next-mptcp-ksft-subtest-time-v1-0-f1ed499a11b1@kernel.org
 
 ---
- drivers/platform/x86/intel/pmc/core.c | 53 +++++++++++++++++++++++++++
- drivers/platform/x86/intel/pmc/core.h |  2 +
- 2 files changed, 55 insertions(+)
+Matthieu Baerts (NGI0) (5):
+      selftests: mptcp: lib: add time per subtests in TAP output
+      selftests: mptcp: connect: remote time in TAP output
+      selftests: mptcp: reset the last TS before the first test
+      selftests: mptcp: diag: remove trailing whitespace
+      selftests: mptcp: connect: remove duplicated spaces in TAP output
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 01ae71c6df59..0ec703af16a4 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -714,6 +714,49 @@ static int pmc_core_s0ix_blocker_show(struct seq_file *s, void *unused)
- }
- DEFINE_SHOW_ATTRIBUTE(pmc_core_s0ix_blocker);
- 
-+static void pmc_core_ltr_ignore_all(struct pmc_dev *pmcdev)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
-+		struct pmc *pmc;
-+		u32 ltr_ign;
-+
-+		pmc = pmcdev->pmcs[i];
-+		if (!pmc)
-+			continue;
-+
-+		guard(mutex)(&pmcdev->lock);
-+		pmc->ltr_ign = pmc_core_reg_read(pmc, pmc->map->ltr_ignore_offset);
-+
-+		/* ltr_ignore_max is the max index value for LTR ignore register */
-+		ltr_ign = pmc->ltr_ign | GENMASK(pmc->map->ltr_ignore_max, 0);
-+		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, ltr_ign);
-+	}
-+
-+	/*
-+	 * Ignoring ME during suspend is blocking platforms with ADL PCH to get to
-+	 * deeper S0ix substate.
-+	 */
-+	pmc_core_send_ltr_ignore(pmcdev, 6, 0);
-+}
-+
-+static void pmc_core_ltr_restore_all(struct pmc_dev *pmcdev)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
-+		struct pmc *pmc;
-+
-+		pmc = pmcdev->pmcs[i];
-+		if (!pmc)
-+			continue;
-+
-+		guard(mutex)(&pmcdev->lock);
-+		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, pmc->ltr_ign);
-+	}
-+}
-+
- static inline u64 adjust_lpm_residency(struct pmc *pmc, u32 offset,
- 				       const int lpm_adj_x2)
- {
-@@ -1479,6 +1522,10 @@ static bool warn_on_s0ix_failures;
- module_param(warn_on_s0ix_failures, bool, 0644);
- MODULE_PARM_DESC(warn_on_s0ix_failures, "Check and warn for S0ix failures");
- 
-+static bool ltr_ignore_all_suspend = true;
-+module_param(ltr_ignore_all_suspend, bool, 0644);
-+MODULE_PARM_DESC(ltr_ignore_all_suspend, "Ignore all LTRs during suspend");
-+
- static __maybe_unused int pmc_core_suspend(struct device *dev)
- {
- 	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
-@@ -1488,6 +1535,9 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
- 	if (pmcdev->suspend)
- 		pmcdev->suspend(pmcdev);
- 
-+	if (ltr_ignore_all_suspend)
-+		pmc_core_ltr_ignore_all(pmcdev);
-+
- 	/* Check if the syspend will actually use S0ix */
- 	if (pm_suspend_via_firmware())
- 		return 0;
-@@ -1594,6 +1644,9 @@ static __maybe_unused int pmc_core_resume(struct device *dev)
- {
- 	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
- 
-+	if (ltr_ignore_all_suspend)
-+		pmc_core_ltr_restore_all(pmcdev);
-+
- 	if (pmcdev->resume)
- 		return pmcdev->resume(pmcdev);
- 
-diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-index ea04de7eb9e8..e862ea88b816 100644
---- a/drivers/platform/x86/intel/pmc/core.h
-+++ b/drivers/platform/x86/intel/pmc/core.h
-@@ -372,6 +372,7 @@ struct pmc_info {
-  * @map:		pointer to pmc_reg_map struct that contains platform
-  *			specific attributes
-  * @lpm_req_regs:	List of substate requirements
-+ * @ltr_ign:		Holds LTR ignore data while suspended
-  *
-  * pmc contains info about one power management controller device.
-  */
-@@ -380,6 +381,7 @@ struct pmc {
- 	void __iomem *regbase;
- 	const struct pmc_reg_map *map;
- 	u32 *lpm_req_regs;
-+	u32 ltr_ign;
- };
- 
- /**
+ tools/testing/selftests/net/mptcp/diag.sh          |  2 +-
+ tools/testing/selftests/net/mptcp/mptcp_connect.sh | 17 ++++++++++-------
+ tools/testing/selftests/net/mptcp/mptcp_join.sh    |  3 ++-
+ tools/testing/selftests/net/mptcp/mptcp_lib.sh     | 17 ++++++++++++++++-
+ tools/testing/selftests/net/mptcp/mptcp_sockopt.sh |  1 +
+ tools/testing/selftests/net/mptcp/pm_netlink.sh    |  2 ++
+ tools/testing/selftests/net/mptcp/simult_flows.sh  |  1 +
+ tools/testing/selftests/net/mptcp/userspace_pm.sh  |  1 +
+ 8 files changed, 34 insertions(+), 10 deletions(-)
+---
+base-commit: 52fc70a32573707f70d6b1b5c5fe85cc91457393
+change-id: 20240902-net-next-mptcp-ksft-subtest-time-a83cec43d894
+
+Best regards,
 -- 
-2.43.0
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
