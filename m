@@ -1,75 +1,126 @@
-Return-Path: <linux-kernel+bounces-318882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7FD96F495
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:49:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C89B96F499
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6853A1F27FB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:49:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B6F1C21BB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B3B1CCB54;
-	Fri,  6 Sep 2024 12:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iy2VYzu2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0301CCEC1;
+	Fri,  6 Sep 2024 12:49:53 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC291CB14E;
-	Fri,  6 Sep 2024 12:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC35266AB;
+	Fri,  6 Sep 2024 12:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725626974; cv=none; b=HOdgJlcnsDMTRfl1HTiB2cHWCCN2Gg5Oh6Wb4ZBLwFvK8mh87jjkuE38hcVC/Yt61kPYaT64dHKWAa+b5c/H4yK+oluFQVZCZrcuEPtw+a/dkLRsdR3QugC7Si6ch2tYyZAiQYC6c532TeLbHIR2bNhSPGtXLIvPfua91ylP+dw=
+	t=1725626993; cv=none; b=oF+sH+NbN0Yzb+U+7e2SdHVSh4hoAou+wBxjCj4/UfRXc/0PfPbqb6xXF4QG+HOvB2rI9Haq1jK80T8arCUJ7TQ3vdt8qOYaDWHK28EQ/3EjMmLtGk/VCA8Wfu2W+qox7IGoVON6PwaaObRt53529CN/B6GTShIkQ/phVt6vnfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725626974; c=relaxed/simple;
-	bh=lncAoqxCDXvCitN6TBXMfjNZSYKKZ+uFMg+gCaNDfTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q5Gkwonb/J+Toc27/DbqBB0tKcLfPox/9CJmumIqLRKW6/YOWtNl9o0JGmIRffJdOZa1vBv4y4VU1X+griKXshkZb2OPl6rO7r/M7Hgd7dZMNkPkcBnLf8UyEBWU/3Qz3fV828Xhn1N06jd0WdIJk3YmCf6DTYoOq1w6Y/YNLJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iy2VYzu2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E7CC4CEC4;
-	Fri,  6 Sep 2024 12:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725626974;
-	bh=lncAoqxCDXvCitN6TBXMfjNZSYKKZ+uFMg+gCaNDfTI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iy2VYzu2pXdp/8PmaQHoWbWaav2WbV+UWoIggdJUGIIOvvHFirE+lJBBCIAm5MvNz
-	 s2slPnFNH757sEczFj+rBjl3vvUYbZiKxQDmZxAB0DOkvgGWORksdS5KYDYk4pzJtJ
-	 nnZRyc9yfnr7cxMG5Ivb4nHl+V488WJ9a0J0peZSYijoFGWEF6h4Zs/BjUQ8/nAY6S
-	 e5tkTXscQNSsch+YIn05GdD655Iw6qEzxdlV2WLeOAB4kqcoOfrqZ2RKRkNIUs2pUV
-	 f8+S8yGQGw3dwSty/8XGlCtNJGt8PSsFcsrqlX1Q5L4r2FgEU+cLcmGJpSPNbjlaVI
-	 W1ylI+A/FfsKQ==
-Date: Fri, 6 Sep 2024 13:49:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: Re: [PATCHv2 net-next 2/7] net: ag71xx: add MODULE_DESCRIPTION
-Message-ID: <20240906124929.GG2097826@kernel.org>
-References: <20240905194938.8453-1-rosenp@gmail.com>
- <20240905194938.8453-3-rosenp@gmail.com>
+	s=arc-20240116; t=1725626993; c=relaxed/simple;
+	bh=QaYcT11Zyn+WdN0AhbAZUWQJOXX0cxwqfqioGMJDiWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h+v0KXJdOPwKK3scMslODWi0PcLIDg14Ynm1a0FJDiD2t6mxrXAW4V5QBQuP/I0AypmHtzEcjARZ8dABIvBBxzqM9in/GC8XRNcjZsASh/WfhvKpDUBnEdMRlg1P9JY9n55QjrB3VmpquUgmPl4AG3VQB964LCqJNB9JE39B4Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X0bfN6fPHz9sRs;
+	Fri,  6 Sep 2024 14:49:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id agw7d8TAxvw7; Fri,  6 Sep 2024 14:49:48 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X0bfN5Z16z9sRr;
+	Fri,  6 Sep 2024 14:49:48 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id AC44A8B778;
+	Fri,  6 Sep 2024 14:49:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id nqS38ZzxOd5w; Fri,  6 Sep 2024 14:49:48 +0200 (CEST)
+Received: from [192.168.235.70] (unknown [192.168.235.70])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DBC568B764;
+	Fri,  6 Sep 2024 14:49:47 +0200 (CEST)
+Message-ID: <2aaf06aa-af16-43fc-8bc5-3908760438bb@csgroup.eu>
+Date: Fri, 6 Sep 2024 14:49:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905194938.8453-3-rosenp@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 9/9] vdso: Modify getrandom to include the correct
+ namespace
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-10-vincenzo.frascino@arm.com>
+ <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
+ <72f3d6cf-a03b-4a16-9983-77d3dd70b0ea@arm.com>
+ <4a4873d9-c783-4374-a505-3628d3c92137@csgroup.eu>
+ <3155e7ba-33fe-4de8-bb63-867579c3eac8@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <3155e7ba-33fe-4de8-bb63-867579c3eac8@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 05, 2024 at 12:49:33PM -0700, Rosen Penev wrote:
-> Now that COMPILE_TEST is enabled, it gets flagged when building with
-> allmodconfig W=1 builds. Text taken from the beginning of the file.
+
+
+Le 06/09/2024 à 14:40, Vincenzo Frascino a écrit :
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> 
+> On 06/09/2024 13:04, Christophe Leroy wrote:
+>>
+>>
+>> Le 06/09/2024 à 13:52, Vincenzo Frascino a écrit :
+>>>
+>>>
+>>> On 04/09/2024 18:26, Christophe Leroy wrote:
+>>>>
+>>>>
+>>>> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
+>>> ...
+>>>
+> 
+> ...
+> 
+>>
+>> More details:
+>>
+>> $ make ARCH=powerpc CROSS_COMPILE=ppc-linux- mpc885_ads_defconfig
+>>
+>> $ LANG= make ARCH=powerpc CROSS_COMPILE=ppc-linux- vmlinux
+>>    SYNC    include/config/auto.conf
+>>    SYSHDR  arch/powerpc/include/generated/uapi/asm/unistd_32.h
+>>    SYSHDR  arch/powerpc/include/generated/uapi/asm/unistd_64.h
+>>    SYSTBL  arch/powerpc/include/generated/asm/syscall_table_32.h
+>>    SYSTBL  arch/powerpc/include/generated/asm/syscall_table_64.h
+>>    SYSTBL  arch/powerpc/include/generated/asm/syscall_table_spu.h
+> 
+> Thank you Christophe, is upstream code sufficient to reproduce the issue? Or do
+> I need specific patches?
+> 
 
-Thanks,
+You need random git tree plus the patch "[PATCH] powerpc patches for 
+Vincenzo's series" I have just sent to you.
 
-This description lines-up with the one in Kconfig.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+Christophe
 
