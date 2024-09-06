@@ -1,322 +1,181 @@
-Return-Path: <linux-kernel+bounces-318491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E61296EEAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC1D96EEB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12AB1F25760
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC041F257FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6377F1A7AEE;
-	Fri,  6 Sep 2024 09:00:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6CC1A071E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206BC1AE021;
+	Fri,  6 Sep 2024 09:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9PtT39z"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DD21AD9C7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725613221; cv=none; b=qYglr7QPkd6LHeDTZu3HvX0aPRyoSrPYe0Qof64eHJWx32JA/ge0CKVAnTbfwvwac2k3MwxRjd3bbIeaid71FfrTbGPG0P9LMvbZJVzcfHSxI7BjCu0m8VP2S5BqA9j7s3Te94PyCf4tre+ZaYPe7HZGrd1CPytcKH5R0JGrSWs=
+	t=1725613248; cv=none; b=AqalNRftOX6Q5DXsLSbux0wgI5dm5WnJcmf6oay/yR0O6RN0Sy3iJrv3d5RMwEud92vXJ31Rc0q2aVYG294IHo3dfkFNm1a6tSnI5rWwMCIG2YLSW37QSBhiBMN5LG8ErRUUeJdDbNo4I6/DJfra+adORgS0AhhIsv8nto3XQnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725613221; c=relaxed/simple;
-	bh=vLQfZNLJakpxnqz8nYxY9AMetP6YtB/IuS6Enlsyn+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xh+NZolmArFOAV9WB56DpD4bxPwMHP8rdAgAlbFYEGYLsgCZc+KC+M7JehFYzSjqPTd7kI2/Xl/Zf2KnOLNeUcWEo4Koeo1VLNTt4AfKP3q6AGkxJV560JZqsOScgZb2Y0PQLIXHtHWpZMSFftF9Kgrd2BN3rX1J/EV/JFTg5SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD180FEC;
-	Fri,  6 Sep 2024 02:00:45 -0700 (PDT)
-Received: from [10.162.41.22] (e116581.arm.com [10.162.41.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA92A3F73F;
-	Fri,  6 Sep 2024 02:00:10 -0700 (PDT)
-Message-ID: <709c0648-c9c5-4197-83f2-64d36293b99e@arm.com>
-Date: Fri, 6 Sep 2024 14:30:07 +0530
+	s=arc-20240116; t=1725613248; c=relaxed/simple;
+	bh=dneSZjJ2vPgl3hyYtX8hzcDr4+dBqK3UtPDLTWshofM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J5SZvgVyJEdq6tap8xoCdihPz6OpuHWXFguC/DmkrlCkoKUtl6FmzUbMoEsuzv1bGzBUZU5cdXDEFTT0Z9ms/CwaG0xNWvqrZtcuEPPJjL7frhylctjUJivNZeg/7ip1Bh94z+G8cVbVUNTHa5/WrC1+3T/J9WsLI2yLEE9yIPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9PtT39z; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso1927952276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725613245; x=1726218045; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIQkSBKbbP3m5236+1FfLCnUNpyzVmpYKde35NrXJBM=;
+        b=m9PtT39zdImH+FD9B323RUTLQwVMVT7khOPqKi3D7sY7fwOMGHThbweXvIdpYAKUiq
+         o4KKmslIuxfCqBHMZHpSmn7JyHW3n/Sk+WIOTyzUdPi7SjKaLXi8+JeaNC/ou3Pqg6O6
+         bs2b9/XOx6ybzsfVVg10bx3da4sKn+3dhQrnqqK8f+U25k1fS+u2Pwb78rfCsyFZz6UJ
+         wJo9xgDyElAN16RSG4i67l3+FGJck/Dvo9sWBFGDrq320JrNf3dScHIO4xWFXL3p5pYs
+         QuGVembFdr8RrH16NqRyVo0IQwRGWzFpqMTrnIwitAsn+po/7mMdHa/0LwMv/vtdeZl2
+         IUNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725613245; x=1726218045;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DIQkSBKbbP3m5236+1FfLCnUNpyzVmpYKde35NrXJBM=;
+        b=er5yK8W+S4cw5MBzdn6rSGNrjFyCG6tsYeS3oDCaUHlJD8JDeQOOcKSwm8b/GlmpSF
+         baAiH0qB+JRcEbEZ2EbWa8NtI+ZN84P18w0Z19pDz617I4qhSS42+rpiB/7Pv6bh0FQ7
+         Epj+5tvcByl3UxTVnye3y+BFPPgD292TvKIK9DRzp0aF+Rtgrv8SEIqz6WM8f7KI1viD
+         xsM/CFXYxdfdFvM0pJoPjccGNHNoxSfRZ0jsNDzcBlGrtN3Bz8vx9o9dYIgeO2Ds5WuL
+         ku9MmdYNiPp499JVUIcu23mGC554EAy0m/HAhd+3y3yyc8CZ2odu6ayETJriTz2skvP/
+         bivg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyYXIQmMzqRgpuXr4LGdj5d8nHsb09MuTepCeaJlUe7XalrqmwfQgfiWZTewnitdLsDWFQo6rD8xGoqPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVZ93NQfgZPdrO7iHkoXBmQ603HgokXYjiV7zcY++qRUZkAg0f
+	Cf8JF+i3sTiiyEFGsXTFPuFN5uggD+UBQMO4q7DjHK5UV9qW0wGLtpVM7xc9r6eycP9BWOXgvDa
+	Nslxta6d7GLcBNxKbQZWewUwHEWDLGj7YBO/eVg==
+X-Google-Smtp-Source: AGHT+IEbGZeRmX6gvEeu1yF0puP76+awMCQf5K3ZBbrl3NdKFa3jl2iTSCp/Xzi2oPXO/ImUW54dLgh1F0yGvuVCvbA=
+X-Received: by 2002:a05:6902:1005:b0:e1d:318c:d841 with SMTP id
+ 3f1490d57ef6-e1d34a0b18fmr2402394276.48.1725613245474; Fri, 06 Sep 2024
+ 02:00:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-3-dev.jain@arm.com>
- <542b8267-39de-4593-82ef-a586bb372824@arm.com>
- <7b7c5dc8-933b-405f-be27-907624f7f8ce@arm.com>
- <ce7bb8c0-7b3d-4755-a64e-0327bf009536@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <ce7bb8c0-7b3d-4755-a64e-0327bf009536@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com>
+ <CAPDyKFrFX_UeYWuZtQPoxHbZb0CwpLRA=QcMFsALwuiFTY3T5Q@mail.gmail.com> <7hplphah5w.fsf@baylibre.com>
+In-Reply-To: <7hplphah5w.fsf@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 6 Sep 2024 11:00:09 +0200
+Message-ID: <CAPDyKFrBSHRmP+CFd7xWXnN6LXKaAtihYv22b60wYsgSShCD+g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] pmdomain: ti_sci: collect and send low-power mode constraints
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
+	Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 9/6/24 14:13, Ryan Roberts wrote:
-> On 06/09/2024 08:05, Dev Jain wrote:
->> On 9/5/24 18:44, Ryan Roberts wrote:
->>> On 04/09/2024 11:09, Dev Jain wrote:
->>>> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
->>>> replace it with a PMD-mapped THP. Change the helpers introduced in the
->>>> previous patch to flush TLB entry corresponding to the hugezeropage,
->>>> and preserve PMD uffd-wp marker. In case of failure, fallback to
->>>> splitting the PMD.
->>>>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>> ---
->>>>    include/linux/huge_mm.h |  6 ++++
->>>>    mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
->>>>    mm/memory.c             |  5 +--
->>>>    3 files changed, 78 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>> index e25d9ebfdf89..fdd2cf473a3c 100644
->>>> --- a/include/linux/huge_mm.h
->>>> +++ b/include/linux/huge_mm.h
->>>> @@ -9,6 +9,12 @@
->>>>    #include <linux/kobject.h>
->>>>      vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
->>>> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->>>> +               unsigned long haddr, struct folio **foliop,
->>>> +               unsigned long addr);
->>>> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>>> +         struct vm_area_struct *vma, unsigned long haddr,
->>>> +         pgtable_t pgtable);
->>> I don't think you are using either of these outside of huge_memory.c, so not
->>> sure you need to declare them here or make them non-static?
->> As pointed out by Kirill, you are right, I forgot to drop these from my previous
->> approach.
->>
->>>>    int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->>>>              pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
->>>>              struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 58125fbcc532..150163ad77d3 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp,
->>>> unsigned long addr,
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->>>>    -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct
->>>> vm_area_struct *vma,
->>>> -                  unsigned long haddr, struct folio **foliop,
->>>> -                  unsigned long addr)
->>>> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->>>> +               unsigned long haddr, struct folio **foliop,
->>>> +               unsigned long addr)
->>>>    {
->>>>        struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->>>>    @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct
->>>> vm_area_struct *vma, int order)
->>>>        count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>>>    }
->>>>    -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>>> -            struct vm_area_struct *vma, unsigned long haddr,
->>>> -            pgtable_t pgtable)
->>>> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>>> +         struct vm_area_struct *vma, unsigned long haddr,
->>>> +         pgtable_t pgtable)
->>>>    {
->>>> -    pmd_t entry;
->>>> +    pmd_t entry, old_pmd;
->>>> +    bool is_pmd_none = pmd_none(*vmf->pmd);
->>>>          entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
->>>>        entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>>>        folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>>>        folio_add_lru_vma(folio, vma);
->>>> -    pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>>> +    if (!is_pmd_none) {
->>>> +        old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
->>>> +        if (pmd_uffd_wp(old_pmd))
->>>> +            entry = pmd_mkuffd_wp(entry);
->>> I don't really get this; entry is writable, so I wouldn't expect to also be
->>> setting uffd-wp here? That combination is not allowed and is checked for in
->>> page_table_check_pte_flags().
->>>
->>> It looks like you expect to get here in the uffd-wp-async case, which used to
->>> cause the pmd to be split to ptes. I'm guessing (but don't know for sure) that
->>> would cause the uffd-wp bit to be set in each of the new ptes, then during
->>> fallback to handling the wp fault on the pte, uffd would handle it?
->> I guess you are correct; I missed the WARN_ON() in page_table_check_pmd_flags(),
->> but I did see, if I read the uffd code correctly, that mfill_atomic() will just
->> return in case of pmd_trans_huge(*dst_pmd) while doing a uffd_copy to the
->> destination
->> location. So preserving pmd_uffd_wp is useless in case a THP is mapped, but I
->> did not
->> know that in fact it is supposed to be an invalid combination. So, I will drop it,
->> unless someone has some other objection.
-> So what's the correct way to handle uffd-wp-async in wp_huge_pmd()? Just split
-> it? If so, you can revert your changes in memory.c.
-
-I think so.
-
+On Fri, 6 Sept 2024 at 00:07, Kevin Hilman <khilman@baylibre.com> wrote:
 >
->>>> +    }
->>>> +    if (pgtable)
->>>> +        pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>> Should this call be moved outside of here? It doesn't really feel like it
->>> belongs. Could it be called before calling map_pmd_thp() for the site that has a
->>> pgtable?
->> Every other place I checked, they are doing this: make the entry -> deposit
->> pgtable ->
->> set_pmd_at(). I guess the general flow is to do the deposit based on the old
->> pmd, before
->> setting the new one. Which implies: I should at least move this check before I call
->> pmdp_huge_clear_flush(). And, since vmf->pmd and creating the new entry has no
->> relation,
->> I am inclined to do what you are saying.
-> pgtable_trans_huge_deposit() is just adding the pgtable to a list so that if the
-> THP needs to be split in future, then we have preallocated the pte pgtable so
-> the operation can't fail.
-
-Yes.
-
-> And enqueing it is just under the protection of the
-> PTL as far as I can tell. So I think the only ordering requirement is that you
-> both set the pmd and deposit the pgtable under the lock (without dropping it in
-> between). So you can deposit either before or after map_pmd_thp().
-
-Yes I'll do that before.
-
-> And
-> pmdp_huge_clear_flush() is irrelavent, I think?
-
-You mean, in this context? Everywhere, pgtable deposit uses the old pmd
-value to be replaced as its input, that is, it is called before set_pmd_at().
-So calling pgtable deposit after clear_flush() will violate this ordering.
-I do not think this ordering is really required but I'd rather be safe :)
-
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
 >
->>>>        set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>>>        update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>>>        add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>>> -    mm_inc_nr_ptes(vma->vm_mm);
->>>> +    if (is_pmd_none)
->>>> +        mm_inc_nr_ptes(vma->vm_mm);
->>>>    }
->>>>      static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>>> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
->>>>        spin_unlock(vmf->ptl);
->>>>    }
->>>>    +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
->>>> +                         unsigned long haddr,
->>>> +                         struct folio *folio)
->>>> +{
->>>> +    struct vm_area_struct *vma = vmf->vma;
->>>> +    vm_fault_t ret = 0;
->>>> +
->>>> +    ret = check_stable_address_space(vma->vm_mm);
->>>> +    if (ret)
->>>> +        goto out;
->>>> +    map_pmd_thp(folio, vmf, vma, haddr, NULL);
->>>> +out:
->>>> +    return ret;
->>>> +}
->>>> +
->>>> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long
->>>> haddr)
->>>> +{
->>>> +    struct vm_area_struct *vma = vmf->vma;
->>>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
->>>> +    struct mmu_notifier_range range;
->>>> +    struct folio *folio = NULL;
->>>> +    vm_fault_t ret = 0;
->>>> +
->>>> +    ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
->>>> +                  vmf->address);
->>> Just checking: the PTE table was already allocated during the read fault, right?
->>> So we don't have to allocate it here.
->> Correct, that happens in set_huge_zero_folio(). Thanks for checking.
->>
->>>> +    if (ret)
->>>> +        goto out;
->>>> +
->>>> +    mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
->>>> +                haddr + HPAGE_PMD_SIZE);
->>>> +    mmu_notifier_invalidate_range_start(&range);
->>>> +    vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
->>>> +    if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
->>>> +        goto unlock;
->>>> +    ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
->>>> +    if (!ret)
->>>> +        __thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
->>>> +unlock:
->>>> +    spin_unlock(vmf->ptl);
->>>> +    mmu_notifier_invalidate_range_end(&range);
->>> I'll confess I don't understand all the mmu notifier rules.
->> I confess the same :)
->>
->>> But the doc at
->>> Documentation/mm/mmu_notifier.rst implies that the notification must be done
->>> while holding the PTL. Although that's not how wp_page_copy(). Are you confident
->>> what you have done is correct?
->> Everywhere else, invalidate_range_end() is getting called after dropping the lock,
->> one reason is that it has a might_sleep(), and therefore we cannot call it while
->> holding a spinlock. I still don't know what exactly these calls mean...but I think
->> what I have done is correct.
-> High level; they are notifying secondary MMUs (e.g. IOMMU) of a change so the
-> tables of those secondary MMUs can be kept in sync. I don't understand all the
-> ordering requirement details though.
+> > On Tue, 20 Aug 2024 at 02:00, Kevin Hilman <khilman@baylibre.com> wrote:
+> >>
+> >> The latest (10.x) version of the firmware for the PM co-processor (aka
+> >> device manager, or DM) adds support for a "managed" mode, where the DM
+> >> firmware will select the specific low power state which is entered
+> >> when Linux requests a system-wide suspend.
+> >>
+> >> In this mode, the DM will always attempt the deepest low-power state
+> >> available for the SoC.
+> >>
+> >> However, Linux (or OSes running on other cores) may want to constrain
+> >> the DM for certain use cases.  For example, the deepest state may have
+> >> a wakeup/resume latency that is too long for certain use cases.  Or,
+> >> some wakeup-capable devices may potentially be powered off in deep
+> >> low-power states, but if one of those devices is enabled as a wakeup
+> >> source, it should not be powered off.
+> >>
+> >> These kinds of constraints are are already known in Linux by the use
+> >> of existing APIs such as per-device PM QoS and device wakeup APIs, but
+> >> now we need to communicate these constraints to the DM.
+> >>
+> >> For TI SoCs with TI SCI support, all DM-managed devices will be
+> >> connected to a TI SCI PM domain.  So the goal of this series is to use
+> >> the PM domain driver for TI SCI devices to collect constraints, and
+> >> communicate them to the DM via the new TI SCI APIs.
+> >>
+> >> This is all managed by TI SCI PM domain code.  No new APIs are needed
+> >> by Linux drivers.  Any device that is managed by TI SCI will be
+> >> checked for QoS constraints or wakeup capability and the constraints
+> >> will be collected and sent to the DM.
+> >>
+> >> This series depends on the support for the new TI SCI APIs (v10) and
+> >> was also tested with this series to update 8250_omap serial support
+> >> for AM62x[2].
+> >>
+> >> [1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
+> >> [2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
+> >>
+> >> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> >> ---
+> >> Changes in v2:
+> >>
+> >> - To simplify this version a bit, drop the pmdomain ->power_off()
+> >>   changes.  Constraints only sent during ->suspend() path.  The pmdomain
+> >>   path was an optimization that may be added back later.
+> >> - With the above simplification, drop the extra state variables that
+> >>   had been added to keep track of constraint status.
+> >> - Link to v1: https://lore.kernel.org/r/20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com
+> >>
+> >> ---
+> >> Kevin Hilman (3):
+> >>       pmdomain: ti_sci: add per-device latency constraint management
+> >>       pmdomain: ti_sci: add wakeup constraint management
+> >>       pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
+> >>
+> >>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 76 insertions(+)
+> >> ---
+> >> base-commit: ad7eb1b6b92ee0c959a0a6ae846ddadd7a79ea64
+> >> change-id: 20240802-lpm-v6-10-constraints-pmdomain-f33df5aef449
+> >>
+> >> Best regards,
+> >> --
+> >> Kevin Hilman <khilman@baylibre.com>
+> >
+> > Besides a couple of minor things that I have commented on for each
+> > patch, this looks okay to me!
+> >
+> > Taking into account the other series that this depends on, what is the
+> > best merging strategy? Is it safe for me to take it through my
+> > pmdomain tree?
 >
-> I think what you have is probably correct, would be good for someone that knows
-> what they are talking about to confirm though :)
-
-Exactly.
-
 >
->>> Thanks,
->>> Ryan
->>>
->>>> +out:
->>>> +    return ret;
->>>> +}
->>>> +
->>>>    vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->>>>    {
->>>>        const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
->>>> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->>>>        vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
->>>>        VM_BUG_ON_VMA(!vma->anon_vma, vma);
->>>>    -    if (is_huge_zero_pmd(orig_pmd))
->>>> +    if (is_huge_zero_pmd(orig_pmd)) {
->>>> +        vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
->>>> +
->>>> +        if (!(ret & VM_FAULT_FALLBACK))
->>>> +            return ret;
->>>> +
->>>> +        /* Fallback to splitting PMD if THP cannot be allocated */
->>>>            goto fallback;
->>>> +    }
->>>>          spin_lock(vmf->ptl);
->>>>    diff --git a/mm/memory.c b/mm/memory.c
->>>> index 3c01d68065be..c081a25f5173 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault
->>>> *vmf)
->>>>        if (vma_is_anonymous(vma)) {
->>>>            if (likely(!unshare) &&
->>>>                userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
->>>> -            if (userfaultfd_wp_async(vmf->vma))
->>>> +            if (!userfaultfd_wp_async(vmf->vma))
->>>> +                return handle_userfault(vmf, VM_UFFD_WP);
->>>> +            if (!is_huge_zero_pmd(vmf->orig_pmd))
->>>>                    goto split;
->>>> -            return handle_userfault(vmf, VM_UFFD_WP);
->>>>            }
->>>>            return do_huge_pmd_wp_page(vmf);
->>>>        }
+> That other series should be merged shortly, so I will check with
+> Nishanth (on cc) if he can create an immutable branch/tag that you could
+> use in your tree.
+>
+> It has a build-time dependency on that other series, so I think this is
+> the best way.
+>
+> Alternatively, if you don't expect this to clash with other changes in
+> your tree, with your ack/reviewed-by, Nishanth could merge this series
+> via his tree and we could avoid the cross-tree shuffle.
+
+At the moment there shouldn't be any clashes I think. Let's use
+Nishanth's tree and see how it goes.
+
+I will ack/review the patches when they are ready.
+
+Kind regards
+Uffe
 
