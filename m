@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-318667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB2A96F16B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:26:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD7696F16F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65D641C21090
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D14BB268A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628AB1CB33B;
-	Fri,  6 Sep 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOe9+l0S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE99A1C8FC3;
-	Fri,  6 Sep 2024 10:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029321D1F62;
+	Fri,  6 Sep 2024 10:22:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FA71D174E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725618154; cv=none; b=hCAePXywR01wvXw/7c3qN93kmzMFgJ0PY9SAlH1j4DVP0PWMwgxU/4l/+ajGfUJZjSgrUzDmPut9BOI6ipv7iLssaF2mx1NshYm8MAt4ZGCP4jzYl5MOgJvs3atcZnkn2S3TwNMDy/D9d55mZjXBQMdckv8Bz9PToENVZNdOcks=
+	t=1725618159; cv=none; b=ATt/mnEhvYkngfdMP67qvfceRYy0/IDAl2PPNu2XAKQlqbZEnF2JTl1/YTtiynMuJSliHn5RS6Ug3O/fp2TQ99hOU8FqNVs5Cchi6v079m2F4T+DeZ0UjjgzDyhhYiZCJGc4Jzl6wEGn1CE/DLNhlqF4t5+bwqorOBM0FC3iTk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725618154; c=relaxed/simple;
-	bh=kCZfqEd1O2JUBD1zEJYLNSVfJ31+1gmfzt3ZOXrSoAU=;
+	s=arc-20240116; t=1725618159; c=relaxed/simple;
+	bh=IHmOeR0Pr/t6zbYBG/EsN+tiugC4dmPA5rKEKXszId0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R63JKbCPU/S85V4353BCz7CPi83rhx5MCIthAgwLJBwrCLpRkOWkv2BtZstmVZZlcmbqEEzu4nGQnSftmNY76vtxS0qNmHwGFF+n4FwJY/B6jlagInVxRSuzqNk+XI07KqLJ3mzz8q+FqX4JHb7Tzzeo0xu3J+13otlf0GBrZOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOe9+l0S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781FEC4CEC4;
-	Fri,  6 Sep 2024 10:22:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725618154;
-	bh=kCZfqEd1O2JUBD1zEJYLNSVfJ31+1gmfzt3ZOXrSoAU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kOe9+l0SPtXq11L6It7D3XSTUmdLaxCkT54sKMTl3STjEDmx0RPxEaGeuoLxG9ogS
-	 o/rQlI++E5SETq/g3eEAop9lwETLsaleJVmmpKvOQe7wExMb0uKBHmtjRvirmwIQJD
-	 1T+lgFs569YZWJHXRpWaAQa2HiGBr7e+s+BuZifT0gNO7pkYxyEfBSsI0wnUg38FDf
-	 J7LOZh7OndiQ03DODd8LrSkMwnXDKsv3AfpXW/3UArlELD2iJEcBJK8BzRqhBvWTFZ
-	 zbc1T5sT98MxTyiyP6/W7No32XWDI8aJigmPk3jrKT73OnPOtZiPi8+6lmbNw9+g0s
-	 fatq6u1TV+Udw==
-Message-ID: <89639b91-f80e-4794-98a6-2ad896c372b4@kernel.org>
-Date: Fri, 6 Sep 2024 19:22:32 +0900
+	 In-Reply-To:Content-Type; b=L+aVMZWR+vWxE5zu3aX8c24hX48nKuaRkViWNfJbxgfOqBwtZn++WPIaiI4sSC2fok9sv38RkoiO0E3/768k0lVjfHnYndEGxWCnQrXjckDBVgMP9aYj65FifhsgUzkAp4G8z49BSEAEFAg25KEkD+2c3IVt8twQvnBsjJtQMrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53BA4FEC;
+	Fri,  6 Sep 2024 03:23:03 -0700 (PDT)
+Received: from [10.1.36.22] (e122027.cambridge.arm.com [10.1.36.22])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25A653F73F;
+	Fri,  6 Sep 2024 03:22:34 -0700 (PDT)
+Message-ID: <b6f822aa-c985-4195-9508-3df67959b662@arm.com>
+Date: Fri, 6 Sep 2024 11:22:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,79 +41,211 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] block: move non sync requests complete flow to softirq
-To: ZhangHui <zhanghui31@xiaomi.com>, axboe@kernel.dk, bvanassche@acm.org,
- ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240906095414.386388-1-zhanghui31@xiaomi.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240906095414.386388-1-zhanghui31@xiaomi.com>
+Subject: Re: [PATCH v2 2/2] drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO
+ dev query
+To: Mary Guillemard <mary.guillemard@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Christopher Healy <healych@amazon.com>, kernel@collabora.com,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+References: <20240905173222.252641-2-mary.guillemard@collabora.com>
+ <20240905173222.252641-4-mary.guillemard@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240905173222.252641-4-mary.guillemard@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/6/24 18:54, ZhangHui wrote:
-> From: zhanghui <zhanghui31@xiaomi.com>
+On 05/09/2024 18:32, Mary Guillemard wrote:
+> Expose allowed group priorities with a new device query.
 > 
-> Currently, for a controller that supports multiple queues, like UFS4.0,
-> the mq_ops->complete is executed in the interrupt top-half. Therefore, 
-> the file system's end io is executed during the request completion process,
-> such as f2fs_write_end_io on smartphone.
+> This new uAPI will be used in Mesa to properly report what priorities a
+> user can use for EGL_IMG_context_priority.
 > 
-> However, we found that the execution time of the file system end io
-> is strongly related to the size of the bio and the processing speed
-> of the CPU. Because the file system's end io will traverse every page
-> in bio, this is a very time-consuming operation.
+> Since this extends the uAPI and because userland needs a way to
+> advertise priorities accordingly, this also bumps the driver minor
+> version.
 > 
-> We measured that the 80M bio write operation on the little CPU will
-> cause the execution time of the top-half to be greater than 100ms,
-> which will undoubtedly affect interrupt response latency.
+> v2:
+> - Remove drm_panthor_group_allow_priority_flags definition
+> - Document that allowed_mask is a bitmask of drm_panthor_group_priority
 > 
-> Let's fix this issue by moving non sync requests completion to softirq
-> context, and keeping sync requests completion in the IRQ top-half context.
-> 
-> Signed-off-by: zhanghui <zhanghui31@xiaomi.com>
+> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+
+With Boris' BIT() macro change:
+
+Reviewed-by: Steven Price <steven.price@arm.com>
+
+Thanks,
+Steve
+
 > ---
-> Changes in v5:
-> - modify the commit log
-> - remove unnecessary variable and add comment
+>  drivers/gpu/drm/panthor/panthor_drv.c | 61 ++++++++++++++++++---------
+>  include/uapi/drm/panthor_drm.h        | 22 ++++++++++
+>  2 files changed, 64 insertions(+), 19 deletions(-)
 > 
-> Changes in v4:
-> - fix commit log from "scheduling efficiency" to "interrupt response latency"
-> 
-> Changes in v3:
-> - modify op_is_sync to rq_is_sync
-> 
-> Changes in v2:
-> - fix build warning
-> ---
->  block/blk-mq.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index e3c3c0c21b55..45e4d255ea3b 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -1210,7 +1210,11 @@ bool blk_mq_complete_request_remote(struct request *rq)
->  		return true;
->  	}
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 7b1db2adcb4c..f85aa2d99f09 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -170,6 +170,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_group_priorities_info, pad), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+> @@ -777,11 +778,41 @@ static int panthor_query_timestamp_info(struct panthor_device *ptdev,
+>  	return 0;
+>  }
 >  
-> -	if (rq->q->nr_hw_queues == 1) {
-> +	/*
-> +	 * To reduce the execution time in the IRQ top-half,
-> +	 * move non-sync request completions to softirq context.
-> +	 */
-> +	if ((rq->q->nr_hw_queues == 1) || !rq_is_sync(rq)) {
-
-I did mention that you do not need the inner parenthesis here...
-
->  		blk_mq_raise_softirq(rq);
->  		return true;
+> +static int group_priority_permit(struct drm_file *file,
+> +				 u8 priority)
+> +{
+> +	/* Ensure that priority is valid */
+> +	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
+> +		return -EINVAL;
+> +
+> +	/* Medium priority and below are always allowed */
+> +	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
+> +		return 0;
+> +
+> +	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+> +	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
+> +		return 0;
+> +
+> +	return -EACCES;
+> +}
+> +
+> +static void panthor_query_group_priorities_info(struct drm_file *file,
+> +						struct drm_panthor_group_priorities_info *arg)
+> +{
+> +	int prio;
+> +
+> +	for (prio = PANTHOR_GROUP_PRIORITY_REALTIME; prio >= 0; prio--) {
+> +		if (!group_priority_permit(file, prio))
+> +			arg->allowed_mask |= 1 << prio;
+> +	}
+> +}
+> +
+>  static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
+>  {
+>  	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
+>  	struct drm_panthor_dev_query *args = data;
+>  	struct drm_panthor_timestamp_info timestamp_info;
+> +	struct drm_panthor_group_priorities_info priorities_info;
+>  	int ret;
+>  
+>  	if (!args->pointer) {
+> @@ -798,6 +829,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  			args->size = sizeof(timestamp_info);
+>  			return 0;
+>  
+> +		case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
+> +			args->size = sizeof(priorities_info);
+> +			return 0;
+> +
+>  		default:
+>  			return -EINVAL;
+>  		}
+> @@ -818,6 +853,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  
+>  		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
+>  
+> +	case DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO:
+> +		panthor_query_group_priorities_info(file, &priorities_info);
+> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
+> +
+>  	default:
+>  		return -EINVAL;
 >  	}
-
--- 
-Damien Le Moal
-Western Digital Research
+> @@ -1037,24 +1076,6 @@ static int panthor_ioctl_group_destroy(struct drm_device *ddev, void *data,
+>  	return panthor_group_destroy(pfile, args->group_handle);
+>  }
+>  
+> -static int group_priority_permit(struct drm_file *file,
+> -				 u8 priority)
+> -{
+> -	/* Ensure that priority is valid */
+> -	if (priority > PANTHOR_GROUP_PRIORITY_REALTIME)
+> -		return -EINVAL;
+> -
+> -	/* Medium priority and below are always allowed */
+> -	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
+> -		return 0;
+> -
+> -	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+> -	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
+> -		return 0;
+> -
+> -	return -EACCES;
+> -}
+> -
+>  static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+>  				      struct drm_file *file)
+>  {
+> @@ -1436,6 +1457,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
+>   * PanCSF driver version:
+>   * - 1.0 - initial interface
+>   * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
+> + * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
+> + *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
+>   */
+>  static const struct drm_driver panthor_drm_driver = {
+>  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+> @@ -1449,7 +1472,7 @@ static const struct drm_driver panthor_drm_driver = {
+>  	.desc = "Panthor DRM driver",
+>  	.date = "20230801",
+>  	.major = 1,
+> -	.minor = 1,
+> +	.minor = 2,
+>  
+>  	.gem_create_object = panthor_gem_create_object,
+>  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index 011a555e4674..87c9cb555dd1 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -263,6 +263,11 @@ enum drm_panthor_dev_query_type {
+>  
+>  	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
+>  	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
+> +
+> +	/**
+> +	 * @DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO: Query allowed group priorities information.
+> +	 */
+> +	DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO,
+>  };
+>  
+>  /**
+> @@ -399,6 +404,23 @@ struct drm_panthor_timestamp_info {
+>  	__u64 timestamp_offset;
+>  };
+>  
+> +/**
+> + * struct drm_panthor_group_priorities_info - Group priorities information
+> + *
+> + * Structure grouping all queryable information relating to the allowed group priorities.
+> + */
+> +struct drm_panthor_group_priorities_info {
+> +	/**
+> +	 * @allowed_mask: Bitmask of the allowed group priorities.
+> +	 *
+> +	 * Each bit represents a variant of the enum drm_panthor_group_priority.
+> +	 */
+> +	__u8 allowed_mask;
+> +
+> +	/** @pad: Padding fields, MBZ. */
+> +	__u8 pad[3];
+> +};
+> +
+>  /**
+>   * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
+>   */
 
 
