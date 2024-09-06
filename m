@@ -1,207 +1,132 @@
-Return-Path: <linux-kernel+bounces-318336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E2796EBEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D30B96EBF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1265B2852C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:27:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5CA281C34
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAA214EC4A;
-	Fri,  6 Sep 2024 07:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0bdCY3yK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Eyqhmktm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0bdCY3yK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Eyqhmktm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6FC14C5B3;
+	Fri,  6 Sep 2024 07:28:56 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCC0149C4B;
-	Fri,  6 Sep 2024 07:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7365913E898;
+	Fri,  6 Sep 2024 07:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725607581; cv=none; b=uk1qdykj+OkVGKzhfQCGC8g+cD5eM2GV2ekVYZQAgJzJLrsC6dnMhUsS6YHyxWzn2UKsCQ+Mfp4OPV4jT2XcYq6xPR/dpqaCVQzkXSasXY7DNj+Eg9t5Rmj+lQkKK8kK1hl0eFodBOJ5X2B6MEjUF4aEStdbBeUs92NmlM/xKxk=
+	t=1725607735; cv=none; b=md65/aYP96iCJjVEo1IhDtiM7oHvVI4cSYvpAsDEbB9wU+nigGJdKPzDpGBny6JW0BadxZ8nsaKJsEpo+WXvCarHcjyySbk3LKNez6eB+GPeQ45q0/ld1UfP23A1SdpmoWSzfKW2757iY0tstqQkzM4UOpcmQN1oGJBE3CH6ilg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725607581; c=relaxed/simple;
-	bh=w24ClMpk/3FWOO/uXiViU0olb2BuJQQrGQS/6CnBfuE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jbB1svccCTYW7hEm4A7L3Rw8bKVpRyPzxWjpbSMKoQVJLpXlkuKmv4aVMOSCwRliqQVaNG+f4AM4qjQC0OiBUTsmwIgSYDmeo4DSbaASaQLThmECOineeO7dqS9jh3Q0vsTMxpvg7PuRUJY6rwVSkV+yZ3fkct4k05uXzCu8Slc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0bdCY3yK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Eyqhmktm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0bdCY3yK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Eyqhmktm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0786C1F896;
-	Fri,  6 Sep 2024 07:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725607578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqoweOcBDbSA+7HZiUYq5Pgtsyq80P3DQd88C5/WAT4=;
-	b=0bdCY3yKGm8H/78zikBOmnv7J25+SU5hegtuofsLGKVl7Kmn32ajD46MIeamJytzFXGFLy
-	hFsTIqfcv8HhbeeTJpiPSwzFKSt9W5DW8LwKnH6vP3K+8h/LRTusEHbnph/otzjRy8OZVq
-	V8YVw8wobPDbmOYC+EeWEDUojry7QLE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725607578;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqoweOcBDbSA+7HZiUYq5Pgtsyq80P3DQd88C5/WAT4=;
-	b=EyqhmktmWFiZJmZW8M/wUVN8guG1vJe0G6sWL8OW3r9Rxm1DVjHnSTVToLVfVZbdSRUEOq
-	UI+ULZ/FmGxqD7BQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725607578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqoweOcBDbSA+7HZiUYq5Pgtsyq80P3DQd88C5/WAT4=;
-	b=0bdCY3yKGm8H/78zikBOmnv7J25+SU5hegtuofsLGKVl7Kmn32ajD46MIeamJytzFXGFLy
-	hFsTIqfcv8HhbeeTJpiPSwzFKSt9W5DW8LwKnH6vP3K+8h/LRTusEHbnph/otzjRy8OZVq
-	V8YVw8wobPDbmOYC+EeWEDUojry7QLE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725607578;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hqoweOcBDbSA+7HZiUYq5Pgtsyq80P3DQd88C5/WAT4=;
-	b=EyqhmktmWFiZJmZW8M/wUVN8guG1vJe0G6sWL8OW3r9Rxm1DVjHnSTVToLVfVZbdSRUEOq
-	UI+ULZ/FmGxqD7BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E2B61395F;
-	Fri,  6 Sep 2024 07:26:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CgfEFZmu2mYgNAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 06 Sep 2024 07:26:17 +0000
-Date: Fri, 06 Sep 2024 09:27:03 +0200
-Message-ID: <87h6atfdiw.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 00/13] ALSA: update sample rate definitions
-In-Reply-To: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
-References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1725607735; c=relaxed/simple;
+	bh=6XBwn2hugRbWAd5VsP7HVR5H6Ag2j9H4A9SlK666470=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBzgRIRLCEqLNfqcBU1bS0+HHJOY6FIx2VogoFBNa88h9TftiVH8SGjqTaJ6jlIW+oQDFPwL68Haf0vzV+SR386VK33UuHZhep4oj8hJEdi4SmUtMObMUo0noFKJnAzUy0EadJNacBEehEFHGyL7FNfy38raMHMNq73EOPhXMZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6daf46ee332so16974377b3.0;
+        Fri, 06 Sep 2024 00:28:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725607732; x=1726212532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xuzw7zJ2WWQZhbbGEQc9vSAGZuPiQIjz91qfszNVDqE=;
+        b=XvBx4r9vouuBBmRzH1VXedpwKxe6YvcqjVMGBL1dBDEVoBVKOUAKuyBLcSpiLcWJLb
+         3J0HxufYOL+7DQMxByCCW1dtJHa/fdXi/22tr8EHu+OHTAxu9xA1KzrFGkQNomQAF701
+         TVJmc38pKRgx0OEbIWv50eVLifS1XU12t0l5qARQ8o7UNdzCby3koiq//JuorkuG5A3K
+         3hNiX6e4MKQZaosG3Qxc5Ov/5QWCLxxIxfthT6sDotRljjno7rwiK2UUHz9/L7h2lGGp
+         tjODaJ5CVhqQljtd2JrIJs/zPE6JhW+XQbGZYAbUIBIv5z53JCTlsvLzZkpOF4+WbTLJ
+         Xdmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUewtGBMcEWiZkXOx22UV4emwVsMdo/GmQ30vlMZMNRAgAE5ywzUF4I/EnavpecsUxAHUzRACeRKCsbFmFk@vger.kernel.org, AJvYcCV0zNpYf8hea+2a/ZFrQ54pld+f6VYTF8zC7NM5R8t7ZmorfvvOs85eKNP5u6nL5j2h/xm9hkW9NoBf@vger.kernel.org, AJvYcCVVeteaCY4TFBMJiIe1NleObqNsZ8NG8aids8uBdSaeWN/BWMFIacKZ6FZdpMmy5nu/pEsmTaLcFiNj@vger.kernel.org, AJvYcCW5ufjzKsPx5TgotR1IR+K4x1XYvSERbvpO/y1DV8GjsOPtjfEb+fcApQWP/nCQLKiMMJBRJfix9CQsWSn/GINwF+A=@vger.kernel.org, AJvYcCXoTWwNfWUX5EAC5zBm/Vf0HePvRZzUBBMAMNUGxPWkfyMtZOr6ozeqL2UpYaC9u+zjCXd59M4JfIYr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHgCG6wcT/hsef1aiQKaFCa6C6azwJUv2Jaygdcz0FhydPHf6N
+	z10/LUAhj/K0T7WWGOGt6W3tPEO7OhbktEzuuZ0trZBRB/y14yViwPIEpx5o
+X-Google-Smtp-Source: AGHT+IEWLkp5V8/D7wdzEil1VKsHw98JWqy9UNByuten1XWqiU0DRfTGfSBOpIqC/dNcoLDg7dBWfg==
+X-Received: by 2002:a05:690c:688c:b0:6d3:b708:7b1a with SMTP id 00721157ae682-6db45165782mr19861737b3.42.1725607732012;
+        Fri, 06 Sep 2024 00:28:52 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d40f24aafcsm27836357b3.89.2024.09.06.00.28.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 00:28:51 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6d3f017f80eso14443407b3.1;
+        Fri, 06 Sep 2024 00:28:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUA9j0xvlPxJYoL8e9I09mdmqh3W28OZhcIwXiKP2kk/YVYoOC+RXXdArW0HCojqHoC+63DYnfIYTpz@vger.kernel.org, AJvYcCUsQPfpWni/xzSKycRS9hRjY7zbAk/zfSl6SY/4vaaS9xghI66pJEDtb4xOetDQu3ay0kHJMyVJfbVM@vger.kernel.org, AJvYcCWmwVdhPmSbX+bf4tbUdUbuDhxC1+hHgb9cVztyJY75S1CDgAaXRc1ulg4s+8LDwsM23mP20cBo3+XlAzsaVk0TCpA=@vger.kernel.org, AJvYcCXRDOz4cRMI6Yq5rghWpR5Ed4PDprNov9Dq7ij6iI79pTWyiQ7oEXDuhKQac6+dQsSsrJLezuQStrek@vger.kernel.org, AJvYcCXWi8WINbPHT+gJBbOdGpB3w0djwpn5re5CBdcBkhB7iTFDYHs357Ql8gpFTWB1JDFXk9jBbAE9Xppi6CO4@vger.kernel.org
+X-Received: by 2002:a05:690c:4391:b0:6b0:e93b:7179 with SMTP id
+ 00721157ae682-6db44f41516mr13823817b3.26.1725607731490; Fri, 06 Sep 2024
+ 00:28:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -1.80
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,cirrus.com,opensource.cirrus.com,gmail.com,kernel.org,intel.com,linux.intel.com,linaro.org,csie.org,sholland.org,vger.kernel.org,alsa-project.org,lists.infradead.org,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+ <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
+ <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org>
+In-Reply-To: <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Sep 2024 09:28:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com>
+Message-ID: <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, 
+	conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 05 Sep 2024 16:12:51 +0200,
-Jerome Brunet wrote:
-> 
-> This patchset adds rate definitions for 12kHz, 24kHz and 128kHz.
-> 
-> It is follow-up on the series/discussion [0] about adding 128kHz for
-> spdif/eARC support. The outcome was to add 12kHz and 24kHz as well and
-> clean up the drivers that no longer require custom rules to allow these
-> rates.
-> 
-> Identifying these drivers is not straight forward, I tried my best but I
-> may have missed some. Those will continue to work anyway so it is not
-> critical. Some drivers using these rates have not been changed on
-> purpose. The reason for this may be:
-> * The driver used other uncommon rates that still don't have a definition
->   so a custom rule is still required.
-> * The constraint structure is used in some other way by the driver and
->   removing it would not help the readability or maintainability. This is
->   the case the freescale asrc drivers for example.
-> 
-> There is one change per driver so, if there is a problem later on, it will
-> easier to properly add Fixes tag.
-> 
-> The series has been tested with
-> * ARM64 defconfig - spdif 128kHz at runtime.
-> * x86_64 allmodconfig - compile test only
-> 
-> Last, the change adding IEC958 definitions has been dropped for this
-> patchset and will be resent separately
-> 
-> [0]: https://lore.kernel.org/all/20240628122429.2018059-1-jbrunet@baylibre.com/
-> 
-> ---
-> Jerome Brunet (13):
->       ALSA: pcm: add more sample rate definitions
->       ALSA: cmipci: drop SNDRV_PCM_RATE_KNOT
->       ALSA: emu10k1: drop SNDRV_PCM_RATE_KNOT
->       ALSA: hdsp: drop SNDRV_PCM_RATE_KNOT
->       ALSA: hdspm: drop SNDRV_PCM_RATE_KNOT
->       ASoC: cs35l36: drop SNDRV_PCM_RATE_KNOT
->       ASoC: cs35l41: drop SNDRV_PCM_RATE_KNOT
->       ASoC: cs53l30: drop SNDRV_PCM_RATE_KNOT
->       ASoC: Intel: avs: drop SNDRV_PCM_RATE_KNOT
->       ASoC: qcom: q6asm-dai: drop SNDRV_PCM_RATE_KNOT
->       ASoC: sunxi: sun4i-codec: drop SNDRV_PCM_RATE_KNOT
->       ASoC: cs35l34: drop useless rate contraint
->       ASoC: spdif: extend supported rates to 768kHz
+Hi Stephen,
 
-A nice cleanup series.
-Applied all now to for-next branch.
+On Thu, Sep 5, 2024 at 8:09=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
+e:
+> Quoting claudiu beznea (2024-09-04 05:17:30)
+> > On 03.09.2024 22:48, Stephen Boyd wrote:
+> > > The node name should be something like clock-<frequency> but if the
+> > > frequency is different per-board then I don't know what should happen
+> > > here.
+> >
+> > The frequency should be always around 32768 Hz but not necessarily exac=
+tly
+> > 32768 Hz. It depends on what is installed on the board, indeed. RTC can=
+ do
+> > time error adjustments based on the variations around 32768 Hz.
+> >
+> > > Can you leave the vbattb_xtal phandle up above and then require
+> > > the node to be defined in the board with the proper frequency after t=
+he
+> > > dash?
+> >
+> > Is it OK for you something like this (applied on top of this series)?
+>
+> Yes, it's too bad we can't append to a property in DT, or somehow leave
+> alone certain cells and only modify one of them.
 
+My main objections are that (1) this approach is different than the one use=
+d
+for all other external clock inputs on Renesas SoCs, and (2) this requires
+duplicating part of the clocks property in all board DTS files.
 
-Thanks!
+Gr{oetje,eeting}s,
 
-Takashi
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
