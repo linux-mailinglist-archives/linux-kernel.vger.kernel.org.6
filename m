@@ -1,66 +1,78 @@
-Return-Path: <linux-kernel+bounces-319419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458B896FC5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD0F96FC62
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628081C23B27
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A941C2469F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E40F1D54FE;
-	Fri,  6 Sep 2024 19:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69C41D5885;
+	Fri,  6 Sep 2024 19:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1xcwyPw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhbLdm17"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3E26EB7C;
-	Fri,  6 Sep 2024 19:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C011E86F;
+	Fri,  6 Sep 2024 19:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725652235; cv=none; b=OjCEEndnYz5cGSKrm0y1Wakn9YrgucTrTe6Sw5gy5UEMjMTu7fcxOw1ny3Ppg6wa364r+/8ZCEfvND3Z5B7fJ72DJuMrajKcaWxJVl8sJvpcnAh8T9UOzj3e5V7Ls1VmlUKyX2RYc0d1PcT/BthUtXI+3gszC2KQuwaREwt1kAU=
+	t=1725652461; cv=none; b=RshsJocdW2QUcF6HrR5Vp9Vs8+nvZr4DDANePM7KNGyAofYhoy0EydYJRz0L2O84oWhn2VFJRkViKtcnHiwYdz77JbLNrEQO0UKqVHZGhiwPdJM9H3Ea7RFbTxbYlWmsVofkPopMTBQCvOk5qUDsZ+jNFoyQnujLzxEJ8+PAgi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725652235; c=relaxed/simple;
-	bh=Y4+4R6aK6O0cVzHKiYd83Bg4mKJvI/Gln27GtwXMpEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CFS2WGJnHPUq0vdsZodFzn99J+ML2iimPg1PH+CEGXNdZtopv58si+4C5RUFq8nF9GC9eWZUmxuwVK75/22FImcHwaqm4fK2lKqFoM5MpZFZ3fNFeSksLi8QY36TyjaydAKg3H1T7Qv4H15Air3cVBovuCB4HUVfDS6yXcOsxSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1xcwyPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB5D0C4CEC4;
-	Fri,  6 Sep 2024 19:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725652234;
-	bh=Y4+4R6aK6O0cVzHKiYd83Bg4mKJvI/Gln27GtwXMpEw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F1xcwyPwgnhqmDoQZ106QrD7WB47NDr2GlS3GrVysLaqJAZ6IbGgs5qhniAzipwHZ
-	 S6K2zjeyhyiCwFfHvtqCbivgBdPJ3f+pXpxdOri0vGiLgOY+vxb7ARLN08mPJb1VNm
-	 pvmaFva6YMRI9KTNuRWxWJI9OiX+skWO296FLF8R1IQTNZwJCwW/5EjZydqeshyUJa
-	 GwIQDxCFCRthtVmP9ahWZSCcqsXwfO1DQIONSSPqP72Hs5yGysR73rNcM9h4p+u/J5
-	 OcEsTy0zD7F0hqFNseMCyb4hT2s4Mn0nTY1ELXRuGfLH56vqRsMMb7Bnptw7MTWxud
-	 Zy3c7q9yLG16Q==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
+	s=arc-20240116; t=1725652461; c=relaxed/simple;
+	bh=sjAM3VQD4+zuRHxIxfJhwni0vZTgCqAmO9Nq2E34HQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UWmqm8Go4b3ctiNeA4GewGc1cKMbHl5OhGx4rbiX3Xern2Orrg03nyJDU6el5bsx9/my1fhB2yTDZgwVcKcaKOMiFMVsB0kcwaUFXrfBBvdZYdv8sXhEgKeFsFnby4RtlkyU/ctDRO24Dr14p5qR4pX9j0woB4rzHU8JrLqIpbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UhbLdm17; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6c34fb4f65eso12109916d6.0;
+        Fri, 06 Sep 2024 12:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725652459; x=1726257259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3CsdSrVyqeemyTzfAitC4EmwS3QBR+rYGCwhOM7Zz1U=;
+        b=UhbLdm17ZJa16HCM8zLLmURGzavErwBOoSy9cwwa4ghl5AVbRl55gMhc5sNOci5Odz
+         vhLoANZaK3B/pllPjy3PH7Q9Ma7AWCOB8av+8H9uzBtWhWNpCEpFj05bQFl+BZtJJs58
+         XDfo9vnKOZIrIFKTg6BVdFzNukV8Ljfy9xIWU08gTcN1h28zdmMtwfqYwAvmzc71uGFe
+         WhcW1vBJWbbV8o+mCMJedBlG0SPkgtjsMvVmVL4j04wi86dES1OxTFDptVU4CAxsAejY
+         HOr5Rs5zcM4mjsHk3od6GKVRyULfeH5O9tDctzip8PqRTPn2Cc63Lp5KPEi6KHpBVlc2
+         PA9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725652459; x=1726257259;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3CsdSrVyqeemyTzfAitC4EmwS3QBR+rYGCwhOM7Zz1U=;
+        b=uV0nVylIw0EEWZE3XplcoG2Nsb3t7lMwbpbWykwG8WTCvbPwX81+TU4Nj7jGG1Y2fr
+         5AhLvTlYGZ9HZaT1779v7e+Dle+tcWvmVGnlgLj0A7tJeMKtWHaGsVgwsxNZ8nUgNixU
+         ogMxHpJjm7hag8N4vIjJ8skzh+c9CzGxgn2T28c21uU7Ixioupk4Ur2a4vCjIn4NVK4n
+         p+ssA+lh0M6PUPYm28UrVj4nAJIsSOtf6tiFPhcgbIsYrmGNhQWo6FCBgsqQrTXrczHb
+         h/9l5t1f7DmhPvIxBBuG/ewTceUUlRP8hAQrZt0hOJwNJ09WnMELlRwVrnEL4PRUdFr9
+         /yog==
+X-Forwarded-Encrypted: i=1; AJvYcCXCyK+kSpRrIUdWj309kpgrpv1FyCqhyP7IPVllZrJ6bsfVmyI2MVXEx93Jq/vrLPWqkhtcYKYxlXue09t7@vger.kernel.org, AJvYcCXSBGWI66Ecl2GP78HbNZDHvXd4B8Q6VUG5s+WS518bDTn1cH8oQEK0NezEFWlQUDFQUPQbp4PcL7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzXUO+N4alaKlZ6d1IdyaGCyWL7VrShS6mjczXP92cDHdwRVRb
+	IkqNBtId0i4EW/6pSbDSaOt52JpNGetqapwf5gco6jaSHrLWHq+vrsssxfXR
+X-Google-Smtp-Source: AGHT+IGIzOjTcS/g80AXf73nfAVdiLoqlxceO81bFWcEfo1pPQqWtGD9rHGL6jwVZQHsUvKNz/jweg==
+X-Received: by 2002:a05:6214:3d9e:b0:6c5:1711:81d7 with SMTP id 6a1803df08f44-6c528527d88mr61932976d6.33.1725652458554;
+        Fri, 06 Sep 2024 12:54:18 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6c5201e051asm19505096d6.10.2024.09.06.12.54.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 12:54:18 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: corbet@lwn.net
+Cc: Dennis Lam <dennis.lamerice@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>
-Subject: [PATCH 2/2] perf trace: Use a common encoding for augmented arguments, with size + error + payload
-Date: Fri,  6 Sep 2024 16:50:20 -0300
-Message-ID: <20240906195020.481841-3-acme@kernel.org>
+	linux-doc@vger.kernel.org
+Subject: [PATCH] docs:filesystems: fix spelling and grammar mistakes
+Date: Fri,  6 Sep 2024 15:53:52 -0400
+Message-ID: <20240906195400.39949-1-dennis.lamerice@gmail.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240906195020.481841-1-acme@kernel.org>
-References: <20240906195020.481841-1-acme@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,392 +81,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-We were using a more compact format, without explicitely encoding the
-size and possible error in the payload for an argument.
-
-To do it generically, at least as Howard Chu did in his GSoC activities,
-it is more convenient to use the same model that was being used for
-string arguments, passing { size, error, payload }.
-
-So use that for the non string syscall args we have so far:
-
-  struct timespec
-  struct perf_event_attr
-  struct sockaddr (this one has even a variable size)
-
-With this in place we have the userspace pretty printers:
-
-  perf_event_attr___scnprintf()
-  syscall_arg__scnprintf_augmented_sockaddr()
-  syscall_arg__scnprintf_augmented_timespec()
-
-Ready to have the generic BPF collector in tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-sending its generic payload and thus we'll use them instead of a generic
-libbpf btf_dump interface that doesn't know about about the sockaddr
-mux, perf_event_attr non-trivial fields (sample_type, etc), leaving it
-as a (useful) fallback that prints just basic types until we put in
-place a more sophisticated pretty printer infrastructure that associates
-synthesized enums to struct fields using the header scrapers we have in
-tools/perf/trace/beauty/, some of them in this list:
-
-  $ ls tools/perf/trace/beauty/*.sh
-  tools/perf/trace/beauty/arch_errno_names.sh
-  tools/perf/trace/beauty/kcmp_type.sh
-  tools/perf/trace/beauty/perf_ioctl.sh
-  tools/perf/trace/beauty/statx_mask.sh
-  tools/perf/trace/beauty/clone.sh
-  tools/perf/trace/beauty/kvm_ioctl.sh
-  tools/perf/trace/beauty/pkey_alloc_access_rights.sh
-  tools/perf/trace/beauty/sync_file_range.sh
-  tools/perf/trace/beauty/drm_ioctl.sh
-  tools/perf/trace/beauty/madvise_behavior.sh
-  tools/perf/trace/beauty/prctl_option.sh
-  tools/perf/trace/beauty/usbdevfs_ioctl.sh
-  tools/perf/trace/beauty/fadvise.sh
-  tools/perf/trace/beauty/mmap_flags.sh
-  tools/perf/trace/beauty/rename_flags.sh
-  tools/perf/trace/beauty/vhost_virtio_ioctl.sh
-  tools/perf/trace/beauty/fs_at_flags.sh
-  tools/perf/trace/beauty/mmap_prot.sh
-  tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
-  tools/perf/trace/beauty/x86_arch_prctl.sh
-  tools/perf/trace/beauty/fsconfig.sh
-  tools/perf/trace/beauty/mount_flags.sh
-  tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
-  tools/perf/trace/beauty/fsmount.sh
-  tools/perf/trace/beauty/move_mount_flags.sh
-  tools/perf/trace/beauty/sockaddr.sh
-  tools/perf/trace/beauty/fspick.sh
-  tools/perf/trace/beauty/mremap_flags.sh
-  tools/perf/trace/beauty/socket.sh
-  $
-
-Testing it:
-
-  root@number:~# rm -f 987654 ; touch 123456 ; perf trace -e rename* mv 123456 987654
-     0.000 ( 0.031 ms): mv/1193096 renameat2(olddfd: CWD, oldname: "123456", newdfd: CWD, newname: "987654", flags: NOREPLACE) = 0
-  root@number:~# perf trace -e *nanosleep sleep 1.2345678901
-       0.000 (1234.654 ms): sleep/1192697 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 234567891 }, rmtp: 0x7ffe1ea80460) = 0
-  root@number:~# perf trace -e perf_event_open* perf stat -e cpu-clock sleep 1
-       0.000 ( 0.011 ms): perf/1192701 perf_event_open(attr_uptr: { type: 1 (software), size: 136, config: 0 (PERF_COUNT_SW_CPU_CLOCK), sample_type: IDENTIFIER, read_format: TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING, disabled: 1, inherit: 1, enable_on_exec: 1, exclude_guest: 1 }, pid: 1192702 (perf), cpu: -1, group_fd: -1, flags: FD_CLOEXEC) = 3
-
-   Performance counter stats for 'sleep 1':
-
-                0.51 msec cpu-clock                        #    0.001 CPUs utilized
-
-         1.001242090 seconds time elapsed
-
-         0.000000000 seconds user
-         0.001010000 seconds sys
-
-  root@number:~# perf trace -e connect* ping -c 1 bsky.app
-       0.000 ( 0.130 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: LOCAL, path: /run/systemd/resolve/io.systemd.Resolve }, addrlen: 42) = 0
-      23.907 ( 0.006 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 3.20.108.158 }, addrlen: 16) = 0
-      23.915 PING bsky.app (3.20.108.158) 56(84) bytes of data.
-  ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.917 ( 0.002 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 3.12.170.30 }, addrlen: 16) = 0
-      23.921 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.923 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 18.217.70.179 }, addrlen: 16) = 0
-      23.925 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.927 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 3.132.20.46 }, addrlen: 16) = 0
-      23.930 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.931 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 3.142.89.165 }, addrlen: 16) = 0
-      23.934 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.935 ( 0.002 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 18.119.147.159 }, addrlen: 16) = 0
-      23.938 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.940 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 3.22.38.164 }, addrlen: 16) = 0
-      23.942 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: UNSPEC }, addrlen: 16)           = 0
-      23.944 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 0, addr: 3.13.14.133 }, addrlen: 16) = 0
-      23.956 ( 0.001 ms): ping/1192740 connect(fd: 5, uservaddr: { .family: INET, port: 1025, addr: 3.20.108.158 }, addrlen: 16) = 0
-  ^C
-  --- bsky.app ping statistics ---
-  1 packets transmitted, 0 received, 100% packet loss, time 0ms
-
-  root@number:~#
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
 ---
- tools/perf/trace/beauty/perf_event_open.c     |   2 +-
- tools/perf/trace/beauty/sockaddr.c            |   2 +-
- tools/perf/trace/beauty/timespec.c            |   2 +-
- .../bpf_skel/augmented_raw_syscalls.bpf.c     | 104 +++++++++++-------
- 4 files changed, 66 insertions(+), 44 deletions(-)
+ Documentation/filesystems/journalling.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/trace/beauty/perf_event_open.c b/tools/perf/trace/beauty/perf_event_open.c
-index 01ee15fe9d0c7a98..632237128640dbb4 100644
---- a/tools/perf/trace/beauty/perf_event_open.c
-+++ b/tools/perf/trace/beauty/perf_event_open.c
-@@ -76,7 +76,7 @@ static size_t perf_event_attr___scnprintf(struct perf_event_attr *attr, char *bf
+diff --git a/Documentation/filesystems/journalling.rst b/Documentation/filesystems/journalling.rst
+index e18f90ffc6fd..0254f7d57429 100644
+--- a/Documentation/filesystems/journalling.rst
++++ b/Documentation/filesystems/journalling.rst
+@@ -137,7 +137,7 @@ Fast commits
  
- static size_t syscall_arg__scnprintf_augmented_perf_event_attr(struct syscall_arg *arg, char *bf, size_t size)
- {
--	return perf_event_attr___scnprintf((void *)arg->augmented.args, bf, size, arg->trace->show_zeros);
-+	return perf_event_attr___scnprintf((void *)arg->augmented.args->value, bf, size, arg->trace->show_zeros);
- }
+ JBD2 to also allows you to perform file-system specific delta commits known as
+ fast commits. In order to use fast commits, you will need to set following
+-callbacks that perform correspodning work:
++callbacks that perform corresponding work:
  
- static size_t syscall_arg__scnprintf_perf_event_attr(char *bf, size_t size, struct syscall_arg *arg)
-diff --git a/tools/perf/trace/beauty/sockaddr.c b/tools/perf/trace/beauty/sockaddr.c
-index 2e0e867c0c1b879a..a17a27ac2a6ff1c4 100644
---- a/tools/perf/trace/beauty/sockaddr.c
-+++ b/tools/perf/trace/beauty/sockaddr.c
-@@ -47,7 +47,7 @@ static size_t (*af_scnprintfs[])(struct sockaddr *sa, char *bf, size_t size) = {
+ `journal->j_fc_cleanup_cb`: Cleanup function called after every full commit and
+ fast commit.
+@@ -149,7 +149,7 @@ File system is free to perform fast commits as and when it wants as long as it
+ gets permission from JBD2 to do so by calling the function
+ :c:func:`jbd2_fc_begin_commit()`. Once a fast commit is done, the client
+ file  system should tell JBD2 about it by calling
+-:c:func:`jbd2_fc_end_commit()`. If file system wants JBD2 to perform a full
++:c:func:`jbd2_fc_end_commit()`. If the file system wants JBD2 to perform a full
+ commit immediately after stopping the fast commit it can do so by calling
+ :c:func:`jbd2_fc_end_commit_fallback()`. This is useful if fast commit operation
+ fails for some reason and the only way to guarantee consistency is for JBD2 to
+@@ -199,7 +199,7 @@ Journal Level
+ .. kernel-doc:: fs/jbd2/recovery.c
+    :internal:
  
- static size_t syscall_arg__scnprintf_augmented_sockaddr(struct syscall_arg *arg, char *bf, size_t size)
- {
--	struct sockaddr *sa = (struct sockaddr *)arg->augmented.args;
-+	struct sockaddr *sa = (struct sockaddr *)&arg->augmented.args->value;
- 	char family[32];
- 	size_t printed;
+-Transasction Level
++Transaction Level
+ ~~~~~~~~~~~~~~~~~~
  
-diff --git a/tools/perf/trace/beauty/timespec.c b/tools/perf/trace/beauty/timespec.c
-index e1a61f092aad8b23..b14ab72a2738efd9 100644
---- a/tools/perf/trace/beauty/timespec.c
-+++ b/tools/perf/trace/beauty/timespec.c
-@@ -7,7 +7,7 @@
- 
- static size_t syscall_arg__scnprintf_augmented_timespec(struct syscall_arg *arg, char *bf, size_t size)
- {
--	struct timespec *ts = (struct timespec *)arg->augmented.args;
-+	struct timespec *ts = (struct timespec *)arg->augmented.args->value;
- 
- 	return scnprintf(bf, size, "{ .tv_sec: %" PRIu64 ", .tv_nsec: %" PRIu64 " }", ts->tv_sec, ts->tv_nsec);
- }
-diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-index 0f9bd2690d4e5295..9c7d2f8552945695 100644
---- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-+++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-@@ -10,6 +10,9 @@
- #include <bpf/bpf_helpers.h>
- #include <linux/limits.h>
- 
-+#define PERF_ALIGN(x, a)        __PERF_ALIGN_MASK(x, (typeof(x))(a)-1)
-+#define __PERF_ALIGN_MASK(x, mask)      (((x)+(mask))&~(mask))
-+
- /**
-  * is_power_of_2() - check if a value is a power of two
-  * @n: the value to check
-@@ -66,19 +69,6 @@ struct syscall_exit_args {
- 	long		   ret;
- };
- 
--struct augmented_arg {
--	unsigned int	size;
--	int		err;
--	char		value[PATH_MAX];
--};
--
--struct pids_filtered {
--	__uint(type, BPF_MAP_TYPE_HASH);
--	__type(key, pid_t);
--	__type(value, bool);
--	__uint(max_entries, 64);
--} pids_filtered SEC(".maps");
--
- /*
-  * Desired design of maximum size and alignment (see RFC2553)
-  */
-@@ -105,17 +95,27 @@ struct sockaddr_storage {
- 	};
- };
- 
--struct augmented_args_payload {
--       struct syscall_enter_args args;
--       union {
--		struct {
--			struct augmented_arg arg, arg2;
--		};
-+struct augmented_arg {
-+	unsigned int	size;
-+	int		err;
-+	union {
-+		char   value[PATH_MAX];
- 		struct sockaddr_storage saddr;
--		char   __data[sizeof(struct augmented_arg)];
- 	};
- };
- 
-+struct pids_filtered {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, pid_t);
-+	__type(value, bool);
-+	__uint(max_entries, 64);
-+} pids_filtered SEC(".maps");
-+
-+struct augmented_args_payload {
-+	struct syscall_enter_args args;
-+	struct augmented_arg arg, arg2; // We have to reserve space for two arguments (rename, etc)
-+};
-+
- // We need more tmp space than the BPF stack can give us
- struct augmented_args_tmp {
- 	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-@@ -182,15 +182,17 @@ int sys_enter_connect(struct syscall_enter_args *args)
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *sockaddr_arg = (const void *)args->args[1];
- 	unsigned int socklen = args->args[2];
--	unsigned int len = sizeof(augmented_args->args);
-+	unsigned int len = sizeof(u64) + sizeof(augmented_args->args); // the size + err in all 'augmented_arg' structs
- 
-         if (augmented_args == NULL)
-                 return 1; /* Failure: don't filter */
- 
--	_Static_assert(is_power_of_2(sizeof(augmented_args->saddr)), "sizeof(augmented_args->saddr) needs to be a power of two");
--	socklen &= sizeof(augmented_args->saddr) - 1;
-+	_Static_assert(is_power_of_2(sizeof(augmented_args->arg.saddr)), "sizeof(augmented_args->arg.saddr) needs to be a power of two");
-+	socklen &= sizeof(augmented_args->arg.saddr) - 1;
- 
--	bpf_probe_read_user(&augmented_args->saddr, socklen, sockaddr_arg);
-+	bpf_probe_read_user(&augmented_args->arg.saddr, socklen, sockaddr_arg);
-+	augmented_args->arg.size = socklen;
-+	augmented_args->arg.err = 0;
- 
- 	return augmented__output(args, augmented_args, len + socklen);
- }
-@@ -201,14 +203,14 @@ int sys_enter_sendto(struct syscall_enter_args *args)
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *sockaddr_arg = (const void *)args->args[4];
- 	unsigned int socklen = args->args[5];
--	unsigned int len = sizeof(augmented_args->args);
-+	unsigned int len = sizeof(u64) + sizeof(augmented_args->args); // the size + err in all 'augmented_arg' structs
- 
-         if (augmented_args == NULL)
-                 return 1; /* Failure: don't filter */
- 
--	socklen &= sizeof(augmented_args->saddr) - 1;
-+	socklen &= sizeof(augmented_args->arg.saddr) - 1;
- 
--	bpf_probe_read_user(&augmented_args->saddr, socklen, sockaddr_arg);
-+	bpf_probe_read_user(&augmented_args->arg.saddr, socklen, sockaddr_arg);
- 
- 	return augmented__output(args, augmented_args, len + socklen);
- }
-@@ -249,13 +251,23 @@ int sys_enter_rename(struct syscall_enter_args *args)
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *oldpath_arg = (const void *)args->args[0],
- 		   *newpath_arg = (const void *)args->args[1];
--	unsigned int len = sizeof(augmented_args->args), oldpath_len;
-+	unsigned int len = sizeof(augmented_args->args), oldpath_len, newpath_len;
- 
-         if (augmented_args == NULL)
-                 return 1; /* Failure: don't filter */
- 
-+	len += 2 * sizeof(u64); // The overhead of size and err, just before the payload...
-+
- 	oldpath_len = augmented_arg__read_str(&augmented_args->arg, oldpath_arg, sizeof(augmented_args->arg.value));
--	len += oldpath_len + augmented_arg__read_str((void *)(&augmented_args->arg) + oldpath_len, newpath_arg, sizeof(augmented_args->arg.value));
-+	augmented_args->arg.size = PERF_ALIGN(oldpath_len + 1, sizeof(u64));
-+	len += augmented_args->arg.size;
-+
-+	struct augmented_arg *arg2 = (void *)&augmented_args->arg.value + augmented_args->arg.size;
-+
-+	newpath_len = augmented_arg__read_str(arg2, newpath_arg, sizeof(augmented_args->arg.value));
-+	arg2->size = newpath_len;
-+
-+	len += newpath_len;
- 
- 	return augmented__output(args, augmented_args, len);
- }
-@@ -266,13 +278,23 @@ int sys_enter_renameat2(struct syscall_enter_args *args)
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *oldpath_arg = (const void *)args->args[1],
- 		   *newpath_arg = (const void *)args->args[3];
--	unsigned int len = sizeof(augmented_args->args), oldpath_len;
-+	unsigned int len = sizeof(augmented_args->args), oldpath_len, newpath_len;
- 
-         if (augmented_args == NULL)
-                 return 1; /* Failure: don't filter */
- 
-+	len += 2 * sizeof(u64); // The overhead of size and err, just before the payload...
-+
- 	oldpath_len = augmented_arg__read_str(&augmented_args->arg, oldpath_arg, sizeof(augmented_args->arg.value));
--	len += oldpath_len + augmented_arg__read_str((void *)(&augmented_args->arg) + oldpath_len, newpath_arg, sizeof(augmented_args->arg.value));
-+	augmented_args->arg.size = PERF_ALIGN(oldpath_len + 1, sizeof(u64));
-+	len += augmented_args->arg.size;
-+
-+	struct augmented_arg *arg2 = (void *)&augmented_args->arg.value + augmented_args->arg.size;
-+
-+	newpath_len = augmented_arg__read_str(arg2, newpath_arg, sizeof(augmented_args->arg.value));
-+	arg2->size = newpath_len;
-+
-+	len += newpath_len;
- 
- 	return augmented__output(args, augmented_args, len);
- }
-@@ -293,26 +315,26 @@ int sys_enter_perf_event_open(struct syscall_enter_args *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const struct perf_event_attr_size *attr = (const struct perf_event_attr_size *)args->args[0], *attr_read;
--	unsigned int len = sizeof(augmented_args->args);
-+	unsigned int len = sizeof(u64) + sizeof(augmented_args->args); // the size + err in all 'augmented_arg' structs
- 
-         if (augmented_args == NULL)
- 		goto failure;
- 
--	if (bpf_probe_read_user(&augmented_args->__data, sizeof(*attr), attr) < 0)
-+	if (bpf_probe_read_user(&augmented_args->arg.value, sizeof(*attr), attr) < 0)
- 		goto failure;
- 
--	attr_read = (const struct perf_event_attr_size *)augmented_args->__data;
-+	attr_read = (const struct perf_event_attr_size *)augmented_args->arg.value;
- 
- 	__u32 size = attr_read->size;
- 
- 	if (!size)
- 		size = PERF_ATTR_SIZE_VER0;
- 
--	if (size > sizeof(augmented_args->__data))
-+	if (size > sizeof(augmented_args->arg.value))
-                 goto failure;
- 
- 	// Now that we read attr->size and tested it against the size limits, read it completely
--	if (bpf_probe_read_user(&augmented_args->__data, size, attr) < 0)
-+	if (bpf_probe_read_user(&augmented_args->arg.value, size, attr) < 0)
- 		goto failure;
- 
- 	return augmented__output(args, augmented_args, len + size);
-@@ -325,16 +347,16 @@ int sys_enter_clock_nanosleep(struct syscall_enter_args *args)
- {
- 	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *rqtp_arg = (const void *)args->args[2];
--	unsigned int len = sizeof(augmented_args->args);
-+	unsigned int len = sizeof(u64) + sizeof(augmented_args->args); // the size + err in all 'augmented_arg' structs
- 	__u32 size = sizeof(struct timespec64);
- 
-         if (augmented_args == NULL)
- 		goto failure;
- 
--	if (size > sizeof(augmented_args->__data))
-+	if (size > sizeof(augmented_args->arg.value))
-                 goto failure;
- 
--	bpf_probe_read_user(&augmented_args->__data, size, rqtp_arg);
-+	bpf_probe_read_user(&augmented_args->arg.value, size, rqtp_arg);
- 
- 	return augmented__output(args, augmented_args, len + size);
- failure:
-@@ -352,10 +374,10 @@ int sys_enter_nanosleep(struct syscall_enter_args *args)
-         if (augmented_args == NULL)
- 		goto failure;
- 
--	if (size > sizeof(augmented_args->__data))
-+	if (size > sizeof(augmented_args->arg.value))
-                 goto failure;
- 
--	bpf_probe_read_user(&augmented_args->__data, size, req_arg);
-+	bpf_probe_read_user(&augmented_args->arg.value, size, req_arg);
- 
- 	return augmented__output(args, augmented_args, len + size);
- failure:
+ .. kernel-doc:: fs/jbd2/transaction.c
 -- 
 2.46.0
 
