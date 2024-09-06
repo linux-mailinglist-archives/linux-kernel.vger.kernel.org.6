@@ -1,97 +1,140 @@
-Return-Path: <linux-kernel+bounces-318026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EB196E752
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:34:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1C996E753
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA80B23D35
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:34:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D7CB23CAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA7E208A9;
-	Fri,  6 Sep 2024 01:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7971BDCF;
+	Fri,  6 Sep 2024 01:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAW6geP+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikKqfWZb"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADE01CA94;
-	Fri,  6 Sep 2024 01:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A884B11CAF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725586469; cv=none; b=LsbwGs99a9QB2MBQhX88wbrmQrDeSfV3YooPFkabQ3DnBO0fO9ni7IfFBfTVRzKAY/otvzpi2d7HISUF50w1y5i+f54QRmqV/tnleG+SjE/O//ifw4kvax7DhIr5hlwmxjp+GgvoUDWFE7SfYMMbJM0G3h2vVongpqvFDMUrly0=
+	t=1725586533; cv=none; b=J5iEYTuQ/tYUbBxlNyeP//f8UBnBnnfyI9dWvL4Tq9KTkEqjoG1qZiWd1KBRSLnfYWup34gTPFLwii2fRCEjTrv/pxYzDXZXcs1GKx38Me/dr+lcZ9QHbCYzIZsaik/bdWZ99WFrrmccyPukJA/gA9t7l7EwwNqy6q0GuuSHyyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725586469; c=relaxed/simple;
-	bh=DhY6rGfOlLTMtYFY6JMioPUvjaIkctEMK5oG3sIAKKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZj6DHM0BbZor4WEKxIwrhy6PX147HeXQq0Cx8fjDjWU1vGw+5sA76AQL3vZIH20tIA/Pp3FIBWGw4rcLDvWkGiJcGvfhX4ypDkBgth1P4+RNp5UR67ygPxYIOF9HzA/LWVsM9OiQF9nQ5FTDNGMTxsF0GMoMogPNsVxPqSZk6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAW6geP+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931CFC4CEC3;
-	Fri,  6 Sep 2024 01:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725586468;
-	bh=DhY6rGfOlLTMtYFY6JMioPUvjaIkctEMK5oG3sIAKKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UAW6geP+l/1A7xcK1gfy30FPnS/X9eRktTLABf0RTHny7zuS3fUAVgAYxkv9SUrN+
-	 A0v/Ji1O3R34gXq+nFwN4JMqgrxeE6dZDk2AQFFmT4F1LaV5NPXqtNlOB5OtE3gEmz
-	 j8WOiiUA4BAK1iisAzWQKVIK2LcBnr/v1qU58sa2D3cFk+jUfDtO6O2k6tgGaZMsLc
-	 VakmieRckRYZtwFhd4hN9syttFl2+06L+HqrWM2KTnVv8uxh5r1h2eAaBSJF2sA4og
-	 mY128FTnfL9EAO5ai4zKA+a9qfJ3/NnBLn7vcgYtwACUAHY5qlEmIxBNENOU3msnp+
-	 XYfkZBkT4qJ2A==
-Date: Thu, 5 Sep 2024 15:34:27 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-	Alasdair Kergon <agk@redhat.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Sami Tolvanen <samitolvanen@google.com>, linux-nfs@vger.kernel.org
-Subject: Re: sharing rescuer threads when WQ_MEM_RECLAIM needed? [was: Re: dm
- verity: don't use WQ_MEM_RECLAIM]
-Message-ID: <ZtpcI-Qv_Q6g0Q6Z@slm.duckdns.org>
-References: <20240904040444.56070-1-ebiggers@kernel.org>
- <086a76c4-98da-d9d1-9f2f-6249c3d55fe9@redhat.com>
- <20240905223555.GA1512@sol.localdomain>
- <ZtpATbuopBFAzl89@kernel.org>
+	s=arc-20240116; t=1725586533; c=relaxed/simple;
+	bh=tLDL+A9viQ1nAY8oe/yvXuYMz/gZ/yRpA38oxxwuROI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WJBp0L6iFmB108ZOlkj7viuxcYAWP7VFygYtCffFrn6GjXqNNbLLqyqhswOBNfx26b6A5Qd32Yd576UHr5ZIh1CDFROnixXOphZbGng5Itxy8JVdPUiU4Hut/KIFGjnOQj7zKTU8AE3/xhXWfeyY6LlLlKS4tairsNNTDWA8BP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikKqfWZb; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5e1972a9622so934277eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725586531; x=1726191331; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OMgbS41L4QCYKYzW6bBuy48fjTdOYZvxaDewb5mrAAA=;
+        b=ikKqfWZbbuHmVVvmeGXxdfxHturQjkQhqGJvZAgf6Oa4G7A3RGDy/rXxJS8tRXjRpN
+         8MZb2FouGNr4RWIe+VZThHoSiTRcnxzwXzO1r2mqtDzz1ibAgVN+AREx7EZz+vGry+rK
+         1D2Ej1V9+f7WJUgV6dzvoaBiNx6j3Sky8TdluPC1Hf80Hb6FfZTgrOi6a/12jRkzTCGV
+         KFvnSkbnWfUSR5ECThvcuBQ7UUu7mP37ayVqtj19NBP653QOmkigiB2lhBq2DTvSHG6V
+         5ddSEM1IkuE42U1sKK5lhA9YklR0VycZWs0k5Aa7N1WDtIpcPQjSlDih7hAQp60uutsQ
+         YpZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725586531; x=1726191331;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OMgbS41L4QCYKYzW6bBuy48fjTdOYZvxaDewb5mrAAA=;
+        b=HFpW7ZFm0VGPaLbX708gl39FHnECYPxquw+djA6C/FzZT2nHtSQRk60y54ugZlQ9Rl
+         DRjOhkKVCXn80pYVYvwgRxRQwfp7osFR5YYkqMPBDv+chM9JcvLvhHWIgvoEYvB6qNYI
+         umgQbucArMdCbk1ZSkkHYenOAevilU2+4cji9pbuZrfx+2MSLJeOHh5VUHPf1e4pGEDJ
+         /JX51RiYKgzSslmi7f+5nX/apRAJEGDF+kOXVM+BRxm1U0DJg9mrOw1VltQAhYTR+4yX
+         3HINJzLNbd8VhcXZ6NPWWUPYE6MX9SrCQRsKuUWFG4t6M/L6MxC1b9fQzFB90rR/bx4W
+         jSLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNXmdkzyRW2JSB3wyafVUxJEd5yYsFtvMB5IGgQSedU1MzQeSrJ3HII/dqNAlfG4QIJ0dGrLc+bT11YXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7mBW/vPdlGIzV8dIy0OrvgTFaC2RWWbs0olwQLOae/VaFYVlm
+	zwA98f0hm/Sp2ykaqdyAspm/FP5XyGYuZm0FIEXjVR1bhtY1Ic5GnNztUbDnbYibPcYFckGdVzW
+	aOvQxRD8QM6qgRbO4MemsDGltYZCEq9hE
+X-Google-Smtp-Source: AGHT+IHfjCIHKFZIUvkTEZAvNmlhTTwAGrLTVFkuFCCz9tZ6BL6/rVTGbLGzacJbVMCXomf+S2cSsB2RvS+nLTAMdmo=
+X-Received: by 2002:a05:6871:826:b0:27b:6ffd:bfd0 with SMTP id
+ 586e51a60fabf-27b6ffdc42bmr4273089fac.17.1725586530530; Thu, 05 Sep 2024
+ 18:35:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtpATbuopBFAzl89@kernel.org>
+References: <20240816101912.1049329-1-zhangchunyan@iscas.ac.cn> <665dee3c-1833-49c9-88d1-9f92475dbb59@ghiti.fr>
+In-Reply-To: <665dee3c-1833-49c9-88d1-9f92475dbb59@ghiti.fr>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 6 Sep 2024 09:34:53 +0800
+Message-ID: <CAAfSe-uyHNmMU97ZtsSYpUDw4shPx+v32tCY3j3vu2dweOCppA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Remove unused GENERATING_ASM_OFFSETS
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Fri, 16 Aug 2024 at 20:30, Alexandre Ghiti <alex@ghiti.fr> wrote:
+>
+> Hi Chunyan,
+>
+> On 16/08/2024 12:19, Chunyan Zhang wrote:
+> > The macro is not used in the current version of kernel, it looks like
+> > can be removed to avoid a build warning:
+> >
+> > ../arch/riscv/kernel/asm-offsets.c: At top level:
+> > ../arch/riscv/kernel/asm-offsets.c:7: warning: macro "GENERATING_ASM_OFFSETS" is not used [-Wunused-macros]
+> >      7 | #define GENERATING_ASM_OFFSETS
+>
+> So this warning never shows up in a "normal" kernel compilation, but it
+> happens when using W=2 (with quite a lot of other warnings).
+>
+> This unused define indeed seems completely useless, I guess not all
+> unused defines fall into this category and we should be careful when
+> removing them, but for this one it makes sense so:
+>
+> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-On Thu, Sep 05, 2024 at 07:35:41PM -0400, Mike Snitzer wrote:
-...
-> > I wonder if there's any way to safely share the rescuer threads.
-> 
-> Oh, I like that idea, yes please! (would be surprised if it exists,
-> but I love being surprised!).  Like Mikulas pointed out, we have had
-> to deal with fundamental deadlocks due to resource sharing in DM.
-> Hence the need for guaranteed forward progress that only
-> WQ_MEM_RECLAIM can provide.
+I think this should be ready to be merged.
 
-The most straightforward way to do this would be simply sharing the
-workqueue across the entities that wanna be in the same forward progress
-guarantee domain. It shouldn't be that difficult to make workqueues share a
-rescuer either but may be a bit of an overkill.
+Palmer, would you please pick this up to your tree? Or I can resend
+the patch if that's more convenient for you.
 
-Taking a step back tho, how would you determine which ones can share a
-rescuer? Things which stack on top of each other can't share the rescuer cuz
-higher layer occupying the rescuer and stall lower layers and thus deadlock.
-The rescuers can be shared across independent stacks of dm devices but that
-sounds like that will probably involve some graph walking. Also, is this a
-real problem?
+Thanks,
+Chunyan
 
-Thanks.
-
--- 
-tejun
+>
+> Thanks,
+>
+> Alex
+>
+>
+> >
+> > Fixes: 9639a44394b9 ("RISC-V: Provide a cleaner raw_smp_processor_id()")
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> >   arch/riscv/kernel/asm-offsets.c | 2 --
+> >   1 file changed, 2 deletions(-)
+> >
+> > diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+> > index b09ca5f944f7..cb09f0c4f62c 100644
+> > --- a/arch/riscv/kernel/asm-offsets.c
+> > +++ b/arch/riscv/kernel/asm-offsets.c
+> > @@ -4,8 +4,6 @@
+> >    * Copyright (C) 2017 SiFive
+> >    */
+> >
+> > -#define GENERATING_ASM_OFFSETS
+> > -
+> >   #include <linux/kbuild.h>
+> >   #include <linux/mm.h>
+> >   #include <linux/sched.h>
 
