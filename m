@@ -1,433 +1,302 @@
-Return-Path: <linux-kernel+bounces-319560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783AD96FE8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:40:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADC396FE63
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBBC31F2161E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:40:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 284A51C2216D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4208915B971;
-	Fri,  6 Sep 2024 23:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA4415A4B0;
+	Fri,  6 Sep 2024 23:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="IYHdAJkL"
-Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
+	dkim=pass (2048-bit key) header.d=teledyne.com header.i=@teledyne.com header.b="NflJBE3C"
+Received: from us3mail01.teledyne.com (us3mail01.teledyne.com [130.50.171.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DAE15697A;
-	Fri,  6 Sep 2024 23:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725665988; cv=none; b=DoOthYWJJXGBCiERe61x0cHGLay/WfIHR4SrDpp/U+P8hrwmNfuH4aC0A5Ij5ZjLjbyEsTY14rFANbQlMShimNz/Y3k7WOaWf+uampW3r/QsAh6uOr84SGKjGB9g5zWEjaa9fbQkYLXgRHWpKRM6NPOXYW4ox1XMonEliCH01VE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725665988; c=relaxed/simple;
-	bh=LJaLza5RzTeRUW7RewGclZuGu512QpWBM1aw8HSCyvc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YcFXVYYtKyIYlQACK9KDyg6KgM+qkAaFd6OXKxOX2Ubc9A7isGz/utCF9Fn//NEPI6NsVJ8ePImDYFVMswmXQlFLYVG5xZIDomTY9Ukdak/0Yr89NZQEpwVQW/QM4qZOpHSzwYNJT0H2enTISaOwUK8jJHhva8tfXuHmvAtnCPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=IYHdAJkL; arc=none smtp.client-ip=67.231.157.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0409411.ppops.net [127.0.0.1])
-	by m0409411.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 486DgDhO002392;
-	Sat, 7 Sep 2024 00:17:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=jan2016.eng; bh=m4SwwstE98nXXuqGmIl/
-	o5Bbmv5FhnZSIwGgkrGqqWA=; b=IYHdAJkLkcyyuKlRJRK+UQPQIX9QGl68Prno
-	oxkJRBbccLEzQcBw8EREMYgxjkMkW1Sg522dp4bzp52yvN4J+vpAXOt810WNlebL
-	cT3A5OZaxdippQm7KjqU8ygyDardGgyF5dQ9RhS8O93op/xTr/pdmrCamhK0fuia
-	se542Gfw0rx8vUbrc0EO1kEL2Sa63/weAW5/3XAmIUvRqeav+fhlL+PRiN6hi0o9
-	LgQybQb5qxDlGVLUNS0viYwyKK4cAmj3zcEEWqHOVXwJmADK1qxBFyBZW5aACwMs
-	m4oyTg3QZ0m1Au6S78IlLw0MzivfSIiWsv93F+B4jTN5qkzbQA==
-Received: from prod-mail-ppoint2 (prod-mail-ppoint2.akamai.com [184.51.33.19] (may be forged))
-	by m0409411.ppops.net-00190b01. (PPS) with ESMTPS id 41g2uec9gk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 07 Sep 2024 00:17:04 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint2.akamai.com [127.0.0.1])
-	by prod-mail-ppoint2.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 486JbxDh032000;
-	Fri, 6 Sep 2024 19:17:03 -0400
-Received: from email.msg.corp.akamai.com ([172.27.91.21])
-	by prod-mail-ppoint2.akamai.com (PPS) with ESMTPS id 41fj2q6wwd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 19:17:03 -0400
-Received: from usma1ex-dag4mb2.msg.corp.akamai.com (172.27.91.21) by
- usma1ex-dag4mb2.msg.corp.akamai.com (172.27.91.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 6 Sep 2024 19:17:03 -0400
-Received: from bos-lhvx56.bos01.corp.akamai.com (172.28.41.223) by
- usma1ex-dag4mb2.msg.corp.akamai.com (172.27.91.21) with Microsoft SMTP Server
- id 15.2.1544.11 via Frontend Transport; Fri, 6 Sep 2024 19:17:03 -0400
-Received: by bos-lhvx56.bos01.corp.akamai.com (Postfix, from userid 30754)
-	id 2C19B15F5D3; Fri,  6 Sep 2024 19:17:03 -0400 (EDT)
-From: Josh Hunt <johunt@akamai.com>
-To: <edumazet@google.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <ncardwell@google.com>
-CC: <linux-kernel@vger.kernel.org>, <johunt@akamai.com>
-Subject: [PATCH net v2] tcp: check skb is non-NULL in tcp_rto_delta_us()
-Date: Fri, 6 Sep 2024 19:17:00 -0400
-Message-ID: <20240906231700.2097588-1-johunt@akamai.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65CF1B85DB;
+	Fri,  6 Sep 2024 23:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=130.50.171.101
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725664802; cv=fail; b=FOYHEbIGzcahStBcr5Uul8ZIOjXat1PdULQwUEyxyXwhLFw4D2zNAys78filbo+2XRkgYfitYw1jG46yIiU79WzOXKeBffmh7M2YE5hQbBBB+3xBzzyyCLqAUA/jz8t53mECTboqKOtgUr9Dg2W0diodKd63ZdEWiwDj89M15nQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725664802; c=relaxed/simple;
+	bh=eCEs9BciXtdLgDG31dXVT/Iv7BRjYtnEloBHBdLG/WY=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jCjShwSxsuPwN/wsu4BWBj0MawCRhBmInWF1j7og0MDcSGKNfTKOM9Tonyv6WoGvHeSdwWKfozVcclyRUu6dYZ512q24i3mPW6E0HMiQpZw/eYF8IYCwBBdaLzd3z3KgChc3qFrgk+S1ZUO134GTfTPVaITJt+0F3TT3dfynPew=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Teledyne.com; spf=pass smtp.mailfrom=teledyne.com; dkim=pass (2048-bit key) header.d=teledyne.com header.i=@teledyne.com header.b=NflJBE3C; arc=fail smtp.client-ip=130.50.171.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Teledyne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=teledyne.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=teledyne.com; i=@teledyne.com; q=dns/txt; s=TDY-2;
+  t=1725664801; x=1757200801;
+  h=from:to:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=eCEs9BciXtdLgDG31dXVT/Iv7BRjYtnEloBHBdLG/WY=;
+  b=NflJBE3C4pjSv9FVHMq/DGIadctH3te2Ly6y0dgRP8YltIiwpd2ycMht
+   4tiC8c2Tat6otAvOV9/7dtbsE2j5zSMP5nHwYDwTmrAEl0EMJcs3OX4zv
+   06Heq48ISq3c5YuMBULgKuxS8VZSiVHglEZpaPeIqKrBaw/Q2guThqh8B
+   Qf9LvtOmxYVQqj+wHqGO0H5xURA0b8FMETjIr1F7de3mIRrxm3lzQc2A3
+   +XsUY+dYNe06Uean9fI65hxod06geMmPrxAyuE/aYnK6mQh+uCbng/bRG
+   uE2M6TzM9OWV2VEgVV909RjM4A38idcHFIBI5CUp1Q2AVCjLlm/lpmJkI
+   w==;
+X-CSE-ConnectionGUID: 2jJ+v9ZPQlmRqPxVvatogA==
+X-CSE-MsgGUID: jUPltII0SBGtBhXdKa83mA==
+X-ThreatScanner-Verdict: Negative
+IronPort-Data: A9a23:Rss+dKNH50FTWmPvrR3flsFynXyQoLVcMsEvi/4bfWQNrUoh32ECm
+ jccUGjVbvfYMWX1e4olPdi+8EsDvcOGn9JhSAZtpSBmQkwWlceUXt7xwmXYZnvIcpWbFBoPA
+ +Y2M4GacJhsFie0SjOFaOWJQaxUjPnQLlbEILeZfH03HEk8FXpJZStLw4YRmpRvjcWyHzSDs
+ Nbzp9y3EFK+0laYCEpNg06+gEgHUMra6WpwUmMWNagjUG/2zxE9EJ8ZLKetGHr0KqE8NvK6X
+ evK0Iai9Wrf+Ro3Yvv9+losWhRXKlJ6FVHmZkt+A8BOsDAbzsAB+v9T2M4nVKtio2nhc+ada
+ jl6ncfYpQ8BZsUgkQmGOvVSO3kW0aZuodcrLZUj2CA6IoKvn3bEmp1T4E8K0YIwoORVQn8fx
+ 8QhLDU3dyiTufy/3LW0Y7w57igjBJGD0II3h0o6iA/hKM0JBLXpc/2To8NUzXEsi8RDEefYa
+ owSbj8HgBboOkYXfApPTshiwaHz3hETcBUBwL6RjYg+4GWV7AV02qnFLNfRd9CbQ8gTlUGdz
+ o7D1z2lUkBAaYLDklJp9Fquu9fLgQLaALk4O6GS9s5mo1TDnWk6XUh+uVyT5KPRZlSFc9ZeL
+ VEEvyEnq4As+0GxCNrwRRu1pDiDpBF0c95RFfAqrQKA0KzZ5y6HCWUeCD1MctorsIkxXzNC6
+ 7OSt87yX3lxqLiORjeY/KfM9HWuNTlTMWIGaCMVSwZD6N7myG0usi/yoh9YOPbdprXI9fvYm
+ lhmcABWa20vsPM2
+IronPort-HdrOrdr: A9a23:GJP5WKiyz3wN/21VY/4G+UUvHXBQX1J13DAbv31ZSRFFG/FwyP
+ rAoB1L73PJYWgqNU3IwerwQZVoMkmsjaKdhrNhdYtKPTOW8VdAQ7sSircKrweBJ8SczJ8X6U
+ 4DSdkZNDSYNzET5qyVgTVQe+xQheVvm5rY59s2uk0dKT2CHJsQijuRZDzrcXFedU1jP94UBZ
+ Cc7s1Iq36LYnIMdPm2AXEDQqzqu8DLvIiOW29NOzcXrC21yR+44r/zFBaVmj0EVSlU/Lsk+W
+ /Z1yTk+6SYte2hwBO07R6f030Woqqs9jJwPr3DtiEnEESstu9uXvUgZ1S2hkF7nAho0idorD
+ CDmWZjAy050QKrQoj8m2qW5+Cn6kdr15aq8y7lvVLz5cP+Xz40EMxHmMZQdQbY8VMpuJVm3L
+ tMxH/xjesiMfrsplWO2zHzbWAeqmOk5X451eIDhX1WVoUTLLdXsIwE5UtQVJMNBjjz5owrGP
+ RnSJi03ochTXqKK3TC+mV/yt2lWXo+Wh+AX0gZo8SQlzxbhmpwwUcUzNEW2n0A6JU+QZ9Z4P
+ msCNUeqJheCssNKa5tDuYIRsW6TmTLXBLXKWqXZU/qEakWUki92KIfII9FlN1CVKZ4vafawq
+ 6xL2+wnVRCBX4Hvqe1reB2ziw=
+X-Talos-CUID: 9a23:mdp9jWG8rCMrR6isqmI99mxXBJEXSkTZyU3JG1+GF291T7K8HAo=
+X-Talos-MUID: =?us-ascii?q?9a23=3A9xK9+g7yl78SEdyHj4RdcYU2xoxq3pyqFGEsya4?=
+ =?us-ascii?q?slNWuNRx8GD7N1zGeF9o=3D?=
+Received: from us2-vpmsg-mbx01.tdy.teledyne.com ([130.50.245.30])
+  by us3mail01.tdy.teledyne.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Sep 2024 16:19:55 -0700
+Received: from US2-VPMSG-MBX01.TDY.Teledyne.com (130.50.245.30) by
+ US2-VPMSG-MBX01.TDY.Teledyne.com (130.50.245.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 6 Sep 2024 16:19:54 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (130.50.245.239)
+ by US2-VPMSG-MBX01.TDY.Teledyne.com (130.50.245.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 6 Sep 2024 16:19:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZSRCxCb2DSe45Eshkqpp9TMwa70WGgsynVVwcphbOk2m5SzKWSkgq9OrbTCth5M8BRogcoq58R4Zy3QvGfp0hWrUvJVJpYA/bPnFD8ZU8SqW3gQxQWvOC1jG+W4Jex/WBHecjOvqYbnqkcv8EGLoy+mTT+Lm+4FalBWwHnir43ury2E3l4T6eKFfYE3lALvoA1pmrHSoA+O6M6l6CXp7pfbqGxRZGo+xCcB3edSs8BLPcnlRosCUSnkKzc45uY6oHvJ2g+XCvPgVujMe5NokKLFjXenQuZysqJg/fxjZ0IB524aZcProHZcax1XFtSBehiopEK3j8AnwbIdgHVwEoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eCEs9BciXtdLgDG31dXVT/Iv7BRjYtnEloBHBdLG/WY=;
+ b=lCcpqVzuVOkTYDFvyagCKgkVuIHiZ/LcdvQOxwU2G77AwTulZYq+gZO4al+JNo5PMbfpGSu6NOdKshEZRH9sUjh4XJSl2+IrzMaf7LhUCdm/Ey7Xan9jsMUvsDXSVyLhlRlUtSYLec/LvhqumNbtxmjbNBjUEqdwkvnHHZpTMmHgQ+oBLo0Rp3+UD3z4Qy+OSz0nKj4P1Q+CH3dpnMHXb2SiFmaq9eHeGjw5tbD8wX7o7t5DzWyU107PEt6GDgRdhQYQC5iTwgiwTfVJuu40KNof+H2vzoCz0mP77q+SQl57rHUCyDJHkve1M/WvWPlN0Gah0Ar8zbgTCDtfn698rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=teledyne.com; dmarc=pass action=none header.from=teledyne.com;
+ dkim=pass header.d=teledyne.com; arc=none
+Received: from DM8PR14MB5221.namprd14.prod.outlook.com (2603:10b6:8:28::14) by
+ SA6PR14MB7644.namprd14.prod.outlook.com (2603:10b6:806:41c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Fri, 6 Sep
+ 2024 23:19:51 +0000
+Received: from DM8PR14MB5221.namprd14.prod.outlook.com
+ ([fe80::608e:ffbc:5b4d:d1b2]) by DM8PR14MB5221.namprd14.prod.outlook.com
+ ([fe80::608e:ffbc:5b4d:d1b2%4]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
+ 23:19:51 +0000
+From: "Hamby, Jake (US)" <Jake.Hamby@Teledyne.com>
+To: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] can: m_can: Enable NAPI before enabling interrupts
+Thread-Topic: [PATCH] can: m_can: Enable NAPI before enabling interrupts
+Thread-Index: AdsAsyKTGmJ+XkFHSO22ELaGzk/2Hw==
+Date: Fri, 6 Sep 2024 23:19:51 +0000
+Message-ID: <DM8PR14MB5221D9DD3A7F2130EF161AF7EF9E2@DM8PR14MB5221.namprd14.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-titus-metadata-40: =?utf-8?B?ZXlKRFlYUmxaMjl5ZVV4aFltVnNjeUk2SWlJc0lrMWxkR0ZrWVhSaElqcDdJ?=
+ =?utf-8?B?bTV6SWpvaWFIUjBjRHBjTDF3dmQzZDNMblJwZEhWekxtTnZiVnd2Ym5OY0ww?=
+ =?utf-8?B?Wk1TVklpTENKcFpDSTZJamhoT1RVeE1UVTRMV05pWkdRdE5HTTRNQzFpWWpF?=
+ =?utf-8?B?MExUQXdaRE13WlRJek5EQmhPQ0lzSW5CeWIzQnpJanBiZXlKdUlqb2lSVU5K?=
+ =?utf-8?B?UkdGMFlTSXNJblpoYkhNaU9sdDdJblpoYkhWbElqb2lUazl2Y2tWQlVqazVJ?=
+ =?utf-8?B?bjFkZlN4N0ltNGlPaUpGUTBsS2RYSnBjeUlzSW5aaGJITWlPbHRkZlN4N0lt?=
+ =?utf-8?B?NGlPaUpGUTBsSlZFRlNRMnhoYzNNaUxDSjJZV3h6SWpwYlhYMHNleUp1SWpv?=
+ =?utf-8?B?aVJVTkpSVUZTUTJ4aGMzTWlMQ0oyWVd4eklqcGJYWDBzZXlKdUlqb2libTl1?=
+ =?utf-8?B?VlZORGIzVnVkSEo1SWl3aWRtRnNjeUk2VzExOUxIc2liaUk2SW01dmJsVlRS?=
+ =?utf-8?B?VU5KU25WeWFYTWlMQ0oyWVd4eklqcGJYWDBzZXlKdUlqb2lWVzV5WlhORGIy?=
+ =?utf-8?B?MXdSWGgwSWl3aWRtRnNjeUk2VzNzaWRtRnNkV1VpT2lKT1R5SjlYWDBzZXlK?=
+ =?utf-8?B?dUlqb2lRMjl0Y0ZObGJuTWlMQ0oyWVd4eklqcGJleUoyWVd4MVpTSTZJazVQ?=
+ =?utf-8?B?SW4xZGZTeDdJbTRpT2lKSmJtTnNkV1JsUTI5dGNGTmxibk5OWVhKcmFXNW5J?=
+ =?utf-8?B?aXdpZG1Gc2N5STZXMTE5TEhzaWJpSTZJa052Ym1aTVpXZFFjbWtpTENKMllX?=
+ =?utf-8?B?eHpJanBiZXlKMllXeDFaU0k2SWs1UEluMWRmU3g3SW00aU9pSlFTVWxFWVhS?=
+ =?utf-8?B?aElpd2lkbUZzY3lJNlczc2lkbUZzZFdVaU9pSk9UeUo5WFgwc2V5SnVJam9p?=
+ =?utf-8?B?UTFWSlJHRjBZU0lzSW5aaGJITWlPbHQ3SW5aaGJIVmxJam9pVGs4aWZWMTlM?=
+ =?utf-8?B?SHNpYmlJNklrTlZTVU5oZEdWbmIzSjVJaXdpZG1Gc2N5STZXMTE5TEhzaWJp?=
+ =?utf-8?B?STZJa1JwYzNObGJXbHVZWFJwYjI0aUxDSjJZV3h6SWpwYlhYMHNleUp1SWpv?=
+ =?utf-8?B?aVVtVnNWRzhpTENKMllXeHpJanBiWFgwc2V5SnVJam9pUkdsemNHeGhlVTl1?=
+ =?utf-8?B?YkhraUxDSjJZV3h6SWpwYlhYMWRmU3dpVTNWaWFtVmpkRXhoWW1Wc2N5STZX?=
+ =?utf-8?B?MTBzSWxSTlExWmxjbk5wYjI0aU9pSXlNeTQyTGpJME1ETXVNU0lzSWxSeWRY?=
+ =?utf-8?B?TjBaV1JNWVdKbGJFaGhjMmdpT2lKRlRVWjVRek5aUlhabWFtaEhibTVxUjBw?=
+ =?utf-8?B?dlZscHRlWFIwTjJsdVRqVTRlVkZ0ZGt4RWNEQm5Wa2RvYzJWd1ZtWk5jMEpV?=
+ =?utf-8?B?WEM5Q1Ixd3ZTa1pWUVZCQ00zTWlmUT09?=
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=Teledyne.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM8PR14MB5221:EE_|SA6PR14MB7644:EE_
+x-ms-office365-filtering-correlation-id: 587844c8-a3d5-4b3f-ca5f-08dcceca68a3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?eURHZC9uUzErY3MyaXJBS29MU2JkN2ErWllmSURCekMza2F3eWhpcWJEY2Y0?=
+ =?utf-8?B?d21OQlhyQzBYblloZEhVbmNMUlpCUG1yeXBaamVmbnZsMmxUSjg0T2xlekJa?=
+ =?utf-8?B?WUh4K245YjB3bFYwTlBxWWQrdFV5TnMzaFgrV1EzTExUN3VDdUFtTnpUZGRy?=
+ =?utf-8?B?cTlGOFV1TmFlUGtMaDRnb1ZGakgxZk42R3krd1FNclZ0WmFJbnUyblBONzd3?=
+ =?utf-8?B?REprT0Y1aFU1Slc1L1IxelE1Q1JnS1hkS1BiYTl5YWNVaUhRRHk3Nmo4WjlJ?=
+ =?utf-8?B?SStMcFZWMjJQQ0R0bHcwQjRSMUVkWXpnNDRTSk9kNSt1NmRQU1FWZ2VlOTNR?=
+ =?utf-8?B?aFRNd2pNaUxmRnRDN0Y1QTQ2dk96TWNWaVNra3c3VXpDWHdUMzVKcVdxeUhn?=
+ =?utf-8?B?T241bXk5ZExWSXIxNjU5c2JISE1RUFRrVWV0L2RKL0tTcFZJbHRSUUNpUVpX?=
+ =?utf-8?B?Qk5RUXNWcGRocXpCbE5HaG56c1NxNnMyWlNxL2drMnhLUkNMdGsyekIrWU93?=
+ =?utf-8?B?ZzZ0WDZmRExsTGhQWHowejkxYXpvVlJUZUdUTnZoV0tBOWErdDNDTnZaVUtR?=
+ =?utf-8?B?bk4vYm5wS2dVUVZzdSs0K2xuWTBmYy9MOS9nRjgrSUhlcFRTQkxJSmRrQ3lF?=
+ =?utf-8?B?ZTkxVlZ0UFVJdU9XQzAyVFZrUHd3cHRUZFlkSDhWbVh1aVlUQ1hjbDhubnY3?=
+ =?utf-8?B?UWx0VVZLMWt4bDVKcFFSU3U4VWpHUExlVjZ1YS9xRWZXUnI3dG9DSUJDb3Fa?=
+ =?utf-8?B?NitOUVVGblRjZWhSWDFseVNjMTJ4QWEzdlFjK3grTHg5aFVhN1JEZjJiSVpY?=
+ =?utf-8?B?cE4xRFVlaUJhSTRKRy9kR2pnSjVEUGNUallXNjVuWG52bzhVeEtWNXg0T0g2?=
+ =?utf-8?B?VUlIT1pWdi9NVjBZQ0ZHTnpleTJlUEpSMHZGS3ZyMHE1L2xPb2QxV3MycTV3?=
+ =?utf-8?B?TC8wWWVaQlJUTnNRWWtnMWovTUYxTjRpa1M1N3JjV2dxamRFUUlLTkZzaFJ1?=
+ =?utf-8?B?eW03MHVweTJpckdCSVk2Ly9BTzRpdXp3OGw0UTdSeDJOelhIOEdkRzNzSjhm?=
+ =?utf-8?B?VUlrbU8vTDhwMHVLaG9CTGpFRmJVOEJ0VlRPWkl0di9LY1FKUlFia3I2bDF4?=
+ =?utf-8?B?UnJuVkJXTWdWRC9WTDB2ZWk3Ym5rT0pydUwzZWc5QjIvaXB4RGhQdFNaL1NJ?=
+ =?utf-8?B?a05QZHZrNTA2VmVjb1ZVWXRjeldmZVRSZUh4K1pTbHU2dGs3RzM2YzJwOFpS?=
+ =?utf-8?B?anJLTEFlaSt2UkpRWlJSK3ArMnJodUh2akJyekNzOFFmVlZwOUhpZ3FMMHhE?=
+ =?utf-8?B?NTRnQlIxWVZoUkErUUdlR244WU5DMVRHSkszVjViN0tJa1hlZHZXS3QxRkpE?=
+ =?utf-8?B?WS9QNnlSOG8zL0tPZ1dsTTB0Qk4yUjkrei8xdDFkYlMxSlFMaXNoempGMElU?=
+ =?utf-8?B?a1FrMXhlTnBlczdVYml6anNvb29IR2xpemNwaGR3ckNFamxzL1BZbWFyLzZJ?=
+ =?utf-8?B?RHRjYnlaSGwxbjNjRUVFUnhGSGFLeXJyazJvQnpPRVBMRUM1VGgwV0M5b0Qw?=
+ =?utf-8?B?Y1pzQzVwSWtXanpnNGg2YkVsb2NDWUZRU01mQzJ1NmlIalZGcHBLcTlBcEN6?=
+ =?utf-8?B?N0ttYzFUQSsyTkpBR3lmSVFIS0EvZWFZRXJ1RXpaTXdzWVVMTDRpczlMb0di?=
+ =?utf-8?B?ZWVaREtvOUFvck1SVnlXNCtTQ2hpdE5wNDlYVksrZ0xPcnlLTzZtb1kvVkNo?=
+ =?utf-8?B?cTF0MTRTWjZSZjdmMG1tQWdCTXFPVkJBZDJoRVZibXVucWZpVlpDaDBkRmJj?=
+ =?utf-8?B?T2x6S1NHUDJndVhJZXc0SWhSRXdXc0RtaWdhakxkN1ZKVFJ3MDl6SHVKK2lK?=
+ =?utf-8?B?ckd1Q2NLQktOb0ViRkJYNkR2dWpzTCt5T2YzckMwY1pmc3c9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR14MB5221.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YjBVcE1ZOFRFSHNLMWQxUUNDdklqQ0Fkb0ZGK21lUjZhT3ZMbnFoV1hiY3Nw?=
+ =?utf-8?B?NWxBNTlTVUx3aUR3eHBpQ3ZyeEFKMVJmWCtaQmlFWVVHY08wNDhGV1JzTjBR?=
+ =?utf-8?B?a0VHSGJhS2N6SWRaaC9ZR3BIQ2xxNEZkLzhkTzA0OElZcU9tUTBtbzBSeFNp?=
+ =?utf-8?B?emF5V21JQnlsZkpoZHo3UjBYN29sQnlXWGtVekhwSmFhYVlrLys1QU5xVTQ0?=
+ =?utf-8?B?RlhFazFWdFNLWUJ5WTZ3aUlwWTRqZUdSTXEyY3BXMGVWdktLZ0xWampPUEVp?=
+ =?utf-8?B?VjNiQk9ENS90Sms4MHU0YW5qa2NMbENNelhiWFVJUDRBRVB1RzVab1dsWnVL?=
+ =?utf-8?B?eHdCdy9rTTh6N2MxaG5HV2psTGFrbE5FSDI4UU1iZXk2aWw3NE95cGtzWVFq?=
+ =?utf-8?B?aXllaE9oVkt2UmNqQ0k4a0k5QmRjaGtCcStuUDlMKzh2Nlh6NEwrZVp4R3pP?=
+ =?utf-8?B?ZUVWSVJWdTRpRmNsMVp3VzVJeUg3ckhlTkluZnZsWlZ1Y05JeStTRXc4SEx5?=
+ =?utf-8?B?Q2o4RCtEamRPVDQ2VSt4OW1NdXhxMFkzUzUvMVl3bldid0FjdXNtK1VTb3Ni?=
+ =?utf-8?B?SFlTZ1F5ZTlGanJEVURVQ29uV3dPN1F4Unl3U0l5alFiRmpzekdNMklnazdz?=
+ =?utf-8?B?RGZSckJmS0VOZG1GN29mV0VYOU9GOEdvYlV6SUR6bjRhaXN2KytmczdXTDFy?=
+ =?utf-8?B?Z2N5K0VWWnlZU2RVdTNMbThwb3FxM0cvZFFuOFNFOUZmc2U1WWJGY2FkdXJj?=
+ =?utf-8?B?WmV2WlE5S05rRFl5M2tlSEFjSzJ2NHBFZ1JmVmthdWJtNFFReDdrZ2NhNTc3?=
+ =?utf-8?B?elNzMHZkZlBwZVFqRTh4c1NpVHNVRnBzSENhWkdVaGFtcDhvMTVtOUh4U0Mr?=
+ =?utf-8?B?YTQ3cHFUTmxiQlBYYUJUMThLLzU0aFpqdjdKcW11amhHQ0pXUFMyVG00Wkpa?=
+ =?utf-8?B?Rmw2YVJQaFFjUUp6K2pKR2xrM2NGM3JVQVFtdVRIbmUvUE5wdDZMSGFZZTZB?=
+ =?utf-8?B?bzRGcnZkMW10ZXpvL1ozK280azFTckp5TmtUMFZBZ0NlNzJZOXN5QW9PMnJT?=
+ =?utf-8?B?NThuOFdWQzBEMEJGeVo2S2dob3ozcGlEUlgvUVNzRWdIRzVRK296dEZvZWk0?=
+ =?utf-8?B?VEVXZGRrQlZ3eVBEZlVSaytHTXZSNTN1N2JPbEhPYTJRVFpCMndmR3BOYm1o?=
+ =?utf-8?B?aUFIaGI2M0IyOVpacC9nYXZPU1FQdC9MV3U4MFhkTU4zM1IyUzhBYzN2cWd0?=
+ =?utf-8?B?cXd1bUwzZjlUdlNMTk9rSTBPa1dITjAwbmJTWFg0dFRsTEs1MXJhNFpKZkc0?=
+ =?utf-8?B?ampzeGlwakhwb0FXNDg2QXNvYTVncWRLdHg3SE53K1V1QVRwNytaM28zTHEx?=
+ =?utf-8?B?OFk3bzJlQnZ3dTdzQXNQclFLOC9kOUlwNktVbmpSZWlqVnYwZEV6Y1JZbk5k?=
+ =?utf-8?B?c3pDdzhONU00YWc0SER5WlVsWnU2UnloK2VGNGFQQTBaSlJ2eDZURjh1R1ZT?=
+ =?utf-8?B?VVIxdE9laWpodDNrZU96TlY3a3o4Q21GdGx3SFQxeUZrdnRYR1pnMXI4L2pi?=
+ =?utf-8?B?WmtBZ2x4TVI1K0dXTEo4Nkk2UzUzWkIwd3kvZVNlaXlWR2VXRzhsUVJ0bVJO?=
+ =?utf-8?B?MDhTL2ZZdmhxb1Z5b1dWdHZuREtOR3FOWWl1a2NCRTNlTXdtbWt1eUszOC93?=
+ =?utf-8?B?SENEdDFKOVNQUzVTZ3ZiK1hXSW1qZ29hbUFEaFNraDdxeG4rT1ZYZGlJeTN6?=
+ =?utf-8?B?RzVEbGlJcmFhVGVjME8zcGduMUVITlJLZUVxL3RST1NtU3p2T2VVb0F6ditr?=
+ =?utf-8?B?bjRvdUVRNGxwMmU3NEVkWldSMEpPazB3YWJFWHhmTHB6TlZuZ1lqajB2K2R1?=
+ =?utf-8?B?ZVpyWlFrTGJmUTAwNG5obWFGR3FaUkc1Q2tET2dCcHlxQkpVZ3ZOVVowMjZR?=
+ =?utf-8?B?MFlJR1RmU3lhY0JRZTBJWktFa1lkQ0pEVm5KN1Q0UllYWDJ1YVpDZ3hKOFRv?=
+ =?utf-8?B?UVVVclUyT2xRM1VZYzhEaGJtSVVEWkhOWFI4TU96Y3IrUWQxMGdGZ1UybUVU?=
+ =?utf-8?B?WHEweXprUjhiekdxV1ZCcFErejFkazBwajNIWDhKOEQ5TkdtdFBzUTJHL2xw?=
+ =?utf-8?Q?ZJCFXO++zrqbDfNVkq8Yd4wjP?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_07,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- spamscore=0 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409060172
-X-Proofpoint-GUID: B3SHjv2wWsiyuNSIfqWhPlFp3pkPsCiG
-X-Proofpoint-ORIG-GUID: B3SHjv2wWsiyuNSIfqWhPlFp3pkPsCiG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_08,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
- priorityscore=1501 clxscore=1015 lowpriorityscore=0 phishscore=0
- adultscore=0 suspectscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060173
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR14MB5221.namprd14.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 587844c8-a3d5-4b3f-ca5f-08dcceca68a3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2024 23:19:51.3848
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e324592a-2653-45c7-9bfc-597c36917127
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: otpBKrotSsu6utJnmw1/nq+Ir3ZdbyX2puapZmYqe4ZERKsmj65bdp+TmkWQbUHoI1oVffTOqFIXFSQWjcZOOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR14MB7644
+X-OriginatorOrg: Teledyne.com
 
-We have some machines running stock Ubuntu 20.04.6 which is their 5.4.0-174-generic
-kernel that are running ceph and recently hit a null ptr dereference in
-tcp_rearm_rto(). Initially hitting it from the TLP path, but then later we also
-saw it getting hit from the RACK case as well. Here are examples of the oops
-messages we saw in each of those cases:
-
-Jul 26 15:05:02 rx [11061395.780353] BUG: kernel NULL pointer dereference, address: 0000000000000020
-Jul 26 15:05:02 rx [11061395.787572] #PF: supervisor read access in kernel mode
-Jul 26 15:05:02 rx [11061395.792971] #PF: error_code(0x0000) - not-present page
-Jul 26 15:05:02 rx [11061395.798362] PGD 0 P4D 0
-Jul 26 15:05:02 rx [11061395.801164] Oops: 0000 [#1] SMP NOPTI
-Jul 26 15:05:02 rx [11061395.805091] CPU: 0 PID: 9180 Comm: msgr-worker-1 Tainted: G W 5.4.0-174-generic #193-Ubuntu
-Jul 26 15:05:02 rx [11061395.814996] Hardware name: Supermicro SMC 2x26 os-gen8 64C NVME-Y 256G/H12SSW-NTR, BIOS 2.5.V1.2U.NVMe.UEFI 05/09/2023
-Jul 26 15:05:02 rx [11061395.825952] RIP: 0010:tcp_rearm_rto+0xe4/0x160
-Jul 26 15:05:02 rx [11061395.830656] Code: 87 ca 04 00 00 00 5b 41 5c 41 5d 5d c3 c3 49 8b bc 24 40 06 00 00 eb 8d 48 bb cf f7 53 e3 a5 9b c4 20 4c 89 ef e8 0c fe 0e 00 <48> 8b 78 20 48 c1 ef 03 48 89 f8 41 8b bc 24 80 04 00 00 48 f7 e3
-Jul 26 15:05:02 rx [11061395.849665] RSP: 0018:ffffb75d40003e08 EFLAGS: 00010246
-Jul 26 15:05:02 rx [11061395.855149] RAX: 0000000000000000 RBX: 20c49ba5e353f7cf RCX: 0000000000000000
-Jul 26 15:05:02 rx [11061395.862542] RDX: 0000000062177c30 RSI: 000000000000231c RDI: ffff9874ad283a60
-Jul 26 15:05:02 rx [11061395.869933] RBP: ffffb75d40003e20 R08: 0000000000000000 R09: ffff987605e20aa8
-Jul 26 15:05:02 rx [11061395.877318] R10: ffffb75d40003f00 R11: ffffb75d4460f740 R12: ffff9874ad283900
-Jul 26 15:05:02 rx [11061395.884710] R13: ffff9874ad283a60 R14: ffff9874ad283980 R15: ffff9874ad283d30
-Jul 26 15:05:02 rx [11061395.892095] FS: 00007f1ef4a2e700(0000) GS:ffff987605e00000(0000) knlGS:0000000000000000
-Jul 26 15:05:02 rx [11061395.900438] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Jul 26 15:05:02 rx [11061395.906435] CR2: 0000000000000020 CR3: 0000003e450ba003 CR4: 0000000000760ef0
-Jul 26 15:05:02 rx [11061395.913822] PKRU: 55555554
-Jul 26 15:05:02 rx [11061395.916786] Call Trace:
-Jul 26 15:05:02 rx [11061395.919488]
-Jul 26 15:05:02 rx [11061395.921765] ? show_regs.cold+0x1a/0x1f
-Jul 26 15:05:02 rx [11061395.925859] ? __die+0x90/0xd9
-Jul 26 15:05:02 rx [11061395.929169] ? no_context+0x196/0x380
-Jul 26 15:05:02 rx [11061395.933088] ? ip6_protocol_deliver_rcu+0x4e0/0x4e0
-Jul 26 15:05:02 rx [11061395.938216] ? ip6_sublist_rcv_finish+0x3d/0x50
-Jul 26 15:05:02 rx [11061395.943000] ? __bad_area_nosemaphore+0x50/0x1a0
-Jul 26 15:05:02 rx [11061395.947873] ? bad_area_nosemaphore+0x16/0x20
-Jul 26 15:05:02 rx [11061395.952486] ? do_user_addr_fault+0x267/0x450
-Jul 26 15:05:02 rx [11061395.957104] ? ipv6_list_rcv+0x112/0x140
-Jul 26 15:05:02 rx [11061395.961279] ? __do_page_fault+0x58/0x90
-Jul 26 15:05:02 rx [11061395.965458] ? do_page_fault+0x2c/0xe0
-Jul 26 15:05:02 rx [11061395.969465] ? page_fault+0x34/0x40
-Jul 26 15:05:02 rx [11061395.973217] ? tcp_rearm_rto+0xe4/0x160
-Jul 26 15:05:02 rx [11061395.977313] ? tcp_rearm_rto+0xe4/0x160
-Jul 26 15:05:02 rx [11061395.981408] tcp_send_loss_probe+0x10b/0x220
-Jul 26 15:05:02 rx [11061395.985937] tcp_write_timer_handler+0x1b4/0x240
-Jul 26 15:05:02 rx [11061395.990809] tcp_write_timer+0x9e/0xe0
-Jul 26 15:05:02 rx [11061395.994814] ? tcp_write_timer_handler+0x240/0x240
-Jul 26 15:05:02 rx [11061395.999866] call_timer_fn+0x32/0x130
-Jul 26 15:05:02 rx [11061396.003782] __run_timers.part.0+0x180/0x280
-Jul 26 15:05:02 rx [11061396.008309] ? recalibrate_cpu_khz+0x10/0x10
-Jul 26 15:05:02 rx [11061396.012841] ? native_x2apic_icr_write+0x30/0x30
-Jul 26 15:05:02 rx [11061396.017718] ? lapic_next_event+0x21/0x30
-Jul 26 15:05:02 rx [11061396.021984] ? clockevents_program_event+0x8f/0xe0
-Jul 26 15:05:02 rx [11061396.027035] run_timer_softirq+0x2a/0x50
-Jul 26 15:05:02 rx [11061396.031212] __do_softirq+0xd1/0x2c1
-Jul 26 15:05:02 rx [11061396.035044] do_softirq_own_stack+0x2a/0x40
-Jul 26 15:05:02 rx [11061396.039480]
-Jul 26 15:05:02 rx [11061396.041840] do_softirq.part.0+0x46/0x50
-Jul 26 15:05:02 rx [11061396.046022] __local_bh_enable_ip+0x50/0x60
-Jul 26 15:05:02 rx [11061396.050460] _raw_spin_unlock_bh+0x1e/0x20
-Jul 26 15:05:02 rx [11061396.054817] nf_conntrack_tcp_packet+0x29e/0xbe0 [nf_conntrack]
-Jul 26 15:05:02 rx [11061396.060994] ? get_l4proto+0xe7/0x190 [nf_conntrack]
-Jul 26 15:05:02 rx [11061396.066220] nf_conntrack_in+0xe9/0x670 [nf_conntrack]
-Jul 26 15:05:02 rx [11061396.071618] ipv6_conntrack_local+0x14/0x20 [nf_conntrack]
-Jul 26 15:05:02 rx [11061396.077356] nf_hook_slow+0x45/0xb0
-Jul 26 15:05:02 rx [11061396.081098] ip6_xmit+0x3f0/0x5d0
-Jul 26 15:05:02 rx [11061396.084670] ? ipv6_anycast_cleanup+0x50/0x50
-Jul 26 15:05:02 rx [11061396.089282] ? __sk_dst_check+0x38/0x70
-Jul 26 15:05:02 rx [11061396.093381] ? inet6_csk_route_socket+0x13b/0x200
-Jul 26 15:05:02 rx [11061396.098346] inet6_csk_xmit+0xa7/0xf0
-Jul 26 15:05:02 rx [11061396.102263] __tcp_transmit_skb+0x550/0xb30
-Jul 26 15:05:02 rx [11061396.106701] tcp_write_xmit+0x3c6/0xc20
-Jul 26 15:05:02 rx [11061396.110792] ? __alloc_skb+0x98/0x1d0
-Jul 26 15:05:02 rx [11061396.114708] __tcp_push_pending_frames+0x37/0x100
-Jul 26 15:05:02 rx [11061396.119667] tcp_push+0xfd/0x100
-Jul 26 15:05:02 rx [11061396.123150] tcp_sendmsg_locked+0xc70/0xdd0
-Jul 26 15:05:02 rx [11061396.127588] tcp_sendmsg+0x2d/0x50
-Jul 26 15:05:02 rx [11061396.131245] inet6_sendmsg+0x43/0x70
-Jul 26 15:05:02 rx [11061396.135075] __sock_sendmsg+0x48/0x70
-Jul 26 15:05:02 rx [11061396.138994] ____sys_sendmsg+0x212/0x280
-Jul 26 15:05:02 rx [11061396.143172] ___sys_sendmsg+0x88/0xd0
-Jul 26 15:05:02 rx [11061396.147098] ? __seccomp_filter+0x7e/0x6b0
-Jul 26 15:05:02 rx [11061396.151446] ? __switch_to+0x39c/0x460
-Jul 26 15:05:02 rx [11061396.155453] ? __switch_to_asm+0x42/0x80
-Jul 26 15:05:02 rx [11061396.159636] ? __switch_to_asm+0x5a/0x80
-Jul 26 15:05:02 rx [11061396.163816] __sys_sendmsg+0x5c/0xa0
-Jul 26 15:05:02 rx [11061396.167647] __x64_sys_sendmsg+0x1f/0x30
-Jul 26 15:05:02 rx [11061396.171832] do_syscall_64+0x57/0x190
-Jul 26 15:05:02 rx [11061396.175748] entry_SYSCALL_64_after_hwframe+0x5c/0xc1
-Jul 26 15:05:02 rx [11061396.181055] RIP: 0033:0x7f1ef692618d
-Jul 26 15:05:02 rx [11061396.184893] Code: 28 89 54 24 1c 48 89 74 24 10 89 7c 24 08 e8 ca ee ff ff 8b 54 24 1c 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 2f 44 89 c7 48 89 44 24 08 e8 fe ee ff ff 48
-Jul 26 15:05:02 rx [11061396.203889] RSP: 002b:00007f1ef4a26aa0 EFLAGS: 00000293 ORIG_RAX: 000000000000002e
-Jul 26 15:05:02 rx [11061396.211708] RAX: ffffffffffffffda RBX: 000000000000084b RCX: 00007f1ef692618d
-Jul 26 15:05:02 rx [11061396.219091] RDX: 0000000000004000 RSI: 00007f1ef4a26b10 RDI: 0000000000000275
-Jul 26 15:05:02 rx [11061396.226475] RBP: 0000000000004000 R08: 0000000000000000 R09: 0000000000000020
-Jul 26 15:05:02 rx [11061396.233859] R10: 0000000000000000 R11: 0000000000000293 R12: 000000000000084b
-Jul 26 15:05:02 rx [11061396.241243] R13: 00007f1ef4a26b10 R14: 0000000000000275 R15: 000055592030f1e8
-Jul 26 15:05:02 rx [11061396.248628] Modules linked in: vrf bridge stp llc vxlan ip6_udp_tunnel udp_tunnel nls_iso8859_1 amd64_edac_mod edac_mce_amd kvm_amd kvm crct10dif_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd glue_helper wmi_bmof ipmi_ssif input_leds joydev rndis_host cdc_ether usbnet mii ast drm_vram_helper ttm drm_kms_helper i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt ccp mac_hid ipmi_si ipmi_devintf ipmi_msghandler nft_ct sch_fq_codel nf_tables_set nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink ramoops reed_solomon efi_pstore drm ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid0 multipath linear mlx5_ib ib_uverbs ib_core raid1 mlx5_core hid_generic pci_hyperv_intf crc32_pclmul tls usbhid ahci mlxfw bnxt_en libahci hid nvme i2c_piix4 nvme_core wmi
-Jul 26 15:05:02 rx [11061396.324334] CR2: 0000000000000020
-Jul 26 15:05:02 rx [11061396.327944] ---[ end trace 68a2b679d1cfb4f1 ]---
-Jul 26 15:05:02 rx [11061396.433435] RIP: 0010:tcp_rearm_rto+0xe4/0x160
-Jul 26 15:05:02 rx [11061396.438137] Code: 87 ca 04 00 00 00 5b 41 5c 41 5d 5d c3 c3 49 8b bc 24 40 06 00 00 eb 8d 48 bb cf f7 53 e3 a5 9b c4 20 4c 89 ef e8 0c fe 0e 00 <48> 8b 78 20 48 c1 ef 03 48 89 f8 41 8b bc 24 80 04 00 00 48 f7 e3
-Jul 26 15:05:02 rx [11061396.457144] RSP: 0018:ffffb75d40003e08 EFLAGS: 00010246
-Jul 26 15:05:02 rx [11061396.462629] RAX: 0000000000000000 RBX: 20c49ba5e353f7cf RCX: 0000000000000000
-Jul 26 15:05:02 rx [11061396.470012] RDX: 0000000062177c30 RSI: 000000000000231c RDI: ffff9874ad283a60
-Jul 26 15:05:02 rx [11061396.477396] RBP: ffffb75d40003e20 R08: 0000000000000000 R09: ffff987605e20aa8
-Jul 26 15:05:02 rx [11061396.484779] R10: ffffb75d40003f00 R11: ffffb75d4460f740 R12: ffff9874ad283900
-Jul 26 15:05:02 rx [11061396.492164] R13: ffff9874ad283a60 R14: ffff9874ad283980 R15: ffff9874ad283d30
-Jul 26 15:05:02 rx [11061396.499547] FS: 00007f1ef4a2e700(0000) GS:ffff987605e00000(0000) knlGS:0000000000000000
-Jul 26 15:05:02 rx [11061396.507886] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Jul 26 15:05:02 rx [11061396.513884] CR2: 0000000000000020 CR3: 0000003e450ba003 CR4: 0000000000760ef0
-Jul 26 15:05:02 rx [11061396.521267] PKRU: 55555554
-Jul 26 15:05:02 rx [11061396.524230] Kernel panic - not syncing: Fatal exception in interrupt
-Jul 26 15:05:02 rx [11061396.530885] Kernel Offset: 0x1b200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-Jul 26 15:05:03 rx [11061396.660181] ---[ end Kernel panic - not syncing: Fatal
- exception in interrupt ]---
-
-After we hit this we disabled TLP by setting tcp_early_retrans to 0 and then hit the crash in the RACK case:
-
-Aug 7 07:26:16 rx [1006006.265582] BUG: kernel NULL pointer dereference, address: 0000000000000020
-Aug 7 07:26:16 rx [1006006.272719] #PF: supervisor read access in kernel mode
-Aug 7 07:26:16 rx [1006006.278030] #PF: error_code(0x0000) - not-present page
-Aug 7 07:26:16 rx [1006006.283343] PGD 0 P4D 0
-Aug 7 07:26:16 rx [1006006.286057] Oops: 0000 [#1] SMP NOPTI
-Aug 7 07:26:16 rx [1006006.289896] CPU: 5 PID: 0 Comm: swapper/5 Tainted: G W 5.4.0-174-generic #193-Ubuntu
-Aug 7 07:26:16 rx [1006006.299107] Hardware name: Supermicro SMC 2x26 os-gen8 64C NVME-Y 256G/H12SSW-NTR, BIOS 2.5.V1.2U.NVMe.UEFI 05/09/2023
-Aug 7 07:26:16 rx [1006006.309970] RIP: 0010:tcp_rearm_rto+0xe4/0x160
-Aug 7 07:26:16 rx [1006006.314584] Code: 87 ca 04 00 00 00 5b 41 5c 41 5d 5d c3 c3 49 8b bc 24 40 06 00 00 eb 8d 48 bb cf f7 53 e3 a5 9b c4 20 4c 89 ef e8 0c fe 0e 00 <48> 8b 78 20 48 c1 ef 03 48 89 f8 41 8b bc 24 80 04 00 00 48 f7 e3
-Aug 7 07:26:16 rx [1006006.333499] RSP: 0018:ffffb42600a50960 EFLAGS: 00010246
-Aug 7 07:26:16 rx [1006006.338895] RAX: 0000000000000000 RBX: 20c49ba5e353f7cf RCX: 0000000000000000
-Aug 7 07:26:16 rx [1006006.346193] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff92d687ed8160
-Aug 7 07:26:16 rx [1006006.353489] RBP: ffffb42600a50978 R08: 0000000000000000 R09: 00000000cd896dcc
-Aug 7 07:26:16 rx [1006006.360786] R10: ffff92dc3404f400 R11: 0000000000000001 R12: ffff92d687ed8000
-Aug 7 07:26:16 rx [1006006.368084] R13: ffff92d687ed8160 R14: 00000000cd896dcc R15: 00000000cd8fca81
-Aug 7 07:26:16 rx [1006006.375381] FS: 0000000000000000(0000) GS:ffff93158ad40000(0000) knlGS:0000000000000000
-Aug 7 07:26:16 rx [1006006.383632] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Aug 7 07:26:16 rx [1006006.389544] CR2: 0000000000000020 CR3: 0000003e775ce006 CR4: 0000000000760ee0
-Aug 7 07:26:16 rx [1006006.396839] PKRU: 55555554
-Aug 7 07:26:16 rx [1006006.399717] Call Trace:
-Aug 7 07:26:16 rx [1006006.402335]
-Aug 7 07:26:16 rx [1006006.404525] ? show_regs.cold+0x1a/0x1f
-Aug 7 07:26:16 rx [1006006.408532] ? __die+0x90/0xd9
-Aug 7 07:26:16 rx [1006006.411760] ? no_context+0x196/0x380
-Aug 7 07:26:16 rx [1006006.415599] ? __bad_area_nosemaphore+0x50/0x1a0
-Aug 7 07:26:16 rx [1006006.420392] ? _raw_spin_lock+0x1e/0x30
-Aug 7 07:26:16 rx [1006006.424401] ? bad_area_nosemaphore+0x16/0x20
-Aug 7 07:26:16 rx [1006006.428927] ? do_user_addr_fault+0x267/0x450
-Aug 7 07:26:16 rx [1006006.433450] ? __do_page_fault+0x58/0x90
-Aug 7 07:26:16 rx [1006006.437542] ? do_page_fault+0x2c/0xe0
-Aug 7 07:26:16 rx [1006006.441470] ? page_fault+0x34/0x40
-Aug 7 07:26:16 rx [1006006.445134] ? tcp_rearm_rto+0xe4/0x160
-Aug 7 07:26:16 rx [1006006.449145] tcp_ack+0xa32/0xb30
-Aug 7 07:26:16 rx [1006006.452542] tcp_rcv_established+0x13c/0x670
-Aug 7 07:26:16 rx [1006006.456981] ? sk_filter_trim_cap+0x48/0x220
-Aug 7 07:26:16 rx [1006006.461419] tcp_v6_do_rcv+0xdb/0x450
-Aug 7 07:26:16 rx [1006006.465257] tcp_v6_rcv+0xc2b/0xd10
-Aug 7 07:26:16 rx [1006006.468918] ip6_protocol_deliver_rcu+0xd3/0x4e0
-Aug 7 07:26:16 rx [1006006.473706] ip6_input_finish+0x15/0x20
-Aug 7 07:26:16 rx [1006006.477710] ip6_input+0xa2/0xb0
-Aug 7 07:26:16 rx [1006006.481109] ? ip6_protocol_deliver_rcu+0x4e0/0x4e0
-Aug 7 07:26:16 rx [1006006.486151] ip6_sublist_rcv_finish+0x3d/0x50
-Aug 7 07:26:16 rx [1006006.490679] ip6_sublist_rcv+0x1aa/0x250
-Aug 7 07:26:16 rx [1006006.494779] ? ip6_rcv_finish_core.isra.0+0xa0/0xa0
-Aug 7 07:26:16 rx [1006006.499828] ipv6_list_rcv+0x112/0x140
-Aug 7 07:26:16 rx [1006006.503748] __netif_receive_skb_list_core+0x1a4/0x250
-Aug 7 07:26:16 rx [1006006.509057] netif_receive_skb_list_internal+0x1a1/0x2b0
-Aug 7 07:26:16 rx [1006006.514538] gro_normal_list.part.0+0x1e/0x40
-Aug 7 07:26:16 rx [1006006.519068] napi_complete_done+0x91/0x130
-Aug 7 07:26:16 rx [1006006.523352] mlx5e_napi_poll+0x18e/0x610 [mlx5_core]
-Aug 7 07:26:16 rx [1006006.528481] net_rx_action+0x142/0x390
-Aug 7 07:26:16 rx [1006006.532398] __do_softirq+0xd1/0x2c1
-Aug 7 07:26:16 rx [1006006.536142] irq_exit+0xae/0xb0
-Aug 7 07:26:16 rx [1006006.539452] do_IRQ+0x5a/0xf0
-Aug 7 07:26:16 rx [1006006.542590] common_interrupt+0xf/0xf
-Aug 7 07:26:16 rx [1006006.546421]
-Aug 7 07:26:16 rx [1006006.548695] RIP: 0010:native_safe_halt+0xe/0x10
-Aug 7 07:26:16 rx [1006006.553399] Code: 7b ff ff ff eb bd 90 90 90 90 90 90 e9 07 00 00 00 0f 00 2d 36 2c 50 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d 26 2c 50 00 fb f4 90 0f 1f 44 00 00 55 48 89 e5 41 55 41 54 53 e8 dd 5e 61 ff 65
-Aug 7 07:26:16 rx [1006006.572309] RSP: 0018:ffffb42600177e70 EFLAGS: 00000246 ORIG_RAX: ffffffffffffffc2
-Aug 7 07:26:16 rx [1006006.580040] RAX: ffffffff8ed08b20 RBX: 0000000000000005 RCX: 0000000000000001
-Aug 7 07:26:16 rx [1006006.587337] RDX: 00000000f48eeca2 RSI: 0000000000000082 RDI: 0000000000000082
-Aug 7 07:26:16 rx [1006006.594635] RBP: ffffb42600177e90 R08: 0000000000000000 R09: 000000000000020f
-Aug 7 07:26:16 rx [1006006.601931] R10: 0000000000100000 R11: 0000000000000000 R12: 0000000000000005
-Aug 7 07:26:16 rx [1006006.609229] R13: ffff93157deb5f00 R14: 0000000000000000 R15: 0000000000000000
-Aug 7 07:26:16 rx [1006006.616530] ? __cpuidle_text_start+0x8/0x8
-Aug 7 07:26:16 rx [1006006.620886] ? default_idle+0x20/0x140
-Aug 7 07:26:16 rx [1006006.624804] arch_cpu_idle+0x15/0x20
-Aug 7 07:26:16 rx [1006006.628545] default_idle_call+0x23/0x30
-Aug 7 07:26:16 rx [1006006.632640] do_idle+0x1fb/0x270
-Aug 7 07:26:16 rx [1006006.636035] cpu_startup_entry+0x20/0x30
-Aug 7 07:26:16 rx [1006006.640126] start_secondary+0x178/0x1d0
-Aug 7 07:26:16 rx [1006006.644218] secondary_startup_64+0xa4/0xb0
-Aug 7 07:26:17 rx [1006006.648568] Modules linked in: vrf bridge stp llc vxlan ip6_udp_tunnel udp_tunnel nls_iso8859_1 nft_ct amd64_edac_mod edac_mce_amd kvm_amd kvm crct10dif_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd glue_helper wmi_bmof ipmi_ssif input_leds joydev rndis_host cdc_ether usbnet ast mii drm_vram_helper ttm drm_kms_helper i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt ccp mac_hid ipmi_si ipmi_devintf ipmi_msghandler sch_fq_codel nf_tables_set nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink ramoops reed_solomon efi_pstore drm ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid0 multipath linear mlx5_ib ib_uverbs ib_core raid1 hid_generic mlx5_core pci_hyperv_intf crc32_pclmul usbhid ahci tls mlxfw bnxt_en hid libahci nvme i2c_piix4 nvme_core wmi [last unloaded: cpuid]
-Aug 7 07:26:17 rx [1006006.726180] CR2: 0000000000000020
-Aug 7 07:26:17 rx [1006006.729718] ---[ end trace e0e2e37e4e612984 ]---
-
-Prior to seeing the first crash and on other machines we also see the warning in
-tcp_send_loss_probe() where packets_out is non-zero, but both transmit and retrans
-queues are empty so we know the box is seeing some accounting issue in this area:
-
-Jul 26 09:15:27 kernel: ------------[ cut here ]------------
-Jul 26 09:15:27 kernel: invalid inflight: 2 state 1 cwnd 68 mss 8988
-Jul 26 09:15:27 kernel: WARNING: CPU: 16 PID: 0 at net/ipv4/tcp_output.c:2605 tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: Modules linked in: vrf bridge stp llc vxlan ip6_udp_tunnel udp_tunnel nls_iso8859_1 nft_ct amd64_edac_mod edac_mce_amd kvm_amd kvm crct10dif_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd glue_helper wmi_bmof ipmi_ssif joydev input_leds rndis_host cdc_ether usbnet mii ast drm_vram_helper ttm drm_kms_he>
-Jul 26 09:15:27 kernel: CPU: 16 PID: 0 Comm: swapper/16 Not tainted 5.4.0-174-generic #193-Ubuntu
-Jul 26 09:15:27 kernel: Hardware name: Supermicro SMC 2x26 os-gen8 64C NVME-Y 256G/H12SSW-NTR, BIOS 2.5.V1.2U.NVMe.UEFI 05/09/2023
-Jul 26 09:15:27 kernel: RIP: 0010:tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: Code: 08 26 01 00 75 e2 41 0f b6 54 24 12 41 8b 8c 24 c0 06 00 00 45 89 f0 48 c7 c7 e0 b4 20 a7 c6 05 8d 08 26 01 01 e8 4a c0 0f 00 <0f> 0b eb ba 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 41
-Jul 26 09:15:27 kernel: RSP: 0018:ffffb7838088ce00 EFLAGS: 00010286
-Jul 26 09:15:27 kernel: RAX: 0000000000000000 RBX: ffff9b84b5630430 RCX: 0000000000000006
-Jul 26 09:15:27 kernel: RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff9b8e4621c8c0
-Jul 26 09:15:27 kernel: RBP: ffffb7838088ce18 R08: 0000000000000927 R09: 0000000000000004
-Jul 26 09:15:27 kernel: R10: 0000000000000000 R11: 0000000000000001 R12: ffff9b84b5630000
-Jul 26 09:15:27 kernel: R13: 0000000000000000 R14: 000000000000231c R15: ffff9b84b5630430
-Jul 26 09:15:27 kernel: FS: 0000000000000000(0000) GS:ffff9b8e46200000(0000) knlGS:0000000000000000
-Jul 26 09:15:27 kernel: CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Jul 26 09:15:27 kernel: CR2: 000056238cec2380 CR3: 0000003e49ede005 CR4: 0000000000760ee0
-Jul 26 09:15:27 kernel: PKRU: 55555554
-Jul 26 09:15:27 kernel: Call Trace:
-Jul 26 09:15:27 kernel: <IRQ>
-Jul 26 09:15:27 kernel: ? show_regs.cold+0x1a/0x1f
-Jul 26 09:15:27 kernel: ? __warn+0x98/0xe0
-Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: ? report_bug+0xd1/0x100
-Jul 26 09:15:27 kernel: ? do_error_trap+0x9b/0xc0
-Jul 26 09:15:27 kernel: ? do_invalid_op+0x3c/0x50
-Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: ? invalid_op+0x1e/0x30
-Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: tcp_write_timer_handler+0x1b4/0x240
-Jul 26 09:15:27 kernel: tcp_write_timer+0x9e/0xe0
-Jul 26 09:15:27 kernel: ? tcp_write_timer_handler+0x240/0x240
-Jul 26 09:15:27 kernel: call_timer_fn+0x32/0x130
-Jul 26 09:15:27 kernel: __run_timers.part.0+0x180/0x280
-Jul 26 09:15:27 kernel: ? timerqueue_add+0x9b/0xb0
-Jul 26 09:15:27 kernel: ? enqueue_hrtimer+0x3d/0x90
-Jul 26 09:15:27 kernel: ? do_error_trap+0x9b/0xc0
-Jul 26 09:15:27 kernel: ? do_invalid_op+0x3c/0x50
-Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: ? invalid_op+0x1e/0x30
-Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
-Jul 26 09:15:27 kernel: tcp_write_timer_handler+0x1b4/0x240
-Jul 26 09:15:27 kernel: tcp_write_timer+0x9e/0xe0
-Jul 26 09:15:27 kernel: ? tcp_write_timer_handler+0x240/0x240
-Jul 26 09:15:27 kernel: call_timer_fn+0x32/0x130
-Jul 26 09:15:27 kernel: __run_timers.part.0+0x180/0x280
-Jul 26 09:15:27 kernel: ? timerqueue_add+0x9b/0xb0
-Jul 26 09:15:27 kernel: ? enqueue_hrtimer+0x3d/0x90
-Jul 26 09:15:27 kernel: ? recalibrate_cpu_khz+0x10/0x10
-Jul 26 09:15:27 kernel: ? ktime_get+0x3e/0xa0
-Jul 26 09:15:27 kernel: ? native_x2apic_icr_write+0x30/0x30
-Jul 26 09:15:27 kernel: run_timer_softirq+0x2a/0x50
-Jul 26 09:15:27 kernel: __do_softirq+0xd1/0x2c1
-Jul 26 09:15:27 kernel: irq_exit+0xae/0xb0
-Jul 26 09:15:27 kernel: smp_apic_timer_interrupt+0x7b/0x140
-Jul 26 09:15:27 kernel: apic_timer_interrupt+0xf/0x20
-Jul 26 09:15:27 kernel: </IRQ>
-Jul 26 09:15:27 kernel: RIP: 0010:native_safe_halt+0xe/0x10
-Jul 26 09:15:27 kernel: Code: 7b ff ff ff eb bd 90 90 90 90 90 90 e9 07 00 00 00 0f 00 2d 36 2c 50 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d 26 2c 50 00 fb f4 <c3> 90 0f 1f 44 00 00 55 48 89 e5 41 55 41 54 53 e8 dd 5e 61 ff 65
-Jul 26 09:15:27 kernel: RSP: 0018:ffffb783801cfe70 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-Jul 26 09:15:27 kernel: RAX: ffffffffa6908b20 RBX: 0000000000000010 RCX: 0000000000000001
-Jul 26 09:15:27 kernel: RDX: 000000006fc0c97e RSI: 0000000000000082 RDI: 0000000000000082
-Jul 26 09:15:27 kernel: RBP: ffffb783801cfe90 R08: 0000000000000000 R09: 0000000000000225
-Jul 26 09:15:27 kernel: R10: 0000000000100000 R11: 0000000000000000 R12: 0000000000000010
-Jul 26 09:15:27 kernel: R13: ffff9b8e390b0000 R14: 0000000000000000 R15: 0000000000000000
-Jul 26 09:15:27 kernel: ? __cpuidle_text_start+0x8/0x8
-Jul 26 09:15:27 kernel: ? default_idle+0x20/0x140
-Jul 26 09:15:27 kernel: arch_cpu_idle+0x15/0x20
-Jul 26 09:15:27 kernel: default_idle_call+0x23/0x30
-Jul 26 09:15:27 kernel: do_idle+0x1fb/0x270
-Jul 26 09:15:27 kernel: cpu_startup_entry+0x20/0x30
-Jul 26 09:15:27 kernel: start_secondary+0x178/0x1d0
-Jul 26 09:15:27 kernel: secondary_startup_64+0xa4/0xb0
-Jul 26 09:15:27 kernel: ---[ end trace e7ac822987e33be1 ]---
-
-The NULL ptr deref is coming from tcp_rto_delta_us() attempting to pull an skb
-off the head of the retransmit queue and then dereferencing that skb to get the
-skb_mstamp_ns value via tcp_skb_timestamp_us(skb).
-
-The crash is the same one that was reported a # of years ago here:
-https://lore.kernel.org/netdev/86c0f836-9a7c-438b-d81a-839be45f1f58@gmail.com/T/#t
-
-and the kernel we're running has the fix which was added to resolve this issue.
-
-Unfortunately we've been unsuccessful so far in reproducing this problem in the
-lab and do not have the luxury of pushing out a new kernel to try and test if
-newer kernels resolve this issue at the moment. I realize this is a report
-against both an Ubuntu kernel and also an older 5.4 kernel. I have reported this
-issue to Ubuntu here: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2077657
-however I feel like since this issue has possibly cropped up again it makes
-sense to build in some protection in this path (even on the latest kernel
-versions) since the code in question just blindly assumes there's a valid skb
-without testing if it's NULL b/f it looks at the timestamp.
-
-Given we have seen crashes in this path before and now this case it seems like
-we should protect ourselves for when packets_out accounting is incorrect.
-While we should fix that root cause we should also just make sure the skb
-is not NULL before dereferencing it. Also add a warn once here to capture
-some information if/when the problem case is hit again.
-
-Signed-off-by: Josh Hunt <johunt@akamai.com>
----
-
-v2: Removed cover letter and added context from original cover letter to
-    commit msg.
-
- include/net/tcp.h | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 2aac11e7e1cc..19ea6ed87880 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -2433,10 +2433,19 @@ void tcp_plb_update_state_upon_rto(struct sock *sk, struct tcp_plb_state *plb);
- static inline s64 tcp_rto_delta_us(const struct sock *sk)
- {
- 	const struct sk_buff *skb = tcp_rtx_queue_head(sk);
--	u32 rto = inet_csk(sk)->icsk_rto;
--	u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + jiffies_to_usecs(rto);
-+	u32 rto = jiffies_to_usecs(inet_csk(sk)->icsk_rto);
-+
-+	if (likely(skb)) {
-+		u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + rto;
-+
-+		return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
-+	} else {
-+		WARN_ONCE(1,
-+			"rtx queue emtpy: inflight %u tlp_high_seq %u state %u\n",
-+			tcp_sk(sk)->packets_out, tcp_sk(sk)->tlp_high_seq, sk->sk_state);
-+		return rto;
-+	}
- 
--	return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
- }
- 
- /*
--- 
-2.34.1
+SWYgYW55IGVycm9yIGZsYWdzIGFyZSBzZXQgd2hlbiBicmluZ2luZyB1cCB0aGUgQ0FOIGRldmlj
+ZSwgZS5nLiBkdWUgdG8NCkNBTiBidXMgdHJhZmZpYyBiZWZvcmUgaW5pdGlhbGl6aW5nIHRoZSBk
+ZXZpY2UsIHdoZW4gbV9jYW5fc3RhcnQgaXMNCmNhbGxlZCBhbmQgaW50ZXJydXB0cyBhcmUgZW5h
+YmxlZCwgbV9jYW5faXNyIGlzIGNhbGxlZCBpbW1lZGlhdGVseSwNCndoaWNoIGRpc2FibGVzIGFs
+bCBDQU4gaW50ZXJydXB0cyBhbmQgY2FsbHMgbmFwaV9zY2hlZHVsZS4NCg0KQmVjYXVzZSBuYXBp
+X2VuYWJsZSBpc24ndCBjYWxsZWQgdW50aWwgbGF0ZXIgaW4gbV9jYW5fb3BlbiwgdGhlIGNhbGwg
+dG8NCm5hcGlfc2NoZWR1bGUgbmV2ZXIgc2NoZWR1bGVzIHRoZSBtX2Nhbl9wb2xsIGNhbGxiYWNr
+IGFuZCB0aGUgZGV2aWNlIGlzDQpsZWZ0IHdpdGggaW50ZXJydXB0cyBkaXNhYmxlZCBhbmQgY2Fu
+J3QgcmVjZWl2ZSBhbnkgQ0FOIHBhY2tldHMgdW50aWwNCnJlYm9vdGVkLiBUaGlzIGNhbiBiZSB2
+ZXJpZmllZCBieSBydW5uaW5nICJjYW5zZW5kIiBmcm9tIGFub3RoZXIgZGV2aWNlDQpiZWZvcmUg
+c2V0dGluZyB0aGUgYml0cmF0ZSBhbmQgY2FsbGluZyAiaXAgbGluayBzZXQgdXAgY2FuMCIgb24g
+dGhlIHRlc3QNCmRldmljZS4gQWRkaW5nIGRlYnVnIGxpbmVzIHRvIG1fY2FuX2lzciBzaG93cyBp
+dCdzIGNhbGxlZCB3aXRoIGZsYWdzDQooSVJfRVAgfCBJUl9FVyB8IElSX0NSQ0UpLCB3aGljaCBj
+YWxscyBtX2Nhbl9kaXNhYmxlX2FsbF9pbnRlcnJ1cHRzIGFuZA0KbmFwaV9zY2hlZHVsZSwgYW5k
+IHRoZW4gbV9jYW5fcG9sbCBpcyBuZXZlciBjYWxsZWQuDQoNCk1vdmUgdGhlIGNhbGwgdG8gbmFw
+aV9lbmFibGUgYWJvdmUgdGhlIGNhbGwgdG8gbV9jYW5fc3RhcnQgdG8gZW5hYmxlIGFueQ0KaW5p
+dGlhbCBpbnRlcnJ1cHQgZmxhZ3MgdG8gYmUgaGFuZGxlZCBieSBtX2Nhbl9wb2xsIHNvIHRoYXQg
+aW50ZXJydXB0cw0KYXJlIHJlZW5hYmxlZC4gQWRkIGEgY2FsbCB0byBuYXBpX2Rpc2FibGUgaW4g
+dGhlIGVycm9yIGhhbmRsaW5nIHNlY3Rpb24NCm9mIG1fY2FuX29wZW4sIHRvIGhhbmRsZSB0aGUg
+Y2FzZSB3aGVyZSBsYXRlciBmdW5jdGlvbnMgcmV0dXJuIGVycm9ycy4NCg0KQWxzbywgaW4gbV9j
+YW5fY2xvc2UsIG1vdmUgdGhlIGNhbGwgdG8gbmFwaV9kaXNhYmxlIGJlbG93IHRoZSBjYWxsIHRv
+DQptX2Nhbl9zdG9wIHRvIGVuc3VyZSBhbGwgaW50ZXJydXB0cyBhcmUgaGFuZGxlZCB3aGVuIGJy
+aW5naW5nIGRvd24gdGhlDQpkZXZpY2UuIFRoaXMgcmFjZSBjb25kaXRpb24gaXMgbXVjaCBsZXNz
+IGxpa2VseSB0byBvY2N1ci4NCg0KV2hpbGUgdGVzdGluZywgSSBub3RpY2VkIHRoYXQgSVJfVFNX
+ICh0aW1lc3RhbXAgd3JhcGFyb3VuZCkgZmlyZXMgYXQNCmFib3V0IDEgSHosIGJ1dCB0aGUgZHJp
+dmVyIGRvZXNuJ3QgY2FyZSBhYm91dCBpdC4gQWRkIGl0IHRvIHRoZSBsaXN0IG9mDQppbnRlcnJ1
+cHRzIHRvIGRpc2FibGUgaW4gbV9jYW5fY2hpcF9jb25maWcgdG8gcmVkdWNlIHVubmVlZGVkIHdh
+a2V1cHMuDQoNClRlc3RlZCBvbiBhIE1pY3JvY2hpcCBTQU1BN0c1NCBNUFUuIFRoZSBmaXggc2hv
+dWxkIGJlIGFwcGxpY2FibGUgdG8gYW55DQpTb0Mgd2l0aCBhIEJvc2NoIE1fQ0FOIGNvbnRyb2xs
+ZXIuDQotLS0NCiBkcml2ZXJzL25ldC9jYW4vbV9jYW4vbV9jYW4uYyB8IDE5ICsrKysrKysrKysr
+Ky0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMo
+LSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2Nhbi9tX2Nhbi9tX2Nhbi5jIGIvZHJpdmVy
+cy9uZXQvY2FuL21fY2FuL21fY2FuLmMNCmluZGV4IDAxMmMzZDIyYjAxZC4uNGNlZDgzMGY1ZWNl
+IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvY2FuL21fY2FuL21fY2FuLmMNCisrKyBiL2RyaXZl
+cnMvbmV0L2Nhbi9tX2Nhbi9tX2Nhbi5jDQpAQCAtMTQzNCw3ICsxNDM0LDggQEAgc3RhdGljIGlu
+dCBtX2Nhbl9jaGlwX2NvbmZpZyhzdHJ1Y3QgbmV0X2RldmljZSAqZGV2KQ0KIA0KIAkvKiBEaXNh
+YmxlIHVudXNlZCBpbnRlcnJ1cHRzICovDQogCWludGVycnVwdHMgJj0gfihJUl9BUkEgfCBJUl9F
+TE8gfCBJUl9EUlggfCBJUl9URUZGIHwgSVJfVEZFIHwgSVJfVENGIHwNCi0JCQlJUl9IUE0gfCBJ
+Ul9SRjFGIHwgSVJfUkYxVyB8IElSX1JGMU4gfCBJUl9SRjBGKTsNCisJCQlJUl9IUE0gfCBJUl9S
+RjFGIHwgSVJfUkYxVyB8IElSX1JGMU4gfCBJUl9SRjBGIHwNCisJCQlJUl9UU1cpOw0KIA0KIAll
+cnIgPSBtX2Nhbl9jb25maWdfZW5hYmxlKGNkZXYpOw0KIAlpZiAoZXJyKQ0KQEAgLTE3NjMsMTMg
+KzE3NjQsMTQgQEAgc3RhdGljIGludCBtX2Nhbl9jbG9zZShzdHJ1Y3QgbmV0X2RldmljZSAqZGV2
+KQ0KIA0KIAluZXRpZl9zdG9wX3F1ZXVlKGRldik7DQogDQotCWlmICghY2Rldi0+aXNfcGVyaXBo
+ZXJhbCkNCi0JCW5hcGlfZGlzYWJsZSgmY2Rldi0+bmFwaSk7DQotDQogCW1fY2FuX3N0b3AoZGV2
+KTsNCiAJbV9jYW5fY2xrX3N0b3AoY2Rldik7DQogCWZyZWVfaXJxKGRldi0+aXJxLCBkZXYpOw0K
+IA0KKwkvKiBkaXNhYmxlIE5BUEkgYWZ0ZXIgZGlzYWJsaW5nIGludGVycnVwdHMgKi8NCisJaWYg
+KCFjZGV2LT5pc19wZXJpcGhlcmFsKQ0KKwkJbmFwaV9kaXNhYmxlKCZjZGV2LT5uYXBpKTsNCisN
+CiAJbV9jYW5fY2xlYW4oZGV2KTsNCiANCiAJaWYgKGNkZXYtPmlzX3BlcmlwaGVyYWwpIHsNCkBA
+IC0yMDMxLDYgKzIwMzMsMTAgQEAgc3RhdGljIGludCBtX2Nhbl9vcGVuKHN0cnVjdCBuZXRfZGV2
+aWNlICpkZXYpDQogCWlmIChjZGV2LT5pc19wZXJpcGhlcmFsKQ0KIAkJY2FuX3J4X29mZmxvYWRf
+ZW5hYmxlKCZjZGV2LT5vZmZsb2FkKTsNCiANCisJLyogZW5hYmxlIE5BUEkgYmVmb3JlIGVuYWJs
+aW5nIGludGVycnVwdHMgKi8NCisJaWYgKCFjZGV2LT5pc19wZXJpcGhlcmFsKQ0KKwkJbmFwaV9l
+bmFibGUoJmNkZXYtPm5hcGkpOw0KKw0KIAkvKiByZWdpc3RlciBpbnRlcnJ1cHQgaGFuZGxlciAq
+Lw0KIAlpZiAoY2Rldi0+aXNfcGVyaXBoZXJhbCkgew0KIAkJY2Rldi0+dHhfd3EgPSBhbGxvY19v
+cmRlcmVkX3dvcmtxdWV1ZSgibWNhbl93cSIsDQpAQCAtMjA2Myw5ICsyMDY5LDYgQEAgc3RhdGlj
+IGludCBtX2Nhbl9vcGVuKHN0cnVjdCBuZXRfZGV2aWNlICpkZXYpDQogCWlmIChlcnIpDQogCQln
+b3RvIGV4aXRfc3RhcnRfZmFpbDsNCiANCi0JaWYgKCFjZGV2LT5pc19wZXJpcGhlcmFsKQ0KLQkJ
+bmFwaV9lbmFibGUoJmNkZXYtPm5hcGkpOw0KLQ0KIAluZXRpZl9zdGFydF9xdWV1ZShkZXYpOw0K
+IA0KIAlyZXR1cm4gMDsNCkBAIC0yMDc3LDYgKzIwODAsOCBAQCBzdGF0aWMgaW50IG1fY2FuX29w
+ZW4oc3RydWN0IG5ldF9kZXZpY2UgKmRldikNCiAJaWYgKGNkZXYtPmlzX3BlcmlwaGVyYWwpDQog
+CQlkZXN0cm95X3dvcmtxdWV1ZShjZGV2LT50eF93cSk7DQogb3V0X3dxX2ZhaWw6DQorCWlmICgh
+Y2Rldi0+aXNfcGVyaXBoZXJhbCkNCisJCW5hcGlfZGlzYWJsZSgmY2Rldi0+bmFwaSk7DQogCWlm
+IChjZGV2LT5pc19wZXJpcGhlcmFsKQ0KIAkJY2FuX3J4X29mZmxvYWRfZGlzYWJsZSgmY2Rldi0+
+b2ZmbG9hZCk7DQogCWNsb3NlX2NhbmRldihkZXYpOw0KLS0gDQoyLjM0LjENCg0KQmVzdCBSZWdh
+cmRzLA0KSmFrZSBIYW1ieQ0KDQo=
 
