@@ -1,206 +1,105 @@
-Return-Path: <linux-kernel+bounces-318160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7327596E949
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4409796E946
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00E91C23755
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0203C28668E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DAE7E574;
-	Fri,  6 Sep 2024 05:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8DB84D0D;
+	Fri,  6 Sep 2024 05:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vfj3DiGe"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBpUlW94"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D661BC23;
-	Fri,  6 Sep 2024 05:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6460819;
+	Fri,  6 Sep 2024 05:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725600677; cv=none; b=f+r92QwV2/VI/fsyJEQiarDMWz6Ipw9pqNikOQjqHXwj1Fk8zuXPHKWMiFzslOHZg97QHve0IVyM43mLAmwI/Prtq6CRO84EJUoGXBDdFgdrycKSOauIizqgidU9tUnBQFShebN00XvdA4z1VekuO+yTWXSnJ0xruqDzXzDzuBM=
+	t=1725600664; cv=none; b=Lz4VoRFGtIyGxdvkY+0cqq0Y4gz75bVVXVq7tgwChElNmhGPfoac5xuIgPmdPASuZTJv+YcsuDgPZ7g9lLJpKL8wh2yS8/BvRsgUJpCmSLlbYkUnm9Qhvy3rssKeVNUaMusC7U5qIKNhV5CZ/UnJxeGksallZMfBHlN91dwpmKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725600677; c=relaxed/simple;
-	bh=h09P8HLKfyRwc0dRd+XCdETIOzYIh+xJX+5H6gLZg7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K4oo5JFI9H2beDH0qOTW3xDDIYpUubnvcg/oA668Isiwo8H18FAFikFk3Vnd2mTZkFHNwgaIeMEE+R2bcak3vCEA9AjA1fheJ+umrLiRiFQ8pYWDY/sbsExg610VWmgv3dngd0r24veA1p5kBVDrd3S/CBhnHRzmdLJQvOEfrDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vfj3DiGe; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost.localdomain (unknown [10.101.196.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C10DE3FE84;
-	Fri,  6 Sep 2024 05:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725600664;
-	bh=9a0OMGDGZrWicasMjCZX0lZ5DMyf3q0ANOrm+ZbpmDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=vfj3DiGeWTj3yAlBpOvmvEc7q0tTOZuyNlMulqIJnEjE/oFs4V+Jrj4rVdFKL8INL
-	 q+nQtnhh6isJ9GHJxAk23dd4WYXttlfp1OUTJavA+znS7iG9xobvtlyQQvD7ptaw7+
-	 4wBNcs9IuEGvGdOXWbc+sgUhlvdPiVtUmiHjmH1Yjf9MJhrtHDcgPgERqpdBpIlqlP
-	 QODevfKZqw1Hujlep7FLj194TRT74pBUcyD27VCZl5CE7fdyxSnpgcIh7FmVuT633s
-	 d6KK8kWOj6tk3vL78pUOh22BPZBQV6yruYtwVc5kHbadfjUFotrNHi5nQwU31S4Vi7
-	 bVbH/GQLk//Jg==
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	jorge.lopez2@hp.com
-Cc: acelan.kao@canonical.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v3] platform/x86/hp: Avoid spurious wakeup on HP ProOne 440
-Date: Fri,  6 Sep 2024 13:30:47 +0800
-Message-ID: <20240906053047.459036-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725600664; c=relaxed/simple;
+	bh=xYRDfR7w4cvg0JE/SSRywsqcsK0ZVzCAWzanLbugdKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozeSsn/uQUIKJytVJvS3nCEOJ+sarkK8UQuuoMS8qlZvo2OSmZsVVdac3ZLrsn/1pCBIT9EYl9ZkAIVs0B5kq2KXnQ1j4GnfRW/lgYJab3uBwPIpMo1KyH01Mdfa4nPzeDwlz1wEBKRel9TK8i7VCX5wlF8I6Aj30sDQ2/qFnto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBpUlW94; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-27051f63018so807246fac.3;
+        Thu, 05 Sep 2024 22:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725600662; x=1726205462; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rlojunx8GHInoLGCMntB+ZOAAQdHr69FYIGEn6wPK4=;
+        b=jBpUlW94u2O00FJBeUjV2kg8BXGjxNNslSyhgHzr3RO8etnGQnxEMFC/8pW4CpemXR
+         yORi4qbRdk252AITaiWtlkpchRMr8H6S/uAuI8MsQyKJapTntKiXcnZv3jCm14yl+8lX
+         +Nc9OZSNGlQUzG0W1ygjpoJqMWl9i1GCYwtcxl3KktCdrEx6Z6tpgYyxYqz0j3h94VwJ
+         oPg/xQv1uzQLFrxh4BIj75wGAPL6APXnlKKJH/Xn2FA6zPNovGjV11COnZg34Fk3MN1a
+         iHjNDqYS6yI8li5pDtKlLzy+NmxyJ9xFsaDVWdB7K5NZ4euK5TAUiXqUNSSkjLRFzO68
+         Wa0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725600662; x=1726205462;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6rlojunx8GHInoLGCMntB+ZOAAQdHr69FYIGEn6wPK4=;
+        b=a82bvOdAnp12TFRuTF+EIYjROxRyLL52xKj9aWWmhJ4mdwcZUK5bj82M/yiXdKoMLM
+         22LEKXIUChCaHmYeMFwDyFyCIh9bCM//051i2PJCJ2+FILfxmPJHSNgxnQYI1XWAvXBd
+         ajNEmPZDWygonpyV/Sd2NKTb9r4Sg1Kwh4l+8br5KtbPhfrI/5z2A3iX77XIqEVe7sIB
+         ZN5f5VmFQGQ+kfuDDu9qluALgDXNSmIX51x1ml3cEnZ3hlhP5lF8Evxaypif3RGi0zud
+         MI2Bss3ryIDVG2T0elAEM2fvH7HRuMFTlSw3zOginmhFtFeqVkdgaz4DnJ/UHXb+hLmN
+         KarQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9YS5PTcJZfn1NQBuFoD+FBAoUApf5HPRBCJnLANkjb4FaE2VC4QgP+B1s0OMY7iox1SqUARFA08L+IPmh@vger.kernel.org, AJvYcCWMhiOFukfpPSTydgS6WKCKGRgrg6a9m8fZQ5tyQ2HyviDfOcdKZMzcF/80J1EFUniIn4YpVO94DnDR1Z4=@vger.kernel.org, AJvYcCWVTqoKx0lcXMDP4XQ0PdTwEZnFRhV+RSkryuBzgZBYPnGQ3ap0KgLJJVDq9zr1QJKSXUY9ah1n5B0Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1qi9YulzCGmo30zNECKEoegWiD4kQsLIWukBrGy/ZSqebTXCr
+	FGCFDmChosqIlbx20nVDgLshrvW7K9GSLAn/VHd/JWIFAbzy3Sf9
+X-Google-Smtp-Source: AGHT+IGJhDHSeGSMTpCmO/BHOqkArJRSxKtV4pDbBAprpmrun6J+Xrj7nn6JiGoluHx0bZKiryy6YA==
+X-Received: by 2002:a05:6871:580f:b0:260:e4ac:72e5 with SMTP id 586e51a60fabf-27b82edbfb5mr244718fac.25.1725600661782;
+        Thu, 05 Sep 2024 22:31:01 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1de8:3062:3230:1a45])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d770499e7asm532882a12.91.2024.09.05.22.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 22:31:01 -0700 (PDT)
+Date: Thu, 5 Sep 2024 22:30:58 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: input: convert rotary-encoder to yaml
+Message-ID: <ZtqTklejytV9n74t@google.com>
+References: <20240811214656.3773098-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811214656.3773098-1-Frank.Li@nxp.com>
 
-The HP ProOne 440 has a power saving design that when the display is
-off, it also cuts the USB touchscreen device's power off.
+On Sun, Aug 11, 2024 at 05:46:55PM -0400, Frank Li wrote:
+> Convert binding doc rotary-encoder.txt to yaml format.
+> 
+> Additional change:
+> - Only keep one example.
+> 
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mn-dimonoff-gateway-evk.dtb: /rotary-encoder:
+>     failed to match any schema with compatible: ['rotary-encoder']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-This can cause system early wakeup because cutting the power off the
-touchscreen device creates a disconnect event and prevent the system
-from suspending:
-[  445.814574] hub 2-0:1.0: hub_suspend
-[  445.814652] usb usb2: bus suspend, wakeup 0
-[  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, portsc: 0x202a0
-[  445.824639] xhci_hcd 0000:00:14.0: resume root hub
-[  445.824651] xhci_hcd 0000:00:14.0: handle_port_status: starting usb1 port polling.
-[  445.844039] xhci_hcd 0000:00:14.0: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x20 returns -16
-[  445.844058] xhci_hcd 0000:00:14.0: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x1c0 returns -16
-[  445.844072] xhci_hcd 0000:00:14.0: PM: failed to suspend async: error -16
-[  446.276101] PM: Some devices failed to suspend, or early wake event detected
+Applied, thank you.
 
-So add a quirk to make sure the following is happening:
-1. Let the i915 driver suspend first, to ensure the display is off so
-   system also cuts the USB touchscreen's power.
-2. Wait a while to let the USB disconnect event fire and get handled.
-3. Since the disconnect event already happened, the xhci's suspend
-   routine won't be interrupted anymore.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v3:
- - Use dev_dbg() instead of dev_info().
-
-v2:
- - Remove the part that searching for the touchscreen device.
- - Wording.
-
- drivers/platform/x86/hp/hp-wmi.c | 59 +++++++++++++++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
-index 876e0a97cee1..92cb02b50dfc 100644
---- a/drivers/platform/x86/hp/hp-wmi.c
-+++ b/drivers/platform/x86/hp/hp-wmi.c
-@@ -30,6 +30,8 @@
- #include <linux/rfkill.h>
- #include <linux/string.h>
- #include <linux/dmi.h>
-+#include <linux/delay.h>
-+#include <linux/pci.h>
- 
- MODULE_AUTHOR("Matthew Garrett <mjg59@srcf.ucam.org>");
- MODULE_DESCRIPTION("HP laptop WMI driver");
-@@ -1708,6 +1710,14 @@ static void __exit hp_wmi_bios_remove(struct platform_device *device)
- 		platform_profile_remove();
- }
- 
-+static int hp_wmi_suspend_handler(struct device *device)
-+{
-+	/* Let the xhci have time to handle disconnect event */
-+	msleep(200);
-+
-+	return 0;
-+}
-+
- static int hp_wmi_resume_handler(struct device *device)
- {
- 	/*
-@@ -1745,7 +1755,7 @@ static int hp_wmi_resume_handler(struct device *device)
- 	return 0;
- }
- 
--static const struct dev_pm_ops hp_wmi_pm_ops = {
-+static struct dev_pm_ops hp_wmi_pm_ops = {
- 	.resume  = hp_wmi_resume_handler,
- 	.restore  = hp_wmi_resume_handler,
- };
-@@ -1871,6 +1881,51 @@ static int hp_wmi_hwmon_init(void)
- 	return 0;
- }
- 
-+static int lg_usb_touchscreen_quirk(const struct dmi_system_id *id)
-+{
-+	struct pci_dev *vga, *xhci;
-+	struct device_link *vga_link, *xhci_link;
-+
-+	vga = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, NULL);
-+
-+	xhci = pci_get_class(PCI_CLASS_SERIAL_USB_XHCI, NULL);
-+
-+	if (vga && xhci) {
-+		xhci_link = device_link_add(&hp_wmi_platform_dev->dev, &xhci->dev,
-+				      DL_FLAG_STATELESS);
-+		if (xhci_link)
-+			dev_dbg(&hp_wmi_platform_dev->dev, "Suspend before %s\n",
-+				 pci_name(xhci));
-+		else
-+			return 1;
-+
-+		vga_link = device_link_add(&vga->dev, &hp_wmi_platform_dev->dev,
-+					   DL_FLAG_STATELESS);
-+		if (vga_link)
-+			dev_dbg(&hp_wmi_platform_dev->dev, "Suspend after %s\n",
-+				 pci_name(vga));
-+		else {
-+			device_link_del(xhci_link);
-+			return 1;
-+		}
-+	}
-+
-+	hp_wmi_pm_ops.suspend = hp_wmi_suspend_handler;
-+
-+	return 1;
-+}
-+
-+static const struct dmi_system_id hp_wmi_quirk_table[] = {
-+	{
-+		.callback = lg_usb_touchscreen_quirk,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "HP ProOne 440 23.8 inch G9 All-in-One Desktop PC"),
-+		},
-+	},
-+	{}
-+};
-+
- static int __init hp_wmi_init(void)
- {
- 	int event_capable = wmi_has_guid(HPWMI_EVENT_GUID);
-@@ -1909,6 +1964,8 @@ static int __init hp_wmi_init(void)
- 			goto err_unregister_device;
- 	}
- 
-+	dmi_check_system(hp_wmi_quirk_table);
-+
- 	return 0;
- 
- err_unregister_device:
 -- 
-2.43.0
-
+Dmitry
 
