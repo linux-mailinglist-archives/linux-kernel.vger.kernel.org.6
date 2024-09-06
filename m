@@ -1,88 +1,349 @@
-Return-Path: <linux-kernel+bounces-318428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08DA96EDBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:24:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AAA96EDC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756871F21E59
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4708E1C2370F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D5015821D;
-	Fri,  6 Sep 2024 08:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58617158A04;
+	Fri,  6 Sep 2024 08:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metrotek.ru header.i=@metrotek.ru header.b="PeRsUgaK"
-Received: from mail.pr-group.ru (mail.pr-group.ru [178.18.215.3])
-	(using TLSv1.1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TmNMcYVS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DF942065;
-	Fri,  6 Sep 2024 08:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.18.215.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611028; cv=none; b=fH1QKxZLNbKJ7tQXJiY78LHWHwvA9J4/xhAw/goDDbO2fd6c2dXyU8mJoMg6jKY+c7DXnXaaSV9xfhPuKtpd6+l/nK2LCUwLaH2n9wmBmXD7ajIxbPPvMrB6/zKv/OHLoiQ9thDmvPV+zthPk24DpN/zgUuDeJiWoHop+xnvaSI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611028; c=relaxed/simple;
-	bh=PW6onf9LcajVOoQ4Hh0om1kDuEKqnohs+XGu9TUH8S4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=T+RLXN7Zy4TLDNCJL4VNQnnsFnZIFU8Jstid0R729vSGtq+8JyqwgGXiWcp9hfpou/u6y3dGj3CGD76Sgtitrv0zSFTHTZn6b6iS716Ck7BpHTdv25HK4m/2eTu2yrE8LScOhChOSsyslC1TB69xgZ6qlRGhRI0HzHLZgu/Gbqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metrotek.ru; spf=pass smtp.mailfrom=metrotek.ru; dkim=pass (2048-bit key) header.d=metrotek.ru header.i=@metrotek.ru header.b=PeRsUgaK; arc=none smtp.client-ip=178.18.215.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metrotek.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metrotek.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-	d=metrotek.ru; s=mail;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=PW6onf9LcajVOoQ4Hh0om1kDuEKqnohs+XGu9TUH8S4=;
-	b=PeRsUgaK+zG+7FJpdvAin+VNsXHkYinKk586b7jzCPaiecFv1mZgAqOXnlHGyhwHThSiZbDLRM+wx
-	 x1g/ZAXUbnnbIN7nDkdONmKbXZalIbK40BOCP6ZK4m51/6zlVmIZmXXeNtyOrd8dVhc0/2vtwXoWlP
-	 W8v1BDzKTzy0B+cVX0op5kYrGohzPWPFwcFr74HkFivyQ+604BFMruivzX/JUOhPz+7BnVv5cAdpSq
-	 +BRAskyfeG7F0MPjoL14DAfGgcMLtmTGDIRM1bqF4q1Wj6BtgT6uQroamVkux/ssxzrpPlgAwO0/qZ
-	 LVLK3M6qlxqmRjzWSZ8jDQvGS+EzKjw==
-X-Spam-Level: 
-X-Footer: bWV0cm90ZWsucnU=
-Received: from localhost ([85.143.252.66])
-	(authenticated user d.dolenko@metrotek.ru)
-	by mail.pr-group.ru with ESMTPSA
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits));
-	Fri, 6 Sep 2024 11:23:27 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159E5155391;
+	Fri,  6 Sep 2024 08:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725611030; cv=fail; b=T4tCQakB/Rj9uFRirrm9Mk8QCcAuZ0729fFqsSQ4bsIs3uQWZN4RDZ2O2WUYC85oExOjA0Kme4vXaKIdr5zAk0uesui+1qSZyb6OJPHKFMC2u9h0baxcdi7NUoUUvF+JiTET3HKucI1sU/7WZXlWC6gxiwT2CFlV9HGH9Ur31HI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725611030; c=relaxed/simple;
+	bh=F0FEiN8H70ONGlJSnGe2078EvzFNW8c9ED9sEgthSYU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ETlzzOLfJqJxl4UDMQq15HWJhlQoIKXSJQSWZDLgZ1ZKbGEfMNM4tqFWckGYfBzJOlTZ4QmjD2E8rPCZOEQkTAr/EZi5TVt2Qj/DW3EdyeFLKqkGdeiPhkObN1RYt9AtJM3UhhsBADL9e4F8YdmnbDFUV3uSeeWGMMhED+w2aaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TmNMcYVS; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725611029; x=1757147029;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=F0FEiN8H70ONGlJSnGe2078EvzFNW8c9ED9sEgthSYU=;
+  b=TmNMcYVSfvKV4kQlOJSSeVLE3IlFryaGdFW7pTCN584v+aZ2hbkzFpu4
+   8WL1EHzWVFmvBb+HP3RL8XxlSiy691QRzpIcCjpOe7rTM0nozQZ5WbzZy
+   F5zQDUAQ+pjl/69yn1f2Lr6WX09CqB3vtLuJPAHfymVGiLCS5UYHRbNTO
+   XoC9UPIn0q8yH3t7EqiUw7aHxLSjVvWD9oG/E9U4+PFhyBUW5wJvmMi/l
+   u9OXbO4p94RaX2gR/kjvvpT30n3JNHOtgw4pnEmjG63ZKaTyJXTKzSPkv
+   hJ/Z/MNJF5QQoObwgI26G7pcg1M6dKAxpMFt4x76vsVJGVggqp0ZgxHJC
+   Q==;
+X-CSE-ConnectionGUID: 2tJOKgesTqerXNYw1OwtTw==
+X-CSE-MsgGUID: WSeVu2TVRIuItWy8CAy/ug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="24229046"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="24229046"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:23:48 -0700
+X-CSE-ConnectionGUID: OS0KmzH7Su6mQ+qJt1/VuA==
+X-CSE-MsgGUID: V3p0ToYaQquicMBsQIFcAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="96670273"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Sep 2024 01:23:47 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 6 Sep 2024 01:23:47 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 6 Sep 2024 01:23:47 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 6 Sep 2024 01:23:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xjIWJdjTTa/sbwnXV58pPKzh06HpvN/o/8b3Jk7VR/0ffKLcahkSbh0YiymG+S6f/Tx3Nw9wJ+v9NoXYtRX/HLweOQSCDYWU+qhZjoUpaoGrT/KuyKWU+efeYuqS2wge3YqKlMzoZtxRgnk/YcASgxbK7MrgwuegiaObrYdwKmrPVI+gzUwsa6QftDNaFudDV1cfTUmqwLgJXDLEsAYNgAWSNQBV80jch0rO0R2d3LDa4cJvMgP+CmHi0dPybwqnCeyR7ny5jZ2o8bmx6Nyke67UnZtP91zoI+UnqRomKAMEb60kq/qOsiDOZOjNm/la/B+d9qBEzloUAra5sUxmnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m1G6+lDbNrKwpOJairo7Pgl4Wo6edZQY6w4eYy84sBE=;
+ b=S9MB+fS9usj5zY4h5XCpbvZnkuVT8ndWRuho2My5wR0Jp27jOA0acu218IfZaVLpNluDfiqe2bfIHnXVsbJDR9QAI8giK8JfWAVjM8Pq2TY176fhppn1AbbyPLmQD7akO3AZOMGu5jkSSdTXwMg6ca2Y5axjZk87jUrp9X7lWkhFtjdKDTnn/6K3uOyBlK/NPhyTiKLDpP5B3gKe/74lGb2a7ibJSZwOcAS6/2I6i18BcUVQOjpejq78hWmp7Tc9IwScc5aC4K3tkFFCzazR4LUMUyMZ77odEm3iAECWxl9KDMlld4yAWeHUZTVx1hEcwK+O5oHELPLGTFf8TLtkRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
+ by MN2PR11MB4678.namprd11.prod.outlook.com (2603:10b6:208:264::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
+ 2024 08:23:39 +0000
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b%5]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 08:23:39 +0000
+From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+	=?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, Gerd Hoffmann
+	<kraxel@redhat.com>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH v5 7/7] udmabuf: reuse folio array when pin folios
+Thread-Topic: [PATCH v5 7/7] udmabuf: reuse folio array when pin folios
+Thread-Index: AQHa/d0qEhTrDE1KAU60PiLwV6IO7LJJdOzw
+Date: Fri, 6 Sep 2024 08:23:39 +0000
+Message-ID: <IA0PR11MB7185D2C5AE98C2EBD72B72C3F89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+References: <20240903083818.3071759-1-link@vivo.com>
+ <20240903083818.3071759-8-link@vivo.com>
+In-Reply-To: <20240903083818.3071759-8-link@vivo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|MN2PR11MB4678:EE_
+x-ms-office365-filtering-correlation-id: 8d491714-a309-428f-e1be-08dcce4d3645
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?b5qfbPPZJBqF3PxfPvKKoPWEohOntCj6LMXSEHjaXSrqLPTBl+F6m9CJhs?=
+ =?iso-8859-1?Q?gi3hiaCU4RdSVFeHHJYDCCs/MJoH9VrSuUIKEOAycoSeo5ibE5TV6q8k7C?=
+ =?iso-8859-1?Q?Kt91TQaeZBAgVmbssbuizvJN1pputeKaNG4U6yAxmMFihqc1XSQUA1JMCQ?=
+ =?iso-8859-1?Q?IfYBQFv/k37mmd8vQdTu53ds6GCwJ+Fo0yrFDLGTtHp1DUJBPYoJwt51Lh?=
+ =?iso-8859-1?Q?kty6dhjjlZ1PQD0bjfW6L/sIO7hP7dbHjan5hFkFhKnD+PbRdnUbA335f0?=
+ =?iso-8859-1?Q?sfrGOWrL3LSyxaAFE2ZO3EW0rWoknjPHgcX3fRqkKUoMIP4H4KIRrZTLGV?=
+ =?iso-8859-1?Q?VgGueLB31uAwUtbaJyRirqfNTw7BFtssQdSip5KhCkSWx2PjVOFxRtvEz2?=
+ =?iso-8859-1?Q?nwUf5lBVm/HAtkbNcoOpOS2XSGRMOjWVU2psHcCFYtvn/z1eWakr9KQyHr?=
+ =?iso-8859-1?Q?Z9iIaW172rUUGDUH4AkIEJGscEElDRmjkWy63FFcbBNqEZ2U8PFaJo4aZT?=
+ =?iso-8859-1?Q?+ytQeGIUw4VYj2PES8tu7TrVPo4cujtbyUdb5HxDLjaLhf52llj08xEKYv?=
+ =?iso-8859-1?Q?MrOgYiprBXzanVXzBrqQwBxL8cUSM/J7Bm/feHhx0mHYEVWBpxpm20ZC6q?=
+ =?iso-8859-1?Q?4B3nZNT4AaG6QZI9boN0CM80chKEPK5CPVwoxFwM+0IU/YqVt7FQ812P+d?=
+ =?iso-8859-1?Q?1V0Qb2N26zLkyz1bW76ilWqRLLQhdQMiY+K1rEFtIeys7qasxVdhBKAM1v?=
+ =?iso-8859-1?Q?gvGJSRHecKUpApE0pat+8qtfRvjwl/SJv7rFG8vyn+VOSoB4AMxeOwqeNC?=
+ =?iso-8859-1?Q?XOKn8VgXVeWslNlKUr2xUpbSSQDiF/tVwn9iTOJF4Id2dDQI/oohZ7DGgM?=
+ =?iso-8859-1?Q?a0OObl4vhpee7pbTeGFHM83ghj4Zuka/ijDCoF+Xnl2biR2Zm3TpcVhRRt?=
+ =?iso-8859-1?Q?TwYqx0Vzm6Psp2oCLLg1prGC46pPQdOH1DkRHeryIpu+Pj7/18euznnv1K?=
+ =?iso-8859-1?Q?gVBmtbVj3Pyel9uVk9DGKdU5ltzqcOrS0jl7Ublwmgq+M+OrVC7mgyiClR?=
+ =?iso-8859-1?Q?sfi2Y9jD72ap3SZCAvAv2tFQWwB6sD1r/c/refQjFsowPKZzcy/+eUKR7M?=
+ =?iso-8859-1?Q?Ihfd8QHniPoJOWqwLVgBNxKfp5aTDS0IvUHPp/Azd5oSRQBgKkJidxqMny?=
+ =?iso-8859-1?Q?uhcVKb5XRjkduUkDu7al406PpRl9h+gb+YelQH6RBoTO8AkmtdlsGf39B9?=
+ =?iso-8859-1?Q?QYzo6I8ddHyXbvvSLrJBI9VShS16EQ4xnouIDGCydYzJ8Yn/V8eKtUYJZA?=
+ =?iso-8859-1?Q?GZsEDv8vWLIx9EtBDX9Nm2cRC9O1FLZ9u0hva0pn6um1nYdYyR11nae8N1?=
+ =?iso-8859-1?Q?4YEf/ajcLm0OBJ50oB7FL78Yloq0dimkrJg3qJkmQB68sMAR0ec9mMtFlU?=
+ =?iso-8859-1?Q?/mm6LFoRRHbVH6XfJc0M7d8ZMOzKSl4P+wEjfg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?NNF/QPcVKMupgDx7ucMQWWBi3JPISb1EjgNwQdDpuuS1diYqT+fr9VVJOM?=
+ =?iso-8859-1?Q?X9CGCnoJL8YsJ8/esZJFxIWE0lUz+X6T+TEce3mRlDjLdZVw2mXpzn1CpC?=
+ =?iso-8859-1?Q?b1Bg+kwaJGJadw165H+ZRavDS0BYsJdbCbIb/MjNUTqoGQSnCGu2A570Nn?=
+ =?iso-8859-1?Q?qK/JfI/IR/5Oeadx4DjEkly3pOx6tENXGtugHArfktpTWJCjdXt2ONTup7?=
+ =?iso-8859-1?Q?ro5g0mhUir8YISyEDiENE6RDuHghWabnUFn87Gbv5s15PkAFsIJNNWwnJR?=
+ =?iso-8859-1?Q?rq4hcY9A5uRqAT9eJ539+xrG13DBYvWQqIGF4zzWyhYwrhIXBHhXlkcCj9?=
+ =?iso-8859-1?Q?564RRbDLxNv2MeFgDiVuvZX5nJKuIJbmmWbHLal2zsDisYQu1dy0RdK7DN?=
+ =?iso-8859-1?Q?mWQePX00tqICHPDxo1BSqNsrDL3jq2TOmXBsd0yd8bqP0vSvv+tPoB7heC?=
+ =?iso-8859-1?Q?kqrv8STHJ6Md1ctQR2xvHxuZtKhmEp9litoY6xFML9cgpfplAbMyBLYIoI?=
+ =?iso-8859-1?Q?7Ny/uQehMa5M1WUXA6uIkwLV+8euCI0YU1oMXF+fxX7iNHNL4UwD+tUiID?=
+ =?iso-8859-1?Q?2ntn92S4VnLcpWF3UenEOA/9AO6hL84KoZgRpJ1yZp/+Ok+US24eYuKJma?=
+ =?iso-8859-1?Q?PoIuxDvWJasOYe8Zs5aWamOo8XDUHIm1ljv5Oek5bu6DpQgtyuu6rR0NdV?=
+ =?iso-8859-1?Q?jWKPOKQ9py+u9beF4FPvtQyRY0l5B1VF6tUjhnpXrOYMrkDIVUFI4L+DB6?=
+ =?iso-8859-1?Q?sH6dg2XIjo2sGVASjMa++H7ZaJIwL47pO37+58fQFd5fKbs789N/ICC7je?=
+ =?iso-8859-1?Q?WyTgZ5hVuMgHGEl7wAF0MOM2Kmx/H5fUMF/hnQz84FvMrYooj9RZ/JNgFq?=
+ =?iso-8859-1?Q?BaqMGU7GZVSmZuccmf6/CXvm4GDar9U9gLT5Kqfs2OY/ZnHmMqfRVVcC8l?=
+ =?iso-8859-1?Q?YFWRqKuiPok5tD0x0wOyNl+sbL9H0BOFsRYfi+K0npc8Eosw8zMEUH8bu+?=
+ =?iso-8859-1?Q?qSkXAtjnzMWkmoQ2nZrGLpxK0t4TExuQWjq0ta6jVlVKkdrhsETSohTuWk?=
+ =?iso-8859-1?Q?Mj5UwNqDdibnpLicDa84dKQ9YvOMf4QQXg00Kcb8XwDW3orLs4uKOWxviQ?=
+ =?iso-8859-1?Q?y5EkpVUDIIQS2Jlm9Ct6l6BcqEQmegR4Ga7Xq2XC+YjjL3dV5QP5ZAO3dj?=
+ =?iso-8859-1?Q?3Wq7ND3DJ81ciwS0czRAXo1JvPZlNxZPXBe337v3ZAX5BMvlNsC5aKVeTZ?=
+ =?iso-8859-1?Q?m4VPocnDt1d/sE8/3fOX49GKGHbbq3TjmdffZtNWZ/EeruZ8C6z/tRTHr6?=
+ =?iso-8859-1?Q?T2Dch1uqgQON2eMr5lXAY/m3IXmG/Jpl34B81D00081wCJy/syR7G1zds5?=
+ =?iso-8859-1?Q?UUdBKfNN2ixNWEKTdLyrXiIGHSGRglrvTHF5Y3ZrbMkiJfqbJjT1wkT4cQ?=
+ =?iso-8859-1?Q?qKeNEobN9h7ZXPIZUlTJE+AQvMcLSWTCugcp/xUq6NyKaLY39mBV8wx2LK?=
+ =?iso-8859-1?Q?c2zZgQkbjArzocH0Wbf30Q+yiDjR1QidWpVWAyGEk2CbjDSFHYZhOkmluT?=
+ =?iso-8859-1?Q?oLsK5MTji2liyP0diiM5Xa0/mtcPVbqB7Id7LlymiXv9NGCdvUItgaa7kY?=
+ =?iso-8859-1?Q?LnYCXoU00oq5viMG2mua2uQLr1injhbIz0?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 06 Sep 2024 08:23:28 +0000
-Message-Id: <D3Z21TAKKE4R.7AQ0T9SOCGOJ@fort>
-Cc: <pantelis.antoniou@gmail.com>, <nava.manne@xilinx.com>,
- <radhey.shyam.pandey@xilinx.com>, <austin.zhang@intel.com>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <system@metrotek.ru>
-Subject: Re: of: Status of DT-Overlay configfs patch
-From: "Dmitry Dolenko" <d.dolenko@metrotek.ru>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>
-X-Mailer: aerc 0.14.0
-References: <20240903104608.184988-1-d.dolenko@metrotek.ru>
- <CAMuHMdVuJFRrHAR8Q+HkXbaf29TaUFgvxYY4Ua9xQ7mGZoBsnQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVuJFRrHAR8Q+HkXbaf29TaUFgvxYY4Ua9xQ7mGZoBsnQ@mail.gmail.com>
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d491714-a309-428f-e1be-08dcce4d3645
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2024 08:23:39.8100
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tFDlf5cV78UZsdvh5ohwlgKQlmE3fAq1JpIM6x74vqnIgULwkUp9HOqHZ3z3bj5bXvpNC8ZK0bb3PRwh2kIOh5z0ufLiit4twNm47+DR1Lw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4678
+X-OriginatorOrg: intel.com
 
-Hi Geert,
+Hi Huan,
 
-On Tue Sep 3, 2024 at 3:35 PM MSK, Geert Uytterhoeven wrote:
-> I try to keep it up-to-date in [1].  In fact I have just pushed a
-> rebase to v6.11-rc5, to fix a merge conflict with a recent upstream
-> change.
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers=
-.git/commit/?h=3Dtopic/renesas-overlays
+> Subject: [PATCH v5 7/7] udmabuf: reuse folio array when pin folios
+>=20
+> When invoke memfd_pin_folios, we need offer an array to save each folio
+> which we pinned.
+>=20
+> The currently way is dynamic alloc an array, get folios, save into
+> udmabuf and then free.
+>=20
+> If the size is tiny, alloc from slab, is ok due to slab can cache it.
+> Or, just PCP order can cover, also ok.
+>=20
+> But if size is huge, need fallback into vmalloc, then, not well, due to
+> each page will iter alloc, and map into vmalloc area. Too heavy.
+>=20
+> Now that we need to iter each udmabuf item, then pin it's range folios,
+> we can reuse the maximum size range's folios array.
+>=20
+> Signed-off-by: Huan Yang <link@vivo.com>
+> ---
+>  drivers/dma-buf/udmabuf.c | 34 ++++++++++++++++++++--------------
+>  1 file changed, 20 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> index d449c1fd67a5..d70e45c33442 100644
+> --- a/drivers/dma-buf/udmabuf.c
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -343,28 +343,21 @@ static int export_udmabuf(struct udmabuf *ubuf,
+>  }
+>=20
+>  static int udmabuf_pin_folios(struct udmabuf *ubuf, struct file *memfd,
+> -			      loff_t start, loff_t size)
+> +			      loff_t start, loff_t size, struct folio **folios)
+>  {
+>  	pgoff_t pgoff, pgcnt;
+>  	pgoff_t upgcnt =3D ubuf->pagecount;
+>  	pgoff_t nr_pinned =3D ubuf->nr_pinned;
+>  	u32 cur_folio, cur_pgcnt;
+> -	struct folio **folios =3D NULL;
+>  	long nr_folios;
+>  	loff_t end;
+>  	int ret =3D 0;
+>=20
+>  	pgcnt =3D size >> PAGE_SHIFT;
+> -	folios =3D kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
+> -	if (!folios)
+> -		return -ENOMEM;
+> -
+>  	end =3D start + (pgcnt << PAGE_SHIFT) - 1;
+>  	nr_folios =3D memfd_pin_folios(memfd, start, end, folios, pgcnt,
+> &pgoff);
+> -	if (nr_folios <=3D 0) {
+> -		ret =3D nr_folios ? nr_folios : -EINVAL;
+> -		goto err;
+> -	}
+> +	if (nr_folios <=3D 0)
+> +		return nr_folios ? nr_folios : -EINVAL;
+>=20
+>  	cur_pgcnt =3D 0;
+>  	for (cur_folio =3D 0; cur_folio < nr_folios; ++cur_folio) {
+> @@ -389,10 +382,8 @@ static int udmabuf_pin_folios(struct udmabuf
+> *ubuf, struct file *memfd,
+>  		pgoff =3D 0;
+>  	}
+>  end:
+> -err:
+>  	ubuf->pagecount =3D upgcnt;
+>  	ubuf->nr_pinned =3D nr_pinned;
+> -	kvfree(folios);
+>  	return ret;
+The variable ret is now unused in this function. Remove it and just
+return 0 at the end.
 
-Thank you for the information!
+>  }
+>=20
+> @@ -403,6 +394,8 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  	pgoff_t pgcnt =3D 0, pglimit;
+>  	long ret =3D -EINVAL;
+>  	struct udmabuf *ubuf;
+> +	struct folio **folios =3D NULL;
+> +	unsigned long max_nr_folios =3D 0;
+>  	u32 i, flags;
+>=20
+>  	ubuf =3D kzalloc(sizeof(*ubuf), GFP_KERNEL);
+> @@ -411,14 +404,19 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>=20
+>  	pglimit =3D (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
+>  	for (i =3D 0; i < head->count; i++) {
+> +		pgoff_t subpgcnt;
+> +
+>  		if (!PAGE_ALIGNED(list[i].offset))
+>  			goto err_noinit;
+>  		if (!PAGE_ALIGNED(list[i].size))
+>  			goto err_noinit;
+>=20
+> -		pgcnt +=3D list[i].size >> PAGE_SHIFT;
+> +		subpgcnt =3D list[i].size >> PAGE_SHIFT;
+> +		pgcnt +=3D subpgcnt;
+>  		if (pgcnt > pglimit)
+>  			goto err_noinit;
+> +
+> +		max_nr_folios =3D max_t(unsigned long, subpgcnt,
+> max_nr_folios);
+>  	}
+>=20
+>  	if (!pgcnt)
+> @@ -428,6 +426,12 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  	if (ret)
+>  		goto err;
+>=20
+> +	folios =3D kvmalloc_array(max_nr_folios, sizeof(*folios), GFP_KERNEL);
+> +	if (!folios) {
+> +		ret =3D -ENOMEM;
+> +		goto err;
+> +	}
+> +
+>  	for (i =3D 0; i < head->count; i++) {
+>  		struct file *memfd =3D fget(list[i].memfd);
+>=20
+> @@ -436,7 +440,7 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  			goto err;
+>=20
+>  		ret =3D udmabuf_pin_folios(ubuf, memfd, list[i].offset,
+> -					 list[i].size);
+> +					 list[i].size, folios);
+>  		fput(memfd);
+>  		if (ret)
+>  			goto err;
+> @@ -447,12 +451,14 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  	if (ret < 0)
+>  		goto err;
+>=20
+> +	kvfree(folios);
+Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
 
---=20
-Regards,
-Dmitry
+>  	return ret;
+>=20
+>  err:
+>  	deinit_udmabuf(ubuf);
+>  err_noinit:
+>  	kfree(ubuf);
+> +	kvfree(folios);
+>  	return ret;
+>  }
+>=20
+> --
+> 2.45.2
 
 
