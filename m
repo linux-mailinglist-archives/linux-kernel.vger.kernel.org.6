@@ -1,218 +1,124 @@
-Return-Path: <linux-kernel+bounces-319426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BD996FC7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:01:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB03E96FC7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B93D284E2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658351F29106
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5305A1D45F3;
-	Fri,  6 Sep 2024 20:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18691D6789;
+	Fri,  6 Sep 2024 20:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="Ud0GCsTa"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2114.outbound.protection.outlook.com [40.107.21.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KBfwCypv";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="dOdrA8+j"
+Received: from a7-42.smtp-out.eu-west-1.amazonses.com (a7-42.smtp-out.eu-west-1.amazonses.com [54.240.7.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9347B6A33C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725652902; cv=fail; b=G7HBHfPNV/JgBZk9JWSuWAcZYg1UvUiN4+e2UrBIYWXHJVAD2+QX1diW87fvWCNhdXbqILaIU1/O7oy3gJGGEAhVJzsmJSwx+Ri7gFgKjgTvZDjbx8W6qGcnMfYA+/wRgAZqesjK1/IqYpWdHp14SzdqqDEv/7PRx8wrPau1LNE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725652902; c=relaxed/simple;
-	bh=VehnYloh5D6Coccf5ojFB3RsmlSGy7GtvTjiYsu7+oU=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=m5yl6Hzbu9DjMUTxr4upfzzOK5r9Rpi0nJ5+g4XhrCOIsgjSOgHtDEwgWjAE4+AzEgs4lnzKtdfT4TcTGV3GPH2yLE1StMn8PMxUBNAqTpfoPxRolArmezPCrg6SvmMVALCTyOZqbHJ4yEI5IKHGqwq3vfLpmIYRfC6o14NVCLw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=Ud0GCsTa; arc=fail smtp.client-ip=40.107.21.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NThFI5QD+k8DRTnDy3uEBT28zKHygY+O9fWL6mlF7DzYOyY9e+KcOCdC0FbM5+PwdlqA9WRN5je2W9tHgz3THmNhGHs4i9D6hy2maf+0rEAAa0naRq55u4SpkNuQBV6/fxLjRWDaCo9e1qRq0MyynPTdGRYwtW2eQ/eZLtVDjinEKNGqoEaHQoYKu0/4LfZQjQaW63O0421j4SwZSivmpohA6c9jHW255A1zC6oAb0Fsg35r83gLhz/jDFQ+HKUYdk2V4h7SEoZVol/MAgO308aQFL3K7GFsAmIRHUsnwpQBUJMEujp6uhzyjpfHAwOVFJ1WxGyppVhZl+0sFwKUQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LwNJqQ1ftLT2XAp0Lckwzg/atiYCuhWrWJziEuOSf88=;
- b=CEnsCv4GNUdKgZkhJ/ksJR9utoWQuLsgQmhjrKB8g2bL3i5Xi5u+n11oauC+ZQV01IAHFCK7+vbwCpBbkLoSWvHPNxM5JeA0+oJUAdlZ6U1sLAA3GtIJaaXLqOFrZTYmMcPycq458/dsQhE7HGv+zuREK+xOomqbcAYwJ4RTTbZZRLPnoEyBvfg+WAJOqo3bVhMSZio0Fff5O1hHz7rz5lc8MG1cJ7ljOyFZeh3fVwTDH4Nk9CMmIp0wJ5PW6q5wGBd7HqJuOPPr8IOyaDexMOUOQEA0u0Z2DHCCvH7BUzGR1qpSWCImGv/2zQgdM+8I6IWWO/msaLl+rzlKebrMXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
- s=selector2-mysnt-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LwNJqQ1ftLT2XAp0Lckwzg/atiYCuhWrWJziEuOSf88=;
- b=Ud0GCsTayf8zTOPRRhWOU5nPqJkdRRsbKTWFkPpl4+fhY4O1Nf+GFN4ireVysreZxmrbqY6jFCP0D4KsgU/IGSrJ7ohdHq/X0J7O26R0gh8jQLgFxekRH12bkVZ3AvfD3P2XfkC4cJSIK6jBRQyOben2porrNc21oKQUTqbf1sQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by AS8PR10MB6389.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:536::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
- 2024 20:01:36 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b854:7611:1533:2a19%7]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 20:01:36 +0000
-Message-ID: <01d578b9-e42e-4767-a33f-b0892a602e23@kontron.de>
-Date: Fri, 6 Sep 2024 22:01:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: i.MX8MP IMX-LCDIF Underrun Question(s)
-To: Adam Ford <aford173@gmail.com>, imx@lists.linux.dev,
- Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- dri-devel <dri-devel@lists.freedesktop.org>,
- arm-soc <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Dominique MARTINET <dominique.martinet@atmark-techno.com>
-References: <CAHCN7xLL4hrTK1OqsqUa78cdp9ZcG0sC+cO5QKC3x_Y9-QVzSA@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <CAHCN7xLL4hrTK1OqsqUa78cdp9ZcG0sC+cO5QKC3x_Y9-QVzSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0228.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e9::9) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226982BCF5;
+	Fri,  6 Sep 2024 20:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725652939; cv=none; b=oCuvh6opoQr9uQuNKJLlPPDQ58B63fCFu0e8fZICKZ86N+7sMSiWxFm2SrXllLjCWtgr+anIbbRa6bLECmItB97hW9O5tL+kD+W7la2A/w6ijTSfweEHbK50XUWzuw5PYXxZNdbukk6+sK58w+sSmkdMwOlrj/poVOZBKA/6YLQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725652939; c=relaxed/simple;
+	bh=vj3ywybZ5L9YAyh1lIVp6jPH3WTnH0ExmDAOYOwj8dA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pwpAyvWZRmk0nUksbCv/BAWNXed1LnHOaULGjeWDIvF0NC9OemPetvZ726NZ7u+buhiqg6hImRRNVJz+DlZpUcPZH0NMHOfo+d7pWptHbvL3zQBfxilkQUeR+WgPS15BYFa2Ve8Bn2aBGq4CODQZqwIt3oDSPpDuZXbfOX26Gfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KBfwCypv; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=dOdrA8+j; arc=none smtp.client-ip=54.240.7.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725652935;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding;
+	bh=vj3ywybZ5L9YAyh1lIVp6jPH3WTnH0ExmDAOYOwj8dA=;
+	b=KBfwCypvcRPdsL/Eo0DFYXrF2uApqQtwT6PvonrhhJDvZLsAxau0euqDaiSDUdxu
+	+/Nj4l2RhQ7GKV/tUfO2IjO60l+fvzncB2zyRf69Takz910PdyUltEEoBwdr7wuMPUY
+	TxmJ8RKKHAH2z+TSt3OtZK3L/1CK6ruxVr1azoWyL/wQz//PPoDzztOKqKFMRJ21oaH
+	qpe0NeQtrynWDqVbLCylgvFwLIOVMnXcQ3ZhdO4ZoUsqf5nn0yzN7zMSk6UvkGeugp5
+	qxdYa+U8y5zO7wpQ+U1gxA0TxQAYXB9o27RUjzPqIAn+Q/kiWB7bZ0/CNE51UATeqww
+	CCHi7mEaZA==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725652935;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=vj3ywybZ5L9YAyh1lIVp6jPH3WTnH0ExmDAOYOwj8dA=;
+	b=dOdrA8+jrpjcFCumpeWG9DyalV69rl6yMTX0Ziye+dYBdM81FVIz/vI37I4GiNix
+	FsIgyxdjuYRqfpvwiZ9N5tPCLv/jH02ra7BMfTmE0rwidMTDNCapSlvPCFUWKTM3UQS
+	TZiA8gddWV92lQNq3O9OlqVvGuVdspVajZAwJI9Y=
+Message-ID: <01020191c8ee20f9-9382cd7e-c3f5-4e19-a9d2-9222fd36e789-000000@eu-west-1.amazonses.com>
+Subject: Re: [PATCH v4 0/4] Add Synopsys DesignWare HDMI RX Controller
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Shreeya Patel <shreeya.patel@collabora.com>, 
+	Tim Surber <me@timsurber.de>
+Cc: heiko <heiko@sntech.de>, mchehab <mchehab@kernel.org>, 
+	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
+	conor+dt <conor+dt@kernel.org>, mturquette <mturquette@baylibre.com>, 
+	sboyd <sboyd@kernel.org>, "p.zabel" <p.zabel@pengutronix.de>, 
+	"jose.abreu" <jose.abreu@synopsys.com>, 
+	"nelson.costa" <nelson.costa@synopsys.com>, 
+	"shawn.wen" <shawn.wen@rock-chips.com>, 
+	hverkuil <hverkuil@xs4all.nl>, 
+	hverkuil-cisco <hverkuil-cisco@xs4all.nl>, 
+	kernel <kernel@collabora.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-media <linux-media@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-rockchip <linux-rockchip@lists.infradead.org>
+Date: Fri, 6 Sep 2024 20:02:14 +0000
+In-Reply-To: <1919d97402f.b403f96c443474.1860819764033812181@collabora.com>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+	 <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
+	 <19150697f90.11f343d091099757.4301715823219222254@collabora.com>
+	 <74850340-b662-4a58-b5eb-a4e352c5002c@timsurber.de>
+	 <1919d97402f.b403f96c443474.1860819764033812181@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AS8PR10MB6389:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28488c5a-1e17-496c-18ef-08dcceaeb68b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aCtYaVA2TVA5dURBaFRCdG9TSXhLaE5UMGNLaklMZ0dCM0FjNDRYSEFxckY5?=
- =?utf-8?B?UGlVczBid0NoOFQwWkdlQXkvWi9jQUNKWWtqeUYwb3ZnOWlRQk9lTXM4bDE2?=
- =?utf-8?B?RTFqYVEwUkFkQUVUVFExZlRkNXk0SStqUGFHYVhYcnd5N1pwbVhWa01hdHlz?=
- =?utf-8?B?SEFwS3RLMmZCM3JnTVJFUGlHUGwxR0NsT1paWmlZNW44elBGRkF1dFRpM21I?=
- =?utf-8?B?ekMxTTZlWXg4eVFFNDk1VEFSSXp3dk9idzhFUXdOQ0dvY204YzJKNTFsY2dU?=
- =?utf-8?B?byt0dmMvUTRiMXhZU1J1MmlLU1VqV0p4SWp1c25JVVIzVUlQZ3RvWVpCc0Fx?=
- =?utf-8?B?ZDNqRk9CRDJ2Nm93eFpmWW5MSTVrRUVUOUtvWWJnajNGM1FZV0pNalhmOEJa?=
- =?utf-8?B?VSt3WVF5cS9ieGdIOXR0UVJCdW5rME5wVFlMNGIzeWZZeGhCa09YMkxlTmhk?=
- =?utf-8?B?Z3dtckRsV0pzQTFGUHRXRlNBQzd4NTVzRzdFcktHeXRwdUErNVRPMDBZNnEv?=
- =?utf-8?B?emFObWNqSUNwRzJhbDcyZ3dnSDNYMFducS9SZUVxb1VodjVzUlZ3dmFmNHZD?=
- =?utf-8?B?d3JCcHcvYUVndFlENkhRUFpGV3p3MnZndVJpaVFKazZFQ1lleWUrdjBIRVEx?=
- =?utf-8?B?elBqVDRYb2NXUktYeEVCZVZkMlJCZ3FyY1k1Vnc5V2s2c2NEb1VUWitlVDc2?=
- =?utf-8?B?RlBJRWs2cE9QTERIdk5Xa3JDN3BmWTkvQ2gvb3ZIWlQzMzlzWmVFek8rQjRU?=
- =?utf-8?B?a2s3ZEZwRmVmTnF4c05oWnlJZTJHbTF5YW1JbzZyeEp2TGV4eFhVaGlGL2tG?=
- =?utf-8?B?WklSMjR6R0JqK25UWGZ0VjZlREZBUUhpdE45YlRYY1ExK0FreTFtUFpyazBh?=
- =?utf-8?B?OStHZXRKL0V6VlZRaDFIVmF2OFlZaGVjU0ttalAxUkxvb1djL1RCcWxPV1d1?=
- =?utf-8?B?Yno2S0d6Qi9wQ2xMSnVGc0N1cUZ4akFaTlJnMzZFMllBbzVmZERVRDZDeHVE?=
- =?utf-8?B?Y1h4VVg4RCtHeERSbUE2KzBCcGNyWkRvaUlCNVpwY0NjbDhtYTRqTHJFSS9w?=
- =?utf-8?B?NUUycjd2RkozMXQ3UGk2Ri9BcW5IL0daSitoOWlzOVRmM3FnZ3lnL0tRODVn?=
- =?utf-8?B?Y21ETENOSS9FU0hHSFFpZGFzdGlDQmpULzZsZjdSWU9TeG5sN21oRlJKRDNN?=
- =?utf-8?B?UkJLSzJ1czBMYmhCRlo2TDYwR0Qrd01PYXBZblZHbVlVcmoxRFVNYXB3d2Js?=
- =?utf-8?B?c2hMTnRobVM1em80VlppWGZRNE5JRmJWM3RONkRZdEtwU0sxdDV2d0lZVGNz?=
- =?utf-8?B?NXNIRWhScTk0RTRoVEtKMHlmenphMUVMUyszajhFSHkyRE4vRWtWSDNjaHJN?=
- =?utf-8?B?SmdMOWEwZ3ZHanBFbDRsU0dTUjQ2bWlWZHptSU4rNVkvd0JPNTdNZnBRRXpv?=
- =?utf-8?B?SklOZGdveURnUHNVeFg1Ny9hMzR5dnVLZUlYaW52VzlsQzJqOHN6WnF6UkhD?=
- =?utf-8?B?T1BFUy9DN0doeXhBV0tTUTVYa0hoT2x0WGdHSTk2M0V5MHBZR2tlUmhTVEJC?=
- =?utf-8?B?SExXZE4vWEcxZkNIdDJwaVcvVjFCRWIzeE9mNWppSmg4aDRHOFd1NFIrYkZE?=
- =?utf-8?B?ZW13dXFBM2hWamhQUkdISk5oTXV1Um1PS1lRbkhUUlJ4eHlBTlFrZWhxS29Y?=
- =?utf-8?B?S3N4QlJ0aFZpUmhFUkpGZ2hlVDE3K21mSVFZYlkrajZIL1dNWG9YU0pzTFMr?=
- =?utf-8?B?Q3J0Mk82YTFRWE1mcVNIK2puMzh3RVhYRU5CWFJzMUYxSlN6VnNHcUk4aUFt?=
- =?utf-8?B?VGRGWXJjUG1nN3FuRExaN2p4c281NnFyN2RZSmF3ZXhMTnl5TW14Zk5FNmQr?=
- =?utf-8?Q?3V6SCyI3dgQ/I?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?elIzdW44NzN6SFQwRDJsdTRJMGtvbzI3bUY4SjU4aUVHS25OUnpLTGt2emg5?=
- =?utf-8?B?SS9pdXVmblNvc3FTV3NDdUpBMFJnV1R2REdUa21nUFZJQzhnTGZDYkFCZnFQ?=
- =?utf-8?B?L3NxN0xZWjFhRUdQRkE1NG04NEg1NnJRcG9Ya0ZoSXhNN1cra2VRbm01aktX?=
- =?utf-8?B?ZlBBNEowL2hvWlJaWktEUlh6YnVNaDFUeDBRM0NkQ1g2ajExN1c0NzExMlJr?=
- =?utf-8?B?YUZZQVJNSGt2S2xyVENxUzlMN2dmOUxLSWNUcEZER1RRSUl4QWdtL2poVk5o?=
- =?utf-8?B?dXFTRFd2c3JmWS82UmFqTXdiRWtZbVJhTlAzbkZRaHRJaDhrY2FpV1pEN1B1?=
- =?utf-8?B?eDlmZHp4NGUzQ1BKelpWbHRlWmV6R3d0RWo3S1F1VDB1TkZhcnp2OHE2YjhQ?=
- =?utf-8?B?ZEs1TUhuVWNxZzZ4emlNMXV3RWNCZFM1SU8vU0gwNEkrNUQxNVV0UThqSHNK?=
- =?utf-8?B?NGtEdVNETWtHbHZjN2FpcnRUTWJzcUFVU3pPWnFESithSkxGMVUrUzl6engv?=
- =?utf-8?B?LzV5UlhQcGtuS3BsOTVIVXhybUozYW9Ebk1JRE1YWCtabkhwVnVUM0tZVE1K?=
- =?utf-8?B?bkZiT3M3WDN6NUdqTjlBVnUweEF0cnZuckptN251UEZiclluZWczakpOdHRH?=
- =?utf-8?B?aEdrOEtWTVhpdldtZXJSQVhxalJRZDB6akJJaUZMNFJ1T0kwNHo1R2dNVzVt?=
- =?utf-8?B?UnVETkI1QzJRUzFjYnEzZWtOT25YV29oWTV5ZWNSSkdKRGpTZ2k1VVgyL1NE?=
- =?utf-8?B?OG5sdFZpVkFBWUc0TGM3cERsNlAwQ3NHT1dvL2YxbFBxc2lMYUtDTGhZMzZP?=
- =?utf-8?B?Ri9ld254M1pnekc3RTZYb2lXVlhBY0Y4QXFDcEI4SHJQaGhTRXprZ2RPclVE?=
- =?utf-8?B?U3ZCOGQ0c2RTcDFLWHczTEtyU0tWeUFoK1RQcTJ5WVExQmR4RWlDNllhZThR?=
- =?utf-8?B?b05URUdXUWpPZE1nclBHakQyS0d1NjdPTzFreHlBbXVQd3RCSElyZ3FlZ245?=
- =?utf-8?B?UnpQNzNEcFpuTEVRVjYxWFRKRU40cTJoWmM2bzJZNjhYd2hocWp5SEVobXlw?=
- =?utf-8?B?TVo2WDFMK1JPT3VmNmVabkdDaFhTZjF6cHFuYmREZzdHMk0zclpJZWxRNnBx?=
- =?utf-8?B?SlIxc2xKcGdYNGxwd2I5OGlUSGxPUlB6elNYcTZPd1RUVmVGTW9ocDc1dFRn?=
- =?utf-8?B?RVVHZGQvbVZBckV2S2o4b0VlbTNsemlpT2JmOGZld0JWQkJlb21TTU1iNFlh?=
- =?utf-8?B?SjlYWHFpOHBEUFJaVEo3ZmNGUXRneURXYkZVcVdwcWpvVzVBZ1FuQ09HVmtB?=
- =?utf-8?B?dE1pYnRhZkljSC9PdjU5ZHhlYWJwZ3E1NXBxaTVaeVRyZzYrdWNVUU5Ia3R0?=
- =?utf-8?B?RmlEWE9uSlByZWtPVHg2UkMvT0Z5aWVRaVllQ3Z2b1oyYm1mOENDenEzd2hN?=
- =?utf-8?B?V2p4OFVLVUlRcndVeUE2MzhoQ1YzN28rUjYzUXYyTGV2dTNibUdna0RkWGUx?=
- =?utf-8?B?TTNUV2JjRTZGYW96aDBPQmRhZDdPM25aOEQwVEc0Tm9QVm0wbW1VYWhpalRS?=
- =?utf-8?B?NzFXdmRLejR6a1ZRb0N2VVpsYXozVmppVEozUmFaRzRwcWdkODNtM3I3NVVE?=
- =?utf-8?B?TXhuQXpmcGhoT3ZlbFp6QUFIeEJZQndxMFJGdU5jZVlBV2pHS3JISnJlcDJw?=
- =?utf-8?B?ZmJlVnNVNDRZTE1EUFY4a1M3TGI2TDIrRDZURTJGbWROMmowK1JFaithZkFZ?=
- =?utf-8?B?Tk1sYXF1NmMzd0UyeVFCU2QzOFVOVGxzcTBpU1NoMW43dERBWmxxd21CNjRN?=
- =?utf-8?B?Ync3SmIvdW95eCtyVDQ5ZUVoMHlobDRBNC9tUzJyRlBKWDlmVE8yQ3JZSkh3?=
- =?utf-8?B?VnpLWGdRT2pRTW5xU0NwQ3dTaTdQeVVlbFBLM05NZW83UW1XNUcwRmI2OVNJ?=
- =?utf-8?B?U0FXMTY1TGFuamhqMkNmOHNVMmFxdm1qWGRRdm5vNmhUUjBXSktwWnRydVVl?=
- =?utf-8?B?UlBrVXFTR1c5S0M3YjVxcXVvbUhVeS9ZdHRheW15c0FzL3MzeXFTN1pRSGRn?=
- =?utf-8?B?TmhkSWFBeHk1UmlmelU3RXE1RWVTRXlRZ01FTVRtaVM2djM1Z3dmMmFhM1Zk?=
- =?utf-8?B?THp4QnFtbzJGRzBUaTRTSzRrcWxQUmM3SXBFaHJRUW1zdGk2aXUrWVYwY0cv?=
- =?utf-8?B?K0E9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28488c5a-1e17-496c-18ef-08dcceaeb68b
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 20:01:36.3081
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0pQrLDyFpHHjI74sD+7pfPwM1si0hcKgzmsV8Zzb+RdNXJNG9O5N2pBNlrZ6C+6l/LtvsY+XMBqUbR9tlWzyoqgzh0PRdqABc/2SwH424v8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6389
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.06-54.240.7.42
 
-On 06.09.24 3:46 AM, Adam Ford wrote:
-> I have been testing various settings on the HDMI out of the i.MX8MP.
-> 
-> I noticed that sometimes my monitor would not sync, but sometimes it
-> would on the same resolution/refresh rate.  Frieder noted the LCDIF
-> was sometimes underflowing, so read up on it a little bit.
-> 
-> In the comments of the LCDIF driver, it's noted:
->     Set FIFO Panic watermarks, low 1/3, high 2/3 .
-> 
-> However, in the downstream kernels, NXP changes the threshold to 1/2
-> and 3/4 on the LCDIF that drives the HDMI, while leaving the other
-> LCDIF interfaces at the default.
-> 
-> When I increased the threshold to 1/2 and 3/4, it appeared that
-> several resolutions that my monitor was struggling to sync started
-> working, and it appeared to sync faster.  I don't have an HDMI
-> analyzer, so I cannot verify much beyond knowing if my monitor can or
-> cannot sync.
+Hi Shreya,
 
-For me this change doesn't seem to cause any improved behavior. My
-monitor still fails to sync every few times I run "modetest -s" .
+Le jeudi 29 août 2024 à 15:33 +0530, Shreeya Patel a écrit :
+>  ---- On Thu, 29 Aug 2024 03:43:40 +0530  Tim Surber  wrote --- 
+>  > Hi Shreeya,
+>  > 
+>  > another hint:
+>  > 
+>  > Changing the EDID like you described fixed the 4k60fps BGR3 input.
+>  > 
+>  > But still for NV16/NV24 (I can't output NV12 for some reason) there is 
+>  > the error which Nicolas described.
+>  > 
+>  > The output from v4l2-ctl for NV16/NV24 is:
+>  > 
+>  > Plane 0           :
+>  >         Bytes per Line : 3840
+>  >         Size Image     : 8294400
+>  > 
+>  > According to Nicolas there should be an additional plane/more memory 
+>  > reserved.
+>  > 
+> 
+> Yes, it could be possible that the imagesize is incorrect as we made some
+> modifications related to it in v4. I'll increase this as required by the NV12/24
+> and see if that fixes the issue.
 
-Also we have a downstream kernel based on 6.1 with backported HDMI
-support and I don't see the issues there. But I need to make some
-further tests to make any reliable statements.
 
-> 
-> Could the threshold and underrun cause this monitor intermittent
-> issue, or would this be something else?
-> 
-> Does it make sense to have a flag or device tree option to override
-> the default thresholds to change the panic level?
-> 
-> adam
+Sorry for the slow feedback, just noticed this message. Please make sure to us
+v4l2-common, these exists exactly because no one can get strides and image size
+right on first go.
+
+Nicolas
 
