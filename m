@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-318483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D03C96EE98
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:55:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA7696EE9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB9F1C23802
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93B6D1F25614
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2653115853A;
-	Fri,  6 Sep 2024 08:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839711591F0;
+	Fri,  6 Sep 2024 08:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t34t0/LS"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRiu7/ej"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0FE53376
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A52155CBD;
+	Fri,  6 Sep 2024 08:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725612938; cv=none; b=ol+yRnuRfEq8l896axxTNvAifVhKxsYwzUK0TCvW6CXbr5Np/4w0MjCXSuS8v9Wsu6ILA9oGGIhcvyGxbageiBFsezKNVVQk3MizfVgCA39uiE8MFFd/wXLfVQX+3Yj2U3FkH+rB0VQrVuWar+BZbYxK3etWx1ub4pYaVIXx1Qk=
+	t=1725612943; cv=none; b=RrlX+mS9GjSmVrzShTs0UJrov7ThvvkXtuZYUVZWr6aGefgviKGeqEunKYP5dCb75a991kXs3hPaw5zNLvIhwsUOoivJqJEAZDSv6sIPKbGEebouCj4jFPnWm9Oz/EGvV5z4F2opwOhRfKMt5mavufVgEx9MdjyzDvgT4lIPK2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725612938; c=relaxed/simple;
-	bh=1tKIDlnB3KkJtGr5ZP7mpRStjsQ42s/bsGiQCaSCx3I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dvSPlciuEBOrPQeNpF93ci188e5whF1OX4irRL30udZZEN5GYyPaF0Cvmojtq0Kx0A/Ca8gaiChpU/9FJj5sUJAF/5jMKpBXsM931FPGW2tboz4QuccObHhVljsJ0o4cRXkUi1ZLTFobBvPdi1PuqRrsbRiRS44gcc2zo7ssNjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t34t0/LS; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1a9f84699cso1797450276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 01:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725612935; x=1726217735; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3BuLJ0oJF3nW7k2dmOfDC2I3AF3RStkd1D/ShFKctU=;
-        b=t34t0/LS6bsIrCg+26Ee/pejyHgR6YlY9wg4l6F3HW8nbteaPnR7My7Pce+x0RhnXR
-         1I2s6MTxFiiTEW06IIR5c2En8H/WHBi/UZ7e1uUL6+VmgS6wclt+w7FyGatQkMkssPqd
-         Pe6I3NaeM09Stg4o75GhCnsvKNT3pRu/gIOAb1PDBi32H9lMQwwRUvAJ+gdxj2yTFk6f
-         FuZXEblom7Q4F4qAQVc+52Ix3RDgCOaPBLnCt29skCJkRUnwj2g0BNNYmf43krz2l9yg
-         5btsP0egWzQn4s+tYSMKFMadCw+X+JmyLYNbw9UMTvHz0hMd0LVNHrvIg25Whlv/VFZc
-         nqvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725612935; x=1726217735;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M3BuLJ0oJF3nW7k2dmOfDC2I3AF3RStkd1D/ShFKctU=;
-        b=Q49NuJ5xvpHA85vAtiLA9lM2luS12XULJiwqIiwJDVbBcwQvlbKcGmq0LT66CDz8OM
-         oaB2sqlZ1yloMt4dIcMaQ2yS77EiZtoJtmPmeDSPnouDWNFws+ZUMdBIl7D7LhYzpvE4
-         7BqRtEE06mUgp7SkQppXxudKr5e0WN5jd1mzbKYxTaiQBggD/+7IwOotytUhJlYjFgCT
-         PKmH6jPtnD1RBxidswuVjUgtWBik4QGGX5AAZwnNyo2y6gk07PBEq82N/4mK2Y2MWauz
-         od/d9wjrYJqXBAh6D543z99uSj3R6/6s036ns60i/AFL6Z23albuVspo8OrfB/OHYkiu
-         2AJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYualAJ0h+vx6AzAdmcz534qS9Jza99ANDPc/48OWICzVosBFZeDCgsxrgYMWOBG1fcTROZirdVmbJOi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7GSWxefx+HQ1C9ruLE8N9BPFI+vIv+ToU5+r0YQxvEQ2NXWyb
-	Q5AtMGVvfjBz3kGwjPc/xeXiSHUZcpaN3C0SaOsSXQG8f1SVEMvbppY/TCuj6Xmvhcvkg5NGTkP
-	toDdKeG3LYu13hJ0PmP4rSDeSoKPWCM3zlUhTFA==
-X-Google-Smtp-Source: AGHT+IHtYWG+Hz8JJJa4zYxXRaKyd0MoxOK8rolwdv2JTB/QiteDyUjIyfsFBEnuK1KLoEFT3fbCCFgXam+ue5yETyc=
-X-Received: by 2002:a05:6902:844:b0:e1a:a665:1db4 with SMTP id
- 3f1490d57ef6-e1d3488379fmr2023197276.14.1725612934767; Fri, 06 Sep 2024
- 01:55:34 -0700 (PDT)
+	s=arc-20240116; t=1725612943; c=relaxed/simple;
+	bh=1aAaNnmeOLOewP2Gk674dATUFG1To6NBujHf5BahOR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U40eUj8DECqjQ1iqWW1dU0+VNngdBMI3ZDPjnUHzUvHLQj/y283EWCGwBs5fsvk2rg5/j0U6KG+pfpOi7xSZyvzZ0DzklYM2cDv0Xzikvs1Zx8VZLoSMMVDotohlU4dMPARE5eY3hSiLykTgurqZP0cA+pD4ehKKQpG6mmIRUl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRiu7/ej; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C86C4CECA;
+	Fri,  6 Sep 2024 08:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725612941;
+	bh=1aAaNnmeOLOewP2Gk674dATUFG1To6NBujHf5BahOR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CRiu7/ejJIaDDh1TaE2LFl6HgF8rS0Lx8PqV2mbwAUxEuTa7CHT/Cve6AajCHvbw9
+	 6Bzq+Pm7RUyvj/PDIUr409jYbJ+XLBShT4EEceVF+OJEAwf1sG624CmMHSfgh2VJTu
+	 CIPcGwiByeiJ14e1GdAqD0tOiYiB8JyHawSOg1EiWHHGQB3x7f6azknPL45mUtEGCO
+	 zdGvXqnLBXijHdeAJyuBnUtBsfEtRiEcA4A/UEwVbEojY9rM76+KbWBNfJMZy2xjrH
+	 1F1qTgBeBvAtD539hhqzPcM0otyn+kHG8OpU2rv48fi679KA2/qaT+b9R2zMPmjpyk
+	 S1LK7/8gOS3AQ==
+Date: Fri, 6 Sep 2024 09:55:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
+ property
+Message-ID: <20240906-float-cabana-69e69e9dc6a0@squawk>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+ <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
+ <20240829-stopwatch-morality-a933abb4d688@spud>
+ <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
+ <20240830-quilt-appointee-4a7947e84988@spud>
+ <642d61b23c58d9b846e42badb2f2d97691c92144.camel@gmail.com>
+ <20240906-reveler-waggle-8a7043690633@squawk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com>
- <20240905-lpm-v6-10-constraints-pmdomain-v3-3-e359cbb39654@baylibre.com>
-In-Reply-To: <20240905-lpm-v6-10-constraints-pmdomain-v3-3-e359cbb39654@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 6 Sep 2024 10:54:58 +0200
-Message-ID: <CAPDyKFquSHYLGzd288K3JSOF_p+UyRO8GoBP9TGCR_3syGXTDw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] pmdomain: ti_sci: handle wake IRQs for IO daisy
- chain wakeups
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
-	Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
-	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="T/cH56Qfnq1MBPg/"
+Content-Disposition: inline
+In-Reply-To: <20240906-reveler-waggle-8a7043690633@squawk>
 
-On Fri, 6 Sept 2024 at 00:03, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> When a device supports IO daisy-chain wakeups, it uses a dedicated
-> wake IRQ.  Devices with IO daisy-chain wakeups enabled should not set
-> wakeup constraints since these can happen even from deep power states,
-> so should not prevent the DM from picking deep power states.
->
-> Wake IRQs are set with dev_pm_set_wake_irq() or
-> dev_pm_set_dedicated_wake_irq().  The latter is used by the serial
-> driver used on K3 platforms (drivers/tty/serial/8250/8250_omap.c)
-> when the interrupts-extended property is used to describe the
-> dedicated wakeup interrupt.
->
-> Detect these wake IRQs in the suspend path, and if set, skip sending
-> constraint.
->
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> ---
->  drivers/pmdomain/ti/ti_sci_pm_domains.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> index 1ab1e46924ab..747a7a33c0a9 100644
-> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> @@ -82,6 +82,13 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
->         int ret;
->
->         if (device_may_wakeup(dev)) {
-> +               /*
-> +                * If device can wakeup using IO daisy chain wakeups,
-> +                * we do not want to set a constraint.
-> +                */
-> +               if (dev->power.wakeirq)
-> +                       dev_dbg(dev, "%s: has wake IRQ, not setting constraints\n", __func__);
 
-return; ?
+--T/cH56Qfnq1MBPg/
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
->                 ret = ti_sci->ops.pm_ops.set_device_constraint(ti_sci, pd->idx,
->                                                                TISCI_MSG_CONSTRAINT_SET);
->                 if (!ret)
->
-> --
-> 2.46.0
->
+On Fri, Sep 06, 2024 at 09:50:30AM +0100, Conor Dooley wrote:
+> On Thu, Sep 05, 2024 at 11:50:45AM +0200, Nuno S=E1 wrote:
+> > On Fri, 2024-08-30 at 16:33 +0100, Conor Dooley wrote:
+> > > On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
 
-Kind regards
-Uffe
+> > > > > > +=A0=A0=A0 maxItems: 1
+> > > > > > +=A0=A0=A0 description: |
+> > > > > > +=A0=A0=A0=A0=A0 Configure bus type:
+> > > > > > +=A0=A0=A0=A0=A0=A0=A0 - 0: none
+> > > > > > +=A0=A0=A0=A0=A0=A0=A0 - 1: qspi
+> > >=20
+> > > Also, re-reading the cover letter, it says "this platform driver uses=
+ a 4
+> > > lanes parallel bus, plus a clock line, similar to a qspi."
+> > > I don't think we should call this "qspi" if it is not actually qspi,
+> > > that's just confusing.
+> > >=20
+> >=20
+> > Just by looking at the datasheet it feels like typical qspi to be hones=
+t. And,
+> > fwiw, even if not really qspi, this is how the datasheet names the inte=
+rface.
+>=20
+> Right, just a phrasing issue in the cover letter I guess :)
+
+The other thing that this brings into question, and I forget if I said
+it before (perhaps to David on IRC) was whether or not the ADC/DAC needs
+to be a child of the backend, if the backend is providing the SPI bus
+that the device is attached to. Why would it not be the case, if as you
+say, it appears to be a real qspi controller?
+
+--T/cH56Qfnq1MBPg/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtrDiQAKCRB4tDGHoIJi
+0ubcAQDna5dbOQOhgjUpwDofzl9b0VrpweCcBHp1X7hDA5XdiQD/XI+HiyIeEoAs
+igX18hbDjHJVWNocwVX2aJukAeRIUwc=
+=BBdT
+-----END PGP SIGNATURE-----
+
+--T/cH56Qfnq1MBPg/--
 
