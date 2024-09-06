@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-319207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DE696F949
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:29:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C750896F945
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECAF9B21EFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4174B1C21C3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE81C1D417E;
-	Fri,  6 Sep 2024 16:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A285D1D363C;
+	Fri,  6 Sep 2024 16:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K/HfAobu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BJOADixo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D431D365D;
-	Fri,  6 Sep 2024 16:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999AD374F1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725640164; cv=none; b=gPCfwEsSA14WX78FL4nuyt15zEplBfxH1WzznMFOGw9SkgbxFMDPv8HeeawiQy6ITfGZVyTijhbiGCjHIdye0avpxGWnDM4Xlxi2V+leMRMeY5VPiVW2uMRFN0dgN1yh/EJzxep0CLJonPQq3xVGpIekwOJuXUAb0QP/gq/mLlk=
+	t=1725640161; cv=none; b=mB1JaVPkYSEPkyAnSodZsEERIEE7wILuuZcbITAQzdS+jknp+CgkuP4sy34mUPuyYFpQPGiyJa5rC1WwBbHkFYDE740XCws3haUevPBocKDX6YIeyZIzU0+qYMyyeLcWd4gZi4GnPnWif/sbkiQLb5D3ayJ0v0Um5EXBItmlbPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725640164; c=relaxed/simple;
-	bh=tgrMaFjyIw7IX4ux4Go/30dmOzrurB83EDc3BdqbTWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cgGRTC6b8Rj4rEf4NK9+xUZDNSPR+E9pB27K27xYG+LTmNpYgNCuvT9aApEDhATBU4Z322AkR66/mmlMYhmJCTmWJGekr41wlhbSNd/eW8EPrbNmHJ4Wj7Kc7Dl7MOMrOBlZp/svkRmMALcJJYxWP0Yx0t+kb2k141GProCkf/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K/HfAobu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486A6r6h000495;
-	Fri, 6 Sep 2024 16:29:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	STIBMfriypcCxXo3heZSjYUYtLO2sq/904jtEBjYL94=; b=K/HfAobuD/JGCKa6
-	/dn0yLWNxeeVrmechsayQm/rLcAVEsKrjDFhoNJBWM6Gk9Jtsh/phbJwEYZs9w97
-	3qSguVn7mWss9BMnlhuuvnp9WBqrGi42fnmfCFY5lkouQjTDLgV3tpb8Pmr4IOC3
-	NBOUWK6CmbpyR2Acj942/3HpkGvPGbhKax+SxZEotIx+LfbY1cgWHL3xiBTAqfzk
-	BdAdMdeofLlJifnGr/3dleyRbfvXUwiW07k8VbETj/YERu+4xr3WMsMxTP7OdQFd
-	TztBrQ5SBq0D3xqBYuqmcwjUAIBrXXE+IoNp6pwcjMp4SS8feFdhSMQhJHCykw0A
-	3xY1aQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fj09tvra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 16:29:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486GTDwW011734
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 16:29:13 GMT
-Received: from [10.110.36.55] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Sep 2024
- 09:29:12 -0700
-Message-ID: <4c5a5d30-5ee0-4d5e-ab9f-a0277fe8796a@quicinc.com>
-Date: Fri, 6 Sep 2024 09:28:54 -0700
+	s=arc-20240116; t=1725640161; c=relaxed/simple;
+	bh=zL1hQBAwH9cjTxb30JMyPPh4ASwEHc17U1m2yvqJP8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Z6nTUTb71YUt+WHVnZGoVTG0OAajrTonvdWXnvTJk2x+l6d0XyMtMBJTVGFjHPdHkYveCAt+EVvoSyR4wHq9s7uAnMrTvO0NPkCk8y0ZXedFmkTS/GvI8FZWJhSlueQoM7E1+LOOyBKg+WqbwIMjpVX3/r7a7PKgrtFuZyOL0LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BJOADixo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725640158;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NTF/nKjKqx3JSmZJNOkT6LhQPRYiMBga9bgFVidxPTg=;
+	b=BJOADixo8v4yRlf/rbFYDri9kkRtG+04fP5F+FiMaeZuy6xhLAjzyIguh/dpTF74rMU82t
+	9ad16RjvbnHiybq5ZjxaesHJcNKaF+mroU2R/fDK3+nCPkrpNL3okq9jXFupvMlXptvHlq
+	j+LZhQfyaC6tYGwhCfK6skthxmF+T3U=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-aoWscZadOnacfsmZqAG9gw-1; Fri, 06 Sep 2024 12:29:17 -0400
+X-MC-Unique: aoWscZadOnacfsmZqAG9gw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42c7936e4ebso18064815e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:29:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725640156; x=1726244956;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTF/nKjKqx3JSmZJNOkT6LhQPRYiMBga9bgFVidxPTg=;
+        b=NqaEzm5Bf7BjJ159xOaNbxiEzhUt1oQ0TROVZFDYvlzjzCWu6KtLVlcIFVfVktj7wi
+         YGIqwVuvcqmpM1/q548kKyXZ3yM2WXKqmxOLjFN6Fxyy//BSfQvN05S7e1N8El/K4b3p
+         ZeH8S62Jl586Gdp6uR9440bMXbmLPo/EVY4rCON3pRnjnTsx1uOH89gUFp8X0N0M3vsK
+         GLYYapr56crs6KtqfRf68xfCmFTWdwYwi1VDjdsmOb6Q7AN644fWetHz7TPfiMVDQdDq
+         bFm12K/MzzLp6MS8L7VWBKdlRpNuVGqiy19xKo0rqSdKlk3WyFGxtZO5CFgBGMomKIAm
+         eFxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFIKUx2RAu/zvHP3d0CoMdWSeGFJh895nRXmdd0Zyhz0BL4DgL2G06OpseJswKT4yELQh026EXGnToh00=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqcol53oAmLxiCmMjHxA8FZnHoKAqdrPBryoogYZGaprYS1eeQ
+	LftMse/J7kFad08icgpo/ugiTfH70a5TZ0jME5l38CTL9IbMK2MtHV5V898hkCdBIqUenvOiXqI
+	eo3PSXMJJiolYjC6ZUBg6ARO7c0of1OojAepZhCk4nRGjubiZ1tzBePLQ5BgSBg==
+X-Received: by 2002:a05:600c:45d1:b0:426:5e91:391e with SMTP id 5b1f17b1804b1-42c9f9d6d1cmr24597865e9.26.1725640156045;
+        Fri, 06 Sep 2024 09:29:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE01F8H/WdLhuKvK4CLUhFcSQZEx27sCPQ1eZjRPgcGIGX7GfL6OJuouynXnk+joG/+G2USSA==
+X-Received: by 2002:a05:600c:45d1:b0:426:5e91:391e with SMTP id 5b1f17b1804b1-42c9f9d6d1cmr24597655e9.26.1725640155569;
+        Fri, 06 Sep 2024 09:29:15 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cac8543dbsm3587525e9.42.2024.09.06.09.29.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 09:29:15 -0700 (PDT)
+Message-ID: <c02de5fb-1daa-4afd-9887-96087ee4eb43@redhat.com>
+Date: Fri, 6 Sep 2024 18:29:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,83 +81,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/29] Qualcomm iris video decoder driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>
-CC: <quic_dikshita@quicinc.com>, Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vedang Nagar <quic_vnagar@quicinc.com>
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <3a62b4cb-5c41-4c76-a957-af8e594ca8b1@linaro.org>
- <xwkibtfakensuzrj4ycmyh4nqjr4nwkgqr63og7n6ejiw3hjqo@rvl3hhznfftx>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <xwkibtfakensuzrj4ycmyh4nqjr4nwkgqr63og7n6ejiw3hjqo@rvl3hhznfftx>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [RFC PATCH 3/3] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+To: John Ogness <john.ogness@linutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Petr Mladek <pmladek@suse.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240801100640.462606-1-jfalempe@redhat.com>
+ <20240801100640.462606-4-jfalempe@redhat.com>
+ <87o76czfb2.fsf@jogness.linutronix.de>
+ <d4412d54-41b1-4671-9733-34ba1423404c@redhat.com>
+ <87zfpwxqpc.fsf@jogness.linutronix.de> <87a5gm2khw.fsf@jogness.linutronix.de>
+ <a421b31b-53ad-4f56-88be-66a7d4c3bb61@redhat.com>
+ <87seudchlu.fsf@jogness.linutronix.de> <87plphcgo2.fsf@jogness.linutronix.de>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <87plphcgo2.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IaXLEYkoPVi3LhOmDIfgZyGFEDeoaD6Q
-X-Proofpoint-ORIG-GUID: IaXLEYkoPVi3LhOmDIfgZyGFEDeoaD6Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_03,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=946
- impostorscore=0 malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060120
 
-
-
-On 9/1/2024 5:02 PM, Dmitry Baryshkov wrote:
-> On Sat, Aug 31, 2024 at 04:18:35PM GMT, Bryan O'Donoghue wrote:
->>> The result of v4l2-compliance test on SM8250:
->>>
->>> v4l2-compliance 1.29.0-5239, 64 bits, 64-bit time_t
->>> v4l2-compliance SHA: a1ebb4dad512 2024-08-08 20:00:17
->>>
->>> Compliance test for iris_driver device /dev/video0:
->>>
->>> Driver Info:
->>>           Driver name      : iris_driver
->>>           Card type        : iris_decoder
->>
->> Hmm, so this is decoder only ?
->>
->> What's the intention here for encoding support ?
->>
->> I've verified your results on the test branch but I just noticed that sm8250
->> with the iris driver is decoder only - whereas the venus driver does both,
->> which strikes me as a bit odd.
+On 06/09/2024 10:47, John Ogness wrote:
+> On 2024-09-06, John Ogness <john.ogness@linutronix.de> wrote:
+>> Your device_lock()/device_unlock() callbacks probably just need to
+>> lock/unlock your mutex @drm_log_lock.
 > 
-> I think we all have discussed this during the review of the previous
-> series: complete driver becomes very huge and complicated to review. So
-> the recommendation was to submit the limited features driver (decoding,
-> 1 codec) and get more features (more codecs, encoding support, etc)
-> after getting the Iris driver in. Of course sm8250 support in Venus
-> driver will stay in until Iris driver reaches feature parity.
+> Sorry, forgot to mention that the device_lock() callback must also
+> disable migration. Since you are using a mutex, you will need to
+> manually do that as well...
+> 
+> mutex_lock(&drm_log_lock);
+> migrate_disable();
+
+Thanks a lot, I've done most of the conversion, and it's already working 
+great. I will send a new series next week.
+
+Best regards,
+
+-- 
+
+Jocelyn
+
+
+> 
+> John
 > 
 
-Ack and +1 to this.
-
-Lets first review and conclude on the driver with the limited feature 
-set and incrementally build the driver to be feature compatible with 
-venus as we had agreed upon earlier.
-
->>
->> Is your intention to publish more patches to enable the encoder in another
->> series ?
->>
->> ---
->> bod
-> 
 
