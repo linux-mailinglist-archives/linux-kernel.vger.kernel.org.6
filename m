@@ -1,213 +1,122 @@
-Return-Path: <linux-kernel+bounces-318037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B7796E770
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:57:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACDF96E77F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85871F24465
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F292857D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464E3335A5;
-	Fri,  6 Sep 2024 01:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="s/z06XT8"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3462420B22;
+	Fri,  6 Sep 2024 02:04:05 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4BF18E0E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DB51FDD;
+	Fri,  6 Sep 2024 02:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725587838; cv=none; b=S+Tkk1K7TcjRXrYnVeRy5ZFUIu6XGxgBak8mSZsd9IO8mKowdmfl50LjxkwECQiIqpY2oP30zZODSP3xezsKljh/Wmmi21ZIqaUpKF1HN83fP36Pc8h94iaVMqyzuxCvz6848pFxugiFvTfA8MJzCkCNcvYyTV2IhHgdqly1Swg=
+	t=1725588244; cv=none; b=qrDZI1lfl6BtL4y3t3vzi/l2+CkL8DPJrq4qFtQalrZ2qK8JsvR5WdgDTnxfsKjzTIRF+Np//ASDJZ93edtnKP+uNlhx8mhtR/C8G8kohs7T5CZt12i9JJwJV3rPE8mRCMmFNtZLXlwQE2kkeyiBHeK4OIidC8e/j6nVZSbNbxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725587838; c=relaxed/simple;
-	bh=0cOHGAjR+tN+R6qMQ7WgMAGz6qbMfSjySeMki3cDKDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AqLTc68UwwxFsT9fhXzGZDJHhoaL0vsLzfJnnx0bhCshmfMa6O9tr0ir20WwZU7YW17EtgoTooRksEY8uA2NcWoKNRQXR7wWzLyb6QtYZTfTc9L7zTtHsd9dQ46nP5KrOWCwLRh/h2DRBwku6ziZz9wJMInUrg/Diwgm+hdfiY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=s/z06XT8; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8E2D73F327
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725587833;
-	bh=EL3eloeKhhdUIy+w5WuH4wnRWV+F7GryQMB+9nuDDIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=s/z06XT86zAHanVdYTksOL7uqTdOxs4MiHFHB8t/YYUX6m7fyZ4diyiLuyGJbdLKN
-	 Uv56MQkCqrvXu3V3phpMpQGaZLxf0GsehWEwXKTgO8sCHog9bjwVdLq46juRTguCk/
-	 MhZpLXe9gJAcPiuG0d0roskMGop4kkDVRp9oh32aXDEUNWCNXXc2zDbSQM9PxWKZVt
-	 2Glse+ZNESoB+MSLd8JYv+KGIZT2oQiFHmKqKM4Io7QN1HjHwvxxvh5GpgBtsKXiIG
-	 DbguUxTEqWEBMKaWYUJ17raWhl4yDqEuSj/VzjCDH0e8kNWfJNJhoa1blWFYdIzzJ+
-	 SvleqohvYQnPQ==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c384fc1c65so2175614a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:57:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725587832; x=1726192632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EL3eloeKhhdUIy+w5WuH4wnRWV+F7GryQMB+9nuDDIk=;
-        b=cNGBI7Aocjtu5qpLsos3Izc83Ssdg/H1/SgddtIsGzhuniw1mj5MqDYIDNHmlFzaSO
-         3DBiAp761jiMr725NoA/lKiykgkn6cowzU2iYqUtU6vmB6cAm2Moovu1ZboYSQeM748O
-         MEm1xFM0Uibt9DnlSsBhPPR5q5nxyBGLvjbtP2fux9cwQV/fGjOs6T6uxJVikbKLePLt
-         heU9S+dUVZNFbxkDzQnzInQVEQ5LN5YAgmERfiDpDr1+6IfJ66QhyHMJAVlHcglVt52j
-         CsW1OW/UiVJqBNqDnukBR97VhjpDa8jcCyDgSEmkyAU2AGa0ZjXyOVm89ZygJXCgtMPU
-         8jOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXELkUH5NU6JkwOVAc0tBYIo6R6Ad6sgrs0x+DM64ZZ/rLaT/fMua+8SWgCnQ4lU5uBeOlwSp7XAycNMao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvLJhPTKHqNU0Nb7JEPE09PqGaxMSn3yEOKi4prCkPUmf1Z02L
-	5o1esp5IxKq3hNlAX+LQXTALX1iaRl9uE8lqlyuYJYqHzXYGWKP/C9LRu2zXTY+rE2qlGUWpg4+
-	Rx2mBqqbUKgzOSSlZXLA6HB+Cfo4cQ634qg++JikOlDgZS6hfRh80cd3XXKt03GcRW8Q1j28JmF
-	C0vflErWPiH5rDxcPbmgOipLSyLEkqBM3UvQgsgsSeKQebMMsyhlin
-X-Received: by 2002:a05:6402:84d:b0:5c2:5248:a929 with SMTP id 4fb4d7f45d1cf-5c3db976252mr1141569a12.7.1725587832392;
-        Thu, 05 Sep 2024 18:57:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpPt58F5FS0DqOKKD4R5wPwUJrt37QUevH9yHBuKznjg+BH2JoJ/tb87I6p7X1+ghoza/DchGHc/QjTK3idJo=
-X-Received: by 2002:a05:6402:84d:b0:5c2:5248:a929 with SMTP id
- 4fb4d7f45d1cf-5c3db976252mr1141551a12.7.1725587831840; Thu, 05 Sep 2024
- 18:57:11 -0700 (PDT)
+	s=arc-20240116; t=1725588244; c=relaxed/simple;
+	bh=QeYUXtY5JpyYrDpPKMOW6fHt73XzdsW3AkeAkEzbuYc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rC/XDjIZQjX3PZpiraggko1b0ssvW+ajgTVv1fHV4P0wiT18man/TUJY0KcXEsuTEdjRFhPdDCxCkiCTePpDXmsspBv2iNgHNnxg53sJwIhJYtZMNSb/jBq+21qSHaXh6Slzjumu5t7pHCkC0zNFNrBvAdAx6Zasyo+LNn8xNOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAAHDx_sYtpmJrR9AQ--.29972S2;
+	Fri, 06 Sep 2024 10:03:32 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: linus.walleij@linaro.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	bartosz.golaszewski@linaro.org,
+	antonio.borneo@foss.st.com,
+	s.shtylyov@omp.ru,
+	valentin.caron@foss.st.com,
+	peng.fan@nxp.com,
+	make24@iscas.ac.cn,
+	akpm@linux-foundation.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] pinctrl: stm32: check devm_kasprintf() returned value
+Date: Fri,  6 Sep 2024 10:03:23 +0800
+Message-Id: <20240906020323.556593-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
- <20240903042852.v7ootuenihi5wjpn@thinkpad> <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
- <ZtciXnbQJ88hjfDk@kbusch-mbp> <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
- <20240904062219.x7kft2l3gq4qsojc@thinkpad>
-In-Reply-To: <20240904062219.x7kft2l3gq4qsojc@thinkpad>
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Date: Fri, 6 Sep 2024 09:56:59 +0800
-Message-ID: <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
-Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Keith Busch <kbusch@kernel.org>, nirmal.patel@linux.intel.com, 
-	jonathan.derrick@linux.dev, acelan.kao@canonical.com, lpieralisi@kernel.org, 
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAHDx_sYtpmJrR9AQ--.29972S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1kWF4xZrykCr1DAw4xWFg_yoW8Jw48pF
+	s3Gr1Ykr47J3y3CF1UJ34Y9F9agayktFyDGa1I934xZF4Yvayjqr4rKrWUZr4kKF4rXwn8
+	ZF43Jay5Zr1rCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Wed, Sep 4, 2024 at 2:22=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Wed, Sep 04, 2024 at 09:57:08AM +0800, Kai-Heng Feng wrote:
-> > On Tue, Sep 3, 2024 at 10:51=E2=80=AFPM Keith Busch <kbusch@kernel.org>=
- wrote:
-> > >
-> > > On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
-> > > > On Tue, Sep 3, 2024 at 12:29=E2=80=AFPM Manivannan Sadhasivam
-> > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > >
-> > > > > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng wrote:
-> > > > > > Meteor Lake VMD has a bug that the IRQ raises before the DMA re=
-gion is
-> > > > > > ready, so the requested IO is considered never completed:
-> > > > > > [   97.343423] nvme nvme0: I/O 259 QID 2 timeout, completion po=
-lled
-> > > > > > [   97.343446] nvme nvme0: I/O 384 QID 3 timeout, completion po=
-lled
-> > > > > > [   97.343459] nvme nvme0: I/O 320 QID 4 timeout, completion po=
-lled
-> > > > > > [   97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion po=
-lled
-> > > > > >
-> > > > > > The is documented as erratum MTL016 [0]. The suggested workarou=
-nd is to
-> > > > > > "The VMD MSI interrupt-handler should initially perform a dummy=
- register
-> > > > > > read to the MSI initiator device prior to any writes to ensure =
-proper
-> > > > > > PCIe ordering." which essentially is adding a delay before the =
-interrupt
-> > > > > > handling.
-> > > > > >
-> > > > >
-> > > > > Why can't you add a dummy register read instead? Adding a delay f=
-or PCIe
-> > > > > ordering is not going to work always.
-> > > >
-> > > > This can be done too. But it can take longer than 4us delay, so I'd
-> > > > like to keep it a bit faster here.
-> > >
-> > > An added delay is just a side effect of the read. The read flushes
-> > > pending device-to-host writes, which is most likely what the errata
-> > > really requires. I think Mani is right, you need to pay that register
-> > > read penalty to truly fix this.
-> >
-> > OK, will change the quirk to perform dummy register read.
-> >
-> > But I am not sure which is the "MSI initiator device", is it VMD
-> > controller or NVMe devices?
-> >
->
-> 'MSI initiator' should be the NVMe device. My understanding is that the
-> workaround suggests reading the NVMe register from the MSI handler before=
- doing
-> any write to the device to ensures that the previous writes from the devi=
-ce are
-> flushed.
+devm_kasprintf() can return a NULL pointer on failure but this returned
+value is not checked. Fix this lack and check the returned value.
 
-Hmm, it would be really great to contain the quirk in VMD controller.
-Is there anyway to do that right before generic_handle_irq()?
+Found by code review.
 
->
-> And this sounds like the workaround should be done in the NVMe driver as =
-it has
-> the knowledge of the NVMe registers. But isn't the NVMe driver already re=
-ading
-> CQE status first up in the ISR?
+Cc: stable@vger.kernel.org
+Fixes: 32c170ff15b0 ("pinctrl: stm32: set default gpio line names using pin names")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the patch according to suggestions, added braces;
+- modified the typo.
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-The VMD interrupt is fired before the CQE status update, hence the bug.
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index a8673739871d..f23b081f31b3 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1374,10 +1374,16 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
+ 
+ 	for (i = 0; i < npins; i++) {
+ 		stm32_pin = stm32_pctrl_get_desc_pin_from_gpio(pctl, bank, i);
+-		if (stm32_pin && stm32_pin->pin.name)
++		if (stm32_pin && stm32_pin->pin.name) {
+ 			names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s", stm32_pin->pin.name);
+-		else
++			if (!names[i]) {
++				err = -ENOMEM;
++				goto err_clk;
++			}
++		}
++
++		else {
+ 			names[i] = NULL;
++		}
+ 	}
+ 
+ 	bank->gpio_chip.names = (const char * const *)names;
+-- 
+2.25.1
 
-Kai-Heng
-
->
-> - Mani
->
-> > Kai-Heng
-> >
-> > >
-> > > > > > +     /* Erratum MTL016 */
-> > > > > > +     VMD_FEAT_INTERRUPT_QUIRK        =3D (1 << 6),
-> > > > > >  };
-> > > > > >
-> > > > > >  #define VMD_BIOS_PM_QUIRK_LTR        0x1003  /* 3145728 ns */
-> > > > > > @@ -90,6 +94,8 @@ static DEFINE_IDA(vmd_instance_ida);
-> > > > > >   */
-> > > > > >  static DEFINE_RAW_SPINLOCK(list_lock);
-> > > > > >
-> > > > > > +static bool interrupt_delay;
-> > > > > > +
-> > > > > >  /**
-> > > > > >   * struct vmd_irq - private data to map driver IRQ to the VMD =
-shared vector
-> > > > > >   * @node:    list item for parent traversal.
-> > > > > > @@ -105,6 +111,7 @@ struct vmd_irq {
-> > > > > >       struct vmd_irq_list     *irq;
-> > > > > >       bool                    enabled;
-> > > > > >       unsigned int            virq;
-> > > > > > +     bool                    delay_irq;
-> > > > >
-> > > > > This is unused. Perhaps you wanted to use this instead of interru=
-pt_delay?
-> > > >
-> > > > This is leftover, will scratch this.
-> > >
-> > > Maybe you should actually use it instead of making a global? The quir=
-k
-> > > says it is device specific, so no need to punish every device if it
-> > > doesn't need it (unlikely as it is to see such a thing).
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
 
