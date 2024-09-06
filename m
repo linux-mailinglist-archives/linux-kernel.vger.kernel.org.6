@@ -1,115 +1,177 @@
-Return-Path: <linux-kernel+bounces-318781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102D596F341
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:41:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C802A96F349
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E53289B99
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E486C1C2413D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9720E1CB33B;
-	Fri,  6 Sep 2024 11:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4A01CBEA9;
+	Fri,  6 Sep 2024 11:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxpKwfmT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMjP2dQk"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A296415852B;
-	Fri,  6 Sep 2024 11:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C344A15852B;
+	Fri,  6 Sep 2024 11:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622864; cv=none; b=RR8caA6S/kKOgCgwJ4XNLqLKk6xQPuJNC2WOBA+HOZI9tmlFduxKU85LVB03BBvpm/NKFV0JQGwJxvMbEFvPU/Ohw86udnFRJThe4n2G99KQD2wBR9JYaOPw8UNALNfrtS68jCNF0T5Hfwa2tdI1kK6+SOgYI9H+wedwvwWRQPI=
+	t=1725622871; cv=none; b=BsWJyBpR63WdUHXgZ5ccPhCxMRb1cZaiEMKBE4/Pvl/YPiCdeBAprGe/a00UsxFXAgl9lF2fpTDILDd3miwGq86SH9Hl16bU4m5pjvv7Ze0MAMuzAUbW5mODO9ef6/6drsdwPP4o/kv48/5e++dESVLsgU2uQonPt16abw+OvYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622864; c=relaxed/simple;
-	bh=YGHl4O8g0y5wAhBvvDSoCsRTbOvTVD97w2B1eAugi6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzuL4ctg2jtEDbA6f+UdXqpEUeoqrb1f2sYd9fQlO5CnGphsXyEsq8w4RmT1Vbqh/KO8bGHkn2TdpdsXooWRrfSDCBaQNgL1HO31JvToHG01N9XCRiOPRv5d4/9ldrbEkIX9uN+EIxczxB3vxb14U8EvFBXrLabdeV4CnmoJ0K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxpKwfmT; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725622863; x=1757158863;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YGHl4O8g0y5wAhBvvDSoCsRTbOvTVD97w2B1eAugi6k=;
-  b=KxpKwfmTn7rCQHOb2owvwfdtDhmYBWVpOhnm5Mg14rF5FSnzCMGSStqj
-   IXazn74c2+N8lL2C5q9tJsvFnyByvT3LhW1unQ+p5QR104w1XqyHD372e
-   7dW196bnu3nobt6kVelBkN3qm0TJM0VvO4d6gr/lweljb7xAve8X41bA1
-   FRR5sczL0r4I7PIUPSPqzNFWUv+lqzEF95HjoElawQK2GoxCVp+Z3Rc+d
-   cXTWfTlvyUzzvA/Atwz/1oUaAl065k3n+SoTFe4wKA1PnrJ0HWudUM8ni
-   VYGbybsfmMKUtnPEf1i9VH66IypGByTEnnbu66XatJWqjdxc8GHfx8i+q
-   Q==;
-X-CSE-ConnectionGUID: 5KzKzNb9ScGyZPu8UtXNUw==
-X-CSE-MsgGUID: pKnBySZpQk+a2YJ2anc0lA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35730374"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="35730374"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:41:03 -0700
-X-CSE-ConnectionGUID: WQK9yInwQwaYZ/2sETdENg==
-X-CSE-MsgGUID: +kM31qQnQxSVCYmefBQkbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="103406212"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:40:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smXKg-00000005lsd-1cyA;
-	Fri, 06 Sep 2024 14:40:54 +0300
-Date: Fri, 6 Sep 2024 14:40:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com,
-	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
-	yuenn@google.com, benjaminfair@google.com, wsa@kernel.org,
-	rand.sec96@gmail.com, wsa+renesas@sang-engineering.com,
-	tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com,
-	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com,
-	kfting@nuvoton.com, openbmc@lists.ozlabs.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] i2c: npcm: restore slave addresses array length
-Message-ID: <ZtrqRc5XYmYBtonw@smile.fi.intel.com>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
- <20240830034640.7049-2-kfting@nuvoton.com>
- <xdaufg4bju3iq5fqeo2gdej3yaxyufhuaiuyixnla234l2ej3r@fmvann767tib>
+	s=arc-20240116; t=1725622871; c=relaxed/simple;
+	bh=8aSJOWgx+cnbeHGiojisRHuWB5MxjZipaJDi/7kDI2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EpJuYR3v/wHJW10FILUMsy/ntPSztvd93AFrclPXcxl0VVC8CQKkz7D06sC7ASOtu7n5LaLA4H4caMykgRjbN9dkDtsT0KRg/5gPtxG4NFOiLelAMC0BvOpwpbrZTkSEieJHR+l584mwEjA+Oth6i6jKpx/cJnRE+jMB8DppBTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMjP2dQk; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d885019558so1437632a91.2;
+        Fri, 06 Sep 2024 04:41:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725622869; x=1726227669; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=nSE4UbmLPT89Bj18HP/jHu8JFDfgkM64ZTAP/BuhzBM=;
+        b=KMjP2dQkcEJotvFA7eX1clmdCx6AtBfcg+/M62WloehFiy/4sG0mtTT8Bfo8VdQF8y
+         Jo5vPw2glWUXXQdv0yjsixWSfAidtd+pABfxbyELANhtjqfak7ZCJjbjzwVEqKP3gvsR
+         0+jBXHp2cD/fDbOFs1FGeWd/X1Kk78T/UBNlqkK+vRqXyLVpa/4MCIde2JapF9aBFJAP
+         5ZNlMV93jYInJCz5CWtp/HzBJRVLAT65msLT/S0gdSE0rsXg6Zly6WK8obE3xYjLWm0f
+         CXz5/OhnZdXpF2cwVPy8GS4THF2p22dWgVWgYLb9p43Mz9uqTXJ24kfReih1NG61P+AX
+         YKOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725622869; x=1726227669;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nSE4UbmLPT89Bj18HP/jHu8JFDfgkM64ZTAP/BuhzBM=;
+        b=oRw2e4BsRlCJgh8oN8tLAbBnWFQ4IAAjcRAIf1NYAQLtKtH8imxLs0I/7pf4D5NwxL
+         zu7IByr1Ae0h6wheeSqSubmSmrkgCHOrZdL9oQOvwovnIGqb0OUubTMswot7vyxi9BR6
+         lD6/iaI4g4Jq+65/JDxioZkblFep9ZHviiFO0HCqZ36YCppwsDEUNtvfom7V+pjzfnuN
+         fQZnEE7AoV9ERNP48LEhpLT+Ejq4QPBs4jcVd/PI4wWoXClyHNvQE842QnRrJ26n9IaN
+         TdEgO27Xoa2us/+a8uw8lig11gp05ZPzOLtyee1eXS8yciP46LCTZHNsXJLXkjrdESjX
+         ZfDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQUaHTKNcrzUAWgKZQpdkPy2k/e350dJ65DKer0enmp/HwLJ9Em/QStNC7YBEb3/DOZKOccwJAeMc=@vger.kernel.org, AJvYcCVf7JT6z5uT02Gdm9ZEx4RsRvD4zrdiBcv6t4QnEqZpez1dSeO+AFlpwmfM1vnJQGrvP8/xRVdZNFH8@vger.kernel.org, AJvYcCVhd58Smb8QUNRD1jgFTlLILxflIh1nSIulLlovKcnES/PbbiJQxjX0Vn0HRTbAvVbs+8cEBLDsFuowbg==@vger.kernel.org, AJvYcCWJZswuOQjy8bCzLSPzpAzSbpxzbp4YZZcyph8FCKoTN82w4OapQv0rm+kxxp4Tmb4B3Z5jQz7rrtNuK0HVV0A=@vger.kernel.org, AJvYcCXJReZyKlMipucwmgRwbwqLQ1znIo2YR4er2erGhSyJZZdtk3Isc/OZeryqsuWw+x0R9lIwFKSSOLjV@vger.kernel.org, AJvYcCXKAeouMBmQXyUwnNpaoeypol4+fzh4uexutZfL3rzuQTDsPipn40/uGrZBKweqJw5OUUlNUplkOZY8bW4S@vger.kernel.org, AJvYcCXoLu+ddit1Axyif81iO5utgzLYxh72CPo1GLFnyquF+tnx5sC4/rxMfpDO62tdjbfFjsXzFmGcOSjK4PU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYQQnTtjLMHerk+mTERo548YQ+7Xw3YZjtWKVAClAXMmord8+m
+	TjEimPBIr0KbHnp6CA3sdzwIXVBhZ2nKTiXCBAwKkfbVUde+SUJo
+X-Google-Smtp-Source: AGHT+IG8+NKJVVHmU7dMZkptp8cuB6+8HX7Zzy6Yj7AiC4L2InjShBKLgIME0ueterTApmKVtZTUtg==
+X-Received: by 2002:a17:90b:4ace:b0:2c9:6a38:54e4 with SMTP id 98e67ed59e1d1-2dad51bfdd9mr2390340a91.41.1725622868829;
+        Fri, 06 Sep 2024 04:41:08 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfeebaasm1334056a91.10.2024.09.06.04.41.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 04:41:07 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <a33633be-800c-4ca0-9d1e-f190e23384d5@roeck-us.net>
+Date: Fri, 6 Sep 2024 04:41:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xdaufg4bju3iq5fqeo2gdej3yaxyufhuaiuyixnla234l2ej3r@fmvann767tib>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] hwmon: Add support for Photonicat PMU board
+ temperature sensor
+To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-7-bigfoot@classfun.cn>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240906093630.2428329-7-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 05, 2024 at 11:36:45PM +0200, Andi Shyti wrote:
-> On Fri, Aug 30, 2024 at 11:46:34AM GMT, Tyrone Ting wrote:
-> > The smatch check warning is "buffer overflow 'npcm_i2caddr' 2 <= 9".
-> > The original design supports 10 slave addresses although only 2
-> > addresses are required for current implementation.
-> > 
-> > Restore the npcm_i2caddr array length to fix the smatch warning.
-> > 
-> > Fixes: 47d506d1a28f ("i2c: npcm: Remove own slave addresses 2:10")
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/r/202408130818.FgDP5uNm-lkp@intel.com/
-> > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+On 9/6/24 02:36, Junhao Xie wrote:
+> Photonicat PMU MCU will send status reports regularly,
+> including board temperature.
 > 
-> your email used in From: is different that your e-mail used the
-> SoB. Is this done in purpose? If so I will keep it as it is, no
-> problem for me, otherwise I can fix it while applying it.
 
-IIRC Linux Next has the respective check and it will become your problem :-)
+This is not an appropriate description.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+> ---
+>   drivers/hwmon/Kconfig            |  10 +++
+>   drivers/hwmon/Makefile           |   1 +
+>   drivers/hwmon/photonicat-hwmon.c | 129 +++++++++++++++++++++++++++++++
 
+Documentation missing.
+
+> +static int pcat_hwmon_probe(struct platform_device *pdev)
+> +{
+...
+> +	dev_info(dev, "Board Temprature: %d degress C\n", hwmon->temperature);
+> +
+
+Unacceptable (misspelled) noise.
+
+> +	hwmon->hwmon = devm_hwmon_device_register_with_groups(
+> +		dev, label, hwmon, pcat_pmu_temp_groups);
+> +
+
+Please use the with_info API. I am not going to review the code because
+it will need to be completely rewritten.
+
+Guenter
 
 
