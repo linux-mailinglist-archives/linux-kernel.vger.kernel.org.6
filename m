@@ -1,72 +1,88 @@
-Return-Path: <linux-kernel+bounces-318422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091CC96ED98
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8800396ED9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFBD283989
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318C31F23908
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FF3158524;
-	Fri,  6 Sep 2024 08:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A14156C5E;
+	Fri,  6 Sep 2024 08:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAMcbQZ0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="db5hdR/o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD3157476;
-	Fri,  6 Sep 2024 08:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BDE156C40;
+	Fri,  6 Sep 2024 08:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725610680; cv=none; b=IlEI7sqCJyDyvDjGQmrHpDs8ad8Q2AEkuEADo1LX9T0ujU9RBC94qmzZt2/rVZfyRNNQZg5LnSbRAB/GkX//4rmzDpTnVeBf8tNqXuHHgWTehnV6lXJ+vZSG4Ez2kwzfHvElQcjRtbPTAg4Kp7A6hm0PcbjfZs5+hw3u5eZRv+A=
+	t=1725610709; cv=none; b=L675XjJKkgTxUXe3UKAe/QcrZHeYNJ6q5A+Lq15HkPUbxD+OYP3mGVBiu3q729zpRFzb4tVSJwatBAwnWiwb0KpmCNOrHaeivdUytScVzZB2+y8zdv88CnNJ25KHvl1SFm0hGIbWLGQ0/SKxzv/q5c1llxffVKSYkwhXidjS6wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725610680; c=relaxed/simple;
-	bh=QBOG/88G3YRcY9zMff+guhNTY4exVsPsjtw718pEeHA=;
+	s=arc-20240116; t=1725610709; c=relaxed/simple;
+	bh=P9ijqIiAgO/MrBm843x3Xs7+rP6/2wpXmDlmyoVM9dw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgPWQRjy6mpwnKqdeYPYPoNKMokBwiufJKlkQachBAHGocq/hRfDdiAXLJej/nD1GQobtfpslbhmwxVt9Vup5t9l+3UwxvJVet+ELZB55y59+DlWGAb42t/uEj1Mkh/UTQ0JQsf3Vww/Rmt6J3DcyZ1BTs27Yg91rrTlmL7z4ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAMcbQZ0; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725610679; x=1757146679;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QBOG/88G3YRcY9zMff+guhNTY4exVsPsjtw718pEeHA=;
-  b=NAMcbQZ0260tZH2Y3M128miw4/sr5Cb3vOuOwdJW3+8coutfiZtxZI1v
-   qXzNRjF7e7sUpMgwwmow4sp+KdPqwvmxn7th/kHoCmQwauZEE8BADovRt
-   Iegkhku++54FFreuErm352bOU/ANiLJ8aZBA7XcXoq+b4pvx8NvICwbF1
-   QEwpfK6eysqIWWkmdWCas3h5oG5VWBqkQ4Ue8Pi96AD6FguyGDvnpxZNg
-   URceiH+DnzUvb7lYSd9rYYO8f6tW3HdCl6QNAODIOrwIt0zytVbMRZdTR
-   6bnbiWWAiyJuBsmEpAQszTPuluviUnNGZZ2BTSsG5ByKL/5796FrfKOoc
-   Q==;
-X-CSE-ConnectionGUID: SegKC2RYQ9q1k9KZDSTupQ==
-X-CSE-MsgGUID: dm9IQkg6Sc2xUDwfeZqYww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="41843318"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="41843318"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 01:17:58 -0700
-X-CSE-ConnectionGUID: 8+bx6dJfS1aiPuSPNOyLIw==
-X-CSE-MsgGUID: KLkjRvucRxiT6qU7fMgjQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="70308868"
-Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
-  by fmviesa005.fm.intel.com with ESMTP; 06 Sep 2024 01:17:56 -0700
-Date: Fri, 6 Sep 2024 16:17:55 +0800
-From: Yuan Yao <yuan.yao@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yuan Yao <yuan.yao@intel.com>
-Subject: Re: [PATCH v2 05/22] KVM: x86: Retry to-be-emulated insn in "slow"
- unprotect path iff sp is zapped
-Message-ID: <20240906081755.okkq3hlrm6wibfxy@yy-desk-7060>
-References: <20240831001538.336683-1-seanjc@google.com>
- <20240831001538.336683-6-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+NFdUKE8qB26SqynCbYrV+bo/R3X4Pdxkut8qFUZ1X3RYmtflouT4C34QRMUjsypjHyqwfnWN3NgAYc5dHUNbgY7QOCmnmUgamBYk1mr1iUo3nPIruL+FSA+Ooy2G7eUbQZ965H78vCKstdXrk57g8zqfQDJNCLyaKPIV9e5HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=db5hdR/o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2301EC4CEC4;
+	Fri,  6 Sep 2024 08:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725610708;
+	bh=P9ijqIiAgO/MrBm843x3Xs7+rP6/2wpXmDlmyoVM9dw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=db5hdR/o5UoYbI2b7BscGrpbq9xRl/AdUrPSlA/8fOZxDBR1QdSNxnkUtd9QrwnYQ
+	 6pQtPdpljx4ztREQGI0fUOu7ElhyluT3ouzQDIDl7B4k1JJA3nLP2WF6yw2VnRse+4
+	 WbQ7KdTqpR80IKFv3Ktw1YT/pOxcAID/Sbkj9+6IaVE9GZRxTFPxCwgqPXfRrmzMvF
+	 CUXEEoKFKUvVt3XayK9lBqBdEbRKeOOLa33STCZCrXjw1r/joD50JkYuCVKMXSwwjf
+	 kekuTfnzGTCIsKf4wyU4EcQvvHRVXT0de/rhtGwZorbh485sthvIKXxw1T+vNc7jzH
+	 O0Vg4PR9q+y/Q==
+Date: Fri, 6 Sep 2024 08:18:21 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v4 18/18] platform/chrome: cros_ec_typec: Handle lack of
+ HPD information
+Message-ID: <Ztq6zf8n09ZcJNjT@google.com>
+References: <20240901040658.157425-1-swboyd@chromium.org>
+ <20240901040658.157425-19-swboyd@chromium.org>
+ <ZtgqLZXbJbpG65vD@google.com>
+ <CAE-0n51w3AAtLPq5M-i8F6z2jSOT3xFw3g8HM1h48xXBSeoZnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,52 +91,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240831001538.336683-6-seanjc@google.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CAE-0n51w3AAtLPq5M-i8F6z2jSOT3xFw3g8HM1h48xXBSeoZnA@mail.gmail.com>
 
-On Fri, Aug 30, 2024 at 05:15:20PM -0700, Sean Christopherson wrote:
-> Resume the guest and thus skip emulation of a non-PTE-writing instruction
-> if and only if unprotecting the gfn actually zapped at least one shadow
-> page.  If the gfn is write-protected for some reason other than shadow
-> paging, attempting to unprotect the gfn will effectively fail, and thus
-> retrying the instruction is all but guaranteed to be pointless.  This bug
-> has existed for a long time, but was effectively fudged around by the
-> retry RIP+address anti-loop detection.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/x86.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 966fb301d44b..c4cb6c6d605b 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8961,14 +8961,14 @@ static bool retry_instruction(struct x86_emulate_ctxt *ctxt,
->  	if (ctxt->eip == last_retry_eip && last_retry_addr == cr2_or_gpa)
->  		return false;
->
-> +	if (!vcpu->arch.mmu->root_role.direct)
-> +		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2_or_gpa, NULL);
-> +
-> +	if (!kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa)))
-> +		return false;
-> +
+On Wed, Sep 04, 2024 at 02:45:36PM -0700, Stephen Boyd wrote:
+> Quoting Tzung-Bi Shih (2024-09-04 02:36:45)
+> > On Sat, Aug 31, 2024 at 09:06:56PM -0700, Stephen Boyd wrote:
+> > > +static void cros_typec_inject_hpd(struct cros_typec_data *typec,
+> > > +                               struct ec_response_usb_pd_mux_info *resp,
+> > > +                               struct cros_typec_port *port)
+> > > +{
+> > [...]
+> > > +     /*
+> > > +      * Only read the mux GPIO setting if we need to change the active port.
+> > > +      * Otherwise, an active port is already set and HPD going high or low
+> > > +      * doesn't change the muxed port until DP mode is exited.
+> > > +      */
+> > > +     if (!typec->active_dp_port) {
+> >
+> > Given that cros_typec_inject_hpd() is called before `typec->active_dp_port`
+> > would be set (from previous patch "platform/chrome: ...  Support DP muxing"),
+> > would it possibly wrongly fall into here at the beginning?  (E.g.:
+> > cros_typec_probe() -> cros_typec_port_update() -> cros_typec_configure_mux()
+> > -> cros_typec_inject_hpd().)
+> 
+> We wouldn't get here if 'hpd_asserted' is false though. We want to fall
 
-Reviewed-by: Yuan Yao <yuan.yao@intel.com>
+Ack, I overlooked that.
 
->  	vcpu->arch.last_retry_eip = ctxt->eip;
->  	vcpu->arch.last_retry_addr = cr2_or_gpa;
-> -
-> -	if (!vcpu->arch.mmu->root_role.direct)
-> -		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2_or_gpa, NULL);
-> -
-> -	kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa));
-> -
->  	return true;
->  }
+> > > [...]
+> > > +     /* Inject HPD from the GPIO state if EC firmware is broken. */
+> > > +     if (typec->hpd_asserted)
+> > > +             resp->flags |= USB_PD_MUX_HPD_LVL;
+> >
+> > `typec->hpd_asserted` is shared between all typec->ports[...].  Would it be
+> > possible that a HPD is asserted for another port but not current `port`?
+> > E.g.: cros_typec_inject_hpd() for port 2 and cros_typec_dp_bridge_hpd_notify()
+> > gets called due to port 1 at the same time?
+> 
+> I'd like to avoid synchronizing the hpd notify and this injection code,
+> if that's what you're asking. Thinking about this though, I've realized
+> that it's broken even when HPD is working on the EC. Consider this
+> scenario with two type-c ports C0 and C1:
 >
-> --
-> 2.46.0.469.g59c65b2a67-goog
->
+> [...]
+
+I understood it more: originally, I was wondering if it needs an array
+`typec->hpd_asserted[...]` for storing HPD for each port.  But, no.
+
+What cros_typec_dp_bridge_hpd_notify() get is just a connected/disconnected
+signal.  It kicks off cros_typec_port_work() for finding which port is
+supposed to trigger the event (with some logic with `active_dp_port`,
+`mux_gpio`, and `hpd_asserted`).
+
+
+Curious about one more scenario, is it possible:
+
+Initially, no DP port and no mux is using:
+  active_dp_port = NULL
+  hpd_asserted = false
+  mux_gpio = NULL
+
+CPU A                                        CPU B
+------------------------------------------------------------------------------
+cros_typec_port_work()
+  cros_typec_port_update(port_num=0)
+                                             [C0 connected]
+                                             cros_typec_dp_bridge_hpd_notify()
+                                               hpd_asserted = true
+  cros_typec_port_update(port_num=1)
+    cros_typec_configure_mux(port_num=1)
+      cros_typec_inject_hpd()
+      active_dp_port = C1
 
