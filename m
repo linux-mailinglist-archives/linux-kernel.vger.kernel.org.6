@@ -1,113 +1,102 @@
-Return-Path: <linux-kernel+bounces-318901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9909A96F4C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884E896F489
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55AAC280F8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFAAF1C20CE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB341CCEEA;
-	Fri,  6 Sep 2024 12:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F131CDFBB;
+	Fri,  6 Sep 2024 12:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="N2dnlkDT"
-Received: from sonic310-19.consmr.mail.sg3.yahoo.com (sonic310-19.consmr.mail.sg3.yahoo.com [106.10.244.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EduTf8Xs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD40B1CBEBC
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492CA25760;
+	Fri,  6 Sep 2024 12:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627349; cv=none; b=e7fKfay/FVRshuSO7dmyZ+6votqIS+wBjKFP81UY9uMK78CWur5KKFylI4SU3IJMoW5ZnVSJ2FO71ViIUUeh1UZRsWuPwzyOVt9ZkKtTUqVEsNCrZ8/U1QLVcE475pBqCZo8XN8zEPgJNrPml8uV3TTdfciw25sSfhqeINS2qPU=
+	t=1725626788; cv=none; b=cKZGshgCS3pUeKOc6PeNX/qrmv3BNJkJO3apZDTqSNpz6BbTT79thD0axf3qLM+unrma0Bvr+emWHiCA0WAjknlHoH5eV8JN1XbJmhkH9C53zJR5Mm3mtBP1dT4FkWIZahyXBPiWylzOR1L6DIMcT96LHA2jcfAmyR7519HKLTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627349; c=relaxed/simple;
-	bh=qmWrAIZu5iSuMOs78IMq7mw1QxQ2rtIiXykTLxfkJMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=FxUT/odZ3ejOZWMN7Gg1SyhvR1JMVd6X8t0U+B+Q+8vWZezjpBV3CjoZ08ThNXoz4N4RrNwR20lt1VGADp8I5YEPMSnMHONznrJqm7TJXqKN0c4ZXUsMwAP9yUdPiWtbA+hC+rkE7jvxAmJhHhrKCgvi+bOhRdPJFNsMe3LCBU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=N2dnlkDT; arc=none smtp.client-ip=106.10.244.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1725627345; bh=Ie2y1TiUEKPKXT8hNmOxB3fbFuOwlG7O5EiFvueE47A=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=N2dnlkDTaF7T4sLHwRCJUfZZqqRtE6YX3SLH4KhhoaBtWdbCCVhvvR3paErUf5VpI8U+6xLedEUBCblmMFfAKTRN7RjbXtNB+NnjpM8qS3HUB42X53Wnlt03j2NhHHkfxtSwKOuHErHqUm1WAyYkS0htwvShVMxz3Vw3sq87fyYKgznv069iH0Cht6EhaWk97Pz1hCdHbWySN1MtirgHz1sZXBW1OeNpQV/YRqTo0Oe+WKo+v4ofocVRNfzTBzZR5vzK2KMqdrAz1OClXCkSv+ZLdm4cdjUP+iES+3zIB1/gA3Mw24eYXpt8UkVFs+5rcuML1Oxl+vrGZHcycrnyWg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725627345; bh=WRm9Fou2uOQGclkCao+8kjGRTUINZFBlvJmYVIFywXO=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=nQPAD/HrJV9ACuLhbDOVsuMqH1UjVbMtyGi5EtniS8Dz3Ba9dcglC8LjRWdvpOraBfSTP/mAwcgxEurPzVIvHxsKvvKPVdxCQ8g/If0q+JFzOJyMnaRcprs/lPRgP5Lkbs08w2oYhwYvYQuq/RvQmWs4HytcYj7HVdgrp6mwCS9BffDqS/O2MwXsGdMsaoSlxPVicV+vLWd5IowI6NqPqhAZ2HG08xo48lW6XmwFg8FIzQXEVudvImMGDWLq3y+SBk/Jw18OaBoJxHtE2BlQpYAMYJ8FqZUQUUSqLG4i9ljoisXR6T7zWzrG6p7h5dvon9jBFKZGkThaqudwCkISEA==
-X-YMail-OSG: wVsCtLAVM1nk8XKr5sBeyC5thEmxxcegSNZq6zEwjPYLNkxmYLDNp99RlwdhFZS
- 7YlAz15amPkjU56hykk89oyJx5vjVhtUZ2fYiaregTbIde3oRJSqEJQJvPgMnQlkcz16cK96aGXz
- .6yZyBTNcrbP3Vhm2yLFybNaF4ri2yVOf6XxykGkwS_j6fspryLY.bfkjiIsslahYK1Qkm2beq5n
- cu_KnPjUUmkjfieGWdHl0EL1xPKJ54A62914qG7J2k10otjHpucNljSaRZGA943yFlHZZqtUhP2P
- ToehxiPneHdWGsfUhd7igF_TLcSY9sZZd1aF.3h7nagybcU4C5CyVtBBp2I65clGePhRqhF9Dhn6
- KxL2tqR1Pwrb14x3jK4q88MPJVDNgqMUc6_QVycXu3e5Oj9au50BN3YCmsfzz3RI.H6adlgzQuNA
- e1gJThKTeBh8rE_7RRzk2jsnCZamZSRl9N8r1RK0Sfe_qklQbXswO14JCoxLf9UplsExV7v_58hk
- 0_xXJmiQTq9prhQ912gabTSqHpoeOsLnjDqwINkwBZ_kPoOoLby19zd9fMj1geQO4LaDoDJ3kVZ8
- LBF1EDxNsofbA9WV7qT0e4TQz_bgwvHiCl.BwBwiNA0b00lN9wuawbvAEXJNl9oakIxMStP.HzLx
- xFcFYcxjrBbo_aQIhoLLypLAAE4BkbR0CnjMym4mGvrGDIQyiywgBww2k.20YcwvJLElquIg21Xo
- 8tLViLjeMPe_w.cCZnN5mAkuwR1HINt_zNL14FfQhMYqircDRHom3gE8X0f_vk7eJ0xm9FPluKmu
- 5FXJpbDWFNIFUIJOUJmcm6ukAHXz4JSshjYG6N0cKtRtcdX2ca.as1iGfZnQ3N2NOPuJGLtbIWLJ
- 87_zPLaHuovT81FxxzVXFQXyJ14uTpmOdqm.DhM2IjjxLDKgvtdI1BfiY6A2iznCJMY8RRpTtrYG
- JZVfVHdmdZZjmQmVMplG9PwVwdrlBC6_seWB0MXflli.HjG_gJ0Wf3k24EuHAFysCtf8T48Wb5Ns
- ntSJSjmZ0I8z2YfnNbUlyritBCJCZG._JTgrjUgbKsw6JXryu6y5.QM1q5bab.RxUuCVZwdYoY6.
- 3V_JsQBxe8lHi8YjPGmX24DIqCVgsqapvs83NK0pWVJvphnm8fIjti6w0G3YLda9oLck1Lx2QCi5
- K0ljZ9NX3d_32xx1UaY09reQpsiVS50iDEJTx4PZ_.atfGaEu1ONwcMxxetHeUylR4JW3eHXOKtA
- anJm..hEqLua6N7V7SME.pZ9rGQnYAgbNN_vRnzoa5KkQYQA4xArMRzCiv..1M3V9vLgWfl6WL9J
- tK5wdVnuLZ_bZSv6wbp6T1UGpslnPuGae6WsCcNXNV8Hw01wChTMv9pfJ1tZ7W6afSN3f13O4ruQ
- LEKFlKxPUrfLz0SSLXf_.R14wfDBxG5IevB8S7VcsNMtskTKNwSL2FAA_CJtc0vdjtmiuHTcAJV9
- T7efPD8jzqo5CRf2wjgf0kMfFWGTe9oi2R_p4EP4YsAHAGQ_agsB1waR9ZhjpiSeAY3Y_nwsV_1m
- Hrf9l0gkQqsK0ALxOnkgb4zp4RPNVPexl1LWjsvdOB0CBIsO5rWotnlZ.K3euXkMTiTvokLCVc2S
- e4tAfdQSXgg4Cctb64lOF8ZEsL_.IruUFrOV.aWBg8nX3BDMlhhsIQGrFJVCNRkGg0rfAHCI34gK
- UaP8R67ZsMOGQBvYdE6BSS5C2R70j8Elo_HEUUxxP13lwU1ftxnYV4ItP.afHt8bE0C6jZ25QCui
- xfk5Qu0PT.E1OD6NqvHCiZwm4VbTTgTCs1kxHjDU5PxRw4dOsQG3zJXbj12rkli56uVDmpUTvTe8
- 8pXSALdZynLuOu3Eao6ane78H5vLBhAFwNTS.j0NPD4cWpamXTBPwysSK98h8hC51B_f3aSCg7l3
- VusOBJP3siRy0FDK2pvUPWHfhzeLzHqeta_eDRj1MDmYmy0_wpZXpR2NxK.FjCKVg_9JggTMWxWD
- ggDK5gIKpTaLruwXVbfX8DcAnxtVac67Hy1iUDKqJWkudYH4GfI5TSbPLbqwOq9z.i8pdO.TQKnN
- gYZuWdlduBUuWsDRvXZ2wwgXFiyerG65JavmJktDPPCKq_rokRnMGlkOW2yu7tfqYyvT5R78ymK6
- VMXwHX3T9Jhirh89ehHe8eqFTlIEpofYKgIvuvDUXOdFOQMmuniHTRem1qPBrhdCp3Vrn6lhnua_
- qurbvKOud4RZkUrr.DYo2vg7Pf1T88xYF0Qz.PXPFcu0p8iIH02hO06EQqlao4zoR
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 011fccbe-b5a9-4423-92b0-e4490bb0393a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.sg3.yahoo.com with HTTP; Fri, 6 Sep 2024 12:55:45 +0000
-Received: by hermes--production-sg3-fc85cddf6-flkd9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b2af45da1f26bfea588bc7caf835a39f;
-          Fri, 06 Sep 2024 12:45:33 +0000 (UTC)
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: corbet@lwn.net,
-	bhelgaas@google.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Abdul Rahim <abdul.rahim@myyahoo.com>
-Subject: [PATCH] PCI: Fixed spelling in Documentation/PCI/pci.rst
-Date: Fri,  6 Sep 2024 18:15:18 +0530
-Message-ID: <20240906124518.10308-1-abdul.rahim@myyahoo.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725626788; c=relaxed/simple;
+	bh=Af4hVO2lEqJLghX243SGdJHNChv8mD1EBsYO0E+v2XY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oAIsiYdyI7A5qrJBRl7wCQYykzuak0O2Qnoe0v4Buu+cdGDjO72y3RpQkytCisJnk6iplVDaQb8VmkcSjjJZF5OUoYI2bEhGLuWC3Yuk5TvgoSwfIvZnAuLfZ07A8zZwHz04oH4AAX8Z9nqq6TntcRnmUAqNko0cyVJkJU2OOpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EduTf8Xs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B36D4C4CEC5;
+	Fri,  6 Sep 2024 12:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725626787;
+	bh=Af4hVO2lEqJLghX243SGdJHNChv8mD1EBsYO0E+v2XY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=EduTf8XsLV8NI4SzzhCH56sp1alDH9umiR+j/e52eBLfrH0A8CyTcEpXmWO3Xzet+
+	 kmXIiOe+7e6cOXkxt6FdSTfRDt6oZwO8JFfynk+ydUFpuXA3S09DCMDeOMntqXnxVc
+	 grLBdk8Sp8xtNorSb0lU0LD7mqerI6g3MR9/nJkwYkSZBV9GMeb4YEkKpN6Oh9DF1T
+	 9L0q8rvdPTLMJUnZTBdJun63RiR4vxRQ7tiNsC9tIBwYnn564eQA88TS9i1/rXDK1B
+	 6SfZTrmmjSYdQmlbjK57xE2Tj0sQOkxpeXlxax7JoXZ3WxMC2HrtML8AQLDHRq6/gu
+	 hfOryp4WVuXjA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D3DCE7B03;
+	Fri,  6 Sep 2024 12:46:27 +0000 (UTC)
+From: Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>
+Subject: [PATCH 0/2] Add support for Amlogic C3 PWM
+Date: Fri, 06 Sep 2024 20:46:11 +0800
+Message-Id: <20240906-c3-pwm-v1-0-acaf17fad247@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20240906124518.10308-1-abdul.rahim.ref@myyahoo.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJP52mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSwMz3WRj3YLyXN0UQ3MDcyNTQ3MLIzMloOKCotS0zAqwQdGxtbUAHXP
+ JPFgAAAA=
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, Kelvin Zhang <kelvin.zhang@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725626786; l=600;
+ i=kelvin.zhang@amlogic.com; s=20240329; h=from:subject:message-id;
+ bh=Af4hVO2lEqJLghX243SGdJHNChv8mD1EBsYO0E+v2XY=;
+ b=8dq3owc63Flh3oSrwiJ6ZbPd7n2PLeqykBE4++TGv2VCDPWshqQnmin/SpZG7z2QVX5yEfHtP
+ IzzrWBjOQ0uARrFv2gIh3PY+imduyZF5JwpKVMDj22KLSq1Sx4uls6O
+X-Developer-Key: i=kelvin.zhang@amlogic.com; a=ed25519;
+ pk=pgnle7HTNvnNTcOoGejvtTC7BJT30HUNXfMHRRXSylI=
+X-Endpoint-Received: by B4 Relay for kelvin.zhang@amlogic.com/20240329 with
+ auth_id=148
+X-Original-From: Kelvin Zhang <kelvin.zhang@amlogic.com>
+Reply-To: kelvin.zhang@amlogic.com
 
-Fixed spelling and edited for clarity.
+Add support for Amlogic C3 PWM, including the DT binding document and DTS.
 
-Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
 ---
- Documentation/PCI/pci.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kelvin Zhang (2):
+      dt-bindings: pwm: amlogic: Document C3 PWM
+      arm64: dts: amlogic: Add Amlogic C3 PWM
 
-diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
-index dd7b1c0c21da..344c2c2d94f9 100644
---- a/Documentation/PCI/pci.rst
-+++ b/Documentation/PCI/pci.rst
-@@ -52,7 +52,7 @@ driver generally needs to perform the following initialization:
-   - Enable DMA/processing engines
- 
- When done using the device, and perhaps the module needs to be unloaded,
--the driver needs to take the follow steps:
-+the driver needs to perform the following steps:
- 
-   - Disable the device from generating IRQs
-   - Release the IRQ (free_irq())
+ .../devicetree/bindings/pwm/pwm-amlogic.yaml       |   4 +
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 364 +++++++++++++++++++++
+ 2 files changed, 368 insertions(+)
+---
+base-commit: ad40aff1edffeccc412cde93894196dca7bc739e
+change-id: 20240906-c3-pwm-d17072517826
+
+Best regards,
 -- 
-2.46.0
+Kelvin Zhang <kelvin.zhang@amlogic.com>
+
 
 
