@@ -1,157 +1,274 @@
-Return-Path: <linux-kernel+bounces-319352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5234B96FB82
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3DE96FB8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9EB282F88
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8F01F29389
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17D1B85C8;
-	Fri,  6 Sep 2024 18:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B9B1D04A4;
+	Fri,  6 Sep 2024 18:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JSTfH/cH"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RRSuXmrH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97BF1B85CA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE313398E;
+	Fri,  6 Sep 2024 18:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725648841; cv=none; b=EWntY3Klu1cZVfB3A9sADhcV7CBlKAJBYrgvWUdnMGd4d9Oku5rXDdeI2/gU8BRknlSBkRej1Cz2GlXgujVkaIo0w9FZtt3hq+y5hRt8GUHrKBa64VnxQYJFgl+69p46SSJolViYtqY1Q6VEKgndAd9Edgadih0GTgJGcrkL34c=
+	t=1725648953; cv=none; b=aOJVobSqASWp51kDJpdyaLYxbpEozN5H9CuJRcnG6DMq9cTUyDbeuYJSZnizoCK7nOa3pTGvvODUBv+PTdZ1bQrN00kMNy7dbYlxxQQetms+dlXbRGeWn6RaO3tLqGpmrH5tyiNfUvD6+UIN2CsqKv1dRuVDOrHGdgpweDp5q9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725648841; c=relaxed/simple;
-	bh=csLMJFKnRw9ejiDzng9uWv9z06uzYm5hjtYR8dNDqmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gM+IRQpl4owrwVp6mXzgaqdYDEe++kStelThZMceqdahHGJeGBmVbCQFKYZi0g2U/BgcYrc9qSfsk0ZbhZ/IcIdy0e00a2Ec33dcBnwx4RQjOpnV2D/Fg5p2fFvBYkf5LmkZ//2CdZpDG2A6ToQV1XzBcWbcSrMCP/eM2m3TksI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JSTfH/cH; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d50a42ce97so1106822a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 11:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725648839; x=1726253639; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gxW7zGEcfjHvaccSBeMMlRMsikKLMKllizI6+H0GFvc=;
-        b=JSTfH/cHnGpUBaEMZCW+AlvBRM0lLMu5hs+92jCPrzgnrnnUgs3otLCJOZcxPglImr
-         r/GN/mU2MpAMdsDEuUld0Lfo8KtyxuguL7WejzmZyIRW4vh/z56WCgkSyrwLSqb8lisz
-         fmJmvu7KzUzFLpV8djYm5997pJy6IuURoFWPI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725648839; x=1726253639;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gxW7zGEcfjHvaccSBeMMlRMsikKLMKllizI6+H0GFvc=;
-        b=JWgpJpJ/TtBJsglxdc3yJww/hFL/q/JItfB9IhCQRdSTPR/+2xZMk60xTvOeTaXSlq
-         LStdBexhH4IvZPFzCQgPwVjmX/CpJOvrlo3UMjJffAPWwUhYtQrgFuISPuqxTNNAwBMV
-         X8zbGZ1LAhEYIvunqxRaTEcBDFMUShRPpfpKDtjRm8GxCOlKaKAAsJCfjqjBEyq3d1u4
-         JulKnN84LOEaRslfpBBLZwl3Mnz6EWHgtDTnRfRm+neSqpZWFuB3FbGxG+VsmacgmfUo
-         JSmTugPyVPMN6TcpORuMX5QBH8wyeR55m1XyUT+ge+ioQ2ZUcuE1JabwIpVdLIhby1LY
-         4Zuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaRoBSjrqRRRzF6grsh1vZ84oMvvKipXKnZHOX+PUrOsjs8OMovf7EKr7lkAw7KnICZ9RaggheBiZ+MSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvwBH50JwDKFnQf1HpHOAbxwrc2mbBcHFZ6ieU6PxkUFSuQwYz
-	tzxi5hhfaWHwvH388dnY9A5Z/b/hbVzZLHSwhoN23MQKLtcg0tIB9YPlnYMhwg==
-X-Google-Smtp-Source: AGHT+IGyuhVdHpgemjSyuB0qAWi4hST+Gklb+OoGAeY8tuDIxPvLJTqBCnQFAn7D4L+NoIEiF2FF/A==
-X-Received: by 2002:a17:90b:4c48:b0:2d8:8d34:5b8 with SMTP id 98e67ed59e1d1-2dafcf1b325mr483149a91.10.1725648838788;
-        Fri, 06 Sep 2024 11:53:58 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0a881fsm1951967a91.48.2024.09.06.11.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 11:53:58 -0700 (PDT)
-Message-ID: <eeebe625-244d-48b7-9e48-2d26460127c6@broadcom.com>
-Date: Fri, 6 Sep 2024 11:53:53 -0700
+	s=arc-20240116; t=1725648953; c=relaxed/simple;
+	bh=RP5YtbiQ+sHYrD3YKYKNjZL3SuHcr7e7vZiat9k1cyE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jU+WibEDJwTqK29k/37JDHC0q2+PTvc+xx6Jkt0jlHvlZeBl1Q9r/AZN2RQcLWaDd9jlMhS1A2PRwyWq4tFsodg0UYArzfbrTLZn7iA5JpCaUlyHymQfw7TMIha+ZrI9rRPERhhBzjPnAlnrq+WMA8r3+6LG1TsQlBSxv65CzS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RRSuXmrH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868YSmS029796;
+	Fri, 6 Sep 2024 18:55:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=cbzAOE75Omm0qZHADaG42w
+	ywFbgNl0+QFfOE9yYOU6w=; b=RRSuXmrH9P5hsY1ToXIGjXlFKwWPj/9ECcjEeA
+	Se3CrafhvXWNHKFFVfabedJoWmxII71zptYO9KOFRMF1r85J/wJEyHVQVfi0aOgi
+	2CF52efnWOcpvPwyDvRfk9Zj5HO6iBK4ZI1nt0eHJ06pIi/jNSLIoSBEeNas19aY
+	G//q23UC0lhsJsiAT8ivIMnsSTwukhb/n8fY+p+3qPMazFXMN9K76wFqpFPNww0Q
+	U2N9WzUkvnoIv/+lEe5XEcgp30E5V1sZ8BueCpw9T5Xa4xCOtQOluvaB52j5/mi+
+	TJWBD3sn+KJnb6ekKI8SDYPfajCrR+SoervvbOHN/Scsx3XQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwtu6t7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 18:55:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486ItUhd026365
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 18:55:31 GMT
+Received: from hu-obabatun-lv.qualcomm.com (10.49.16.6) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Sep 2024 11:55:27 -0700
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+To: <robh@kernel.org>
+CC: <andy@black.fi.intel.com>, <aisheng.dong@nxp.com>,
+        <catalin.marinas@arm.com>, <devicetree@vger.kernel.org>, <hch@lst.de>,
+        <iommu@lists.linux.dev>, <kernel@quicinc.com>, <klarasmodin@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <m.szyprowski@samsung.com>,
+        <quic_obabatun@quicinc.com>, <robin.murphy@arm.com>,
+        <saravanak@google.com>, <will@kernel.org>, <quic_ninanaik@quicinc.com>
+Subject: [PATCH v9 0/2] Dynamic Allocation of the reserved_mem array
+Date: Fri, 6 Sep 2024 11:53:58 -0700
+Message-ID: <20240906185400.3244416-1-quic_obabatun@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: brcmstb: Correctly store and use the output value
-To: Jim Quinlan <james.quinlan@broadcom.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Stanimir Varbanov <svarbanov@suse.de>, kernel@collabora.com,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240906110932.299689-1-usama.anjum@collabora.com>
- <CA+-6iNw1PCNL6k3bx18VySbgt8m2tjOMokqC-esDfHaSN-dh0A@mail.gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <CA+-6iNw1PCNL6k3bx18VySbgt8m2tjOMokqC-esDfHaSN-dh0A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EElWRQSi2-32egrIw2fEaZEh9Gl_SaeT
+X-Proofpoint-ORIG-GUID: EElWRQSi2-32egrIw2fEaZEh9Gl_SaeT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_04,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409060139
 
-On 9/6/24 11:20, Jim Quinlan wrote:
-> On Fri, Sep 6, 2024 at 7:10 AM Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->>
->> brcm_pcie_get_inbound_wins() can return negative error. As
->> num_inbound_wins is unsigned, we'll be unable to recognize the error.
->> Hence store return value of brcm_pcie_get_inbound_wins() in ret which is
->> signed and store result back to num_inbound_wins after confirming that
->> it isn't negative.
-> 
-> 
-> Hello Muhammad,
-> You are correct -- I was asked to make a few variables to be of the
-> type u8, but I missed having an int (ret) hold the
-> resultof that call. I believe I am still in the process of submitting
-> this commit series -- V7 is coming next -- so I will
-> take your email as a review instead of adding a fixup commit.
-> 
-> Unless Bjorn says that V6 was applied.
+The reserved_mem array is used to store data for the different
+reserved memory regions defined in the DT of a device.  The array
+stores information such as region name, node reference, start-address,
+and size of the different reserved memory regions.
 
-A similar patch has already been submitted to address this in a slightly 
-different way:
+The array is currently statically allocated with a size of
+MAX_RESERVED_REGIONS(64). This means that any system that specifies a
+number of reserved memory regions greater than MAX_RESERVED_REGIONS(64)
+will not have enough space to store the information for all the regions.
 
-https://lore.kernel.org/all/20240904161953.46790-2-riyandhiman14@gmail.com/
+This can be fixed by making the reserved_mem array a dynamically sized
+array which is allocated using memblock_alloc() based on the exact
+number of reserved memory regions defined in the DT.
+
+On architectures such as arm64, memblock allocated memory is not
+writable until after the page tables have been setup.
+This is an issue because the current implementation initializes the
+reserved memory regions and stores their information in the array before
+the page tables are setup. Hence, dynamically allocating the
+reserved_mem array and attempting to write information to it at this
+point will fail.
+
+Therefore, the allocation of the reserved_mem array will need to be done
+after the page tables have been setup, which means that the reserved
+memory regions will also need to wait until after the page tables have
+been setup to be stored in the array.
+
+When processing the reserved memory regions defined in the DT, these
+regions are marked as reserved by calling memblock_reserve(base, size).
+Where:  base = base address of the reserved region.
+        size = the size of the reserved memory region.
+
+Depending on if that region is defined using the "no-map" property,
+memblock_mark_nomap(base, size) is also called.
+
+The "no-map" property is used to indicate to the operating system that a
+mapping of the specified region must NOT be created. This also means
+that no access (including speculative accesses) is allowed on this
+region of memory except when it is coming from the device driver that
+this region of memory is being reserved for.[1]
+
+Therefore, it is important to call memblock_reserve() and
+memblock_mark_nomap() on all the reserved memory regions before the
+system sets up the page tables so that the system does not unknowingly
+include any of the no-map reserved memory regions in the memory map.
+
+There are two ways to define how/where a reserved memory region is
+placed in memory:
+i) Statically-placed reserved memory regions
+i.e. regions defined with a set start address and size using the
+     "reg" property in the DT.
+ii) Dynamically-placed reserved memory regions.
+i.e. regions defined by specifying a range of addresses where they can
+     be placed in memory using the "alloc_ranges" and "size" properties
+     in the DT.
+
+The dynamically-placed reserved memory regions get assigned a start
+address only at runtime. And this needs to  be done before the page
+tables are setup so that memblock_reserve() and memblock_mark_nomap()
+can be called on the allocated region as explained above.
+Since the dynamically allocated reserved_mem array can only be
+available after the page tables have been setup, the information for
+the dynamically-placed reserved memory regions needs to be stored
+somewhere temporarily until the reserved_mem array is available.
+
+Therefore, this series makes use of a temporary static array to store
+the information of the dynamically-placed reserved memory regions until
+the reserved_mem array is allocated.
+Once the reserved_mem array is available, the information is copied over
+from the temporary array into the reserved_mem array, and the memory for
+the temporary array is freed back to the system.
+
+The information for the statically-placed reserved memory regions does
+not need to be stored in a temporary array because their starting
+address is already stored in the devicetree.
+Once the reserved_mem array is allocated, the information for the
+statically-placed reserved memory regions is added to the array.
+
+Note:
+Because of the use of a temporary array to store the information of the
+dynamically-placed reserved memory regions, there still exists a
+limitation of 64 for this particular kind of reserved memory regions.
+From my observation, these regions are typically small in number and
+hence I expect this to not be an issue for now.
+
+Patch Versions:
+v9:
+- fix issue reported from v8:
+  https://lore.kernel.org/all/DU0PR04MB92999E9EEE959DBC3B1EAB6E80932@DU0PR04MB9299.eurprd04.prod.outlook.com/
+  In v8, the rmem struct being passed into __reserved_mem_init_node()
+  was not the same as what was being stored in the reserved_mem array.
+  As a result, information such as rmem->ops was not being stored in
+  the array for these regions.
+  Make changes to pass the same reserved_mem struct into
+  __reserved_mem_init_node() as what is being stored in the reserved_mem
+  array.
+
+v8:
+https://lore.kernel.org/all/20240830162857.2821502-1-quic_obabatun@quicinc.com/
+- Check the value of initial_boot_params in
+  fdt_scan_reserved_mem_reg_nodes() to avoid breakage on architectures
+  where this is not being used as was found to be the case for x86 in
+  the issues reported below:
+  https://lore.kernel.org/all/202408192157.8d8fe8a9-oliver.sang@intel.com/
+  https://lore.kernel.org/all/ZsN_p9l8Pw2_X3j3@black.fi.intel.com/
+
+v7:
+https://lore.kernel.org/all/20240809184814.2703050-1-quic_obabatun@quicinc.com/
+- Make changes to initialize the reserved memory regions earlier in
+  response to issue reported in v6:
+  https://lore.kernel.org/all/20240610213403.GA1697364@thelio-3990X/
+
+- For the reserved regions to be setup properly,
+  fdt_init_reserved_mem_node() needs to be called on each of the regions
+  before the page tables are setup. Since the function requires a
+  refernece to the devicetree node of each region, we are not able to
+  use the unflattened_devicetree APIs since they are not available until
+  after the page tables have been setup.
+  Hence, revert the use of the unflatten_device APIs as a result of this
+  limitation which was discovered in v6:
+  https://lore.kernel.org/all/986361f4-f000-4129-8214-39f2fb4a90da@gmail.com/
+  https://lore.kernel.org/all/DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com/
+
+v6:
+https://lore.kernel.org/all/20240528223650.619532-1-quic_obabatun@quicinc.com/
+- Rebased patchset on top of v6.10-rc1.
+- Addressed comments received in v5 such as:
+  1. Switched to using relevant typed functions such as
+     of_property_read_u32(), of_property_present(), etc.
+  2. Switched to using of_address_to_resource() to read the "reg"
+     property of nodes.
+  3. Renamed functions using "of_*" naming scheme instead of "dt_*".
+
+v5:
+https://lore.kernel.org/all/20240328211543.191876-1-quic_obabatun@quicinc.com/
+- Rebased changes on top of v6.9-rc1.
+- Addressed minor code comments from v4.
+
+v4:
+https://lore.kernel.org/all/20240308191204.819487-2-quic_obabatun@quicinc.com/
+- Move fdt_init_reserved_mem() back into the unflatten_device_tree()
+  function.
+- Fix warnings found by Kernel test robot:
+  https://lore.kernel.org/all/202401281219.iIhqs1Si-lkp@intel.com/
+  https://lore.kernel.org/all/202401281304.tsu89Kcm-lkp@intel.com/
+  https://lore.kernel.org/all/202401291128.e7tdNh5x-lkp@intel.com/
+
+v3:
+https://lore.kernel.org/all/20240126235425.12233-1-quic_obabatun@quicinc.com/
+- Make use of __initdata to delete the temporary static array after
+  dynamically allocating memory for reserved_mem array using memblock.
+- Move call to fdt_init_reserved_mem() out of the
+  unflatten_device_tree() function and into architecture specific setup
+  code.
+- Breaking up the changes for the individual architectures into separate
+  patches.
+
+v2:
+https://lore.kernel.org/all/20231204041339.9902-1-quic_obabatun@quicinc.com/
+- Extend changes to all other relevant architectures by moving
+  fdt_init_reserved_mem() into the unflatten_device_tree() function.
+- Add code to use unflatten devicetree APIs to process the reserved
+  memory regions.
+
+v1:
+https://lore.kernel.org/all/20231019184825.9712-1-quic_obabatun@quicinc.com/
+
+References:
+[1] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/reserved-memory/reserved-memory.yaml#L79
+
+Oreoluwa Babatunde (2):
+  of: reserved_mem: Restruture how the reserved memory regions are
+    processed
+  of: reserved_mem: Add code to dynamically allocate reserved_mem array
+
+ drivers/of/fdt.c             |   5 +-
+ drivers/of/of_private.h      |   3 +-
+ drivers/of/of_reserved_mem.c | 227 +++++++++++++++++++++++++++--------
+ 3 files changed, 179 insertions(+), 56 deletions(-)
+
 -- 
-Florian
+2.34.1
+
 
