@@ -1,169 +1,167 @@
-Return-Path: <linux-kernel+bounces-318984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA60E96F62E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:03:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD8096F630
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129811C20C29
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2B9DB2492C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16951CF7C6;
-	Fri,  6 Sep 2024 14:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381971CF7DC;
+	Fri,  6 Sep 2024 14:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dyMY9vi+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="t5HUOzoq"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EF91CE710;
-	Fri,  6 Sep 2024 14:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925161CB152
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725631400; cv=none; b=lipExuMDc8F+9uWwRie6TbU1zgfHqw5FbNq5nrSKAUU6//EvgMd0yM5AIAfRWyyjoSVovy5umS6sEgiYTWNN+Z9xlJbsXEqSHU1pSFcdkiGUU5aBlAKPFGcG9AxFEHFAt2FqtynRU+Ogc688XSJKsuCOHQ4quJrC/xrUbQFb9KQ=
+	t=1725631442; cv=none; b=ETYu+LXy8GK9M82RyKUlnDdGw8Qu2jXsnV4QUfLKnE8jAgHmHORRcixNv87abtmaOWb0cLssD4rG1aYRWo+hF4m7/3vCQrqhdCJC5TliBL7T/Lz6MwI9oHYhTBdvPPnsc6tyvy0QNw5kiqUUrWjFZOhkYe84DKKm5dBvvqm69yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725631400; c=relaxed/simple;
-	bh=cCvVFVarD948ikan+/2TaJVbsKjZAcxCYUNJAassXuo=;
+	s=arc-20240116; t=1725631442; c=relaxed/simple;
+	bh=TWm++yHm+ticvSkpxPLAyti5B/a/nVIvW22N4O9cmnQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWd1PtOIHBGAnVjXZkqX/yTHbq4qk6YMIQDLl2d9dIxgejiMunr7oa2CFdF6KSNmHDZUZUyGRD8lp0ckbNNVBEhFgWDOxxqbvatNO85mncgwdAiJQob/NI7nUAdFeBEpYYQCjmGN3icHdX4A127mQYwWR9YhPDnsuLW0idaaa+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dyMY9vi+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21929C4CED1;
-	Fri,  6 Sep 2024 14:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725631400;
-	bh=cCvVFVarD948ikan+/2TaJVbsKjZAcxCYUNJAassXuo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dyMY9vi+Iv/1EE4rQ5BwnYhfwk66+LJ4z96MdbykYSppKKoQ6y3a0sNfUu/b88uyD
-	 CnMZ+ONw74z6CdB7oB6DTdO6H33Yg0CqFxIeKoXjlAeH7r+IeYZBwiBhKopg0VRDv1
-	 gzpGPqLViAnfIcvPs8ONYWfyESePiuh7ufuvViitOGQLxvTFW462hGXk6bbFU2yUaH
-	 L9ypC5UisZq5so1J2EZ4Zsx2oDa8QzGHtDF2R5KDWuQbRupAZrdUcRbDK0gOWrBwUd
-	 QfmUhasthbSt1k+8xvJ7JF5Ifym3SEZdnZdQXjE4OvCP9je+KurLddBgNN2nspGq59
-	 NazYJG1NuiiDw==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5353cd2fa28so2454042e87.3;
-        Fri, 06 Sep 2024 07:03:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9Ztj0X90dyL2yOZ5gj/wvCM65BvxCpNwyOknReamq75SMC2NkdqpJz56gX9j4NHxzZH+r7bge2MdgJasK@vger.kernel.org, AJvYcCVQ8UKofh5or87mhXLGx6p/fn9B/cNsUV7Ywbfsl5cwQ9krl2d9E1PeqmneWw+2fWv+TBULLAo1fzckXoQ=@vger.kernel.org, AJvYcCWSvbQVsS1kM+a+nQNiq5IN1aPl11nYq68EM11GPInmyu9cOYE1+WWXlIYKftPuH40OCXFZ/phmDQ==@vger.kernel.org, AJvYcCWwgkqSt084qNDp0FC7B1jEbyfM8OrWri/fU8DH47qjvcS3TIxg9b8nH0MN7dvMDcbYyrUMF23xodXeFVAT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8eI12/qluUNH9CvjhpwrrPKz+LAUqXJ5FCymIGaDswDejbzpg
-	x4WpKNcTusFvZ9BkUQrTSYVvKM6Nu4uWr9KfYiVJv7yhawpGOKFVjKfqtbBt4tbw0v6Da2PFg5l
-	sCgt+U0XvogxbzofSD4wsElwkaH0=
-X-Google-Smtp-Source: AGHT+IEwm1OihzyduuH3GdpU3yiLq9gm3KuXayVrsg5BxQSVxVXk/rmKiVyZVYISmyKuN7IvBRI5rMb23e03P34iqD4=
-X-Received: by 2002:a05:6512:39ce:b0:536:54df:bff2 with SMTP id
- 2adb3069b0e04-53658812f84mr1830079e87.54.1725631398698; Fri, 06 Sep 2024
- 07:03:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=SsqD8PstwwRA8FbnWnBTj5UGAfVlPDhCbBUgU/t6keE+WQkm+damrLrV8Xi7y5E9wh/0qK/2rLIAkJXht0s7KS7chM5OzO9/o+GY2fCCl1UXthu3tNxMDROYEf6IZxUaKijOucZaH6hqg5Wq4CheZ7GegULMWbGX2igN0L2r6lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=t5HUOzoq; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-277efdcfa63so1189367fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725631439; x=1726236239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=trpCET00jcBb2iDnuftwsHMgMss5swacYU3IbyIuopk=;
+        b=t5HUOzoqx1Jfv3I8ME+Unyi3cY+efSd7fd9W+wYegAsj0m+aC8LNgSMLd28vtEJSrl
+         pCQdeZLL6GXAGpeeujDbB7fETuEPzsdvaFUVZRnzHDcZek669TbMhMwES3SvEI9Szxtz
+         +9vYfxWsXAnXbkB6MXRE9iERv42HAV5mTZKBZeY6Qo5xZpMU4/yw22jLVAKGN2wasPbR
+         zHdSlBDClOUHN4+MO/3hMFNvgf58mb1/21OfUTqy6D+1b13wkbSVrjwe2YvJFYVGxc8N
+         9pHC+zt8j9kF/BYExcX+wawyiSUR9d7wgCVnjqXScPODWZ40x0zf5qovFoEXejYT/LTO
+         zSAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725631439; x=1726236239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=trpCET00jcBb2iDnuftwsHMgMss5swacYU3IbyIuopk=;
+        b=Y9Ci3IpOZT2Jr0cAZn5AQeSaj66Z6vGbOABqZymigWJRXfvXFhAbdgvPsxl7RLfonF
+         rqSwALVveSHkdSrDsAHy1pEBb1rWyEgOVmRm+xD67dHe6EnkdqtO9qUwmaKOdOI1wHL9
+         GK80YDziMU4z89gyzOggwPayRR5HiiVJk2LW/MnrGS4ma+KHWLAfRC0RXSPJWe3b6vXl
+         XnmPvjE96rVs8tuOvoXBObELRvSPBpLbQIxvzwEhCsCH+vzgIj3laR9SiimAZRNDi3pn
+         W+U9O02p8QAYR679mkLF5Hzb42auA2Mw8kcYSivDxQVZp6hUeQEO6U8c3Fr/z5V916wJ
+         w8nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQtWZAeDtXRC8VXKb5fz6tcERsvYf+n8a66F6HJE+KIBZ+8vkyCmRxqpfxv6tW9ZlznKmbPtClKtP8eF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw95ukaOUKXfOsJR6T0Fm88fAOlmssQGp3/hRRV55KgMOyZgqVQ
+	WXaTaovEUV1kACoQQat3YMKXLuJND06sfsFxdbIkAm7jCRUzupCljf06RKp2bmwF2afJuVPaeAI
+	xicdVrGVnDVb+CKwtzN1UmzMs8MVJWrGifJlCFw==
+X-Google-Smtp-Source: AGHT+IHEymvMMei4A6Xe5mwTIwf6bMo1X0AHc0S8SPQjJWdqiePKLpRe9Ze2zH6IR5h5hZDvGENKiaCs2Kdq33ZADv0=
+X-Received: by 2002:a05:6871:ca6a:b0:260:f50e:923f with SMTP id
+ 586e51a60fabf-27b8302a3d1mr2886683fac.42.1725631439482; Fri, 06 Sep 2024
+ 07:03:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com> <20240906-macos-build-support-v2-5-06beff418848@samsung.com>
-In-Reply-To: <20240906-macos-build-support-v2-5-06beff418848@samsung.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 6 Sep 2024 23:02:42 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQGuXzuA5tNSv0q_AMAy8Zw5MtG2RFRW0nQOwCO8Z5FLw@mail.gmail.com>
-Message-ID: <CAK7LNAQGuXzuA5tNSv0q_AMAy8Zw5MtG2RFRW0nQOwCO8Z5FLw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/8] scripts: add bee-headers support
-To: da.gomez@samsung.com
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
+References: <20240905082404.119022-1-aardelean@baylibre.com>
+ <20240905082404.119022-9-aardelean@baylibre.com> <2bf78e47-909a-45c0-bebb-6a8d38cdef7c@baylibre.com>
+ <CA+GgBR9=unTe5WVq0G2zowbL9FnLfCwoAuZp=7VD=xZOt9Gn5w@mail.gmail.com> <52eb0187-056b-413a-a64a-6fd001c27132@baylibre.com>
+In-Reply-To: <52eb0187-056b-413a-a64a-6fd001c27132@baylibre.com>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Fri, 6 Sep 2024 17:03:48 +0300
+Message-ID: <CA+GgBR9sKzBptH3dm0Eg6Gi7-369vvHerC6EQvzTC_qBe82LYQ@mail.gmail.com>
+Subject: Re: [PATCH v4 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
-<devnull+da.gomez.samsung.com@kernel.org> wrote:
+On Fri, Sep 6, 2024 at 4:33=E2=80=AFPM David Lechner <dlechner@baylibre.com=
+> wrote:
 >
-> From: Daniel Gomez <da.gomez@samsung.com>
+> On 9/6/24 12:34 AM, Alexandru Ardelean wrote:
+> > On Fri, Sep 6, 2024 at 2:30=E2=80=AFAM David Lechner <dlechner@baylibre=
+.com> wrote:
+> >>
+> >> On 9/5/24 3:24 AM, Alexandru Ardelean wrote:
 >
-> endian.h header is not provided by default in macOS. Use pkg-config with
-> the new development package 'bee-headers' [1] to find the path where the
-> headers are installed.
 >
-> [1] Bee Headers Project links:
-> https://github.com/bee-headers/headers
-> https://github.com/bee-headers/homebrew-bee-headers
+> >>> -static int ad7606_read_samples(struct ad7606_state *st)
+> >>> +static int ad7606_read_samples(struct ad7606_state *st, bool sign_ex=
+tend_samples)
+> >>>  {
+> >>> +     unsigned int storagebits =3D st->chip_info->channels[1].scan_ty=
+pe.storagebits;
+> >>
+> >> Why [1]? Sure, they are all the same, but [0] would seem less arbitrar=
+y.
+> >
+> > [0] is the timestamp channel.
 >
-> It requires to install bee-headers Homebrew Tap:
->   brew tap bee-headers/bee-headers
->   brew install bee-headers/bee-headers/bee-headers
+> Oh, that's weird. First channel but last scan index!?
+
+Yep
+=C2=AF\_(=E3=83=84)_/=C2=AF
+
 >
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
->  scripts/Makefile     | 4 +++-
->  scripts/mod/Makefile | 5 +++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
 >
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index 6bcda4b9d054..40f6a9159f8c 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -25,8 +25,10 @@ generate_rust_target-rust :=3D y
->  rustdoc_test_builder-rust :=3D y
->  rustdoc_test_gen-rust :=3D y
+> >>
+> >>> +     if (ret)
+> >>> +             return ret;
+> >>> +
+> >>> +     if (storagebits =3D=3D 16 || !sign_extend_samples)
+> >>> +             return 0;
+> >>> +
+> >>> +     /* For 18 bit samples, we need to sign-extend samples to 32 bit=
+s */
+> >>> +     for (i =3D 0; i < num; i++)
+> >>> +             data32[i] =3D sign_extend32(data32[i], 17);> +
+> >>> +     return 0;
+> >>>  }
+> >>>
+> >>>  static irqreturn_t ad7606_trigger_handler(int irq, void *p)
+> >>> @@ -124,11 +176,11 @@ static irqreturn_t ad7606_trigger_handler(int i=
+rq, void *p)
+> >>>
+> >>>       guard(mutex)(&st->lock);
+> >>>
+> >>> -     ret =3D ad7606_read_samples(st);
+> >>> +     ret =3D ad7606_read_samples(st, true);
+> >>
+> >> Shouldn't the sign_extend parameter depend on if the data is unipolar =
+or bipolar?
+> >
+> > [c1]
+> > Sign-extension is only needed for 18-bit samples.
+> > 16-bit samples are already properly sign(ed), but to 16-bits.
+> >
+> > It's a slight performance improvement, that may look quirky here.
+> > The idea here, is that for ad7606_scan_direct() we only need to
+> > sign-extend 1 sample of the 8 samples we get.
+> > And we need to sign-extend it to 32 bits regardless of it being 16-bit
+> > or 18-bit.
+> >
+> > In ad7606_trigger_handler(), the 16-bit samples were pushed as-is.
+> > Which means that we need to sign-extend the samples at least for
+> > 18-bits (as it is a new part)
+> > The question now becomes if we should sign-extend to 32-bits, 16-bit
+> > samples in ad7606_trigger_handler(), as that may break some ABI.
+> >
 >
-> -HOSTCFLAGS_sorttable.o =3D -I$(srctree)/tools/include
-> +HOSTCFLAGS_sorttable.o =3D -I$(srctree)/tools/include \
-> +       $(shell $(HOSTPKG_CONFIG) --cflags bee-headers 2> /dev/null)
->  HOSTLDLIBS_sorttable =3D -lpthread
-> +HOSTCFLAGS_insert-sys-cert.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-=
-headers 2> /dev/null)
->  HOSTCFLAGS_asn1_compiler.o =3D -I$(srctree)/include
->  HOSTCFLAGS_sign-file.o =3D $(shell $(HOSTPKG_CONFIG) --cflags libcrypto =
-2> /dev/null)
->  HOSTLDLIBS_sign-file =3D $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /=
-dev/null || echo -lcrypto)
-> diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
-> index 75c12c045f21..33bb032039ba 100644
-> --- a/scripts/mod/Makefile
-> +++ b/scripts/mod/Makefile
-> @@ -9,6 +9,11 @@ modpost-objs   :=3D modpost.o file2alias.o sumversion.o =
-symsearch.o
->  devicetable-offsets-file :=3D devicetable-offsets.h
->
->  HOSTCFLAGS_file2alias.o +=3D -D_UUID_T -D__GETHOSTUUID_H
-> +HOSTCFLAGS_modpost.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-headers =
-2> /dev/null)
-> +HOSTCFLAGS_file2alias.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-heade=
-rs 2> /dev/null)
-> +HOSTCFLAGS_sumversion.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-heade=
-rs 2> /dev/null)
-> +HOSTCFLAGS_symsearch.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-header=
-s 2> /dev/null)
-> +HOSTCFLAGS_mk_elfconfig.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-hea=
-ders 2> /dev/null)
->
->  $(obj)/$(devicetable-offsets-file): $(obj)/devicetable-offsets.s FORCE
->         $(call filechk,offsets,__DEVICETABLE_OFFSETS_H__)
+> Sign extension should not be needed at all for buffered reads (that is
+> what scan_type is for). So sign extension should only be needed for
+> the direct read when returning a raw value via sysfs (raw read).
 
-
-
-Same as 4/8.
-
-NACK.
-
-
-
-
---
-Best Regards
-
-Masahiro Yamada
+ack;
+will remove it then from ad7606_read_samples()
 
