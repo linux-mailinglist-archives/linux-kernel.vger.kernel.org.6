@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-318913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E4A96F505
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:06:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B9B96F507
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB12E1F22A23
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61459288914
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BC81CEAA2;
-	Fri,  6 Sep 2024 13:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7081CDFA4;
+	Fri,  6 Sep 2024 13:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSSdplk9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="igq5pTxn"
+Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40F31CE706;
-	Fri,  6 Sep 2024 13:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A111C8FC0
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627966; cv=none; b=X4uJEBfvCW1WbKcb0U4sJ9ysrUeqIW0ozP6U8PDXgvYwLGrlgBm7A8m015t7WjEJH90O3U6or2+OWKGqdMGUbxs2DRbgQMhOaPyi3eBXDZ6TPvIovlz4QwfzvuOswJmJrVxoE7iyQexOD0IPsM4NaIq9KDQHy8EaG7z0eYkRtfM=
+	t=1725628003; cv=none; b=ZF0Xbn2HA5jfLukKhgZ3/5XJ1/cmYQ4/a+lxZcmle+ZdTewc3Wdm48Wjvqfx86keZa0B1usit+R49KtG9GF21RxFVmHXFL+ZTKIdc6R6cdO+pCvy+/UUl6UL3pf+LWMxnXyTH81seAQ8+vmgey+IPLWqTlc7Lq/7ctv3dVj6lRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627966; c=relaxed/simple;
-	bh=PzQtuj58s1m6hfHiyF9Oj2TCTBi4ABvLhfkuhzcvK6s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Jll05bYqToaMiI+wItmI8PvwTAufDNWvVxE9gawgFmQPIROtcM8KpKiHw6fr9y9I/3PO2N2BkP/jJQNXLsEqsjJqFP3o1/o8dRHrS3VYQtw20d4REUfLPOSSiFGOw9cDEOhw8Nq3AZb4jioH5xplc7VUXVuYnxb6ZtR4JbGMf+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSSdplk9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2167C4CEC4;
-	Fri,  6 Sep 2024 13:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725627966;
-	bh=PzQtuj58s1m6hfHiyF9Oj2TCTBi4ABvLhfkuhzcvK6s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RSSdplk98Es/e0Iy6R6OkRmgpUgC0deitakX/yxShqoGCzJrEctYhLSvKo7Hipd5U
-	 bN02BEH/96c1FO9XAxzrurMKPlU3WKgNPpxVWnY+q7Ylq6hwWPiBIqrQ3PtNqbRP5D
-	 q7a7/JtUIuUvltcwoyZqcSeLMi8B/wGI8y4jzapLZ0YqK+BhM1ykZaHLThTGLmQfey
-	 XPH4PivvEMUU77igb5G1Ec67hYJU+ptoSfYhW6f4qEOem8hvL6I7DcpcvfbWHCLz/D
-	 hSRvzDCcftRQFq+p0PDf9szbIyIQwRtlEdX0sjpV6aqgduYLC7y3Rmv9zJJwxsXM4o
-	 6XquD9mrC+KEQ==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- Tang Bin <tangbin@cmss.chinamobile.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240906100523.2142-1-tangbin@cmss.chinamobile.com>
-References: <20240906100523.2142-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: loongson: remove redundant variable assignments
-Message-Id: <172562796127.927452.244425997808347061.b4-ty@kernel.org>
-Date: Fri, 06 Sep 2024 14:06:01 +0100
+	s=arc-20240116; t=1725628003; c=relaxed/simple;
+	bh=N4r6Z4LilYknUGdeTdFJ4rurd+at5Hv7n2OtIfvg9mM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=U8th1d+BfccrMfadOxdIvb3cPO1Gbgz8eyNUY2VegtYAX+Zc48AnhG7qLdT+i0JFNUmRsBFGTFVpQqCji2CFQSIw8tbY0J61SBS4kPbTFhtTjxYuemTxxbkYkwKEVl4CLymhymnxq69YVivvywvM4XXOnlrzYJuOMfprcjg0j1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=igq5pTxn; arc=none smtp.client-ip=203.205.221.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725627993; bh=XicgIRu8/O9XUmcqZyRvKUd0R0MDBc92c/muUV4mj0E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=igq5pTxnwRkY1cwEkhfF2AN6CAvH+IAtxg21W6t6nb40tHcVpEUEW4aBLcb0+f3kF
+	 iV4t1bJ2xKOMkCLSgv0GMJu/2xfqTe8yT5LdfTgiwu9LBWmi+Shmlddv5//je/uj6g
+	 QmeahviVRNN0X6Ngd+SFx21NesbmpouiRM2VtBxE=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 19F23C78; Fri, 06 Sep 2024 21:06:31 +0800
+X-QQ-mid: xmsmtpt1725627991thbfba84p
+Message-ID: <tencent_157C251EBA15BB1533CB9E1C1B254BF11B08@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wWKn3VHFFpdRKvOU6II1ykxcvTYY3pBcbYeU6myoz9eaOCsHPeG
+	 Yl1RTBUbFBVIyMG3nHMc3vJ4w8Jo7m2Rau0T4VVSELUUFkNqhNVPXNMPfchMIACVovuB3Y/zCHYd
+	 I45I5vhxAtVtQDsm+gTKHoC1eo6A79rw6XUkwVOVdFOSelb6X+4cwdeysPvc8BIEDf48wKNnS/sP
+	 N0zIwL+ayThXyt4Rv4EqmE/7Zw8JyEN7MA59dV+SWGRsEDc+nlnztgaqcOxy7RhIgdA8mClrKzEz
+	 SDqNQq9tRHry60V40ZkXLSAKqwEZ/CptDB5Zgp4yQIg6gIYbsTQsQfF+x74nMXv7ckZTxqW3pO17
+	 VJk2BAJY8dE/h3c2rPDmbyQ1RHV5wfXfs86P1BjSa9SqYgqLUHFV+SmxlNf3Qw6K2JDfPvROOYtw
+	 4ncyGHb10O/J0BTstC/Tiq6KFvd8AAbQ9ESg12clRnjEau2ExWRAJZpJUVP/MvLgLh4CJwBFf5TR
+	 Lpz/Wv2rYg96H1yMfvr+OjWOi33faxoIciFq/b+sX2/U18iiO+W8nult+v14d6stiIa25HtL8BU7
+	 F8A1YzrQcKpnT44e7i/Bk4vrX5/G8bmZ6diuxFanPB4ImYZxzSgd7H/531oWpn9IPLafsGAbepbq
+	 FWFv9DYqFn4NlT4Rq0L3lO9wU8kYT59sSpQhK+Zs4zYChpsPllwfw7opW9aG4P3dknhLUBMoh/za
+	 4B0WTQn2Pls+vjo2QHP1w8UN3faAjf+ybm1TGS/Yf8Hw+LWerp2yiIcOhOqwy8bbKwONkN0YO8aG
+	 nwNna4Z625qWXum0dzNIWh3AGxPTXw7BKvKXDbU5aig2KzJWK64Xd9JGkkJ4RmW5rJtiW8LoACvg
+	 0QlD+HEzWYElffxcGm3BlJzHoWvaHaafBhO4BDFA+RKFMnoz4YAwVM7Byc9qZ98WVu4jS2Dy3jsh
+	 7ioP6nnXrdwyYov1Jx5UrtwcHlvYglDBTP7bwZqCtO2+5agMEvoA==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+Date: Fri,  6 Sep 2024 21:06:31 +0800
+X-OQ-MSGID: <20240906130630.299785-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <000000000000a338d6062149eb22@google.com>
+References: <000000000000a338d6062149eb22@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Transfer-Encoding: 8bit
 
-On Fri, 06 Sep 2024 18:05:23 +0800, Tang Bin wrote:
-> In the function loongson_asoc_card_probe, it is simpler
-> to return the value of function devm_snd_soc_register_card
-> directly.
-> 
-> 
+Clear the buffer that has not been set, after copying data from user space.
 
-Applied to
+#syz test
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: loongson: remove redundant variable assignments
-      commit: 1798acef8f50af59abaa0ff4775e7a79a68db671
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+index 6bd9fe565385..faf8c5508997 100644
+--- a/drivers/usb/class/usbtmc.c
++++ b/drivers/usb/class/usbtmc.c
+@@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+ 		goto exit;
+ 	}
+ 
++	if (transfersize <= 3)
++		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
++			aligned - USBTMC_HEADER_SIZE - transfersize);
++
+ 	dev_dbg(&data->intf->dev, "%s(size:%u align:%u)\n", __func__,
+ 		(unsigned int)transfersize, (unsigned int)aligned);
+ 
 
 
