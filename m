@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-318044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5854196E790
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:10:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA0496E78B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021371F23D57
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597D7285DFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250ED2233B;
-	Fri,  6 Sep 2024 02:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A414C2110E;
+	Fri,  6 Sep 2024 02:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j2H2TSR1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PN35VIuZ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6D6224D1;
-	Fri,  6 Sep 2024 02:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16EE1B59A;
+	Fri,  6 Sep 2024 02:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725588611; cv=none; b=nj8iJ1svBZuy0VjT/SxkIXE6kx+inl+V7xSI1SvMR3ryzLvPjIr59SuHPsabqhsceqkOrJmn6qqPZT7o0/Sa4kEb96qZJEurzdfX4Qe8zjpmPo4VwqwRFEUlubSP9XVgnrRevamdjAHdRM/5IgDrgTclPbz6lNE5WbG8+Rws9ts=
+	t=1725588506; cv=none; b=sS8voymsngW1W9BxPHr1Hk+bDRIyLPTImiPVPzttC4+C+OZggpm8KHuYLKcII5hVpL5YuNWAxclESvHDKdAGt3+odEqq2qS1iIWUsfwSOR7IiAkf0oOAZEqHH4TsvI2NVI1fIvMf/rvdoSdjyp+swhP1V6osgbk7ToQ+bpmBYfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725588611; c=relaxed/simple;
-	bh=i4l10zfX/DGhG/AbOrQwBZEQooKwTqkjISKRIiHs6HE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oeYnmK+fGgi83yPcJB9bmLB6Cl00i1uRyOZ2vJQ9+ZjLljwVPBv6IanBBix6fhCpEcnLy5CckVPvK3U0cUoryEMZ6zPU3P7dsSSt6KNObTKuh+15/foa0VGH8uokZyp7Gd598lIfmWzcLR0WVC0NkjLhGpHq3yv3oHw713mxH1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j2H2TSR1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQ1Bj019686;
-	Fri, 6 Sep 2024 02:04:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=o3m6ibt/YPMUXISBWQEtD/dM
-	JXL1mxksn9wAFtL6Bz4=; b=j2H2TSR1ow58n1mWGWdDXGcs74Z2Mhzj17bGVshe
-	aWWGmzj2OwyV70OfSUMA85QzExyyQLbt0ELXnDNP3X78qOtp3wIBYQLRTB8Kuw4J
-	ynUPKmwigoxp7KX2GYLvwlP9YsQM9baq+4RWXDrfpFLMQV6hBwx2QwWyznbI9IFf
-	KrZ6mnFCgEZ9MDtPw38Lo3u9lmpmQpATDtTQppXP6WwarC8D9JeHDyTBqiIh05h5
-	eb/SLZajy/9lbPLH4zgXbStErlygI4GHqJGH1138FME0K75jpreWwwXnIcPC5jjg
-	TktE5hs3CsyWk/aAjrwc7NtgTqvn5C9sD4pdUYze2VEOYg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu0rjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 02:04:59 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48624wHx012353
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 02:04:58 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Sep 2024 19:04:57 -0700
-Date: Thu, 5 Sep 2024 19:04:56 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Brian Masney <bmasney@redhat.com>
-CC: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <quic_omprsing@quicinc.com>, <neil.armstrong@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ernesto.mnd.fernandez@gmail.com>,
-        <quic_jhugo@quicinc.com>
-Subject: Re: [PATCH v3 0/2] crypto: qcom-rng: fix support for ACPI-based
- systems
-Message-ID: <ZtpjSPI5+loYoT2M@hu-bjorande-lv.qualcomm.com>
-References: <20240906002521.1163311-1-bmasney@redhat.com>
+	s=arc-20240116; t=1725588506; c=relaxed/simple;
+	bh=xwu+Ko87uW3Nel/t+x+us/FjNcL68/8AaWlzObr5OOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PzfuK22e7Lju3pOFH4qeaOAFwAgU3xEkOmheWD9ON9A7Yaml4rxBiiaXiye5h9XhTdpmIf84RN0QA0htDicOssE1DhIWtMXR9hPmjC1FjNe8A58edKy+F6mMEEkeJ4N1txpwFPsN5gCAchU/VNmnEb9wCrVoEAV2hDG9znbg994=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PN35VIuZ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725588501;
+	bh=S3wtYb7aiLCJt3DDSZ8aFXIgqe481olk0EsLirbwCS0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PN35VIuZrTbwSpjc8dJMA0W+5SqJh3BTrtL1B289xY9nag/9cqjhOHihSGMZkgP8W
+	 HOVHIfNZCfyncGrAjJ6rm6BWRNN5hU410yRjlv0k3dYDZqOJPqFTJ9FDlLdXPMlaRF
+	 ZIM2q0Mz0f9uVdquv0M7gfzmUPB7lRxrD6LWnbQXx3jsxAdI5BTCFSCKY60kb2QQKP
+	 cp26C7WvD7MYrXzJTU7sAVYmL7w52R4z7qA3gE8PQgNI7hLLpyDEEPlvlvCQPikKFX
+	 gmDja/ExO3TYsUTExxKf90UrWyBmB3TWHJDYzjj1M+p4I9hBilW1D15BvgwQyVblNt
+	 hxovGG2leOfUg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0KQF60wTz4x21;
+	Fri,  6 Sep 2024 12:08:21 +1000 (AEST)
+Date: Fri, 6 Sep 2024 12:08:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alexandre Torgue <alexandre.torgue@st.com>, Olof Johansson
+ <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the stm32 tree
+Message-ID: <20240906120821.6ca2ac3d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240906002521.1163311-1-bmasney@redhat.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9fjCBhBEyxfCCy1WbR6yEJgMi4sf68gk
-X-Proofpoint-GUID: 9fjCBhBEyxfCCy1WbR6yEJgMi4sf68gk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
- clxscore=1011 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060015
+Content-Type: multipart/signed; boundary="Sig_/A=h3yswC_qvU9ssT+JHkCg0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Sep 05, 2024 at 08:25:19PM -0400, Brian Masney wrote:
-> The qcom-rng driver supports both ACPI and device tree based systems.
-> ACPI support was broken when the hw_random interface support was added.
-> This small series gets that working again.
-> 
-> This fix was boot tested on a Qualcomm Amberwing server (ACPI based) and
-> on a Qualcomm SA8775p Automotive Development Board (DT based). I also
-> verified that qcom-rng shows up in /proc/crypto on both systems.
-> 
+--Sig_/A=h3yswC_qvU9ssT+JHkCg0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+Hi all,
 
-Regards,
-Bjorn
+The following commits are also in the arm-soc tree as different commits
+(but the same patches):
 
-> Changes since v2:
-> - Simplify ACPI fix based on what's done with other drivers (Brian)
-> 
-> Changes since v1:
-> - Use qcom_prng_ee_match_data instead of qcom_prng_match_data for the
->   true skip_init to match previous behavior (Ernesto)
-> - Reordered patches so fix is first (Dmitry)
-> 
-> Brian Masney (2):
->   crypto: qcom-rng: fix support for ACPI-based systems
->   crypto: qcom-rng: rename *_of_data to *_match_data
-> 
->  drivers/crypto/qcom-rng.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.46.0
-> 
+  078dc4752822 ("ARM: dts: stm32: stm32mp151a-prtt1l: Fix QSPI configuratio=
+n")
+  76e16f3549e8 ("ARM: dts: stm32: Keep MDIO bus in AF across suspend DH STM=
+32MP13xx DHCOR DHSBC board")
+  835dfbca3781 ("ARM: dts: stm32: Add ethernet MAC nvmem cells to DH STM32M=
+P13xx DHCOR DHSBC board")
+  8388a6e67f22 ("dt-bindings: arm: stm32: Add compatible strings for Proton=
+ic boards")
+  a15ad86d4b65 ("ARM: dts: stm32: Add MECIO1 and MECT1S board variants")
+  b14c9f6bd0ba ("ARM: dts: stm32: Use SAI to generate bit and frame clock o=
+n STM32MP15xx DHCOM PDK2")
+  b512ce39b570 ("ARM: dts: stm32: Sort properties in audio endpoints on STM=
+32MP15xx DHCOM PDK2")
+  c00176c49e94 ("ARM: dts: stm32: Describe PHY LEDs in DH STM32MP13xx DHCOR=
+ DHSBC board DT")
+  ce923f5d2804 ("ARM: dts: stm32: Switch bitclock/frame-master to flag on S=
+TM32MP15xx DHCOM PDK2")
+  d3557e468f68 ("ARM: dts: stm32: Disable PHY clock output on DH STM32MP13x=
+x DHCOR DHSBC board")
+  efab072ce426 ("ARM: dts: stm32: Add missing gpio options for sdmmc2_d47_p=
+ins_d")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/A=h3yswC_qvU9ssT+JHkCg0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaZBUACgkQAVBC80lX
+0GyHNQf8DyQE32G6zUCFnmV9Hebi4PE8TMbAPd3FeZ5+jp+l/jeUl9CREsq9klPX
+RgtxWh/s+DoqOT1y2kRIR6vFk7PyPn3HY7bsYcXFhKJAIxA4YNhamV/bb0x8I0KB
+/UMDrOE0w+LlXVnBu4t3Mw15uh6PJe8URcoSdDrdqALqgE2ahxVVDI+yiXIE8Am+
+47VMNHi4bWDPIfDpYFB/8N7I6ofksMINAi7m+PFxjNu/eFf48wN1U2ZgCL8gmAWC
+bONww70Dc/9/nVLveyJ43LU2Zj+pUzzmh7HmxQEld/xmSNnxwuyDG1DoZSuLmwOn
+xiFLACFTAWtNIbDUeXO65BbvszmjCw==
+=lwLp
+-----END PGP SIGNATURE-----
+
+--Sig_/A=h3yswC_qvU9ssT+JHkCg0--
 
