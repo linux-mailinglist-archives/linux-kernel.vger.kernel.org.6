@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-318058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990DA96E7C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:35:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081E796E7D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6701F23BD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310DC1C22BE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605AB36130;
-	Fri,  6 Sep 2024 02:35:17 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA3836130;
+	Fri,  6 Sep 2024 02:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQV/iT3l"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8886A182B3;
-	Fri,  6 Sep 2024 02:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5038727450
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 02:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725590117; cv=none; b=mBdT4a9iojyV4aoTMLplwqnCKtk1ohE+R3gTr22gVSqryZQanJNlKo0ZzK6XTT636kY2Psw8N/6xEgptC9ArXrZRJVtM7IKd70kBPMi6lZLFgh6ca+uoMC2mAkVEYfslZzn1S5Bi1GWbRxdc1efuqmVCV4I7x6/TEExVpMnYOR8=
+	t=1725590522; cv=none; b=Hi1Bkykjpp05mnowLgG9xk8mnv9ssmoV+Bb4cUEkONe1xdcTejZj7v4juiILrVV9y9K5SB3oOf1otjqqZwmCGUVozKIDUR6W/q3J56fVg7sU8cYEbCvafMJcOsLFEPvRy2ohjnI18R6RBBIZa3RL5Q5bKVEyjzq0X0G4o5Fxe4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725590117; c=relaxed/simple;
-	bh=WhQeqFtAGTX6XYbCEXQ9ZmWwEhxISb8ziXHJQ0oDfDI=;
-	h=Subject:References:CC:From:To:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Z23a5oZw5yw94Bs4ksokfXcDl8RFKaRdswhgnULjC7vXUppsggfeIRGO14vda3uV3P0+te43405sNxjH3pFs9N4XEta0zx5FB7V6EmBq8QsvsnuCnMPWq/REn7YUX7NPtXhq6thhzfL8gb278jyWpFMCIIuasifaVUXWfRYTDCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X0KvS2Qykz69Wr;
-	Fri,  6 Sep 2024 10:30:12 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id A052E1800F2;
-	Fri,  6 Sep 2024 10:35:11 +0800 (CST)
-Received: from [10.174.178.75] (10.174.178.75) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 6 Sep 2024 10:35:09 +0800
-Subject: Re: [PATCH v2 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-References: <CGME20240903033105eucas1p2b9d0b874da268fecb49905d90340de09@eucas1p2.samsung.com>
- <20240903033011.2870608-1-yukaixiong@huawei.com>
- <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
-CC: <guohanjun@huawei.com>, <ysato@users.osdn.me>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<kees@kernel.org>, <willy@infradead.org>, <Liam.Howlett@oracle.com>,
-	<vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>,
-	<anna@kernel.org>, <chuck.lever@oracle.com>, <jlayton@kernel.org>,
-	<neilb@suse.de>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <paul@paul-moore.com>,
-	<jmorris@namei.org>, <linux-sh@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-To:
-	<"wangkefeng.wang@huawei.com liushixin2@huawei.com liuyongqiang13@huawei.com tongtiangen@huawei.com sunnanyong@huawei.com mawupeng1@huawei.com zuoze1@huawei.com zhangpeng362@huawei.com tujinjiang@huawei.com yaolulu5"@huawei.com>
-Message-ID: <0a12953b-0d11-00d2-ef0e-454d0e3d98f3@huawei.com>
-Date: Fri, 6 Sep 2024 10:35:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1725590522; c=relaxed/simple;
+	bh=sdshN9UNlzuD27u6ROZbKQMULAXmm9YbEwRektccAXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ShFaAuJ2yJVHFhtziEid0Xmo3E3VOG9iIHJqCkfb28KCcRpRYnx6m+kIy1OR0eVJ6VqwsD0zV8p5SiRezktKtc4fKysHYPKIxaBYfDUG+onqKaVODzo/AD6adTNkxv2GbQ3Dcdh5OQyQpFVwO/yni1g/BM1tFirwc21WVXxiY+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pQV/iT3l; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4567deb9f9dso92281cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 19:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725590520; x=1726195320; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v4UaR9rnfs3nkxsuzsZ+aLOeL91gfHZmS2quKBI2l2E=;
+        b=pQV/iT3lEfUR4Ig5YZGeanpRsPBJ7twXlFmftE3nT+jzy/G0d7KEqYHVFX23r3ZZD8
+         VDEJ/1aCvBbPX+gXeb43e0SMDmFAbyTNrjwMISuvV8w7vCZFvEjiFgkXOHy8TsYSN5ef
+         VYDasx1l+48Z1XzK8jVpJfpA3SqoCVhIsmDDZLcLZ0qCGBys/1wGwaTWZOcH2xxXv+j+
+         a9fvkr7bFF94Y+Wc0k+W35Oq4s8Tzi9CYtmkKSvfweCP+gKB2IC4FAgXOmwVk461apnt
+         mLakc56PHFpLnm78Rihm/Tqfr+mgDI+6DghWz9Fza74vHQxnWPOs7uanPlcg3P1/vUqj
+         Kvfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725590520; x=1726195320;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v4UaR9rnfs3nkxsuzsZ+aLOeL91gfHZmS2quKBI2l2E=;
+        b=RQfZTeaA5+N0xiK76d8PZ5EzRVawDlst4Hj0NyRTWJBbT1Vz+RVYKNkqRPzTbRk/ds
+         mzU4jHoWCBbDEdbww9HVO1yYq7SCPLDaYdrOOjOhcHf8uuXwfP1lbJqiuvQWZa/8cmC6
+         PmJqJMEWNJpd3kXBb1trHOYSjNy4VB5je0w0bjf0hYeBo1Iz15TEMlYu+jPRWm6n99iy
+         XlTp60/1D3+cKljhyLurZkS45CzSM/s7ktMenwcj00/F+JbyKjJEmE47640mlVRIJuSZ
+         ycsK9B8U6IhuxZp9F9BghNU2waFX1/lRU7Z1FfZEroD+wSYl1PE1jV+n23d3OBlEbDa0
+         3F1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGDYsbKbjIk8uiHInPgPVQfnz6fF0m7QHAoX+0xXH9CGEyXc63U83lmtYoycMiSjVaZt1HM8h6HIEFkYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTZz2UAjbZd+zA2TWR4vZQlV2HyuQ4sc+jhEK9dS8WJDgro7nC
+	NFThjjG5mmAFwxkgy4wrjGaZjLw3xzZtJSb2adrhKEA0zPVJTEuyKTVLZe8W4he3s8augyPZrBa
+	JNDjtN4ROS0uQoEJqjzR9FaC3mNcdddEO9aav
+X-Google-Smtp-Source: AGHT+IFOLdcChhDKTbdy4hWrZEWpjgccfXJgjnc236wYk8wUUmjOFryorytFFjekkPPnEJ5X3Roahp090JCOs/osYIs=
+X-Received: by 2002:a05:622a:4b06:b0:447:d78d:773b with SMTP id
+ d75a77b69052e-4580e514fcdmr758961cf.6.1725590519728; Thu, 05 Sep 2024
+ 19:41:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml100009.china.huawei.com (7.185.36.95) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+References: <20240903213649.3566695-1-yuzhao@google.com>
+In-Reply-To: <20240903213649.3566695-1-yuzhao@google.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 5 Sep 2024 19:41:46 -0700
+Message-ID: <CAJuCfpF2RoKcyjABk74X6WgcHCCH_xr966JR=O=+w8ptANMKug@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v1 1/3] mm/codetag: fix a typo
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2024/9/4 4:38, Joel Granados wrote:
-> On Tue, Sep 03, 2024 at 11:29:56AM +0800, Kaixiong Yu wrote:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
->>
->> All the modifications of this patch series base on
->> linux-next(tags/next-20240902). To test this patch series, the code was
->> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
->> x86_64 architectures. After this patch series is applied, all files
->> under /proc/sys/vm can be read or written normally.
-> This move make a lot of sense. The question with these multi-subsystem
-> patchsets is how do they go into mainline. For now I have added this to
-> sysctl-testing to see if it needs more work. I can push this through the
-> sysctl subsystem, but you need to get reviewed-by for all of the commits
-> in different subsystems. I'm also fine with this going in through some
-> other subsys if anyone wants to take it?
+On Tue, Sep 3, 2024 at 2:36=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
 >
-> Best
+> Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allo=
+cation profiling")
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
+
+Acked-by: Suren Baghdasaryan <surenb@google.com>
+
+> ---
+>  include/linux/alloc_tag.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-
-Thx，Joel!:-)
-
-Hello，everyone!
-
-This patch series has been reviewed by Kees, Jan Kara, Christian 
-Brauner, and acked
-by Anna Schumaker, Paul Moore. As Joel said, this patch series need to 
-get reviewed-by
-for all of the commits in different subsystems. I would appreciate it if 
-you could review
-this patch series as soon as possible !:-)
+> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> index 8c61ccd161ba..896491d9ebe8 100644
+> --- a/include/linux/alloc_tag.h
+> +++ b/include/linux/alloc_tag.h
+> @@ -70,7 +70,7 @@ static inline struct alloc_tag *ct_to_alloc_tag(struct =
+codetag *ct)
+>  /*
+>   * When percpu variables are required to be defined as weak, static perc=
+pu
+>   * variables can't be used inside a function (see comments for DECLARE_P=
+ER_CPU_SECTION).
+> - * Instead we will accound all module allocations to a single counter.
+> + * Instead we will account all module allocations to a single counter.
+>   */
+>  DECLARE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
+>
+> --
+> 2.46.0.469.g59c65b2a67-goog
+>
 
