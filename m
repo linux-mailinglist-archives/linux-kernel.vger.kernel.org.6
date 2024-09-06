@@ -1,192 +1,108 @@
-Return-Path: <linux-kernel+bounces-318157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62AE96E941
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:28:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C792E96E943
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7E1284A7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:28:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4F8284A55
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A3823DE;
-	Fri,  6 Sep 2024 05:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A4D84D0D;
+	Fri,  6 Sep 2024 05:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RgjjMUgS"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEhvc+b3"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82501805A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 05:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC502A48;
+	Fri,  6 Sep 2024 05:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725600523; cv=none; b=R1J3/o4AppfvtUA5XWwy0w9J60YdWFoZfzVBkJXuDe8Eh0Iwnasbq294bBlJGnWNVFB7Uw7IRiVgp+VVAyEtsky9xr++Wnb3tP4PU3wYJnRKVUi5nMdVsHLtSQWTRYRY6qBAzOZNE+fkDLjz4CZGrXoyxnKMuzzbxcvE8W3To3M=
+	t=1725600595; cv=none; b=Wt9GOMrIDK+m0rQL//+OdvNCyvF0krLWN6a87pQvpOfNx9lwMFUsCjU/YOL8hQGbXiv7VihKl7BTB7LjkQLEpjRwfVrD5gQ8urLJnvDhUQopmqD6lZlzZQ8cq7o8CXP9puYRzkZQeRP+cQV9Jq9B8wTAShTh+5fN3AB2sV8htyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725600523; c=relaxed/simple;
-	bh=P8NzR1clZZHvq168490j+k6VhlPtn3NzB9PTUUKGTrE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bD8JeBBxseAsSCLqKTQ9nxxHod3VY895FmLl8DxNOtaCQ19bmIsl/h36hXlzfzaaUuF2RRMQt4cbUTPfM96Agwt2fO95jKJofUxguT+K+sKvfioE6sXDBtRwFsHvya0TgxZBYatv6uFMuOYiH1t0JztjtfBTpPko6oROu06hxYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RgjjMUgS; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725600517; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=B59qOTQ5B/DlCcvhL+utjjELqTBP0dtzxxRmP6Grzk4=;
-	b=RgjjMUgSpMjTIS/K9iWKiNvlyIQaT+0h0uwPzqWeeqC9ZLKjDQCZFJo2vZBvGWfmjiqecAm319j4RUrVQnOTNvnSJz4Pf3rWWWXSWg1qZ/j8MmBIQeE6mR24ew9nfQhg/tKo7z/jfH6e5JDp7Jl558yRR2xXDQxqCLW3b9S+DLU=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WEOJP-i_1725600516)
-          by smtp.aliyun-inc.com;
-          Fri, 06 Sep 2024 13:28:37 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: shmem: fix khugepaged activation policy for shmem
-Date: Fri,  6 Sep 2024 13:28:23 +0800
-Message-Id: <7c796904528e21152ba5aa639e963e0ae45b7040.1725600217.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1725600595; c=relaxed/simple;
+	bh=c5rG8W+UpJgiXdoTi/jU3jDWygp9pIrM3OecNI7yB74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwXaO/IhQhdRQpaSmXsMNCUoB5Bb0sN8qbS/dnIimPPt64akR9yzZe7Qwftatw0nOLnuZoJBQNCXNsjS8VZw/wJwpCVtLyWeGiyWwvQ5oXBAaOYpEAYrJJDTwwPG89BW+PC8hM4i+aN8o+JcVlZucqv0KOQYlkEOzEXPGCdWkxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEhvc+b3; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5dfa315ccf1so1018029eaf.3;
+        Thu, 05 Sep 2024 22:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725600593; x=1726205393; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WCyrXdUT4Wks/m84wqW9nphU1jA9e88xa4OHLtyB4dE=;
+        b=kEhvc+b30cwfwbGjShMgeHsKO/6txek//VO0phJpWZvtLMRo69iMGF11ChIEkVfHH6
+         avQWUT12s1FwO7y2yi0y/CLZHTuzgJL/jVyXuCFqAQfFBJM5JoFQ2osx4SpBwzFEi65T
+         upP8U2NKdRIzFQFZCIOkT/b1O+QNlYpZCw+SDGailwPEHoghMf/VpwJU/7EI9Ko4H2yW
+         rEfnNf5bw3z9wlIJWIVsQ+EDdp3pzgxXBT2KSVATRkKlHW1G+zQm0o7GpicZiZhPB7RS
+         hJuC4Eo2urVmStG+NpAzHwGYtGL9VCRcTA9n6AH5msir6VDr8bpkPBLcg1W+11undZXA
+         bvzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725600593; x=1726205393;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCyrXdUT4Wks/m84wqW9nphU1jA9e88xa4OHLtyB4dE=;
+        b=rhoUKAZbbX3LF8DKj+Wab3txLLkN4ZlavoEPXZjMZR+DoB9Q9kwxRIsHQfkCU+ovgJ
+         q3ck0TBLZ61Hdq7fJnYRJIq/AfoMiuksAXi0CFy2CV7poNfSH1yN2CR5UQKjwxP8gJ3V
+         9/YIzMQJV89SPcl9xMmMr9OY1+98k+v1o7MrlVgDJHzgDTXjDN7/Bj8sspH/NY6dnsfP
+         2VxA5OFwfCM5ulcZ2Fc3u8i+bNEKyxdM5TUbobUwFO/Wo3pk97HBIzw5bxA5ByXW9oH8
+         d4r7aJWjPSf85LssLeqRxlXBazsD1WDgf0WBUm9nU0QR5lb1TBxhQHdjXuQ5Ageu1dnW
+         F8gA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ33bhVaTP2XbubpBDq2Nii8ySDO+rtvFtoeRM4Sz5eATe4S+p4azI5GWcQytl7IOln5jnFJUNj5fMKVrE@vger.kernel.org, AJvYcCXO7Lpb7Kp5T2G8YLRY0ucp856z/4R+pGvf2cfhT+e4wQPfSXxQb2MLwuIWMFpI5CgPQeCYSaJVXbsjUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPihvi58jp+wjgOwAOP26pvlgVTe9qcHsHWz//tUuNsoSxbeLv
+	4wfxs+IYe2rnLbTnuVN/J9+CFTHgsz3ygOLYo8pzJnE3JVUQ6gR8
+X-Google-Smtp-Source: AGHT+IEIFBATCXcOsz9JD3+EPLtTHVM/0/bkvsqFStGZK3sxwyPyAnbV1+4aOVfihvhd2axqlF9BRA==
+X-Received: by 2002:a05:6358:5245:b0:1b8:203b:db89 with SMTP id e5c5f4694b2df-1b8203bdca2mr897095455d.5.1725600592679;
+        Thu, 05 Sep 2024 22:29:52 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1de8:3062:3230:1a45])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7177858988bsm4072916b3a.105.2024.09.05.22.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 22:29:52 -0700 (PDT)
+Date: Thu, 5 Sep 2024 22:29:49 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: hadess@hadess.net, hdegoede@redhat.com, neil.armstrong@linaro.org,
+	jeff@labundy.com, krzk@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux@mainlining.org
+Subject: Re: [PATCH] Input: goodix-berlin - Fix VDDIO regulator name
+ according to dt-bindings
+Message-ID: <ZtqTTZizT7nAaYzq@google.com>
+References: <20240805155806.16203-1-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240805155806.16203-1-danila@jiaxyga.com>
 
-Shmem has a separate interface (different from anonymous pages) to control
-huge page allocation, that means shmem THP can be enabled while anonymous
-THP is disabled. However, in this case, khugepaged will not start to collapse
-shmem THP, which is unreasonable.
+Hi Danila,
 
-To fix this issue, we should call start_stop_khugepaged() to activate or
-deactivate the khugepaged thread when setting shmem mTHP interfaces.
-Moreover, add a new helper shmem_hpage_pmd_enabled() to help to check
-whether shmem THP is enabled, which will determine if khugepaged should
-be activated.
+On Mon, Aug 05, 2024 at 06:58:06PM +0300, Danila Tikhonov wrote:
+> The dt-bindings specify the regulator as "vddio" instead of "iovdd".
+> 
+> This patch fixes the regulator name from "iovdd" to "vddio" in the
+> driver code to align with the dt-bindings. Fixing the dt-bindings
+> would break ABI, hence the fix is made in the driver instead.
+> 
+> There are no users of this regulator сurrently.
 
-Reported-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
-Hi Ryan,
+If there are no users (and the binding is pretty new) we should consider
+all options. Do you know the name of the supply in the datasheet?
 
-I remember we discussed the shmem khugepaged activation issue before, but
-I haven’t seen any follow-up patches to fix it. Recently, I am trying to
-fix the shmem mTHP collapse issue in the series [1], and I also addressed
-this activation issue. Please correct me if you have a better idea. Thanks.
+Thanks.
 
-[1] https://lore.kernel.org/all/cover.1724140601.git.baolin.wang@linux.alibaba.com/T/#u
----
- include/linux/shmem_fs.h |  6 ++++++
- mm/khugepaged.c          |  2 ++
- mm/shmem.c               | 29 +++++++++++++++++++++++++++--
- 3 files changed, 35 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 515a9a6a3c6f..ee6635052383 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -114,6 +114,7 @@ int shmem_unuse(unsigned int type);
- unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 				struct vm_area_struct *vma, pgoff_t index,
- 				loff_t write_end, bool shmem_huge_force);
-+bool shmem_hpage_pmd_enabled(void);
- #else
- static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 				struct vm_area_struct *vma, pgoff_t index,
-@@ -121,6 +122,11 @@ static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
- {
- 	return 0;
- }
-+
-+static inline bool shmem_hpage_pmd_enabled(void)
-+{
-+	return false;
-+}
- #endif
- 
- #ifdef CONFIG_SHMEM
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index f9c39898eaff..caf10096d4d1 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -430,6 +430,8 @@ static bool hugepage_pmd_enabled(void)
- 	if (test_bit(PMD_ORDER, &huge_anon_orders_inherit) &&
- 	    hugepage_global_enabled())
- 		return true;
-+	if (shmem_hpage_pmd_enabled())
-+		return true;
- 	return false;
- }
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 74f093d88c78..d7c342ae2b37 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1653,6 +1653,23 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
- }
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+bool shmem_hpage_pmd_enabled(void)
-+{
-+	if (shmem_huge == SHMEM_HUGE_DENY)
-+		return false;
-+	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_always))
-+		return true;
-+	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_madvise))
-+		return true;
-+	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_within_size))
-+		return true;
-+	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_inherit) &&
-+	    shmem_huge != SHMEM_HUGE_NEVER)
-+		return true;
-+
-+	return false;
-+}
-+
- unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 				struct vm_area_struct *vma, pgoff_t index,
- 				loff_t write_end, bool shmem_huge_force)
-@@ -5036,7 +5053,7 @@ static ssize_t shmem_enabled_store(struct kobject *kobj,
- 		struct kobj_attribute *attr, const char *buf, size_t count)
- {
- 	char tmp[16];
--	int huge;
-+	int huge, err;
- 
- 	if (count + 1 > sizeof(tmp))
- 		return -EINVAL;
-@@ -5060,7 +5077,9 @@ static ssize_t shmem_enabled_store(struct kobject *kobj,
- 	shmem_huge = huge;
- 	if (shmem_huge > SHMEM_HUGE_DENY)
- 		SHMEM_SB(shm_mnt->mnt_sb)->huge = shmem_huge;
--	return count;
-+
-+	err = start_stop_khugepaged();
-+	return err ? err : count;
- }
- 
- struct kobj_attribute shmem_enabled_attr = __ATTR_RW(shmem_enabled);
-@@ -5137,6 +5156,12 @@ static ssize_t thpsize_shmem_enabled_store(struct kobject *kobj,
- 		ret = -EINVAL;
- 	}
- 
-+	if (ret > 0) {
-+		int err = start_stop_khugepaged();
-+
-+		if (err)
-+			ret = err;
-+	}
- 	return ret;
- }
- 
 -- 
-2.39.3
-
+Dmitry
 
