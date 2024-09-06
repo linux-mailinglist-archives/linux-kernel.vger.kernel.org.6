@@ -1,391 +1,204 @@
-Return-Path: <linux-kernel+bounces-318492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56A196EEB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54AC96EEB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1FF91C23DC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9CC1C21D7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661981AC448;
-	Fri,  6 Sep 2024 09:00:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9D01ABED4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8161BF329;
+	Fri,  6 Sep 2024 09:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hzu1YsHt"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B781BE230
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725613234; cv=none; b=PK8Vi9+qW2/ezhLG1lpPtbmUccC7B2qilmZjNuReKGoCnzDdEq/3XUWY7Vrzl01jjcVXlq3kficRkx2R/rn8FioBRZoA8vYU1zOTgRELHz5DgBb6AfQ+eoKCBlAg/fekQPxlysLenkF5NgLmnjSrL0dkBoT+SaVNlsJTuqX9mAE=
+	t=1725613292; cv=none; b=EBIPGMvZROpWdD/5RYsuDB1hC3Gm7jaXZa/DZDDNb8qFeb386+v2OiXXYfcWhU7d0o2nfKnOI8svSCt7l8XXvDlxp4H2VdGzD/I7mOuiMMcTSBXhnf3+frnP5vCB5REj0sF9+sGw+mCWU8XPJJZRhCtuh0+Wyc4xQXN+8hrBCRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725613234; c=relaxed/simple;
-	bh=lNKCRA2NpzRQK1sG92o0hRj49HRau15orVjqDAdyIBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WSXSCzEb1RjXaNHEav0KBQuegY4ZRBd5aT8Cbq12IU9E3pVijFhw4P/0aBCWGf1UeMGK5YM17zbP0PsB1putQzQfhwmD/hWCwbdIb1SgOaSuPYvglMluKf7NmiQuPL07Ryc7eS2rXsDLWIx7aKP1pMMgY55knDFn1UfIDTFQU68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B714FEC;
-	Fri,  6 Sep 2024 02:00:58 -0700 (PDT)
-Received: from [10.57.86.132] (unknown [10.57.86.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9375D3F73F;
-	Fri,  6 Sep 2024 02:00:27 -0700 (PDT)
-Message-ID: <baef78b2-40f8-4207-b58e-a59a65d4baad@arm.com>
-Date: Fri, 6 Sep 2024 10:00:26 +0100
+	s=arc-20240116; t=1725613292; c=relaxed/simple;
+	bh=qrQ9YgUhH+H/Te/OsxLs4U6f7nJKyvkqUdMM9wubSJg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qn+v8+LgIf3lTNhi/QXuI5eKFeb7ed0jdcQnFpkdIMvy3y2/zxLC4GySR5o5Jfg+BPE8vI8PIcfwQ9mO6p9HMVc4LA7jUHxjp8tb3Nmo8JJHhHu6jqYw5B8AACdRn1AeVU+C5RwBPCNPOkJMuIbqhNLHJ2stqhZnUpCHqbTX4Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hzu1YsHt; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e1a74f8ee51so1951202276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:01:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725613289; x=1726218089; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8QEWJHIT/hdvLCuZB6AcivByjiJ8SklO4OGwL+coTQI=;
+        b=hzu1YsHt+oAqyv2GkpNj2XovmwmRXGIrL6jgRkQKEUM9rHhGzbQ4bXVXPfer9BJ4nV
+         YGEybTV0bb0jheckb9s3oNMWjXSzAD6oGhOGN0jg9EpxnwC5elhL+3svEeS3O5ePZP3G
+         hCxq9A07SIr5BcJfk6xtOIE08h9tfME9SncI+laRDEYTIiYCndHKue4eGHiylB2guJK9
+         VmLB+efUIiaVTfdzJo+g6WSV/yitWGYUKfZekevDFcW8NUo9ls8E2kfzEEBvqejujV1E
+         Ju0YzMe60DW8MW/kRGlXJWrzSZjvNzIrIYPGzrOVkJOw/QG/SB5oLh8nNMm3URoXCZA7
+         4t7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725613289; x=1726218089;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8QEWJHIT/hdvLCuZB6AcivByjiJ8SklO4OGwL+coTQI=;
+        b=ZGaeRwMWKZsLzTQ02lfY0deJAD/dFaoLz3GsTqnXe9xEwMQn4UZENTcvJ+FXXhb+HH
+         Wmh743fhsl0tUweoeVk14fmdkJQBIGIdW3cFpXa/ywdnoUYmJjgsXFol121IMJ7jTemV
+         kqyyfcgJo9Q6mLdb11k6eYcQFPTGtAakqzbel1vr9PH7GC/wr640TPMREvOEBHLooeNi
+         d9n2eZLBllJyTK/hJsrs3YRjO99zbrrddIN6daNTePIiAXz6aPuW2mtGLRz9zrS0g9MG
+         8sQmwGWNFjW2h0bg2CzwmoCuNXklktqV+7x4pUUqiZpUG6OT/3PgVqmd1kHXcMavyW+m
+         JEEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXinX6sp+4BJMyp5UiNtCttFdEE4KGx99fq1zjhEjFjlneD/O4TsvkBoXPyx8RCeZqsjKWwizAHRme+wRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygYlCURb5n1RR6I9YaZ/z1qxxQd8V3c99NVUvQb2vslbXSytOs
+	8HUp+OoRjouX29/baVj0I4xvUZIqZpu8AM/SRHDDGchphKKtRC21QJFerQ47vJSUxNcvrJE3Y9v
+	Ar7eC5FkNiYw9MOZ+E0QlA8dGLGPCsUsZUaxxPQ==
+X-Google-Smtp-Source: AGHT+IGq+SDLPnETEb82wVVaWN4yKIhqYi2KkdUpODCUzthRjVo1BPJdvjkP3c8J679Do0Qyd9Of2aRVmQ9Xtl34CME=
+X-Received: by 2002:a05:6902:2085:b0:e1a:9c37:6e67 with SMTP id
+ 3f1490d57ef6-e1d34a2a35cmr1831405276.54.1725613288676; Fri, 06 Sep 2024
+ 02:01:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: Abstract THP allocation
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-2-dev.jain@arm.com>
- <336ce914-43dc-4613-a339-1a33f16f71ad@arm.com>
- <10aea3c3-42be-4f82-8961-75d5142a9653@arm.com>
- <60f1577f-314d-4ac9-85b3-068111594845@arm.com>
- <efc2f4c8-d853-4197-8f38-1ea274b888c5@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <efc2f4c8-d853-4197-8f38-1ea274b888c5@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com>
+ <20240905-lpm-v6-10-constraints-pmdomain-v3-1-e359cbb39654@baylibre.com>
+In-Reply-To: <20240905-lpm-v6-10-constraints-pmdomain-v3-1-e359cbb39654@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 6 Sep 2024 11:00:52 +0200
+Message-ID: <CAPDyKFq6gD3gAmz2hHTGga6YFXfq6KuaQvP-GVo1JYbkOUV8Pg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] pmdomain: ti_sci: add per-device latency
+ constraint management
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
+	Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 06/09/2024 09:45, Dev Jain wrote:
-> 
-> On 9/6/24 13:58, Ryan Roberts wrote:
->> On 06/09/2024 06:42, Dev Jain wrote:
->>> On 9/5/24 16:38, Ryan Roberts wrote:
->>>> On 04/09/2024 11:09, Dev Jain wrote:
->>>>> In preparation for the second patch, abstract away the THP allocation
->>>>> logic present in the create_huge_pmd() path, which corresponds to the
->>>>> faulting case when no page is present.
->>>>>
->>>>> There should be no functional change as a result of applying
->>>>> this patch.
->>>>>
->>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>> ---
->>>>>    mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
->>>>>    1 file changed, 67 insertions(+), 43 deletions(-)
->>>>>
->>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>> index 67c86a5d64a6..58125fbcc532 100644
->>>>> --- a/mm/huge_memory.c
->>>>> +++ b/mm/huge_memory.c
->>>>> @@ -943,47 +943,89 @@ unsigned long thp_get_unmapped_area(struct file *filp,
->>>>> unsigned long addr,
->>>>>    }
->>>>>    EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->>>>>    -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
->>>>> -            struct page *page, gfp_t gfp)
->>>>> +static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct
->>>>> vm_area_struct *vma,
->>>> Is there a reason for specifying order as a parameter? Previously it was
->>>> hardcoded to HPAGE_PMD_ORDER. But now, thp_fault_alloc() and
->>>> __thp_fault_success_stats() both take order and map_pmd_thp() is still
->>>> implicitly mapping a PMD-sized block. Unless there is a reason you need this
->>>> parameter in the next patch (I don't think there is?) I suggest simplifying.
->>> If I am not wrong, thp_fault_alloc() and __thp_fault_success_stats()
->>> will remain the same in case of mTHP?
->> No, its a bit different for smaller-than-pmd THP - that's handled in
->> alloc_anon_folio() in memory.c. It deals with fallback to smaller orders (inc
->> order-0. Potentially alloc_anon_folio() could be refactored to use your new
->> functions in future but I'm sure there would be a number of subtlties to
->> consider and in any case you would want to make that a separate change. The
->> order param would be added as part of that future change.
-> 
-> Okay.
-> 
->>
->>> I chose to pass order so that these
->>> functions can be used by others in the future.
->> It's not valuable to have an internal interface with no users. My advice is to
->> keep it simple and only extend it when a user pops up.
-> 
-> Makes sense. In that case, should I call it pmd_thp_fault_alloc() to enforce that
-> this is not a non-PMD THP?
+On Fri, 6 Sept 2024 at 00:03, Kevin Hilman <khilman@baylibre.com> wrote:
+>
+> For each device in a TI SCI PM domain, check whether the device has
+> any resume latency constraints set via per-device PM QoS.  If
+> constraints are set, send them to DM via the new SCI constraints API.
+>
+> Checking for constraints happen for each device before system-wide
+> suspend (via ->suspend() hook.)
+>
+> An important detail here is that the PM domain driver inserts itself
+> into the path of both the ->suspend() and ->resume() hook path
+> of *all* devices in the PM domain.  This allows generic PM domain code
+> to handle the constraint management and communication with TI SCI.
+>
+> Further, this allows device drivers to use existing PM QoS APIs to
+> add/update constraints.
+>
+> DM firmware clears constraints during its resume, so Linux has
+> to check/update/send constraints each time system suspends.
+>
+> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Dhruva Gole <d-gole@ti.com>
 
-Yeah, that works for me.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-> 
->>
->>> Therefore, these two functions
->>> can be generically used in the future while map_pmd_thp() (as the name suggests)
->>> maps only a PMD-mappable THP.
->>>
->>>>> +                  unsigned long haddr, struct folio **foliop,
->>>> FWIW, I agree with Kirill's suggestion to just return folio* and drop the
->>>> output
->>>> param.
->>> As I replied to Kirill, I do not think that is a good idea. If you do a git
->>> grep on
->>> the tree for "foliop", you will find several places where that is being used,
->>> for
->>> example, check out alloc_charge_folio() in mm/khugepaged.c. The author
->>> intends to
->>> do the stat computation and setting *foliop in the function itself, so that the
->>> caller is only concerned with the return value.
->> By having 2 return params, you open up the possibility of returning an invalid
->> combination (e.g. ret==FALLBACK, folio!=NULL). You avoid that by having a single
->> return param, which is either NULL (failure) or a valid pointer.
-> 
-> Okay, I agree with this in a generic sense.
-> 
->>
->>> Also, if we return the folio instead of VM_FAULT_FALLBACK from
->>> thp_fault_alloc(),
->>> then you will have two "if (unlikely(!folio))" branches, the first to do the
->>> stat
->>> computation in the function, and the second branch in the caller to set ret =
->>> VM_FAULT_FALLBACK
->>> and then goto out/release.
->> There are already 2 conditionals, that doesn't change.
->>
->>> And, it is already inconsistent to break away the stat computation and the
->>> return value
->>> setting, when the stat computation name is of the form
->>> "count_vm_event(THP_FAULT_FALLBACK)"
->>> and friends, at which point it would just be better to open code the function.
->> I don't understand this.
->>
->>> If I am missing something and your suggestion can be implemented neatly, please
->>> guide.
->> This looks cleaner/simpler to my eye (also removing the order parameter):
->>
->> static folio *thp_fault_alloc(gfp_t gfp, struct vm_area_struct *vma,
->>                   unsigned long haddr, unsigned long addr)
->> {
->>     const int order = HPAGE_PMD_ORDER;
->>     struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->>
->>     if (unlikely(!folio)) {
->>         count_vm_event(THP_FAULT_FALLBACK);
->>         count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->>         goto out;
->>     }
->>
->>     VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->>     if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
->>         folio_put(folio);
->>         count_vm_event(THP_FAULT_FALLBACK);
->>         count_vm_event(THP_FAULT_FALLBACK_CHARGE);
->>         count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->>         count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>         goto out;
->>     }
->>     folio_throttle_swaprate(folio, gfp);
->>
->>     folio_zero_user(folio, addr);
->>     /*
->>      * The memory barrier inside __folio_mark_uptodate makes sure that
->>      * folio_zero_user writes become visible before the set_pmd_at()
->>      * write.
->>      */
->>     __folio_mark_uptodate(folio);
->> out:
->>     return folio;
->> }
->>
->>
->> static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->> {
->>     vm_fault_t ret = VM_FAULT_FALLBACK;
->>     ...
->>
->>     folio = thp_fault_alloc(gfp, vma, haddr, vmf->address);
->>     if (unlikely(!folio))
->>         goto release;
->>     ...
->> }
->>
-> 
-> Thanks for your help. I will switch to this, just that, ret should still
-> be initialized to zero in case we spot the pmd changes after taking the lock.
-> So I'll set it in the case of !folio.
+Kind regards
+Uffe
 
-ret = thp_fault_alloc() will have already set it back to zero so there isn't a
-bug. But if you prefer to explicitly set it in the "if" to make the code clearer
-to read, that's fine by me.
 
-Thanks,
-Ryan
-
-> 
->>
->>>> Thanks,
->>>> Ryan
->>>>
->>>>> +                  unsigned long addr)
->>>>>    {
->>>>> -    struct vm_area_struct *vma = vmf->vma;
->>>>> -    struct folio *folio = page_folio(page);
->>>>> -    pgtable_t pgtable;
->>>>> -    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->>>>> -    vm_fault_t ret = 0;
->>>>> +    struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->>>>>    -    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->>>>> +    *foliop = folio;
->>>>> +    if (unlikely(!folio)) {
->>>>> +        count_vm_event(THP_FAULT_FALLBACK);
->>>>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>>> +        return VM_FAULT_FALLBACK;
->>>>> +    }
->>>>>    +    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->>>>>        if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
->>>>>            folio_put(folio);
->>>>>            count_vm_event(THP_FAULT_FALLBACK);
->>>>>            count_vm_event(THP_FAULT_FALLBACK_CHARGE);
->>>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>>> -        count_mthp_stat(HPAGE_PMD_ORDER,
->>>>> MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>>>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>>>>            return VM_FAULT_FALLBACK;
->>>>>        }
->>>>>        folio_throttle_swaprate(folio, gfp);
->>>>>    -    pgtable = pte_alloc_one(vma->vm_mm);
->>>>> -    if (unlikely(!pgtable)) {
->>>>> -        ret = VM_FAULT_OOM;
->>>>> -        goto release;
->>>>> -    }
->>>>> -
->>>>> -    folio_zero_user(folio, vmf->address);
->>>>> +    folio_zero_user(folio, addr);
->>>>>        /*
->>>>>         * The memory barrier inside __folio_mark_uptodate makes sure that
->>>>>         * folio_zero_user writes become visible before the set_pmd_at()
->>>>>         * write.
->>>>>         */
->>>>>        __folio_mark_uptodate(folio);
->>>>> +    return 0;
->>>>> +}
->>>>> +
->>>>> +static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
->>>>> +{
->>>>> +    count_vm_event(THP_FAULT_ALLOC);
->>>>> +    count_mthp_stat(order, MTHP_STAT_ANON_FAULT_ALLOC);
->>>>> +    count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>>>> +}
->>>>> +
->>>>> +static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>>>> +            struct vm_area_struct *vma, unsigned long haddr,
->>>>> +            pgtable_t pgtable)
->>>>> +{
->>>>> +    pmd_t entry;
->>>>> +
->>>>> +    entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
->>>>> +    entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>>>> +    folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>>>> +    folio_add_lru_vma(folio, vma);
->>>>> +    pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>>>> +    set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>>>> +    update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>>>> +    add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>>>> +    mm_inc_nr_ptes(vma->vm_mm);
->>>>> +}
->>>>> +
->>>>> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>>>> +{
->>>>> +    struct vm_area_struct *vma = vmf->vma;
->>>>> +    struct folio *folio = NULL;
->>>>> +    pgtable_t pgtable;
->>>>> +    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->>>>> +    vm_fault_t ret = 0;
->>>>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
->>>>> +
->>>>> +    pgtable = pte_alloc_one(vma->vm_mm);
->>>>> +    if (unlikely(!pgtable)) {
->>>>> +        ret = VM_FAULT_OOM;
->>>>> +        goto release;
->>>>> +    }
->>>>> +
->>>>> +    ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
->>>>> +                  vmf->address);
->>>>> +    if (ret)
->>>>> +        goto release;
->>>>>          vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
->>>>> +
->>>>>        if (unlikely(!pmd_none(*vmf->pmd))) {
->>>>>            goto unlock_release;
->>>>>        } else {
->>>>> -        pmd_t entry;
->>>>> -
->>>>>            ret = check_stable_address_space(vma->vm_mm);
->>>>>            if (ret)
->>>>>                goto unlock_release;
->>>>> @@ -997,20 +1039,9 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct
->>>>> vm_fault *vmf,
->>>>>                VM_BUG_ON(ret & VM_FAULT_FALLBACK);
->>>>>                return ret;
->>>>>            }
->>>>> -
->>>>> -        entry = mk_huge_pmd(page, vma->vm_page_prot);
->>>>> -        entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>>>> -        folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>>>> -        folio_add_lru_vma(folio, vma);
->>>>> -        pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>>>> -        set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>>>> -        update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>>>> -        add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>>>> -        mm_inc_nr_ptes(vma->vm_mm);
->>>>> +        map_pmd_thp(folio, vmf, vma, haddr, pgtable);
->>>>>            spin_unlock(vmf->ptl);
->>>>> -        count_vm_event(THP_FAULT_ALLOC);
->>>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
->>>>> -        count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>>>> +        __thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
->>>>>        }
->>>>>          return 0;
->>>>> @@ -1019,7 +1050,8 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct
->>>>> vm_fault *vmf,
->>>>>    release:
->>>>>        if (pgtable)
->>>>>            pte_free(vma->vm_mm, pgtable);
->>>>> -    folio_put(folio);
->>>>> +    if (folio)
->>>>> +        folio_put(folio);
->>>>>        return ret;
->>>>>      }
->>>>> @@ -1077,8 +1109,6 @@ static void set_huge_zero_folio(pgtable_t pgtable,
->>>>> struct mm_struct *mm,
->>>>>    vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>>>>    {
->>>>>        struct vm_area_struct *vma = vmf->vma;
->>>>> -    gfp_t gfp;
->>>>> -    struct folio *folio;
->>>>>        unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->>>>>        vm_fault_t ret;
->>>>>    @@ -1129,14 +1159,8 @@ vm_fault_t do_huge_pmd_anonymous_page(struct
->>>>> vm_fault *vmf)
->>>>>            }
->>>>>            return ret;
->>>>>        }
->>>>> -    gfp = vma_thp_gfp_mask(vma);
->>>>> -    folio = vma_alloc_folio(gfp, HPAGE_PMD_ORDER, vma, haddr, true);
->>>>> -    if (unlikely(!folio)) {
->>>>> -        count_vm_event(THP_FAULT_FALLBACK);
->>>>> -        count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>>> -        return VM_FAULT_FALLBACK;
->>>>> -    }
->>>>> -    return __do_huge_pmd_anonymous_page(vmf, &folio->page, gfp);
->>>>> +
->>>>> +    return __do_huge_pmd_anonymous_page(vmf);
->>>>>    }
->>>>>      static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long
->>>>> addr,
-
+> ---
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>
+> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> index 1510d5ddae3d..bb95c40ab3ea 100644
+> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> @@ -13,6 +13,8 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/slab.h>
+> +#include <linux/pm_qos.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/soc/ti/ti_sci_protocol.h>
+>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>
+> @@ -51,6 +53,27 @@ struct ti_sci_pm_domain {
+>
+>  #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
+>
+> +static inline bool ti_sci_pd_is_valid_constraint(s32 val)
+> +{
+> +       return val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+> +}
+> +
+> +static void ti_sci_pd_set_lat_constraint(struct device *dev, s32 val)
+> +{
+> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +       struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+> +       const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
+> +       int ret;
+> +
+> +       ret = ti_sci->ops.pm_ops.set_latency_constraint(ti_sci, val, TISCI_MSG_CONSTRAINT_SET);
+> +       if (ret)
+> +               dev_err(dev, "ti_sci_pd: set latency constraint failed: ret=%d\n",
+> +                       ret);
+> +       else
+> +               dev_dbg(dev, "ti_sci_pd: ID:%d set latency constraint %d\n",
+> +                       pd->idx, val);
+> +}
+> +
+>  /*
+>   * ti_sci_pd_power_off(): genpd power down hook
+>   * @domain: pointer to the powerdomain to power off
+> @@ -79,6 +102,22 @@ static int ti_sci_pd_power_on(struct generic_pm_domain *domain)
+>                 return ti_sci->ops.dev_ops.get_device(ti_sci, pd->idx);
+>  }
+>
+> +static int ti_sci_pd_suspend(struct device *dev)
+> +{
+> +       int ret;
+> +       s32 val;
+> +
+> +       ret = pm_generic_suspend(dev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
+> +       if (ti_sci_pd_is_valid_constraint(val))
+> +               ti_sci_pd_set_lat_constraint(dev, val);
+> +
+> +       return 0;
+> +}
+> +
+>  /*
+>   * ti_sci_pd_xlate(): translation service for TI SCI genpds
+>   * @genpdspec: DT identification data for the genpd
+> @@ -188,6 +227,13 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>                                 pd->pd.power_on = ti_sci_pd_power_on;
+>                                 pd->idx = args.args[0];
+>                                 pd->parent = pd_provider;
+> +                               /*
+> +                                * If SCI constraint functions are present, then firmware
+> +                                * supports the constraints API.
+> +                                */
+> +                               if (pd_provider->ti_sci->ops.pm_ops.set_device_constraint &&
+> +                                   pd_provider->ti_sci->ops.pm_ops.set_latency_constraint)
+> +                                       pd->pd.domain.ops.suspend = ti_sci_pd_suspend;
+>
+>                                 pm_genpd_init(&pd->pd, NULL, true);
+>
+>
+> --
+> 2.46.0
+>
 
