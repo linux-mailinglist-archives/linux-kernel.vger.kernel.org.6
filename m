@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-319217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE9196F964
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:32:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF55796F968
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70D71C23FDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5A5285F89
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520B11D47A0;
-	Fri,  6 Sep 2024 16:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830161D365D;
+	Fri,  6 Sep 2024 16:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+7JWFja"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS3ULYHA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB9E1D47AA;
-	Fri,  6 Sep 2024 16:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BA31D31A9;
+	Fri,  6 Sep 2024 16:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725640303; cv=none; b=UbDizy9Tw6PZiZOe2Opc50lzCGx1gCCEzVcF/Ec9PSylBzoVjtpV2EHS/srSOMGUzJ4CLRMsrcZeI4iVe2nkiF0oVp9a/DVBIQb3dxDs/pUvSidFW1maCPwf3y82EUFDsGEwLURMaIgGiDz06OadpGT44qCJWBKGBaIxV2x8IXQ=
+	t=1725640542; cv=none; b=NlgvknDAPBF7S9Z/YhaPgC1odPJcQQsoqoTu/cQvyPjOxjkuoePANZ2nSFidwQYfxLou30a6N7/fyAydRqE/1osobTeIoFPD12l3GbKtWtd+sfiNFyfgh0P4wM/vTIcCicotBSfY3xdIPmuxyLkOBOZVj421fozE+6Jr6VuXmlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725640303; c=relaxed/simple;
-	bh=P42yeXkNnTmRaVvRlLuHDgj7xNa3QrbZEA882GWSS2o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To; b=ZewiXXJVsxryv4YUTo4nNdLP9KvVJEY0i/FtiJV7ecm/KHkOZXdYQTwc3O1r1+uCAW54Lenaln3Vy2nUgPnLuUR8rUCzzIDkqx/0tE7BKxQKcHlp50Qz8QftbM/cB680E72/FL8TrvcTHXIPluui3f8v3krKlJ/rAe4AV/GJe6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+7JWFja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF82C4CEC6;
-	Fri,  6 Sep 2024 16:31:43 +0000 (UTC)
+	s=arc-20240116; t=1725640542; c=relaxed/simple;
+	bh=6fgAXad1syfSTJKtcJj8sAwYW4bPeTU9Trm2C5UltDI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SLBzYQZ1jypqLrjkpj7ZffccIrZgO7gRM9Ws8i+At1OZWj7+T+U33i/C/UGTlt9UvKt9k5bSDT2HCanrtLluaiYAmVBR0Uw2CRtw9L3vA6eAQdJ35C4vDt0M3mmHu1kW9YlAATWqpYSWs+un2Qe75vdH7URtzwG/amVcM13s/jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS3ULYHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A616BC4CEC4;
+	Fri,  6 Sep 2024 16:35:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725640303;
-	bh=P42yeXkNnTmRaVvRlLuHDgj7xNa3QrbZEA882GWSS2o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:From;
-	b=i+7JWFjaAN3R9CBGzFdd2W6vVxQ3srhGcCZIyFR/Xb+pgzX8SsfRn/mLVLolb68Jv
-	 EZwkziMJgXvQ58fSMOnv5sFlVc6Jt4nZUxB9XTm/GyWGXVtrDcAgaKisH2qoUekd3j
-	 OFeWCYFD2zOn53NzR+8MTMb+Jmh5/Uxp+tbto3s/uYB+K5ape/tiNKz47La3njq1xo
-	 a1cPe2RYAqh6GR6EUq5fC6Hzj7SmyIFJp7+JjwzecAgjj9t4OasIZqP0oWJe/zSNLX
-	 JFrLg/hHPQLAqwiJqu1ufdZDMYHJBsBaj6O5LSSh1MvYMyhmx8BPjs6BecDE2ZtbI2
-	 R4zQ9cfNiCcqQ==
-From: SeongJae Park <sj@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: SeongJae Park <sj@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org,
-	Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 08/15] mm/damon/core: Use generic upper bound recommondation for usleep_range()
-Date: Fri,  6 Sep 2024 09:31:41 -0700
-Message-Id: <20240906163141.31088-1-sj@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-8-e98760256370@linutronix.de>
+	s=k20201202; t=1725640542;
+	bh=6fgAXad1syfSTJKtcJj8sAwYW4bPeTU9Trm2C5UltDI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JS3ULYHAwmxeeeuP2MnCRTbcNb3OCtYWMoxxJS4D1pW6ck4O3gu+KVS3MdIO/8qmx
+	 NL3FyMDaQqKObH4DxptJNG2J2+JUhsCUthCLmlHL2AMsFj2OnBwKz5nDesOz2zRg3q
+	 uUbFAn/YbLKASKiDxcQx/b6o7UkTgOBakt1z7yhDuh+lqsoBAVffKttn3qhvaAik4a
+	 qhkj/hYbF2iini3Lmt4sTr3VgLKek9f4EkRKHrV53S7ispe6VJvnsqga9O3i1SHtw9
+	 8jVQHpwIIV8g6XWPZOckiF1KVa0JIJmRSHS5Vg39mIQnaX1SwSdaLlUP/UtO0yhGHs
+	 3ZDqe7az1aoeg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1smbvv-00AMkA-TG;
+	Fri, 06 Sep 2024 17:35:40 +0100
+Date: Fri, 06 Sep 2024 17:35:39 +0100
+Message-ID: <86ed5wvixw.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Snehal Koukuntla <snehalreddy@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Add memory length checks before it is xfered
+In-Reply-To: <20240906092732.113152-1-snehalreddy@google.com>
+References: <20240906092732.113152-1-snehalreddy@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: snehalreddy@google.com, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, sebastianene@google.com, vdonnefort@google.com, jean-philippe@linaro.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 04 Sep 2024 15:04:58 +0200 Anna-Maria Behnsen <anna-maria@linutronix.de> wrote:
+Hi Snehal,
 
-> The upper bound for usleep_range_idle() was taken from the outdated
-> documentation. As a recommondation for the upper bound of usleep_range()
-> depends on HZ configuration it is not possible to hard code it.
+On Fri, 06 Sep 2024 10:27:32 +0100,
+Snehal Koukuntla <snehalreddy@google.com> wrote:
 > 
-> Use the define "USLEEP_RANGE_UPPER_BOUND" instead.
+> From: Snehal <snehalreddy@google.com>
 > 
-> Cc: SeongJae Park <sj@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: damon@lists.linux.dev
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Check size during allocation to fix discrepancy in memory reclaim path.
+> Currently only happens during memory reclaim, inconsistent with mem_xfer
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+Can you please elaborate? It doesn't seem to fail at allocation time
+here, as everything is pre-allocated. Some context would greatly help,
+as my FFA-foo is as basic as it gets (I did read the spec once and ran
+away screaming).
 
+>
+> Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
 
-Thanks,
-SJ
+The From: and Signed-off-by: tags do not match. You may want to add a
+[user] section to your .gitconfig with your full name so that this
+issue is sorted once and for all.
 
 > ---
->  mm/damon/core.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index 94fe2f1f9b0e..4b971871da75 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
-> @@ -1883,8 +1883,7 @@ static unsigned long damos_wmark_wait_us(struct damos *scheme)
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index e715c157c2c4..e9223cc4f913 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -461,6 +461,11 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+
+/facepalm: why do we have this __always_inline here? Nothing to do
+with your patch, but definitely worth understanding why it is
+required.
+
+>  		goto out_unlock;
+>  	}
 >  
->  static void kdamond_usleep(unsigned long usecs)
->  {
-> -	/* See Documentation/timers/timers-howto.rst for the thresholds */
-> -	if (usecs > 20 * USEC_PER_MSEC)
-> +	if (usecs >= USLEEP_RANGE_UPPER_BOUND)
->  		schedule_timeout_idle(usecs_to_jiffies(usecs));
->  	else
->  		usleep_range_idle(usecs, usecs + 1);
-> 
-> -- 
-> 2.39.2
-> 
->
+> +	if (len > ffa_desc_buf.len) {
+> +		ret = FFA_RET_NO_MEMORY;
+> +		goto out_unlock;
+> +	}
+> +
+
+It took some digging to understand how the various queues are sized,
+and a comment explaining the relation between ffa_desc_buf and the
+other queues would be very welcome.
+
+I also notice that we have other places (apparently dealing with
+fragments) that do not have such checks. Do they need anything else?
+
+>  	buf = hyp_buffers.tx;
+>  	memcpy(buf, host_buffers.tx, fraglen);
+>  
+
+Finally, this probably deserves a Fixes: tag and a Cc: stable so that
+it can be backported.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
