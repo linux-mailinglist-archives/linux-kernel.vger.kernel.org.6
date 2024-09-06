@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-319039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CACE96F6DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03E496F6DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD751F2509B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C64285E0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737BA1D1754;
-	Fri,  6 Sep 2024 14:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DDA1D27AD;
+	Fri,  6 Sep 2024 14:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S1b8DaDX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AAE/XDIN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AJDV5vrG"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663641D0494;
-	Fri,  6 Sep 2024 14:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B4F1D0494
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633114; cv=none; b=GZW/CSYSQCjwIh2metTdXyanCSzYLwmQ2YLHWPElKsqq0D+jf8HI8ywbNcFJtcKoULTZPOeQ0Ah7kPhUVZYWbkJ6L0y3BrTiE49YEBqcgdCmQnZ/4r1w/mAhCAAwHO+l7X9fHclnrZ1EWWj5HDBNKHQ4yuhPDhouNQbPhXFf2zk=
+	t=1725633122; cv=none; b=Am1BAVFz1masqf9+4QnNr/NdSf2bEAQNPSe92OcuovVXZfBBKxzs56w02CiGWRUPnVMt0LP9Xasfw1vCSYVqwAdcs7NqHNRiyr6XIHIesFkMgNkGRLpfpDoER4S39kGAI7kxxnsA8uxShpzl6Hmj/LDBAOgG645KoMvnEvWHuWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633114; c=relaxed/simple;
-	bh=4krHYtHBVodpVvdRF4m+U26SVZ6nkeQa2m4gqJmw1Ww=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IyrYr5kMnyc67izJoVV7IYQUeZhsUDkIk9DuJ/P7Zd/rBys6+YI0IrqkBpAF26/0EbR35q5NPFAtGoNiZkMoDLqIadF+ljNyNDpSLyGbI5xvxdaHmS63tj80ncyV1bFkk8nKIJkeXGOKi/CA4mi6Make2chlQlOOSv7BcpVuFoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S1b8DaDX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AAE/XDIN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 06 Sep 2024 14:31:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725633111;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3AebdZDqMYlZpapALDlSdI64hNVLjUd86FtGVirem/A=;
-	b=S1b8DaDXkDfsjrIrir6SsKfspyLcLI+hFmkFnIL8sX8v2tnRIwbn35hEgoFnTdzN82HsUO
-	M+2GOnA20NwPN++Q/4qhMU5Rln6EOxjX10ntapawu3L1uQzQauqdcnRoy9SYKEe5pr6pTZ
-	im4Jj5+unzt4MbfLzaianlQ4oigKwTdI0FNsaJrA2OFCHlQP+CXw94ErY38x31LKM+c9/E
-	QRtXPDKhrhk62jBFbkVfjZNA8er7QkuUVfN/BKYosS+oeuIMeCkLpLSFOLtI4pTxtvrcWz
-	vD65OmoGrqPfgXPN6hlV1VA65ecyBh8GarvQxGjPuEY7i6lxYvcWnLbF4Ss2Fg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725633111;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3AebdZDqMYlZpapALDlSdI64hNVLjUd86FtGVirem/A=;
-	b=AAE/XDINNj3ffVuZ80nxG4KpNIXCfB4ftej9fP4TUoocFnlTsq2DK2E3ZzvbKlEq8sy6D5
-	Xy9q/CG2MlRwbQCQ==
-From: "tip-bot2 for Costa Shulyupin" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/cpuhotplug: Use cpumask_intersects()
-Cc: Costa Shulyupin <costa.shul@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ming Lei <ming.lei@redhat.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240904134823.777623-2-costa.shul@redhat.com>
-References: <20240904134823.777623-2-costa.shul@redhat.com>
+	s=arc-20240116; t=1725633122; c=relaxed/simple;
+	bh=od53PKb7drv/B0Nw08nf27stwFA9yWQv0X6TdGXj7xE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oKR4Q022LFI+0y1VoJvNbeUK9Uw6ipIBldXCYQyG1abdcGIM3RPK1+3C9kVeziNW6TugTq+OA4k7mbsOj+Tgh6bhQcV6Ivh7RlraB3Vb0QagZ0Gk7evf8ZjJpZyTOhRAg1iK1d6sVoWfmefydKVAS17JhbIL1FIpnkmAP4vb+ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AJDV5vrG; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20536dcc6e9so14922265ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:32:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725633120; x=1726237920; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=22o0ZzyLZEiafCqX5cQ+ZMjMs0v61dURGbb/IDBuD18=;
+        b=AJDV5vrG/hDhiDP/SocPWZ8G6zaXZGXtGkzV8kNUn5Po2HSy72d6sFMCyYqq6PZIWY
+         mnSxMnaPWi7P8yjP7jGD6ypkyP6Uuzctj3NRNeE7nAO1NMoL76ZDrhrKLOdS9/lqJ070
+         iCj0/ruKIPVaZlaV12q3iannjiRfNAtoBdhj7hwy5+NZk/RTgxCe6EHwUGamDPeU4dYG
+         Jr7Z356yst29d3agvodwVsL866VnQbofjYjcMT5Xng9q+XkjJcr2UH0AA0DCAXmB7HVJ
+         SwNP5TRGQ/eVJhPhFmFZjA1rt2KPNgf5lmOp7Ek2aXP53FX+9TldGP1s3KMZQBCYUueB
+         SDOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725633120; x=1726237920;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=22o0ZzyLZEiafCqX5cQ+ZMjMs0v61dURGbb/IDBuD18=;
+        b=qcyoSf5Ho+1x/tjPsb46S52DTc20ed5Mijo46pEciOTR4qTqFnHad72w8q+MeB+OvI
+         YhvGvJgD7dF0NOTuF7NO6QnyiblIMqDEK7qccbnqgm5i+b9Jdnl3HrcbnXE28ZfRvVzv
+         EKi7U4y5NxLamYshQb7h0LPOJ1+ffGztFNGDBht3id6m2rfDhlYS8QNgjA9Y74moWHOl
+         bWtCQ7+qOpKb5rCKvlb/d+38b9ZLoTcio8Xts6Osm7F+zrqMt79rP/FZRPbC3r3XTYvz
+         0kSgIeJpivutsH7Y0d/q0KC7ub3RJDnWgbO+HDiEDle0cMglFG3DI/+/7uNAcbstzYL6
+         erIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXv5hJYGpsxEBxtnvfyRP8U82UpGCCgKZjh1uJWq3UO4bFuWoN2jDPk71Y84vptssnU+UDQOmMGvo2/buE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD2nqYoZBcGy4gPEs8l9l06Q3nzbNfDNBVB4IMb8qxDS1Xaqug
+	N39jZveLKuWrgGl+SDf2ld1SZJ59ReYtHPoP9A8fxbA9vWNFHXsQUreO+OBRc2A=
+X-Google-Smtp-Source: AGHT+IGp6TA5jS245vevFKjB8AnYfnX/DyCCBJVnGWu7AhC5Ng41koXdz2LEtkmRWnVak5lHk9zdFA==
+X-Received: by 2002:a17:902:ce0b:b0:206:96ae:dc57 with SMTP id d9443c01a7336-20707001917mr363995ad.48.1725633120088;
+        Fri, 06 Sep 2024 07:32:00 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea38539sm43951255ad.130.2024.09.06.07.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 07:31:59 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Josef Bacik <josef@toxicpanda.com>, Wouter Verhelst <w@uter.be>
+Cc: Eric Blake <eblake@redhat.com>, Damien Le Moal <dlemoal@kernel.org>, 
+ linux-block@vger.kernel.org, nbd@other.debian.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240812133032.115134-1-w@uter.be>
+References: <20240812133032.115134-1-w@uter.be>
+Subject: Re: [PATCH v4 0/3] nbd: WRITE_ZEROES and a few fixes
+Message-Id: <172563311875.172223.11600465596358728901.b4-ty@kernel.dk>
+Date: Fri, 06 Sep 2024 08:31:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172563311092.2215.12674498600378438582.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     87b5a153b862b7d937fc1dd499368297a1feae87
-Gitweb:        https://git.kernel.org/tip/87b5a153b862b7d937fc1dd499368297a1feae87
-Author:        Costa Shulyupin <costa.shul@redhat.com>
-AuthorDate:    Wed, 04 Sep 2024 16:48:23 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 06 Sep 2024 16:28:39 +02:00
+On Mon, 12 Aug 2024 15:20:35 +0200, Wouter Verhelst wrote:
+> Implement the WRITE_ZEROES command for the NBD kernel driver. While
+> here, add NBD_FLAG_ROTATIONAL to the function that decodes our flags for
+> debugfs.
+> 
 
-genirq/cpuhotplug: Use cpumask_intersects()
+Applied, thanks!
 
-Replace `cpumask_any_and(a, b) >= nr_cpu_ids`
-with the more readable `!cpumask_intersects(a, b)`.
+[1/3] nbd: implement the WRITE_ZEROES command
+      commit: e49dacc71ec2621ce4c422cd5605d4d06f7807b0
+[2/3] nbd: nbd_bg_flags_show: add NBD_FLAG_ROTATIONAL
+      commit: 41372f5c9a866365e212809b3543ae8cb5b2542b
+[3/3] nbd: correct the maximum value for discard sectors
+      commit: 296dbc72d29085d5fc34430d0760423071e9e81d
 
-[ tglx: Massaged change log ]
+Best regards,
+-- 
+Jens Axboe
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Link: https://lore.kernel.org/all/20240904134823.777623-2-costa.shul@redhat.com
----
- kernel/irq/cpuhotplug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/irq/cpuhotplug.c b/kernel/irq/cpuhotplug.c
-index eb86283..15a7654 100644
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -37,7 +37,7 @@ static inline bool irq_needs_fixup(struct irq_data *d)
- 	 * has been removed from the online mask already.
- 	 */
- 	if (cpumask_any_but(m, cpu) < nr_cpu_ids &&
--	    cpumask_any_and(m, cpu_online_mask) >= nr_cpu_ids) {
-+	    !cpumask_intersects(m, cpu_online_mask)) {
- 		/*
- 		 * If this happens then there was a missed IRQ fixup at some
- 		 * point. Warn about it and enforce fixup.
-@@ -110,7 +110,7 @@ static bool migrate_one_irq(struct irq_desc *desc)
- 	if (maskchip && chip->irq_mask)
- 		chip->irq_mask(d);
- 
--	if (cpumask_any_and(affinity, cpu_online_mask) >= nr_cpu_ids) {
-+	if (!cpumask_intersects(affinity, cpu_online_mask)) {
- 		/*
- 		 * If the interrupt is managed, then shut it down and leave
- 		 * the affinity untouched.
+
 
