@@ -1,131 +1,283 @@
-Return-Path: <linux-kernel+bounces-318457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED75E96EE49
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32A496EE4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D481F23C31
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BCB1C2162F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622B11581EA;
-	Fri,  6 Sep 2024 08:37:12 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02457156C40;
+	Fri,  6 Sep 2024 08:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="LR9D6mWO"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011065.outbound.protection.outlook.com [52.101.129.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637B514B945;
-	Fri,  6 Sep 2024 08:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611832; cv=none; b=f3AeMNdL+oqC7xiFq3QfDYMXTZnDHZR0On7gUChZbDBdXu679ihB79pqquOANTCWAKhClcn8Myqje0Ix006TMD6N9gk4eRQnHwE1pZlmLP7CCUAOWmvuwMkTdwtl1lzMphTc55A3y9TvQwGyVLBjZgEAoGpRpGhyYMHi9Ebapkg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611832; c=relaxed/simple;
-	bh=8jWFPdLFDN+8Ep6iSkcVUtdmybE//sELBKXGEdHVpXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4w24VZJLiE85eH+C/kqag/HUcZsdvfLFvksSk6NImWog4GGBFY4Z2/FfI7cMcRoJFmDvfQCehvWaJeY6wW/rGnamCJIDIQuM3pVteALEmx2AHLMPOMa5Qm3CnIi3Vzu001bNOdzEpNBjOu/UtAKmQ2MkYrfNqHr0vB+w2nQWlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c275491c61so1992675a12.0;
-        Fri, 06 Sep 2024 01:37:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725611828; x=1726216628;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mU3p+kGDxT8pD2/VuCxTs6mx2rQ91JWp00lS3cMXX7o=;
-        b=cKwJQzJe6lbh3yO6RPiFYYbf/L8Ptch5oZ9rX+bsmKeLS717UAiMd61bbXFKyRBYbU
-         lVM0o0oDxdQ3Hd9t97jWFJBSDMpi14ifoG6PQIv6wyVw7B9O/i0CTUkfB7zPqdFPd69P
-         VVZdtLv93KWH37F91wiIMaYCa+Tv6lw/HFnGYpbXuBm/g3DyI9rJYwWLm2A5BlrScEFJ
-         8UgcsABnQ6YWdhVBkySFRVkbiHccArCBC9zoi0mpM4ohqtBJlDOmPKruq2WxkNZ43wHu
-         nP4jBCoXGpwXvvuGxME6Grq/nCHwvdO5Qk5xVD0dKP+qvD6lIiExXBIQ+qU6nX1E+8GH
-         4FWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSPR184iK2yZBSRQG3bED6GIumwrGX/dq2hfDoO3rgsm+CA8TbwvjA4Q+d/W2cUN4YISDMtwfB@vger.kernel.org, AJvYcCWGxQFxe8Fl3vHC8IpPzPrBrTF1Cu99FBIT9H5Q0Ldt9fxei0zK6ZfsR12uPoyF4o+94ilvnnX/EqCq10M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+qGgg56F2ks0TZoJCb2emdJZDdDcfn3czdZHYa0k/57WdPFMM
-	ReJ0AahNdKt0AiujjPeLOrXW9TbeqchJ5V3gCgsx+plE+87bD6+R
-X-Google-Smtp-Source: AGHT+IHltrD5UjRcY/7U8bmhp8k6K2DQDnNReHj5qX0RdQfqnl75pXXDmehMizUX10WWN5u1FoGShA==
-X-Received: by 2002:a05:6402:40c5:b0:5c3:cc7d:c2b1 with SMTP id 4fb4d7f45d1cf-5c3cc7dc558mr3780813a12.7.1725611827669;
-        Fri, 06 Sep 2024 01:37:07 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc52a227sm2181357a12.8.2024.09.06.01.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 01:37:07 -0700 (PDT)
-Date: Fri, 6 Sep 2024 01:37:05 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
-	thevlad@meta.com, max@kutsevol.com
-Subject: Re: [PATCH net-next 6/9] net: netconsole: track explicitly if
- msgbody was written to buffer
-Message-ID: <20240906-tremendous-intelligent-slug-fdd3cb@devvm32600>
-References: <20240903140757.2802765-1-leitao@debian.org>
- <20240903140757.2802765-7-leitao@debian.org>
- <20240904110726.GT4792@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331AC154C19;
+	Fri,  6 Sep 2024 08:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725611852; cv=fail; b=egvvd9q7MyKAuZDvPKhMzHkYoYVgcKrkHjdXbHIrPIc/ta5d9loo76Y/cSaIi8IZVVC188i1pE3AmQ7ba+XSSh/WVuZ4CEDJQlLAuyjyeevuUZMaMjMoF6FhVq1tINpLnCViNHuYvY5mcuuj6y94rBCHCQ+AL2xM+TWBsGHYPEg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725611852; c=relaxed/simple;
+	bh=+HN3zT6sZCf4j+GJOIWCoWBk+u+yuAgm/SdUutJxsmE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=OEfWaRCT9Vh8DxXrVJDfoLmpiwa+ITUgO3MA18GHCs6tiRlo8n5t7bpK8H+F6q7sZCK1OIvCVnsCzcdEgp7nfBInBfOm8kwbR100IBx4b8OxntEVBb1u12zxOB4ULyj2bqx6EIKy1oqN3L6E2q/Hs/VxqJCuclzP3GNchWYFSec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=LR9D6mWO; arc=fail smtp.client-ip=52.101.129.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yb3ZYO9GDuA0KDltOcyp9IubKMUV8MLxYzVtDx7/Pb3HUH9WvmE42Ee8bvCfUCAg9EDrjWPbUa5OOKmaZpim44e9xdIVc+frWwHERcT/o2xbKulXVk/9Y8XgYg66IohS/XKJd8bfmNOCcnlWb9Rw//ayy2fPI1D64JGu5h1swLlh99WANCeyb0IVE53lddhmWnyCtFZvm4edEbIk5lvQhbDUxQXO8qX2tZgOOnhngxwyw2HroNp3/WjFKzgayKHxZ5OcZ5U0sSLzaUUNJ6kB09TJznaAoWaqwKiA3Q/E36VGOaxJ2zgIAIrvNlQacbiQ+DvIkYTtw2sq38Gp7JpoSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7PCHF776DpFWARjwlbvyB8cqCpoKEHmnwWBHim0ww0o=;
+ b=NqiA1p1XBQPTZx1m3syyvALokKmjkEC8D8HAJRsQUmSa5mIAdeDEImwCue3mYe1nFpvD+ae2cL5j58De6Qc53Z+CLBIchx6eQ+a4sm4W4VCv0DFH1uoNekUyzM7wOPHAPLaawrSBms13cG4Um3VzdyFzjqtZpQMJ414BFBFVcVs4Em9sCrYaWvYpEzcywnp4HZSInt8m+0DBQro+va5DKCLIqDWd0YbN1D1yQexsbBMwOh97NQC4iFVlc4Wkjx9ut6pi34h2aqq1vXr2+tklpvX1B7dXVDZjMGWcIELHHDuSP4K70NZjp2KF9N+2P/9LsAJ/8KxK/SR/7sezC55O4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7PCHF776DpFWARjwlbvyB8cqCpoKEHmnwWBHim0ww0o=;
+ b=LR9D6mWOuOFFye1JZCewydfn+bwuAVeNPBaS6ZrgtIud0To1G+JCeldM8cf7iXfSUzQ4GUO7/p5qo3cM2oY0dtzrTRvFVYuV93SgWH91xYLfW313/qxDmniJBM0diluMyVYvXav2RvJLOFwWvUTBNnUlTtabaci6RKnv8ZAJaFcNz1v/BkaB4x7AdX2PtxEcw73ePDMcWgDYSCFXmDmyTWE8IbddykFff4MBcgygchQtR/c8pk8uQ1u/cykEl2QK+GvAylcbJYJzKUvZGTJRdWc13qlOEWerotfM6q8tz5E8o+bUA6xndn7G15XmbEzuxBDZA7oIr/M2ysY25jPW8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by TYSPR06MB6501.apcprd06.prod.outlook.com (2603:1096:400:47d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
+ 2024 08:37:23 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
+ 08:37:23 +0000
+Message-ID: <55af756d-5002-4534-857b-f3ef3c8e34e6@vivo.com>
+Date: Fri, 6 Sep 2024 16:37:18 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] udmabuf: pre-fault when first page fault
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240903083818.3071759-1-link@vivo.com>
+ <20240903083818.3071759-2-link@vivo.com>
+ <IA0PR11MB718502273712359BC456893CF89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB718502273712359BC456893CF89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2P153CA0008.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::19) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904110726.GT4792@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYSPR06MB6501:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88fe3e71-63a1-4869-c29c-08dcce4f20b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Rkx3aXlKRVZNQjJMcE1CdmtxWStwbjR6RWJobDFHK0tFNTVDSDBwWXJId29M?=
+ =?utf-8?B?MWZsRDR6eGNUYkIzUlduK0tubW1KOHhvQlNNUTBxQkpmVzVhQisydVFOcGxQ?=
+ =?utf-8?B?TDdybzhsNmJuOFN1VDBnZzFIMTk1cHIzODJ3WEtqb3Z4dXZweFE5aVEwMklN?=
+ =?utf-8?B?UXVBdGJMQXREc01KVW85ZWYyOWlqVmJmUkx0QmZ1ZmwrS1VVTWZmNldRSUR6?=
+ =?utf-8?B?RnNCWGZSekR3Q29yN1lwK2ZnMW93UHFjTkJLWFhUdnhLL1JYRFplNjg4VEdm?=
+ =?utf-8?B?TFpRamxVemFEZGhORkRxdXVhdWZJWEhSQ285SHpzWjBUbTBZdGRyRXJwck44?=
+ =?utf-8?B?NmdnMFc5MkVQdGp3T1ByaW10MVlGMnZjSGNTZmF4RUJFeWRvWnpGOE1XQUNq?=
+ =?utf-8?B?VFVrYXVzeDVQRTNiYm5SeWZwNU05cXVkM1hFRk9aeThiejE2dm5jalVCVGtq?=
+ =?utf-8?B?T1ppUTNVM2hZQndEZkVJbnFtU0xNK0dhQnRwYm9lYVFvZi9yOUN4c3lXVm9r?=
+ =?utf-8?B?VktBRTN1NGlPK2trd2tZcEtxWEVxbGVOc0lLZ2wwQXdNa0ZFemxvL0hQWk5n?=
+ =?utf-8?B?aGRma3BIQUFnRmlpS2ZFUjhCbmVWSEVodm1HaFAzNlNHSnNSQ3d4dFhCUm9P?=
+ =?utf-8?B?RmJKYiticXRrWTZhbml4K2VZS0I3SFlFc3JoK1BUZEMyQkFXTW8rOFlxV3hM?=
+ =?utf-8?B?THNGc0tvWER0S1huRGRnMWdhMGxSQW9YWi90a3YrRmRraDcrVUp5TXlmTU1r?=
+ =?utf-8?B?dk43TnpEdTQ4MXQzVVAxRGlJQnFXaDlhejJXb3VVRXUvNXRHT2ZpUG9YcnJZ?=
+ =?utf-8?B?ZEd6dDNCUDhTbjQvYUhvUmdMR2xuWDZ6RXFnWlNDZjFWejJJWDJ1cDhxUkpr?=
+ =?utf-8?B?YVRTZjJuUVhsYlFjU3hHSXl4ekZNazlVRmRlVmNqQ3kvZEM4eDlSeEtEMzRr?=
+ =?utf-8?B?Vm1HOXZRV3M0K0RaaWRHdytOZHM3RWVrUFJUaFdSWlV4dWFYK0pWU1h0czlz?=
+ =?utf-8?B?ODBBSUQvQTZKYllCYmdFTWk1YXJpL0kybnpIS2ovaEtsWWEvdnoyUmJUanNN?=
+ =?utf-8?B?K1NCeXBJTUNLaUlKaDRlNGNzcS9oeDNsQ3d1RTdJTjI4SGtSWHg2SEdzdUFr?=
+ =?utf-8?B?U1pHL3ZBN1grYXJSQUJrVkhFRS9KVkdORXowaWpqSUkzOHd5cUZLSVpjSytv?=
+ =?utf-8?B?REQ2Rkg5TWU5bU9BT09WN0xKbmpOSkU1VFh3amtZL2h6YTd6WEwrVUZ5T0hO?=
+ =?utf-8?B?V01jMVNrbFFoK2QxVUpIQXhQaDB1cVNWTitaSHZFT1Boci9sQ2JpVWlEMG9l?=
+ =?utf-8?B?RExIMmE4MWxuL09NR3RoQ3pjcjd0QUpkOEJ5UnZhZ1JJOThDMTRyb25sMG9a?=
+ =?utf-8?B?aDZBcEFiQk9WL0p4ZjVIdnVFYkFzMW9acWV3ckZPeElmcld1SUtyNkM5bWZN?=
+ =?utf-8?B?Uyt5UU13Q1R1cGwvNnVHbHp1K0htK2lUREpRblRkdXdkcVFUdUJ6R3Q4Mjdv?=
+ =?utf-8?B?VWtyNmFPY1NXTlpyYVllQ1ZVTytleU9MZFFmVENwL3FuT0tkUW1RdEM5UEZ1?=
+ =?utf-8?B?dlZnVzdBL0NGN01VTDVqRlNIdjFPUFhadGF0NEpoc3JUeGZtK3dUUzAvZi9D?=
+ =?utf-8?B?RHFmcUF6K1ovYWVCU1NuSmVzZi9WMDFCL2hCWlB3Qk1iOGpQamZORmkvek1P?=
+ =?utf-8?B?dndYRVBJMHJLSzdxME41SzFQTnBKcHk3MUovSnM5YmtqaTVxVEN3a2J0aVpG?=
+ =?utf-8?B?NkJkN1RabjgyQVJNenY5bTlBMFNIbEszZGNsbEc5T29NSnNoR3I5czcva1E1?=
+ =?utf-8?B?SHcreXdicTdkZFpIZXExMno1M3k5YTVyUUpzZ2FJZFNIVEM4NVFISENTdC83?=
+ =?utf-8?B?KzB0U3RnL0xIaFFqV1dLQTZFdU5ybFQ2alBiaTNuN09aMGc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WXhERGxpaFE1U0gvSUVPSkdMQlppOGVQVHFKN0tOZ0w2dlh2YSthQlcyUHZK?=
+ =?utf-8?B?M2dSM3B1WDU1UVJVU3NnMGZJb2JJK0Yza1JmZHVXaTczcFdBdTZBc29kRkg0?=
+ =?utf-8?B?OXdCNmhlRU9EVjlZYW5vak5OMWI3aFVQS1luTHFHcE8wZHVWdlk4Ylg0U2p6?=
+ =?utf-8?B?bnhJbFFjbjQzbEhlWlZsVTQyeVdRL2IrNmhVSGhOK0hqS3JtNDRuZXhPWm5S?=
+ =?utf-8?B?WmJheW56L3BBZWhBUTFsYVgrTk5XSEt6QVk1UGxiRnRRd2lKS2pUa3M5Mm8z?=
+ =?utf-8?B?aTJIQTJ0djlHWmRKQ05KTTd1NGNQa3BhOVdVYVNkZmk0TENvKzlqVU1Pb0tI?=
+ =?utf-8?B?V0VtdVRPS1UzWE5FQnFDK1kzUXVsTk52SEhLRzA3V3Vsd3lzamtRVlozVjlu?=
+ =?utf-8?B?b3F3YnBWbnpUd0tZNXA2bk1oNU1STGVyTmVNUFQxbXArSXlrdmI1S3hTZmVW?=
+ =?utf-8?B?cXlXOXZ1T1F5WGtJZFdRMk96TkUwOXo1dTBOYTdRWWlWZ0NldjYrVFI4dDdj?=
+ =?utf-8?B?K2ZoamxnQnV2L1JzU2FEZGpyWERrU1VCcFNOWm55dlhweEdJVU9LVW45aHFj?=
+ =?utf-8?B?YnZ1VXZWOUxXdkZ5NkFwcEtSN21WdDl0S3lRMkJSOGUvL3FTRStEckM1ZDV1?=
+ =?utf-8?B?VktJSTh0WE9ocS9IU2NiREhJZlNuN0lOVUxldkl1cDUxUmsxZFJNMlM1ZG5L?=
+ =?utf-8?B?emRjeDg3THVLYTIrUENNVkVkSjhyemw2d2o1N1NzVkhFWThFWlgvVC8xc1BG?=
+ =?utf-8?B?UGFyQWZZdmNLU2hZcnJhUHowdDJwV3pEOU1KRUlsK1BEKzFlVXBGUW1iQmhl?=
+ =?utf-8?B?T25TcVYvaUo2U3pEOStSQUtSSlpJckhQQWNTMkFRZDdWcVEvQ3NHREZvS2Ji?=
+ =?utf-8?B?SE1GK1ZvQk5sN0tyTTJMZzhrQm03WXY5VG1NaFRHdjdxNUtnWk8vRStEWnh0?=
+ =?utf-8?B?V1NEa05vcndBbEtFd3R3dDUzaUNlVlVyVGVCK1pRMzBjcGhPZlVVK3RZRWp1?=
+ =?utf-8?B?eUdweGJ3NUg2em9UajdlQzN2TEE0OEtPUmRFTmYxRWcwL1ZmRnBkTkJMOVp2?=
+ =?utf-8?B?dXBwajlzTCtxYzRjaUxFZ0cwNXpBQys2RVg0TFliQnRaN3h5bTVkYWlnV1BD?=
+ =?utf-8?B?Qmc1ZGc0Tm9RNEhlTjhCc05YVmRrYy96OFlDY24wYjJBQmdmcDhQRWN3Q2JI?=
+ =?utf-8?B?RHEvVDU4WWM3ODdnTWp4YS9mU3VpQm5Mb0dnc2dtSlVRTlJWZjhhYnhQMmNh?=
+ =?utf-8?B?ZSs3NmlLMkkybmw3WlJwV3g5akZlQVZDTHlvWUxMZEhrRS9IODdnUzJuWUVM?=
+ =?utf-8?B?eVJKNTh6OHpaMlBxKy9UK0xOYTIxUEJGak84VHlEYU9ESENYZ3UwVFZxZTZ3?=
+ =?utf-8?B?NVRMb2R0TjBLc2t2QjhraXczNHdLMVFRS3VnblE0cEpSeUlvSzRNSDgrY0c1?=
+ =?utf-8?B?NmhNQ3pubDh3VVY0RkZMRGRzRExBVXppN2RQakpyRllMZklqaTNzdXI4OVJw?=
+ =?utf-8?B?VHBKbS9lVzNXYXdwNkUrekNBdEcwVWZRT0p2dFB2V0haUjU1NnZFZ0hQek1T?=
+ =?utf-8?B?emVjNWprWDFmNG0wcVZmczhRSFAyeGJtL1p0TUt6c0poSXdGRjY3WWVZVHg1?=
+ =?utf-8?B?dFZmZjlyUnBTMVRpSFc1VEo5SFJ6SFVaYXV3eXNCSlZBRTZkWW1IWTBRQkxm?=
+ =?utf-8?B?WHVLbjBueDhTUXE3UkV0bjJCd0xpcDNqQ2RHbS9ueTJXRGgvd3FOZit4WWxR?=
+ =?utf-8?B?WjAvN3ZLSUkzT0dWaHEvdjhRckowcnVBbURFU3VQSVdkSTVIZ3JQemVVMGxY?=
+ =?utf-8?B?dTRKRGtObHJRSEgxQXhLZTBXSWhYbjdlMnhHZEluOWVhancrSlU2T0NuaHZy?=
+ =?utf-8?B?NEtoQXJ6c2RDY2lhb2FSSlJmS3I0cEpsUnRibFFMTmFqN2lJUERmSmVMZUhl?=
+ =?utf-8?B?bC9rZVN2UFlhMkhRQllkVmZRQnB5UzY3OER0RXpxamhYWURnZ1YzWkwremlZ?=
+ =?utf-8?B?S3d1U05PQ2NpN3duc2xvWGNGa1pnYVYwL3lRbjRhazlLSDEvZ05sNlRCc2xr?=
+ =?utf-8?B?ckRiZllTK25SM3lBOCt3YUprOFRDdzFMWk5HQ1NsR2RuTW50L3FoeDYwdDc5?=
+ =?utf-8?Q?4poveUvTL+uoENAx58ZIOktNJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88fe3e71-63a1-4869-c29c-08dcce4f20b6
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:37:22.8232
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HWY26D16AoGY4RMBSPP4kEuGis9gc8wBKdIXrN6dE12el6FiHpKdvIBoV7yjGYjHUGztkx4hPzSK50SfDDqVFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6501
 
-On Wed, Sep 04, 2024 at 12:07:26PM +0100, Simon Horman wrote:
-> On Tue, Sep 03, 2024 at 07:07:49AM -0700, Breno Leitao wrote:
-> > The current check to determine if the message body was fully sent is
-> > difficult to follow. To improve clarity, introduce a variable that
-> > explicitly tracks whether the message body (msgbody) has been completely
-> > sent, indicating when it's time to begin sending userdata.
-> > 
-> > Additionally, add comments to make the code more understandable for
-> > others who may work with it.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> Thanks,
-> 
-> The nit below notwithstanding this looks good to me.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> 
-> > ---
-> >  drivers/net/netconsole.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> > index 22ccd9aa016a..c8a23a7684e5 100644
-> > --- a/drivers/net/netconsole.c
-> > +++ b/drivers/net/netconsole.c
-> > @@ -1102,6 +1102,7 @@ static void send_msg_fragmented(struct netconsole_target *nt,
-> >  	 */
-> >  	while (offset < body_len) {
-> >  		int this_header = header_len;
-> > +		bool msgbody_written = false;
-> >  		int this_offset = 0;
-> >  		int this_chunk = 0;
-> >  
-> > @@ -1119,12 +1120,22 @@ static void send_msg_fragmented(struct netconsole_target *nt,
-> >  			memcpy(buf + this_header, msgbody + offset, this_chunk);
-> >  			this_offset += this_chunk;
-> >  		}
-> > +
-> > +		if (offset + this_offset >= msgbody_len)
-> > +			/* msgbody was finally written, either in the previous messages
-> > +			 * and/or in the current buf. Time to write the userdata.
-> > +			 */
-> 
-> Please consider keeping comments <= 80 columns wide.
-> Likewise in other patches of this series.
-> 
-> checkpatch can be run with an option to check for this.
 
-Thanks for the heads-up. I've just added `--max-line-length=80` to my
-checkpatch by default
+在 2024/9/6 16:12, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH v5 1/7] udmabuf: pre-fault when first page fault
+>>
+>> The current udmabuf mmap uses a page fault to populate the vma.
+>>
+>> However, the current udmabuf has already obtained and pinned the folio
+>> upon completion of the creation.This means that the physical memory has
+>> already been acquired, rather than being accessed dynamically.
+>>
+>> As a result, the page fault has lost its purpose as a demanding
+>> page. Due to the fact that page fault requires trapping into kernel mode
+>> and filling in when accessing the corresponding virtual address in mmap,
+>> when creating a large size udmabuf, this represents a considerable
+>> overhead.
+>>
+>> This patch first the pfn into page table, and then pre-fault each pfn
+>> into vma, when first access. Should know, if anything wrong when
+>> pre-fault, will not report it's error, else, report when task access it
+>> at the first time.
+>>
+>> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 35 +++++++++++++++++++++++++++++++++--
+>>   1 file changed, 33 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index 047c3cd2ceff..0a8c231a36e1 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -43,7 +43,8 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
+>> *vmf)
+>>   	struct vm_area_struct *vma = vmf->vma;
+>>   	struct udmabuf *ubuf = vma->vm_private_data;
+>>   	pgoff_t pgoff = vmf->pgoff;
+>> -	unsigned long pfn;
+>> +	unsigned long addr, end, pfn;
+>> +	vm_fault_t ret;
+>>
+>>   	if (pgoff >= ubuf->pagecount)
+>>   		return VM_FAULT_SIGBUS;
+>> @@ -51,7 +52,37 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
+>> *vmf)
+>>   	pfn = folio_pfn(ubuf->folios[pgoff]);
+>>   	pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>>
+>> -	return vmf_insert_pfn(vma, vmf->address, pfn);
+>> +	ret = vmf_insert_pfn(vma, vmf->address, pfn);
+>> +	if (ret & VM_FAULT_ERROR)
+>> +		return ret;
+>> +
+>> +	/* pre fault */
+>> +	pgoff = vma->vm_pgoff;
+>> +	end = vma->vm_end;
+> Nit: use vma->vm_end directly in the loop below, as end is used only once.
+>
+>> +	addr = vma->vm_start;
+>> +
+>> +	for (; addr < end; pgoff++, addr += PAGE_SIZE) {
+>> +		if (addr == vmf->address)
+>> +			continue;
+>> +
+>> +		if (WARN_ON(pgoff >= ubuf->pagecount))
+>> +			break;
+>> +
+>> +		pfn = folio_pfn(ubuf->folios[pgoff]);
+>> +
+> Nit: no need for a blank line here.
+>
+>> +		pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>> +
+>> +		/**
+>> +		 * If something wrong, due to this vm fault success,
+>> +		 * do not report in here, report only when true access
+>> +		 * this addr.
+>> +		 * So, don't update ret here, just break.
+> Please rewrite the above comments as:
+> * If the below vmf_insert_pfn() fails, we do not return an error here
+> * during this pre-fault step. However, an error will be returned if the
+> * failure occurs when the addr is truly accessed.
+Thank you
+>
+> With that,
+
+OK.
 
 Thanks
+
+> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>
+>> +		 */
+>> +		if (vmf_insert_pfn(vma, addr, pfn) & VM_FAULT_ERROR)
+>> +			break;
+>> +	}
+>> +
+>> +	return ret;
+>>   }
+>>
+>>   static const struct vm_operations_struct udmabuf_vm_ops = {
+>> --
+>> 2.45.2
 
