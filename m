@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-318264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDD496EAD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:41:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09D796EAD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A77FB21376
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:41:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AEFB28331B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E634C13D8B0;
-	Fri,  6 Sep 2024 06:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5567913D8B5;
+	Fri,  6 Sep 2024 06:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="C3kLgRiu"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="QAqkJYoi"
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8275A48;
-	Fri,  6 Sep 2024 06:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F1130A47;
+	Fri,  6 Sep 2024 06:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725604888; cv=none; b=lyE8lOtZkf8h0rtHWtsyMcZiPnoObJMLaLR7eEbudBjlpsYKW6SNa+vmw+r+NHmAR4xzeqz6GaADxCBeJG6CMvAiyTd+M5HFUQWcZsuq2gRBIUwOdQshHsYzE6+5omRRO7Ig6zsyPs+DUbSClezbLzxbOoIouIbm0sg4NFyzbyU=
+	t=1725604902; cv=none; b=HqoDFXk6lzfeoBWYVE2ZfdJ65PhoPoPzZyJ3nYVqQsTrfBV/6rtEvKzP6wQOYfQsC/kAKM+zCsShJWVmaNqpTDPFsEUMpTdRKR0oVBDxppM61t1ytF1x5TqFKDfJpNclG8ngK3gJBEoZoDylyOxcE8FGAyBhbcAPJOek30aUqOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725604888; c=relaxed/simple;
-	bh=lISy1XVK95E6juyFTlrJi6eGquNRUHVuITs9r4o9CKM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u9axdGlnsX6bIYqFoCuZqSFFNsBGUHrFIs09C0WHVwCK1fWVtT/G3dIGcir9nFRxOMKUEGrELqB9OX8C/dDzvQRz+a69R61K0eXTx7RNgByTVY9LXDyK3P2H1D+f7OLVTwAsl2v5G1vPF7BSqDVQTKz+8L4HLz2uGmRNGxt/7Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=C3kLgRiu; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 880A1100003;
-	Fri,  6 Sep 2024 09:40:58 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1725604858; bh=G001kMIRwgSJpFj2NWZLKtCybZzFdTXkEYckfYsihfw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=C3kLgRiuehVH3lRCVJ0gr3WNg4Sqt/yU8Ttvc3OIv+Z5jx+u/AvtzkzH+lUtwscsB
-	 2Ih2YC5TbzTbTlA8UHeGmHQu4YLGHEIYNBmlxIAYgrep2MqG5HNyaZQLj9PblxIJEL
-	 bbI8HX8zWQPojG/r0K5nI/uHvVGy195hrUv0kQ4AHOqTmr5rL9HujYGmgo1oZitE3b
-	 +zhdan2mVjECC/7fl7dckgfF1ljcxERZTFXFlb+dmyswd8vMMeIPRCjmZ0IM2i2TZp
-	 eKDZJt7bMT5koPlmcthc1k5bwdnjfpDGHuaBjXmCgbXlHnW5oQCMLAEiR9sAV+mogd
-	 8tVPiuHm4/F6g==
-Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Fri,  6 Sep 2024 09:39:50 +0300 (MSK)
-Received: from localhost.localdomain (172.17.210.9) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Sep
- 2024 09:39:27 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Veerasenareddy Burru <vburru@marvell.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Sathesh Edara <sedara@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Abhijit
- Ayarekar <aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net] octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
-Date: Fri, 6 Sep 2024 09:39:07 +0300
-Message-ID: <20240906063907.9591-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1725604902; c=relaxed/simple;
+	bh=0/GAUh9+vr5dSsV/KCoFiCdKVPCmYu2BnbiNLdKPFs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cVBg/4xnAAZHGJDIpYGoA6FDlc9HTgJ1ZDO9qRE63mzZBdbrz+cS68mHXUO53ISbKlrOV+7sUN3pdd4Yjrv5EAXI70O5OBSuPIzcBvaFHJeSb3FJi0nvHKrjKoRUXgT+UGGKob9fTC/25XLQ0oc28wxxxfzBdoKihhKv2B3UPK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=QAqkJYoi; arc=none smtp.client-ip=43.155.80.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1725604834;
+	bh=5mzqLfW7T+9KCT/Eu0R8VmSjmBF0RsE3ZlF9EWCDd+E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=QAqkJYoi/KeSx3lJTUPiYnk3p7PqGvH+IkOS1pjYmAea0tEXhIB8eILsAlXKewn/d
+	 vRTIYAYTP1tlfwlCA2iTDabyHou5VEObURHHpfVjgWisf7NOqJity2NNv2XoRGuzza
+	 kcA26Z1c8Gg5qgf2ZObQOpXmxJzGNluJJXadxFzg=
+X-QQ-mid: bizesmtp86t1725604827tsooev16
+X-QQ-Originating-IP: ooAcqUZ7t+lXQteNLEkJIX42EB788EaNuNw+PwgZ1js=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 06 Sep 2024 14:40:14 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3138750108479780127
+From: WangYuli <wangyuli@uniontech.com>
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	tsbogend@alpha.franken.de
+Cc: linux-crypto@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	WangYuli <wangyuli@uniontech.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Guan Wentao <guanwentao@uniontech.com>
+Subject: [PATCH v3] MIPS: crypto: Clean up useless assignment operations
+Date: Fri,  6 Sep 2024 14:40:02 +0800
+Message-ID: <C4F76EB9DD3AEFEB+20240906064002.404538-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,136 +65,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187583 [Sep 06 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 32 0.3.32 766319f57b3d5e49f2c79a76e7d7087b621090df, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/06 06:08:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/06 05:10:00 #26531716
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-build_skb() returns NULL in case of a memory allocation failure so handle
-it inside __octep_oq_process_rx() to avoid NULL pointer dereference.
+When entering the "len & sizeof(u32)" branch, len must be less than 8.
+So after one operation, len must be less than 4.
+At this time, "len -= sizeof(u32)" is not necessary for 64-bit CPUs.
 
-__octep_oq_process_rx() is called during NAPI polling by the driver. If
-skb allocation fails, keep on pulling packets out of the Rx DMA queue: we
-shouldn't break the polling immediately and thus falsely indicate to the
-octep_napi_poll() that the Rx pressure is going down. As there is no
-associated skb in this case, don't process the packets and don't push them
-up the network stack - they are skipped.
+After that, replace `while' loops with equivalent `for' to make the
+code structure a little bit better by the way.
 
-The common code with skb and index manipulations is extracted to make the
-fix more readable and avoid code duplication. Also 'alloc_failures' counter
-is incremented to mark the skb allocation error in driver statistics.
-
-The suggested approach for handling buffer allocation failures in the NAPI
-polling functions is also implemented in the Cavium Liquidio driver. It
-has the same structure, namely in octeon_droq_fast_process_packets().
-
-A similar situation is present in the __octep_vf_oq_process_rx() of the
-Octeon VF driver. First we want to try the fix on __octep_oq_process_rx().
-
-Compile tested only. Marvell folks, could you review and test this, please?
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 37d79d059606 ("octeon_ep: add Tx/Rx processing and interrupt support")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2406281713040.43454@angie.orcam.me.uk/
+Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+Link: https://lore.kernel.org/all/ZtqZpzMH_qMQqzyc@gondor.apana.org.au/
+Signed-off-by: Guan Wentao <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- .../net/ethernet/marvell/octeon_ep/octep_rx.c | 44 ++++++++++---------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+ arch/mips/crypto/crc32-mips.c | 70 ++++++++++++++++++-----------------
+ 1 file changed, 37 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-index 4746a6b258f0..e92afd1a372a 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-@@ -394,32 +394,32 @@ static int __octep_oq_process_rx(struct octep_device *oct,
- 			data_offset = OCTEP_OQ_RESP_HW_SIZE;
- 			rx_ol_flags = 0;
- 		}
-+
-+		skb = build_skb((void *)resp_hw, PAGE_SIZE);
-+		if (skb)
-+			skb_reserve(skb, data_offset);
-+		else
-+			oq->stats.alloc_failures++;
- 		rx_bytes += buff_info->len;
-+		read_idx++;
-+		desc_used++;
-+		if (read_idx == oq->max_count)
-+			read_idx = 0;
+diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
+index ec6d58008f8e..2a59b85f88aa 100644
+--- a/arch/mips/crypto/crc32-mips.c
++++ b/arch/mips/crypto/crc32-mips.c
+@@ -77,24 +77,26 @@ static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+ {
+ 	u32 crc = crc_;
  
- 		if (buff_info->len <= oq->max_single_buffer_size) {
--			skb = build_skb((void *)resp_hw, PAGE_SIZE);
--			skb_reserve(skb, data_offset);
--			skb_put(skb, buff_info->len);
--			read_idx++;
--			desc_used++;
--			if (read_idx == oq->max_count)
--				read_idx = 0;
-+			if (skb)
-+				skb_put(skb, buff_info->len);
- 		} else {
- 			struct skb_shared_info *shinfo;
- 			u16 data_len;
- 
--			skb = build_skb((void *)resp_hw, PAGE_SIZE);
--			skb_reserve(skb, data_offset);
- 			/* Head fragment includes response header(s);
- 			 * subsequent fragments contains only data.
- 			 */
--			skb_put(skb, oq->max_single_buffer_size);
--			read_idx++;
--			desc_used++;
--			if (read_idx == oq->max_count)
--				read_idx = 0;
+-#ifdef CONFIG_64BIT
+-	while (len >= sizeof(u64)) {
+-		u64 value = get_unaligned_le64(p);
 -
--			shinfo = skb_shinfo(skb);
-+			if (skb) {
-+				skb_put(skb, oq->max_single_buffer_size);
-+				shinfo = skb_shinfo(skb);
-+			}
- 			data_len = buff_info->len - oq->max_single_buffer_size;
- 			while (data_len) {
- 				dma_unmap_page(oq->dev, oq->desc_ring[read_idx].buffer_ptr,
-@@ -434,10 +434,11 @@ static int __octep_oq_process_rx(struct octep_device *oct,
- 					data_len -= oq->buffer_size;
- 				}
- 
--				skb_add_rx_frag(skb, shinfo->nr_frags,
--						buff_info->page, 0,
--						buff_info->len,
--						buff_info->len);
-+				if (skb)
-+					skb_add_rx_frag(skb, shinfo->nr_frags,
-+							buff_info->page, 0,
-+							buff_info->len,
-+							buff_info->len);
- 				buff_info->page = NULL;
- 				read_idx++;
- 				desc_used++;
-@@ -446,6 +447,9 @@ static int __octep_oq_process_rx(struct octep_device *oct,
- 			}
- 		}
- 
-+		if (!skb)
-+			continue;
+-		CRC32(crc, value, d);
+-		p += sizeof(u64);
+-		len -= sizeof(u64);
+-	}
+-
+-	if (len & sizeof(u32)) {
+-#else /* !CONFIG_64BIT */
+-	while (len >= sizeof(u32)) {
+-#endif
+-		u32 value = get_unaligned_le32(p);
+-
+-		CRC32(crc, value, w);
+-		p += sizeof(u32);
+-		len -= sizeof(u32);
++	if (IS_ENABLED(CONFIG_64BIT)) {
++		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
++			u64 value = get_unaligned_le64(p);
 +
- 		skb->dev = oq->netdev;
- 		skb->protocol =  eth_type_trans(skb, skb->dev);
- 		if (feat & NETIF_F_RXCSUM &&
++			CRC32(crc, value, d);
++		}
++
++		if (len & sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32(crc, value, w);
++			p += sizeof(u32);
++		}
++	} else {
++		for (; len >= sizeof(u32); len -= sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32(crc, value, w);
++			p += sizeof(u32);
++		}
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
+@@ -117,24 +119,26 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+ {
+ 	u32 crc = crc_;
+ 
+-#ifdef CONFIG_64BIT
+-	while (len >= sizeof(u64)) {
+-		u64 value = get_unaligned_le64(p);
++	if (IS_ENABLED(CONFIG_64BIT)) {
++		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
++			u64 value = get_unaligned_le64(p);
+ 
+-		CRC32C(crc, value, d);
+-		p += sizeof(u64);
+-		len -= sizeof(u64);
+-	}
++			CRC32(crc, value, d);
++		}
+ 
+-	if (len & sizeof(u32)) {
+-#else /* !CONFIG_64BIT */
+-	while (len >= sizeof(u32)) {
+-#endif
+-		u32 value = get_unaligned_le32(p);
++		if (len & sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32(crc, value, w);
++			p += sizeof(u32);
++		}
++	} else {
++		for (; len >= sizeof(u32); len -= sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
+ 
+-		CRC32C(crc, value, w);
+-		p += sizeof(u32);
+-		len -= sizeof(u32);
++			CRC32(crc, value, w);
++			p += sizeof(u32);
++		}
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
 -- 
-2.30.2
+2.43.4
 
 
