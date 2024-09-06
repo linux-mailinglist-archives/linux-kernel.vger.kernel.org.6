@@ -1,274 +1,146 @@
-Return-Path: <linux-kernel+bounces-319197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5384896F92A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C921F96F92B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D434C1F2366D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D442864C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689BE1D3621;
-	Fri,  6 Sep 2024 16:20:31 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E991D3653;
+	Fri,  6 Sep 2024 16:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="DrgJYsKT"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E69156880
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2C6130E57
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725639630; cv=none; b=ojetdYbMun7WvhfW/NqG5xw0TOTgBHHJ0xUuOgXhOnlhfBeVn7DYnInm8GGA4Aa+l66YUkMtoHEAU9CdrEJQJCfzPZl4i2TDADz66EXwd9jy4H60ukLc43fd/WoGN8j+GblCkYLJzbq/vBUZcKB/5u45GnUu6wudS4OzNsTD7h8=
+	t=1725639694; cv=none; b=liDGnkMkTn1jZSn8xnvuhhOEYsyAfz2DoXcgFmNoNs35sonii0BZtKS0LkcP2wpKIacm67Ei4yfVmrchOqR5efloN4yzShLSBTlGwklpdHscn1o07zL8tnurxf3AkZWyXVkmpEp7Hf9hEuaK8oxYZ+89Au3R90Xkj9qRvai571M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725639630; c=relaxed/simple;
-	bh=8phRWTUPx/h63ImVyA2fWukk+9GaTu/ewCFKTSB4t9w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O0FQWhyeKd3prVY/3if0xVvvXn2MBaVPgE4QfBWkhBxl7KT5XX2J0zz0WlKjhR0LeOis5HRYUYx2uMXWTO+iZ6rFq6m7RjH3fPSHJb7XIIg3xV5iwccLeeHaclOLeXqZeGJ9wwmRhvzeBfTsAy77tGj/lgzadJ9FKKp8G64Zer4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a21f28d87so465615039f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:20:28 -0700 (PDT)
+	s=arc-20240116; t=1725639694; c=relaxed/simple;
+	bh=XUiFl+NfhcoFhDvs/sSprEsyUo8jhiqXMXbejPCwIeg=;
+	h=Date:Subject:CC:From:To:Message-ID; b=uTWkqW3s0zJAzpxnUPmjf+JMmqZ4uh+9FmGQGyBiHSyouOXL3nM+f22c84ZyKlG6fDp6W6me39XM6s9rzF+cmQjhUUx3lUYq7LTVD9M+CPbTGfkPdJ4kbKnsd5jl21V5q4Ay8uewTqmZUiui98JX9LrP841W8unmPcCblxF3jFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=DrgJYsKT; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2068bee21d8so23787185ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725639691; x=1726244491; darn=vger.kernel.org;
+        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5eYtctJfTJlMWL5l2Lu9nbkftuipcA6blBFQEhlLdB8=;
+        b=DrgJYsKT1hRFYiW1OpXCSl4o241IlbRce6M1ddDFi3c1m9dcKX1XwMeez9Mr1zvNIn
+         xz+a9KufMl+KDueVHdJ9yWr3KVRjw7ibhQ+x9HIVQBzqdvOzN+vxmDTcytacjv6ux7QP
+         u2GVes6GfTXr9N2BIYXA8poUZlGj4gsh65jOT4atfC1GPppSftYF1y+Z5fJI6wTldvZE
+         lnWQJTf6sqlTDnwD4VGmlmSXHt8lYu+n+C9mWIfjhAC6S0LgxeKTv9BZJJOgBgevTdbQ
+         T6lFFYiB6JXm1yUYBEDC/jf56rJHZsj8754RwOndslvdmdbzkGEd6/skrH5lONGwZ1tS
+         SBtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725639628; x=1726244428;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OzgTD5nDx4mrru7Wd0mjDvl8Z+hQAv0pV9FuX0feNc8=;
-        b=WVz84s+Rs0Dooor6zq0HFdyAw8XZJ43cYnKuUVAmoAKYYpwmTf4hv8Pzwmm6Pq3ygf
-         8RUomGn1aYalnKAQznT5qLpMgytntTUlW2izQ2MLfGrojnDiJ/EaPmTHWz4chAAThq5o
-         2o24XwRt2Y8eEO0dwO1FhQqBPDhKCEuunkO7URiOwYdf9gjv/b0x6rJeut3cKvtRzHAb
-         RdwkpWPoB338fdxVnUJQ2VTh3mpin4kUynyIl/LTBLHSPpXYI2AuoOBQSpjO/vrVOaHA
-         NuEBxbf5nfCzeOI/iT17ckREm1EkNSRU9rCqVm/4qXU6w38kHFIQBRTybnBJe1ykcvY/
-         J3TA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVuJFeEhxsw3dAte4rD28VovvzEGJ90OYTtzl5JJzxpXu4qy7HJMZPNGyERp5u6+602zGYsWfFnLi/4NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydLdzMbd1g4fn39eP/NQFX/qwxXU3s5CYdUcn7gAHI5dE9vJ/+
-	/HKWzKAuEA3KdyD7yuu8meEiSQ5W4obgPbEeAuMzgJuAcYZ+L/ikrx5AP71JodCmZv3yi6LiZff
-	eVfjx0RjjJmMz+ngee6eHKT5vrGH2mF4Ek3mOU/VoRqBu5YlS/Vw0Tm4=
-X-Google-Smtp-Source: AGHT+IEuBLB1xGqeHl3LSc8yrhQ1mQowNq2ECAFReKXZ8rrxI1S6P2hl+1wpMLW6zD++2Ie21kc5uh1Dx0tOgFLy8oxrdc3opKs2
+        d=1e100.net; s=20230601; t=1725639691; x=1726244491;
+        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5eYtctJfTJlMWL5l2Lu9nbkftuipcA6blBFQEhlLdB8=;
+        b=wA1wjmQhixDmUFbMEzqSxVJJU6w1asPkiUD0rJv/NWnCyCL3hMeA6BuR145MqVaxph
+         nSyTkzR5ijjQnguhckNEDdGrdN78se1tmYZ+3spb0tlF0ScqofNFqyja3cMiTRr3KNVR
+         aqnvSk8q3ZxIYV/3g83JMREl8ZJ3+Nwgt3CmSjLqugk06TqbcAEqft/5oax6CHVu4J64
+         pTGbtCT8DVTLtkvo1o+vg6qltDFXNoWh9BOlqoWscVqdvVZ5S2v1p+meaKM6s7aKKWcb
+         3rD5kg1b2+3b8Yx4ee/0PsZ/jmrNg1x5vBy2Q4p5cFGPkBQ5aYJO5YJbOUcRawScBmU4
+         XIpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXf6pzjR5Bv6gtZJoqCqZQajJsR2DMegjm2dkP7paFsdeuDcj5rwMaBO3bci4nLVwlj+IVplh6u7L3lkzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwweSOADrqDvuVChIYWYTHMkN+TlteM/WyLkfBGx3OYMn8XqjBp
+	ODtQXkQ/0+eTmi0XBKY3Pjz1AMk3bZJslWr6P5ajtHFwJU7anVnKj07wlTjLLVd5RD688xynkA/
+	F
+X-Google-Smtp-Source: AGHT+IFrxyzqMcF2UeehBPT3CymEL6yHGMozxetkTEC0Q2e1Ixf8Bdnmqn+Nx69DjJsy2v2toYrq+A==
+X-Received: by 2002:a17:902:e749:b0:206:aafb:4a91 with SMTP id d9443c01a7336-206aafb4aeamr114695635ad.50.1725639690771;
+        Fri, 06 Sep 2024 09:21:30 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae9505b7sm44789525ad.89.2024.09.06.09.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 09:21:30 -0700 (PDT)
+Date: Fri, 06 Sep 2024 09:21:30 -0700 (PDT)
+X-Google-Original-Date: Fri, 06 Sep 2024 09:21:27 PDT (-0700)
+Subject: [GIT PULL] RISC-V Fixes for 6.11-rc7
+CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-43509d97-4d3a-449f-b4d7-74f1041daefc@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:6c84:b0:4b9:e5b4:67fd with SMTP id
- 8926c6da1cb9f-4d084e65b5dmr167888173.1.1725639628249; Fri, 06 Sep 2024
- 09:20:28 -0700 (PDT)
-Date: Fri, 06 Sep 2024 09:20:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000d6e15062175c9ae@google.com>
-Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_lock_refcount_tree
-From: syzbot <syzbot+285cfeaeb4ba53a373aa@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The following changes since commit 32d5f7add080a936e28ab4142bfeea6b06999789:
 
-syzbot found the following issue on:
+  Merge patch series "RISC-V: hwprobe: Misaligned scalar perf fix and rename" (2024-08-15 13:12:21 -0700)
 
-HEAD commit:    67784a74e258 Merge tag 'ata-6.11-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ed88af980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=285cfeaeb4ba53a373aa
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+are available in the Git repository at:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-rc7
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-67784a74.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e2f2583cf0b1/vmlinux-67784a74.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0fedd864addd/bzImage-67784a74.xz
+for you to fetch changes up to 1ff95eb2bebda50c4c5406caaf201e0fcb24cc8f:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+285cfeaeb4ba53a373aa@syzkaller.appspotmail.com
+  riscv: Fix RISCV_ALTERNATIVE_EARLY (2024-09-03 07:57:55 -0700)
 
-loop0: detected capacity change from 0 to 32768
-BTRFS: device fsid ed167579-eb65-4e76-9a50-61ac97e9b59d devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5106)
-BTRFS info (device loop0): first mount of filesystem ed167579-eb65-4e76-9a50-61ac97e9b59d
-BTRFS info (device loop0): using sha256 (sha256-avx2) checksum algorithm
-BTRFS error (device loop0): superblock checksum mismatch
-BTRFS error (device loop0): open_ctree failed
-loop0: detected capacity change from 0 to 32768
-=======================================================
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc6-syzkaller-00019-g67784a74e258 #0 Not tainted
-------------------------------------------------------
-syz.0.0/5106 is trying to acquire lock:
-ffff888040fa4098 (&new->rf_sem){+.+.}-{3:3}, at: __ocfs2_lock_refcount_tree fs/ocfs2/refcounttree.c:427 [inline]
-ffff888040fa4098 (&new->rf_sem){+.+.}-{3:3}, at: ocfs2_lock_refcount_tree+0x1fe/0xa70 fs/ocfs2/refcounttree.c:462
+----------------------------------------------------------------
+RISC-V Fixes for 6.11-rc7
 
-but task is already holding lock:
-ffff8880413b8660 (&ocfs2_file_ip_alloc_sem_key){++++}-{3:3}, at: ocfs2_truncate_file+0x372/0x1560 fs/ocfs2/file.c:471
+* A revert for the mmap() change that ties the allocation range to the
+  hint adress, as what we tried to do ended up regressing on other
+  userspace workloads.
+* A fix to avoid a kernel memory leak when emulating misaligned accesses
+  from userspace.
+* A Kconfig fix for toolchain vector detection, which now correctly
+  detects vector support on toolchains where the V extension depends on
+  the M extension.
+* A fix to avoid failing the linear mapping bootmem bounds check on
+  NOMMU systems.
+* A fix for early alternatives on relocatable kernels.
 
-which lock already depends on the new lock.
+----------------------------------------------------------------
+That mmap() one is particuarly embarassing, as it didn't even fix the sv39
+compatibility issue we set out to fix in the first place.  We'll have a better
+fix for this, but I figured it would be best to get the revert out as it'll
+need to be backported and it breaks real workloads.
 
+----------------------------------------------------------------
+Alexandre Ghiti (2):
+      riscv: Do not restrict memory size because of linear mapping on nommu
+      riscv: Fix RISCV_ALTERNATIVE_EARLY
 
-the existing dependency chain (in reverse order) is:
+Anton Blanchard (1):
+      riscv: Fix toolchain vector detection
 
--> #2 (&ocfs2_file_ip_alloc_sem_key){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
-       ocfs2_read_virt_blocks+0x2ca/0xa50 fs/ocfs2/extent_map.c:976
-       ocfs2_read_dir_block fs/ocfs2/dir.c:508 [inline]
-       ocfs2_find_entry_el fs/ocfs2/dir.c:715 [inline]
-       ocfs2_find_entry+0x43b/0x2780 fs/ocfs2/dir.c:1080
-       ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1980
-       ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2002
-       _ocfs2_get_system_file_inode fs/ocfs2/sysfile.c:136 [inline]
-       ocfs2_get_system_file_inode+0x305/0x7b0 fs/ocfs2/sysfile.c:112
-       ocfs2_init_global_system_inodes+0x32c/0x730 fs/ocfs2/super.c:457
-       ocfs2_initialize_super fs/ocfs2/super.c:2250 [inline]
-       ocfs2_fill_super+0x3068/0x5880 fs/ocfs2/super.c:994
-       mount_bdev+0x20a/0x2d0 fs/super.c:1679
-       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1800
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3472
-       do_mount fs/namespace.c:3812 [inline]
-       __do_sys_mount fs/namespace.c:4020 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Charlie Jenkins (3):
+      Revert "RISC-V: mm: Document mmap changes"
+      riscv: selftests: Remove mmap hint address checks
+      riscv: mm: Do not restrict mmap address based on hint
 
--> #1 (&osb->system_file_mutex){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       ocfs2_get_system_file_inode+0x18f/0x7b0 fs/ocfs2/sysfile.c:101
-       ocfs2_reserve_suballoc_bits+0x16f/0x4eb0 fs/ocfs2/suballoc.c:780
-       ocfs2_reserve_new_metadata_blocks+0x41c/0x9c0 fs/ocfs2/suballoc.c:982
-       ocfs2_add_refcount_flag+0x4a0/0x1150 fs/ocfs2/refcounttree.c:3683
-       ocfs2_reflink_remap_extent fs/ocfs2/refcounttree.c:4542 [inline]
-       ocfs2_reflink_remap_blocks+0xe58/0x1f30 fs/ocfs2/refcounttree.c:4669
-       ocfs2_remap_file_range+0x600/0x8e0 fs/ocfs2/file.c:2724
-       vfs_copy_file_range+0xc1f/0x1530 fs/read_write.c:1522
-       __do_sys_copy_file_range fs/read_write.c:1612 [inline]
-       __se_sys_copy_file_range+0x3f2/0x5d0 fs/read_write.c:1575
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Palmer Dabbelt (1):
+      Merge patch series "riscv: mm: Do not restrict mmap address based on hint"
 
--> #0 (&new->rf_sem){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       __ocfs2_lock_refcount_tree fs/ocfs2/refcounttree.c:427 [inline]
-       ocfs2_lock_refcount_tree+0x1fe/0xa70 fs/ocfs2/refcounttree.c:462
-       ocfs2_commit_truncate+0xc78/0x2560 fs/ocfs2/alloc.c:7345
-       ocfs2_truncate_file+0xd0e/0x1560 fs/ocfs2/file.c:509
-       ocfs2_setattr+0x1217/0x1f50 fs/ocfs2/file.c:1208
-       notify_change+0xbca/0xe90 fs/attr.c:503
-       do_truncate+0x220/0x310 fs/open.c:65
-       handle_truncate fs/namei.c:3381 [inline]
-       do_open fs/namei.c:3731 [inline]
-       path_openat+0x2ced/0x3470 fs/namei.c:3886
-       do_filp_open+0x235/0x490 fs/namei.c:3913
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_open fs/open.c:1439 [inline]
-       __se_sys_open fs/open.c:1435 [inline]
-       __x64_sys_open+0x225/0x270 fs/open.c:1435
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Samuel Holland (1):
+      riscv: misaligned: Restrict user access to kernel memory
 
-other info that might help us debug this:
-
-Chain exists of:
-  &new->rf_sem --> &osb->system_file_mutex --> &ocfs2_file_ip_alloc_sem_key
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ocfs2_file_ip_alloc_sem_key);
-                               lock(&osb->system_file_mutex);
-                               lock(&ocfs2_file_ip_alloc_sem_key);
-  lock(&new->rf_sem);
-
- *** DEADLOCK ***
-
-3 locks held by syz.0.0/5106:
- #0: ffff888040330420 (sb_writers#10){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
- #1: ffff8880413b89c0 (&sb->s_type->i_mutex_key#19){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:800 [inline]
- #1: ffff8880413b89c0 (&sb->s_type->i_mutex_key#19){+.+.}-{3:3}, at: do_truncate+0x20c/0x310 fs/open.c:63
- #2: ffff8880413b8660 (&ocfs2_file_ip_alloc_sem_key){++++}-{3:3}, at: ocfs2_truncate_file+0x372/0x1560 fs/ocfs2/file.c:471
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5106 Comm: syz.0.0 Not tainted 6.11.0-rc6-syzkaller-00019-g67784a74e258 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- down_write+0x99/0x220 kernel/locking/rwsem.c:1579
- __ocfs2_lock_refcount_tree fs/ocfs2/refcounttree.c:427 [inline]
- ocfs2_lock_refcount_tree+0x1fe/0xa70 fs/ocfs2/refcounttree.c:462
- ocfs2_commit_truncate+0xc78/0x2560 fs/ocfs2/alloc.c:7345
- ocfs2_truncate_file+0xd0e/0x1560 fs/ocfs2/file.c:509
- ocfs2_setattr+0x1217/0x1f50 fs/ocfs2/file.c:1208
- notify_change+0xbca/0xe90 fs/attr.c:503
- do_truncate+0x220/0x310 fs/open.c:65
- handle_truncate fs/namei.c:3381 [inline]
- do_open fs/namei.c:3731 [inline]
- path_openat+0x2ced/0x3470 fs/namei.c:3886
- do_filp_open+0x235/0x490 fs/namei.c:3913
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_open fs/open.c:1439 [inline]
- __se_sys_open fs/open.c:1435 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1435
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4924979eb9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4925732038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f4924b15f80 RCX: 00007f4924979eb9
-RDX: 0000000000000000 RSI: 000000000014d27e RDI: 0000000020000180
-RBP: 00007f49249e793e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4924b15f80 R15: 00007ffd762ef968
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+ Documentation/arch/riscv/vm-layout.rst           | 16 ------
+ arch/riscv/Kconfig                               |  4 +-
+ arch/riscv/include/asm/processor.h               | 26 +--------
+ arch/riscv/include/asm/sbi.h                     | 20 ++++++-
+ arch/riscv/kernel/Makefile                       |  6 ++-
+ arch/riscv/kernel/sbi.c                          | 63 ----------------------
+ arch/riscv/kernel/sbi_ecall.c                    | 48 +++++++++++++++++
+ arch/riscv/kernel/traps_misaligned.c             |  4 +-
+ arch/riscv/mm/init.c                             |  2 +-
+ tools/testing/selftests/riscv/mm/mmap_bottomup.c |  2 -
+ tools/testing/selftests/riscv/mm/mmap_default.c  |  2 -
+ tools/testing/selftests/riscv/mm/mmap_test.h     | 67 ------------------------
+ 12 files changed, 79 insertions(+), 181 deletions(-)
+ create mode 100644 arch/riscv/kernel/sbi_ecall.c
 
