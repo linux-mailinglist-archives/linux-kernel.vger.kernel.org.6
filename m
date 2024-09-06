@@ -1,182 +1,96 @@
-Return-Path: <linux-kernel+bounces-318265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09D796EAD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:41:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3BB96EAD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AEFB28331B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F266A2825DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5567913D8B5;
-	Fri,  6 Sep 2024 06:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="QAqkJYoi"
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E613613D8B5;
+	Fri,  6 Sep 2024 06:42:18 +0000 (UTC)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F1130A47;
-	Fri,  6 Sep 2024 06:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307905B216;
+	Fri,  6 Sep 2024 06:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725604902; cv=none; b=HqoDFXk6lzfeoBWYVE2ZfdJ65PhoPoPzZyJ3nYVqQsTrfBV/6rtEvKzP6wQOYfQsC/kAKM+zCsShJWVmaNqpTDPFsEUMpTdRKR0oVBDxppM61t1ytF1x5TqFKDfJpNclG8ngK3gJBEoZoDylyOxcE8FGAyBhbcAPJOek30aUqOM=
+	t=1725604938; cv=none; b=gj2FgklomAklS9WhfwDT8Ip7WvKoFjtxBHbvHlLSW2dTEOTh0MVPZuM1L5xi9Zo82LIantE7tjZ3HnJQKKgcNjpXC26TKlWClX6ihLuyK70uFUBuZoKXSv+vqp2/aznJezLgdKKb7fBB3rBd/VD1ETwghEwzvahxj7D5myhaunE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725604902; c=relaxed/simple;
-	bh=0/GAUh9+vr5dSsV/KCoFiCdKVPCmYu2BnbiNLdKPFs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cVBg/4xnAAZHGJDIpYGoA6FDlc9HTgJ1ZDO9qRE63mzZBdbrz+cS68mHXUO53ISbKlrOV+7sUN3pdd4Yjrv5EAXI70O5OBSuPIzcBvaFHJeSb3FJi0nvHKrjKoRUXgT+UGGKob9fTC/25XLQ0oc28wxxxfzBdoKihhKv2B3UPK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=QAqkJYoi; arc=none smtp.client-ip=43.155.80.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1725604834;
-	bh=5mzqLfW7T+9KCT/Eu0R8VmSjmBF0RsE3ZlF9EWCDd+E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QAqkJYoi/KeSx3lJTUPiYnk3p7PqGvH+IkOS1pjYmAea0tEXhIB8eILsAlXKewn/d
-	 vRTIYAYTP1tlfwlCA2iTDabyHou5VEObURHHpfVjgWisf7NOqJity2NNv2XoRGuzza
-	 kcA26Z1c8Gg5qgf2ZObQOpXmxJzGNluJJXadxFzg=
-X-QQ-mid: bizesmtp86t1725604827tsooev16
-X-QQ-Originating-IP: ooAcqUZ7t+lXQteNLEkJIX42EB788EaNuNw+PwgZ1js=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 06 Sep 2024 14:40:14 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3138750108479780127
-From: WangYuli <wangyuli@uniontech.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	tsbogend@alpha.franken.de
-Cc: linux-crypto@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WangYuli <wangyuli@uniontech.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Guan Wentao <guanwentao@uniontech.com>
-Subject: [PATCH v3] MIPS: crypto: Clean up useless assignment operations
-Date: Fri,  6 Sep 2024 14:40:02 +0800
-Message-ID: <C4F76EB9DD3AEFEB+20240906064002.404538-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1725604938; c=relaxed/simple;
+	bh=+IJEH69gOISTWlvg3zPU/w1epIilrKjZbaz5D7bgZs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwqrIQ7nZlV/aR8CnClwrmbmqGDaqm+cUoxiHGYZ+BkSEdWSFgK84w2W4+0ipXKoiOt/u6dHN3GQHk9xixJtrEeC/K6mc/2dXxVk4x29mP5GrlD3dVTRIkDlDMMZpS6GzDRcC1NOlAJX5CJcMXzq0XoLsc+2fWPbnnCOze7tB8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20551e2f1f8so16641915ad.2;
+        Thu, 05 Sep 2024 23:42:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725604936; x=1726209736;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLCwuYJ2jIQ7AX7cjzt4YWvFkOdwbanLmpVnFzyu7nI=;
+        b=iOuvb3u5uoZeoVJnvbYH85lisH/zznONCQ9fW+OVEwvag4FnxXz1jZJcCvI38Xslje
+         Wf/BSJovNJegajtBiHnQxciMbUo5b2GwrlWUENAzTRSxEzvqosVAIOWvjzho+qg7ePFR
+         bq48jLqpqjsUw7rPmPJxmzTPwhBiff/h8lA5amy/n+wj8xYu0i4pdZesu2K0kWSHwuEW
+         Fg7Tvykuu0B2Xsft6dBdN0DEnsaakumPsUvoa2NjkW55Q0L0NGyhiXMebwJ7lIfGYb6y
+         wPSoZR+I77kStyoPy50wE0J30WI8wU3sHV/PD+AH1DcK+2CtvsM39KMAfF5JQGaWif5k
+         XGgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1MGODuQNET0SwBrhlqO/MdYSgYl22kktdKhJQooL6bAgA9JT5audQoSTEl4akypzg386zDOIxu2MObrk=@vger.kernel.org, AJvYcCXBR5/cfoeJ3ZxoM10tcQv2coFjbOHdx4KUi3uV71Gd2bE2TWdpvZa85fc09SxmhmE+2BXmpiTWkugp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/ZaHzMvFIZoRnOYL0Yda0Tplh8jSZ6tJoFQvB1IHvuXxi2z9Y
+	b8fBfESO6Z90i7Fd1+aQ+eQwoiQY/jKnfH9cwoW68BTm1Q2MBDOD
+X-Google-Smtp-Source: AGHT+IFhcKxn4gucXi1dxpFusTJmODNkq5R1NnJNsOzTXcINwffJplrx2JVql7aUmLFMrAtY4UvA/g==
+X-Received: by 2002:a17:903:2409:b0:206:a162:e1bd with SMTP id d9443c01a7336-206f05361e6mr20283585ad.34.1725604936445;
+        Thu, 05 Sep 2024 23:42:16 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea38389sm37333465ad.137.2024.09.05.23.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 23:42:16 -0700 (PDT)
+Date: Fri, 6 Sep 2024 15:42:14 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] PCI: kirin: Fix buffer overflow
+Message-ID: <20240906064214.GC679795@rocinante>
+References: <20240903115823.30647-1-adiupina@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903115823.30647-1-adiupina@astralinux.ru>
 
-When entering the "len & sizeof(u32)" branch, len must be less than 8.
-So after one operation, len must be less than 4.
-At this time, "len -= sizeof(u32)" is not necessary for 64-bit CPUs.
+Hello,
 
-After that, replace `while' loops with equivalent `for' to make the
-code structure a little bit better by the way.
+By the way, this would be v2, technically, but not to worry.
 
-Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-Link: https://lore.kernel.org/all/alpine.DEB.2.21.2406281713040.43454@angie.orcam.me.uk/
-Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
-Link: https://lore.kernel.org/all/ZtqZpzMH_qMQqzyc@gondor.apana.org.au/
-Signed-off-by: Guan Wentao <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/crypto/crc32-mips.c | 70 ++++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 33 deletions(-)
+> In kirin_pcie_parse_port() pcie->num_slots is compared to
+> pcie->gpio_id_reset size (MAX_PCI_SLOTS). Need to fix
+> condition to pcie->num_slots + 1 >= MAX_PCI_SLOTS and move
+> pcie->num_slots increment lower to avoid out-of-bounds
+> array access.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
-index ec6d58008f8e..2a59b85f88aa 100644
---- a/arch/mips/crypto/crc32-mips.c
-+++ b/arch/mips/crypto/crc32-mips.c
-@@ -77,24 +77,26 @@ static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
- {
- 	u32 crc = crc_;
- 
--#ifdef CONFIG_64BIT
--	while (len >= sizeof(u64)) {
--		u64 value = get_unaligned_le64(p);
--
--		CRC32(crc, value, d);
--		p += sizeof(u64);
--		len -= sizeof(u64);
--	}
--
--	if (len & sizeof(u32)) {
--#else /* !CONFIG_64BIT */
--	while (len >= sizeof(u32)) {
--#endif
--		u32 value = get_unaligned_le32(p);
--
--		CRC32(crc, value, w);
--		p += sizeof(u32);
--		len -= sizeof(u32);
-+	if (IS_ENABLED(CONFIG_64BIT)) {
-+		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
-+			u64 value = get_unaligned_le64(p);
-+
-+			CRC32(crc, value, d);
-+		}
-+
-+		if (len & sizeof(u32)) {
-+			u32 value = get_unaligned_le32(p);
-+
-+			CRC32(crc, value, w);
-+			p += sizeof(u32);
-+		}
-+	} else {
-+		for (; len >= sizeof(u32); len -= sizeof(u32)) {
-+			u32 value = get_unaligned_le32(p);
-+
-+			CRC32(crc, value, w);
-+			p += sizeof(u32);
-+		}
- 	}
- 
- 	if (len & sizeof(u16)) {
-@@ -117,24 +119,26 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
- {
- 	u32 crc = crc_;
- 
--#ifdef CONFIG_64BIT
--	while (len >= sizeof(u64)) {
--		u64 value = get_unaligned_le64(p);
-+	if (IS_ENABLED(CONFIG_64BIT)) {
-+		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
-+			u64 value = get_unaligned_le64(p);
- 
--		CRC32C(crc, value, d);
--		p += sizeof(u64);
--		len -= sizeof(u64);
--	}
-+			CRC32(crc, value, d);
-+		}
- 
--	if (len & sizeof(u32)) {
--#else /* !CONFIG_64BIT */
--	while (len >= sizeof(u32)) {
--#endif
--		u32 value = get_unaligned_le32(p);
-+		if (len & sizeof(u32)) {
-+			u32 value = get_unaligned_le32(p);
-+
-+			CRC32(crc, value, w);
-+			p += sizeof(u32);
-+		}
-+	} else {
-+		for (; len >= sizeof(u32); len -= sizeof(u32)) {
-+			u32 value = get_unaligned_le32(p);
- 
--		CRC32C(crc, value, w);
--		p += sizeof(u32);
--		len -= sizeof(u32);
-+			CRC32(crc, value, w);
-+			p += sizeof(u32);
-+		}
- 	}
- 
- 	if (len & sizeof(u16)) {
--- 
-2.43.4
+Applied to controller/kirin, thank you!
 
+[1/1] PCI: kirin: Fix buffer overflow in kirin_pcie_parse_port()
+      https://git.kernel.org/pci/pci/c/c500a86693a1
+
+	Krzysztof
 
