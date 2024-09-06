@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-318597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAC496F058
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:54:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F81B96F061
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FB51B23BBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38091F27B44
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AE91CB339;
-	Fri,  6 Sep 2024 09:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9011C9DD8;
+	Fri,  6 Sep 2024 09:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c4AMZsBg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0Kh6B7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057831CB32E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04B1C7B90;
+	Fri,  6 Sep 2024 09:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725616374; cv=none; b=lhZCl2eXiXmNH/Nr+bxxbi8Zd+mEQOQTy8HhXhhmHY4N8BkxH5x6ijDlH/hUmdnJ9aF7sbDrKni/TfgBXLtxEVT8GEjoy22YJYoaG2DeNb1OZx9/rj1i63xv1VR+KG8IBgWkT8anqsuCyYviTiUy215J8m2fRBGwInsho31cb9c=
+	t=1725616416; cv=none; b=rjz0zDRNOGDLuyuce/1Ei5qJin+7X3PDIcgPIfDSz+s4hh3bh2PWv9JCQDtZTWrlLUqmV5lO1JLEh4VL4UGLc6Wg5JhGV81bd1AI3MoK5E2DJyY+ZJ5/5ZsCuCeruVDr+sZuagmEGgvXL4KXKzbJmRzWQiFE6iAAada2BvkQ6+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725616374; c=relaxed/simple;
-	bh=G0vuRwIZULx1awulz3TZccpUD9HBmx1Km+yJqugvR6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=neLi/AO/O/Be5SUNUZEVeRTpskeY3ZK4RZucS67ZHZ3/3YYszkyaSS0eAOop9yvW6G3kWreSpxgMVWpkTHyvBxvicuRjuVSMmwg7T8c6fEZBxONHKdlMiUEroPofDXm963fny9xJeywP4FKos9KUzd6Ad2ECpjZeI9QO91r9yNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c4AMZsBg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725616372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0BVAAiLX2YDT2AdtI4QtNJTs70zsl324iWlMmUL5ZGE=;
-	b=c4AMZsBgBTcYlVtCsXNOIBoM43gGwqkNDY5Mg00r/ujfL1/TyId7lgjUeU7S2NAvPnlAi0
-	Xl7luMWUej5FB9A+bL4YImFXTpBEScZa1pZzi15S7TwHIgmb+YsydizQ3bLTOTNp3p6cHo
-	FDmbi90xP1cDNJfE2F+7XMC6E7F9+dE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-yX70QcSNMw6ftfwwo2agCA-1; Fri, 06 Sep 2024 05:52:51 -0400
-X-MC-Unique: yX70QcSNMw6ftfwwo2agCA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374b9a8512dso918509f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:52:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725616369; x=1726221169;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0BVAAiLX2YDT2AdtI4QtNJTs70zsl324iWlMmUL5ZGE=;
-        b=pWo56Hhby07vu9km04xcpkOF2JgzrZOYRDwIejBg6dct/qsNa8Mrfa+a/RTOtL/0sZ
-         OMfcptdZtAHUT/GP+KEXyDCDOele24wHtXLVtp3c4LNjz3LYX3JAcnQkPjXdH9OH7yD0
-         OYSTQDWpk4BMzUu8QWwVYxAO2E615lxF4M77WTUFKDGoCkCnLWH6Hgp3gKvPr1KseFZk
-         /u38+bvE2b8equDVcSUiAaMgJmnv44TGqyeTVsxK5KuoxlAaOI+3u0k6jZXMdtsrIpqK
-         YGAFkeekU4ID/YZSi5NlcXo8KLYk5VC5ZXaBdXMBE++Wieobgui+82hM8y10TgcWbCLx
-         gnAw==
-X-Gm-Message-State: AOJu0YzxwjyQ7zBALqQ0KWtyV+9qIF0/fy5dD6ogRHl4HG0ViG9D+FZO
-	yUYcGSMefiVSIPK7aIXWOvESPR5HYkgY0dYkmNzHIgtSknlHdWWZ2chShFikzR7FVvV0K1uOn6b
-	GMg/1pdOVZnSlImW3l6Bq7vsCT9tS5AQDveT9QJ0U2DSpTUPsuVNEU5Ns7uXafjobpsQGuR2QtS
-	pIhrA5LL6zWJWFKvZ7Fjp3rGFlNQzA4bodLGAHDsQSwA==
-X-Received: by 2002:a5d:5225:0:b0:36b:3384:40e5 with SMTP id ffacd0b85a97d-378895de480mr1326185f8f.24.1725616369348;
-        Fri, 06 Sep 2024 02:52:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpPl6uh0wHWO+9rukppTUDX20dNZLFoJnMDp58PodNRcJ5IH3PPSXhUNF+FyNXmBHbr/zcog==
-X-Received: by 2002:a5d:5225:0:b0:36b:3384:40e5 with SMTP id ffacd0b85a97d-378895de480mr1326157f8f.24.1725616368848;
-        Fri, 06 Sep 2024 02:52:48 -0700 (PDT)
-Received: from redhat.com ([155.133.17.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c5ba7027sm14447997f8f.19.2024.09.06.02.52.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 02:52:48 -0700 (PDT)
-Date: Fri, 6 Sep 2024 05:52:44 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
-	Darren Kenny <darren.kenny@oracle.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>
-Subject: [RFC PATCH v2 7/7] Revert "virtio_ring: enable premapped mode
- whatever use_dma_api"
-Message-ID: <e8a8f8c3a2d67b25dd261184da6684fda1813c6d.1725616135.git.mst@redhat.com>
-References: <cover.1725616135.git.mst@redhat.com>
+	s=arc-20240116; t=1725616416; c=relaxed/simple;
+	bh=sIHvnuKMsGosS+8Rs7mZhNLKmzTCYjE+RF/2DCpylBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qBXr9hM4KVoREBKqsgQKSum2xlHSCftiSY2d/k8Y79EsiMZ0mrVFGu55NEf3CBhfUWIaDrkzA5eFE4McOaSZ9Y2Bbu0brrscRoHlA8Xd25TTq000PuntJK0PkOpXAnZ7WBw6aBy7DvzWIWm39u8GFQB/bjm+V56zaS4mPklQv4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0Kh6B7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC927C4CEC4;
+	Fri,  6 Sep 2024 09:53:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725616415;
+	bh=sIHvnuKMsGosS+8Rs7mZhNLKmzTCYjE+RF/2DCpylBU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V0Kh6B7/JEEC+j2Sh8mb3x7luLB0E0ek5QRiojlgGxsfkKSWnjdoT0CfrFaZ2ORSi
+	 GIIMbclpgW6B9F2Rru5D0DA12a0b7LtuFHGT+jAslayGdkHw5SOrpH2cW4Tde6/LLw
+	 c6sHRiihOD3hDM6CdZnCPGOQeJjlKkZ2VU8fudwlnmo9S7WNvWDIOm6BscFwx1uRKb
+	 4nIUn6o2hsjP8l9/6Lnb2/dZWqaTrVXql6gweQXNBkCat0gvlKM7mZQ+uH0iuzdQrJ
+	 rfP+A1fNNFcTiD9LtdFNvxDw8vuDcGYrWSRWY0nX7GbyfNln2x71XFDHPzrcEz2AGp
+	 2XIiLsT7RL6Zg==
+Message-ID: <5c8b066c-6e61-44c1-b99d-4ae1a2313033@kernel.org>
+Date: Fri, 6 Sep 2024 11:53:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1725616135.git.mst@redhat.com>
-X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
-X-Mutt-Fcc: =sent
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 9/9] arm64: dts: rockchip: add Photonicat PMU support for
+ Ariaboard Photonicat
+To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-10-bigfoot@classfun.cn>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240906093630.2428329-10-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This reverts commit f9dac92ba9081062a6477ee015bd3b8c5914efc4.
+On 06/09/2024 11:36, Junhao Xie wrote:
+> This commit adds support for Photonicat power management MCU on
+> Ariaboard Photonicat.
+> 
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+> ---
+>  .../boot/dts/rockchip/rk3568-photonicat.dts   | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+> index 2fe403cd61cb..597275702408 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+> @@ -513,6 +513,49 @@ &uart4 {
+>  	dma-names = "tx", "rx";
+>  	status = "okay";
+>  	/* Onboard power management MCU */
+> +
+> +	pcat_pmu: mcu {
+> +		compatible = "ariaboard,photonicat-pmu";
+> +		current-speed = <115200>;
+> +		local-address = <1>;
+> +		remote-address = <1>;
+> +
+> +		pcat_pmu_battery: supply-battery {
 
-leads to crashes with no ACCESS_PLATFORM when
-sysctl net.core.high_order_alloc_disable=1
+Drop unused labels. Everywhere. You are not making the code more readable.
 
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Reported-by: Si-Wei Liu <si-wei.liu@oracle.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/virtio/virtio_ring.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index be7309b1e860..06b5bdf0920e 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -2782,7 +2782,7 @@ EXPORT_SYMBOL_GPL(virtqueue_resize);
-  *
-  * Returns zero or a negative error.
-  * 0: success.
-- * -EINVAL: too late to enable premapped mode, the vq already contains buffers.
-+ * -EINVAL: vring does not use the dma api, so we can not enable premapped mode.
-  */
- int virtqueue_set_dma_premapped(struct virtqueue *_vq)
- {
-@@ -2798,6 +2798,11 @@ int virtqueue_set_dma_premapped(struct virtqueue *_vq)
- 		return -EINVAL;
- 	}
- 
-+	if (!vq->use_dma_api) {
-+		END_USE(vq);
-+		return -EINVAL;
-+	}
-+
- 	vq->premapped = true;
- 	vq->do_unmap = false;
- 
--- 
-MST
+> +			compatible = "ariaboard,photonicat-pmu-supply";
+> +			label = "battery";
+> +			monitored-battery = <&battery>;
+> +			power-supplies = <&pcat_pmu_charger>;
+
+Why do you reference internal design of the device as DTS? You cannot
+have here other power supply, can you?
+
+Best regards,
+Krzysztof
 
 
