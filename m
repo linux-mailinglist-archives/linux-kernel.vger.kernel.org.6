@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-319026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC6C96F6A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E4096F6A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E701CB24992
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:25:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52213B21608
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB931D1730;
-	Fri,  6 Sep 2024 14:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yc3+GYHL"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962661D04B6;
+	Fri,  6 Sep 2024 14:26:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6F01D0DDF;
-	Fri,  6 Sep 2024 14:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBFD1C7B9B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725632699; cv=none; b=E5nMdJD67M2RmI7mXyl2+30k5qhmqFmsUuehKbZFEcU1NCfG/0yw7OtaS2aHdZ0rMbzdmoXHWWffnAxzfvPs1VwheKl9yUXYYxbhe1eK+3wasb7VoaSNSQwKDPULStFLo1zyNeZFVUSU0+mXz1e4E/pOFKWPdHWG/EmHwyF43xY=
+	t=1725632797; cv=none; b=hNq0qKIG59mx9mPMDZyus0I92aZDSJlzDddN36I3q4FrWgFZEPZT8meFdRIdpCHNrRCWo5KF6f7lfZgaSMMvFBluuBWS0DDJ17b3xfdUSCrsMhFD0EHUD1zCOOcl+3yN37AYZAqpmAyRMe0hJycHhjSQU5nqRiKjMez/vjy5LgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725632699; c=relaxed/simple;
-	bh=Ae/E+HwwnrmVtMR5Ie0tM3RoV8FviaM5rFcynKwfpe0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBlycqgIxiFzECGwpBOB/VMtmF30w6vVTTZ/ur5ZAD0xoDS3O4GJJ7OoFxKPdTyWgJ3wE9//T2Jnrk+hLuD7XmbeY+m4oPchXOGV1e0uQc7KMmoVLy1U5OdngKSyay/HSNbx23OnS1qEVsGBuRTuFlet/iNHAvCSsiqWOAkRO4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yc3+GYHL; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2053616fa36so21720595ad.0;
-        Fri, 06 Sep 2024 07:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725632698; x=1726237498; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MJoi1jywiZO+XvKJEVuaNemlL/axteDLk0qoQjK504s=;
-        b=Yc3+GYHLfqkbkUfzf0SPtyTZSurltNjs2HCZBL41kR4nkgU8BtqSJE9l+gqPQvK0p6
-         f22PSUWZ6vhA2LpNRqz8wG1HUVRIMBXAPro/qwfTu0tgKrt8dE4iXeby96RvwKw3L2dg
-         k48cogLFPb0ZRa47QEhcxYCNfB/Gf3+AqjHFRCvoOHDhTZERkNklcWAFjku63VuaSeCc
-         E4X8wuxRIYHOnd/ByP7ODsE58sjVxqimi+FI56HksphRLwALgm+1l0FyIpWs9eEu4CWK
-         CEiYlxulqB0XbXRfs6mL/XfWaBb1nxa3NHreB7Wn2vBrgZTAX/8kWQ8F4+vQF/0NBRQR
-         0qDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725632698; x=1726237498;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MJoi1jywiZO+XvKJEVuaNemlL/axteDLk0qoQjK504s=;
-        b=nWGe4KcqHk2OqPteWKVHfedW4Ojv1WJsQPGr4ZHJX7da6QzlPqzwnH9RQdt9U0KWuq
-         Zm8Ojl2sNeyYaOzOBHSjG7EiNeKHx2rJt+NqAEzX460Peb9YNSgKSflEEOeDHIa+Frre
-         S8VA4qZkkTftWeGpqsU2IjMe21jLPzs3ssR9att61OlJaU4Upa5znqTC7XOL40Joo3z1
-         C+KbZqTS+H9LBJK5V7vqqDTlioT3cHmR5bUND/JCCvNKl4+77g625MobrxZHuAY1TrrP
-         zjoU/whgmrq3OQedZmMW+Eitwzg/VencykOaCcvewgjf9polLakTGR2HhGl+OVizlFeU
-         cDlA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0UGwxL6o4k6vCenMH0mwQhnzRWASMoLNkVVlRFqqFiaINhNosEXN0y4NA9ix43wu64KXYc1KUhhdyBLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh4BJ6CDNO+2AlsL6POHd7qi6DFqbgRI6b/js3fV7wsurgKuSS
-	XZgV2HZHHK6Kf6V8E0BtPj0o/D3Ly19DaPOdibP/BjqSbUF5SYKIBb3ZKIlI
-X-Google-Smtp-Source: AGHT+IEnEyzMjgrIIevOgy8FqtHozXZCGYN6NYb6jc8MdPwzrLM0zHeS6FOL5luf4H+7eMWsltRXOQ==
-X-Received: by 2002:a17:902:d58d:b0:206:994b:6d53 with SMTP id d9443c01a7336-206994b6f3emr145549645ad.30.1725632697490;
-        Fri, 06 Sep 2024 07:24:57 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea530casm43740605ad.184.2024.09.06.07.24.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:24:57 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: toke@toke.dk,
-	kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] wifi: ath9k: add range check for conn_rsp_epid in htc_connect_service()
-Date: Fri,  6 Sep 2024 23:24:52 +0900
-Message-Id: <20240906142452.144525-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725632797; c=relaxed/simple;
+	bh=F4y2He1YIui1adjE5+pCswrIKa0N1YfFjGMhhQ7dn9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/Tz6G+zOI2VAdbjaKiOqiNf2C9hE7cY/XvCpJwFkv3J6G8Iovh2UJYfmJdypyMgwfgY8LSa/JRdHjh8OWvEom6d/Vwc7ExfvdELVMCe7WkHbtUsUfhnKwjUG6bpqIdrOvPky20dq/Cw0+mCSgVBg+fpUhp7+qRaRg2xvPtY3pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X0dp11cClz9sRs;
+	Fri,  6 Sep 2024 16:26:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 3VYKC4BIXjqc; Fri,  6 Sep 2024 16:26:33 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X0dp10qrzz9sRr;
+	Fri,  6 Sep 2024 16:26:33 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0CE838B778;
+	Fri,  6 Sep 2024 16:26:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id zRHVVnzg8rQx; Fri,  6 Sep 2024 16:26:32 +0200 (CEST)
+Received: from [192.168.235.70] (unknown [192.168.235.70])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A024F8B764;
+	Fri,  6 Sep 2024 16:26:32 +0200 (CEST)
+Message-ID: <795db5f1-c266-4fb3-a51b-c2b3745d334b@csgroup.eu>
+Date: Fri, 6 Sep 2024 16:26:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Fixup for 3279be36b671 ("powerpc/vdso: Wire up
+ getrandom() vDSO implementation on VDSO32")
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Andrei Vagin <avagin@gmail.com>
+References: <700dbf296d02e32376329774be35cfbead08041d.1725611321.git.christophe.leroy@csgroup.eu>
+ <ffd7fc255e194d1e2b0aa3d9d129e826c53219d4.1725611321.git.christophe.leroy@csgroup.eu>
+ <ZtsMpcV7iLYoytdJ@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <ZtsMpcV7iLYoytdJ@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-I found the following bug in my fuzzer:
 
-  UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_hst.c:26:51
-  index 255 is out of range for type 'htc_endpoint [22]'
-  CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-  Workqueue: events request_firmware_work_func
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x180/0x1b0
-   __ubsan_handle_out_of_bounds+0xd4/0x130
-   htc_issue_send.constprop.0+0x20c/0x230
-   ? _raw_spin_unlock_irqrestore+0x3c/0x70
-   ath9k_wmi_cmd+0x41d/0x610
-   ? mark_held_locks+0x9f/0xe0
-   ...
 
-Since this bug has been confirmed to be caused by insufficient verification 
-of conn_rsp_epid, I think it would be appropriate to add a range check for 
-conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.
+Le 06/09/2024 à 16:07, Jason A. Donenfeld a écrit :
+> On Fri, Sep 06, 2024 at 10:33:44AM +0200, Christophe Leroy wrote:
+>> Use the new get_realdatapage macro instead of get_datapage
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> ---
+>>   arch/powerpc/kernel/vdso/getrandom.S | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
+>> index a957cd2b2b03..f3bbf931931c 100644
+>> --- a/arch/powerpc/kernel/vdso/getrandom.S
+>> +++ b/arch/powerpc/kernel/vdso/getrandom.S
+>> @@ -31,7 +31,7 @@
+>>   	PPC_STL		r2, PPC_MIN_STKFRM + STK_GOT(r1)
+>>     .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
+>>   #endif
+>> -	get_datapage	r8
+>> +	get_realdatapage	r8, r11
+>>   	addi		r8, r8, VDSO_RNG_DATA_OFFSET
+>>   	bl		CFUNC(DOTSYM(\funct))
+>>   	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
+> 
+> I tested that this is working as intended on powerpc, powerpc64, and
+> powerpc64le. Thanks for writing the patch so quickly.
 
-Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/net/wireless/ath/ath9k/htc_hst.c | 2 ++
- 1 file changed, 2 insertions(+)
+You are welcome.
 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
-index eb631fd3336d..aedba5f79bfb 100644
---- a/drivers/net/wireless/ath/ath9k/htc_hst.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
-@@ -293,6 +293,8 @@ int htc_connect_service(struct htc_target *target,
- 			service_connreq->service_id);
- 		return -ETIMEDOUT;
- 	}
-+	if (target->conn_rsp_epid < 0 || target->conn_rsp_epid >= ENDPOINT_MAX) 
-+		return -EINVAL;
- 
- 	*conn_rsp_epid = target->conn_rsp_epid;
- 	return 0;
---
+And thanks for playing up with it while I was sleeping and getting ideas 
+too.
+
+Did you learn powerpc assembly during the night or did you know it already ?
+
+At the end I ended up with something which I think is simple enough for 
+a backport to stable.
+
+On the long run I wonder if we should try to find a more generic 
+solution for getrandom instead of requiring each architecture to handle 
+it. On gettimeofday the selection of the right page is embeded in the 
+generic part, see for instance :
+
+static __maybe_unused __kernel_old_time_t
+__cvdso_time_data(const struct vdso_data *vd, __kernel_old_time_t *time)
+{
+	__kernel_old_time_t t;
+
+	if (IS_ENABLED(CONFIG_TIME_NS) &&
+	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+		vd = __arch_get_timens_vdso_data(vd);
+
+	t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
+
+	if (time)
+		*time = t;
+
+	return t;
+}
+
+and powerpc just provides:
+
+static __always_inline
+const struct vdso_data *__arch_get_timens_vdso_data(const struct 
+vdso_data *vd)
+{
+	return (void *)vd + (1U << CONFIG_PAGE_SHIFT);
+}
+
+
+I know it may not be that simple for getrandom but its probably worth 
+trying.
+
+Or another solution could be to put random data in a third page that is 
+always at the same place regardless of timens ?
+
+Christophe
 
