@@ -1,119 +1,97 @@
-Return-Path: <linux-kernel+bounces-318790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2F596F366
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:44:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1773B96F369
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04FC2886B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526EA288B8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682E51CBE9A;
-	Fri,  6 Sep 2024 11:44:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FA91CB525;
+	Fri,  6 Sep 2024 11:44:48 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12321CB154;
-	Fri,  6 Sep 2024 11:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B056D1CB154
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623076; cv=none; b=Cl53bsFUddDsDAq3tHdUuVUKJNG1oi7S3/y8UIDswmbRC/PQKJzrWwwnlOPhpU9l+f7vh+vljQF6dTSzR193DgGDG0k8/fun14USwElIKhVe8+I8Npkx7o1WItz3YSoXX+Jm45LSPxV0TPIk7YyTjCuD/ZrXYxowMDZ5sYmARZw=
+	t=1725623087; cv=none; b=BoQUKdtCATilXiY7zQq+Q5DrEpdpIVl8mYzIQfGSFuncy/sWsGqz5ujr488+7XkDf7cxMm6WtoHwD4RWOJkdEgrScAKlwPAIM08VLsMLSX+hfakw7bsfIzm5MZMW/UfPTGncqpNtYJm3hVrIjWrqyeSYsrJZeVfDtVI40hlmh+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623076; c=relaxed/simple;
-	bh=pgHZ6pNns/zCb7OwBUYttF56SM01OMsasHc2ufiQzQ4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aTktoDtRfzhDHx/YnTimBhC5eC9za4BSwuwAjjjM2zy9cDB9hyFZiEAOJGh4SRKAlCA0tU+D6mvcXK4pWd6PeN9RNAi/kOsZYvIgcnkZNwPrjRHyNHdbP5EO8xh5i3vKe4T1P+gYHlGIPVk7UemdO2+FEuyxbCmKMK68BQFERt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X0ZBn4qnhz4f3kKD;
-	Fri,  6 Sep 2024 19:44:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 14DF71A058E;
-	Fri,  6 Sep 2024 19:44:28 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMga69pm74M6Ag--.57615S3;
-	Fri, 06 Sep 2024 19:44:27 +0800 (CST)
-Subject: Re: [PATCH -next] ext4: don't pass full mapping flags to
- ext4_es_insert_extent()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240906061401.2980330-1-yi.zhang@huaweicloud.com>
- <20240906103445.pwdlkivrlqh3redb@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <742ccba0-6a27-7694-2381-37a70c137ac5@huaweicloud.com>
-Date: Fri, 6 Sep 2024 19:44:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1725623087; c=relaxed/simple;
+	bh=EzyEwRgLGiBkrBgGamBbcHsNgaaSq6ZSyw6/X4X0zyY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fxeJMCt7wqDmAgFNT4f5gVeu5o4bz7qJkRcxgJKiIGpQ92cr5cJ+OFWxYRG6FJPaUSeqFhjwe3laz3lBaWA0compA7nD7T7EmVA++zgS496aTndM09Kfk4pHqIxejqJTgZRc9MXFCQOFS5DT7Fd/MPNA1t9soXa53VN+DewAi8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1smXOB-0001ZM-0B; Fri, 06 Sep 2024 13:44:31 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1smXOA-005w0g-06; Fri, 06 Sep 2024 13:44:30 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1smXO9-0006xv-2w;
+	Fri, 06 Sep 2024 13:44:29 +0200
+Message-ID: <baa18c3414c75476c154f564a7058f53d4913972.camel@pengutronix.de>
+Subject: Re: [PATCH 1/1] drm/imx: Add missing DRM_BRIDGE_CONNECTOR dependency
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Alexander Stein
+	 <alexander.stein@ew.tq-group.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ dri-devel@lists.freedesktop.org,  imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Date: Fri, 06 Sep 2024 13:44:29 +0200
+In-Reply-To: <CAA8EJpoz7jtjN-Dxq-6SHNiZCz2xsFFf5j4HOoFiLAq=OnHn6Q@mail.gmail.com>
+References: <20240906063857.2223442-1-alexander.stein@ew.tq-group.com>
+	 <CAA8EJpoz7jtjN-Dxq-6SHNiZCz2xsFFf5j4HOoFiLAq=OnHn6Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240906103445.pwdlkivrlqh3redb@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAnXMga69pm74M6Ag--.57615S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw15uw4DZw1DtF4xZw4UXFb_yoW8Jw4fpa
-	9rC3W8JF1rKa4xCFWxta17trW7Ka1UJ3y2vFykuw15ZFZ5Zr93Kr45G3WjgFyIkrWFyr1a
-	vFW8uwnxC3Wjg37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024/9/6 18:34, Jan Kara wrote:
-> On Fri 06-09-24 14:14:01, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When converting a delalloc extent in ext4_es_insert_extent(), since we
->> only want to pass the info of whether the quota has already been claimed
->> if the allocation is a direct allocation from ext4_map_create_blocks(),
->> there is no need to pass full mapping flags, so changes to just pass
->> whether the EXT4_GET_BLOCKS_DELALLOC_RESERVE bit is set.
->>
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
->> @@ -863,8 +863,8 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>  	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
->>  		return;
->>  
->> -	es_debug("add [%u/%u) %llu %x %x to extent status tree of inode %lu\n",
->> -		 lblk, len, pblk, status, flags, inode->i_ino);
->> +	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %lu\n",
->> +		 lblk, len, pblk, status, delalloc_reserve_used, inode->i_ino);
-> 
-> Ah, I didn't know 'bool' gets automatically promoted to 'int' when passed
-> as variadic argument but it seems to be the case from what I've found. One
-> always learns :)
-> 
+On Fr, 2024-09-06 at 14:35 +0300, Dmitry Baryshkov wrote:
+> On Fri, 6 Sept 2024 at 09:39, Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
+> >=20
+> > When drm/bridge-connector was moved to DRM_DISPLAY_HELPER not all
+> > users were updated. Add missing Kconfig selections.
+> >=20
+> > Fixes: 9da7ec9b19d8 ("drm/bridge-connector: move to DRM_DISPLAY_HELPER =
+module")
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > ---
+> >  drivers/gpu/drm/imx/ipuv3/Kconfig | 2 ++
+> >  1 file changed, 2 insertions(+)
+>=20
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>=20
+> I'll update it to drm-misc-next if nobody objects within a few hours
 
-Yeah, I'm always learn too. ;)
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Thanks,
-Yi.
-
+regards
+Philipp
 
