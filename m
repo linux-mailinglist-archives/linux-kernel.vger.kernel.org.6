@@ -1,115 +1,173 @@
-Return-Path: <linux-kernel+bounces-318868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C7496F45D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:32:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48F596F460
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 917E61C2413A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CCC21C233D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED6D1C8FA6;
-	Fri,  6 Sep 2024 12:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8B31CC897;
+	Fri,  6 Sep 2024 12:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7XqluW4"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2QLrCDm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD4F2745B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049D21A4E6E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725625949; cv=none; b=q/lQ2i2B/RC4SAFKUDWf89NStMLJfO1MUZmsejO4/yc8A7AxAiqjAf1fxYRnxoiSf+WUmsVfhNBF3GK7ddnVLWeig/qsOb9OKt8yKUlFmIwqKIWxdD148OHzFyF6SwjGaLTPuQ+Dwzwqu3WgGkyTgmPd6+wRuhfZcqeU/gpAmME=
+	t=1725626220; cv=none; b=Z+YCWZuBfXtwKqnVWa9mgmmqkh04xHEWXFIAw/dBPXUZzrF3KTnTBA0YDhq9CmL0Uyqm7aMymvKvSN8MQKkOsRhzoT3hzUigPKVsRSohBwsn0zv+gMmr5TE3h4nY/KULi2YAUDOUXSzqpkF/6HuZb3cep/Vm5iyzz6tLsMn0zpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725625949; c=relaxed/simple;
-	bh=BdjMmt8J3spzuvVK2jxXiZJFpvMMHE1qWuKGsMcrFek=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rkYgWFRDN0EAtjPNM64r6baQMpChdfHJtgBjVvfcs9YErwp6BUj6tK+b7x3tfjKmJrtCIcBxGmekbJjRaIdeFVea4XRGmXSChboc5G1DLwsWjjxoSC7gp24O0JgAR210aNExPws7ftz9D3AjcWmIzJ4xZYtvxidm/QAhQgSMK68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7XqluW4; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d5f5d8cc01so1364307a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 05:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725625947; x=1726230747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ohleuXUYZA1tyY7CTumF4DAGjjc5SkvM97PKu4XlTI4=;
-        b=S7XqluW4PfpwDcVXYndZ59Edd99P71T30+8zJUU4ur4SjLZB1PFfYXIZfe7l8JYlmh
-         krTLszWZsiP+sn8wm6XTFYcCUkO3FThPynWSRQfvTaCuSP8Jo5mlYu0eq4nPCwIGSOc7
-         BEgTDHP+AS0cly7SvVS3mmCh6YGUfWFF7Z5H6+6VttK7GF3XJiE6LyRQH/Vhh5PEbbgt
-         rL8qerYPwoJxHvNsf0NIkTKhZQCk5oHTAUMsItICp9pnXVvfMF5O8CECsxz/jko61okd
-         Jrh57oVLJD397ORMz8ARgqssowUd1AQQcaXZ9IBRoXUimmQmj0slq4ODn+GfA8tji3bc
-         uSpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725625947; x=1726230747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ohleuXUYZA1tyY7CTumF4DAGjjc5SkvM97PKu4XlTI4=;
-        b=WyKe1doYEgORiwu6V8o4YaUagojV1/AEfFB6NIgT1Lz2oKrXwtZEG46BzHhmVof/+U
-         jzTL+z90Nf/6CZurlXCna+oXVq+4lb/ATGxvYS+k21MJ5F7XMWiiilJlWRiQC9OLEQX8
-         98TohhevhaXHp2PEwQHaJKvRTsmPoDI4LpGZoLX5cKspSlmSVXnPIR8920FVzxieE5My
-         wNMBEyiaeOP7HVH869Dz9C4fuzD6gSA4nVWTQ6a1ZLAJ24dMh/9zUuC+Z3u4a1f+EIfY
-         jGUEBrCwszdl8HlgqPzYJngN6q0BzobE1sjIlwJn4ms8otftN8f03NddOmJ54geRRC/u
-         yvew==
-X-Forwarded-Encrypted: i=1; AJvYcCXCRR2jkwb1vCap5ozafo8d6lDMZ+9HuN0waFEHwp4S5f9T2f5oi2rmH1zSgM55dXDlaTUnx+KOwSbqlHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjow7TasmSaVFvRydCetkgDKSxX/UNBYtmzRJflsN9rskKMSeP
-	VsD1ziVn0q2xG68XihWcPM8mVM73+PDRAHjt1wD0EzdgWn2StHWG
-X-Google-Smtp-Source: AGHT+IEmqyU2jz9pNIlB8sZzd52kwoCaqvv27CGuHeb+SNCET66fa4Y204rtcFM2t2mLpKu6hJEqNw==
-X-Received: by 2002:a17:90a:3dc3:b0:2d8:7c44:487c with SMTP id 98e67ed59e1d1-2dad507ac38mr4118126a91.12.1725625947324;
-        Fri, 06 Sep 2024 05:32:27 -0700 (PDT)
-Received: from localhost.localdomain ([175.112.156.113])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0e1558sm1427616a91.55.2024.09.06.05.32.25
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 06 Sep 2024 05:32:26 -0700 (PDT)
-From: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>
-X-Google-Original-From: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
-To: Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>,
+	s=arc-20240116; t=1725626220; c=relaxed/simple;
+	bh=tJ9daY7WGj0ycxrojbLCpIa6HPeBgYgJObTvkAZ1yDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nkdKJJ4Y5Mw40G1IghAWCsBfAD1F66lKgaFSaj9WkgNkMqDlFp6WYta5RZuOAhNnck6Tb+z5Dl6+0lewwWfHAAe867RM6QvR5KD8jtVSbcwgJsdLtOBz7oAFs9d7w1YY/MU7h3gXD4jnczf6oylU+b24kjCxaxGkjLa4Gcw15eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2QLrCDm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25C7EC4CEC7;
+	Fri,  6 Sep 2024 12:36:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725626219;
+	bh=tJ9daY7WGj0ycxrojbLCpIa6HPeBgYgJObTvkAZ1yDU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G2QLrCDmMzLSNe5ilBgAQtx2I77NBNaxen3D1zOOhkbp+RXNVlMZfbw5+rzDZ5iEz
+	 m3dTp7FCjuEJBSI9vHZGApiGRMfKOWL79xEjxVzREO7/VXqYCSz6t+OsN6Juyh702s
+	 soHEfg8Ed6T0PmlxUV5AQyr5ZpdRq+YmjnpPZcJimbAlvIvPKUItZwhyIgriC6NUYn
+	 y6Vq6ky0o3zYNbzhiAYZqJoWi0/D1uBnUhfXXEdiS5LDzhq7P4YrbBkm7kQCtQ3puz
+	 tbNRKX8Fd5ZmixojkamuL5h4hAwx8W2/8WxyUUtYSmm4JK9/BRJSpDsC9s7yz/hhQb
+	 H2N0BzA4nkysw==
+Date: Fri, 6 Sep 2024 14:36:56 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ni_routing: Check when the file could not be opened
-Date: Fri,  6 Sep 2024 21:32:21 +0900
-Message-ID: <20240906123222.32006-1-RuffaloLavoisier@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH 1/3] sched/isolation: Add HK_FLAG_SCHED to nohz_full
+Message-ID: <Ztr3aP7GId1yoDKx@pavilion.home>
+References: <20240818234520.90186-1-longman@redhat.com>
+ <20240818234520.90186-2-longman@redhat.com>
+ <ZtcK3aF_d3BUhiVz@localhost.localdomain>
+ <7fa3dbd5-7c2e-4614-a5f4-258546cb090b@redhat.com>
+ <ZteAfUXZd1TgIwiL@pavilion.home>
+ <4822d111-b02d-469a-a457-46392c35021f@redhat.com>
+ <ZthWKgK9B_AUqSs1@localhost.localdomain>
+ <20240904130445.GI4723@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240904130445.GI4723@noisy.programming.kicks-ass.net>
 
-Signed-off-by: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
----
+Le Wed, Sep 04, 2024 at 03:04:45PM +0200, Peter Zijlstra a écrit :
+> On Wed, Sep 04, 2024 at 02:44:26PM +0200, Frederic Weisbecker wrote:
+> > Le Tue, Sep 03, 2024 at 09:23:53PM -0400, Waiman Long a écrit :
+> > > > After discussing with Peter lately, the rules should be:
+> > > > 
+> > > > 1) If a nohz_full CPU is part of a multi-CPU domain, then it should
+> > > >     be part of load balancing. Peter even says that nohz_full should be
+> > > >     forbidden in this case, because the tick plays a role in the
+> > > >     load balancing.
+> > > 
+> > > My understand is that most users will use nohz_full together with isolcpus.
+> > > So nohz_full CPUs are also isolated and not in a sched domain. There may
+> > > still be user setting nohz_full without isolcpus though, but that should be
+> > > relatively rare.
+> > 
+> > Apparently there are users wanting to use isolation along with automatic
+> > containers deployments such as kubernetes, which doesn't seem to work
+> > well with isolcpus...
+> 
+> I've been proposing to get rid of isolcpus for at least the last 15
+> years or so. There just isn't a good reason to ever use it. We were
+> close and then the whole NOHZ_FULL thing came along.
+> 
+> You can create single CPU partitions using cpusets dynamically.
 
-I'm sorry. I think it's dirty because I'm not used to the patch. I'm going to write it all over again and send it to you.
+I'm not sure we could have removed isolcpus= even back then.
+It has always been widely used and we would have broke someone's box.
 
-This is just a defense code just in case.
+> 
+> > > Anyway, all these nohz_full/kernel_nose setting will only apply to CPUs in
+> > > isolated cpuset partitions which will not be in a sched domain.
+> > > 
+> > > > 
+> > > > 2) Otherwise, if CPU is not part of a domain or it is the only CPU of all its
+> > > >     domains, then it can be out of the load balancing machinery.
+> > > I am aware that a single-cpu domain is the same as being isolated with no
+> > > load balancing.
+> > 
+> > By the way is it possible to have a single-cpu domain (sorry I'm a noob here)
+> > or do such CPU always end up on a null domain?
+> 
+> IIRC they always end up with the null domain; but its been a while. It
+> simply doesn't make much sense to have a 1 cpu domain. The way the
+> topology code works is by always building the full domain tree, and then
+> throwing away all levels that do not contribute, and in the 1 cpu case,
+> that would be all of them.
+> 
+> Look for 'degenerate' in kernel/sched/topology.c.
 
- drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Ok.
 
-diff --git a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
-index d55521b5bdcb..892a66b2cea6 100644
---- a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
-+++ b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
-@@ -140,6 +140,11 @@ int main(void)
- {
- 	FILE *fp = fopen("ni_values.py", "w");
- 
-+	if (fp == NULL) {
-+		fprintf(stderr, "Could not open file!");
-+		return -1;
-+	}
-+
- 	/* write route register values */
- 	fprintf(fp, "ni_route_values = {\n");
- 	for (int i = 0; ni_all_route_values[i]; ++i)
--- 
-2.43.0
+> 
+> > > > 
+> > > > I'm a bit scared about rule 1) because I know there are existing users of
+> > > > nohz_full on multi-CPU domains... So I feel a bit trapped.
+> > > 
+> > > As stated before, this is not a common use case.
+> > 
+> > Not sure and anyway it's not a forbidden usecase. But this is anyway outside
+> > the scope of this patchset.
+> 
+> Most crucially, it is a completely broken setup. It doesn't actually
+> work well.
+> 
+> Taking it away will force people to fix their broken. That's a good
+> thing, no?
 
+I'm all for it but isn't the rule not to break userspace?
+
+> 
+> > > The isolcpus boot option is deprecated, as stated in kernel-parameters.txt.
+> > 
+> > We should undeprecate it, apparently it's still widely used. Perhaps by people
+> > who can't afford to use cpusets/cgroups.
+> 
+> What is the actual problem with using cpusets? At the very least the
+> whole nohz_full thing needs to be moved into cpusets so it isn't a fixed
+> boot time thing anymore.
+
+Sure that's the plan.
+
+> 
+> > > My plan is to deprecate nohz_full as well once we are able to make dynamic
+> > > CPU isolation via cpuset works almost as good as isolcpus + nohz_full.
+> > 
+> > You can't really deprecate such a kernel boot option unfortunately. Believe me
+> > I wish we could.
+> 
+> Why not? As I said, the only thing that's kept it around, and worse,
+> made it more popular again, is this nohz_full nonsense. That never
+> should've used isolcpus, but that's not something we can do anything
+> about now.
+> 
+> Rigid, boot time only things are teh suck.
+
+I know...
+
+Thanks.
 
