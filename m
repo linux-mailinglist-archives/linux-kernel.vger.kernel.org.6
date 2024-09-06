@@ -1,475 +1,220 @@
-Return-Path: <linux-kernel+bounces-319465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 732E896FCDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:45:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5005296FCE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE0C288C8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:45:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FF61C225AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0351D88A1;
-	Fri,  6 Sep 2024 20:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03021D79BB;
+	Fri,  6 Sep 2024 20:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JQ1m04CY"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAj0G6Um"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5591D7E41
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478E1B85F3;
+	Fri,  6 Sep 2024 20:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725655524; cv=none; b=Et2VLQoA2G8AV3ousQYykGtC9xecV0aNysZsoNx1BkJdiOoJqJXIJ2n2MBAaBBHf0K52i++vBxNzqskEUk6TStDbyTWuUUzr4AJy7ywmw9LZPdW2pwglLEG9jFQuxCLd13/9qFdxr36znJh+xxA/+d/6AatkPzzN8aAcdWb7WUI=
+	t=1725655589; cv=none; b=GrY5lFonkCeaeGDFup3L8lt6NPwyvsaAOouau5kMMVuss0PNfiJju96JbPyxJqry2l6pIeG5klwGO7n+nPpiZlfS8rMvrOEa2qZmGzudXIzzlPq05RpjT8shw/ygL9at314v/Rk6cNgcHEJnQmF7aq68OsNPaJUho8f1L2GR4Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725655524; c=relaxed/simple;
-	bh=sMoZ6zXACMl/k6sr6RMk0twcIsgikQ36WnjB+a6b3TI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ri7mC8cinkP+bKz299dzgudikIoKCfYw8ldDfPLSSxl8XQD7UN1gXzuZ+EyHBjhAjwtLVXb9R35a3a/XGfGjCl7vpkaiLhaA/l6ZbXfODXdeT9Skwqf8TYJnX0GQ/TvoTqVsep/J1iaxAh3jI+zEp1QWDBJNpFGqzqFtYEUYTJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JQ1m04CY; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2039ce56280so31652885ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 13:45:22 -0700 (PDT)
+	s=arc-20240116; t=1725655589; c=relaxed/simple;
+	bh=ja20IrBAw3wYn8GHefIkv6XWxhhlzm76ReH7NEp9qq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JqGaRdfVWp/NsZ2IpzTJgJiqBGhTo7MTzTjhUyJTUzGLPxRpbLif9aJ9DpJWMgHzXx0b38J/2VbnJPI1Z8QL2vm3MqYr+/um3twYCqrBOFkiW4Z39UjsgljQh9zCTzZtNPAgY/cCCyoe1+naDN5k9Oo7e36VsXTsAP9z2z/hBQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAj0G6Um; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2057c6c57b5so13966985ad.1;
+        Fri, 06 Sep 2024 13:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725655522; x=1726260322; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XX1S537jtVISqBJxzm6B+4ZHvpDhxy7xsVVvCabn7cw=;
-        b=JQ1m04CYJQZbiy/21X0srae7TS2vXpgjaRZieuq25mCachACR2kUFlZPhEdQrJC1Np
-         K+3M16KEgJtnnXdQk5hCI4noo1IJL4jNYR4uLKpVE23RZusJTU+HM1nFfzlSVjS35u4x
-         eCLjNC53IhAMVgyR3Fjqxco2BKhOfl6IhC9a8N8EWy6r2zbCWi3lxOzFcab+PF6NsRNj
-         pSK1oIwxs2xtAUCsc7iqTBkpZUNxT1qw/WyX1zge3XdLC8b6xkjY1LEIu5ut8RxhVocS
-         9AgxVnh8CsvU/fFXMFgBwExNe9Vlgfwf8ZqrdO2Hv/6ThvAOWkfeg3JYm0PNZj2i5WHF
-         I+6A==
+        d=gmail.com; s=20230601; t=1725655586; x=1726260386; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DulQxFyxfC3V3sFFbk29/KbmlwOujuVzihqTTa8u0/o=;
+        b=QAj0G6UmBcPbRvJrO3ucJDzL0XsI6qqlZngGyqoYI6dOLk96/hP0hZNRnahnwLjXhy
+         t/xbPATarYX94UzLVNqSu3b30EzMyECsTkEUVZ3coBnFpRVgtZ3qUHkYbv2ORQvFrB8e
+         4a9j1n2Ck7sFfehk5arXjapSCkm7VyjGg85XzTCSj7Oa0u7vYoHfE1dLvpTdaFy7yvDX
+         YPZVq4SsCacWicR6xcYueRXmRpMEd7ynoBc27Y2R7SB1ZVeVX9EuA0KGmDGBtWTebroU
+         25wUV81iqnpwcYbr8rq8QAM5M3356XHLEIhJ6DShlrPHG4KpjOHeVNpPkudQwPAlrLv4
+         EGxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725655522; x=1726260322;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XX1S537jtVISqBJxzm6B+4ZHvpDhxy7xsVVvCabn7cw=;
-        b=UmSl3rFG7RhxJvQjFs5YUKiGrLU4TJ3GBt9Ek+mX19nc2iNP443363w9ze/SPWI/CT
-         wRK2Bzb4+as9F7xDr3XD7Vkz+yVDuUz8zSfE+DbRLut2QJEZffICF3qTBnfpiABpCFFr
-         TUlv4wLKsTOdSwz51ABK5VibSCEaM4P8jKexDJNUiBdVWR08RaeA5C5NwqmJ9BcZ33k1
-         k/h74nrVH+67K7ffNW/frRYjLK96SNpHeVl4d93HSTXvYrGNfs47GK7F7VT30q9n+Zty
-         jINZBKSLCbwikMTI0KhZKR4efffB83i/GrmGhEmIHUcfWSjLvsHtOStbELSbgOpINVho
-         7v1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUjSA0xslOUVgzo16U4oGOGZMThu5NRWj9WB040cVjGlm5TiB2Gsm7P4LR4tJJTMJPuNHbcMIF6EX6xjss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhAnsy4pn979a+hY/WPjM73afDzLMAETrsI1BazjwkBVhfmV4Y
-	A5PxSv8EY2kDW1/Y5Z8YpPwbWlda3JUG5jln3aaEQGeakjJuzZgYJXZN+xZjP0OUCAz/Cv9vFUo
-	+pTMv4Q==
-X-Google-Smtp-Source: AGHT+IEB3I4S81gLMcFJ/JuG6s6suhuCxS7h6lZ0rtdEXrDyRVVSF/9n67cIAzpvMDwHHDqZKmG1CnVQMCL+
-X-Received: from vipin.c.googlers.com ([34.105.13.176]) (user=vipinsh
- job=sendgmr) by 2002:a17:902:fa10:b0:205:5f42:4191 with SMTP id
- d9443c01a7336-206f04d5649mr554085ad.4.1725655521528; Fri, 06 Sep 2024
- 13:45:21 -0700 (PDT)
-Date: Fri,  6 Sep 2024 13:45:15 -0700
-In-Reply-To: <20240906204515.3276696-1-vipinsh@google.com>
+        d=1e100.net; s=20230601; t=1725655586; x=1726260386;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DulQxFyxfC3V3sFFbk29/KbmlwOujuVzihqTTa8u0/o=;
+        b=iYlj4yjeCqKhxdhzIR/r2mDyMnKu1C9DbOabLnTfDQoQiuB7WFLu6rirrcycZSiTTr
+         tnXfd5yKQqAVooc42ABo+6Zc9anKz0xfUx6MvxWsGwjO7QLR7I5fy2GFEGRqY0++/nXa
+         bjIDB/UEfK9wwylnPLXlcrt+6e5FitOkIC/o0sdjpYksxZl+mpoqKfbcXYLH7ygMfS8c
+         dqPHz/A3ahcwyNqPYXVHPoiT6W+F1jNmCC714aimoHuG10XJs7gC5L3I9sXSljk/BlU3
+         MM3Ifmk/rAfRyo6g6FV5rZCjpQ7DPg3+UKjC6mQqbMYE2ReBRvZNqpz1PmOtrC9kgEEw
+         yR3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNCPq7qJoniEBFxKtlTfZMHB0kKaLIYeJUcLRMuySfZBioGlOaJofpnh3r/qrD7yDalymJOsRDT+XZDjQT0B+A@vger.kernel.org, AJvYcCWGdEuyN5nl5UbL+DhPbeNGuj4a80HGD5KXnSDTFEU3tki+Vm88DJwhhFpbGgkhN6bXiESqw3ne1iH6B6HP@vger.kernel.org, AJvYcCWdd/LD36Osv3Lu7duR6jLZLu85RIHHA1MtUCpk1i1oGSMj0qI32g6+uj2/69c/Ar3vo/A=@vger.kernel.org, AJvYcCX3hmwJbLgoZKmr4D5yms1N2DVqQSiJiUPWr8UKdph9sYeqwiBJifLs9fb9LjQjmRgKqpIuDJSh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqKj52s3L2ncYloIFLvG5ca+BZfopSDBKE4nc0Vik+gdS3U9rA
+	A/XFlBtVQlaR4o9lj02dYpTrNsD6PGPtdd3M/iyHvMnG+Vzvp4A=
+X-Google-Smtp-Source: AGHT+IFQpuM49e1iBf57WiEpqEBxgYLXbGA/ZzUPlBLIxHFa3kHJf1EunmqPzy8aNkh/KlbiWT/eoA==
+X-Received: by 2002:a17:902:cec9:b0:206:8915:1c74 with SMTP id d9443c01a7336-206b840d063mr161651675ad.21.1725655585724;
+        Fri, 06 Sep 2024 13:46:25 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea66598sm46873765ad.250.2024.09.06.13.46.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 13:46:25 -0700 (PDT)
+Date: Fri, 6 Sep 2024 13:46:24 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Florian Kauer <florian.kauer@linutronix.de>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Hangbin Liu <liuhangbin@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jesper Dangaard Brouer <brouer@redhat.com>,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net v2 2/2] bpf: selftests: send packet to devmap
+ redirect XDP
+Message-ID: <ZttqIOKR9Khhw0H7@mini-arch>
+References: <20240906-devel-koalo-fix-ingress-ifindex-v2-0-4caa12c644b4@linutronix.de>
+ <20240906-devel-koalo-fix-ingress-ifindex-v2-2-4caa12c644b4@linutronix.de>
+ <Zttk_hTqQ-1wFTtI@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240906204515.3276696-1-vipinsh@google.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240906204515.3276696-3-vipinsh@google.com>
-Subject: [PATCH v3 2/2] KVM: x86/mmu: Recover TDP MMU NX huge pages using MMU
- read lock
-From: Vipin Sharma <vipinsh@google.com>
-To: seanjc@google.com, pbonzini@redhat.com, dmatlack@google.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vipin Sharma <vipinsh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zttk_hTqQ-1wFTtI@mini-arch>
 
-Use MMU read lock to recover TDP MMU NX huge pages. Iterate
-huge pages list under tdp_mmu_pages_lock protection and unaccount the
-page before dropping the lock.
+On 09/06, Stanislav Fomichev wrote:
+> On 09/06, Florian Kauer wrote:
+> > The current xdp_devmap_attach test attaches a program
+> > that redirects to another program via devmap.
+> > 
+> > It is, however, never executed, so do that to catch
+> > any bugs that might occur during execution.
+> > 
+> > Also, execute the same for a veth pair so that we
+> > also cover the non-generic path.
+> > 
+> > Warning: Running this without the bugfix in this series
+> > will likely crash your system.
+> > 
+> > Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+> > ---
+> >  .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
+> >  1 file changed, 108 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
+> > index ce6812558287..c9034f8ae63b 100644
+> > --- a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
+> > +++ b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
+> > @@ -1,6 +1,9 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> > +#include <arpa/inet.h>
+> >  #include <uapi/linux/bpf.h>
+> >  #include <linux/if_link.h>
+> > +#include <network_helpers.h>
+> > +#include <net/if.h>
+> >  #include <test_progs.h>
+> >  
+> >  #include "test_xdp_devmap_helpers.skel.h"
+> > @@ -17,7 +20,7 @@ static void test_xdp_with_devmap_helpers(void)
+> >  		.ifindex = IFINDEX_LO,
+> >  	};
+> >  	__u32 len = sizeof(info);
+> > -	int err, dm_fd, map_fd;
+> > +	int err, dm_fd, dm_fd_redir, map_fd;
+> >  	__u32 idx = 0;
+> >  
+> >  
+> > @@ -25,14 +28,11 @@ static void test_xdp_with_devmap_helpers(void)
+> >  	if (!ASSERT_OK_PTR(skel, "test_xdp_with_devmap_helpers__open_and_load"))
+> >  		return;
+> >  
+> > -	dm_fd = bpf_program__fd(skel->progs.xdp_redir_prog);
+> > -	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
+> > +	dm_fd_redir = bpf_program__fd(skel->progs.xdp_redir_prog);
+> > +	err = bpf_xdp_attach(IFINDEX_LO, dm_fd_redir, XDP_FLAGS_SKB_MODE, NULL);
+> >  	if (!ASSERT_OK(err, "Generic attach of program with 8-byte devmap"))
+> >  		goto out_close;
+> >  
+> > -	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
+> > -	ASSERT_OK(err, "XDP program detach");
+> > -
+> >  	dm_fd = bpf_program__fd(skel->progs.xdp_dummy_dm);
+> >  	map_fd = bpf_map__fd(skel->maps.dm_ports);
+> >  	err = bpf_prog_get_info_by_fd(dm_fd, &info, &len);
+> > @@ -47,6 +47,23 @@ static void test_xdp_with_devmap_helpers(void)
+> >  	ASSERT_OK(err, "Read devmap entry");
+> >  	ASSERT_EQ(info.id, val.bpf_prog.id, "Match program id to devmap entry prog_id");
+> >  
+> > +	/* send a packet to trigger any potential bugs in there */
+> > +	char data[10] = {};
+> > +	DECLARE_LIBBPF_OPTS(bpf_test_run_opts, opts,
+> > +			    .data_in = &data,
+> > +			    .data_size_in = 10,
+> > +			    .flags = BPF_F_TEST_XDP_LIVE_FRAMES,
+> > +			    .repeat = 1,
+> > +		);
+> > +	err = bpf_prog_test_run_opts(dm_fd_redir, &opts);
+> > +	ASSERT_OK(err, "XDP test run");
+> > +
+> > +	/* wait for the packets to be flushed */
+> > +	kern_sync_rcu();
+> > +
+> > +	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
+> > +	ASSERT_OK(err, "XDP program detach");
+> > +
+> >  	/* can not attach BPF_XDP_DEVMAP program to a device */
+> >  	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
+> >  	if (!ASSERT_NEQ(err, 0, "Attach of BPF_XDP_DEVMAP program"))
+> > @@ -124,6 +141,88 @@ static void test_xdp_with_devmap_frags_helpers(void)
+> >  	test_xdp_with_devmap_frags_helpers__destroy(skel);
+> >  }
+> >  
+> > +static void test_xdp_with_devmap_helpers_veth(void)
+> > +{
+> > +	struct test_xdp_with_devmap_helpers *skel;
+> 
+> skel needs to be initialized to NULL ....
+> 
+> > +	struct bpf_prog_info info = {};
+> > +	struct bpf_devmap_val val = {};
+> > +	struct nstoken *nstoken = NULL;
+> > +	__u32 len = sizeof(info);
+> > +	int err, dm_fd, dm_fd_redir, map_fd, ifindex_dst;
+> > +	__u32 idx = 0;
+> > +
+> > +	SYS(out_close, "ip netns add testns");
+> > +	nstoken = open_netns("testns");
+> > +	if (!ASSERT_OK_PTR(nstoken, "setns"))
+> > +		goto out_close;
+> 
+> ... for this goto to not do test_xdp_with_devmap_helpers__destroy(garbage)
+> 
+> pw-bot: cr
 
-Modify kvm_tdp_mmu_zap_sp() to kvm_tdp_mmu_zap_possible_nx_huge_page()
-as there are no other user of it. Ignore the zap if any of the following
-condition is true:
-- It is a root page.
-- Parent is pointing to:
-  - A different page table.
-  - A huge page.
-  - Not present
+Ignore everything below and sorry for the spam.
+(NIPA doesn't like DKIM on my sdf@fomichev.me, let's see whether it
+works from plain gmail.com)
 
-Warn if zapping SPTE fails and current SPTE is still pointing to same
-page table. This should never happen.
-
-There is always a race between dirty logging, vCPU faults, and NX huge
-page recovery for backing a gfn by an NX huge page or an execute small
-page. Unaccounting sooner during the list traversal is increasing the
-window of that race. Functionally, it is okay, because accounting
-doesn't protect against iTLB multi-hit bug, it is there purely to
-prevent KVM from bouncing a gfn between two page sizes. The only
-downside is that a vCPU will end up doing more work in tearing down all
-the child SPTEs. This should be a very rare race.
-
-Zapping under MMU read lock unblock vCPUs which are waiting for MMU read
-lock. This optimizaion is done to solve a guest jitter issue on Windows
-VM which was observing an increase in network latency. The test workload
-sets up two Windows VM and use latte.exe[1] binary to run network
-latency benchmark. Running NX huge page recovery under MMU lock was
-causing latency to increase up to 30 ms because vCPUs were waiting for
-MMU lock.
-
-Running the tool on VMs using MMU read lock NX huge page recovery
-removed the jitter issue completely and MMU lock wait time by vCPUs was
-also reduced.
-
-Command used for testing:
-
-Server:
-latte.exe -udp -a 192.168.100.1:9000 -i 10000000
-
-Client:
-latte.exe -c -udp -a 192.168.100.1:9000 -i 10000000 -hist -hl 1000 -hc 30
-
-Output from the latency tool on client:
-
-Before
-------
-
-Protocol      UDP
-SendMethod    Blocking
-ReceiveMethod Blocking
-SO_SNDBUF     Default
-SO_RCVBUF     Default
-MsgSize(byte) 4
-Iterations    10000000
-Latency(usec) 69.98
-CPU(%)        2.8
-CtxSwitch/sec 32783     (2.29/iteration)
-SysCall/sec   99948     (6.99/iteration)
-Interrupt/sec 55164     (3.86/iteration)
-
-Interval(usec)   Frequency
-      0          9999967
-   1000          14
-   2000          0
-   3000          5
-   4000          1
-   5000          0
-   6000          0
-   7000          0
-   8000          0
-   9000          0
-  10000          0
-  11000          0
-  12000          2
-  13000          2
-  14000          4
-  15000          2
-  16000          2
-  17000          0
-  18000          1
-
-After
------
-
-Protocol      UDP
-SendMethod    Blocking
-ReceiveMethod Blocking
-SO_SNDBUF     Default
-SO_RCVBUF     Default
-MsgSize(byte) 4
-Iterations    10000000
-Latency(usec) 67.66
-CPU(%)        1.6
-CtxSwitch/sec 32869     (2.22/iteration)
-SysCall/sec   69366     (4.69/iteration)
-Interrupt/sec 50693     (3.43/iteration)
-
-Interval(usec)   Frequency
-      0          9999972
-   1000          27
-   2000          1
-
-[1] https://github.com/microsoft/latte
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Vipin Sharma <vipinsh@google.com>
----
- arch/x86/kvm/mmu/mmu.c          | 85 ++++++++++++++++++++++-----------
- arch/x86/kvm/mmu/mmu_internal.h |  4 +-
- arch/x86/kvm/mmu/tdp_mmu.c      | 56 ++++++++++++++++++----
- arch/x86/kvm/mmu/tdp_mmu.h      |  5 +-
- 4 files changed, 110 insertions(+), 40 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 455caaaa04f5..fc597f66aa11 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7317,8 +7317,8 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
- 	return err;
- }
- 
--void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
--			       unsigned long nr_pages)
-+void kvm_recover_nx_huge_pages(struct kvm *kvm, bool shared,
-+			       struct list_head *pages, unsigned long nr_pages)
- {
- 	struct kvm_memory_slot *slot;
- 	int rcu_idx;
-@@ -7329,7 +7329,10 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
- 	ulong to_zap;
- 
- 	rcu_idx = srcu_read_lock(&kvm->srcu);
--	write_lock(&kvm->mmu_lock);
-+	if (shared)
-+		read_lock(&kvm->mmu_lock);
-+	else
-+		write_lock(&kvm->mmu_lock);
- 
- 	/*
- 	 * Zapping TDP MMU shadow pages, including the remote TLB flush, must
-@@ -7341,8 +7344,13 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
- 	ratio = READ_ONCE(nx_huge_pages_recovery_ratio);
- 	to_zap = ratio ? DIV_ROUND_UP(nr_pages, ratio) : 0;
- 	for ( ; to_zap; --to_zap) {
--		if (list_empty(pages))
-+		if (tdp_mmu_enabled)
-+			kvm_tdp_mmu_pages_lock(kvm);
-+		if (list_empty(pages)) {
-+			if (tdp_mmu_enabled)
-+				kvm_tdp_mmu_pages_unlock(kvm);
- 			break;
-+		}
- 
- 		/*
- 		 * We use a separate list instead of just using active_mmu_pages
-@@ -7358,24 +7366,41 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
- 		WARN_ON_ONCE(!sp->role.direct);
- 
- 		/*
--		 * Unaccount and do not attempt to recover any NX Huge Pages
--		 * that are being dirty tracked, as they would just be faulted
--		 * back in as 4KiB pages. The NX Huge Pages in this slot will be
--		 * recovered, along with all the other huge pages in the slot,
--		 * when dirty logging is disabled.
-+		 * Unaccount the shadow page before zapping its SPTE so as to
-+		 * avoid bouncing tdp_mmu_pages_lock more than is necessary.
-+		 * Clearing nx_huge_page_disallowed before zapping is safe, as
-+		 * the flag doesn't protect against iTLB multi-hit, it's there
-+		 * purely to prevent bouncing the gfn between an NX huge page
-+		 * and an X small spage. A vCPU could get stuck tearing down
-+		 * the shadow page, e.g. if it happens to fault on the region
-+		 * before the SPTE is zapped and replaces the shadow page with
-+		 * an NX huge page and get stuck tearing down the child SPTEs,
-+		 * but that is a rare race, i.e. shouldn't impact performance.
-+		 */
-+		unaccount_nx_huge_page(kvm, sp);
-+		if (tdp_mmu_enabled)
-+			kvm_tdp_mmu_pages_unlock(kvm);
-+
-+		/*
-+		 * Do not attempt to recover any NX Huge Pages that are being
-+		 * dirty tracked, as they would just be faulted back in as 4KiB
-+		 * pages. The NX Huge Pages in this slot will be recovered,
-+		 * along with all the other huge pages in the slot, when dirty
-+		 * logging is disabled.
- 		 *
- 		 * Since gfn_to_memslot() is relatively expensive, it helps to
- 		 * skip it if it the test cannot possibly return true.  On the
- 		 * other hand, if any memslot has logging enabled, chances are
--		 * good that all of them do, in which case unaccount_nx_huge_page()
--		 * is much cheaper than zapping the page.
-+		 * good that all of them do, in which case
-+		 * unaccount_nx_huge_page() is much cheaper than zapping the
-+		 * page.
- 		 *
--		 * If a memslot update is in progress, reading an incorrect value
--		 * of kvm->nr_memslots_dirty_logging is not a problem: if it is
--		 * becoming zero, gfn_to_memslot() will be done unnecessarily; if
--		 * it is becoming nonzero, the page will be zapped unnecessarily.
--		 * Either way, this only affects efficiency in racy situations,
--		 * and not correctness.
-+		 * If a memslot update is in progress, reading an incorrect
-+		 * value of kvm->nr_memslots_dirty_logging is not a problem: if
-+		 * it is becoming zero, gfn_to_memslot() will be done
-+		 * unnecessarily; if it is becoming nonzero, the page will be
-+		 * zapped unnecessarily.  Either way, this only affects
-+		 * efficiency in racy situations, and not correctness.
- 		 */
- 		slot = NULL;
- 		if (atomic_read(&kvm->nr_memslots_dirty_logging)) {
-@@ -7385,20 +7410,21 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
- 			slot = __gfn_to_memslot(slots, sp->gfn);
- 			WARN_ON_ONCE(!slot);
- 		}
--
--		if (slot && kvm_slot_dirty_track_enabled(slot))
--			unaccount_nx_huge_page(kvm, sp);
--		else if (is_tdp_mmu_page(sp))
--			flush |= kvm_tdp_mmu_zap_sp(kvm, sp);
--		else
--			kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
-+		if (!slot || !kvm_slot_dirty_track_enabled(slot)) {
-+			if (shared)
-+				flush |= kvm_tdp_mmu_zap_possible_nx_huge_page(kvm, sp);
-+			else
-+				kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
-+		}
- 		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
- 
- 		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
- 			kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
- 			rcu_read_unlock();
--
--			cond_resched_rwlock_write(&kvm->mmu_lock);
-+			if (shared)
-+				cond_resched_rwlock_read(&kvm->mmu_lock);
-+			else
-+				cond_resched_rwlock_write(&kvm->mmu_lock);
- 			flush = false;
- 
- 			rcu_read_lock();
-@@ -7408,7 +7434,10 @@ void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
- 
- 	rcu_read_unlock();
- 
--	write_unlock(&kvm->mmu_lock);
-+	if (shared)
-+		read_unlock(&kvm->mmu_lock);
-+	else
-+		write_unlock(&kvm->mmu_lock);
- 	srcu_read_unlock(&kvm->srcu, rcu_idx);
- }
- 
-@@ -7425,7 +7454,7 @@ static long get_nx_huge_page_recovery_timeout(u64 start_time)
- 
- static void kvm_mmu_recover_nx_huge_pages(struct kvm *kvm)
- {
--	kvm_recover_nx_huge_pages(kvm, &kvm->arch.possible_nx_huge_pages,
-+	kvm_recover_nx_huge_pages(kvm, false, &kvm->arch.possible_nx_huge_pages,
- 				  kvm->arch.nr_possible_nx_huge_pages);
- }
- 
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index 2d2e1231996a..e6b757c59ccc 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -355,7 +355,7 @@ void track_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp,
- 				 struct list_head *pages, u64 *nr_pages);
- void untrack_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp,
- 				   u64 *nr_pages);
--void kvm_recover_nx_huge_pages(struct kvm *kvm, struct list_head *pages,
--			       unsigned long nr_pages);
-+void kvm_recover_nx_huge_pages(struct kvm *kvm, bool shared,
-+			       struct list_head *pages, unsigned long nr_pages);
- 
- #endif /* __KVM_X86_MMU_INTERNAL_H */
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 9a6c26d20210..8a6ffc150c99 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -74,9 +74,19 @@ static void tdp_mmu_free_sp_rcu_callback(struct rcu_head *head)
- 	tdp_mmu_free_sp(sp);
- }
- 
-+void kvm_tdp_mmu_pages_lock(struct kvm *kvm)
-+{
-+	spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-+}
-+
-+void kvm_tdp_mmu_pages_unlock(struct kvm *kvm)
-+{
-+	spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-+}
-+
- void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
- {
--	kvm_recover_nx_huge_pages(kvm,
-+	kvm_recover_nx_huge_pages(kvm, true,
- 				  &kvm->arch.tdp_mmu_possible_nx_huge_pages,
- 				  kvm->arch.tdp_mmu_nr_possible_nx_huge_pages);
- }
-@@ -825,23 +835,51 @@ static void tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
- 	rcu_read_unlock();
- }
- 
--bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
-+bool kvm_tdp_mmu_zap_possible_nx_huge_page(struct kvm *kvm,
-+					   struct kvm_mmu_page *sp)
- {
--	u64 old_spte;
-+	struct tdp_iter iter = {
-+		.old_spte = sp->ptep ? kvm_tdp_mmu_read_spte(sp->ptep) : 0,
-+		.sptep = sp->ptep,
-+		.level = sp->role.level + 1,
-+		.gfn = sp->gfn,
-+		.as_id = kvm_mmu_page_as_id(sp),
-+	};
-+
-+	lockdep_assert_held_read(&kvm->mmu_lock);
-+	if (WARN_ON_ONCE(!is_tdp_mmu_page(sp)))
-+		return false;
- 
- 	/*
--	 * This helper intentionally doesn't allow zapping a root shadow page,
--	 * which doesn't have a parent page table and thus no associated entry.
-+	 * Root shadow pages don't a parent page table and thus no associated
-+	 * entry, but they can never be possible NX huge pages.
- 	 */
- 	if (WARN_ON_ONCE(!sp->ptep))
- 		return false;
- 
--	old_spte = kvm_tdp_mmu_read_spte(sp->ptep);
--	if (WARN_ON_ONCE(!is_shadow_present_pte(old_spte)))
-+	/*
-+	 * Since mmu_lock is held in read mode, it's possible another task has
-+	 * already modified the SPTE. Zap the SPTE if and only if the SPTE
-+	 * points at the SP's page table, as checking  shadow-present isn't
-+	 * sufficient, e.g. the SPTE could be replaced by a leaf SPTE, or even
-+	 * another SP. Note, spte_to_child_pt() also checks that the SPTE is
-+	 * shadow-present, i.e. guards against zapping a frozen SPTE.
-+	 */
-+	if ((tdp_ptep_t)sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
- 		return false;
- 
--	tdp_mmu_set_spte(kvm, kvm_mmu_page_as_id(sp), sp->ptep, old_spte,
--			 SHADOW_NONPRESENT_VALUE, sp->gfn, sp->role.level + 1);
-+	/*
-+	 * If a different task modified the SPTE, then it should be impossible
-+	 * for the SPTE to still be used for the to-be-zapped SP. Non-leaf
-+	 * SPTEs don't have Dirty bits, KVM always sets the Accessed bit when
-+	 * creating non-leaf SPTEs, and all other bits are immutable for non-
-+	 * leaf SPTEs, i.e. the only legal operations for non-leaf SPTEs are
-+	 * zapping and replacement.
-+	 */
-+	if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE)) {
-+		WARN_ON_ONCE((tdp_ptep_t)sp->spt == spte_to_child_pt(iter.old_spte, iter.level));
-+		return false;
-+	}
- 
- 	return true;
- }
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.h b/arch/x86/kvm/mmu/tdp_mmu.h
-index 510baf3eb3f1..ed4bdceb9aec 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.h
-+++ b/arch/x86/kvm/mmu/tdp_mmu.h
-@@ -20,7 +20,8 @@ __must_check static inline bool kvm_tdp_mmu_get_root(struct kvm_mmu_page *root)
- void kvm_tdp_mmu_put_root(struct kvm *kvm, struct kvm_mmu_page *root);
- 
- bool kvm_tdp_mmu_zap_leafs(struct kvm *kvm, gfn_t start, gfn_t end, bool flush);
--bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp);
-+bool kvm_tdp_mmu_zap_possible_nx_huge_page(struct kvm *kvm,
-+					   struct kvm_mmu_page *sp);
- void kvm_tdp_mmu_zap_all(struct kvm *kvm);
- void kvm_tdp_mmu_invalidate_all_roots(struct kvm *kvm);
- void kvm_tdp_mmu_zap_invalidated_roots(struct kvm *kvm);
-@@ -66,6 +67,8 @@ int kvm_tdp_mmu_get_walk(struct kvm_vcpu *vcpu, u64 addr, u64 *sptes,
- 			 int *root_level);
- u64 *kvm_tdp_mmu_fast_pf_get_last_sptep(struct kvm_vcpu *vcpu, gfn_t gfn,
- 					u64 *spte);
-+void kvm_tdp_mmu_pages_lock(struct kvm *kvm);
-+void kvm_tdp_mmu_pages_unlock(struct kvm *kvm);
- void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm);
- 
- #ifdef CONFIG_X86_64
--- 
-2.46.0.469.g59c65b2a67-goog
-
+pw-bot: cr
 
