@@ -1,51 +1,72 @@
-Return-Path: <linux-kernel+bounces-318849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B74596F419
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4359E96F41B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0AC28250D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:16:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002F7281B28
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638771CBEAC;
-	Fri,  6 Sep 2024 12:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947001CBEAC;
+	Fri,  6 Sep 2024 12:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ou1G2edv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TyC0cktZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3076157476
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCF1158866
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624956; cv=none; b=GTym8RNUtNifAR6+41g8bx23+AU/u0Z2QcA5jZFiAUaXPfQ11umyBiV+40+32Uht+eTJLAt97wLeSAVEGVTqcghf0EUXISzbrEETRrag5hi8eRiItB4GiMocsiDI+bbvseLsmq5uLA8M7lgv1rmxuBwnnSKD9Kwh7NuNazcQ63Q=
+	t=1725625034; cv=none; b=tgB9YN720rv5FLLNlMEH5P2grJAnwbKKFDT5+W3Ysf7idpf//zU3gIC+DBfAK6gusdKrcA4d1b7TxG/uaU+vWNsP/KBwIRMZjT3NJSRaLJ+X69UGuyLlrYtzgc1DkJU0ZJUedcF5APc6/Aeggg+cNLtMOX2QI6esSAR3Ad+Ag4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624956; c=relaxed/simple;
-	bh=8o6HrNJoy0Oj0DyfRcBQ/KQ1S3BHmQHVHs67iKCBZ7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WaqNiztzt/qrCq2K7VVCAzV0/GIjoQjfSn1hwf/ybbzmX1a4paH6cLMuAip9zXYlhM1RzypqPN5DuNOIedlr4stFeC6ay/lXQVF0B4TTFaMgt3bgf7gJaleZouXljr+d4AqHiVAxmW5SSsKX2bj5wKQCekdJNSyf6YCQ5irDCCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ou1G2edv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A711EC4CEC4;
-	Fri,  6 Sep 2024 12:15:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725624956;
-	bh=8o6HrNJoy0Oj0DyfRcBQ/KQ1S3BHmQHVHs67iKCBZ7I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ou1G2edv4N/LtjKHj5JYOwQt3mXdfCli+USWQFTBNEktE3/POT2QsHTnoMz/6hpYQ
-	 Ps5sV5uTuPgtYKgJqFM7PKHI8q75fNSX2vRNz3RjdELnohwXltZi8niqDk/MwwyVoU
-	 N7U5SpeHIghXEwiFMJQcA6yMHbJKdIgamOnNQnJw=
-Date: Fri, 6 Sep 2024 14:15:51 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>
-Cc: Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ni_routing: Check when the file could not be opened
-Message-ID: <2024090631-boogeyman-freefall-fab8@gregkh>
-References: <20240906121009.73799-1-RuffaloLavoisier@gmail.com>
+	s=arc-20240116; t=1725625034; c=relaxed/simple;
+	bh=+Qx4z5FNs7SHBiPalSVFSCl7p9NSu6qf9umFOCaZvA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iehqby856kYCgT8WixvgsSxI/Y5EtsbIqLKIYekXFJzQgdqRJN82S4eyX14I11rHMSGqOxCpstc+F51Q0lVnkI+RGrasm36nl8NrF56dVBO4Zlembp9Xs68uNt2RmPeuKJrPriow47OkzVUjQtkO0ki/huvBR/IIRnHxTppf4fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TyC0cktZ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725625032; x=1757161032;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=+Qx4z5FNs7SHBiPalSVFSCl7p9NSu6qf9umFOCaZvA8=;
+  b=TyC0cktZxu0IoufPNby5UHl14cC9YVRNT9/Xgo8TvKb+iuR4mknedg0p
+   uG+N98NbbyJ+0A2DQk7HExwxmytadOKnAbItC3nRT/TKJeJRp+NQWeXYO
+   OCxKMTf0G50kO2B3iPSSW+R0Z9Omb4HkVXKL2MxrB+HWZH+ZmNmujkxUN
+   06mRZDQm7++1hxIUFCoW5q3Eakh/zV+m58TkdeCuO6lenW2KBQZ1Sl748
+   hoSjamrgrywGhMoSCCDayRFINWQFf/bRzZ/629gPBCLHH0Bh1wNxGVQHm
+   s+fEBAoYUYWu8lmgPy0IaGOaq1lMnSaqWK7kYjdCrzp5u5+uDBQ5yHOFH
+   g==;
+X-CSE-ConnectionGUID: IjlOrxooRumfLQ01ZlTfig==
+X-CSE-MsgGUID: 5L+75lN2SFuZsnwxb1PAsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="28130052"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="28130052"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 05:17:11 -0700
+X-CSE-ConnectionGUID: 2s0dMdOKQhuCdhQ19s4qSA==
+X-CSE-MsgGUID: U/fhRrS5RjeJa343gnjBCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="70733574"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 06 Sep 2024 05:17:11 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smXtk-000BAW-0a;
+	Fri, 06 Sep 2024 12:17:08 +0000
+Date: Fri, 6 Sep 2024 20:17:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: error: ABI 'o32' is not supported on CPU 'mips3'
+Message-ID: <202409062003.wDQ7fEq1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,65 +75,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906121009.73799-1-RuffaloLavoisier@gmail.com>
 
-On Fri, Sep 06, 2024 at 09:10:08PM +0900, Ruffalo Lavoisier wrote:
-> Signed-off-by: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
-> ---
->  drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
-> index d55521b5bdcb..892a66b2cea6 100644
-> --- a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
-> +++ b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
-> @@ -140,6 +140,11 @@ int main(void)
->  {
->  	FILE *fp = fopen("ni_values.py", "w");
->  
-> +	if (fp == NULL) {
-> +		fprintf(stderr, "Could not open file!");
-> +		return -1;
-> +	}
-> +
->  	/* write route register values */
->  	fprintf(fp, "ni_route_values = {\n");
->  	for (int i = 0; ni_all_route_values[i]; ++i)
-> -- 
-> 2.43.0
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b831f83e40a24f07c8dcba5be408d93beedc820f
+commit: bfc0a330c1b4526b88f6f9e711484b342cb00fb5 MIPS: Fallback CPU -march flag to ISA level if unsupported
+date:   7 months ago
+config: mips-randconfig-r111-20240906 (https://download.01.org/0day-ci/archive/20240906/202409062003.wDQ7fEq1-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce: (https://download.01.org/0day-ci/archive/20240906/202409062003.wDQ7fEq1-lkp@intel.com/reproduce)
 
-Hi,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409062003.wDQ7fEq1-lkp@intel.com/
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+All errors (new ones prefixed by >>):
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+>> error: ABI 'o32' is not supported on CPU 'mips3'
+>> error: ABI 'o32' is not supported on CPU 'mips3'
+>> error: ABI 'o32' is not supported on CPU 'mips3'
+   make[3]: *** [scripts/Makefile.build:116: scripts/mod/devicetable-offsets.s] Error 1
+   make[3]: *** [scripts/Makefile.build:243: scripts/mod/empty.o] Error 1
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1198: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
