@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-319478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD92C96FD2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC8796FD2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92301C21F0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D29872841BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288591D79AD;
-	Fri,  6 Sep 2024 21:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8445146588;
+	Fri,  6 Sep 2024 21:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KfW152WU"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C411B85F7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NUGNy1TQ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68B91B85F3
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725657299; cv=none; b=HTix8p9+Ur56E9VMMfcFJPJEMK7Y6oFTux/IlAHBNM4PawB78eHD1cHbh/PduSZzDHVYyvb1w2NSsY7XJS6tEY671Pd/G/jsNrtZTrnDCMeSHqLS42HKuisnjlHZIjSZKs3IQWHRPKjVpujC7PdJX3k7MGe2nYOeytEsYAhxoxA=
+	t=1725657334; cv=none; b=EPAmHfMESmwvOeYcZWknDZcCVGkiCTyPbdLoX/ypJI+AvWKhwrD+YogNCHQjyQ2wwYYN7aWxh9uYJRYnLwtpcZfaaibJl0frQUHKOMjV1LALOqhYoteGa7F3MZBg7Zq6ikmR3uTDcmOJ5n/UsiZZRN+r2AM/GVCchU8c/h2jvkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725657299; c=relaxed/simple;
-	bh=ZEvUEorOsia9rQcPYFPa22tCoLVCyg1slnig8NMKf50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fddNXV8QpwVF9icmkqVPjfCe8Ntr5IliuRpidxp4pB4QXx0DYHUWTczZThnLAuBN1Xo/2kiwkZZXIMXOf+9AfqsGDTNQBjkEA+qlv9HVLKgo6rnzyBixuSWat/HXOxOe+GQg4xmH3cJO8v5sPyaZcVS63vldgPB/LiQau3uiHIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KfW152WU; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-49bc13c3a47so1015200137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 14:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725657297; x=1726262097; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cs9aVK4sfy3gpXBpKGUO42369WUFZ09m2WcyDCsX/ac=;
-        b=KfW152WUvRKNpsfg7492fsYSrqcNXTAYHl9X65e2wLEhY9Z1nAGcS8aq78q3VCzWrG
-         lFVPmi1FSHyJLpFIBACn2ZDjopYjrmEMxRZX1YcNu94YA7MrahtCrSdmukh5RYIZPFIh
-         zyEkkttilsx96epy224zXFEnoO2cRWWIRM4mc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725657297; x=1726262097;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cs9aVK4sfy3gpXBpKGUO42369WUFZ09m2WcyDCsX/ac=;
-        b=lNZysrHMX4sYwcx971rAh0Tu/pK0Zrkoir1bT++0gxO1bAoHCuPjPuPJJx65vbNTsJ
-         wWmTTiUsMStWlQDofCdap+XpOPS+18BOrqD5vsbaymzEJt1b5wfgEKj/bACKlaIfm0t4
-         hwzQdqZKV9cnyxN84RQ+oMYK1zlNQoVYHhLchAjrlIx0hMQs84T/tX5Z7K7PczVffrFa
-         ADARxJ3oFgY6um42imdmyLAHbbyFwmDSd+Yegzd+WFu9dEyE0+RWDDgPd6eOEZFvETPW
-         OWxnIfQ7eIVn8wt83RBpkYUeAoY59K/4TQCq+mrogqUK/HJcrlQA7eXEW6s2COmK2P0o
-         vJjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvi4dIsiRAtqnPVjDxcLOnpPsben/0UbWTFrax9pUYmoXhnncY+VJkJT0+6PhxEfWLCOTv5r64oyqZWEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBYx1tOUGt+XMj8RdKG38aaH5k5wzL3y5jBwJcwxeYaJjQOrNg
-	6fUNtDe/mgiHd04wHAfFmX6mdCtz9iiCn5MnIEsZIGT318WPzz02ibjT3VTs5Q==
-X-Google-Smtp-Source: AGHT+IGu1gSdn+TAhuXyZYC0Jo1w5AWPPH8ZYSvd0b/4lADstyEw4lDaVQ72agnawfprbU0iJrsTYg==
-X-Received: by 2002:a05:6102:38d0:b0:48f:dfb3:f26a with SMTP id ada2fe7eead31-49bde1c74f5mr4625071137.15.1725657296870;
-        Fri, 06 Sep 2024 14:14:56 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7a99dc0f8b0sm63299985a.23.2024.09.06.14.14.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 14:14:56 -0700 (PDT)
-From: Joshua Pius <joshuapius@chromium.org>
-X-Google-Original-From: Joshua Pius <joshuapius@google.com>
-To: alsa-devel@alsa-project.org
-Cc: Joshua Pius <joshuapius@google.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	"Steven 'Steve' Kendall" <skend@chromium.org>,
-	Karol Kosik <k.kosik@outlook.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: Add logitech Audio profile quirk
-Date: Fri,  6 Sep 2024 21:14:38 +0000
-Message-ID: <20240906211445.3924724-1-joshuapius@google.com>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+	s=arc-20240116; t=1725657334; c=relaxed/simple;
+	bh=l+0yeSacAL3zv8lep9C92F5OVmcgi/IPFluSvzfXBtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oTP/iQ6G5d8I5FnzaLr/FLg9ccFX9eK7RELEKnYoYwRh8C85NJhj00R6qVsUTPPAoujNq63+elJzXg2ScBu7Rz9tAGatqqHfAEAN5v3LLQdckgG7gct6BzIjGFFeyVpg8OhzoKtF9bZ5K/66uZ7lgefQ/IGAAxiIHy/E98PWXlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NUGNy1TQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2E10120B7436;
+	Fri,  6 Sep 2024 14:15:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2E10120B7436
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1725657332;
+	bh=F3oZzOF/ypfBSnYIzXfchELhRH8BmGaOrLYbG3ZZEr4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NUGNy1TQDidAgIM/nvanGZJAFF5xC8ul4phQPa4EnffgL4o6bkEoHuaKII+TpDrTJ
+	 bGgprXkcv7JYQ3kTswVuyypXBefj357yfwU+FGF/bwYrG3gEfgxRMiIz0GevkVW/m7
+	 s/17oRZGz1S1Ohldam6eYjBmCucJ8C7hhzt5fqH0=
+Message-ID: <61713c72-bd86-4694-9c06-49579a33d8f3@linux.microsoft.com>
+Date: Fri, 6 Sep 2024 14:15:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
+ FS
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, "Eric W. Biederman"
+ <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, apais@microsoft.com, benhill@microsoft.com,
+ ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240905212741.143626-1-romank@linux.microsoft.com>
+ <20240905212741.143626-2-romank@linux.microsoft.com>
+ <20240906112345.GA17874@redhat.com>
+ <CAHk-=wjtMKmoC__NJ5T18TaRCqXL-3VFc6uADJv_MzgR1ZWPJQ@mail.gmail.com>
+ <da4baf5b-19e9-474c-90f6-fe17dd934333@linux.microsoft.com>
+ <CAHk-=wiSN1NWzG2W1KCQKoG7mM+RmP+dZ0nWNfEagTwPPiDxXQ@mail.gmail.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <CAHk-=wiSN1NWzG2W1KCQKoG7mM+RmP+dZ0nWNfEagTwPPiDxXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Specify shortnames for the following Logitech Devices: Rally bar, Rally
-bar mini, Tap, MeetUp and Huddle.
 
-Signed-off-by: Joshua Pius <joshuapius@google.com>
----
- sound/usb/card.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/sound/usb/card.c b/sound/usb/card.c
-index 778de9244f1e..9c411b82a218 100644
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -384,6 +384,12 @@ static const struct usb_audio_device_name usb_audio_names[] = {
- 	/* Creative/Toshiba Multimedia Center SB-0500 */
- 	DEVICE_NAME(0x041e, 0x3048, "Toshiba", "SB-0500"),
- 
-+	/* Logitech Audio Devices */
-+	DEVICE_NAME(0x046d, 0x0867, "Logitech, Inc.", "Logi-MeetUp"),
-+	DEVICE_NAME(0x046d, 0x0874, "Logitech, Inc.", "Logi-Tap-Audio"),
-+	DEVICE_NAME(0x046d, 0x087c, "Logitech, Inc.", "Logi-Huddle"),
-+	DEVICE_NAME(0x046d, 0x0898, "Logitech, Inc.", "Logi-RB-Audio"),
-+	DEVICE_NAME(0x046d, 0x08d2, "Logitech, Inc.", "Logi-RBM-Audio"),
- 	DEVICE_NAME(0x046d, 0x0990, "Logitech, Inc.", "QuickCam Pro 9000"),
- 
- 	DEVICE_NAME(0x05e1, 0x0408, "Syntek", "STK1160"),
+On 9/6/2024 1:26 PM, Linus Torvalds wrote:
+> On Fri, 6 Sept 2024 at 13:08, Roman Kisel <romank@linux.microsoft.com> wrote:
+>>
+>> When the process has run into a fatal error and is about to exit, having
+>> a way to break into the debugger at this exact moment wouldn't change
+>> anything about the logic of the data processing happening in the process.
+>> What's so horrible in that to have a way to land in the debugger to see
+>> what exactly is going on?
+> 
+> I don't buy it.
+> 
+> If you want to debug some fatal behavior, and a debugger *isn't*
+> attached, you want it to create a core-dump.
+> 
+> And if a debugger *is* attached, it will catch that.
+> 
+> This is basically how abort() has always worked, and it very much is
+> *not* doing some "let's check if we're being debugged" stuff. Exactly
+> because that would be a bad idea and an anti-pattern.
+> 
+> The other very traditional model - for example if you do *not* want to
+> do core-dumps for some reason, and just exit with an error message -
+> is to just put a breakpoint on the "fatal()" function (or whatever
+> your "fatal error happened" situation is) using the debugger.
+> 
+> Then the target will behave differently depending on whether it is
+> being debugged or not BECAUSE THE DEBUGGER ASKED FOR IT, not because
+> the program decided to act differently when debugged.
+> 
+> In other words, this is a long-solved problem with solid solutions
+> from before Linux even existed.
+
+
+Writing a core-dump might not be an option as you have pointed out
+hence the "fatal()" function might not be permitted to fault.
+
+Breaking into the debugger if it is attached saves a step of setting
+a breakpoint and doesn't require the knowledge of the guts of the
+standard library and/or the journey of the trap exception from the
+CPU to the debugger. The very name of the "fatal()" function is a
+tight contract, and something akin to the onion in the varnish for
+the uninitiated.
+
+Libraries like Google Breakpad, Boost.Test, C++ std, AWS C SDK,
+Unreal Engine have that "breakpoint_if_debugging" facility, folks
+find that useful. They all read and parse the "/proc/self/status" file,
+where as it may seem, just the ptrace syscall one liner could save
+the trouble of that. The kernel helps the user space do work as I
+understand, why police it? There is "fork()", and threads can deadlock.
+Quite horrible, still the user space has access to that. Here,
+there is evidence folks do want to detect if a debugger is present,
+there is evidence how the kernel can help the user space compute that
+with so much less effort, the patch is trivial. Why don't let the
+userspace burn less electricity?
+
+> 
+>                Linus
+
 -- 
-2.46.0.598.g6f2099f65c-goog
+Thank you,
+Roman
 
 
