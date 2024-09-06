@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-319474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC18C96FD04
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB21596FD0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5640D1F2599D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038C51C227AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669181D79AD;
-	Fri,  6 Sep 2024 21:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B824C1D7E4A;
+	Fri,  6 Sep 2024 21:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vmb8um88"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o0x2qbGm"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0684481DD;
-	Fri,  6 Sep 2024 21:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC9E13D251
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725656691; cv=none; b=slLtb2fpvWbE3AhpX80t3QnLNvfI3D8l3xelgzfQcOnlvmjS+a2C6ylqC+tokVTL86Ncqwt5mPyWVXly57Xm/+1iVnSNiqmiGVRk7/LDMnSWT4TuoJ7tKZjyKxhB+86c/l7vaCMOVwbAaBrIYPtKHI+vtjo54MPs5ElsMn9rZRY=
+	t=1725656880; cv=none; b=KNZwJTzJP7rSxSyd64UdF143WB92WvD5F3CWVerZDA195K2o/W95F18PiyfxkFigkJUx0WJilPt8Ybbpch3QDT2i3P2C73WZvYfpHv13JW8WGwOp4HK09QfmpdNUQ+8/CRYkjDlXzDObVJk3fE54527eL5sNv0D4O6YPU9C2J0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725656691; c=relaxed/simple;
-	bh=Qi7l3LEit7RU0ApqPXLuPy7zvE5YFnc5ZdG9M93j8ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MH6ivobTOwOCA8LbgQHFAncVbyJ+YNXQ5B+V8bNiydBeENzZt4XstA0EURq18vUdCWmbX1TwF6CqnuoTqGC4m6+0Ko+0qSBhrLyMs707wdgCvqwRP+vLa2EufqFDXHVSg8zt3jNPrPXRUlNrk/AZ1SKyReLWx57myQ4qk7WsFmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vmb8um88; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C40CC4CEC4;
-	Fri,  6 Sep 2024 21:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725656691;
-	bh=Qi7l3LEit7RU0ApqPXLuPy7zvE5YFnc5ZdG9M93j8ms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vmb8um88N+sRkcpvVWHxnTOb8jGW9yFBSYtGRagysQ7mAgSmuSeox8PgqMTglme18
-	 +F840LNShRhr7zMt8FRUXxYglgaH9GIc5+VaGdBG23kUf8obXYjcLJQpli7jugzmp4
-	 rlxP32YE2f7J5Ne4XKrLsuOG46nI+Pz2iEP1lPAK4cxtkk2+pdJjlir2C3H6jspetw
-	 kyo5qKCDSu+5EdqKASCPiA6qgIzRAoJcvGsA9/8F7Ji173UqxRkzosN5vapkHrlAvw
-	 izCCxVZm+mn/F1BH2QanTGH/dHLf1VWbrfDw1UcWbcJRAgZ3lh6rtmWNe51vWM6pfw
-	 URZoLmwXGjnHg==
-Date: Fri, 6 Sep 2024 22:04:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Alexandre Mergnat <amergnat@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Nicolas Belin <nbelin@baylibre.com>
-Subject: Re: (subset) [PATCH v7 00/16] Add audio support for the MediaTek
- Genio 350-evk board
-Message-ID: <ZttucCV86ryyqIiT@finisterre.sirena.org.uk>
-References: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
- <172544860860.19172.7052813450885034844.b4-ty@kernel.org>
- <20240906180348.GA1239602@thelio-3990X>
- <ZttJdexQFOq2Q9iQ@finisterre.sirena.org.uk>
- <20240906192323.GA3160860@thelio-3990X>
+	s=arc-20240116; t=1725656880; c=relaxed/simple;
+	bh=JJ1smVVv1hpPtnU9o9QoOlpsW1GluwEyiacWgsBBzpY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FJ6MAPFChsD810f83CB5XL2bgcAnEiUBEsUseV+JjI1g5r70hcRXECLum5N1nlaSHVV8QXmrt3rEg3oTKsUcY77O1rZurYlI78FXC1bojB/GaQ7IHdY5TpCnVumY8UYLD13w1mX5wJXCXsmXPbQEsk+EPzJDvPFvjMKuw4jqGjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o0x2qbGm; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725656875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Keefv1899VY9ObcYSkgFK6MVawN7CzaBeJBfIS+JVWY=;
+	b=o0x2qbGmjF7Uq/qzoqjo7KmwV0YF0oQHrSqZyjFFaPILkbOeBqJrryuQj/FXGwKlilxv77
+	0R2J1aVyfMmNksD0rCjLqr95uzzWfaRk7WzY7YKT/PJCzxnq0bEpWLQvFCPFuK4YS3K2KM
+	O8cT5CPthjkxtExe6hPhT2wKRU14CO4=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: Willem de Bruijn <willemb@google.com>,
+	linux-kernel@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net] selftests: net: csum: Fix checksums for packets with non-zero padding
+Date: Fri,  6 Sep 2024 17:07:43 -0400
+Message-Id: <20240906210743.627413-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tSNyT2qHs0Efy6wS"
-Content-Disposition: inline
-In-Reply-To: <20240906192323.GA3160860@thelio-3990X>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Padding is not included in UDP and TCP checksums. Therefore, reduce the
+length of the checksummed data to include only the data in the IP
+payload. This fixes spurious reported checksum failures like
 
---tSNyT2qHs0Efy6wS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+rx: pkt: sport=33000 len=26 csum=0xc850 verify=0xf9fe
+pkt: bad csum
 
-On Fri, Sep 06, 2024 at 12:23:23PM -0700, Nathan Chancellor wrote:
-> On Fri, Sep 06, 2024 at 07:27:01PM +0100, Mark Brown wrote:
-> > Are these just warnings introduced by recent versions of the toolchains?
-> > These commits passed an x86 allmodconfig with GCC 12 at each step (I did
-> > catch one warning there with another patch in the series that didn't get
-> > applied) and 0day didn't say anything at any point.
+Technically it is possible for there to be trailing bytes after the UDP
+data but before the Ethernet padding (e.g. if sizeof(ip) + sizeof(udp) +
+udp.len < ip.len). However, we don't generate such packets.
 
-> Not sure, I did not look too hard. At cursory glance, I am not sure x86
-> allmodconfig would catch these, as this code depends on ARCH_MEDIATEK
-> (not COMPILE_TEST), which only exists for arm and arm64.
+Fixes: 91a7de85600d ("selftests/net: add csum offload test")
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
+Found while testing for this very bug in hardware checksum offloads.
 
-Ah, I hadn't seen that (the other bits were building on x86).
+ tools/testing/selftests/net/lib/csum.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-> > > Clang 19:
+diff --git a/tools/testing/selftests/net/lib/csum.c b/tools/testing/selftests/net/lib/csum.c
+index b9f3fc3c3426..e0a34e5e8dd5 100644
+--- a/tools/testing/selftests/net/lib/csum.c
++++ b/tools/testing/selftests/net/lib/csum.c
+@@ -654,10 +654,16 @@ static int recv_verify_packet_ipv4(void *nh, int len)
+ {
+ 	struct iphdr *iph = nh;
+ 	uint16_t proto = cfg_encap ? IPPROTO_UDP : cfg_proto;
++	uint16_t ip_len;
+ 
+ 	if (len < sizeof(*iph) || iph->protocol != proto)
+ 		return -1;
+ 
++	ip_len = ntohs(iph->tot_len);
++	if (ip_len > len || ip_len < sizeof(*iph))
++		return -1;
++
++	len = ip_len;
+ 	iph_addr_p = &iph->saddr;
+ 	if (proto == IPPROTO_TCP)
+ 		return recv_verify_packet_tcp(iph + 1, len - sizeof(*iph));
+@@ -669,16 +675,22 @@ static int recv_verify_packet_ipv6(void *nh, int len)
+ {
+ 	struct ipv6hdr *ip6h = nh;
+ 	uint16_t proto = cfg_encap ? IPPROTO_UDP : cfg_proto;
++	uint16_t ip_len;
+ 
+ 	if (len < sizeof(*ip6h) || ip6h->nexthdr != proto)
+ 		return -1;
+ 
++	ip_len = ntohs(ip6h->payload_len);
++	if (ip_len > len - sizeof(*ip6h))
++		return -1;
++
++	len = ip_len;
+ 	iph_addr_p = &ip6h->saddr;
+ 
+ 	if (proto == IPPROTO_TCP)
+-		return recv_verify_packet_tcp(ip6h + 1, len - sizeof(*ip6h));
++		return recv_verify_packet_tcp(ip6h + 1, len);
+ 	else
+-		return recv_verify_packet_udp(ip6h + 1, len - sizeof(*ip6h));
++		return recv_verify_packet_udp(ip6h + 1, len);
+ }
+ 
+ /* return whether auxdata includes TP_STATUS_CSUM_VALID */
+-- 
+2.35.1.1320.gc452695387.dirty
 
-> > That's relatively modern, though some of the warnings don't look
-> > particularly new and exciting.
-
-> Fair although I still see some of them on old versions too:
-
-Yeah, like I say some of the warnings didn't look like they were new.
-
-> https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/1=
-0738441894
->=20
-> > >   sound/soc/mediatek/mt8365/mt8365-dai-adda.c:93:8: error: implicit c=
-onversion from 'unsigned long' to 'unsigned int' changes value from 1844674=
-4073709551614 to 4294967294 [-Werror,-Wconstant-conversion]
-> > >      91 |                 regmap_update_bits(afe->regmap, AFE_ADDA_UL=
-_DL_CON0,
-> > >         |                 ~~~~~~~~~~~~~~~~~~
-> > >      92 |                                    AFE_ADDA_UL_DL_ADDA_AFE_=
-ON,
-> > >      93 |                                    ~AFE_ADDA_UL_DL_ADDA_AFE=
-_ON);
-> > >         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~=
-~~~
-> > >   1 error generated.
-> >=20
-> > That's a bit surprising, regmap_update_bits() takes an unsigned long?  I
-> > suspect the constants need to be defined as unsigned.
-
-> Does it? I see it taking 'unsigned int' for all of its parameters.
-
-Sorry, I misread the warning there (or was perhaps looking at another
-one) and for some reason though it was about dropping signs but it's
-rather due to BIT() being defined for longs which is a rather bad
-landmine given how common a pattern negation is.  I do see that
-synclink.h has some convenient BITn macros for some reason which would
-do the trick but really I think it's just a case of open coding the
-BIT() usage, or defining a BITI() or something but that seems ugly.
-Probably just open code the definitions.
-
---tSNyT2qHs0Efy6wS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbbbmoACgkQJNaLcl1U
-h9A4/AgAhDUwT8rRI4M3S+NXdNzBJSPacU05GQT9cqLHhdUtUgyqvhxeH6OhPjiN
-wUxAA7ugGFCDswITd22nOKiR76kgijacKAluiYXCh0nPvokDPQyzUklJltqFUYzm
-GJfOTqniw75BP3VxTgB7KmehOyYd1EP72Oj1qc6HmNmZX7G3c2wcX3cbED2eP4hU
-BfWhc9whOYYXqUYMicCcpItyPVVfKyvNgwbePdDxlHNcapm5t8z8b0jIutnhDr+c
-4AUADF6NwNc6L7+ttA5yHTogggWSrzJBIYea3trWLj14a32ho28hZb6+1jE3Q6R6
-bnK/Qw7CnUl4m787UaxMFjX9z84mxA==
-=qv06
------END PGP SIGNATURE-----
-
---tSNyT2qHs0Efy6wS--
 
