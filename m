@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-318816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55C096F3AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:54:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A67896F3BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7112DB25A1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F201C24508
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F051CCEDC;
-	Fri,  6 Sep 2024 11:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18C81CC897;
+	Fri,  6 Sep 2024 11:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ggd+jRVv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="MnZBcpCk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A664B1CB52A;
-	Fri,  6 Sep 2024 11:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BFB17C9B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623535; cv=none; b=qlh+5zkNxVAFBVepCWB1RVqUrD/iNxRdk/t2r0UUfB+/jhQ/wfaTnCECJL2CoE7WTou8OhKkiXBqw8nQ7pK76rxC7o/nhAxgrYaQoEss7mHENZVDD7RkjR9vdFaFQqaXwQpFxXaSewhT7QO6rllHzw8X381q4FtHEDdAgJgW+hg=
+	t=1725623733; cv=none; b=oSU0FsNKGN/V/rTID8mrj2UinCwY2a+lDH4PKrrsLIf6G3pnVaUkZhPN2cRvJ+L4amFnOqKTG4Rn7Lp47iJXEvWEEguWQot+M9cXuBMpKf15X1bxS6EaLkhhi5KrFgAtdQNYHTb3lo15aru53uMdzWvJ5UpiwoV5QstQq9XJI9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623535; c=relaxed/simple;
-	bh=2f3/nOBHkWEXU5xICQ9uAX6+MKLRFa47tYxd7HHtQvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qon6R6/OlerdzYR59v0JnBGYnuLbKkO0jf2FEEZubkQwFMdUt8kKzOppbgjMAGZ3RpDBRw+TJ8BYFHCRUwNgeexk4ncOIltmwLx77r5wAN/RIyZQDkKHLc3TfRxPWbuisqZGHOvHB9d+AJ3in9wbLh6Jf6oMsOtNgCrmhnUrct0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ggd+jRVv; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725623535; x=1757159535;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2f3/nOBHkWEXU5xICQ9uAX6+MKLRFa47tYxd7HHtQvk=;
-  b=ggd+jRVvlk5lXols4dHegP2joAB84+r/OEt9bLRmdMkMTkCIySPUJ5VP
-   /1oEj8b/QRIb0xTdPLAVECOK9AvT2jVA/Ai172HFGX1NQiIo9UI95UBIm
-   k2Ch6xvvHpDjsqwVX6gzjCuNYV4lKGSvbiCk5CyFGR3Bnq3vcEvVXurMi
-   mWU6gSNDg63CjMfrXtlkRbjc752QVeGNMQXFG7LBA06jsEam7lFDNRdzV
-   PaOFvzu5JxWObxhY/ZISt/7ap0FpANTZRBZWpSCTfQChsPQ+8SwKzVJiH
-   3HjZRynVdpbors3NmfTrXAvtzhtGD0Dy4Sh6jK7AhPVCKuu4CO9jdCvu6
-   g==;
-X-CSE-ConnectionGUID: NPM5O7DKSeuVIod1RhxRkw==
-X-CSE-MsgGUID: Xjn6GVscQKimM//pwF2ohg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24489370"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="24489370"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:52:15 -0700
-X-CSE-ConnectionGUID: uVyfWXGKRzuS7Sok8KO6Aw==
-X-CSE-MsgGUID: /STYDR5WQRadRnFUJ3C4mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="70350132"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:52:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smXVZ-00000005m5L-3IC3;
-	Fri, 06 Sep 2024 14:52:09 +0300
-Date: Fri, 6 Sep 2024 14:52:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kimriver Liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
-	jsd@semihalf.com, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <Ztrs6bA7gfSCl4e7@smile.fi.intel.com>
-References: <20240906074731.3064-1-kimriver.liu@siengine.com>
+	s=arc-20240116; t=1725623733; c=relaxed/simple;
+	bh=7zJd8pqsGbtorV2RA9SGRcvUEjR+eD3Dxzhd3Hx/9aE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aez2lPdcdQky/0KHHCpeD2OzNtFzW3gMPkD/xqQdIL2qSjmT7VvB6iYxryzUFSe+Y98iEKHoETlbOPH8xG75SyYp5ZkJ8nigRKvGU88G3PQB7H7urjOnoqT7+KO9jGvpsF4vVWq/pUK+u2SX/40W/kzguMgeOhZRBszn/wPUfyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=MnZBcpCk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1725623730;
+	bh=D4Tr3xq01QTABI4MGDDJgIWKSI4WtSOuzrdByLrAR/o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MnZBcpCko69YZN85FnTOGIbw5GEuf6Qco7BMs7ynvKVa2dOPSQuCl+uCN4rO5XwcP
+	 rlV37HMCXYfMYMIrB0fQa+25ienTlCphVdiyiFymWa3x40EPqK2ElAgVFpOYhXaH80
+	 /JB6jtLO3TgzrupFrSxQhwGBRUsnTwwLqBHdSv1CWLL6huCR0IRBisTA8KWidfOFoS
+	 BnQ9xsytS2Vb/ihFAhkIsmkVv9X+pM93ayOH+n8P+KR1xe+rG9HxZ93t0hxkTVN58P
+	 nV+ZYfUVVlIkHVpGir8Lz84/osUjNKAX5JfPLH5uJbXj/UA5lKFd/x9Gj+B/aoXWO5
+	 LDa2sptqW/hEw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0ZRk3C0Jz4wy9;
+	Fri,  6 Sep 2024 21:55:30 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <0fa863f2f69b2ca4094ae066fcf1430fb31110c9.1724313540.git.christophe.leroy@csgroup.eu>
+References: <0fa863f2f69b2ca4094ae066fcf1430fb31110c9.1724313540.git.christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH] powerpc/vdso: Inconditionally use CFUNC macro
+Message-Id: <172562357203.467568.1789157792030341503.b4-ty@ellerman.id.au>
+Date: Fri, 06 Sep 2024 21:52:52 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906074731.3064-1-kimriver.liu@siengine.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 06, 2024 at 03:47:31PM +0800, Kimriver Liu wrote:
-> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
-> IC_ENABLE is already disabled.
+On Thu, 22 Aug 2024 10:00:29 +0200, Christophe Leroy wrote:
+> During merge of commit 4e991e3c16a3 ("powerpc: add CFUNC assembly
+> label annotation") a fallback version of CFUNC macro was added at
+> the last minute, so it can be used inconditionally.
 > 
-> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
-> holding SCL low. If ENABLE bit is disabled, the software need
-> enable it before trying to issue ABORT bit. otherwise,
-> the controller ignores any write to ABORT bit.
+> 
 
-This is *still* version 1!
+Applied to powerpc/next.
 
--- 
-With Best Regards,
-Andy Shevchenko
+[1/1] powerpc/vdso: Inconditionally use CFUNC macro
+      https://git.kernel.org/powerpc/c/65948b0e716a47382731889ee6bbb18642b8b003
 
-
+cheers
 
