@@ -1,105 +1,150 @@
-Return-Path: <linux-kernel+bounces-318837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5F596F406
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294F196F408
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C71A41C24442
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58472830AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB851CC163;
-	Fri,  6 Sep 2024 12:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53301CC171;
+	Fri,  6 Sep 2024 12:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="o43K4T4E"
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SrkJxtGM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066891CC150;
-	Fri,  6 Sep 2024 12:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97B21CB31D;
+	Fri,  6 Sep 2024 12:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624525; cv=none; b=nu6TU3vwzpcTrYDq7j9vUrMpCy5QltiCtNxggUDrHmoGlZvObyQWMQ0mZDJuL9z9Ur8KfIv/mNuKW2RXx4ph1l+2HMiuW0WgkGuqRzgbbaAOUTnvqNwwI8nVjQfHAqNKWDbOdUPRap7m55ydWguVw1+8y2jaw5BfKrTXHwqGYBw=
+	t=1725624580; cv=none; b=Kvo5mH0cMGizng3TfmMapE1RH2+f7RGRKPW9nUBZkQWE8M3YcpwtFgCf9+dUwojiyvXCQoDj3obdZ0Dab3qy81AfMQEea9nNxK4BohC/W7OYSVgm2szhCiAWmgfvXefwqoGFC0hLcZI/ND4HgxfSd/nnkzK2Pc7uwgHRvlXCCXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624525; c=relaxed/simple;
-	bh=XthwQVOWr2ip0l4CSOQfAjQmHCl1Ylg9z/C8SFjr/gk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EToCaYREsqK+KAnqRL8lhmm1y37tBn2MKpdSENXpTihgJxRywvZ9DpM2Sj02y7WMtICnJF2wg5Vpp2VjoSemD8oShHT3gdvbRUZbj5BopSMPCLax0pBcTaryUWxlLihc7qWIxou8wySIrErKIJNr9b1obDuWNEw28YB+Y12TROA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=o43K4T4E; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:5e9c:0:640:b3f4:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id B476761DF6;
-	Fri,  6 Sep 2024 15:08:31 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id U8dbVMXOneA0-dvV8s3HL;
-	Fri, 06 Sep 2024 15:08:31 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1725624511; bh=XthwQVOWr2ip0l4CSOQfAjQmHCl1Ylg9z/C8SFjr/gk=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=o43K4T4EoPrqI+42jemgKmXH1aXC3VadPYhar7dTHsIT6jGeSvP6joDiC5YE+N4GK
-	 /4AGx/NzNmTiezH/8Q4DhWV+PAhsKfruEVmu6Dt3ImzTK8OaVtpBD4DddcTWA6tWgk
-	 k6kPGuw1hvM67CPrNKv2nX1hP831LyetFi1TrH6Y=
-Authentication-Results: mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <02d50cb52a0b73fb937fa2121bac6812592826d9.camel@maquefel.me>
-Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
- <devnull+nikita.shubin.maquefel.me@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date: Fri, 06 Sep 2024 15:08:31 +0300
-In-Reply-To: <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-	 <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
-	 <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
-	 <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
-	 <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
-	 <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
-	 <887d5cfabeccf5dae0538a9c59ba74e4.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1725624580; c=relaxed/simple;
+	bh=5p+4Bl9mqbxouOtptcDfPPmou1wvxYkLSmiClXxVh3c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lCfacO7Fbo2HvNMsbrZxMBZWDZhhnBiheSzlRJWAAEa46uqs77XTsy7xMSm0oFnMUa4ylVkrCHsLiLwUoLg5wZh8HDmydi8y59VvYAILgNJzWN7fDS19gpJjdp9SwL7jgzHFbZrwfPa7ZoHSI7SynO37ElmqfGTMu/P2iLiJxDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SrkJxtGM; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725624578; x=1757160578;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5p+4Bl9mqbxouOtptcDfPPmou1wvxYkLSmiClXxVh3c=;
+  b=SrkJxtGMHPJiX/RwVQt1DklGBHaJAIo8/yuvjl6J9smHuUb+FFRLDV+m
+   SieNzKCj2vScjQ2+aQJtyB46He7Vb0VYUzA17/JX54ogQj4/aCF5KwhMa
+   63+n4cquFujAImLUp7ctxLVyLlTrNYmqA+rhPlRXBa0q2Zamr17WDDEwO
+   jtHDCmmZawa6vyyKfeXOFaZnqJj2uv0d4bUd9hbjhKhWc+3r9Qrho8IbW
+   G7+Tn2mRfqqgYZTzvGozgb/usnPAYpFkjxMwWsXD/MN3ypPjY5rFg/fMM
+   GvqcCIzZ8HJdvudLj+rGwEG/HxxoI+c5f2Md3cOFCke+coagG1mhncYYf
+   g==;
+X-CSE-ConnectionGUID: djVm1GvPTJ2W5AHWRNbOHQ==
+X-CSE-MsgGUID: 12BQj/ELR1Cd1xsskltAYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24535761"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="24535761"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 05:09:38 -0700
+X-CSE-ConnectionGUID: HprW+X66SaqXRjfUb/ltHQ==
+X-CSE-MsgGUID: mTrxtkOGSAKpg0n5x8l8qA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="70734766"
+Received: from feng-clx.sh.intel.com ([10.239.159.50])
+  by orviesa005.jf.intel.com with ESMTP; 06 Sep 2024 05:09:34 -0700
+From: Feng Tang <feng.tang@intel.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	sparclinux@vger.kernel.org,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Feng Tang <feng.tang@intel.com>
+Subject: [PATCH v3] sched/debug: Dump end of stack when detected corrupted
+Date: Fri,  6 Sep 2024 20:09:33 +0800
+Message-Id: <20240906120933.2176727-1-feng.tang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-09-05 at 13:50 -0700, Stephen Boyd wrote:
-> Quoting Nikita Shubin (2024-09-02 06:31:59)
-> > On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
-> > > Quoting Nikita Shubin (2024-08-30 02:23:12)
-> > > >=20
-> > > > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not
-> > > > required,
-> > > > but
-> > > > it needs AUXILIARY_BUS.
-> > >=20
-> > > I don't see REGMAP selected by COMMON_CLK. Did I miss something?
-> >=20
-> > Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK
-> > on
-> > make tinyconfig + COMPILE_TEST.
->=20
-> The meson driver isn't used here?
+When debugging a kernel hang during suspend/resume [1], there were random
+memory corruptions in different places like being reported by
+slub_debug+KASAN, or detected by scheduler with error message:
 
-This is purely from ARCH=3Darm make tinyconfig - i use it only with
-COMPILE_TEST for testing.
+  "Kernel panic - not syncing: corrupted stack end detected inside scheduler"
 
->=20
-> >=20
-> > Then we require REGMAP because we are using regmap_read() in clk
-> > driver.
->=20
-> I think you're supposed to select REGMAP_<BUS> config option, not the
-> toplevel REGMAP option. For example, if you're using mmio, then
-> select
-> REGMAP_MMIO.
+So dump the corrupted memory around the stack end to give more direct
+hints about how the memory is corrupted:
 
-Yes this makes sense, REGMAP_MMIO it is.
+ "
+ Corrupted Stack: ff11000122770000: ff ff ff ff ff ff 14 91 82 3b 78 e8 08 00 45 00  .........;x...E.
+ Corrupted Stack: ff11000122770010: 00 1d 2a ff 40 00 40 11 98 c8 0a ef 30 2c 0a ef  ..*.@.@.....0,..
+ Corrupted Stack: ff11000122770020: 30 ff a2 00 22 3d 00 09 9a 95 2a 00 00 00 00 00  0..."=....*.....
+ ...
+ Kernel panic - not syncing: corrupted stack end detected inside scheduler
+ "
+
+And with it, the culprit was quickly identified to be ethernet driver
+that it frees RX related memory back to kernel in suspend hook, but
+its HW is not really stopped, and still send RX data to those old
+buffer through DMA.
+
+[1]. https://bugzilla.kernel.org/show_bug.cgi?id=217854
+
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+---
+Changlog:
+
+  since v2:
+    * Change code format (Adrian)
+    * Add Reviewed tag from Adrian
+
+  since v1:
+    * Refine the commit log with more info, and rebase againt 6.8-rc3
+
+ kernel/sched/core.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f3951e4a55e5..0c5cc3bdc02b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5741,8 +5741,19 @@ static noinline void __schedule_bug(struct task_struct *prev)
+ static inline void schedule_debug(struct task_struct *prev, bool preempt)
+ {
+ #ifdef CONFIG_SCHED_STACK_END_CHECK
+-	if (task_stack_end_corrupted(prev))
++	if (task_stack_end_corrupted(prev)) {
++		unsigned long *ptr = end_of_stack(prev);
++
++		/* Dump 16 ulong words around the corruption point */
++#ifdef CONFIG_STACK_GROWSUP
++		ptr -= 15;
++#endif
++		print_hex_dump(KERN_ERR, "Corrupted Stack: ",
++			DUMP_PREFIX_ADDRESS, 16, 1, ptr,
++			16 * sizeof(unsigned long), true);
++
+ 		panic("corrupted stack end detected inside scheduler\n");
++	}
+ 
+ 	if (task_scs_end_corrupted(prev))
+ 		panic("corrupted shadow stack detected inside scheduler\n");
+-- 
+2.34.1
 
 
