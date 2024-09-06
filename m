@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-319461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043AD96FCCA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:31:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DA096FC80
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DB71F28ADF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6177D1F26893
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C76716FF25;
-	Fri,  6 Sep 2024 20:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D781D67B1;
+	Fri,  6 Sep 2024 20:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UKRALhwG"
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="suZslRvD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A448414C5B3;
-	Fri,  6 Sep 2024 20:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBC32BCF5;
+	Fri,  6 Sep 2024 20:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654691; cv=none; b=usQUzbHtb2agv/wpU+3ydd3eTyqPprrgFuELaPceA2JwbzJq2IAJy0eAMFZ05+31I3yNwiXeP8AiEWOARxBgL9V4yjSMddbMi18dDjLa0JfeYdQ2VdjUd9UQCe9XbPmwq5QYqF2jsgYA14f/UejhmXCwLjx0XLtWMcMbCflJZtg=
+	t=1725653186; cv=none; b=iaSti1hkwmesKfjZ/nXzYfI2ZqEl0eTrr7m9e2cEwJssfOTHqe3GZOpz83VuFTXYpQm2luZJAGfAxO+cV+Aem41HnjgAxelEjOnAKEg3YWtx0ABFAKEWenYEc1Oes+yPT1YUYlkmNVhoJ4icZowNcUtwGkk3YK0bHEKCEm9zS7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654691; c=relaxed/simple;
-	bh=5OSiCUxRsvtARcou56wXI3cDIiAdAe6GQc7hKq0JdXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqbfVMIXEHgM5EhTeQeqFQRBTLWmqvCF7ZkXc2Ro4rKCSg50GWsVblzodVDxuAX2b0pqdCIBPdVt1cZ+fAkHSJQQjBaS0CvdrR00ZJrrE0rjEqZazmnl2xuBNZFg1RjNdswb7FH9zEOkPeWbJWFacRtRLo0hA7YXLYfe8yRSAbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UKRALhwG; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mf5asaRIOjDE7mf5asHg0n; Fri, 06 Sep 2024 21:57:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725652674;
-	bh=xYR3kPiysp0DAu3hHTCdnVZ7J5OM+i5euxXxIpGksJ4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UKRALhwGsYTuYigKVxKoo0JZ69+DDjBvnn6qfJcKI3njUqRapI3Rh51o8+diJHjuE
-	 MhgHF9HQnh1G5UdkHXe+Ijsp4HwEphBpO9KK5OVMJFcd1p0m1Pev8lY98FjLHnsM6f
-	 14VKjI/kFW9y/n/yw4te7mKEm3UoVH3om1zmYXAzE5RkqmUOR1DrZpSaEDSD0NMSMp
-	 eejwB1pfMfRrESQd9sqWBRs0d/TIwnau3gBlyaEzdY2962egpIlD+AW0VPde039ebG
-	 vvN3mh6SEx9MoGRI1HzwpCnk8TLGWyHyaCnwki82Fl13TdSFCPotd6vRaQjmVzARAG
-	 bK5cf5AD8YdUA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Sep 2024 21:57:54 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
-Date: Fri,  6 Sep 2024 21:57:47 +0200
-Message-ID: <fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725653186; c=relaxed/simple;
+	bh=4wOrm1/JMqXF81WTRl2exPoXRDO6uvmW+dNAP5ZUVms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKGsARgoxGv+RSmt1N5iAnJM5AKkaytmnDJQO/z8I+ysnGU/UBLqNMYhcjB/VqH4ciujbNnX8sTbiQRnxNEyba2z7JoL1sndrIKtjJkwMLNEO9ExmS/g+M9svh93GaAmmd56PARa6isCewlxEnIIjcU2EvYMYOTtE5KaUwam1nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=suZslRvD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21409C4CEC9;
+	Fri,  6 Sep 2024 20:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725653185;
+	bh=4wOrm1/JMqXF81WTRl2exPoXRDO6uvmW+dNAP5ZUVms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=suZslRvDiCSl8lp0BcAxcsu+JSmQ0W4pAYv0Tw1n/ZVTuMWiRwtm9D8trOoljyZBj
+	 Fed9qU/4z4X9RLJXTQ7mUbIM8zIJZiqB7hzap3UFDMzZR57/LVj7wpNPZ91981uckJ
+	 fuAt1wzUpBOsRr6dUkZHKjD+l+0AA4L+ru+RUh46iERsEI60AL5CsHeIIOjHMvLG5g
+	 99cByClrmyt2gUQba2dYy7pE9TG1Mrz1ZvXVoTRcD7t9m4ieJRtZLlZKKBulkUEg+M
+	 4tmQD01KUOdqn83xjiEHm6Vn3U8RztkiwH4xzz954aXUuGBlLuYeL1/DFLLAEz/vAU
+	 uwQJlJINWEctQ==
+Date: Fri, 6 Sep 2024 17:06:21 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf mem: Fix missed p-core mem events on ADL and RPL
+Message-ID: <ZttgvduaKsVn1r4p@x1>
+References: <20240905170737.4070743-1-kan.liang@linux.intel.com>
+ <20240905170737.4070743-2-kan.liang@linux.intel.com>
+ <ZtoHgMqNhnDdvAIi@x1>
+ <1a339858-74a3-414a-9fc1-bef47c513728@linux.intel.com>
+ <ZtsO-v3pUVezKBgE@x1>
+ <8644996b-33d6-4eee-890c-f23a3c830b77@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8644996b-33d6-4eee-890c-f23a3c830b77@linux.intel.com>
 
-If an error occurs after the rcar_gen3_phy_usb2_init_bus(),
-reset_control_assert() must be called, as already done in the remove
-function.
+On Fri, Sep 06, 2024 at 12:08:52PM -0400, Liang, Kan wrote:
+> On 2024-09-06 10:17 a.m., Arnaldo Carvalho de Melo wrote:
+> > On Thu, Sep 05, 2024 at 03:47:03PM -0400, Liang, Kan wrote:
+> >> On 2024-09-05 3:33 p.m., Arnaldo Carvalho de Melo wrote:
+> >>> But can we reconstruct the events relationship (group, :S, etc) from
+> >>> what we have in the perf.data header?
 
-Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> >> Do you mean show the group relation in the perf evlist?
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 58e123305152..8577056491de 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -770,7 +770,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		if (IS_ERR(channel->rphys[i].phy)) {
- 			dev_err(dev, "Failed to create USB2 PHY\n");
- 			ret = PTR_ERR(channel->rphys[i].phy);
--			goto error;
-+			goto err_control_assert;
- 		}
- 		channel->rphys[i].ch = channel;
- 		channel->rphys[i].int_enable_bits = rcar_gen3_int_enable[i];
-@@ -784,7 +784,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (IS_ERR(channel->vbus)) {
- 		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
- 			ret = PTR_ERR(channel->vbus);
--			goto error;
-+			goto err_control_assert;
- 		}
- 		channel->vbus = NULL;
- 	}
-@@ -793,15 +793,17 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (IS_ERR(provider)) {
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
--		goto error;
-+		goto err_control_assert;
- 	} else if (channel->is_otg_channel) {
- 		ret = device_create_file(dev, &dev_attr_role);
- 		if (ret < 0)
--			goto error;
-+			goto err_control_assert;
- 	}
- 
- 	return 0;
- 
-+err_control_assert:
-+	reset_control_assert(channel->rstc);
- error:
- 	pm_runtime_disable(dev);
- 
--- 
-2.46.0
+> >> $perf mem record sleep 1
+> >> [ perf record: Woken up 1 times to write data ]
+> >> [ perf record: Captured and wrote 0.027 MB perf.data (10 samples) ]
 
+> >> $perf evlist -g
+> >> cpu_atom/mem-loads,ldlat=30/P
+> >> cpu_atom/mem-stores/P
+> >> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+> >> cpu_core/mem-stores/P
+> >> dummy:u
+
+> >> The -g option already did it, although the group modifier looks lost.
+
+> > Right, I can reproduce that, but I wonder if we shouldn't make this '-g'
+> > option the default?
+
+> I think the evlist means a list of events. Only outputting the events
+> makes sense to me.
+> With -g, the extra relationship information is provided.
+
+At first 'perf evlist' showing just the events present in the perf.data
+file seems enough, and maybe it should continue like that.
+
+It is just that this relationship is so critical that not showing it by
+default looks suboptimal :-\
+
+Perhaps we should add some warning at the end mentioning the special
+relationships present and suggest using '-g' to see it?
+
+- Arnaldo
 
