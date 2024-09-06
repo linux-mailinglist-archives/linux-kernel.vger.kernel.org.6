@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-318831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2419796F3F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380DB96F3F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D045D28673D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E38952867D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BB41CBEBF;
-	Fri,  6 Sep 2024 12:04:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8211CCB21;
+	Fri,  6 Sep 2024 12:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohi7w8sM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5F22233B;
-	Fri,  6 Sep 2024 12:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D76A1CC14A;
+	Fri,  6 Sep 2024 12:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624285; cv=none; b=ZHVTy+r2dHYL0D6AbOEOvwSmrLdQEZvwa7sCgN20VXi/w7WVbn5oqXKeEFsutpk90Gq4G0J86YfxDXmdJTDthBtRUn+lQl9AwzecEy+QdZesjNB0mlmOcFOZVOzTRJ7p7z5uPy/t0WgqCjgrLwZCYv/azvzljziFbsmP5kxlrGY=
+	t=1725624286; cv=none; b=MEpK0wRCOoBut42aa7m9niHGvnBmuhgQtnEWd9wrFvUBBw49ZBNVvznKtVgkUkBP0CZMq0pOIvNibvV9jzMhN8UTkL0embcu7Zc5lYAcPPw49x3DxbTJadLmqWnkzPcB5sjcI3nfKEJxie6PUwnOf+P6Yfab6Os02Yk/k/AGid8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624285; c=relaxed/simple;
-	bh=55gUJMDTC3/pBOEkdNxLHnHLs7HndChLxy9qDTL78u0=;
+	s=arc-20240116; t=1725624286; c=relaxed/simple;
+	bh=VjnFzA5vTH6FBFKurz0jJbBddzA3RMO1RzobCH/Htqc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=moVc02Q4h5NWbfJ7XiIy9m0+YnwAJY+846SOkQjJjTV28GjX/liRXPT7XR3L/c8BGYhDxto2IegP+UBuvIBQwAWFGIqeJOKbYOgftU8sagGVuYOeBbLDhcw/4qrYcGomH3fkWWJ2Rj16XjKhdtC97PsC2t7gokihUT8I6Re0feg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X0ZfJ4QQgz9sRs;
-	Fri,  6 Sep 2024 14:04:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id EUm50aOSwMqG; Fri,  6 Sep 2024 14:04:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X0ZfJ3513z9sRr;
-	Fri,  6 Sep 2024 14:04:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5364E8B778;
-	Fri,  6 Sep 2024 14:04:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id xTSHCMgcQrW2; Fri,  6 Sep 2024 14:04:40 +0200 (CEST)
-Received: from [192.168.235.70] (unknown [192.168.235.70])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2EBB48B764;
-	Fri,  6 Sep 2024 14:04:39 +0200 (CEST)
-Message-ID: <4a4873d9-c783-4374-a505-3628d3c92137@csgroup.eu>
-Date: Fri, 6 Sep 2024 14:04:38 +0200
+	 In-Reply-To:Content-Type; b=GkuWwbX6uyGVvnsck6uhr9UaoLKnN4EbGf74lcX6u3Yv+4PPv186nB4WJzR7ma/MT6FzaPPBkIBozoLsgryw1dQswHsVSV8cfs1/JJe9B933NcuTsxxEZKC4fYzLiA9iUJKrFKHci8Y9xi3nMYYyQW+BWgG4MOIr60sufnLrXlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohi7w8sM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFECC4CEC4;
+	Fri,  6 Sep 2024 12:04:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725624286;
+	bh=VjnFzA5vTH6FBFKurz0jJbBddzA3RMO1RzobCH/Htqc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ohi7w8sMKjf35qnatmnS8vgkgm0YCrhV7XFE9Dc4SVRHmoBhAwr/Eqydtb8s5i2vQ
+	 lIakmkOWojTLZHr/whZWwmA6VFqmPknlhCL/iMvsfL2YDmIXyspFpRLKlSq2geIid5
+	 IQkxb4Y/9GA36PRxjpVrMnlOOJetYDjjf50Umnq9OvaPe/BsYgXZIU2DsT68oTskk6
+	 HDKLji1TvMIduu1dZ4hA7oKwLfORkpGZWbzofBVwUBEQe8fLLizuJLBIMitwd2cDqe
+	 vg1hiRtFTXkxJ2ZGzvXQNWMXcqnp+fyNPh5eY816EHOt8C44RPIgKiUwBImOfYyOub
+	 jh0pGqvUTNtgg==
+Message-ID: <c7fd8c50-d5d9-4210-8253-457d7523eb30@kernel.org>
+Date: Fri, 6 Sep 2024 14:04:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,365 +49,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] vdso: Modify getrandom to include the correct
- namespace
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-10-vincenzo.frascino@arm.com>
- <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
- <72f3d6cf-a03b-4a16-9983-77d3dd70b0ea@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <72f3d6cf-a03b-4a16-9983-77d3dd70b0ea@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 04/29] media: iris: initialize power resources
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
+ <81fd218f-aa0f-4710-b832-cab927bfab9d@kernel.org>
+ <ba747923-38de-5c05-9220-762c5272ec74@quicinc.com>
+ <76ffb882-10f9-4737-afa2-9bb60248835d@kernel.org>
+ <f88d8596-c6a0-356e-060e-81d68f038995@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f88d8596-c6a0-356e-060e-81d68f038995@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-Le 06/09/2024 à 13:52, Vincenzo Frascino a écrit :
-> 
-> 
-> On 04/09/2024 18:26, Christophe Leroy wrote:
+On 06/09/2024 13:21, Vikash Garodia wrote:
+>>>>
+>>>>> +	}
+>>>>> +
+>>>>>  	ret = v4l2_device_register(dev, &core->v4l2_dev);
+>>>>>  	if (ret)
+>>>>>  		return ret;
+>>>>> @@ -88,8 +101,14 @@ static int iris_probe(struct platform_device *pdev)
+>>>>>  }
+>>>>>  
+>>>>>  static const struct of_device_id iris_dt_match[] = {
+>>>>> -	{ .compatible = "qcom,sm8550-iris", },
+>>>>> -	{ .compatible = "qcom,sm8250-venus", },
+>>>>> +	{
+>>>>> +		.compatible = "qcom,sm8550-iris",
+>>>>> +		.data = &sm8550_data,
+>>>>> +	},
+>>>>> +	{
+>>>>> +		.compatible = "qcom,sm8250-venus",
+>>>>> +		.data = &sm8250_data,
+>>>>
+>>>> You just added this. No, please do not add code which is immediatly
+>>>> incorrect.
+>>> It's not incorrect, in earlier patch we only added the compatible strings
+>>> and with this patch introducing the platform data and APIs to get it.
 >>
->>
->> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-> ...
-> 
->>
->> Now build fails on powerpc because struct vgetrandom_opaque_params is unknown.
->>
->> x86 get it by chance via the following header inclusion chain:
->>
->> In file included from ./include/linux/random.h:10,
->>                   from ./include/linux/nodemask.h:98,
->>                   from ./include/linux/mmzone.h:18,
->>                   from ./include/linux/gfp.h:7,
->>                   from ./include/linux/xarray.h:16,
->>                   from ./include/linux/radix-tree.h:21,
->>                   from ./include/linux/idr.h:15,
->>                   from ./include/linux/kernfs.h:12,
->>                   from ./include/linux/sysfs.h:16,
->>                   from ./include/linux/kobject.h:20,
->>                   from ./include/linux/of.h:18,
->>                   from ./include/linux/clocksource.h:19,
->>                   from ./include/clocksource/hyperv_timer.h:16,
->>                   from ./arch/x86/include/asm/vdso/gettimeofday.h:21,
->>                   from ./include/vdso/datapage.h:164,
->>                   from arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
->>                   from arch/x86/entry/vdso/vgetrandom.c:7:
->>
->>
->>
->>
-> 
-> This tells me very little ;)
-> 
-> Can you please provide more details? e.g. What is the error you are getting? How
-> do I reproduce it?
-> 
-> I am happy to include the required change as part of this series.
-> 
-> Overall, the reason why I am doing this exercise it to sanitize the headers for
-> all the architectures so that in future we do not have issues. It is good we
-> find problems now.
-> 
+>> It is incorrect to immediately remove it. You keep arguing on basic
+>> stuff. Sorry, but that is not how it works. If you add code and
+>> IMMEDIATELY remove it, then it means the code was not needed. Or was not
+>> correct. Choose one.
+> I think it is not removing it. It is adding platform data to compatibles
+> introduced in previous patch. Maybe it appears as if it is removing it.
 
-More details:
+I know how the diff works.
 
-$ make ARCH=powerpc CROSS_COMPILE=ppc-linux- mpc885_ads_defconfig
+The way you avoid solving the problem with trivial responses is not
+helping. We already have been there with another patchset from different
+person and it lead to annoying all DT maintainers and (usually very
+patient) some of networking folks. I ask you to approach to the review
+seriously.
 
-$ LANG= make ARCH=powerpc CROSS_COMPILE=ppc-linux- vmlinux
-   SYNC    include/config/auto.conf
-   SYSHDR  arch/powerpc/include/generated/uapi/asm/unistd_32.h
-   SYSHDR  arch/powerpc/include/generated/uapi/asm/unistd_64.h
-   SYSTBL  arch/powerpc/include/generated/asm/syscall_table_32.h
-   SYSTBL  arch/powerpc/include/generated/asm/syscall_table_64.h
-   SYSTBL  arch/powerpc/include/generated/asm/syscall_table_spu.h
-   HOSTCC  scripts/dtc/dtc.o
-   HOSTCC  scripts/dtc/flattree.o
-   HOSTCC  scripts/dtc/fstree.o
-   HOSTCC  scripts/dtc/data.o
-   HOSTCC  scripts/dtc/livetree.o
-   HOSTCC  scripts/dtc/treesource.o
-   HOSTCC  scripts/dtc/srcpos.o
-   HOSTCC  scripts/dtc/checks.o
-   HOSTCC  scripts/dtc/util.o
-   LEX     scripts/dtc/dtc-lexer.lex.c
-   YACC    scripts/dtc/dtc-parser.tab.[ch]
-   HOSTCC  scripts/dtc/dtc-lexer.lex.o
-   HOSTCC  scripts/dtc/dtc-parser.tab.o
-   HOSTLD  scripts/dtc/dtc
-   HOSTCC  scripts/dtc/libfdt/fdt.o
-   HOSTCC  scripts/dtc/libfdt/fdt_ro.o
-   HOSTCC  scripts/dtc/libfdt/fdt_wip.o
-   HOSTCC  scripts/dtc/libfdt/fdt_sw.o
-   HOSTCC  scripts/dtc/libfdt/fdt_rw.o
-   HOSTCC  scripts/dtc/libfdt/fdt_strerror.o
-   HOSTCC  scripts/dtc/libfdt/fdt_empty_tree.o
-   HOSTCC  scripts/dtc/libfdt/fdt_addresses.o
-   HOSTCC  scripts/dtc/libfdt/fdt_overlay.o
-   HOSTCC  scripts/dtc/fdtoverlay.o
-   HOSTLD  scripts/dtc/fdtoverlay
-   HOSTCC  scripts/kallsyms
-   HOSTCC  scripts/sorttable
-   CC      scripts/mod/empty.o
-   HOSTCC  scripts/mod/mk_elfconfig
-   MKELF   scripts/mod/elfconfig.h
-   HOSTCC  scripts/mod/modpost.o
-   CC      scripts/mod/devicetable-offsets.s
-   HOSTCC  scripts/mod/file2alias.o
-   HOSTCC  scripts/mod/sumversion.o
-   HOSTCC  scripts/mod/symsearch.o
-   HOSTLD  scripts/mod/modpost
-   CC      kernel/bounds.s
-   CC      arch/powerpc/kernel/asm-offsets.s
-   CALL    scripts/checksyscalls.sh
-   CHKSHA1 include/linux/atomic/atomic-arch-fallback.h
-   CHKSHA1 include/linux/atomic/atomic-instrumented.h
-   CHKSHA1 include/linux/atomic/atomic-long.h
-   LDS     arch/powerpc/kernel/vdso/vdso32.lds
-   VDSO32A arch/powerpc/kernel/vdso/sigtramp32-32.o
-   VDSO32A arch/powerpc/kernel/vdso/gettimeofday-32.o
-   VDSO32A arch/powerpc/kernel/vdso/datapage-32.o
-   VDSO32A arch/powerpc/kernel/vdso/cacheflush-32.o
-   VDSO32A arch/powerpc/kernel/vdso/note-32.o
-   VDSO32A arch/powerpc/kernel/vdso/getcpu-32.o
-   VDSO32A arch/powerpc/kernel/vdso/getrandom-32.o
-   VDSO32A arch/powerpc/kernel/vdso/vgetrandom-chacha-32.o
-   VDSO32C arch/powerpc/kernel/vdso/vgettimeofday-32.o
-   VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
-In file included from <command-line>:
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c: In function 
-'__cvdso_getrandom_data':
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:75:23: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    75 |                 params->size_of_opaque_state = sizeof(*state);
-       |                       ^~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:76:23: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    76 |                 params->mmap_prot = VDSO_MMAP_PROT;
-       |                       ^~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:77:23: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    77 |                 params->mmap_flags = VDSO_MMAP_FLAGS;
-       |                       ^~
-In file included from ./include/linux/array_size.h:5,
-                  from ./include/linux/kernel.h:16,
-                  from ./arch/powerpc/include/asm/page.h:11,
-                  from ./arch/powerpc/include/asm/vdso/page.h:8,
-                  from ./include/vdso/page.h:5,
-                  from /home/chleroy/linux-powerpc/lib/vdso/getrandom.c:10:
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:57: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                                         ^~
-./include/vdso/array_size.h:11:33: note: in definition of macro 'ARRAY_SIZE'
-    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
-__must_be_array(arr))
-       |                                 ^~~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:57: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                                         ^~
-./include/vdso/array_size.h:11:48: note: in definition of macro 'ARRAY_SIZE'
-    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
-__must_be_array(arr))
-       |                                                ^~~
-In file included from ./include/linux/container_of.h:5,
-                  from ./include/linux/kernel.h:22:
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:57: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                                         ^~
-./include/linux/build_bug.h:16:62: note: in definition of macro 
-'BUILD_BUG_ON_ZERO'
-    16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { 
-int:(-!!(e)); })))
-       |                                                              ^
-./include/linux/compiler.h:243:51: note: in expansion of macro '__same_type'
-   243 | #define __must_be_array(a) 
-BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-       |                                                   ^~~~~~~~~~~
-./include/vdso/array_size.h:11:59: note: in expansion of macro 
-'__must_be_array'
-    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
-__must_be_array(arr))
-       | 
-^~~~~~~~~~~~~~~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:40: note: in 
-expansion of macro 'ARRAY_SIZE'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                        ^~~~~~~~~~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:57: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                                         ^~
-./include/linux/build_bug.h:16:62: note: in definition of macro 
-'BUILD_BUG_ON_ZERO'
-    16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { 
-int:(-!!(e)); })))
-       |                                                              ^
-./include/linux/compiler.h:243:51: note: in expansion of macro '__same_type'
-   243 | #define __must_be_array(a) 
-BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-       |                                                   ^~~~~~~~~~~
-./include/vdso/array_size.h:11:59: note: in expansion of macro 
-'__must_be_array'
-    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
-__must_be_array(arr))
-       | 
-^~~~~~~~~~~~~~~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:40: note: in 
-expansion of macro 'ARRAY_SIZE'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                        ^~~~~~~~~~
-./include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width 
-not an integer constant
-    16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { 
-int:(-!!(e)); })))
-       |                                                   ^
-./include/linux/compiler.h:243:33: note: in expansion of macro 
-'BUILD_BUG_ON_ZERO'
-   243 | #define __must_be_array(a) 
-BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-       |                                 ^~~~~~~~~~~~~~~~~
-./include/vdso/array_size.h:11:59: note: in expansion of macro 
-'__must_be_array'
-    11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
-__must_be_array(arr))
-       | 
-^~~~~~~~~~~~~~~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:78:40: note: in 
-expansion of macro 'ARRAY_SIZE'
-    78 |                 for (size_t i = 0; i < 
-ARRAY_SIZE(params->reserved); ++i)
-       |                                        ^~~~~~~~~~
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:79:31: error: invalid 
-use of undefined type 'struct vgetrandom_opaque_params'
-    79 |                         params->reserved[i] = 0;
-       |                               ^~
-In file included from ./include/vdso/datapage.h:7,
-                  from /home/chleroy/linux-powerpc/lib/vdso/getrandom.c:6:
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:88:32: error: 
-'GRND_NONBLOCK' undeclared (first use in this function); did you mean 
-'MAP_NONBLOCK'?
-    88 |         if (unlikely(flags & ~(GRND_NONBLOCK | GRND_RANDOM | 
-GRND_INSECURE)))
-       |                                ^~~~~~~~~~~~~
-./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-    77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-       |                                             ^
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:88:32: note: each 
-undeclared identifier is reported only once for each function it appears in
-    88 |         if (unlikely(flags & ~(GRND_NONBLOCK | GRND_RANDOM | 
-GRND_INSECURE)))
-       |                                ^~~~~~~~~~~~~
-./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-    77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-       |                                             ^
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:88:48: error: 
-'GRND_RANDOM' undeclared (first use in this function)
-    88 |         if (unlikely(flags & ~(GRND_NONBLOCK | GRND_RANDOM | 
-GRND_INSECURE)))
-       |                                                ^~~~~~~~~~~
-./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-    77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-       |                                             ^
-/home/chleroy/linux-powerpc/lib/vdso/getrandom.c:88:62: error: 
-'GRND_INSECURE' undeclared (first use in this function)
-    88 |         if (unlikely(flags & ~(GRND_NONBLOCK | GRND_RANDOM | 
-GRND_INSECURE)))
-       | 
-^~~~~~~~~~~~~
-./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-    77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-       |                                             ^
-make[2]: *** [arch/powerpc/kernel/vdso/Makefile:87: 
-arch/powerpc/kernel/vdso/vgetrandom-32.o] Error 1
-make[1]: *** [arch/powerpc/Makefile:388: vdso_prepare] Error 2
-make: *** [Makefile:227: __sub-make] Error 2
+NAK.
 
-
-
-FWIW, here are the changes I added on top of your series:
-
-diff --git a/arch/powerpc/include/asm/vdso/getrandom.h 
-b/arch/powerpc/include/asm/vdso/getrandom.h
-index 501d6bb14e8a..4af9efdbe296 100644
---- a/arch/powerpc/include/asm/vdso/getrandom.h
-+++ b/arch/powerpc/include/asm/vdso/getrandom.h
-@@ -5,6 +5,8 @@
-  #ifndef _ASM_POWERPC_VDSO_GETRANDOM_H
-  #define _ASM_POWERPC_VDSO_GETRANDOM_H
-
-+#include <vdso/datapage.h>
-+
-  #ifndef __ASSEMBLY__
-
-  static __always_inline int do_syscall_3(const unsigned long _r0, const 
-unsigned long _r3,
-diff --git a/arch/powerpc/include/asm/vdso/mman.h 
-b/arch/powerpc/include/asm/vdso/mman.h
-new file mode 100644
-index 000000000000..4c936c9d11ab
---- /dev/null
-+++ b/arch/powerpc/include/asm/vdso/mman.h
-@@ -0,0 +1,15 @@
-+
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ASM_VDSO_MMAN_H
-+#define __ASM_VDSO_MMAN_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <uapi/linux/mman.h>
-+
-+#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
-+#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __ASM_VDSO_MMAN_H */
-diff --git a/arch/powerpc/include/asm/vdso/page.h 
-b/arch/powerpc/include/asm/vdso/page.h
-new file mode 100644
-index 000000000000..c41fd44aca5b
---- /dev/null
-+++ b/arch/powerpc/include/asm/vdso/page.h
-@@ -0,0 +1,15 @@
-+
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ASM_VDSO_PAGE_H
-+#define __ASM_VDSO_PAGE_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <asm/page.h>
-+
-+#define VDSO_PAGE_MASK	PAGE_MASK
-+#define VDSO_PAGE_SIZE	PAGE_SIZE
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __ASM_VDSO_PAGE_H */
-
-
-Christophe
+Best regards,
+Krzysztof
 
 
