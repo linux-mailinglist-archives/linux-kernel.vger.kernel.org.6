@@ -1,88 +1,135 @@
-Return-Path: <linux-kernel+bounces-319522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C296FDDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:17:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAB396FDDE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D522D1F24303
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9E81C21BDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C953E155A59;
-	Fri,  6 Sep 2024 22:17:26 +0000 (UTC)
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D896815AD90;
+	Fri,  6 Sep 2024 22:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ly0fUayQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953E31B85D9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F70155A59
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725661046; cv=none; b=nL2PUtD7FvVLzYi5w55EErJ+4HBGLmUXLJpxXGggCh/M4XYWo/4ZBTmsmum05R2512B2w0ie1hgMxR5tgedlFnui+tGKBc10KyHTMdg/H2czLupurehzNz+VMpF6AUKNsAPjGQYCv/4i2PJFx8f8ws5KVRCv6SEKBgt9bjpxAss=
+	t=1725661118; cv=none; b=o1lPuCRZDx0DJ4dcBmRAgu2sFzrjjfLw9isTGB+CSO8oAVxMl+EUAmrifNBEyLmmP6an9kwHfgX4hJwXYac4OisQ+UPqg69AmtQqDL9jwYV8SLy3UqMcliwxHnMQTD8aCJynxC+zhsSIPbVYdGcm2K15yHjQeG7cjLN5VqqYTNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725661046; c=relaxed/simple;
-	bh=CGPUl/gZ50PuyC+ib9ypM0DRXzMScW15aObsCnYi7Xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Iq4A7zemN+vfNCE/SKB6P/Ft+tIpJeZ5cq5ZObUrmLdt5oG32fqIKW23GC/rvT8/F6b2+UzXmU66ByTSS1koF5p5cIstRpmkqYkmW8Nu7iF14zy3sAb5pJ9pTei1vQ6Znu0BEDIUni4S3keCGClW9L5iN5hvys5xeghtkiGEt3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.150])
-	by sina.com (10.185.250.24) with ESMTP
-	id 66DB7F640000370A; Fri, 7 Sep 2024 06:17:10 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9042510748451
-X-SMAIL-UIID: 895FC86F443B417787E1DC98DDBA0694-20240907-061710-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in lockref_get_not_dead (2)
-Date: Sat,  7 Sep 2024 06:16:58 +0800
-Message-Id: <20240906221658.2144-1-hdanton@sina.com>
-In-Reply-To: <000000000000af47d506216f5b6e@google.com>
-References: 
+	s=arc-20240116; t=1725661118; c=relaxed/simple;
+	bh=oDnyoADLZxxoDCVd/HnrxeAvpVLH1ZwcrkNTr9tiixs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=alGLSFItQ9q8CIYggJ8yjzuVA5WfrLCzPYoeWOnVupC4QRe1zAckinnUBP4YzxZgiwgfi7XNsLAA9oT8rOimWHRwpzkZ/STFv0EySyHd7OzBZV57HwVjjBpXtri4RbpvdcSd1loKEYiUhlFKqzCNItQTXU7A+eaAd4SZOupA6+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ly0fUayQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725661115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fPS3RfxI/ckV+ClTMJfETVTJewuiT7qYQwOs4/LgDPw=;
+	b=Ly0fUayQvyF4jxE7Ra9B1aPC7vUYbEv/3SRl1shrDC3gdJ/BzOxDniw/XAzaIgfmFMafwu
+	PLSayBcUOWupLeqSxYXlEc442Kbv8191BrGpJiiSg6LI387orjB/jpx+cYYRlZLoavdef6
+	jGI5AhiU/0cb0iaWROEWmXlYRzmlgUg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-37-HiVZOmlkMNKEVfOjyRGsUQ-1; Fri,
+ 06 Sep 2024 18:18:32 -0400
+X-MC-Unique: HiVZOmlkMNKEVfOjyRGsUQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A28E619560B1;
+	Fri,  6 Sep 2024 22:18:27 +0000 (UTC)
+Received: from starship.lan (unknown [10.22.65.51])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1944E19560AA;
+	Fri,  6 Sep 2024 22:18:24 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH v4 0/4] Relax canonical checks on some arch msrs
+Date: Fri,  6 Sep 2024 18:18:20 -0400
+Message-Id: <20240906221824.491834-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, 06 Sep 2024 01:40:23 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    9b0874286768 Merge branch 'mctp-serial-tx-escapes'
-> git tree:       net
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1627ab2b980000
+Recently we came up upon a failure where likely the guest writes=0D
+0xff4547ceb1600000 to MSR_KERNEL_GS_BASE and later on, qemu=0D
+sets this value via KVM_PUT_MSRS, and is rejected by the=0D
+kernel, likely due to not being canonical in 4 level paging.=0D
+=0D
+One of the way to trigger this is to make the guest enter SMM,=0D
+which causes paging to be disabled, which SMM bios re-enables=0D
+but not the whole 5 level. MSR_KERNEL_GS_BASE on the other=0D
+hand continues to contain old value.=0D
+=0D
+I did some reverse engineering and to my surprise I found out=0D
+that both Intel and AMD indeed ignore CR4.LA57 when doing=0D
+canonical checks on this and other msrs and/or other arch=0D
+registers (like GDT base) which contain linear addresses.=0D
+=0D
+V2: addressed a very good feedback from Chao Gao. Thanks!=0D
+=0D
+V3: also fix the nested VMX, and also fix the=0D
+MSR_IA32_SYSENTER_EIP / MSR_IA32_SYSENTER_ESP=0D
+=0D
+V4:=0D
+  - added PT and PEBS msrs=0D
+  - corrected emulation of SGDT/SIDT/STR/SLDT instructions=0D
+  - corrected canonical checks for TLB invalidation instructions=0D
+=0D
+Best regards,=0D
+	Maxim Levitsky=0D
+=0D
+Maxim Levitsky (4):=0D
+  KVM: x86: drop x86.h include from cpuid.h=0D
+  KVM: x86: implement emul_is_noncanonical_address using=0D
+    is_noncanonical_address=0D
+  KVM: x86: model canonical checks more precisely=0D
+  KVM: nVMX: fix canonical check of vmcs12 HOST_RIP=0D
+=0D
+ arch/x86/kvm/cpuid.h         |  1 -=0D
+ arch/x86/kvm/emulate.c       | 15 ++++++-----=0D
+ arch/x86/kvm/kvm_emulate.h   |  5 ++++=0D
+ arch/x86/kvm/mmu.h           |  1 +=0D
+ arch/x86/kvm/mmu/mmu.c       |  2 +-=0D
+ arch/x86/kvm/vmx/hyperv.c    |  1 +=0D
+ arch/x86/kvm/vmx/nested.c    | 35 +++++++++++++++++---------=0D
+ arch/x86/kvm/vmx/pmu_intel.c |  2 +-=0D
+ arch/x86/kvm/vmx/sgx.c       |  5 ++--=0D
+ arch/x86/kvm/vmx/vmx.c       |  4 +--=0D
+ arch/x86/kvm/x86.c           | 13 +++++++---=0D
+ arch/x86/kvm/x86.h           | 49 ++++++++++++++++++++++++++++++++++--=0D
+ 12 files changed, 102 insertions(+), 31 deletions(-)=0D
+=0D
+-- =0D
+2.26.3=0D
+=0D
 
-#syz test
-
---- x/fs/libfs.c
-+++ y/fs/libfs.c
-@@ -2234,6 +2234,7 @@ int path_from_stashed(struct dentry **st
- 	path->dentry = stash_dentry(stashed, dentry);
- 	if (path->dentry != dentry)
- 		dput(dentry);
-+	dget(dentry);
- 
- out_path:
- 	WARN_ON_ONCE(path->dentry->d_fsdata != stashed);
-@@ -2258,5 +2259,6 @@ void stashed_dentry_prune(struct dentry
- 	 * already cleared out @dentry and stashed their own
- 	 * dentry in there.
- 	 */
--	cmpxchg(stashed, dentry, NULL);
-+	if (dentry == cmpxchg(stashed, dentry, NULL))
-+		dput(dentry);
- }
---
 
