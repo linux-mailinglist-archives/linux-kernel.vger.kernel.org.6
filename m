@@ -1,318 +1,237 @@
-Return-Path: <linux-kernel+bounces-318467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44A496EE6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8FE96EE70
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 116C8B21B91
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:43:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D401C21367
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC36158523;
-	Fri,  6 Sep 2024 08:43:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B179A156887
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725612215; cv=none; b=QD+JeGrEmfPdXqIOHO+DeF6yCDt74XC3n7WW0VzGj8VSm5zmYJrhklwZmnceUXZzYAOKx0PvpWmsfwC9j8UlwrbnKFPZ7CWb9ypRycCWAuCEfz+jt//Ym5x4qPcou5hsUvpbzMGOWcijtXbPkXklmvHPIsDzC/UZe/UkTqyaA1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725612215; c=relaxed/simple;
-	bh=UXj1pwylDFYiR0Z4RVTnymcHB7+Omej2JANGRpRqh6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pWWakJ66ApTm1xuJ22Nf9KTWNtKUUsaUw1tfxtifC74JRdBwyjCfMpDnarM69hBJ5ymZ4okr4W6CJ/uMbV7pJJq4sVcVSTJ6EIsmDABZ/mjTFvrSTmzjblk5b3LZvYxhAauWu73ZfcQePwBXAqdWmI6KT37NjRz4fCn22WU+a+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75CAEFEC;
-	Fri,  6 Sep 2024 01:43:57 -0700 (PDT)
-Received: from [10.57.86.132] (unknown [10.57.86.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B20403F66E;
-	Fri,  6 Sep 2024 01:43:26 -0700 (PDT)
-Message-ID: <ce7bb8c0-7b3d-4755-a64e-0327bf009536@arm.com>
-Date: Fri, 6 Sep 2024 09:43:25 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5859158868;
+	Fri,  6 Sep 2024 08:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xqrMcDz3"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49B15278E;
+	Fri,  6 Sep 2024 08:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725612222; cv=fail; b=Y08PyPTAalH/i8GaWbL1Les3EK8o7eAiJQkMmJA4/sfwG8EsEdoykyzZrL0dsax+HKbifrHrJxjenBOX++8XGYgine88NTLWWNBChg/0YA0C5DcEbg5t8eEEA2NYdU6g3xMlXSqJCE53Q0Ax/MgGmOo6vsKH4OJwGrmRJCtk2aM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725612222; c=relaxed/simple;
+	bh=RiphTgB2WC8vZFqCVK59qtMHqskV0Mm+ZKwTMsnG3Ro=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=OZSac9KhxcW3wZNsIW19Ac9htqtrT52WMNDH1k3nO3XIE0+UyUVC5UFKrQSev2hLBdPTxCCwLvdkqK0N8LjiZzWSlUNASjr1GTlkgfWn9IT1KVxE1ftWWsRPWkB6xU2JTzsTkNKQv9a+HYGs8VUY1OP2DEzEHTN9xWlYnwS3axg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xqrMcDz3; arc=fail smtp.client-ip=40.107.21.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B4pne4D+zcabt3KiuIoRuCK2SRL7hRPg3UuJLuQogPUgFCm/yHhA6OqmEFx2xuHAVg/ZtsygoWgEeC3DEtpnu7mBByeND1qTBB4Jr2ybQgPyXiv4JmgN4gCUFAv7J7hW3YYpTi+vlfKR5UJ7Z8tTA6ZHsv9ihUL4JENQ9wUnWIWzYDbI50lW+BCFFimbBNDUzWAh64VczU+SQ2Czvp6kg3hfrU84QKG65bDFrXWmDgOBfpE8SuNiG3jfuF0y+6dXSKy9reO5qBnM88Brmjolo7fPX0Go1tX07QUMEbRQL7tt/3SL8iAlPYtIsOjobi9jb1VL8qgz0sM5GRERFjTURw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KHSOZZsRnukhXeJ3/+NUi67cXyy1hzWhr7B1ffx5N3Q=;
+ b=oxxcHQX4OhVk41hVCt5EB6E9QE1YvQKlA+NKjl9AZF36Ug+FGeUI/b9/Ff/+OwjyBDbMVnH0dXGy2wc8oab5kkwSoUvsZD8ys7iH5lcyanmE7cxU/O0NKNeVTPqtlDt0xyyLz3uKM5e1TpgStc+w1sgkoT/BRVXMXyY44ATkt6PWtgonWbdbbUbhf1fzWM7zal1eTcepAvlRjGZxNZo9MJKD4uTadSe7FA2OCdNkkt2ubp2JglE97fPrr+NIzyz5YpaweU44T59Wnbf9mlk0QDf/VxdjVDTLFtU6nG4aTCHf1rCQHQ4nvYmiCHP+6bKSuJRQnpgG9+KZgirYqgAvNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KHSOZZsRnukhXeJ3/+NUi67cXyy1hzWhr7B1ffx5N3Q=;
+ b=xqrMcDz351zSYXcKbLnq/AVbZvd3IOGti5vRrF7BAhclb/iMlORbyZEhTMNjGrymHph0VgwPpE4j3myNG9B4txX5FpdMZxdU3rIPCjGuu56HuD807XOyr6JEBnqFQKrf+OWIgBp3rzuhMlBmBxnGKPSjvT0SrbeEFVE42PW4b4dC4q/C2fwnzKdzrD0wPRlN50hc7LfCBKwdlFWnDWSxbqfuCWmCTe3JzOts3pRspQfBRKbHViRb+al7g+x/9U9m1xu6VtQy+kdVUqXckE7mSRgRMUNw498Kskbc5tDyqNWSmqjk8RmGiTRKGc6N1MUq8HzOlnTiJKe7AqMSQ2WFrQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by AS8PR04MB9061.eurprd04.prod.outlook.com (2603:10a6:20b:444::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
+ 2024 08:43:35 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%4]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 08:43:35 +0000
+Message-ID: <6a65f608-7ca4-44f1-865c-6a1b9891b275@oss.nxp.com>
+Date: Fri, 6 Sep 2024 11:43:31 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
+ support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240826084214.2368673-1-andrei.stefanescu@oss.nxp.com>
+ <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
+ <fd18295c-6544-4da6-aab0-6d6b9c12581a@kernel.org>
+Content-Language: en-US
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <fd18295c-6544-4da6-aab0-6d6b9c12581a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4PR09CA0002.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5e0::9) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240904100923.290042-1-dev.jain@arm.com>
- <20240904100923.290042-3-dev.jain@arm.com>
- <542b8267-39de-4593-82ef-a586bb372824@arm.com>
- <7b7c5dc8-933b-405f-be27-907624f7f8ce@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <7b7c5dc8-933b-405f-be27-907624f7f8ce@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|AS8PR04MB9061:EE_
+X-MS-Office365-Filtering-Correlation-Id: 837194e0-8cb7-4234-f072-08dcce4ffe85
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SG55dzJIU0tyamRlTlowU2wzNVMrS1VMZFk4ckgyZE5BTE5LYzRDTFFKL0g0?=
+ =?utf-8?B?N2VDWlJqUTdMVzlTdkduYS8vckJWeEcxNmtxdmF0Vlpaa2pSMldSZm1XRHNm?=
+ =?utf-8?B?TE1heUlRVEg3VWJKbG1MaUp1OEduSEJUbGJiRjZaZll3TVhNaCtHdjdFZnhw?=
+ =?utf-8?B?aG9XTEkyUytyaTlpZ3VsV0R3ZDlsT3BKbHNQVVBZOW9SOFU1ZTRPNTNBUHFJ?=
+ =?utf-8?B?MVdHYmNFUTI0MlhRU2tXanFzM2RWQVJ1QmQycG0xNzZSL2VNSmN4bDZJdi82?=
+ =?utf-8?B?dUpZK0Y5dUVDSWFqQlAwdWx1T1BScFlTTW85VHNBbGV3QnFYR3E5RE8wZ0x1?=
+ =?utf-8?B?cVE2MU5iN3crNkk2V2p4aHg0Y2Qya0xaemlBbllYNVVkaFMxYUxRSmpPcmdX?=
+ =?utf-8?B?cmlrOGl4WmY0a2dsUjZYSDRWQUJ5czF4cUNrbFNZeldVeEd1a2ZDRFNiSDVr?=
+ =?utf-8?B?WEJwL0xnS0VBU0hnUVFKeVJrQzg4WnlsM0JCTG4vUXRNVE4zdG83UEZ1L0RB?=
+ =?utf-8?B?bWJ0M0dGc0tjQzVVQ2QrVUpJNytyVE9UanN5YTFkdVhINFJTN1FWY1d5RTJU?=
+ =?utf-8?B?VzdvcCtRL3pnYjE4U0V6bldBVStuWEFHY1A4Vk1qK29hYXI3STlqWHBXNldO?=
+ =?utf-8?B?VmVMcG4rdGtBUVp2TDJNeEZYTHI5NmVsU2pEYy9ZSU9leHFLQnZ2eUZldkUr?=
+ =?utf-8?B?bzdsdkMyVmV1S0JPa2YzS0ZVWXd2cmx1ZUVsd2N4MmZSTmIySk9yWlU3dDRW?=
+ =?utf-8?B?NVI3aE9HTjlabG9ZUmp1TlA3RUk3ZGpJZEF1SWtLbm1HdDk1aW53U01pNGlT?=
+ =?utf-8?B?WkNKREtGSjVtakE1WWJZVWVsQWVyek5HSlVlaUJLQTUwR0RtUmRoMFlUS0Jw?=
+ =?utf-8?B?S2ljS29pY252UUw2OGtNOTN1c3VnczIrUENUMVBUSU1HTnA3T0dwR005NGJY?=
+ =?utf-8?B?dFNxdHVaa01yYzR6SVBTSDVrckswN3JreGZUQ1RJRER5TzFPNllzS3dIUS9V?=
+ =?utf-8?B?MjN4TmNyVFZKLzlMTVlHMFRiN3hwUVdiTE1WWXRJL3k3b0R1S01kblpmZzBT?=
+ =?utf-8?B?bk9PelA1RVVRVGJqZi9RRUpONjJEamo4YnBiSEMrTG1WbVhQMHBYM3kyU0Jz?=
+ =?utf-8?B?aDZzQjhoNlhOcFdSTkxLQkNPeHhxalVuUHk3TXVESnl2WkozSytVTkRpY2l6?=
+ =?utf-8?B?WGxvdjZmYnV3dVk1ZGdhQ1NHdmx6OTlyN2ZDamNoUmhkeUNmMTNsMXR3NFJa?=
+ =?utf-8?B?MStEZXZTTm94UDFhWWJOeElEc2twUkJYNTEwSDhkNk5kdkFJaGNwRU54ZWUx?=
+ =?utf-8?B?MG8vSURtSlZmSmJFVjg3OU9QekJkZ2ZJeXVTK2NsRkdlc0t1UDEvODlVejFG?=
+ =?utf-8?B?WElxL1lMZUhYSXhOWE0zYkx1RnhZS2dKbkdvc0RISWV6UzZyMUE2MVRlbVNj?=
+ =?utf-8?B?NkhJRVFyaDdrOEVmcFdKb1VKSVA2VVNXUW1UL2dEWFhEU0Z6T1JUd2JMc0Mv?=
+ =?utf-8?B?eXQ3czVRQmRlYnZvdGNsMXlBMFQvWDY4Y20wUEJCL3BXKzJmcU1OOUxGclli?=
+ =?utf-8?B?YURXTTZKZlFpOWZ6NEtvZ3c0bGd6U2ZidDdkMWMvREozeXVNTDVRYjFUbW9V?=
+ =?utf-8?B?bmoyTHZvNUU4UXFOTXEyZmtoOU5OanR0ZU1KMGYxUEhaSGYwT2x2Qk5lZThl?=
+ =?utf-8?B?Ni9ydDRxQXA4NlRsWW5HbHhvT3F4VjdRT1FuRStkWXp0Z2d2SW1KZ2EvTU56?=
+ =?utf-8?B?cGwyS1IwNFBPaFMrQjhJaTFsY1pFUlRpb0VWWk1kM1k0OGdmNVpDUk85T2VH?=
+ =?utf-8?B?amZTeWQ0NWNSWWNJQkloUlJoMFJ3aXQ1U1dWbVpNKys0L0lVRHF5aEtsUDND?=
+ =?utf-8?Q?s8jlxhBjhpZ7K?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NHlFMG9mazhEVlhUT0lDM0QzeFhFZU1XS1dKUzBlYll6dUp6UGFsNDBucTFE?=
+ =?utf-8?B?NVNzSGQwMXhrOUNXdVZHWnphQ3p6U1BncFkzU1ZtSjFKNldTMENMQjFiVlRQ?=
+ =?utf-8?B?U2dtQ3RLL3FNbEpTd0hNQzZFdjhIazZkMC9QQVJ3Q21Ldi9aTWhETEpRSWFJ?=
+ =?utf-8?B?RWdnME5mdHdqNHRuTXJsZVFqb0NSeXYveUdGZDV3UlVaazRRRmt5d1U4eXJD?=
+ =?utf-8?B?SHIvU0F6Sm9DZEtUSEd4SDdOc2o0OVE4MnViVEpXU3JlUjliNjZra21ZN0RL?=
+ =?utf-8?B?NjVWVVV4ZVZpdlhFZXhXNG83TENFdEVEUXQxNS85Z1ByZlI0c2ZvdEdkaWtK?=
+ =?utf-8?B?SmQxZFZZdEZ2Mkd3UUt6UFFXUnhkWWpLWUZDU1JocWFOb0IwTmNnMVIvUm5T?=
+ =?utf-8?B?QmgwWCs0NmxvMjNFdDR3ai9HRld3c3R5V0I4RkZ1QVFJaWRQaHd4K1VJMjgx?=
+ =?utf-8?B?NzA0TktkT2xwZWFJZEh1N0RJa0hLZ3l0V0cwNk1TbmhsQ0p5Z1pGUWVvbzNH?=
+ =?utf-8?B?ZzRmcWg0aGsxbHJzcDhBV1NOSFJGYVV4V2N5TDlJQnQ5RlJxcm1TZndoRDg2?=
+ =?utf-8?B?d3RyakxtaTAxUXFZLzV3YnFSL29IRHJrWHV4eVhQK3B4NXR4RHBaT0l5bWJo?=
+ =?utf-8?B?M0xhVHBzWW9pQnZ3cUFUU0tvbkpHR1RkcWp5d1ZDM29VRXBCQVJ3Ymh2REd5?=
+ =?utf-8?B?amNTbFNCWWN5UmJRV2kzQU1UUHhMNEVnbmVrMjZZTjliYWdERlMrSklUTm9u?=
+ =?utf-8?B?M0h4c1F5RlBaRG45WWJud01sbjBXN3VPYjJNVmxiYVYwWUg3UHJ4NjMzeDFC?=
+ =?utf-8?B?NXJpMFVXVmxQSm85bGZ5SmNaT3VoSGZLSUxvcTFML3laVERkclowUjZ3VGZ6?=
+ =?utf-8?B?Nm1jZ1pSTjFsUzFibzZ5RkNKTVJhT0xvdFRCVm45eis3bE1EaVpwVGl2cVdB?=
+ =?utf-8?B?S0U1RzZSU1NnOUYyNHZlWGIwb09HeTNwOU5ybkF3d2RwSWlnZ0lURE1tYWJV?=
+ =?utf-8?B?NXlpU1JIZzRqL3dkWVpaa2ZWem4xb2xjV3R2Y1pIM2lDYmRINEVuTVQraEdV?=
+ =?utf-8?B?aDRBazVyUWFmT2t1VlBRSmNFQUJsbWRXVVN0NzdaRmV2VVdJZWVmNzRKV2tl?=
+ =?utf-8?B?c2pEbHlUbEVTUXR6TStDa3ZsZk9zemNFYm5MOTVKbXJhS1lpd1lLNFBxRzZX?=
+ =?utf-8?B?M0dBbkhyWUlXaEpGYkpFWWJ0dGxPekdDSzVLRWNVT2ozb0ZWY1h3NVJlbGdC?=
+ =?utf-8?B?LzhBc21XVXB1QkZncmRpOG00TEpCcE44NmV2VFlNRWxBajBGVHBHa09aNWZs?=
+ =?utf-8?B?ZDdyZGdBcWM1aWZ5aEY3TVBCZXJLT3NIcFZpS0xQalJSdTNwZk85ejdaWG9U?=
+ =?utf-8?B?b0dDeldMUFUrd1gyZTlFYWp3bGI3d0NHaXQvUDduSjBFUlpkc2VodXNGemVu?=
+ =?utf-8?B?Znl1WnNBb1V0TWtFSjRpNnlzK2UxZzI2SDVNOU0vWEJnR0FoU2FsbExHNFNh?=
+ =?utf-8?B?cDFpRWpMem1ETW5EcitPUkpnY1Y3dkRybG1wY1FzYWdXMDNsRjQ4a240WEVy?=
+ =?utf-8?B?U1RUMjhRRzBOK0Z6dkgxSVArS1pjL3dnUlFrdm5DQk9OQVpVUTk4TlhFRVlH?=
+ =?utf-8?B?N3ZlWWRZTDRyRkpwb1VHZzRYSWVRVGNEK3ZzOGFtRjRsVS9weU1tRlBCZWph?=
+ =?utf-8?B?a3ViOUFOOEszMHZQUyszSUl2cHFHb0luZzJOaUVOT0hYRDA2eEZZRjRFcndM?=
+ =?utf-8?B?dGhEMkJianc5TUZJS0l1eW15WHVlaVU4YnJZQTVxY2FYS0lnWnpwYzlXNHVV?=
+ =?utf-8?B?a0JPWUkvcWZGc3pYaFBqRUo4NllXS3lDN0lPQlhjNm9OcWZlbktLOUxSR2Rx?=
+ =?utf-8?B?WVZBM001T1YwaFlPMTFOV0hkeW5EbjVTMXMreVJTTFZJUlQ0YlovNmV1aXZn?=
+ =?utf-8?B?V29RUkZmWi9IbXZLQW5nYmU4dzBjcUx3V2pzS3l3dGJqVWFNUnlsWEFucFF6?=
+ =?utf-8?B?UTNSWGdEcjRVdEhlKzI5M2l6YXpuVHNWazFnUUNDbzNaQnk1UUlhNjRzVEgy?=
+ =?utf-8?B?WUxQSVQ3YXBnK1dzcXdxYkY4QTZLWDM3RlFhbnV0UzVjNVRZa2FrUFZkVElX?=
+ =?utf-8?B?VWZHTm16blRFbHdPM1ZGWklBNXVoS0JNR2UvM1ljUlkzdndsaTBUR2Q5ZFhl?=
+ =?utf-8?B?bGc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 837194e0-8cb7-4234-f072-08dcce4ffe85
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:43:35.4946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ue2TCPEzKjyOFAsScBnLmg/jZO8abWlI1OnoNRqiwC3EJ7tWMUaZ1utBgMgDNsJieUUbE0xetuQS/oQqyuAyLCrUByY0dYxPVPNhdkhOjOA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9061
 
-On 06/09/2024 08:05, Dev Jain wrote:
-> 
-> On 9/5/24 18:44, Ryan Roberts wrote:
->> On 04/09/2024 11:09, Dev Jain wrote:
->>> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
->>> replace it with a PMD-mapped THP. Change the helpers introduced in the
->>> previous patch to flush TLB entry corresponding to the hugezeropage,
->>> and preserve PMD uffd-wp marker. In case of failure, fallback to
->>> splitting the PMD.
->>>
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>> ---
->>>   include/linux/huge_mm.h |  6 ++++
->>>   mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
->>>   mm/memory.c             |  5 +--
->>>   3 files changed, 78 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index e25d9ebfdf89..fdd2cf473a3c 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -9,6 +9,12 @@
->>>   #include <linux/kobject.h>
->>>     vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
->>> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->>> +               unsigned long haddr, struct folio **foliop,
->>> +               unsigned long addr);
->>> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>> +         struct vm_area_struct *vma, unsigned long haddr,
->>> +         pgtable_t pgtable);
->> I don't think you are using either of these outside of huge_memory.c, so not
->> sure you need to declare them here or make them non-static?
-> 
-> As pointed out by Kirill, you are right, I forgot to drop these from my previous
-> approach.
-> 
->>
->>>   int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->>>             pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
->>>             struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 58125fbcc532..150163ad77d3 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp,
->>> unsigned long addr,
->>>   }
->>>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->>>   -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct
->>> vm_area_struct *vma,
->>> -                  unsigned long haddr, struct folio **foliop,
->>> -                  unsigned long addr)
->>> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
->>> +               unsigned long haddr, struct folio **foliop,
->>> +               unsigned long addr)
->>>   {
->>>       struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
->>>   @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct
->>> vm_area_struct *vma, int order)
->>>       count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
->>>   }
->>>   -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>> -            struct vm_area_struct *vma, unsigned long haddr,
->>> -            pgtable_t pgtable)
->>> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
->>> +         struct vm_area_struct *vma, unsigned long haddr,
->>> +         pgtable_t pgtable)
->>>   {
->>> -    pmd_t entry;
->>> +    pmd_t entry, old_pmd;
->>> +    bool is_pmd_none = pmd_none(*vmf->pmd);
->>>         entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
->>>       entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
->>>       folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
->>>       folio_add_lru_vma(folio, vma);
->>> -    pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->>> +    if (!is_pmd_none) {
->>> +        old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
->>> +        if (pmd_uffd_wp(old_pmd))
->>> +            entry = pmd_mkuffd_wp(entry);
->> I don't really get this; entry is writable, so I wouldn't expect to also be
->> setting uffd-wp here? That combination is not allowed and is checked for in
->> page_table_check_pte_flags().
->>
->> It looks like you expect to get here in the uffd-wp-async case, which used to
->> cause the pmd to be split to ptes. I'm guessing (but don't know for sure) that
->> would cause the uffd-wp bit to be set in each of the new ptes, then during
->> fallback to handling the wp fault on the pte, uffd would handle it?
-> 
-> I guess you are correct; I missed the WARN_ON() in page_table_check_pmd_flags(),
-> but I did see, if I read the uffd code correctly, that mfill_atomic() will just
-> return in case of pmd_trans_huge(*dst_pmd) while doing a uffd_copy to the
-> destination
-> location. So preserving pmd_uffd_wp is useless in case a THP is mapped, but I
-> did not
-> know that in fact it is supposed to be an invalid combination. So, I will drop it,
-> unless someone has some other objection.
+Hi Krzysztof,
 
-So what's the correct way to handle uffd-wp-async in wp_huge_pmd()? Just split
-it? If so, you can revert your changes in memory.c.
 
+>> +static struct regmap *common_regmap_init(struct platform_device *pdev,
+>> +					 struct regmap_config *conf,
+>> +					 const char *name)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct resource *res;
+>> +	resource_size_t size;
+>> +	void __iomem *base;
+>> +
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
+>> +	if (!res) {
+>> +		dev_err(&pdev->dev, "Failed to get MEM resource: %s\n", name);
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	base = devm_ioremap_resource(dev, res);
 > 
->>
->>> +    }
->>> +    if (pgtable)
->>> +        pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
->> Should this call be moved outside of here? It doesn't really feel like it
->> belongs. Could it be called before calling map_pmd_thp() for the site that has a
->> pgtable?
-> 
-> Every other place I checked, they are doing this: make the entry -> deposit
-> pgtable ->
-> set_pmd_at(). I guess the general flow is to do the deposit based on the old
-> pmd, before
-> setting the new one. Which implies: I should at least move this check before I call
-> pmdp_huge_clear_flush(). And, since vmf->pmd and creating the new entry has no
-> relation,
-> I am inclined to do what you are saying.
+> There is a wrapper for both calls above, so use it.
 
-pgtable_trans_huge_deposit() is just adding the pgtable to a list so that if the
-THP needs to be split in future, then we have preallocated the pte pgtable so
-the operation can't fail. And enqueing it is just under the protection of the
-PTL as far as I can tell. So I think the only ordering requirement is that you
-both set the pmd and deposit the pgtable under the lock (without dropping it in
-between). So you can deposit either before or after map_pmd_thp(). And
-pmdp_huge_clear_flush() is irrelavent, I think?
+I am not sure I can change this because I also use the `resource_size`
+call below in order to initialize the regmap_config. 
+Unfortunately, `devm_platform_ioremap_resource_byname` doesn't also retrieve
+the resource via a pointer.
+
+I saw the `devm_platform_get_and_ioremap_resource` function but that one
+retrieves the resource based on the index. I would like to keep identifying
+the resource by its name instead of its index.
+
+Would you agree to keep the existing implementation in this case?
 
 > 
->>
->>>       set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
->>>       update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
->>>       add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>> -    mm_inc_nr_ptes(vma->vm_mm);
->>> +    if (is_pmd_none)
->>> +        mm_inc_nr_ptes(vma->vm_mm);
->>>   }
->>>     static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
->>>       spin_unlock(vmf->ptl);
->>>   }
->>>   +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
->>> +                         unsigned long haddr,
->>> +                         struct folio *folio)
->>> +{
->>> +    struct vm_area_struct *vma = vmf->vma;
->>> +    vm_fault_t ret = 0;
->>> +
->>> +    ret = check_stable_address_space(vma->vm_mm);
->>> +    if (ret)
->>> +        goto out;
->>> +    map_pmd_thp(folio, vmf, vma, haddr, NULL);
->>> +out:
->>> +    return ret;
->>> +}
->>> +
->>> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long
->>> haddr)
->>> +{
->>> +    struct vm_area_struct *vma = vmf->vma;
->>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
->>> +    struct mmu_notifier_range range;
->>> +    struct folio *folio = NULL;
->>> +    vm_fault_t ret = 0;
->>> +
->>> +    ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
->>> +                  vmf->address);
->> Just checking: the PTE table was already allocated during the read fault, right?
->> So we don't have to allocate it here.
-> 
-> Correct, that happens in set_huge_zero_folio(). Thanks for checking.
-> 
->>
->>> +    if (ret)
->>> +        goto out;
->>> +
->>> +    mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
->>> +                haddr + HPAGE_PMD_SIZE);
->>> +    mmu_notifier_invalidate_range_start(&range);
->>> +    vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
->>> +    if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
->>> +        goto unlock;
->>> +    ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
->>> +    if (!ret)
->>> +        __thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
->>> +unlock:
->>> +    spin_unlock(vmf->ptl);
->>> +    mmu_notifier_invalidate_range_end(&range);
->> I'll confess I don't understand all the mmu notifier rules.
-> 
-> I confess the same :)
-> 
->> But the doc at
->> Documentation/mm/mmu_notifier.rst implies that the notification must be done
->> while holding the PTL. Although that's not how wp_page_copy(). Are you confident
->> what you have done is correct?
-> 
-> Everywhere else, invalidate_range_end() is getting called after dropping the lock,
-> one reason is that it has a might_sleep(), and therefore we cannot call it while
-> holding a spinlock. I still don't know what exactly these calls mean...but I think
-> what I have done is correct.
+>> +	if (IS_ERR(base))
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	size = resource_size(res);
+>> +	conf->val_bits = conf->reg_stride * 8;
+>> +	conf->max_register = size - conf->reg_stride;
+>> +	conf->name = name;
+>> +	conf->use_raw_spinlock = true;
+>> +
+>> +	if (conf->cache_type != REGCACHE_NONE)
+>> +		conf->num_reg_defaults_raw = size / conf->reg_stride;
+>> +
+>> +	return devm_regmap_init_mmio(dev, base, conf);
 
-High level; they are notifying secondary MMUs (e.g. IOMMU) of a change so the
-tables of those secondary MMUs can be kept in sync. I don't understand all the
-ordering requirement details though.
-
-I think what you have is probably correct, would be good for someone that knows
-what they are talking about to confirm though :)
-
-> 
->>
->> Thanks,
->> Ryan
->>
->>> +out:
->>> +    return ret;
->>> +}
->>> +
->>>   vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->>>   {
->>>       const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
->>> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
->>>       vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
->>>       VM_BUG_ON_VMA(!vma->anon_vma, vma);
->>>   -    if (is_huge_zero_pmd(orig_pmd))
->>> +    if (is_huge_zero_pmd(orig_pmd)) {
->>> +        vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
->>> +
->>> +        if (!(ret & VM_FAULT_FALLBACK))
->>> +            return ret;
->>> +
->>> +        /* Fallback to splitting PMD if THP cannot be allocated */
->>>           goto fallback;
->>> +    }
->>>         spin_lock(vmf->ptl);
->>>   diff --git a/mm/memory.c b/mm/memory.c
->>> index 3c01d68065be..c081a25f5173 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault
->>> *vmf)
->>>       if (vma_is_anonymous(vma)) {
->>>           if (likely(!unshare) &&
->>>               userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
->>> -            if (userfaultfd_wp_async(vmf->vma))
->>> +            if (!userfaultfd_wp_async(vmf->vma))
->>> +                return handle_userfault(vmf, VM_UFFD_WP);
->>> +            if (!is_huge_zero_pmd(vmf->orig_pmd))
->>>                   goto split;
->>> -            return handle_userfault(vmf, VM_UFFD_WP);
->>>           }
->>>           return do_huge_pmd_wp_page(vmf);
->>>       }
-
+Best regards,
+Andrei
 
