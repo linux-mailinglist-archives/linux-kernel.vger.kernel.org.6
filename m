@@ -1,127 +1,94 @@
-Return-Path: <linux-kernel+bounces-319203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A520696F93D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:26:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CEF896F940
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649DA28343A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 385CB1C22D71
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502CA1D3638;
-	Fri,  6 Sep 2024 16:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504C11D4173;
+	Fri,  6 Sep 2024 16:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZR5V1slU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaa1VBDq"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48D01D3621;
-	Fri,  6 Sep 2024 16:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F391D3656;
+	Fri,  6 Sep 2024 16:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725639965; cv=none; b=jvYJRhNtR55EGjBVYSqGeiL/U8zZn9T1R/8di/ZP4BkN/dobdiD3kCTbLluiRL81BnQkTiF39HSoRffXCt7jD+g+HgbDGI1JvokgP3sKGRvgb5q+/Q6O66kkHD8R/GUkXmExPKOhuKAFDsR2tQUpiNJyULYSBBfvfBbJM64PcrE=
+	t=1725639968; cv=none; b=sZRyuz/O+Nt62kl2Hff6MgZIVCrcZ6CmGCNRftIZ9ypvJt5J2WiCnIvGP2c0EB6p5oeC6tVNwmKdj6Kd2jmPav2x7kUvmuXysJ3UAA4F3UztL/nyGQvmnntJ8fRc03ND/La2gG6RqlCk33mF4FOMNoOXxwDZSi8V6dr/c8XF79A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725639965; c=relaxed/simple;
-	bh=vcgHtoa6Cxj1gRGeyoTDpvizy+JeUW/QNtJF4/J0g7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To; b=SRVlEdCDazeNyUvcOpYv8JTMq96WkKLEU7tlrJki2NHPa1yiIzgS1CJxauauBSw89RBku17K4zQpagRrzbcBl3p+bdIb/ujtXudWRox0rRDftLPxADzXkfz9gHyCZXqIJLJ7PUv2Vff+rcnR9er2e4itXya2Pt1/nEzvE099UDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZR5V1slU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B277C4CEC4;
-	Fri,  6 Sep 2024 16:26:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725639965;
-	bh=vcgHtoa6Cxj1gRGeyoTDpvizy+JeUW/QNtJF4/J0g7g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:From;
-	b=ZR5V1slUo/fZjqW36cJK3VJmNpB0Rt08eTb4+qXRItTfE6xi03glGVgZWLS9orduW
-	 Gputj6k32noq63FpOT2MH905LPz6a311ghM+Ug6EPM+aWiUtcOE13s/Jl+QjOI8C8r
-	 g0TxUKBL2TLjYnBQwm1hvm2+MGVS07jJhnQhwjhu4WLx/pGDenr3LvTedNO0sLZXHo
-	 ZkiA9Rd/IH1TmMm1CMzb2VsQvCM0FTlmLnaJAHOBUHKMbpzOm29TMLFsVwWcIL/2Ou
-	 qmqM2MbX7dUmq+8Ol6Kj0l8YGgbsUghlPjyVL/cFuyDUDm21n3SGsdNij07PSbHtcy
-	 rCvI55keeldRQ==
-From: SeongJae Park <sj@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: SeongJae Park <sj@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org,
-	Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 05/15] timers: Rename sleep_idle_range() to sleep_range_idle()
-Date: Fri,  6 Sep 2024 09:25:55 -0700
-Message-Id: <20240906162555.30071-1-sj@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-5-e98760256370@linutronix.de>
+	s=arc-20240116; t=1725639968; c=relaxed/simple;
+	bh=nFF73k02llJCIJJL5L70joPl6968VwhvuwceIGOxv/c=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qnCraIRcz8APY6Qo05FEBbsmIOfHuGM10/AJyBPePaAg5DuklBolxbvoJZ5129xCZrVQs7SQkZrA1Ww1I4e2nbQi6rsJFdE+iAKJDP1VWaOsWGW45QyOKqNK84gzIzkikQmKeMWJBVkg9NZectbhkYPtCYiYAjoRSy0n8QLEp5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaa1VBDq; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d6a3ab427aso18620967b3.2;
+        Fri, 06 Sep 2024 09:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725639966; x=1726244766; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9Ny6pJsax76tq4JboD/Doed2vOv3/3852gshTMYnMQ=;
+        b=eaa1VBDqAi4Tx/ba34ql2Vtu/22GXsxz7wPOkQVYUTY/C1CvOvVx9ihRikp2Ja5oj/
+         4rL+V79MJp6rRm2NMOCKa03il3b8EL0D/vfuExVQDm1wcTw3Flc+6KvSksmpfLvLyrys
+         roQxQ53gghXMiQzWJst7oiEdQopty/RkYCw16eDewb14IHvXjJRvdEcD4Yry7BpEl1B1
+         PymBYGJF+Jbf0KKaNPr086FwjxiCwQ5JOJ3+z3BavJX6e1mYnjtPJxnCPHKyJws/4zOU
+         MssSAep9oNYL5FPGCz0FtcWjCVo03dczcrUbbyr+jpNh9CHusegq7DCEB+ajPnWq6LsX
+         YEIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725639966; x=1726244766;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p9Ny6pJsax76tq4JboD/Doed2vOv3/3852gshTMYnMQ=;
+        b=lv5r6CVd+JnL6sAeUKxD1GxDyZcoCPEXNeCp/PcfUvwJZJcSS8OQsoZUdzMzc8NTH/
+         rjSN1HmGvVP9hySNA5SX545RauYdpEo0kiPCefJ5FPNFOloqJgYnXvhNUtprb7EVS29F
+         5gCBB88WFsuwzifeRXbqiQrUdrrihTBnp3gfUQcmeiE0M6aSYuo5iDi6qpHjqiHHMzR/
+         eWPqQxqUYMZ4gJVECtxhfzS1ddbhjKYZ8+WcUhk1DkaHiZ+3YSRf0FZPOUCLDoc31yKf
+         y35j/4L+6JcQbmoegPWxmrG4DfsTD7hiL0Auz0e7fZ7chvxgqJtJc7IF0ce7aFSGxLJw
+         WNbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPdoxqr4lm+nE5Ow4iDIYCW2pUVA+7CA9rXeq0dNnbftwkm6OoshdsOr1a4qwJkt9vLbobLu69NaW84IQ=@vger.kernel.org, AJvYcCXryArau0b9rPh8LOUFEgdbD2eoQOAPplIW4w8pNzpCJKNR+2vYtVJWOYBMjs/LN1vg2fzse+5q@vger.kernel.org, AJvYcCXxxgpXhClK47dcz11thVGr65/AHci6V4drgBO5FZL1iS4u/T8KwWbwNm3otjZuj+DvciDWg3rE8kyh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5e4Xts8Fn8gSBVsNADf12pK+Qh7wW8Lr2g3Y5OcEQlLRqAkOe
+	TX+cbnjcRuQeJxdDbT+5MvxId+m8zHM/o3vepqDTYCMVZXA1FwLL
+X-Google-Smtp-Source: AGHT+IFH/jIN8UGDXpLiwPIButM2OHHRvVnKuE6CuEixZ4Tx9UZffvF0/9MjZwjqszw0HFLYBxTmKg==
+X-Received: by 2002:a05:690c:6211:b0:6af:c39c:da99 with SMTP id 00721157ae682-6db45164c55mr37083657b3.43.1725639966273;
+        Fri, 06 Sep 2024 09:26:06 -0700 (PDT)
+Received: from [10.0.1.200] (c-71-56-174-87.hsd1.va.comcast.net. [71.56.174.87])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db565c2c2fsm446577b3.106.2024.09.06.09.26.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 09:26:05 -0700 (PDT)
+Message-ID: <f110db9e-16a5-4256-b0fd-980fda8a2cb0@gmail.com>
+Date: Fri, 6 Sep 2024 12:26:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: syzbot+d7e968426f644b567e31@syzkaller.appspotmail.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com,
+ syzkaller-bugs@googlegroups.com
+References: <00000000000073383906212f236a@google.com>
+Subject: Re: [syzbot] [usb?] WARNING in rtl8150_open/usb_submit_urb
+Content-Language: en-US
+From: Ananta Srikar Puranam <srikarananta01@gmail.com>
+In-Reply-To: <00000000000073383906212f236a@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 04 Sep 2024 15:04:55 +0200 Anna-Maria Behnsen <anna-maria@linutronix.de> wrote:
-
-> sleep_idle_range() is a variant of sleep_range(). Both are using
-> sleep_range_state() as a base. To be able to find all the related functions
-> in one go, rename it sleep_idle_range() to sleep_range_idle().
-
-Nit.  s/sleep_/usleep_/?
-
-> 
-> No functional change.
-> 
-> Cc: SeongJae Park <sj@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: damon@lists.linux.dev
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> ---
->  include/linux/delay.h | 2 +-
->  mm/damon/core.c       | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/delay.h b/include/linux/delay.h
-> index ff9cda975e30..2bc586aa2068 100644
-> --- a/include/linux/delay.h
-> +++ b/include/linux/delay.h
-> @@ -68,7 +68,7 @@ static inline void usleep_range(unsigned long min, unsigned long max)
->  	usleep_range_state(min, max, TASK_UNINTERRUPTIBLE);
->  }
->  
-> -static inline void usleep_idle_range(unsigned long min, unsigned long max)
-> +static inline void usleep_range_idle(unsigned long min, unsigned long max)
->  {
->  	usleep_range_state(min, max, TASK_IDLE);
->  }
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index 7a87628b76ab..94fe2f1f9b0e 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
-> @@ -1887,7 +1887,7 @@ static void kdamond_usleep(unsigned long usecs)
->  	if (usecs > 20 * USEC_PER_MSEC)
->  		schedule_timeout_idle(usecs_to_jiffies(usecs));
->  	else
-> -		usleep_idle_range(usecs, usecs + 1);
-> +		usleep_range_idle(usecs, usecs + 1);
->  }
->  
->  /* Returns negative error code if it's not activated but should return */
-
-
-Other than the trivial nit,
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-
-Thanks,
-SJ
-
-> 
-> -- 
-> 2.39.2
-> 
-> 
+#syz test: 
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 
+b831f83e40a24f07c8dcba5be408d93beedc820f
 
