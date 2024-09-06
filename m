@@ -1,219 +1,130 @@
-Return-Path: <linux-kernel+bounces-319532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3841096FDF5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C4A96FE09
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5416284BA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A20284D19
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F6815958D;
-	Fri,  6 Sep 2024 22:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E0815AAD3;
+	Fri,  6 Sep 2024 22:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GtzqpDIQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="43anE2gk"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2312F1B85DD
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0477C1B85D8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725661742; cv=none; b=tFdeFiR0sIdcew4szRNcpw8zTQNW5pgApiEK7uF80u6wCdzJRU3EDLDNooBEna3B5w2rDAPWpteny2KMrJPz5xvudmgtkOc6diAnRM9i9HLVszMm9bsPx6efy8BZuL+Zz6ryfRPpJLKDg0dp9CEJHYZkgJmBLBDerzazf77ssq0=
+	t=1725661949; cv=none; b=EtNt2iPL8CBYqABMRluz+dk3O4rnzuH4zCoGrZDwvZCy9XGVoeK0DZfX1roAWY6rEuPumPJ3AwboQv0qunI1UEEo2n2NL19EBdeXAiur44ApRqM8mqsAezQU8Uztf56mfPCKN4slOEYHilb4HcMogyWE5ZiMBQ/ihcCd7kUti68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725661742; c=relaxed/simple;
-	bh=wji6i/m5fVmotek+jcgbt82uPqBX/z68pB3bV9/rg4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ddr7rtYfL38T2ihwqExx8q/BDGzLKd0dhSnUquqXEMlVN/9QG1y4uUtSdyqTqffXzdXvygd0VcQzvDSlqeCoQOYtqHN7VWcuvbyjNLhWL5pDqCoOHDCE2QgwxgUK/gCxANVIoKgNrzShb9YOSAaH293KplCXTvkHMJhRckmxrWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GtzqpDIQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486IdadR001123;
-	Fri, 6 Sep 2024 22:28:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A0fMNr5wag5DEeQGPGtu1HaQYDHDG1GM+re7H6tfCws=; b=GtzqpDIQgT9gCsKD
-	6VgYpFRWk1wWTlwZanidjoaIjsYJ5rSY1iehHvFw1r6jr2AGPqJlEfPcV7qUbbhA
-	4xurnEfyuAsXD1cqrQAJRPzgotjIO5wdhMwSxnPGhBblHz+4Wz8cn+uMQMHrYn5h
-	J5dCb0CEsUowvTKOY2LkNjwC6RDmrYWO8bG4YsIUOydutjzg4LmGmdUomwsykNP8
-	8pPdj9Qu6RfVj6BY0vN1V4dXuYsOepqcffUfoXvDsfptSxu6XIfvPt8vEe41ngbM
-	hWwldXpbXuxFkjPU++6U3qmEeBTv3Gy2XTZ1gCf5L4jBPOFOxlW4RFbX3gnKZ9lz
-	MFLCcg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwtbnbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 22:28:50 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486MSnaG021912
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 22:28:49 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Sep 2024
- 15:28:49 -0700
-Message-ID: <519bdbd1-0cf6-43e1-b593-35001624cef6@quicinc.com>
-Date: Fri, 6 Sep 2024 15:28:48 -0700
+	s=arc-20240116; t=1725661949; c=relaxed/simple;
+	bh=XSlIhTL85Dkf7AG09eQo8nLBuD0ZJMyOsY3Hl7kCHwQ=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=K0ghWP/fFLPObti7kx01tTxmRVsWZBzc3iKT1hJycmuDoizKbrUdDX15N6hWVy4f74C4fZ8Le6FhQecsmhYKvVIlRoqGll/KnEBb6uAYSYYDjN71ZSP1wrgolNoqaWY4VDadpMctagONn/2zOb00MsroNLg5rXQepfVlR/6hPN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=43anE2gk; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id mZVNsp0lWvH7lmhV6s6uAr; Fri, 06 Sep 2024 22:32:21 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id mhV5sE7YFeCxMmhV6sUehC; Fri, 06 Sep 2024 22:32:20 +0000
+X-Authority-Analysis: v=2.4 cv=M/yGKDws c=1 sm=1 tr=0 ts=66db82f4
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=BEK6XHwdWclZZPXDZJEA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rDBREgK2nH9Lrz8BAvt0Zr2D2ezNqb3hegHj37VRtaY=; b=43anE2gkfSBVW0YXX8O8sb11rI
+	S/Tf1whLfV3kOEj7IcMe4HO0uqQbPEi8SPeyIB5DcdvqYqYmmg4psEvgq5E7enUaY5RUxqnlE0HVU
+	Txw7s952kc08M6ewvnC6IP5nBn45aapK3z+HQi3miqjAaC0LJLG4svSOP+CZMss/ZXYV877ha6JDo
+	t7Imk6zcKVDGeMii6299itZkNUP3hEkMgZenRp/VkFQx74sfOPH8RRvR8NzQ0+71x1P25O/NhMtdC
+	VABNmULqQ+JRsjr+elQ33K/33wcVM2/3KqGFA8CCu2aNZWva1SG7kxzNb2VT0kqogC/PxdamTBZKo
+	7urhr2rg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38802 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1smhV3-000aQH-2w;
+	Fri, 06 Sep 2024 16:32:17 -0600
+Subject: Re: [PATCH 6.1 000/101] 6.1.109-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240905093716.075835938@linuxfoundation.org>
+In-Reply-To: <20240905093716.075835938@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <82de129c-6ed3-a47a-ca35-3bdfa7c23d89@w6rz.net>
+Date: Fri, 6 Sep 2024 15:32:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panel: samsung-s6e3fa7: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>, <neil.armstrong@linaro.org>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>
-CC: <dianders@chromium.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240902071019.351158-1-tejasvipin76@gmail.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240902071019.351158-1-tejasvipin76@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5VnrBDvKoPWT9VDSTtmCDxyZk_dNspMd
-X-Proofpoint-ORIG-GUID: 5VnrBDvKoPWT9VDSTtmCDxyZk_dNspMd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_07,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
- adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409060167
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1smhV3-000aQH-2w
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:38802
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 42
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfEqcMqx2S4S+WyjwQXgnixVHWF6Ss3mQ3Q/aQByuRntPw7mfL52lCuz79I87zrnLAhIlECKX2p2bPYZxx/FEmXkHvyAKyyQl8OT7yxR03srcBHutw7BN
+ fjpAiDUzO+U0CEiWvnspTk4YcBmfpaK7GD5k+1FhDiL/Mlp0FuwyyEFo+qDXthCROexOv9yqDV5tXKVx9x7wCX3WgHHfF5YZISk=
 
+On 9/5/24 2:40 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.109 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 07 Sep 2024 09:36:50 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.109-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-On 9/2/2024 12:10 AM, Tejas Vipin wrote:
-> Changes the samsung-s6e3fa7 panel to use multi style functions for
-> improved error handling.
-> 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+Tested-by: Ron Economos <re@w6rz.net>
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-
-> ---
->   drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c | 71 ++++++-------------
->   1 file changed, 21 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c b/drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c
-> index 10bc8fb5f1f9..27a059b55ae5 100644
-> --- a/drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c
-> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c
-> @@ -38,57 +38,38 @@ static void s6e3fa7_panel_reset(struct s6e3fa7_panel *ctx)
->   	usleep_range(10000, 11000);
->   }
->   
-> -static int s6e3fa7_panel_on(struct s6e3fa7_panel *ctx)
-> +static int s6e3fa7_panel_on(struct mipi_dsi_device *dsi)
->   {
-> -	struct mipi_dsi_device *dsi = ctx->dsi;
-> -	struct device *dev = &dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->   
-> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(120);
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
->   
-> -	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set tear on: %d\n", ret);
-> -		return ret;
-> -	}
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x5a, 0x5a);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf4,
-> +				     0xbb, 0x23, 0x19, 0x3a, 0x9f, 0x0f, 0x09, 0xc0,
-> +				     0x00, 0xb4, 0x37, 0x70, 0x79, 0x69);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0xa5, 0xa5);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x20);
->   
-> -	mipi_dsi_dcs_write_seq(dsi, 0xf0, 0x5a, 0x5a);
-> -	mipi_dsi_dcs_write_seq(dsi, 0xf4,
-> -			       0xbb, 0x23, 0x19, 0x3a, 0x9f, 0x0f, 0x09, 0xc0,
-> -			       0x00, 0xb4, 0x37, 0x70, 0x79, 0x69);
-> -	mipi_dsi_dcs_write_seq(dsi, 0xf0, 0xa5, 0xa5);
-> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x20);
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->   
-> -	ret = mipi_dsi_dcs_set_display_on(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set display on: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static int s6e3fa7_panel_prepare(struct drm_panel *panel)
->   {
->   	struct s6e3fa7_panel *ctx = to_s6e3fa7_panel(panel);
-> -	struct device *dev = &ctx->dsi->dev;
->   	int ret;
->   
->   	s6e3fa7_panel_reset(ctx);
->   
-> -	ret = s6e3fa7_panel_on(ctx);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to initialize panel: %d\n", ret);
-> +	ret = s6e3fa7_panel_on(ctx->dsi);
-> +	if (ret < 0)
->   		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-> -		return ret;
-> -	}
->   
-> -	return 0;
-> +	return ret;
->   }
->   
->   static int s6e3fa7_panel_unprepare(struct drm_panel *panel)
-> @@ -104,23 +85,13 @@ static int s6e3fa7_panel_disable(struct drm_panel *panel)
->   {
->   	struct s6e3fa7_panel *ctx = to_s6e3fa7_panel(panel);
->   	struct mipi_dsi_device *dsi = ctx->dsi;
-> -	struct device *dev = &dsi->dev;
-> -	int ret;
-> -
-> -	ret = mipi_dsi_dcs_set_display_off(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set display off: %d\n", ret);
-> -		return ret;
-> -	}
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->   
-> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(120);
-> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
->   
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static const struct drm_display_mode s6e3fa7_panel_mode = {
-> -- 
-> 2.46.0
-> 
 
