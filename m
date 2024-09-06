@@ -1,160 +1,262 @@
-Return-Path: <linux-kernel+bounces-319304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C36896FA55
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:06:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197E796FA71
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE672284B7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5AC1F25296
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D83B1D4618;
-	Fri,  6 Sep 2024 18:06:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3E0EAE7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662051D47B9;
+	Fri,  6 Sep 2024 18:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dNnKs/3j"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB03D1D5CDA
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725645993; cv=none; b=oAiLVgUkXtNEdBCvnQH34B7J3s3oiYhrxetzGIpGL+2BBCxGZ2Kafw2hzK61cv+IfV1qUqIPND1XLPwgGqdrwOjqwi/DQ+1J0HS0eeV3tK+WNV+4TJWKbrQZwVpn3aRM82aogdUduJqYL+LwFrwN75LEFfaDbxeH+E9UMy2NZlw=
+	t=1725646048; cv=none; b=E7a+9hrbsdx7u0OaR4KqQWRgUQImSGTFvlbkqf4c+gyX8rp+SnehWK7rTF7or/4Md5CWnVxYqh2SHj2MPUZz+09yFAEGwUWV6EUI4yFHxMn9fshprDrZnEBjFf8SBk/OJspCQVxBBKiwsH8ui4bkfDJb8M1uJ8Cqekano/GylQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725645993; c=relaxed/simple;
-	bh=BzAJmfbS75UCPQvMJ217+J4hY32LBQlNf5i9BJ9k/KE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X75SvgHiPbw/ORcUlNKXR3Mv8ML20wfgPU8Jj+UZZsoCRedEK6Afut+mYUWwC3yJyuQ3JVVViNdoH4UNzlhp/JUzDNiE8ox2+SlqpFUQXCj3Rhm/5vV11FtFAJMTKXAzkuIt+ocwWSVjHlAlThf2/ucOTE9gqee7FVQIJ9IhO9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DFF6FEC;
-	Fri,  6 Sep 2024 11:06:56 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A70B3F73F;
-	Fri,  6 Sep 2024 11:06:26 -0700 (PDT)
-Message-ID: <4a1da47f-655a-4ba1-9b68-baaad297dda9@arm.com>
-Date: Fri, 6 Sep 2024 19:06:25 +0100
+	s=arc-20240116; t=1725646048; c=relaxed/simple;
+	bh=aVAgf6Jw06Lql3bDOfE6zVcTVmPhHzcmNDJscnSeSew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fnegOApXjNzlVIPfAnofUBXXq2EIz6O3TnR+55BD7Wh55mpPJdx5jCep0xhZI3jlFZzceTN/posUxBPdfuE/rVhVc22u8+7E2O7eW2Of5SF75SyOa1Ac2voyXtisczToRejSYR63MhRSL6j5Rz7qydX61VuAEJKFDxWpuAsuggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dNnKs/3j; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c828c8863so18793965e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 11:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725646045; x=1726250845; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+CkJo3Bz1wCo8cghBLvNHn5F/2d1ljMEB+CBPgFMiOM=;
+        b=dNnKs/3jgyvO+A6mXjyT7eFiuJije9f1o6pKnEkiUiDkVKYDYpLm84U/T7zp3WR4Qo
+         3sGVUHueJACIsD7IXa6ca7+reSi+BmgijvPbV5DByfMVibDD3UwALwB5BHDJsuzSa54T
+         ZvKlEKAuUZylowgZvhA7evaUoYYI/vt4SLP3EtBTvCJViDrIQUsAti01U+TyFvsOinKk
+         pU+WY8+x1khKstuzzirgsdKTBkO5hduI/rgOR41b3YfnXNo6ITdHo70YgEhVwNzWSuh8
+         7pygZrs+0WG9uxzsUgOHAztASfMVF6yruH7tCdjTQgJmlhB2FimR0FcmPwrwllYwHkfR
+         o1FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725646045; x=1726250845;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+CkJo3Bz1wCo8cghBLvNHn5F/2d1ljMEB+CBPgFMiOM=;
+        b=vduL9k5nESSTLik8LBtbS7QPBmzGCCWRH10JNtfiGanS64ZnkM9C7QqquWFPKrLjtZ
+         F1XetIph2o4gaFk/AvDrNPnLpyLvZLuI25huAkkv8SwoiZWALiT2glR4nyVFC4wC9uVG
+         BVe/LYd8WDcq/NBKseHTppHD4cR3r8paSpjsh/yj4JORSPn3hH9l7zHf7iGsPWrAddkC
+         /hzdD+DWAEuiW5BbvDAeC6dIwyExeEE7HgKW+O3/APC4XY/NII4ZAjcPuSvE6FybcyuS
+         toJ1w/BAuiJiMTRQ3STYBaWgGVx31RpueT0xqm1Xv7QIcviufHd+5C1xCPTG3J8N053f
+         tceQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPfwk1BF3k1Q2ajlw9V/2HRNaJskQf6rRsRNeNsQlKLRr4cE4ZW2s7kORHvZ5DeAAALRsMz8Q9Bc6Uaro=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywej8V1WyaDOPebgZpLj2JAeyzTS4ultcWcrUtDoqzsfjwWAsvK
+	shZoPVH4ys3U70MPGtDwAjNF1y4k8nH21B3XMBf7QTFi4CTtDrAj6slyi+C+LHY=
+X-Google-Smtp-Source: AGHT+IHy1pIX6vPFN+GTLpQP7Rpewt0HZvI8JhY+ZgzCgA6fBvnlWfM8eNUCakcjVl0vKiyxCZY3pw==
+X-Received: by 2002:adf:f14a:0:b0:377:2ce0:a760 with SMTP id ffacd0b85a97d-378896a47eamr2289788f8f.49.1725646044865;
+        Fri, 06 Sep 2024 11:07:24 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:b9fc:a1e7:588c:1e37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cac8543dbsm5880485e9.42.2024.09.06.11.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 11:07:24 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 00/17] Hardware wrapped key support for QCom ICE and UFS
+ core
+Date: Fri, 06 Sep 2024 20:07:03 +0200
+Message-Id: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/39] x86/resctrl: Use schema type to determine how to
- parse schema values
-Content-Language: en-GB
-To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>
-References: <20240802172853.22529-1-james.morse@arm.com>
- <20240802172853.22529-5-james.morse@arm.com>
- <5eea2e6a-f062-4ff4-9d11-87d8af0306dd@intel.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <5eea2e6a-f062-4ff4-9d11-87d8af0306dd@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMdE22YC/x3MSwqAIBRG4a3EHSdcLCLaSjSw/K1LYKLQA2nvS
+ cNvcE6mhChINFSZIk5JcviCrq5o2YxfocQWk2bdcs9aXdGEAKt2PEkBhrnRbnawVJIQ4eT+d+P
+ 0vh8aHOmmXgAAAA==
+To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+ Mikulas Patocka <mpatocka@redhat.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Asutosh Das <quic_asutoshd@quicinc.com>, 
+ Ritesh Harjani <ritesh.list@gmail.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, 
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Eric Biggers <ebiggers@google.com>, 
+ Om Prakash Singh <quic_omprsing@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6577;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=aVAgf6Jw06Lql3bDOfE6zVcTVmPhHzcmNDJscnSeSew=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm20TRVUK7s5AluIXTTb9EEpQr0K8OAnyTVliLo
+ nGHj15AhL6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZttE0QAKCRARpy6gFHHX
+ cgslEAC8zF47axKM4eyrLbxAT7zfi+OlAXxoW7fVp6nbh2i+ikstA+dRIKyyAkw+09gVD629cnv
+ PPxeehFUKgVaHZshBdiP8ekuFLijPWDFySoOK8WrNHLAGcnyMYeKeEk/tGAuzVIQv5VUjSQvHXl
+ jfMYj/lxFMbIOGUdCkc8wMxYQTwwK6xD3PAUKEcjhGGEgDRgWYoH/OA5iYsnqKCQ0aaddlcyTYc
+ IDTedf3x5Xi4rM+caiUpdRwf5Q5zwHQJzGugfh5H0xba2vidjV3mlOu75lYHqnbKBJHjnfqt2zZ
+ Hmuv/PzCMq2gQZAhfpUTyFyqQYBxJtNeYGnlV1d2HRhHBkrbEt1Bgj1PJ/i8rw9yDvPWIA3NE4c
+ vttukKfAwu9UGl+szEG3nGdUuHn56GRJaS8xAfq5GjpALf1krP+HGkH0G/GNd/g9XijKVADUTyx
+ o2x0pHeMt7FoQqtpiiqzsK7G7KyNr3QHxziDtA/fhfEwBARI6lvGDX3EkFcIMx97RdI3PugB8SC
+ nOb/xe2w4qBxuHUSW5CGovmHNE7OUyl+37XuGY+odYSRw2viBjr2anYSHsJJIdF3vnZsfuMrm2H
+ bYhyu4zX5jsiygksTPOInurmIbq8XAjgyz7ddVW2tOlyDcdbk/Kg0tSLXpOGMrNIZmnlaoqQnHc
+ 53ysG6tzB32F0fw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Reinette,
+I took this work over from Gaurav Kashyap and integrated Eric's series
+into it for an easier discussion on the actual API to be used for
+wrapped keys as well as if and how to enable users to indicate whether
+wrapped keys should be used at all.
 
-On 14/08/2024 04:56, Reinette Chatre wrote:
-> On 8/2/24 10:28 AM, James Morse wrote:
->> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
->> index 9ca542a8e2d4..57c88e1c2adf 100644
->> --- a/arch/x86/kernel/cpu/resctrl/core.c
->> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+I know Dmitry's opinion on that and expect this to be more of an RFC
+rather than a real patch series. That being said, what is here, works
+fine on sm8650.
 
->> @@ -192,6 +191,18 @@ enum resctrl_scope {
->>       RESCTRL_L3_NODE,
->>   };
->>   +/**
->> + * enum resctrl_schema_fmt - The format user-space provides for a schema.
->> + * @RESCTRL_SCHEMA_BITMAP:    The schema is a bitmap in hex.
->> + * @RESCTRL_SCHEMA_PERCENTAGE:    The schema is a decimal percentage value.
->> + * @RESCTRL_SCHEMA_MBPS:    The schema is a decimal MBps value.
->> + */
->> +enum resctrl_schema_fmt {
->> +    RESCTRL_SCHEMA_BITMAP,
->> +    RESCTRL_SCHEMA_PERCENTAGE,
->> +    RESCTRL_SCHEMA_MBPS,
->> +};
->> +
-> 
-> I believe that the choice of RESCTRL_SCHEMA_PERCENTAGE and RESCTRL_SCHEMA_MBPS has
-> potential for significant confusion. The closest place to where user space can enter
-> a MBps value (which is actually MiBps) is on Intel when resctrl is mounted with mba_MBps,
-> and as per above it will have the "RESCTRL_SCHEMA_PERCENTAGE" format.
+Hardware-wrapped keys are encrypted keys that can only be unwrapped
+(decrypted) and used by hardware - either by the inline encryption
+hardware itself, or by a dedicated hardware block that can directly
+provision keys to the inline encryption hardware. For more details,
+please see patches 1-3 in this series which extend the inline encryption
+docs with more information.
 
-It was AMD's QOS that I was thinking of. To pick the example from the documentation:
-| For example, to allocate 2GB/s limit on the first cache id:
-|    MB:0=2048;1=2048;2=2048;3=2048
+This series adds support for wrapped keys to the block layer, fscrypt
+and then build upwards from there by implementing relevant callbacks in
+QCom SCM driver, then the ICE driver and finally in UFS core and QCom
+layer.
 
-How does user-space know that its not a percentage? Suck it and see...
-If those values aren't in MB/s ... I'm not sure what they are.
+Tested on sm8650-qrd.
 
+How to test:
 
-The schema format isn't exposed to user-space. (I think we should do that).
-I agree if it were, we'd need to report MBps/MiBps for the mba_sc case.
+Use the wip-wrapped-keys branch from https://github.com/ebiggers/fscryptctl
+to build a custom fscryptctl that supports generating wrapped keys.
 
+Enable the following config options:
+CONFIG_BLK_INLINE_ENCRYPTION=y
+CONFIG_QCOM_INLINE_CRYPTO_ENGINE=m
+CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+CONFIG_SCSI_UFS_CRYPTO=y
 
-> What is considered
-> here as RESCTRL_SCHEMA_MBPS also cannot really be considered as "MBPS" since it is used to
-> cover AMD's values that are "multiples of one eighth GB/s". Any new resource that
-> _actually_ uses MBPS will thus not be able to use RESCTRL_SCHEMA_MBPS.
+$ mkfs.ext4 -F -O encrypt,stable_inodes /dev/disk/by-partlabel/userdata
+$ mount /dev/disk/by-partlabel/userdata -o inlinecrypt /mnt
+$ fscryptctl generate_hw_wrapped_key /dev/disk/by-partlabel/userdata > /mnt/key.longterm
+$ fscryptctl prepare_hw_wrapped_key /dev/disk/by-partlabel/userdata < /mnt/key.longterm > /tmp/key.ephemeral
+$ KEYID=$(fscryptctl add_key --hw-wrapped-key < /tmp/key.ephemeral /mnt)
+$ rm -rf /mnt/dir
+$ mkdir /mnt/dir
+$ fscryptctl set_policy --hw-wrapped-key --iv-ino-lblk-64 "$KEYID" /mnt/dir
+$ dmesg > /mnt/dir/test.txt
+$ sync
 
-Isn't this already covered by the granularity?
-AMD platforms are unfortunately reporting '1' as the granularity.
-From the 1/8th GB/s it sounds like the granularity should really be 128 MB/s.
+Reboot the board
 
-Any platform that did have a real MB/s control could report whatever granularity it really
-has here.
+$ mount /dev/disk/by-partlabel/userdata -o inlinecrypt /mnt
+$ ls /mnt/dir
+$ fscryptctl prepare_hw_wrapped_key /dev/disk/by-partlabel/userdata < /mnt/key.longterm > /tmp/key.ephemeral
+$ KEYID=$(fscryptctl add_key --hw-wrapped-key < /tmp/key.ephemeral /mnt)
+$ fscryptctl set_policy --hw-wrapped-key --iv-ino-lblk-64 "$KEYID" /mnt/dir
+$ cat /mnt/dir/test.txt # File should now be decrypted
 
+Changes since v5:
+- add the wrapped key support from Eric Biggers to the series
+- remove the new DT property from the series and instead query the
+  at run-time rustZone to find out if wrapped keys are supported
+- make the wrapped key support into a UFS capability, not a quirk
+- improve kerneldocs
+- improve and rework coding style in most patches
+- improve and reformat commit messages
+- simplify the offset calculation for CRYPTOCFG
+- split out the DTS changes into a separate series
 
-> Considering that RESCTRL_SCHEMA_PERCENTAGE and RESCTRL_SCHEMA_MBPS use the same parser,
-> could "RESCTRL_SCHEMA_RANGE" be more fitting? I acknowledge that it is very generic and
-> better
-> ideas are welcome. A "range" does seem to be appropriate considering the later patch
-> (x86/resctrl:
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (1):
+      firmware: qcom: scm: add a call for checking wrapped key support
 
-> Add max_bw to struct resctrl_membw) that codes an explicit max.
+Eric Biggers (4):
+      blk-crypto: add basic hardware-wrapped key support
+      blk-crypto: show supported key types in sysfs
+      blk-crypto: add ioctls to create and prepare hardware-wrapped keys
+      fscrypt: add support for hardware-wrapped keys
 
-Yes because the AMD platforms have a firmware-advertised maximum value, I presume that is
-an achievable bandwidth. (otherwise why advertise it to user-space!).
-(I'm not sure why data_width is 4 - it looks like that was the hard coded based on one
- platforms limit ... that probably needs fixing too)
+Gaurav Kashyap (12):
+      ice, ufs, mmc: use the blk_crypto_key struct when programming the key
+      firmware: qcom: scm: add a call for deriving the software secret
+      firmware: qcom: scm: add calls for creating, preparing and importing keys
+      soc: qcom: ice: add HWKM support to the ICE driver
+      soc: qcom: ice: add support for hardware wrapped keys
+      soc: qcom: ice: add support for generating, importing and preparing keys
+      ufs: core: add support for wrapped keys to UFS core
+      ufs: core: add support for deriving the software secret
+      ufs: core: add support for generating, importing and preparing keys
+      ufs: host: add support for wrapped keys in QCom UFS
+      ufs: host: add a callback for deriving software secrets and use it
+      ufs: host: add support for generating, importing and preparing wrapped keys
 
-But if you had a MBps control, I'm not sure that implies you know what the maximum
-achievable bandwidth is. The control may have a range based on some power of two, which is
-unrelated to the bandwidth.
-In the arm world the hardware never knows what the achievable bandwidth is - that is
-something only the SoC designer can work out.
+ Documentation/ABI/stable/sysfs-block               |  18 ++
+ Documentation/block/inline-encryption.rst          | 245 +++++++++++++-
+ Documentation/filesystems/fscrypt.rst              | 154 ++++++++-
+ Documentation/userspace-api/ioctl/ioctl-number.rst |   2 +
+ block/blk-crypto-fallback.c                        |   5 +-
+ block/blk-crypto-internal.h                        |  10 +
+ block/blk-crypto-profile.c                         | 103 ++++++
+ block/blk-crypto-sysfs.c                           |  35 ++
+ block/blk-crypto.c                                 | 194 ++++++++++-
+ block/ioctl.c                                      |   5 +
+ drivers/firmware/qcom/qcom_scm.c                   | 233 ++++++++++++++
+ drivers/firmware/qcom/qcom_scm.h                   |   4 +
+ drivers/md/dm-table.c                              |   1 +
+ drivers/mmc/host/cqhci-crypto.c                    |   9 +-
+ drivers/mmc/host/cqhci.h                           |   2 +
+ drivers/mmc/host/sdhci-msm.c                       |   6 +-
+ drivers/soc/qcom/ice.c                             | 355 ++++++++++++++++++++-
+ drivers/ufs/core/ufshcd-crypto.c                   |  86 ++++-
+ drivers/ufs/host/ufs-qcom.c                        |  61 +++-
+ fs/crypto/fscrypt_private.h                        |  71 ++++-
+ fs/crypto/hkdf.c                                   |   4 +-
+ fs/crypto/inline_crypt.c                           |  44 ++-
+ fs/crypto/keyring.c                                | 124 +++++--
+ fs/crypto/keysetup.c                               |  54 +++-
+ fs/crypto/keysetup_v1.c                            |   5 +-
+ fs/crypto/policy.c                                 |  11 +-
+ include/linux/blk-crypto-profile.h                 |  73 +++++
+ include/linux/blk-crypto.h                         |  75 ++++-
+ include/linux/firmware/qcom/qcom_scm.h             |   8 +
+ include/soc/qcom/ice.h                             |  18 +-
+ include/uapi/linux/blk-crypto.h                    |  44 +++
+ include/uapi/linux/fs.h                            |   6 +-
+ include/uapi/linux/fscrypt.h                       |   7 +-
+ include/ufs/ufshcd.h                               |  21 ++
+ 34 files changed, 1958 insertions(+), 135 deletions(-)
+---
+base-commit: ad40aff1edffeccc412cde93894196dca7bc739e
+change-id: 20240802-wrapped-keys-eea0032fbfed
 
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I agree we can parse both values as a range, as resctrl doesn't need to interpret the
-values, its just whatever the hardware does.
-
-I did it like this as I'd like to expose "percentage/MBps/bitmap" to user-space so that
-control types user-space doesn't recognised can be programmed. If arm64 and riscv each
-want to add new schema types, it would be good to do it in a way that is low-impact for
-the resctrl filesystem code, and unaware user-space can do something with.
-percentage/MBps/bitmap are the control schemes we already have.
-
-The MBps/range difference matters if the 'maximum bandwidth' isn't actually an achievable
-number e.g. ~0, then user-space can't treat it as some kind of percentage.
-
-
-Thanks,
-
-James
 
