@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-318723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2292B96F218
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A22A96F21A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8967284BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C311F2566E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DB71CB15F;
-	Fri,  6 Sep 2024 11:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A0E1CB33E;
+	Fri,  6 Sep 2024 11:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="acaXcOBu"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ORP2VeGI"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2082.outbound.protection.outlook.com [40.107.212.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7947114C5BF;
-	Fri,  6 Sep 2024 11:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329B51CB328;
+	Fri,  6 Sep 2024 11:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.82
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620446; cv=fail; b=kJAG6YcQhZpXa0gFLNnCw8rVfERB/7iybW/faZrxD3g4uWr4m87A86a6VVjejsQXw4vkpEf3LGYC1PZ1yu/z5ge9xQ0NAWsYFqwm1Ll/iHNhSxlXdTcxbS8287RHcAksGDmB4IgnblIpfUKApKrVkY+942kTJXuLcIClwXeZ8nI=
+	t=1725620450; cv=fail; b=eTyqTJBcZaZsi6alwcHZOzMM/OXjaoURHyD/COrICxIcT4Y1rzcUIEDOpydIQx1A2GHOz9zI7wEtw/5O4fecdyS0WNQxrWQ7dC0dmufSo4i8Kb0zABVqBQSu5mgdVqCPEA96fuLqeHN4vueGy2UVI3PGOwp6+9dlD07bHJvd5LE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620446; c=relaxed/simple;
-	bh=+YQCWDGma6Mpyd2pv8ixFFfAb7ApM4bYYc8cscjZMY4=;
+	s=arc-20240116; t=1725620450; c=relaxed/simple;
+	bh=/sH2HVzCJBSvfmx68YXx5nlsYRNtVuBRyQZBPOKGFOw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jjXw29dwAgsyz2v+E+PxKRgWkqtHbevAAgmLnm4/Yh+1osP6hVTjRQ/jzQwm46BrxiZlFadz2qavP9q5M0/7lBMlr4wcpf2lWUzzetYPgfqj8xXxwIPvVoqFGa/vhJjupogIgjIOJMsmxgjI/ssagpzV3cJK8f+dSf+IgB0XB0Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=acaXcOBu; arc=fail smtp.client-ip=40.107.94.40
+	 MIME-Version:Content-Type; b=I28nIss0RCi5FF+kD+HbkBUFka5cnnVES4DOzrxvbYHtbCu8ltX99FladSeSHSMBcy/8dL/6V1v47qjQ2z0A7cepW2BPiWQWFolEku5Wotr9VEUErUc2PdW/sApvZM7O3hY4e1yU56yomz2uykQS5wm0mFtA/uhteV+1jmATmBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ORP2VeGI; arc=fail smtp.client-ip=40.107.212.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=do8Pkhqp8NFJkuJpQYLfLdJp93eocqW6PEq0YQrH6XUKOyfO5zAZaDvmMHxZ6fwNnPEJ7C4NbCpaYlXHL2oRM4SZfP0Nxb2i3YxX117I1Q8504XVF0eUTRBqUxSiDtrqCOuX9kz9xbCfovYaMIHG6UZ3iF5qoAsabDHYA5SdRKxm1Y/U2CKneMm0HQuU014fTi2BbPsOg1tgVAKYZe+2InaMsVm697MyvWXgeZqpQBrAfzUNmfEc4JBUB6IVPYKjTchUYPyqVbEn1/sfhcYXLodZUkA8JxZClcC1EBe8uDxNkvxfcRT3vbIA0XCGFZFG7osDaDlONgxgmlJQq+ZG5w==
+ b=cR9yAJqCLQbAWpzm9mRp5OK0RKTnHTZeng/dbhJwQxo1SpHBHhjluWWQPV5AabpamDgIkvPrIiRFtmLs0hqL3k/Wg7mLn6NGEU5gAu8Yo1HPv01lX1u8veckKFi6shy8vDRRYuRsJBPPY+9i8C18IbJRCCNF/p0FZq94Kwjuead01gPCCpXUqxWXF7IvUsPRTwdqpxSpwlBb0TOT9gZN8D/I7CyRJSxnMTx63935JSlr9t09n2vGmzqn0NBVsOVWNgvUSSupnD518d2/Qsazd1lk+3erAhuT0iQNVQmu3A5f42jUSTBGT6gqTdyDgRzuf0hecoAljCPz70qk4wVHiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JK/q8uJurRSBTYRzviE2yn4wIWBdYISTD6zdKzYGPcE=;
- b=iak4jQL3wRISolQOAgJxHELKWjdncP/2Sn/eqIdVL2Ic9oa3iNL3/vNo5oyW4TnSXIQP8TDJJ7IwTMSsMdm1Xf7o87HLRFSIbhFmqFLn+I3gQ8pTYYbzlO0u9zI+Ckz+CthTjii04a08eG8yWU3jsjl6tye6/vMM/uuck9kyyOl81SPuCEHi8RZz8qa6rdkiUmMfuPMkhP6m8zYsMiQChYLx73gKgnAxNYI5eul36EzG6RNyb1VpnYuZ90DCYLoz51Vi+4iqw3P3WBUFitKkraElxuRyIZ99s4pzJHbz6o9gqMhGEgN7ldq5G0Zjj6/dLYz4ETY8q/tfEfhgbsY5jw==
+ bh=o1WvseWLnscFaORs0UX3Ksr7JLqZgR+JpN/14+gcdhc=;
+ b=uZ1UuBW6/D1pJRJK13dtRG/oRQG7zTNI41FyPN6WXiTOi94pJKaKF70UiPt3ib0K1deDT8cwjGjF5MS/keXL5+FuLzbwEsRu0emmvaL+P6CvD/XURg2Ia21pNcxjWnYmQo1RPV4ihu9If5QTSVD87O4qipOr79CVHZtyPhvTeBugUgH9bHvJhpHwBqrdV6dtWg3nnmC89XSBxkSXEde4Zj6wZOjYbpScGkzPJpsXMRYII7Aj1FJCyf1NeP8ALegqPKgM+TiT3LNOO9W2fopX8DgcvQr0nm36QECD0NnPBiqZlgYwcMzvtNCUaNCPw/ru0o0RmAt1Vt4alBtZsoEy+A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=chromium.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JK/q8uJurRSBTYRzviE2yn4wIWBdYISTD6zdKzYGPcE=;
- b=acaXcOBuQHRHTGhqcwovEHURJp51k4kt6GsOWrXeOhVliNQOPP7DVIvDEobJ5odyQDGlYoleVlv4wZr+aqTvoq8CF2xcNRVVydFRPbYiIGbjkq3cG4bRHabIv6hEnSZ35y5SHS1tL+J46YwVCAz6X8+onSE9Owukux3Qi04vTSE=
-Received: from MN2PR06CA0013.namprd06.prod.outlook.com (2603:10b6:208:23d::18)
- by IA1PR12MB6209.namprd12.prod.outlook.com (2603:10b6:208:3e7::22) with
+ bh=o1WvseWLnscFaORs0UX3Ksr7JLqZgR+JpN/14+gcdhc=;
+ b=ORP2VeGI12Q/nUf4+MYhP7bX/dqotKYGMBZhMsb9GPOjbNzHMvvjTxjLupzZMIwgoHlGsNOuUANCtMTxj/Js5S6DyYr4nQOwVaNtFKwm/YfHWLpxd0yNyOqb896amtpsCKbLVPO2yGALcSWbu4ROo9d1dEd7PCkALYB8v6YW3tY=
+Received: from MW4PR04CA0122.namprd04.prod.outlook.com (2603:10b6:303:84::7)
+ by DM4PR12MB5961.namprd12.prod.outlook.com (2603:10b6:8:68::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Fri, 6 Sep
- 2024 11:00:39 +0000
-Received: from BN2PEPF00004FBA.namprd04.prod.outlook.com
- (2603:10b6:208:23d:cafe::4c) by MN2PR06CA0013.outlook.office365.com
- (2603:10b6:208:23d::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
+ 2024 11:00:43 +0000
+Received: from CO1PEPF000044FB.namprd21.prod.outlook.com
+ (2603:10b6:303:84:cafe::e4) by MW4PR04CA0122.outlook.office365.com
+ (2603:10b6:303:84::7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
- Transport; Fri, 6 Sep 2024 11:00:39 +0000
+ Transport; Fri, 6 Sep 2024 11:00:43 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF00004FBA.mail.protection.outlook.com (10.167.243.180) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044FB.mail.protection.outlook.com (10.167.241.201) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 11:00:38 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.7962.2 via Frontend Transport; Fri, 6 Sep 2024 11:00:42 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
- 2024 06:00:38 -0500
+ 2024 06:00:41 -0500
 Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 6 Sep 2024 06:00:35 -0500
+ Transport; Fri, 6 Sep 2024 06:00:38 -0500
 From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 To: <mka@chromium.org>, <gregkh@linuxfoundation.org>,
 	<javier.carrasco@wolfvision.net>, <jbrunet@baylibre.com>,
@@ -79,9 +79,9 @@ To: <mka@chromium.org>, <gregkh@linuxfoundation.org>,
 	<frieder.schrempf@kontron.de>
 CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<git@amd.com>, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Subject: [PATCH v5 1/2] usb: misc: onboard_dev: extend platform data to add power on delay field
-Date: Fri, 6 Sep 2024 16:30:22 +0530
-Message-ID: <1725620423-1758964-2-git-send-email-radhey.shyam.pandey@amd.com>
+Subject: [PATCH v5 2/2] usb: misc: onboard_usb_dev: add Microchip usb5744 SMBus programming support
+Date: Fri, 6 Sep 2024 16:30:23 +0530
+Message-ID: <1725620423-1758964-3-git-send-email-radhey.shyam.pandey@amd.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1725620423-1758964-1-git-send-email-radhey.shyam.pandey@amd.com>
 References: <1725620423-1758964-1-git-send-email-radhey.shyam.pandey@amd.com>
@@ -92,120 +92,239 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: radhey.shyam.pandey@amd.com does not
+Received-SPF: None (SATLEXMB03.amd.com: radhey.shyam.pandey@amd.com does not
  designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBA:EE_|IA1PR12MB6209:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69b565b9-1808-4889-efb5-08dcce632490
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FB:EE_|DM4PR12MB5961:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5caebf4a-a293-43a1-1b1e-08dcce632707
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/z9fsMb0AAPAEHqFC4NTSaqkTl7Dn646lQj+KSVvxc40lk3r+CvGHvrRQqbr?=
- =?us-ascii?Q?RMe692cEhbWXuCTVMPwEnE893/jcTHjrn9J58Lb41ClY9rTKCpa0IsA3LDmL?=
- =?us-ascii?Q?uijCESpobh1CYUZBx0IxjZgu+h/XGyE1k2uVYmqB2yScbBJ6Bk9n0koxOFq5?=
- =?us-ascii?Q?7oJltLEUz9/y4A/15O+opTOFGf5EMoN1n/FTUS/XDpcb0NGS+hCHh4Yh/sI4?=
- =?us-ascii?Q?tsD/GOfI/BIHWtzLEuDtAhhIzzu8hffsftZw4+KnupaG4SHY1CrnXrL/VBe9?=
- =?us-ascii?Q?/Wuq/xfrhL2Isz3shf02ZwKxRJ2yJ0Vp6cO4aqtEGvirE6tCUK2cGBnlwTSC?=
- =?us-ascii?Q?/7zOff6t/r+jmx2O23sNwCfXJ3Z2uyDmXUXSre4m+T2+j1cgB/OEqMn4YA6e?=
- =?us-ascii?Q?sP4TISaAWNZboTQ7N5C09S4EmKGzuJFVcMOtg+syq3NaF+MzU1jmxUe1npRg?=
- =?us-ascii?Q?v/KJMKe8PsQSyf/pDJoxq7n4+jwTtqKnyo5w/d7wo5zP7/4rDNGoOdL+S5eF?=
- =?us-ascii?Q?iUve+C5PlTGO1nKmvZPURn9Y67LLkyNTpZSSo03G2mZsD5qdPFPHyKRFbkE9?=
- =?us-ascii?Q?j6VlIc3yBoyC757pCGSTvJzbnByEvatrTFeNDvRNbp01jKBDgJu1fcvLGtHo?=
- =?us-ascii?Q?YK5kVw4SmnmsNWLQKhzM+QDO48A48BsyQf1VQSAAQP8aicIFsGRp4O/UjpQG?=
- =?us-ascii?Q?C3apX0HeZRWriYxt5SAZp1PqAIQcLS4PB7ofZnWUUCr27jnPVT+vWJENAJcb?=
- =?us-ascii?Q?5LFPqYmbcH5ymHoGleVNqsj+NLeE2hpAGdAP3VzLGLiMVlD/ZK2yHxFEniGQ?=
- =?us-ascii?Q?WvZs3r30V0tAwa3MzU0SDwNMmQaMOJff2BAEfFGgr+1RG/9LuEDR7drIkQfn?=
- =?us-ascii?Q?+it/F5uaHuHOLKGyc5iejOCf7uCJuTCUG8zV/RYFo0t5CLVcJDyHoU6im/DW?=
- =?us-ascii?Q?2aYGmmgwOw1eyQyYeYzA4JZmZgD/e63MV+OOvmikggc0ewT0TPPJmsy8MH7O?=
- =?us-ascii?Q?CAcvWe+RCWrt+OL1yGT5rzl3Mk4LeDcPZB5kEMbRn74T/kJ5u2f3gAF3u0OG?=
- =?us-ascii?Q?fJRsTCP2+uZlYcX9HZzB1qhZk2+CF6V1teFLbebCUu5DfUOGi1rhK4rufvJ5?=
- =?us-ascii?Q?Okrwx5CgBt8H0Ui39EoP26W4nTYIbD1NgfJmjbU3aSi8eM/VHUz+k28+V0gv?=
- =?us-ascii?Q?SDkC3bvlJOqwrm2ctBP4XRmNqTQ0weyRfBD3oWgF2jczRNf7gppgVXtPzvYV?=
- =?us-ascii?Q?cYK7uLJ8zdUXBofZE6nHYftssvzNgE5mRdR2ca2/6hJUjTvAS88NT+FepXZE?=
- =?us-ascii?Q?M41Qm6sKaxc1pTrmrI8ko/D+hdu5pm27Ir1wZqeom7woFL+45r5lYMrnVNWs?=
- =?us-ascii?Q?nwjMGhRPEL6o63PxBGfT2WtE/4kap+bEdetHdhiKO4xP3EKiVp+YpITT6xHi?=
- =?us-ascii?Q?Oq0MIfuLZ9XWp3MF/xHGLWl6+9ohwS57?=
+	=?us-ascii?Q?8mdWxlcB4umXkP+6kDDn9XtTTOjBlVyvMiOckpY2OdLRk7a+Dlw0B5dsf+Hw?=
+ =?us-ascii?Q?1qZ/CREObB6paDI9uRxGM6Wq5RHVeQTD2+5/S6HH3YAxEaPbn1gLnySaiDTQ?=
+ =?us-ascii?Q?6NJ1WJGcU3QK/eBiY0WSeXjuBNhYZaxsDL1Ft7lAghK+YVJjIoHaA7vnC3dx?=
+ =?us-ascii?Q?K0+fakHavLYXhrA5nZIJ4RMR3VzYPq8MgKcSMbLKsNw2bljvI6lMNC4WEpVK?=
+ =?us-ascii?Q?feuRKCrgX+jeGf0wMqnhzG6aWq36nOEDj2Jxk2zVsCkhkRUFT/SM7xIc/XH+?=
+ =?us-ascii?Q?GaAOQafTAlISbBpqKiDx8GdTWCawUKWE5oacIfvf6BLXfxkZvqFwdhSwbIP8?=
+ =?us-ascii?Q?ihPR8HVtrGX+SaZPiMuw2o30Ge/xcSEEDNJDgVAf5wTafr7Ehq95al7EgU+y?=
+ =?us-ascii?Q?Vh7+f0GRJPORR83lHBckRoBwsuBdiLKd3vxW4WZQY7r0pBpWaZ11qAdaZLCa?=
+ =?us-ascii?Q?GBPEnE7qw4ZojCH2D+S+gp0LWS4FlXh9LnzU7Jmyq0smDUc5ZuBQBiV/Ox65?=
+ =?us-ascii?Q?gqaHMstkZg6ooZJO49kFkZRxBj7YeqCFvXemVOBnMRnOzQryWfzuMqh3bz02?=
+ =?us-ascii?Q?KOOsNyDErxYgZ0V+M9qMnvh/+igXMbQiKA1KmR4ennIHT+676K+um01NNTnL?=
+ =?us-ascii?Q?k7uV45k9t2NdbQi4aIjYvrPwHHSFAqVzHjl7aOnx7/GNecF4UllNap4sRdXI?=
+ =?us-ascii?Q?QTT3fg9ov4k/m1ASq8It4iSjOM4J27Jihe+xifwMUMG5eOOH/pckN7PIcV3Z?=
+ =?us-ascii?Q?S7BHetXlU3zs0FKQcNKuSlddbFv16aqOg8w753Bg2wJo2HVDlxZlhUB/L2/3?=
+ =?us-ascii?Q?qJ8M8Xug8lvfS6w/PhkMeF6InAtCu6fNl5uSedyGtmLJBwflraJpqP0b9LOV?=
+ =?us-ascii?Q?rVYN/BIWU06E+RLSI2imbCr1CX/3JuTSJcvrCgQkl8lRPkJIDl5CtLsZv8hj?=
+ =?us-ascii?Q?sXtmvAHTdBRrm6tPrdoqWu9m4Sn5NKytPsKocybN8qFojVDiiQDT0HBsoOta?=
+ =?us-ascii?Q?cOX02wZ9Q4UHne2/otj8f2zLuSADMUygxOhy3hZV8txto5vlJGHSvgZlR5+f?=
+ =?us-ascii?Q?MfrH/W0koGG6YJAyc2sxDevii6VHQ59jfLHCpluC+Cwn4GY2lssBU0uAE0bj?=
+ =?us-ascii?Q?JOBvi37+BXPYN3MI9z02MQ+vUBKPjGXU3ri6H6H3DsuAeyBXzPsgG6rESD4O?=
+ =?us-ascii?Q?p1aTLbAa0DFS0Hl7PcRt4O3osS7jf2nLR9qObNsznSEKyfiUysOx0voLS5Cq?=
+ =?us-ascii?Q?jJ/4DK6wlnsmvaVDHPA+0/0re3IND/ORgbtAvuLwlFuIrHSsUwhuTk4q+rt+?=
+ =?us-ascii?Q?gJCbmFhGToCPP0xbtkPkqgR6WiBRCaCghLmWUCtaxBUXwfltBX+1sNEzKcp3?=
+ =?us-ascii?Q?gYwThBpwQXG3dhxB4VuAhn1TBodJDCrsFbN/680645kQqajoP0V2aciQxMHD?=
+ =?us-ascii?Q?Dp5XjPer7dzmhKR0bus3HKy7TMWi3ZOI?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 11:00:38.9705
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 11:00:42.9754
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69b565b9-1808-4889-efb5-08dcce632490
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5caebf4a-a293-43a1-1b1e-08dcce632707
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBA.namprd04.prod.outlook.com
+	CO1PEPF000044FB.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6209
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5961
 
-Introduce dedicated field 'power_on_delay_us' in onboard platform data
-and update its delay for USB5744 configuration. Hub itself requires some
-delay after reset to get to state where configuration data is going to
-be accepted. Without delay upcoming support for configuration via SMBUS
-is reporting a failure on the first SMBus write.
+usb5744 supports SMBus Configuration and it may be configured via the
+SMBus slave interface during the hub start-up configuration stage.
 
-i2c 2-002d: error -ENXIO: BYPASS_UDC_SUSPEND bit configuration failed
+To program it driver uses i2c-bus phandle (added in commit '02be19e914b8
+dt-bindings: usb: Add support for Microchip usb5744 hub controller') to
+get i2c client device and then based on usb5744 compatible check calls
+usb5744 i2c default initialization sequence.
 
-Similar delay is likely also required for default configuration but
-because there is enough time (code execution) between reset and usage
-of the hub any issue is not visible but it doesn't mean delay shouldn't
-be reflected.
+Apart from the USB command attach, prevent the hub from suspend.
+when the USB Attach with SMBus (0xAA56) command is issued to the hub,
+the hub is getting enumerated and then it puts in a suspend mode.
+This causes the hub to NAK any SMBus access made by the SMBus Master
+during this period and not able to see the hub's slave address while
+running the "i2c probe" command.
+
+Prevent the MCU from putting the HUB in suspend mode through register
+write. The BYPASS_UDC_SUSPEND bit (Bit 3) of the RuntimeFlags2
+register at address 0x411D controls this aspect of the hub. The
+BYPASS_UDC_SUSPEND bit in register 0x411Dh must be set to ensure that the
+MCU is always enabled and ready to respond to SMBus runtime commands.
+This register needs to be written before the USB attach command is issued.
+
+The byte sequence is as follows:
+Slave addr: 0x2d           00 00 05 00 01 41 1D 08
+Slave addr: 0x2d           99 37 00
+Slave addr: 0x2d           AA 56 00
+
+Also since usb5744 i2c initialization routine uses i2c SMBus APIs invoke
+these APIs only when i2c driver is enabled in the kernel configuration.
 
 Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Suggested-by: Matthias Kaehlcke <mka@chromium.org>
 ---
 Changes for v5:
-- None
+- Drop Kconfig I2C_CONFIG dependency and instead put the _i2c_init()
+  implementation inside IS_ENABLED(CONFIG_I2C) check. Also a note
+  that check for get i2c-bus phandle and find i2c device is not
+  guarded by CONFIG_I2C check as we want to return error when i2c-bus
+  phandle is present and CONFIG_I2C is not enabled in kernel
+  configuration.
 
 Changes for v4:
-- None
+- Fix error: implicit declaration of function 'i2c_smbus_*' APIs by
+  introducing a dependency on I2C_CONFIG. This error is reported
+  by kernel test on v3 series and usb:usb-testing 20/25 branch.
+  https://lore.kernel.org/all/2024082503-uncoated-chaperone-7f70@gregkh
 
 Changes for v3:
-- Modified power_on_delay_us comment.
+- Add comment for UDC suspend sequence.
+- Drop USB5744_CREG_MEM_NBYTES and USB5744_CREG_NBYTES and replace
+  it with literal + comment.
+- Move microchip defines to source file.
 
 Changes for v2:
-- New patch
+- Move power on reset delay to separate patch.
+- Switch to compatible based check for calling usb5755
+  onboard_dev_5744_i2c_init(). This is done to make
+  onboard_dev_5744_i2c_init() as static.
+- Fix subsystem "usb: misc: onboard_usb_dev:..."
+- Use #define for different register bits instead of magic values.
+- Use err_power_off label name.
+- Modified commit description to be in sync with v2 changes.
 ---
- drivers/usb/misc/onboard_usb_dev.c | 1 +
- drivers/usb/misc/onboard_usb_dev.h | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/usb/misc/onboard_usb_dev.c | 75 ++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
 diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
-index 56710e6b1653..da27c48fc11d 100644
+index da27c48fc11d..578cb4b2bf62 100644
 --- a/drivers/usb/misc/onboard_usb_dev.c
 +++ b/drivers/usb/misc/onboard_usb_dev.c
-@@ -98,6 +98,7 @@ static int onboard_dev_power_on(struct onboard_dev *onboard_dev)
+@@ -11,6 +11,7 @@
+ #include <linux/err.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/init.h>
++#include <linux/i2c.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/module.h>
+@@ -29,6 +30,17 @@
  
- 	fsleep(onboard_dev->pdata->reset_us);
- 	gpiod_set_value_cansleep(onboard_dev->reset_gpio, 0);
-+	fsleep(onboard_dev->pdata->power_on_delay_us);
+ #include "onboard_usb_dev.h"
  
- 	onboard_dev->is_powered_on = true;
++/* USB5744 register offset and mask */
++#define USB5744_CMD_ATTACH			0xAA
++#define USB5744_CMD_ATTACH_LSB			0x56
++#define USB5744_CMD_CREG_ACCESS			0x99
++#define USB5744_CMD_CREG_ACCESS_LSB		0x37
++#define USB5744_CREG_MEM_ADDR			0x00
++#define USB5744_CREG_WRITE			0x00
++#define USB5744_CREG_RUNTIMEFLAGS2		0x41
++#define USB5744_CREG_RUNTIMEFLAGS2_LSB		0x1D
++#define USB5744_CREG_BYPASS_UDC_SUSPEND		BIT(3)
++
+ static void onboard_dev_attach_usb_driver(struct work_struct *work);
  
-diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
-index fbba549c0f47..317b3eb99c02 100644
---- a/drivers/usb/misc/onboard_usb_dev.h
-+++ b/drivers/usb/misc/onboard_usb_dev.h
-@@ -10,6 +10,7 @@
+ static struct usb_device_driver onboard_dev_usbdev_driver;
+@@ -297,10 +309,48 @@ static void onboard_dev_attach_usb_driver(struct work_struct *work)
+ 		pr_err("Failed to attach USB driver: %pe\n", ERR_PTR(err));
+ }
  
- struct onboard_dev_pdata {
- 	unsigned long reset_us;		/* reset pulse width in us */
-+	unsigned long power_on_delay_us; /* power on delay in us */
- 	unsigned int num_supplies;	/* number of supplies */
- 	const char * const supply_names[MAX_SUPPLIES];
- 	bool is_hub;
-@@ -24,6 +25,7 @@ static const struct onboard_dev_pdata microchip_usb424_data = {
++static int onboard_dev_5744_i2c_init(struct i2c_client *client)
++{
++#if IS_ENABLED(CONFIG_I2C)
++	struct device *dev = &client->dev;
++	int ret;
++
++	/*
++	 * Set BYPASS_UDC_SUSPEND bit to ensure MCU is always enabled
++	 * and ready to respond to SMBus runtime commands.
++	 * The command writes 5 bytes to memory and single data byte in
++	 * configuration register.
++	 */
++	char wr_buf[7] = {USB5744_CREG_MEM_ADDR, 5,
++			  USB5744_CREG_WRITE, 1,
++			  USB5744_CREG_RUNTIMEFLAGS2,
++			  USB5744_CREG_RUNTIMEFLAGS2_LSB,
++			  USB5744_CREG_BYPASS_UDC_SUSPEND};
++
++	ret = i2c_smbus_write_block_data(client, 0, sizeof(wr_buf), wr_buf);
++	if (ret)
++		return dev_err_probe(dev, ret, "BYPASS_UDC_SUSPEND bit configuration failed\n");
++
++	ret = i2c_smbus_write_word_data(client, USB5744_CMD_CREG_ACCESS,
++					USB5744_CMD_CREG_ACCESS_LSB);
++	if (ret)
++		return dev_err_probe(dev, ret, "Configuration Register Access Command failed\n");
++
++	/* Send SMBus command to boot hub. */
++	ret = i2c_smbus_write_word_data(client, USB5744_CMD_ATTACH,
++					USB5744_CMD_ATTACH_LSB);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "USB Attach with SMBus command failed\n");
++
++	return ret;
++#endif
++}
++
+ static int onboard_dev_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct onboard_dev *onboard_dev;
++	struct device_node *i2c_node;
+ 	int err;
  
- static const struct onboard_dev_pdata microchip_usb5744_data = {
- 	.reset_us = 0,
-+	.power_on_delay_us = 10000,
- 	.num_supplies = 2,
- 	.supply_names = { "vdd", "vdd2" },
- 	.is_hub = true,
+ 	onboard_dev = devm_kzalloc(dev, sizeof(*onboard_dev), GFP_KERNEL);
+@@ -340,6 +390,27 @@ static int onboard_dev_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
++	i2c_node = of_parse_phandle(pdev->dev.of_node, "i2c-bus", 0);
++	if (i2c_node) {
++		struct i2c_client *client;
++
++		client = of_find_i2c_device_by_node(i2c_node);
++		of_node_put(i2c_node);
++
++		if (!client) {
++			err = -EPROBE_DEFER;
++			goto err_power_off;
++		}
++
++		if (of_device_is_compatible(pdev->dev.of_node, "usb424,2744") ||
++		    of_device_is_compatible(pdev->dev.of_node, "usb424,5744"))
++			err = onboard_dev_5744_i2c_init(client);
++
++		put_device(&client->dev);
++		if (err < 0)
++			goto err_power_off;
++	}
++
+ 	/*
+ 	 * The USB driver might have been detached from the USB devices by
+ 	 * onboard_dev_remove() (e.g. through an 'unbind' by userspace),
+@@ -351,6 +422,10 @@ static int onboard_dev_probe(struct platform_device *pdev)
+ 	schedule_work(&attach_usb_driver_work);
+ 
+ 	return 0;
++
++err_power_off:
++	onboard_dev_power_off(onboard_dev);
++	return err;
+ }
+ 
+ static void onboard_dev_remove(struct platform_device *pdev)
 -- 
 2.34.1
 
