@@ -1,88 +1,147 @@
-Return-Path: <linux-kernel+bounces-319536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29B896FE16
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:45:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C615596FE18
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE0FB24B19
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837362871B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F6E15B0F2;
-	Fri,  6 Sep 2024 22:45:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F00715ADA6;
+	Fri,  6 Sep 2024 22:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpBZwAx7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244AB3612D
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE113D248;
+	Fri,  6 Sep 2024 22:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725662704; cv=none; b=Fs1IjbyxOcqDE7wN7VUVwMeFN3E1MQpcLbHrm3Fo1BvnlwS+Q7GOAfVyFA9x74b4PG0G8MYP/F6mmFvGdA3+Cir/jZmugh5Bz9DD8IefUCmrXofLTwL1o+VySHmVObzOXMJ2UcUY0mV9527EeXMRlKHXNCee8urOBWh/gtIn6Cg=
+	t=1725662761; cv=none; b=B5Oq0e1zsnscHFPJD3avBp/gzJiKNwLYc6FwoXz3mhWjidCsARF7l7qbQOFJRt2FFI2BLLT71BzTAzXslDRTvyo7psUbN2JAk+0uMJe/VtYVtWndPy08wzV+K97DPOVupuwr6O3sspnUJSEG6wfnWn53cnDAZxq2aodO81AnVro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725662704; c=relaxed/simple;
-	bh=8J91T6+0g+beF3geljjWtDOb+BKObrCgpP4cX5Q+tZk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Aqbg7VeDmw8YuVXOFvhS6Jg7Z+CCNCe6Ah1kCPjNiK6h0KS26aasCVLQIOG3z/aZZAR4e+YwB+e8iPw30e0YCy5VmBepNlgCbd5GZRxAkZeZE2F0751zT7ODpuzPe+Y/2434G+ZXfd+ivfvWmQ7Yp4G1ZijXysOxdWgfJOXBK0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a492c9d88so527390739f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 15:45:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725662702; x=1726267502;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VRgWmnR7uxjc65cAqAgk0UjOgG5A5PqPSZqQa+3EZ2Q=;
-        b=azvFUgIbGTzflFtOCu6ifWLuHsczNCgI7juUUECPjYO/26xyj+2VDSKhvPnjX3vKU0
-         oX6SWBzxJWAP4bIQLQMfRcGmC/n/MboF1p4cl8p2JJDkmSGeafpkY6My6XTQRt2zZnqQ
-         /Ni5ec94DhdBOYQ6zP0Vh4G2Urh7sMfUFgYZYES8k1Up0RUweiMPbgrBUHyJ/YakKxeW
-         si21ZONLDb9oQpEZDh/sE431f8p/K7J2PpF3lNm1JdNxYH/4HtCl8f+IS/Q5DfNzmCGr
-         DUIqQWQcVEKZneZxfXyX0OrjJ4BXAAbu8VAt5RO4qcN8KVY1Ie05Lh58QwyGfKz5gf66
-         5+DA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW4oSJft2vfofyI9TX5nljNwsC8Gt1f72AdxruTykmpWU73sYPOsyacE2kLlyJPm38ItCCtEvEb2kuWZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBcoTLFhitAj4ZPsvqaS4cfMea2x988lsW5jPX6jJzrAqkIp/z
-	DK3+F/paM+BW4vsW4MXtZKgUJREIbKAyGDOEOkkkJ+No9Vs6a5Y+RF6v6XBP/UUazYS5n23jRuz
-	yCP7QlyAJXOMo9GVxtmaLHFPhAOb0jlZiBD93MyZNiDtCdmDCQVpNGcM=
-X-Google-Smtp-Source: AGHT+IFqA9fMK742QQwzYjDsOeVkVXJcKjISB60SiHI/k2L8TrTH1fBBcL8EvOf3OrjhRjQbEWTp58lobOM9hLeOZomwN0RMMfbC
+	s=arc-20240116; t=1725662761; c=relaxed/simple;
+	bh=pgy10sINnl3wg5V5uZT+kLYtn7sjQNqFtgevoyHcgl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dSFxNwJxmANm2N/RoCQOcdoWg3ZwXT197fF0tcQuzl2A9Wzn+9Fya1RDaLrCJZCQAD/CgmVjd/Q4dgGUw55vw8FqcJapZovc1LwDA391f5qh2Zpr6+LPqBrG+UNS9BUzPMms7M9uxv3tJgMd9MP3TB5wjMlo2qF3xLKOfusT+Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpBZwAx7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBBEDC4CEC4;
+	Fri,  6 Sep 2024 22:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725662761;
+	bh=pgy10sINnl3wg5V5uZT+kLYtn7sjQNqFtgevoyHcgl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cpBZwAx7yliuYL/V7IhiXW0QcYq/c9F8TkHWZCljXLKwLPLDP07pr9y2YFAfjCzlX
+	 hJkgbtmIIYg/m9jyZc6dp3BmSZe7jVt0YCXybivc4lcJ8i2vC9l0N3RFxVg2l1Yeul
+	 Q6lnYcFaHMwWHPQeQju5CfzdPZpJYbDrjTWDWNXZDEIkNMsUgASMV3aCQfI69JkYab
+	 ZPSMx9HYNkzckHRt1CJaBsK5VD7xVbL3roBcYGDnuT5eDYru2tGF0lGQ/56MQi6oGH
+	 J8ssxWASA98rE4iY2hHvQWHmNKLGXHFq+5AvPMH8cYpvHegmQCvtYubZajq1xtMFRJ
+	 Og7Aq5D0SW9qg==
+Date: Fri, 6 Sep 2024 15:45:49 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240906224549.3et6ikhqi6vr2d3m@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ZtsJ9qIPcADVce2i@redhat.com>
+ <20240906170008.fc7h3vqdpwnkok3b@treble>
+ <Ztttv0Eo/FHyxo78@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:6c8e:b0:4b9:b122:d07d with SMTP id
- 8926c6da1cb9f-4d084ff3a53mr120378173.4.1725662702252; Fri, 06 Sep 2024
- 15:45:02 -0700 (PDT)
-Date: Fri, 06 Sep 2024 15:45:02 -0700
-In-Reply-To: <20240906221658.2144-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005ec5bb06217b2833@google.com>
-Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in
- lockref_get_not_dead (2)
-From: syzbot <syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Ztttv0Eo/FHyxo78@redhat.com>
 
-Hello,
+On Fri, Sep 06, 2024 at 05:01:51PM -0400, Joe Lawrence wrote:
+> On Fri, Sep 06, 2024 at 10:00:08AM -0700, Josh Poimboeuf wrote:
+> > On Fri, Sep 06, 2024 at 09:56:06AM -0400, Joe Lawrence wrote:
+> > > In the case of klp-diff.c, adding #include <string.h> will provide the
+> > > memmem prototype.  For both files, I needed to #define _GNU_SOURCE for
+> > > that prototype though.
+> > > 
+> > > For the other complaint, I just set struct instruction *dest_insn = NULL
+> > > at the top of the for loop, but perhaps the code could be refactored to
+> > > clarify the situation to the compiler if you prefer not to do that.
+> > 
+> > Thanks!  I'll get these fixed up.
+> > 
+> 
+> Also, with the workarounds mentioned above, the two you sent to Song,
+> and the same .config I attached in the first email, I get the following
+> error when trying to build the canonical /proc/cmdline example:
+> 
+>   $ cat cmdline-string.patch 
+>   diff --git a/fs/proc/cmdline.c b/fs/proc/cmdline.c
+>   index a6f76121955f..2bcaf9ec6f78 100644
+>   --- a/fs/proc/cmdline.c
+>   +++ b/fs/proc/cmdline.c
+>   @@ -7,8 +7,7 @@
+>    
+>    static int cmdline_proc_show(struct seq_file *m, void *v)
+>    {
+>   -       seq_puts(m, saved_command_line);
+>   -       seq_putc(m, '\n');
+>   +       seq_printf(m, "%s kpatch=1", saved_command_line);
+>           return 0;
+>    }
+> 
+> 
+>   $ ./scripts/livepatch/klp-build ./cmdline-string.patch 2>&1 | tee build2.out
+>   - klp-build: building original kernel
+>   vmlinux.o: warning: objtool: init_espfix_bsp+0xab: unreachable instruction
+>   vmlinux.o: warning: objtool: init_espfix_ap+0x50: unreachable instruction
+>   vmlinux.o: warning: objtool: syscall_init+0xca: unreachable instruction
+>   vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+>   vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+>   vmlinux.o: warning: objtool: tc_wrapper_init+0x16: unreachable instruction
+>   vmlinux.o: warning: objtool: pvh_start_xen+0x50: relocation to !ENDBR: pvh_start_xen+0x57
+>   - klp-build: building patched kernel
+>   vmlinux.o: warning: objtool: init_espfix_bsp+0xab: unreachable instruction
+>   vmlinux.o: warning: objtool: init_espfix_ap+0x50: unreachable instruction
+>   vmlinux.o: warning: objtool: syscall_init+0xca: unreachable instruction
+>   vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+>   vmlinux.o: warning: objtool: sync_core_before_usermode+0xf: unreachable instruction
+>   vmlinux.o: warning: objtool: tc_wrapper_init+0x16: unreachable instruction
+>   vmlinux.o: warning: objtool: pvh_start_xen+0x50: relocation to !ENDBR: pvh_start_xen+0x57
+>   - klp-build: diffing objects
+>   kvm.o: added: __UNIQUE_ID_nop_644
+>   kvm.o: added: __UNIQUE_ID_nop_645
+>   kvm.o: added: __UNIQUE_ID_nop_646
+>   kvm.o: added: __UNIQUE_ID_nop_647
+>   kvm.o: added: __UNIQUE_ID_nop_648
+>   kvm.o: added: __UNIQUE_ID_nop_649
+>   kvm.o: added: __UNIQUE_ID_nop_650
+>   kvm.o: added: __UNIQUE_ID_nop_651
+>   kvm.o: added: __UNIQUE_ID_nop_652
+>   vmlinux.o: changed: cmdline_proc_show
+>   - klp-build: building patch module
+>   make[2]: /bin/sh: Argument list too long
+>   make[2]: *** [scripts/Makefile.build:253: /home/jolawren/src/linux/klp-tmp/out/livepatch.mod] Error 127
+>   make[1]: *** [/home/jolawren/src/linux/Makefile:1943: /home/jolawren/src/linux/klp-tmp/out] Error 2
+>   make: *** [Makefile:240: __sub-make] Error 2
+>   klp-build: error: module build failed
+> 
+> I'm guessing that this happens because of the huge dependency line in
+> klp-tmp/out/Kbuild for livepatch-y, it includes over 2000 object files
+> (that I'm pretty sure didn't change :)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hm, did you get this fix?
 
-Reported-by: syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com
-Tested-by: syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com
+https://lkml.kernel.org/lkml/20240904070952.kkafz2w5m7wnhblh@treble
 
-Tested on:
-
-commit:         d759ee24 Merge tag 'net-6.11-rc7' of git://git.kernel...
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=17816567980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=f82b36bffae7ef78b6a7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16949200580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Josh
 
