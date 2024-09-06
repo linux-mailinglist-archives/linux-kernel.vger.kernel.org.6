@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-318293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D325296EB4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:00:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252E896EB62
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C665B238BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2BE1F21BFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3614A60C;
-	Fri,  6 Sep 2024 06:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3320814A4DE;
+	Fri,  6 Sep 2024 07:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="JPN2IXXt"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/uRYJmt"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E48145B11;
-	Fri,  6 Sep 2024 06:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA25328DB;
+	Fri,  6 Sep 2024 07:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605990; cv=none; b=T5kgYa2CUG0aukJU4ecRh0rPnPIFo8so3I7kMhC1RTpdLpRz1tvyumIbp07Vv183ZxSqiY8meYWTLVRN1BIcTlGfMU1yRznm5e/is4cUe9mxyJZjCGvYdq2D2TkXoeYu2+6Gay6tRJfhzw3YAXrSEId8Q7k+hxKU6l2MdYxVn7w=
+	t=1725606054; cv=none; b=gHyFmGtF5OAPjooWtPRfOpi5aP/4eJlE4+3Og/iAPxOu4BYqNLcuM3xUpFhf+UqzxW9dAUJLxbAQ4TWzIJbtyRC/JxbO+QfTmxJw4l4OPYG6zXEWryhfTCAnDzdShJwu0oFL+KkqL8EXufY7Fsi+wMHi6BoG3b+3kZs040lslvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605990; c=relaxed/simple;
-	bh=Upc8XWfetGI1gtyR95rbZZ4/7td25ncn9d0JTpGxvI0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=auU81gas0N6sv6Vu2kofZie4moShfODS2FlsDK5h1ihtTuF2KPe1wu/l262BPXvn+irwFer20YkirR33rh9p/AkKmieQMfp1GR7AgwT9wDz7WVYMM0Sg/jeJDSMVQbuZAKcO4JYfKh9pDfo8vTPkiUeR0hR/7/es8+nAWAGNwck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=JPN2IXXt; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1725605984;
-	bh=sUHXIrjnHS+Ol+xIsY2BagDRHrRUVN5ksj5mkzk0GWk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JPN2IXXt8T9uK4WYrDF/aF6tNmSORt6qbIW8Scxf7Yj0cQGJxTUZFKXGO5myErUhO
-	 dheOx7TGFohEGncpupi9qLpH83n3AoXHGCjFRaE5Niax6X5n9aT7nWA+I3bK9x+Eiu
-	 t/dnkmhZucV62gV/Pjw/qwUz/2SdQGvC8Z7HFyyYFE1maTeK28OAbv9xMO/lRl53vR
-	 fKTDg3SbBMv8DMAXesSGLDGuR2pGfdcOTY/rxpyxqpZlA4RGjpSxeBvc3wq5DGClm0
-	 ulPvkdGfU6/akU45rkH7aLtvWoVsLT7oyn1+O++FpgqAAdWj4erLl8CjsBT5teWKFY
-	 UOvnBfG3WqM6A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0RtN4J6hz4w2N;
-	Fri,  6 Sep 2024 16:59:40 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta
- <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Guo Ren
- <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge
- Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
- <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>,
- Christoph Hellwig <hch@infradead.org>, Michal Hocko <mhocko@suse.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, Chris Torek
- <chris.torek@gmail.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net,
- Charlie Jenkins <charlie@rivosinc.com>
-Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
- 47 bits
-In-Reply-To: <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
-References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
- <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
-Date: Fri, 06 Sep 2024 16:59:40 +1000
-Message-ID: <87zfol468z.fsf@mail.lhotse>
+	s=arc-20240116; t=1725606054; c=relaxed/simple;
+	bh=a0IpK29gcRaxiGzYOqvJwcXihlwviNea9FYnuHFI7gc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jOYprlEsBRxkmilLz0GRnCnQfxM6jnVoe7HYbuaeqIE5phmO9TRXVyRRCqYVt+ZTGHdHxeEC4Ble9gEWeZqs6nw+em1zffPrrvPmpPspRrDSVElVAVqGDA1dGGtsNex3jUtMcANs3frEtYD61i0vpJkw7fBDNoeVs8TK1WQJEOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/uRYJmt; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49be3d534ffso49470137.0;
+        Fri, 06 Sep 2024 00:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725606052; x=1726210852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m3Ez8XYl6eL7ErMydWXe0O3lPOV2uCplEY60l4avJJ4=;
+        b=Z/uRYJmtkz142oOnZp2sd3uC3Y4fxN81ZcPaeG2KHZIup3kRZJXwFw6p3fjYJUKAjv
+         n5zDIVpVCD2dg7bZ4bqOBN5LMjOOClRsEuyOhiLxBZ/SLZbzHN1F+mUn1KsAVjmLPBpM
+         292p3CWG9xd4WUoRPoOEB2prA4Q2Cxa4T4iePC/ZcOJpPegefgF0ghRfziaMJ2FvJc1+
+         1OSrxjVL8Zab6pR7BJbLRhwvbmcGRjcxQjC3GeZo7EznpJqZAEH1EVBecTokB1LP8CVe
+         u3borzCwCdLrNpE+oycn8Hh7oeYXonOJBQx/zgzP/qsD6VrMkp1xRXjWu3z6XM2QEKDJ
+         bL2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725606052; x=1726210852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m3Ez8XYl6eL7ErMydWXe0O3lPOV2uCplEY60l4avJJ4=;
+        b=sPGvkHfrAuuT3+7VTBSoTjtlQyn76pFz08sWUNmxT/K0ijyVYJ4GMAuBRwvcK7O4SQ
+         zDRtA5m8fq3JM/I/0WxVolEGp1HX0b7HkrN+zUkkjLZVU4QO1HJWh8W7McsxJcev19tn
+         NO8oyMXpeIWxXtFgh7iXkg/8OLt+skrynvF8HkYtZIMqVwzC4La8bS+8wJSbSfx9gXp9
+         QMZ0PI6cux997x7pnnp+ZEWe7YqXvqM4A/XzlSH8BJCwnztgdq6Omj4jfEo1OQigskce
+         bjJAIxKfoanSdrECrOLbSTvV6oBVn4v2fA1Ljzp/irYX2E/4ATm9gQcW2HbS1tlei2G+
+         NPFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrsjQUt36o1sQW0t0qFlay4KGh3HqoWfKoSIfH3zYOizSVgQ7MLpNcIvuCsxMrHYQR5njD0NFORiru6p4Q@vger.kernel.org, AJvYcCVSqcC7KmsdBOgNFqY3h5weI7cS9YR+BKaC5t1KyDoMYa6ej33s3kC1Bzan/5caZfAFtCNw8M2tFrnRMkT/00U=@vger.kernel.org, AJvYcCW87F9mj+V0fLVyIw/4EYKOktv1w3LdCXdayNzu5C6CrODsu9rVJIQLYW2BMz0yIvl8OqWfBMZAqgrCVkUYWgj+g1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/tETGBPjfUdEFLbKHq7lb0c+fMMgJRd+gd7X4Xp1xuWxqmV4U
+	2c7QJSjCi9mGPEGWpbqqKdR/iyG55vRyt8/yMwd4uYKTIXBRMZMI4LqE2j0ufDOQAsYR97IKXnT
+	GLeXDLnumd/pwjrJ+xU7hdQSGxB0=
+X-Google-Smtp-Source: AGHT+IGdsNQUsmbUOUI+orNngMgxpsTQdp0snOH8gbX5DALySfY8923JRytGglN6HweIwISXhyNuq567FwNajE1v7us=
+X-Received: by 2002:a05:6102:1625:b0:49b:dd30:d168 with SMTP id
+ ada2fe7eead31-49bde130e32mr1997788137.2.1725606051772; Fri, 06 Sep 2024
+ 00:00:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <7c4a1ca4525a1d1429c9f16ccfc6d8bf80fc2b63.1720942618.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7c4a1ca4525a1d1429c9f16ccfc6d8bf80fc2b63.1720942618.git.christophe.jaillet@wanadoo.fr>
+From: Inki Dae <daeinki@gmail.com>
+Date: Fri, 6 Sep 2024 16:00:15 +0900
+Message-ID: <CAAQKjZPN742hd=BJHmS+ATOwpR+AdhyhF4W0J8vWAonMKfPXhg@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: Constify struct exynos_drm_ipp_funcs
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Charlie Jenkins <charlie@rivosinc.com> writes:
-> Create a personality flag ADDR_LIMIT_47BIT to support applications
-> that wish to transition from running in environments that support at
-> most 47-bit VAs to environments that support larger VAs. This
-> personality can be set to cause all allocations to be below the 47-bit
-> boundary. Using MAP_FIXED with mmap() will bypass this restriction.
+Hi Christophe JAILLET,
+
+2024=EB=85=84 7=EC=9B=94 14=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 4:37, C=
+hristophe JAILLET
+<christophe.jaillet@wanadoo.fr>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> 'struct exynos_drm_ipp_funcs' are not modified in these drivers.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   20446    1746      16   22208    56c0 drivers/gpu/drm/exynos/exynos_drm=
+_fimc.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   20446    1714      16   22176    56a0 drivers/gpu/drm/exynos/exynos_drm=
+_fimc.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Applied. Thank for contribution,
+Inki Dae
+
 > ---
->  include/uapi/linux/personality.h | 1 +
->  mm/mmap.c                        | 3 +++
->  2 files changed, 4 insertions(+)
+> Compile tested-only.
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/include/uapi/linux/personality.h b/include/uapi/linux/personality.h
-> index 49796b7756af..cd3b8c154d9b 100644
-> --- a/include/uapi/linux/personality.h
-> +++ b/include/uapi/linux/personality.h
-> @@ -22,6 +22,7 @@ enum {
->  	WHOLE_SECONDS =		0x2000000,
->  	STICKY_TIMEOUTS	=	0x4000000,
->  	ADDR_LIMIT_3GB = 	0x8000000,
-> +	ADDR_LIMIT_47BIT = 	0x10000000,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/e=
+xynos/exynos_drm_fimc.c
+> index 142184c8c3bc..4d7ea65b7dd8 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> @@ -1125,7 +1125,7 @@ static void fimc_abort(struct exynos_drm_ipp *ipp,
+>         }
+>  }
+>
+> -static struct exynos_drm_ipp_funcs ipp_funcs =3D {
+> +static const struct exynos_drm_ipp_funcs ipp_funcs =3D {
+>         .commit =3D fimc_commit,
+>         .abort =3D fimc_abort,
 >  };
-
-I wonder if ADDR_LIMIT_128T would be clearer?
-
-Have you looked at writing an update for the personality(2) man page? :)
-
-cheers
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_gsc.c
+> index 1b111e2c3347..d80b0d1eb734 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> @@ -1162,7 +1162,7 @@ static void gsc_abort(struct exynos_drm_ipp *ipp,
+>         }
+>  }
+>
+> -static struct exynos_drm_ipp_funcs ipp_funcs =3D {
+> +static const struct exynos_drm_ipp_funcs ipp_funcs =3D {
+>         .commit =3D gsc_commit,
+>         .abort =3D gsc_abort,
+>  };
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm=
+/exynos/exynos_drm_scaler.c
+> index a9d469896824..2788105ac780 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+> @@ -403,7 +403,7 @@ static int scaler_commit(struct exynos_drm_ipp *ipp,
+>         return 0;
+>  }
+>
+> -static struct exynos_drm_ipp_funcs ipp_funcs =3D {
+> +static const struct exynos_drm_ipp_funcs ipp_funcs =3D {
+>         .commit =3D scaler_commit,
+>  };
+>
+> --
+> 2.45.2
+>
+>
 
