@@ -1,82 +1,133 @@
-Return-Path: <linux-kernel+bounces-318960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48C996F5AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:45:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D974496F5B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC532841BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E97284A18
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2141CE707;
-	Fri,  6 Sep 2024 13:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIn6X0dg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E18188A31;
-	Fri,  6 Sep 2024 13:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6241CF2B8;
+	Fri,  6 Sep 2024 13:45:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7B61E4BE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630327; cv=none; b=rRbK1/Va4HyukYYvpCx0n2zUtg2dp/SWSZZp/Z1mKjJaGmpHopayAX4D7snYIp7lNQfFEkl3ipgToVZl70bhup+4u1L9AH1eTWgxS/9iZ3JfHD54iDlqaHCRS0CuPKHpWWDrExsSFXJKsE98LreYMYWaTF0Vk7+eTc6eK72PbxM=
+	t=1725630344; cv=none; b=jw03U8sF5ZByN1G5QCzZhgysWF7jOmbMzIAIOp7+5oLeuVpVD7urhQ2ONtU/AfL65NN04JAOW7ybpG7d/VcwIoJE2OGosVgHxr3mTdNAz7DhVw+V5vxUenAqUpxC2+gz9OVTEy6YrUXZvZyOoNbx75VbiC2x2yIj333Bop/eoag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630327; c=relaxed/simple;
-	bh=D9mwUNXxC/j5K9uvw5L/WU/SNxAuyrswt76dmUCYKJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqszrZdx31tEzUzc3Ovn3VCC5SZf7H8/Ni8UT3WBzNrf4FcODr4E2dSYt9ubYAVu9IVai/y4W3QLN+Zsd4gZgdPu/GdVq9eZ4ZfUyOuO7WyXqatHeVTCZJqK9Fvm4g8pURaOaqVgXPcv3yBRbxwvhhyo9QsSb6/Me/Rhq5z2fpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIn6X0dg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8895CC4CEC9;
-	Fri,  6 Sep 2024 13:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725630325;
-	bh=D9mwUNXxC/j5K9uvw5L/WU/SNxAuyrswt76dmUCYKJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QIn6X0dg1+OCbht+1ToTsNTDiFpGWyNc6BimGxj8umIct/EzudGB/vOIscfl9e84k
-	 wpRm9e06RYSPFT/bFxhin95DIdl5Z/kLOqvTEI4OGIPWvluEOdHh0Z4c+aHS72rwTU
-	 RtgmPB85779ZYVxRAZUrusedoTHobpCjbFgdiLW0mLnfeyH2sC7AqCMeMafwFORxMu
-	 GSODvHlvO4Iwlim0VK+jia9FyLmqybffPcSwmJy2mgUgW58NVg//6lZ7IZIKIiXmGk
-	 1kiIkG+m3apPISLxrh6fqlq5iVeUguJZdLEVklvens/eZF+sShzLivNRNlxPzeiCSF
-	 LH6dzzOxhXvLQ==
-Date: Fri, 6 Sep 2024 15:45:23 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 05/15] timers: Rename sleep_idle_range() to
- sleep_range_idle()
-Message-ID: <ZtsHcyjnEu1Ml56C@pavilion.home>
-References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
- <20240904-devel-anna-maria-b4-timers-flseep-v1-5-e98760256370@linutronix.de>
+	s=arc-20240116; t=1725630344; c=relaxed/simple;
+	bh=TNW5lGfhfsP+beCT0CRW7oI5YJ5qb3u0F8ZVwYMrM2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TEOPwX/vZkngs8nUIKsbCM/BdTQmUayFJPmDv6Wi0b7Q2h8FXbAN9IlW/LGnFkgP8iIBA7eI1ZtzM9mUbeY0phQWE9rKSB2zeh5gfiIY+I2eXzN1x3U4O/vQQ2+yXXeyOX70PGQmbDriYDWIwpDcTjrALgdNI5q3OY9dROoPEVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47E21FEC;
+	Fri,  6 Sep 2024 06:46:08 -0700 (PDT)
+Received: from [10.57.86.132] (unknown [10.57.86.132])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DFA53F73B;
+	Fri,  6 Sep 2024 06:45:39 -0700 (PDT)
+Message-ID: <16b02b7e-7877-4965-b15a-bf3b600134f7@arm.com>
+Date: Fri, 6 Sep 2024 14:45:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-5-e98760256370@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/vmalloc:arm64 support cont-pte huge vmalloc mapping
+Content-Language: en-GB
+To: Haiwang Fu <fuhaiwang@bytedance.com>, akpm@linux-foundation.org,
+ mark.rutland@arm.com, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240906130919.3765401-1-fuhaiwang@bytedance.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240906130919.3765401-1-fuhaiwang@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le Wed, Sep 04, 2024 at 03:04:55PM +0200, Anna-Maria Behnsen a écrit :
-> sleep_idle_range() is a variant of sleep_range(). Both are using
-> sleep_range_state() as a base. To be able to find all the related functions
-> in one go, rename it sleep_idle_range() to sleep_range_idle().
+On 06/09/2024 14:09, Haiwang Fu wrote:
+> From: fuhaiwang <fuhaiwang@bytedance.com>
 > 
-> No functional change.
+> Arm64 support contiguous bit which is used to increase the mapping size
+> at the pmd and pte level.
 > 
-> Cc: SeongJae Park <sj@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: damon@lists.linux.dev
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Now huge vmalloc support PMD and PTE level mapping, and support
+> multi size at pte level.
+> 
+> arm64: implement the fllowing interface on arm64 to support
+> cont-pte huge vmalloc mapping.
+> arch_vmap_pte_supported_shift(*)
+> arch_vmap_pte_range_map_size(*)
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+I believe that riscv tried to do the same thing and had to revert it because its
+possible to unmap a portion of what was allocated and there was no easy way to
+fix up the mapping safely. See [1].
+
+I believe arm64 might suffer from a similar problem; I'm guessing the contpte
+code would attempt to repaint the ptes with/out the PTE_CONT bit, as needed. But
+that isn't safe on kernel mappings because there is no way to recover if another
+thread tries to access the mapping concurrently. The code is only safe for user
+mappings where the racing fault will get serialized behind the PTL.
+
+[1] https://lore.kernel.org/linux-riscv/20240227205016.121901-2-
+alexghiti@rivosinc.com/
+
+Thanks,
+Ryan
+
+
+> 
+> Signed-off-by: fuhaiwang <fuhaiwang@bytedance.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index c329ea061dc9..3f32e3150680 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1814,6 +1814,34 @@ static inline void clear_young_dirty_ptes(struct vm_area_struct *vma,
+>  
+>  #endif /* CONFIG_ARM64_CONTPTE */
+>  
+> +static inline unsigned long arch_vmap_pte_range_map_size(unsigned long addr, unsigned long end,
+> +					u64 pfn, unsigned int max_page_shift)
+> +{
+> +	if (end - addr < CONT_PTE_SIZE)
+> +		return PAGE_SIZE;
+> +
+> +	if ((1UL << max_page_shift) < CONT_PTE_SIZE)
+> +		return PAGE_SIZE;
+> +
+> +	if (!IS_ALIGNED(addr, CONT_PTE_SIZE))
+> +		return PAGE_SIZE;
+> +
+> +	if (!IS_ALIGNED(PFN_PHYS(pfn), CONT_PTE_SIZE))
+> +		return PAGE_SIZE;
+> +
+> +	return CONT_PTE_SIZE;
+> +}
+> +#define arch_vmap_pte_range_map_size arch_vmap_pte_range_map_size
+> +
+> +static inline int arch_vmap_pte_supported_shift(unsigned long size)
+> +{
+> +	if (size >= CONT_PTE_SIZE)
+> +		return CONT_PTE_SHIFT;
+> +	else
+> +		return PAGE_SHIFT;
+> +}
+> +#define arch_vmap_pte_supported_shift arch_vmap_pte_supported_shift
+> +
+>  #endif /* !__ASSEMBLY__ */
+>  
+>  #endif /* __ASM_PGTABLE_H */
+
 
