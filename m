@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-318895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4DA96F4B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F423196F4D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02AC81C23CAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B448628429A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CAF1CCB49;
-	Fri,  6 Sep 2024 12:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A77D1CCB53;
+	Fri,  6 Sep 2024 12:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulbJyjDb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4m52fepH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295B11C9EBB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8521CB14E;
+	Fri,  6 Sep 2024 12:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627234; cv=none; b=MXvjiYgHVpdVSTASE+D6SXAuks50c3Z8bJbAjTCJB4nZK2c7Gp0LfSn6BenTad9vsy8XGkgFNK/xJEWMQYzL2A9R8uvboXGbD9KIPMPvmIp6eVrNs0uIESpMB7XvS0Y1KtuCmsx7PutBzzVpeVlUDmCeZt0N2GaLmVLLxc8QwGA=
+	t=1725627470; cv=none; b=Xk7td164dEWvFxbLO1zV6JLtY1lezgJ3buNoW4Sws7kJvL1fomi3eROKg61AZLDVLU9ZTjJ9/xBgghvEblnyewFE/FG1lJWKU24BLY+LPKe3AaIvpduwTxsS7HEQ8ihiWV9pRFF6sUPva7O6Tm01bbwrz2hfQ6oFv2EmgkR9EoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627234; c=relaxed/simple;
-	bh=FQquC8C5I/dDQukjjSCFxWMh6nkN285LKr1R53TYDz4=;
+	s=arc-20240116; t=1725627470; c=relaxed/simple;
+	bh=/2FtnWCHaPjHsUcPxHXdI1VpOC7eip5BSxs8aBELA+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELYg6nmlkavGtKyvuBIQx/J7MxpTflXKUZwVHbetUWRU8MJiCbCtsDKqbJLpcsE06L30bAx6bQsdKLXP0PG42N1KA9zxKmUsX2riw7rUumW80ZI4G0w8+uRfLWNf0vAIYK3rfRV+nZyzkw3blCE70DmN92lVOU1Rcyl08yRrjXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulbJyjDb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 530A3C4CEC4;
-	Fri,  6 Sep 2024 12:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725627233;
-	bh=FQquC8C5I/dDQukjjSCFxWMh6nkN285LKr1R53TYDz4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ulbJyjDbxmiOZK+dwRvGNvr8u29v3hkLASgDwDY1KG81wjI1DYeeBOvuhasXcNoK7
-	 1S8G+uQO9b07VciLyvPBezqI7z9PeP8uw28xl7dduFJHLYRGycy5KMTGyYjaNlQdqo
-	 jRtVP+K7bIVjF48YHG4X247wizxfq5X+zIP6Hb+5gdWGPlNmJrQccbMZ28yp0OfdAW
-	 JO3au5rOE7X60cHu552tPfq8q71uhukZIp3AwATRgpQpTSwN1CUVHVn5FUfQE53b4X
-	 JDqs6fX7aIJJNFr6dSkp/fsjdTtED5IPKmWD/OOfP+aOsn1u4g0oxWw/ZdgNzpxZJM
-	 GP3ebutekYTLw==
-Date: Fri, 6 Sep 2024 14:53:50 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sched/fair: Use HK_TYPE_SCHED housekeeping CPUs
-Message-ID: <Ztr7XgZd5pUWNLnY@pavilion.home>
-References: <20240818234520.90186-1-longman@redhat.com>
- <20240818234520.90186-3-longman@redhat.com>
- <ZtcLUcJvqSV3vXd2@localhost.localdomain>
- <d43165ae-9124-4034-b816-d09c9a48ecec@redhat.com>
- <70e5a6f3-1cff-46c9-af34-75664961eae2@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZE42o7GRPqjyMxIAEELaxOPwGR+FT3wrawGUhY75UwIjcVCr3Z3S7WI6dV6s1pFVRk84IHY2nj0dXtDnY5z/3GRBw5cRNDEFlXVaOqK1jryxfGZ3GVo42zuqxPJQy6kXh40sDKTVe/YiKDlRPH0icEPYQYZ3yMTeZ/fjgp1Go9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4m52fepH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZZLMqGWTh9m7ksvTShRd1ZBjtLKzyMJggprBHSOKla0=; b=4m52fepHMFB4fqS/495CWIdz34
+	F2NPjaqbz1BohSs+cIe8xG8HumG+uZUFaCToIdb3k6bOXXTxfSzDI/aOTl2jktjcQmc6K5KJeVe6u
+	/+iH8rTx/w/9tAlCsNUOAhoV7/I4DTl8VYSD1U6VugZu5JTaXS8UQ6y7zH+1CW1ebczI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1smYWt-006oLc-Li; Fri, 06 Sep 2024 14:57:35 +0200
+Date: Fri, 6 Sep 2024 14:57:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tarun.Alle@microchip.com
+Cc: Arun.Ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: SQI support for LAN887x
+Message-ID: <af78280b-68a5-47f4-986e-667cc704f8da@lunn.ch>
+References: <20240904102606.136874-1-tarun.alle@microchip.com>
+ <dba796b1-bb59-4d90-b592-1d56e3fba758@lunn.ch>
+ <DM4PR11MB623922B7FE567372AB617CA88B9E2@DM4PR11MB6239.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <70e5a6f3-1cff-46c9-af34-75664961eae2@redhat.com>
+In-Reply-To: <DM4PR11MB623922B7FE567372AB617CA88B9E2@DM4PR11MB6239.namprd11.prod.outlook.com>
 
-Le Wed, Sep 04, 2024 at 10:54:15AM -0400, Waiman Long a écrit :
-> 
-> On 9/3/24 09:53, Waiman Long wrote:
+> > How long does this take?
 > > 
-> > On 9/3/24 09:12, Frederic Weisbecker wrote:
-> > > Le Sun, Aug 18, 2024 at 07:45:19PM -0400, Waiman Long a écrit :
-> > > > As the previous commit has enabled the setting of HK_TYPE_SCHED
-> > > > housekeeping CPUs in nohz_full setup, we can now use the more aptly
-> > > > named HK_TYPE_SCHED housekeeping CPUs instead of HK_TYPE_MISC.
-> > > > 
-> > > > Signed-off-by: Waiman Long <longman@redhat.com>
-> > > Can we instead merge HK_FLAG_TICK, HK_FLAG_WQ, HK_FLAG_TIMER,
-> > > HK_FLAG_RCU,
-> > > HK_FLAG_MISC and HK_FLAG_KTHREAD into a single
-> > > HK_FLAG_KERNEL_NOISE / HK_TYPE_KERNEL_NOISE ?
-> > 
-> > Sure. I am open to new name as I am not good on that.
-> > HK_FLAG_KERNEL_NOISE does make sense.
 > 
-> I can't merge HK_FLAG_TICK just yet as it can be independently set by using
-> isolcpus which can set just HK_TYPE_TICK, HK_TYPE_DOMAIN or
-> HK_TYPE_MANAGED_IRQ. That is the reason why they are still separate.
+> ~76ms
 
-Ah I think we really need to unify behaviours of isolcpus=nohz and nohz_full=
+That is faster than i expected. You have a pretty efficient MDIO bus
+implementation.
 
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 5891e715f00d..9bc8fbf326cc 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -212,7 +212,8 @@ static int __init housekeeping_isolcpus_setup(char *str)
- 	while (isalpha(*str)) {
- 		if (!strncmp(str, "nohz,", 5)) {
- 			str += 5;
--			flags |= HK_FLAG_TICK;
-+			flags |= HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU |
-+				 HK_FLAG_MISC | HK_FLAG_KTHREAD;
- 			continue;
- 		}
- 
+> > genphy_c45_read_link() takes a few MDIO transaction, plus the two you see
+> > here. So maybe 1000 MDIO bus transactions? Which could be
+> > 3000-4000 if it needs to use C45 over C22.
+> > 
+> > Do you have any data on the accuracy, with say 10, 20, 40, 80, 160 samples?
+> >
+> 
+> Here number of samples are suggested by our compliance test data.
+> There is an APP Note regarding SQI samples and calculations.
+> No, the number of samples are only 200 as any other count was not
+> consistent in terms of accuracy.
+>  
+> > Can the genphy_c45_read_link() be moved out of the loop? If the link is lost, is the
+> > sample totally random, or does it have a well defined value? Looking at the link
+> > status every iteration, rather than before and after collecting the samples, you are
+> > trying to protect against the link going down and back up again. If it is taking a
+> > couple of seconds to collect all the samples, i suppose that is possible, but if its
+> > 50ms, do you really have to worry?
+> > 
+> 
+> 
+> Sampling data is random. If the link is down at any point during
+> the data sampling we are discarding the entire set.
+> If we check the link status before and after the data collection, there could
+> be an invalidate SQI derivation in very worst-case scenario.
+> 
+> Just to improve instead of register read can I change it to use phydev->link variable?
+> This link variable is update by PHY state machine.
 
+Which won't get to run because the driver is actively doing SQI. There
+is no preemption here, this code will run to completion, and then
+phylib will deal with any interrupts for link down, or do its once per
+second poll to check the link status.
+
+With this only taking 76ms, what is the likelihood of link down and
+link up again within 76ms? For a 1000BaseT PHY, they don't report link
+down for 1 second, and it takes another 1 second to perform autoneg
+before the link is up again. Now this is an automotive PHY, so the
+timing is different. What does the data sheet say about how fast it
+detects and reports link down and up?
+
+	Andrew
 
