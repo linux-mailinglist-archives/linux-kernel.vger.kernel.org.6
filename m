@@ -1,228 +1,140 @@
-Return-Path: <linux-kernel+bounces-318575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9267C96F007
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:46:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1288E96F00B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49404288251
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E6EC1C21081
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06101CA681;
-	Fri,  6 Sep 2024 09:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75CD1A3022;
+	Fri,  6 Sep 2024 09:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYvozVGM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CclR5XKV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FCC1CA6AF;
-	Fri,  6 Sep 2024 09:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181161CB145;
+	Fri,  6 Sep 2024 09:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615903; cv=none; b=ex+7u9FqNrbBqN4+hvo/SOgK7SkHx6dkAsEHwy5IGyC72YE0bzEbiufgOaGtvhFpAWiNkX62S5m9lmwT6hoAWpt6101Lk7lyWSl82u2tKo31XWLeBuM5uzHZV6w+HlpnZeeygfpD9pm7FF2KsdoID1Vvlq2gPPoAUVx2ps4gKwE=
+	t=1725615907; cv=none; b=Nvr6nxYjT2pTeNeYJd+j1aG/uBMw1a+61K5LATfRAtGq9DgQWMC2a6D3gyd319QKkKgGHJK4fTnVKZ094YKREe3bPQI2D8Y97RiR54syIp7hXuWoxPj0Bi6ThenbkBbFIrBQyoqZSaD5LxZie9Kr4Blh4cW8qA49mhWBJkO4KBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615903; c=relaxed/simple;
-	bh=Rt2nyfE5ubP8pA0B8PPUA3nYtqppOBbV6wORmmUvWSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYjrUhLpnC7FFrueo854jGkxJrls9kWcAMVwwoSi3SFYp+15t2tsozJdqT3n0LeIIifiNylOM8I7dE9a57G0cFveZhejyqmxViHtbb3WWge+CPbKJAa/siyO5r7YWpGo0Ma2FmDSbWN/df/GvSUVsIdEFc3Iyc5ZlRAcA2wyxRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYvozVGM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94185C4CEC4;
-	Fri,  6 Sep 2024 09:44:56 +0000 (UTC)
+	s=arc-20240116; t=1725615907; c=relaxed/simple;
+	bh=h6tMVK3hUBDyNHoKcfua8I1SEiAjO/LajNuZV1loc14=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=C8ZENN9fpUAuascFQ8xrFTE7dA7Hgpv1jJ61YmVGDzpMmW554L1+6S11mlomGQvwlYiYCWqJMnhYyszk408Zs3w4sIvTtAYQkSs1kSHnifCdDtWJCYHNw9YXq6xCtS0h8TvyHm+FUgTIeuEbZ+ttSc3B9zKV885hZE4v1q49urs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CclR5XKV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254B1C4CEC8;
+	Fri,  6 Sep 2024 09:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725615902;
-	bh=Rt2nyfE5ubP8pA0B8PPUA3nYtqppOBbV6wORmmUvWSk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uYvozVGMeF2/g2AfsViHKq0jq64rjOe9ORT9k2+I+fyuafVQ91YpaGC6KflyRH/L6
-	 W7VWPThXq+AdS5TKuaPNPPz2rLmq0AJ/eVz3QTLe7Av6oPQLmkR3QH2AtkFtbZhNTo
-	 M44tj570e5pvNl7fm6X3GMmplSv3Wb7PlvX1WNIWEnTVJ/sr4mPi47jjubuPBpa4xY
-	 fibniBERy0g1ZX/GGCXhFnNhaZhP54x9YIVcAT6gVel0i1wdPL3NYo8+IXo9FdrGqd
-	 N8wAWN00iYaVLIS0xosnvynSpBmWsArG2YTG/Y7FzAsyotd1J8hH9nzDEBE/L8lC7s
-	 Mu7TVwoYngDgQ==
-Message-ID: <90a5b41b-84cd-4daa-b102-04a29c2cd46b@kernel.org>
-Date: Fri, 6 Sep 2024 11:44:54 +0200
+	s=k20201202; t=1725615906;
+	bh=h6tMVK3hUBDyNHoKcfua8I1SEiAjO/LajNuZV1loc14=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=CclR5XKVX+vY89v50ULWz36stcErhdsU39M/DOohlVC/ZsSaSe+y3L2IVBJjbPScH
+	 GXOn0glHUhAT0iOZk62N3cY7PkUOSJGILlYDN3lY0iTk6LWbYD1GnbNXI9pmF9EGgg
+	 sJTAp9ln8Jydc29cP4RJop1LNuwYibdDa7bWNnnddaUZQgkULn/SRTob/OB5uoQAfX
+	 cq01Mi6KkHOKwteAKlxrlMmy8JD+h7QtHwgu8P4aSfXTaLlzvo9JK7hDejHRlEoBGU
+	 8ALB9zWGb77EYUlbWUzVdRneP+6mUMRKEOgAT6Jg2OtKa8mBMNQ6XKTr40zW9OWwyL
+	 8W+OTBBNXxt0Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] power: reset: add Photonicat PMU poweroff driver
-To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
- Chukun Pan <amadeus@jmu.edu.cn>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-3-bigfoot@classfun.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240906093630.2428329-3-bigfoot@classfun.cn>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Fri, 06 Sep 2024 12:45:02 +0300
+Message-Id: <D3Z3S9Z6B4BC.2OSFJZYTZOPZD@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <wufan@linux.microsoft.com>, <pbrobinson@gmail.com>, <zbyszek@in.waw.pl>,
+ <hch@lst.de>, <mjg59@srcf.ucam.org>, <pmatilai@redhat.com>,
+ <jannh@google.com>, <dhowells@redhat.com>, <jikos@kernel.org>,
+ <mkoutny@suse.com>, <ppavlu@suse.com>, <petr.vorel@gmail.com>,
+ <mzerqung@0pointer.de>, <kgold@linux.ibm.com>, "Roberto Sassu"
+ <roberto.sassu@huawei.com>
+Subject: Re: [RFC][PATCH v3 04/10] ima: Add digest_cache_measure/appraise
+ boot-time built-in policies
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <corbet@lwn.net>,
+ <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+ <eric.snowberg@oracle.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+ <serge@hallyn.com>
+X-Mailer: aerc 0.18.2
+References: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
+ <20240905152512.3781098-5-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240905152512.3781098-5-roberto.sassu@huaweicloud.com>
 
-On 06/09/2024 11:36, Junhao Xie wrote:
-> This driver implements the shutdown function of Photonicat PMU:
-> 
-> - Host notifies PMU to shutdown:
->   When powering off, a shutdown command (0x0F) needs to be sent
->   to the MCU.
-> 
-> - PMU notifies host to shutdown:
->   If the power button is long pressed, the MCU will send a shutdown
->   command (0x0D) to the system.
->   If system does not shutdown within 60 seconds,
->   the power will be turned off directly.
-> 
-> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+On Thu Sep 5, 2024 at 6:25 PM EEST, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Specify the 'digest_cache_measure' boot-time policy with 'ima_policy=3D' =
+in
+> the kernel command line to add the following rule at the beginning of the
+> IMA policy, before other rules:
+>
+> measure func=3DDIGEST_LIST_CHECK pcr=3D12
+>
+> which will measure digest lists into PCR 12 (or the value in
+> CONFIG_IMA_DIGEST_CACHE_MEASURE_PCR_IDX).
+>
+> Specify 'digest_cache_appraise' to add the following rule at the beginnin=
+g,
+> before other rules:
+>
+> appraise func=3DDIGEST_LIST_CHECK appraise_type=3Dimasig|modsig
+>
+> which will appraise digest lists with IMA signatures or module-style
+> appended signatures.
+>
+> Adding those rule at the beginning rather than at the end is necessary to
+> ensure that digest lists are measured and appraised in the initial ram
+> disk, which would be otherwise prevented by the dont_ rules.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  drivers/power/reset/Kconfig               | 12 +++
->  drivers/power/reset/Makefile              |  1 +
->  drivers/power/reset/photonicat-poweroff.c | 95 +++++++++++++++++++++++
->  3 files changed, 108 insertions(+)
->  create mode 100644 drivers/power/reset/photonicat-poweroff.c
-> 
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index fece990af4a7..c59529ce25a2 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -148,6 +148,18 @@ config POWER_RESET_ODROID_GO_ULTRA_POWEROFF
->  	help
->  	  This driver supports Power off for Odroid Go Ultra device.
->  
-> +config POWER_RESET_PHOTONICAT_POWEROFF
-> +	tristate "Photonicat PMU power-off driver"
-> +	depends on MFD_PHOTONICAT_PMU
+>  .../admin-guide/kernel-parameters.txt         | 10 +++++-
+>  security/integrity/ima/Kconfig                | 10 ++++++
+>  security/integrity/ima/ima_policy.c           | 35 +++++++++++++++++++
+>  3 files changed, 54 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index 09126bb8cc9f..afaaf125a237 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2077,7 +2077,8 @@
+>  	ima_policy=3D	[IMA]
+>  			The builtin policies to load during IMA setup.
+>  			Format: "tcb | appraise_tcb | secure_boot |
+> -				 fail_securely | critical_data"
+> +				 fail_securely | critical_data |
+> +				 digest_cache_measure | digest_cache_appraise"
+> =20
+>  			The "tcb" policy measures all programs exec'd, files
+>  			mmap'd for exec, and all files opened with the read
+> @@ -2099,6 +2100,13 @@
+>  			The "critical_data" policy measures kernel integrity
+>  			critical data.
+> =20
+> +			The "digest_cache_measure" policy measures digest lists
+> +			into PCR 12 (can be changed with kernel config).
+> +
+> +			The "digest_cache_appraise" policy appraises digest
+> +			lists with IMA signatures or module-style appended
+> +			signatures.
+> +
+>  	ima_tcb		[IMA] Deprecated.  Use ima_policy=3D instead.
+>  			Load a policy which meets the needs of the Trusted
+>  			Computing Base.  This means IMA will measure all
 
-|| COMPILE_TEST, no?
+Must be updated as a separate commit as kernel-parameters.txt not
+part of IMA. Consider it as a different subsystem in this context.
 
-> +	help
-> +	  This driver supports Power off for Photonicat PMU device.
-> +
-> +	  Supports operations:
-> +	    Host notifies PMU to shutdown
-> +	    PMU notifies host to shutdown
-> +
-> +	  Say Y if you have a Photonicat board.
-> +
->  config POWER_RESET_PIIX4_POWEROFF
->  	tristate "Intel PIIX4 power-off driver"
->  	depends on PCI
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index a95d1bd275d1..339b36812b95 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -17,6 +17,7 @@ obj-$(CONFIG_POWER_RESET_MT6323) += mt6323-poweroff.o
->  obj-$(CONFIG_POWER_RESET_QCOM_PON) += qcom-pon.o
->  obj-$(CONFIG_POWER_RESET_OCELOT_RESET) += ocelot-reset.o
->  obj-$(CONFIG_POWER_RESET_ODROID_GO_ULTRA_POWEROFF) += odroid-go-ultra-poweroff.o
-> +obj-$(CONFIG_POWER_RESET_PHOTONICAT_POWEROFF) += photonicat-poweroff.o
->  obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
->  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
->  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
-> diff --git a/drivers/power/reset/photonicat-poweroff.c b/drivers/power/reset/photonicat-poweroff.c
-> new file mode 100644
-> index 000000000000..f9f1ea179247
-> --- /dev/null
-> +++ b/drivers/power/reset/photonicat-poweroff.c
-> @@ -0,0 +1,95 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024 Junhao Xie <bigfoot@classfun.cn>
-> + */
-> +
-> +#include <linux/mfd/photonicat-pmu.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reboot.h>
-> +
-> +struct pcat_poweroff {
-> +	struct device *dev;
-> +	struct pcat_pmu *pmu;
-> +	struct notifier_block nb;
-> +};
-> +
-> +static int pcat_do_poweroff(struct sys_off_data *data)
-> +{
-> +	struct pcat_poweroff *poweroff = data->cb_data;
-> +
-> +	dev_info(poweroff->dev, "Host request PMU shutdown\n");
-> +	pcat_pmu_write_data(poweroff->pmu, PCAT_CMD_HOST_REQUEST_SHUTDOWN,
-> +			    NULL, 0);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int pcat_poweroff_notify(struct notifier_block *nb, unsigned long action,
-> +				void *data)
-> +{
-> +	struct pcat_poweroff *poweroff =
-> +		container_of(nb, struct pcat_poweroff, nb);
-> +
-> +	if (action != PCAT_CMD_PMU_REQUEST_SHUTDOWN)
-> +		return NOTIFY_DONE;
-> +
-> +	dev_info(poweroff->dev, "PMU request host shutdown\n");
-
-Nope. Drop.
-
-> +	orderly_poweroff(true);
-> +
-> +	return NOTIFY_DONE;
-Best regards,
-Krzysztof
-
+BR, Jarkko
 
