@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-318448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23E896EE2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F3696EE31
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD7A1C23DA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403C2286214
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD600157492;
-	Fri,  6 Sep 2024 08:33:38 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E8C157492;
+	Fri,  6 Sep 2024 08:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lAbhSCkw"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92EA45BE3;
-	Fri,  6 Sep 2024 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B672545BE3;
+	Fri,  6 Sep 2024 08:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611618; cv=none; b=XZtKpIA5McfJxag4KNl1BFiPOpxfcflkreHamK0AaP4udu+MW9vbZtcRWAUSO2RmqwA44WQicPH87RsggQ/luBoQt4IF+DHGWba92ssN8EXdbTE3RqnldexVgpgE7W88yhl7eZu63SDGNACIsJT6e5/bRY8s7pIGLZ4DzYwujcM=
+	t=1725611627; cv=none; b=tVqI4pHRLlwhYxvQUnLjVOrqTZkReWu5nMgZaPhZxoJpydnsLIBx2t+YuxWxoJ8X6PdgAGEc+i692N0hqPzt7cTX39tsIv9ErGeWCQo19U1VbxHYPxBkGB4tSkfN2Jp0HWssh6Nx4VP9DV6+tmzi+7MSOUVOzGVics69tl8/Vjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611618; c=relaxed/simple;
-	bh=cpiiP/a8WYagaZ5Xik48GIkl1auYNZ+kgnNZrgUnfwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rg2DxDuLEpagW/pdCbbXmYWvwq6LyFxYfj/y42sxYD6DudA1jj6ZEffNjDZ1wKuqcnaRfU7KZASz9IZSjjz54fkI+C1koWAkFP5g0La4vF10F1+7m+kCSQ8JvWRKCS1vmzllUf6BHyl9/nuG1WrLercbGxB3ApcGbKz4G0gmcaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so1917480a12.0;
-        Fri, 06 Sep 2024 01:33:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725611615; x=1726216415;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oDUzfZByll+vRnVYBIgUXxP9h/bQhb38hRxpuRtAknE=;
-        b=wEEjWOk5lom5pN2i6U3togs4MtjUglmLKFPLrS1QdWMKNtbe1IXz7qB6zxpBl7dY3j
-         DoOf0KpG6+owGs++cTf6KdyKSI9U24fhkFXhsJ3NBfgCKJ97qCSQ/icN6IgcebDYVPKj
-         RAsZ5IVnI9HeHbOQTFzSAGm7+Nfa/6pp2ivf74R9Mt+DrJ6scatbr9cOzorDNc4mE4BB
-         gjuom3pQbgnYbEhKqgzGJD38lvMdjEzTnhvJBFGVTK3vFCecDKOCVBMOuOTNXDSxUbSq
-         Cz1T1iNF2MoPHdBsmbaOU+dMKZMLb4KvgY0F/3K/SIiiphaFborXVtDn5bhbXpabxrpF
-         I07A==
-X-Forwarded-Encrypted: i=1; AJvYcCURU20r5wAslMPA1eZTacb5mySRsJMEZDtr6lDba3T2O0jZ60wjSVr0djNVNzR6DxuiBtbBOWiu@vger.kernel.org, AJvYcCXR55S+jOPIqh5NcuPdhrJvP+/pimtNUt8cuXHzIcut7qIRFRklAegPnR/RqJhEyY4HAChM1yvGeh9z7rU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjBAMVw5FPwdRiCoj3Uugmn1gAUF8IE4Oyo1hA8lwsDhpImzU6
-	RUe0a/e9HywJwLXSJmeq2uuKVzMMDSIeBg++oxWr4K77Bbdb56Bf
-X-Google-Smtp-Source: AGHT+IFrtcbjg6efbNfcdOcAqRd8vCbzLMgRIkSQlU7LMsaRGRthrG3Zoa++0enR4NK56pJllMwIqA==
-X-Received: by 2002:a05:6402:3496:b0:5bf:279:ca09 with SMTP id 4fb4d7f45d1cf-5c21ed52c58mr19116084a12.17.1725611614182;
-        Fri, 06 Sep 2024 01:33:34 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc697fedsm2139508a12.64.2024.09.06.01.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 01:33:33 -0700 (PDT)
-Date: Fri, 6 Sep 2024 01:33:31 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
-	thevlad@meta.com, max@kutsevol.com
-Subject: Re: [PATCH net-next 3/9] net: netconsole: separate fragmented
- message handling in send_ext_msg
-Message-ID: <20240906-organic-prompt-jaguarundi-c37ffd@devvm32600>
-References: <20240903140757.2802765-1-leitao@debian.org>
- <20240903140757.2802765-4-leitao@debian.org>
- <20240904105920.GQ4792@kernel.org>
+	s=arc-20240116; t=1725611627; c=relaxed/simple;
+	bh=zfqVcNDd2InBULh79J4Bpfr4W/mecVaaNu0JccNnN0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WiwR4PdyXLjfCpApPznwacn5ZwEwdfGmIl7BIoPFB0bfYaXALz9I3rzWY0DXSxJbgD1xcGLBu979r2hS3bBvpC7UGEQFMBXdv3TAaf6tqnWYA5xcUEmXWcLY63hxdTD9qwq0wquDhUu9Usr7yfZuUBzMRzQvAyx83erBDEJzgHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lAbhSCkw; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725611623;
+	bh=oWhWhJ1rtSPcuJ/t1xAToET/G6tEZKPb4PuXuNI2Hw8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lAbhSCkwEzViSjcIa0XORiO2QFDgTSs2pHIjZINGRpDmsnreqSW+twOU8VdKf5Ocd
+	 cYsPnz9fPiYfy/5xdVtU/q8hUpddcMUqaQrYpKwybjFIc5JT5DN0Se13ug5dpnvxr7
+	 wXvL3DJM8fSvm92C8BCsBaVG9gI9Q5hfF+puVi+U7ZroGdBiOfx2V166Yz/eX8stGH
+	 1gs7kEX7bks0bRyAWrGxI4wEIJMiI+mmMffEobtRNpu8L9PIdhV9esT9VvK2R2kgVw
+	 bypDiXGkcUL4rSiur1n61rAhzeX4r8zu0j38UlS+cUx5ajGzFLMZjX0qD65hh66Slr
+	 6YANg+kVNSt1A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0Tyv3qDBz4x0H;
+	Fri,  6 Sep 2024 18:33:43 +1000 (AEST)
+Date: Fri, 6 Sep 2024 18:33:42 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the slab tree
+Message-ID: <20240906183342.78d62a54@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904105920.GQ4792@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/VtoQ=jgr3bk8pqcBWL++1VA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Sep 04, 2024 at 11:59:20AM +0100, Simon Horman wrote:
-> On Tue, Sep 03, 2024 at 07:07:46AM -0700, Breno Leitao wrote:
-> > Following the previous change, where the non-fragmented case was moved
-> > to its own function, this update introduces a new function called
-> > send_msg_fragmented to specifically manage scenarios where message
-> > fragmentation is required.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> Due to tooling the diff below seems to more verbose than the change
-> warrants. Perhaps some diff flags would alleviate this, but anyone viewing
-> the patch using git with default flags, would see what is below anyway.
-> 
-> So I wonder if you could consider moving send_msg_fragmented()
-> to above send_msg_no_fragmentation(). Locally this lead to an entirely
-> more reasonable diff to review.
+--Sig_/VtoQ=jgr3bk8pqcBWL++1VA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I agree. Let me move the functions around aiming to generate an
-easy-to-review diff.
+Hi all,
 
-Thanks for the feedback.
+After merging the slab tree, today's linux-next build (htmldocs) produced
+this warning:
+
+include/linux/slab.h:244: warning: Cannot understand  * @align: The require=
+d alignment for the objects.
+ on line 244 - I thought it was a doc line
+
+Introduced by commit
+
+  0c64b97ac116 ("slab: add struct kmem_cache_args")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VtoQ=jgr3bk8pqcBWL++1VA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbavmYACgkQAVBC80lX
+0Gwmmgf/WeN8lZwfxJHe/vGPHatVkb3/O2ioQEeNXXQhDUNN6X2coLOLA0wWQvK5
+Edwxh0JO7qUC0DORv8tCxaahuQi+i0IxtWn62Eaql7pnp0Spf/ZzOGBckp5xbIH+
+B/nDHPX37MVJOMCAxldb1TtnbJtpiZ96nSdqgOvXJ8DJFSrwhqrVhLouDSZ7Z/dE
+G2tQzPzY1W/DQgbGYlFCctU8/PcKtFIbaDKmG91vas/xNkkHtnexA+UHiqkf0cmg
+gW5dnzc91AebOFpV/f+fGfdyLTK39sTx/wAYXUJ5FWTmWPkgRA4pko0LS+7Dbp4H
+bwU7EFxwLJt3Clr+v8JQA31svsSamg==
+=3bY/
+-----END PGP SIGNATURE-----
+
+--Sig_/VtoQ=jgr3bk8pqcBWL++1VA--
 
