@@ -1,294 +1,203 @@
-Return-Path: <linux-kernel+bounces-318067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA3696E7F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:00:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAF096E7F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B62286310
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9B301C2336F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2568022334;
-	Fri,  6 Sep 2024 03:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB573B1A2;
+	Fri,  6 Sep 2024 03:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="trTtWYnu"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="cZ0fxCZm"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AD3D68
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 03:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5764D18E0E;
+	Fri,  6 Sep 2024 03:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725591650; cv=none; b=F+cy5AfhaqafMu/XLs+UpLoyY27ydsXAhtxguP4hafKLLcvB6RB70z5BKrpV0f4yOddsHD9LLatYoosF/4hKAtehNYOAmKbkY4jOoKtUgE3MKD3yrLrI+jslUGZr+IpSHo9qGME9nyM67BuvRAsCHHPkG7b9aUqfgdIjqE7fWeE=
+	t=1725591815; cv=none; b=eS+IYwYgf7JCoS7TJAJHeMAKZUxKWAlYVzqqtd+4j8GD1CxNkKJWLpVvKUAx8YrMPhOW6GSzDwYsCUnIim8Q/YAV8QYD3fLja3uL52hX5lghgCux/ZWbSxiUnn0B27KwwXt4lr58opsyEdxfnczFMZ9DtVxL3ShlF9PbVJ0K+Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725591650; c=relaxed/simple;
-	bh=aPuZwJuBg5VWysrUAu9Ahiw7Xv/H487l+Hj806f5kcA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ceXMovdchraYw2gJGN25Cy3RbdPiwqqCv64GsOirbtpUh23gbzsy+wSSosLMfGQtCw7v+/F0q5iR1/d6AvK1ibDudxbQkBg3r1GGPFEQIpxG2Ei04tzEKX/fyiKZ7LptFOzB9vX3vIL9PqzFgZskajqVDb47iUHMm0w1hcRtwJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=trTtWYnu; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-457c6389a3aso97271cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 20:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725591647; x=1726196447; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JTsFBCFFaXLue3y9fxeSovsc+6lMLee2VRnbsZWDcbI=;
-        b=trTtWYnuIFOQS2wplMu13VbvThb7H4kZkWuVIl4US+OL4Kj71EO6WEBhXUEO66Sd4W
-         gfq9epKhhmtCnV3cR9oOZlHOrzcz5sKYsGOH9fjfdSvpH+ArZOC5snJD+MI3JUB5I6JR
-         53ODifiV6/H2+KfW9Yx0OE88990mRsph9T9j+DZidnjsgi2YJk68EOOHdgZu77Jx9Zo5
-         sfmRKyCDVUNbY4LRGMpWorwWQKVer9rLH3Ah1/3PUJOpKHOpKfADF61Le5t1vCcFLKT6
-         lDTK4Jln5RoOFkcuOqrFMlSbpUmk9OjlqzsyiND6BdIDIhbDgsFd36SXhAdwB0uDSKf1
-         N1nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725591647; x=1726196447;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JTsFBCFFaXLue3y9fxeSovsc+6lMLee2VRnbsZWDcbI=;
-        b=XF+8c0BbhPcOmuy8ihnZolD43Zj97U30l0c5YzVFoq4FuOcZHNzZ5ywQn+x8d6wP4H
-         DExrXMl9/ZSrM9q1s1rpcRf/piTvBd/sEGXy7fDZWXq72WFU+XE6l8Xn+fMIroKtbVmL
-         R7GgT7BAY57otC+rqqajRbCAtPQYbeMApMU5ZcTBWFm7EOlq/ZPtnbUAhaKPwCdZ7c24
-         EUk59tlL8SmgLuMSm9eAfgabhdKq1anUMrj8Qn0sbDfPXHybrH+alH9UsJZpX1xvxy9W
-         SKoVIa4cnhwon0x/x0XOrXNLez/2lVxVqbYLAU3feIBQ2hTeF20ozoLbUm11TAvwP4I6
-         R0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfntWcf+CjlCOCo2CGetJZOLiaDl2Ct5FfGCNk/grt2m1lrLKY6Gz1lDrmVD2fL1CGysMUiQrpA7Tcl3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeGXHaJem6kpuZCLaUGdwj57a3RUevypeIcdZg8cDC13zwG3BH
-	C9BCNqcuCSCx0gniTQuSwRM3UsFR8Lxin6jV0S8biFTr+mXM70IRXHteufMCyV2kvJPjMm/xWJ4
-	pxyVUR3bkQJgWyrPzTGR8mevSEnb8qyWT63i3
-X-Google-Smtp-Source: AGHT+IGFhlRcKSnHb7qnr3x+BEWd0gahj8Hw8W2cGgAhJIvbRKdGt/cZk32y1QzFyFfzc119DwH5CPb0vdMQd13+ZBc=
-X-Received: by 2002:ac8:5852:0:b0:456:9498:6b53 with SMTP id
- d75a77b69052e-4580e501817mr766401cf.16.1725591647062; Thu, 05 Sep 2024
- 20:00:47 -0700 (PDT)
+	s=arc-20240116; t=1725591815; c=relaxed/simple;
+	bh=pY5ZeyCMUSMIPlXrBWEPXCGN8z8YDj1hmA9FiJoT+yM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jwRzwhd14wEI0VyPESquZhnmW6YLnyLzkoKbDIAJTYHToA75jO26lLpMuR0SxaI2Dohtia1S5iWSTLKwR36N0u6TO99QWQxLVKTfZ5LhDT6xBhqYKVACLIuIZkid8TCi996pJnm1bEFqjS86dC9dPuheD7jRrFNVb+Nu/XULnT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=cZ0fxCZm; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from localhost.localdomain (unknown [10.101.196.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C7FD83F8D0;
+	Fri,  6 Sep 2024 03:03:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1725591802;
+	bh=b3HaiPJkHmkZb7OFUj3DBAtoNHQP33N6Bt1SRGcN4VA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=cZ0fxCZmHeX8NP40Y2Si76I8WDhsAxy2cVIHOMqZx3q8Xf5WJSAkIl4xn8tdsaqbq
+	 p7V9oqD/gnp+X82LvVw6P0OveHIFVHR1rKETOPEYj3lotxGDOCuQhYz4meIBXBUsDD
+	 FOZIgQz8R7GyfADjN8GBVDl86sZ7z6thAgUzDpN7StEgSzWcgEAksamMRoSLoQKCp3
+	 jVQgcunSNM1mMREtpGMHuUYmOZFSZrrXY+wTY22kx7X7Hy0lsLxTm7ZAQCpoNR4WiI
+	 CfSxqlraGVFWfJELaqEFb1VkhlKcQlrhiOtRHb2z/HunaGgFr1/v3P2Dkhmh5wrYuP
+	 9bLxaPUtveyuQ==
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	jorge.lopez2@hp.com
+Cc: acelan.kao@canonical.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH v2] platform/x86/hp: Avoid spurious wakeup on HP ProOne 440
+Date: Fri,  6 Sep 2024 11:03:00 +0800
+Message-ID: <20240906030300.442110-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903213649.3566695-1-yuzhao@google.com> <20240903213649.3566695-2-yuzhao@google.com>
-In-Reply-To: <20240903213649.3566695-2-yuzhao@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 5 Sep 2024 20:00:35 -0700
-Message-ID: <CAJuCfpFdFjf7CCu_=PkUJdxbMH9+zE4wsifaqXiQakhBBiFW8A@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1 2/3] mm/codetag: fix pgalloc_tag_split()
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 3, 2024 at 2:36=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> Only tag the new head pages when splitting one large folio to multiple
-> ones of a lower order. Tagging tail pages can cause imbalanced "calls"
-> counters, since only head pages are untagged by pgalloc_tag_sub() and
-> reference counts on tail pages are leaked, e.g.,
->   # echo 2048kB >/sys/kernel/mm/hugepages/hugepages-1048576kB/demote_size
->   # echo 700 >/sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages
->   # time echo 700 >/sys/kernel/mm/hugepages/hugepages-1048576kB/demote
->   # grep alloc_gigantic_folio /proc/allocinfo
->
-> Before this patch:
->   0  549427200  mm/hugetlb.c:1549 func:alloc_gigantic_folio
->
->   real  0m2.057s
->   user  0m0.000s
->   sys   0m2.051s
->
-> After this patch:
->   0          0  mm/hugetlb.c:1549 func:alloc_gigantic_folio
->
->   real  0m1.711s
->   user  0m0.000s
->   sys   0m1.704s
->
-> Not tagging tail pages also improves the splitting time, e.g., by
-> about 15% when demoting 1GB hugeTLB folios to 2MB ones, as shown
-> above.
->
-> Fixes: be25d1d4e822 ("mm: create new codetag references during page split=
-ting")
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> ---
->  include/linux/mm.h          | 30 ++++++++++++++++++++++++++++++
->  include/linux/pgalloc_tag.h | 31 -------------------------------
->  mm/huge_memory.c            |  2 +-
->  mm/hugetlb.c                |  2 +-
->  mm/page_alloc.c             |  4 ++--
->  5 files changed, 34 insertions(+), 35 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index b31d4bdd65ad..a07e93adb8ad 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4137,4 +4137,34 @@ void vma_pgtable_walk_end(struct vm_area_struct *v=
-ma);
->
->  int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phys_=
-addr_t *size);
->
-> +#ifdef CONFIG_MEM_ALLOC_PROFILING
-> +static inline void pgalloc_tag_split(struct folio *folio, int old_order,=
- int new_order)
-> +{
-> +       int i;
-> +       struct alloc_tag *tag;
-> +       unsigned int nr_pages =3D 1 << new_order;
-> +
-> +       if (!mem_alloc_profiling_enabled())
-> +               return;
-> +
-> +       tag =3D pgalloc_tag_get(&folio->page);
-> +       if (!tag)
-> +               return;
-> +
-> +       for (i =3D nr_pages; i < (1 << old_order); i +=3D nr_pages) {
-> +               union codetag_ref *ref =3D get_page_tag_ref(folio_page(fo=
-lio, i));
-> +
-> +               if (ref) {
-> +                       /* Set new reference to point to the original tag=
- */
-> +                       alloc_tag_ref_set(ref, tag);
-> +                       put_page_tag_ref(ref);
-> +               }
-> +       }
-> +}
-> +#else /* !CONFIG_MEM_ALLOC_PROFILING */
-> +static inline void pgalloc_tag_split(struct folio *folio, int old_order,=
- int new_order)
-> +{
-> +}
-> +#endif /* CONFIG_MEM_ALLOC_PROFILING */
-> +
->  #endif /* _LINUX_MM_H */
-> diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
-> index 207f0c83c8e9..59a3deb792a8 100644
-> --- a/include/linux/pgalloc_tag.h
-> +++ b/include/linux/pgalloc_tag.h
-> @@ -80,36 +80,6 @@ static inline void pgalloc_tag_sub(struct page *page, =
-unsigned int nr)
->         }
->  }
->
-> -static inline void pgalloc_tag_split(struct page *page, unsigned int nr)
-> -{
-> -       int i;
-> -       struct page_ext *first_page_ext;
-> -       struct page_ext *page_ext;
-> -       union codetag_ref *ref;
-> -       struct alloc_tag *tag;
-> -
-> -       if (!mem_alloc_profiling_enabled())
-> -               return;
-> -
-> -       first_page_ext =3D page_ext =3D page_ext_get(page);
-> -       if (unlikely(!page_ext))
-> -               return;
-> -
-> -       ref =3D codetag_ref_from_page_ext(page_ext);
-> -       if (!ref->ct)
-> -               goto out;
-> -
-> -       tag =3D ct_to_alloc_tag(ref->ct);
-> -       page_ext =3D page_ext_next(page_ext);
-> -       for (i =3D 1; i < nr; i++) {
-> -               /* Set new reference to point to the original tag */
-> -               alloc_tag_ref_set(codetag_ref_from_page_ext(page_ext), ta=
-g);
-> -               page_ext =3D page_ext_next(page_ext);
-> -       }
-> -out:
-> -       page_ext_put(first_page_ext);
-> -}
-> -
->  static inline struct alloc_tag *pgalloc_tag_get(struct page *page)
->  {
->         struct alloc_tag *tag =3D NULL;
-> @@ -142,7 +112,6 @@ static inline void clear_page_tag_ref(struct page *pa=
-ge) {}
->  static inline void pgalloc_tag_add(struct page *page, struct task_struct=
- *task,
->                                    unsigned int nr) {}
->  static inline void pgalloc_tag_sub(struct page *page, unsigned int nr) {=
-}
-> -static inline void pgalloc_tag_split(struct page *page, unsigned int nr)=
- {}
->  static inline struct alloc_tag *pgalloc_tag_get(struct page *page) { ret=
-urn NULL; }
->  static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned=
- int nr) {}
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0993dfe9ae94..aa8a4c938ba9 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3244,7 +3244,7 @@ static void __split_huge_page(struct page *page, st=
-ruct list_head *list,
->         /* Caller disabled irqs, so they are still disabled here */
->
->         split_page_owner(head, order, new_order);
-> -       pgalloc_tag_split(head, 1 << order);
-> +       pgalloc_tag_split(folio, order, new_order);
+The HP ProOne 440 has a power saving design that when the display is
+off, it also cuts the USB touchscreen device's power off.
 
-Looks like here and in the next diff you are fixing an additional bug.
-I was assuming that we are always splitting into order-0 pages, which
-is not the case anymore. It's worth mentioning that in the changelog.
-With that added:
+This can cause system early wakeup because cutting the power off the
+touchscreen device creates a disconnect event and prevent the system
+from suspending:
+[  445.814574] hub 2-0:1.0: hub_suspend
+[  445.814652] usb usb2: bus suspend, wakeup 0
+[  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, portsc: 0x202a0
+[  445.824639] xhci_hcd 0000:00:14.0: resume root hub
+[  445.824651] xhci_hcd 0000:00:14.0: handle_port_status: starting usb1 port polling.
+[  445.844039] xhci_hcd 0000:00:14.0: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x20 returns -16
+[  445.844058] xhci_hcd 0000:00:14.0: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x1c0 returns -16
+[  445.844072] xhci_hcd 0000:00:14.0: PM: failed to suspend async: error -16
+[  446.276101] PM: Some devices failed to suspend, or early wake event detected
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+So add a quirk to make sure the following is happening:
+1. Let the i915 driver suspend first, to ensure the display is off so
+   system also cuts the USB touchscreen's power.
+2. Wait a while to let the USB disconnect event fire and get handled.
+3. Since the disconnect event already happened, the xhci's suspend
+   routine won't be interrupted anymore.
 
->
->         /* See comment in __split_huge_page_tail() */
->         if (folio_test_anon(folio)) {
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 3faf5aad142d..a8624c07d8bf 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3778,7 +3778,7 @@ static long demote_free_hugetlb_folios(struct hstat=
-e *src, struct hstate *dst,
->                 list_del(&folio->lru);
->
->                 split_page_owner(&folio->page, huge_page_order(src), huge=
-_page_order(dst));
-> -               pgalloc_tag_split(&folio->page, 1 <<  huge_page_order(src=
-));
-> +               pgalloc_tag_split(folio, huge_page_order(src), huge_page_=
-order(dst));
->
->                 for (i =3D 0; i < pages_per_huge_page(src); i +=3D pages_=
-per_huge_page(dst)) {
->                         struct page *page =3D folio_page(folio, i);
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index c242d61fc4fd..13ce8e8899ed 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2822,7 +2822,7 @@ void split_page(struct page *page, unsigned int ord=
-er)
->         for (i =3D 1; i < (1 << order); i++)
->                 set_page_refcounted(page + i);
->         split_page_owner(page, order, 0);
-> -       pgalloc_tag_split(page, 1 << order);
-> +       pgalloc_tag_split(page_folio(page), order, 0);
->         split_page_memcg(page, order, 0);
->  }
->  EXPORT_SYMBOL_GPL(split_page);
-> @@ -5020,7 +5020,7 @@ static void *make_alloc_exact(unsigned long addr, u=
-nsigned int order,
->                 struct page *last =3D page + nr;
->
->                 split_page_owner(page, order, 0);
-> -               pgalloc_tag_split(page, 1 << order);
-> +               pgalloc_tag_split(page_folio(page), order, 0);
->                 split_page_memcg(page, order, 0);
->                 while (page < --last)
->                         set_page_refcounted(last);
-> --
-> 2.46.0.469.g59c65b2a67-goog
->
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v2:
+ - Remove the part that searching for the touchscreen device.
+ - Wording.
+
+ drivers/platform/x86/hp/hp-wmi.c | 59 +++++++++++++++++++++++++++++++-
+ 1 file changed, 58 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+index 876e0a97cee1..7c239d8d02fd 100644
+--- a/drivers/platform/x86/hp/hp-wmi.c
++++ b/drivers/platform/x86/hp/hp-wmi.c
+@@ -30,6 +30,8 @@
+ #include <linux/rfkill.h>
+ #include <linux/string.h>
+ #include <linux/dmi.h>
++#include <linux/delay.h>
++#include <linux/pci.h>
+ 
+ MODULE_AUTHOR("Matthew Garrett <mjg59@srcf.ucam.org>");
+ MODULE_DESCRIPTION("HP laptop WMI driver");
+@@ -1708,6 +1710,14 @@ static void __exit hp_wmi_bios_remove(struct platform_device *device)
+ 		platform_profile_remove();
+ }
+ 
++static int hp_wmi_suspend_handler(struct device *device)
++{
++	/* Let the xhci have time to handle disconnect event */
++	msleep(200);
++
++	return 0;
++}
++
+ static int hp_wmi_resume_handler(struct device *device)
+ {
+ 	/*
+@@ -1745,7 +1755,7 @@ static int hp_wmi_resume_handler(struct device *device)
+ 	return 0;
+ }
+ 
+-static const struct dev_pm_ops hp_wmi_pm_ops = {
++static struct dev_pm_ops hp_wmi_pm_ops = {
+ 	.resume  = hp_wmi_resume_handler,
+ 	.restore  = hp_wmi_resume_handler,
+ };
+@@ -1871,6 +1881,51 @@ static int hp_wmi_hwmon_init(void)
+ 	return 0;
+ }
+ 
++static int lg_usb_touchscreen_quirk(const struct dmi_system_id *id)
++{
++	struct pci_dev *vga, *xhci;
++	struct device_link *vga_link, *xhci_link;
++
++	vga = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, NULL);
++
++	xhci = pci_get_class(PCI_CLASS_SERIAL_USB_XHCI, NULL);
++
++	if (vga && xhci) {
++		xhci_link = device_link_add(&hp_wmi_platform_dev->dev, &xhci->dev,
++				      DL_FLAG_STATELESS);
++		if (xhci_link)
++			dev_info(&hp_wmi_platform_dev->dev, "Suspend before %s\n",
++				 pci_name(xhci));
++		else
++			return 1;
++
++		vga_link = device_link_add(&vga->dev, &hp_wmi_platform_dev->dev,
++					   DL_FLAG_STATELESS);
++		if (vga_link)
++			dev_info(&hp_wmi_platform_dev->dev, "Suspend after %s\n",
++				 pci_name(vga));
++		else {
++			device_link_del(xhci_link);
++			return 1;
++		}
++	}
++
++	hp_wmi_pm_ops.suspend = hp_wmi_suspend_handler;
++
++	return 1;
++}
++
++static const struct dmi_system_id hp_wmi_quirk_table[] = {
++	{
++		.callback = lg_usb_touchscreen_quirk,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "HP ProOne 440 23.8 inch G9 All-in-One Desktop PC"),
++		},
++	},
++	{}
++};
++
+ static int __init hp_wmi_init(void)
+ {
+ 	int event_capable = wmi_has_guid(HPWMI_EVENT_GUID);
+@@ -1909,6 +1964,8 @@ static int __init hp_wmi_init(void)
+ 			goto err_unregister_device;
+ 	}
+ 
++	dmi_check_system(hp_wmi_quirk_table);
++
+ 	return 0;
+ 
+ err_unregister_device:
+-- 
+2.43.0
+
 
