@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-318794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3373896F37B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9F796F383
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A181C23C0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:48:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B904F1C24295
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112DC1CB33E;
-	Fri,  6 Sep 2024 11:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PivsV9vW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1661CBE8F;
-	Fri,  6 Sep 2024 11:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2511CC170;
+	Fri,  6 Sep 2024 11:48:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB3A1CBE8A;
+	Fri,  6 Sep 2024 11:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623274; cv=none; b=CHNx3O2oKqKGMQw0GrPtCibTPftXe/jXZH9kTfDwCkmzGn9cFuFqenIkY0VHZ95T/X+bPtvnPgu1II20w6BG8o29118ANLPo1K+DRMksDOq3JphhAFvfVJ5mFdCM0A4KI6/HTOaRCm+6DVaUk8syeyfRQxeOZzUgLOGJadRYwbk=
+	t=1725623300; cv=none; b=lz1kSWnwvNDn08c1yiVmjxJ9PbL0cHE1WOyxVQxwb/jGSEuRY1Fza6qW6Q2JmHnP+vBVP90bgCZXNnk976X4yj7LykeKjDPQpppKobGrI1FzAVjCO4zcZDqFlMTwEAc7JJlvhjMr7TqsebT7etpce8qDrMXiCGF92NYZJVBiO3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623274; c=relaxed/simple;
-	bh=N5aKQU5kkjMWnod8/X4iS0VDX8jjc/t6Cugpf7X/brQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smkdKo6t7LaqWyDUKZMIcwrAxsND5/ToFdAoMaOCKY1yP1+gpjwLFn0mGKDSzAdb4m1DSHO9hrnR67bhufIYo/OkyNtzuXEcLFf7AsjuDjVHKWQvNildQi92Lvx31rzk567nsnJR6qsXwWnvbQnTPt0eA4ECtPLwxBA0mr6SLSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PivsV9vW; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725623273; x=1757159273;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N5aKQU5kkjMWnod8/X4iS0VDX8jjc/t6Cugpf7X/brQ=;
-  b=PivsV9vWmSyA4V/87eycNhcVrvbkpuLWokJkmTmCEFQn3A8XIuQZQQii
-   M5u5RI86F9aXoL5+fHXn7MwXYfoPBLO6tEAJcZNTTt2++qt6whoDLDVvq
-   qpMzhHldMJkHpuQcskXScx/yYIO/t2mqoorIKs2TWY9Beh2Y/EZULRXGj
-   0KRKcBR4pKgZv0vI6+NB6KqsBA6gPGiAhDZJdPsViLyn47cN29qqOlykG
-   kNJpTa4z/A69RKi9SSAY2VL6u4IFerqkKUxx7IANAhnJ1zwqkxaQwSqz1
-   S1i9SQSGqTaM0NuuI15/sBk6VFGM90V67LqfS/9cvUSw3sz0d2F7ZnlIu
-   w==;
-X-CSE-ConnectionGUID: rHKanv31RqS8FKv9zQUjXw==
-X-CSE-MsgGUID: wuBjWv5cRFuJ+3zGL1JBTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="13408814"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="13408814"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:47:52 -0700
-X-CSE-ConnectionGUID: EZwPke7qTb2ylIfRFgVDXw==
-X-CSE-MsgGUID: Gv4/ZtQ6Qxyo1IzLOUXTPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="66163030"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:47:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smXRL-00000005lzo-3BAq;
-	Fri, 06 Sep 2024 14:47:47 +0300
-Date: Fri, 6 Sep 2024 14:47:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kimriver Liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
-	jsd@semihalf.com, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <Ztrr4-igQ20gu0VS@smile.fi.intel.com>
-References: <20240906054250.2745-1-kimriver.liu@siengine.com>
+	s=arc-20240116; t=1725623300; c=relaxed/simple;
+	bh=4ClbQmfpxydj6Dcl8lMspojV/o8trKHqXTKFjuewnLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kBAUMJKvZcOoThwJmi77Xqdk8g+cInqoRypzy4nlZcegAcXaFifKKlEBw5r6VJM2eaLNnIvbRlDJ3KMqJPj/xx+MVSUKi1tOPZEfm9aR2WfGRc4Ncl19fRvA0B+eckndztSs8y7EsJPFis2Rl2+4gT+CxYwWDWP8uTViMi6T32c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEB57113E;
+	Fri,  6 Sep 2024 04:48:45 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D50573F73B;
+	Fri,  6 Sep 2024 04:48:15 -0700 (PDT)
+Message-ID: <2d11332c-1575-419c-af49-de9cb36dcabf@arm.com>
+Date: Fri, 6 Sep 2024 12:48:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906054250.2745-1-kimriver.liu@siengine.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] x86: vdso: Modify asm/vdso/getrandom.h to include
+ datapage
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-8-vincenzo.frascino@arm.com>
+ <ebb01fce-aea5-4d82-b8b9-2e30f534b54c@csgroup.eu>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <ebb01fce-aea5-4d82-b8b9-2e30f534b54c@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 01:42:50PM +0800, Kimriver Liu wrote:
-> It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
-> IC_ENABLE is already disabled.
+
+
+On 04/09/2024 18:19, Christophe Leroy wrote:
 > 
-> Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
-> holding SCL low. If ENABLE bit is disabled, the software need
-> enable it before trying to issue ABORT bit. otherwise,
-> the controller ignores any write to ABORT bit
 > 
-> Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
+> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
+>> The VDSO implementation includes headers from outside of the
+>> vdso/ namespace.
+>>
+>> Modify asm/vdso/getrandom.h to include datapage.
 > 
-> ---
+> Does  asm/vdso/getrandom.h need datapage ? If not it is the ones that need it
+> that should include it.
+>
 
-> V3->V4:
+Why do you think it does not need it?
 
-Nice, but the Subject (which is most important part) still has no versioning :-(
-
->       1. update commit messages and add patch version and changelog
->       2. move print the error message in i2c_dw_xfer
-> V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
-> V1->V2: used standard words in function names and addressed review comments
-
-...
-
-> +			/*
-> +			 * Wait two ic_clk delay when enabling the i2c to ensure ENABLE bit
-> +			 * is already set by the driver (for 400KHz this is 25us)
-> +			 * as described in the DesignWare I2C databook.
-> +			 */
-> +			fsleep(25);
-
-And if we use 100kHz?
-Please, calculate this delay based on the actual speed in use
-(or about to be in use).
-
-> +		}
+>>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+>> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>> ---
+>>   arch/x86/include/asm/vdso/getrandom.h | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/x86/include/asm/vdso/getrandom.h
+>> b/arch/x86/include/asm/vdso/getrandom.h
+>> index ff5334ad32a0..4597d5a6f094 100644
+>> --- a/arch/x86/include/asm/vdso/getrandom.h
+>> +++ b/arch/x86/include/asm/vdso/getrandom.h
+>> @@ -7,6 +7,8 @@
+>>     #ifndef __ASSEMBLY__
+>>   +#include <vdso/datapage.h>
+>> +
+>>   #include <asm/unistd.h>
+>>   #include <asm/vvar.h>
+>>   
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Vincenzo
 
