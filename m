@@ -1,79 +1,51 @@
-Return-Path: <linux-kernel+bounces-318380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBE696EC98
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB5A96ECF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5661B284664
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA40D283C1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F61D155741;
-	Fri,  6 Sep 2024 07:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8214115533B;
+	Fri,  6 Sep 2024 07:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dJXhAa3K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D4EsJoI3"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F7114E2ED
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540FE14BF8F
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609214; cv=none; b=Gspx0Ac6ypknoroTj7s0KRonRK6/1MoXdl7M2Aupf1SLhpZNzpKPs0nKaWJcQGDocM+nvA8a6EYfASL+4jRqnIFfNGM14VfC1Yf3rzmcGslp7+B9+Kl8nqdAIbr1iKWd5yVLBijGLn3XyOmKC4L7yOPCaHyXVuxwyfnCvXt2nh0=
+	t=1725609316; cv=none; b=HdzlsP+pYm1Ts1TqiwQJ4x1oN7IgAvP89rbEoPfv66bc3ybXSdTjW+6tkmn3/rxyMKIgVbEImyVPvoa9qZhvHT9SvFsSuyEwS5GKEsLIJkBRy0UckUgVgpyzjxysbGPhCgEVtuH7z87eBojSj9+zl0UfcS5FHpRlS1AkYarEAXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609214; c=relaxed/simple;
-	bh=GCMDxAu3IaniQ5HCxcQskflExoAkJD9+BwP8v4G3nfw=;
+	s=arc-20240116; t=1725609316; c=relaxed/simple;
+	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JBIOThuOvyuICrb6BKESjJPvCAt24QV3H4bsZZxq7flHu01bcn6m4EcZD5ETT121Vctw8QRrsYZdeCSvneod964aOuYlDa8oc9bnnUqyuZZeQa1kwtGPIa91EAPFuY3kHQAZty0TmWseyNRvYv6fbchR7zV5Uka/df4lbsytAqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dJXhAa3K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725609211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jb0VO/koKLYJgTCZzGirO66CNO/8U0TBlaqXMtiO8uM=;
-	b=dJXhAa3KGkgkYCjumG+AZZxEEO5NYm5s1gHzMxx1B45rdrrBXSnqnk6sbMLpQzTVflgxQP
-	VMKlyASA5kbp8jn0uLl6lUV6cI1YVaPUuPhaMxD7FA191Vs6bCeVn4M5H/qSPfIwzbStSw
-	ya+AdgqgXR44AT3jLMeELKEZuDhf6cs=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-A9Vbx7wgMF2rzRjffOzBlA-1; Fri, 06 Sep 2024 03:53:30 -0400
-X-MC-Unique: A9Vbx7wgMF2rzRjffOzBlA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8a8d9a2a12so39444966b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:53:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725609209; x=1726214009;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jb0VO/koKLYJgTCZzGirO66CNO/8U0TBlaqXMtiO8uM=;
-        b=EDH8dV2OY70dVeyLQbjibg8+kxVexrOtAsM1z4hhzxe1HSkE87qKh40A62RR1SgHm5
-         ROIEmCkG3xZKUfaufGYg3UzCUaByKR/EH+h2JFz7wiejTUydrBKOk4QPk4pGnL344sWl
-         1yQgj9L0xBaEDazZxL9DN4vgTQ4qA+xvZwKZiDk5N/Eo8frCsngJcBfWvS1fOBV3ERWu
-         x0KIiZiEo39DrK3PYYHgeEobkDUwgli+d2exiOQS8vQjz+uDaOeG4bhGpSGNeLKR9OaS
-         OI8CRDFHxIrxOgCoPCY1P7bu+MQECkIfVcpCLopxTuMOV2HtkvC82Ddb4MSel6E4oK50
-         JoHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfpRmx2Dr3lGfHmkwAfCL7kU3UokP7gHSQuEo4I8yEFe7RJ+mGNfh32vsrCdrNtiU+RqyyjAxvz0GZeKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzq4kH19JeiIsr87Z7wBtjR0LUlWyl9C5KGGST/Qz46dthkqwR
-	3UME0MFKo8+jIVLZTzg9PRBhJu9ghL0ax2zHZyqRaDQr6/s+yWs4rz3XqTSZ5f8yqYzz600cpRR
-	1D0DiAE9TnXI19jgVQCNX0zazkW5R3eLEtP3PWUhY63Ow4oDS4+4BJGaVWVetkA==
-X-Received: by 2002:a17:907:72d3:b0:a88:a48d:2b9a with SMTP id a640c23a62f3a-a897fa74459mr2016881966b.52.1725609209259;
-        Fri, 06 Sep 2024 00:53:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHp5hoFTWcod3R3DE52W9xXd6OoPu09wqLhMYrYtNi9fhJDGs0vfjiIfjOISDezF+RhQFCZoQ==
-X-Received: by 2002:a17:907:72d3:b0:a88:a48d:2b9a with SMTP id a640c23a62f3a-a897fa74459mr2016879766b.52.1725609208773;
-        Fri, 06 Sep 2024 00:53:28 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6204677csm239290866b.79.2024.09.06.00.53.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 00:53:28 -0700 (PDT)
-Message-ID: <b37a0c60-55aa-44ec-b96c-68cdaabdc110@redhat.com>
-Date: Fri, 6 Sep 2024 09:53:27 +0200
+	 In-Reply-To:Content-Type; b=q3+OJpkIz+tp9oEutIacbG5AdBDRxkX49Mequ0oIRpLTuNEmRapGhoSOFxxXUct3Q4bHNMK2WDT+a5RsUnP3U5m5bjporqbjoF3zBvXhwuf0OUXO6BD8XpATB/4WULyHDklpaLzC9t3iPT4laoYSCdM58EXodK3omHt1fUhR+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=fail smtp.mailfrom=grimberg.me; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D4EsJoI3; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=grimberg.me
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=; b=D4EsJoI3k38j+6r2N7C9Uqarr0
+	E9UhvLFYXVAqWb0JxLAGOrKAGls1Lh9GyHZkpeJByWDpgwYlUqcxtogZP2/MMBOBvLsuSWJFxNuho
+	YHgRkGSGA8rHbX7IpX2ENxwjyROG1Gwa7YDnrdqrifX4ZiZyPoe3BHmm8SDRRwcWelu57+jOFLHl8
+	lzCNYezRvhoEzNxV+GBRdjcfMm9YEInyJ8KQBmIGOkBSnKgzMOnE2U4BjyN9g5Ky97j+/p39yc2zk
+	iVo4D8CNlHVPdZ3M4cYPzmmLDQSUVhrhorZAIyZXJ/fJzpKbaLHJ4m0l78CvmfEtGSz5XIzkcdxWi
+	dNK6FxOw==;
+Received: from 89-138-71-253.bb.netvision.net.il ([89.138.71.253] helo=[10.100.102.74])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1smToB-00000003b5J-2wnl;
+	Fri, 06 Sep 2024 07:55:09 +0000
+Message-ID: <e39bc8fc-3e20-4e3f-b906-1c63953ab76b@grimberg.me>
+Date: Fri, 6 Sep 2024 10:55:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,153 +53,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: atomisp: Use clamp_t() in
- ia_css_eed1_8_vmem_encode()
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: David.Laight@ACULAB.COM, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev
-References: <155aba6ab759e98f66349e6bb4f69e2410486c09.1722084704.git.christophe.jaillet@wanadoo.fr>
- <20240906081542.5cb0c142@foz.lan>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240906081542.5cb0c142@foz.lan>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v1] nvme: Convert comma to semicolon
+To: Shen Lichuan <shenlichuan@vivo.com>, kbusch@kernel.org, axboe@kernel.dk,
+ hch@lst.de
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <20240906065815.40300-1-shenlichuan@vivo.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240906065815.40300-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Mauro,
-
-On 9/6/24 8:15 AM, Mauro Carvalho Chehab wrote:
-> Em Sat, 27 Jul 2024 14:51:56 +0200
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> escreveu:
-> 
->> Using clamp_t() instead of min_t(max_t()) is easier to read.
->>
->> It also reduces the size of the preprocessed files by ~ 193 ko.
->> (see [1] for a discussion about it)
->>
->> $ ls -l ia_css_eed1_8.host*.i
->>  4829993 27 juil. 14:36 ia_css_eed1_8.host.old.i
->>  4636649 27 juil. 14:42 ia_css_eed1_8.host.new.i
->>
->> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>  .../isp/kernels/eed1_8/ia_css_eed1_8.host.c   | 24 +++++++++----------
->>  1 file changed, 12 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
->> index e4fc90f88e24..96c13ebc4331 100644
->> --- a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
->> +++ b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
->> @@ -172,25 +172,25 @@ ia_css_eed1_8_vmem_encode(
->>  		base = shuffle_block * i;
->>  
->>  		for (j = 0; j < IA_CSS_NUMBER_OF_DEW_ENHANCE_SEGMENTS; j++) {
->> -			to->e_dew_enh_x[0][base + j] = min_t(int, max_t(int,
->> -							     from->dew_enhance_seg_x[j], 0),
->> -							     8191);
->> -			to->e_dew_enh_y[0][base + j] = min_t(int, max_t(int,
->> -							     from->dew_enhance_seg_y[j], -8192),
->> -							     8191);
->> +			to->e_dew_enh_x[0][base + j] = clamp_t(int,
->> +							       from->dew_enhance_seg_x[j],
->> +							       0, 8191);
->> +			to->e_dew_enh_y[0][base + j] = clamp_t(int,
->> +							       from->dew_enhance_seg_y[j],
->> +							       -8192, 8191);
-> 
-> Such change introduces two warnings on smatch:
-> 
-> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c: drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c:177 ia_css_eed1_8_vmem_encode() warn: assigning (-8192) to unsigned variable 'to->e_dew_enh_y[0][base + j]'
-> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c: drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c:182 ia_css_eed1_8_vmem_encode() warn: assigning (-8192) to unsigned variable 'to->e_dew_enh_a[0][base + j]'
-> 
-> Should dew_enhance_seg_x and dew_enhance_seg_y be converted to signed?
-
-These already are s32, the problem is that e_dew_enh_a is of type t_vmem_elem which is:
-
-typedef u16 t_vmem_elem;
-
-And that type is used in a lot of places, so we cannot
-just change that.
-
-I guess we could add a t_signed_vmem_elem (s16) and use that for these vmem-arrays ?
-
-I tried fixing it like this:
-
-diff --git a/drivers/staging/media/atomisp/i2c/atomisp-t4ka3.c b/drivers/staging/media/atomisp/i2c/atomisp-t4ka3.c
-index 1e01d354152b..7c0195d15f53 100644
---- a/drivers/staging/media/atomisp/i2c/atomisp-t4ka3.c
-+++ b/drivers/staging/media/atomisp/i2c/atomisp-t4ka3.c
-@@ -428,18 +428,13 @@ static int t4ka3_s_stream(struct v4l2_subdev *sd, int enable)
- 			goto error_unlock;
- 		}
- 
--		ret = cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
--					  ARRAY_SIZE(t4ka3_init_config), NULL);
--		if (ret)
--			goto error_powerdown;
--
-+		cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
-+				    ARRAY_SIZE(t4ka3_init_config), &ret);
- 		/* enable group hold */
--		ret = cci_multi_reg_write(sensor->regmap, t4ka3_param_hold,
--					  ARRAY_SIZE(t4ka3_param_hold), NULL);
--		if (ret)
--			goto error_powerdown;
--
--		ret = cci_multi_reg_write(sensor->regmap, sensor->res->regs, sensor->res->regs_len, NULL);
-+		cci_multi_reg_write(sensor->regmap, t4ka3_param_hold,
-+				    ARRAY_SIZE(t4ka3_param_hold), &ret);
-+		cci_multi_reg_write(sensor->regmap, sensor->res->regs,
-+				    sensor->res->regs_len, &ret);
- 		if (ret)
- 			goto error_powerdown;
- 
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
-index b79d78e5b77f..c9043d516192 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
-@@ -172,21 +172,21 @@ ia_css_eed1_8_vmem_encode(
- 		base = shuffle_block * i;
- 
- 		for (j = 0; j < IA_CSS_NUMBER_OF_DEW_ENHANCE_SEGMENTS; j++) {
--			to->e_dew_enh_x[0][base + j] = clamp(from->dew_enhance_seg_x[j],
--							     0, 8191);
--			to->e_dew_enh_y[0][base + j] = clamp(from->dew_enhance_seg_y[j],
--							     -8192, 8191);
-+			to->e_dew_enh_x[0][base + j] = (u16)clamp(from->dew_enhance_seg_x[j],
-+								  0, 8191);
-+			to->e_dew_enh_y[0][base + j] = (u16)clamp(from->dew_enhance_seg_y[j],
-+								  -8192, 8191);
- 		}
- 
- 		for (j = 0; j < (IA_CSS_NUMBER_OF_DEW_ENHANCE_SEGMENTS - 1); j++) {
--			to->e_dew_enh_a[0][base + j] = clamp(from->dew_enhance_seg_slope[j],
--							     -8192, 8191);
-+			to->e_dew_enh_a[0][base + j] = (u16)clamp(from->dew_enhance_seg_slope[j],
-+								  -8192, 8191);
- 			/* Convert dew_enhance_seg_exp to flag:
- 			 * 0 -> 0
- 			 * 1...13 -> 1
- 			 */
--			to->e_dew_enh_f[0][base + j] = clamp(from->dew_enhance_seg_exp[j],
--							     0, 13) > 0;
-+			to->e_dew_enh_f[0][base + j] = (u16)clamp(from->dew_enhance_seg_exp[j],
-+								  0, 13) > 0;
- 		}
- 
- 		/* Hard-coded to 0, in order to be able to handle out of
-
-but smatch still complains after this...
-
-Regards,
-
-Hans
-
-
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 
