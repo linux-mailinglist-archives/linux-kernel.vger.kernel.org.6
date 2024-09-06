@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-318524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701F296EF29
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9680696EF26
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D11B2815A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182D11F24D35
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3571A1C7B9D;
-	Fri,  6 Sep 2024 09:27:45 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514141C7B9B;
+	Fri,  6 Sep 2024 09:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWR9pXJY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5EF1C7B94;
-	Fri,  6 Sep 2024 09:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08A51581EE;
+	Fri,  6 Sep 2024 09:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725614864; cv=none; b=EANDmCPsbagR1e61QEEXTd7ohrCtfiMG747XdOafAR/c6gnX0Bzm69+rpi9uW+EWawZVSrcssApbDiaCHuexd/o9sC9l03XDTbA3/3QezH7e975YKk1ycCswC8daq9Ihlfkc9oKrB3XUdR7cbrqSGGrzhMU5i6hgaXbKLYcoq4Y=
+	t=1725614832; cv=none; b=Vb0IWXM5W5WtM5Q0VLRzTx5AnCCnuaINJ/Zn1MjyW6QKDngtSCwXiEohZhqZHulEfSJfhyMkoRl2QWIYb3L84boNTIMvq1AEGTkAVifUgTgU76jegOYp2JYAX+ADefEpNj8yoRbTXWm17KLDuSd3lBcj8f1gBASBNnvVZkukONQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725614864; c=relaxed/simple;
-	bh=hSgLbdVySfl4Q6f8eJEadZzN87CI9P4mpBAqv75zD6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=idsgedAl48m73VtoVRQYvKqgm7vlrcgbRjJ2rnkdaXW1eOl5MJLyGzR3pmCY0JitUCCDV3qvo7SuH/SE+7IsSZaIYT4wWTMOzqZ0VylcGNbk6msR6/lU54TefQ1s2qOUdYbpof7OazUPYWdv+Rk3+OMKMK/ZdtlhTzbJxCPYEOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3adb8d866c3211efa216b1d71e6e1362-20240906
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:b028dc87-11cf-4581-ae29-bfdb57adfd4d,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:1a3dffae82510f9c76cde797f2b905e8,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 3adb8d866c3211efa216b1d71e6e1362-20240906
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <zenghongling@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 761202791; Fri, 06 Sep 2024 17:27:26 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 27A40B80758A;
-	Fri,  6 Sep 2024 17:27:26 +0800 (CST)
-X-ns-mid: postfix-66DACAFE-17534928
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node2.com.cn (NSMail) with ESMTPA id 01340B80758A;
-	Fri,  6 Sep 2024 09:27:19 +0000 (UTC)
-From: zenghongling <zenghongling@kylinos.cn>
-To: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	zhongling0719@126.com,
-	zenghongling <zenghongling@kylinos.cn>
-Subject: [PATCH] ALSA: hda/cs8409: Support new Dell Dolphin for device
-Date: Fri,  6 Sep 2024 17:27:03 +0800
-Message-ID: <20240906092703.1303605-1-zenghongling@kylinos.cn>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725614832; c=relaxed/simple;
+	bh=OIA8HXSM5TnHNn0iNSRymE5aF9pj/H5jQBZHRfGOuIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PVZIn0GnQHhQML69fsITfEeLsY+CMrxGkW3G3QJrTmus2TmVnFzNAspeNhFHPqLqVoBNIlfmbGDI10wg/OE0udoq4lZuMpS0b47Ph4uJGL3V/MM/c/v0dPscTW+dcuSfI09jBIFR3LilHCL+KkUNDHsaMNGfHUx8bvB7DQkktVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWR9pXJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298FFC4CEC4;
+	Fri,  6 Sep 2024 09:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725614832;
+	bh=OIA8HXSM5TnHNn0iNSRymE5aF9pj/H5jQBZHRfGOuIM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eWR9pXJYsL3Ww3mdoCDtpBWKNJ0q+Vyy1tolhUmdlWwhGkEst6BBnCFFb57P1Tagz
+	 0vGf2Xcg386CvVnPqEJgMR/zgDWsobAf/z/XLSHaZ/Rr6AJ5Fe83Bqh7aMEekyyS+Q
+	 jgTFcc2IqvUFsnJx5/jjYI2xlUvOiR7KlqiwQzymDs3YkoFa28cFzdSPgqnZzlq+zO
+	 K30MIw1MJOmu0eDLws+NL35wvXxm08VBVRW2R5iSYNH+xY7KE+KeeoSr22jUyJrWeX
+	 C1L+EeoqbRFSA65+LbEU8JlF3hcYaqJzxNtntQicEByqtsXobDn26Rdys1xQGJvKO1
+	 iaYb/uiKev7rQ==
+Message-ID: <6ce7bb37-833f-4164-8247-2ea80321993e@kernel.org>
+Date: Fri, 6 Sep 2024 11:27:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 28/32] ARM: dts: aspeed: yosemite4: fix GPIO linename
+ typo
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com>
+ <20240906062701.37088-29-Delphine_CC_Chiu@wiwynn.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240906062701.37088-29-Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add 1 new Dell Dolphin Systems, same configuration as older systems.
+On 06/09/2024 08:26, Delphine CC Chiu wrote:
+> Fix GPIO linename typo and add missing GPIO pin initial state.
+> 
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+> ---
+>  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 554 ++++++++++++++----
+>  1 file changed, 455 insertions(+), 99 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> index abd4a9173de4..4090725160f9 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> @@ -285,6 +285,8 @@ &mac2 {
+>  	pinctrl-0 = <&pinctrl_rmii3_default>;
+>  	use-ncsi;
+>  	mellanox,multi-host;
+> +	ncsi-ctrl,start-redo-probe;
+> +	ncsi-ctrl,no-channel-monitor;
 
-Signed-off-by: zenghongling <zenghongling@kylinos.cn>
----
- sound/pci/hda/patch_cs8409-tables.c | 1 +
- 1 file changed, 1 insertion(+)
+NAK.
 
-diff --git a/sound/pci/hda/patch_cs8409-tables.c b/sound/pci/hda/patch_cs=
-8409-tables.c
-index 36b411d1..bc14b18 100644
---- a/sound/pci/hda/patch_cs8409-tables.c
-+++ b/sound/pci/hda/patch_cs8409-tables.c
-@@ -546,6 +546,7 @@ const struct snd_pci_quirk cs8409_fixup_tbl[] =3D {
- 	SND_PCI_QUIRK(0x1028, 0x0BD6, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0BD7, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0BD8, "Dolphin", CS8409_DOLPHIN),
-+	SND_PCI_QUIRK(0x1028, 0x0BAA, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0C43, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0C50, "Dolphin", CS8409_DOLPHIN),
- 	SND_PCI_QUIRK(0x1028, 0x0C51, "Dolphin", CS8409_DOLPHIN),
---=20
-2.1.0
+Stop sending downstream junk to us.
+
+...
+
+> +	pin_gpio_m3 {
+
+You were already told multiple times to fix youro naming.
+
+Underscores are not allowed in node names.
+
+Finally, fix all your patches, not just one.
+
+> +		gpios = <ASPEED_GPIO(M, 3) GPIO_ACTIVE_LOW>;
+> +		input;
+> +	};
+> +	pin_gpio_m4 {
+> +		gpios = <ASPEED_GPIO(M, 4) GPIO_ACTIVE_LOW>;
+> +		input;
+> +	};
+> +	pin_gpio_m5 {
+> +		gpios = <ASPEED_GPIO(M, 5) GPIO_ACTIVE_LOW>;
+> +		input;
+> +	};
+> +	pin_gpio_n0 {
+> +		gpios = <ASPEED_GPIO(N, 0) GPIO_ACTIVE_LOW>;
+> +		input;
+> +	};
+> +	pin_gpio_n1 {
+
+Best regards,
+Krzysztof
 
 
