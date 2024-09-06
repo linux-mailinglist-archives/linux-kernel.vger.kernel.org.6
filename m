@@ -1,107 +1,158 @@
-Return-Path: <linux-kernel+bounces-318342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06E796EC0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:34:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D92C96EC0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7F2286C04
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D121F23F56
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A8C14C5B5;
-	Fri,  6 Sep 2024 07:34:37 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654EB14C592;
+	Fri,  6 Sep 2024 07:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="GcKQXbhy"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E4217C9B;
-	Fri,  6 Sep 2024 07:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725608077; cv=none; b=eokZ38nXVntZVzQzGPqTxQCB4ZhILzBNFB1eIulIfag/Yl68qFs5s+9a5Di5UkENdVAMqj+2ebhqrBwMefRzDHbXNKC1ZbGGsyv4y+EyaMTOZ8E0EXmE3Ry6uMOIufnkCARozu0cyJ6VPH2v1l67QyDE6no1uhTUciTr9BQ24c8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725608077; c=relaxed/simple;
-	bh=eeVzETaP9T5RwN0n/X9P3/bS1TMJXFOsU2KTkWDq7eg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RwdGJJKWsfkJoky0nAA6OstuEMig2SSFSC+QWfRrVUBSLxcxA+z9BM9fnWWLvnqBY0t0pvXazyVgIrkjD5gt4WzsVtLdy2DN2c3Qx1xxw3tS3515/+hWRpWFkyVZahOMNbDyWnzFUUIq3V+n/gNivalIFqWOtkhg8Zjmpr+T/8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b5b65b1b9fso13780247b3.2;
-        Fri, 06 Sep 2024 00:34:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725608073; x=1726212873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OzWwlgD21vw3dYHmaJkpCeyi7AwIVfGBZ5Yt8JsuZL0=;
-        b=UYhiKJE7etT+6pEaT5W0S3cYxSt/An3TImwSsTFItrZLXsdbWI0YZatBStnUpjcviL
-         dn3jCwgNJdPC+VDpMfx3aay8vg55wsF58XJ6D5va9HfSQegHLv8zmkhkijfrrCgtKTjv
-         LpUJBO1AVFcllXTiElJCYpWVzt5MOqrdl77oCvApyOxa9+Cn6uuhAEa9TZjybv3lixGW
-         2iPbnA9PD0RePDCTw5aXdSzTNaIznGXOF6cd/egQ06UaFe363gN3hN8XjDaZUE8EtLqZ
-         zfjFZb9cirNplP3ZFPctwhieH5s9pCM/PoL+WqWbL2ocrYDWtulrcihNVbHf+t83U7WH
-         nJRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTZcoBKTG/Ey3afrerRziJ5JIpJ91/BHw5zDLJhLG3Knst4Af2GXEeRKAfoXFv4nAuVNzfX1byTJFbCxYw@vger.kernel.org, AJvYcCUfY8JUA/FftfYm9yXUCXrSEUqbXTtSSSazApOxCA4iQ6GYc/bLTcpMV/tIv+028+D0fCDrv2g4cfZQ5xY2LZrJRRs=@vger.kernel.org, AJvYcCXE+1EYq6xkBmFDz9elzRS3X/9HVVNJ46nv3n20uwS3tkn72TiG1RPt2Dt9IbYUC6BBWMwC9pB8kAuD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/AiRHsy88oVoyU2IJDMMw++j3a1gkRwZ0FAcyBRe+diJniVFR
-	aCwhA7Z0NtalIXRV4TN+QuB2ZBQdLaCI5Su9QGrYKyKHxAvKbyNDtQ+FbPdO
-X-Google-Smtp-Source: AGHT+IEOuyidtSxUCV5oKopj2oA3H3Umq7j6zjGPhxw5/6gjtm9gJh1IHixdTZyJlmoqTaJAlW9Gqg==
-X-Received: by 2002:a05:690c:61c6:b0:6db:3b2f:a1eb with SMTP id 00721157ae682-6db45134ccamr24090997b3.26.1725608073031;
-        Fri, 06 Sep 2024 00:34:33 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d697a15d23sm20991977b3.135.2024.09.06.00.34.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 00:34:31 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6d4f1d9951fso16013587b3.1;
-        Fri, 06 Sep 2024 00:34:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxtuM6blAydizM0aY9BIFM3yHptm981wEBrr2a2ZPoJMGj254wifGk2tlPgFGBe005tRJ2HlVvZpz/@vger.kernel.org, AJvYcCV22oSWukBKU5WZtPU1HkHENUb3+iRwVcAJGIEDmKtaUAOmhOCFl5yJoNSxnhft27FGXJX+Q/8F9Kx/6X+C8CqDusQ=@vger.kernel.org, AJvYcCVRreWkgTksBHHxH0eqaXz/p1oDpipGODQt+3D3Cq0xtm1JauEBTyvsUzjtaVto6C3WqhGQjf23Kyd9DDov@vger.kernel.org
-X-Received: by 2002:a05:690c:61c6:b0:6db:3b2f:a1eb with SMTP id
- 00721157ae682-6db45134ccamr24089527b3.26.1725608071358; Fri, 06 Sep 2024
- 00:34:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E5617C9B;
+	Fri,  6 Sep 2024 07:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725608131; cv=pass; b=Rsj/yX219dHd6SAUJjjBAuYcAZ3StGIHHoKDoqji95HVM3Z2n435rxLbL7JoxDb0fijEJ/hmcqdtSeeRtvWZfY6dHMcmAYhCYt29FouZwP8RG3PiwhpBb6igY83tiZr/nGbcRSQy+OoCqtI/rTg2ywtCojafRcnynpI9aEN7mrA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725608131; c=relaxed/simple;
+	bh=5aF5bYiarcRj1XxZVX6A2LZgn96Z1jeWp3pgLJxBIz4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FuAjon6iELLNTWV7/233fZNQFJ+H2C79H+WOUhVdIzG3owRlAhakmruFjoWv9hPry172jCfeEY7YxBem4YRDDDrGzK6A4E58nhIvFf34gqzIyXvKzF5T1VExetIMP6zX7HFfr808KQvvb/mFJ8WqiGz1qBrzeZb7hQo8G4JUrTY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=GcKQXbhy; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: Usama.Anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725608124; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LndPC0Izogm9avH8SOF9DLPPHI6YIiX2l0cMgdxwSfKPTtxGcL4S2m5M9dCIhDkbgUiKZhRzV0ZKAT+Nel+87Td+pfck0b2LdJnHpJA2kYpPTUTdgFprOHJiAPmJgpCXS/5IOu0jaw+7dd7Jbw2jboJ5YShHLM05ZGTWGfrKCtw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725608124; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pEwUbiM//of1AB1j8Nhr4O0R1ToKKHIhcCiDJdTozOw=; 
+	b=G0ZzRWmBoUKEVsPl2UetmuSQPmxv0cmGAxx3WWuTvcDWHn1Rwmb/TLR/UGNuzZQtdj0ZfJl1NcNiKAhpqFA45MlHZvY08I7kI0IxdUfiDzCA3IffcAnNnqdEHtvhhhqBD5Bto1gUDbSqvKJ2MkLxoz3PuxeAO7uYh/dNF1PYnnY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725608124;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=pEwUbiM//of1AB1j8Nhr4O0R1ToKKHIhcCiDJdTozOw=;
+	b=GcKQXbhy7OjVca0HMFFhMH+aA1cbhT53K0winv1mMBynQqL7dwsBogjRUURE0xVh
+	fTaf48AVSz8eKfvF4fTgO/T/DKv9PcxHOHOgKtpiRQFVmEGrNIdYGmLeayyFqpDKZVX
+	kwu+OfBui0eed6WutzjJqSceJPhKT3JN2WTXNi3Y=
+Received: by mx.zohomail.com with SMTPS id 1725608121594363.4890217236482;
+	Fri, 6 Sep 2024 00:35:21 -0700 (PDT)
+Message-ID: <ad3d035e-be82-44c4-a850-a33889fcf717@collabora.com>
+Date: Fri, 6 Sep 2024 12:35:14 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com> <20240906062701.37088-9-Delphine_CC_Chiu@wiwynn.com>
-In-Reply-To: <20240906062701.37088-9-Delphine_CC_Chiu@wiwynn.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Sep 2024 09:34:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVTkLDz=5+GH+kKhfKC89nh0+bKh=X4A7bdeiMoBgPwWg@mail.gmail.com>
-Message-ID: <CAMuHMdVTkLDz=5+GH+kKhfKC89nh0+bKh=X4A7bdeiMoBgPwWg@mail.gmail.com>
-Subject: Re: [PATCH v15 08/32] ARM: dts: aspeed: yosemite4: Remove space for
- adm1272 compatible
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests:resctrl: Fix build failure on archs without
+ __cpuid_count()
+To: Shuah Khan <skhan@linuxfoundation.org>, shuah@kernel.org,
+ fenghua.yu@intel.com, reinette.chatre@intel.com,
+ ilpo.jarvinen@linux.intel.com
+References: <20240905180231.20920-1-skhan@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20240905180231.20920-1-skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Fri, Sep 6, 2024 at 8:27=E2=80=AFAM Delphine CC Chiu
-<Delphine_CC_Chiu@wiwynn.com> wrote:
-> Remove space for adm1272 compatible
->
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Hi Shuah,
 
-Fixes: 2b8d94f4b4a4765d ("ARM: dts: aspeed: yosemite4: add Facebook
-Yosemite 4 BMC")
+Thank you for fixing it.
 
-Gr{oetje,eeting}s,
+On 9/5/24 11:02 PM, Shuah Khan wrote:
+> When resctrl is built on architectures without __cpuid_count()
+> support, build fails. resctrl uses __cpuid_count() defined in
+> kselftest.h.
+> 
+> Even though the problem is seen while building resctrl on aarch64,
+> this error can be seen on any platform that doesn't support CPUID.
+> 
+> CPUID is a x86/x86-64 feature and code paths with CPUID asm commands
+> will fail to build on all other architectures.
+> 
+> All others tests call __cpuid_count() do so from x86/x86_64 code paths
+> when _i386__ or __x86_64__ are defined. resctrl is an exception.
+> 
+> Fix the problem by defining __cpuid_count() only when __i386__ or
+> __x86_64__ are defined in kselftest.h and changing resctrl to call
+> __cpuid_count() only when __i386__ or __x86_64__ are defined.
+> 
+> In file included from resctrl.h:24,
+>                  from cat_test.c:11:
+> In function ‘arch_supports_noncont_cat’,
+>     inlined from ‘noncont_cat_run_test’ at cat_test.c:326:6:
+> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
+>    74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
+>       |         ^~~~~~~
+> cat_test.c:304:17: note: in expansion of macro ‘__cpuid_count’
+>   304 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+>       |                 ^~~~~~~~~~~~~
+> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
+>    74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
+>       |         ^~~~~~~
+> cat_test.c:306:17: note: in expansion of macro ‘__cpuid_count’
+>   306 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+> 
+> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Reported-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+LGTM
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-                        Geert
+...
+> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
+> index 742782438ca3..ae3f0fa5390b 100644
+> --- a/tools/testing/selftests/resctrl/cat_test.c
+> +++ b/tools/testing/selftests/resctrl/cat_test.c
+> @@ -290,12 +290,12 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
+>  
+>  static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+>  {
+> -	unsigned int eax, ebx, ecx, edx;
+> -
+>  	/* AMD always supports non-contiguous CBM. */
+>  	if (get_vendor() == ARCH_AMD)
+>  		return true;
+>  
+> +#if defined(__i386__) || defined(__x86_64__) /* arch */
+> +	unsigned int eax, ebx, ecx, edx;
+>  	/* Intel support for non-contiguous CBM needs to be discovered. */
+>  	if (!strcmp(test->resource, "L3"))
+>  		__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> @@ -305,6 +305,8 @@ static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+>  		return false;
+>  
+>  	return ((ecx >> 3) & 1);
+> +#endif /* end arch */
+> +	return false;
+nit: empty line before return
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+>  }
+>  
+>  static int noncont_cat_run_test(const struct resctrl_test *test,
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+BR,
+Muhammad Usama Anjum
+
 
