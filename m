@@ -1,70 +1,74 @@
-Return-Path: <linux-kernel+bounces-318009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B2F96E712
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:03:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 531DE96E716
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B991C22FDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA6D1F24470
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0197814286;
-	Fri,  6 Sep 2024 01:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCC21A28C;
+	Fri,  6 Sep 2024 01:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c+0xw3Ez"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sQOs/dco"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E69634
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC4110940
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725584587; cv=none; b=CNksgVBALDianEmWcTpaf3Q8Nus1pjQtPgpWnsyXYWxKMnUWvbOd0JUV7JGXMRbWa54EUv0YMOVqW0PwMpSyQtweHDiVqr6Ss0LBiemaXJ74tH3T/2D9Lk334YIR66MZ+m4pu1KK1rd9NK4A3TTOJcOPszDJbQCTnGt+mlDRKQk=
+	t=1725584737; cv=none; b=ooUPIq3qWFfTNl+8YjucuG1B0JMQi5N5WkZbRed060Lj/IlwPpy3mNI1RLfFLZqBEpQO0kokvUE2kpmDrMRQyRvCzM2ZUldqHCT8maWvcYUB6B93yWdxMqsysVTd+XKM+tC2dldELWjI8PPmBnxIfBnrb00u+pso15VB98LUmqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725584587; c=relaxed/simple;
-	bh=z4m4o2/drN603NiUF70RgY7/WIJvRfsJfDnzeGXC0qo=;
+	s=arc-20240116; t=1725584737; c=relaxed/simple;
+	bh=J02rQJFIdENo8s9OyaLrzvWWAhINGwRko9kbgLPFte4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nc3jFIQ5LPHVU7Z3HFqFTNQDL5Q4O/l6+5oTeggcjwX1e4P2uTqocKhnwmkeSf5wV0lasFWmAftOgKYgpOrb/MtaxmfwHNv412FMiHdJ1I2d5Bx4ilLKF0ia1TRaMrPdYK/qFZyW1YnSbLc0OasAuWPtOuwNmqFOmIkX2oXp0ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c+0xw3Ez; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2059112f0a7so14546915ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:03:05 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=RZ0W3FiVZ5whSQqLKbMzMqn/sxTl38pVKsPG9TO+3FXv7e7cWsEYfaZaYNKoqb8dTJdHJ2r5jjL8nbrIxg26xl12LGoaVPsLSlJTzHXBO8lvFnTFfSjYXNMYxqlQarAl0WODndBd6r0YUnKhzSU/6uvLI5InwZhrTci/qaZJYB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sQOs/dco; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53658e2d828so43596e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:05:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725584585; x=1726189385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1725584734; x=1726189534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dOGqKcCZS3m+coWkXftBCip2jTDTfVTP0RKG8IcdHp8=;
-        b=c+0xw3EzIQpfKnDqnjyAQkd4MqwN8bJHtuntHwTTjH3O0zzt4bQ4qRq6VYouowktxR
-         P4nDEsyJNQ8TYg8UyhniRwyvKvK18vHFVnzqbyC6yn0kmQPH3aL+xq70JqXSCEVwpmI4
-         E9Gs03Ax7YB0LfM5yPN9cioKkObDE6HBYxXsI=
+        bh=pEISOZKVymIo9I1PGSjsszu4GcOoy0f94hhNiVuBx/I=;
+        b=sQOs/dco09di2xawsEvjQ9W2MTen6rXKTqRy+7Ls3WFyi1HQ8+fbxIgbtZ3VnUEYrJ
+         FAHjC9A7eb3VtSdWPghQzjChzeBRIOZ+RL4vSZONbjWIS7Ly1n7cZWwb5YyG0KS/qDvE
+         L3q8ncY2TwsZRi/ewbXS7KEwtouGpHoyLhn9bIzDSAaKbUG9apMBmC5tOlxjbHXhfr6g
+         3oglPy+g3KGMF8rgsWPw74LB6OOBgvvRbOtOj3ep2HqGb2V2jberNhIjPG0esMRpSaYs
+         YSZ1GbL5MCdD1QxX4iJbXHnkWOHpHjuNn46WLwMS3qwEFX51DNz/GN93J6nTmsuTgNCe
+         yGuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725584585; x=1726189385;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725584734; x=1726189534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOGqKcCZS3m+coWkXftBCip2jTDTfVTP0RKG8IcdHp8=;
-        b=aGYFfjMDyDNhp/sO2QDR6h42BBrFBaVbe5QQ4SU18mNXoZf7Mb7k59pJ1fCPFFEoZD
-         1wtXLYDcQgsE3SN9dDlJWixyPVlO5f4Th1MDmctZ/Mx3M8vt0eTkARxXVj3SDgooUSzW
-         Il+5nXVZ9xV+9jBCYuM2U40UWcgIrLu2RtXl1QCJQWhkBhoHWG7lJthEdmIjJWv6xkCl
-         GXcUZWG8tnvE6ln6znQLufCv/cjlPvB5yzVvu7DMrEWKfHQefyaBfwMQDvO+/gx3MnDw
-         NbBWEqtbIEVfuI1LMhtM4JmazkrnVnTKnw/oXpGUaSD3bk9T6Zu1L7vt0Fr5Md24BKW9
-         LnWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwb9SgkC/UY73F+xLv4q9k7iMkhphmHvsx15A1sKG6WuXFDyOivNnjFKcD1W01DkNDLG6mckzIS1IlS7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhKH5fhcJOnEiLj8bKFPTiEH7XTyh4YcSMXdirvYgEQE2PFH/T
-	7Y6lV9UuzeVHARfRI1109P52wg29u/VKidqfnFvSM2HUvMPVYp3XpfgH5qxqvf8=
-X-Google-Smtp-Source: AGHT+IGQS+zlVQH8e863up19r0CoJnbE9Az0nr/PClGUOKV1rszxTZ+R67nI2CgGD6MOFohQXJrtIw==
-X-Received: by 2002:a17:902:d4cd:b0:206:96ae:dc57 with SMTP id d9443c01a7336-20696aee0a4mr135653185ad.48.1725584584485;
-        Thu, 05 Sep 2024 18:03:04 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea37ccdsm34167785ad.168.2024.09.05.18.03.02
+        bh=pEISOZKVymIo9I1PGSjsszu4GcOoy0f94hhNiVuBx/I=;
+        b=k5lIrwpTwlmq7Q74cWs3jL87ajxxlmGtGCnjmoYglMYvNJMcafyiETy5eAIjxpJwyW
+         wzleND4YUuKZ5BIMCgdc3M1br51/4AI3RdmjQy7vbXYTC2tdssPn7mY5nO536P9vxh9O
+         n3rtB8PeKHY0GARNnGy65/r+fhjeeGVfCx/MqIF3BcjsPAXrXh8nDzkLjyt4HetIdVzQ
+         kLgBSjkGwNa8kGkFx8rlXbMMo+vCd+6U3HD4192bmfDXplpp8p7IBeu3fKbdDWbpX4bx
+         8OjV62upk1pVUZLsfSOA2Ni1aVPAzmUJNpyees9yaWQhBRaVfD6sKHl7yAXwf5y3X8i+
+         A46Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkklgg2lD6hjWa9g5xqdaN1qPL0NqChPtAR1hjnStuhLrkLYF5ECBKXkqDTlyxLBWFYi6asIdnpJUrCXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkMydJNqFAWwsJzMSil5Szc9qwG6gNbL5++1Jk30if3ZfapWGN
+	caTT5g4s5bssXVFO4w//e3XCxvDH1mW6UUSRSAesMpSh15b6B3EOBuAIO9qCahUz5WnhAW+vAgd
+	A
+X-Google-Smtp-Source: AGHT+IHqTecyMCXjxz/h97PL0XeJTktBMk1kLCkDh232vEf9xzuW6gKiZrusAkzTTBBC6DSTu79Mgg==
+X-Received: by 2002:a05:6512:b9d:b0:52f:76:c258 with SMTP id 2adb3069b0e04-5365880faefmr194848e87.8.1725584733590;
+        Thu, 05 Sep 2024 18:05:33 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53655171444sm183909e87.213.2024.09.05.18.05.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 18:03:03 -0700 (PDT)
-Message-ID: <428a42ef-2a3b-41ec-b1a0-7886d52d621f@linuxfoundation.org>
-Date: Thu, 5 Sep 2024 19:03:02 -0600
+        Thu, 05 Sep 2024 18:05:33 -0700 (PDT)
+Message-ID: <b9b1e8e9-5fd2-4880-abc5-300d9d28211c@linaro.org>
+Date: Fri, 6 Sep 2024 04:05:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,116 +76,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] Add SWIG Bindings to libcpupower
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
- Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
- Tomas Glozar <tglozar@redhat.com>, Arnaldo Melo <acme@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "John B. Wyatt IV" <sageofredondo@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240905021916.15938-1-jwyatt@redhat.com>
+Subject: Re: [PATCH v3 1/2] media: qcom: camss: Remove use_count guard in
+ stop_streaming
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240905021916.15938-1-jwyatt@redhat.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hansverk@cisco.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Milen Mitkov <quic_mmitkov@quicinc.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+References: <20240729-linux-next-24-07-13-camss-fixes-v3-0-38235dc782c7@linaro.org>
+ <20240729-linux-next-24-07-13-camss-fixes-v3-1-38235dc782c7@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240729-linux-next-24-07-13-camss-fixes-v3-1-38235dc782c7@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/4/24 20:19, John B. Wyatt IV wrote:
-> SWIG is a tool packaged in Fedora and other distros that can generate
-> bindings from C and C++ code for several languages including Python,
-> Perl, and Go. Providing bindings for scripting languages is a common feature
-> to make use of libraries more accessible to more users and programs. My team
-> specifically wants to expand the features of rteval. rteval is a Python program
-> used to measure real time performance. We wanted to test the effect of enabling
-> some levels of idle-stat to see how it affects latency, and didn't want to
-> reinvent the wheel. Since SWIG requires the .o files created by libcpupower at
-> compilation it makes sense to include this in the cpupower directory so that
-> others can make use of them.
+On 7/29/24 15:42, Bryan O'Donoghue wrote:
+> The use_count check was introduced so that multiple concurrent Raw Data
+> Interfaces RDIs could be driven by different virtual channels VCs on the
+> CSIPHY input driving the video pipeline.
 > 
-> The V3 of this patchset includes:
-> * renaming header messages as requested and adding people to Cc as
-> requested
-> * moving the stub (dummy) commit to the front of the patchset
-> * small punctuation fixes
+> This is an invalid use of use_count though as use_count pertains to the
+> number of times a video entity has been opened by user-space not the number
+> of active streams.
 > 
-> The V2 of this patchset includes:
-> * the full definition of libcpupower headers that is needed for the bindings
-> * dummy implementation in C of a function listed in the header of libcpupower
-> (requested by Shuah Khan)
-> * test_raw_pylibcpupower.py demonstrates an example of using the bindings
-> * adding myself and John Kacur to the cpupower section of the maintainers file
-> (requested by Shuah Khan)
-> * addressed review comments about doc, makefile, and maintainers file
-> * small style and other fixes
+> If use_count and stream-on count don't agree then stop_streaming() will
+> break as is currently the case and has become apparent when using CAMSS
+> with libcamera's released softisp 0.3.
 > 
-> The name raw_pylibcpupower is used because a wrapper `pylibcpupower` may be
-> needed to make the bindings more 'pythonic' in the future. The bindings folder
-> is used because Go or Perl bindings may be useful for other users in the
-> future.
+> The use of use_count like this is a bit hacky and right now breaks regular
+> usage of CAMSS for a single stream case. Stopping qcam results in the splat
+> below, and then it cannot be started again and any attempts to do so fails
+> with -EBUSY.
 > 
-> Note that while SWIG itself is GPL v3+ licensed; the resulting output, the
-> bindings code, has the same license as the .o files used to generate the
-> bindings (GPL v2 only). Please see
-> https://swig.org/legal.html
-> and
-> https://lore.kernel.org/linux-pm/Zqv9BOjxLAgyNP5B@hatbackup/#t
-> for more details on the license.
+> [ 1265.509831] WARNING: CPU: 5 PID: 919 at drivers/media/common/videobuf2/videobuf2-core.c:2183 __vb2_queue_cancel+0x230/0x2c8 [videobuf2_common]
+> ...
+> [ 1265.510630] Call trace:
+> [ 1265.510636]  __vb2_queue_cancel+0x230/0x2c8 [videobuf2_common]
+> [ 1265.510648]  vb2_core_streamoff+0x24/0xcc [videobuf2_common]
+> [ 1265.510660]  vb2_ioctl_streamoff+0x5c/0xa8 [videobuf2_v4l2]
+> [ 1265.510673]  v4l_streamoff+0x24/0x30 [videodev]
+> [ 1265.510707]  __video_do_ioctl+0x190/0x3f4 [videodev]
+> [ 1265.510732]  video_usercopy+0x304/0x8c4 [videodev]
+> [ 1265.510757]  video_ioctl2+0x18/0x34 [videodev]
+> [ 1265.510782]  v4l2_ioctl+0x40/0x60 [videodev]
+> ...
+> [ 1265.510944] videobuf2_common: driver bug: stop_streaming operation is leaving buffer 0 in active state
+> [ 1265.511175] videobuf2_common: driver bug: stop_streaming operation is leaving buffer 1 in active state
+> [ 1265.511398] videobuf2_common: driver bug: stop_streaming operation is leaving buffer 2 in active st
 > 
-> Sincerely,
-> John Wyatt
-> Software Engineer, Core Kernel
-> Red Hat
+> One CAMSS specific way to handle multiple VCs on the same RDI might be:
 > 
-> John B. Wyatt IV (4):
->    pm:cpupower: Add missing powercap_set_enabled() stub function
->    pm:cpupower: Add SWIG bindings files for libcpupower
->    pm:cpupower: Include test_raw_pylibcpupower.py
->    MAINTAINERS: Add Maintainers for SWIG Python bindings
+> - Reference count each pipeline enable for CSIPHY, CSID, VFE and RDIx.
+> - The video buffers are already associated with msm_vfeN_rdiX so
+>    release video buffers when told to do so by stop_streaming.
+> - Only release the power-domains for the CSIPHY, CSID and VFE when
+>    their internal refcounts drop.
 > 
->   MAINTAINERS                                   |   3 +
->   .../power/cpupower/bindings/python/.gitignore |   8 +
->   tools/power/cpupower/bindings/python/Makefile |  31 +++
->   tools/power/cpupower/bindings/python/README   |  59 +++++
->   .../bindings/python/raw_pylibcpupower.i       | 247 ++++++++++++++++++
->   .../bindings/python/test_raw_pylibcpupower.py |  42 +++
->   tools/power/cpupower/lib/powercap.c           |   8 +
->   7 files changed, 398 insertions(+)
->   create mode 100644 tools/power/cpupower/bindings/python/.gitignore
->   create mode 100644 tools/power/cpupower/bindings/python/Makefile
->   create mode 100644 tools/power/cpupower/bindings/python/README
->   create mode 100644 tools/power/cpupower/bindings/python/raw_pylibcpupower.i
->   create mode 100755 tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
+> Either way refusing to release video buffers based on use_count is
+> erroneous and should be reverted. The silicon enabling code for selecting
+> VCs is perfectly fine. Its a "known missing feature" that concurrent VCs
+> won't work with CAMSS right now.
+> 
+> Initial testing with this code didn't show an error but, SoftISP and "real"
+> usage with Google Hangouts breaks the upstream code pretty quickly, we need
+> to do a partial revert and take another pass at VCs.
+> 
+> This commit partially reverts commit 89013969e232 ("media: camss: sm8250:
+> Pipeline starting and stopping for multiple virtual channels")
+> 
+> Fixes: 89013969e232 ("media: camss: sm8250: Pipeline starting and stopping for multiple virtual channels")
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://lore.kernel.org/lkml/ZoVNHOTI0PKMNt4_@hovoldconsulting.com/
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/media/platform/qcom/camss/camss-video.c | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
+> index cd72feca618c..3b8fc31d957c 100644
+> --- a/drivers/media/platform/qcom/camss/camss-video.c
+> +++ b/drivers/media/platform/qcom/camss/camss-video.c
+> @@ -297,12 +297,6 @@ static void video_stop_streaming(struct vb2_queue *q)
+>   
+>   		ret = v4l2_subdev_call(subdev, video, s_stream, 0);
+>   
+> -		if (entity->use_count > 1) {
+> -			/* Don't stop if other instances of the pipeline are still running */
+> -			dev_dbg(video->camss->dev, "Video pipeline still used, don't stop streaming.\n");
+> -			return;
+> -		}
+> -
+>   		if (ret) {
+>   			dev_err(video->camss->dev, "Video pipeline stop failed: %d\n", ret);
+>   			return;
 > 
 
-Applied the series for Linux 6.12-rc1 to
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git cpupower branch
-
-I chose to walk through the steps without installing SWIG
-to see what make would do.
-
-Some things to improve:
-
-Running make in tools/power/cpupower/bindings/python directory without
-installing SWIG gives me the following errors:
-
-make: python-config: No such file or directory
-swig -python raw_pylibcpupower.i
-make: swig: No such file or directory
-make: *** [Makefile:27: raw_pylibcpupower_wrap.c] Error 127
-
-I think it would be good to provide better help message walking
-user through installing the dependencies.
-
-Documentation/Makefile is a good example to look at for useful
-message on the dependencies to be installed.
-
-You can send me patch on top of
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git cpupower branch
-
-thanks,
--- Shuah
+--
+Best wishes,
+Vladimir
 
