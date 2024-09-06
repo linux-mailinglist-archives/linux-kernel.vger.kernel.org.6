@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-318444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD40096EDFC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859D796EE1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E34F1F24E7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B228F1C23E8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7293A157476;
-	Fri,  6 Sep 2024 08:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC771157A46;
+	Fri,  6 Sep 2024 08:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VWh14/dI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWv0+dmp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C1C13E898;
-	Fri,  6 Sep 2024 08:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4215B45BE3;
+	Fri,  6 Sep 2024 08:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611354; cv=none; b=IjvzXLTwNWvldD7XHYDaw66CDogWmLcHugkIMJtyPasg+C3lEHv/gBwfRkEFt0cINL3QuCe4KDB6Its9ixN/XrQrwhS9EjfEhvqXbaAbZNCp/RUN7PPXXjG3EaUyavsly/fwWqenA6YTVUZUMYQftp3zq+PtET/4vLo07+KZDJM=
+	t=1725611443; cv=none; b=DCmxxZlA3C8kO5+qEOY2yPLJQwNI52T+xN3O6vHI+Y70MKxWt7+P0WjCWoarlp0XZz7QtgwXfXOBWK0JsRblEsBOZUOSQbksgVNGtCg/oOmx0zY1m1UUG0+gQX1aeT4rv+nHgRwNxE9mLCL+MbBLNAG7CSdnl7zX+gnqx9dWF3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611354; c=relaxed/simple;
-	bh=2keYo2lgk3+u8/KTLbluWmIqaXS+4zVJ9pPSATcq4kE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rBbD5pGejZaXMXvpS1ptvyc2XSy8s5PkQ10FKfXsyo6/XJgv3WIek4bV9GYPTnyuEmCdVCiJng9s5TvsnONKbSvbohRlaDUeZr/tBEMLdPLLIXC1u23Zs2gEhwfDmXEtM8bZjJvQ4iC8dy5SJvCqpdWjehzww5eEJyi6sb7+j8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VWh14/dI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725611347;
-	bh=wTy8a23gUAo+S9eEeZ+b2EmYQJGFPXWGGQkDji6Y7bI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VWh14/dIxftNaGH7a/gEDruMpK3I96BwRj4qZuhr5agli8+AeqbL4boX86+zaXZvk
-	 eJYVSDxXxqFPruUZOeoL3l30nsTfUuZxUnlzul3ZBsK4NKGkZdZDceskUNhEfcguWt
-	 zm6tp3iZiIaiUfnAPRgIF5+eR1d7QwGmLjbEigLsgWPS6Qun29c0QvdNYlf6ItCng/
-	 4cxlGT1aOZWkVwLAslmuwpijVZuXH/81cwifBobpLvGjEOrSHGJQfS8J8N+eDoWTxU
-	 sXQDn8Su/xZ3bJ/wDS18DHpSA82Hv8w0pZcdRjT51Bz+UCLTXbNs8lSLhvISAZEOA3
-	 atCHvOa7Zj9Yg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0Tsb1662z4w2N;
-	Fri,  6 Sep 2024 18:29:07 +1000 (AEST)
-Date: Fri, 6 Sep 2024 18:29:06 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <20240906182906.54527fbf@canb.auug.org.au>
+	s=arc-20240116; t=1725611443; c=relaxed/simple;
+	bh=A5dq9VXSOyYLnbKAephiLb4/q2ZPRZWcqiBaCOExek4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVSXLKdkEmvibqVl4I/k2lI10WW5jlrpuioRs5TzIT0Bi1RI4v7jZcmkPi8D/TQ5iR3kC52ZtY/OE+9RTS6W4td4RmZDwLv6tN/q1nj4JP5wRtqiWdrKNnowyu6nVH73kuftEMYBROa6g82AVuzex9y2TSrJ+K1aBMtY9CEjzZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWv0+dmp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619BBC4CEC4;
+	Fri,  6 Sep 2024 08:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725611442;
+	bh=A5dq9VXSOyYLnbKAephiLb4/q2ZPRZWcqiBaCOExek4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SWv0+dmp0VjjpwgOjn/rgchbdug4Cxd8CeXi17mh1b0caKbFg21RCbpO1xdkdEA3+
+	 UymzcCa7gSnv4pDx4yzQTEuwr2Jz/z58ImXpGaDYfed7FPRb4CaAt1b/4gFuZP9Y8c
+	 9EZf8pTXk6Ycd3KP+Vi4IDTRUNB2QcuS8RU6dy8JBVho43tpxE0T3sRwSn67l1Actk
+	 6lIZoXB/cJJrtaigyAABRHFX9913ntCZJR2iHERmKaCl7C+mPy8r8izFNlYviDJpAZ
+	 q8aXYWL6HPNNRKB9ZtzJhIhYM3DmAfDbVAioCltQU9AwdksKpsW7nMfewX8PLvb+dH
+	 LZG4fbO9qdUzw==
+Date: Fri, 6 Sep 2024 09:30:38 +0100
+From: Simon Horman <horms@kernel.org>
+To: Gui-Dong Han <hanguidong02@outlook.com>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2] ice: Fix improper handling of refcount in
+ ice_sriov_set_msix_vec_count()
+Message-ID: <20240906083038.GC2097826@kernel.org>
+References: <SY8P300MB0460D0263B2105307C444520C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/t_Hzun1RV/kVPp9RK/+gb.K";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SY8P300MB0460D0263B2105307C444520C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
 
---Sig_/t_Hzun1RV/kVPp9RK/+gb.K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 03, 2024 at 11:59:43AM +0000, Gui-Dong Han wrote:
+> This patch addresses an issue with improper reference count handling in the
+> ice_sriov_set_msix_vec_count() function.
+> 
+> First, the function calls ice_get_vf_by_id(), which increments the
+> reference count of the vf pointer. If the subsequent call to
+> ice_get_vf_vsi() fails, the function currently returns an error without
+> decrementing the reference count of the vf pointer, leading to a reference
+> count leak. The correct behavior, as implemented in this patch, is to
+> decrement the reference count using ice_put_vf(vf) before returning an
+> error when vsi is NULL.
+> 
+> Second, the function calls ice_sriov_get_irqs(), which sets
+> vf->first_vector_idx. If this call returns a negative value, indicating an
+> error, the function returns an error without decrementing the reference
+> count of the vf pointer, resulting in another reference count leak. The
+> patch addresses this by adding a call to ice_put_vf(vf) before returning
+> an error when vf->first_vector_idx < 0. 
+> 
+> This bug was identified by an experimental static analysis tool developed
+> by our team. The tool specializes in analyzing reference count operations
+> and identifying potential mismanagement of reference counts. In this case,
+> the tool flagged the missing decrement operation as a potential issue,
+> leading to this patch.
+> 
+> Fixes: 4035c72dc1ba ("ice: reconfig host after changing MSI-X on VF")
+> Fixes: 4d38cb44bd32 ("ice: manage VFs MSI-X using resource tracking")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gui-Dong Han <hanguidong02@outlook.com>
+> ---
+> v2:
+> * In this patch v2, an additional resource leak was addressed when
+> vf->first_vector_idx < 0. The issue is now fixed by adding ice_put_vf(vf)
+> before returning an error.
+>   Thanks to Simon Horman for identifying this additional leak scenario.
 
-Hi all,
+Thanks for the update,
 
-After merging the vfs-brauner tree, today's linux-next build (htmldocs)
-produced this warning:
+I agree with the analysis and that the two instances of
+this problem were introduced by each of the cited commits.
 
-Error: Cannot open file /home/sfr/next/next/fs/netfs/io.c
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Introduced by commit
-
-  550bc501ff91 ("netfs: Remove fs/netfs/io.c")
-
-$ git grep -w fs/netfs/io.c
-Documentation/filesystems/netfs_library.rst:.. kernel-doc:: fs/netfs/io.c
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/t_Hzun1RV/kVPp9RK/+gb.K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbavVIACgkQAVBC80lX
-0Gy7jQf+NlOk220sQGxT+TiPp3NY/rkntF6sdR0LVhA/85YVafFVV5Gm6yu968cK
-6ZU+vjKxL/XoD16/Cc5cjp6lo64FO+Pu/ASBkpC7Llvzb/0tN8g6QNreVR+pcRs5
-EACzWFT1YGIA+rMIFJoyP34ZmSLT80r8ToDcTRdsxSbaE79jg8DbpwUYARYlTf0X
-njK/Zpjw4STh0NWwoCxBShyD+o+3b9dzE2XgQRVb2snbNTNPVbSnhxa5coTMS2UN
-XCWaY4PFmcS3YWqHJNTWMV78AIomU2efM53OTyCwuX8ls3f0YzpWFZCQ34FXKGsv
-Cc3pkQ92sjoP+U8dfVzf5+TfdB1jMg==
-=DxdE
------END PGP SIGNATURE-----
-
---Sig_/t_Hzun1RV/kVPp9RK/+gb.K--
 
