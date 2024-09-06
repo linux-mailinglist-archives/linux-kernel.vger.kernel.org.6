@@ -1,77 +1,111 @@
-Return-Path: <linux-kernel+bounces-319099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E3C96F7BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEA696F7BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BC91C24859
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3722A1F21D11
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB01E1D31B4;
-	Fri,  6 Sep 2024 15:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBDD1D3626;
+	Fri,  6 Sep 2024 15:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="MysOFamN"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lPF136AF"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2521D31A2;
-	Fri,  6 Sep 2024 15:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40751D3628;
+	Fri,  6 Sep 2024 15:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635041; cv=none; b=ei40nAHIuv4wfs6ud/GXn7HUzQFDUREesSMbtJ6qToecrQSdV+Hvvc0xzY5g6SU034kUAJ7/wjKqVyG9sL2RSzqeMxWsa0Z2rrAE/tk9tSbZLHcivsavMllOI/Hho3NFKQrakqCxqLLbw0iw54mEZIZhPbkD2JOs73x7WjAiY8o=
+	t=1725635044; cv=none; b=RPdUzLECEFwOLd+6qratQ88O3G84P1movC15loyDlopid201QcbNBf0yUhb6TqwxxUjxo2dpPJ9hXIWu4HqBsahvtij1ymyD9F5tPuVFzzScJXiao6QqVkaF5ZkxkS0+rSBCHBlmNdHSg13fkdZcvrZ8hZHHAp97ALPPWG/F3ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635041; c=relaxed/simple;
-	bh=0DAeDZaLP0DU2MmjmVtrao0wyO8nipOg5KlCq+MG0lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rm7yuWoYahNrwwFfyoDSat979lvqkI95GNtxHU3KAuFTTCQWkEZsz7ligI7QfyBBe5j/ZR3MzXwygsJ5+a/mp7R3ZzblllJUqF4yb3TH3E3hFn77WUgpIuVUENsO5ZPuEe6KAksDqVIX7dahYsLRmLScRlwShu6M70RXXY1593I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=MysOFamN; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id B6BAC1F9DF;
-	Fri,  6 Sep 2024 17:03:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725635036;
-	bh=ipReIdMPXitBqltXsvmD6hYpQjXWgFygseGherE65fo=; h=From:To:Subject;
-	b=MysOFamNOzKZySaZhmAIWXQD+wivNqXhGoZCUpOORiajEVChlSbVl9Kd7K388VZ0Q
-	 o83mOJQipXsPvpG8NGOI6Ji3lEjgka3ocgu9oQFguBjKMZ58YExDtikWRYGP0PC8u4
-	 0bf3+X2t499qBHn3ekEi/ShGbWEDOh90+YLUiY0vDXjqXWHt6e84f2efqsVBDXNWWu
-	 3nZQwpQPHGRcq4Ye/HuIpRZEsQYx0UXR/VZCgcJvb7nwusr4NrOuDcgJ3he0OLcbWY
-	 cCpU4cPE1KHkGpyDwmDMyOmmWXXeoDEPN6vNn6pxH57vgDJB04xqE7aNE81BNVDM3p
-	 RIpGCf1GVGfXA==
-Date: Fri, 6 Sep 2024 17:03:55 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] wifi: mwifiex: use adapter as context pointer for
- mwifiex_hs_activated_event()
-Message-ID: <20240906150355.GC45399@francesco-nb>
-References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
- <20240826-mwifiex-cleanup-1-v1-4-56e6f8e056ec@pengutronix.de>
+	s=arc-20240116; t=1725635044; c=relaxed/simple;
+	bh=hEWqExGTt0pJ13YLSou1uTl2RYpMSjF0CsYpiLkm7Q8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HFTmQt4QLOOA3wfd89r/LvmUTQL/CJTF6a3UDCvAOi2LWZF7GqW/zIkvZBTNWhCSRMvETu5j9LGwNt7I52fxP6ISb3CM6ox7GPckY32ij+9slQQ2qzPMv5yX/Tc+OZcseZFdzxyAPK99tyrcGec90fyJdIY8HfCGtqixyX3Tc3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lPF136AF; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 10FF81C000D;
+	Fri,  6 Sep 2024 15:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725635040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0gVP1IO5B0KxwnAMcPOyPNDvjw/mvY2nbIjRYuUupdU=;
+	b=lPF136AFaXPTVEKxnUQMWPcv+NslqQqYRoTBEdgY2gcjR9kVQpL2qGAMOp23FcUtGHqAal
+	m6W2r6rK4/3g+NFSfeQtOQG21ZBHap2EfQYyAVC/vWZniDLb326RRU107oBb5UGa4yab+z
+	AupglR5W41ecFm6fBikBJLW2i6kjgpO3SeNlEzdkMUZEbctp/Pwp68Emx4/96MVNsC+trh
+	0tOCnVwOtENsa8b4qxAoHl9vR0djb5fKuZPzcRSdD7vX1yGHvIJwAP68a3h8NEjUDw8auw
+	W5JtVwLM25N7hJws1c+MDFny/rk4NYO/BXqOpJiGfJ57aGAogkUW5ec+cjnfXQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>,
+	miquel.raynal@bootlin.com,
+	michal.simek@amd.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	liang.yang@amlogic.com,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	heiko@sntech.de,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	wens@csie.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
+	kees@kernel.org,
+	gustavoars@kernel.org,
+	linux@treblig.org,
+	robh@kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	erick.archer@gmx.com,
+	christophe.jaillet@wanadoo.fr,
+	val@packett.cool,
+	christophe.kerello@foss.st.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	krzk@kernel.org,
+	jic23@kernel.org
+Subject: Re: [PATCH -next RESEND 04/10] mtd: rawnand: marvell: drm/rockchip: Use for_each_child_of_node_scoped()
+Date: Fri,  6 Sep 2024 17:03:57 +0200
+Message-ID: <20240906150357.734687-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240826094328.2991664-5-ruanjinjie@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-mwifiex-cleanup-1-v1-4-56e6f8e056ec@pengutronix.de>
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'707f2d0720ed6831d736cca084b62ba97eb7fa23'
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, Aug 26, 2024 at 01:01:25PM +0200, Sascha Hauer wrote:
-> mwifiex_hs_activated_event() takes a struct mwifiex_private * as
-> context pointer which this function doesn't need directly and the callers
-> don't have. Use struct mwifiex_adapter * instead to simplify both the
-> function and the callers.
+On Mon, 2024-08-26 at 09:43:22 UTC, Jinjie Ruan wrote:
+> Avoids the need for manual cleanup of_node_put() in early exits
+> from the loop.
 > 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
+Miquel
 
