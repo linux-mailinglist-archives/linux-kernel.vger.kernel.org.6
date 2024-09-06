@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-319117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DE896F7F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:12:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6367096F7EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB9A1F25BAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:12:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA2D3B2175D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049F61D27B8;
-	Fri,  6 Sep 2024 15:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC051D27AD;
+	Fri,  6 Sep 2024 15:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wdbzAy6E"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWhNye39"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3521C9EA4;
-	Fri,  6 Sep 2024 15:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7831CCB2C;
+	Fri,  6 Sep 2024 15:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635538; cv=none; b=NWXPF66TyMIqYtKfhWiJWkHNHjua4VjozN6VpjC1dI8/zLYOjrQ3pEXZT84ryGH6i1c9hKl0IvWFHz7j/vr5/H1AHa2C/hiilju09eu84cXu4at533HIFg9lrXWpm9l+xSSTGNEe37R/mCDypSk8n5bvaEhBR5u2JiHYzSHmq4s=
+	t=1725635527; cv=none; b=bcP9l0MxqD//aEcc3ksAfYFGbVUFSlNTPKIV+gq/Cx19NeFGpbeARcypYr9lGHPXWnNpvMKt4cc6Sh6AQ/mHqCZX/v9vmyuoq9z7YOGAJTeBBJ0CatRxjHIx3WDxtL290ulE3TlXV/agujotvE5Qmb6vqWyWc7KQMVdEfS4zavk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635538; c=relaxed/simple;
-	bh=nHfH1To98MiQXw9Cq91V2tGugWtiARfETsNaWf94Vjk=;
+	s=arc-20240116; t=1725635527; c=relaxed/simple;
+	bh=rciSxuZD53i8BTX8BoSl0WLC4ttW5yXIfU80/LugGk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oD83CamoyWKkhRhDVQ0Xkk5+f50q0CLL6P+lNZ8/IAewDpC1InXqQinNyKu5HeFmDvYDJ1nWSCXq7L583Ktfp3wScidIehrVAO7o8g5rub992+L6/xjIUdvDVSOkBabUQE9nCC7HniUDz3F9eLPn+SK3nCQpWL1PT2wItc64ncI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wdbzAy6E; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Xowjl4gL3MXeOIeUtVOUSScxtHchudp16w9u5iKTOEs=; b=wdbzAy6EeZvgycIkxYYLjSZA1B
-	Xy0tkwAQITTeHNPdj2CXU0RfM+zMPkXK9OHTZ1hvlaOynIsxPCUaHCItAJq3koypsWRrld+/73Yqd
-	hxx1k9PHAVmr4gHunyOisTpGH/XlH1WYClj4jne10loGmnfjfdjqaIxNCYCirllO3xpE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smacs-006pnp-Si; Fri, 06 Sep 2024 17:11:54 +0200
-Date: Fri, 6 Sep 2024 17:11:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: net: ethernet-phy: Add
- forced-master/slave properties for SPE PHYs
-Message-ID: <c08ac9b7-08e1-4cde-979c-ed66d4a252f1@lunn.ch>
-References: <20240906144905.591508-1-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwb/9bmf2t623HZatb7oATnCLKa7f2emFSRf+oAnon7g6SbL2CewSBHDoYVFG+eWSgAW1KvRZn40yaNxcrkODdT1qhgNcM6Xzalytb7lajeZmKMa8gS4dyoXMbjk6pjEdKxHOp0Yq6oE6tos2fF7//IKIccFnElpoDXK1tPkMr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWhNye39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F91C4CEC4;
+	Fri,  6 Sep 2024 15:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725635527;
+	bh=rciSxuZD53i8BTX8BoSl0WLC4ttW5yXIfU80/LugGk8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BWhNye39IaX7G2AvQEkoOjcB4drNnrZTAVSU/D4CqvhZGELACYzyBlGsPCPsj36rP
+	 5+OTf8VayUacWlr9nbGMd6griO7eLrpWSRY2U1GZvVMFTLqEOHkDYxhOG3rXvBLyg6
+	 YIaLv0ecGRd4jPk3xToV3DcwpF4e+YC03vVy70Ilf+xAg/VhLSEaOt8lzqaf78NB+z
+	 N0Xo+zRhdblnvSnP3TMS4X1i56q3M76++uZz+h1NHBQWLEbWBI33645XHOjVnX4BCI
+	 1H00aY52ANNMGhCSTQn55FLQFcQ9j8cWzM8Dvpfu732JLEveAozuhJPm6UXGdIesnM
+	 WC1d/2yCCRmUw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1smadP-0000000061d-20F8;
+	Fri, 06 Sep 2024 17:12:28 +0200
+Date: Fri, 6 Sep 2024 17:12:27 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Junhao Xie <bigfoot@classfun.cn>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] USB: serial: pl2303: add device id for Macrosilicon
+ MS3020
+Message-ID: <Ztsb29fnHyTONn-W@hovoldconsulting.com>
+References: <20240903150638.3850030-1-bigfoot@classfun.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +61,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906144905.591508-1-o.rempel@pengutronix.de>
+In-Reply-To: <20240903150638.3850030-1-bigfoot@classfun.cn>
 
-On Fri, Sep 06, 2024 at 04:49:05PM +0200, Oleksij Rempel wrote:
-> Add two new properties, `forced-master` and `forced-slave`, to the
-> ethernet-phy binding. These properties are intended for Single Pair
-> Ethernet (1000/100/10Base-T1) PHYs, where each PHY and product may have
-> a predefined link role (master or slave). Typically, these roles are set
-> by hardware strap pins, but in some cases, device tree configuration is
-> necessary.
+On Tue, Sep 03, 2024 at 11:06:38PM +0800, Junhao Xie wrote:
+> Add the device id for the Macrosilicon MS3020 which is a
+> PL2303HXN based device.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  .../devicetree/bindings/net/ethernet-phy.yaml | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> index d9b62741a2259..af7a1eb6ceff6 100644
-> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> @@ -158,6 +158,28 @@ properties:
->        Mark the corresponding energy efficient ethernet mode as
->        broken and request the ethernet to stop advertising it.
-> 
-> +  forced-master:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      If set, forces the PHY to operate as a master. This is used in Single Pair
-> +      Ethernet (1000/100/10Base-T1) where each PHY and product has a predefined
-> +      link role (master or slave). This property is board-specific, as the role
-> +      is usually configured by strap pins but can be set through the device tree
-> +      if needed.
-> +      This property is mutually exclusive with 'forced-slave'; only one of them
-> +      should be used.
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
 
-DT reviewers tend to complain about such mutually exclusive
-properties.
+Applied, thanks.
 
-What you are effectively adding is support for the ethtool:
-
-ethtool -s [master-slave preferred-master|preferred-slave|forced-master|forced-slave]
-
-10Base-T1 often does not have autoneg, so preferred-master &
-preferred-slave make non sense in this context, but i wounder if
-somebody will want these later. An Ethernet switch is generally
-preferred-master for example, but the client is preferred-slave.
-
-Maybe make the property a string with supported values 'forced-master'
-and 'forced-slave', leaving it open for the other two to be added
-later.
-
-I've not seen the implementation yet, but i don't think there is much
-driver specific here. We already have phydev->master_slave_set, it
-just needs to be set from this property. Can it be done in phylib core
-somewhere?
-
-	Andrew
+Johan
 
