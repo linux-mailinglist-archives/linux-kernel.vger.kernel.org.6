@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-318967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8699B96F5CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4246796F5C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02891C24007
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBF31C23F99
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DE41CFEAE;
-	Fri,  6 Sep 2024 13:48:35 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD81CF2B3;
-	Fri,  6 Sep 2024 13:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D1B1CF299;
+	Fri,  6 Sep 2024 13:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="n0RKf9b/"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64651CBE89;
+	Fri,  6 Sep 2024 13:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630515; cv=none; b=i3BlqYxn54MOZm+7Ya5K3gSRHPH0hYRMvNL5y1+qAnkVY6wB3eCUpyuK+dNpt6egu0/3tB3EyI7AlP0OiIlDQC15wx0y2+XMXEe3Q0tV11nRQNkm+XRxsiZS3MnvTcyWK1LBIhe00RgzFZpuXDia5qQjZm+Zo/WUSSTU+FxAiiY=
+	t=1725630511; cv=none; b=MB6bnbyJWL1xJGEO9EbBcVzt0lqHd9n9vUggSZfeGSss+rZQw54GFx8Wjai9+HtvRkb7ppHdYkJiRGchaw7b9+8ksrhtQaO3xgL2cJUogHdM5dFFB+eZ6hRUqssfAeUoN7nbeXh5UzhUuvwFc9e4O0kIKMZ+qm+RcjlrzlmGybs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630515; c=relaxed/simple;
-	bh=wlwOWRdYKR00Zm5rmNIKW5fkEehkGxr67EXu3FHs30A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IRor+pQbOpQweMRd0FpwwvompW45hiDtBoK5R6qB9cCtAdo7qGHt6/mR63+mPwfMmrOPJrqjTWCEPyt21H5i2D8FBHSGrxFUzVF5ioHMXgrRODirEc7fQfX03uA9xNN+NJOk/2sZYQPzlZj2/D4Ws68y1bASw8qRG72QY1U/p38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Sam James <sam@gentoo.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: Sam James <sam@gentoo.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] libbpf: workaround (another) -Wmaybe-uninitialized false positive
-Date: Fri,  6 Sep 2024 14:48:14 +0100
-Message-ID: <f6962729197ae7cdf4f6d1512625bd92f2322d31.1725630494.git.sam@gentoo.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725630511; c=relaxed/simple;
+	bh=de27J4yiTEMCkWp47eHD/sFM0Yeb9I683sS0iZ0vUHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=i3t9/yJrWoS5wIlLJODAUD9Kt1NaHMjio2nHi0LpfB4IeSmaeofP+boVAT3CtROPvDU/xkGx1wMMsHEhxXSAKVkJdEhd6Hn7b/mLTZIGB5OR4/BX0sfyhWd1EYXESaqXII2sOsewaUoMkCBsVxDwm3KnuFjYC6vhCgfAUUlRK60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=n0RKf9b/; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.155.100.110])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 87A39789F3;
+	Fri,  6 Sep 2024 21:48:25 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 87A39789F3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1725630506;
+	bh=naamg7UNm6mx3z8yDA7GqJbR3zn2wb64TfuOIljta10=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=n0RKf9b/BT9pj0TqQuZAJCtA+K9QdxCzyNV2W+mW02toJQh7G1JEjiqdtQto5j+QZ
+	 z3U8LTHHqrtkvIKGlcR1XEsiqaGremCMy13hGmd7uhkTIGoEifo+PeGrMzy8GMcy/d
+	 BZez3KgmN0sFed3e726VlCfDBh5NFNzJ5o8toZtc=
+Message-ID: <e1f98265-ab75-45fe-a7a9-8e65cc13908e@classfun.cn>
+Date: Fri, 6 Sep 2024 21:49:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] hwmon: Add support for Photonicat PMU board
+ temperature sensor
+To: Guenter Roeck <linux@roeck-us.net>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-7-bigfoot@classfun.cn>
+ <a33633be-800c-4ca0-9d1e-f190e23384d5@roeck-us.net>
+Content-Language: en-US
+Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley,"
+ <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>, Junhao Xie <bigfoot@classfun.cn>
+From: Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <a33633be-800c-4ca0-9d1e-f190e23384d5@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-We get this with GCC 15 -O3 (at least):
-```
-libbpf.c: In function ‘bpf_map__init_kern_struct_ops’:
-libbpf.c:1109:18: error: ‘mod_btf’ may be used uninitialized [-Werror=maybe-uninitialized]
- 1109 |         kern_btf = mod_btf ? mod_btf->btf : obj->btf_vmlinux;
-      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-libbpf.c:1094:28: note: ‘mod_btf’ was declared here
- 1094 |         struct module_btf *mod_btf;
-      |                            ^~~~~~~
-In function ‘find_struct_ops_kern_types’,
-    inlined from ‘bpf_map__init_kern_struct_ops’ at libbpf.c:1102:8:
-libbpf.c:982:21: error: ‘btf’ may be used uninitialized [-Werror=maybe-uninitialized]
-  982 |         kern_type = btf__type_by_id(btf, kern_type_id);
-      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-libbpf.c: In function ‘bpf_map__init_kern_struct_ops’:
-libbpf.c:967:21: note: ‘btf’ was declared here
-  967 |         struct btf *btf;
-      |                     ^~~
-```
+On 2024/9/6 19:41, Guenter Roeck wrote:
+> On 9/6/24 02:36, Junhao Xie wrote:
+>> Photonicat PMU MCU will send status reports regularly,
+>> including board temperature.
+>>
+> 
+> This is not an appropriate description.
 
-This is similar to the other libbpf fix from a few weeks ago for
-the same modelling-errno issue (fab45b962749184e1a1a57c7c583782b78fad539).
+I will change to a better description.
 
-Link: https://bugs.gentoo.org/939106
-Signed-off-by: Sam James <sam@gentoo.org>
----
- tools/lib/bpf/libbpf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+>> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+>> ---
+>>   drivers/hwmon/Kconfig            |  10 +++
+>>   drivers/hwmon/Makefile           |   1 +
+>>   drivers/hwmon/photonicat-hwmon.c | 129 +++++++++++++++++++++++++++++++
+> 
+> Documentation missing.
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index a3be6f8fac09e..7315120574c29 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -988,7 +988,7 @@ find_struct_ops_kern_types(struct bpf_object *obj, const char *tname_raw,
- {
- 	const struct btf_type *kern_type, *kern_vtype;
- 	const struct btf_member *kern_data_member;
--	struct btf *btf;
-+	struct btf *btf = NULL;
- 	__s32 kern_vtype_id, kern_type_id;
- 	char tname[256];
- 	__u32 i;
-@@ -1115,7 +1115,7 @@ static int bpf_map__init_kern_struct_ops(struct bpf_map *map)
- 	const struct btf *btf = obj->btf;
- 	struct bpf_struct_ops *st_ops;
- 	const struct btf *kern_btf;
--	struct module_btf *mod_btf;
-+	struct module_btf *mod_btf = NULL;
- 	void *data, *kern_data;
- 	const char *tname;
- 	int err;
--- 
-2.46.0
+Does it need to be placed in Documentation/hwmon/photonicat-hwmon.rst?
 
+> 
+>> +static int pcat_hwmon_probe(struct platform_device *pdev)
+>> +{
+> ...
+>> +    dev_info(dev, "Board Temprature: %d degress C\n", hwmon->temperature);
+>> +
+> 
+> Unacceptable (misspelled) noise.
+> 
+>> +    hwmon->hwmon = devm_hwmon_device_register_with_groups(
+>> +        dev, label, hwmon, pcat_pmu_temp_groups);
+>> +
+> 
+> Please use the with_info API. I am not going to review the code because
+> it will need to be completely rewritten.
+> 
+> Guenter
+> 
+
+Thanks for your review, I will rewrite this driver!
+
+Best regards,
+Junhao
 
