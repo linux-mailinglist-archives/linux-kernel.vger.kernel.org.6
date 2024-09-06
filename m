@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-319407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A0996FC2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:32:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9BD96FC35
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212091C246CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D4E28B419
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DCD1D4146;
-	Fri,  6 Sep 2024 19:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917391D5CDD;
+	Fri,  6 Sep 2024 19:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUl9K7lz"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmkRasOb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD701B85EA;
-	Fri,  6 Sep 2024 19:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F401D4611;
+	Fri,  6 Sep 2024 19:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725651116; cv=none; b=ssOq77xc8pflcZ5xd4FdKZfFmw1aqJOL+MaAUgKQ9K5Fw6GXOHGtJZLG1cuBY3AuaK/Z7A6Y/k8VXmzELnKGjIQkByxS95roh7PpzpP+RiQOJmohRlUvaYJArKT4zGntjFmpk449Szk1nlv2N4xJ7nnAQV4m0rgkTAckleq/Vyg=
+	t=1725651462; cv=none; b=G1vn65jHrxgRvrbEcj7yRn9ptq933WXjyrG7Xr6u4g7GDOHntZVeyIoyvA6riTosXzU0nI7Uz0AIoPmHTFAr04o+SeV4HJ6810f0ggMzt4mqkE3AuiAWIRqkMAY24tBIi6vXd+ssZHVvq2DXvLf4y4mI5amcowTz0Upm+SWx+PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725651116; c=relaxed/simple;
-	bh=7CqKdMMa2W2u5sWK3EDB8rJvgqNG8GxHeQBQ2YsyL+w=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=IrjzXgNwYRa09oZQvhw3i7NYBpQub+rwXKT/SWBUZFng5kfgC+W63wBAWbnvvfkM+tGp8343TSDKgMdbgldkXoQ0Nf3cIHPCSdoj5YXMBZrw9PgPw8pmcJ7/ePFWTJyChDFf6ajg1quFXTt6i8CcD8DYit0RcFfkE2dml0Iq+VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUl9K7lz; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so15732641fa.3;
-        Fri, 06 Sep 2024 12:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725651113; x=1726255913; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Nuxy+071csmO0ZbB3fQ4CSEEMw+4ZTybAjYB4eqh4EQ=;
-        b=gUl9K7lzuBGYFRDnXP5lL9J0SXKn6ApTlY/vzXLYLHEBXkthHkAFV3YuM/BnjOPvLD
-         AEbK4Y2dnYw4fW4ioGTOY2t8o2TZVIoj74jN8yhiN3fCvwbMOXe4oF3eQ1opQYo9s5mc
-         PbZNkczxMYRBxbzIxxnKjM3ug1sJfHxmnb32dX3ud47oP0VaYUUnrOL1jinxjYgJ7NGy
-         lG37YR/bMIalQTIqRQNDJgDMmoXt2SrVnSumZVawHBGjBV/B40SppGIkY0i6U74e7FzJ
-         I7iT078BKVOeLYSqkFHz5BcyxL28RCS19+m22D4Rm2ev2W3X4osBHCNdO+SpevCxjk3L
-         l3aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725651113; x=1726255913;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nuxy+071csmO0ZbB3fQ4CSEEMw+4ZTybAjYB4eqh4EQ=;
-        b=ItSZrne1A86gP1F7EXkqqiCe6OzUAr9Y4DdJs0BuPYKi0hQ6d4duKO0J6B20BgJ5Ng
-         0SioVNqPfy/4F2pdXF6OYAqiprvK68Bq85+IsvnTNaxAoIWUE0oSst61jDZaf9HZon7j
-         jrcYrdaN1scYQlqClgcAgm2UzuJrFJp+VIGzhd7vSyB3jwMLW7YsDOg05qrOiA4P1e21
-         sE2oeWLiWuHAu6elSdQwm3A3b+VD0aE1iAWzAsyS/EeU35fR2yQjbKF0mH5GZVm0S/Zz
-         oTZ7ScPjeucccnMliR5vM8sC5qoZ3OrqK/QRRcze9zPB/WmapJmelR4dziIjePRVJhk9
-         giOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvwHfZKWEKE9UiN4RiBgaFXMLzacCt7UDXemnjAHVf9tiJhwe42p8g/TPZDkanoshi+YgftG7UpfFBEyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOrsq2vbyVA2OHd/4cUD79AoOu4MQ1gqn+DtsNmCE2y3WE5aHj
-	QSMsZetkEaKwJ57oE4+11XDr89zSm6SzIS9ff/L+oZaT6w1GoU46hQJAXWgoJ4GdK3p3d072Ju5
-	x8xgVwSKO4Vh17OcAFaq4VCDJvaRh4KMJPpA=
-X-Google-Smtp-Source: AGHT+IE/6BUUKGp71wBZs/+LHe4mCzEeMa8JPUeJm+GJQOh5ietNFz4HzW3ihrpLwi0HsuqlMdY8EbaBlFIJMPJ/hJA=
-X-Received: by 2002:a05:6512:3ba4:b0:533:483f:9562 with SMTP id
- 2adb3069b0e04-536587f87damr2686486e87.42.1725651112908; Fri, 06 Sep 2024
- 12:31:52 -0700 (PDT)
+	s=arc-20240116; t=1725651462; c=relaxed/simple;
+	bh=7gSozHxOKN1b4oBqdqqH/vQTTFlC58/kfdK0diKksbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SuBFYp4/km2w7k7b7iexNJ5z6cinf44xauTcO8Epa5iMHiURZOcPxEHiVV5mCEFU18s2WKogRY/jpY46O0gnvEfkuxGEtf8GzqvNRhqe+nwWx/9w6eCkbPoNaiT/v9jhiV1tphc5VOV69+dqOxcvj9y+Ey6QHF1KEuhFsH2XMvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmkRasOb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69842C4CEC7;
+	Fri,  6 Sep 2024 19:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725651461;
+	bh=7gSozHxOKN1b4oBqdqqH/vQTTFlC58/kfdK0diKksbE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tmkRasOb0b85VQdW8BCa0UrERccpUeO3Yf8b+ACzB9XgCXw99idlOuTJMTPwM61r3
+	 56NZwEAvktbG3l33O2OCx8PM/aZHGg/45h1/VMoGRdBL8+J/6fdDUCPeLi4RPDFaSM
+	 6UPzGUeOtp2qXfJiSlLD+WXFn6x/gHbhm5k0v1IEgNUYEqsR7Ob0QXcc9CXU9zdi8u
+	 UoE/eUbqM8deX+oAbGONulu/iSBuWpqCNdvdtU2kLXg7Rrtauz/cvwuMpWNz0l0ktz
+	 /WTEHqa90RD8ZxfC+8b/57WkTXJZKXD2AfgxQhSdqApMk9HrIKah5Xro5jAQqEEKAt
+	 8WoLMzfmJGLgw==
+Date: Fri, 6 Sep 2024 14:37:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] PCI fixes for v6.11
+Message-ID: <20240906193739.GA431645@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 6 Sep 2024 14:31:41 -0500
-Message-ID: <CAH2r5mu_sd0WC=c=eV-AS90-hH42-ANqyD1-BoJ-52oD-fMuOg@mail.gmail.com>
-Subject: [GIT PULL] smb3/cifs client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please pull the following changes since commit
-431c1646e1f86b949fa3685efc50b660a364c2b6:
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
 are available in the Git repository at:
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.11-rc6-cifs-client-fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git pci-v6.11-fixes-3
 
-for you to fetch changes up to ab85218910729b95f9b0acfebab55c2cab5f8ee7:
+for you to fetch changes up to 8f62819aaace77dd85037ae766eb767f8c4417ce:
 
-  netfs, cifs: Improve some debugging bits (2024-09-03 10:17:51 -0500)
+  PCI/pwrctl: Rescan bus on a separate thread (2024-09-03 17:11:05 -0500)
+
+These are fixes to commits merged during the v6.11 merge window.
+----------------------------------------------------------------
+- Unregister platform devices for child nodes when stopping a PCI device,
+  even if the PCI core has already cleared the OF_POPULATED bit and
+  of_platform_depopulate() doesn't do anything (Bartosz Golaszewski)
+
+- Rescan the bus from a separate thread so we don't deadlock when
+  triggering rescan from sysfs (Bartosz Golaszewski)
 
 ----------------------------------------------------------------
-Six smb3 client fixes
-- fix potential mount hang
-- fix retry problem in two types of compound operations
-- important netfs integration fix in SMB1 read paths
-- fix potential uninitialized zero point of inode
-- minor patch to improve debugging for potential crediting problems
-----------------------------------------------------------------
-David Howells (3):
-      cifs: Fix zero_point init on inode initialisation
-      cifs: Fix SMB1 readv/writev callback in the same way as SMB2/3
-      netfs, cifs: Improve some debugging bits
+Bartosz Golaszewski (2):
+      PCI: Don't rely on of_platform_depopulate() for reused OF-nodes
+      PCI/pwrctl: Rescan bus on a separate thread
 
-Paulo Alcantara (3):
-      smb: client: fix hang in wait_for_response() for negproto
-      smb: client: fix double put of @cfile in smb2_rename_path()
-      smb: client: fix double put of @cfile in smb2_set_path_size()
-
- fs/netfs/io.c             |  2 +-
- fs/smb/client/cifssmb.c   | 54
-++++++++++++++++++++++++++++++++++++++++++++++--------
- fs/smb/client/connect.c   | 14 +++++++++++++-
- fs/smb/client/inode.c     |  2 ++
- fs/smb/client/smb2inode.c |  3 +++
- fs/smb/client/smb2ops.c   |  8 +++++---
- 6 files changed, 70 insertions(+), 13 deletions(-)
-
-
--- 
-Thanks,
-
-Steve
+ drivers/pci/pwrctl/core.c              | 26 +++++++++++++++++++++++---
+ drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  2 +-
+ drivers/pci/remove.c                   | 18 +++++++++++++++++-
+ include/linux/pci-pwrctl.h             |  3 +++
+ 4 files changed, 44 insertions(+), 5 deletions(-)
 
