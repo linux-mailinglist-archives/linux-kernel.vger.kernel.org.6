@@ -1,142 +1,165 @@
-Return-Path: <linux-kernel+bounces-318578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F198A96F012
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:47:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C3496EFFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78021F2829D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8075FB23BD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD381C8FD6;
-	Fri,  6 Sep 2024 09:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB9D1C9DF9;
+	Fri,  6 Sep 2024 09:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PowfCfWx"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQAie+tA"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714811C8FD5
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5DF1C8FA1;
+	Fri,  6 Sep 2024 09:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615940; cv=none; b=rLUSIzWtBpqNvu/JZ7NrF67cKbTVapEu5cbZVEG5RcCCDgd1JEtTwxl/S1ADJbh+D7pNszruz4/HVr0rWQ6tVee86dTJd3tyBbKSdo3ZSB/FJTd03hD5U2vcUZmpBUEYY7TY8tDwPEt+gHhx5jSj9rywVKQV6HdnrP/TAQro77o=
+	t=1725615875; cv=none; b=WKNo0JVmriBzN6bRrSk+CQy49Pv7XVF6czf7BiNvK7IpzQh/o7+5gObWcH31V/X6lR961ky2bSitoHqpCkPLECNL38xmxoUSDlF5Syos0VgbSYC08ER0QGlwuUyeV1BwjbQaL9m953BuW28lhjL33J+PTT3j0QeP9RMnRzEvjcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615940; c=relaxed/simple;
-	bh=7PbyHCGSU/EBWPpLh2nI/FGAdjLSfkCd7ogz0SmyE84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Txsykb5AxJyAgAGPyODUITh1SMKNQlQZtv0455EOW5MKQgdZKCSLXlnq4TMoOsMmwlTNdADn6Z1DTm8Ivml6WbuBZm4OiSiyITEJrr3G61BftsmQMTqe2HtPIAKFwMaFU9dJuZ9iTKo0aLxwesWfdFID/9r4n+wx08fG6+zKFM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PowfCfWx; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42c7bc97423so18800955e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:45:38 -0700 (PDT)
+	s=arc-20240116; t=1725615875; c=relaxed/simple;
+	bh=jMxXxMRP05BxNfr0rgYsI9fsUas4cRrtArUMzOwVjWs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hibrfHsqg8x2qI6TcfYCulp3pVnipun86hpl1xCjRnngZLVVn0nXFLVtynbm+7T3BQRHQId6UvKFCu0ptD5pMa/z9daE2nODRSj5jTK7tA0rCVtt6q1/FpzwyU/uXE8/z61hD63VeWiY1eWx2EnEYHoEZqosvtXChSdHkmt+WTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQAie+tA; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-277e6002b7dso1030231fac.1;
+        Fri, 06 Sep 2024 02:44:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725615937; x=1726220737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mMLNOnOgZigxncEhDKlQLxYVkdY5WouKUkAt0vKRysU=;
-        b=PowfCfWxNUrSItjl69Eo1wCgYEEnZAj/SzvU4+iPbZRVOqWp5JxuEbVpxyEgJzyPLl
-         1YmutkpIFxnpTCqjmQb19+e99OnR5riwaoDnuZZAOmLbYh4zNyly0nYCaj/U+2HhC0xT
-         pgyw7x9XdUIdIj/hDYLG35pIB0TQGdGP5eEwaDu82M0Xnp0dHTGAHMASvVSIjo1wrhWi
-         bUYlnr2g8G6egEA9VU0O6GeV5XFZEj1UIN0Ant8TJNbvigqBuf+5fcg06wGQR2uAWatj
-         AjOxOq2YQ34nKO2m5xLt8yTWj3qcnXnk9do138tLbZR8Jmxqzoc+YQIO3hvrbupt52Cs
-         gbrw==
+        d=gmail.com; s=20230601; t=1725615873; x=1726220673; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A5Fr6Ylhqat7EiJp6HArSc39dt7M4u0mIFR+JQKvwXQ=;
+        b=iQAie+tA7NT6QyscG0m5BGyVN0eiM0SREwm8uxxtTzsa3ajhdffr3XHx0VsUY+lqxB
+         ZKHwxUJA/ZA2beVuFFiB8iRxkwg8RAs6PczVskU7vA1TRx63TjrlOd/u1M0orYye640A
+         caSrl1j+M87DiacK2OE4jMUo7myFIl0R9wL2VLG0ivFdq7m7bW5oXS679oXucGyav+Bs
+         QeuzRtOI5jRS5Yt5/ee3QtLddxLtqVvaVW+EPaWD4LK8GEemrioJ51yel1P5WoxLemsI
+         6DkBV5nkHrGm9NZOqdIKHoYURK9ISS4lZLW2e9LCoiqBl6czy4eBp6NlVJE4B9v7qFtN
+         uAiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725615937; x=1726220737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mMLNOnOgZigxncEhDKlQLxYVkdY5WouKUkAt0vKRysU=;
-        b=UoBzsKPxfs09a/Z+UCiusSlKMr/jbsmN+UwjxJu+1Quq55e8qBJ5Kf4TVst9Y+m4Am
-         rYjTm4eQKzzwLaXYZ7M3WFJAdiRNcoTV60GpIa+PuUUc6VzGcS1nkLSCV8cu+4t9B07q
-         ue34dr5BrGyOIvhjOR8m7Nr2htAIMFax0j6ul94BoTKwlFJsdMdlXFSUPaf/tfPwXtHH
-         TE1lYM8u2JozzwiS/cmYw0lFrlzZ6T6ddfs+OeVsVKo8gek+awHcgPvXzyM8h3nmbwaL
-         U+XvJwrXDFP1EaKQlzA+XekkUnVycmxDg9ViFeI0AHDYmYqnFP0+5VFPIHFhT8j1Mp8M
-         XInw==
-X-Forwarded-Encrypted: i=1; AJvYcCVshZ20mqWBUmbMoUENBFDGc8dBiU0/L8o5tB4qTaViJu7q6mgeREoPLISkIJpxc4ZwEO5eFRgl/N5LWfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYk5TOeCYhb8Z5V30VZt9EkR+TK+GW73Vuj+S+EFb+Omhmx0q8
-	0i/lwtjX9w4pSoBG9wCikuQLNaI6xufGTX/RvqM2KHSvAc29bUWmF6EnRMcfRe8aFGUTXorltwl
-	y
-X-Google-Smtp-Source: AGHT+IECmYyhyA+IpABo5bXuqpdZnToIY8Sd1IRurZQbW8hGzZw7lteqMNDonXje3MoT/oWp4yuj+A==
-X-Received: by 2002:a05:600c:1d99:b0:428:f0a:3f92 with SMTP id 5b1f17b1804b1-42c9f98c2b0mr17597355e9.21.1725615936652;
-        Fri, 06 Sep 2024 02:45:36 -0700 (PDT)
-Received: from [192.168.0.2] (host-95-233-232-76.retail.telecomitalia.it. [95.233.232.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca053ec61sm14854315e9.0.2024.09.06.02.45.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 02:45:36 -0700 (PDT)
-Message-ID: <fb50e9a6-f78f-41ba-af67-8eb414e9d54c@baylibre.com>
-Date: Fri, 6 Sep 2024 11:44:23 +0200
+        d=1e100.net; s=20230601; t=1725615873; x=1726220673;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A5Fr6Ylhqat7EiJp6HArSc39dt7M4u0mIFR+JQKvwXQ=;
+        b=aDlGTxn47wEgMj0ya1E/x8OUtthdCx8Jue1Dda8UmnlXUd4dIWAVg5uUxuch+nc9ZZ
+         VrSO9lS8g2o/ElZmngadXBiFB3mr2ymkgkYyLinMOcuaCRqqA0Ay0vpDFpLE9vM3imgX
+         fwEvYTwESodP5An8yyVTSU/KFDX+ZPF26Ra7nRtEFrrPX/jAxwW1j2PNw/q8m+z8vhtk
+         tMgd9Xe97Frdxru0nIyR10hCpKXV0IbzvJ4ByBhMF547FqCCdkcgRybyo7N8YIC3RNze
+         uZL04T0MXhT2BvsILvtLZgVPvFl5w7X16vZyQ/54MFP+NPNjthx1AE+pN/bb40u98KD6
+         KmWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKthog1QbvBvnV7Mei5Quylq3zvJN/wCOEp6WDTl5uY5FYTSDeN1J2YF6wdnQEpGfZqrenY2ArA+vGR3is9A==@vger.kernel.org, AJvYcCXWJ2EwNlQIcS7f4MEUqoTsaRkLBp0z0o8DZItcgrFHfYU2rh6CZIMGb5JII6fiKgqlU1iEvJKQv9iy1Aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd4g0+YD8I6yJDtFMrZ9iklplwzxGAO08SKRBvycFHzmakKVPS
+	nJBTq5HX0uDcH9mHanvCm5/U7GzHLVzCgFhyPt1buecZDuNo3+wN
+X-Google-Smtp-Source: AGHT+IHWNhysmerhtGgrQ7Po0968uCcoK9g7XJOix4JHWyVqJlQmV7+TlwN7RNnTpd8wKuaoMCJKcA==
+X-Received: by 2002:a05:6870:610b:b0:260:fd20:a880 with SMTP id 586e51a60fabf-27b82ffa8c5mr2237525fac.42.1725615873119;
+        Fri, 06 Sep 2024 02:44:33 -0700 (PDT)
+Received: from smtpclient.apple ([47.254.32.37])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718dd273e3fsm312148b3a.190.2024.09.06.02.44.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Sep 2024 02:44:32 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] iio: add support for the ad3552r AXI DAC IP
-To: Conor Dooley <conor@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
- <20240906-unwatched-backshift-4782a627278f@squawk>
-Content-Language: en-US
-From: Angelo Dureghello <adureghello@baylibre.com>
-In-Reply-To: <20240906-unwatched-backshift-4782a627278f@squawk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 1/2] Introduce klp_ops into klp_func structure
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2409060857130.1385@pobox.suse.cz>
+Date: Fri, 6 Sep 2024 17:44:26 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7F83CD32-3965-4F15-B4FA-44503EF6EA9D@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-2-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409051139540.8559@pobox.suse.cz>
+ <EF43117B-DF46-4001-A5D4-49304EFF21AD@gmail.com>
+ <alpine.LSU.2.21.2409060857130.1385@pobox.suse.cz>
+To: Miroslav Benes <mbenes@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Hi Conor,
+Hi Miroslav
 
-On 06/09/24 11:07 AM, Conor Dooley wrote:
-> On Thu, Sep 05, 2024 at 05:17:30PM +0200, Angelo Dureghello wrote:
->> The serie comes from the previously discussed RFC, that i
->> converted to a normal patch from this v2.
->>
->> Purpose is to add ad3552r AXI DAC (fpga-based) support.
->>
->> The fpga DAC IP has been created to reach the maximum speed
->> (33MUPS) supported from the ad3552r. To obtain the maximum
->> transfer rate, the custom module has been implemented using
->> the QSPI lines in DDR mode, using a dma buffer.
->>
->> The design is actually using the DAC backend since the register
->> map is the same of the generic DAC IP, except for some customized
->> bitfields. For this reason, a new "compatible" has been added
->> in adi-axi-dac.c.
->>
->> Also, backend has been extended with all the needed functions
->> needed for this use case, keeping the names gneric.
->>
->> Note: the following patch is actually for linux-iio/testing
->> ---
->> Changes in v2:
->> - use unsigned int on bus_reg_read/write
->> - add a compatible in axi-dac backend for the ad3552r DAC IP
->> - minor code alignment fixes
->> - fix a return value not checked
->> - change devicetree structure setting ad3552r-axi as a backend
->>    subnode
->> - add synchronous_mode_available in the ABI doc
-> Please give reviewers a chance to response to in-progress discussion on
-> a version before sending a new one. I've left a couple of responses to
-> v1 that I only had a chance to reply to today due to travel.
+>=20
+> node member. You removed the global list, hence this member is not =
+needed=20
+> anymore.
 
-sure, will wait some more days next time.
+OK, I got it.
 
-Regards,
--- 
-  ,,,      Angelo Dureghello
-:: :.     BayLibre -runtime team- Developer
-:`___:
-  `____:
+>=20
+>>>=20
+>>>> +       struct list_head func_stack;
+>>>> +       struct ftrace_ops fops;
+>>>> +};
+>>>> +
+>>>>=20
+>>>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+>>>> index 52426665eecc..e4572bf34316 100644
+>>>> --- a/kernel/livepatch/core.c
+>>>> +++ b/kernel/livepatch/core.c
+>>>> @@ -760,6 +760,8 @@ static int klp_init_func(struct klp_object =
+*obj, struct klp_func *func)
+>>>> if (!func->old_name)
+>>>> return -EINVAL;
+>>>>=20
+>>>> + func->ops =3D NULL;
+>>>> +
+>>>=20
+>>> Any reason why it is not added a couple of lines later alongside the =
+rest=20
+>>> of the initialization?
+>>=20
+>> Do you mean I should add couple of lines after 'return -EINVAL' ?
+>=20
+> No, I am asking if there is a reason why you added 'func->ops =3D =
+NULL;'=20
+> here and not right after the rest of func initializations
+>=20
+>        INIT_LIST_HEAD(&func->stack_node);
+>        func->patched =3D false;
+>        func->transition =3D false;
+>=20
+
+Hah... it just my habit to do so. Will fix it later.
+
+>>=20
+>> Maybe there still other places will call this klp_find_ops? Is it =
+safe to delete it?
+>=20
+> If you have no other plans with it, then it can be removed since there =
+is=20
+> no user after the patch.
+>=20
+
+> Wardenjohn, you should then get all the information that you need. =
+Also,=20
+> please test your patches with livepatch kselftests before a submission=20=
+
+> next time. New sysfs attributes need to be documented in=20
+> Documentation/ABI/testing/sysfs-kernel-livepatch and there should be a =
+new=20
+> kselftest for them.
+
+OK, will do it.
+
+Regards.
+Wardenjohn.
 
 
