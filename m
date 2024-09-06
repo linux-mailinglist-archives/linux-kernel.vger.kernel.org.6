@@ -1,171 +1,228 @@
-Return-Path: <linux-kernel+bounces-318574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE7096F000
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9267C96F007
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184AF2865E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49404288251
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157571C9ECA;
-	Fri,  6 Sep 2024 09:44:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178401C9EB8
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06101CA681;
+	Fri,  6 Sep 2024 09:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYvozVGM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FCC1CA6AF;
+	Fri,  6 Sep 2024 09:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615887; cv=none; b=THfuSAZ2ODP4Wz8nC23BTFkuMswZsWvf5oBy6G63dDoeUc0YTkt7/LlHDh1UYshaWb2Oc6T48S59YBT4dlNaqQFrMRab4pqJZzArZyUOakzzZbdnD+JU0zOHdpiSVqdGQxCosRTjH1J55a9l8U8MnIXqKKzAKqRgINByyNciUPM=
+	t=1725615903; cv=none; b=ex+7u9FqNrbBqN4+hvo/SOgK7SkHx6dkAsEHwy5IGyC72YE0bzEbiufgOaGtvhFpAWiNkX62S5m9lmwT6hoAWpt6101Lk7lyWSl82u2tKo31XWLeBuM5uzHZV6w+HlpnZeeygfpD9pm7FF2KsdoID1Vvlq2gPPoAUVx2ps4gKwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615887; c=relaxed/simple;
-	bh=9ODtU11g/u2BLfqy7e5eSMtZdLz4z4P+8IVG8beTBds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fg05xj8MsvlxtflvjBKg+R5J4DLV/BAMy56DztvPbx9Nzq2Jdd+MA7ridcl6q9Lf5m/oaAVV9CjxykMWRR1GXJ41yG2Q0TZI4CASVsJLoTynf9D9iX8NBt85iLqMf2XpX6SHEcIVeoXW9KClasSdNZQsxnHnpmajLA13cllR1fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 427BDFEC;
-	Fri,  6 Sep 2024 02:45:12 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D281E3F73F;
-	Fri,  6 Sep 2024 02:44:43 -0700 (PDT)
-Date: Fri, 6 Sep 2024 10:44:41 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Tian Tao <tiantao6@hisilicon.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, jonathan.cameron@huawei.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxarm@huawei.com
-Subject: Re: [PATCH] arm64: Add ARM64_HAS_LSE2 CPU capability
-Message-ID: <ZtrPCVhqj5qLrQVY@J2N7QTR9R3>
-References: <20240906090812.249473-1-tiantao6@hisilicon.com>
+	s=arc-20240116; t=1725615903; c=relaxed/simple;
+	bh=Rt2nyfE5ubP8pA0B8PPUA3nYtqppOBbV6wORmmUvWSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nYjrUhLpnC7FFrueo854jGkxJrls9kWcAMVwwoSi3SFYp+15t2tsozJdqT3n0LeIIifiNylOM8I7dE9a57G0cFveZhejyqmxViHtbb3WWge+CPbKJAa/siyO5r7YWpGo0Ma2FmDSbWN/df/GvSUVsIdEFc3Iyc5ZlRAcA2wyxRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYvozVGM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94185C4CEC4;
+	Fri,  6 Sep 2024 09:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725615902;
+	bh=Rt2nyfE5ubP8pA0B8PPUA3nYtqppOBbV6wORmmUvWSk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uYvozVGMeF2/g2AfsViHKq0jq64rjOe9ORT9k2+I+fyuafVQ91YpaGC6KflyRH/L6
+	 W7VWPThXq+AdS5TKuaPNPPz2rLmq0AJ/eVz3QTLe7Av6oPQLmkR3QH2AtkFtbZhNTo
+	 M44tj570e5pvNl7fm6X3GMmplSv3Wb7PlvX1WNIWEnTVJ/sr4mPi47jjubuPBpa4xY
+	 fibniBERy0g1ZX/GGCXhFnNhaZhP54x9YIVcAT6gVel0i1wdPL3NYo8+IXo9FdrGqd
+	 N8wAWN00iYaVLIS0xosnvynSpBmWsArG2YTG/Y7FzAsyotd1J8hH9nzDEBE/L8lC7s
+	 Mu7TVwoYngDgQ==
+Message-ID: <90a5b41b-84cd-4daa-b102-04a29c2cd46b@kernel.org>
+Date: Fri, 6 Sep 2024 11:44:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240906090812.249473-1-tiantao6@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] power: reset: add Photonicat PMU poweroff driver
+To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-3-bigfoot@classfun.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240906093630.2428329-3-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 06, 2024 at 05:08:12PM +0800, Tian Tao wrote:
-> When FEAT_LSE2 is implemented and Bit 6 of sctlr_elx is nAA, the
-> full name of the Not-aligned access. nAA bit has two values:
-> 0b0 Unaligned accesses by the specified instructions generate an
-> Alignment fault.
-> 0b1 Unaligned accesses by the specified instructions do not generate
-> an Alignment fault.
+On 06/09/2024 11:36, Junhao Xie wrote:
+> This driver implements the shutdown function of Photonicat PMU:
 > 
-> this patch sets the nAA bit to 1,The following instructions will not
-> generate an Alignment fault if all bytes being accessed are not within
-> a single 16-byte quantity:
-> • LDAPR, LDAPRH, LDAPUR, LDAPURH, LDAPURSH, LDAPURSW, LDAR, LDARH,LDLAR,
-> LDLARH.
-> • STLLR, STLLRH, STLR, STLRH, STLUR, and STLURH
+> - Host notifies PMU to shutdown:
+>   When powering off, a shutdown command (0x0F) needs to be sent
+>   to the MCU.
 > 
-> Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-
-What is going to depend on this? Nothing in the kernel depends on being
-able to make unaligned accesses with these instructions, and (since you
-haven't added a HWCAP), userspace has no idea that these accesses won't
-generate an alignment fault.
-
-Mark.
-
+> - PMU notifies host to shutdown:
+>   If the power button is long pressed, the MCU will send a shutdown
+>   command (0x0D) to the system.
+>   If system does not shutdown within 60 seconds,
+>   the power will be turned off directly.
+> 
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
 > ---
->  arch/arm64/Kconfig              | 10 ++++++++++
->  arch/arm64/include/asm/sysreg.h |  1 +
->  arch/arm64/kernel/cpufeature.c  | 18 ++++++++++++++++++
->  arch/arm64/tools/cpucaps        |  1 +
->  4 files changed, 30 insertions(+)
+>  drivers/power/reset/Kconfig               | 12 +++
+>  drivers/power/reset/Makefile              |  1 +
+>  drivers/power/reset/photonicat-poweroff.c | 95 +++++++++++++++++++++++
+>  3 files changed, 108 insertions(+)
+>  create mode 100644 drivers/power/reset/photonicat-poweroff.c
 > 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 77d7ef0b16c2..7afe73ebcd79 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -2023,6 +2023,16 @@ config ARM64_TLB_RANGE
->  	  The feature introduces new assembly instructions, and they were
->  	  support when binutils >= 2.30.
+> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> index fece990af4a7..c59529ce25a2 100644
+> --- a/drivers/power/reset/Kconfig
+> +++ b/drivers/power/reset/Kconfig
+> @@ -148,6 +148,18 @@ config POWER_RESET_ODROID_GO_ULTRA_POWEROFF
+>  	help
+>  	  This driver supports Power off for Odroid Go Ultra device.
 >  
-> +config ARM64_LSE2_NAA
-> +	bool "Enable support for not-aligned access"
-> +	depends on AS_HAS_ARMV8_4
+> +config POWER_RESET_PHOTONICAT_POWEROFF
+> +	tristate "Photonicat PMU power-off driver"
+> +	depends on MFD_PHOTONICAT_PMU
+
+|| COMPILE_TEST, no?
+
 > +	help
-> +	 LSE2 is an extension to the original LSE (Large System Extensions) feature,
-> +	 introduced in ARMv8.4.
+> +	  This driver supports Power off for Photonicat PMU device.
 > +
-> +	 Enable this feature will not generate an Alignment fault if all bytes being
-> +	 accessed are not within a single 16-byte quantity.
+> +	  Supports operations:
+> +	    Host notifies PMU to shutdown
+> +	    PMU notifies host to shutdown
 > +
->  endmenu # "ARMv8.4 architectural features"
->  
->  menu "ARMv8.5 architectural features"
-> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> index 8cced8aa75a9..42e3a1959aa8 100644
-> --- a/arch/arm64/include/asm/sysreg.h
-> +++ b/arch/arm64/include/asm/sysreg.h
-> @@ -854,6 +854,7 @@
->  #define SCTLR_ELx_ENDB	 (BIT(13))
->  #define SCTLR_ELx_I	 (BIT(12))
->  #define SCTLR_ELx_EOS	 (BIT(11))
-> +#define SCTLR_ELx_nAA    (BIT(6))
->  #define SCTLR_ELx_SA	 (BIT(3))
->  #define SCTLR_ELx_C	 (BIT(2))
->  #define SCTLR_ELx_A	 (BIT(1))
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 646ecd3069fd..558869a7c7f0 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2299,6 +2299,14 @@ static void cpu_enable_mte(struct arm64_cpu_capabilities const *cap)
->  }
->  #endif /* CONFIG_ARM64_MTE */
->  
-> +#ifdef CONFIG_ARM64_LSE2_NAA
-> +static void cpu_enable_lse2(const struct arm64_cpu_capabilities *__unused)
+> +	  Say Y if you have a Photonicat board.
+> +
+>  config POWER_RESET_PIIX4_POWEROFF
+>  	tristate "Intel PIIX4 power-off driver"
+>  	depends on PCI
+> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> index a95d1bd275d1..339b36812b95 100644
+> --- a/drivers/power/reset/Makefile
+> +++ b/drivers/power/reset/Makefile
+> @@ -17,6 +17,7 @@ obj-$(CONFIG_POWER_RESET_MT6323) += mt6323-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_QCOM_PON) += qcom-pon.o
+>  obj-$(CONFIG_POWER_RESET_OCELOT_RESET) += ocelot-reset.o
+>  obj-$(CONFIG_POWER_RESET_ODROID_GO_ULTRA_POWEROFF) += odroid-go-ultra-poweroff.o
+> +obj-$(CONFIG_POWER_RESET_PHOTONICAT_POWEROFF) += photonicat-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+>  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+> diff --git a/drivers/power/reset/photonicat-poweroff.c b/drivers/power/reset/photonicat-poweroff.c
+> new file mode 100644
+> index 000000000000..f9f1ea179247
+> --- /dev/null
+> +++ b/drivers/power/reset/photonicat-poweroff.c
+> @@ -0,0 +1,95 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024 Junhao Xie <bigfoot@classfun.cn>
+> + */
+> +
+> +#include <linux/mfd/photonicat-pmu.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+> +
+> +struct pcat_poweroff {
+> +	struct device *dev;
+> +	struct pcat_pmu *pmu;
+> +	struct notifier_block nb;
+> +};
+> +
+> +static int pcat_do_poweroff(struct sys_off_data *data)
 > +{
-> +	sysreg_clear_set(sctlr_el2, SCTLR_ELx_nAA, SCTLR_ELx_nAA);
-> +	isb();
-> +}
-> +#endif
+> +	struct pcat_poweroff *poweroff = data->cb_data;
 > +
->  static void user_feature_fixup(void)
->  {
->  	if (cpus_have_cap(ARM64_WORKAROUND_2658417)) {
-> @@ -2427,6 +2435,16 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		ARM64_CPUID_FIELDS(ID_AA64ISAR0_EL1, ATOMIC, IMP)
->  	},
->  #endif /* CONFIG_ARM64_LSE_ATOMICS */
-> +#ifdef CONFIG_ARM64_LSE2_NAA
-> +	{
-> +		.desc = "Support for not-aligned access",
-> +		.capability = ARM64_HAS_LSE2,
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches = has_cpuid_feature,
-> +		.cpu_enable = cpu_enable_lse2,
-> +		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, AT, IMP)
-> +	},
-> +#endif
->  	{
->  		.desc = "Virtualization Host Extensions",
->  		.capability = ARM64_HAS_VIRT_HOST_EXTN,
-> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-> index ac3429d892b9..0c7c0a293574 100644
-> --- a/arch/arm64/tools/cpucaps
-> +++ b/arch/arm64/tools/cpucaps
-> @@ -41,6 +41,7 @@ HAS_HCX
->  HAS_LDAPR
->  HAS_LPA2
->  HAS_LSE_ATOMICS
-> +HAS_LSE2
->  HAS_MOPS
->  HAS_NESTED_VIRT
->  HAS_PAN
-> -- 
-> 2.33.0
-> 
-> 
+> +	dev_info(poweroff->dev, "Host request PMU shutdown\n");
+> +	pcat_pmu_write_data(poweroff->pmu, PCAT_CMD_HOST_REQUEST_SHUTDOWN,
+> +			    NULL, 0);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int pcat_poweroff_notify(struct notifier_block *nb, unsigned long action,
+> +				void *data)
+> +{
+> +	struct pcat_poweroff *poweroff =
+> +		container_of(nb, struct pcat_poweroff, nb);
+> +
+> +	if (action != PCAT_CMD_PMU_REQUEST_SHUTDOWN)
+> +		return NOTIFY_DONE;
+> +
+> +	dev_info(poweroff->dev, "PMU request host shutdown\n");
+
+Nope. Drop.
+
+> +	orderly_poweroff(true);
+> +
+> +	return NOTIFY_DONE;
+Best regards,
+Krzysztof
+
 
