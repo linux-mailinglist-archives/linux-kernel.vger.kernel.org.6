@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-318952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A898D96F589
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6D496F590
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9301F250C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B782284676
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459DE1CE710;
-	Fri,  6 Sep 2024 13:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7011CEAD5;
+	Fri,  6 Sep 2024 13:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="jRtVNlBZ"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtRUpSdV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5DE1CCEEA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D691E49B;
+	Fri,  6 Sep 2024 13:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725629943; cv=none; b=N2nne/2k0yP6ze2gzame6t+2HbCw9+92JcYBngJNlq/PXWIHgh2jFonEHQe/fEhn1eid0QXk3Kz0ZpFdqcAzAM8B0cRHQm4p9Ku/uFhAzDjZlOjBs68PJVQSiEBJP0eEdtq557NlPc16naU4ze1/mmSgoE/FzYtMhcxAWLmc1X0=
+	t=1725630011; cv=none; b=TGLMirorWh2MbrXuw9qZ3vGaxuXS4VOv5JgINk7atQsI43GnKHVv45x1e3GXXGlc8M5SWMNZR6zfe8c4vYw0cBd3mJ9Y+e84WywKzkuC5C3rIxMQTYupIIKJ9m8uKIqhMA7A501IT6sOE0R0lXFmhIOXJqThQUNqnpRqcV5KJ2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725629943; c=relaxed/simple;
-	bh=QVsf0P+mtHtWmnrlhDzcepBHBPQIrcMSAMHPNfjf9QU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M7enYfgxXjGTFKKd7i8FFtWb2IS6jrxyftDRT7tgR3nmya2LIkxU/ePmBY7FoH5QCX/7x3OMqSf22QOcLlg6fUy9KD/7iAg4t6ryG0tPtkVY12nh5//VQ7rHhrCvU2jF81RZBoNECkmKpmnVH07fLBefbospG2JFUhh9plkghAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=jRtVNlBZ; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374d29ad8a7so1318653f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 06:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1725629940; x=1726234740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K+AqCSr8HoChcAFGwGiSrmlNcV3RopcVFPKN/wyqjkU=;
-        b=jRtVNlBZ7YUs+KA+YzHMAK684kWKTs5liS3psRTCm+7hcq0Yj3zmnozCbmfJfiL1x7
-         trc63GAMoggQhKF5i2tjwWsPoaWojr1TGNKkgiyvn3e3CsbuPj5AlVkPI8WTfM7lIAe5
-         Xz/hjZ/JssrgIecFuBAnDhv9/BaYbppJglB5Mdq5og1aRGIk7Zd5kmxMZW4I43POPNOj
-         uk9LPJmdiGH5BefoqjMVEoiuwi/cxU+nJFndhL7bTyw4ae53n+JKeZKxoDU9KSQmxSyl
-         twz0p6MhCbCIhAPvIk8uwXhfX3Lz+WEFR4l2/PyNyiFxWliCFDoTnNZDRyK1n/IqtM3K
-         0OtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725629940; x=1726234740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K+AqCSr8HoChcAFGwGiSrmlNcV3RopcVFPKN/wyqjkU=;
-        b=pL5/3Zg8ntzPxxMpnBfCGkiWwuRj8N0B6/5TxRltPhq9JSOHJQ/8zYni9EpSVDM4hs
-         grlOqfOWcv5CEu3QFaXyhirTWHfhkRWKTMriMgrGIpPu1tOBdgj+B+4OlgClgccVfWj0
-         IpraVtAk/bFkS5thy6jOVGD+TcaMuHOGRM9JMBbmecmEokAYpt9xDDyxmx6fuea47arR
-         ay0l4fqu0/BHMRfE1+iVlUoDFaOv5dJYe7HUnaWMC2G2NVSnbnJ2N2sWVtTl6cjtkxLK
-         qrA7sMcYymzxX9hMjD6uYMuvbpkvNQKBLaXLAoudYWS5RW7S/6JU6o39DwTVMHD9iZsD
-         Ccbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGsEwgIXnBJpsyl09Ok9HvJTLzDAPWFirWxUvT6KzeRsmaEujSMTYiYAO6GMhVNB20psre84w1oNoTndI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIMXIwL2j24iylC3OdoKKAUnnf6ip9keC5ESYkcibf0oSWMPmV
-	8hwU/0X4ZLMmbqLDSnK81xQ+7LLEmCWQf6H7+CDu+GV7bk5yzJiaN9/81iF+61g4F2OKfOF8cUw
-	kXxofm8jQCx3q1plyxFLcIyY8Ptr189NmLNOKLw==
-X-Google-Smtp-Source: AGHT+IEs0TymDN0qb1H6KzoG9uLNWYfnTI5aRT0d/XNeG7DXuzTNxv/klqY7eBy6ztM2Bw2F4aZOLOo9bzWg7LFprN0=
-X-Received: by 2002:a5d:69cf:0:b0:374:b71f:72c9 with SMTP id
- ffacd0b85a97d-378895ca1a2mr1946306f8f.16.1725629939583; Fri, 06 Sep 2024
- 06:38:59 -0700 (PDT)
+	s=arc-20240116; t=1725630011; c=relaxed/simple;
+	bh=3X47wiK7Z53owlSZ6EkvqXjKfYY8m0qVta1OE1ylsh4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rh2+lP+jBlAVfmszO1kC0j8+P/4C3MinHTLREtAph+HAV6r8vJVI5ixcdMhT7nBollIwkOoaA/InQfh4c0EdO+2AFI1/IsYTKU1jM1rM1owMLuRwVYoSR93je8UaQ69s3Egu9AZtPV6O0z5vV4G2K85gwcE3/iVqacbD4P7upss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtRUpSdV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492EDC4CEC5;
+	Fri,  6 Sep 2024 13:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725630010;
+	bh=3X47wiK7Z53owlSZ6EkvqXjKfYY8m0qVta1OE1ylsh4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=QtRUpSdVRoGcXwVENYf8lux421Hr7+xhFIlobZYRJouGo25hZ7hdqr7xAa1vGV+/4
+	 Q886fRhUxmBvmZ+ZNUJK7LbrTjNeidc/pD022y0BS2q9ztrvZ68nDpTehepSgsLTOM
+	 1GtBGQiWbCb/+1nTSIiDKTqwD3QTofSpk8UAWU4402X2k1qwyZ7/ULPEQ6XJrpn55t
+	 T18yqHQsfbOi/N1iflsKaQwmT4BtQs8iBOGUHMd1yffEtRAFov9d9lbAGHDKx9jy8b
+	 TjxvCWNAOxteukoKwcSEDUV/1lzjhB134nfunlRNotn1oUMWfeDD/Fom3OeSVQGjH2
+	 I2CnDYMfz++MA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240905163540.863769972@linuxfoundation.org>
-In-Reply-To: <20240905163540.863769972@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Fri, 6 Sep 2024 22:38:48 +0900
-Message-ID: <CAKL4bV4GT2R5WZqzTXkAkY6d8eL5PLnnTKoDK-XXL9pCzj5nbQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/131] 6.6.50-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 06 Sep 2024 16:40:06 +0300
+Message-Id: <D3Z8S9922SIU.QD22EOW9RGT0@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <wufan@linux.microsoft.com>, <pbrobinson@gmail.com>, <zbyszek@in.waw.pl>,
+ <hch@lst.de>, <mjg59@srcf.ucam.org>, <pmatilai@redhat.com>,
+ <jannh@google.com>, <dhowells@redhat.com>, <jikos@kernel.org>,
+ <mkoutny@suse.com>, <ppavlu@suse.com>, <petr.vorel@gmail.com>,
+ <mzerqung@0pointer.de>, <kgold@linux.ibm.com>, "Roberto Sassu"
+ <roberto.sassu@huawei.com>
+Subject: Re: [RFC][PATCH v3 01/10] ima: Introduce hook DIGEST_LIST_CHECK
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <corbet@lwn.net>,
+ <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+ <eric.snowberg@oracle.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+ <serge@hallyn.com>
+X-Mailer: aerc 0.18.2
+References: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
+ <20240905152512.3781098-2-roberto.sassu@huaweicloud.com>
+ <D3Z3PDARWOV4.1CBB4U4NW846J@kernel.org>
+ <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
+In-Reply-To: <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
 
-Hi Greg
-
-On Fri, Sep 6, 2024 at 1:36=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri Sep 6, 2024 at 2:22 PM EEST, Roberto Sassu wrote:
+> On Fri, 2024-09-06 at 12:41 +0300, Jarkko Sakkinen wrote:
+> > On Thu Sep 5, 2024 at 6:25 PM EEST, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >=20
+> > > Introduce a new hook to check the integrity of digest lists.
+> >=20
+> > "Introduce DIGEST_LIST_CHECK, a new hook..."
+> >=20
+> > >=20
+> > > The new hook is invoked during a kernel read with file type
+> >=20
+> > "with the file type"
+> >=20
+> >=20
+> > > READING_DIGEST LIST, which is done by the Integrity Digest Cache when=
+ it is
+> > > populating a digest cache with a digest list.
+> >=20
+> > The patch creates a new struct imap_rule_entry instance when it parses
+> > the corresponding rule, which means that there are couple slices of
+> > information missing here:
+> >=20
+> > 1. The commit message does not tell what the code change effectively
+> >    is. I scavenged this information from [1].
 >
-> This is the start of the stable review cycle for the 6.6.50 release.
-> There are 131 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 07 Sep 2024 16:35:08 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.50-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Sorry, to me it seems a bit redundant to state what a IMA hook is. The
+> new hook will be handled by IMA like the other existing hooks.
 
-6.6.50-rc2 tested.
+I think with documentation (scoping also to commit messages) it is in
+general a good strategy to put it less rather than more. No
+documentation is better than polluted documentation ;-)
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Just remarking what might not be obvious with someone who might not
+be obvious, unless being a pro-active contributor.
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
-
-[    0.000000] Linux version 6.6.50-rc2rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240805, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Fri Sep  6 21:24:14 JST 2024
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+BR, Jarkko
 
