@@ -1,186 +1,137 @@
-Return-Path: <linux-kernel+bounces-318296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D4996EB68
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:01:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A4A96EB74
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA73A28A7C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEF628710D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB9E1494AC;
-	Fri,  6 Sep 2024 07:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022F814A60C;
+	Fri,  6 Sep 2024 07:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="GneD+Ajc"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2077.outbound.protection.outlook.com [40.107.255.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkK8Bh84"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261A3328DB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725606098; cv=fail; b=ZQNmBG1buHnUYmbzZlzOcoW0FKxQX9tYDermRE+1ybkPF2wCOLSYuD/UlJfApPD9tlAsSeCwrutbDiiG3wHPUL+NC3Tr6fJSkDojpA3VkE+LbP7jh0PyKDLwhLZikMaVVwQMD+tU6T/9rkiBAIizgN8FQsGHloyOMEttFvmFAT0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725606098; c=relaxed/simple;
-	bh=O8uJCYwrjutZCcJTAvH9TC0x8R1YpGtHuK7rQDM/wGA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=b9UA3z0GgSeXbCxres+PMVPkWcQz2mR+JpgYsQmFl6sRIa2oJ4XXux2Ef+jQawXiDZlnK+DcXfcXazAhjjFT6dIwWDhlRr4kvN5xt8Ws+hiE49lSqvuusXLWwhWYW4aWL/5CJIDqjA+qlrJTKSZjiuxCqMLd5ellKX6ZxUTxusc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=GneD+Ajc; arc=fail smtp.client-ip=40.107.255.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EtEjBuCsL1iJMq3wRdMv+mLCQxNLP5wL1GazWQxEFcXppUD2uHHUTqqVbKCbVqWEUgYGg8rFd/8iEnXzLoK/YbCCb1MtZkFXr7I/BuNuGfToRQE7sRJvJFrqoXHWP00h57eqqAU79c6AuDaovu5O0tE/dKV+wOZVxdq69B+zxH5FJOVswhgcGGtrDdpWCQkkUyUNWQEacu/dodDFdZbBK+f2PEouvEYTiaHlGTTp+DQW+q58t4FNJPdcNMWb5BB0FWycv3KbdDXKat3vw3C0Jkw1LHzwRl0VHT8X8tCgnMGmZ9iXXSnXE4mYfXXjefuDn37NSsKi2TN0jtC0d97cjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6dC0TEeUoyustIppKT2Tw9OUZkdPI23A1ykjPmPaqmk=;
- b=E4RISpC6aecKbbYWj2cRM2RrEOL7dZnb8Vi2V/fLwm0FUsEoaTNaI1nzBc8gVRfEsyPtKLazwofX2OKsQa0gWi2o77+v3/0U0MKLH1cfRy0LljcQQpNqZ/8DTP8oYJB0GwmYcxCfBigOZZSmQjkTJKSLBrXqzsz0WxJdBLTvZMMynU1eN2TdGrKpDjCn1E+9+3fAlhbEOvaTsGtwwrCdgQYPHF6h8lHAYd4DV2LQb42ZmvaRZM5EktSUH96d0ZgZZSKAGOh2so49tAVrcC3ptwonats81iDD2V3m6LudLitezcJ3hJEpejNkWmjV3M+PcbcpDGn9EJMyDD1QdLXZiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6dC0TEeUoyustIppKT2Tw9OUZkdPI23A1ykjPmPaqmk=;
- b=GneD+AjcCr4sJUJ2+aEaSIZgJU4/CHq26fgOoKLMLD8ILFFoMVvhNFv5Z62D6U3MRAp8LvXbJn+5r5tmBHGMvJIT/WEouGoV0RhF9GYueefDf5ZlW9d9V25GbDF66IxiPBnt71Mg8PErpjcDEMTlNiNJtEyu+t0TBkP0NVQglJ6TasieAvfNwGLsU8gmNcPX8GAsHx5aud8vd1rkHX94/sIHbxd2n+FzOVIn3H9HmKXOdVH1DmXLS/1o9btTTZ2df3e4pR9GLNDF5+CfrP4Tk2znjFoFR1PgkqA6GAZvqvEC6OkWz55bWxPT1b9qw6CnRH4VXihLLk4/BaDmh+m69g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by TY0PR06MB5494.apcprd06.prod.outlook.com (2603:1096:400:265::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
- 2024 07:01:32 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%6]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 07:01:32 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] drm/xe: Use ERR_CAST to return an error-valued pointer
-Date: Fri,  6 Sep 2024 15:01:09 +0800
-Message-Id: <20240906070109.1852860-1-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0030.apcprd02.prod.outlook.com
- (2603:1096:4:195::17) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E482B149C7A;
+	Fri,  6 Sep 2024 07:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725606235; cv=none; b=kD6ZbqYyn130ztlIMpLhvcWXMeQIj3bjxzq5QeYlxgPzFTBRtFv9Tp06GCvCBrde35K5wqy/rbJruzm9XaqGnqG8kyQdEfPKWW/nEHToniXOaijlX9srkcrwENPeLjmIcONkZ8YJsQPIfHTKShrgWnxSLmfcI9lbqVMXPTl5A+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725606235; c=relaxed/simple;
+	bh=s8UUzacwVnl0YLmN5UrXoJ76kzWxcTkevPcaDv1C9uc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QefyB6xim2265yu23aAy9wCdjKECpd638V8zeTeJk7YSy9oZ/ZgNNwEwNbixaQB4YVn1vGCZtz1LMUAMlDiEDsYSXPkCQri8h1b5xA9rlkEu0yyBeUXXDboYX2MmgyvGSZoCB55rIoZXGWRetutVJGhW6xYY26QaoreiHg9y4Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CkK8Bh84; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-502aeeb791eso154582e0c.1;
+        Fri, 06 Sep 2024 00:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725606233; x=1726211033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SQP9fjoMvNzGodLR3rN9WzzZsDn7pee0FftrcLS8K1M=;
+        b=CkK8Bh84IBIAlflZMDh0hPLdcfy8zxVX0rGcC9LyLXNYshkV0Y9AYC5Cd9HIUDqA+0
+         6MTVx6nLN5BCrW8lY2iKOslLzzFWxFiAlfVKcxzyMSOBnNIKmGw6rkUxAuzgZwmXttBR
+         riJoasqd83tgd4ned+twCvusme59BvLp5BSUX1SeuDETNWPnUj+0Zw7gWGGRWVVQSG62
+         8aSOXpQ2etl6KEunZ7QjCcP0TKqSCF4kqeGNDasU7XYsJ4FxIRSPv7q66cFO0CiWlsPF
+         ryZPrjmAlY32a7+v7+nJ6UFc3uS1EgA5bs/LFYXSyj5MeSXKyi7S3BnlT1VRjudDCkCy
+         ESdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725606233; x=1726211033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SQP9fjoMvNzGodLR3rN9WzzZsDn7pee0FftrcLS8K1M=;
+        b=hNz1YRtECeB/++sQnqIyuf2RbMspP0FuYSMc1GyS1EIN4y2KM30CAExSiQf7OMudnI
+         pYONWWhn6YanaMig1s56akONPqyfC5IgRHrqtXWyLZxvTpHxvWxu8LayjYU2xOeB3ZO+
+         u6gPBql2hZcFyh4dsECKRqbTD7enXn1wXzXxaj/WEWLumSzJ46uAd2rlE9HHFVOd2rlL
+         +bRH6BehAq4se/Ii0qvUhxxubIpGyVXO1iRsAMFVtOiB5NyqHmFp2Qyei/szhFlKTYV5
+         qaDeL+/+mDGnyGb/QNX0VuJrZvSjWL+UZwrIjO0prWk27CcPwsYF+6HVV/KYZkuMZx8v
+         Bx2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUW5FIwuOh4WMLHPNI1LHHSNFwYTXAo2NQViqzH5NNzbeWjopT5nA0j7OqMNYSU200/zTMsgSsZe/nk+d60GjtCRZ0=@vger.kernel.org, AJvYcCXgOO9dUWSgcxzFyUzqmRT2Pg9pBAPFd2BETDx+JKHoXpjtUOXJynO/tQl2JDq+UKRUvdbIxP4xJm3ithg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQpfh6PYa1cuQdL5LLenZd5z8vAK8KJuot5voLcCXWQZMBklkQ
+	yaie+kiPOcUQjC216zAnSOt1jjpLF3cwy6dm9K7typ2B1a3w+5slo0aOtGBdat0KlD5jGkokYG6
+	uysEITdcwGcbwO8vBaNDDXwiOWUA=
+X-Google-Smtp-Source: AGHT+IEN0qBLQeDG0XiyrY9rkcl5CaIfbG2bEDTzc5WKY9yWSHevLvtPPzoQbYADc+yvKuc3+2zikyihFR5elq/nn1k=
+X-Received: by 2002:a05:6122:904:b0:4ef:58c8:4777 with SMTP id
+ 71dfb90a1353d-5019d455718mr1421444e0c.4.1725606232696; Fri, 06 Sep 2024
+ 00:03:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TY0PR06MB5494:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebac8c18-4a99-4f2d-bfdf-08dcce41bd3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|7416014|52116014|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WS1qz1ft1A4zblpoMKMVFG/HCjNTOxdsGDVR/ikHzA2OvNhIWUvLhMRlwFl1?=
- =?us-ascii?Q?fv3qpO1+sgrtCIA40mYbTsMDUY8h6+CBhV4tHRdJbMUKkDijtF1Nt0La0sKS?=
- =?us-ascii?Q?WByeqjeToqTT0p4FYzzPnAU0KcM2nWWqG2ZcD8rkrJ9KsRIE7EvympSTO+ck?=
- =?us-ascii?Q?lOJh+Khc+yo3FjUyDCl9H0gAycdplJ1iRl/sIeB/+TFi49HiDzVsWSfIdoeB?=
- =?us-ascii?Q?VNwERPzdDaRP8Nywh+ONy4hNctOocudnzDAUx1X7aEsVvKt3nQeuzfIN8sne?=
- =?us-ascii?Q?hT3692DaUplWW9s4lGFuenlPeTljVmqW/zj/lff8mKyj2e0rMFPM2QEScih6?=
- =?us-ascii?Q?n3Y7Dp8rEd/RjqgQXM//HJIrj7NXBlDpADcBj5TBlqE6NipI9NlTPpJfE/Ge?=
- =?us-ascii?Q?m+WwJhIXIZ3loWf90CU0D6czEwRT8prmw/KA7ERGaZLinLm69o2Y4YigMgKO?=
- =?us-ascii?Q?4lt2ipSErB/kwizmN/l9zxL0G4g8pXPukCE51jgMXescLl21ntoxdA+Kmigk?=
- =?us-ascii?Q?rLJlTMOBKVknr3DRA2Upk5bcBiRI3w/giMl0GYGUtr93emvaHfrk3V/O2S9J?=
- =?us-ascii?Q?WPPC76wWi9drg1RzwJIQsWJxUAKnQ2Ia5SMtKuAGvuUoCsQpFv2SQ0TiUC0x?=
- =?us-ascii?Q?lS+3IMWSRBRdy/aG9tia1Nb44YeMblwpdn/O5da08JVzzHPt5avHBGIK/qv2?=
- =?us-ascii?Q?tCkUFCSMiP8wrEYltxM2fTU1CkkIP7uDNWML2DSlSRMFHEe2sgtU5D2oYiry?=
- =?us-ascii?Q?DtpDGDudTfwBGidO12H8yCvyBRxBAdRmZYvrqYf1PMl7n1p7dtiMOjRUAGSK?=
- =?us-ascii?Q?vo96Rh6191W9mgnZ+LhjY2cBYcRXzoHjJSffZMLDAjpkfmIz2E3jLFBzgXla?=
- =?us-ascii?Q?5MdhsH/EgqrplCHNTpNTb+YfdWrm8zq99+mm7URNpM+U9Zg42wxy0eF0If6p?=
- =?us-ascii?Q?tDZDqYOaeRtPdsmJP2IODf0rbjygt0qwn1FsOHwIOBZ0koVWt9nAJp09Bz9I?=
- =?us-ascii?Q?k+y0q7g6/qQe9dkWI/EfH2v+YTFS09audZpbFUvhIeTt2GbkGFT1ZdV8YtrJ?=
- =?us-ascii?Q?Uaf6v53tUS6XiYzwrdsAy92OxdNB7VK9/fBSl8SMfxGYoQglZ6qYx7Xmi1dl?=
- =?us-ascii?Q?qmGFPZ3WAw++AxDsZ0gXoe76Y5l1irl08FOx7rBDFok8neRZ7ReA86PBrB3P?=
- =?us-ascii?Q?Q9vBHP2IKMFAawIVLUUCkbe7uHDEQCf/ZF34bplVZnb8++KTorAPlLYcK8w8?=
- =?us-ascii?Q?/RQAVOdfp7S/vGwurBB9CT1m/bErmdQJ18fEzNlVT59JMKcK9UZioB/wZvZd?=
- =?us-ascii?Q?hy4YFt7s764OU97ohBbcaaQxNbwhgH4996OMlwrC2bxCZ9++osojwvgLhoYm?=
- =?us-ascii?Q?HjTSYaexWCiFEVOsHK7ovk4gPlGDtIs2SEPse1ciL8w4Y/GWAyPpN3mvA5yd?=
- =?us-ascii?Q?gy5Hv2/qZd0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(52116014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?u//cb1X+nK6ZUzD2HVoDNmfdjvjOUjtbSgsLrG2a7kHkUUnmKxGcMkPnGHQa?=
- =?us-ascii?Q?WrAVqM88Pf23nhpBs5CKX7OLmp9esb3xcMD2+hvnB3guFMGxWJtojvn52HjX?=
- =?us-ascii?Q?yitpILAxmgPTEm+AKnjHvb1+2D1LIf7w2W0tpgLYCh1C+OYGWPDJdlnbW4rH?=
- =?us-ascii?Q?cxSUVpumSdZ4u+uevRjnSZaeJ+u0Zi177Amti76/XA1uXlsKsHNOmqOY9zbJ?=
- =?us-ascii?Q?x3/XvrmYRag+5hIECix9AbBtnnr+f7KsCQ+kbhgzWQKpNmHZDY3AzrY/go/x?=
- =?us-ascii?Q?kn3TrG+oD1lDGuKBXXv0jhgiWpzA69SQ8To93Fz4oEt299zJj+RQPNeWfhVi?=
- =?us-ascii?Q?KM+nPjThL2c8BHnaT75Bn7GwaTQ2I0A56xzxnUjQTAe4i8kIEVd8sRCSXWtF?=
- =?us-ascii?Q?oacupB5w1uJSSjXq9piUClCMwlgSfCyHcDou/SbwGrynQoohEOh13KkOT2KS?=
- =?us-ascii?Q?4cMWMMQ/CR7rNrbIMhAD4ZCOlX+4ZSJT/UldduHmAoyOoOgl2l8v0l8+YMQs?=
- =?us-ascii?Q?fPTILWgNQWXRupk+sR8BrxGVzU1RltOHzmhiIH79pe0VpgDyDE1VYUEcaVNS?=
- =?us-ascii?Q?ZNE011H1sBdv79raACNQfr6/t6lyIG9Cgho/+WGYirhF1Gp/CZbIaaQ2szv5?=
- =?us-ascii?Q?J8XY4puSxYoTLidO6js34E3zcmyjvCIq5CYF6U4BQcvyaVwzwyVEfYq2aacW?=
- =?us-ascii?Q?tXJ2jlMgjvmCWlZfciZCBlOJH7U1Jf5qms5Obset1v2HPr5HMM7lQzvURpjq?=
- =?us-ascii?Q?xmjd/iQtOPHgoU6kVmyAGJR9AuBBs6c5Y3z6S4qGx6KIZ6Rxkph8cEqGkc7u?=
- =?us-ascii?Q?3pyqlcq/J4OUmLTD9a+phnHDrPM/NbKc+hUBA7wOB2uSLm02ZHXv9jD+Tuj1?=
- =?us-ascii?Q?4lgueW9cAH4+s2VKHOKZWELI0qYFeL4s7s+6ZUDWqM9RlqJ5TPvPoOqQCA4h?=
- =?us-ascii?Q?OZS8GTtvn7fAPVnlXDt7L8ovGygBOwV0mX7D1jcr2iO0TZhVAxFA9qAg2u7g?=
- =?us-ascii?Q?H2lsXWhYuj6nrGnqnmr4MrfQhaYaTh9O1+yCEjnQohySqGRpG3T3qXCw+EKQ?=
- =?us-ascii?Q?P/hxrjoUlXZujSpkT/0CnHgiPi4b+oVX+WNgwKMzeQCBA5/CSAzAw1F/02pC?=
- =?us-ascii?Q?xJRaO8W4ca5eNSRGvGklI7FPLuB7ltBlwiWSHqHYlbtWXZBxe0BMKd+0zNzU?=
- =?us-ascii?Q?fwizRd6vL7Eow6ErF5ZyFHcPOBEu8/x+UJTSjb6E1wBglfaCF5ohq3AF3aTT?=
- =?us-ascii?Q?pD4AignqASBj2sGR31+9BrZtqyel+5pm5v5RmMbrylVKK+sDLYIY/xSv4nbP?=
- =?us-ascii?Q?PvoofqtS9+YesCp1jIcHUXW/P7V/pYZ1AV+yaSjOfYoP84ZB7QvmMb3lP2t4?=
- =?us-ascii?Q?mEZ/2r3ghPEGNlvFfRzN+5iKWduISryhgXd8miakK53Z4GSlcwqzvgWvziuR?=
- =?us-ascii?Q?UXTSKxLKvVEr+LNrQ7QhK1wDzaqlu30wGB5M+nPJFOiRFwOiWxu2BNpq6+bQ?=
- =?us-ascii?Q?WoBxCpmVktC3y0t40tOy0mU02jazIBK8IeAEY4878O0cfvzs8lj3Eea4pGLA?=
- =?us-ascii?Q?+EBEIFR3KtblYyTeog2AZY5OS6/wX4M0jb51yXzD?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebac8c18-4a99-4f2d-bfdf-08dcce41bd3a
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 07:01:32.4323
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dNlomkDxGgfD/ycaq/QxaedzX+2OaPlrBVU1QAY474o0N6a6RobwqxL9X725MjjyE7RLbH1AdSo57dJzYSHhJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5494
+References: <CGME20240814035701epcas1p21fdecb1ea56edb88951ea789a2123dd4@epcas1p2.samsung.com>
+ <20240814-remove_define-v1-1-7947ae6f747d@samsung.com>
+In-Reply-To: <20240814-remove_define-v1-1-7947ae6f747d@samsung.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Fri, 6 Sep 2024 16:03:15 +0900
+Message-ID: <CAAQKjZPc1St2gOF=nVqShtdaXdG_B2h+7hF4vdNFfnvFmPvGGw@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: Remove unnecessary code
+To: Kwanghoon Son <k.son@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of directly casting and returning an error-valued pointer,
-use ERR_CAST to make the error handling more explicit and improve
-code clarity.
+Hi Kwanghoon,
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
----
- drivers/gpu/drm/xe/xe_sa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+2024=EB=85=84 8=EC=9B=94 14=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 12:57, =
+Kwanghoon Son <k.son@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Function usage exynos_atomic_commit was removed in
+> commit 41cbf0fdaa28 ("drm/exynos: use atomic helper commit").
+> Remove unnecessary function declare.
 
-diff --git a/drivers/gpu/drm/xe/xe_sa.c b/drivers/gpu/drm/xe/xe_sa.c
-index fe2cb2a96f78..e055bed7ae55 100644
---- a/drivers/gpu/drm/xe/xe_sa.c
-+++ b/drivers/gpu/drm/xe/xe_sa.c
-@@ -53,7 +53,7 @@ struct xe_sa_manager *xe_sa_bo_manager_init(struct xe_tile *tile, u32 size, u32
- 	if (IS_ERR(bo)) {
- 		drm_err(&xe->drm, "failed to allocate bo for sa manager: %ld\n",
- 			PTR_ERR(bo));
--		return (struct xe_sa_manager *)bo;
-+		return ERR_CAST(bo);
- 	}
- 	sa_manager->bo = bo;
- 	sa_manager->is_iomem = bo->vmap.is_iomem;
--- 
-2.34.1
+It's true. Applied.
 
+Thanks,
+Inki Dae
+
+>
+> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/ex=
+ynos/exynos_drm_drv.h
+> index 81d501efd013..23646e55f142 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -254,10 +254,6 @@ static inline int exynos_drm_check_fimc_device(struc=
+t device *dev)
+>  }
+>  #endif
+>
+> -int exynos_atomic_commit(struct drm_device *dev, struct drm_atomic_state=
+ *state,
+> -                        bool nonblock);
+> -
+> -
+>  extern struct platform_driver fimd_driver;
+>  extern struct platform_driver exynos5433_decon_driver;
+>  extern struct platform_driver decon_driver;
+>
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240814-remove_define-580075bceaae
+>
+> Best regards,
+> --
+> Kwanghoon Son <k.son@samsung.com>
+>
+>
 
