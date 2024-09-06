@@ -1,73 +1,107 @@
-Return-Path: <linux-kernel+bounces-318341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D9096EC07
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:33:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06E796EC0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 291B3B2218F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7F2286C04
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935B614C592;
-	Fri,  6 Sep 2024 07:33:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A8C14C5B5;
+	Fri,  6 Sep 2024 07:34:37 +0000 (UTC)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3200A22087;
-	Fri,  6 Sep 2024 07:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E4217C9B;
+	Fri,  6 Sep 2024 07:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725607982; cv=none; b=IbZI/GiLfZkQp5aaCVxQABtFolWEyZB2himTfLMlJcLIyjeBKgB3ToI+QuJWU4V/ZNYe3UpIM2bAlAQWtqK4rWiz6eiaHSz1gLnyEhPi7yw7fKAMJm4sH+7qFnUXJf4L/AEalGfC91WuZpM7Z2a8gfbtDvyZITOIhJyX1XkXC6A=
+	t=1725608077; cv=none; b=eokZ38nXVntZVzQzGPqTxQCB4ZhILzBNFB1eIulIfag/Yl68qFs5s+9a5Di5UkENdVAMqj+2ebhqrBwMefRzDHbXNKC1ZbGGsyv4y+EyaMTOZ8E0EXmE3Ry6uMOIufnkCARozu0cyJ6VPH2v1l67QyDE6no1uhTUciTr9BQ24c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725607982; c=relaxed/simple;
-	bh=AB6M4h+5Wgjqeo6/50sRThvejlW9PnffRcLFdYXOE0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNji0uXoDIGiAfariZjU9QERv2vG5bk3UHmmO3zGtAxYb8YzPtCHF4+vuVcuV3/srTx9eVj3xpb/oW/kSJyISoGXWINdsM6cz+AbwkI4GdRYnLGNBPun7Ad9ltOJcQtNUSxQs5SEYnTEEAlwf6qgNEbCi6UVcijVYpE0rNU654o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A661C4CECA;
-	Fri,  6 Sep 2024 07:33:00 +0000 (UTC)
-Date: Fri, 6 Sep 2024 09:32:58 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: Peng Fan <peng.fan@nxp.com>, 
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"cristian.marussi@arm.com" <cristian.marussi@arm.com>, "arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@quicinc.com" <kernel@quicinc.com>, 
-	"quic_psodagud@quicinc.com" <quic_psodagud@quicinc.com>
-Subject: Re: [PATCH v3] dt-bindings: firmware: arm,scmi: allow multiple
- virtual instances
-Message-ID: <4p6rknakoojsjunwbakwzsyyymufhvim2kctdkexcrqfcphe2a@k7epaxvxmgn3>
-References: <20240905201217.3815113-1-quic_nkela@quicinc.com>
- <PAXPR04MB84593380F220DEC7974058D9889E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <9930c7b8-cddb-4c70-a283-8f0a09d6c30d@quicinc.com>
+	s=arc-20240116; t=1725608077; c=relaxed/simple;
+	bh=eeVzETaP9T5RwN0n/X9P3/bS1TMJXFOsU2KTkWDq7eg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RwdGJJKWsfkJoky0nAA6OstuEMig2SSFSC+QWfRrVUBSLxcxA+z9BM9fnWWLvnqBY0t0pvXazyVgIrkjD5gt4WzsVtLdy2DN2c3Qx1xxw3tS3515/+hWRpWFkyVZahOMNbDyWnzFUUIq3V+n/gNivalIFqWOtkhg8Zjmpr+T/8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b5b65b1b9fso13780247b3.2;
+        Fri, 06 Sep 2024 00:34:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725608073; x=1726212873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OzWwlgD21vw3dYHmaJkpCeyi7AwIVfGBZ5Yt8JsuZL0=;
+        b=UYhiKJE7etT+6pEaT5W0S3cYxSt/An3TImwSsTFItrZLXsdbWI0YZatBStnUpjcviL
+         dn3jCwgNJdPC+VDpMfx3aay8vg55wsF58XJ6D5va9HfSQegHLv8zmkhkijfrrCgtKTjv
+         LpUJBO1AVFcllXTiElJCYpWVzt5MOqrdl77oCvApyOxa9+Cn6uuhAEa9TZjybv3lixGW
+         2iPbnA9PD0RePDCTw5aXdSzTNaIznGXOF6cd/egQ06UaFe363gN3hN8XjDaZUE8EtLqZ
+         zfjFZb9cirNplP3ZFPctwhieH5s9pCM/PoL+WqWbL2ocrYDWtulrcihNVbHf+t83U7WH
+         nJRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTZcoBKTG/Ey3afrerRziJ5JIpJ91/BHw5zDLJhLG3Knst4Af2GXEeRKAfoXFv4nAuVNzfX1byTJFbCxYw@vger.kernel.org, AJvYcCUfY8JUA/FftfYm9yXUCXrSEUqbXTtSSSazApOxCA4iQ6GYc/bLTcpMV/tIv+028+D0fCDrv2g4cfZQ5xY2LZrJRRs=@vger.kernel.org, AJvYcCXE+1EYq6xkBmFDz9elzRS3X/9HVVNJ46nv3n20uwS3tkn72TiG1RPt2Dt9IbYUC6BBWMwC9pB8kAuD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/AiRHsy88oVoyU2IJDMMw++j3a1gkRwZ0FAcyBRe+diJniVFR
+	aCwhA7Z0NtalIXRV4TN+QuB2ZBQdLaCI5Su9QGrYKyKHxAvKbyNDtQ+FbPdO
+X-Google-Smtp-Source: AGHT+IEOuyidtSxUCV5oKopj2oA3H3Umq7j6zjGPhxw5/6gjtm9gJh1IHixdTZyJlmoqTaJAlW9Gqg==
+X-Received: by 2002:a05:690c:61c6:b0:6db:3b2f:a1eb with SMTP id 00721157ae682-6db45134ccamr24090997b3.26.1725608073031;
+        Fri, 06 Sep 2024 00:34:33 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d697a15d23sm20991977b3.135.2024.09.06.00.34.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 00:34:31 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6d4f1d9951fso16013587b3.1;
+        Fri, 06 Sep 2024 00:34:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxtuM6blAydizM0aY9BIFM3yHptm981wEBrr2a2ZPoJMGj254wifGk2tlPgFGBe005tRJ2HlVvZpz/@vger.kernel.org, AJvYcCV22oSWukBKU5WZtPU1HkHENUb3+iRwVcAJGIEDmKtaUAOmhOCFl5yJoNSxnhft27FGXJX+Q/8F9Kx/6X+C8CqDusQ=@vger.kernel.org, AJvYcCVRreWkgTksBHHxH0eqaXz/p1oDpipGODQt+3D3Cq0xtm1JauEBTyvsUzjtaVto6C3WqhGQjf23Kyd9DDov@vger.kernel.org
+X-Received: by 2002:a05:690c:61c6:b0:6db:3b2f:a1eb with SMTP id
+ 00721157ae682-6db45134ccamr24089527b3.26.1725608071358; Fri, 06 Sep 2024
+ 00:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9930c7b8-cddb-4c70-a283-8f0a09d6c30d@quicinc.com>
+References: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com> <20240906062701.37088-9-Delphine_CC_Chiu@wiwynn.com>
+In-Reply-To: <20240906062701.37088-9-Delphine_CC_Chiu@wiwynn.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Sep 2024 09:34:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVTkLDz=5+GH+kKhfKC89nh0+bKh=X4A7bdeiMoBgPwWg@mail.gmail.com>
+Message-ID: <CAMuHMdVTkLDz=5+GH+kKhfKC89nh0+bKh=X4A7bdeiMoBgPwWg@mail.gmail.com>
+Subject: Re: [PATCH v15 08/32] ARM: dts: aspeed: yosemite4: Remove space for
+ adm1272 compatible
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Cc: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2024 at 05:33:04PM -0700, Nikunj Kela wrote:
-> 
-> On 9/5/2024 5:25 PM, Peng Fan wrote:
-> >> Subject: [PATCH v3] dt-bindings: firmware: arm,scmi: allow multiple
-> >> virtual instances
-> > Just wonder, what do you mean virtual?
-> 
-> Just a term to indicate that these are different SCMI instances within
-> the same OS. In one of the series from Cristian, he used the term
-> 'virtual SCMI instances' so I used the same term here.
+On Fri, Sep 6, 2024 at 8:27=E2=80=AFAM Delphine CC Chiu
+<Delphine_CC_Chiu@wiwynn.com> wrote:
+> Remove space for adm1272 compatible
+>
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 
-That's indeed confusing. Virtual means not a real thing...
+Fixes: 2b8d94f4b4a4765d ("ARM: dts: aspeed: yosemite4: add Facebook
+Yosemite 4 BMC")
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
