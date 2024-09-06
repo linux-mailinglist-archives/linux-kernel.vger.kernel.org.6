@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-318638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E4596F124
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:15:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28B596F127
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AFDCB22234
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3681C241C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D5F1C8FD9;
-	Fri,  6 Sep 2024 10:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5D41C9840;
+	Fri,  6 Sep 2024 10:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rDachOhz"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTHVXjli"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C115530C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358C21459FA;
+	Fri,  6 Sep 2024 10:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725617702; cv=none; b=U5LIIeBuvBPsixn56YoH5/gGCJpqBoBek9i8PHQYjsWkh1jCNVQ7MSXoSpHSxvAqE2/U/k+9KPiTTA/VV1lgS+qQP48xzfEo7fQm5S4sM9EfdLRl047BotL1Sqg9sexPPbIUFbGgG7vVQVGmzHWtu/FBsQuzTBZIBP6kPqtFCvo=
+	t=1725617780; cv=none; b=uX9dPIt22alNNna1eHm5/aHk80JY2vkxbybBoXLPKOaki1L/RjKwZw/b3UJRYCN2hjnuueF4k0NEPC6pcUnC9PUWEtFcRW0By2CEsMDQOCkcNMohW6dCYHQu1u8oq2WgYHNX2qOxJxvd5O8XgWkPOXenLCLI4unY4f7SKKEMFYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725617702; c=relaxed/simple;
-	bh=wbk5c3ZPDtOemUDTmxUQ41pcY+yxLgziWxiOC4juKNo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bqEZIh20kIs3Kg/JS0Dobu/fRYlSixB10Ah5Y3PNSFOz5ATFLeb6SbD0ld03BR2P4gElcr61l8too6eNDqfFX70yJzrdpN2KRUF0j82gpO+u5RHo2aid4oPolDfOXt3gMHvFSFzi4Cju390qkKXyTnheJFcH0cyzAf+AY5q8GW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rDachOhz; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso3153101e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725617699; x=1726222499; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+RZ7CTOMIGwkZYZOKOaC4ouB8JKVAiXvcgnN4UjbbG0=;
-        b=rDachOhzXRv70N1CZWdBhxckavGOXBLX8l60aCAKp293euM61EnxiEFbeDNOCxby22
-         Ks09THjrYT8zbT8MeTZu+s9E2LHOMk77XhesSj35rSnT7p230lRT8xWUY+b4oyO1/BpJ
-         AdUG1QJpBsAaWSmz4/Kn/oPtkBeBsVWlnUfZ5B1UcX1XNO5smk0Oe38rfCLfhkqX/RXf
-         Wd3webpDcrK27ZPQex6swtbbvNW3R2qiZCnai5CgHP3Ad2gAk6idW/e76YyrQuOqdV4p
-         s7TPBV5MSnQPDkSBTLPDp01u9cSJZTfpQ/88OOIca7tp744l7uxqUpM91nyRr3Iod6TF
-         4uCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725617699; x=1726222499;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+RZ7CTOMIGwkZYZOKOaC4ouB8JKVAiXvcgnN4UjbbG0=;
-        b=j2ojcJNvKh0LKgl0AsjX0P2qPmwu734bUrKs1rCSMkJzavvCuz/7L9iKV5N6r072+i
-         2Q50iJE9BO0NC6TkL+oJtOKeMypAv8jo0ak+nfycrJgd4IWHs0jEc4yBSfxwb5u1H6jx
-         N/6mlXmP53zxdVoFmbeP1Di2ZqPZUioKU9KobzmCrCFky6iz8rVhnw2RZqWC2Qb3bR9Y
-         mXBloZ7jHwQ+V27DwhI0pLraTp1Yz3VKvD1lNS9pkvxF1byLzMfeRajR4zka0htS2l/w
-         3wxAErqYR1ZKrn1xlVXfu5l+CVzgJZztBNqRZSOm5A6jzoxzDjFkxIFLrFTb+onElHLo
-         fCjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtpL3X4eDmF1Mll/CHp5AcPFG8UgjSCX6QJwRtYmBDq7VqwaFLloT0eQcL5P29C5UlONOKogQxRi+7dYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjkNaK/rZBLXsQ3bm3gErS7rUF1cHUDK2IGZ+JtO71HdjJfjFk
-	Y9ghmuOzeVoDQW9r5ns3b6JW5hPJxvq9hnTxXdmniC/inklitmJKX33jdHOM3iqV/BKxcC/YaBl
-	V
-X-Google-Smtp-Source: AGHT+IHfAyHUNM1NELI3OmTm0r5vomgEimByZFF2Y77yBcBHbIeBY4L/vPo3i7/vbYSpVqnm22Pzaw==
-X-Received: by 2002:a05:6512:1599:b0:536:55a9:caf0 with SMTP id 2adb3069b0e04-5365856cc8amr1250895e87.0.1725617698306;
-        Fri, 06 Sep 2024 03:14:58 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53652bd3dc3sm391663e87.29.2024.09.06.03.14.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 03:14:57 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v6.11-rc7
-Date: Fri,  6 Sep 2024 12:14:56 +0200
-Message-Id: <20240906101456.198887-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725617780; c=relaxed/simple;
+	bh=+bj2BITNSIO7xfbg8J1LoZgShP8Wt/QS5XhqDDEiCew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uiKu5/hQeFzbQ6aZEclSIK/o1HMdbVVVnTSPuRkzd23t5rH6a316MT2kKzFgzFDDy/abHIkkc/pd3zE17+E1fZ5gbiA2MIRMhp+6kJqUjoGShYmX8/hr9uvMSIC6a7++CGbyX4YormTjoeetEK3omGx3tBTt2iB2vGUAFcos9Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTHVXjli; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B6DC4CEC4;
+	Fri,  6 Sep 2024 10:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725617779;
+	bh=+bj2BITNSIO7xfbg8J1LoZgShP8Wt/QS5XhqDDEiCew=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UTHVXjliwy5Ae5mDBk6hUpOgoc8+mOdbFcZvLL4uy1aElRKZsnoF4eUvL9AOB+pL/
+	 RY60w2DiNaqnW7U6VbcC5ZZn/ZUXdJ9nZVd0o7t8Basgq7iQxdhH/JvoPMWL6pxdwX
+	 +r+uFMpAHbtY9YWoNHAbHyZAk8lHU/L7F1xziL+oyDqHmnfcQnwW7IFxKYyHa3GQMT
+	 Pl83ZonwSbJH7v3iXO2gGilDpv3X4EXVujnvR3i13qfYd1apNPkclETqx15nSm3HoP
+	 rB7JNoIPUDC5hXMgCGGw+TGVLhOeulYCUS5M44VBg9gwgugZRdM7J2GGROjKbfu+kb
+	 0lSZqSDYlL8GA==
+Message-ID: <2405c1c2-cd4b-4e97-babe-ed408282bc37@kernel.org>
+Date: Fri, 6 Sep 2024 12:16:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: vendor-prefixes: Add prefix for
+ Ariaboard
+To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
+ FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240906045706.1004813-1-bigfoot@classfun.cn>
+ <20240906045706.1004813-2-bigfoot@classfun.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240906045706.1004813-2-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 06/09/2024 06:57, Junhao Xie wrote:
+> Add an entry for Ariaboard from Shanghai Novotech
+> 
+> Ariaboard represents a product line from Shanghai Novotech Co., Ltd.
+> 
+> Link: https://shanghainovotech.com/
+> Link: https://ariaboard.com/
+> 
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
 
-Here's a PR with a couple of MMC fixes intended for v6.11-rc7. Details about the
-highlights are as usual found in the signed tag.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Please pull this in!
+Best regards,
+Krzysztof
 
-Kind regards
-Ulf Hansson
-
-
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
-
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.11-rc5
-
-for you to fetch changes up to aea62c744a9ae2a8247c54ec42138405216414da:
-
-  mmc: cqhci: Fix checking of CQHCI_HALT state (2024-09-03 14:20:51 +0200)
-
-----------------------------------------------------------------
-MMC core:
- - Apply SD quirks earlier during probe so they become relevant
-
-MMC host:
- - cqhci: Fix checking of CQHCI_HALT state
- - dw_mmc: Fix IDMAC operation with pages bigger than 4K
- - sdhci-of-aspeed: Fix module autoloading
-
-----------------------------------------------------------------
-Jonathan Bell (1):
-      mmc: core: apply SD quirks earlier during probe
-
-Liao Chen (1):
-      mmc: sdhci-of-aspeed: fix module autoloading
-
-Sam Protsenko (1):
-      mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
-
-Seunghwan Baek (1):
-      mmc: cqhci: Fix checking of CQHCI_HALT state
-
- drivers/mmc/core/quirks.h          | 22 +++++++++++++---------
- drivers/mmc/core/sd.c              |  4 ++++
- drivers/mmc/host/cqhci-core.c      |  2 +-
- drivers/mmc/host/dw_mmc.c          |  4 ++--
- drivers/mmc/host/sdhci-of-aspeed.c |  1 +
- 5 files changed, 21 insertions(+), 12 deletions(-)
 
