@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-318784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51A496F34C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:42:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A509B96F34E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D131A1C20BEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6D21F2155D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF1C1CB33F;
-	Fri,  6 Sep 2024 11:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3781CBEA8;
+	Fri,  6 Sep 2024 11:42:08 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602A11CB12E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AD11CB338;
+	Fri,  6 Sep 2024 11:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622926; cv=none; b=jNes4obvYJch56QZsyjhisU7MtCicWndOEsZSePuAd1g0m5pZGM+7BFXf3ec+mWhM0tXUlNHJqbhLqAgtEDh/YOkVyxFG4G6qHJCHyger2j9OrMwuIoI7x7yvbK5GYB0C/wb5R4sfFSwF1sYyJ4wl35EpXT1UkZLyH7qqEt36KA=
+	t=1725622928; cv=none; b=W7UFl+1MSaP8oPqB22bChjwv9xPTJVAtpaxjCFToKWtf6rmm+BuDkrr6zfRPq08yZCwhiwq5LbThyWvjHJWqdrkqRScz4Dv0UIEyVpPPEVLXSrUuUbVbkhFUC0cag9xxAIRWtdRdB+tgPVwV9hBJiiVsN83V3sTL5SghEXJcpm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622926; c=relaxed/simple;
-	bh=1LCwCLkRxcVwZ5qDIkjo5FpCFQUWpwXvn7CgtRWDhPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akoyJEaYSEs3JcXjouz1O3LEaFyjcuxDQOzQG7SIaiWLqprFe/YoFSsQLs/MLOkurO3vaRwFK5P188vcnjihcOfqUYXQUylCoKECtVFIwyYuCPKwEiZdNDueafjAgrZZxxJ4a/1K1HQJHqkCszeKVqVLbkQqrMJcNh712yTWQPQ=
+	s=arc-20240116; t=1725622928; c=relaxed/simple;
+	bh=n79CBpFhVYSTVoBciUCHzjp+ivBLUAqIR/JPy8AxHVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bovt1Jq9V+IuZ3k62M37kGQp/GjgPv0IohmTcF2BIV02oHZbuCsZNjWXOp5ffFuE2B3gFuRVPyELxMPAVuAxpx1qUqpdFaDIviOEjlFaNQT8uLc0md416Q5GVnS1W7Qaas4FYxMEMmLzGK2vUihZYg+8jQimKZVtl0t+nkqilp8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE94CFEC;
-	Fri,  6 Sep 2024 04:42:31 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9821A3F73B;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69335113E;
+	Fri,  6 Sep 2024 04:42:33 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B34953F836;
 	Fri,  6 Sep 2024 04:42:03 -0700 (PDT)
-Date: Fri, 6 Sep 2024 12:42:01 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "tiantao (H)" <tiantao6@hisilicon.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, jonathan.cameron@huawei.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxarm@huawei.com
-Subject: Re: [PATCH] arm64: Add ARM64_HAS_LSE2 CPU capability
-Message-ID: <Ztrqie427P_Lxaoh@J2N7QTR9R3>
-References: <20240906090812.249473-1-tiantao6@hisilicon.com>
- <ZtrPCVhqj5qLrQVY@J2N7QTR9R3>
- <587f7c84-cdfc-b348-4cd0-1015adad2cca@hisilicon.com>
+Message-ID: <7490988c-734f-4bfd-9756-a1356bb8b18e@arm.com>
+Date: Fri, 6 Sep 2024 12:42:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] vdso: Split linux/array_size.h
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-7-vincenzo.frascino@arm.com>
+ <8fbb8fed-e8d4-475c-8093-373d0afb62cc@csgroup.eu>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <8fbb8fed-e8d4-475c-8093-373d0afb62cc@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <587f7c84-cdfc-b348-4cd0-1015adad2cca@hisilicon.com>
 
-On Fri, Sep 06, 2024 at 06:58:19PM +0800, tiantao (H) wrote:
+
+
+On 04/09/2024 18:18, Christophe Leroy wrote:
 > 
-> 在 2024/9/6 17:44, Mark Rutland 写道:
-> > On Fri, Sep 06, 2024 at 05:08:12PM +0800, Tian Tao wrote:
-> > > When FEAT_LSE2 is implemented and Bit 6 of sctlr_elx is nAA, the
-> > > full name of the Not-aligned access. nAA bit has two values:
-> > > 0b0 Unaligned accesses by the specified instructions generate an
-> > > Alignment fault.
-> > > 0b1 Unaligned accesses by the specified instructions do not generate
-> > > an Alignment fault.
-> > > 
-> > > this patch sets the nAA bit to 1,The following instructions will not
-> > > generate an Alignment fault if all bytes being accessed are not within
-> > > a single 16-byte quantity:
-> > > • LDAPR, LDAPRH, LDAPUR, LDAPURH, LDAPURSH, LDAPURSW, LDAR, LDARH,LDLAR,
-> > > LDLARH.
-> > > • STLLR, STLLRH, STLR, STLRH, STLUR, and STLURH
-> > > 
-> > > Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-> > What is going to depend on this? Nothing in the kernel depends on being
-> > able to make unaligned accesses with these instructions, and (since you
-> > haven't added a HWCAP), userspace has no idea that these accesses won't
-> > generate an alignment fault.
-> > 
-> > Mark.
 > 
-> I've come across a situation where the simplified code is as follows:
+> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
+>> The VDSO implementation includes headers from outside of the
+>> vdso/ namespace.
+>>
+>> Split linux/array_size.h to make sure that the generic library
+>> uses only the allowed namespace.
 > 
->  long  address = (long) mmap(NULL,1024*1024*2,PROT_READ|PROT_WRITE,
-> MAP_PRIVATE|MAP_ANONYMOUS,-1,0);
+> There is only one place using ARRAY_SIZE(x), can be open coded as
+> sizeof(x)/sizeof(*x) instead.
 > 
-> long new_address = address + 9;
+
+Agreed, as per previous comment on MIN()/MAX(). I will refactor my code accordingly.
+
+> Christophe
 > 
->  long *p = (long*) new_address;
->  long v = -1;
-> 
->  __atomic_store(p, &v, __ATOMIC_RELEASE);
+>>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+>> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>> ---
+>>   include/linux/array_size.h |  8 +-------
+>>   include/vdso/array_size.h  | 13 +++++++++++++
+>>   2 files changed, 14 insertions(+), 7 deletions(-)
+>>   create mode 100644 include/vdso/array_size.h
+>>
+>> diff --git a/include/linux/array_size.h b/include/linux/array_size.h
+>> index 06d7d83196ca..ca9e63b419c4 100644
+>> --- a/include/linux/array_size.h
+>> +++ b/include/linux/array_size.h
+>> @@ -2,12 +2,6 @@
+>>   #ifndef _LINUX_ARRAY_SIZE_H
+>>   #define _LINUX_ARRAY_SIZE_H
+>>   -#include <linux/compiler.h>
+>> -
+>> -/**
+>> - * ARRAY_SIZE - get the number of elements in array @arr
+>> - * @arr: array to be sized
+>> - */
+>> -#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>> +#include <vdso/array_size.h>
+>>     #endif  /* _LINUX_ARRAY_SIZE_H */
+>> diff --git a/include/vdso/array_size.h b/include/vdso/array_size.h
+>> new file mode 100644
+>> index 000000000000..4079f7a5f86e
+>> --- /dev/null
+>> +++ b/include/vdso/array_size.h
+>> @@ -0,0 +1,13 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef _VDSO_ARRAY_SIZE_H
+>> +#define _VDSO_ARRAY_SIZE_H
+>> +
+>> +#include <linux/compiler.h>
+>> +
+>> +/**
+>> + * ARRAY_SIZE - get the number of elements in array @arr
+>> + * @arr: array to be sized
+>> + */
+>> +#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>> +
+>> +#endif  /* _VDSO_ARRAY_SIZE_H */
 
-Hold on; looking at the ARM ARM (ARM DDI 0487K.a), the example and the
-patch are both bogus. NAK to this patch, explanation below.
-
-Per section B2.2.1.1 "Changes to single-copy atomicity in Armv8.4", all of the
-LSE2 relaxations on alignment require:
-
-| all bytes being accessed are within a 16-byte quantity that is aligned
-| to 16 bytes
-
-In your example you perform an 8-byte access at an offset of 9 bytes,
-which means the access is *not* contained within 16 bytes, and is *not*
-guaranteed to be atomic. That code simply has to be fixed, the kernel
-cannot magically make it safe.
-
-Regardless of that, the nAA bit *only* causes an alignment fault for
-accesses which cannot be atomic. If a CPU has LSE2 and SCTLR_ELx.nAA=0,
-an unaligned access within 16 bytes (which would be atomic) does not
-cause an alignment fault. That's pretty clear from the description of
-nAA and the AArch64.UnalignedAccessFaults() pseudocode:
-
-| boolean AArch64.UnalignedAccessFaults(AccessDescriptor accdesc, bits(64) address, integer size)
-|     if AlignmentEnforced() then
-|         return TRUE;
-|     elsif accdesc.acctype == AccessType_GCS then
-|         return TRUE;
-|     elsif accdesc.rcw then
-|         return TRUE;
-|     elsif accdesc.ls64 then
-|         return TRUE;
-|     elsif accdesc.exclusive || accdesc.atomicop then
-|         return !IsFeatureImplemented(FEAT_LSE2) || !AllInAlignedQuantity(address, size, 16);
-|     elsif accdesc.acqsc || accdesc.acqpc || accdesc.relsc then
-|         return (!IsFeatureImplemented(FEAT_LSE2) ||
-|                 (SCTLR_ELx[].nAA == '0' && !AllInAlignedQuantity(address, size, 16)));
-|     else
-|         return FALSE;
-
-Note that when FEAT_LSE2 is implemented, unaligned atomic accesss within
-a 16-byte window never raise an alignment fault, regardless of the value
-of the nAA bit.
-
-Setting the nAA bit only hides where atomicity is lost, and does not
-make code function correctly. Consequently, that only serves to hide
-bugs, making those harder to detect, debug, and fix. Thus I see no
-reason to set the nAA bit.
-
-So as above, NAK to this path. Please fir your broken userspace code.
-
-Mark.
+-- 
+Regards,
+Vincenzo
 
