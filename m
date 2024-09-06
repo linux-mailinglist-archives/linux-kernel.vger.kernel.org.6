@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-318718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A76896F1FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:56:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AAA96F202
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8F41C23F4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4551F25586
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4871CB128;
-	Fri,  6 Sep 2024 10:56:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503C71CA6AA;
-	Fri,  6 Sep 2024 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5CC1CB12E;
+	Fri,  6 Sep 2024 10:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWtY/qrc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3907158866;
+	Fri,  6 Sep 2024 10:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620166; cv=none; b=q75esVrPANhDV77+BzDU3SRrTydsg4M19HGKOYSL+0eNj4PaB0CA8FVgaZ90kkZkvXZDTZ3DCxxCIgoU5B6QjpgF6KW0hOyAHbLjwuLhWiruZy3VOdNakQaS5T1wdHnLMiYwzyXBMPI+KMSh6vKVwFb4qW0v+kbPAgMmd0NUkII=
+	t=1725620222; cv=none; b=EjK+MhYvC2wgcVJgJDeuzavJX59dyVIHaLJ4AqeM6oBebLPOSz4XEob9nxvETojUEfR30+eQ3t0fpr38aWVDFnJAxcOPPFHYttOYEvp60JGNINN3BkPhCnaweE2GL+XMrvPzgmReEm5Jwpp5RMNDtQ9XbPP5GZiuo11pr3Rdbr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620166; c=relaxed/simple;
-	bh=s65V3MJ9MtbfJfmv2YobiFjfN/XToUEbJVYOauK9bR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X24IxOj8LXofNaJSFEPG3765furcFUlmNyONnxEWdZesPKzA+FO88Glg1aq0GEP1NediFiaMdSwEs+NWT4MaJMbL+zLded7Ytdh0OkPHf698ZKkxeTsUQNCIzFVic7BR59zYHbkjzhdu25T/KfRXPwTp7y88hMRckVINdawmRkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82855FEC;
-	Fri,  6 Sep 2024 03:56:30 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6EC73F66E;
-	Fri,  6 Sep 2024 03:56:00 -0700 (PDT)
-Message-ID: <043e992f-487e-4102-9543-16da1f57b7bc@arm.com>
-Date: Fri, 6 Sep 2024 11:55:59 +0100
+	s=arc-20240116; t=1725620222; c=relaxed/simple;
+	bh=Y1Xu/m4qEradqB0WQJLayaC6i5KppBg/Aq1cg8q0uks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YS2VsFZFDNa1FZrbmSl5e+DGeegBbjvnH6LqsLL5QXGD3LNT4nSA70NL3jgCy4FmGH4vVsO2H01+9PLCSx7EjnbnNBN7/NFUc9C/9X8Ij1m73HVJaSoamqqoGhILEDBUb1CiGrQEuzof7eIqsfhG53POajfPRiuPHnFOOce7Zn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWtY/qrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E3C6C4CEC4;
+	Fri,  6 Sep 2024 10:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725620221;
+	bh=Y1Xu/m4qEradqB0WQJLayaC6i5KppBg/Aq1cg8q0uks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jWtY/qrch76CwBkJQSxyyCYzfJfg/Dp/dtzl6Vk4UMJGfJwQQNbuRQBJowgjqRMq2
+	 lYC6Q6V1dwGdbAnw90ZBGuBCjJVUtF8mqpB62kgQzfopU1hYTJ3BNCm9I1CKgDaG+G
+	 MvU9FTQaPwdyiGYFFKTT9nXTWmb1jflToY7+kFZo4oCEbNQ4pUHoXq5dEp+ztjSQI4
+	 QCmZ0JE5Ix2Yl1OmtK2mGcNhqu4OMWNlOCTHC+ldeHoEqjBF9Q84jMNipfJccPHEJI
+	 pRNeFJk98EcALV/DM4cLL6hsX1mHwxD8W08K0wuGX3KdVOh4Qpu223CLTTB2RRP3d+
+	 E08jvNH8noIOw==
+Date: Fri, 6 Sep 2024 11:56:56 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	Ashish Mhetre <amhetre@nvidia.com>,
+	Rob Clark <robdclark@chromium.org>, Joerg Roedel <joro@8bytes.org>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Optimise non-coherent
+ unmap"
+Message-ID: <20240906105656.GA16124@willie-the-truck>
+References: <20240905124956.84932-1-robdclark@gmail.com>
+ <20240905155330.GA15246@willie-the-truck>
+ <53f13813-a515-475a-836d-0b6017a117eb@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] x86: vdso: Introduce asm/vdso/mman.h
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-2-vincenzo.frascino@arm.com>
- <710f9663-e99c-40e2-9c0e-2f5e6e854653@csgroup.eu>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <710f9663-e99c-40e2-9c0e-2f5e6e854653@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <53f13813-a515-475a-836d-0b6017a117eb@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Christophe,
-
-Thank you for your review.
-
-On 04/09/2024 17:56, Christophe Leroy wrote:
+On Thu, Sep 05, 2024 at 05:27:28PM +0100, Robin Murphy wrote:
+> On 05/09/2024 4:53 pm, Will Deacon wrote:
+> > On Thu, Sep 05, 2024 at 05:49:56AM -0700, Rob Clark wrote:
+> > > From: Rob Clark <robdclark@chromium.org>
+> > > 
+> > > This reverts commit 85b715a334583488ad7fbd3001fe6fd617b7d4c0.
+> > > 
+> > > It was causing gpu smmu faults on x1e80100.
+> > > 
+> > > I _think_ what is causing this is the change in ordering of
+> > > __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
+> > > memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
+> > > this patch is supposed to work correctly in the face of other
+> > > concurrent translations (to buffers unrelated to the one being
+> > > unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
+> > > stale data read back into the tlb.
+> > > 
+> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > ---
+> > >   drivers/iommu/io-pgtable-arm.c | 31 ++++++++++++++-----------------
+> > >   1 file changed, 14 insertions(+), 17 deletions(-)
+> > 
+> > Please can you try the diff below, instead?
 > 
+> Given that the GPU driver's .tlb_add_page is a no-op, I can't see this
+> making a difference. In fact, given that msm_iommu_pagetable_unmap() still
+> does a brute-force iommu_flush_iotlb_all() after io-pgtable returns, and in
+> fact only recently made .tlb_flush_walk start doing anything either for the
+> sake of the map path, I'm now really wondering how this patch has had any
+> effect at all... :/
+
+Hmm, yup. Looks like Rob has come back to say the problem lies elsewhere
+anyway.
+
+One thing below though...
+
+> > 
+> > Will
+> > 
+> > --->8
+> > 
+> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> > index 0e67f1721a3d..0a32e9499e2c 100644
+> > --- a/drivers/iommu/io-pgtable-arm.c
+> > +++ b/drivers/iommu/io-pgtable-arm.c
+> > @@ -672,7 +672,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+> >                  /* Clear the remaining entries */
+> >                  __arm_lpae_clear_pte(ptep, &iop->cfg, i);
+> > -               if (gather && !iommu_iotlb_gather_queued(gather))
+> > +               if (!iommu_iotlb_gather_queued(gather))
 > 
-> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
-...
+> Note that this would reintroduce the latent issue which was present
+> originally, wherein iommu_iotlb_gather_queued(NULL) is false, but if we
+> actually allow a NULL gather to be passed to io_pgtable_tlb_add_page() it
+> may end up being dereferenced (e.g. in arm-smmu-v3).
 
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef __ASM_VDSO_MMAN_H
->> +#define __ASM_VDSO_MMAN_H
->> +
->> +#ifndef __ASSEMBLY__
->> +
->> +#include <uapi/linux/mman.h>
->> +
->> +#define VDSO_MMAP_PROT    PROT_READ | PROT_WRITE
->> +#define VDSO_MMAP_FLAGS    MAP_DROPPABLE | MAP_ANONYMOUS
-> 
-> I still can't see the benefit of duplicating those two defines in every arch.
-> 
-> I understand your point that some arch might in the future want to use different
-> flags, but unless we already have one such architecture in mind we shouldn't
-> make things more complicated than needed.
-> 
-> In case such an architecture is already identified it should be said in the
-> commit message
-> 
+I think there is still something to fix here. arm_lpae_init_pte() can
+pass a NULL gather to __arm_lpae_unmap() and I don't think skipping the
+invalidation is correct in that case. Either the drivers need to handle
+that or we shouldn't be passing NULL.
 
-I do not have such an architecture in mind, hence I did not add it to the commit
-message.
+What do you think?
 
-Apart being future proof the real problem here is to handle the mman.h header.
-As Arnd was saying [1] (and I agree), including it on some architectures might
-be problematic if they change it in a way that is incompatible with compat vdso.
-
-In this way we make sure that the each architecture that decides to include it
-specifically validates it for this purpose. I am not a fan of complicating code
-either but this seems the lesser evil. I am open to any solution you can come up
-that is better then this one.
-
-The other issue I see is that being these defines in a uapi header that is
-included directly by userspace splitting it requires some validation to make
-sure we do not break the status quo.
-
-[1]
-https://lore.kernel.org/lkml/cb66b582-ba63-4a5a-9df8-b07288f1f66d@app.fastmail.com/
-
->> +
->> +#endif /* !__ASSEMBLY__ */
->> +
->> +#endif /* __ASM_VDSO_MMAN_H */
-
--- 
-Regards,
-Vincenzo
+Will
 
