@@ -1,268 +1,213 @@
-Return-Path: <linux-kernel+bounces-318036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD2596E76E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B7796E770
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EB4D1F22A42
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85871F24465
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EA72232A;
-	Fri,  6 Sep 2024 01:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464E3335A5;
+	Fri,  6 Sep 2024 01:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="as6MXblP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="s/z06XT8"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0647D1BDE6;
-	Fri,  6 Sep 2024 01:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4BF18E0E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725587836; cv=none; b=puIb3ksZNQ0D/cB24JlYvEUp/t0G/VAvwkAqul/VBX2n2mBGX/nz1Mh2CGHhp2QxfNH153lCknJDWhObfvqMiSGhIwlmHf7/Zxjw1V2P8rzxHpaVZ4bEDAnkab/IqoQLaY67q2VFV9m6qVDxEzu4Jd+Y90k4MUqEYDbO0dLff/A=
+	t=1725587838; cv=none; b=S+Tkk1K7TcjRXrYnVeRy5ZFUIu6XGxgBak8mSZsd9IO8mKowdmfl50LjxkwECQiIqpY2oP30zZODSP3xezsKljh/Wmmi21ZIqaUpKF1HN83fP36Pc8h94iaVMqyzuxCvz6848pFxugiFvTfA8MJzCkCNcvYyTV2IhHgdqly1Swg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725587836; c=relaxed/simple;
-	bh=8GSouxZA15dzrjJlHlKZLXCIMbilzZC4xgwf3qtb3bE=;
+	s=arc-20240116; t=1725587838; c=relaxed/simple;
+	bh=0cOHGAjR+tN+R6qMQ7WgMAGz6qbMfSjySeMki3cDKDI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=koMJfnEJqqiSl6JVy8d+kvF6i6dpan23RH3pJi5tZ5BBlo60fgZr8eJqb05LfzVIGyWf7TN0DUV/Cs37hBYYllZS99k/R663L01coQ2//ZMEJGTunUSXcdmFvffC83Cn9JpCkJKcOp5lHAjf+WMZju8yp+R6kKUt5UJVjdOGvbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=as6MXblP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8298CC4CEC5;
-	Fri,  6 Sep 2024 01:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725587835;
-	bh=8GSouxZA15dzrjJlHlKZLXCIMbilzZC4xgwf3qtb3bE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=as6MXblP0yNOMTRazIuivP5C+O+n+8YswubSIkUSW8DgCoMr8L1pcRGcUP3568lm+
-	 a3X/gifiDx/o2kwjtcC+MhtkCsM0aXpYUIcAbfU+EednoSPbuFKmTXEHyS+EF61B3W
-	 tFhjXrguURs2eDdL9daoche4qvwDCxGED9GOC9ULUCdffXbzFNtx7COa0r6joJ561I
-	 wQNIIdqQ6Had7RDDPjofRp5qIqwthJe7jK/Nw1gFQAwem9ph9kFC4XkzhhcqM2iUdU
-	 tXAWMtoCmaJEd0QcEQJAz5o10sbBqVBoi9ILhg6+NpZrWQLM2L4k7Bt9bDLyImvDo9
-	 GrRZmZmGVJmJg==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53436e04447so1264061e87.1;
-        Thu, 05 Sep 2024 18:57:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWSr35u8+BxUQlRqR4VKJ5dyGmiSzqqhzbY0ggS4BupzQOjZHWPXgcumEqIbDqrGVFK4oR8rrUXR3lSg==@vger.kernel.org, AJvYcCUjwfyBcISTinXoip/y5RP9iQSGFoOgU1b5VUmU0QII1WhbBBd2lT0nhNC97R4B+tYLL8vKh5VC/w3O@vger.kernel.org, AJvYcCVQgXPdepP0OYOgBX90YFL/9qcYXlTr/7/zIwFHtg4Qna9jzgVQnoyNIxrdYW8aPmJoNbYSTXJfYPg1udMNERs=@vger.kernel.org, AJvYcCXSt6gyg4DCSwFjF3SGsDNX9vgStDibEKwVtgIE5Hei+SW0D2iiLkkpN42L3boP/ah+Qggu0cPts1hSFw==@vger.kernel.org, AJvYcCXlVb6JTIcFexEQvXJjhfkWNfe5A8jOcBtBZlukCZrGvn3flhTZbH5z39+h/Umk7zV5u+iM9NoupPFIR11+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwr53nDmwpI0f2eZfiUwnGo5jzSvDToMCYXp09e/wxhXbqp9nv
-	+DTehJ/xEMc8HGlaYX6us5H5LHcc0tFwYY+SB0dzlm95mv6GisRRGZ1bYBOMTiOKPNfCZLu79/a
-	UlteuWSHSKCLpLxQBt6lYchxSDws=
-X-Google-Smtp-Source: AGHT+IEyHAyF5odK5wNGdrU91US5ikWBw7iV5drivufpH4J1DDqUMcH1u85P5o28YcdYFP088Ih/883620s0jcsYKJA=
-X-Received: by 2002:a05:6512:2806:b0:52f:1b08:d2d8 with SMTP id
- 2adb3069b0e04-53657dbb114mr374742e87.7.1725587834140; Thu, 05 Sep 2024
- 18:57:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=AqLTc68UwwxFsT9fhXzGZDJHhoaL0vsLzfJnnx0bhCshmfMa6O9tr0ir20WwZU7YW17EtgoTooRksEY8uA2NcWoKNRQXR7wWzLyb6QtYZTfTc9L7zTtHsd9dQ46nP5KrOWCwLRh/h2DRBwku6ziZz9wJMInUrg/Diwgm+hdfiY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=s/z06XT8; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8E2D73F327
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1725587833;
+	bh=EL3eloeKhhdUIy+w5WuH4wnRWV+F7GryQMB+9nuDDIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=s/z06XT86zAHanVdYTksOL7uqTdOxs4MiHFHB8t/YYUX6m7fyZ4diyiLuyGJbdLKN
+	 Uv56MQkCqrvXu3V3phpMpQGaZLxf0GsehWEwXKTgO8sCHog9bjwVdLq46juRTguCk/
+	 MhZpLXe9gJAcPiuG0d0roskMGop4kkDVRp9oh32aXDEUNWCNXXc2zDbSQM9PxWKZVt
+	 2Glse+ZNESoB+MSLd8JYv+KGIZT2oQiFHmKqKM4Io7QN1HjHwvxxvh5GpgBtsKXiIG
+	 DbguUxTEqWEBMKaWYUJ17raWhl4yDqEuSj/VzjCDH0e8kNWfJNJhoa1blWFYdIzzJ+
+	 SvleqohvYQnPQ==
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c384fc1c65so2175614a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:57:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725587832; x=1726192632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EL3eloeKhhdUIy+w5WuH4wnRWV+F7GryQMB+9nuDDIk=;
+        b=cNGBI7Aocjtu5qpLsos3Izc83Ssdg/H1/SgddtIsGzhuniw1mj5MqDYIDNHmlFzaSO
+         3DBiAp761jiMr725NoA/lKiykgkn6cowzU2iYqUtU6vmB6cAm2Moovu1ZboYSQeM748O
+         MEm1xFM0Uibt9DnlSsBhPPR5q5nxyBGLvjbtP2fux9cwQV/fGjOs6T6uxJVikbKLePLt
+         heU9S+dUVZNFbxkDzQnzInQVEQ5LN5YAgmERfiDpDr1+6IfJ66QhyHMJAVlHcglVt52j
+         CsW1OW/UiVJqBNqDnukBR97VhjpDa8jcCyDgSEmkyAU2AGa0ZjXyOVm89ZygJXCgtMPU
+         8jOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXELkUH5NU6JkwOVAc0tBYIo6R6Ad6sgrs0x+DM64ZZ/rLaT/fMua+8SWgCnQ4lU5uBeOlwSp7XAycNMao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvLJhPTKHqNU0Nb7JEPE09PqGaxMSn3yEOKi4prCkPUmf1Z02L
+	5o1esp5IxKq3hNlAX+LQXTALX1iaRl9uE8lqlyuYJYqHzXYGWKP/C9LRu2zXTY+rE2qlGUWpg4+
+	Rx2mBqqbUKgzOSSlZXLA6HB+Cfo4cQ634qg++JikOlDgZS6hfRh80cd3XXKt03GcRW8Q1j28JmF
+	C0vflErWPiH5rDxcPbmgOipLSyLEkqBM3UvQgsgsSeKQebMMsyhlin
+X-Received: by 2002:a05:6402:84d:b0:5c2:5248:a929 with SMTP id 4fb4d7f45d1cf-5c3db976252mr1141569a12.7.1725587832392;
+        Thu, 05 Sep 2024 18:57:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpPt58F5FS0DqOKKD4R5wPwUJrt37QUevH9yHBuKznjg+BH2JoJ/tb87I6p7X1+ghoza/DchGHc/QjTK3idJo=
+X-Received: by 2002:a05:6402:84d:b0:5c2:5248:a929 with SMTP id
+ 4fb4d7f45d1cf-5c3db976252mr1141551a12.7.1725587831840; Thu, 05 Sep 2024
+ 18:57:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904234803.698424-1-masahiroy@kernel.org> <20240904234803.698424-5-masahiroy@kernel.org>
- <20240905141723.GC1517132-robh@kernel.org>
-In-Reply-To: <20240905141723.GC1517132-robh@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 6 Sep 2024 10:56:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASRtTDkVC7rBz6EEsu64LykMVRqyDODUCycGD1deLC9pw@mail.gmail.com>
-Message-ID: <CAK7LNASRtTDkVC7rBz6EEsu64LykMVRqyDODUCycGD1deLC9pw@mail.gmail.com>
-Subject: Re: [PATCH 04/15] kbuild: add generic support for built-in boot DTBs
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-openrisc@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>
+References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+ <20240903042852.v7ootuenihi5wjpn@thinkpad> <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+ <ZtciXnbQJ88hjfDk@kbusch-mbp> <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
+ <20240904062219.x7kft2l3gq4qsojc@thinkpad>
+In-Reply-To: <20240904062219.x7kft2l3gq4qsojc@thinkpad>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Fri, 6 Sep 2024 09:56:59 +0800
+Message-ID: <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
+Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Keith Busch <kbusch@kernel.org>, nirmal.patel@linux.intel.com, 
+	jonathan.derrick@linux.dev, acelan.kao@canonical.com, lpieralisi@kernel.org, 
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 11:17=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
+On Wed, Sep 4, 2024 at 2:22=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
-> On Thu, Sep 05, 2024 at 08:47:40AM +0900, Masahiro Yamada wrote:
-> > Some architectures embed boot DTBs in vmlinux. A potential issue for
-> > these architectures is a race condition during parallel builds because
-> > Kbuild descends into arch/*/boot/dts/ twice.
+> On Wed, Sep 04, 2024 at 09:57:08AM +0800, Kai-Heng Feng wrote:
+> > On Tue, Sep 3, 2024 at 10:51=E2=80=AFPM Keith Busch <kbusch@kernel.org>=
+ wrote:
+> > >
+> > > On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
+> > > > On Tue, Sep 3, 2024 at 12:29=E2=80=AFPM Manivannan Sadhasivam
+> > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > >
+> > > > > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng wrote:
+> > > > > > Meteor Lake VMD has a bug that the IRQ raises before the DMA re=
+gion is
+> > > > > > ready, so the requested IO is considered never completed:
+> > > > > > [   97.343423] nvme nvme0: I/O 259 QID 2 timeout, completion po=
+lled
+> > > > > > [   97.343446] nvme nvme0: I/O 384 QID 3 timeout, completion po=
+lled
+> > > > > > [   97.343459] nvme nvme0: I/O 320 QID 4 timeout, completion po=
+lled
+> > > > > > [   97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion po=
+lled
+> > > > > >
+> > > > > > The is documented as erratum MTL016 [0]. The suggested workarou=
+nd is to
+> > > > > > "The VMD MSI interrupt-handler should initially perform a dummy=
+ register
+> > > > > > read to the MSI initiator device prior to any writes to ensure =
+proper
+> > > > > > PCIe ordering." which essentially is adding a delay before the =
+interrupt
+> > > > > > handling.
+> > > > > >
+> > > > >
+> > > > > Why can't you add a dummy register read instead? Adding a delay f=
+or PCIe
+> > > > > ordering is not going to work always.
+> > > >
+> > > > This can be done too. But it can take longer than 4us delay, so I'd
+> > > > like to keep it a bit faster here.
+> > >
+> > > An added delay is just a side effect of the read. The read flushes
+> > > pending device-to-host writes, which is most likely what the errata
+> > > really requires. I think Mani is right, you need to pay that register
+> > > read penalty to truly fix this.
 > >
-> > One build thread is initiated by the 'dtbs' target, which is a
-> > prerequisite of the 'all' target in the top-level Makefile:
+> > OK, will change the quirk to perform dummy register read.
 > >
-> >   ifdef CONFIG_OF_EARLY_FLATTREE
-> >   all: dtbs
-> >   endif
+> > But I am not sure which is the "MSI initiator device", is it VMD
+> > controller or NVMe devices?
 > >
-> > For architectures that support the embedded boot dtb, arch/*/boot/dts/
-> > is visited also during the ordinary directory traversal in order to
-> > build obj-y objects that wrap DTBs.
-> >
-> > Since these build threads are unaware of each other, they can run
-> > simultaneously during parallel builds.
-> >
-> > This commit introduces a generic build rule to scripts/Makefile.vmlinux
-> > to support embedded boot DTBs in a race-free way. Architectures that
-> > want to use this rule need to select CONFIG_GENERIC_BUILTIN_DTB.
-> >
-> > After the migration, Makefiles under arch/*/boot/dts/ will be visited
-> > only once to build only *.dtb files.
-> >
-> > This change also aims to unify the CONFIG options used for embedded DTB=
-s
-> > support. Currently, different architectures use different CONFIG option=
-s
-> > for the same purposes.
-> >
-> > The CONFIG options are unified as follows:
-> >
-> >  - CONFIG_GENERIC_BUILTIN_DTB
-> >
-> >    This enables the generic rule for embedded boot DTBs. This will be
-> >    renamed to CONFIG_BUILTIN_DTB after all architectures migrate to the
-> >    generic rule.
-> >
-> >  - CONFIG_BUILTIN_DTB_NAME
-> >
-> >    This specifies the path to the embedded DTB.
-> >    (relative to arch/*/boot/dts/)
-> >
-> >  - CONFIG_BUILTIN_DTB_ALL
-> >
-> >    If this is enabled, all DTB files compiled under arch/*/boot/dts/ ar=
-e
-> >    embedded into vmlinux. Only used by MIPS.
 >
-> I started to do this a long time ago, but then decided we didn't want to
-> encourage this feature. IMO it should only be for legacy bootloaders or
-> development/debug. And really, appended DTB is more flexible for the
-> legacy bootloader case.
+> 'MSI initiator' should be the NVMe device. My understanding is that the
+> workaround suggests reading the NVMe register from the MSI handler before=
+ doing
+> any write to the device to ensures that the previous writes from the devi=
+ce are
+> flushed.
 
+Hmm, it would be really great to contain the quirk in VMD controller.
+Is there anyway to do that right before generic_handle_irq()?
 
-I learned CONFIG_ARM_APPENDED_DTB today.
-
-
-
-> In hindsight, a common config would have been easier to limit new
-> arches...
 >
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  Makefile                 |  7 ++++++-
-> >  drivers/of/Kconfig       |  6 ++++++
-> >  scripts/Makefile.vmlinux | 44 ++++++++++++++++++++++++++++++++++++++++
-> >  scripts/link-vmlinux.sh  |  4 ++++
-> >  4 files changed, 60 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 145112bf281a..1c765c12ab9e 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1417,6 +1417,10 @@ ifdef CONFIG_OF_EARLY_FLATTREE
-> >  all: dtbs
-> >  endif
-> >
-> > +ifdef CONFIG_GENERIC_BUILTIN_DTB
-> > +vmlinux: dtbs
-> > +endif
-> > +
-> >  endif
-> >
-> >  PHONY +=3D scripts_dtc
-> > @@ -1483,7 +1487,8 @@ endif # CONFIG_MODULES
-> >  CLEAN_FILES +=3D vmlinux.symvers modules-only.symvers \
-> >              modules.builtin modules.builtin.modinfo modules.nsdeps \
-> >              compile_commands.json rust/test \
-> > -            rust-project.json .vmlinux.objs .vmlinux.export.c
-> > +            rust-project.json .vmlinux.objs .vmlinux.export.c \
-> > +               .builtin-dtbs-list .builtin-dtb.S
-> >
-> >  # Directories & files removed with 'make mrproper'
-> >  MRPROPER_FILES +=3D include/config include/generated          \
-> > diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-> > index dd726c7056bf..5142e7d7fef8 100644
-> > --- a/drivers/of/Kconfig
-> > +++ b/drivers/of/Kconfig
-> > @@ -2,6 +2,12 @@
-> >  config DTC
-> >       bool
-> >
-> > +config GENERIC_BUILTIN_DTB
-> > +     bool
+> And this sounds like the workaround should be done in the NVMe driver as =
+it has
+> the knowledge of the NVMe registers. But isn't the NVMe driver already re=
+ading
+> CQE status first up in the ISR?
+
+The VMD interrupt is fired before the CQE status update, hence the bug.
+
+Kai-Heng
+
 >
-> So that we don't add new architectures to this, I would like something
-> like:
+> - Mani
 >
-> # Do not add new architectures to this list
-> depends on MIPS || RISCV || MICROBLAZE ...
->
-> Yes, it's kind of odd since the arch selects the option...
->
-> For sure, we don't want this option on arm64. For that, I can rely on
-> Will and Catalin rejecting a select, but on some new arch I can't.
->
-> > +
-> > +config BUILTIN_DTB_ALL
-> > +     bool
->
-> Can this be limited to MIPS?
-
-
-I am fine with hard-coded "depends on"
-if this feature is discouraged.
-
-
-
-
-> > +
-> >  menuconfig OF
-> >       bool "Device Tree and Open Firmware support"
-> >       help
-> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > index 5ceecbed31eb..4626b472da49 100644
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -17,6 +17,50 @@ quiet_cmd_cc_o_c =3D CC      $@
-> >  %.o: %.c FORCE
-> >       $(call if_changed_dep,cc_o_c)
+> > Kai-Heng
 > >
-> > +quiet_cmd_as_o_S =3D AS      $@
-> > +      cmd_as_o_S =3D $(CC) $(a_flags) -c -o $@ $<
-> > +
-> > +%.o: %.S FORCE
-> > +     $(call if_changed_dep,as_o_S)
-> > +
-> > +# Built-in dtb
-> > +# --------------------------------------------------------------------=
--------
-> > +
-> > +quiet_cmd_wrap_dtbs =3D WRAP    $@
-> > +      cmd_wrap_dtbs =3D {                                             =
-         \
-> > +     echo '\#include <asm-generic/vmlinux.lds.h>';                   \
-> > +     echo '.section .dtb.init.rodata,"a"';                           \
-> > +     while read dtb; do                                              \
-> > +             symbase=3D__dtb_$$(basename -s .dtb "$${dtb}" | tr - _); =
- \
-> > +             echo '.balign STRUCT_ALIGNMENT';                        \
+> > >
+> > > > > > +     /* Erratum MTL016 */
+> > > > > > +     VMD_FEAT_INTERRUPT_QUIRK        =3D (1 << 6),
+> > > > > >  };
+> > > > > >
+> > > > > >  #define VMD_BIOS_PM_QUIRK_LTR        0x1003  /* 3145728 ns */
+> > > > > > @@ -90,6 +94,8 @@ static DEFINE_IDA(vmd_instance_ida);
+> > > > > >   */
+> > > > > >  static DEFINE_RAW_SPINLOCK(list_lock);
+> > > > > >
+> > > > > > +static bool interrupt_delay;
+> > > > > > +
+> > > > > >  /**
+> > > > > >   * struct vmd_irq - private data to map driver IRQ to the VMD =
+shared vector
+> > > > > >   * @node:    list item for parent traversal.
+> > > > > > @@ -105,6 +111,7 @@ struct vmd_irq {
+> > > > > >       struct vmd_irq_list     *irq;
+> > > > > >       bool                    enabled;
+> > > > > >       unsigned int            virq;
+> > > > > > +     bool                    delay_irq;
+> > > > >
+> > > > > This is unused. Perhaps you wanted to use this instead of interru=
+pt_delay?
+> > > >
+> > > > This is leftover, will scratch this.
+> > >
+> > > Maybe you should actually use it instead of making a global? The quir=
+k
+> > > says it is device specific, so no need to punish every device if it
+> > > doesn't need it (unlikely as it is to see such a thing).
 >
-> Is this always guaranteed to be at least 8 bytes? That's the required
-> alignment for dtbs and assumed by libfdt.
-
-
-I think so.
-
-
-include/asm-generic/vmlinux.lds.h defines it as 32.
-
-
-We can loosen the alignment to 8, but for safety,
-I just copied this from scripts/Makefile.lib
-because 32-byte alignment is what we do now.
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
