@@ -1,166 +1,215 @@
-Return-Path: <linux-kernel+bounces-318383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F55C96ECF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:57:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5233A96ECF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03B21F2784A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FCCE1C22B0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137421553B3;
-	Fri,  6 Sep 2024 07:57:35 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6E1547DD;
+	Fri,  6 Sep 2024 07:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Loj1+UQK"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9609F14D282
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EE11474B5
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609454; cv=none; b=iN4jjzdxJj26RYefa4vbX/vvsKO+j/1RvI/8hHROIairspo03no5rvUSsLnkY6hoyN5Zmq2lgODlyOSrz9o0HdnUWyg+J/RdTvyJSWvSypFiBbL5o+/fVHVjhJv7jE/MojayhUHofKaCPYvX6fBx/7QqIKrONEPjL4KNqW+8WEk=
+	t=1725609429; cv=none; b=UtiMjy6DGvbHAfuqqeGqerVTkm7cIfNpMK40Zz+LMyGnNDVKI2jbVNbxVDWcjBLmiX35c+45mKJBLZq7ojZv/Obik575NNc/3idyC31FC1NnzX6HJb9rf2Kp4qFWYLJ+o0AK3gkyF1O+zAgYW3X7Hw5c7YzlNqsR8oADBNigi+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609454; c=relaxed/simple;
-	bh=If1Z3ucK+BshlFAuR4+9cyHkrKZMcAXU5BabL5q1yY4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=tdod+lmM7ovHJdpxzQHSji9Y1xH51ZZ9zATRix3CNOCAZAKFJKhzWujhHSBZ+eD/9yBvVoq8ZDsYcxr9bi/EbhP4O7qHsgepxLwcIIYAthlK72C6BZRtnIHbTOGzfzlWfNtUnUJLbhRhz6DHyC3cuHeSCs6NcvV5ahpW+4piD/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-272-62-3r_aIMM6qyocEmmOHaQ-1; Fri, 06 Sep 2024 08:57:28 +0100
-X-MC-Unique: 62-3r_aIMM6qyocEmmOHaQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Sep
- 2024 08:56:44 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Sep 2024 08:56:44 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Mauro Carvalho Chehab' <mchehab+huawei@kernel.org>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, Hans de Goede <hdegoede@redhat.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus
-	<sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>
-Subject: RE: [PATCH] media: atomisp: Use clamp_t() in
- ia_css_eed1_8_vmem_encode()
-Thread-Topic: [PATCH] media: atomisp: Use clamp_t() in
- ia_css_eed1_8_vmem_encode()
-Thread-Index: AQHbACQzagH7UmA9AUeCwJRVG1DaELJKYshg
-Date: Fri, 6 Sep 2024 07:56:44 +0000
-Message-ID: <8c8b5727abf44e429727b70365cc3048@AcuMS.aculab.com>
-References: <155aba6ab759e98f66349e6bb4f69e2410486c09.1722084704.git.christophe.jaillet@wanadoo.fr>
- <20240906081542.5cb0c142@foz.lan>
-In-Reply-To: <20240906081542.5cb0c142@foz.lan>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725609429; c=relaxed/simple;
+	bh=Wh9SlVbbUmrFXHHWJtHJsESHp2xdw5pRp/k9kgTL2yg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=f905pMRNsn89g6gBUhH7K+bweCVOpulRB7dZwdGHYKFs/pmocoXfr+Up1UagNsA0je4m7829VT8qeMQ9aoc/BAyMl5xADHds2XKEksRw3fbzNHje/sFu/cAlYj8gXoAYj/ku9GzmDIzCY2J61M9rzO38cNYXQPslKZlYLBeYonI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Loj1+UQK; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42bbd16fcf2so13615355e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725609426; x=1726214226; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zvVkrkpN6j+a38laIGqZJX8O9Gb4gq72X5FJNVHGZIY=;
+        b=Loj1+UQKFzuJENfDiEP2zw7IytUhba182mni8b/+MiXecXaUIJDG1CgM4TocNwkYmh
+         IC4a9gWaqaTWIHyUvhtwIgWMxdF8VK5kA/c3n8bEjh5UXZZFQS3Ttq3aON20kC1DRs/7
+         hfyJZifbmztwADIihDmtvBBshIi2D3lNJqXYkSA57s+Eu1BzGQBGMdNDCCDfkRoyBkeO
+         /I6aMxadOSeJ+RlxAWehMUl0TPIUMXVH+rJURNdodPQdUmWc2kxQhWKyS8DBV+eMk8XV
+         LwQ+T8sGDlO+kpM81U4ZpEBg5Daw6mEqV/IxIUfbYWM/rMhqdQTf5vCrRDGnqPo71xQx
+         nnOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725609426; x=1726214226;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zvVkrkpN6j+a38laIGqZJX8O9Gb4gq72X5FJNVHGZIY=;
+        b=LcZhHT3yV9EXFOPxtjTyUTVGJS/C1y5r4H7xAkd6eGa9pgQSDt19iSdJEh9wBH0GDb
+         KY3Af+QcafijO4VoCp1auGJkFNsrhsEUe7sbOK5uMBpgQ2TumijwC24fM50bG+JftEh7
+         5tOYM3jI/ozR9A0lc1nWhB+7/dHTveAauTM1p0tOJSBmw5VrxIG8+2xihBaV1jIhK02V
+         2K1zbcA6iWqIYlBjupVyPPxUcmcFI8SiTmsXLZZZT7Y3DBb5Y2WVBjN8wpi7CjFsQbJk
+         QfVScYYmTtY2XvOYmU3mMb/Kbu6/GnwLCfHyzcdKGqohu2G0714kERbW3+4V8LidVAlp
+         aOww==
+X-Forwarded-Encrypted: i=1; AJvYcCWBTwoV7fybXqExSagjCsDfzJ9IeyEJFZgXG9SckOfPVakc+xQVZ5+pYaMV7LRNEaUM7mdssj3ns7YGmAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWDFcD5wy9jkOeZCKZ6hrtNH2nXLL0H0jPSbaClmF1+S2Yv3EW
+	eOSCfhKectQ1bBkDCbysG/8lXE5pBZq9yplRWdhFvbIvmQeP3kU7JGe5QCO6kmo=
+X-Google-Smtp-Source: AGHT+IHSybREBxFmsJpzKFaWK/9SX109W2qtCK1HRP856KH1y0kUhbi9NMZgjxRJtRzCZz9Kgex8kQ==
+X-Received: by 2002:a5d:5f4a:0:b0:374:c269:df79 with SMTP id ffacd0b85a97d-374c269e0d7mr16043530f8f.22.1725609425782;
+        Fri, 06 Sep 2024 00:57:05 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:75bf:cfcd:3d88:2a0e? ([2a01:e0a:982:cbb0:75bf:cfcd:3d88:2a0e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b67ff88dsm18204067f8f.26.2024.09.06.00.57.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 00:57:05 -0700 (PDT)
+Message-ID: <c68d7894-501c-414c-8460-3009e2536af6@linaro.org>
+Date: Fri, 6 Sep 2024 09:57:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] Input: goodix-berlin - Fix VDDIO regulator name according
+ to dt-bindings
+To: Danila Tikhonov <danila@jiaxyga.com>, hadess@hadess.net,
+ hdegoede@redhat.com, dmitry.torokhov@gmail.com, jeff@labundy.com,
+ krzk@kernel.org
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@mainlining.org
+References: <20240805155806.16203-1-danila@jiaxyga.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240805155806.16203-1-danila@jiaxyga.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Mauro Carvalho Chehab
-> Sent: 06 September 2024 07:16
->=20
-> Em Sat, 27 Jul 2024 14:51:56 +0200
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> escreveu:
->=20
-> > Using clamp_t() instead of min_t(max_t()) is easier to read.
-> >
-> > It also reduces the size of the preprocessed files by ~ 193 ko.
-> > (see [1] for a discussion about it)
-> >
-> > $ ls -l ia_css_eed1_8.host*.i
-> >  4829993 27 juil. 14:36 ia_css_eed1_8.host.old.i
-> >  4636649 27 juil. 14:42 ia_css_eed1_8.host.new.i
-> >
-> > [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS=
-.aculab.com/
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  .../isp/kernels/eed1_8/ia_css_eed1_8.host.c   | 24 +++++++++----------
-> >  1 file changed, 12 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_cs=
-s_eed1_8.host.c
-> b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host=
-.c
-> > index e4fc90f88e24..96c13ebc4331 100644
-> > --- a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_=
-8.host.c
-> > +++ b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_=
-8.host.c
-> > @@ -172,25 +172,25 @@ ia_css_eed1_8_vmem_encode(
-> >  =09=09base =3D shuffle_block * i;
-> >
-> >  =09=09for (j =3D 0; j < IA_CSS_NUMBER_OF_DEW_ENHANCE_SEGMENTS; j++) {
-> > -=09=09=09to->e_dew_enh_x[0][base + j] =3D min_t(int, max_t(int,
-> > -=09=09=09=09=09=09=09     from->dew_enhance_seg_x[j], 0),
-> > -=09=09=09=09=09=09=09     8191);
-> > -=09=09=09to->e_dew_enh_y[0][base + j] =3D min_t(int, max_t(int,
-> > -=09=09=09=09=09=09=09     from->dew_enhance_seg_y[j], -8192),
-> > -=09=09=09=09=09=09=09     8191);
-> > +=09=09=09to->e_dew_enh_x[0][base + j] =3D clamp_t(int,
-> > +=09=09=09=09=09=09=09       from->dew_enhance_seg_x[j],
-> > +=09=09=09=09=09=09=09       0, 8191);
-> > +=09=09=09to->e_dew_enh_y[0][base + j] =3D clamp_t(int,
-> > +=09=09=09=09=09=09=09       from->dew_enhance_seg_y[j],
-> > +=09=09=09=09=09=09=09       -8192, 8191);
->=20
-> Such change introduces two warnings on smatch:
->=20
-> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c=
-:
-> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c=
-:177
-> ia_css_eed1_8_vmem_encode() warn: assigning (-8192) to unsigned variable =
-'to->e_dew_enh_y[0][base +
-> j]'
-> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c=
-:
-> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c=
-:182
-> ia_css_eed1_8_vmem_encode() warn: assigning (-8192) to unsigned variable =
-'to->e_dew_enh_a[0][base +
-> j]'
->=20
-> Should dew_enhance_seg_x and dew_enhance_seg_y be converted to signed?
+On 05/08/2024 17:58, Danila Tikhonov wrote:
+> The dt-bindings specify the regulator as "vddio" instead of "iovdd".
+> 
+> This patch fixes the regulator name from "iovdd" to "vddio" in the
+> driver code to align with the dt-bindings. Fixing the dt-bindings
+> would break ABI, hence the fix is made in the driver instead.
+> 
+> There are no users of this regulator сurrently.
+> 
+> Fixes: 44362279bdd4 ("Input: add core support for Goodix Berlin Touchscreen IC")
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>   .../input/touchscreen/goodix_berlin_core.c    | 26 +++++++++----------
+>   1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
+> index 0bfca897ce5a..b5d6e6360fff 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_core.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
+> @@ -165,7 +165,7 @@ struct goodix_berlin_core {
+>   	struct device *dev;
+>   	struct regmap *regmap;
+>   	struct regulator *avdd;
+> -	struct regulator *iovdd;
+> +	struct regulator *vddio;
+>   	struct gpio_desc *reset_gpio;
+>   	struct touchscreen_properties props;
+>   	struct goodix_berlin_fw_version fw_version;
+> @@ -248,22 +248,22 @@ static int goodix_berlin_power_on(struct goodix_berlin_core *cd)
+>   {
+>   	int error;
+>   
+> -	error = regulator_enable(cd->iovdd);
+> +	error = regulator_enable(cd->vddio);
+>   	if (error) {
+> -		dev_err(cd->dev, "Failed to enable iovdd: %d\n", error);
+> +		dev_err(cd->dev, "Failed to enable vddio: %d\n", error);
+>   		return error;
+>   	}
+>   
+> -	/* Vendor waits 3ms for IOVDD to settle */
+> +	/* Vendor waits 3ms for VDDIO to settle */
+>   	usleep_range(3000, 3100);
+>   
+>   	error = regulator_enable(cd->avdd);
+>   	if (error) {
+>   		dev_err(cd->dev, "Failed to enable avdd: %d\n", error);
+> -		goto err_iovdd_disable;
+> +		goto err_vddio_disable;
+>   	}
+>   
+> -	/* Vendor waits 15ms for IOVDD to settle */
+> +	/* Vendor waits 15ms for VDDIO to settle */
+>   	usleep_range(15000, 15100);
+>   
+>   	gpiod_set_value_cansleep(cd->reset_gpio, 0);
+> @@ -283,8 +283,8 @@ static int goodix_berlin_power_on(struct goodix_berlin_core *cd)
+>   err_dev_reset:
+>   	gpiod_set_value_cansleep(cd->reset_gpio, 1);
+>   	regulator_disable(cd->avdd);
+> -err_iovdd_disable:
+> -	regulator_disable(cd->iovdd);
+> +err_vddio_disable:
+> +	regulator_disable(cd->vddio);
+>   	return error;
+>   }
+>   
+> @@ -292,7 +292,7 @@ static void goodix_berlin_power_off(struct goodix_berlin_core *cd)
+>   {
+>   	gpiod_set_value_cansleep(cd->reset_gpio, 1);
+>   	regulator_disable(cd->avdd);
+> -	regulator_disable(cd->iovdd);
+> +	regulator_disable(cd->vddio);
+>   }
+>   
+>   static int goodix_berlin_read_version(struct goodix_berlin_core *cd)
+> @@ -744,10 +744,10 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>   		return dev_err_probe(dev, PTR_ERR(cd->avdd),
+>   				     "Failed to request avdd regulator\n");
+>   
+> -	cd->iovdd = devm_regulator_get(dev, "iovdd");
+> -	if (IS_ERR(cd->iovdd))
+> -		return dev_err_probe(dev, PTR_ERR(cd->iovdd),
+> -				     "Failed to request iovdd regulator\n");
+> +	cd->vddio = devm_regulator_get(dev, "vddio");
+> +	if (IS_ERR(cd->vddio))
+> +		return dev_err_probe(dev, PTR_ERR(cd->vddio),
+> +				     "Failed to request vddio regulator\n");
+>   
+>   	error = goodix_berlin_power_on(cd);
+>   	if (error) {
 
-Someone clearly needs to read the code and work out what it is doing.
+My bad on this one...
 
-First stage is to use clamp() (not clamp_t) to get warnings from the
-compiler for the RHS.
-The snippet implies that the _x values are unsigned but the _y ones
-can be negative.
-Holding negative values in unsigned variables is a recipe for disaster.
-
-=09David
-
-
->=20
->=20
-> Thanks,
-> Mauro
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
 
