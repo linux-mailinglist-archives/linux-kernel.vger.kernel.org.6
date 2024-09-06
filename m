@@ -1,78 +1,151 @@
-Return-Path: <linux-kernel+bounces-319451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99A496FCB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:29:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8306496FCC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3031F21E95
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F8161C25A1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C821DC1BC;
-	Fri,  6 Sep 2024 20:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184031D7E31;
+	Fri,  6 Sep 2024 20:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTEYStIZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8LhhbnL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A63B1DB539
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4E91D1F56;
+	Fri,  6 Sep 2024 20:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654504; cv=none; b=VS0+bzh4UrMNdEvSCsjTwFyYklxT67YFCMpDFQsNo3fUiKmP4llu79ceES1XzfKn6UrMGlZiR5wXYWav7edXiRmDjR77wY6W1FFT2n6fXjOR8pLNYZkOPxhPpCnX4z8QB+fxlfbzM6uuCcm1/lxSUvL/vciAaJVeqkedjpE9Hhw=
+	t=1725654539; cv=none; b=dkwtoH5g2Txn8zYHtcPEGhWGj5qxsrZpOAIuR4xw6/neotX9OjDmZ0S7aaYGzBW+C0PFwoVY5ZXrUykbeJBIo+0yvIlLmcNFOwW+8l7ZU6EJCww5fhnpI+Y3qalHs8s0FUKkKjHllIV1J2Z+GkXoU5H7nOXhdKXcrrEoAlhnLHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654504; c=relaxed/simple;
-	bh=OedAZd7MMqmFKHSV85Hc0CUKP6HtFLFUqdbtGyoNx6w=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FwaaffP4zkeu5dnchKIC+3Is406N5ceg7e6QN9iyaz65IrfZLutVNvrOpxM7G2h8ulEqqNVbAhYajefUA7wFwo/NY0t6Bse9V7JQFK/accOV9+V1wy3PBx5B7kH7vPxZPbus0kMeM74s5ZF7lc8X4GROA/wF2m2NWpiWPo0i10A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTEYStIZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FEAC4CECA;
-	Fri,  6 Sep 2024 20:28:24 +0000 (UTC)
+	s=arc-20240116; t=1725654539; c=relaxed/simple;
+	bh=hv0U7pa1nU9i8rSDEBlp42iO0ygFjbq5mj4CRdcsy1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FhjDIVihzSZC1cS06CxLRHPtuzTjBr5Y8W7IgmJIswdNT1clz/uTGQw6q3idTWOuqgH9igmJDY6hrHUEcInHDoyYOO5b+soR/shDRpJQ2VJNiu8Zear5nOc05Vlks047B8exJvDnhIovd1bBCZte3ywsPdA7KIl8iYf9iegmYrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8LhhbnL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D117C4CEC7;
+	Fri,  6 Sep 2024 20:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725654504;
-	bh=OedAZd7MMqmFKHSV85Hc0CUKP6HtFLFUqdbtGyoNx6w=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=KTEYStIZQl8hrcH0YdXYsH9CU4Xdy9oU4sZH3Bzj5W4my2uTyJ4YmNUwdn3O8ki2n
-	 2kgaLohRIPWklPfG7+7FqhDq7yDjx/V9ICjhDvsDioOV9CxL4Y098tDK53a5yM9xjR
-	 b/yEeoCQL0Dmuaz/hgLezZD7gV2kKzGnwZR/tGLF6S+hD+M2/jmUmbDciv1gKKF4l9
-	 o1fEPO5BxZ05ybI3g49U/ytN4vSlHxFAzubdOI9obf9VQLuKfz8BtTz3gS+OQ8Y30J
-	 L8KFw0cgUgCfOIvtITyq2l0TwWpTA0VYKO9l3Az5SGyKC10OxSF9hIhJKJf1zemwFV
-	 alr+VHgNXB1WQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343473806644;
-	Fri,  6 Sep 2024 20:28:26 +0000 (UTC)
-Subject: Re: [GIT PULL] arm64 fixes for 6.11-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zts3ECHu-7nucQHp@arm.com>
-References: <Zts3ECHu-7nucQHp@arm.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zts3ECHu-7nucQHp@arm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-X-PR-Tracked-Commit-Id: c060f93253cad63ea9d41b5b1186a1da32541dec
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6b8ff511e412af4a367a8d3d4f323715a9357aa0
-Message-Id: <172565450495.2515438.2346612428582734391.pr-tracker-bot@kernel.org>
-Date: Fri, 06 Sep 2024 20:28:24 +0000
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1725654539;
+	bh=hv0U7pa1nU9i8rSDEBlp42iO0ygFjbq5mj4CRdcsy1U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f8LhhbnLg3lB/A1i92L1gUSdm0XfSu1r6zpSZoumrgIFPWmxehESyUWkRLeC7Udow
+	 6oWCJp2VGzlcMotwz7lThZphM9NCeKB3tmisygjVU8dlneFy1toMKZDIettI6wW/gY
+	 kwkPCNDtlcOKZEwHV/OzqZYccfK/YEGCI1mFUPCv1QvRzeH8lG4hOaDTYXc/ecGZ5v
+	 4IUrCZrZfr9bRlpKJcXA8xav5v2A99dW7nFg/UXyVjZjEGzgL2TC9PUK5AN5MqGhuO
+	 Xf8WyKF535LZCUAeWA/HI+oZr0CUfnFUtO9J92nQfXNnC+elKH6M157or5gzzn0f2A
+	 +gBuV1YHYjoNA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53345dcd377so3087919e87.2;
+        Fri, 06 Sep 2024 13:28:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZpJbjVxAY6M9Hs1dP4RKxGKamiotb8fhzq2j5sIv0W+rdBsZ0FIukJhP5bjVCmxYEzVZkQIPHYe3HmMc=@vger.kernel.org, AJvYcCVdve/0W2zq+Mo08vLpzj1scvaXKCNEXZU9qsVpvqtm5aG43rym5eInAONSbLN/qU9mgqeSMxVd0a38mNLr@vger.kernel.org, AJvYcCXPhcSH5X/PHNmyhHZcVMhPzEmUcsfLW8Sa1zEscgdjBke2GVb7lcT6NP+ufGRrNVLA5PJqoJyweHC8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAQUhuXqq/FG8jVYCrtBXl3aMlWJfPMjk1LRUXLtQfEWSX75km
+	D9qyFXJL0VFxsAWc43am1bybsE6XZi1qSurGRzSCT6aOi05u9FGArucEhHyNmkIza4Md80bB4Oy
+	V0v5t7NeU/jg4mYQms5J8U9a8Xg==
+X-Google-Smtp-Source: AGHT+IHnxC1JQal5GS+rIfcQcX86BozBZ492O7DlOM07zAmT8O+OHbAWtZsxF7m08rOoE+axZxM6xxK35KOwaUVI9CU=
+X-Received: by 2002:a05:6512:10c6:b0:52e:e3c3:643f with SMTP id
+ 2adb3069b0e04-536587a418emr2416330e87.2.1725654537672; Fri, 06 Sep 2024
+ 13:28:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240814024513.164199-1-charles.goodix@gmail.com> <20240814024513.164199-3-charles.goodix@gmail.com>
+In-Reply-To: <20240814024513.164199-3-charles.goodix@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 6 Sep 2024 15:28:45 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com>
+Message-ID: <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: dmitry.torokhov@gmail.com, dianders@chromium.org, dan.carpenter@linaro.org, 
+	conor@kernel.org, krzk+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org, 
+	hbarnor@chromium.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Fri, 6 Sep 2024 18:08:32 +0100:
+On Tue, Aug 13, 2024 at 9:45=E2=80=AFPM Charles Wang <charles.goodix@gmail.=
+com> wrote:
+>
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  .../bindings/input/goodix,gt7986u.yaml        | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986=
+u.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml =
+b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> new file mode 100644
+> index 000000000..a7d42a5d6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> @@ -0,0 +1,71 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GOODIX GT7986U SPI HID Touchscreen
+> +
+> +maintainers:
+> +  - Charles Wang <charles.goodix@gmail.com>
+> +
+> +description: Supports the Goodix GT7986U touchscreen.
+> +  This touch controller reports data packaged according to the HID proto=
+col,
+> +  but is incompatible with Microsoft's HID-over-SPI protocol.
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - goodix,gt7986u
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+This is already documented in goodix,gt7375p.yaml. Now linux-next has warni=
+ngs:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6b8ff511e412af4a367a8d3d4f323715a9357aa0
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,=
+gt7986u.example.dtb:
+touchscreen@0: compatible: 'oneOf' conditional failed, one must be
+fixed:
+        ['goodix,gt7986u'] is too short
+        'goodix,gt7375p' was expected
+        from schema $id:
+http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,=
+gt7986u.example.dtb:
+touchscreen@0: reg:0:0: 0 is not one of [93, 20]
+        from schema $id:
+http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,=
+gt7986u.example.dtb:
+touchscreen@0: 'vdd-supply' is a required property
+        from schema $id:
+http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,=
+gt7986u.example.dtb:
+touchscreen@0: 'goodix,hid-report-addr', 'spi-max-frequency' do not
+match any of the regexes: 'pinctrl-[0-9]+'
+        from schema $id:
+http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
 
-Thank you!
+Please sort this out and send a fix.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Rob
 
