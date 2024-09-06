@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-318298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F219F96EB72
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:04:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6038B96EB78
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29FA31C21265
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192B6287F33
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E211E14C5B3;
-	Fri,  6 Sep 2024 07:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8382C14AD3F;
+	Fri,  6 Sep 2024 07:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RImlA/LC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hCenTb6e"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4561314BF8F;
-	Fri,  6 Sep 2024 07:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A09D14AD03
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725606222; cv=none; b=qNkn+Gf0WA96BeviOzXgmk1yXEWMucdOIhxD9A85BAyl4yDR+sM8VZNnr+X0USB0nnQK/kWsc6oxwwRyRxqEhcdqIFRt/0MqCenyDu+wOOMYlDbWsBGEejeNnggS7jTgjujEeDESj5T5KkU19q/igf8ATCqWjXUhrMfbazjVUNk=
+	t=1725606267; cv=none; b=bxSjaRgmmH82h/5BNQ4iRopqtkDYNzuEPiZ1+/gj8S5KNgCvYAmYMHrb8VG1GVZQvhrDyLSkCzWSoO97jNHql60pJ5GSxnusvPz2gPYvgJP/8K/T5epCifbZxkucoOK6196k+UkGjA1n+EqG07cDAjAkC12doznC7pinzl2leUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725606222; c=relaxed/simple;
-	bh=XosyfNwJeFXOQHRLgM+l6NjMHrTnOYEKaf5JavecBl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2cKFFEoCziCosA3OgjOZbzJFmQN0BxPQc/mN8Vq/9BMvjLyyUtrCXyzR9de0UmIS6YxFRN4SpdjNMbAzvL/EDOFuUee/plfGy1Dib5oR5E5aWL9AP7VIMqpo7i7ZQemDLSIfWBrtGtc9Y+hI6mcYCqr2GPL0Z2EoTYKLp0uN0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RImlA/LC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 900ABC4CEC4;
-	Fri,  6 Sep 2024 07:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725606220;
-	bh=XosyfNwJeFXOQHRLgM+l6NjMHrTnOYEKaf5JavecBl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RImlA/LCGzIxQrv5on0OCtCoLNLx/B45N3EYOs+TSxZqcJteZxindT458nHNTnff9
-	 LX+sY++09mpOpLReSItz4hujPrkjUxLAzF7Pq7OoxS1nQWeCX23dYH2g30msvL+esR
-	 LuEnSwVxmyM6QXIL0Isqsy9i3V2DpXgJbaP4Hz6pQYfUo29u/IKwwew3KXf1CD9eAu
-	 W0TJca3+CcuULOCkW8HkFq0cqJqbBbph567PFu+0VYEDXnrog93eplHSsQJvdNUbqN
-	 jfEBT9ADPOtD31MgpHJhGFIAayZYfiZZiCqyJe0TgDy4n8V0Q1KXLeBhn7K1KF4m1G
-	 eeHB9rbN69T8A==
-Date: Fri, 6 Sep 2024 08:03:36 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-	Heng Qi <hengqi@linux.alibaba.com>
-Subject: Re: [PATCH net-next 0/2] net: xilinx: axienet: Enable adaptive IRQ
- coalescing with DIM
-Message-ID: <20240906070336.GJ1722938@kernel.org>
-References: <20240903192524.4158713-1-sean.anderson@linux.dev>
- <20240904163503.GA1722938@kernel.org>
- <d2470924-78a2-4905-a24f-afb127644d70@linux.dev>
+	s=arc-20240116; t=1725606267; c=relaxed/simple;
+	bh=8WjZia20575zWwWqBXNo4kBtOCi4n8bCZvJqfR2vml4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MzvWKXjo0v2liQosCXCA40W+CS3gU275iJ98qeeW+JuA6+RGq6kAp/JW2U6pb2eV61ixBDF+4Joeb0nIjQdw2u2submPh9f1wYQ/wZTyhzcrzVYY/hIRCj81lJnDUMTkUsBV1Uax1UUa46JV+SSkXrcoyNkCAyqoSyo9ejo56Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hCenTb6e; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374ba78f192so907987f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:04:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725606263; x=1726211063; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mmvQ+Tp6rwj8ytkbPRHE2L4V7NjEhAGYliO1vaPNhGg=;
+        b=hCenTb6e1BckR3gufECmL1ihXasB6qKBHcGNdNiX6rH7SXGtigQqRGVbJMKqkO9Rd/
+         YaN+vvVx9UO93yUupadZzuE0O1upp83Ou9PcIeFs6dp+VmoqBTcu854zJgofFX6ht8lW
+         sttSciWlnWq1iOgy1HRwLWAnhG8tR+H5f8N3DeVLaVlCko6b7zaCpPtI1rePjL+RDUGW
+         IDsYdKeeO7nzOIJTuj9jUJfA4BacEz5Kfa4GeWqZ/mvqCE/1Dp/STmYKBc59fx8/aIlS
+         5jXCWBgV8uAvra657YpoMBwePp/OUauG7jCrENJX5CfnKb3J7SdoKGAZL0dTRkTYOTJN
+         4LgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725606263; x=1726211063;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mmvQ+Tp6rwj8ytkbPRHE2L4V7NjEhAGYliO1vaPNhGg=;
+        b=OzGtqV5paj7nwKJAWXUZsd0Igdgcv3UaIfEJszEyg5iUlDW1IK4hPvheofz8FtcHFB
+         G7gi1u2ClymilSMqNEVJQk/lilw7rvX7WerQVAyaarJuvQ4cbHoyb1136YYg6XPCaYbb
+         d/IJ60hehxpJFG1tegQ69+zagE8cXYfkFChEYknTQK6qiTPRWDRu1Ji9x+SU868aaKOG
+         WNQrSmb5v31/WZWzeI+wUmSBadKS/Bm8ME7gIydhTxTd+DzWKckQaAlM5rRb+f9JcoIY
+         WnCsfW/jpHPucDgTe1ZU5sMvRmrOgUHUppXbSdctQZNRdxX1l5O7xFN7czO8egX7N7nY
+         Foqg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9IHT2+clFEjYjhZVDCXL/0myDocgSpSN0hP/+fRli4s2U+0i3xg9Kc3SNgjFg/AWyajSVQ2oOOW7j/rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVpKm6sITcbum7qXjLRPBpUQAQTvy6arlZQvStpgKSuyx8Gc6X
+	PT5TiM0IzmkxOBrDaA+5xJtDlGt5OFYkT4vSVBcjQN2+DR+O3MVFt36Yg6IdZwQ=
+X-Google-Smtp-Source: AGHT+IGlyWHVSEWro5k26v/9BbprNSe8PT6hvmfZpe/tLbwFZ0rhCf+beAnjTByheeKXnnumuvMrBw==
+X-Received: by 2002:adf:e747:0:b0:374:c847:866 with SMTP id ffacd0b85a97d-378895cb1ddmr1033472f8f.23.1725606263243;
+        Fri, 06 Sep 2024 00:04:23 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05c70d6sm10465345e9.5.2024.09.06.00.04.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 00:04:12 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: meson: Fix an issue with inaccurate hifi_pll
+ frequency
+In-Reply-To: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com> (Chuan Liu via's
+	message of "Fri, 06 Sep 2024 13:52:32 +0800")
+References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
+Date: Fri, 06 Sep 2024 09:04:01 +0200
+Message-ID: <1jo751qn4u.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2470924-78a2-4905-a24f-afb127644d70@linux.dev>
+Content-Type: text/plain
 
-On Thu, Sep 05, 2024 at 10:27:00AM -0400, Sean Anderson wrote:
-> On 9/4/24 12:35, Simon Horman wrote:
-> > On Tue, Sep 03, 2024 at 03:25:22PM -0400, Sean Anderson wrote:
-> >> To improve performance without sacrificing latency under low load,
-> >> enable DIM. While I appreciate not having to write the library myself, I
-> >> do think there are many unusual aspects to DIM, as detailed in the last
-> >> patch.
-> >> 
-> >> This series depends on [1].
-> >> 
-> >> [1] https://lore.kernel.org/netdev/20240903180059.4134461-1-sean.anderson@linux.dev/
-> > 
-> > Hi Sean,
-> > 
-> > Unfortunately the CI doesn't understand dependencies,
-> > and so it is unable to apply this patchset :(
-> > 
-> > I would suggest bundling patches for the same driver for net-next
-> > in a single patchset. And in any case, only having one active
-> > at any given time.
-> > 
-> 
-> Well, I would normally do so, but that patch is a fix and this series is
-> an improvement. So that one goes into net and this one goes into net-next.
-> 
-> I've been advised in the past to split up independent patches so they can be
-> reviewed/applied individually.
+On Fri 06 Sep 2024 at 13:52, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 
-Thanks Sean,
+> Some PLLs with fractional multipliers have fractional denominators that
+> are fixed to "100000" instead of the previous "(1 << pll->frac.width)".
+>
+> The hifi_pll for both C3 and S4 supports a fractional multiplier and has
+> a fixed fractional denominator of "100000".
+>
+> Here are the results of the C3-based command tests (already defined
+> CLOCK_ALLOW_WRITE_DEBUGFS):
+> * echo 491520000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
+> * cat /sys/kernel/debug/clk/hifi_pll/clk_rate
+> 491520000
+> * echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
+> * cat /sys/kernel/debug/meson-clk-msr/clks/hifi_pll_clk
+> 491515625       +/-15625Hz
+> * devmem 0xfe008100 32
+> 0xD00304A3
+> * devmem 0xfe008104 32
+> 0x00014820
+>
+> Based on the register information read above, it can be obtained:
+> m = 0xA3 = 0d163;
+> n = 0x1 = 0d1
+> frac = 0x14820 = 0d84000
+> od = 0x3 = 0d3
+>
+> hifi_pll calculates the output frequency:
+> calc_rate = xtal_rate / n * (m + (frac / frac_max)) >> od;
+> calc_rate = 24000000 / 1 * (163 + (84000 / 100000)) >> 3;
+> calc_rate = 491520000
+>
+> clk_rate, msr_rate, and calc_rate all match.
 
-Understood. Given the first point, which I had missed earlier,
-I'd would have suggested marking this patch-set as an RFC,
-then reposting it once the dependency hits net-next (via net).
+Thanks for the detailed description.
+
+Is there a possibility this applies to the g12/sm1 as well ? HiFi PLL
+has had trouble on these SoCs since support has been added. It sometimes
+takes a long time to report a lock. So long we consider it a failure.
+
+There was no such issue on AXG. If you check DT, it is the reason why
+AXG use the HiFi PLL for the sound card and G12/SM1 does not.
+
+>
+> The test and calculation results of S4 are consistent with those of C3,
+> which will not be repeated here.
+>
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+> Chuan Liu (4):
+>       clk: meson: Support PLL with fixed fractional denominators
+>       clk: meson: c3: pll: hifi_pll frequency is not accurate
+>       clk: meson: s4: pll: hifi_pll support fractional multiplier
+>       clk: meson: s4: pll: hifi_pll frequency is not accurate
+>
+>  drivers/clk/meson/c3-pll.c  |  1 +
+>  drivers/clk/meson/clk-pll.c | 22 +++++++++++++++++++---
+>  drivers/clk/meson/clk-pll.h |  1 +
+>  drivers/clk/meson/s4-pll.c  |  9 +++++++--
+>  4 files changed, 28 insertions(+), 5 deletions(-)
+> ---
+> base-commit: adac147c6a32e2919cb04555387e12e738991a19
+> change-id: 20240904-fix_clk-668f7a1a2b16
+>
+> Best regards,
+
+-- 
+Jerome
 
