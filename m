@@ -1,147 +1,201 @@
-Return-Path: <linux-kernel+bounces-318496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C5296EEBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:01:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FEE96EEBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBAD7283BD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC261C21722
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329AA1C2420;
-	Fri,  6 Sep 2024 09:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412D91C7B78;
+	Fri,  6 Sep 2024 09:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="paxnb1a2"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEpTkb31"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078D11C2339
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57C417C223
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725613311; cv=none; b=A1T3V0q0a2QRLas6GSSEH6qT42nBeYjMtaGB9Y4+VniJJEHZtQm+HFSJHt6CI0NCr7AFl2XLBdjnqiOaDlcQ08AeQLhkibr57u0PTa5DMEvmrMEI0flRLgtOrrMYbbqpfm6JPIEPmYVMGMPDASeVwTTXPNm25kntc1MwicnMpeQ=
+	t=1725613377; cv=none; b=mt5PqkwXfhfO2uQYHXRSqvCoAOVPbhWvZUCgiJGShgaC5PTiLJ3YdhJyrTg4zrwGBBOwMETrmLBl1sk7MoawvHQgO3STVWzPlCdUm2rd4Dkv9KFRINMk6QmN3RM/UfpGu21uVn6S/FKhIBWbvGjQVav8D7ww3kYj5u1/7PwoYbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725613311; c=relaxed/simple;
-	bh=AK1DjOpyBmg6MrZsgyycLtZEyblkfcxZ3xEStXmD5Sk=;
+	s=arc-20240116; t=1725613377; c=relaxed/simple;
+	bh=vXI3+CWnVCxD3jxgBFr8fRdSkjPReA3J4iCsJpW7vwg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C74r93MEPpLzWRDBtC02MQgJ9Z3Y7w51Ky1Bjf4IZfcKDexweyhR2AzxRIgEbw4Q+qoVPm/G6bZS0Fq0RkDLEkeZ91DjRg+wjCL2MmTLWlhN5GoudMs5xIWiPuwzxKVJ5Dc8aRRA3zcWFxq0n8V3AY9g2KFT5UJo8+LYDM0iHDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=paxnb1a2; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso1931774276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:01:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=P0c84W+iBZtccZ/zujLK2RVKjHbqKEJSRtj45Lj51/rCfwD18xRKas9JEKq5UgOWMFFWkdxHBRUvRmeoKa9etKS8RXs3ZwEpet39rnBBK5rspQTTQO67pJvPePgMCXGZnf/9PW+cDMiAZJ+JY9Ut158+S4wX6L+yvViBOG0VAbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEpTkb31; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a869f6ce2b9so230032966b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725613309; x=1726218109; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=naafd9NQdL7c0TVHJHZyeDroIpmJmtpt2mzXoi2uMhw=;
-        b=paxnb1a2Ha1yT4jQNLC3ma595OoNDdyFiUjMbsBFa7qcq4INetdoEfMSXOt/kjiuBu
-         HpKdXhjN7f7nfeW5pSEOThfAxqpn6IQKelaAicKCQYKiMje+O7ecdBLnkHu5YKfJi2U4
-         wuFVLeppYMB+wkrQUpVOqC3oCuOaYh9Z/Ut+FFNPiHZ3ugyQC2aTCSL7kOl/NRTAAyul
-         I34J/3Q/TK+594y7zJWXNJJDBBFo3hkwIMSSuMVOihJdTHhqQMtZLHtGVu9uvt2BaSW0
-         BENZWBZXV9+AGmidDpEe3HB2Y2d6HJC2VTAYvCXDHcIzhdnGB4vbB6ZS0vXWALM6C7uy
-         d/yw==
+        d=gmail.com; s=20230601; t=1725613374; x=1726218174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jWDTdSp8MaQzxWMHggACQJpon5x26di5jgLCCGz319U=;
+        b=MEpTkb31KsvCryEyGDxNp3q8SOrDt2aMP9JixZqPYQqb4ftp6q303xMbWAEprPcb9Q
+         u7EIlnfs9s/A6mpE+N3Hyxeywe8biOVCcExXclPzSCizkT0sZnV6L0lAMkLSFvrCq1Up
+         fvqqeBi8Tj7VYjexJsxRW8bnG/REIN095NiHGC8jIZgK0iM4HYGTxHFPUGPlCMfDs+xS
+         0jGlv7FhBUUdzezJZf8Lk1YHj2TE+Ecjmm1vau/S4U6fYhUh/J47UzEkHCeET8ZENqP5
+         P9hvTwxf4s9CYBIcRzp5/QhzdCIxrQhhF8+r5kOQTPYgFxgNocjDUILEmecEC1+S3jaI
+         9Kzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725613309; x=1726218109;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=naafd9NQdL7c0TVHJHZyeDroIpmJmtpt2mzXoi2uMhw=;
-        b=g6IYeKKR1rSvGC39yipLf97cHYbMhL9ViqQCz1FHgAwzkEP4y2POgr7CSW7LeN9F/d
-         pGYUyVFGUVHZi129Hj9IglL19AyUX6MFgTlVXYhyEMhDT6qeB24fhkaBEtzO660gIX3C
-         2x7ZBb9V7itNmfk0iInRZjAQW7ySDeaMx9xWAt4qvx6wDr4M5nYe1ofR/EnDY7Nh97N9
-         TY/NfeXufrRydupiNoIw4Pq+ulYGV0IZDD0jH4opI2NXxRygZmlWb8cMXpNArYx2oO7U
-         Zg+bybVbqNyY770Dh+kCsMdftVt7W2F8p9Kx/ovr6jUBJkPOzPZSZb5o63fECoeN5o1M
-         oeQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWF12dCXAy1EvxUc01DdgWXS7YfI2ytutR/nIpewvqeVn1w78IkJIn1fCZwOfgqZtYOJ8QgWE1WakMu8SQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVif5ZlqB80aZYJTDkOCp+XIAlfNGWhy0RGE2ixLFdcwURAeJo
-	GRWQB41IkQQqKXMMYZU8wYX7vOXy8Mth3GZbs/x+wVsdP5QjcqrAiCbzsXrtgWnyv+OUaEvHRBS
-	vfl1jrpDKlViFSP3JXY2hgcnfeYmYblooNJm9mw==
-X-Google-Smtp-Source: AGHT+IFGQXdRZWy9RIvR/NJ/1402FeLabmNEa/IgMAE8xXJL7U/I48UXtAHrMD5jwlbUTFr/jlclZyUQEZZyPK0rr4M=
-X-Received: by 2002:a05:6902:2e11:b0:e0b:db06:18cc with SMTP id
- 3f1490d57ef6-e1d34875b85mr2345005276.12.1725613308963; Fri, 06 Sep 2024
- 02:01:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725613374; x=1726218174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jWDTdSp8MaQzxWMHggACQJpon5x26di5jgLCCGz319U=;
+        b=kNyAWskNanqp557H1T0fvqL6gc5yD9vgoGLzdmskYhm9SCp2e80KEBph5C2eVWanO2
+         VsD7lRFW97au+JC9VBXjeoicqpTzDv69+ZEMrahyuCDbAOVCsxkPSamdz4IAT8+2BZzf
+         WhPdtFz2CxdaeOnVdrQQz0nKDsSYWK6AoyuL8/LOajAfgN+eVVKkO1entXEq1LGybxue
+         tBaa+F2iQX0HPEJR943xZ4+HKBmRJYokWNNPsebI59wI6co3BeheHWnNrlCKcHIoW/fH
+         ZyXCJdrYZJ/IOBei8yz1ZMh4vW/HGljYLuZKWKHgxVQeWE2rux3J4xsustUtderx23Ti
+         W8Fw==
+X-Gm-Message-State: AOJu0Yxlgpqcf5555q+LlAWngLHNYnnCo4SuipjCWZoE+k/Egv+31bFk
+	GqWfzopjuzo4xff+7x88mNFxVb+YQFE9khX80dbwQ4qTN+FA0DQ7fxKxb/8weQLWhZPTRHYXNyR
+	Dkdi8myXdxVJD197etFANi7y7TV6WX+WM
+X-Google-Smtp-Source: AGHT+IGhbjH44iESmJRDI5YEdttWpwN9LgkjOlo15dwFpBWi8wXypKs2uNe88KizYFdj9URI2+1ReXZ0ojziyLKapC8=
+X-Received: by 2002:a17:906:fd8b:b0:a8a:809b:14e0 with SMTP id
+ a640c23a62f3a-a8a88871d22mr141192366b.48.1725613373791; Fri, 06 Sep 2024
+ 02:02:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com>
- <20240905-lpm-v6-10-constraints-pmdomain-v3-2-e359cbb39654@baylibre.com>
-In-Reply-To: <20240905-lpm-v6-10-constraints-pmdomain-v3-2-e359cbb39654@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 6 Sep 2024 11:01:13 +0200
-Message-ID: <CAPDyKFq=z8QQ3BLHd=sdJUcP+ZuekUzaBEt5PLARgJWD=PBMpA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] pmdomain: ti_sci: add wakeup constraint management
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
-	Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
-	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <cover.1725334811.git.bo.wu@vivo.com>
+In-Reply-To: <cover.1725334811.git.bo.wu@vivo.com>
+From: Juhyung Park <qkrwngud825@gmail.com>
+Date: Fri, 6 Sep 2024 18:02:42 +0900
+Message-ID: <CAD14+f2M+C_21h2bV6=GMhNwgWzLVaCL5jv1SQxsuKoveX6P_w@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH 00/13] f2fs: introduce inline tail
+To: Wu Bo <bo.wu@vivo.com>
+Cc: linux-kernel@vger.kernel.org, Wu Bo <wubo.oduw@gmail.com>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 6 Sept 2024 at 00:03, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> During system-wide suspend, check all devices connected to PM domain
-> to see if they are wakeup-enabled.  If so, set a TI SCI device
-> constraint.
->
-> Note: DM firmware clears all constraints on resume.
->
-> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
-> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+Hi Wu,
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Interesting patch-set.
 
-Kind regards
-Uffe
+A quick test here on my daily-driver phone's data (785558 inodes) with
+both compression and encryption disabled, copied via rsync to 2 fresh
+f2fs partitions with and without inline tail:
+Before: 170064928KiB
+After: 169249780KiB
 
-> ---
->  drivers/pmdomain/ti/ti_sci_pm_domains.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+So about 0.48% saved.
+
+Let me know if this is an unexpected result.
+
+Thanks,
+
+On Tue, Sep 3, 2024 at 5:42=E2=80=AFPM Wu Bo via Linux-f2fs-devel
+<linux-f2fs-devel@lists.sourceforge.net> wrote:
 >
-> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> index bb95c40ab3ea..1ab1e46924ab 100644
-> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> @@ -74,6 +74,21 @@ static void ti_sci_pd_set_lat_constraint(struct device *dev, s32 val)
->                         pd->idx, val);
->  }
+> The inode in F2FS occupies an entire 4k block. For many small files, this=
+ means
+> they consume much more space than their actual size. Therefore, there is
+> significant potential to better utilize the inode block space.
 >
-> +static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
-> +{
-> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> +       struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-> +       const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-> +       int ret;
-> +
-> +       if (device_may_wakeup(dev)) {
-> +               ret = ti_sci->ops.pm_ops.set_device_constraint(ti_sci, pd->idx,
-> +                                                              TISCI_MSG_CONSTRAINT_SET);
-> +               if (!ret)
-> +                       dev_dbg(dev, "ti_sci_pd: ID:%d set device constraint.\n", pd->idx);
-> +       }
-> +}
-> +
->  /*
->   * ti_sci_pd_power_off(): genpd power down hook
->   * @domain: pointer to the powerdomain to power off
-> @@ -115,6 +130,8 @@ static int ti_sci_pd_suspend(struct device *dev)
->         if (ti_sci_pd_is_valid_constraint(val))
->                 ti_sci_pd_set_lat_constraint(dev, val);
+> Currently, F2FS has two features to make use of the inode block space: in=
+line
+> data and inline xattr.
 >
-> +       ti_sci_pd_set_wkup_constraint(dev);
-> +
->         return 0;
->  }
+> Inline data stores file which size is smaller then 3.5k in inode block. H=
+owever,
+> for slightly larger small files, there still have much waste.
+> For example, a 5k file requires 3 blocks, totaling 12k of space, which is
+> more than twice the size of the file itself!
 >
+> Additionally, the end of a file often does not occupy an entire block. If=
+ we can
+> store the end of the file data within the inode block, we can save an ent=
+ire
+> block for the file. This is particularly important for small files.
+>
+> In fact, the current inline data is a special case of inline tail, and
+> inline tail is an extension of inline data.
+>
+> To make it simple, inline tail only on small files(<64k). And for larger =
+files,
+> inline tails don't provide any significant benefits.
+>
+> The layout of an inline tail inode block is following:
+>
+> | inode block     | 4096 |     inline tail enable    |
+> | --------------- | ---- | --------------------------|
+> | inode info      | 360  |                           |
+> | --------------- | ---- | --------------------------|
+> |                 |      | extra info         | 0~36 |
+> |                 |      | **compact_addr[16] | 64   |
+> | addr table[923] | 3692 | reserved           | 4    |
+> |                 |      | **tail data        |      |
+> |                 |      | inline_xattr       | 200  |
+> | --------------- | ---- | --------------------------|
+> | nid table[5]    | 20   |
+> | node footer     | 24   |
+>
+> F2fs-tools to support inline tail:
+> https://lore.kernel.org/linux-f2fs-devel/20240903075931.3339584-1-bo.wu@v=
+ivo.com
+>
+> I tested inline tail by copying the source code of Linux 6.9.7. The stora=
+ge
+> space was reduced by approximately 8%. Additionally, due to the reduced I=
+O, the
+> copy time also reduced by around 10%.
+>
+> This patch series has been tested with xfstests by running 'kvm-xfstests =
+-c f2fs
+> -g quick' both with and without the patch; no regressions were observed.
+> The test result is:
+> f2fs/default: 583 tests, 6 failures, 213 skipped, 650 seconds
+>   Failures: generic/050 generic/064 generic/250 generic/252 generic/563
+>       generic/735
+>       Totals: 607 tests, 213 skipped, 30 failures, 0 errors, 579s
+>
+> Wu Bo (13):
+>   f2fs: add inline tail mount option
+>   f2fs: add inline tail disk layout definition
+>   f2fs: implement inline tail write & truncate
+>   f2fs: implement inline tail read & fiemap
+>   f2fs: set inline tail flag when create inode
+>   f2fs: fix address info has been truncated
+>   f2fs: support seek for inline tail
+>   f2fs: convert inline tail when inode expand
+>   f2fs: fix data loss during inline tail writing
+>   f2fs: avoid inlining quota files
+>   f2fs: fix inline tail data lost
+>   f2fs: convert inline tails to avoid potential issues
+>   f2fs: implement inline tail forward recovery
+>
+>  fs/f2fs/data.c     |  93 +++++++++++++++++++++++++-
+>  fs/f2fs/f2fs.h     |  46 ++++++++++++-
+>  fs/f2fs/file.c     |  85 +++++++++++++++++++++++-
+>  fs/f2fs/inline.c   | 159 +++++++++++++++++++++++++++++++++++++++------
+>  fs/f2fs/inode.c    |   6 ++
+>  fs/f2fs/namei.c    |   3 +
+>  fs/f2fs/node.c     |   6 +-
+>  fs/f2fs/recovery.c |   9 ++-
+>  fs/f2fs/super.c    |  25 +++++++
+>  fs/f2fs/verity.c   |   4 ++
+>  10 files changed, 409 insertions(+), 27 deletions(-)
 >
 > --
-> 2.46.0
+> 2.35.3
 >
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
