@@ -1,105 +1,76 @@
-Return-Path: <linux-kernel+bounces-318686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254D896F1A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C4596F1A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6461F233C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E6DB2272F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947361C9ECE;
-	Fri,  6 Sep 2024 10:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="G6x/byVg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552AE1C9EC1;
+	Fri,  6 Sep 2024 10:37:50 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5831C9EC1;
-	Fri,  6 Sep 2024 10:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725619092; cv=pass; b=qMMsQKH7JKCzjFIjCtHchxPMCU+dPI5GXskn0/soujSrA67fkCOeFBw9smMelmhanWQhBEPcbJII1NSkHcS4AOHihIK1DINkbnNAVS8TOFccgRSJv+9NAW+8moO9GNueYLjV2CLvlaBLkQKVj6vE/qQW9EU0RXSrR/5WJvkDSVU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725619092; c=relaxed/simple;
-	bh=S5GeQ2PX64HKmYqJxWN562B3NUdKkEmZivnovPV5oS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tu2dpWOmPFQKEr6m1y7iDuQORIC55OT503Q8KNE64TAcZY8zfCQEi8vK/QyOMosLxDUcjkdIQol5Jr0+XEDIuTYqIOmq0swFpIcPDzlzyB/9gAHoAqDjyq3FJ7lwd1kMDzXaqLxwxd/DLQmBHgSBDTM++Hz8SRqxfpnpbq9hM2w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=G6x/byVg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: usama.anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725619072; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=j7kL7hTxwYWgV809uPCeUug65QSA2izxVhypOB4bA6zSAGEtkywqaiK+998+BrvsUXNqdRQj/h2B0eeeUKRdgvMgceqeDb0Oz82B8q5/kDB1J17I3y86pj929q+l/s8ShFRWH6I8jamzdtBVLwO8m5C4mWhmwCEpTskrgGHVPao=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725619072; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=dji0WrDUX2YOKzFvOkOb3cVSwywumU9GEEbmJmUTJuI=; 
-	b=j+QBZFkkyPabDB5axQ3mReO1+rifmwph+2KauiTuLn7eP56wLQFJDYU/Lq+s1V70PXtb9RNtAD60a5HsAI9hTcjPkYY/S6tBem/ZBfFWjokshAuzPgy85T1AZS6BmX1c5k6db5inUHVZe5BeDs4uUBTlUbwvMGOoJLKxOuBla20=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725619072;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=dji0WrDUX2YOKzFvOkOb3cVSwywumU9GEEbmJmUTJuI=;
-	b=G6x/byVgXowohDSlIYd2cZspWzhVZ2rhiammIELvyVwZyEhwn20PRqw3oI3JGX73
-	GLeniHl6wtlQn18j6zm6OLxDTbsQY9rLqElG92Q5lU2Xxnkt1tXZe5cgyYYWYmVMWGB
-	vo1TFcaDN/0c7/6YzYsQxhmoYJZVn8Fu9dFp9vjI=
-Received: by mx.zohomail.com with SMTPS id 1725619071634303.6658924086322;
-	Fri, 6 Sep 2024 03:37:51 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
-	Syed Saba Kareem <Syed.SabaKareem@amd.com>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: amd: acp: Return in-case of error
-Date: Fri,  6 Sep 2024 15:37:24 +0500
-Message-Id: <20240906103727.222749-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C681C8FD8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725619070; cv=none; b=MT3JnasoHC9Y0zQMOybIdEhg4O6NG7dijB0WpkJmS3UTypiTts5N+fMjc48YIikG8pZfEDC5qUTPp/REsFYKqUN6qTY3D1fYxgfNMrc7b9Aky1T9EuKn6gwHdvRef9x4HDQW5fG+eZ2M5iEakj4fQlfo/sf3SFMzLgEYSs5540Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725619070; c=relaxed/simple;
+	bh=fknTa8a8xDipkCYrePSsQTLagTPC4FM5VAA/rgPzynU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dQD99C9KMvwVlxArqomW9IkvfuKXm7dx1NVZoGSdjzhbszZaIX+cph7ISuCALcu3rjCZmTd9LDk/cuoUq9eq5yNJWDFt0gNaMKTapnAQKQys7ahfBn4xKEUQe4iiBRwMURmuQohpB4gwUWJTRPpbWnCTXaMsDdishhAnK6SaS9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a3754a02bso461928239f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:37:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725619068; x=1726223868;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QhX9JfzOe0jyuZyP+4YKY9K8LKwJP5t7uxyVlFjHVM=;
+        b=MW1FLkdpFDZUYYoVBefYZ25ajecSnfrvLdJ+kX7sq+pCER2soBpbSBysq7QExoRN7h
+         CxDFjznb98ecn0A2gdVRKT38qrVxhTVRyT3m6pmNup4f3JgLPty9/Z2NhQTj81mh5bhy
+         LUzTd76IAvj0KHr5JqgG3CdGq5MPrNEFFK70Umhze4s9DZKXnDag7FHzNcgKuapi/pjN
+         tCdO/Mf/Ncs6EiUneawrP0IuaucU5T9riAavhNUl1J5v1pwT2rqD4MrtitwDTf2FPTTZ
+         GxaaxBkboymgkX4RbhcAx8kn53Wn6zZKpPNm/M4BDGO8eXLWRimN9aJUXi96glXG9EWU
+         l5BQ==
+X-Gm-Message-State: AOJu0Yz0M3ehQvKXR5q6S+95F89mId/k71AonQWNX5vrYr3yKKV5CTmf
+	DU+ReA5mzn16b5fy6AwtiqWF5/Ce4G9Cns8mKZencYJKQ3W8Jyr3ERETc/0E+g+e2d3bnm8rXYN
+	sfB8pWHs5rQyinsTuwLGCH10e73MvtDIpW1gjrReGDH1PmFvSTn3/yws=
+X-Google-Smtp-Source: AGHT+IFZPmaSzZKRtKVmu2DibVhGcPaPiauepWzZuejKR9rX/N0ytk5nTqEJoWG+fcIZZyoYtSqaE+RLgJ1M3xyAmfaT2KE41M9q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6e02:12e3:b0:3a0:4aa5:5235 with SMTP id
+ e9e14a558f8ab-3a04f10a955mr837715ab.4.1725619067768; Fri, 06 Sep 2024
+ 03:37:47 -0700 (PDT)
+Date: Fri, 06 Sep 2024 03:37:47 -0700
+In-Reply-To: <0000000000009cd5bc060a430d80@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008d6b15062170ff96@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+cf93299f5a30fb4c3829@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Return when error occurs instead of proceeding to for loop which will
-use val uninitialized.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Fixes: f6f7d25b1103 ("ASoC: amd: acp: Add pte configuration for ACP7.0 platform")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
-The fix may be wrong. Please consider this patch as report and fix it.
----
- sound/soc/amd/acp/acp-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+***
 
-diff --git a/sound/soc/amd/acp/acp-platform.c b/sound/soc/amd/acp/acp-platform.c
-index ae63b2e693ab5..3a7a467b70633 100644
---- a/sound/soc/amd/acp/acp-platform.c
-+++ b/sound/soc/amd/acp/acp-platform.c
-@@ -231,7 +231,7 @@ void config_acp_dma(struct acp_dev_data *adata, struct acp_stream *stream, int s
- 			break;
- 		default:
- 			dev_err(adata->dev, "Invalid dai id %x\n", stream->dai_id);
--			break;
-+			return;
- 		}
- 		break;
- 	default:
--- 
-2.39.2
+Subject: 
+Author: nogikh@google.com
 
+#syz invalid
 
