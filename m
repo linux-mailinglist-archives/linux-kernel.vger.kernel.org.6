@@ -1,144 +1,96 @@
-Return-Path: <linux-kernel+bounces-318521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8904596EF20
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:26:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701F296EF29
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ACD1F246DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D11B2815A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949AA158DC1;
-	Fri,  6 Sep 2024 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgnI2meK"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3571A1C7B9D;
+	Fri,  6 Sep 2024 09:27:45 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EDE1C7B93;
-	Fri,  6 Sep 2024 09:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5EF1C7B94;
+	Fri,  6 Sep 2024 09:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725614768; cv=none; b=mRn2i9fmA7f3yEZlMpXZpze7cOEwF/nPhdKGF5BoD6zjON6FtdEgHLQdFFCI84cMximtdPhRa7oWy9Uz5m2dVW1iqwFmsU+HurbV+DtaLuGGutXYoxhXPA8SUa9qIRjbGXeDFkX79GHmitCO/41AfNWnunrQ5eeMVg8If2FjtCc=
+	t=1725614864; cv=none; b=EANDmCPsbagR1e61QEEXTd7ohrCtfiMG747XdOafAR/c6gnX0Bzm69+rpi9uW+EWawZVSrcssApbDiaCHuexd/o9sC9l03XDTbA3/3QezH7e975YKk1ycCswC8daq9Ihlfkc9oKrB3XUdR7cbrqSGGrzhMU5i6hgaXbKLYcoq4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725614768; c=relaxed/simple;
-	bh=1rf4cNFUJy8d8/dUnLrOK9aVtm01X8NuHJxBam5tXis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWOvCM2oN5iHTEnbxyD+SyBDudAhIW1RUoNxf0SVzztnWLwuLaTsGTzvaundxwz6gT4jqS3FMrYg45VuqPSuXQWEp83LXF06js02u1U4CgXXYmqwojCBy0uuF4qNRCaaNxzVuuFgIuqu/Mbn268TFGLLoRb4BtF9OCHM7nAfWHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AgnI2meK; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5010a36e69dso627549e0c.0;
-        Fri, 06 Sep 2024 02:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725614765; x=1726219565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Gv7O8iFsLmZOem+ZGCytIr9AEh8K7CayQ/E2g4S4Is=;
-        b=AgnI2meKT1OmFG6qTn1lTqwdkAc29RHZSu/HeUcXnSv/5aALiMv4xemhRiQ0I8TQv+
-         fT5zsDOCzij6DJNbDvANpixh8w4KOMCdvunlM2u6v6k8odgJlQ9BT61Xo/QufBA33umo
-         Cj0bjFTEpbk9PNqoAwMNMTfpA3WF31rgXDvBIyO8XvgCXMiHxhrmJaQBwXYBK3vDhaCa
-         gvWexb1hz1ABDFt4rvD40b05+NdfOby4OBxlkN+Ek3BYGcGUMwfIydcjv5O+JNzyFv5A
-         pHx+9yPnLFAu9210eVP+AdIN53asco+AZb2K5aqEIdRcOYWbaBiUwxe1yxR4mWsMKDAN
-         BD5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725614765; x=1726219565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Gv7O8iFsLmZOem+ZGCytIr9AEh8K7CayQ/E2g4S4Is=;
-        b=Y7h4YQHChNIM2YXUmvChEOIrwrgN34kT9ufrVDdt8chiYFXZHrnIDYJn7bCJ/RmNbj
-         73qaXkVKec5gKX7i8hYJr6AlJJFlHJ/MrH9RqbLGvoTNUCowU8K0kGqTObx2xM3u1LBH
-         mVx1KoTzRyI9L3qP8CQ18gcqmrtuUdztSSoMUw4VyiQiOcn7RkitETDqIvSC7UxgxfXM
-         zMDvavPnvXIrAm85orlikQAQoCcmI/NKfyACZSxyz5jiAc3JR5pSnCpZntEKwCzmjr9R
-         M06zU3d7oXKj5J1TJok61H3JDmd86MnnbVw5SNHnz0P6B4Z1TMMBhUXB9MIlLsbqCHSv
-         RoJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqMWm49DmyULLEcbTws67elQ28w74x38BnN/pl6jbXBViF5w/n7MU6uMrziG/YwN6lS/7t03BDT+b/G/uO@vger.kernel.org, AJvYcCXQ+jF+1gtLMnnexRtPT0EV/M3G6Ivw5Xe6J7QEZ7x5XBSCh7JHXQEUhkzQCwbwnV0cVLD93C45FHotJRvN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1RmwAwPt08I89GDmpzn7ASm0ca9y2kTzvGkFBSzLV9x16Jxjd
-	RgwQ8IPPZBcFJx5+2fpMHKnE99qfGBKSrFT819avZXqtoIILhUKd4O9Z8hHVKz+rKms+bwSMH1j
-	/wL+XmZp3rlezv5q4fljLdVfK6Wk=
-X-Google-Smtp-Source: AGHT+IEr/n+On170K0HW3Vn/ODvTisQwHHgr+zwDAYrGpv66t5zLaAjYy+fbepob8nfgh0T596y+2+5ItisBjEe+9hU=
-X-Received: by 2002:a05:6122:1da2:b0:4f6:e87d:5160 with SMTP id
- 71dfb90a1353d-502142567e3mr1764345e0c.9.1725614765322; Fri, 06 Sep 2024
- 02:26:05 -0700 (PDT)
+	s=arc-20240116; t=1725614864; c=relaxed/simple;
+	bh=hSgLbdVySfl4Q6f8eJEadZzN87CI9P4mpBAqv75zD6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=idsgedAl48m73VtoVRQYvKqgm7vlrcgbRjJ2rnkdaXW1eOl5MJLyGzR3pmCY0JitUCCDV3qvo7SuH/SE+7IsSZaIYT4wWTMOzqZ0VylcGNbk6msR6/lU54TefQ1s2qOUdYbpof7OazUPYWdv+Rk3+OMKMK/ZdtlhTzbJxCPYEOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3adb8d866c3211efa216b1d71e6e1362-20240906
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:b028dc87-11cf-4581-ae29-bfdb57adfd4d,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:1a3dffae82510f9c76cde797f2b905e8,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
+	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
+	NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 3adb8d866c3211efa216b1d71e6e1362-20240906
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <zenghongling@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 761202791; Fri, 06 Sep 2024 17:27:26 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 27A40B80758A;
+	Fri,  6 Sep 2024 17:27:26 +0800 (CST)
+X-ns-mid: postfix-66DACAFE-17534928
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node2.com.cn (NSMail) with ESMTPA id 01340B80758A;
+	Fri,  6 Sep 2024 09:27:19 +0000 (UTC)
+From: zenghongling <zenghongling@kylinos.cn>
+To: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	zhongling0719@126.com,
+	zenghongling <zenghongling@kylinos.cn>
+Subject: [PATCH] ALSA: hda/cs8409: Support new Dell Dolphin for device
+Date: Fri,  6 Sep 2024 17:27:03 +0800
+Message-ID: <20240906092703.1303605-1-zenghongling@kylinos.cn>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906080047.21409-1-hailong.liu@oppo.com>
-In-Reply-To: <20240906080047.21409-1-hailong.liu@oppo.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 6 Sep 2024 21:25:50 +1200
-Message-ID: <CAGsJ_4yAp=VF4c12soA0U5dzX-ksb3FV4UnC5e7Jtp+D6BO4iw@mail.gmail.com>
-Subject: Re: [PATCH] seq_file: replace kzalloc() with kvzalloc()
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 6, 2024 at 8:06=E2=80=AFPM Hailong Liu <hailong.liu@oppo.com> w=
-rote:
->
-> __seq_open_private() uses kzalloc() to allocate a private buffer. However=
-,
-> the size of the buffer might be greater than order-3, which may cause
-> allocation failure. To address this issue, use kvzalloc instead.
+Add 1 new Dell Dolphin Systems, same configuration as older systems.
 
-In general, this patch seems sensible, but do we have a specific example
-of a driver that uses such a large amount of private data?
-Providing a real-world example of a driver with substantial private data co=
-uld
-make this patch more convincing:-)
+Signed-off-by: zenghongling <zenghongling@kylinos.cn>
+---
+ sound/pci/hda/patch_cs8409-tables.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
-> ---
->  fs/seq_file.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/seq_file.c b/fs/seq_file.c
-> index e676c8b0cf5d..cf23143bbb65 100644
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -621,7 +621,7 @@ int seq_release_private(struct inode *inode, struct f=
-ile *file)
->  {
->         struct seq_file *seq =3D file->private_data;
->
-> -       kfree(seq->private);
-> +       kvfree(seq->private);
->         seq->private =3D NULL;
->         return seq_release(inode, file);
->  }
-> @@ -634,7 +634,7 @@ void *__seq_open_private(struct file *f, const struct=
- seq_operations *ops,
->         void *private;
->         struct seq_file *seq;
->
-> -       private =3D kzalloc(psize, GFP_KERNEL_ACCOUNT);
-> +       private =3D kvzalloc(psize, GFP_KERNEL_ACCOUNT);
->         if (private =3D=3D NULL)
->                 goto out;
->
-> @@ -647,7 +647,7 @@ void *__seq_open_private(struct file *f, const struct=
- seq_operations *ops,
->         return private;
->
->  out_free:
-> -       kfree(private);
-> +       kvfree(private);
->  out:
->         return NULL;
->  }
-> --
-> 2.30.0
->
->
+diff --git a/sound/pci/hda/patch_cs8409-tables.c b/sound/pci/hda/patch_cs=
+8409-tables.c
+index 36b411d1..bc14b18 100644
+--- a/sound/pci/hda/patch_cs8409-tables.c
++++ b/sound/pci/hda/patch_cs8409-tables.c
+@@ -546,6 +546,7 @@ const struct snd_pci_quirk cs8409_fixup_tbl[] =3D {
+ 	SND_PCI_QUIRK(0x1028, 0x0BD6, "Dolphin", CS8409_DOLPHIN),
+ 	SND_PCI_QUIRK(0x1028, 0x0BD7, "Dolphin", CS8409_DOLPHIN),
+ 	SND_PCI_QUIRK(0x1028, 0x0BD8, "Dolphin", CS8409_DOLPHIN),
++	SND_PCI_QUIRK(0x1028, 0x0BAA, "Dolphin", CS8409_DOLPHIN),
+ 	SND_PCI_QUIRK(0x1028, 0x0C43, "Dolphin", CS8409_DOLPHIN),
+ 	SND_PCI_QUIRK(0x1028, 0x0C50, "Dolphin", CS8409_DOLPHIN),
+ 	SND_PCI_QUIRK(0x1028, 0x0C51, "Dolphin", CS8409_DOLPHIN),
+--=20
+2.1.0
+
 
