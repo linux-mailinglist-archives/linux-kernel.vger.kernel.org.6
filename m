@@ -1,146 +1,74 @@
-Return-Path: <linux-kernel+bounces-319081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2551896F784
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:55:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A6496F785
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A721F25BEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28621F25ED4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5471D2788;
-	Fri,  6 Sep 2024 14:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CEA1D1F4E;
+	Fri,  6 Sep 2024 14:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3IAtx+Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XI42mrDW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2669172BA9;
-	Fri,  6 Sep 2024 14:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E1A1CF5F3;
+	Fri,  6 Sep 2024 14:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725634522; cv=none; b=i45r7Ey43p28ZwIORXodcY5Y+kJTft8R+OMvxc2LiFbA3JnsR8+wSpzFcP945ffUTAD6nwlrwX2xXIaVmNNIJ95oaqzMAjvv6TrHxjxL5jYhz6A+kBg6n8ySMoU8EJxaKGN7ETzVWhWb5tVV9NTlmOx5v1NbJe2Nl9gJJajs1iU=
+	t=1725634564; cv=none; b=kbShKMZ+I53ZhQcm08ztWw9b4anISqn9aWDJyOgzgD3zMafrx5QTqQYlPl1Oy2kVe1BgvjNZDDrshL8Gdhb+EpfuRu939hVmSmcLyyxG6p64wjlWZ/V5g3o1grrRLtw8Z0+I9pnXfUZ9JkeGUZILO2W23ho5A9JdP9XDsE02+Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725634522; c=relaxed/simple;
-	bh=MFuZNLwda90vW+mPXIjOs38OY9mGR52AE5fGXpmm25k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ANh4iGCovB19yFSXCEcHNHk7GMl5bNa1eFrt+nk1xvnk9Sjrzcr44S6wBGLdke7BLznWNLF52+vOp4vofIYAeQkc9IJufyFnpup95Y6NccM7YUDfDXU5ltvwuJO7vC05SOQ7/tJaOCYEqAlF8fH4G1e/F/9y1GJF6K4Mv7QkgZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3IAtx+Y; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725634521; x=1757170521;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=MFuZNLwda90vW+mPXIjOs38OY9mGR52AE5fGXpmm25k=;
-  b=Y3IAtx+YkuRWCM7NovAjjN6zcjyJ5yYBtNrEicF5e2aLRAGhq8Rhgr61
-   IQOf3dWrimUHslCuHnPtulWhGTFMxY5jtHS6+n+SJn93YSA3enuyfB9xb
-   ydJRYziumjHfsujXkxNu1J8aM3v+m8ee1n8t4l5nqFeJ0c6xIB9NPiaa4
-   kYfDLAnhZIwwgzF7p15eubkE9d/9WYSH0E/wUgOdgR3VEF38zJKE455jm
-   bNKX4+Cc9sjq8ECtUw9hZh+0GDP8bsua+imRn0bKZhITDwiP8FbaXn94X
-   bI2HAegooDkUJekNg8R+QPs/ljDqIuc9lRSM7Z9R0z9h5rjEj3O+TNEWp
-   w==;
-X-CSE-ConnectionGUID: pqNaLdhqSJK+kBNTC6TTpw==
-X-CSE-MsgGUID: 4j9Hj01uT1OUjCoMmkYjIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="23900516"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="23900516"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:55:20 -0700
-X-CSE-ConnectionGUID: 69DWNT1tTrKmjA8uXnUubQ==
-X-CSE-MsgGUID: fXGnhljAQQGHcGChVQ28fw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="70917921"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 06 Sep 2024 07:55:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BD38613E; Fri, 06 Sep 2024 17:55:14 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH net v1 1/1] netfilter: nf_reject: Fix build error when CONFIG_BRIDGE_NETFILTER=n
-Date: Fri,  6 Sep 2024 17:55:13 +0300
-Message-ID: <20240906145513.567781-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725634564; c=relaxed/simple;
+	bh=LGnZDMfJU884B2YPkVPeudaYSKIzukkErVdTwkER1r8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Sv8VbkmKruqZlnHBT2O4vyV1nG7rim2mKgaR4AyI8J3MEGxdGZLtR7MFlpF+ljimL7xyaI2W540NbEPFc05oTlfkLfi0irEjqQgWdEYOeLvZfE4Wm3og9Sp9ayZmRSLxsaGu/lcnqkzK+JW3DWIRp41PJ03JUUbqD/X5b1aee6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=XI42mrDW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D28C4CEC4;
+	Fri,  6 Sep 2024 14:56:02 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XI42mrDW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725634561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=LGnZDMfJU884B2YPkVPeudaYSKIzukkErVdTwkER1r8=;
+	b=XI42mrDWgxG4+GGrNaLclZ2jvIdN/SsSWelDdUSEcxWg9YzPEpcOHm0WjKDOgicpF2pDpA
+	TsS2lgB67NhGC6sFXtfK7jf5eEBsf2DKHrX47sqk3TAKK/Dza38SIoSin+lVEIVuBwIeJN
+	8k+F9hSQ5ezexArMKhJCdYEpO5SZSnI=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 82d7cc8d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 6 Sep 2024 14:56:01 +0000 (UTC)
+Date: Fri, 6 Sep 2024 16:55:58 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: maobibo <maobibo@loongson.cn>, gaosong@loongson.cn,
+	jiaxun.yang@flygoat.com, qemu-devel@nongnu.org, thomas@t-8ch.de,
+	xry111@xry111.site, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: LoongArch without CONFIG_ACPI and CONFIG_EFI
+Message-ID: <ZtsX_tcEuOjktUl9@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-In some cases (CONFIG_BRIDGE_NETFILTER=n) the pointer to IP header
-is set but not used, it prevents kernel builds with clang, `make W=1`
-and CONFIG_WERROR=y:
+Hi,
 
-ipv6: split nf_send_reset6() in smaller functions
-netfilter: nf_reject_ipv4: split nf_send_reset() in smaller functions
+It appears that as of QEMU 9.1, it's possible to boot LoongArch machines
+that don't provide EFI or ACPI.
 
-net/ipv4/netfilter/nf_reject_ipv4.c:243:16: error: variable 'niph' set but not used [-Werror,-Wunused-but-set-variable]
-  243 |         struct iphdr *niph;
-      |                       ^
-net/ipv6/netfilter/nf_reject_ipv6.c:286:18: error: variable 'ip6h' set but not used [-Werror,-Wunused-but-set-variable]
-  286 |         struct ipv6hdr *ip6h;
-      |                         ^
+Would you consider removing the `select ACPI` and `select EFI` from the
+arch Kconfig, so that kernels built for this minimal QEMU environment
+can be a bit leaner and quicker to build?
 
-Fix these by marking respective variables with __maybe_unused as it
-seems more complicated to address that in a better way due to ifdeffery.
-
-Fixes: 8bfcdf6671b1 ("netfilter: nf_reject_ipv6: split nf_send_reset6() in smaller functions")
-Fixes: 052b9498eea5 ("netfilter: nf_reject_ipv4: split nf_send_reset() in smaller functions")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- net/ipv4/netfilter/nf_reject_ipv4.c | 2 +-
- net/ipv6/netfilter/nf_reject_ipv6.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv4/netfilter/nf_reject_ipv4.c b/net/ipv4/netfilter/nf_reject_ipv4.c
-index 04504b2b51df..0af42494ac66 100644
---- a/net/ipv4/netfilter/nf_reject_ipv4.c
-+++ b/net/ipv4/netfilter/nf_reject_ipv4.c
-@@ -240,7 +240,7 @@ void nf_send_reset(struct net *net, struct sock *sk, struct sk_buff *oldskb,
- 		   int hook)
- {
- 	struct sk_buff *nskb;
--	struct iphdr *niph;
-+	struct iphdr *niph __maybe_unused;
- 	const struct tcphdr *oth;
- 	struct tcphdr _oth;
- 
-diff --git a/net/ipv6/netfilter/nf_reject_ipv6.c b/net/ipv6/netfilter/nf_reject_ipv6.c
-index dedee264b8f6..f5ed4e779b72 100644
---- a/net/ipv6/netfilter/nf_reject_ipv6.c
-+++ b/net/ipv6/netfilter/nf_reject_ipv6.c
-@@ -283,7 +283,7 @@ void nf_send_reset6(struct net *net, struct sock *sk, struct sk_buff *oldskb,
- 	const struct tcphdr *otcph;
- 	unsigned int otcplen, hh_len;
- 	const struct ipv6hdr *oip6h = ipv6_hdr(oldskb);
--	struct ipv6hdr *ip6h;
-+	struct ipv6hdr *ip6h __maybe_unused;
- 	struct dst_entry *dst = NULL;
- 	struct flowi6 fl6;
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Jason
 
