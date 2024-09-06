@@ -1,162 +1,190 @@
-Return-Path: <linux-kernel+bounces-319274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E546596F9EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:30:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A7A96F9E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66D40B23DBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F38D1C22150
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8127E1D79BB;
-	Fri,  6 Sep 2024 17:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3D41D5CDB;
+	Fri,  6 Sep 2024 17:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ir2sDJkj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mwWcw3lu"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B11D7985;
-	Fri,  6 Sep 2024 17:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3FE55B;
+	Fri,  6 Sep 2024 17:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725643785; cv=none; b=EvG6NjmXZe3cICw/SLI1l7rQQrzlqn4OzgSzwUhg4oTe4wcV6eQykN3hdO2ebhIjoihHtvZrKzhGEltnwX4la5tqFbyY50DU1Dn1oWs3dPlbGXq0dLNELK0u0tqnuAFXDHDSTRUrnCk62eMrl3yjYsS8BpEaiCHcfnIPStG+mPg=
+	t=1725643778; cv=none; b=t0FMiPmvGqawtE6V4bQbWpykEM1k7Ky8ZuzybkNN/tx5GXDo/tjijywWiZ+vMrmrhTM+qaZ9lSonZtF8P/XGkVX6o6P/UYpvpZ3tVequH1Mdm42gssu8cw8Ks7CZNuZESOEl37Etgy9emU09omkuEV5FrTYbs7/TZbmXx3bURGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725643785; c=relaxed/simple;
-	bh=bqxbf2UbdchPA3++K/VLWumlvgK77qHdYxBCz+Szp1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p1sQPoQva6HjIGZMS8dYIUhBW0fITy2exJ3X+VZTn7478xN+CJcbI7lqWY064NfVqw3BKFplZfwca1x2n8UeM+cN1cb15+BgM89s/Zm1QV66ECYmqw+xzfhpwzeQY/VeNq2R+G2K9Ny90XrFLn0jVJhT5raC8v1gTJoi8bF61xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ir2sDJkj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE06C4CEC8;
-	Fri,  6 Sep 2024 17:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725643784;
-	bh=bqxbf2UbdchPA3++K/VLWumlvgK77qHdYxBCz+Szp1Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ir2sDJkjTsFWXT9O7My2H5Ux2kNduLI/YKJSh41g2NyNFn2e+SLXDUgOuENf7QN6b
-	 Lc3AcvdLiqN7rui8pD5hl9dGPO25kAExe+Uc2b0KGIqI5sksRSMX+vc78T0CGReCNd
-	 Zbpd2YiqBCD6rOwqi6w3D5XrAAmGChxvo4U+oNUXK4YYm8ZLzKYxYMJtNWjyNsJseh
-	 9t5RO7amFA5Za6LIi90cnpvaQ5uSbffHXHy1svqtOm4y4Lrgrhs8ZqhA5HSP4EiFvC
-	 ryqkxobgoc2J76tAv//p1Mpi6uVkDiepe9qJNxJzsxafC9Tpc2iM52a0fU7DcArWit
-	 hq6ocAR79LGSw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	selinux@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org,
-	Daniel Gomez <da.gomez@samsung.com>,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH v2 2/2] selinux: move genheaders to security/selinux/
-Date: Sat,  7 Sep 2024 02:29:14 +0900
-Message-ID: <20240906172934.1317830-2-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240906172934.1317830-1-masahiroy@kernel.org>
-References: <20240906172934.1317830-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1725643778; c=relaxed/simple;
+	bh=PImS7UJ48429hdSI7psmmfyEJFCe/jIV68VMqGI9S70=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KPRufohPBht/3JK0O88zH4g1YE0fO36qy0frCwfMlv0P+KW77nIYEiJUHZyBsSR4Tt3dJA7CbDEQQiwAWA4S7gSpIspZTE9MLgSptM6zz27qncP9s5z/d+JSzaijrJA11T9jviXVcpEsDvPjefLKNBMwqAqYgyQEtuKgU7bvSUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mwWcw3lu; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725643773; x=1725902973;
+	bh=PImS7UJ48429hdSI7psmmfyEJFCe/jIV68VMqGI9S70=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=mwWcw3luUzoMt+vZTtSx77c96wwb0xyp+NKVtorWE+itT2wX4VS64ryYpS02bZxpx
+	 +LHVcaPaMrR/6nIqwoMUZ4Ab3qfc74JoXeIU5bHvHx/XAqnMeq7yFH7zWkmhT3wj1/
+	 RRbH+RqSRk1k2jmuBdy40UsbKJPT6nksOQ9Ewjj84ktG6rQ3YbtaraikKD3d/JVyOk
+	 z05f6v5y4wsrAgYX3o8McXKK1aYGd1iojpCl8QGsXhTQSg/l0YogTfjqKrPPdVP2m+
+	 IafRqvuHjXzUxKhnAH+h6p6UN/aFwJZ77IfQHhcsRXwTUuDLGZvYVe1PC9+ZX3pl2h
+	 Ju1x/DFqZZXjg==
+Date: Fri, 06 Sep 2024 17:29:28 +0000
+To: Greg KH <gregkh@linuxfoundation.org>
+From: Patrick Miller <paddymills@proton.me>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
+Subject: Re: [PATCH 2/2] checkpatch: warn on known non-plural rust doc headers
+Message-ID: <SP3tXoSxg14Ga_W2X_E6G3HpeqZjRVwWUhlMCcUMgDvvJOageFJiaQ1OLnZ0mxKuyueW4z10jZZgGankXKf8ezLTTEbyo_pF7vTbjrt0pZU=@proton.me>
+In-Reply-To: <2024090620-clause-unfrozen-f493@gregkh>
+References: <20240906164543.2268973-1-paddymills@proton.me> <2024090620-clause-unfrozen-f493@gregkh>
+Feedback-ID: 45271957:user:proton
+X-Pm-Message-ID: 40dcb189ac704d41f0abcb9d729c4cdc87ef8fb3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------92cba60f43a877a473dc0e95e992924985a3734b9d75f3703e94d444401cdbe1"; charset=utf-8
 
-This tool is only used in security/selinux/Makefile.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------92cba60f43a877a473dc0e95e992924985a3734b9d75f3703e94d444401cdbe1
+Content-Type: multipart/mixed;boundary=---------------------b57f89715bba07d51bf9c942a183d4da
 
-Move it to security/selinux/ so that 'make clean' can clean it up.
+-----------------------b57f89715bba07d51bf9c942a183d4da
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;charset=utf-8
 
-Please note 'make clean' does not clean scripts/ because tools under
-scripts/ are often used for external module builds. Obviously, genheaders
-is not the case here.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
 
-Changes in v2:
-  - Add more reason to move genheaders to security/selinux/
 
- scripts/remove-stale-files                                 | 3 +++
- scripts/selinux/Makefile                                   | 2 +-
- scripts/selinux/genheaders/.gitignore                      | 2 --
- scripts/selinux/genheaders/Makefile                        | 3 ---
- security/selinux/.gitignore                                | 1 +
- security/selinux/Makefile                                  | 7 +++++--
- .../selinux/genheaders => security/selinux}/genheaders.c   | 0
- 7 files changed, 10 insertions(+), 8 deletions(-)
- delete mode 100644 scripts/selinux/genheaders/.gitignore
- delete mode 100644 scripts/selinux/genheaders/Makefile
- rename {scripts/selinux/genheaders => security/selinux}/genheaders.c (100%)
 
-diff --git a/scripts/remove-stale-files b/scripts/remove-stale-files
-index f38d26b78c2a..4e7d25668a98 100755
---- a/scripts/remove-stale-files
-+++ b/scripts/remove-stale-files
-@@ -20,4 +20,7 @@ set -e
- # yard. Stale files stay in this file for a while (for some release cycles?),
- # then will be really dead and removed from the code base entirely.
- 
-+# moved to security/selinux/genheaders
-+rm -f scripts/selinux/genheaders/genheaders
-+
- rm -f *.spec
-diff --git a/scripts/selinux/Makefile b/scripts/selinux/Makefile
-index 59494e14989b..4b1308fa5732 100644
---- a/scripts/selinux/Makefile
-+++ b/scripts/selinux/Makefile
-@@ -1,2 +1,2 @@
- # SPDX-License-Identifier: GPL-2.0-only
--subdir-y := mdp genheaders
-+subdir-y := mdp
-diff --git a/scripts/selinux/genheaders/.gitignore b/scripts/selinux/genheaders/.gitignore
-deleted file mode 100644
-index 5fcadd307908..000000000000
---- a/scripts/selinux/genheaders/.gitignore
-+++ /dev/null
-@@ -1,2 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only
--genheaders
-diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/genheaders/Makefile
-deleted file mode 100644
-index 866f60e78882..000000000000
---- a/scripts/selinux/genheaders/Makefile
-+++ /dev/null
-@@ -1,3 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--hostprogs-always-y += genheaders
--HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
-diff --git a/security/selinux/.gitignore b/security/selinux/.gitignore
-index 168fae13ca5a..01c0df8ab009 100644
---- a/security/selinux/.gitignore
-+++ b/security/selinux/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- av_permissions.h
- flask.h
-+/genheaders
-diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-index c47519ed8156..86f0575f670d 100644
---- a/security/selinux/Makefile
-+++ b/security/selinux/Makefile
-@@ -36,7 +36,10 @@ quiet_cmd_genhdrs = GEN     $(addprefix $(obj)/,$(genhdrs))
- # see the note above, replace the $targets and 'flask.h' rule with the lines
- # below:
- #  targets += $(genhdrs)
--#  $(addprefix $(obj)/,$(genhdrs)) &: scripts/selinux/...
-+#  $(addprefix $(obj)/,$(genhdrs)) &: $(obj)/genheaders FORCE
- targets += flask.h
--$(obj)/flask.h: scripts/selinux/genheaders/genheaders FORCE
-+$(obj)/flask.h: $(obj)/genheaders FORCE
- 	$(call if_changed,genhdrs)
-+
-+hostprogs := genheaders
-+HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
-diff --git a/scripts/selinux/genheaders/genheaders.c b/security/selinux/genheaders.c
-similarity index 100%
-rename from scripts/selinux/genheaders/genheaders.c
-rename to security/selinux/genheaders.c
--- 
-2.43.0
+
+On Friday, September 6th, 2024 at 1:00 PM, Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+
+> =
+
+
+> =
+
+
+> On Fri, Sep 06, 2024 at 04:45:49PM +0000, Patrick Miller wrote:
+> =
+
+
+> > Adds a check for documentation in rust file. Warns if certain known
+> > documentation headers are not plural.
+> > =
+
+
+> > Signed-off-by: Patrick Miller paddymills@proton.me
+> > Suggested-by: Miguel Ojeda ojeda@kernel.org
+> > Link: https://github.com/Rust-for-Linux/linux/issues/1110
+> > =
+
+
+> > ---
+> > scripts/checkpatch.pl | 8 ++++++++
+> > 1 file changed, 8 insertions(+)
+> > =
+
+
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > index 39032224d504..0e99d11eeb04 100755
+> > --- a/scripts/checkpatch.pl
+> > +++ b/scripts/checkpatch.pl
+> > @@ -3900,6 +3900,14 @@ sub process {
+> > "Avoid using '.L' prefixed local symbol names for denoting a range of =
+code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-ann=
+otations.rst\n" . $herecurr);
+> > }
+> > =
+
+
+> > +# check that document section headers are plural in rust files
+> > + if ( $realfile =3D~ /\.rs$/
+> > + && $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant)\s*$/ )
+> > + {
+> > + WARN( "RUST_DOC_HEADER",
+> > + "Rust doc he
+> > aders should be plural\n" . $herecurr );
+> =
+
+
+> =
+
+
+> Something went wrong, your patch lost the tabs and it had a line wrap?
+My bad! Editor settings strikes again.
+
+> =
+
+
+> And why is Rust unique for plurals here? What if there really is only
+> one example?
+Per Miguel Ojeda (who suggested the issue): "We prefer plurals when writin=
+g code documentation sections: # Examples, # Invariants, # Guarantees and =
+# Panics, so that it is consistent and so that one can add more examples w=
+ithout having to change the section name."
+> =
+
+
+> thanks,
+> =
+
+
+> greg k-h
+
+I apologize, first time submitting. Do I submit a new email or add the fix=
+ed patch to this one?
+-----------------------b57f89715bba07d51bf9c942a183d4da
+Content-Type: application/pgp-keys; filename="publickey - paddymills@proton.me - 0xDCA74891.asc"; name="publickey - paddymills@proton.me - 0xDCA74891.asc"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="publickey - paddymills@proton.me - 0xDCA74891.asc"; name="publickey - paddymills@proton.me - 0xDCA74891.asc"
+
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgp4ak1FWWs0UnNSWUpLd1lCQkFI
+YVJ3OEJBUWRBU1FhVy9FUmQ4dGZncXNNSHQweTY3ZFdRTEU3UnV2T3gKM2p6YWdhRWI0c0xOSzNC
+aFpHUjViV2xzYkhOQWNISnZkRzl1TG0xbElEeHdZV1JrZVcxcGJHeHpRSEJ5CmIzUnZiaTV0WlQ3
+Q2p3UVFGZ29BSUFVQ1lrNFJzUVlMQ1FjSUF3SUVGUWdLQWdRV0FnRUFBaGtCQWhzRApBaDRCQUNF
+SkVKdFJHcnN1cjU0UkZpRUUzS2RJa1N2VW5DdmU4MDFtbTFFYXV5NnZuaEZpcUFFQXQwVCsKcGdw
+MFJvV3dJZm1EUEZUbjNsbVRRcVA0dUEreDRnNXB2OG5SSHBJQS8xVU1YLzh3akZlK24wZUM0V0pq
+Cnk0bjUvTmVLcTF6LzhQSnRZYXVzZVZnT3pqZ0VZazRSc1JJS0t3WUJCQUdYVlFFRkFRRUhRRi9m
+TnBEZgpsbERSbkhIcmVIdlR0SXRGd3VETDNLWkFhaDhZd3dxV0FyNFJBd0VJQjhKNEJCZ1dDQUFK
+QlFKaVRoR3gKQWhzTUFDRUpFSnRSR3JzdXI1NFJGaUVFM0tkSWtTdlVuQ3ZlODAxbW0xRWF1eTZ2
+bmhHR2Z3RUFuWkFzCkdwb0w3UWk5VkNOT3Bja3IwdjhONUt4YnNsSUxmZVArMmNJU0hlY0Erd1Rx
+WDNsZ3dnNVJDN1lBT1MvUQowQ3NxMGNrT0kwSm5zTEtVWlNyOE5Sb0IKPVcxOG4KLS0tLS1FTkQg
+UEdQIFBVQkxJQyBLRVkgQkxPQ0stLS0tLQo=
+-----------------------b57f89715bba07d51bf9c942a183d4da--
+
+--------92cba60f43a877a473dc0e95e992924985a3734b9d75f3703e94d444401cdbe1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnUEARYKACcFgmbbO+8JkJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
+nhEAAOiSAQC7RvdqJpdVf7jVhiJbP0U+H9gUzeiCVNKOyq/rjj4PhgEA0VcB
+7RH14ZU1Fihr6tG3RAE8/eDBghmh/kkpgDNt/wo=
+=pHNQ
+-----END PGP SIGNATURE-----
+
+
+--------92cba60f43a877a473dc0e95e992924985a3734b9d75f3703e94d444401cdbe1--
 
 
