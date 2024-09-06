@@ -1,140 +1,117 @@
-Return-Path: <linux-kernel+bounces-319459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC9C96FCC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:31:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E2E96FCC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50CCBB273AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C8228C9E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1D214C5B3;
-	Fri,  6 Sep 2024 20:30:16 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F3B208A4;
+	Fri,  6 Sep 2024 20:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBNHYO9G"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C2D208A4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D26016FF25
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654615; cv=none; b=pU66lCNkUs4g2eAJeGxfDXpW5GVxKWTYtp4313722Vsn8HGRAhTc2TtAAQfGGEIkc8rk4117SV3t1lcPShufwqnPPfmypMMOdyXLb24cfUUa8RotZjO6LRxjsbVgBU/0N0kBi3Mpwsy975LFDzlvbRo0kJMuQM+zTbCo9mUalnw=
+	t=1725654633; cv=none; b=afs6qQu3FCTYW8vMDffMK2rkEOjKucYBYUcLju5vakMFmsc8k7KZ3a90tuBT3IzYm0fM4vAW1DvAQlqxo/5bFAnAW07KtIi7btSIMPHGE4pJ/0IWr38jnnpkLb/GfALZGHVPYmThEoFI280UG/c5HODojegdjyFA7CEtsvrZbMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654615; c=relaxed/simple;
-	bh=hJHF4v7aSf47GY/DPzV56HvVJuFbMVg6ELYEezF1950=;
-	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=R1RO1gFOz/Rbs7HgHL3oyhZNJr/jRrrjhiJmh+Kv7R2HqEKf9J0eyYm/QcNzmo77dL0mOTymeP5YqFxG9ROd9GhA7gfAtBk0JPzWX8HCdx+6m+MXev4jmqjIC6JBxEuGdhLPkwx1l+mk0rvR2STL/l6eRW08HqY7GlRe2Msg3tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.75.14) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 6 Sep
- 2024 23:29:48 +0300
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in
- gic_ipi_send_mask()
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
- <87cyli5zj7.ffs@tglx> <86o752v8xs.wl-maz@kernel.org>
-Organization: Open Mobile Platform
-Message-ID: <f0efe812-a77b-9a77-c17c-ece503475923@omp.ru>
-Date: Fri, 6 Sep 2024 23:29:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1725654633; c=relaxed/simple;
+	bh=0U3IVLkwpjMDkZfeMiBk78Gdag2qeYoz98SOV9ZjhNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LddxkLkeWkQHOmpjoXCeZ3qSA1PJAiBkNK8lgpMTK1Iq1UoA/TTy3RJni+BetJQr1DaYklr2lUqd1ZI9xdYFr4TUe4JHPf+5kERR3LuoGrjPkbxH1BqUhWwIUU/3kNI5s5vPXsmmWE4IyDM71hBvUe8rGgdtjW07kaah7JLee74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBNHYO9G; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d89229ac81so1910701a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 13:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725654631; x=1726259431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c4Rbk3DSuNWUnUADQJm7wN6W4544RAIhoOC0f2S5sGk=;
+        b=jBNHYO9GvlC2CpF/nQPUiTAWiZMx+RRRvDbbSMb4RcSLlNxlwvHfCxNvyRtqj2BFk3
+         9ppfww6rDmoNIAuxK4BhtgYo4EEqsCxGHHiKBRK7voRMrBV/fzJf2Xqt+sc3J8VE+SDE
+         EMpGFBYtczfjo9CSGahuh3QdasItgXrOS5XlXqhG8WYdXUqqnle2/nSGfZ8wlAolhcP0
+         iYQ5TDkZwwVUOG5FUP+Gg657guA0Xl5MIwKim66ifQK4uTbB70mtMPSyntv5bXnm/GAF
+         AimaNnjJtN/tuEJwpLvGdH0/NAby7Chn5uDh2QHH3ybjkIxoHScqdwgvj+NoIRlaxLxt
+         igRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725654631; x=1726259431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c4Rbk3DSuNWUnUADQJm7wN6W4544RAIhoOC0f2S5sGk=;
+        b=kAbtQzO6olv8DTVSDFHPLc9G93DGoQ+DcDWXPVH9qJ0slTlkrtMXEs0VvoCO24+jPq
+         jOmc9hO38j/lb/6wQvjFWu6SZJVI5ei6YEWKFLPkDoNawBoV4oUeCSTCHLy0rQXLgioi
+         zZRnrigRwD5DyJzZ/kRZJfq4duEuLn9U+fk27RSiMJJ4WfQcDJTCdZ3qRRrixNgCzIoT
+         LT4ttV9meActS6s+G+oKym3uXziMxNSUe+nEujADo2+oQPFh1c8DGhMK7N6U292S3LSZ
+         xJ+qFlmuSfTbJQiljuhg1cyA+lOnN3NwSwblF36bHszWCoBZBz5lG42Tn9jr+ql86kMT
+         fXSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmpqMSQHDA4gb4giSUuALLbqKQ863dmqWolvimjSnQh6ScbTXZqjvIQq+G2xlc97Tv9t/xM6j90fUND4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx79Rp49tNy9sSvbhnQEWCQvd7NKpTREHxaLjpEu7Jxl7UsnhgM
+	jEsvHV8mefhhVt7qo9sf4v/snuixbXeqHh3ODIpvIEu2qnjyXU5NUwmwUg==
+X-Google-Smtp-Source: AGHT+IGuIPEMdd6VovONJwvSbjzLMykxwVa+nAo5z+4FoAWmawKEHi+mVzXQxr9JR6yR3pyp4tTHTw==
+X-Received: by 2002:a17:90a:a414:b0:2d8:efd1:22e4 with SMTP id 98e67ed59e1d1-2dad50c99f5mr4690851a91.26.1725654631387;
+        Fri, 06 Sep 2024 13:30:31 -0700 (PDT)
+Received: from localhost.localdomain ([175.112.156.113])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc11051csm2039919a91.42.2024.09.06.13.30.29
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 06 Sep 2024 13:30:31 -0700 (PDT)
+From: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>
+X-Google-Original-From: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
+To: Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ni_routing: Check when the file could not be opened
+Date: Sat,  7 Sep 2024 05:30:25 +0900
+Message-ID: <20240906203025.89588-1-RuffaloLavoisier@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <86o752v8xs.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/06/2024 20:17:39
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187598 [Sep 06 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
- 766319f57b3d5e49f2c79a76e7d7087b621090df
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.75.14 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.75.14
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/06/2024 20:21:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/6/2024 7:13:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-On 9/5/24 10:47 AM, Marc Zyngier wrote:
-[...]
+- After fopen check NULL before using the file pointer use
 
->>> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
->>> looking at the GIC driver's irq_set_affinity() method, it seems that the
->>> passed CPU mask may contain the logical CPU #s beyond 8, and that method
->>> filters them out before reading gic_cpu_map[], bailing out with
->>> -EINVAL.
->>
->> The reasoning is correct in theory, but in reality it's a non problem.
->>
->> Simply because processors which use this GIC version cannot have more
->> than 8 cores.
->>
->> That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
->> bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
-> 
-> That.
+Signed-off-by: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
+---
 
-   That? :-)
+I'm sorry. I think it's dirty because I'm not used to the patch. I'm going to write it all over again and send it to you.
 
-> The irq_set_affinity() check exists because the affinity can be
-> provided by userspace, and used to be be *anything*. Since
+This is just a defense code just in case.
 
-   In this case you mean gic_set_affinity(), right?
+ drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> 33de0aa4bae98, the affinity that the driver gets is narrowed to what
-> is actually *online*.
-
-   What I haven't quite understood from my (cursory) looking at the GICv2
-spec (and the GIC driver) is why only one CPU (with a lowest #) is selected
-from *mask_val before writing to GICD_GIC_DIST_TARGET, while the spec holds
-that an IRQ can be forwarded to any set of 8 CPU interfaces...
+diff --git a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
+index d55521b5bdcb..892a66b2cea6 100644
+--- a/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
++++ b/drivers/comedi/drivers/ni_routing/tools/convert_c_to_py.c
+@@ -140,6 +140,11 @@ int main(void)
+ {
+ 	FILE *fp = fopen("ni_values.py", "w");
  
-> So we could actually relax the check in the driver (not that it really
-> matters).
++	if (fp == NULL) {
++		fprintf(stderr, "Could not open file!");
++		return -1;
++	}
++
+ 	/* write route register values */
+ 	fprintf(fp, "ni_route_values = {\n");
+ 	for (int i = 0; ni_all_route_values[i]; ++i)
+-- 
+2.43.0
 
-   Well, maybe in my copious free time... :-)
-
-> Thanks,
-> 
-> 	M.
-
-MBR, Sergey
 
