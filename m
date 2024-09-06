@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-318602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7162E96F081
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4709A96F085
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0D41C20FA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01715282E91
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836CD1C9840;
-	Fri,  6 Sep 2024 09:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y8TOy0UF"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDAD1C8FDF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB07A1C8FA6;
+	Fri,  6 Sep 2024 09:55:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCEE1C7B90
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725616504; cv=none; b=CvXT4qrjUgGKlc4Uo4ZnqjZLaC/W0vCHFNOMM7eQ57gnlmu0XwaMaVooI6MTBhuY9UiTBnNh5EB49/ID8QLUw4B5bXG/THHrJFZ0ECP83bsjBEa77aGdHubPJzBYpoP+NkjpSvKlI63bapIbTNMgG2uYgA+lBzWHoNwLVa1i8y8=
+	t=1725616536; cv=none; b=XuNsGQQIO7HvZSCtWA1NtFi56V/0Mxsj4wya5zBNiIseQUtfB1w5ohjeENJ0e6Na09hJls8D+Xz2bbEnDsoClJ/3DkILLf8FHNLhv/Jrhu38qD4/zX98ZHT195YRD758T28p8X0Rnj99DC80YbEW/VehprH0avTQwQPGu+XYydw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725616504; c=relaxed/simple;
-	bh=TgUfYpNfVCM36W5N/o95NjsehMbaFlikvyBsdPQajJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EouUFllsM1SHIzA1NIyA1c8ZTdlQhsJZjkU//Rx58tdoqDuDO8OXh74Mv/5tCsvDVV1FQ4Jwwa2j3mBAQltoYg7uhe8ZBBIsZVtR14ye8HCus9x9Q6RDFCDnZCYNQeh8G4yXv+UJ4iG91LfEFqCyt9WjLIeR5ZWiBMyxkd6VV44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y8TOy0UF; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so4242531fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725616501; x=1726221301; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s86VyCjnrHQBv7IvvTu3Ou8rPKyNQh1txaGTPumLsys=;
-        b=Y8TOy0UFkcNlrbYC9gqSv6npsJYvpSVeq4at/UBGFgx04WCOQGbpmviojj6oNLyiyX
-         CP5rCV5/37zxaPnxSDdMwiKO4SZ71GCNg9yIxCyapwUTzANfEJuL6xymqfzQthwwqfcm
-         4veDBbL4seCxLjx+NGSGRyBXxPxrR7S/SRjEArRZ86Janl9vS82G+1CVtsafTV/HITsA
-         FCvDn3Ini6JNlTeOnEG7koo2Bfsmk59nCYwFFuXGnaAjJxPji9lcUqOCUnSoiURYPlSx
-         DjrXWNAylwvGiyQ7PoaBkcjT1K9mjbZW1jqbDWgWI4lS/Xk55OOG5rKLZ9pLJ0eCWwH/
-         iCtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725616501; x=1726221301;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s86VyCjnrHQBv7IvvTu3Ou8rPKyNQh1txaGTPumLsys=;
-        b=VTf9QP0Fw/A9ZZFqSqaxZIph++ttExfvDHDj+nbQgYsOYdWaPqJxOGRKBCxxmv49Kk
-         y3ymkVfY6dPSMLslf8ev3GMl5WEnQn+bcehsEloRnCbLzZHZUdgfrrl1UTp/5gRhzoMu
-         Dwh0ZAkZGHO1OtIN0VQJwvCCeSDFO87+5oYJl70PsbfXL1Gg6KNnZEu2mwvpewxrc1cr
-         mx8vZEx5/FQA5uBvZAFBgDkoaZWrUNainpYS+2umrzK6L00YmKboab6Ri2rI0+gYyi7Y
-         GKxle0IaCk9jpGFp7T/S3A8r7FC557ibOFzi99A1QD26cwV1oAoCRZZ0oQNIxSx4ACp4
-         b0iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGi8yqmbWz76LgArTRev1sAI28wSgbsNlVk0GQTAebnb5yQYOYL810kyVHsdl17dNd/0TuGTEMz2pQlXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy17tav1OT0On0iXCHDenz+pK2Rxvu/9rANFrgrpy9AvKlmvwNh
-	DF4PuxS5/S0Mhwvy5lYlDRjK9lQ7BVB9CRookXGKPdTHmNTaiuTso8QnnpUmRDc=
-X-Google-Smtp-Source: AGHT+IF844pSrLixRk6wUHI5yRSvPlucQpVGpC8Ewt1wZPUcMFsg9NoBGfApKlFd7JpuCaxLM90GYQ==
-X-Received: by 2002:a2e:b8c7:0:b0:2f3:e2f0:2b74 with SMTP id 38308e7fff4ca-2f751f8289amr15670591fa.36.1725616500494;
-        Fri, 06 Sep 2024 02:55:00 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f7518d1c41sm1731481fa.18.2024.09.06.02.54.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 02:55:00 -0700 (PDT)
-Date: Fri, 6 Sep 2024 12:54:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
-	agross@kernel.org, andersson@kernel.org, linux-kernel@vger.kernel.org, 
-	konrad.dybcio@linaro.org, mchehab@kernel.org, quic_vgarodia@quicinc.com, 
-	stanimir.k.varbanov@gmail.com
-Subject: Re: [PATCH v2] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-Message-ID: <on75kpguzpniuwurzfxfumzbgiarsqmthrpvj27mc5wjcebjsl@ol5zoyr2g5l6>
-References: <20240906055609.2200641-1-quic_miaoqing@quicinc.com>
+	s=arc-20240116; t=1725616536; c=relaxed/simple;
+	bh=FpCqUmxR12+Z0iTIhs4ATZ3sR5tHSqjlqOn0UZd0yz0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JUvzeAiQgFnH5YBjwy/JFgC3ZkeHwKqRh682fV1H80ebuodnDAWdyWOPtnhXpEZQIQhzxy8SndjMOv3BOjks5LvBnvjpVbEP+2+qt0uxFuUz0y91+zp3/SHohyfY8ImNEtKX5nfzrQxeLuwysnuagmEMhj/1q+DP1CecoKRmiqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65057FEC;
+	Fri,  6 Sep 2024 02:56:01 -0700 (PDT)
+Received: from [192.168.178.115] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15FCC3F73F;
+	Fri,  6 Sep 2024 02:55:31 -0700 (PDT)
+Message-ID: <22c238bc-7b9e-40db-9aa4-9af86208e20f@arm.com>
+Date: Fri, 6 Sep 2024 11:55:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906055609.2200641-1-quic_miaoqing@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Hongyan Xia <hongyan.xia2@arm.com>, Luis Machado <luis.machado@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+ juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ kprateek.nayak@amd.com, wuyun.abel@bytedance.com, youssefesmat@chromium.org,
+ tglx@linutronix.de, efault@gmx.de
+References: <20240727102732.960974693@infradead.org>
+ <20240727105029.315205425@infradead.org>
+ <6f39e567-fd9a-4157-949d-7a9ccd9c3592@arm.com>
+ <CAKfTPtAS0eSqf5Qoq_rpQC7DbyyGX=GACsB7OPdhi8=HEciPUQ@mail.gmail.com>
+ <1debbea4-a0cf-4de9-9033-4f6135a156ed@arm.com>
+ <CAKfTPtCEUZxV9zMpguf7RKs6njLsJJUmz8WadyS4ryr+Fqca1Q@mail.gmail.com>
+ <83a20d85-de7a-4fe6-8cd8-5a96d822eb6b@arm.com>
+ <629937b1-6f97-41d1-aa4f-7349c2ffa29d@arm.com>
+ <CAKfTPtBPK8ovttHDQjfuwve63PK_pNH4WMznEHWoXQ=2vGhKQQ@mail.gmail.com>
+ <CAKfTPtDO3n-4mcr2Sk-uu0ZS5xQnagdicQmaBh-CyrndPLM8eQ@mail.gmail.com>
+ <aa81d37e-ad9c-42c6-a104-fe8496c5d907@arm.com>
+ <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
+ <CAKfTPtCNUvWE_GX5LyvTF-WdxUT=ZgvZZv-4t=eWntg5uOFqiQ@mail.gmail.com>
+ <a9a45193-d0c6-4ba2-a822-464ad30b550e@arm.com>
+Content-Language: en-US
+In-Reply-To: <a9a45193-d0c6-4ba2-a822-464ad30b550e@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 06, 2024 at 01:56:09PM GMT, Miaoqing Pan wrote:
-> Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
-> board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
-> 
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> ---
-> v2:
->   - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
->   - relocate pcieport0 node in alphabetical order.
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 119 +++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
->  2 files changed, 120 insertions(+), 1 deletion(-)
-> 
-> @@ -702,6 +793,23 @@ &pcie1_phy {
->  	status = "okay";
->  };
->  
-> +&pcieport0 {
-> +	wifi@0 {
-> +		compatible = "pci17cb,1101";
-> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +
-> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
-> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-> +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+On 05/09/2024 16:07, Dietmar Eggemann wrote:
+> On 05/09/2024 15:33, Vincent Guittot wrote:
+>> On Thu, 5 Sept 2024 at 15:02, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>>
+>>> On 29/08/2024 17:42, Hongyan Xia wrote:
+>>>> On 22/08/2024 15:58, Vincent Guittot wrote:
+>>>>> On Thu, 22 Aug 2024 at 14:10, Vincent Guittot
+>>>>> <vincent.guittot@linaro.org> wrote:
+>>>>>>
+>>>>>> On Thu, 22 Aug 2024 at 14:08, Luis Machado <luis.machado@arm.com> wrote:
+>>>>>>>
+>>>>>>> Vincent,
+>>>>>>>
+>>>>>>> On 8/22/24 11:28, Luis Machado wrote:
+>>>>>>>> On 8/22/24 10:53, Vincent Guittot wrote:
+>>>>>>>>> On Thu, 22 Aug 2024 at 11:22, Luis Machado <luis.machado@arm.com>
+>>>>>>>>> wrote:
+>>>>>>>>>>
+>>>>>>>>>> On 8/22/24 09:19, Vincent Guittot wrote:
+>>>>>>>>>>> Hi,
+>>>>>>>>>>>
+>>>>>>>>>>> On Wed, 21 Aug 2024 at 15:34, Hongyan Xia <hongyan.xia2@arm.com>
 
-Quoting review for v1:
+[...]
 
-Please add
-qcom,ath11k-calibration-variant = "name"
+> I just realized that this fixes the uneven util_est_dequeue/enqueue
+> calls so we don't see the underflow depicted by Hongyan and no massive
+> rq->cfs util_est due to missing ue_dequeues.
+> But delayed tasks are part of rq->cfs util_est, not excluded. Let me fix
+> that.
 
-No, "the WiFi node is for 'drivers/pci/pwrctl'" won't go.
+Looks like I got confused ... After checking again, it seems to be OK:
 
-> +	};
-> +};
-> +
->  &remoteproc_adsp {
->  	firmware-name = "qcom/sa8775p/adsp.mbn";
->  	status = "okay";
 
--- 
-With best wishes
-Dmitry
+  dequeue_task_fair()
+
+    if !(p is delayed && (migrating || DEQUEUE_SAVE))
+      util_est_dequeue()
+
+    if !entity_eligible(&p->se)
+      se->sched_delayed = 1       -> p not contributing to
+                                     rq->cfs.avg.util_est
+
+  enqueue_task_fair()
+
+    if !(p is delayed && (migrating || ENQUEUE_RESTORE))
+      util_est_enqueue()
+
+    if ENQUEUE_DELAYED
+      requeue_delayed_entity()
+        se->sched_delayed = 0     -> p contributing to
+                                     rq->cfs.avg.util_est
+
+
+Luis M. did test this for power/perf with jetnews on Pix6 mainline 6.8
+and the regression went away.
+
+There are still occasional slight CPU frequency spiking on little CPUs.
+Could be the influence of decayed tasks on runnable_avg but we're not
+sure yet.
+
+[...]
 
