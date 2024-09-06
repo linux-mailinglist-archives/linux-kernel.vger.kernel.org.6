@@ -1,210 +1,180 @@
-Return-Path: <linux-kernel+bounces-319398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7843A96FC08
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A8896FC03
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C4C1C22845
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:16:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F57B23E8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F77F1D86E0;
-	Fri,  6 Sep 2024 19:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738B71CE6F8;
+	Fri,  6 Sep 2024 19:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Meat5QW4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNBrTrTA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E7113B584;
-	Fri,  6 Sep 2024 19:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B131C86FB
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725650138; cv=none; b=HSYcWn+2QNywFNo8h4LLsreeh1KBJFXKQemP3ytzXSYTJjkuVfGCr+Dfk1QBG3o2n0TmqnCOO6pi/Hzrc8XG1ZDIg/XLLqRTaSvAGonmnBcxWdjN0NRZ7IxKa4zo+xFKJTHCaGy2B5AITe/kBNQJW1OepXKT7U7RoaE4DuwLxRM=
+	t=1725650126; cv=none; b=UP686WDEfsRlCBDNc7aTo5H2JwOzuID3tEe03wlWww9dp3Y6YDZBx2UwdluXoS+iBdYzAufW2ngw3dJgrOMtF+VSl37T5VbT+cC9ME7HrCV/pwY1wXyQYnRlcnZ9frwfTStyYFXrBy9hTU4q6yY+UUvOB33ErVT7oYyUqT2NoWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725650138; c=relaxed/simple;
-	bh=P9bp+kuK45uZZSN3cpkVtEACd9ZvSOCvJtQ1RH40zPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WVJ8WRXcox4LRkCmF3mfPI+hLTo+6mUT3kwtOf7XlPXq09kLn37h3xsljXtQ9BZrhdGxngZTHtZwGvBNsBdQAxJORzDFBJee4owggYpYECcUkDZ+QdxVymDOOB8vuHfOK2ZTZtCSd8wmZEyCxHT27EXeroOemNU+kPuNagcKBik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Meat5QW4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868WQRK019626;
-	Fri, 6 Sep 2024 19:15:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=yuNVYZ9hfDi
-	5n3vRZsFzMDLctazYKEOldnRMnjkS1N4=; b=Meat5QW4FDVZ9H+4vdpkXpKY0ha
-	BTvtP5foLJi9KREFJTtiY1V9hEl2KZ3CgxmMVI1Zo3YUwcLU4AvBKIoQyyVQ2R3M
-	biJirQD0xMn9pBgoVpMXRvdX9vUIXbM4zh02JhILoP9vL64MoNf2DpziFf+RFmjZ
-	CaymlrqaSaoCvhnCIi9nY1pLknKLE4Utmoto8o8ys79twL04pOkGuY2CvM2/sUCd
-	Xf64+e6muLhZD1ijbtY+cYL+zpN4KPSXx1RhxXtikSbOeGy646DGeQZGBHBsyM9h
-	HZXCzkyUJoh3hJo7rTorwxbA382rsI2N06dIsQHxZxCnAVnmzPRIpsl9xjA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu37x7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 19:15:27 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 486JEphf013106;
-	Fri, 6 Sep 2024 19:15:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41bv8mxy5d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 19:15:08 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 486JF7vu013798;
-	Fri, 6 Sep 2024 19:15:07 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-msavaliy-hyd.qualcomm.com [10.213.110.207])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 486JF7fS013791
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 19:15:07 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 429934)
-	id 8AAEE240F3; Sat,  7 Sep 2024 00:45:06 +0530 (+0530)
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-To: konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
-        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
-        Frank.Li@nxp.com, konradybcio@kernel.org
-Cc: quic_vdadhani@quicinc.com,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing between two subsystems
-Date: Sat,  7 Sep 2024 00:44:38 +0530
-Message-Id: <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
+	s=arc-20240116; t=1725650126; c=relaxed/simple;
+	bh=8PYtUzBcRzDR+BkqAPJy0YFiShnPQgO2syJSUrN07gE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=th1UpOsTL/KHu742xZIqy/wZYCJ8qWJ5fz4Td7CE+CZ5M3YB0/2tZrmdXT58jxzYj6yew7DBZASK63ELprxKaJ5DCE5XucwCN462MHaM+Wk4HdvNLMUysBBLQ2+RrnSvbwD1buvsaiyms7fezsn76n4vKX/bceFGYVwK8Fk7a7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNBrTrTA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F8BC4CECC
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 19:15:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725650126;
+	bh=8PYtUzBcRzDR+BkqAPJy0YFiShnPQgO2syJSUrN07gE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oNBrTrTAYqb5KVvZmDYXr/Tw1x3q2PzUQw1iCxKVBQIGMk9jv/ujH8K6Oz/Xb5lyE
+	 zITJ6p6plvdQZy1zcSOKHAyO4JjvCQy7Y24Yu3n+1+XRIrwr7efRcyEcRD2Cj4ciME
+	 yUOsSxscNyPTcLXk3JreInQAnNknQIuEPzy0YqHvQDl9ZBY/CiFuz3ANmm4nrSMPWV
+	 rTx4TGMdsqZPUB/HVxpY3/Siw92u26oF0PoZTNsZOwQDm40aY64R4Svbaii67UBWsW
+	 cVZxotgdPvCM/1MKM+xF3tv4obg45rv5I4JjZgx24MVlpV4qjuSrDifnDYjRz0XT5Y
+	 dLIAngWfoW4kg==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5365c512b00so554712e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 12:15:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvGkipZNKXuNbvMIRutDptg3oPfcNoBAYKaCXd86/9I9tcXLE/1+9t7q4dXVQyDR5LMzbzz5hglEyz+Gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFXmai09gyZM6OUYMk8cbr/hUg9Y0oEDF4BZV8hD42FEBpM2pK
+	mkAyj8QLPNWH6IpjWPgL9qULD56uvzQ3loAv9txXKY+XHwa+pPO2wIv1L+UjkVUdjV9tiYsln5D
+	KIUw608up7MDnotmY5Ws/ehW9sg==
+X-Google-Smtp-Source: AGHT+IESGdRuCUkts+rxu7pfXA/qAjquHWsXBUeusiW4kkmLl2lNFAhP28jMC+hCB9hG78a+QRBP6Rs8ZXuOucr3RL0=
+X-Received: by 2002:a05:6512:1289:b0:52e:9fda:f18a with SMTP id
+ 2adb3069b0e04-536587f5be1mr2777799e87.44.1725650124666; Fri, 06 Sep 2024
+ 12:15:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CtMxmfcneIp82Sx1nyZUES6IfpRXLTk0
-X-Proofpoint-GUID: CtMxmfcneIp82Sx1nyZUES6IfpRXLTk0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_04,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060142
+References: <20240731191312.1710417-12-robh@kernel.org> <CAL_JsqKvA0Uw7uqpmdMP7Z4mL3Qsmay5Fqb4M97s=QsBW_Nxyg@mail.gmail.com>
+ <CAPY8ntAv3Xpq45ykwX_98WJKFBxqP6Os+6KvD5xzDTFz8a1idQ@mail.gmail.com>
+ <CAL_JsqKjRbHCeFoZDE_wss5HMNmt8UBWa+y_8yJ6TC80xxiTOA@mail.gmail.com> <CAPY8ntBJL9nJupadT8T1DGeQHn++MRGKbyH5xSF94a0moqWGYw@mail.gmail.com>
+In-Reply-To: <CAPY8ntBJL9nJupadT8T1DGeQHn++MRGKbyH5xSF94a0moqWGYw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 6 Sep 2024 14:15:11 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKZSk+zY49CAzDisA3kBQf46TOvN-OF+wTH=LGLGwSQUw@mail.gmail.com>
+Message-ID: <CAL_JsqKZSk+zY49CAzDisA3kBQf46TOvN-OF+wTH=LGLGwSQUw@mail.gmail.com>
+Subject: Re: [PATCH] drm: vc4: Use of_property_present()
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Maxime Ripard <mripard@kernel.org>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support to share I2C SE by two Subsystems in a mutually exclusive way.
-Use  "qcom,shared-se" flag in a particular i2c instance node if the
-usecase requires i2c controller to be shared.
+On Fri, Sep 6, 2024 at 9:24=E2=80=AFAM Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+>
+> On Wed, 4 Sept 2024 at 14:19, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Wed, Sep 4, 2024 at 6:18=E2=80=AFAM Dave Stevenson
+> > <dave.stevenson@raspberrypi.com> wrote:
+> > >
+> > > Hi Rob
+> > >
+> > > On Tue, 3 Sept 2024 at 20:19, Rob Herring <robh@kernel.org> wrote:
+> > > >
+> > > > On Wed, Jul 31, 2024 at 2:13=E2=80=AFPM Rob Herring (Arm) <robh@ker=
+nel.org> wrote:
+> > > > >
+> > > > > Use of_property_present() to test for property presence rather th=
+an
+> > > > > of_find_property(). This is part of a larger effort to remove cal=
+lers
+> > > > > of of_find_property() and similar functions. of_find_property() l=
+eaks
+> > > > > the DT struct property and data pointers which is a problem for
+> > > > > dynamically allocated nodes which may be freed.
+> > > > >
+> > > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > ---
+> > > > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 4 ++--
+> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > Ping!
+> > >
+> > > Sorry, this fell through the cracks.
+> > >
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4=
+/vc4_hdmi.c
+> > > > > index d57c4a5948c8..049de06460d5 100644
+> > > > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > > > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > > > > @@ -2211,7 +2211,7 @@ static int vc4_hdmi_audio_init(struct vc4_h=
+dmi *vc4_hdmi)
+> > > > >         struct device *dev =3D &vc4_hdmi->pdev->dev;
+> > > > >         struct platform_device *codec_pdev;
+> > > > >         const __be32 *addr;
+> > > > > -       int index, len;
+> > > > > +       int index;
+> > > > >         int ret;
+> > > > >
+> > > > >         /*
+> > > > > @@ -2234,7 +2234,7 @@ static int vc4_hdmi_audio_init(struct vc4_h=
+dmi *vc4_hdmi)
+> > > > >         BUILD_BUG_ON(offsetof(struct vc4_hdmi_audio, card) !=3D 0=
+);
+> > > > >         BUILD_BUG_ON(offsetof(struct vc4_hdmi, audio) !=3D 0);
+> > > > >
+> > > > > -       if (!of_find_property(dev->of_node, "dmas", &len) || !len=
+) {
+> > > > > +       if (!of_property_present(dev->of_node, "dmas")) {
+> > >
+> > > The existing conditional is true if the property is not present or is=
+ 0 length.
+> > > Your new one is only true if the property isn't present, so it isn't =
+the same.
+> >
+> > It is not the kernel's job to validate the DT. It does a terrible job
+> > of it and we have better tools for that now (schemas (though RPi
+> > platforms are in a pretty sad state for schemas)). I'm pretty sure a
+> > zero length or otherwise malformed "dmas" property would also cause a
+> > dtc warning as well. Non-zero length is hardly a complete test
+> > anyways. Any bogus value of "dmas" would pass. Or it can be completely
+> > valid, but the DMA driver is not enabled (whether you even probe
+> > depends on fw_devlinks).
+> >
+> > The kernel should just parse the properties it wants and handle any err=
+ors then.
+>
+> I've followed up over the rationale of this.
+>
+> The base DT enables HDMI audio.
+> On some systems there is a need to use the DMA channels for other
+> purposes and no need for HDMI audio.
 
-I2C driver just need to mark first_msg and last_msg flag to help indicate
-GPI driver to  take lock and unlock TRE there by protecting from concurrent
-access from other EE or Subsystem.
+If that's a user decision, I wouldn't use overlays to decide that, but
+make it a run-time OS decision...
 
-gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
-Unlock TRE for the respective transfer operations.
+> As we understand it, an overlay can't remove a property from the base
+> DT, but it can set it to being empty. (Please correct us if there is a
+> way to delete an existing property).
 
-Since the GPIOs are also shared for the i2c bus between two SS, do not
-touch GPIO configuration during runtime suspend and only turn off the
-clocks. This will allow other SS to continue to transfer the data
-without any disturbance over the IO lines.
+There isn't currently.
 
-Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
----
- drivers/i2c/busses/i2c-qcom-geni.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+> The current check therefore allows an overlay to disable the HDMI
+> audio that is enabled in the base DT. It doesn't care how long the
+> property actually is, just whether it is totally empty or not as an
+> alternative to being present.
+>
+> I understand that you may consider that abuse of DT, but that is the
+> reasoning behind it. We can drop it to a downstream patch if
+> necessary.
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index eebb0cbb6ca4..ee2e431601a6 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-+// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
- 
- #include <linux/acpi.h>
- #include <linux/clk.h>
-@@ -99,6 +100,7 @@ struct geni_i2c_dev {
- 	struct dma_chan *rx_c;
- 	bool gpi_mode;
- 	bool abort_done;
-+	bool is_shared;
- };
- 
- struct geni_i2c_desc {
-@@ -602,6 +604,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
- 	peripheral.clk_div = itr->clk_div;
- 	peripheral.set_config = 1;
- 	peripheral.multi_msg = false;
-+	peripheral.shared_se = gi2c->is_shared;
- 
- 	for (i = 0; i < num; i++) {
- 		gi2c->cur = &msgs[i];
-@@ -612,6 +615,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
- 		if (i < num - 1)
- 			peripheral.stretch = 1;
- 
-+		peripheral.first_msg = (i == 0);
-+		peripheral.last_msg = (i == num - 1);
- 		peripheral.addr = msgs[i].addr;
- 
- 		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
-@@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
- 		dma_async_issue_pending(gi2c->tx_c);
- 
- 		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
--		if (!time_left)
-+		if (!time_left) {
-+			dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
-+						gi2c->cur->flags, gi2c->cur->addr);
- 			gi2c->err = -ETIMEDOUT;
-+		}
- 
- 		if (gi2c->err) {
- 			ret = gi2c->err;
-@@ -800,6 +808,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
- 		gi2c->clk_freq_out = KHZ(100);
- 	}
- 
-+	if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
-+		gi2c->is_shared = true;
-+		dev_dbg(&pdev->dev, "Shared SE Usecase\n");
-+	}
-+
- 	if (has_acpi_companion(dev))
- 		ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
- 
-@@ -962,14 +975,16 @@ static int __maybe_unused geni_i2c_runtime_suspend(struct device *dev)
- 	struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
- 
- 	disable_irq(gi2c->irq);
--	ret = geni_se_resources_off(&gi2c->se);
--	if (ret) {
--		enable_irq(gi2c->irq);
--		return ret;
--
-+	if (gi2c->is_shared) {
-+		geni_se_clks_off(&gi2c->se);
- 	} else {
--		gi2c->suspended = 1;
-+		ret = geni_se_resources_off(&gi2c->se);
-+		if (ret) {
-+			enable_irq(gi2c->irq);
-+			return ret;
-+		}
- 	}
-+	gi2c->suspended = 1;
- 
- 	clk_disable_unprepare(gi2c->core_clk);
- 
--- 
-2.25.1
+I guess it's going to be use of_count_phandle_with_args() instead.
 
+Rob
 
