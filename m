@@ -1,135 +1,81 @@
-Return-Path: <linux-kernel+bounces-317985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EECB96E6B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A45F96E6BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9361C232C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87061F23F30
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE88D531;
-	Fri,  6 Sep 2024 00:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EAC10A0C;
+	Fri,  6 Sep 2024 00:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MaakXBQ6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6HGSkX4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD372F32;
-	Fri,  6 Sep 2024 00:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF70513FFC;
+	Fri,  6 Sep 2024 00:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725581979; cv=none; b=cuXRoSjQzPRcro4Y2cCseJR06sVY++8HxzbVYEriCz0mXhBdW9HMJCI1FHHlJQTtwHSGV5FTY48fTGTjzQ4Bw7h0Xb9EthCjV7UUmY898MlWh4VoDGTRMiytlBtrUDvEMAaIIWng/zcoSEphyCKyNMtjE4puywbWeNeoiiAGrTM=
+	t=1725582032; cv=none; b=gTAf7bOtir9N8tWQCJ9spuW2QFwO+nyHe3+qUqmlhRXm604EgwwYyHdGI+8Q6mUfiiRu6oW0aJ2ubYZyKirulMuXpS612p0mstEbfLNDSX7W482zvacEAaeahHk20DLUPp0CMqLTQ3LNwoOCmcHaDcqLQntGBvEI1Mxtc9WNkXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725581979; c=relaxed/simple;
-	bh=DApWteau5L6e7Nfm/JUijj4CIhQSNjmJ6cu/FjlbURk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HJFa6Ov0oJAE8D/vHYvQLrxl2Ja16ol4uUaH18tx6qfE1beNX3zsuvDdMPMX4kzekCh4Foa0IyJDV1bZa5osiRwCKiAQRpBzZkHgarPSiNBegdJpm/chlSLFGHGtaHeZigOATpuibCiocUbzz0T/oyH9M+Ojis3viMwlxTqrAyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MaakXBQ6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485IQ16d019686;
-	Fri, 6 Sep 2024 00:19:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Fif+WdWuY0TPK05I2EWfRBaK9MDCbSukT+BvyfFoqoQ=; b=MaakXBQ6TrpP4DdT
-	TMsdZVHeb5HX0HsNDogkAh+1bGZgw7qopVhYVXphKQL5Qx7k4xPsNQSpEbOgoi8v
-	i5TuuvCtB9Rsd58f7WXpVkaXV0qVS3vnDecG+ke+0sSHpprRvmNqpmBzcRdMBsMd
-	C1eP27TCFsy1LVJF8HIxt+NkGcI73n3tSWPLgbNs8r49lcZuSM/EiTb/fW7omWxM
-	OcnjDCd4SqYZq+ObirH1cRE7F7zMOIUeH7kjmY8D38UDPigx2MiRvgZtdjfwQm0G
-	GrGI8QUaEn+XubK++XXnrlIG/esm3R/DPQsiIxQk5bGaXBSL+Pd8fxMEhtMES3he
-	TG6y+A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu0kaw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 00:19:33 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4860JXiQ005676
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 00:19:33 GMT
-Received: from [10.231.216.207] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
- 17:19:30 -0700
-Message-ID: <87a1a50f-f485-4a4f-91fc-34fa19312519@quicinc.com>
-Date: Fri, 6 Sep 2024 08:19:28 +0800
+	s=arc-20240116; t=1725582032; c=relaxed/simple;
+	bh=4V8o7Ima5HsTiALZdyULmSsGXq6cAPqQaG4Zo+80WXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H8aP6MINEbAErjWGyVdUQM+LA7QJdO6AmF0PL1nSC8udLxVdPobAMct8eYhej6bBc22eUIFf/Y7Eo6YDFkoC4TSe8PAbA7txZXub17z0fHMHxa17ZD/RLW2wLC/99DgKlcRgKyTECYnHiMaaX0zOgFNFi3LwYRHDIa/7AmN4rM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6HGSkX4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D87D2C4CEC3;
+	Fri,  6 Sep 2024 00:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725582031;
+	bh=4V8o7Ima5HsTiALZdyULmSsGXq6cAPqQaG4Zo+80WXE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A6HGSkX4KQQoEijgosNXs2DSkeWoJaozDuYE7kgCzE/dzlneEBElxw3Az9zZ+P1Fh
+	 YW6ChfTAUGhMlq3fEQdypw9p1PHAfXdE3WGwZ1tOAnGEmxqnWWICfrqJfc1scCYSA9
+	 ibit0x6LAGy8nkTWTyCMkbpYb42/4WQXLIA2ixWt4Llizm+42ssMp7H4SsEsjNrs1b
+	 dz6HrcdqR/dg6pw2TuH8dkKw2kyEXStCCes+dW57UxTP4SWzK0SxnAmxV/yQSLCiDN
+	 rXgnGx7KACi5uOYJaRRWSCQoLRC4vBwev4agIZnqRD80Wj8dEa7mKOz2MnelvRYhoX
+	 9JtaaZXYqlQmg==
+Date: Thu, 5 Sep 2024 17:20:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>, John Fastabend
+ <john.fastabend@gmail.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, bpf@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS
+ frames
+Message-ID: <20240905172029.5e9ca520@kernel.org>
+In-Reply-To: <Ztnj9ujDg4NLZFDm@lore-desk>
+References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
+	<20240903135158.7031a3ab@kernel.org>
+	<ZteAuB-QjYU6PIf7@lore-desk>
+	<Ztnj9ujDg4NLZFDm@lore-desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-To: Dmitry Baryshkov <dbaryshkov@gmail.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
-        <stanimir.k.varbanov@gmail.com>
-References: <20240905064817.3885953-1-quic_miaoqing@quicinc.com>
- <d6mt6i4a6xa3juvn4gzytuhsot2kx7dn4wmm3kmgwywfj2hcau@leecyxx36wql>
-Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <d6mt6i4a6xa3juvn4gzytuhsot2kx7dn4wmm3kmgwywfj2hcau@leecyxx36wql>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DvasUYBtezgIvAPLwA95qf_CJMJ_rdG5
-X-Proofpoint-GUID: DvasUYBtezgIvAPLwA95qf_CJMJ_rdG5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0
- clxscore=1011 mlxscore=0 mlxlogscore=819 phishscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060000
 
+On Thu, 5 Sep 2024 19:01:42 +0200 Lorenzo Bianconi wrote:
+> In particular, the cpumap kthread pinned on cpu 'n' can schedule the
+> backlog NAPI associated to cpu 'n'. However according to my understanding
+> it seems the backlog NAPI APIs (in process_backlog()) do not support GRO,
+> right? Am I missing something?
 
-
-On 9/5/2024 8:49 PM, Dmitry Baryshkov wrote:
-> On Thu, Sep 05, 2024 at 02:48:17PM GMT, Miaoqing Pan wrote:
->> Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
->> board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
->>
->> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 119 +++++++++++++++++++++
->>   arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
->>   2 files changed, 120 insertions(+), 1 deletion(-)
->>
->> @@ -837,3 +939,20 @@ &usb_2_hsphy {
->>   &xo_board_clk {
->>   	clock-frequency = <38400000>;
->>   };
->> +
->> +&pcieport0 {
->> +	wifi@0 {
->> +		compatible = "pci17cb,1101";
->> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
->> +
->> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
->> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
->> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
->> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
->> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
->> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
->> +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
->> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
->> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-> 
-> Please add
-> 
-> qcom,ath11k-calibration-variant = "name";
-
-No need, here the WiFi node is for 'drivers/pci/pwrctl', not ath11k driver.
-
+I meant to use the struct directly, not to schedule it. All you need
+is GRO - feed it packets, flush it. 
+But maybe you can avoid the netdev allocation and patch 3 in other ways.
+Using backlog NAPI was just the first thing that came to mind.
 
