@@ -1,159 +1,179 @@
-Return-Path: <linux-kernel+bounces-318386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64CE96ED06
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B02996ED0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47E08B236D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279DE1C23451
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F7B156C65;
-	Fri,  6 Sep 2024 08:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1CC157A72;
+	Fri,  6 Sep 2024 08:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="qS8uuxYi"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NF8C7DWD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87011A28C;
-	Fri,  6 Sep 2024 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F82415530C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609703; cv=none; b=mBv12nwAigauxcEyogv7ktfsts5ClaS6zSbgXfttG7lGgNDs6IOB8agwTqG2f80C/+1+9P9I9QJaN2movrCovqQpaAKW1XEhQ7WM877uRlQC9A9XGe2Q0pkVQwIOH/uEVFGsvULpXyJuTmTLdmqQVCeqNJx3eCV2X0OEs1vt9qQ=
+	t=1725609705; cv=none; b=FCu7VXAsNYivWK9hlM/sDByTWVOWDRsB9BhaSLg94uA+wKoUZ0MHmahsu73WYG2HaSQ7Z3Vw5yxxb8hSuPVI87arBLj0fekzmpet/v2UUx+Q4jiqh85FCyC82tv/jG8RPs/Vfalxaf7NhfPuCjzBscJ17kmhj7DaoANXQVLhjkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609703; c=relaxed/simple;
-	bh=GGW2mP0FOw5e7YTZk5o31AtnAUs24hgfzJgcmoV/maU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwXF7fWh9sqhr44KTa2exQR88VW988G0J5t01ghqt1DwA0yqJshcJU7pClX6KZONlRwqmASyrHvw7qkiQRPrm40bKomivhCnrU/qPkfgxYKU0HtZjU7zOhb4UurwzGCsMdfa1A0HhAfiQ6tWynI1NntgeUFWaN140QpkDoH0So0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=qS8uuxYi; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4X0TFk0k78z9sn8;
-	Fri,  6 Sep 2024 10:01:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1725609690;
+	s=arc-20240116; t=1725609705; c=relaxed/simple;
+	bh=SbmM5uhbcnL1olHSU93fypGNtH3znpt3dWvOUJqzD04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LChrOmZRlYNFIcxm7hzw/I5DY+X89HDfVsDxIkoekcCGojEnr7ZGSU5+iEGGrt+gg7nXK+uwyHCh09usQRXag9jzxeZP4rhGPwSKr5D+tZeaXRL2lAMQ5My5h8wkOPwjH65Mu0ZbJ3CoEvf70i46/b23MDFhbej0vN2q6Ode1xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NF8C7DWD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725609702;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=txiTk9IGx6J3KSO7NujdzBabpDFq03RzqiY0DDy6h34=;
-	b=qS8uuxYixNti8tE7TN9MLXvUBgPDjjlh9aTJdMkk3SurmVQjB6IIh/4l2iXjxLgrv0h9vr
-	5TMmBe6fZTNwOIMXy88Czf0WzZAEb+pV9BXgh7OBbJ+Gb17IrhY2JjvM44y1MRfvr73RnV
-	5mAk456khuBRrN/tNg5y458EixvqWWZ4Lh0DR3z0wJ5k2ScCtQhL9gakI4vOB9SMSXh3ah
-	JEGczHKtCLcQBlq+yoVbWxcp/PQqGoNs1jxRURY5jwO/zYt/WmJpXyMQB6ERcCziUmXLuh
-	19OBukBK+v0mnjJUROFZ2M6jz7ErfMNKPIPPlwH21umlNcYrxdjTLtFMlNN5XA==
-Date: Fri, 6 Sep 2024 08:01:20 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
-	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
-	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-	ryan.roberts@arm.com, David Howells <dhowells@redhat.com>,
-	pengfei.xu@intel.com
-Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
-Message-ID: <20240906080120.q6xff2odea3ay4k7@quentin>
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
- <20240822135018.1931258-5-kernel@pankajraghav.com>
- <ZtqmtjZ+mVTDx208@ly-workstation>
+	bh=3w8BEgArxnjLRVy3qsubm87vN0Pe8HekCRHq10oOa7w=;
+	b=NF8C7DWDSba7cnf/tdVxwp3sTk8ZuJYhUZzPesOHGts5q8xgFZ0oErmZB446X7jqSDyL99
+	HA1NqCuwHMeAvr3WVnX9QYziIh7q8RRrT3+hLrwFLa4DdegUu4a7dkPnMM+ReM6lhr/xez
+	IySl85/mJu6iikEDp+T0P0v+Bjc7pgI=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-311-nKNZTWVNMt2kR383ZUvZTA-1; Fri, 06 Sep 2024 04:01:41 -0400
+X-MC-Unique: nKNZTWVNMt2kR383ZUvZTA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53654420f0cso1540519e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 01:01:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725609700; x=1726214500;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3w8BEgArxnjLRVy3qsubm87vN0Pe8HekCRHq10oOa7w=;
+        b=CWOwaTM2p6QmS3Rdsr8ZGMjF8hikGfkCvrv3MxtuS835ptkZt1UGecPHvhGxP/WkdO
+         TjeZsQBa4UJHJt6TtGgnAnlFOn8l1zdoF+dK+E8obxYrTYP/gEIKwsmaq1tR9fzNrsoV
+         cjlXY/SFIDgw5XnmnIyqg+AXAZxrVtl/k1ttMALMd8hsPh2DPB98H0994ebE7huwN5Mp
+         ChaQqoNZOQ4K05dsk5iktzn/oVBVfUjgVzb4UnVBLAdXyFIo/fzY7iHllpNqPQkM4oIY
+         YoTidjRdsfS8WJrzVjqLO40eZEWHhIpf61DjkLs/G1wlaYl+to6uxtLLWm7MECstxkXx
+         uu+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUpIzMQo8FJy2BBEOd+2XA0sD1Edxb2r4Jg9LyABJXXw/pikJTgNNysKz9WkbP+a9WSpYUJp0gMH8Fx//Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMZ1ScrIitt/P3hLHdy80dAg6ENG/t1xcR1kn4PjjhNO1R4lfg
+	OuYWwQ75VmikKS0nN5jmu0aCvp8jdly9GQ8niGGQmzZGEU/e9K0mGOB77z2PEWIKn6NRyqs/0GB
+	5fnvQ8CK04a0sY/snJ5ZBQyxFwBCfvKN67VEUckgTkCP+KtVqu5k6Q32VvFTK2w==
+X-Received: by 2002:a05:6512:3a83:b0:52c:952a:67da with SMTP id 2adb3069b0e04-53658809ffamr1126523e87.55.1725609699486;
+        Fri, 06 Sep 2024 01:01:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGp6YUa7kCokg8ObVcxyPBkjN1eJGchaQwvf9zGEui7SeGHmklIylF/+N4KkS1IWFbzJ8ZWJA==
+X-Received: by 2002:a05:6512:3a83:b0:52c:952a:67da with SMTP id 2adb3069b0e04-53658809ffamr1126482e87.55.1725609698865;
+        Fri, 06 Sep 2024 01:01:38 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6e1b7e4csm191617466b.14.2024.09.06.01.01.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 01:01:38 -0700 (PDT)
+Message-ID: <813ec28a-a88a-4ba1-976a-578fed314733@redhat.com>
+Date: Fri, 6 Sep 2024 10:01:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtqmtjZ+mVTDx208@ly-workstation>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: atomisp: Use clamp_t() in
+ ia_css_eed1_8_vmem_encode()
+To: David Laight <David.Laight@ACULAB.COM>,
+ 'Mauro Carvalho Chehab' <mchehab+huawei@kernel.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+References: <155aba6ab759e98f66349e6bb4f69e2410486c09.1722084704.git.christophe.jaillet@wanadoo.fr>
+ <20240906081542.5cb0c142@foz.lan>
+ <8c8b5727abf44e429727b70365cc3048@AcuMS.aculab.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <8c8b5727abf44e429727b70365cc3048@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 06, 2024 at 02:52:38PM +0800, Lai, Yi wrote:
-Hi Yi,
+Hi David,
 
+On 9/6/24 9:56 AM, David Laight wrote:
+> From: Mauro Carvalho Chehab
+>> Sent: 06 September 2024 07:16
+>>
+>> Em Sat, 27 Jul 2024 14:51:56 +0200
+>> Christophe JAILLET <christophe.jaillet@wanadoo.fr> escreveu:
+>>
+>>> Using clamp_t() instead of min_t(max_t()) is easier to read.
+>>>
+>>> It also reduces the size of the preprocessed files by ~ 193 ko.
+>>> (see [1] for a discussion about it)
+>>>
+>>> $ ls -l ia_css_eed1_8.host*.i
+>>>  4829993 27 juil. 14:36 ia_css_eed1_8.host.old.i
+>>>  4636649 27 juil. 14:42 ia_css_eed1_8.host.new.i
+>>>
+>>> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
+>>>
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>> ---
+>>>  .../isp/kernels/eed1_8/ia_css_eed1_8.host.c   | 24 +++++++++----------
+>>>  1 file changed, 12 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
+>> b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
+>>> index e4fc90f88e24..96c13ebc4331 100644
+>>> --- a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
+>>> +++ b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
+>>> @@ -172,25 +172,25 @@ ia_css_eed1_8_vmem_encode(
+>>>  		base = shuffle_block * i;
+>>>
+>>>  		for (j = 0; j < IA_CSS_NUMBER_OF_DEW_ENHANCE_SEGMENTS; j++) {
+>>> -			to->e_dew_enh_x[0][base + j] = min_t(int, max_t(int,
+>>> -							     from->dew_enhance_seg_x[j], 0),
+>>> -							     8191);
+>>> -			to->e_dew_enh_y[0][base + j] = min_t(int, max_t(int,
+>>> -							     from->dew_enhance_seg_y[j], -8192),
+>>> -							     8191);
+>>> +			to->e_dew_enh_x[0][base + j] = clamp_t(int,
+>>> +							       from->dew_enhance_seg_x[j],
+>>> +							       0, 8191);
+>>> +			to->e_dew_enh_y[0][base + j] = clamp_t(int,
+>>> +							       from->dew_enhance_seg_y[j],
+>>> +							       -8192, 8191);
+>>
+>> Such change introduces two warnings on smatch:
+>>
+>> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c:
+>> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c:177
+>> ia_css_eed1_8_vmem_encode() warn: assigning (-8192) to unsigned variable 'to->e_dew_enh_y[0][base +
+>> j]'
+>> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c:
+>> drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c:182
+>> ia_css_eed1_8_vmem_encode() warn: assigning (-8192) to unsigned variable 'to->e_dew_enh_a[0][base +
+>> j]'
+>>
+>> Should dew_enhance_seg_x and dew_enhance_seg_y be converted to signed?
 > 
-> I used Syzkaller and found that there is task hang in soft_offline_page in Linux-next tree - next-20240902.
+> Someone clearly needs to read the code and work out what it is doing.
 
-I don't know if it is related, but we had a fix for this commit for a
-ltp failure due to locking issues that is there in next-20240905 but not
-in next-20240902.
+Ack, I'm looking into this now.
 
-Fix: https://lore.kernel.org/linux-next/20240902124931.506061-2-kernel@pankajraghav.com/
+> First stage is to use clamp() (not clamp_t) to get warnings from the
+> compiler for the RHS.
 
-Is this reproducible also on next-20240905?
+I already changed this to plain clamp() when merging it, that does not
+cause any changes since the clamp-s are doing clamp(s32, -8192, 8192)
 
-> 
-> After bisection and the first bad commit is:
-> "
-> fd031210c9ce mm: split a folio in minimum folio order chunks
-> "
-> 
-> All detailed into can be found at:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page
-> Syzkaller repro code:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.c
-> Syzkaller repro syscall steps:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.prog
-> Syzkaller report:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/repro.report
-> Kconfig(make olddefconfig):
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/kconfig_origin
-> Bisect info:
-> https://github.com/laifryiee/syzkaller_logs/tree/main/240904_155526_soft_offline_page/bisect_info.log
-> bzImage:
-> https://github.com/laifryiee/syzkaller_logs/raw/f633dcbc3a8e4ca5f52f0110bc75ff17d9885db4/240904_155526_soft_offline_page/bzImage_ecc768a84f0b8e631986f9ade3118fa37852fef0
-> Issue dmesg:
-> https://github.com/laifryiee/syzkaller_logs/blob/main/240904_155526_soft_offline_page/ecc768a84f0b8e631986f9ade3118fa37852fef0_dmesg.log
-> 
-> "
-> [  447.976688]  ? __pfx_soft_offline_page.part.0+0x10/0x10
-> [  447.977255]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-> [  447.977858]  soft_offline_page+0x97/0xc0
-> [  447.978281]  do_madvise.part.0+0x1a45/0x2a30
-> [  447.978742]  ? __pfx___lock_acquire+0x10/0x10
-> [  447.979227]  ? __pfx_do_madvise.part.0+0x10/0x10
-> [  447.979716]  ? __this_cpu_preempt_check+0x21/0x30
-> [  447.980225]  ? __this_cpu_preempt_check+0x21/0x30
-> [  447.980729]  ? lock_release+0x441/0x870
-> [  447.981160]  ? __this_cpu_preempt_check+0x21/0x30
-> [  447.981656]  ? seqcount_lockdep_reader_access.constprop.0+0xb4/0xd0
-> [  447.982321]  ? lockdep_hardirqs_on+0x89/0x110
-> [  447.982771]  ? trace_hardirqs_on+0x51/0x60
-> [  447.983191]  ? seqcount_lockdep_reader_access.constprop.0+0xc0/0xd0
-> [  447.983819]  ? __sanitizer_cov_trace_cmp4+0x1a/0x20
-> [  447.984282]  ? ktime_get_coarse_real_ts64+0xbf/0xf0
-> [  447.984673]  __x64_sys_madvise+0x139/0x180
-> [  447.984997]  x64_sys_call+0x19a5/0x2140
-> [  447.985307]  do_syscall_64+0x6d/0x140
-> [  447.985600]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  447.986011] RIP: 0033:0x7f782623ee5d
-> [  447.986248] RSP: 002b:00007fff9ddaffb8 EFLAGS: 00000217 ORIG_RAX: 000000000000001c
-> [  447.986709] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f782623ee5d
-> [  447.987147] RDX: 0000000000000065 RSI: 0000000000003000 RDI: 0000000020d51000
-> [  447.987584] RBP: 00007fff9ddaffc0 R08: 00007fff9ddafff0 R09: 00007fff9ddafff0
-> [  447.988022] R10: 00007fff9ddafff0 R11: 0000000000000217 R12: 00007fff9ddb0118
-> [  447.988428] R13: 0000000000401716 R14: 0000000000403e08 R15: 00007f782645d000
-> [  447.988799]  </TASK>
-> [  447.988921]
-> [  447.988921] Showing all locks held in the system:
-> [  447.989237] 1 lock held by khungtaskd/33:
-> [  447.989447]  #0: ffffffff8705c500 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x73/0x3c0
-> [  447.989947] 1 lock held by repro/628:
-> [  447.990144]  #0: ffffffff87258a28 (mf_mutex){+.+.}-{3:3}, at: soft_offline_page.part.0+0xda/0xf40
-> [  447.990611]
-> [  447.990701] =============================================
-> 
-> "
-> 
-> I hope you find it useful.
-> 
-> Regards,
-> Yi Lai
-> 
+Regards,
+
+Hans
+
 
