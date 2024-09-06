@@ -1,254 +1,163 @@
-Return-Path: <linux-kernel+bounces-319357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB24F96FB8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:56:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA3896FB83
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3894B1F29439
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F101F282EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DAD1D0963;
-	Fri,  6 Sep 2024 18:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB9E82499;
+	Fri,  6 Sep 2024 18:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I/00Tyhd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="efgMiD7z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663833FB8B;
-	Fri,  6 Sep 2024 18:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2416B1B85C8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725648953; cv=none; b=GQOJsGKdgMwFp2VsqarUDyiBW2y7jtqmmiZW+lhMJYpQCTLHLBaQ1MSUwcwNAeHddZodiMzEEZbY5Qc6HEltm2a1KDs7zjD0zWpTbJ8fyxaLOsEjDXDday/EK437T0UCqkyld+6D7Ub3hAL8bKJIDk/c200VNCjfd1OX/bgmow4=
+	t=1725648895; cv=none; b=nMNO8X9veSVQadiHuGGq/rVjj5wCpk/gn02qIalg4aiQvaR7+fMQGDtw4VbrW3F+BYRkOttPpLZkL8zPSgfxyBfGyPYekTNJOvyp4VfaD6Sy+dzi0rW3HRKl8eWA2cczvdQn6KWWNxUmIgHg2lS+1E3XKa7dmMkghbwvywXszGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725648953; c=relaxed/simple;
-	bh=GK61cQ3mFSEWeMf+t1FMxrAGCvM8O5dxwMZJAPMq+tc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j5W8Y5kqgY7fF1UgnJDNp7OpuOieEmcxzv4tzT4Hp5bGSm7w4wFhD+3bmOpeysP5plQZwOJe84d3OzGBro/RYLByWjQahLxYoZuNhoZJPq0+2WLdcVcXeFH0Ekh/fhzGdQI8+rwCCf5RjxK0njEUJcOJdrLStwfmn0fmSy+JJpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I/00Tyhd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48690soJ027910;
-	Fri, 6 Sep 2024 18:55:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	61KLYYbFXr/uwE+fC9yma3isXx1jdUM/pnhUeWSDiWs=; b=I/00TyhdZyOpXUBU
-	ohkdmOApk0Q5/A/6ErKZ2D9cpgEccC6wHjwjC2yyWM7GCZDqQpiJjqCCdmQcIqt7
-	WuFxsyL7IxWpWhQh1zfjpf2pjuOsORuY+B9BK0kjH+qsV2v9ANDS0+Sy4Urfzj9c
-	Wwp7bT/l6yXkOuiuXe7Ulkx6I4I0MVeyuyp3JuktzHlw/vN0MeW/TLPB8lJrB2Yk
-	FBpdwxEg1JrUoqhO4fnTfM0u4anzgiWGGc4maRrlHeFV2loFQOND4j6k562OkrcL
-	itnYZ7NkB9bl4SKEHLhNrhAipHdBHmKumN9ZXxiR+1UL+UewDwPz+O+/C1Dk4JsY
-	4IidZg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhx1u7fp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 18:55:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486ItVjh032175
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Sep 2024 18:55:31 GMT
-Received: from hu-obabatun-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 6 Sep 2024 11:55:27 -0700
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-To: <robh@kernel.org>
-CC: <andy@black.fi.intel.com>, <aisheng.dong@nxp.com>,
-        <catalin.marinas@arm.com>, <devicetree@vger.kernel.org>, <hch@lst.de>,
-        <iommu@lists.linux.dev>, <kernel@quicinc.com>, <klarasmodin@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <m.szyprowski@samsung.com>,
-        <quic_obabatun@quicinc.com>, <robin.murphy@arm.com>,
-        <saravanak@google.com>, <will@kernel.org>, <quic_ninanaik@quicinc.com>
-Subject: [PATCH v9 2/2] of: reserved_mem: Add code to dynamically allocate reserved_mem array
-Date: Fri, 6 Sep 2024 11:54:00 -0700
-Message-ID: <20240906185400.3244416-3-quic_obabatun@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240906185400.3244416-1-quic_obabatun@quicinc.com>
-References: <20240906185400.3244416-1-quic_obabatun@quicinc.com>
+	s=arc-20240116; t=1725648895; c=relaxed/simple;
+	bh=AAu/5hFFlWoGudbNftPQ2v+OCU5T4oYxziLv9W4hXfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=car+k6mXfNT3/uZ5JFunHWuY/K+pUKCXZlt+N6AdCYd8g7qK8kMx7jPB0xz0/dctHuTdEj9B5o557Yk7yeC3IY3verVZoG+Fr2/Trk7fGakWhYqgjWIsb3x78x264mFZnPgD9Rf/H4kY7QlHElTsfrh7iNxSWmXq6jb7tTEkeys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=efgMiD7z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821CBC4CEC4;
+	Fri,  6 Sep 2024 18:54:53 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="efgMiD7z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725648891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4fO2uD55CapDb7E2rYz7b7g+1GsC4SXbsHVZgINqmk=;
+	b=efgMiD7z3gM+I+ScpKY5zOxbUYBqiKjOMk4A9og1wreeDYjHRj6B0THIElQoI+3Jmd58aG
+	jbN8OZ+EGjfjZetq0p8s14rZHXsvZmJgF44HLBxsValYTFEqBGWtBGmZ4uFQFdcV3T2XXP
+	ob6Ca27ME5rPao2YSrgvcj/qtr5Yf88=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6a974a26 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 6 Sep 2024 18:54:51 +0000 (UTC)
+Date: Fri, 6 Sep 2024 20:54:49 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrei Vagin <avagin@gmail.com>
+Subject: Re: [PATCH 2/2] Fixup for 3279be36b671 ("powerpc/vdso: Wire up
+ getrandom() vDSO implementation on VDSO32")
+Message-ID: <ZttP-SU9i6iOyfnG@zx2c4.com>
+References: <700dbf296d02e32376329774be35cfbead08041d.1725611321.git.christophe.leroy@csgroup.eu>
+ <ffd7fc255e194d1e2b0aa3d9d129e826c53219d4.1725611321.git.christophe.leroy@csgroup.eu>
+ <ZtsMpcV7iLYoytdJ@zx2c4.com>
+ <795db5f1-c266-4fb3-a51b-c2b3745d334b@csgroup.eu>
+ <ZtsVry_LL2jjeLJ3@zx2c4.com>
+ <8d0a8d03-95b3-40a8-85cd-5c2e6f92eb6b@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hEHbp_akeNHfnCY7zMRoPk6JiPct4g2d
-X-Proofpoint-GUID: hEHbp_akeNHfnCY7zMRoPk6JiPct4g2d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_04,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409060137
+In-Reply-To: <8d0a8d03-95b3-40a8-85cd-5c2e6f92eb6b@csgroup.eu>
 
-The reserved_mem array is statically allocated with a size of
-MAX_RESERVED_REGIONS(64). Therefore, if the number of reserved_mem
-regions exceeds this size, there will not be enough space to store
-all the data.
+On Fri, Sep 06, 2024 at 05:14:43PM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 06/09/2024 à 16:46, Jason A. Donenfeld a écrit :
+> > On Fri, Sep 06, 2024 at 04:26:32PM +0200, Christophe Leroy wrote:
+> > 
+> >> On the long run I wonder if we should try to find a more generic
+> >> solution for getrandom instead of requiring each architecture to handle
+> >> it. On gettimeofday the selection of the right page is embeded in the
+> >> generic part, see for instance :
+> >>
+> >> static __maybe_unused __kernel_old_time_t
+> >> __cvdso_time_data(const struct vdso_data *vd, __kernel_old_time_t *time)
+> >> {
+> >> 	__kernel_old_time_t t;
+> >>
+> >> 	if (IS_ENABLED(CONFIG_TIME_NS) &&
+> >> 	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
+> >> 		vd = __arch_get_timens_vdso_data(vd);
+> >>
+> >> 	t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
+> >>
+> >> 	if (time)
+> >> 		*time = t;
+> >>
+> >> 	return t;
+> >> }
+> >>
+> >> and powerpc just provides:
+> >>
+> >> static __always_inline
+> >> const struct vdso_data *__arch_get_timens_vdso_data(const struct
+> >> vdso_data *vd)
+> >> {
+> >> 	return (void *)vd + (1U << CONFIG_PAGE_SHIFT);
+> >> }
+> > 
+> > It's tempting, but maybe a bit tricky. LoongArch, for example, doesn't
+> > have this problem at all, because the layout of their vvars doesn't
+> > require it. So the vd->clock_mode access is unnecessary.
+> > 
+> >> Or another solution could be to put random data in a third page that is
+> >> always at the same place regardless of timens ?
+> > 
+> > Maybe that's the easier way, yea. Potentially wasteful, though.
+> > 
+> 
+> Indeed I just looked at Loongarch and that's exactly what they do: they 
+> have a third page after the two pages dedicated to TIME for arch 
+> specific data, and they have added getrandom data there.
+> 
+> The third page is common to every process so it won't waste more than a 
+> few bytes. It doesn't worry me even on the older boards that only have 
+> 32 Mbytes of RAM.
+> 
+> So yes, I may have a look at that in the future, what we have at the 
+> moment is good enough to move forward.
 
-Hence, extend the use of the static array by introducing a
-dynamically allocated array based on the number of reserved memory
-regions specified in the DT.
+My x86 code is kind of icky for this:
 
-On architectures such as arm64, memblock allocated memory is not
-writable until after the page tables have been setup. Hence, the
-dynamic allocation of the reserved_mem array will need to be done only
-after the page tables have been setup.
+static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+{
+        if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
+                return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
+        return &__vdso_rng_data;
+}
 
-As a result, a temporary static array is still needed in the initial
-stages to store the information of the dynamically-placed reserved
-memory regions because the start address is selected only at run-time
-and is not stored anywhere else.
-It is not possible to wait until the reserved_mem array is allocated
-because this is done after the page tables are setup and the reserved
-memory regions need to be initialized before then.
+Doing the subtraction like that means that this is more clearly correct.
+But it also makes the compiler insert two jumps for the branch, and then
+reads the addresses of those variables and such.
 
-After the reserved_mem array is allocated, all entries from the static
-array is copied over to the new array, and the rest of the information
-for the statically-placed reserved memory regions are read in from the
-DT and stored in the new array as well.
+If I change it to:
 
-Once the init process is completed, the temporary static array is
-released back to the system because it is no longer needed. This is
-achieved by marking it as __initdata.
+static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+{
+        if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
+                return (void *)&__vdso_rng_data + (3UL << CONFIG_PAGE_SHIFT);
+        return &__vdso_rng_data;
+}
 
-Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
----
- drivers/of/of_reserved_mem.c | 63 +++++++++++++++++++++++++++++++++---
- 1 file changed, 59 insertions(+), 4 deletions(-)
+Then there's a much nicer single `cmov` with no branching.
 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 2011174211f9..45517b9e57b1 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -27,7 +27,9 @@
- 
- #include "of_private.h"
- 
--static struct reserved_mem reserved_mem[MAX_RESERVED_REGIONS];
-+static struct reserved_mem reserved_mem_array[MAX_RESERVED_REGIONS] __initdata;
-+static struct reserved_mem *reserved_mem __refdata = reserved_mem_array;
-+static int total_reserved_mem_cnt = MAX_RESERVED_REGIONS;
- static int reserved_mem_count;
- 
- static int __init early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
-@@ -55,6 +57,50 @@ static int __init early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
- 	return err;
- }
- 
-+/*
-+ * alloc_reserved_mem_array() - allocate memory for the reserved_mem
-+ * array using memblock
-+ *
-+ * This function is used to allocate memory for the reserved_mem
-+ * array according to the total number of reserved memory regions
-+ * defined in the DT.
-+ * After the new array is allocated, the information stored in
-+ * the initial static array is copied over to this new array and
-+ * the new array is used from this point on.
-+ */
-+static void __init alloc_reserved_mem_array(void)
-+{
-+	struct reserved_mem *new_array;
-+	size_t alloc_size, copy_size, memset_size;
-+
-+	alloc_size = array_size(total_reserved_mem_cnt, sizeof(*new_array));
-+	if (alloc_size == SIZE_MAX) {
-+		pr_err("Failed to allocate memory for reserved_mem array with err: %d", -EOVERFLOW);
-+		return;
-+	}
-+
-+	new_array = memblock_alloc(alloc_size, SMP_CACHE_BYTES);
-+	if (!new_array) {
-+		pr_err("Failed to allocate memory for reserved_mem array with err: %d", -ENOMEM);
-+		return;
-+	}
-+
-+	copy_size = array_size(reserved_mem_count, sizeof(*new_array));
-+	if (copy_size == SIZE_MAX) {
-+		memblock_free(new_array, alloc_size);
-+		total_reserved_mem_cnt = MAX_RESERVED_REGIONS;
-+		pr_err("Failed to allocate memory for reserved_mem array with err: %d", -EOVERFLOW);
-+		return;
-+	}
-+
-+	memset_size = alloc_size - copy_size;
-+
-+	memcpy(new_array, reserved_mem, copy_size);
-+	memset(new_array + reserved_mem_count, 0, memset_size);
-+
-+	reserved_mem = new_array;
-+}
-+
- static void __init fdt_init_reserved_mem_node(struct reserved_mem *rmem);
- /*
-  * fdt_reserved_mem_save_node() - save fdt node for second pass initialization
-@@ -64,7 +110,7 @@ static void __init fdt_reserved_mem_save_node(unsigned long node, const char *un
- {
- 	struct reserved_mem *rmem = &reserved_mem[reserved_mem_count];
- 
--	if (reserved_mem_count == ARRAY_SIZE(reserved_mem)) {
-+	if (reserved_mem_count == total_reserved_mem_cnt) {
- 		pr_err("not enough space for all defined regions.\n");
- 		return;
- 	}
-@@ -193,6 +239,9 @@ void __init fdt_scan_reserved_mem_reg_nodes(void)
- 		return;
- 	}
- 
-+	/* Attempt dynamic allocation of a new reserved_mem array */
-+	alloc_reserved_mem_array();
-+
- 	if (__reserved_mem_check_root(node)) {
- 		pr_err("Reserved memory: unsupported node format, ignoring\n");
- 		return;
-@@ -232,7 +281,7 @@ static int __init __reserved_mem_alloc_size(unsigned long node, const char *unam
- int __init fdt_scan_reserved_mem(void)
- {
- 	int node, child;
--	int dynamic_nodes_cnt = 0;
-+	int dynamic_nodes_cnt = 0, count = 0;
- 	int dynamic_nodes[MAX_RESERVED_REGIONS];
- 	const void *fdt = initial_boot_params;
- 
-@@ -255,6 +304,8 @@ int __init fdt_scan_reserved_mem(void)
- 		uname = fdt_get_name(fdt, child, NULL);
- 
- 		err = __reserved_mem_reserve_reg(child, uname);
-+		if (!err)
-+			count++;
- 		/*
- 		 * Save the nodes for the dynamically-placed regions
- 		 * into an array which will be used for allocation right
-@@ -269,11 +320,15 @@ int __init fdt_scan_reserved_mem(void)
- 	}
- 	for (int i = 0; i < dynamic_nodes_cnt; i++) {
- 		const char *uname;
-+		int err;
- 
- 		child = dynamic_nodes[i];
- 		uname = fdt_get_name(fdt, child, NULL);
--		__reserved_mem_alloc_size(child, uname);
-+		err = __reserved_mem_alloc_size(child, uname);
-+		if (!err)
-+			count++;
- 	}
-+	total_reserved_mem_cnt = count;
- 	return 0;
- }
- 
--- 
-2.34.1
+But if I want to do that for real, I'll have to figure out what set of
+nice compile-time constants I can use. I haven't looked into this yet.
 
+Jason
 
