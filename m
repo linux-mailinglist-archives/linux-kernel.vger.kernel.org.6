@@ -1,216 +1,164 @@
-Return-Path: <linux-kernel+bounces-318545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6612996EF7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:38:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4548096EF6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F7EEB22555
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62D571C2119A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33A31C9853;
-	Fri,  6 Sep 2024 09:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE811C86F8;
+	Fri,  6 Sep 2024 09:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yr+yyoeP"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jd8ihtF9"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AAC1C86F6;
-	Fri,  6 Sep 2024 09:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116CC1C870A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615462; cv=none; b=C1wo8bO0zT2JXy1f16d0+XUZYJjgHNNo4jNoslGENoJgJ+9ImEYqoyR9Oal0frnt0cCIwTygeNIeUTO5WvJPcf5HPG/neVowKOe0vAChud4XpUY0sf09veozTaV8YJlvvpXBJNl26HTHOZRRdW7hIXbtW+gW9ql4FazZDUPf/5s=
+	t=1725615449; cv=none; b=SNrcjXEeR6EAJVzeY2CXdvvZkuod0Y5KEsOrr770JtNBAMtS2+NVHZT/mm8fsMrf/zKH1mvGiGMmuVNaNW0NE3/loExqFh/Io6UngodcoEIXz/QjGbIRxj5wHs+3fvMcKFan5IF3IBw1ZiRkjl5k8hvOZkBBMaoUJo1RcAWMacU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615462; c=relaxed/simple;
-	bh=ZjJAm8HU86AbVyh+QUcsqcfE3GZRta3r0DSC5GFF1fY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HQvH8tLSPHqZCBSu+QMhl8fkWD9BIBA114hksZaKeVgL2Haqrl09JfOzMg1JNoGjbdW/kjxN0EDlF5uJHK3IBO6p9XIsm3gJklYG1sSZTsJjcImzAhwSAIG+S73jxBcz2hphI1IZZ0xyIP/WeB0OSfxijznuVzpEU+Uc0AOFaGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yr+yyoeP; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4869arjo048909;
-	Fri, 6 Sep 2024 04:36:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725615413;
-	bh=+Jr/R2zvoa9OrlkdtJ3CRfJHk6CE8wO8NyUem2MPKOQ=;
-	h=From:To:CC:Subject:Date;
-	b=yr+yyoePBktxkhIe9qbJVTrBh5rZTVJY1ZvDpx3YB0nn4kNkro0fOXLv7zTDF+Mts
-	 Y3AY5lmk174u4FKS7Di9aHmMgxeccSOXgdbPpYMX1GzfTiT+UBwbuKIWRofg4T6qCo
-	 OkjiEjgUwTd0rF7MmTNgKTG/1r27e2Sp+GRONx+U=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4869arXS024347
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 6 Sep 2024 04:36:53 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 6
- Sep 2024 04:36:53 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 6 Sep 2024 04:36:52 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4869arQn004462;
-	Fri, 6 Sep 2024 04:36:53 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4869aqcb018145;
-	Fri, 6 Sep 2024 04:36:52 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: <saikrishnag@marvell.com>, <robh@kernel.org>, <jan.kiszka@siemens.com>,
-        <dan.carpenter@linaro.org>, <diogo.ivo@siemens.com>,
-        <kory.maincent@bootlin.com>, <hkallweit1@gmail.com>, <andrew@lunn.ch>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net-next v2] net: ti: icssg-prueth: Make pa_stats optional
-Date: Fri, 6 Sep 2024 15:06:49 +0530
-Message-ID: <20240906093649.870883-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725615449; c=relaxed/simple;
+	bh=LWOgOZVRTlI0I+kz30Uk3gnI+5CCKpMpfD0zAOW0w5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLNlIsTu/y7c81UBXuZlT0md7nUSr7tvKt4q4xWiP7Pw1gNJSNCO05znCBT/YEkYiOHyUgftgMRFw0qylFgPtWnuzVL7hCW3M81/jKhZA5avEtRZKn6HWbCQUqqb5gBCOl+bjtx66gMy1gzIDfpICXx6VGpT7/XrudBARU5tnIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jd8ihtF9; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6d9f65f9e3eso17010167b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725615447; x=1726220247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/nsrHcczWHZSZRkMXgJlPhYYjECdjwNlK3z7QSwRB0=;
+        b=jd8ihtF9M/rSaDe4k3pztC3A4cqffhs+3614oqVhUla9KFlNgcjBLmaYro4UWPHW5j
+         /nEjgegZuxznQvTlfr8Y3ikGjzNuBMnPCwz/7lvWdsyYbGk1q2B0AHjCahWAqj4iRsoM
+         ENT/E0kRFXQEc+403nCZTR25LNcbuAQGY4q9Q7R15BBbP8e+P7Uyjx9cE8uyxtWMU2Fa
+         K12Ce8/XeZmx2lYNf2sYOdCWCHvRDpDYimbqYcIJqYVjzuIRmdptzpMjCjK41ipScLZr
+         osbJcuxLgyvaVhr9z0bt3NDdyq0w9g1776S/4I0ujiB3+jtxW6BQ8cQU9nqy2XUaTojp
+         Tu8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725615447; x=1726220247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/nsrHcczWHZSZRkMXgJlPhYYjECdjwNlK3z7QSwRB0=;
+        b=T1ChyMhoscXFMEdvFxxdquPcUOz91V2hLTyNRQE8dyu4qGvspKLOIZEupBxb/phMFu
+         53LDJ30zyh3Qyq0jhhXJxVwU/OsMoAX6g3c97WkrJhPGpPwRLussuq5eEosRynPh52jJ
+         AT7pMIyhZGk6pioiiRibHXAzeN5f9w2Vmo6ngIIa6Cv2IduPbFFBhisifkbFtVHdR/SB
+         EIixHo9CmtTvmD+P6UWSj9qjeD7oUlruVaJdPU9CQMLTRgNTc/AaTtXVwWlfZI2F3v8F
+         IM5EsPQBxxqZltz8ntOZhssUCPb96Dd0U6O4BCwu2R5MVZupXThr6wUwfoc+SDV3MAKN
+         Rk/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Xt8XomBBPXUe1+EwwEkhnUKkMaMOrCDF7lWIFQ3PGJat8Z0T5Z90T7b0TOGUdWPSZrGboeYTAn805OU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV1eOPLquI3w/OJdi5WqokghI9DT3l5UC/Cup9WCb3LZGMNJrJ
+	qYmOTfcZiR04BMaJ3D74Xua6mbvjjC0tyc5B2oFEhIqpVgVBa5dwJvwAo1ZbbAu0B4OuFS14LtG
+	AX3vdwjPJZR7bU6TUKmibM5KMTNMxZuGYtw+InA==
+X-Google-Smtp-Source: AGHT+IFZN9hYbTcxM1YGXAqx6TijY45qpQ4RcpRodCBMlcZqtSKVL4Cgbh2pPzb7plTG0Lq3ULZUkDoC4pvzYMrTbRQ=
+X-Received: by 2002:a05:690c:d8c:b0:64b:2f31:296b with SMTP id
+ 00721157ae682-6db44d69aa3mr25692997b3.4.1725615447013; Fri, 06 Sep 2024
+ 02:37:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240905122023.47251-1-brgl@bgdev.pl> <20240905122023.47251-2-brgl@bgdev.pl>
+ <6vikrqhdnkefzpahhhtz2hpi62jvcwnzclm7touwtnpxdzvgrf@uc7r6a7bbjek>
+ <CAMRc=MeijX2by+MS_vq_OVx25JO6z=zNfymta35h11mbm=vmtQ@mail.gmail.com>
+ <CALT56yOP+un5nkxuirJVg=gr7fo4Hqjt1ew3z-=F2J_Y_RcTqg@mail.gmail.com>
+ <CAMRc=Mci-8R1Oe3Fe+1E+K-7khzwBPgn_8SQSUPXthpE4032Pw@mail.gmail.com>
+ <d6d5a943-ab29-4034-b465-b62d9d1efa61@kernel.org> <87v7zagcyf.fsf@kernel.org>
+ <ywn7bq6j6jgokwmm3vsumkuwijplezmery5tr6z5yeblnpyjh7@djkwdbt4sl3q> <CAMRc=Mfj3gpgV0N__oB8kF5pk4PrDwP1CqeUgUbvTwyo7p=7bQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Mfj3gpgV0N__oB8kF5pk4PrDwP1CqeUgUbvTwyo7p=7bQ@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 6 Sep 2024 12:37:16 +0300
+Message-ID: <CAA8EJppi5Zy82=ZUZ67DW-40Qm7aMerNLu_Mzh3HiUBWqPiHVw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: sc8280xp-crd: model the PMU of
+ the on-board wcn6855
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kalle Valo <kvalo@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <dbaryshkov@gmail.com>, Johan Hovold <johan@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, ath11k@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pa_stats is optional in dt bindings, make it optional in driver as well.
-Currently if pa_stats syscon regmap is not found driver returns -ENODEV.
-Fix this by not returning an error in case pa_stats is not found and
-continue generating ethtool stats without pa_stats.
+On Fri, 6 Sept 2024 at 10:45, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> On Thu, Sep 5, 2024 at 9:26=E2=80=AFPM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Thu, Sep 05, 2024 at 09:41:44PM GMT, Kalle Valo wrote:
+> > > Konrad Dybcio <konradybcio@kernel.org> writes:
+> > >
+> > > > On 5.09.2024 3:00 PM, Bartosz Golaszewski wrote:
+> > > >> On Thu, Sep 5, 2024 at 2:56=E2=80=AFPM Dmitry Baryshkov <dbaryshko=
+v@gmail.com> wrote:
+> > > >>>
+> > > >>>>>
+> > > >>>>> As you are going to post another revision, please also add
+> > > >>>>>
+> > > >>>>> qcom,ath11k-calibration-variant
+> > > >>>>>
+> > > >>>>
+> > > >>>> I had it in earlier revisions. The only one we could add here wo=
+uld be
+> > > >>>> the one from X13s as QCom has not yet released the data for the =
+CRD.
+> > > >>>> Johan and Konrad were against adding this here if it doesn't ref=
+er to
+> > > >>>> the correct one so I dropped it.
+> > > >>>
+> > > >>> As Kalle usually merges data with some delay it's not infrequent =
+to
+> > > >>> have DTS which names calibration variant, but board-2.bin doesn't=
+ have
+> > > >>> corresponding data. The driver safely falls back to the data with=
+out
+> > > >>> variant if it can find it. Als  usually it's us who supply the
+> > > >>> calibration name.
+> > > >>>
+> > > >>
+> > > >> Johan, Konrad,
+> > > >>
+> > > >> What do you think? Do we know the exact name and should I add it o=
+r
+> > > >> should we wait until it's in board-2.bin?
+> > > >
+> > > > If we can agree on the string identifier with Kalle in advance, we =
+can
+> > > > add it even before the boardfile drops
+> > >
+> > > There have not been really any naming rules for the variant string, i=
+t
+> > > just needs to be unique so that it doesn't conflict with other varian=
+t
+> > > strings. What have you been thinking?
+> >
+> > QC_8380_CRD (following DMI / Windows name) or QC_X1E80100_CRD (followin=
+g
+> > marketing name). Or maybe QTI_ instead of QC_. WDYT?
+> >
+>
+> Is there any central authority listing these names? Or are they just
+> agreed upon on the mailing list? I honestly don't know where they come
+> from.
 
-Fixes: 550ee90ac61c ("net: ti: icssg-prueth: Add support for PA Stats")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-NOTE: This fix is targetted to net-next because the concerned commit is not
-yet synced to net. So the issue isn't present in net.
+I think on ath12k these names come from ACPI tables. On all previous
+devices it is just being agreed upon. Kalle is the central authority.
 
-v1 -> v2
-*) Replacing the error code returned for optional resource to NULL in probe and
-simplified the if checks as suggested by Andrew Lunn <andrew@lunn.ch>
 
-v1 https://lore.kernel.org/all/20240905101739.44563-1-danishanwar@ti.com/
-
- drivers/net/ethernet/ti/icssg/icssg_ethtool.c | 17 ++++++++++-----
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  2 +-
- drivers/net/ethernet/ti/icssg/icssg_stats.c   | 21 ++++++++++++-------
- 3 files changed, 26 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-index 5073ec195854..6b5cc1e6d64b 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
-@@ -68,9 +68,13 @@ static int emac_nway_reset(struct net_device *ndev)
- 
- static int emac_get_sset_count(struct net_device *ndev, int stringset)
- {
-+	struct prueth_emac *emac = netdev_priv(ndev);
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		return ICSSG_NUM_ETHTOOL_STATS;
-+		if (emac->prueth->pa_stats)
-+			return ICSSG_NUM_ETHTOOL_STATS;
-+		else
-+			return ICSSG_NUM_ETHTOOL_STATS - ICSSG_NUM_PA_STATS;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-@@ -78,6 +82,7 @@ static int emac_get_sset_count(struct net_device *ndev, int stringset)
- 
- static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
- {
-+	struct prueth_emac *emac = netdev_priv(ndev);
- 	u8 *p = data;
- 	int i;
- 
-@@ -86,8 +91,9 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
- 		for (i = 0; i < ARRAY_SIZE(icssg_all_miig_stats); i++)
- 			if (!icssg_all_miig_stats[i].standard_stats)
- 				ethtool_puts(&p, icssg_all_miig_stats[i].name);
--		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
--			ethtool_puts(&p, icssg_all_pa_stats[i].name);
-+		if (emac->prueth->pa_stats)
-+			for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
-+				ethtool_puts(&p, icssg_all_pa_stats[i].name);
- 		break;
- 	default:
- 		break;
-@@ -106,8 +112,9 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
- 		if (!icssg_all_miig_stats[i].standard_stats)
- 			*(data++) = emac->stats[i];
- 
--	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
--		*(data++) = emac->pa_stats[i];
-+	if (emac->prueth->pa_stats)
-+		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++)
-+			*(data++) = emac->pa_stats[i];
- }
- 
- static int emac_get_ts_info(struct net_device *ndev,
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index becdda143c19..6644203d6bb7 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1185,7 +1185,7 @@ static int prueth_probe(struct platform_device *pdev)
- 	prueth->pa_stats = syscon_regmap_lookup_by_phandle(np, "ti,pa-stats");
- 	if (IS_ERR(prueth->pa_stats)) {
- 		dev_err(dev, "couldn't get ti,pa-stats syscon regmap\n");
--		return -ENODEV;
-+		prueth->pa_stats = NULL;
- 	}
- 
- 	if (eth0_node) {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.c b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-index 06a15c0b2acc..8800bd3a8d07 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_stats.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-@@ -42,11 +42,14 @@ void emac_update_hardware_stats(struct prueth_emac *emac)
- 			emac->stats[i] -= tx_pkt_cnt * 8;
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
--		reg = ICSSG_FW_STATS_BASE + icssg_all_pa_stats[i].offset *
--		      PRUETH_NUM_MACS + slice * sizeof(u32);
--		regmap_read(prueth->pa_stats, reg, &val);
--		emac->pa_stats[i] += val;
-+	if (prueth->pa_stats) {
-+		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
-+			reg = ICSSG_FW_STATS_BASE +
-+			      icssg_all_pa_stats[i].offset *
-+			      PRUETH_NUM_MACS + slice * sizeof(u32);
-+			regmap_read(prueth->pa_stats, reg, &val);
-+			emac->pa_stats[i] += val;
-+		}
- 	}
- }
- 
-@@ -70,9 +73,11 @@ int emac_get_stat_by_name(struct prueth_emac *emac, char *stat_name)
- 			return emac->stats[icssg_all_miig_stats[i].offset / sizeof(u32)];
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
--		if (!strcmp(icssg_all_pa_stats[i].name, stat_name))
--			return emac->pa_stats[icssg_all_pa_stats[i].offset / sizeof(u32)];
-+	if (emac->prueth->pa_stats) {
-+		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
-+			if (!strcmp(icssg_all_pa_stats[i].name, stat_name))
-+				return emac->pa_stats[icssg_all_pa_stats[i].offset / sizeof(u32)];
-+		}
- 	}
- 
- 	netdev_err(emac->ndev, "Invalid stats %s\n", stat_name);
-
-base-commit: 43b7724487109368363bb5cda034b3f600278d14
--- 
-2.34.1
-
+--=20
+With best wishes
+Dmitry
 
