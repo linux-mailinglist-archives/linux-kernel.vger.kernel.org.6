@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-319128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A1C96F81B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B6D96F81C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DB11F21309
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188D91C23BEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14E71D2F49;
-	Fri,  6 Sep 2024 15:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73AA1D2F41;
+	Fri,  6 Sep 2024 15:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osppqcWR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQlgJg94"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3701D04B6;
-	Fri,  6 Sep 2024 15:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA021D1739;
+	Fri,  6 Sep 2024 15:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635992; cv=none; b=hqX3/lHvnSqHr5+e0cf2dy3t9vcZEO/J99OVcO8cFBjxfCkofMC/y3Exky1WOGparI41qh05AVkkDTANxAPTbvdH7gJ2kE7APZ1oXEhfYK6sNzqA8SoJVcr2O7KARQKUDDtUPNIjT532oFm5yWtVC4ox7EzvIe7xsNR/J/AStmE=
+	t=1725636088; cv=none; b=X3YdtiLT2Xv9vgQI2i/LyVSTC4Bb7NJ17hdXkDASuGUe/L7yDkQQ0FNfPDR2nAL+BP13dqr9MjCxofeoQ+klkoIMZLhs2AKBl1d8GKrB3FqL0fWiD2CwDD3bZebnP1hTCWrfGvuUEgjxNyiR0QZYBwbvYrLZsH8DWWTlZY2BDiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635992; c=relaxed/simple;
-	bh=JyacMJD70gR0U5F0uVaLkrOHMWLDezzMTuRGb7oMANk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eu9uXv0iWu+TSv3VBkMTjR9agSfCIDvBXBhApQwVRwV/AY3bBKf7NX6kb+xD+tTj08GteVbjT2qlMrZv3HrtOwdzOXo3UCKRV26CbQsejObh815MKTPuliLqMy+79GMbDznAYNrLITBmYMQIsufxHCKZQESzN/wucxlUCqJCHWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osppqcWR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3624C4CEC6;
-	Fri,  6 Sep 2024 15:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725635991;
-	bh=JyacMJD70gR0U5F0uVaLkrOHMWLDezzMTuRGb7oMANk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=osppqcWR2HkbAzfiVFpY50YGS3TLv3PLzd8LgNNZsFN3LYqnOqY3ldPqlrjiNYJ+d
-	 JI3tREKRWXf3RtxmLqnrpF3kBj9p2+rW0iNul0aHr8Zhx+eaa9k5JbK0H/M5PCL4/P
-	 QWbYqwI/bYbeV81xiURp8qwd9LPctUeVj4S2+bU7ZFI315BXz4sP/QOxtuK21f+YHu
-	 vCVFJSRYTE3q44qOxydkHmnJS9ke6gHuDa4AZUNokWAKJSEmoFQr51/IusexBAulcu
-	 zwjSa027gTmm+LnPcUdugMrzMEhJOO/rhDkK5zYcBBtxm0GtqORGkKHq+pQwzuTpHk
-	 yxu6oU0iidvsg==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f7529203ddso8178291fa.0;
-        Fri, 06 Sep 2024 08:19:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMh9n388QU75f11kK4Fxm1xPie2x/JK58ZciGkmiPR3pFofyVBprgXSt8g4h1F7FbU7MkhjkEolA==@vger.kernel.org, AJvYcCUfE7muvUFVLh4u/Uv/XX7/rHH0xZp9WYo8C325NSx6HSIh6JKPTibbxLD9qt+57HcJfez6TiUSt4dg+/sv@vger.kernel.org, AJvYcCX4GuFfSWAtShF/2ZIoeEpPgiBB/y/mJZ4wTYzrsDpipaaXZ2ZjeMLT5KknUbXT+ugv9wLJxO3ee/5dgiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT9SKqDYgelqxnWzFqT+qI8iUl1/DgT/xoaLD8xRK+Nr2MPwB8
-	9QvC0luGlT/YARsdfW9eaHjvtuchRk6nnYb8vRxYaSgDyU7CpJza9yFuAe4fJCkaf22mcw4sQrn
-	d4xbr6M7CTDAAtR0EbtefEmaKV50=
-X-Google-Smtp-Source: AGHT+IHkLbSBiZW38wTZaaWM08grre0I0Datokcan677tEHxnny0JbuWOd2fR1NTCJwojYf19Go6ayQJETR9UzWIhi0=
-X-Received: by 2002:a05:6512:3b10:b0:535:639d:e3e0 with SMTP id
- 2adb3069b0e04-53657fdd284mr1037095e87.24.1725635990440; Fri, 06 Sep 2024
- 08:19:50 -0700 (PDT)
+	s=arc-20240116; t=1725636088; c=relaxed/simple;
+	bh=oUSjs1MMOxspywHp1oG7MWq+ySDSFas4rJEQB36sgpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0zPt28vV7E+NSfy33gWQZ94aTR8Y/RxQv2CoOBGPkMAecP/t42jQxn6gh8aOrHMTUQseDAZprG0VW+xV5BS38aXAGSZRPzqkhQMSy3O0A7LIF+V+Huj3Ikdyotgqv4rEhTo3HeCDHzUtWyW5LtneDo+3D4has+Il0imO9aT9nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQlgJg94; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725636087; x=1757172087;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oUSjs1MMOxspywHp1oG7MWq+ySDSFas4rJEQB36sgpw=;
+  b=TQlgJg94MwEG4kII6SqP2/7ETxL4sFTifC6vczMirjp4fcBxKA+M4k7o
+   fuASyKB4LJ0tQghJ2G+R0mtX8uqKs88geWV1+VQAJi3tylKvO4FBr+W23
+   bySJAkAiN6GWaY1+8QzHXT5n6KXbifKl6XTpCvvZYzAyLaZ1qNi5bOZfj
+   y59qciWWXmf73E21J+vzBTq05ggkWJDgTJ5a49GncDxjLKFAkKVIqknZH
+   bLL/yPdt3hdK2kmGsZfOyYHkHgZ7YY8i7GW7YPH4MxD/zzJ7Pihm/DMHt
+   hYDLM/tWWURb9Rwk8tUWQ9cHf+0sXMkX51ocH8VyQGhabubgj/8whQJBf
+   g==;
+X-CSE-ConnectionGUID: VYh4zCH2TW6sto2VCpWJsw==
+X-CSE-MsgGUID: 7OlrPE65RxyUUTyr2oX+1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35750007"
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="35750007"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:21:26 -0700
+X-CSE-ConnectionGUID: iWX56I1eTTCTgjLcSy8sDQ==
+X-CSE-MsgGUID: Psce5VTTQyqfgwPEv9VTOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="66222829"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:21:25 -0700
+Received: from [10.212.119.23] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.23])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 2152A20B5782;
+	Fri,  6 Sep 2024 08:21:23 -0700 (PDT)
+Message-ID: <8b9d3cbb-99bd-4474-8daf-e9ab36e42a77@linux.intel.com>
+Date: Fri, 6 Sep 2024 11:21:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809122007.1220219-3-masahiroy@kernel.org> <3447459d08dd7ebb58972129cddf1c44@paul-moore.com>
-In-Reply-To: <3447459d08dd7ebb58972129cddf1c44@paul-moore.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 7 Sep 2024 00:19:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
-Message-ID: <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selinux: move genheaders to security/selinux/
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 27, 2024 at 6:22=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Aug  9, 2024 Masahiro Yamada <masahiroy@kernel.org> wrote:
-> >
-> > This tool is only used in security/selinux/Makefile.
-> >
-> > There is no reason to keep it under scripts/.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >  scripts/remove-stale-files                                 | 3 +++
-> >  scripts/selinux/Makefile                                   | 2 +-
-> >  scripts/selinux/genheaders/.gitignore                      | 2 --
-> >  scripts/selinux/genheaders/Makefile                        | 3 ---
-> >  security/selinux/.gitignore                                | 1 +
-> >  security/selinux/Makefile                                  | 7 +++++--
-> >  .../selinux/genheaders =3D> security/selinux}/genheaders.c   | 0
-> >  7 files changed, 10 insertions(+), 8 deletions(-)
-> >  delete mode 100644 scripts/selinux/genheaders/.gitignore
-> >  delete mode 100644 scripts/selinux/genheaders/Makefile
-> >  rename {scripts/selinux/genheaders =3D> security/selinux}/genheaders.c=
- (100%)
->
-> As long as there is no harm in keeping genheaders under scripts/selinux,
-> and based on your cover letter it would appear that there is no problem
-> with the current location, I would prefer to keep it where it currently
-> lives.
-
-
-'make clean' is meant to clean up the tree, but keep
-build artifacts necessary for building external modules.
-
-
-See the help message:
-
-
-  clean           - Remove most generated files but keep the config and
-                    enough build support to build external modules
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/10] perf tools: Separate exclude_hv fallback
+To: Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
+ James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>,
+ Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
+References: <20240905202426.2690105-1-namhyung@kernel.org>
+ <20240905202426.2690105-8-namhyung@kernel.org>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240905202426.2690105-8-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
+On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
+> The exclude_hv was added in the evsel__fallback() in the commit
+> 4ec8d984895fef43a ("perf record: Fix priv level with branch sampling
+> for paranoid=2") to address branch stack samples on Intel PMUs.
+> As some other PMUs might not support that, let's separate the bit from
+> exclude_kernel to make sure it can add the bit only if required.
+> 
+> Technically it should change the modifier string at the end of the
+> event name.  ":u" is for exclude_kernel + exclude_hv, so it should be
+> ":uh" if it has exclude_kernel only.  That means the default events for
+> regular users will looks like "cycles:Puh" (for perf record) or
+> "instructions:uh" (for perf stat).  But I'm not sure if it's worth the
+> trouble so I didn't touch the name in this patch.
+> 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/evsel.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 1a4f52767942e5ad..c5df45bb74dfc1b5 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -3389,10 +3389,20 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+>  		free(evsel->name);
+>  		evsel->name = new_name;
+>  		scnprintf(msg, msgsize, "kernel.perf_event_paranoid=%d, trying "
+> -			  "to fall back to excluding kernel and hypervisor "
+> -			  " samples", paranoid);
+> +			  "to fall back to excluding kernel samples", paranoid);
+>  		evsel->core.attr.exclude_kernel = 1;
+> -		evsel->core.attr.exclude_hv     = 1;
+> +
+> +		return true;
+> +	} else if (err == EACCES && !evsel->core.attr.exclude_hv &&
+> +		   (paranoid = perf_event_paranoid()) > 1) {
+> +		/* If event has exclude user then don't exclude hv. */
+> +		if (evsel->core.attr.exclude_user)
+> +			return false;
+> +
+> +		/* Intel branch stack requires exclude_hv */
 
-'make clean' does not clean up under scripts/
-because tools located scripts/ are used in tree-wide
-and often used for external modules as well.
+I don't think it's an requirement for Intel branch stack. The HV is
+ignored for all X86.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/core.c#n542
 
-So, scripts/selinux/genheaders/genheaders is left over.
+I think it's a generic request for branch on all arch.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/events/core.c#n366
 
+Thanks,
+Kan
 
-genheaders is locally used in security/selinux/.
-
-'make clean' will properly clean up security/selinux/genheaders.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+> +		scnprintf(msg, msgsize, "kernel.perf_event_paranoid=%d, trying "
+> +			  "to fall back to excluding hypervisor samples", paranoid);
+> +		evsel->core.attr.exclude_hv = 1;
+>  
+>  		return true;
+>  	} else if (err == EOPNOTSUPP && !evsel->core.attr.exclude_guest &&
 
