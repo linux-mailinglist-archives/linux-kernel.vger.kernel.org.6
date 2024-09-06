@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-318292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2220896EB3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:59:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D325296EB4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6768289200
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:59:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C665B238BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7593714831F;
-	Fri,  6 Sep 2024 06:59:16 +0000 (UTC)
-Received: from cae.in-ulm.de (cae.in-ulm.de [217.10.14.231])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB966141987;
-	Fri,  6 Sep 2024 06:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.14.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3614A60C;
+	Fri,  6 Sep 2024 06:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="JPN2IXXt"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E48145B11;
+	Fri,  6 Sep 2024 06:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605956; cv=none; b=Xe2RoSDXo9VS/snibbv4geHEPUZ7haQ2+HT1aNmc9Ib6+3aeishuYumO5XKeF6C40FfgdfTOq4ZNlVviXnleTP6LQUxZlp85TxHPOX8bPRpoa/c2Ii/JoAuz2f2pH9JBGtAyYJkaP9OjoWXnZ1jhaRjbX6jiMOW0WetArPLJX94=
+	t=1725605990; cv=none; b=T5kgYa2CUG0aukJU4ecRh0rPnPIFo8so3I7kMhC1RTpdLpRz1tvyumIbp07Vv183ZxSqiY8meYWTLVRN1BIcTlGfMU1yRznm5e/is4cUe9mxyJZjCGvYdq2D2TkXoeYu2+6Gay6tRJfhzw3YAXrSEId8Q7k+hxKU6l2MdYxVn7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605956; c=relaxed/simple;
-	bh=mnUu2HyKbLvtOYL9epi6A7gg7rKyVXS4ja6D7jENLhc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R8roNNkmRKih3dLp/9ujFAQA1c7BimEyyA6m/EUrC1aDuFr1kSO67l137mUs6jbDNZiQraZ9GmGjMwLIwUUvThZSv2LJwzMdSFvUUuAugsQmfw0tY0hy7ybMdNpEHFBLM9cCRYiPV1EaaVP8w+CS99OXt7JeVFXtm0zrRBh9xSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de; spf=pass smtp.mailfrom=c--e.de; arc=none smtp.client-ip=217.10.14.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c--e.de
-Received: by cae.in-ulm.de (Postfix, from userid 1000)
-	id 438B814035E; Fri,  6 Sep 2024 08:59:04 +0200 (CEST)
-From: "Christian A. Ehrhardt" <lk@c--e.de>
-To: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: [PATCH v4] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Date: Fri,  6 Sep 2024 08:58:53 +0200
-Message-Id: <20240906065853.637205-1-lk@c--e.de>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1725605990; c=relaxed/simple;
+	bh=Upc8XWfetGI1gtyR95rbZZ4/7td25ncn9d0JTpGxvI0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=auU81gas0N6sv6Vu2kofZie4moShfODS2FlsDK5h1ihtTuF2KPe1wu/l262BPXvn+irwFer20YkirR33rh9p/AkKmieQMfp1GR7AgwT9wDz7WVYMM0Sg/jeJDSMVQbuZAKcO4JYfKh9pDfo8vTPkiUeR0hR/7/es8+nAWAGNwck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=JPN2IXXt; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1725605984;
+	bh=sUHXIrjnHS+Ol+xIsY2BagDRHrRUVN5ksj5mkzk0GWk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JPN2IXXt8T9uK4WYrDF/aF6tNmSORt6qbIW8Scxf7Yj0cQGJxTUZFKXGO5myErUhO
+	 dheOx7TGFohEGncpupi9qLpH83n3AoXHGCjFRaE5Niax6X5n9aT7nWA+I3bK9x+Eiu
+	 t/dnkmhZucV62gV/Pjw/qwUz/2SdQGvC8Z7HFyyYFE1maTeK28OAbv9xMO/lRl53vR
+	 fKTDg3SbBMv8DMAXesSGLDGuR2pGfdcOTY/rxpyxqpZlA4RGjpSxeBvc3wq5DGClm0
+	 ulPvkdGfU6/akU45rkH7aLtvWoVsLT7oyn1+O++FpgqAAdWj4erLl8CjsBT5teWKFY
+	 UOvnBfG3WqM6A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0RtN4J6hz4w2N;
+	Fri,  6 Sep 2024 16:59:40 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
+ Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta
+ <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Guo Ren
+ <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge
+ Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
+ <dalias@libc.org>, John Paul Adrian Glaubitz
+ <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>,
+ Christoph Hellwig <hch@infradead.org>, Michal Hocko <mhocko@suse.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, Chris Torek
+ <chris.torek@gmail.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net,
+ Charlie Jenkins <charlie@rivosinc.com>
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+In-Reply-To: <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+Date: Fri, 06 Sep 2024 16:59:40 +1000
+Message-ID: <87zfol468z.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-If the busy indicator is set, all other fields in CCI should be
-clear according to the spec. However, some UCSI implementations do
-not follow this rule and report bogus data in CCI along with the
-busy indicator. Ignore the contents of CCI if the busy indicator is
-set.
+Charlie Jenkins <charlie@rivosinc.com> writes:
+> Create a personality flag ADDR_LIMIT_47BIT to support applications
+> that wish to transition from running in environments that support at
+> most 47-bit VAs to environments that support larger VAs. This
+> personality can be set to cause all allocations to be below the 47-bit
+> boundary. Using MAP_FIXED with mmap() will bypass this restriction.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>  include/uapi/linux/personality.h | 1 +
+>  mm/mmap.c                        | 3 +++
+>  2 files changed, 4 insertions(+)
+>
+> diff --git a/include/uapi/linux/personality.h b/include/uapi/linux/personality.h
+> index 49796b7756af..cd3b8c154d9b 100644
+> --- a/include/uapi/linux/personality.h
+> +++ b/include/uapi/linux/personality.h
+> @@ -22,6 +22,7 @@ enum {
+>  	WHOLE_SECONDS =		0x2000000,
+>  	STICKY_TIMEOUTS	=	0x4000000,
+>  	ADDR_LIMIT_3GB = 	0x8000000,
+> +	ADDR_LIMIT_47BIT = 	0x10000000,
+>  };
 
-If a command timeout is hit it is possible that the EVENT_PENDING
-bit is cleared while connector work is still scheduled which can
-cause the EVENT_PENDING bit to go out of sync with scheduled connector
-work. Check and set the EVENT_PENDING bit on entry to
-ucsi_handle_connector_change() to fix this.
+I wonder if ADDR_LIMIT_128T would be clearer?
 
-Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
-This ensures that the command is cancelled even if ->sync_control
-returns an error (most likely -ETIMEDOUT).
+Have you looked at writing an update for the personality(2) man page? :)
 
-Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-Bisected-by: Christian Heusel <christian@heusel.eu>
-Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
----
- drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 4039851551c1..d6d61606bbcf 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -38,6 +38,10 @@
- 
- void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
- {
-+	/* Ignore bogus data in CCI if busy indicator is set. */
-+	if (cci & UCSI_CCI_BUSY)
-+		return;
-+
- 	if (UCSI_CCI_CONNECTOR(cci))
- 		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
- 
-@@ -107,15 +111,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
- 		size = clamp(size, 0, 16);
- 
- 	ret = ucsi->ops->sync_control(ucsi, command);
--	if (ret)
--		return ret;
--
--	ret = ucsi->ops->read_cci(ucsi, cci);
--	if (ret)
--		return ret;
-+	if (ucsi->ops->read_cci(ucsi, cci))
-+		return -EIO;
- 
- 	if (*cci & UCSI_CCI_BUSY)
- 		return -EBUSY;
-+	if (ret)
-+		return ret;
- 
- 	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
- 		return -EIO;
-@@ -1249,6 +1251,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
- 
- 	mutex_lock(&con->lock);
- 
-+	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
-+		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
-+			     __func__);
-+
- 	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
- 
- 	ret = ucsi_send_command_common(ucsi, command, &con->status,
--- 
-2.43.0
-
+cheers
 
