@@ -1,126 +1,157 @@
-Return-Path: <linux-kernel+bounces-318284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012EA96EB15
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:55:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BA396EB16
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12A01F2593C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:55:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D336A287BAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE3E14264A;
-	Fri,  6 Sep 2024 06:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2FB14A4E2;
+	Fri,  6 Sep 2024 06:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c7aXSNpm"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g71Sg6Hy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dn1ULSt/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g71Sg6Hy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dn1ULSt/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7664713D8B5
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 06:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046991411DE;
+	Fri,  6 Sep 2024 06:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725605751; cv=none; b=QRhKt+hhrc9iOmLzZzqVicGrV193GVchA0TeNxJAcZfpsEg6aYmBixnoEPd5gGU8Vl+U+EMRb0VoPhLz/KB0oXkQzDC3Vyjgbs6F8TmVRe5xsreOyq80iDBm3zwGRlefaEMr07QWcwMWaN2xiXAF1sbqduUogH4rEsYwAX4PSqQ=
+	t=1725605755; cv=none; b=pLSVFG4IEDhlYu791UUy1wDXvceIuVQ4lSwHsFEU1VzA68VdbH9BG1F6KM74dExA/Z6IMzd+Ffl/45Shy6uZS8KEpeIelbYUFgJmvpi/I0/VfjGPlLyRlfZzQ4gCIKKRXOzGflajLTpArqkJiw7T17K+wRqYDhz1xqJQ6gTDebU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725605751; c=relaxed/simple;
-	bh=b7ERu1u+RZvnB2du3wS1+TNHr/1umqo9UDdZVtoPrcQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dNg4k8HnHq/geeL3S3mUEBqf5vVq+FH6xI85obAUqAiDeXc9SnmA5ZqrhfTokUX/E2pOkLjEGipqJF0oYaCwyeO+jHPZj3M+2oH8IGHmFUWPrbsJdW/pd3Yti3IEGRyy6N3l6J0WMv8r6P/lprdyxayWw6VEsMztiPTxrIWAKqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c7aXSNpm; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374bd0da617so907713f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 23:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725605748; x=1726210548; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXVPGKCWkvIyxnOaace+gmP1pBIJW2/wUZj/AGb7QaY=;
-        b=c7aXSNpm8nEMds3yUZFA6QKMpZCKDqZ991JXoxnQTz3ADR6IEe8lnzxX9dXZpZ62yq
-         oWBlI1qSeWMBaZal6K+0Vb5Kzzg15CGVACYWfy174fO7t9QL+yypK0FZ0PWCoIRkNR7Z
-         QvSG9gHB1n1o2acakxa1rfeqyktVOFxS5Sdqf/NVjNTkiPMpygwaXvJIqY3VRa6d/Kdl
-         TSrBVOIxmDAZNGJKIT9DnUtMpi+pTffNce2wWs0g91evcKyI4pMKwJ+aXQq+IZ0tiflj
-         9ER+5+2FU9En6TWTBesPvT7XpVT7faPXR3WGjWz4P6YzO/+LtimHzWX1PksiTbDdDwX8
-         10Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725605748; x=1726210548;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXVPGKCWkvIyxnOaace+gmP1pBIJW2/wUZj/AGb7QaY=;
-        b=ToEaxX25W7aWmlHstZG/K/Iw0lWsXRTPqfGJ5r7qL1KMIry0PTtXqBol6X9MgGCZ5v
-         icUL2j/2BMMYp1M25rxioM3PjDy8AvGv6r+gwFhaY08inUpafNt+vWgRp/N/p9hGSkIY
-         7PsYy5pNih2o3v0B3eZC5XSJropWfHmzr4pzbumtePOyuDljtpUFPvRmGDtwG0+/KlM2
-         tQoEg4ZEctDRHh3wi387xBlUU6eXtRjJwGkvmlVEQrlrMo4Hf+xyuJqwBKlrqOsG2TE+
-         mOz+RT9iIHf5IzWctB/fHCLz5mU96JErwRvnmvDqrPMFtH9M90Z46jCu2LAnmmF6auNp
-         0LsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3nG/R3wEkBJSLXEeH5GC0NkRHtZ/v7WmMtbnIGx/On9bIeC45a3EyxzcJdboFXBeLmGr6jHNuYY5VoVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDo+DTHZ9cGuvow2uxr1UVoQz4orhJf0EeafEaCIlvsNPBQ6CB
-	Zv9DpkbNVhwg4h9qOQFigOCieIm/tSs/VDplaqTfNINUysRcLC0QjGfjhUeoMzg=
-X-Google-Smtp-Source: AGHT+IGN9vDlwteKqK7cnYQWXkf07Qewxeb9HmZVyNNN7jUwDQ4VFe4yEkgEVz9AUOTtKtIhJ/ptBw==
-X-Received: by 2002:a5d:5225:0:b0:36b:3384:40e5 with SMTP id ffacd0b85a97d-378895de480mr914131f8f.24.1725605746995;
-        Thu, 05 Sep 2024 23:55:46 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:4e33:801c:cee0:ee57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-375348df4e8sm9303380f8f.115.2024.09.05.23.55.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 23:55:46 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: meson: c3: pll: hifi_pll frequency is not
- accurate
-In-Reply-To: <20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com> (Chuan Liu via's
-	message of "Fri, 06 Sep 2024 13:52:34 +0800")
-References: <20240906-fix_clk-v1-0-2977ef0d72e7@amlogic.com>
-	<20240906-fix_clk-v1-2-2977ef0d72e7@amlogic.com>
-Date: Fri, 06 Sep 2024 08:55:46 +0200
-Message-ID: <1jy145qnil.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1725605755; c=relaxed/simple;
+	bh=N2aqiFNRQUOVhhKlzSLKBeNsO8K5Nh4d2XRcM/+4SZk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MmSBps/K9d8rHy7UliL1z93i3lP8neqWfgJwJt2ShBESUXE5HLnT9SOEmAOZXOc/D6VevJ2sXSM6wBOgxOdSxGj9epCBVmmGqY4/G/7YBlj1v5DSIG5ZRsq6p4Onq/+JXjzgM+q8CWX/dP3fqZvax6P36TEa7TeBJZoW34DbVAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g71Sg6Hy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dn1ULSt/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g71Sg6Hy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dn1ULSt/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 133CC21AB3;
+	Fri,  6 Sep 2024 06:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725605752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTcgdnIMXOLSljxfwFwdmaeYM8dRsY9o8qtxU1XSl08=;
+	b=g71Sg6Hy2hMnpKAH1IJjj0bqjxo212crlWc7bNQarI7sKrBAy++gGEOVHzx/z1H8rKYTEC
+	Hy5hVRfuBBwWWVR5KOku5mDnk0IWR+o9YL04sp7HudJkImfyS2vuP1Mr2KdFMCXt9xeqaT
+	bCyniGQuQVLJDHUYQbLiujg/opsSpV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725605752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTcgdnIMXOLSljxfwFwdmaeYM8dRsY9o8qtxU1XSl08=;
+	b=Dn1ULSt/c+vCPxFwhPl4+fK/hWpgqs+cDaYCAwzHZn+943y/r6GgvV4EZhuQeYJX8QZZvc
+	6wgsdye31A3MW/Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725605752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTcgdnIMXOLSljxfwFwdmaeYM8dRsY9o8qtxU1XSl08=;
+	b=g71Sg6Hy2hMnpKAH1IJjj0bqjxo212crlWc7bNQarI7sKrBAy++gGEOVHzx/z1H8rKYTEC
+	Hy5hVRfuBBwWWVR5KOku5mDnk0IWR+o9YL04sp7HudJkImfyS2vuP1Mr2KdFMCXt9xeqaT
+	bCyniGQuQVLJDHUYQbLiujg/opsSpV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725605752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTcgdnIMXOLSljxfwFwdmaeYM8dRsY9o8qtxU1XSl08=;
+	b=Dn1ULSt/c+vCPxFwhPl4+fK/hWpgqs+cDaYCAwzHZn+943y/r6GgvV4EZhuQeYJX8QZZvc
+	6wgsdye31A3MW/Bw==
+Date: Fri, 6 Sep 2024 08:55:52 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+cc: Wardenjohn <zhangwarden@gmail.com>, jikos@kernel.org, pmladek@suse.com, 
+    joe.lawrence@redhat.com, live-patching@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+In-Reply-To: <20240905163449.ly6gbpizooqwwvt6@treble>
+Message-ID: <alpine.LSU.2.21.2409060851580.1385@pobox.suse.cz>
+References: <20240828022350.71456-1-zhangwarden@gmail.com> <20240828022350.71456-3-zhangwarden@gmail.com> <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz> <20240905163449.ly6gbpizooqwwvt6@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,suse.com,redhat.com,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri 06 Sep 2024 at 13:52, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+On Thu, 5 Sep 2024, Josh Poimboeuf wrote:
 
-> From: Chuan Liu <chuan.liu@amlogic.com>
+> On Thu, Sep 05, 2024 at 12:23:20PM +0200, Miroslav Benes wrote:
+> > I am not a fan. Josh wrote most of my objections already so I will not 
+> > repeat them. I understand that the attribute might be useful but the 
+> > amount of code it adds to sensitive functions like 
+> > klp_complete_transition() is no fun.
+> > 
+> > Would it be possible to just use klp_transition_patch and implement the 
+> > logic just in using_show()?
+> 
+> Yes, containing the logic to the sysfs file sounds a lot better.
+> 
+> > I have not thought through it completely but 
+> > klp_transition_patch is also an indicator that there is a transition going 
+> > on. It is set to NULL only after all func->transition are false. So if you 
+> > check that, you can assign -1 in using_show() immediately and then just 
+> > look at the top of func_stack.
+> 
+> sysfs already has per-patch 'transition' and 'enabled' files so I don't
+> like duplicating that information.
+> 
+> The only thing missing is the patch stack order.  How about a simple
+> per-patch file which indicates that?
+> 
+>   /sys/kernel/livepatch/<patchA>/order => 1
+>   /sys/kernel/livepatch/<patchB>/order => 2
+> 
+> The implementation should be trivial with the use of
+> klp_for_each_patch() to count the patches.
 
-The patch title is not good. the clock innacurate ... Ok, but you are doing
-something about it, right ? Plus just saying that is a bit vague.
+Yes, it should work as well.
 
-How about something like "fix frac maximum value" ? This what you are
-doing, right ?
+Wardenjohn, you should then get all the information that you need. Also, 
+please test your patches with livepatch kselftests before a submission 
+next time. New sysfs attributes need to be documented in 
+Documentation/ABI/testing/sysfs-kernel-livepatch and there should be a new 
+kselftest for them.
 
->
-> The fractional denominator of C3's hifi_pll fractional multiplier is
-> fixed to 100000, so flag CLK_MESON_PLL_FIXED_FRAC_MAX is added.
->
-> Fixes: 8a9a129dc565 ("clk: meson: c3: add support for the C3 SoC PLL clock")
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  drivers/clk/meson/c3-pll.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-> index 32bd2ed9d304..a350173efe90 100644
-> --- a/drivers/clk/meson/c3-pll.c
-> +++ b/drivers/clk/meson/c3-pll.c
-> @@ -361,6 +361,7 @@ static struct clk_regmap hifi_pll_dco = {
->  		.range = &c3_gp0_pll_mult_range,
->  		.init_regs = c3_hifi_init_regs,
->  		.init_count = ARRAY_SIZE(c3_hifi_init_regs),
-> +		.flags = CLK_MESON_PLL_FIXED_FRAC_MAX,
->  	},
->  	.hw.init = &(struct clk_init_data) {
->  		.name = "hifi_pll_dco",
-
--- 
-Jerome
+Thank you,
+Miroslav
 
