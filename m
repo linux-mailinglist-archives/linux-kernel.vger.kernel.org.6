@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-319471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7A596FCF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E8E96FD07
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E4D1C219AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682A0284D35
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2381D6789;
-	Fri,  6 Sep 2024 20:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B991D6DDD;
+	Fri,  6 Sep 2024 21:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X9Wr/Eoi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="YaCrrmHW"
+Received: from sonic313-20.consmr.mail.sg3.yahoo.com (sonic313-20.consmr.mail.sg3.yahoo.com [106.10.240.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C020EAE7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356951D3630
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725656135; cv=none; b=Kg6R49Mqf56avpl8b4EXdM8stDgGNJm0NfX5YdpQMKiU0zBMHBmxZCFBgjIUqwsZNtJ6UyW5rmIQEgPkQkZqez07zFs1WD3li9CPtbIRww01IJ6DrK0eAmM00P3MNv5Ez7TtRL9gArqJxu/7H8ccUkDASLkuD/9G2qqxJljf+n4=
+	t=1725656845; cv=none; b=KOTTM7u4kXMAXPTkuDrgiBTOer4BcoZSxTwxWJSd+t8cJcEjwBc3L8qOg+w+iUf9D4cABaDryxyTaqY7w86RH2qTKVFutcgoQ+mqqBM5QcICknF4oGOGsAJFNBl7mdANhRCuH5z4ThZ6/ghlXA+kTl6dPcIH8BiR5CiBRRh0VRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725656135; c=relaxed/simple;
-	bh=5njwdOk3TNfBSKxifh68TZZM6jHoTAXOxatEVpmLHys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYfKjDVv0rrHMkpI1Tyu+jCN4trMxnAYHVhbgN2T3WqZdefPT9Nym7R5Z8R4QicOxYDPKCHm8GkvM5stFJIEiNSnMhN+oTGW4cLS9EGBeZMv5iOeKaJam8jzHHDHqvipYaBMNxHH5ArM10hsUfb7J6admMHhrnBrF0kXOVZpAw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X9Wr/Eoi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725656130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xo3grFhI2uQRXcZF9zH10dPv1P1lkQZgkcMob6qJdeY=;
-	b=X9Wr/Eoib0zGupXXk8fFhaFR+Mbf3kFuU8ON1aiI4om6DE9kNSlXn7ua2h7AAPFQRv8Ewg
-	0y38hoxYCocd7vkof//MBsN9LV2DB7IlTGbuc0gr9rCBXVYH81/mvzAmC10uuMVVEfMBm3
-	P5j/RwEWagpciKS7rdWluqdjf16x59o=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-594-EtAVEsDJMmqZztgu23rExg-1; Fri,
- 06 Sep 2024 16:55:26 -0400
-X-MC-Unique: EtAVEsDJMmqZztgu23rExg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD0F619560AD;
-	Fri,  6 Sep 2024 20:55:24 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.3])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 503B31956086;
-	Fri,  6 Sep 2024 20:55:20 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  6 Sep 2024 22:55:14 +0200 (CEST)
-Date: Fri, 6 Sep 2024 22:55:08 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240906205436.GA2417@redhat.com>
-References: <20240905212741.143626-1-romank@linux.microsoft.com>
- <20240905212741.143626-2-romank@linux.microsoft.com>
- <20240906112345.GA17874@redhat.com>
- <CAHk-=wjtMKmoC__NJ5T18TaRCqXL-3VFc6uADJv_MzgR1ZWPJQ@mail.gmail.com>
- <da4baf5b-19e9-474c-90f6-fe17dd934333@linux.microsoft.com>
+	s=arc-20240116; t=1725656845; c=relaxed/simple;
+	bh=9iLES3dkWmyBh4NwcYvdX7nP5e5csA5/64UXJbMhOBE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=l82LhDHmmY40OILRpxzPLtiNf3XFqhASYL7MngnaUbMjsEyQSR7+YIoLvtBM1UvbRWU1q092ixj83cnXlkMUUohDW4l6OQQI/84C2905c8Laay1UKTKDICGp30wGKMPl0+0qD+nicHCIPurpcURP0j6rKO63ZGTOZikcn4ogJvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=YaCrrmHW; arc=none smtp.client-ip=106.10.240.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1725656842; bh=awJ6MhJmZhkmmWzLZ7jdz51ALBXVdPkmU9GJhavpEv8=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=YaCrrmHWI34VSP0NxEIRLx1osmuH+AUl3RUFjco/HSt9y2w+R3jyswl4140xCS26WT9B6sF2KXColBwdmL3+WOwKkIaQeeDiZnQqHaY4faowL9jHUWtZM/YSdfHPRtmoCcyzItkMGJqBHdWMpmHe+jLKmQiqIf73V7xfpnwE8vaJ5DrYGCMBQGHvKM6CnWQpD+RMTjUGs7uY162ZTYD6WivX3IvSrZZdGMBlw5wvojVi+0eYQB7sqk03xJOws5w3mmPDhcKD4l+wuydxZA+YL4JZAnjyRBUN9BDqKuTzJXYd3UTx9mOmYMfn26u1kFP8Weg+VcBQ7A0kqo7Gl05Giw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725656842; bh=cEa4d0QOtJ+lGu8th+PsmYT5yMZRxgbyHDi4JHRblqN=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=hyp1DvxHuj7Mmn2YnpDfYQpnxmwXgIo2fB3JPTIcqKcQmymMwUbVAXgobToF91BomjB3gQgZI9glSMSJNQoIF6c39f0L2JLXNXQFE5K1uac+q7Cgk32EhKhEH0cmHVg9ndBk2TcDu0JD6NLAOBzQ0lB0PnqGwjOgOYb/sL4w9/NEO6xTdaaLZ8JSp26ShJPRdJboOJ6eB+AN165a0ZIc93bIYcYiTTG+qc770XgI3TwmgkMxfGfzZQqHs0pNwJJv+RC8/jnuvpnDI7xYy7bPmXqocWiBJYW090Pe9Rg0T3ooXIoLe/HZwNcltWJljQwPLipjHMNTo/UUxt8a3dum6Q==
+X-YMail-OSG: Z6W6wCsVM1nWQv0sVVX0tq2hYzmYBa2fdzOtVcQZwYBXj5XWepWaB3l4c6BivL7
+ VZfujvgZKmJWmOlz1jgaQjPbzT2TUy8_6V5svWV3aldHdTKwmHJKieHswtiXn6ZsqnUXvhzD6G0r
+ rU3SNHFed.JrN_xDnAuZPHr.b5fCXVTqUTChnPuXbbpPap95EUEsPduxKe7sj163WRWwiAy6vwbC
+ OczADWC2bu6RbcT6V7h2vpvnNMcsD9RL8GtLt4IgTcDLQolJC7N3DgaFhbdyuIY8oJE06ukXOYYt
+ FIINi1kNMdHLOBj8_CRvUVDsZ__kK97OVhFRQBikZyWRh5HvWoaus552SAGuiQTeQQgA72TQTUe2
+ MK3rS1r9DK3p0S.hU0AQ8XvhI20qPW4ubpgSVzR8DIoGTMxLd3y0lCRNVrXusQJmIkJuYR5zzRDJ
+ _UKkf8lx9hQGF8iKoCpm57KRNRNsbpRF8ynLHik0sMTW0SIN1tXuler9mOEhiusykC8lf9YeGByJ
+ rkuWDwu5qT2hwCojlQnB8xZ6emlcHNjJK_0pTr8TUARvX1q4KkQ6L4vlLjy3upgTJQTry24s7C4E
+ HvBwQVyT0NrYwi6n7s6ejJ374L82.upPx378xsDDuelK4lgPL7Way5B6M2kJeVg9OTUtZQs8vSiG
+ 6JgxQ0THGxpdXNHvlXgY9sne_C0WU2r.U2_6CJVY7j1KD6XIAFSM2PhOBX8pRUKreFSCjFZwJyLh
+ J0icuCz.SN7a6zFsjg21ztX5jpO3zqBv_N0.l0axDC_4R3IhkUNohr4heRBTFhsru6iScs95_4Ft
+ TdseDYATdoaB_lW8OxnbdHM8g07eEZrXe2v8cd9KzlIXDzaop7NdRTpMY8tyZ4P0AXSFfDACekoM
+ rdstcGKVE0amWPrxUlUNSj_zBUexiHceaQTEy8XSSwq3xi1_b1dij888BNLrsaae0btL_yS17JW8
+ .SHQj9Tvv_cDgUqqtK7VQmJu13A7nmYwlJKP_loFPsmKnfniznnDfU3JIFYbSIV7tleuiunilc_3
+ EW1vAIpLAKo7shxCK9m3IDHvW67xCTOOawBKHEGLGPpf0mz9tvl.N_TYvKgjE5NmTk6nf8x93sTz
+ 6S0iGZXysM5TyWb_Y.moqqkM4P7hChSDcxRzDuhnT1EbqAKVzeE8vsdXDJdMWGNSQekO1G4RXiNh
+ XfwGJ1jSmLqaRKEF0tVjLD5aBIX.6vJcAeNso2Wu8njZ.Q1WPI2gScgFDzkCHAMGVK62o6RO4yb_
+ go_Es0LhFIQ5qlHAejFtplDbCD5nTgQmfwjo9MoroL3YK0Fg9BgL50s.4DVJgaZJ92CDDNcMW87V
+ CYKK7HWV1jDFxumLazYidB0OxTD4d8W96vnDd_nA4W8GG.ani_x5jTjL5jITKlpLIuBP7zZjIMko
+ ADndDIK33CIluOcCgmUFuvLmSkjwl1_yDXFTWl7pEEHe9TmE6Y9yEAFKdAHj4B8JLcQO.FymI0VB
+ FJagnYEBENC0uvxvE05sj8nLl7DsdajUVJLR.FkruTfTVsELBQ4p9tDExHOuTv53oWeCwGE70ADk
+ q3ng_3MewmcZpmP9QWZBIwNJOunGNNPSp.m1ReRduATaFrSkj9EyBhF6E9l782uXfvT4Juz2SH5o
+ Ghmifc0F.9S03IKW8Diu5mVk3U7aRSqxAhXVVvCv3pinASxj6P0EoCnO6EVGDdh3qlDXMj9UqPff
+ o4U5Nk9icZHP.l7mx4Ory1W7qEsAw41uyAXyNtszlJmQRGiSwi0jOpS3X6WkfTVef9eLbMDJ5_iY
+ wUcOdDSzTGVXfHWVRMO_RMVhFT7MAAueBSXM6K8gESIfpQy8aCkG9E3oZBbI0R1aZ9_7.khx6q6i
+ 8lVQWGKb0esLU6.oPA83VucVRHbm3sUHRhzWU8oDN4YpU2.hz0p9_pT3gILFpXm5hcSFiojkapbm
+ KYbCRso2jQf5A29V_NbEe6fXt5sCaJj71gXF7DbUf0Xle9CJ_Rn7OuGU7V7TbCqTBr3JOvfgF0c6
+ FuwGzYnrm_cyhfXmtwCuKryV.TxBHR8FIoF9D3xolW.L90PyNYnnKmjsTy79xdYYI2V24.P_FBoi
+ id1q4KscEdhSaFSa0wPnPH72WxbFfnqUF5YqpX8s0uaW.25rhIfzrigVk9knZAGaVGlZww.YcLKm
+ fGd3QycUcktvVXixTl0Fbu_3Y73c4qwx7MXbEizA3TiyQTyustdZ3Rs0SELZFcuzNmPSH9XLipgX
+ BIOWPAj2ylzW4h3fbO6OFiQBrMhxVRqC__vihq.gzWh4aD49bChVLNJTwPmAQ1Q--
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: c09ad32f-2021-4edb-a6dc-1d43a6352aaa
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.sg3.yahoo.com with HTTP; Fri, 6 Sep 2024 21:07:22 +0000
+Received: by hermes--production-sg3-fc85cddf6-kdpzj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 412f38eebffa696b3206e5fb186b72bc;
+          Fri, 06 Sep 2024 20:57:10 +0000 (UTC)
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: bhelgaas@google.com,
+	corbet@lwn.net
+Cc: helgaas@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abdul Rahim <abdul.rahim@myyahoo.com>
+Subject: [PATCH] Documentation: PCI: fix typo in pci.rst
+Date: Sat,  7 Sep 2024 02:26:56 +0530
+Message-ID: <20240906205656.8261-1-abdul.rahim@myyahoo.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da4baf5b-19e9-474c-90f6-fe17dd934333@linux.microsoft.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+References: <20240906205656.8261-1-abdul.rahim.ref@myyahoo.com>
 
-Well, I leave this to you and Linus (and other reviewers), but if it was not
-clear I too do not really like this feature, that is why I added cc's.
+Fix typo: "follow" -> "following" in pci.rst
 
-Perhaps it makes sense to discuss the alternatives? Say, a process can have a
-please_insert_the_breakpoint_here() function implemented in asm which just does
-asm(ret).
+Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+---
+ Documentation/PCI/pci.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then something like
-
-	#define breakpoint_if_debugging()	\
-		asm volatile ("call please_insert_the_breakpoint_here" : ASM_CALL_CONSTRAINT);
-
-if the process is ptraced, debugger can insert the breakoint into
-please_insert_the_breakpoint_here(). Otherwise breakpoint_if_debugging()
-is a cheap nop.
-
-Not that I think this is a good idea, but std::breakpoint_if_debugging()
-looks even more strange to me...
-
-Oleg.
-
-On 09/06, Roman Kisel wrote:
->
-> All told, let me know if I may proceed with fixing the code as Oleg
-> suggested, or this piece should go into the waste basket. I could make
-> an argument that providing the way to get the tracer PID only via
-> proc FS through parsing text is more like shell/Perl/Python interface
-> to the kernel, and for compiled languages could have what's easier in
-> that setting (there is an easy syscall for getting PID, and there could
-> be code changing the logic on the PID being odd or even for the sake
-> of argument).
-> 
-> >
-> >                Linus
-> 
-> -- 
-> Thank you,
-> Roman
-> 
+diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
+index dd7b1c0c21da..f4d2662871ab 100644
+--- a/Documentation/PCI/pci.rst
++++ b/Documentation/PCI/pci.rst
+@@ -52,7 +52,7 @@ driver generally needs to perform the following initialization:
+   - Enable DMA/processing engines
+ 
+ When done using the device, and perhaps the module needs to be unloaded,
+-the driver needs to take the follow steps:
++the driver needs to take the following steps:
+ 
+   - Disable the device from generating IRQs
+   - Release the IRQ (free_irq())
+-- 
+2.46.0
 
 
