@@ -1,88 +1,65 @@
-Return-Path: <linux-kernel+bounces-318263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6769A96EAD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:39:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDD496EAD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238DA282176
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:39:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A77FB21376
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6469F12EBDB;
-	Fri,  6 Sep 2024 06:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E634C13D8B0;
+	Fri,  6 Sep 2024 06:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SKC29Hq5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="CiC6itrb"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="C3kLgRiu"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095F438DD1
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 06:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8275A48;
+	Fri,  6 Sep 2024 06:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725604753; cv=none; b=vC44WqPLwIdr7io5Zeiu8CM6Dt3YoSlS4soqXvyi2frdf1s7ayLHv85qckm9lyKShwnNvXYVEq0BYez8zNlG95PWYuaSpxa4NkWc5Sr0IxpB04NYNa3I+hp/YHC/Ao5EDJxiHN7tLibQSDUjD/1yHf0VPeLr+NyPwwvJqKJB1FE=
+	t=1725604888; cv=none; b=lyE8lOtZkf8h0rtHWtsyMcZiPnoObJMLaLR7eEbudBjlpsYKW6SNa+vmw+r+NHmAR4xzeqz6GaADxCBeJG6CMvAiyTd+M5HFUQWcZsuq2gRBIUwOdQshHsYzE6+5omRRO7Ig6zsyPs+DUbSClezbLzxbOoIouIbm0sg4NFyzbyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725604753; c=relaxed/simple;
-	bh=6vXIq99GQlRDetMoVUgmyQWx9Ak+P9LIIxDKXth4am4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nk0DLJ/Zxtilm8LLn4RRfCo/OqREPmGDzs+1PbRCdEHD2q3tBTsW9WEern/f2fpOir1Y5WqAnMH5NhgVFh/Tv6CT833zcALsEI1ZosyeQDLXD8yxyKein3EJe4aDY0zttMnmlvBq/IARH2nQeLOwWMNs0evCGQGQTzW5hjfmq6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SKC29Hq5; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=CiC6itrb reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1725604750; x=1757140750;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Dg5SF6JXmaXxF0NLRP6GCKnQQLT8CWaXwLRzR4UmnOs=;
-  b=SKC29Hq5SLNOUuTdPJNVTZVo7sNQPfgOa8dg1SgPeXzcnt9f5G1js0n+
-   0Dmeru3Y0jrdbXT4mHGRJhTBcVQf3p3CyB4lQRtOjm5JJ2gnpn4E23qoi
-   WshystuQ2dWXZWU1ulEwcPD7lyNJ51gwF9Cc3pqtE11stlaLEUKSqjarp
-   VCDwT29EOoeKgKRH3d2Kc+wztz7hCmMmeFd6vm4EM+MfAYVrbmcXNofsT
-   cnXF2MAcbj0IyVMCW26WVyI/qe0fJbVJs1drqKfhhyYxTnni5WsxDJHLQ
-   KoGS1kjIoGW3WtoyM3e37sES57A76072zyFzsNy9ne2ZxLBlLuDP6rms0
-   w==;
-X-CSE-ConnectionGUID: DjVR2wjrShqRlWD7KLf6wg==
-X-CSE-MsgGUID: 0LO+PlrWTIiSpA4VuyZAyA==
-X-IronPort-AV: E=Sophos;i="6.10,207,1719871200"; 
-   d="scan'208";a="38800714"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 06 Sep 2024 08:39:07 +0200
-X-CheckPoint: {66DAA38B-1F-22BB8E18-F5F6D0B4}
-X-MAIL-CPID: 492BF267EFA1B926E3FE21B06D48DD7E_5
-X-Control-Analysis: str=0001.0A782F18.66DAA38B.011E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4DA84162421;
-	Fri,  6 Sep 2024 08:38:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1725604743; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=Dg5SF6JXmaXxF0NLRP6GCKnQQLT8CWaXwLRzR4UmnOs=;
-	b=CiC6itrbelTRi6ewhMP9FNHhuWFQHP6QFd2pZykZYifC5qDOEtEzZ0uZbARHpGUk/O8zX+
-	/Wx/DcrShWriDkaJXsGSmW8GcSHt/XWBV+aJ6V5T21hg/ldTo/gbqqyLnFamC+XEKVQbRZ
-	NYVarCfDsY6S2cOkuAXsE3PgnGsdNCr17GE82ZIaaL5bj9K5FYcJO/7/o4sI9AhlWlsrz7
-	x70qZRwg2TU/9SVbAiW++JIrm/Q++r4s4XxSIsyKVg5k/hsew+9WVcmhNcxcwJ24xkypn3
-	gSW+gO3gNjL9dZyhYkfCvmDepk3EK4PFF0CZpq6cNkxkkktJeoXh5okMnmjGzA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] drm/imx: Add missing DRM_BRIDGE_CONNECTOR dependency
-Date: Fri,  6 Sep 2024 08:38:56 +0200
-Message-Id: <20240906063857.2223442-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725604888; c=relaxed/simple;
+	bh=lISy1XVK95E6juyFTlrJi6eGquNRUHVuITs9r4o9CKM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u9axdGlnsX6bIYqFoCuZqSFFNsBGUHrFIs09C0WHVwCK1fWVtT/G3dIGcir9nFRxOMKUEGrELqB9OX8C/dDzvQRz+a69R61K0eXTx7RNgByTVY9LXDyK3P2H1D+f7OLVTwAsl2v5G1vPF7BSqDVQTKz+8L4HLz2uGmRNGxt/7Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=C3kLgRiu; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 880A1100003;
+	Fri,  6 Sep 2024 09:40:58 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1725604858; bh=G001kMIRwgSJpFj2NWZLKtCybZzFdTXkEYckfYsihfw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=C3kLgRiuehVH3lRCVJ0gr3WNg4Sqt/yU8Ttvc3OIv+Z5jx+u/AvtzkzH+lUtwscsB
+	 2Ih2YC5TbzTbTlA8UHeGmHQu4YLGHEIYNBmlxIAYgrep2MqG5HNyaZQLj9PblxIJEL
+	 bbI8HX8zWQPojG/r0K5nI/uHvVGy195hrUv0kQ4AHOqTmr5rL9HujYGmgo1oZitE3b
+	 +zhdan2mVjECC/7fl7dckgfF1ljcxERZTFXFlb+dmyswd8vMMeIPRCjmZ0IM2i2TZp
+	 eKDZJt7bMT5koPlmcthc1k5bwdnjfpDGHuaBjXmCgbXlHnW5oQCMLAEiR9sAV+mogd
+	 8tVPiuHm4/F6g==
+Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Fri,  6 Sep 2024 09:39:50 +0300 (MSK)
+Received: from localhost.localdomain (172.17.210.9) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Sep
+ 2024 09:39:27 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Veerasenareddy Burru <vburru@marvell.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Sathesh Edara <sedara@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Abhijit
+ Ayarekar <aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
+Date: Fri, 6 Sep 2024 09:39:07 +0300
+Message-ID: <20240906063907.9591-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,38 +67,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187583 [Sep 06 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 32 0.3.32 766319f57b3d5e49f2c79a76e7d7087b621090df, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/09/06 06:08:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/09/06 05:10:00 #26531716
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-When drm/bridge-connector was moved to DRM_DISPLAY_HELPER not all
-users were updated. Add missing Kconfig selections.
+build_skb() returns NULL in case of a memory allocation failure so handle
+it inside __octep_oq_process_rx() to avoid NULL pointer dereference.
 
-Fixes: 9da7ec9b19d8 ("drm/bridge-connector: move to DRM_DISPLAY_HELPER module")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+__octep_oq_process_rx() is called during NAPI polling by the driver. If
+skb allocation fails, keep on pulling packets out of the Rx DMA queue: we
+shouldn't break the polling immediately and thus falsely indicate to the
+octep_napi_poll() that the Rx pressure is going down. As there is no
+associated skb in this case, don't process the packets and don't push them
+up the network stack - they are skipped.
+
+The common code with skb and index manipulations is extracted to make the
+fix more readable and avoid code duplication. Also 'alloc_failures' counter
+is incremented to mark the skb allocation error in driver statistics.
+
+The suggested approach for handling buffer allocation failures in the NAPI
+polling functions is also implemented in the Cavium Liquidio driver. It
+has the same structure, namely in octeon_droq_fast_process_packets().
+
+A similar situation is present in the __octep_vf_oq_process_rx() of the
+Octeon VF driver. First we want to try the fix on __octep_oq_process_rx().
+
+Compile tested only. Marvell folks, could you review and test this, please?
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 37d79d059606 ("octeon_ep: add Tx/Rx processing and interrupt support")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 ---
- drivers/gpu/drm/imx/ipuv3/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ .../net/ethernet/marvell/octeon_ep/octep_rx.c | 44 ++++++++++---------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/Kconfig b/drivers/gpu/drm/imx/ipuv3/Kconfig
-index 5a40c878ebb05..990e216c51cc8 100644
---- a/drivers/gpu/drm/imx/ipuv3/Kconfig
-+++ b/drivers/gpu/drm/imx/ipuv3/Kconfig
-@@ -13,6 +13,7 @@ config DRM_IMX_PARALLEL_DISPLAY
- 	tristate "Support for parallel displays"
- 	depends on DRM_IMX
- 	select DRM_BRIDGE
-+	select DRM_BRIDGE_CONNECTOR
- 	select DRM_PANEL_BRIDGE
- 	select VIDEOMODE_HELPERS
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+index 4746a6b258f0..e92afd1a372a 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+@@ -394,32 +394,32 @@ static int __octep_oq_process_rx(struct octep_device *oct,
+ 			data_offset = OCTEP_OQ_RESP_HW_SIZE;
+ 			rx_ol_flags = 0;
+ 		}
++
++		skb = build_skb((void *)resp_hw, PAGE_SIZE);
++		if (skb)
++			skb_reserve(skb, data_offset);
++		else
++			oq->stats.alloc_failures++;
+ 		rx_bytes += buff_info->len;
++		read_idx++;
++		desc_used++;
++		if (read_idx == oq->max_count)
++			read_idx = 0;
  
-@@ -31,6 +32,7 @@ config DRM_IMX_LDB
- 	depends on COMMON_CLK
- 	select MFD_SYSCON
- 	select DRM_BRIDGE
-+	select DRM_BRIDGE_CONNECTOR
- 	select DRM_PANEL_BRIDGE
- 	select DRM_IMX_LEGACY_BRIDGE
- 	help
+ 		if (buff_info->len <= oq->max_single_buffer_size) {
+-			skb = build_skb((void *)resp_hw, PAGE_SIZE);
+-			skb_reserve(skb, data_offset);
+-			skb_put(skb, buff_info->len);
+-			read_idx++;
+-			desc_used++;
+-			if (read_idx == oq->max_count)
+-				read_idx = 0;
++			if (skb)
++				skb_put(skb, buff_info->len);
+ 		} else {
+ 			struct skb_shared_info *shinfo;
+ 			u16 data_len;
+ 
+-			skb = build_skb((void *)resp_hw, PAGE_SIZE);
+-			skb_reserve(skb, data_offset);
+ 			/* Head fragment includes response header(s);
+ 			 * subsequent fragments contains only data.
+ 			 */
+-			skb_put(skb, oq->max_single_buffer_size);
+-			read_idx++;
+-			desc_used++;
+-			if (read_idx == oq->max_count)
+-				read_idx = 0;
+-
+-			shinfo = skb_shinfo(skb);
++			if (skb) {
++				skb_put(skb, oq->max_single_buffer_size);
++				shinfo = skb_shinfo(skb);
++			}
+ 			data_len = buff_info->len - oq->max_single_buffer_size;
+ 			while (data_len) {
+ 				dma_unmap_page(oq->dev, oq->desc_ring[read_idx].buffer_ptr,
+@@ -434,10 +434,11 @@ static int __octep_oq_process_rx(struct octep_device *oct,
+ 					data_len -= oq->buffer_size;
+ 				}
+ 
+-				skb_add_rx_frag(skb, shinfo->nr_frags,
+-						buff_info->page, 0,
+-						buff_info->len,
+-						buff_info->len);
++				if (skb)
++					skb_add_rx_frag(skb, shinfo->nr_frags,
++							buff_info->page, 0,
++							buff_info->len,
++							buff_info->len);
+ 				buff_info->page = NULL;
+ 				read_idx++;
+ 				desc_used++;
+@@ -446,6 +447,9 @@ static int __octep_oq_process_rx(struct octep_device *oct,
+ 			}
+ 		}
+ 
++		if (!skb)
++			continue;
++
+ 		skb->dev = oq->netdev;
+ 		skb->protocol =  eth_type_trans(skb, skb->dev);
+ 		if (feat & NETIF_F_RXCSUM &&
 -- 
-2.34.1
+2.30.2
 
 
