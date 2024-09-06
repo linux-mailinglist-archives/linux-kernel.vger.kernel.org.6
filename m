@@ -1,145 +1,76 @@
-Return-Path: <linux-kernel+bounces-318673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCB296F182
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:31:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9EF096F190
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4E72829AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:31:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58160B21F41
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C911C8FC7;
-	Fri,  6 Sep 2024 10:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgJJBX9y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2810D1C9EA1;
+	Fri,  6 Sep 2024 10:33:50 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200F513AD2F;
-	Fri,  6 Sep 2024 10:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6213913AD2F
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725618684; cv=none; b=o20q/Kkymcy3ssVi7WEiMoIwgKwvaBCMbYMdnLNGhYpN4VvNdtunfD3eobPwXUKd2V0YNct940SigQVCV+wv2AYjdSqh7KEvQliYCzcscixXnAgk27m/8jlWrSTRQYv42XEQwEx5Prk51SFgUiYfM+y6zSHwyL3s+YcKs2isnfw=
+	t=1725618829; cv=none; b=XqRz94ckWQLxTcXXtKFx/kZ7Ib9/qzaXFMbEmKWSOQtcooDpn1hT5b5xhDW9hEEf3Wsv59I5wdEkAzAjyaVnLg7xvbbjjrXwIfEvHTx3jkfHv57R39yibWJioJFyogxLqRudPD1a2EVshR3+30caog5ISmXefg4uCRUM7ePf65c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725618684; c=relaxed/simple;
-	bh=A4c7deV6ZIknQWmVX7wV7TaEk2v1931J+nZxYnmgi2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFCoWEUweDIJiBYPBVipkIRL4o2cZJolFhv2DXDYzj9cKc8g7Oe1T37mnXcQXggEe0QeYeeeHcT/4YCwWqtF24cPOzlPv5VSq86+mdrarIqRxyVLnsmWaOshFLBnwszziRVRnZz0bgLoL4Cv++D2YiIs/4rpT+wAU/ZPf5vzfaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgJJBX9y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80830C4CEC4;
-	Fri,  6 Sep 2024 10:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725618683;
-	bh=A4c7deV6ZIknQWmVX7wV7TaEk2v1931J+nZxYnmgi2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mgJJBX9yutVEx2zdLpiQZ2XQR223NBTCKqOzD/EVInroPSXC0eiTARgNwfrTqntzP
-	 WlA6C8USra4b3+cTyHa7+mEpqse4xOvnlX/XWmKYDcnjH0Yy4/BkZQApgM77iAfUYZ
-	 SWOxV8pFHG98kEc0zsyhcDaxiylu5sUbORDBj6eiN2bXod5OgU8PVch4zKlDbkjbVE
-	 FRmisOnwqWp6RLolWa0UjhJbibizzbvfx4KbkHSaVEBAiI/snda7N8fALES0FFCxUm
-	 xfLuLGrQQx2qzfGmAjlz+Ud4baHyszNeuzsMOU2KJVeDOqlGzDYn8/p6YJbK4HGKYL
-	 0BX2kWu7UoUiQ==
-Date: Fri, 6 Sep 2024 12:31:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chen Wang <unicornxw@gmail.com>
-Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, unicorn_wang@outlook.com, inochiama@outlook.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, chao.wei@sophgo.com, haijiao.liu@sophgo.com, 
-	xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
-Subject: Re: [PATCH 1/2] dt-bindings: pwm: sophgo: add bindings for sg2042
-Message-ID: <clq2dwmsks56553cythofgd3x5sw4t6pss7cxup2hrvj2n563g@3ishagojtabx>
-References: <cover.1725536870.git.unicorn_wang@outlook.com>
- <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1725618829; c=relaxed/simple;
+	bh=fknTa8a8xDipkCYrePSsQTLagTPC4FM5VAA/rgPzynU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MKz5cO3mOiJzM0YCP/elgcB59q2BJQdU9ZA428koZdf8IgLvHLRsTLrRq80akO8Nyyi0kANUn0/ySuOZU+TFaWr7YI7jvyDHg5fwqMAVHVTnYYMMVeWFI9hjHBOhrEE3Z31dB4JLWkz0WVeJSjTxdM7imazfpMnUdnAbfdFfbvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a1c57f4dcso451558639f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:33:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725618827; x=1726223627;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QhX9JfzOe0jyuZyP+4YKY9K8LKwJP5t7uxyVlFjHVM=;
+        b=KxJ6VbnDwq/AcPqqwzLzQOps3Gho5EF0LCKhNfsr9Y98FQVlHGbA+MeJjMVQWKo2Zs
+         rLan19uy5IDZqnIuamnEXSwXCJtHVItUsfdw9pgudFmOZNWGQSsdt7W7MNog0i/CZyNk
+         Ne0RrVaxqQ6/uVHLmfl9wSSNidTwNvMETS221qiWIO9WFeF8mpXI84UQ/wHzlc+8q8rC
+         Q7atrXu8kSOMK0WRKKtkzAu4VoXFFTZCU61YJdGlkxySwu6c0QUDraMaelXaEOIL/yLQ
+         Ckl6QOPyHwHqzkF3huA8L8zg1uZzZMiyOyCXdoKTkBzesKQ2QXWVI1stfPq3b4ogIbVR
+         d9/Q==
+X-Gm-Message-State: AOJu0YxvkCesyl3J9x7T9yKatjRjp+ADcvpDQQ3fUQg0DzVX/G/qsQO5
+	YzrfDLrN4SDMsKO35BNUmJcLi27Jr9yhiHhn/SSTJJDtQYfwXnyLOjfY9pT3+P/SzIKZ5SdvYhp
+	lREu29TYbNFLIuC2gu2l7IBXn438kuv8VZgALmfpqwFoAKTnZFlIl+DE=
+X-Google-Smtp-Source: AGHT+IHAUxkMLkIqOi45B3Ul0a9mMifEgCREFbiiKWQ22AaYhjUdS97cOAa83CZNrDCZbQgPZNCMRWaMs6HGEAnAqoy6nJjIKBij
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6e5fb37472b916cb9d9abfbe3bea702d8d0d9737.1725536870.git.unicorn_wang@outlook.com>
+X-Received: by 2002:a05:6638:4122:b0:4b9:6637:4913 with SMTP id
+ 8926c6da1cb9f-4d084f961b4mr108186173.3.1725618827446; Fri, 06 Sep 2024
+ 03:33:47 -0700 (PDT)
+Date: Fri, 06 Sep 2024 03:33:47 -0700
+In-Reply-To: <0000000000002680930620a0c6b9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003a652b062170f1fd@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+d2b696e5cb7a92fee831@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 05, 2024 at 08:10:25PM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Add binding document for sophgo,sg2042-pwm.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+***
 
-Say something useful about hardware instead. The same in commit msg -
-you keep saying obvious and duplicated commit subject.
+Subject: 
+Author: nogikh@google.com
 
-> 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-> new file mode 100644
-> index 000000000000..10212694dd41
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-> @@ -0,0 +1,52 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo SG2042 PWM controller
-> +
-> +maintainers:
-> +  - Chen Wang <unicorn_wang@outlook.com>
-> +
-> +description: |
-
-drop |
-
-> +  This controller contains 4 channels which can generate PWM waveforms.
-> +
-> +allOf:
-> +  - $ref: pwm.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,sg2042-pwm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +
-> +  "#pwm-cells":
-> +    # See pwm.yaml in this directory for a description of the cells format.
-
-Drop
-
-> +    const: 2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-
-unevaluatedProperties instead
-
-Best regards,
-Krzysztof
-
+#syz invalid
 
