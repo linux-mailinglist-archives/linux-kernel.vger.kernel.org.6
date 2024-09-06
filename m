@@ -1,108 +1,78 @@
-Return-Path: <linux-kernel+bounces-318064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EEB96E7E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:53:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BB596E7EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A1F1C22FE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22785B23B56
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B54F3BBE2;
-	Fri,  6 Sep 2024 02:53:13 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A1E3398E;
-	Fri,  6 Sep 2024 02:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F37E4437A;
+	Fri,  6 Sep 2024 02:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tHBXgEgW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1EF3398E;
+	Fri,  6 Sep 2024 02:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725591192; cv=none; b=o69zHPKHWI1SC1Q5H0u/1nGx7QkisIB99KasBXffCHaUBWz/iLJlO5NgMARC5x+KmHvZ80sfn1Vc6S0vwg1q1tIarNs7F3h35mirjoX+GqYfn6viydYOPcXg+zBEzqC3PropoPsx0cNWVQIQ++6L+ttpORgnZ5xDI3xWvXxW4TM=
+	t=1725591197; cv=none; b=iirF4UlilE2fDLl9lv43WptC8PpV0RGnopZODAkTuVjGUwpKq9GLQSWb8VU+2ltw2QSfxhBN35xBa+9Ty7UmDPJpYn6N/8eiQW1G9yr3Ytlc7jh7xYcZ0b1LzomhEXsNfENFyczLFB3kdPjZn8430ZAqjdohqN33y4LylyIaFQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725591192; c=relaxed/simple;
-	bh=COmPxaiYh3arXa5lsQlqe24eEgzTUbWn2Xp/xKo+FjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gw/cKl/Ch+UmcQh9/T1bsOcL6BtSsHkg5FjuJ0cPO4a6v8lhylg+g25k68eutEb4tpVnQW5fBpFkqnc1VuEHxjPu/BeCByAW2efgC+Q1yTTFSA1u+JW+8/R1wLMsAREbrqGZ1Y0PDnmLEI/lSBSqvrQ8QMvuKlRWh28nH/1monA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766da6e8c807-f380d;
-	Fri, 06 Sep 2024 10:53:01 +0800 (CST)
-X-RM-TRANSID:2ee766da6e8c807-f380d
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee866da6e8c774-8f30f;
-	Fri, 06 Sep 2024 10:53:01 +0800 (CST)
-X-RM-TRANSID:2ee866da6e8c774-8f30f
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: skhan@linuxfoundation.org
-Cc: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	jstultz@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	tglx@linutronix.de,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH v2] selftests/timers: Remove unused NSEC_PER_SEC macro
-Date: Fri,  6 Sep 2024 10:52:59 +0800
-Message-Id: <20240906025259.3822-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725591197; c=relaxed/simple;
+	bh=hy/7yuKesZKIgpJtLl44wd71KjA5hcfynPA4cAqNpcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnh0HX4Gg3iaIwn6c25g3adMFFI/rQfQm3+bkzBA2ASIB3Ap2z+LebWO9sEfVolbr1fr7d4fjlLOy5AiHEl1AsyQIYMthsjzVoSfn5A8PA5rLq7Xg5qAk6yV+v7tXBMgyFDg364yKbYGvcV9mpd9OIghzdP1b0IjNX3j08pIUYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tHBXgEgW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R3yitP7rIZah4D+LGgszj519jFATzuXRw+5pj8t1oM4=; b=tHBXgEgWM0tgNgMx27xqaVknYk
+	hr0AkeAc4bg4WYQGvqWnHQGWjXM4ixMiNVPNok760reZAf8xDo8p6Y6CtSWj9UWZqpIEW9gLwuJ3t
+	abiwghx+lJ63SU0lzIm/f1yzri6DyQ3WjaGQG5Ntb0HFitnmLN/ZckT4ZJIWGqxP6VVbLuxGLHk03
+	xW7aQGU7NOd9WxVCNiuzGGo1VBrQG2Sal9KQxN9v63VXZH19N2ilMH7J3RL3d9Afg/j33plNKKe5p
+	fni+VQyMWAgK1tSx73V7Xu52KqoAubzjXeBhmZrfSUUN9e6vEcBUQ0pRlbs6tEBrfBpsfiYalA/t3
+	DdUKyx7w==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1smP5y-00000003IVd-2BzR;
+	Fri, 06 Sep 2024 02:53:10 +0000
+Date: Fri, 6 Sep 2024 03:53:10 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Hui Guo <guohui.study@gmail.com>
+Cc: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chengming Zhou <zhouchengming@bytedance.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: kernel BUG in reiserfs_update_sd_size
+Message-ID: <ZtpulsSN09aMn48N@casper.infradead.org>
+References: <CAHOo4gL8UJnY=zZOHVioLsemBfA7eZSK+utxWLd7TBCz89X=3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHOo4gL8UJnY=zZOHVioLsemBfA7eZSK+utxWLd7TBCz89X=3w@mail.gmail.com>
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Fri, Sep 06, 2024 at 10:30:58AM +0800, Hui Guo wrote:
+> Hi Kernel Maintainers,
+> we found a crash "kernel BUG in reiserfs_update_sd_size" in upstream,
+> and reproduced it successfully:
+> by this report "https://groups.google.com/g/syzkaller-bugs/c/3HUP6xnzjo0/m/bP0j4x9rBAAJ",
+> this bug have been triggered before and fixed, but it can still be
+> triggered now, .
 
-By readind the code, I found the macro NSEC_PER_SEC
-is never referenced in the code. Just remove it.
-
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
-v1->v2:
-	Put together files with similar problems
-
- tools/testing/selftests/timers/change_skew.c      | 3 ---
- tools/testing/selftests/timers/skew_consistency.c | 2 --
- 2 files changed, 5 deletions(-)
-
-diff --git a/tools/testing/selftests/timers/change_skew.c b/tools/testing/selftests/timers/change_skew.c
-index 4421cd562c24..18e794a46c23 100644
---- a/tools/testing/selftests/timers/change_skew.c
-+++ b/tools/testing/selftests/timers/change_skew.c
-@@ -30,9 +30,6 @@
- #include <time.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000LL
--
--
- int change_skew_test(int ppm)
- {
- 	struct timex tx;
-diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
-index c8e6bffe4e0a..83450145fe65 100644
---- a/tools/testing/selftests/timers/skew_consistency.c
-+++ b/tools/testing/selftests/timers/skew_consistency.c
-@@ -36,8 +36,6 @@
- #include <sys/wait.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000LL
--
- int main(int argc, char **argv)
- {
- 	struct timex tx;
--- 
-2.33.0
-
-
-
+Nobody cares.  It's a reiserfs bug on a corrupted filesystem.  Don't
+waste anybody's time with reiserfs.
 
