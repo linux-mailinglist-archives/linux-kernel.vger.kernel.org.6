@@ -1,100 +1,178 @@
-Return-Path: <linux-kernel+bounces-318185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C3896E996
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191F096E998
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8096B1F240BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28772831DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C3D13A865;
-	Fri,  6 Sep 2024 05:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE13313AD2F;
+	Fri,  6 Sep 2024 05:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="FuEMpuD8"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AixbkX3b"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060.outbound.protection.outlook.com [40.107.92.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BA1384BF;
-	Fri,  6 Sep 2024 05:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725602238; cv=none; b=mc5Un4xI0X9Ux+UxT5S74uYGBCzlIPZxzFJ7iCgWyiT5IZB/rRfkyILGp9QWKPSybzKN2c4Un5zOx4W5ErC71A9vOaKM8YxeJS4TTVlXfI6/U6yBtknOfMlGPBM3i959LhZVot8cfTK1SzGaE6AunvDcexcW1YtpQW5aHKI8LlQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725602238; c=relaxed/simple;
-	bh=JiIKD8F/N5Luztkt4Z4RRd8OKL1IUvleco+3UGGCm8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDMSOH4FBEo4eMApauBlSpEVfjEJTGh/2KEa2KxvQqsZOPLc6vlgpS1bdRg/iWqmE0m7Cjs2Jnw1KmV9ypR668zy0jMMRR22u/R0qg+/4anpCudhdPtxC41XZT5nagr37jUabiWqmCChbULdMgPIpyXLPkmhcVpc4kMT6Ki4Adw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=FuEMpuD8; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=iHtxda7iJpHqgGjWQcxPMHTYgcUuxhaS1NQzCQw7Tg4=; b=FuEMpuD8+iVpqKY5eXeXpU3ib6
-	A0Idydtmlbaghv96iib7B1pRv5Kgj7TYuYwDN01u2IsL9+unUP2kaU6oLiva9Agjb6DYQ71RJD9vq
-	X3rLIg7WI/gfdTDG/cedGjk8dn3676y71Z6DzAGHPa23najs/N4KHyor8jGHXwmtykg2RvYfwtojT
-	bioHv5Qrz5IJO3fpK78/5NIzpx4ZUXMoYXS/kkJK6vDXMYoJ2n4aqF7Lw18u/yrJkUKHL4ssYY75U
-	/cITWkwhly1lbLIAHJ9i0fVyF2qThS2LuAc2bIMDYII3TC1y5K310blkOWgauIc1UTtk7/1ztmpVZ
-	hGUTdaNQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1smRnu-000VT4-04;
-	Fri, 06 Sep 2024 13:56:56 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 06 Sep 2024 13:56:55 +0800
-Date: Fri, 6 Sep 2024 13:56:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: davem@davemloft.net, tsbogend@alpha.franken.de,
-	linux-crypto@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Guan Wentao <guanwentao@uniontech.com>
-Subject: Re: [RESEND. PATCH v2] MIPS: crypto: Clean up useless assignment
- operations
-Message-ID: <ZtqZpzMH_qMQqzyc@gondor.apana.org.au>
-References: <AB62DAB2DB1B854E+20240906034605.359512-1-wangyuli@uniontech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831AD13699A;
+	Fri,  6 Sep 2024 05:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725602256; cv=fail; b=BRYJvhpn0iYMqB1fDmaicl53ihahJXiEZ5Fvcp7+RJyBwGjaU6/TlfSoi8VToJ7xZyPMFKU0g4E3VZSxrpgTLRXMWi0d7bjWlWOub53QaSFMHwRi9x/GcqbnefADhItJZ3JHrgka8GLY8oqnYaPQLpTY6Y65NROCuHuHa2WD8zk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725602256; c=relaxed/simple;
+	bh=3ckJjisMtMRe6BaAJWvrvDLAMPe9hPt/Bv3lv2WOqHs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SN+v+B40VjeOK5K3SB7EPGfUDMOw8Nk8nJbCN6Ne5VdeHK8ePYLDFDzlyPmkQ1F/2EjpGsRV7bum/DbFmHF+WsS9W4V3PW5UDqs42SbA5aUJJT0aGJ5TDwjS/1d1w+2F0zR+frncEneUaKxFDagu9t3mNZhGtLnvMA+gNMgbP3k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AixbkX3b; arc=fail smtp.client-ip=40.107.92.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IfJE1bQRI7nDsKrvYH4ts3+P0JmJqpbPWs5E6OrMWUlcMDW56blFtVgzlPyIjcOE/Q1f0KHADke7KIzF7M2aYDlCFQDEhKpVW+c5AJXRg/rR8puGQDFS8yHZ7YdCzR6qiBcQSAk0/QMHs8WC9SvpvxOrQPUjhc8ZWuPEvglmoMWIA/zxBCGy8BRCILntSjGuJ+tJlNU/1GxCVaXdpSNkOisY+sqq1FRuHo01QrigRRKZOisdAICOy4Uf5Lt8YEgJM1iUVt1AzagJo5co1aIMA7I/Pt2OqUJ0QybBUsLRKt51jEf6zelrdCjyBY6JmncjX4e2T7WriBUubZqCuCUHPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DojMEP2FN8gnTQUaCVk+1LvgGFwtSgls20SJaFudy8k=;
+ b=d81djje562XgIqgp0PU2lCS0TCrQ1PrbA1WDD1mREwMyNMIqU8xfSICJo2G+uJZby8gSNfVpR7dLn4irnd8VhcDG/h0BtJqe8Kj7lDWCRxqXfgB9HMrlwvJzMxwrZe1CJxL9MhTxPbaGrpnWuU//HRvXrzxL2jFHpIq9u5XOVS2EZdpKydxkTjw/b4aSRPrwUebiIOYrm8LC/eFsbpxIXekv87j85IA3J2ct/1BqXEFEPTl58xE4WuN5Wq30DEn1L0QwaJQKuqa0C0HWb+vMBU4wSVkNVoi157RIAXqj/sUOC5gof4SgSQqCmYsFOVBe0lCgG+41Dn8ImbMAqHVmNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DojMEP2FN8gnTQUaCVk+1LvgGFwtSgls20SJaFudy8k=;
+ b=AixbkX3bL9kVneMq0qWEhsVUgit/EnbgignF/XNJV9GIHowZJ4SHHKVyAVccix0hrOGJEsZEsuwC/sWn+bt8i5RVVg66sLtxtDp8qRvtURvgAEeP6ImQBvnODP9e9F63ZY1mYuXZyqv2kpesbyH1Y6OCXC+5awMQPk41dLfbZqa0p443dIOr6EQNXOH1pHgGz40tHYrR/CYV+4IK1P1To3LwtkO4jK+C2kATM7OvUyiQp26nmNvpZ5E9jM+0hjgWrXBn+1FZPN86R8Mwg43qp9oPANfNM6MZXCMM8KEUyTYgS+C8Nsy1y92cu6xCjosIiQJSv6EVAsQsr4xfGsXTuw==
+Received: from BYAPR02CA0051.namprd02.prod.outlook.com (2603:10b6:a03:54::28)
+ by IA1PR12MB6283.namprd12.prod.outlook.com (2603:10b6:208:3e5::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
+ 2024 05:57:30 +0000
+Received: from SJ1PEPF00001CE9.namprd03.prod.outlook.com
+ (2603:10b6:a03:54:cafe::9b) by BYAPR02CA0051.outlook.office365.com
+ (2603:10b6:a03:54::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17 via Frontend
+ Transport; Fri, 6 Sep 2024 05:57:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF00001CE9.mail.protection.outlook.com (10.167.242.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 05:57:29 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 5 Sep 2024
+ 22:57:20 -0700
+Received: from dev-r-vrt-156.mtr.labs.mlnx (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 5 Sep 2024 22:57:17 -0700
+From: Danielle Ratson <danieller@nvidia.com>
+To: <netdev@vger.kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<petrm@nvidia.com>, <danieller@nvidia.com>
+Subject: [PATCH net-next 0/2] ethtool: Add support for writing firmware
+Date: Fri, 6 Sep 2024 08:56:58 +0300
+Message-ID: <20240906055700.2645281-1-danieller@nvidia.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AB62DAB2DB1B854E+20240906034605.359512-1-wangyuli@uniontech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE9:EE_|IA1PR12MB6283:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9adfbde4-f2dc-461b-f1dd-08dcce38cafb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?U3XgUtONyioicw2DVps2oqG1o6nyOiTt05+hogYu1au0oXBa4J4P2GU1Ycpt?=
+ =?us-ascii?Q?iKLcInzLen8jbkttcCNFmcUYnidfyX3o7yDR9XwtA+ZMGsqsndGevSBSJ6uY?=
+ =?us-ascii?Q?Rcwgsfw5LoUGFeIUpcWbdgnI1NGoxG4hhr1xRftQdyg23z7SxbY8mTUeQ6sX?=
+ =?us-ascii?Q?pCSDkFIaVSDOVeAbN4+l/w+WKoAOq3GbwR9zMBV3f2MEyN0Nav0W8rmByFEm?=
+ =?us-ascii?Q?l/+6lgsTHasqKGM8eBYZRqgWjkFaaEs/7e4LX9XA5IcFR0XvvhVe3wWhFENX?=
+ =?us-ascii?Q?j4OZbNk7b9VGKzlp6NgDIE/n89I0NGMpT7itUAHuuVjZ9Agb4jr9DIyX30UA?=
+ =?us-ascii?Q?wVaqXgvnRc6vxKfzipLINEYZ8Fkx2KS4rpm5wsDe/ejMKDIo7Vm/kVCBOtgh?=
+ =?us-ascii?Q?oFGsADLSe0t7FrdQPtmFqkkhPXQtuO/bncCTFLgMYdsCzHllVMgsbgU1D/jf?=
+ =?us-ascii?Q?u3W5JPJUi8aQIQ8piSrMeVy23tZGn29mhJuRmCUWBZT4y9pHfQH8x4rSrQnl?=
+ =?us-ascii?Q?X8I7l5b0xT+IBFchBMhGO1jSvV/duFLuyPCRbk3nxLsm4IRHmglKcA2xwJFJ?=
+ =?us-ascii?Q?3XjhV3n15lghmpKzv8Kznu/sKYU3mwJ3nhRKK0tAq6UDQmF682A8qmN/5TdP?=
+ =?us-ascii?Q?RJwvIwwxrgBX1EVfBylGdpLudasQ0BQG0K8ps13WOwXQy0pkmN3Notj8eG4m?=
+ =?us-ascii?Q?2jdkM6MbdMLYZqVelTLOex47vV73+gOg+CSrUndhzLNf2l8bW4/Qhqc5EgVm?=
+ =?us-ascii?Q?BRwJurP/inR0LgVx44u16TI7Nft4v09uR15dQvVf3IYSTT7u/pmT24Kl8MUD?=
+ =?us-ascii?Q?nufIpLKuGJkUYkP762fNt/vNZvl84jduvUQFk4ntqScTSsJuISK1NLB0UbL5?=
+ =?us-ascii?Q?YkcF8/0+cfn5sLRf/6eUM/84bxeuVBTRpJ2mEJMaS1RAfVDmne5CQmpJU/UP?=
+ =?us-ascii?Q?u4L2VEZKoW6WLpjo8f4B9cVzV0xrwbtXAULLD/rKr+5Sr432g94pFPr9i61/?=
+ =?us-ascii?Q?it93v31oVza8yCY057b9JZzEG2nAxwBqXI1WjjMLXMme73cHGByPArVtO/3Q?=
+ =?us-ascii?Q?Jy5R/BpuaQ6W0S3qmaSGtZoSmmpB/SkDz9LJbnP/kqPLDtJXejlN/kiNTvIV?=
+ =?us-ascii?Q?BWInG0+lQiuBQzCqcidbBa4wlzDda8dPGM2p3Ai4BvlPAMHuxsMUm7UyTeJL?=
+ =?us-ascii?Q?WUc6gLufVUIJKt0Y/SmN7BX4qr25etpzAkXBCFzLla5s+knhZwpqk18+xUcL?=
+ =?us-ascii?Q?7/8hr1YqNPN1yx1tC5C53kNuy4eGXNQhwJwq3io/trGh38GLc6aA5F2EL531?=
+ =?us-ascii?Q?7mNuVC6zesUsy4TWTeS0MJkNTsCT73H3SV8gs9aRBfZbKzJLro7DYtI+vvLX?=
+ =?us-ascii?Q?dGHvw9I/Smg9bKkN4GwOfmuDZfUKV7e3+Yj5B06XkKnUbqU6MJNrnaAbPdaG?=
+ =?us-ascii?Q?EGOVfmO/yPD1ImUpIWXrXNVMpQVn7HFT?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 05:57:29.8454
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9adfbde4-f2dc-461b-f1dd-08dcce38cafb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6283
 
-On Fri, Sep 06, 2024 at 11:46:05AM +0800, WangYuli wrote:
->
-> diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
-> index ec6d58008f8e..3a80b7576ec3 100644
-> --- a/arch/mips/crypto/crc32-mips.c
-> +++ b/arch/mips/crypto/crc32-mips.c
-> @@ -77,36 +77,29 @@ static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
->  {
->  	u32 crc = crc_;
->  
-> -#ifdef CONFIG_64BIT
-> -	while (len >= sizeof(u64)) {
-> +#if IS_ENABLED(CONFIG_64BIT)
+In the CMIS specification for pluggable modules, LPL (Local Payload) and
+EPL (Extended Payload) are two types of data payloads used for managing
+various functions and features of the module.
 
-That's not how we normally use IS_ENABLED.  The point of having
-it is so that you can embed it into the C code directly, i.e.:
+EPL payloads are used for more complex and extensive management functions
+that require a larger amount of data, so writing firmware blocks using EPL
+is much more efficient.
 
-	if (IS_ENABLED(CONFIG_64BIT))
+Currently, only LPL payload is supported for writing firmware blocks to
+the module.
 
-Please also refrain from making unrelated changes like removing
-blank lines in the same patch as it makes it more difficult to
-see what you're actually changing.
+Add support for writing firmware block using EPL payload, both to support
+modules that support only EPL write mechanism, and to optimize the flashing
+process of modules that support LPL and EPL.
 
-Cheers,
+Running the flashing command on the same sample module using EPL vs. LPL
+showed an improvement of 84%.
+
+Patchset overview:
+Patch #1: preparations
+Patch #2: Add EPL support
+
+Danielle Ratson (2):
+  net: ethtool: Add new parameters and a function to support EPL
+  net: ethtool: Add support for writing firmware blocks using EPL
+    payload
+
+ net/ethtool/cmis.h           |  16 ++++--
+ net/ethtool/cmis_cdb.c       |  94 +++++++++++++++++++++++++-----
+ net/ethtool/cmis_fw_update.c | 108 +++++++++++++++++++++++++++++------
+ 3 files changed, 184 insertions(+), 34 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.45.0
+
 
