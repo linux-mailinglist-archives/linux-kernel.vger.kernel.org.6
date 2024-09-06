@@ -1,264 +1,110 @@
-Return-Path: <linux-kernel+bounces-318564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A537096EFDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:43:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E664E96EEFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298281F23256
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5091C23E18
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72661C8FCB;
-	Fri,  6 Sep 2024 09:40:43 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25EB1C7B8F;
+	Fri,  6 Sep 2024 09:16:24 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB121C9DEA;
-	Fri,  6 Sep 2024 09:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D33159B71;
+	Fri,  6 Sep 2024 09:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615642; cv=none; b=lqXo9Z7J8y79aZlCb+kIoLzK/Jx4Z1+pLSao/N65vb9/hUYbbJTPUixUcUg5R2tLUTxUEZKRzfCYfkMlPHL2ltJVZG+A12lmvEosDyAoV+mv0z5zhakS7e0azijLksTt0exaBhsSZXoLciovRQxdXy3QxuSmzD/iekJJuqMk9iI=
+	t=1725614184; cv=none; b=BvOWpgAFm/XQ/g2Kmn6km81PFai9ke4xvhneBDqWxIZ0fgHBjOHrU2QMVNblgiaVusnJYGQm4TwtQdbl0dLc1SZQ8dRRYoW2xVwYyJmFUhRzcXae/j65mTRVcqP9f0McDIdPYlcVpiAhwbWEclvHILgxJXrOSTS7W5zMi17asZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615642; c=relaxed/simple;
-	bh=zgRErwe+7/OlqN+OtPmfFNEht306dokkywL/aVZYv2g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sxVBUA2dv7+6e5BMhl8/r2xU6RHzWm8428tgT616dLYpq5FF7EqKXYC/5ew1NWDvu3DVN1kBd5ViwZL/+SIQ1MZvuSaQUqnKVl87GMsPfcrwtItkBlB6s6i0TPukfhKne4jiSd6h4p4l9KQSYkNiuBnY/d7rAL37atQRU2EZxY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X0WPt3plXzpVKg;
-	Fri,  6 Sep 2024 17:38:42 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2502214011A;
-	Fri,  6 Sep 2024 17:40:38 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 6 Sep 2024 17:40:37 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>
-Subject: [PATCH for-next 9/9] RDMA/hns: Fix different dgids mapping to the same dip_idx
-Date: Fri, 6 Sep 2024 17:34:44 +0800
-Message-ID: <20240906093444.3571619-10-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
-References: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1725614184; c=relaxed/simple;
+	bh=NB8dXfjkOd81Ya9XnGiaAE0RPFLChNFtR3CKBjUUFSo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=WB72n0kEPki/OBjcos0kByKmDn0QNdZWYeNFeb1Xbcn/O7fEYivSRZNfFNtvcZ44JMxjtsKZhlV+b6tVqe/xIKQCr81mr2Em0h52JnGCNDu9wLNHRHY/ZNuA+B3dlmOzFbJqPLVdu6PUVrRQ2W/2SifXQSHV2GUjMLt+0pCuxdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E4DDB1A15E5;
+	Fri,  6 Sep 2024 11:16:14 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB7B61A1909;
+	Fri,  6 Sep 2024 11:16:14 +0200 (CEST)
+Received: from mega.am.freescale.net (mega.ap.freescale.net [10.192.208.232])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DD8A4183AC0A;
+	Fri,  6 Sep 2024 17:16:12 +0800 (+08)
+From: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com,
+	alexandre.belloni@bootlin.com,
+	UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch,
+	f.fainelli@gmail.com,
+	michael@walle.cc,
+	linux-kernel@vger.kernel.org,
+	xiaoliang.yang_1@nxp.com
+Subject: [PATCH v2 net] net: dsa: felix: ignore pending status of TAS module when it's disabled
+Date: Fri,  6 Sep 2024 17:35:50 +0800
+Message-Id: <20240906093550.29985-1-xiaoliang.yang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100018.china.huawei.com (7.202.181.17)
 
-From: Feng Fang <fangfeng4@huawei.com>
+The TAS module could not be configured when it's running in pending
+status. We need disable the module and configure it again. However, the
+pending status is not cleared after the module disabled. TC taprio set
+will always return busy even it's disabled.
 
-DIP algorithm requires a one-to-one mapping between dgid and dip_idx.
-Currently a queue 'spare_idx' is used to store QPN of QPs that use
-DIP algorithm. For a new dgid, use a QPN from spare_idx as dip_idx.
-This method lacks a mechanism for deduplicating QPN, which may result
-in different dgids sharing the same dip_idx and break the one-to-one
-mapping requirement.
+For example, a user uses tc-taprio to configure Qbv and a future
+basetime. The TAS module will run in a pending status. There is no way
+to reconfigure Qbv, it always returns busy.
 
-This patch replaces spare_idx with two new bitmaps: qpn_bitmap to record
-QPN that is not being used as dip_idx, and dip_idx_map to record QPN
-that is being used. Besides, introduce a reference count of a dip_idx
-to indicate the number of QPs that using this dip_idx. When creating
-a DIP QP, if it has a new dgid, set the corresponding bit in dip_idx_map,
-otherwise add 1 to the reference count of the reused dip_idx and set bit
-in qpn_bitmap. When destroying a DIP QP, decrement the reference count
-by 1. If it becomes 0, set bit in qpn_bitmap and clear bit in dip_idx_map.
+Actually the TAS module can be reconfigured when it's disabled. So it
+doesn't need to check the pending status if the TAS module is disabled.
 
-Fixes: eb653eda1e91 ("RDMA/hns: Bugfix for incorrect association between dip_idx and dgid")
-Fixes: f91696f2f053 ("RDMA/hns: Support congestion control type selection according to the FW")
-Signed-off-by: Feng Fang <fangfeng4@huawei.com>
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+After the patch, user can delete the tc taprio configuration to disable
+Qbv and reconfigure it again.
+
+Fixes: de143c0e274b ("net: dsa: felix: Configure Time-Aware Scheduler via taprio offload")
+Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
 ---
- drivers/infiniband/hw/hns/hns_roce_device.h |  6 +--
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 58 ++++++++++++++++++---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |  1 +
- drivers/infiniband/hw/hns/hns_roce_qp.c     | 16 ++++--
- 4 files changed, 67 insertions(+), 14 deletions(-)
+ drivers/net/dsa/ocelot/felix_vsc9959.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-index 0b1e21cb6d2d..adc65d383cf1 100644
---- a/drivers/infiniband/hw/hns/hns_roce_device.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-@@ -490,9 +490,8 @@ struct hns_roce_bank {
- };
- 
- struct hns_roce_idx_table {
--	u32 *spare_idx;
--	u32 head;
--	u32 tail;
-+	unsigned long *qpn_bitmap;
-+	unsigned long *dip_idx_bitmap;
- };
- 
- struct hns_roce_qp_table {
-@@ -656,6 +655,7 @@ struct hns_roce_qp {
- 	enum hns_roce_cong_type	cong_type;
- 	u8			tc_mode;
- 	u8			priority;
-+	struct hns_roce_dip *dip;
- };
- 
- struct hns_roce_ib_iboe {
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 085461713fa9..19a4bf80a080 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -4706,21 +4706,24 @@ static int get_dip_ctx_idx(struct ib_qp *ibqp, const struct ib_qp_attr *attr,
- {
- 	const struct ib_global_route *grh = rdma_ah_read_grh(&attr->ah_attr);
- 	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
--	u32 *spare_idx = hr_dev->qp_table.idx_table.spare_idx;
--	u32 *head =  &hr_dev->qp_table.idx_table.head;
--	u32 *tail =  &hr_dev->qp_table.idx_table.tail;
-+	unsigned long *dip_idx_bitmap = hr_dev->qp_table.idx_table.dip_idx_bitmap;
-+	unsigned long *qpn_bitmap = hr_dev->qp_table.idx_table.qpn_bitmap;
-+	struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
- 	struct hns_roce_dip *hr_dip;
- 	unsigned long flags;
- 	int ret = 0;
-+	u32 idx;
- 
- 	spin_lock_irqsave(&hr_dev->dip_list_lock, flags);
- 
--	spare_idx[*tail] = ibqp->qp_num;
--	*tail = (*tail == hr_dev->caps.num_qps - 1) ? 0 : (*tail + 1);
-+	if (!test_bit(ibqp->qp_num, dip_idx_bitmap))
-+		set_bit(ibqp->qp_num, qpn_bitmap);
- 
- 	list_for_each_entry(hr_dip, &hr_dev->dip_list, node) {
- 		if (!memcmp(grh->dgid.raw, hr_dip->dgid, GID_LEN_V2)) {
- 			*dip_idx = hr_dip->dip_idx;
-+			hr_dip->qp_cnt++;
-+			hr_qp->dip = hr_dip;
- 			goto out;
- 		}
- 	}
-@@ -4734,9 +4737,21 @@ static int get_dip_ctx_idx(struct ib_qp *ibqp, const struct ib_qp_attr *attr,
- 		goto out;
- 	}
- 
-+	idx = find_first_bit(qpn_bitmap, hr_dev->caps.num_qps);
-+	if (idx < hr_dev->caps.num_qps) {
-+		*dip_idx = idx;
-+		clear_bit(idx, qpn_bitmap);
-+		set_bit(idx, dip_idx_bitmap);
-+	} else {
-+		ret = -ENOENT;
-+		kfree(hr_dip);
-+		goto out;
-+	}
-+
- 	memcpy(hr_dip->dgid, grh->dgid.raw, sizeof(grh->dgid.raw));
--	hr_dip->dip_idx = *dip_idx = spare_idx[*head];
--	*head = (*head == hr_dev->caps.num_qps - 1) ? 0 : (*head + 1);
-+	hr_dip->dip_idx = *dip_idx;
-+	hr_dip->qp_cnt++;
-+	hr_qp->dip = hr_dip;
- 	list_add_tail(&hr_dip->node, &hr_dev->dip_list);
- 
- out:
-@@ -5597,12 +5612,41 @@ static int hns_roce_v2_destroy_qp_common(struct hns_roce_dev *hr_dev,
- 	return ret;
- }
- 
-+static void put_dip_ctx_idx(struct hns_roce_dev *hr_dev,
-+			    struct hns_roce_qp *hr_qp)
-+{
-+	unsigned long *dip_idx_bitmap = hr_dev->qp_table.idx_table.dip_idx_bitmap;
-+	unsigned long *qpn_bitmap = hr_dev->qp_table.idx_table.qpn_bitmap;
-+	struct hns_roce_dip *hr_dip = hr_qp->dip;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&hr_dev->dip_list_lock, flags);
-+
-+	if (hr_dip) {
-+		hr_dip->qp_cnt--;
-+		if (!hr_dip->qp_cnt) {
-+			clear_bit(hr_dip->dip_idx, dip_idx_bitmap);
-+			set_bit(hr_dip->dip_idx, qpn_bitmap);
-+
-+			list_del(&hr_dip->node);
-+		} else {
-+			hr_dip = NULL;
+diff --git a/drivers/net/dsa/ocelot/felix_vsc9959.c b/drivers/net/dsa/ocelot/felix_vsc9959.c
+index ba37a566da39..ecfa73725d25 100644
+--- a/drivers/net/dsa/ocelot/felix_vsc9959.c
++++ b/drivers/net/dsa/ocelot/felix_vsc9959.c
+@@ -1474,10 +1474,13 @@ static int vsc9959_qos_port_tas_set(struct ocelot *ocelot, int port,
+ 	/* Hardware errata -  Admin config could not be overwritten if
+ 	 * config is pending, need reset the TAS module
+ 	 */
+-	val = ocelot_read(ocelot, QSYS_PARAM_STATUS_REG_8);
+-	if (val & QSYS_PARAM_STATUS_REG_8_CONFIG_PENDING) {
+-		ret = -EBUSY;
+-		goto err_reset_tc;
++	val = ocelot_read_rix(ocelot, QSYS_TAG_CONFIG, port);
++	if (val & QSYS_TAG_CONFIG_ENABLE) {
++		val = ocelot_read(ocelot, QSYS_PARAM_STATUS_REG_8);
++		if (val & QSYS_PARAM_STATUS_REG_8_CONFIG_PENDING) {
++			ret = -EBUSY;
++			goto err_reset_tc;
 +		}
-+	}
-+
-+	spin_unlock_irqrestore(&hr_dev->dip_list_lock, flags);
-+	kfree(hr_dip);
-+}
-+
- int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
- {
- 	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
- 	struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
- 	int ret;
+ 	}
  
-+	if (hr_qp->cong_type == CONG_TYPE_DIP)
-+		put_dip_ctx_idx(hr_dev, hr_qp);
-+
- 	ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
- 	if (ret)
- 		ibdev_err_ratelimited(&hr_dev->ib_dev,
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index c65f68a14a26..3804882bb5b4 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -1342,6 +1342,7 @@ struct hns_roce_v2_priv {
- struct hns_roce_dip {
- 	u8 dgid[GID_LEN_V2];
- 	u32 dip_idx;
-+	u32 qp_cnt;
- 	struct list_head node; /* all dips are on a list */
- };
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
-index 6b03ba671ff8..bc278b735736 100644
---- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-@@ -1546,11 +1546,18 @@ int hns_roce_init_qp_table(struct hns_roce_dev *hr_dev)
- 	unsigned int reserved_from_bot;
- 	unsigned int i;
- 
--	qp_table->idx_table.spare_idx = kcalloc(hr_dev->caps.num_qps,
--					sizeof(u32), GFP_KERNEL);
--	if (!qp_table->idx_table.spare_idx)
-+	qp_table->idx_table.qpn_bitmap = bitmap_zalloc(hr_dev->caps.num_qps,
-+						       GFP_KERNEL);
-+	if (!qp_table->idx_table.qpn_bitmap)
- 		return -ENOMEM;
- 
-+	qp_table->idx_table.dip_idx_bitmap = bitmap_zalloc(hr_dev->caps.num_qps,
-+							   GFP_KERNEL);
-+	if (!qp_table->idx_table.dip_idx_bitmap) {
-+		bitmap_free(qp_table->idx_table.qpn_bitmap);
-+		return -ENOMEM;
-+	}
-+
- 	mutex_init(&qp_table->scc_mutex);
- 	mutex_init(&qp_table->bank_mutex);
- 	xa_init(&hr_dev->qp_table_xa);
-@@ -1580,5 +1587,6 @@ void hns_roce_cleanup_qp_table(struct hns_roce_dev *hr_dev)
- 		ida_destroy(&hr_dev->qp_table.bank[i].ida);
- 	mutex_destroy(&hr_dev->qp_table.bank_mutex);
- 	mutex_destroy(&hr_dev->qp_table.scc_mutex);
--	kfree(hr_dev->qp_table.idx_table.spare_idx);
-+	bitmap_free(hr_dev->qp_table.idx_table.qpn_bitmap);
-+	bitmap_free(hr_dev->qp_table.idx_table.dip_idx_bitmap);
- }
+ 	ocelot_rmw_rix(ocelot,
 -- 
-2.33.0
+2.17.1
 
 
