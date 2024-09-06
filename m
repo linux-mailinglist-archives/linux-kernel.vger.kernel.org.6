@@ -1,442 +1,140 @@
-Return-Path: <linux-kernel+bounces-319292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DCF96FA29
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D493F96FA35
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97EC1F23E02
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9244C284F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438031D79A1;
-	Fri,  6 Sep 2024 17:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB891D7985;
+	Fri,  6 Sep 2024 17:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dNb2WYic"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cAPbZ5HQ"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307DE1D1F70
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A2E1C86FB
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725645047; cv=none; b=oE+gf6mfnWJLZ5CVyN+V6+3lUkLWnT71x6nClFm1CdpiSme43OxzCO+GgE41DG/wktNdRJqI+ZyOSiMybCLMyTVr23/8jLrMQ2tqwiqWnsl0f0phufAsAiHteiM0H7dosMZiMEsgd2wnjSPe1B2E4BSkF2s4mBO7ZefipWxu1KE=
+	t=1725645380; cv=none; b=F+ASiiv0f7jADBG3S/bNyERp7q4aKkatDIcUBkr7Dx/f69GG0pif9dhDe1cQMlhPqI3vv+EFulbzRUmDhEQUKFFKX8msmNYHOavNAa3C4kHh9ozVea7uxpp6YW4ptVwxTNr5ecFGGX+a8sFEChh631hcNX7v4l36Z5uqNLHBXDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725645047; c=relaxed/simple;
-	bh=c6uEbkcohf3ucYhL6tKjBC7+SOWgapOzdFEqRfu2C7Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sy/2zf5kgsaafMzdwMkNBK9TUSPj6iuZzjWkvWbNEl/0eOj0/7tTpPuLYherk2NCS5zn6RE4Y4GgKpCrbRApMIl2dmyL+oz4Qv0Xv3TWZuKeeJPe1+fassubc3FEi0N5z6V7lWlW5C/DKeiGWpD4w7o56E7O3qoL7wgkiMEbjn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dNb2WYic; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725645041; x=1725904241;
-	bh=c6uEbkcohf3ucYhL6tKjBC7+SOWgapOzdFEqRfu2C7Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dNb2WYicA5wChC1je5j68QZci7UlEHK4+v2tWDbbx+Xgz645IVE2j4BhMVNe0Dmlr
-	 eV2tKPL6tlK/IExBvfTKGVlolkMgFnhsRYg9U4Wfu/km6OXYUDb+F2wEVAhXQN+Ird
-	 tSUCLuvlSviQS9I1SIHzOTeq8uXQ5a6ZhOCe/MWH7PLju34Dx0+O2S7uyU7xIypj5E
-	 amsfjOMom7xmoPRd24TTQUtjR35pwRRHeRt2QmrYmSnhQkZHX7VwAZMqbGF1sW7QbR
-	 abbCxuUdIYTtLSqstMeph52k1x1LEYwFzq78Lx7cxMtG++7qWHPOlGQsdMJqzqgFTb
-	 RdvI1qFkxg/KQ==
-Date: Fri, 06 Sep 2024 17:50:36 +0000
-To: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Piotr Zalewski <pZ010001011111@proton.me>, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: [PATCH v4] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <Pn-SxLyO78OXrKgkMG8Skwa69PG6oAG_UACHHy_VQqbNRbs1VHW9VV1feGos-zrtrTTi7RDOjERu_fmx9QYPXxI8SXqL_nOKuv0P6z-z6NI=@proton.me>
-In-Reply-To: <20240815124306.189282-2-pZ010001011111@proton.me>
-References: <20240815124306.189282-2-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: aad2cd532d71b8c356243e076b6e061492935d66
+	s=arc-20240116; t=1725645380; c=relaxed/simple;
+	bh=FHS1nCJmr5pCziBIMWQ02d4vRB9fiaTTS8EelXAsTr8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ioz1VcW+K8/+ibAyX4QUJ4efnO2TC6f+JK6ku5CWkdBu7k40lboVibt5gPBcIS5Rrn2+uyrKdaCVumQsXfrzdIMLD/Umsve7ey0uWA2fmhX8Zn7OiCnpBvwMvhTLQ2B3w5q561gzg7+UcnUS3Hvy0kkwyE0VDYJGQtOS0eg0EGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cAPbZ5HQ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42c94e59b93so18883095e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 10:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725645375; x=1726250175; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQYrrFnq45FQZpy1CBFZK584cpJrAdAQCel1rZp9QxM=;
+        b=cAPbZ5HQTIDk54KJfl4nShwpQ9Imbt9rsTVYIeuOiXo/oXUEaLHs9oQXAzz+29KQ6q
+         sQ6I7KOursm17MDM4bvReU2LusGZmWTzfcBzHu06dWzJCf5LhaI7GxMRJSq3Le4kueZl
+         c6m6EX3Lrq71FjTc0xLeYmGSk0AqsEzhUXx189qDsMFENr2yOPbgokviseQtlTFzPLmY
+         fm4X0Zeco4Yff8XvwlUUIRiUDe9WFjZ2PrxV7zsFcoBMm4l3U8PuNNcShi7w4Hf1ZxBu
+         rOFMiJ5JKx8pGsEINmWAFuR5/ttsqccOPuLvIj3qSefyL4bV/1YHWFA+1i7+8Sk1JaUv
+         NQXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725645375; x=1726250175;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hQYrrFnq45FQZpy1CBFZK584cpJrAdAQCel1rZp9QxM=;
+        b=fhsDHDYZ4BxIWzpMTqlITjzduMlXH1i+L6JswoBQI9XuglzRp4UY0gY40kj7cJ6koj
+         IDI4UIC3BTmSB4GEAWZykxZjsL51ISLP1GYWcMR9dSsgvBzERwRBWA1BKlJtUfqCEO6o
+         YdnDjjOm4nM9SVIqXLPjKMh81fIa4RdzyUKRSpDuN3oxmY3oBPWJbfP8ZMNesiA66x5e
+         j9K46cUQfimY2h39/cAS4FtWRCcfdgYcxqZi6kDTq0A+WPCCmjqKG4SWGiikjR1jY+yk
+         QkydYdbAQicbDWeoEhDT1d9HEO2bgXz/H2LRBJTuOQDwU88vNXo9+dzGWEyR2KVUhBE+
+         q6iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXo6qyFBDx73mEHp1MH/CbuE8mQkU4u5RJK3NSpW6h9av90jJSGZtrFoFjaXHMnA5+zmSMiU+t/j72AfY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnDbilGxbp6j9MuJC8ppLiwNG49tccH0uxgB5M2pi7yO9kV2Wv
+	adhvyoFlhs2cMhKbOCB0wlt4TGA5po0SnufSEXoOluFOnHdHSPQnhWZaRkMCnBc=
+X-Google-Smtp-Source: AGHT+IEAO5eQ2WsjpFGOiTZ3rP5m6MHZ9LofXG6FrIx32amj9VumgP2Se3jrYC2I+/fj9GkT6+YpVg==
+X-Received: by 2002:a5d:55ca:0:b0:374:c11c:5024 with SMTP id ffacd0b85a97d-3779a612bdcmr6744851f8f.16.1725645374584;
+        Fri, 06 Sep 2024 10:56:14 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:b9fc:a1e7:588c:1e37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37891607e58sm442920f8f.24.2024.09.06.10.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 10:56:14 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 0/2] arm64: dts: qcom: extend the register range for ICE
+ on sm8[56]50
+Date: Fri, 06 Sep 2024 19:55:59 +0200
+Message-Id: <20240906-wrapped-keys-dts-v6-0-3f0287cf167e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC9C22YC/x3MSQqAMAxA0atI1gbqjF5FXFQTNQhaGnFAvLvF5
+ Vv8/4CyF1Zoogc8H6KyrQFlHMEw23ViFAqG1KS5qU2Jp7fOMeHCtyLtin2VZWSHIiGTQMic51G
+ uf9l27/sBnlO/NmIAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
+ Om Prakash Singh <quic_omprsing@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=977;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=FHS1nCJmr5pCziBIMWQ02d4vRB9fiaTTS8EelXAsTr8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm20I41/6tNEv9qOsMFd5ooEmVDQqNfRErMBPKa
+ Iltd/PSJVGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZttCOAAKCRARpy6gFHHX
+ coGUEACPBfqHURpAg3GQxrXFSJ+luezgVWtIx9vgznL1+EbvvgDNF3Mh+kJBtLl6FSaLvsWr8ir
+ DR1RWMQ99h7eSsKNKaLxS1zV4tGioJkLewo2qByzDg9nI1C4ayu6l8XGanyuPk/hQXseoOsXHlM
+ CLg/A2Yzuidk0+Xzcc1g1vccPSRSiMy8bpoAGBJ2UYP4JwA39CJBhVl76u7Qz/2yni2B1k/7gqm
+ Hoq5l5yAZ5FBa3u06jgUjz4F5adbsrobCrcECUWuUtjb1z+p5coXDHEus1nAtnnHjzKfotW8VR4
+ +ofC0eZLnl6XcnhTqWCOK/LNIk6AJc4p7rZqs3L0kbERV2JGSYApH75pbuC3e/nlLaY5wyy413+
+ 7VlGJGWfgjBVFhqBZ3mzn1ctLKw+KEccao/aLWMVbsIwwYafmX1S1ZSvOjNhFXZy0HlVw7pB9Z1
+ SiXhJnv8TABTZtzc/JneOUKDEXA8sU4FHLft/CgAlJMHciOgejPSTx5T2Cs4gDGzd7bFmon/FsL
+ CfmEmIgIzkSvAL9fXVoF/FhOdOqMkNB55A9lpaTZ4uGbqvaG9KSmcx2vYZBcyjNF5Zr+Dr43wv+
+ 7r3rv+Lpq+Mlv83XCirMpxCULjXeup8p8cxao5krPd6LX7XqQ0YDeSG9jiynchYF9Utw4QUvKYM
+ 0jwBxhKA5yn81bw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Daniel,
+The following changes extend the register range for ICE IPs on sm8550
+and sm8650 in order to cover the registers used for wrapped key support
+on these platforms.
 
-Can you comment on or review this? This version of the patch was based on
-your suggestions and it has been stuck for some time now.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I appreciate your time and help :)
+Changes since v5:
+- split out the DT changes into a separate series
+- remove the new DT property from the series
+- rework commit messages
+Link to v5: https://lore.kernel.org/lkml/20240617005825.1443206-1-quic_gaurkash@quicinc.com/
 
-Best Regards, Piotr Zalewski
+---
+Gaurav Kashyap (2):
+      arm64: dts: qcom: sm8650: extend the register range for UFS ICE
+      arm64: dts: qcom: sm8550: extend the register range for UFS ICE
 
-On Thursday, August 15th, 2024 at 2:46 PM, Piotr Zalewski <pZ010001011111@p=
-roton.me> wrote:
+ arch/arm64/boot/dts/qcom/sm8550.dtsi | 3 ++-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+---
+base-commit: ad40aff1edffeccc412cde93894196dca7bc739e
+change-id: 20240906-wrapped-keys-dts-b733dac51d01
 
-> Add support for gamma LUT in VOP2 driver. The implementation was inspired
-> by one found in VOP1 driver. Blue and red channels in gamma LUT register
-> write were swapped with respect to how gamma LUT values are written in
-> VOP1. If the current SoC is RK3566 or RK3568 and gamma LUT is to be
-> written, full modeset is triggered to synchronize disable, write, enable
-> process and hint userspace that it is not seamless transition[1]. If the
-> current SoC is RK3588 full modeset isn't triggered because gamma LUT need
-> not to be disabled before the LUT write[1]. In case of RK356x as well as
-> RK3588 respective LUT port sel register write was added before the LUT
-> write[2]. In case of RK3588, gamma update enable bit is set after setting
-> gamma LUT enable bit[2]. Gamma size is set and drm color management is
-> enabled for each video port's CRTC except ones which have no associated
-> device. Tested on RK3566 (Pinetab2).
->=20
-> [1] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xzPb=
-Jrk=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-rockchip/7d998e4c-e1d3-4e8b-af76-c5bc83=
-b43647@rock-chips.com/
->=20
-> Helped-by: Daniel Stone daniel@fooishbar.org
->=20
-> Helped-by: Dragan Simic dsimic@manjaro.org
->=20
-> Helped-by: Diederik de Haas didi.debian@cknow.org
->=20
-> Helped-by: Andy Yan andy.yan@rock-chips.com
->=20
-> Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
->=20
-> ---
->=20
-> Notes:
-> WASN'T tested on RK3588.
->=20
-> Changes in v4:
-> - rework the implementation to better utilize DRM atomic updates[2]
-> - handle the RK3588 case[2][3]
->=20
-> Changes in v3:
-> - v3 is patch v2 "resend", by mistake the incremental patch was
-> sent in v2
->=20
-> Changes in v2:
-> - Apply code styling corrections[1]
-> - Move gamma LUT write inside the vop2 lock
->=20
-> Link to v3: https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3iZo=
-_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZ=
-r-MJzJMtw0=3D@proton.me/
-> Link to v2: https://lore.kernel.org/linux-rockchip/Hk03HDb6wSSHWtEFZHUye0=
-6HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2Trja=
-Qfnytzp-Pk=3D@proton.me/T/#u
-> Link to v1: https://lore.kernel.org/linux-rockchip/9736eadf6a9d8e97eef919=
-c6b3d88828@manjaro.org/T/#t
->=20
-> [1] https://lore.kernel.org/linux-rockchip/d019761504b540600d9fc7a585d6f9=
-5f@manjaro.org
-> [2] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xzPb=
-Jrk=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com
-> [3] https://lore.kernel.org/linux-rockchip/7d998e4c-e1d3-4e8b-af76-c5bc83=
-b43647@rock-chips.com
->=20
-> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 148 +++++++++++++++++++
-> drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 5 +
-> 2 files changed, 153 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/d=
-rm/rockchip/rockchip_drm_vop2.c
-> index 9873172e3fd3..fe7657984909 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> @@ -278,6 +278,15 @@ static u32 vop2_readl(struct vop2 *vop2, u32 offset)
-> return val;
-> }
->=20
-> +static u32 vop2_vp_read(struct vop2_video_port *vp, u32 offset)
-> +{
-> + u32 val;
-> +
-> + regmap_read(vp->vop2->map, vp->data->offset + offset, &val);
->=20
-> +
-> + return val;
-> +}
-> +
-> static void vop2_win_write(const struct vop2_win *win, unsigned int reg, =
-u32 v)
-> {
-> regmap_field_write(win->reg[reg], v);
->=20
-> @@ -998,6 +1007,30 @@ static void vop2_disable(struct vop2 *vop2)
-> clk_disable_unprepare(vop2->hclk);
->=20
-> }
->=20
-> +static void vop2_vp_dsp_lut_disable(struct vop2_video_port *vp)
-> +{
-> + u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-> +
-> + dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-> + vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-> +}
-> +
-> +static void vop2_vp_dsp_lut_enable(struct vop2_video_port *vp)
-> +{
-> + u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-> +
-> + dsp_ctrl |=3D RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-> + vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-> +}
-> +
-> +static void vop2_vp_dsp_lut_update_enable(struct vop2_video_port *vp)
-> +{
-> + u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-> +
-> + dsp_ctrl |=3D RK3588_VP_DSP_CTRL__GAMMA_UPDATE_EN;
-> + vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-> +}
-> +
-> static void vop2_crtc_atomic_disable(struct drm_crtc *crtc,
-> struct drm_atomic_state *state)
-> {
-> @@ -1482,6 +1515,24 @@ static bool vop2_crtc_mode_fixup(struct drm_crtc *=
-crtc,
-> return true;
-> }
->=20
-> +static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc=
- *crtc)
-> +{
-> + const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-> + const struct vop2_video_port_data *vp_data =3D &vop2->data->vp[vp->id];
->=20
-> +
-> + struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
->=20
-> + unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
->=20
-> + u32 word;
-> +
-> + for (i =3D 0; i < crtc->gamma_size; i++) {
->=20
-> + word =3D (drm_color_lut_extract(lut[i].blue, bpc) << (2 * bpc)) |
-> + (drm_color_lut_extract(lut[i].green, bpc) << bpc) |
-> + drm_color_lut_extract(lut[i].red, bpc);
-> +
-> + writel(word, vop2->lut_regs + i * 4);
->=20
-> + }
-> +}
-> +
-> static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
-> {
-> struct rockchip_crtc_state *vcstate =3D to_rockchip_crtc_state(crtc->stat=
-e);
->=20
-> @@ -2062,6 +2113,42 @@ static void vop2_crtc_atomic_enable(struct drm_crt=
-c *crtc,
-> vop2_unlock(vop2);
-> }
->=20
-> +static int vop2_crtc_atomic_check_gamma(struct vop2_video_port *vp,
-> + struct drm_crtc *crtc,
-> + struct drm_atomic_state *state,
-> + struct drm_crtc_state *crtc_state)
-> +{
-> + struct vop2 *vop2 =3D vp->vop2;
->=20
-> + unsigned int len;
-> +
-> + if (!vp->vop2->lut_regs || !crtc_state->color_mgmt_changed ||
->=20
-> + !crtc_state->gamma_lut)
->=20
-> + return 0;
-> +
-> + len =3D drm_color_lut_size(crtc_state->gamma_lut);
->=20
-> + if (len !=3D crtc->gamma_size) {
->=20
-> + DRM_DEBUG_KMS("Invalid LUT size; got %d, expected %d\n",
-> + len, crtc->gamma_size);
->=20
-> + return -EINVAL;
-> + }
-> +
-> + // trigger full modeset only when SoC is 356x
-> + if (!crtc_state->mode_changed && (vop2->data->soc_id =3D=3D 3566 ||
->=20
-> + vop2->data->soc_id =3D=3D 3568)) {
->=20
-> + int ret;
-> +
-> + crtc_state->mode_changed =3D true;
->=20
-> + state->allow_modeset =3D true;
->=20
-> +
-> + ret =3D drm_atomic_helper_check_modeset(crtc->dev,
->=20
-> + crtc_state->state);
->=20
-> + if (ret)
-> + return ret;
-> + }
-> +
-> + return 0;
-> +}
-> +
-> static int vop2_crtc_atomic_check(struct drm_crtc *crtc,
-> struct drm_atomic_state *state)
-> {
-> @@ -2069,6 +2156,11 @@ static int vop2_crtc_atomic_check(struct drm_crtc =
-*crtc,
-> struct drm_plane *plane;
-> int nplanes =3D 0;
-> struct drm_crtc_state *crtc_state =3D drm_atomic_get_new_crtc_state(state=
-, crtc);
-> + int ret;
-> +
-> + ret =3D vop2_crtc_atomic_check_gamma(vp, crtc, state, crtc_state);
-> + if (ret)
-> + return ret;
->=20
-> drm_atomic_crtc_state_for_each_plane(plane, crtc_state)
-> nplanes++;
-> @@ -2456,9 +2548,32 @@ static void vop2_setup_dly_for_windows(struct vop2=
- *vop2)
-> vop2_writel(vop2, RK3568_SMART_DLY_NUM, sdly);
-> }
->=20
-> +static void vop2_crtc_atomic_begin_gamma(struct vop2 *vop2,
-> + struct vop2_video_port *vp,
-> + struct drm_crtc *crtc,
-> + struct drm_crtc_state *crtc_state)
-> +{
-> + if (vop2->lut_regs && crtc_state->color_mgmt_changed &&
->=20
-> + crtc_state->gamma_lut) {
->=20
-> + vop2_lock(vop2);
-> + if (vop2->data->soc_id =3D=3D 3566 || vop2->data->soc_id =3D=3D 3568) {
->=20
-> + vop2_writel(vop2, RK3568_LUT_PORT_SEL, vp->id);
->=20
-> + } else {
-> + vop2_writel(vop2, RK3568_LUT_PORT_SEL, FIELD_PREP(
-> + RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL,
-> + vp->id));
->=20
-> + }
-> + vop2_crtc_write_gamma_lut(vop2, crtc);
-> +
-> + vop2_unlock(vop2);
-> + }
-> +}
-> +
-> static void vop2_crtc_atomic_begin(struct drm_crtc *crtc,
-> struct drm_atomic_state *state)
-> {
-> + struct drm_crtc_state *crtc_state =3D
-> + drm_atomic_get_new_crtc_state(state, crtc);
-> struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-> struct vop2 *vop2 =3D vp->vop2;
->=20
-> struct drm_plane *plane;
-> @@ -2482,13 +2597,39 @@ static void vop2_crtc_atomic_begin(struct drm_crt=
-c *crtc,
-> vop2_setup_layer_mixer(vp);
-> vop2_setup_alpha(vp);
-> vop2_setup_dly_for_windows(vop2);
-> +
-> + vop2_crtc_atomic_begin_gamma(vop2, vp, crtc, crtc_state);
-> +}
-> +
-> +static void vop2_crtc_atomic_flush_gamma(struct vop2 *vop2,
-> + struct vop2_video_port *vp,
-> + struct drm_crtc_state *crtc_state)
-> +{
-> + if (vop2->lut_regs && crtc_state->color_mgmt_changed) {
->=20
-> + vop2_lock(vop2);
-> +
-> + if (crtc_state->gamma_lut) {
->=20
-> + vop2_vp_dsp_lut_enable(vp);
-> + if (vop2->data->soc_id !=3D 3566 &&
->=20
-> + vop2->data->soc_id !=3D 3568)
->=20
-> + vop2_vp_dsp_lut_update_enable(vp);
-> +
-> + } else
-> + vop2_vp_dsp_lut_disable(vp);
-> +
-> + vop2_unlock(vop2);
-> + }
-> }
->=20
-> static void vop2_crtc_atomic_flush(struct drm_crtc *crtc,
-> struct drm_atomic_state *state)
-> {
-> + struct drm_crtc_state *crtc_state =3D
-> + drm_atomic_get_new_crtc_state(state, crtc);
-> struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
->=20
-> + vop2_crtc_atomic_flush_gamma(vp->vop2, vp, crtc_state);
->=20
-> +
-> vop2_post_config(crtc);
->=20
-> vop2_cfg_done(vp);
-> @@ -2791,6 +2932,13 @@ static int vop2_create_crtcs(struct vop2 *vop2)
->=20
-> drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
->=20
->=20
-> + if (vop2->lut_regs && vp->crtc.dev !=3D NULL) {
->=20
-> + const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp->id];
->=20
-> +
-> + drm_mode_crtc_set_gamma_size(&vp->crtc, vp_data->gamma_lut_len);
->=20
-> + drm_crtc_enable_color_mgmt(&vp->crtc, 0, false,
->=20
-> + vp_data->gamma_lut_len);
->=20
-> + }
-> init_completion(&vp->dsp_hold_completion);
->=20
-> }
->=20
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/d=
-rm/rockchip/rockchip_drm_vop2.h
-> index 615a16196aff..510dda6f9092 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-> @@ -394,6 +394,7 @@ enum dst_factor_mode {
-> #define RK3568_REG_CFG_DONE__GLB_CFG_DONE_EN BIT(15)
->=20
-> #define RK3568_VP_DSP_CTRL__STANDBY BIT(31)
-> +#define RK3568_VP_DSP_CTRL__DSP_LUT_EN BIT(28)
-> #define RK3568_VP_DSP_CTRL__DITHER_DOWN_MODE BIT(20)
-> #define RK3568_VP_DSP_CTRL__DITHER_DOWN_SEL GENMASK(19, 18)
-> #define RK3568_VP_DSP_CTRL__DITHER_DOWN_EN BIT(17)
-> @@ -408,6 +409,8 @@ enum dst_factor_mode {
-> #define RK3568_VP_DSP_CTRL__CORE_DCLK_DIV BIT(4)
-> #define RK3568_VP_DSP_CTRL__OUT_MODE GENMASK(3, 0)
->=20
-> +#define RK3588_VP_DSP_CTRL__GAMMA_UPDATE_EN BIT(22)
-> +
-> #define RK3588_VP_CLK_CTRL__DCLK_OUT_DIV GENMASK(3, 2)
-> #define RK3588_VP_CLK_CTRL__DCLK_CORE_DIV GENMASK(1, 0)
->=20
-> @@ -460,6 +463,8 @@ enum dst_factor_mode {
-> #define RK3588_DSP_IF_POL__DP1_PIN_POL GENMASK(14, 12)
-> #define RK3588_DSP_IF_POL__DP0_PIN_POL GENMASK(10, 8)
->=20
-> +#define RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL GENMASK(13, 12)
-> +
-> #define RK3568_VP0_MIPI_CTRL__DCLK_DIV2_PHASE_LOCK BIT(5)
-> #define RK3568_VP0_MIPI_CTRL__DCLK_DIV2 BIT(4)
->=20
-> --
-> 2.46.0
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
