@@ -1,170 +1,230 @@
-Return-Path: <linux-kernel+bounces-319498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8E396FD66
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:32:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94EE96FD68
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99DE1B252FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:32:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DD28B24F82
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6C515F41B;
-	Fri,  6 Sep 2024 21:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3881161B43;
+	Fri,  6 Sep 2024 21:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lj7nYvxm"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6KapYCs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628B615C13D;
-	Fri,  6 Sep 2024 21:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725658225; cv=none; b=oRAcHu5BiEVwPeTS/yTVDZ6acupkdTgMXtey0P5+kOQvXagtTfpcIeEsXLxI6O7Ih9zVdl8hw7IKruxpHDseaGz4cXP6k8RRVwSFUOHHCE6/2BvnRbAqhwKvZyNzwA3GyxOes9QSJjvdMsMxPBZ2gWwa9VCuq5SmmQmDkHuF/Lk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725658225; c=relaxed/simple;
-	bh=bElnKQofCAY+p/boD/vxtSPmvt2QWu/imirBWf3UgRo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n1OAaJ3L549wHMGU6wEDYFGVW5Dz7wYPX1K+n3UZoXuFnes6Y/R1rUaTsUlhu9mzSQL4eW65ortBx7q1zdI5Ba88v3PjWrTnCTkd/ivxBrkBA+NtoBppX/R36vT0P+501G9fy3xQ1T0Cf+aGrfyZTToMojTsU8GGKwAjhB7ftd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lj7nYvxm; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2059204f448so22867005ad.0;
-        Fri, 06 Sep 2024 14:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725658222; x=1726263022; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AK65wUPtnvGMD/yVvdcqm/At2jScfUF7HQejuo4N+EU=;
-        b=lj7nYvxmBIOBR52ZSzJZzs2UfA4/rtx5ijkW5ZDuexaNtqlDS11xBu4cIjWtxpjtjB
-         DyF/EnwY/jO5UpvjAF+7mCUMBVa5jbehrxfdrtZZNmpEEDxMQyaNEBttpQCn5w7+x6LW
-         E16FF/sfTxSPrVYJIuWjBw3PK/UA90GN/W5DYZwjpV/Rj/KRi0F4TYxrj+jnzSHix9iD
-         etUdHLwIykk58wQlwSsIQsu7G2ul3gqwIdAmvaOYWUFHHTTGnbVaOr4KQ7NOltqz2FDI
-         oJfwmX73MYQ8vEJMx5xCGP++ixgqSZBLo4TpbdbzsG/pyPozmEwT8D6Oc60Lp7jvyDER
-         bLRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725658222; x=1726263022;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AK65wUPtnvGMD/yVvdcqm/At2jScfUF7HQejuo4N+EU=;
-        b=enw2/N42iZJGCo94Mzwy1PUClHhzKSLy7x7WdS3ubGl5XOsueUv5hTGc19dToLg+1W
-         R0Jc5JBYwTM1vbAspfBSHTYbsXOGF0sa2RjOk5yzHZO00p/ZRYwQne9ridjhq6cItYAW
-         ITBGkebqOKSHrDAMZvO5X7tbbJZ4YGgc4LybruEkDHZBlIYjFC3+cpMYAvoVakh2tBIJ
-         VzSwqERlF7nlQr9Oo9SqYBZ0AiHaq8lUMfozAczOh+mmQBnog+0/q/WKKhYTXewmfmWu
-         VQXNP5yAFaWCEEU/Tyry3PzLHksMi21xtRz7Od+hmUgcjI6upSJuwloRaUIvlsEpCN9R
-         laOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbWIOOzSS2tnidt2rlwA27p11VyMPcti/sjJIRkODvepyQ19RZggcSN2c/OR/1G7/uUnCHxEzb@vger.kernel.org, AJvYcCWhXV9W7dJYUAa865PyjaKb5MtsUO9adwp13YL3UU/vTCeWvgXlej64GlBDdzP8PtWrfehEvIzmSODG8Yo=@vger.kernel.org, AJvYcCXj8JtolySTONd6eUB/79U8AXQs2JmmDs3EkureChAfY/tXWRvrov2xXHbEdOc3U5SJOXWcVnPx7C3QA1j5MsPDfIT7BxPR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKZgyxN80SgQm5RE8xOpoRDlv1NvoenPT/FaWXlD5JCjCXhqnZ
-	eU1SaaD+Zs/ek5wUE4QrLGWwGe0zLEum6j5I7BMLJInOdp65grWZ
-X-Google-Smtp-Source: AGHT+IEDfS8XZHaSIjFR2D/Uhvuv/fnpxsuxJtjyzWagdGZHGaUqv1bNz5wGU4hHfQV4rxOlTWlsIw==
-X-Received: by 2002:a17:902:f788:b0:205:56e8:4a4b with SMTP id d9443c01a7336-206f04e1a86mr45554685ad.2.1725658222626;
-        Fri, 06 Sep 2024 14:30:22 -0700 (PDT)
-Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea67bd1sm47081065ad.247.2024.09.06.14.30.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 14:30:21 -0700 (PDT)
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: outreachy@lists.linux.dev
-Cc: mic@digikod.net,
-	gnoack@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com,
-	jannh@google.com,
-	netdev@vger.kernel.org,
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: [PATCH v4 6/6] landlock: Document LANDLOCK_SCOPED_SIGNAL
-Date: Fri,  6 Sep 2024 15:30:08 -0600
-Message-Id: <dae0dbe1a78be2ce5506b90fc4ffd12c82fa1061.1725657728.git.fahimitahera@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1725657727.git.fahimitahera@gmail.com>
-References: <cover.1725657727.git.fahimitahera@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A481607A7;
+	Fri,  6 Sep 2024 21:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725658228; cv=fail; b=fYO0sI5HFERf1j4fNTouf2pvaT4emIaPMW4RZKlVsIcWuGNcKNmFvP2hRMXh7RE98o4hyftQ62SVRV824tKTvdvbzhhzi7ER4XLnQNQhKVgFYmTDMZvqSi0mYrLyQ2sJBEmLxWK7h0bNyjltmhFCyX+P87I6aVSHCEhf5Ay21UM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725658228; c=relaxed/simple;
+	bh=iFxqBQFxcLrpOlpAeSe+s5a8HviImWee0P/YmmGvRGE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=huLGI4v4JCgPfs6n0gPqFPRg4c5KgF89nDTghkV1bUFFR0uy3SQAcYvnj8YVsiBtlhsYRN+bI/3mydosGeoQSMtjJuwPAJfh2vLURmYya0ewNaIPHp1BbNUDXokVCLWkf5zafGI54JObgmQZjWjovZ39rqiY6nlU1BcY62gkZYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6KapYCs; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725658226; x=1757194226;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=iFxqBQFxcLrpOlpAeSe+s5a8HviImWee0P/YmmGvRGE=;
+  b=A6KapYCsdem49SbfoCcGHiEjtD4bZrn6w9GKiug1BdWGaQiFFzFLIy78
+   LDH4eISsRjqMSM3tzF1C1iIarxoQUAhv/cx454giKYJGE64Gt+vBHbpkl
+   cNn2En9cCfYvDBChF3/Dj5XzIKC4tW146IbKrlJ294fHoeKD/YKkrWQji
+   ngwBOcf2VzDVxMWk9gBowdsE5K+ffAOoW6VPmkfx9gyRCFtH6JrosbQuT
+   1t20YGscQ/8x3kNt5jALZmXhKLXNeYg1ShbuB1oSqW9VyKRDP/PJ2pAeJ
+   7VkXySCs5+EJLTwYiTIiud3IdtIdvGwB8qVPli0OTo5G+Vi22n2xomrl9
+   w==;
+X-CSE-ConnectionGUID: FAmvGvpQQHi4ZprRRqc++g==
+X-CSE-MsgGUID: cfVEQUEdSHCHbRZu59vIsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="28216059"
+X-IronPort-AV: E=Sophos;i="6.10,209,1719903600"; 
+   d="scan'208";a="28216059"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 14:30:25 -0700
+X-CSE-ConnectionGUID: NYSRKn6AT2yEy963tTzG3w==
+X-CSE-MsgGUID: uVFcc51+SY6TQdd8ubtu8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,209,1719903600"; 
+   d="scan'208";a="66046268"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Sep 2024 14:30:24 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 6 Sep 2024 14:30:24 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 6 Sep 2024 14:30:23 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 6 Sep 2024 14:30:23 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.170)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 6 Sep 2024 14:30:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v9xDglsLp+fw9pEDGsweSL3HwN3J/QNNy/q022jZqwS9IB+rZCtxMltHhg9O6dnUibnsuaSDpR7vRgJl/sreVKCRvGX0LdbJ/vL4xjv5e0+Vr8olWxD2KEIypWK4z4gCj8bCml9OjavtgN5BQs/HTgUhC93ayU1PUYpyHDXVUqpeFeD7AOqwKmHoQDsTCG5Lw4fV0ymhGXMTXzgOqBvOeYBRQ3Wai0jadQmD9uM2Cos6C/ZKFaBVo5ydN5IJiRQPQdwJ9Hr2ewkEmzBGt8lXdX/MQCFyrg8Q6NOiJjWltrM38Knnp+La4H7PeLYnbRpofv/D2IkxIDN+rZgpT7MeeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=maCTg7lEuXhbWd2hJJMPr0o/obpjyV850BcB2rEuAMM=;
+ b=T87p3KFrybwb0WizLwlxm9R7QWs6ImRSd6FuCZCcLGG5hhNhUjpuS6gPTKE+HJx3Wq45tx0SIKGcfvRGEqo1gyeiqiXdLCUXVn/ctceFbZkzsTeC0zdkuALP36NdNyuz6Gregq2CvCeAClRn1Gqd7uvXCV6k9XNdfTPsh2/KMCRdEJ17W49FiCRHPt4W42o60Ug1d45dWoH0WjzutRzh3q12OnGGDjktFISwg4nmO1LjMf6J5Y6ePgIZMji5GrlCEOkKrMVk5iXN5YFKnr8tLnC4WESu467Nb3rgAvrdIeIiHpKA9Ooi/UUYJBYvuwbBbC+2ReKQP1lCaPCr3zhuCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by DM4PR11MB7183.namprd11.prod.outlook.com (2603:10b6:8:111::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
+ 2024 21:30:20 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
+ 21:30:20 +0000
+Date: Fri, 6 Sep 2024 14:30:17 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, Kai Huang <kai.huang@intel.com>,
+	<dave.hansen@intel.com>, <kirill.shutemov@linux.intel.com>,
+	<tglx@linutronix.de>, <bp@alien8.de>, <peterz@infradead.org>,
+	<mingo@redhat.com>, <hpa@zytor.com>, <dan.j.williams@intel.com>,
+	<seanjc@google.com>, <pbonzini@redhat.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<rick.p.edgecombe@intel.com>, <isaku.yamahata@intel.com>,
+	<chao.gao@intel.com>, <binbin.wu@linux.intel.com>
+Subject: Re: [PATCH v3 2/8] x86/virt/tdx: Remove 'struct field_mapping' and
+ implement TD_SYSINFO_MAP() macro
+Message-ID: <66db7469dbfdd_22a2294c0@dwillia2-xfh.jf.intel.com.notmuch>
+References: <cover.1724741926.git.kai.huang@intel.com>
+ <9eb6b2e3577be66ea2f711e37141ca021bf0159b.1724741926.git.kai.huang@intel.com>
+ <5235e05e-1d73-4f70-9b5d-b8648b1f4524@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5235e05e-1d73-4f70-9b5d-b8648b1f4524@intel.com>
+X-ClientProxiedBy: MW2PR16CA0062.namprd16.prod.outlook.com
+ (2603:10b6:907:1::39) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DM4PR11MB7183:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef6f08d5-120b-40bd-4325-08dccebb1c1e
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Fof7MpfBJPFXYHWZP6bZ/wqa2HSqp/I+CMGj2cDOuymFAZlccYPDBGNX5QGl?=
+ =?us-ascii?Q?m2Rnr1SWGqKr/36cV6x+3ElTwmNe0WBjAITVz0Sk/yPefdi2p8w4OiMtjZGD?=
+ =?us-ascii?Q?6/1dP98P+W1ZdQ/mkD9OkuNmVqoiXtBKrkIOYwmQPjlarLIRfi0rMibIO9tU?=
+ =?us-ascii?Q?CkAMI8kPepOGqMUYrmTivdF1jycUt7UPs69/gu0nIlfOHlfj+keFzGt/+Y85?=
+ =?us-ascii?Q?xEmMohRtg9DKYaS1YYGVn+UZsmzTJ6dbH7vq07j4q2L2oRYhh47uVj3KnQE7?=
+ =?us-ascii?Q?7DfLcbOVeFMtfBui/HjcQr7yYg20H9j4ZY8Mi5HriTJwRLG+lkiGFgF+Rvlw?=
+ =?us-ascii?Q?mfHba43/x9TUIHj4qUOH+QCNMRTp5FldK/hF3tlqLgfXUCsT8DhAZ4WK9j6O?=
+ =?us-ascii?Q?2a6GPMST8k2vb7rI8vWDJ2HzralASVw9xl8HdejnUC3P40FBQWxQIKX2TfZ/?=
+ =?us-ascii?Q?CIpAtp4hjvN3pXzXU2ZxB6L1dVy6oj4WOBjVdNJUi7WItudCCnWqz0FGQxXg?=
+ =?us-ascii?Q?p3l7fwxCdc1FWPsS08TNMzDFRiSTZoL2z+JfHUpRXjvfPJUYQ3rHogIFtrmE?=
+ =?us-ascii?Q?k/xd2d5Qx54OnLIa5hjhgwdgM085QilI1wXWu10urWR17d5FX0YrOA7er9Qt?=
+ =?us-ascii?Q?nyzV5qopuwTREhuUvAvrO1Ge0RgVMgiENT7E9NIHAq/qAUrN3yH7TdXtk4kr?=
+ =?us-ascii?Q?YZAQPRWbbgdBB3oPSiyJCBlClvm870FkEHEPVwvWVAQ+40tsNFr5RrBcCuF1?=
+ =?us-ascii?Q?TRpZXvyO7Vk12EfBIFz03fXgEgGTv5izKe27/+1lJBkhbQ9OeJWRqgbrMSbr?=
+ =?us-ascii?Q?faXj1jsT/pUsmXGfF3QNJiUrxMjUzAEz5m68MlF2uA0TJnCYJ1Ol59OAqa9d?=
+ =?us-ascii?Q?dQ6ga2xlPcszlUdpwDZkOLds32F1G7UaT+6KNNwly2whT9zL8ikM8VphnAHC?=
+ =?us-ascii?Q?qki6GX7vlFWwHgAa+Ur686VtMUt1e6edzkR57ni4OHe7OA/EPdACSgcsDkAz?=
+ =?us-ascii?Q?K3dnMPbYYfGrjE2LlsyhFIwGGC+qCqxOh6znhxZpum311EpwbxvsHUU3RXDa?=
+ =?us-ascii?Q?X546mUpMmOTNZiZeqqGlxVg7b90TVToCkP00cxhKiRiYoOa65xi/p9+1Hlon?=
+ =?us-ascii?Q?Sm4q/+1yb1cTY/pcZ1yl2rFuHF3JKbuwhKVAp/QhYMqjgESDYL22+gHAnS9D?=
+ =?us-ascii?Q?NsQGYnAPuK0FHDVk9TaRMn9z1jIj2ronuZh9MGXaJLJjtJTOMMRgd8iyCzdT?=
+ =?us-ascii?Q?SLSSfZEoZKvfRQqzFZR8Ke8lFfWJrtqMXW1/cpy/AAiT+jmkIv1AI9qynm0d?=
+ =?us-ascii?Q?2VU5TMj5wFcarlHS1xwCrhZepPCFmV+Od9ecU09hz99i9073C/ny367ldTKl?=
+ =?us-ascii?Q?7I7n5jHUaeZVujfII72PNwgHNpKz?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kMhiBlmzHZTtdhN5BJBCaev3m1wKvXc8VgeZlSSuzSQZd+a/juTo/0AZ8wi4?=
+ =?us-ascii?Q?v4eEORM30mFUq/OBCRuUq76nqgs+8W+5VANnfr0Hmz2pcCD1RBUNZ2dcAwvT?=
+ =?us-ascii?Q?SNZtO5jpqo+SijeqBsmqIn+mBmgC+TMxVNRQFFVU6a6poXp9AR3WpD4HnRgY?=
+ =?us-ascii?Q?yM4886/JSgDTh7QrU/Q7RqKjOv3HF55mcVIaVpYSuQJqOxmSPcSnC+5p+3bP?=
+ =?us-ascii?Q?p5QqQSozWDQpF4w49A2i5eI9foMtSq7chJDHz+ohHf753LT1/ISwPXLexBAy?=
+ =?us-ascii?Q?GQpRvKqTUMFzMz32hHnQ1TXwq1WGQMEu+dDjyeTWSDVuToUVIT3itDz8nF6a?=
+ =?us-ascii?Q?jV/v+S3ZyCkwH46Kn4Z9VRkv5Peo08rZAboHgo8wFbJk6qu2FwQbjQJ+Z8Dr?=
+ =?us-ascii?Q?CtmvEtpRD/0I8Wow3atmtBoBSF+H9B+p4rY18uavejOAF1NsWwYCr5SkbI9d?=
+ =?us-ascii?Q?e6Ue32JxuV3VZj9YEP/moCgnID9qUdW9hjQL/jSA6WP6sR2afRc3m9YCxNnr?=
+ =?us-ascii?Q?HYgsuziloXgh/jkB3O0Wd+EJiUthjqorSEoE0lIVlo1tLwWOJSooA2OCA+QT?=
+ =?us-ascii?Q?BNK76OWMk2A9ECBfRsZu7ID6I9/WFaS6GKCq2QbR4ttST2YECm76vtLAJwe0?=
+ =?us-ascii?Q?BH8DAaH0SU4LWjlOxL6GhPG8o+oam6C/E9a3hDmsLmC/cRoBXZkljPAuNj6h?=
+ =?us-ascii?Q?p9l2kSzrkjKyhGlOqtsyxm8ku4DXUS0TYTO8JC/BOEyzdwS6GpdZ/c7oQ8zz?=
+ =?us-ascii?Q?ofqZUeqAkzq22VOdRTK/9ANm5L5HzK6j5y6SJaBd0jI/HFckzvVEHZ2k1snk?=
+ =?us-ascii?Q?OOkrKY9kKIh02nu4tAN+6x/OA3xP0YCHgPi3D133s5iwIZVGT6SGVKCsxrpd?=
+ =?us-ascii?Q?rqSYRwRf2W890rE14N7hf1MqnX+ccZJz+hgtMxetr+xUaJA+OUpzrwIZCS3s?=
+ =?us-ascii?Q?UAnYUUS4fQl6gw8o+jD8VApT//1ROBj7gx7BR+5oAA2Wp+hilFlTfbDbW3VW?=
+ =?us-ascii?Q?jdkq+kV++1kB6AqE4E1FXiMAaEpNHBT1edtB07eOQcYHveUuE+Fxz4LvsPDv?=
+ =?us-ascii?Q?ha7DUG1xIeO8Yg0ZQxHTTbTqca+gwPG3VhUDpwcIZJo0VqWETmy1UaKToiHJ?=
+ =?us-ascii?Q?/f1YzxTMyvOjGAvOMuS1P/X1MtK8xrn7uW9QPO0dLMeRFhLwY6GpPcA/8Xv/?=
+ =?us-ascii?Q?ppQgw8xH7SVS6pZK1o2R5zzQjsthqCi48mcCI3bHdwJFmiU7DOdJPaW5XcjC?=
+ =?us-ascii?Q?AxA1a4XYRHbaK2OTg7UqcQqXQOpwTtHcxMWhf0LMvDz4usRu+/7TD1jqgw+1?=
+ =?us-ascii?Q?lsCZUnQUIZ1fsk8A1o8rtHZnYlM9C/uizILKnbm1U082x1dbUbhM3F5abUH6?=
+ =?us-ascii?Q?ktRNGrJjT3UTvjG/XnyW0+bz3e1m9hTqNGlzf/hmr3dgrFvB+UptPyoEQZ51?=
+ =?us-ascii?Q?iBe3cTUYl2QILnwRlfJjZG9k1LS344NAU0wF6Ncf71Fjlq1d/0C4+D97PoMi?=
+ =?us-ascii?Q?Ci/1yukG5wFR6LZOWyPzpxdxLkRbEe24fVZbleWHnJQmU7dmjB7iiDDw93Gf?=
+ =?us-ascii?Q?KhuVqDP2NTwYMi5/yW7Gh75jQPiOuSlC6ptQw7Ch5sWY/JBqWFH+rAa18epL?=
+ =?us-ascii?Q?vg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef6f08d5-120b-40bd-4325-08dccebb1c1e
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 21:30:20.6750
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MbtWtzhxFtnpotr2f1O8TEdgMSGk0XVQqnJ4+leGEaaBBsk5n0d1uIhM4qoauQHjT+QUvcwBt1Krf70n6bRyeO694PQpOlVT4sBN2wXOegc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7183
+X-OriginatorOrg: intel.com
 
-Improving Landlock ABI version 6 to support signal scoping with
-LANDLOCK_SCOPED_SIGNAL.
+Adrian Hunter wrote:
+[..]
+> Another possibility is to put the macro at the invocation site:
+> 
+> #define READ_SYS_INFO(_field_id, _member)				\
+> 	ret = ret ?: read_sys_metadata_field16(MD_FIELD_ID_##_field_id,	\
+> 					       &sysinfo_tdmr->_member)
+> 
+> 	READ_SYS_INFO(MAX_TDMRS,             max_tdmrs);
+> 	READ_SYS_INFO(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr);
+> 	READ_SYS_INFO(PAMT_4K_ENTRY_SIZE,    pamt_entry_size[TDX_PS_4K]);
+> 	READ_SYS_INFO(PAMT_2M_ENTRY_SIZE,    pamt_entry_size[TDX_PS_2M]);
+> 	READ_SYS_INFO(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]);
+> 
+> #undef READ_SYS_INFO
+> 
+> And so on in later patches:
+> 
+> #define READ_SYS_INFO(_field_id, _member)				\
+> 	ret = ret ?: read_sys_metadata_field(MD_FIELD_ID_##_field_id,	\
+> 					     &sysinfo_version->_member)
+> 
+> 	READ_SYS_INFO(MAJOR_VERSION,    major);
+> 	READ_SYS_INFO(MINOR_VERSION,    minor);
+> 	READ_SYS_INFO(UPDATE_VERSION,   update);
+> 	READ_SYS_INFO(INTERNAL_VERSION, internal);
+> 	READ_SYS_INFO(BUILD_NUM,        build_num);
+> 	READ_SYS_INFO(BUILD_DATE,       build_date);
+> 
+> #undef READ_SYS_INFO
 
-Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
----
-v3:
-- update date
----
- Documentation/userspace-api/landlock.rst | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index c3b87755e98d..c694e9fe36fc 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -82,7 +82,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-         .scoped =
--            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
-+            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-+            LANDLOCK_SCOPED_SIGNAL,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -123,7 +124,8 @@ version, and only use the available subset of access rights:
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-     case 5:
-         /* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
--        ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
-+        ruleset_attr.scoped &= ~(LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-+                                 LANDLOCK_SCOPED_SIGNAL);
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -320,11 +322,15 @@ explicitly scoped for a set of actions by specifying it on a ruleset.
- For example, if a sandboxed process should not be able to
- :manpage:`connect(2)` to a non-sandboxed process through abstract
- :manpage:`unix(7)` sockets, we can specify such restriction with
--``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``.
-+``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``. Moreover, if a sandboxed
-+process should not be able to send a signal to a non-sandboxed process,
-+we can specify this restriction with ``LANDLOCK_SCOPED_SIGNAL``.
- 
- A sandboxed process can connect to a non-sandboxed process when its
- domain is not scoped. If a process's domain is scoped, it can only
- connect to sockets created by processes in the same scoped domain.
-+Moreover, If a process is scoped to send signal to a non-scoped process,
-+it can only send signals to processes in the same scoped domain.
- 
- A connected datagram socket behaves like a stream socket when its domain
- is scoped, meaning if the domain is scoped after the socket is connected
-@@ -575,12 +581,14 @@ earlier ABI.
- Starting with the Landlock ABI version 5, it is possible to restrict the use of
- :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right.
- 
--Abstract UNIX sockets Restriction  (ABI < 6)
----------------------------------------------
-+Abstract Unix sockets and Signal Restriction  (ABI < 6)
-+-------------------------------------------------------
- 
-+<<<<<<< current
- With ABI version 6, it is possible to restrict connection to an abstract
--Unix socket through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``, thanks to
--the ``scoped`` ruleset attribute.
-+:manpage:`unix(7)` socket through
-+``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET`` and sending signal through
-+``LANDLOCK_SCOPED_SIGNAL``, thanks to the ``scoped`` ruleset attribute.
- 
- .. _kernel_support:
- 
--- 
-2.34.1
-
+Looks like a reasonable enhancement to me.
 
