@@ -1,204 +1,207 @@
-Return-Path: <linux-kernel+bounces-319179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E773896F907
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:08:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F5E96F908
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110551C21EDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:08:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D1EBB23FAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD261D31B9;
-	Fri,  6 Sep 2024 16:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3421D31B4;
+	Fri,  6 Sep 2024 16:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQqX5L2a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eymNuUCV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73299156880
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EA2156880;
+	Fri,  6 Sep 2024 16:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725638928; cv=none; b=IPLHl3DCuFgulTQoqHwz/DzIVhHQmdr4trJBAy58jCAqEqFkrItF9yAwG0ksWE6OGjJ++I5s+1IpbSk2/kBaBTVR6QL2PCbWgYbulRiLgGLiYA6XDitEsY3jP4jQWsMh7g05QnJ/zk9Q0aSJXJcmvgNdNLpGsFyiQfs/TeQNtOU=
+	t=1725638937; cv=none; b=YKU22hrZ20XTnohic4IUz7LJtnn0zO+50rZModesX/etF/ctQkl4CgPGEvzDlfoDeAKOvLlRAxzLSJVU0aTNFoBKO7C0RXmos2ty3xqB+8UChuP/eDztMUsmrYWiydl2hj/JgcC5FEjcAnvUpNQ+USjagiaFS1YT3RUo3zVw6bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725638928; c=relaxed/simple;
-	bh=EEPnW6LB4zj+vyT061YrwlUkBzbpRmsKB9QKu4Z1gh8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=kITqdCm5TraKYi40udxKbtgeZmm1+hRck0ZsLsEnQwHfntRozpMpMVBWa614U1ptjQacqPj5Bm3wi7/qF3EkTK2EXHJQcTSFNRZyWyWIhs17e2/ZtBP7Wl3+jMZ2x1ATsuRG1cmV5VwQ2EKTyrRvHtsMnb61vn2QTzZ4+iIpYMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQqX5L2a; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1725638937; c=relaxed/simple;
+	bh=286ynxw7qLGGt+/rQEscdp4MmXGyQtW2MXCYC+fdvSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OMWwJ5Xt4PLDvKKRlqTxbW8cYamgwa2nZ7gqZQQc98/J7EqPEy953ZtdLH3s7/RcopALU6OtpAjOsR3CI9glClBIc54tDWqgNFubN2EJrhjaObRmqhf6RulDY0Tci/ZetYK1+ye2cP1vXpcA7bN+OFzM88EViY8rS/gGl0EmOuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eymNuUCV; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725638926; x=1757174926;
-  h=date:from:to:cc:subject:message-id;
-  bh=EEPnW6LB4zj+vyT061YrwlUkBzbpRmsKB9QKu4Z1gh8=;
-  b=GQqX5L2aeTZdPdfe/ZTR18Ub9Weo7nHeI/KyybEQ4BtuzzIf3kbI46bf
-   Py75rwHB/BQnxjEPRJ7D/JeIMVzS6p8U3Lra/cNQ/BRVmp6YUuUfEEBDF
-   SCX8sWC2Zk4cS9+FVjrMwGDmvwTBeYto2e/kyb2MfzpToyoYp9Ouf6vQe
-   vAp2Mz61YHfuQXBJkXdIH5el8f/ChjiLytR02O8fyC3SB35vhhwzgL/AQ
-   mRBiiPERPDKqHVvGBg4dEpgQHr8oKCEO/K0hrmFwiQH/wO1k0wcRtbCbc
-   4fB9QzrsRlprCQKO5Az1Oe2TJshokHQPr5HBCeogy2vjsuqQ2MvmoJVhl
-   Q==;
-X-CSE-ConnectionGUID: 7CB3C6tLTNCszUhjk1Mr4Q==
-X-CSE-MsgGUID: FbXSgNnVRNqyCBL3AFmVGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24352671"
+  t=1725638935; x=1757174935;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=286ynxw7qLGGt+/rQEscdp4MmXGyQtW2MXCYC+fdvSQ=;
+  b=eymNuUCVA3OyuzjuVoy7iViOmJR82v278+lVkxJHSD2kW3+sMIvhKizW
+   x+9B3i/wfuhQ+dvykJDgy8jtzkn8B8L4Q7SkCP8X7QQs6daXZrnnhg94H
+   p7plPxZ34P+u8JUYpG1ACQ+MVZjOzjLqnA+aDaH/7OzuhyO6yVF+JEGrD
+   Eb32VM3UdjTPjJjqlIE9OdOZsv9rHMKroMFGr/iNyeu2aXpTxUNOTze3V
+   /dEBWiRF4M28s/Y7gKpuJk2a+/PzZtP+9iD1UMWRLHVxwK3YL5sZVMBZj
+   vdXe2zjTHGfP1KXhaKV4crrEjMAkGHzF62ytp9I7LBNuMjoUVQr0ytG6X
+   w==;
+X-CSE-ConnectionGUID: gO2o9OyETjenZIvlnOOL0g==
+X-CSE-MsgGUID: Q0wC9ANjRYCpanduppzdRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24564787"
 X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="24352671"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 09:08:31 -0700
-X-CSE-ConnectionGUID: 7ZdgmZctQ0KiKC9KFnmKHw==
-X-CSE-MsgGUID: cUgtkkpATai6XXWG2CJOWg==
+   d="scan'208";a="24564787"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 09:08:55 -0700
+X-CSE-ConnectionGUID: kQpImKo5RMOdl0tDzz1OVA==
+X-CSE-MsgGUID: z9/EDITXQQqpcdNS8lsy8g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="70941798"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 06 Sep 2024 09:08:31 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1smbVc-000BSw-1U;
-	Fri, 06 Sep 2024 16:08:28 +0000
-Date: Sat, 07 Sep 2024 00:08:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/bugs] BUILD SUCCESS
- 1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d
-Message-ID: <202409070020.AgqtX5td-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+   d="scan'208";a="70803033"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 09:08:54 -0700
+Received: from [10.212.119.23] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.23])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id CDBD120B5782;
+	Fri,  6 Sep 2024 09:08:53 -0700 (PDT)
+Message-ID: <8644996b-33d6-4eee-890c-f23a3c830b77@linux.intel.com>
+Date: Fri, 6 Sep 2024 12:08:52 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] perf mem: Fix missed p-core mem events on ADL and RPL
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
+ adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240905170737.4070743-1-kan.liang@linux.intel.com>
+ <20240905170737.4070743-2-kan.liang@linux.intel.com> <ZtoHgMqNhnDdvAIi@x1>
+ <1a339858-74a3-414a-9fc1-bef47c513728@linux.intel.com> <ZtsO-v3pUVezKBgE@x1>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <ZtsO-v3pUVezKBgE@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/bugs
-branch HEAD: 1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d  x86/bugs: Fix handling when SRSO mitigation is disabled
 
-elapsed time: 1796m
 
-configs tested: 112
-configs skipped: 1
+On 2024-09-06 10:17 a.m., Arnaldo Carvalho de Melo wrote:
+> On Thu, Sep 05, 2024 at 03:47:03PM -0400, Liang, Kan wrote:
+>> On 2024-09-05 3:33 p.m., Arnaldo Carvalho de Melo wrote:
+>>> On Thu, Sep 05, 2024 at 10:07:36AM -0700, kan.liang@linux.intel.com wrote:
+>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>
+>>>> The p-core mem events are missed when launching perf mem record on ADL
+>>>> and RPL.
+>>>>
+>>>> root@number:~# perf mem record sleep 1
+>>>> Memory events are enabled on a subset of CPUs: 16-27
+>>>> [ perf record: Woken up 1 times to write data ]
+>>>> [ perf record: Captured and wrote 0.032 MB perf.data ]
+>>>> root@number:~# perf evlist
+>>>> cpu_atom/mem-loads,ldlat=30/P
+>>>> cpu_atom/mem-stores/P
+>>>> dummy:u
+>>>>
+>>>> A variable 'record' in the struct perf_mem_event is to indicate whether
+>>>> a mem event in a mem_events[] should be recorded. The current code only
+>>>> configure the variable for the first eligible PMU. It's good enough for
+>>>> a non-hybrid machine or a hybrid machine which has the same
+>>>> mem_events[]. However, if a different mem_events[] is used for different
+>>>> PMUs on a hybrid machine, e.g., ADL or RPL, the 'record' for the second
+>>>> PMU never get a chance to be set. The mem_events[] of the second PMU
+>>>> are always ignored.
+>>>>
+>>>> Perf mem doesn't support the per-PMU configuration now. A
+>>>> per-PMU mem_events[] 'record' variable doesn't make sense. Make it
+>>>> global. That could also avoid searching for the per-PMU mem_events[]
+>>>> via perf_pmu__mem_events_ptr every time.
+>>>>
+>>>> Fixes: abbdd79b786e ("perf mem: Clean up perf_mem_events__name()")
+>>>> Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+>>>> Closes: https://lore.kernel.org/lkml/Zthu81fA3kLC2CS2@x1/
+>>>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>>>
+>>> Looks better:
+>>>
+>>> root@number:~# perf report --header-only | grep 'cmdline\|event'
+>>> # cmdline : /home/acme/bin/perf mem record ls 
+>>> # event : name = cpu_atom/mem-loads,ldlat=30/P, , id = { 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511 }, type = 10 (cpu_atom), size = 136, config = 0x5d0 (mem-loads), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1, { bp_addr, config1 } = 0x1f
+>>> # event : name = cpu_atom/mem-stores/P, , id = { 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523 }, type = 10 (cpu_atom), size = 136, config = 0x6d0 (mem-stores), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1
+>>> # event : name = cpu_core/mem-loads-aux/, , id = { 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539 }, type = 4 (cpu_core), size = 136, config = 0x8203 (mem-loads-aux), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1
+>>> # event : name = cpu_core/mem-loads,ldlat=30/, , id = { 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556 }, type = 4 (cpu_core), size = 136, config = 0x1cd (mem-loads), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, inherit = 1, freq = 1, precise_ip = 2, sample_id_all = 1, exclude_guest = 1, { bp_addr, config1 } = 0x1f
+>>> # event : name = cpu_core/mem-stores/P, , id = { 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572 }, type = 4 (cpu_core), size = 136, config = 0x2cd (mem-stores), { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|ADDR|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, precise_ip = 3, sample_id_all = 1
+>>> # event : name = dummy:u, , id = { 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600 }, type = 1 (software), size = 136, config = 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq } = 1, sample_type = IP|TID|TIME|ADDR|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format = ID|LOST, inherit = 1, exclude_kernel = 1, exclude_hv = 1, mmap = 1, comm = 1, task = 1, mmap_data = 1, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1
+>>> # intel_pt pmu capabilities: topa_multiple_entries=1, psb_cyc=1, single_range_output=1, mtc_periods=249, ip_filtering=1, output_subsys=0, cr3_filtering=1, psb_periods=3f, event_trace=0, cycle_thresholds=3f, power_event_trace=0, mtc=1, payloads_lip=0, ptwrite=1, num_address_ranges=2, max_subleaf=1, topa_output=1, tnt_disable=0
+>>> root@number:~# perf evlist
+>>> cpu_atom/mem-loads,ldlat=30/P
+>>> cpu_atom/mem-stores/P
+>>> cpu_core/mem-loads-aux/
+>>> cpu_core/mem-loads,ldlat=30/
+>>> cpu_core/mem-stores/P
+>>> dummy:u
+>>> root@number:~#
+>>>
+>>> But can we reconstruct the events relationship (group, :S, etc) from
+>>> what we have in the perf.data header?
+>>>
+>>
+>> Do you mean show the group relation in the perf evlist?
+>>
+>> $perf mem record sleep 1
+>> [ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.027 MB perf.data (10 samples) ]
+>>
+>> $perf evlist -g
+>> cpu_atom/mem-loads,ldlat=30/P
+>> cpu_atom/mem-stores/P
+>> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+>> cpu_core/mem-stores/P
+>> dummy:u
+>>
+>> The -g option already did it, although the group modifier looks lost.
+> 
+> Right, I can reproduce that, but I wonder if we shouldn't make this '-g'
+> option the default?
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I think the evlist means a list of events. Only outputting the events
+makes sense to me.
+With -g, the extra relationship information is provided.
 
-tested configs:
-alpha                            allyesconfig   clang-20
-alpha                            allyesconfig   gcc-13.3.0
-arc                              allmodconfig   clang-20
-arc                              allmodconfig   gcc-13.2.0
-arc                              allyesconfig   clang-20
-arc                              allyesconfig   gcc-13.2.0
-arc                   randconfig-001-20240906   gcc-13.2.0
-arc                   randconfig-002-20240906   gcc-13.2.0
-arm                              allmodconfig   clang-20
-arm                              allmodconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                              allyesconfig   gcc-14.1.0
-arm                   randconfig-001-20240906   clang-20
-arm                   randconfig-002-20240906   gcc-14.1.0
-arm                   randconfig-003-20240906   gcc-14.1.0
-arm                   randconfig-004-20240906   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                 randconfig-001-20240906   clang-20
-arm64                 randconfig-002-20240906   clang-17
-arm64                 randconfig-003-20240906   gcc-14.1.0
-arm64                 randconfig-004-20240906   gcc-14.1.0
-csky                  randconfig-001-20240906   gcc-14.1.0
-csky                  randconfig-002-20240906   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-hexagon               randconfig-001-20240906   clang-20
-hexagon               randconfig-002-20240906   clang-14
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240906   clang-18
-i386         buildonly-randconfig-002-20240906   gcc-12
-i386         buildonly-randconfig-003-20240906   clang-18
-i386         buildonly-randconfig-004-20240906   gcc-12
-i386         buildonly-randconfig-005-20240906   clang-18
-i386         buildonly-randconfig-006-20240906   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240906   gcc-12
-i386                  randconfig-002-20240906   clang-18
-i386                  randconfig-003-20240906   gcc-12
-i386                  randconfig-004-20240906   clang-18
-i386                  randconfig-005-20240906   clang-18
-i386                  randconfig-006-20240906   gcc-12
-i386                  randconfig-011-20240906   gcc-12
-i386                  randconfig-012-20240906   clang-18
-i386                  randconfig-013-20240906   gcc-12
-i386                  randconfig-014-20240906   gcc-12
-i386                  randconfig-015-20240906   gcc-12
-i386                  randconfig-016-20240906   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch             randconfig-001-20240906   gcc-14.1.0
-loongarch             randconfig-002-20240906   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-nios2                 randconfig-001-20240906   gcc-14.1.0
-nios2                 randconfig-002-20240906   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                randconfig-001-20240906   gcc-14.1.0
-parisc                randconfig-002-20240906   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc               randconfig-001-20240906   clang-17
-powerpc               randconfig-002-20240906   gcc-14.1.0
-powerpc               randconfig-003-20240906   clang-15
-powerpc64             randconfig-001-20240906   clang-20
-powerpc64             randconfig-002-20240906   clang-15
-powerpc64             randconfig-003-20240906   clang-20
-riscv                            allmodconfig   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                 randconfig-001-20240906   gcc-14.1.0
-riscv                 randconfig-002-20240906   clang-20
-s390                             allmodconfig   clang-20
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                  randconfig-001-20240906   clang-20
-s390                  randconfig-002-20240906   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                    randconfig-001-20240906   gcc-14.1.0
-sh                    randconfig-002-20240906   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64               randconfig-001-20240906   gcc-14.1.0
-sparc64               randconfig-002-20240906   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-17
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                               allyesconfig   gcc-12
-um                    randconfig-001-20240906   clang-20
-um                    randconfig-002-20240906   clang-20
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                randconfig-001-20240906   gcc-14.1.0
-xtensa                randconfig-002-20240906   gcc-14.1.0
+> 
+> -----
+> 
+> Committer testing:
+> 
+>   root@number:~# perf evlist -g
+>   cpu_atom/mem-loads,ldlat=30/P
+>   cpu_atom/mem-stores/P
+>   {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+>   cpu_core/mem-stores/P
+>   dummy:u
+>   root@number:~#
+> 
+> The :S for '{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}' is
+> not being added by 'perf evlist -g', to be checked.
+> 
+> -----
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+It should be a generic issue, not just for perf evlist -g.
+
+The same issue can be observed for perf report.
+$perf report --header-only | grep 'cmdline\|group'
+# cmdline : /home/kan/tmp/perf-tools-next/tools/perf/perf record -e
+{cycles,instructions}:u sleep 1
+# group: {cycles,instructions}
+
+I think it's because the per-group modifiers is converted to per-event
+modifiers and stored in the evsel when parsing the group. It's hard to
+reconstruct the accurate group strings only relying on the evsel, unless
+we record the group string somewhere, e.g., leader evsel, when parsing it.
+
+Thanks,
+Kan
 
