@@ -1,294 +1,208 @@
-Return-Path: <linux-kernel+bounces-318636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38BEF96F11B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECB696F11C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F432B20FB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F9C282668
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375581C9DFD;
-	Fri,  6 Sep 2024 10:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F881C9DEB;
+	Fri,  6 Sep 2024 10:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SNKoIlux"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HN8sxOsO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1AF1C9DD1
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397B21C870C;
+	Fri,  6 Sep 2024 10:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725617575; cv=none; b=bvFUGmdLuv6imb5M6NJ3TQIxQECTFtYh09bxjNGrw8tQfFkOl+5h63sVhqsUCUxLdizxhLg/+TVN3/w1KXCGINkTBbEbiByoDncZ+DWIYHlPNtBU3z3SJRyI4Esz0EfTyq3XNiKoZbOEDgnoqF7USNAAj56W/lPLaxq1nLdMeVQ=
+	t=1725617588; cv=none; b=dr0zU69+VBvAAxxRHnVLUTv4iSrD/ud9hFzlwrbPLBby9QFqiNsUgGZTkPKbH9z6Ax1nxXajhjVPRpHhwlqIXZx74IOvuUujJzMkaHoCDuKFxzHy8pd+v0R7hENFBwspC0FQiyx9qvG1+mSMkppTz3YfB/VC8xo7iZOGXuF/J30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725617575; c=relaxed/simple;
-	bh=Q9TXSvDsVrJJkjBOgWLMxDjKglYwFps2Xb2s+cWc8UE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cTp0oQRGFNGpmlyWVkH91Rg6zIOFyBk0pDUhLyF5q/xm6wvLHuUswzd+1f8T+HkQ869mbXsPs7cTBL0kI2HThSMUx35DoV7nf2HWbirqH/F6O3JyAVdCFKC6b16f5KCrkxAnhhxHYWmDwA91TA3Bofi1Wd0Wg8kETvwkNs4fjMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SNKoIlux; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725617572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NHoMcpM/TTdua1Refqr6XchkQxlkBGAth1WdrFW7wCs=;
-	b=SNKoIluxS9AOw14XMIkJrpccIQ2xoe3jKtHwS/4ORmTPWSXAYxDiOHMupBCk5IT0Y02yZ3
-	Nf6wvc0ePZ07qdQdS8CmSj8K/ZgK0w7XHPv2sleCz7KN+5RMQYt+JJJMcIRKGzzmLYme7e
-	4D8IwtRioPKgjQrZSj9/lToHCHjGtPs=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-1-zPdnkl-eNMydNLBe71iANw-1; Fri, 06 Sep 2024 06:12:49 -0400
-X-MC-Unique: zPdnkl-eNMydNLBe71iANw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c7bc97425so9834795e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:12:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725617568; x=1726222368;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NHoMcpM/TTdua1Refqr6XchkQxlkBGAth1WdrFW7wCs=;
-        b=djg3G8WKI3G4TBPhh9mUNj68QGF+sohVz/QCGhUUaEgw1AoA6Bmc7i/xjY2Ed6kD8J
-         6RRim2UfKi2i20psSX/mcOtMsSLtVQBtQkzRBVBP5J/ij1E8wEY58C1fKGCZbgocYvcw
-         fSPZtJXoxqMFANGghpE0iLYa5s+121Rq/zPPNDRaCFNeKeAKwK0K9gVxbQprzM+cwr9v
-         qbVUfXCtr+nXny1jVw71s7cB8yferDYFWTJS3wjCphR50y4UG2EbX51n1sUXRK0PNevW
-         Mh54XBUPxD8Mv5fHrjoKVtIyYbpiKtT3JYjfJUjlRnHyAA9JSq+OmZ25N9RQ5rdOwvXr
-         ptKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/FMZnOZMDe5liltZ3JoXSYrduP0vwWAv2y2qOFad0/7ui6fGg0g9RkCi0iCJyJnXpky7Ot2RD28/m0NM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9wcHSxuxSsTboozNNUaFvBRzD9NHDNnyoihKTU8d+7W0lfLft
-	6F6PGavPoX0W1cKfRrhvi+LdsDHBZFGsjqkhYnDFC1f3e89lFGZVs+s8yGGDU6H0qLtX6uhyqKk
-	eQg3gF322Dkf1jtr+zrNkApWQLDnct0HrYJ9P01dTPh/SrUQYNYPYz563v2QR4w==
-X-Received: by 2002:a05:600c:4f53:b0:424:8743:86b4 with SMTP id 5b1f17b1804b1-42c95af7f2fmr53544565e9.6.1725617568307;
-        Fri, 06 Sep 2024 03:12:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMfGZxhbaSheOh3dZIC/k+Wm9PeRBDxUi0/bTiDhPKgwP4ARFmRyEdrGyTRIlflMDP6BaG0A==
-X-Received: by 2002:a05:600c:4f53:b0:424:8743:86b4 with SMTP id 5b1f17b1804b1-42c95af7f2fmr53544195e9.6.1725617567652;
-        Fri, 06 Sep 2024 03:12:47 -0700 (PDT)
-Received: from redhat.com ([155.133.17.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05ccaa4sm15146275e9.14.2024.09.06.03.12.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 03:12:47 -0700 (PDT)
-Date: Fri, 6 Sep 2024 06:12:35 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
-	Darren Kenny <darren.kenny@oracle.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH v2 5/7] Revert "virtio_net: rx remove premapped
- failover code"
-Message-ID: <20240906061055-mutt-send-email-mst@kernel.org>
-References: <cover.1725616135.git.mst@redhat.com>
- <69d3032b6560323844d6d9fb0ac4f832ed87f13d.1725616135.git.mst@redhat.com>
- <1725616970.1687496-2-xuanzhuo@linux.alibaba.com>
+	s=arc-20240116; t=1725617588; c=relaxed/simple;
+	bh=AOzfRdknj8c+nsi31JLn/lZPtI4KZvzyANranCPSipU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OCNIhEVfmZx2bcjgMVuLAHZ/h1xnNN08/m04AwcWn0WaaSxy5gBWEA265i7w+BNAonTt4xbhzHQzeD/iZjt41ZxvPN3eroeC7GkOYnUxGQuMCdodlCuqXWpIEDhf7wfVOVxiAzQYIDSMe7zsHU5uTDX0p8aKBXQLhjcFMCWS3No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HN8sxOsO; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725617587; x=1757153587;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=AOzfRdknj8c+nsi31JLn/lZPtI4KZvzyANranCPSipU=;
+  b=HN8sxOsOe8e6EiyzHHk3ZK0udFdJ5PeauY97LjjEgy1o0OTkQHOT1mVx
+   8YcRvbqnY8xvmnztiqgOUAhkLK0l1N2G3kgHiaPsAnAhPA0YyuAqNOpF2
+   LjaasDnZXYKkbvseu6c2hkiB1Ta9X3UzrtPlaIJ8hgRsDFurKvriNqehT
+   0h9flGauf4HsSWisMIDS54xwE7zhtkBStVc1QcGGDJZdGRDrMmD0Vw/7H
+   zMqe8FCcikLqQgcXRWli0pd1Z0QUfdP+0qeTgQ3+JaBJ9mysQ8Jzbbl6e
+   OsvHKyUejeVemmKitYYSLjmrHN7eM4WiG6s9b06cvtXstbkPP/paEpnC1
+   A==;
+X-CSE-ConnectionGUID: R4bkbdBwTlyPoNsOLZgvVA==
+X-CSE-MsgGUID: rUXyInEtRxGkaaXsVoCnWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="41853522"
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="41853522"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 03:13:06 -0700
+X-CSE-ConnectionGUID: K6YLQIaTQimVCRSiqiv6Ew==
+X-CSE-MsgGUID: Fz1N+onFQAGM/+B0EbcJYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="70701690"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.157])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 03:13:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 6 Sep 2024 13:12:58 +0300 (EEST)
+To: Shuah Khan <skhan@linuxfoundation.org>
+cc: shuah@kernel.org, fenghua.yu@intel.com, 
+    Reinette Chatre <reinette.chatre@intel.com>, usama.anjum@collabora.com, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests:resctrl: Fix build failure on archs without
+ __cpuid_count()
+In-Reply-To: <20240905180231.20920-1-skhan@linuxfoundation.org>
+Message-ID: <21267ef6-6fcf-2eed-a3da-2782d1e7013a@linux.intel.com>
+References: <20240905180231.20920-1-skhan@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1725616970.1687496-2-xuanzhuo@linux.alibaba.com>
+Content-Type: multipart/mixed; boundary="8323328-47391373-1725617578=:1053"
 
-On Fri, Sep 06, 2024 at 06:02:50PM +0800, Xuan Zhuo wrote:
-> On Fri, 6 Sep 2024 05:52:36 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > This reverts commit defd28aa5acb0fd7c15adc6bc40a8ac277d04dea.
-> >
-> > leads to crashes with no ACCESS_PLATFORM when
-> > sysctl net.core.high_order_alloc_disable=1
-> >
-> > Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > Reported-by: Si-Wei Liu <si-wei.liu@oracle.com>
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> >  drivers/net/virtio_net.c | 89 +++++++++++++++++++++++-----------------
-> >  1 file changed, 52 insertions(+), 37 deletions(-)
-> >
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index 0944430dfb1f..0a2ec9570521 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -348,6 +348,9 @@ struct receive_queue {
-> >
-> >  	/* Record the last dma info to free after new pages is allocated. */
-> >  	struct virtnet_rq_dma *last_dma;
-> > +
-> > +	/* Do dma by self */
-> > +	bool do_dma;
-> >  };
-> >
-> >  /* This structure can contain rss message with maximum settings for indirection table and keysize
-> > @@ -867,7 +870,7 @@ static void *virtnet_rq_get_buf(struct receive_queue *rq, u32 *len, void **ctx)
-> >  	void *buf;
-> >
-> >  	buf = virtqueue_get_buf_ctx(rq->vq, len, ctx);
-> > -	if (buf)
-> > +	if (buf && rq->do_dma)
-> >  		virtnet_rq_unmap(rq, buf, *len);
-> >
-> >  	return buf;
-> > @@ -880,6 +883,11 @@ static void virtnet_rq_init_one_sg(struct receive_queue *rq, void *buf, u32 len)
-> >  	u32 offset;
-> >  	void *head;
-> >
-> > +	if (!rq->do_dma) {
-> > +		sg_init_one(rq->sg, buf, len);
-> > +		return;
-> > +	}
-> > +
-> >  	head = page_address(rq->alloc_frag.page);
-> >
-> >  	offset = buf - head;
-> > @@ -905,42 +913,44 @@ static void *virtnet_rq_alloc(struct receive_queue *rq, u32 size, gfp_t gfp)
-> >
-> >  	head = page_address(alloc_frag->page);
-> >
-> > -	dma = head;
-> > +	if (rq->do_dma) {
-> > +		dma = head;
-> >
-> > -	/* new pages */
-> > -	if (!alloc_frag->offset) {
-> > -		if (rq->last_dma) {
-> > -			/* Now, the new page is allocated, the last dma
-> > -			 * will not be used. So the dma can be unmapped
-> > -			 * if the ref is 0.
-> > +		/* new pages */
-> > +		if (!alloc_frag->offset) {
-> > +			if (rq->last_dma) {
-> > +				/* Now, the new page is allocated, the last dma
-> > +				 * will not be used. So the dma can be unmapped
-> > +				 * if the ref is 0.
-> > +				 */
-> > +				virtnet_rq_unmap(rq, rq->last_dma, 0);
-> > +				rq->last_dma = NULL;
-> > +			}
-> > +
-> > +			dma->len = alloc_frag->size - sizeof(*dma);
-> > +
-> > +			addr = virtqueue_dma_map_single_attrs(rq->vq, dma + 1,
-> > +							      dma->len, DMA_FROM_DEVICE, 0);
-> > +			if (virtqueue_dma_mapping_error(rq->vq, addr))
-> > +				return NULL;
-> > +
-> > +			dma->addr = addr;
-> > +			dma->need_sync = virtqueue_dma_need_sync(rq->vq, addr);
-> > +
-> > +			/* Add a reference to dma to prevent the entire dma from
-> > +			 * being released during error handling. This reference
-> > +			 * will be freed after the pages are no longer used.
-> >  			 */
-> > -			virtnet_rq_unmap(rq, rq->last_dma, 0);
-> > -			rq->last_dma = NULL;
-> > +			get_page(alloc_frag->page);
-> > +			dma->ref = 1;
-> > +			alloc_frag->offset = sizeof(*dma);
-> > +
-> > +			rq->last_dma = dma;
-> >  		}
-> >
-> > -		dma->len = alloc_frag->size - sizeof(*dma);
-> > -
-> > -		addr = virtqueue_dma_map_single_attrs(rq->vq, dma + 1,
-> > -						      dma->len, DMA_FROM_DEVICE, 0);
-> > -		if (virtqueue_dma_mapping_error(rq->vq, addr))
-> > -			return NULL;
-> > -
-> > -		dma->addr = addr;
-> > -		dma->need_sync = virtqueue_dma_need_sync(rq->vq, addr);
-> > -
-> > -		/* Add a reference to dma to prevent the entire dma from
-> > -		 * being released during error handling. This reference
-> > -		 * will be freed after the pages are no longer used.
-> > -		 */
-> > -		get_page(alloc_frag->page);
-> > -		dma->ref = 1;
-> > -		alloc_frag->offset = sizeof(*dma);
-> > -
-> > -		rq->last_dma = dma;
-> > +		++dma->ref;
-> >  	}
-> >
-> > -	++dma->ref;
-> > -
-> >  	buf = head + alloc_frag->offset;
-> >
-> >  	get_page(alloc_frag->page);
-> > @@ -957,9 +967,12 @@ static void virtnet_rq_set_premapped(struct virtnet_info *vi)
-> >  	if (!vi->mergeable_rx_bufs && vi->big_packets)
-> >  		return;
-> >
-> > -	for (i = 0; i < vi->max_queue_pairs; i++)
-> > -		/* error should never happen */
-> > -		BUG_ON(virtqueue_set_dma_premapped(vi->rq[i].vq));
-> > +	for (i = 0; i < vi->max_queue_pairs; i++) {
-> > +		if (virtqueue_set_dma_premapped(vi->rq[i].vq))
-> > +			continue;
-> > +
-> > +		vi->rq[i].do_dma = true;
-> > +	}
-> 
-> This is too much code to revert. We can just revert this and next one.
-> And add a patch to turn off the default premapped setting (return from this
-> function directly). Otherwise, we will have to do all the work again in the
-> future.
-> 
-> There is no need to revert xsk related code, xsk function cannot be enabled, in
-> the case that premapped mode is not turned on. There is no direct impact itself.
-> 
-> Thanks.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I tried but quickly got lost as the automatic
-revert did not work, and it's very close to release, so
-I wanted to be sure it's right.
+--8323328-47391373-1725617578=:1053
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Post your own version of a revert for testing then please.
+On Thu, 5 Sep 2024, Shuah Khan wrote:
+
+> When resctrl is built on architectures without __cpuid_count()
+> support, build fails. resctrl uses __cpuid_count() defined in
+> kselftest.h.
+>=20
+> Even though the problem is seen while building resctrl on aarch64,
+> this error can be seen on any platform that doesn't support CPUID.
+>=20
+> CPUID is a x86/x86-64 feature and code paths with CPUID asm commands
+> will fail to build on all other architectures.
+>=20
+> All others tests call __cpuid_count() do so from x86/x86_64 code paths
+> when _i386__ or __x86_64__ are defined. resctrl is an exception.
+>=20
+> Fix the problem by defining __cpuid_count() only when __i386__ or
+> __x86_64__ are defined in kselftest.h and changing resctrl to call
+> __cpuid_count() only when __i386__ or __x86_64__ are defined.
+>=20
+> In file included from resctrl.h:24,
+>                  from cat_test.c:11:
+> In function =E2=80=98arch_supports_noncont_cat=E2=80=99,
+>     inlined from =E2=80=98noncont_cat_run_test=E2=80=99 at cat_test.c:326=
+:6:
+> ../kselftest.h:74:9: error: impossible constraint in =E2=80=98asm=E2=80=
+=99
+>    74 |         __asm__ __volatile__ ("cpuid\n\t"                        =
+       \
+>       |         ^~~~~~~
+> cat_test.c:304:17: note: in expansion of macro =E2=80=98__cpuid_count=E2=
+=80=99
+>   304 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+>       |                 ^~~~~~~~~~~~~
+> ../kselftest.h:74:9: error: impossible constraint in =E2=80=98asm=E2=80=
+=99
+>    74 |         __asm__ __volatile__ ("cpuid\n\t"                        =
+       \
+>       |         ^~~~~~~
+> cat_test.c:306:17: note: in expansion of macro =E2=80=98__cpuid_count=E2=
+=80=99
+>   306 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+>=20
+> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Reported-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+
+When the small things from Muhammad and Reinette addressed, this seems=20
+okay.
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+Thanks for the solution.
 
 
-> 
-> >  }
-> >
-> >  static void virtnet_rq_unmap_free_buf(struct virtqueue *vq, void *buf)
-> > @@ -2107,7 +2120,8 @@ static int add_recvbuf_small(struct virtnet_info *vi, struct receive_queue *rq,
-> >
-> >  	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
-> >  	if (err < 0) {
-> > -		virtnet_rq_unmap(rq, buf, 0);
-> > +		if (rq->do_dma)
-> > +			virtnet_rq_unmap(rq, buf, 0);
-> >  		put_page(virt_to_head_page(buf));
-> >  	}
-> >
-> > @@ -2221,7 +2235,8 @@ static int add_recvbuf_mergeable(struct virtnet_info *vi,
-> >  	ctx = mergeable_len_to_ctx(len + room, headroom);
-> >  	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
-> >  	if (err < 0) {
-> > -		virtnet_rq_unmap(rq, buf, 0);
-> > +		if (rq->do_dma)
-> > +			virtnet_rq_unmap(rq, buf, 0);
-> >  		put_page(virt_to_head_page(buf));
-> >  	}
-> >
-> > @@ -5392,7 +5407,7 @@ static void free_receive_page_frags(struct virtnet_info *vi)
-> >  	int i;
-> >  	for (i = 0; i < vi->max_queue_pairs; i++)
-> >  		if (vi->rq[i].alloc_frag.page) {
-> > -			if (vi->rq[i].last_dma)
-> > +			if (vi->rq[i].do_dma && vi->rq[i].last_dma)
-> >  				virtnet_rq_unmap(&vi->rq[i], vi->rq[i].last_dma, 0);
-> >  			put_page(vi->rq[i].alloc_frag.page);
-> >  		}
-> > --
-> > MST
-> >
+I'm still left to wonder if the x86 selftest is supposed to clobber=20
+CFLAGS? It seems that problem is orthogonal to this cpuid/resctrl problem.
+I mean this question from the perspective of coherency in the entire=20
+kselftest framework, lib.mk seems to want to adjust CFLAGS but those
+changes will get clobbered in the case of x86 selftest.
 
+--=20
+ i.
+
+> ---
+>  tools/testing/selftests/kselftest.h        | 2 ++
+>  tools/testing/selftests/resctrl/cat_test.c | 6 ++++--
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftest=
+s/kselftest.h
+> index b8967b6e29d5..e195ec156859 100644
+> --- a/tools/testing/selftests/kselftest.h
+> +++ b/tools/testing/selftests/kselftest.h
+> @@ -61,6 +61,7 @@
+>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+>  #endif
+> =20
+> +#if defined(__i386__) || defined(__x86_64__) /* arch */
+>  /*
+>   * gcc cpuid.h provides __cpuid_count() since v4.4.
+>   * Clang/LLVM cpuid.h provides  __cpuid_count() since v3.4.0.
+> @@ -75,6 +76,7 @@
+>  =09=09=09      : "=3Da" (a), "=3Db" (b), "=3Dc" (c), "=3Dd" (d)=09\
+>  =09=09=09      : "0" (level), "2" (count))
+>  #endif
+> +#endif /* end arch */
+> =20
+>  /* define kselftest exit codes */
+>  #define KSFT_PASS  0
+> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/s=
+elftests/resctrl/cat_test.c
+> index 742782438ca3..ae3f0fa5390b 100644
+> --- a/tools/testing/selftests/resctrl/cat_test.c
+> +++ b/tools/testing/selftests/resctrl/cat_test.c
+> @@ -290,12 +290,12 @@ static int cat_run_test(const struct resctrl_test *=
+test, const struct user_param
+> =20
+>  static bool arch_supports_noncont_cat(const struct resctrl_test *test)
+>  {
+> -=09unsigned int eax, ebx, ecx, edx;
+> -
+>  =09/* AMD always supports non-contiguous CBM. */
+>  =09if (get_vendor() =3D=3D ARCH_AMD)
+>  =09=09return true;
+> =20
+> +#if defined(__i386__) || defined(__x86_64__) /* arch */
+> +=09unsigned int eax, ebx, ecx, edx;
+>  =09/* Intel support for non-contiguous CBM needs to be discovered. */
+>  =09if (!strcmp(test->resource, "L3"))
+>  =09=09__cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> @@ -305,6 +305,8 @@ static bool arch_supports_noncont_cat(const struct re=
+sctrl_test *test)
+>  =09=09return false;
+> =20
+>  =09return ((ecx >> 3) & 1);
+> +#endif /* end arch */
+> +=09return false;
+>  }
+> =20
+>  static int noncont_cat_run_test(const struct resctrl_test *test,
+>=20
+--8323328-47391373-1725617578=:1053--
 
