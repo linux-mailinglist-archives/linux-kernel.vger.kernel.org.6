@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-319025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3620A96F6A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:25:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC6C96F6A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4D1C21B52
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:25:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E701CB24992
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC771D1F5C;
-	Fri,  6 Sep 2024 14:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB931D1730;
+	Fri,  6 Sep 2024 14:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqJCXL2A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yc3+GYHL"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2757E1D1F4C;
-	Fri,  6 Sep 2024 14:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6F01D0DDF;
+	Fri,  6 Sep 2024 14:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725632691; cv=none; b=MjJ3fS+LnlJRpDWcbr/wN4Pq6dWeu+bmTV/yLbUi1fztovLZCKw+D4JYyNb4JUnudqkifPxEMjydzIGjUQ0sK+bGagq4gN2wXM94T0bEZr2FN5BLYb5FDI/oijCQuxqqkOUV7dKe6kReQMN0qjZP2/NX2j3LiEC9k0ZmZDf5rTE=
+	t=1725632699; cv=none; b=E5nMdJD67M2RmI7mXyl2+30k5qhmqFmsUuehKbZFEcU1NCfG/0yw7OtaS2aHdZ0rMbzdmoXHWWffnAxzfvPs1VwheKl9yUXYYxbhe1eK+3wasb7VoaSNSQwKDPULStFLo1zyNeZFVUSU0+mXz1e4E/pOFKWPdHWG/EmHwyF43xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725632691; c=relaxed/simple;
-	bh=qHBHB2kdrNFDSiFJgTc2SnouAy6yPXOIwzYtL6xR0lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npUvs3OUHdrN3Zv8eY2bcmVqLc86o4+MhJG2k2HTB2Z9PctUmCnlt1tw27eNvEnQozGT1z1oqqY+8J8fZA0G7PlKbwyi64L6gCAzRZAA2UyJF+mUvQ2KvU6z1zQVk99U6zkmaFYEt3V5C2FYwn2wNh+N452EpWHDDISoU/zfgYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqJCXL2A; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725632690; x=1757168690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qHBHB2kdrNFDSiFJgTc2SnouAy6yPXOIwzYtL6xR0lw=;
-  b=hqJCXL2AL2hsyMjqLIAFhuZCxHWFbfjbOUpeJh6Uu28ck2lGtnFUac0m
-   XlcI7FNdzxsRecwOgZx7Iz6BMrVi046KlMzPoxVKSxtHHUzBiASiehTvr
-   tHPCFAkJPHdmM+h7b5qUB1VQkVo69HL2Am6V75kf2P9JMf0Nk08RDskwJ
-   cCs2d35egeWZG8Junx8jGIPXXDBuOABZeQV2RNFKEvzkbtAGJq7P24ybs
-   XHInSj7ZQmjqv0TNWkeGv0CIpX50FTn8rBCVKpn28fCChguZG1DvEBIM4
-   DOn21EbFbvR7oW8pfr9yltFOfWsEPOCgqgFMcWbqP8GAJGDHdjN7INBh/
-   A==;
-X-CSE-ConnectionGUID: tKOtkQqeR/OC2OXfIBeVMQ==
-X-CSE-MsgGUID: KGNzHPUrTECS9xGGuEIqGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35778570"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="35778570"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:24:49 -0700
-X-CSE-ConnectionGUID: f8pegL7PQz6Jb13k4USfxg==
-X-CSE-MsgGUID: ObgZyOa6SPurGhtR4M+cAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="70771114"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:24:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smZtF-00000005pGm-0Clu;
-	Fri, 06 Sep 2024 17:24:45 +0300
-Date: Fri, 6 Sep 2024 17:24:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
-Message-ID: <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
-References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
- <20240503143303.15bf82bc@SWDEV2.connecttech.local>
- <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
- <20240906095141.021318c8@SWDEV2.connecttech.local>
+	s=arc-20240116; t=1725632699; c=relaxed/simple;
+	bh=Ae/E+HwwnrmVtMR5Ie0tM3RoV8FviaM5rFcynKwfpe0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBlycqgIxiFzECGwpBOB/VMtmF30w6vVTTZ/ur5ZAD0xoDS3O4GJJ7OoFxKPdTyWgJ3wE9//T2Jnrk+hLuD7XmbeY+m4oPchXOGV1e0uQc7KMmoVLy1U5OdngKSyay/HSNbx23OnS1qEVsGBuRTuFlet/iNHAvCSsiqWOAkRO4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yc3+GYHL; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2053616fa36so21720595ad.0;
+        Fri, 06 Sep 2024 07:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725632698; x=1726237498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJoi1jywiZO+XvKJEVuaNemlL/axteDLk0qoQjK504s=;
+        b=Yc3+GYHLfqkbkUfzf0SPtyTZSurltNjs2HCZBL41kR4nkgU8BtqSJE9l+gqPQvK0p6
+         f22PSUWZ6vhA2LpNRqz8wG1HUVRIMBXAPro/qwfTu0tgKrt8dE4iXeby96RvwKw3L2dg
+         k48cogLFPb0ZRa47QEhcxYCNfB/Gf3+AqjHFRCvoOHDhTZERkNklcWAFjku63VuaSeCc
+         E4X8wuxRIYHOnd/ByP7ODsE58sjVxqimi+FI56HksphRLwALgm+1l0FyIpWs9eEu4CWK
+         CEiYlxulqB0XbXRfs6mL/XfWaBb1nxa3NHreB7Wn2vBrgZTAX/8kWQ8F4+vQF/0NBRQR
+         0qDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725632698; x=1726237498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MJoi1jywiZO+XvKJEVuaNemlL/axteDLk0qoQjK504s=;
+        b=nWGe4KcqHk2OqPteWKVHfedW4Ojv1WJsQPGr4ZHJX7da6QzlPqzwnH9RQdt9U0KWuq
+         Zm8Ojl2sNeyYaOzOBHSjG7EiNeKHx2rJt+NqAEzX460Peb9YNSgKSflEEOeDHIa+Frre
+         S8VA4qZkkTftWeGpqsU2IjMe21jLPzs3ssR9att61OlJaU4Upa5znqTC7XOL40Joo3z1
+         C+KbZqTS+H9LBJK5V7vqqDTlioT3cHmR5bUND/JCCvNKl4+77g625MobrxZHuAY1TrrP
+         zjoU/whgmrq3OQedZmMW+Eitwzg/VencykOaCcvewgjf9polLakTGR2HhGl+OVizlFeU
+         cDlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0UGwxL6o4k6vCenMH0mwQhnzRWASMoLNkVVlRFqqFiaINhNosEXN0y4NA9ix43wu64KXYc1KUhhdyBLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh4BJ6CDNO+2AlsL6POHd7qi6DFqbgRI6b/js3fV7wsurgKuSS
+	XZgV2HZHHK6Kf6V8E0BtPj0o/D3Ly19DaPOdibP/BjqSbUF5SYKIBb3ZKIlI
+X-Google-Smtp-Source: AGHT+IEnEyzMjgrIIevOgy8FqtHozXZCGYN6NYb6jc8MdPwzrLM0zHeS6FOL5luf4H+7eMWsltRXOQ==
+X-Received: by 2002:a17:902:d58d:b0:206:994b:6d53 with SMTP id d9443c01a7336-206994b6f3emr145549645ad.30.1725632697490;
+        Fri, 06 Sep 2024 07:24:57 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea530casm43740605ad.184.2024.09.06.07.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 07:24:57 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: toke@toke.dk,
+	kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] wifi: ath9k: add range check for conn_rsp_epid in htc_connect_service()
+Date: Fri,  6 Sep 2024 23:24:52 +0900
+Message-Id: <20240906142452.144525-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906095141.021318c8@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
-> On Fri, 6 Sep 2024 15:46:51 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
-> > > On Fri,  3 May 2024 20:15:52 +0300
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > > After a rework for CONNTECH was done, the driver may need a bit of
-> > > > love in order to become less verbose (in terms of indentation and
-> > > > code duplication) and hence easier to read.
-> > > >
-> > > > This clean up series fixes a couple of (not so critical) issues and
-> > > > cleans up the recently added code. No functional change indented by
-> > > > the cleaning up part.
-> > > >
-> > > > Parker, please test this and give your formal Tested-by tag
-> > > > (you may do it by replying to this message if all patches are
-> > > >  successfully tested; more details about tags are available in
-> > > >  the Submitting Patches documentation).
-> > >
-> > > I was able to test the Connect Tech related code and everything is
-> > > work as expected. I can't test the non-CTI related changes but they
-> > > are pretty minor.
-> > >
-> > > Tested-by: Parker Newman <pnewman@connecttech.com>
-> >
-> > Sorry for blast from the past, but I have some instersting information
-> > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
-> > used from others via software nodes, can you consider updating your code
-> > to replace custom bitbanging along with r/w ops by the instantiating the
-> > respective drivers?
-> 
-> Hi Andy,
-> The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
-> They have a dedicated "EEPROM interface" which is accessed by the
-> REGB (0x8E) register. It is a very simple bit-bang interface though,
-> one bit per signal.
-> 
-> I guess in theory I could either add  GPIO wrapper to toggle these bits
-> and use the spi-gpio driver but I am not sure if that really improves things?
-> Maybe using the spi-bitbang driver directly is more appropriate?
-> What do you think?
+I found the following bug in my fuzzer:
 
-Yes, spi-bitbang seems better in this case.
+  UBSAN: array-index-out-of-bounds in drivers/net/wireless/ath/ath9k/htc_hst.c:26:51
+  index 255 is out of range for type 'htc_endpoint [22]'
+  CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc6-dirty #14
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+  Workqueue: events request_firmware_work_func
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x180/0x1b0
+   __ubsan_handle_out_of_bounds+0xd4/0x130
+   htc_issue_send.constprop.0+0x20c/0x230
+   ? _raw_spin_unlock_irqrestore+0x3c/0x70
+   ath9k_wmi_cmd+0x41d/0x610
+   ? mark_held_locks+0x9f/0xe0
+   ...
 
--- 
-With Best Regards,
-Andy Shevchenko
+Since this bug has been confirmed to be caused by insufficient verification 
+of conn_rsp_epid, I think it would be appropriate to add a range check for 
+conn_rsp_epid to htc_connect_service() to prevent the bug from occurring.
 
+Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/net/wireless/ath/ath9k/htc_hst.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
+index eb631fd3336d..aedba5f79bfb 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_hst.c
++++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
+@@ -293,6 +293,8 @@ int htc_connect_service(struct htc_target *target,
+ 			service_connreq->service_id);
+ 		return -ETIMEDOUT;
+ 	}
++	if (target->conn_rsp_epid < 0 || target->conn_rsp_epid >= ENDPOINT_MAX) 
++		return -EINVAL;
+ 
+ 	*conn_rsp_epid = target->conn_rsp_epid;
+ 	return 0;
+--
 
