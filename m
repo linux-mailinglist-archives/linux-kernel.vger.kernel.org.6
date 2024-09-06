@@ -1,171 +1,116 @@
-Return-Path: <linux-kernel+bounces-319074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C6296F76A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62A196F76E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F8F2835CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:50:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F231C212D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15E71D1F7C;
-	Fri,  6 Sep 2024 14:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4C31D1F56;
+	Fri,  6 Sep 2024 14:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8g3T29g"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1jCn0htg"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C504B1D174E;
-	Fri,  6 Sep 2024 14:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3F1D1F7B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725634200; cv=none; b=kCIFMxP8bCyJxH4LMH1xifTSIw4ci+uNErzQVhJnxGw0k2u2GE/BdIej7k6oyBRiZjjt3ZkQSQs+2BVyTqplA6H/wkN15u616BUdC4nh36Rkn2WARMMh0MBh7n3XIE2Eyk58MuOdnMbybosd3oXbB9VCKdk782ceeiiBWaFAOsQ=
+	t=1725634262; cv=none; b=t8tDB7eWbDgiur63SJwIANwGdBXqDpa4thuNv0JA6OgkCD7KGteX20EJME7+2/B9N+atZJo92+cfBP8awTmDLio5sobMtBD9RAah+nfEHdcQe+psl44hwvOFS168W3K7KijcuuQLVIPMjkMNXzYwQdAcYf/A6fd9jUFPuXH+2LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725634200; c=relaxed/simple;
-	bh=JZpdIce8FGZIaniHLDF8bwjk0Wwb6VEN1meqkW4lD1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Du3DunaZd13wS3sxAT5hR9/x3Sc1u3uy3xCZNS0V9vjkr9tMYhDM1UDoOZ+UINJ+GO4ddoCsz1oq/8pUKYXEY9Rhc6HyAjsceT7lix/ABaTUYfUiILFRadl37pdHdXqmEIyha3KU/93BxuzWKPH6LlTQ3wlrwaBFk1BpEnyt/Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8g3T29g; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-81f9339e534so82151939f.3;
-        Fri, 06 Sep 2024 07:49:57 -0700 (PDT)
+	s=arc-20240116; t=1725634262; c=relaxed/simple;
+	bh=Bg9hJ5AL+IvxGCWyvU8rqLJ6yreb3n3IQc5S28odOj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nUqZRFKcq/nVj9gIpblGgvIg9nn5zFxjEa4WbuvcQ9oOBFB17mZXFUl43qPDsfBCokFbWl69rEpp7izGon2u2T7K+45dtZqrZp9gh4Eb0NmkKbxPGS/CElOiky1W64vz/PCJbyJnJBsaVMZxeMXeT8HyOHEn+YXfEcat+R098HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1jCn0htg; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d666fb3fb9so634030a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725634197; x=1726238997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WiU9IZHhVnUquHSWM6EXfjGaXokDouEcllR2dgh+6Fg=;
-        b=O8g3T29gebi3lDe5fghTJyhTXvsE9LiDJCvJ5TNs6/Y85K4aRlpWQxY1ds4K0fQd9o
-         O/guP5CFrQZy8nOP7xkaIY4ltxJLxonLkmx7VH+FCk+YKy5aSSW1KYMNo0aPIfyRrcLx
-         DGc/4aX2V0ozWzfbsBB0ubOEdk2yWMnjDMsp8T/cWn0rH3D2RRbXmRIL0kMB/fcGU79J
-         cXnX1NKiQ9UaIWLnseiovFqciVVo6lBn9XUGkbiwHmUbXyQjOUUg3ibXyZRCUeVL50n1
-         lxGOrFgpCxUfH7YLM9JoDOLcCJ/jTDzXI36k0OXzYO+CAhshatm5FhK4ilsdCi9k3Mn8
-         DZeg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725634260; x=1726239060; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5lBMEQHLKMaF3jRPCocf543Y2cCOhdzZyzb/i804/c=;
+        b=1jCn0htg9rIKVG3gr4RyvBW2xerbZqNoisHQnPRG3iEK14vJmz7L+TWa6jhp/zEyOn
+         XBEM7LhlinIvDP54mlsId1BJ9NCGfEsXam4H9q+r2aQP5ei7jiw8aq2lAZsUNf9Td6lL
+         LQ9ftrpH46BRFmXFj/iCgLdxyYNWlABeEpzNigeazYPsFyMZpCB/K4IcOHNtBsUx5adF
+         TYdp2cScJ6QpzWlSsW5/vEoGW2SHWXQMblHIYZnmVhlSAOCQ+yDAQZjWyIwLbw9wzXxp
+         ZFKVWoxtVJrvAixbsfWr4CPQMnl2pTYX/EkUL4j9NhITGqas0Y0l3iVwwDMfsidti9O/
+         W+WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725634197; x=1726238997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WiU9IZHhVnUquHSWM6EXfjGaXokDouEcllR2dgh+6Fg=;
-        b=Ff/J70UgqbBWAJ0LYgqZYOO32KVj6tJJ0WDcCXSCNo9QgRe8/gyhVgpB21IRnpmZnz
-         PXYBtkMBnRmfSkHUoGQzRsMMrtNKqkJcAnGV8H98Y0H6Z7FLPGhzPTftkDMv+KkFnzvj
-         ajZ4bRRNhl2PC5wvju3b9ALWCK7smpd1Et80/74Te9HMWou6vFqfPDk7qQyjIoq1rsMF
-         fcr2xbjrodelWEDOgn8VqzXqKLpFV+jgRMahT5BYNH88jNZMZsrRpNVIXutx2RSyPj+o
-         wxiJhnKwd3+MSy1b92CUgEoAItrHLJNvC8M9bjozm7K32J/B+JU9NIs0/Jj0eOuzzS62
-         2c6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFHRbpCkBTgSgk1bVQOAfgWxPBvv+P0psB4fuajj02df2xSFSrtuQdw3JXVoUzckz5uncyw2c+KpalIt4V@vger.kernel.org, AJvYcCWiobJtv7Pc9w7ZeTXyBq/yYUqu1vf8pzoG7LArRAEaPK3KlbDrOKucQHFWl7gRxN0AgFNzT/9wtkPmqxxq@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVWhMo205s7nvRWJQrem0nKc24WMjOucntQnScWTC2r2OzgfN/
-	0+lUzB+rx6xhXRrxKScQ+ZysRa1oiHhaZf8GmahiBgQ9Gf80NPTdOMPvk3ua/AV1IgciwUVcyJh
-	igOB+wZOJh2Qy58x5c3FoaBDzY5o=
-X-Google-Smtp-Source: AGHT+IH2V8kqjqZuzSiTu4xQgwjYHiNYJlnlag3YQqW/lfLyCQXUGePymWo0HTTtWi+nAbzXenEPCYoGuvVe1VR7+es=
-X-Received: by 2002:a05:6e02:526:b0:39f:4f85:3ae6 with SMTP id
- e9e14a558f8ab-39f4f853c36mr199765265ab.1.1725634196676; Fri, 06 Sep 2024
- 07:49:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725634260; x=1726239060;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5lBMEQHLKMaF3jRPCocf543Y2cCOhdzZyzb/i804/c=;
+        b=XT6XsAlKGjmGQU0WAZmHyVvB0GDABoDSLnI+dYM5SwimosXmDGSW8x5Lht/9ZSN/6A
+         +lJ7IITFTCvrxeF+2Get8vIBsp02m+uZtTWHX/CfUBieSUMbQ+PYFRPzh4bh8GmXJ2fJ
+         q+plYUkuW2Nkmu+y6tUYKIo+1HsmadiQ4opG48RSJXMLWVfm4umGRzlG9PPznsvX72WB
+         gJvoOv0jNOoHIxVoWzPFi5VhXPXXoF6TQsRsI5mcLB4F2f3xzDOzlaN8Y4vDMGlQIoE9
+         HN/vwMuY6eF1+StBNB9lkfp7xVXhDzqpif5Azwuw22n2G+lq7GxKENchA7NWJrDJtsH4
+         hFjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjGf2WajRjvpDsE5KQUs4ScrQgE5GglIhh+xdcuSUi/W8fyxrMbYyHGGnYHfsQeaGViRR27GRPKRWvUxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdJz0ltUUfpALMLTWCixgnKwiWLONZdc/vmzKFKlZDdDC5b0Eg
+	ogsz766fdenpPknFbHbfJg4ZnuAueth+uNTMes4qL0KCepo4u+cxHKx6eGEHYSs=
+X-Google-Smtp-Source: AGHT+IEsBiV55U4YTmFuWCBXZ4clh9+5GpKkqbHGl45VMScWAVU6JAkZCc2jfIndMU3vKbc1JBztKg==
+X-Received: by 2002:a17:90b:1083:b0:2d8:89c3:1b57 with SMTP id 98e67ed59e1d1-2da8f2f3f81mr15557313a91.15.1725634259950;
+        Fri, 06 Sep 2024 07:50:59 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc07681asm1657102a91.33.2024.09.06.07.50.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 07:50:59 -0700 (PDT)
+Message-ID: <ce1999f3-4b30-4e12-bbb9-9b0c090a7092@kernel.dk>
+Date: Fri, 6 Sep 2024 08:50:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905124956.84932-1-robdclark@gmail.com> <20240905155330.GA15246@willie-the-truck>
- <53f13813-a515-475a-836d-0b6017a117eb@arm.com> <CAF6AEGs3aRXbnnhD84GBbz9wJmyNR=dA3hbGuMLcM22Vs8CU_g@mail.gmail.com>
- <CAF6AEGsqdxO4+kaz6jOLBS_syjEkZg-7Veqh3j-o=RiGNcBH8A@mail.gmail.com> <a30d3968-5fb8-423d-9524-0e694930a6b1@arm.com>
-In-Reply-To: <a30d3968-5fb8-423d-9524-0e694930a6b1@arm.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 6 Sep 2024 07:49:43 -0700
-Message-ID: <CAF6AEGueETnUhcf8KA8SNEWBieZ=OvYg7jJ4bgd3wJzT7_D7hA@mail.gmail.com>
-Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Optimise non-coherent unmap"
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Will Deacon <will@kernel.org>, iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Ashish Mhetre <amhetre@nvidia.com>, 
-	Rob Clark <robdclark@chromium.org>, Joerg Roedel <joro@8bytes.org>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] zram: Replace bit spinlocks with a spinlock_t.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mike Galbraith <umgwanakikbuti@gmail.com>, Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+References: <20240906141520.730009-1-bigeasy@linutronix.de>
+ <feb77bdc-512a-4f59-8a9e-1dc7751a2fa7@kernel.dk>
+ <20240906144849.HrQCoqvn@linutronix.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240906144849.HrQCoqvn@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 6, 2024 at 5:24=E2=80=AFAM Robin Murphy <robin.murphy@arm.com> =
-wrote:
->
-> On 2024-09-05 6:10 pm, Rob Clark wrote:
-> > On Thu, Sep 5, 2024 at 10:00=E2=80=AFAM Rob Clark <robdclark@gmail.com>=
- wrote:
-> >>
-> >> On Thu, Sep 5, 2024 at 9:27=E2=80=AFAM Robin Murphy <robin.murphy@arm.=
-com> wrote:
-> >>>
-> >>> On 05/09/2024 4:53 pm, Will Deacon wrote:
-> >>>> Hi Rob,
-> >>>>
-> >>>> On Thu, Sep 05, 2024 at 05:49:56AM -0700, Rob Clark wrote:
-> >>>>> From: Rob Clark <robdclark@chromium.org>
-> >>>>>
-> >>>>> This reverts commit 85b715a334583488ad7fbd3001fe6fd617b7d4c0.
-> >>>>>
-> >>>>> It was causing gpu smmu faults on x1e80100.
-> >>>>>
-> >>>>> I _think_ what is causing this is the change in ordering of
-> >>>>> __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
-> >>>>> memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
-> >>>>> this patch is supposed to work correctly in the face of other
-> >>>>> concurrent translations (to buffers unrelated to the one being
-> >>>>> unmapped(), because after the io_pgtable_tlb_flush_walk() we can ha=
-ve
-> >>>>> stale data read back into the tlb.
-> >>>>>
-> >>>>> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> >>>>> ---
-> >>>>>    drivers/iommu/io-pgtable-arm.c | 31 ++++++++++++++--------------=
----
-> >>>>>    1 file changed, 14 insertions(+), 17 deletions(-)
-> >>>>
-> >>>> Please can you try the diff below, instead?
-> >>>
-> >>> Given that the GPU driver's .tlb_add_page is a no-op, I can't see thi=
-s
-> >>> making a difference. In fact, given that msm_iommu_pagetable_unmap()
-> >>> still does a brute-force iommu_flush_iotlb_all() after io-pgtable
-> >>> returns, and in fact only recently made .tlb_flush_walk start doing
-> >>> anything either for the sake of the map path, I'm now really wonderin=
-g
-> >>> how this patch has had any effect at all... :/
-> >>
-> >> Yeah..  and unfortunately the TBU code only supports two devices so
-> >> far, so I can't easily repro with TBU enabled atm.  Hmm..
-> >> __arm_lpae_unmap() is also called in the ->map() path, although not
-> >> sure how that changes things.
-> >
-> > Ok, an update.. after a reboot, still with this patch reverted, I once
-> > again see faults.  So I guess that vindicates the original patch, and
-> > leaves me still searching..
-> >
-> > fwiw, fault info from the gpu devcore:
-> >
-> > -------------
-> > fault-info:
-> >    - ttbr0=3D0000000919306000
-> >    - iova=3D0000000100c17000
-> >    - dir=3DWRITE
-> >    - type=3DUNKNOWN
-> >    - source=3DCP
-> > pgtable-fault-info:
-> >    - ttbr0: 000000090ca40000
-> >    - asid: 0
-> >    - ptes: 000000095db47003 000000095db48003 0000000914c8f003 00000008f=
-d7f0f47
-> > -------------
-> >
-> > the 'ptes' part shows the table walk, which looks ok to me..
->
-> But is it the right pagetable at all, given that the "ttbr0" values
-> appear to be indicating different places?
+On 9/6/24 8:48 AM, Sebastian Andrzej Siewior wrote:
+> On 2024-09-06 08:31:23 [-0600], Jens Axboe wrote:
+>> On 9/6/24 8:14 AM, Sebastian Andrzej Siewior wrote:
+>>> Hi,
+>>>
+>>> this is follow up to the previous posting, making the lock
+>>> unconditionally. The original problem with bit spinlock is that it
+>>> disabled preemption and the following operations (within the atomic
+>>> section) perform operations that may sleep on PREEMPT_RT. Mike expressed
+>>> that he would like to keep using zram on PREEMPT_RT.
+>>
+>> Looks good to me:
+>>
+>> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> Thank you.
+> This is routed via your tree, right?
 
-hmm, the gpu does seem to be switching to the new table before it is
-done with the old one..
+I can certainly take it - Minchan let me know if you have concerns.
 
-BR,
--R
+-- 
+Jens Axboe
+
 
