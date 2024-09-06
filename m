@@ -1,92 +1,54 @@
-Return-Path: <linux-kernel+bounces-318255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E27B96EABB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:36:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D68E96EA4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 285791F246DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:36:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B131F254BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA39416A94B;
-	Fri,  6 Sep 2024 06:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3788C14C58C;
+	Fri,  6 Sep 2024 06:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="ewQjFmna"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2051.outbound.protection.outlook.com [40.107.255.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7HyKsMP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C589168C26;
-	Fri,  6 Sep 2024 06:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725604166; cv=fail; b=sQnH/xFP6Zim4S/c+APWNx70TmZWwPOOqMf48jkrW4Lq0w/rM5yTocSR8CEMdkqayvMMGyAHMtNdVRUI9zsdujihLnGFjSntQGe114HVHRzz11HPm7pWL2o0c3pgzSfhG+gLNivXgvGiDlsk1y5fYS/ZM2zDt7nCql4GEidUTPw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725604166; c=relaxed/simple;
-	bh=dxf66hJZtVAq9+IaBejsonKuKVgRZ8FP7RlIV8a+PWE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HEG61tFwxh7fBe3dqkBuQ4nlIOSpJ9PskMJDntRc5LkKd2+UFcFxz45un66RK3RwOj5Wq/HX+hNOvOCCPElEsVbZd2wSpBRRufgJwGYxd6BKSgjlg/VrcZUAoOmKco1I2pIgz/FnMvSlv93QWX3wW4g3lUziM/kKfABWx9NCpUM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=ewQjFmna; arc=fail smtp.client-ip=40.107.255.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hl5vAWqjHzw1dVhDho2QbagPN3gjc7YNXNVEbl1pKSJopV27uTHtNVVHdlah9HQaG1T62BdPkcg2XcLrSqj9pDFH/ZPeVyIoy27X/bC1dnZJ3uq5E3ZHFUq2mQidtvRJHgbcZCwTW/UUdm9qLVi5abSk1JJOAMOWyv4CfBiIrPHekvuqNzoKOpZBqcGSjRvwWhl+ounkz0g05lLgq9CXpBYe7IrSjsd0tG84ZAhab5PEQBqKO0Bx30k5rW6Hgz6GUi2DXlW+M23VFLBgbHH9V6il/Lv+LMLE0Fdrs+ZDEKlvY8pKhbA0NGTjL5F3RuCKTrAZCZj8KOnc1T1Jg1aaFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vRQ1AkavuHhhgkpR/yb8EqtcoBHiVYJxKw0ThDWy90c=;
- b=oquGHAuyVdqkMT01ehcDtN3iiQICzg6HnEImvm5RS3rqWX2TxyYJ6cua9o7YHHgQCOkr827oY5nG5S8j592L8VgSlwCSt8oV1285gONTTZQwHOjlqXqmBNnv6+DvcipqVSkZ4B1gUhsc/woTe9He5NtQNcAhhT0gVLLirtfH5IKG+fndiVKYxMLzxObDqKKDxR6Vw1Q9Wo89R5/FXMrxbofI21olyK3VJ7maTUuOxETjr025yj2ic902jdurzu3ur+Iq3KbAplXOdJ7m6iO4oPW3rGzrQwhT9TwVWWU21hU+dR8QZJS8GJB2FQoiwvrHqPCSfakUipz4HiB2K7gJLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vRQ1AkavuHhhgkpR/yb8EqtcoBHiVYJxKw0ThDWy90c=;
- b=ewQjFmnakC0T1ivcd5+5CAH/W6Xp/U+eJcx19xToPyDU4NX9gjiWlNsg4R0OrgceKy9OEUT93EW9Fz+Q/6UrNGNI4u2YzQf6tSggoRz5I+jzGS0rzwqI4DErr79AkyPVaadY2pAqdmT1uQQjDr3v9xV6UcEtm+RFLz6jaeLc478cS1525b33LoMt2/7ubEx6FMEcYPOcwkQP9pEr2EljfUpZS2GfuwwdI4m0ds7InRy1bCKPfd3nSXYVCylXT5YvuGHkjdnuuAovKxd7no7jvvrEAYG6ODzW9OCLDW1UXndgNl8U/9c/RpDO7gxsSmDVDilkg2cVwEPiJosN2f8u7w==
-Received: from PU1PR01CA0001.apcprd01.prod.exchangelabs.com
- (2603:1096:803:15::13) by TY0PR04MB5609.apcprd04.prod.outlook.com
- (2603:1096:400:1af::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
- 2024 06:29:20 +0000
-Received: from HK2PEPF00006FB4.apcprd02.prod.outlook.com
- (2603:1096:803:15:cafe::4e) by PU1PR01CA0001.outlook.office365.com
- (2603:1096:803:15::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17 via Frontend
- Transport; Fri, 6 Sep 2024 06:29:20 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- HK2PEPF00006FB4.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
- Server id 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 06:29:19
- +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37813D891
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 06:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725604055; cv=none; b=s4h9S9DnBuUYYmWNN+duO1jBqLVv/XIX6sDcxcYaYwEuUzagWrPmkdNMK6Ung9k78Qqa7PBaLgY6OLBak+xBdp1XHLOb0Cd7Fm04vhAyCiLAGGwUhjc2BBoLINme1b0ww54LMrleq6K+vwDENnnF9GjgM2/sIfWQBUoO7f2tJT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725604055; c=relaxed/simple;
+	bh=CoOEbAggfh217kPkgbX+dUxoPywR5THB11oX8gQOwn0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k86wNTy7ghmUan6mlcZxn7t02dxuZOur5T0QLUyi8ZZCwYS0r2Jo30nEvElETR9hVZJAmaAVprU/m+/BfBF2q7/5zVBvHZ5TseQ1mDMX3J29iZefvnltth8ZHfKn+t9971tiV0i6cozxwowAKng9xALPSmKCQXyDssBS54np4VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7HyKsMP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FBDC4CEC4;
+	Fri,  6 Sep 2024 06:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725604055;
+	bh=CoOEbAggfh217kPkgbX+dUxoPywR5THB11oX8gQOwn0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=m7HyKsMP2mz1QuP8pcPdn/42CA7vIDxMS7lJ8vcfC01QI2qv/5aUckVrz4TIU8+Tq
+	 KpfcsSiPq6ELZwpNkX0myT27UejgnRWIKmSLp8r9hwIjbrXM7MiXeVEchlJ7PP/V0a
+	 A7ojDtYJpIvKc+pW8/em9g5udzdTnkyY7hxdF6My3gv8Pq8tdu+CJ3tO2eIicf4ZS2
+	 jZie67R7B3crV5eRiBHhGmntbMEPiFgCwm9jHcLRVrfmaBzU09ZtEjZ77x5mFMcUFv
+	 it2U62Fuy5rOW50Jbid3Ov+SCiztnqQsiK3/qEvAxzNwA09TOCWagpOCj4h9Px2qb5
+	 UlJ0rVg4FE3iQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v15 32/32] ARM: dts: aspeed: yosemite4: add ISL28022 support on 11
-Date: Fri,  6 Sep 2024 14:26:58 +0800
-Message-Id: <20240906062701.37088-33-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com>
+	Chao Yu <chao@kernel.org>,
+	syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
+Subject: [PATCH] f2fs: get rid of online repaire on corrupted directory
+Date: Fri,  6 Sep 2024 14:27:24 +0800
+Message-Id: <20240906062724.3569496-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,74 +56,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|TY0PR04MB5609:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 3aab2023-3178-4f9b-c597-08dcce3d3d7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BhZGCVcxXVEn4Xh4Px77MQch/sfXbkMzGCr6Cl+9Dh5aZrfOynU+xFfG2Ihr?=
- =?us-ascii?Q?kKg73mFeVrBwZyhVXQCrnVqxaRZZq2o6JdQpOYWdw0jpMzz/oA+Qza40Qq4n?=
- =?us-ascii?Q?miPWJtX3xJXAkqytAD/RVm9I0FimHqtHfZ3rtssosh7GZ0HyF7tsBFYNCQyb?=
- =?us-ascii?Q?/WdYACBQk+yQlp1iaXVv4MiPvpYyn3kS4FMWkFLSdD96XxHMiptVC5LOkQio?=
- =?us-ascii?Q?dasojpm3Q7X79coqobOrAqWmgAxpnOEiYWoFwyQUTZ3ZS5LNzOCEuVdB5uDt?=
- =?us-ascii?Q?Ctd7tHQMrfdqRRJaGmzsp/8OkY9a7WHdr8Wu9Oqixb5z/5dC0bW/0WLJpmA0?=
- =?us-ascii?Q?SIhQC7yjsmT/Pco0OxSa/rEYCsNp+yYbmeRpaZkX9ypT+1Ll9sQ+i+gpsJgR?=
- =?us-ascii?Q?1QEq4GlCwyw3AIYRFO/kkcOobpB7DVCzEiscntjlVmSNCvu5KvqWhMCNtCKv?=
- =?us-ascii?Q?ITbzNzpIABOkEVeboQNSHVqwS2OJz7JNfKiyZqIpCtAI3dFBkPPKD8dyAUfP?=
- =?us-ascii?Q?28Vw7DA90SpiqBolUsomMotPvTb9CZWholCNHIAZl95voPSQruU2Vlr+bbQu?=
- =?us-ascii?Q?5H2jfxQ8CVt0Q/i9ZuFCjkJSJE5OPkY4P7n/Tfo5n7jJzqKfVkuRFefoeM9H?=
- =?us-ascii?Q?DS60DtS/ANwR/ESNZCQ6kcRur2dRAAc2Z6GRHSDIqa20i+x2IYgigvnasxCh?=
- =?us-ascii?Q?wRxkfZloKDo8hy+MkiUbR5Pg1j94nKXn0bNdVr2QPJepbrWQ9/N8iGXumXij?=
- =?us-ascii?Q?9Tuoqr2/vNLvEMOwuS4RIRtyjWaVi7pTcO7vmbRfcYjbldcBjMKEEK9aNVcl?=
- =?us-ascii?Q?r5tJSUscZNyEp03ewS+l9T1LXgvrJ/zZQUl14U+dau36XTZBC6tQvmu0MACv?=
- =?us-ascii?Q?v4HV/O4Lvr4hhV9YW5+IFbU8wD8wPqnGKeiauiREoaN3WTF/WBzIrG0z77B/?=
- =?us-ascii?Q?mB7W199lkO18Zbm3Ya+hnXLX7MG3SxfdNs6sNUSchFlg9AHhSC9zP1ScY+zs?=
- =?us-ascii?Q?yrVyy6YMB2hBzG60ffp8K07oOsW1csyKmJk5xffo+x/Pf96pAjJb/cXi6I1U?=
- =?us-ascii?Q?qgPgFQanG5eh3YNpysx3Tg0O7yUjnDVRN+20UNMWrGhI3zDRjpAOx4Ek3o4L?=
- =?us-ascii?Q?coJVlp3Bj3DaL7o8LhyOa5lGT4GdjR3iL6mbMAyXypBHMzilPT505cfn2OHe?=
- =?us-ascii?Q?KTYepaJZVsJHqwbm9NI/+YdeoEcZQ1bruipa0+mhs1jO0tMkAKw/W33wdajq?=
- =?us-ascii?Q?yMjsBTZ3G8qnzKxCn5eDmr+Sb1Yr6U+7SeUT86pL3sVrHKBT7MYW4lvMhMvU?=
- =?us-ascii?Q?yfIa0LBZy8HX39+GNQpRPb8qZQgPsvq2mduLE2NkVaw+DvnEFzyqFgPNvGyf?=
- =?us-ascii?Q?p+HIywp/BUi3XlFlBJIAiu2h4Iz4xWPOXJoAXgmP0wzsG/jjBse8bHVKz5mn?=
- =?us-ascii?Q?4ITmRPssqxIDOs1G8dCA7jply5+ZOIin?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 06:29:19.6622
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aab2023-3178-4f9b-c597-08dcce3d3d7d
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK2PEPF00006FB4.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR04MB5609
 
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+syzbot reports a f2fs bug as below:
+
+kernel BUG at fs/f2fs/inode.c:896!
+RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
+Call Trace:
+ evict+0x532/0x950 fs/inode.c:704
+ dispose_list fs/inode.c:747 [inline]
+ evict_inodes+0x5f9/0x690 fs/inode.c:797
+ generic_shutdown_super+0x9d/0x2d0 fs/super.c:627
+ kill_block_super+0x44/0x90 fs/super.c:1696
+ kill_f2fs_super+0x344/0x690 fs/f2fs/super.c:4898
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
+
+Online repaire on corrupted directory in f2fs_lookup() can generate
+dirty data/meta while racing w/ readonly remount, it may leave dirty
+inode after filesystem becomes readonly, however, checkpoint() will
+skips flushing dirty inode in a state of readonly mode, result in
+above panic.
+
+Let's get rid of online repaire in f2fs_lookup(), and leave the work
+to fsck.f2fs.
+
+Fixes: 510022a85839 ("f2fs: add F2FS_INLINE_DOTS to recover missing dot dentries")
+Reported-by: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/000000000000a7b20f061ff2d56a@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/f2fs.h          | 11 -------
+ fs/f2fs/namei.c         | 68 -----------------------------------------
+ include/linux/f2fs_fs.h |  2 +-
+ 3 files changed, 1 insertion(+), 80 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 0341b61aa1f1..e0cdda701c24 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -1088,7 +1088,7 @@ power-sensor@41 {
- 	};
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f280b757c590..729b264b3bab 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -790,7 +790,6 @@ enum {
+ 	FI_NEED_IPU,		/* used for ipu per file */
+ 	FI_ATOMIC_FILE,		/* indicate atomic file */
+ 	FI_DATA_EXIST,		/* indicate data exists */
+-	FI_INLINE_DOTS,		/* indicate inline dot dentries */
+ 	FI_SKIP_WRITES,		/* should skip data page writeback */
+ 	FI_OPU_WRITE,		/* used for opu per file */
+ 	FI_DIRTY_FILE,		/* indicate regular/symlink has dirty pages */
+@@ -3082,7 +3081,6 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 			return;
+ 		fallthrough;
+ 	case FI_DATA_EXIST:
+-	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
+ 	case FI_COMPRESS_RELEASED:
+ 		f2fs_mark_inode_dirty_sync(inode, true);
+@@ -3206,8 +3204,6 @@ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
+ 		set_bit(FI_INLINE_DENTRY, fi->flags);
+ 	if (ri->i_inline & F2FS_DATA_EXIST)
+ 		set_bit(FI_DATA_EXIST, fi->flags);
+-	if (ri->i_inline & F2FS_INLINE_DOTS)
+-		set_bit(FI_INLINE_DOTS, fi->flags);
+ 	if (ri->i_inline & F2FS_EXTRA_ATTR)
+ 		set_bit(FI_EXTRA_ATTR, fi->flags);
+ 	if (ri->i_inline & F2FS_PIN_FILE)
+@@ -3228,8 +3224,6 @@ static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
+ 		ri->i_inline |= F2FS_INLINE_DENTRY;
+ 	if (is_inode_flag_set(inode, FI_DATA_EXIST))
+ 		ri->i_inline |= F2FS_DATA_EXIST;
+-	if (is_inode_flag_set(inode, FI_INLINE_DOTS))
+-		ri->i_inline |= F2FS_INLINE_DOTS;
+ 	if (is_inode_flag_set(inode, FI_EXTRA_ATTR))
+ 		ri->i_inline |= F2FS_EXTRA_ATTR;
+ 	if (is_inode_flag_set(inode, FI_PIN_FILE))
+@@ -3310,11 +3304,6 @@ static inline int f2fs_exist_data(struct inode *inode)
+ 	return is_inode_flag_set(inode, FI_DATA_EXIST);
+ }
  
- 	power-sensor@44 {
--		compatible = "ti,ina238";
-+		compatible = "ti,ina238", "renesas,isl28022";
- 		shunt-resistor = <1000>;
- 		reg = <0x44>;
- 	};
+-static inline int f2fs_has_inline_dots(struct inode *inode)
+-{
+-	return is_inode_flag_set(inode, FI_INLINE_DOTS);
+-}
+-
+ static inline int f2fs_is_mmap_file(struct inode *inode)
+ {
+ 	return is_inode_flag_set(inode, FI_MMAP_FILE);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 38b4750475db..57d46e1439de 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -457,62 +457,6 @@ struct dentry *f2fs_get_parent(struct dentry *child)
+ 	return d_obtain_alias(f2fs_iget(child->d_sb, ino));
+ }
+ 
+-static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+-	struct qstr dot = QSTR_INIT(".", 1);
+-	struct f2fs_dir_entry *de;
+-	struct page *page;
+-	int err = 0;
+-
+-	if (f2fs_readonly(sbi->sb)) {
+-		f2fs_info(sbi, "skip recovering inline_dots inode (ino:%lu, pino:%u) in readonly mountpoint",
+-			  dir->i_ino, pino);
+-		return 0;
+-	}
+-
+-	if (!S_ISDIR(dir->i_mode)) {
+-		f2fs_err(sbi, "inconsistent inode status, skip recovering inline_dots inode (ino:%lu, i_mode:%u, pino:%u)",
+-			  dir->i_ino, dir->i_mode, pino);
+-		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		return -ENOTDIR;
+-	}
+-
+-	err = f2fs_dquot_initialize(dir);
+-	if (err)
+-		return err;
+-
+-	f2fs_balance_fs(sbi, true);
+-
+-	f2fs_lock_op(sbi);
+-
+-	de = f2fs_find_entry(dir, &dot, &page);
+-	if (de) {
+-		f2fs_put_page(page, 0);
+-	} else if (IS_ERR(page)) {
+-		err = PTR_ERR(page);
+-		goto out;
+-	} else {
+-		err = f2fs_do_add_link(dir, &dot, NULL, dir->i_ino, S_IFDIR);
+-		if (err)
+-			goto out;
+-	}
+-
+-	de = f2fs_find_entry(dir, &dotdot_name, &page);
+-	if (de)
+-		f2fs_put_page(page, 0);
+-	else if (IS_ERR(page))
+-		err = PTR_ERR(page);
+-	else
+-		err = f2fs_do_add_link(dir, &dotdot_name, NULL, pino, S_IFDIR);
+-out:
+-	if (!err)
+-		clear_inode_flag(dir, FI_INLINE_DOTS);
+-
+-	f2fs_unlock_op(sbi);
+-	return err;
+-}
+-
+ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 		unsigned int flags)
+ {
+@@ -522,7 +466,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	struct dentry *new;
+ 	nid_t ino = -1;
+ 	int err = 0;
+-	unsigned int root_ino = F2FS_ROOT_INO(F2FS_I_SB(dir));
+ 	struct f2fs_filename fname;
+ 
+ 	trace_f2fs_lookup_start(dir, dentry, flags);
+@@ -558,17 +501,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 		goto out;
+ 	}
+ 
+-	if ((dir->i_ino == root_ino) && f2fs_has_inline_dots(dir)) {
+-		err = __recover_dot_dentries(dir, root_ino);
+-		if (err)
+-			goto out_iput;
+-	}
+-
+-	if (f2fs_has_inline_dots(inode)) {
+-		err = __recover_dot_dentries(inode, dir->i_ino);
+-		if (err)
+-			goto out_iput;
+-	}
+ 	if (IS_ENCRYPTED(dir) &&
+ 	    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
+ 	    !fscrypt_has_permitted_context(dir, inode)) {
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index f17f89a259e2..b0b821edfd97 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -278,7 +278,7 @@ struct node_footer {
+ #define F2FS_INLINE_DATA	0x02	/* file inline data flag */
+ #define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
+ #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+-#define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
++#define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries (obsolete) */
+ #define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
+ #define F2FS_PIN_FILE		0x40	/* file should not be gced */
+ #define F2FS_COMPRESS_RELEASED	0x80	/* file released compressed blocks */
 -- 
-2.25.1
+2.40.1
 
 
