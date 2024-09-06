@@ -1,47 +1,74 @@
-Return-Path: <linux-kernel+bounces-318571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBAE96EFF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F198A96F012
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2B01F2660E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78021F2829D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F03A1C8FD8;
-	Fri,  6 Sep 2024 09:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD381C8FD6;
+	Fri,  6 Sep 2024 09:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rio4yLoS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PowfCfWx"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6966D1C8FBD;
-	Fri,  6 Sep 2024 09:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714811C8FD5
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615843; cv=none; b=fmOxeJFe8uoUMh/D1gjJ0RjBNgT1COiFw0531y8GSDQojy+/U/kPnWVPNUr5iFVXPz9PoCD7fqxL1IjLvmEXJauokmZYbTimB3A3OYa8hDu6M3IjfBkz0Zmbpd5Bo/ljzOv9CPMnO+cxOrF30hQCn+JQfne+MdqkDlPfyxXa6CU=
+	t=1725615940; cv=none; b=rLUSIzWtBpqNvu/JZ7NrF67cKbTVapEu5cbZVEG5RcCCDgd1JEtTwxl/S1ADJbh+D7pNszruz4/HVr0rWQ6tVee86dTJd3tyBbKSdo3ZSB/FJTd03hD5U2vcUZmpBUEYY7TY8tDwPEt+gHhx5jSj9rywVKQV6HdnrP/TAQro77o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615843; c=relaxed/simple;
-	bh=ctoIqVk59onNiwJscBSD56mdXhYR1v1Zr4NXCymePbw=;
+	s=arc-20240116; t=1725615940; c=relaxed/simple;
+	bh=7PbyHCGSU/EBWPpLh2nI/FGAdjLSfkCd7ogz0SmyE84=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VU0pp9Xq3KkZoIj9uoobUkRAp8DD8QRc9Swf2YfIgULwuMp6m/vAjluu3wPP2asRwUUhGaAuRNyW0SWHZ1QZKEFmviRNhjG8yAsZQV/nVP0+wvW/RgS3wq7YpDcmtYUqLgstcMoD9iTb6qFXSp+SqpWDXBnHWFX22hLOeTwRdpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rio4yLoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C478EC4CEC4;
-	Fri,  6 Sep 2024 09:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725615842;
-	bh=ctoIqVk59onNiwJscBSD56mdXhYR1v1Zr4NXCymePbw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rio4yLoSYG5EyDfNOFnxyZxPCWxLhb1jx4wCWpw93o2hoeOKbBOwI4Jac2Vv9lGMl
-	 kahY22CU9OTKEunPG+UPfkrVX3bh/9DJgHY5Zc/GHO/fTKiokoHhDL2t0unXGGLb7p
-	 H/+6e4nOQ7Ai+odbaQrqkFJc7vIR8Ds5ws3M1R/N2qwa3XinxPK43OtTonk6YCuN5G
-	 osxuBYCDnQzG6yfYLocXOD/HETf0wvKOV8A7RNWpPKb46MXYYzQPAOdeDTFCxsZoW9
-	 lT41zdk924orpJTeIbFk9gwRnskpzOp7K3xZzsi66yO5Ur+IdyJh3iJsVU8BkJVGr+
-	 XEvHuoE791ueQ==
-Message-ID: <e4ee504b-98a8-4b35-9e1a-195395cdacf8@kernel.org>
-Date: Fri, 6 Sep 2024 11:43:53 +0200
+	 In-Reply-To:Content-Type; b=Txsykb5AxJyAgAGPyODUITh1SMKNQlQZtv0455EOW5MKQgdZKCSLXlnq4TMoOsMmwlTNdADn6Z1DTm8Ivml6WbuBZm4OiSiyITEJrr3G61BftsmQMTqe2HtPIAKFwMaFU9dJuZ9iTKo0aLxwesWfdFID/9r4n+wx08fG6+zKFM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PowfCfWx; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42c7bc97423so18800955e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 02:45:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725615937; x=1726220737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mMLNOnOgZigxncEhDKlQLxYVkdY5WouKUkAt0vKRysU=;
+        b=PowfCfWxNUrSItjl69Eo1wCgYEEnZAj/SzvU4+iPbZRVOqWp5JxuEbVpxyEgJzyPLl
+         1YmutkpIFxnpTCqjmQb19+e99OnR5riwaoDnuZZAOmLbYh4zNyly0nYCaj/U+2HhC0xT
+         pgyw7x9XdUIdIj/hDYLG35pIB0TQGdGP5eEwaDu82M0Xnp0dHTGAHMASvVSIjo1wrhWi
+         bUYlnr2g8G6egEA9VU0O6GeV5XFZEj1UIN0Ant8TJNbvigqBuf+5fcg06wGQR2uAWatj
+         AjOxOq2YQ34nKO2m5xLt8yTWj3qcnXnk9do138tLbZR8Jmxqzoc+YQIO3hvrbupt52Cs
+         gbrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725615937; x=1726220737;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mMLNOnOgZigxncEhDKlQLxYVkdY5WouKUkAt0vKRysU=;
+        b=UoBzsKPxfs09a/Z+UCiusSlKMr/jbsmN+UwjxJu+1Quq55e8qBJ5Kf4TVst9Y+m4Am
+         rYjTm4eQKzzwLaXYZ7M3WFJAdiRNcoTV60GpIa+PuUUc6VzGcS1nkLSCV8cu+4t9B07q
+         ue34dr5BrGyOIvhjOR8m7Nr2htAIMFax0j6ul94BoTKwlFJsdMdlXFSUPaf/tfPwXtHH
+         TE1lYM8u2JozzwiS/cmYw0lFrlzZ6T6ddfs+OeVsVKo8gek+awHcgPvXzyM8h3nmbwaL
+         U+XvJwrXDFP1EaKQlzA+XekkUnVycmxDg9ViFeI0AHDYmYqnFP0+5VFPIHFhT8j1Mp8M
+         XInw==
+X-Forwarded-Encrypted: i=1; AJvYcCVshZ20mqWBUmbMoUENBFDGc8dBiU0/L8o5tB4qTaViJu7q6mgeREoPLISkIJpxc4ZwEO5eFRgl/N5LWfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYk5TOeCYhb8Z5V30VZt9EkR+TK+GW73Vuj+S+EFb+Omhmx0q8
+	0i/lwtjX9w4pSoBG9wCikuQLNaI6xufGTX/RvqM2KHSvAc29bUWmF6EnRMcfRe8aFGUTXorltwl
+	y
+X-Google-Smtp-Source: AGHT+IECmYyhyA+IpABo5bXuqpdZnToIY8Sd1IRurZQbW8hGzZw7lteqMNDonXje3MoT/oWp4yuj+A==
+X-Received: by 2002:a05:600c:1d99:b0:428:f0a:3f92 with SMTP id 5b1f17b1804b1-42c9f98c2b0mr17597355e9.21.1725615936652;
+        Fri, 06 Sep 2024 02:45:36 -0700 (PDT)
+Received: from [192.168.0.2] (host-95-233-232-76.retail.telecomitalia.it. [95.233.232.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca053ec61sm14854315e9.0.2024.09.06.02.45.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 02:45:36 -0700 (PDT)
+Message-ID: <fb50e9a6-f78f-41ba-af67-8eb414e9d54c@baylibre.com>
+Date: Fri, 6 Sep 2024 11:44:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,324 +76,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
-To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
- Chukun Pan <amadeus@jmu.edu.cn>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-2-bigfoot@classfun.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 0/9] iio: add support for the ad3552r AXI DAC IP
+To: Conor Dooley <conor@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240906-unwatched-backshift-4782a627278f@squawk>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240906093630.2428329-2-bigfoot@classfun.cn>
-Content-Type: text/plain; charset=UTF-8
+From: Angelo Dureghello <adureghello@baylibre.com>
+In-Reply-To: <20240906-unwatched-backshift-4782a627278f@squawk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 06/09/2024 11:36, Junhao Xie wrote:
-> Add a driver for Photonicat power management MCU, which
-> provides battery and charger power supply, real-time clock,
-> watchdog, hardware shutdown.
-> 
-> This driver implementes core MFD/serdev device as well as
-> communication subroutines necessary for commanding the device.
-> 
-> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
-> ---
->  drivers/mfd/Kconfig                |  13 +
->  drivers/mfd/Makefile               |   1 +
->  drivers/mfd/photonicat-pmu.c       | 501 +++++++++++++++++++++++++++++
->  include/linux/mfd/photonicat-pmu.h |  86 +++++
->  4 files changed, 601 insertions(+)
->  create mode 100644 drivers/mfd/photonicat-pmu.c
->  create mode 100644 include/linux/mfd/photonicat-pmu.h
+Hi Conor,
 
-...
+On 06/09/24 11:07 AM, Conor Dooley wrote:
+> On Thu, Sep 05, 2024 at 05:17:30PM +0200, Angelo Dureghello wrote:
+>> The serie comes from the previously discussed RFC, that i
+>> converted to a normal patch from this v2.
+>>
+>> Purpose is to add ad3552r AXI DAC (fpga-based) support.
+>>
+>> The fpga DAC IP has been created to reach the maximum speed
+>> (33MUPS) supported from the ad3552r. To obtain the maximum
+>> transfer rate, the custom module has been implemented using
+>> the QSPI lines in DDR mode, using a dma buffer.
+>>
+>> The design is actually using the DAC backend since the register
+>> map is the same of the generic DAC IP, except for some customized
+>> bitfields. For this reason, a new "compatible" has been added
+>> in adi-axi-dac.c.
+>>
+>> Also, backend has been extended with all the needed functions
+>> needed for this use case, keeping the names gneric.
+>>
+>> Note: the following patch is actually for linux-iio/testing
+>> ---
+>> Changes in v2:
+>> - use unsigned int on bus_reg_read/write
+>> - add a compatible in axi-dac backend for the ad3552r DAC IP
+>> - minor code alignment fixes
+>> - fix a return value not checked
+>> - change devicetree structure setting ad3552r-axi as a backend
+>>    subnode
+>> - add synchronous_mode_available in the ABI doc
+> Please give reviewers a chance to response to in-progress discussion on
+> a version before sending a new one. I've left a couple of responses to
+> v1 that I only had a chance to reply to today due to travel.
 
-> +void *pcat_data_get_data(struct pcat_data *data)
-> +{
-> +	if (!data)
-> +		return NULL;
-> +	return data->data;
-> +}
-> +EXPORT_SYMBOL_GPL(pcat_data_get_data);
+sure, will wait some more days next time.
 
-You need kerneldoc... or just drop it. Looks a bit useless as an
-export... Is it because you want to hide from your own driver pcat_data?
-What for? It's your driver...
-
-> +
-> +int pcat_pmu_send(struct pcat_pmu *pmu, enum pcat_pmu_cmd cmd,
-> +		  const void *data, size_t len)
-> +{
-> +	u16 frame_id = atomic_inc_return(&pmu->frame);
-> +
-> +	return pcat_pmu_raw_write(pmu, frame_id, cmd, false, data, len);
-> +}
-> +EXPORT_SYMBOL_GPL(pcat_pmu_send);
-> +
-> +int pcat_pmu_execute(struct pcat_request *request)
-> +{
-> +	int ret = 0, retries = 0;
-> +	unsigned long flags;
-> +	struct pcat_pmu *pmu = request->pmu;
-> +	struct pcat_request_request *req = &request->request;
-> +	struct pcat_request_reply *reply = &request->reply;
-> +
-> +	init_completion(&request->received);
-> +	memset(reply, 0, sizeof(request->reply));
-> +
-> +	mutex_lock(&pmu->reply_lock);
-> +	if (request->frame_id == 0)
-> +		request->frame_id = atomic_inc_return(&pmu->frame);
-> +	pmu->reply = request;
-> +	mutex_unlock(&pmu->reply_lock);
-> +
-> +	if (req->want == 0)
-> +		req->want = req->cmd + 1;
-> +
-> +	dev_dbg(pmu->dev, "frame 0x%04X execute cmd 0x%02X\n",
-> +		request->frame_id, req->cmd);
-> +
-> +	while (1) {
-> +		spin_lock_irqsave(&pmu->bus_lock, flags);
-> +		ret = pcat_pmu_raw_write(pmu, request->frame_id, req->cmd,
-> +					 true, req->data, req->size);
-> +		spin_unlock_irqrestore(&pmu->bus_lock, flags);
-> +		if (ret < 0) {
-> +			dev_err(pmu->dev,
-> +				"frame 0x%04X write 0x%02X cmd failed: %d\n",
-> +				request->frame_id, req->cmd, ret);
-> +			goto fail;
-> +		}
-> +		dev_dbg(pmu->dev, "frame 0x%04X waiting response for 0x%02X\n",
-> +			request->frame_id, req->cmd);
-> +		if (!wait_for_completion_timeout(&request->received, HZ)) {
-> +			if (retries < 3) {
-> +				retries++;
-> +				continue;
-> +			} else {
-> +				dev_warn(pmu->dev,
-> +					 "frame 0x%04X cmd 0x%02X timeout\n",
-> +					 request->frame_id, req->cmd);
-> +				ret = -ETIMEDOUT;
-> +				goto fail;
-> +			}
-> +		}
-> +		break;
-> +	}
-> +	dev_dbg(pmu->dev, "frame 0x%04X got response 0x%02X\n",
-> +		request->frame_id, reply->head.command);
-> +
-> +	return 0;
-> +fail:
-> +	mutex_lock(&pmu->reply_lock);
-> +	pmu->reply = NULL;
-> +	mutex_unlock(&pmu->reply_lock);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(pcat_pmu_execute);
-
-You need kerneldoc.
-
-> +
-> +int pcat_pmu_write_data(struct pcat_pmu *pmu, enum pcat_pmu_cmd cmd,
-> +			const void *data, size_t size)
-> +{
-> +	int ret;
-> +	struct pcat_request request = {
-> +		.pmu = pmu,
-> +		.request.cmd = cmd,
-> +		.request.data = data,
-> +		.request.size = size,
-> +	};
-> +	ret = pcat_pmu_execute(&request);
-> +	if (request.reply.data)
-> +		devm_kfree(pmu->dev, request.reply.data);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(pcat_pmu_write_data);
-
-You need kerneldoc.
-
-
-> +
-> +static const struct serdev_device_ops pcat_pmu_serdev_device_ops = {
-> +	.receive_buf = pcat_pmu_receive_buf,
-> +	.write_wakeup = serdev_device_write_wakeup,
-> +};
-> +
-> +int pcat_pmu_register_notify(struct pcat_pmu *pmu, struct notifier_block *nb)
-
-You need kerneldoc.
-
-> +{
-> +	return blocking_notifier_chain_register(&pmu->notifier_list, nb);
-> +}
-> +EXPORT_SYMBOL_GPL(pcat_pmu_register_notify);
-> +
-> +void pcat_pmu_unregister_notify(struct pcat_pmu *pmu, struct notifier_block *nb)
-
-You need kerneldoc.
-
-
-> +{
-> +	blocking_notifier_chain_unregister(&pmu->notifier_list, nb);
-> +}
-> +EXPORT_SYMBOL_GPL(pcat_pmu_unregister_notify);
-> +
-> +static int pcat_pmu_probe(struct serdev_device *serdev)
-> +{
-> +	int ret;
-> +	u32 baudrate;
-> +	u32 address;
-> +	char buffer[64];
-> +	struct pcat_pmu *pmu = NULL;
-> +	struct device *dev = &serdev->dev;
-> +
-> +	pmu = devm_kzalloc(dev, sizeof(struct pcat_pmu), GFP_KERNEL);
-
-sizeof(*)
-
-> +	if (!pmu)
-> +		return -ENOMEM;
-
-Blank line
-
-> +	pmu->dev = dev;
-> +	pmu->serdev = serdev;
-> +	spin_lock_init(&pmu->bus_lock);
-> +	mutex_init(&pmu->reply_lock);
-> +	init_completion(&pmu->first_status);
-> +
-> +	if (of_property_read_u32(dev->of_node, "current-speed", &baudrate))
-> +		baudrate = 115200;
-> +
-> +	if (of_property_read_u32(dev->of_node, "local-address", &address))
-> +		address = 1;
-> +	pmu->local_id = address;
-> +
-> +	if (of_property_read_u32(dev->of_node, "remote-address", &address))
-> +		address = 1;
-> +	pmu->remote_id = address;
-> +
-> +	serdev_device_set_client_ops(serdev, &pcat_pmu_serdev_device_ops);
-> +	ret = devm_serdev_device_open(dev, serdev);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to open serdev\n");
-> +
-> +	serdev_device_set_baudrate(serdev, baudrate);
-> +	serdev_device_set_flow_control(serdev, false);
-> +	serdev_device_set_parity(serdev, SERDEV_PARITY_NONE);
-> +	dev_set_drvdata(dev, pmu);
-> +
-> +	/* Disable watchdog on boot */
-> +	pcat_pmu_write_data(pmu, PCAT_CMD_WATCHDOG_TIMEOUT_SET,
-> +			    (u8[]){ 60, 60, 0 }, 3);
-> +
-> +	/* Read hardware version */
-> +	pcat_pmu_read_string(pmu, PCAT_CMD_PMU_HW_VERSION_GET,
-> +			     buffer, sizeof(buffer));
-> +	if (buffer[0])
-> +		dev_info(dev, "PMU Hardware version: %s\n", buffer);
-
-dev_dbg
-
-> +
-> +	/* Read firmware version */
-> +	pcat_pmu_read_string(pmu, PCAT_CMD_PMU_FW_VERSION_GET,
-> +			     buffer, sizeof(buffer));
-> +	if (buffer[0])
-> +		dev_info(dev, "PMU Firmware version: %s\n", buffer);
-
-dev_dbg. Your driver is supposed to be silent.
-
-> +
-> +	return devm_of_platform_populate(dev);
-> +}
-> +
-> +static const struct of_device_id pcat_pmu_dt_ids[] = {
-> +	{ .compatible = "ariaboard,photonicat-pmu", },
-
-Undocumented compatible.
-
-Remember about correct order of patches. ABI documentation is before users.
-
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, pcat_pmu_dt_ids);
-> +
-> +static struct serdev_device_driver pcat_pmu_driver = {
-> +	.driver = {
-> +		.name = "photonicat-pmu",
-> +		.of_match_table = pcat_pmu_dt_ids,
-> +	},
-> +	.probe = pcat_pmu_probe,
-> +};
-> +module_serdev_device_driver(pcat_pmu_driver);
-> +
-> +MODULE_ALIAS("platform:photonicat-pmu");
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-And it is not even correct. This is not a platform driver!
-
-
-Best regards,
-Krzysztof
+Regards,
+-- 
+  ,,,      Angelo Dureghello
+:: :.     BayLibre -runtime team- Developer
+:`___:
+  `____:
 
 
