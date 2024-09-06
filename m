@@ -1,87 +1,120 @@
-Return-Path: <linux-kernel+bounces-319244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6BE96F9AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:59:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FF396F9BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B6E285658
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:59:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5595A1C21CA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD851D45E8;
-	Fri,  6 Sep 2024 16:59:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898711D4606;
+	Fri,  6 Sep 2024 17:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6U1S6Ej"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319851D3634
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0AC1D3620
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725641944; cv=none; b=U4u58mQGKOtAUPC/uMh6Gm+gzwV7cDX9HdEsJTQ4Ck/ab2+xDqaVX8M6uLBwaaGVTO6qGDGrgijZK5V8wMBD51Nfy2PbOHQ3RQxa+yW1nClJXKLSd7JyYhGl8bdy1V/vEfUynqGZprAuuDodc5EzKlgYXuN5qBB3XZtJLJdHmjs=
+	t=1725642426; cv=none; b=dEjOJAtTFKv3jb8IAHj4GwvJj0LDVudVpNAV3Xx/SGvdjuL05uInjRFsKmRKQv4RBFLcRLufvHJQ+9VUGa7xGIg7UDeaCNquIn6YN2fm/JOe5AiddfQSl/lAv5W5vvsjHdW+XCReSlGVJskKnLvU2WfT6W97BaqzIuvw9y83R/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725641944; c=relaxed/simple;
-	bh=e5hMLYOMgd6fSUDyoYUu/wSyazrWKfKq+ppB4d0SBZQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=q85CA70Nzh7vBqEaaqpdLZxjXo6bYyFPZIXAF/XtCdGu4FeSk2+QpZ0Y3lvc5l/2m96z5dmHorAin2/ZDVEPXqEFT92uQnIv4M7LY/g0iJ5HjDfuv36oCtZwf8lsZzJn1vy07C92Liaj+Z52NU/uN1pkMiqhyaQjzRGYUNfj6/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a3fa4edbdso526908239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:59:02 -0700 (PDT)
+	s=arc-20240116; t=1725642426; c=relaxed/simple;
+	bh=c/wFplKjGeoEW8s6yT+hTQd/xCooij82y3QwuPFojJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kwsDffmrzOO+wpTUSyW+TA9rQYcOU4xBAFTpdCrGYioANOZGXCxf/3WjNi9SAXkqSub8EuHoeBmCrHpWmotC3a9QUYkMgNKeVRAo1ysVkh0qBGJARJps+Z5E47zOMKKpwADAUOVcOSUphYLaTbPGErounnCwL9h6da2UjCgKyJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6U1S6Ej; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20551eeba95so23347875ad.2;
+        Fri, 06 Sep 2024 10:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725642424; x=1726247224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wGRYx+Z/60K8I4cTktkF9rBnE5w/ipry+Qd9MExXW8M=;
+        b=c6U1S6EjyGW2tpywQCKqwUPHhm4ffcxC7pR/Evsu7U39kH7tFZZmHLD3Ns5SM48mb7
+         lxmCdqg3GILNeIQCxiMfxFyLoLjAY6mvS82Rw+TG3RYRDRC/7z/bgtfS7NbnEPb215a7
+         iXPwSAhRxe6AQf6QUZJuek/CszcCI4VESV+X06bi586sBbpYL0NYEwCnmkavNIUvvdOO
+         QPspbnvdMebjwV5kTRe+BeBEWQF4eb3QnJdjZ+jgwS3qdhNb5duxVeATir2zpBivGhnI
+         3pTNqLAqNQrJ4W/K8d1IbPEWiGpR6+ZKFG0XDvrU9+G19rdzz8JrfqcecnoG5Q+82tI3
+         LC4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725641942; x=1726246742;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7mtYQk7Eetq9jvIgimP8N8vZdUqiRvnKLLxGUtIQtg=;
-        b=PwYvu9KkZ3wZ+OFX0pCPE+5Oo/I04FB182EMxSiqGoiGt467t+IOJgVurkp9G+dcnz
-         2HE+TCWisvzhL9WVJTJ+00OnE/FkYAUQMnLdHjVH8MHYBS6r9jyQJ/vfeBeln6j97gEL
-         rY1G+zc8jp+JgdSo3FNEkgeTZ+emnGHqYsybe3L8N5fQkcSvhqbPnv4ErDPNMkF7Q3mk
-         2mD9r3lozsWmUrq/gErLI949UQIQqEuX6quC57BRn9oM13E5VEkdUwgWEfVfVj1nRfni
-         ZlBNbD/SJT54l+dJEi4nMKLlqEBD3e7hAg+sBa/9ePUv8wAzKV436Ndnd3ZlnQP9qAXo
-         kdcw==
-X-Forwarded-Encrypted: i=1; AJvYcCW21TyiUAST4Jyxz0sZItzeDhbZuINw5VApFgZarlNvADACAUJ8OSD5D3baFp34mRlVQlI5C6jFgkrRwxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp5qDvVbFpShICCG4BduI9XtLrD20aTQm7IpZVu8B88NXojLLO
-	qyF3Nrhey2gxeIdsN0RkvazN1LBklABRG/KCsbLg5sFIOM4Kkkaln3WO1v2lIg84CVek5LWPciQ
-	9MDSw54rxnwAHnqS3mpiAz7ee4aDonbFtAaiYZFaL2G1h285j3L05WUk=
-X-Google-Smtp-Source: AGHT+IF1npguOCicLVvB4f/bQKVyMCjyUoDNmxl9SBB3iYqULav0t5dWBHvjnPBUh1iVyIAioTn2/XQ7X+Nb3DjKgI9v317wX4gc
+        d=1e100.net; s=20230601; t=1725642424; x=1726247224;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wGRYx+Z/60K8I4cTktkF9rBnE5w/ipry+Qd9MExXW8M=;
+        b=nd4aMIjC9Kd4RIgUA7/vWuCOEBRCKie1j14x+umlqZliMtVA1H5UjRO4SEl+mYdoep
+         +S38/GA03PUZCKws+UfSBMyX7roYMeltS2HpcX6eytWmh1eBzVTmeRZEowJp8EJtViXH
+         /gmOoGTihIHUTJP7BF1W1uCQMTMPyzzyEuFTQ3GRsk1FNR6nLNWY44F8U+xQ2127MNxB
+         UEVvtZbQ1H2/Rg9sBa0nSm3IPED7krqXAydmgTWsag5p2TqBzrK56rJS3v+sfx9cWswK
+         EBsIjvYfxPniL9uV3UeX0n2No6yjXvcdBySSa04a1BuqcJjj1+1OMivVLAZPj/sQXxX7
+         UsgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVd1q/ci9S0XGsudBVI0cZZmUlZdRsuNBQnt23nZYy0hBJj8cuBmTN3w63Y1sH+wuddKDhejfM35z0Di8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFmZiqNmkXHKlrVHaVvWwqaZlyzubt2qvI0gnwp8hYBLwWurd+
+	pTztEqy63slE0OvUZcS8bgRyRwyEIxY3rz7l8hER6bm44YsnmUGY
+X-Google-Smtp-Source: AGHT+IGYxo6SZ92DwzJI7kuPsy/xXiG+Um3ZAD+zN75W/LaCZPp/7Zlz+42nZa9ahtMv7POc6dj3Sg==
+X-Received: by 2002:a17:902:e885:b0:206:c675:66d5 with SMTP id d9443c01a7336-206f04e1e90mr35877335ad.15.1725642423732;
+        Fri, 06 Sep 2024 10:07:03 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-206ae965b58sm45317185ad.118.2024.09.06.10.07.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 10:07:03 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: asahi@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH 0/2] Disable 32-bit EL0 for Apple A10(X), T2
+Date: Sat,  7 Sep 2024 00:59:37 +0800
+Message-ID: <20240906170648.323759-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19ce:b0:3a0:4646:8a7d with SMTP id
- e9e14a558f8ab-3a04f10e30fmr1278305ab.5.1725641942241; Fri, 06 Sep 2024
- 09:59:02 -0700 (PDT)
-Date: Fri, 06 Sep 2024 09:59:02 -0700
-In-Reply-To: <tencent_08AE7451777167B63C51364097F8363A4A09@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fa27700621765237@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
-From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Apple's A10(X), T2 SoCs consists of pairs of performance and efficiency
+cores. However, only one of the core types may be active at a given time,
+and to software, it appears as logical cores that could switch between
+P-mode and E-mode, depending on the p-state.
 
-Reported-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
-Tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+Unforunately, only the performance cores can execute 32-bit EL0. To
+software, this results in logical cores that lose ability to execute
+32-bit EL0 when the p-state is below a certain value.
 
-Tested on:
+Since these CPU cores only supported 16K pages, many AArch32
+executables will not run anyways. This series disables 32-bit EL0 for
+these SoCs.
 
-commit:         b831f83e Merge tag 'bpf-6.11-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a09167980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b20709980000
+Nick Chan
 
-Note: testing is done by a robot and is best-effort only.
+---
+
+Nick Chan (2):
+  arm64: cputype: Add CPU types for A7-A11, T2 SoCs
+  arm64: cpufeature: Pretend that Apple A10(X), T2 does not support
+    32-bit EL0
+
+ arch/arm64/include/asm/cputype.h | 42 +++++++++++++++++++++++---------
+ arch/arm64/kernel/cpufeature.c   | 25 +++++++++++++++++++
+ 2 files changed, 55 insertions(+), 12 deletions(-)
+
+
+base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+-- 
+2.46.0
+
 
