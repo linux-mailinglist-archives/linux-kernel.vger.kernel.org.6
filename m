@@ -1,147 +1,97 @@
-Return-Path: <linux-kernel+bounces-318151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912A496E8FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:11:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B54196E900
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8F928485A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:11:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75BC1C23658
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F17277112;
-	Fri,  6 Sep 2024 05:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763A57F48C;
+	Fri,  6 Sep 2024 05:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0dbrYDEx"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVGFLIE4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEDE54FB5
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 05:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7BA54FB5;
+	Fri,  6 Sep 2024 05:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725599459; cv=none; b=ixFUcjlQ/JXiDU3lNuvcKOPmEcWzjEr5fpheooZuWwNWQ+PHYAXIu7xnj9J5ABc1KneiXAImErcDT3qDLwJHMPk/JGGqQwBWHRTciavzSICVzFGBFCf1UZBMxNNWr4zJnr4BizJCehtu3elO/n7DXX9Ukfc6GNInpgoQb+2x+kU=
+	t=1725599535; cv=none; b=D/TeG35J4KcgV3NRTuhVkwxY8kotVsV0gaAf8wuXfHZv0ozTzxeDhSiGzjpqEFCBOd8VT/VJMb4OGZTc5dLsxgzC3F4P1nNW37o/7Yeg/+7LM8SpNVs8WR/9i95+cjZsHVHdX0SbXdLNbp0s3QbDmAU8DLqfkhrnAuz8ARGC6Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725599459; c=relaxed/simple;
-	bh=cox6Nxc7egq7AZwig73/QCORN5Qr52T6ViOyEhlj3O8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HozJUQl4Uc/7/JRMbWsS+YvvKZF/Tk6E1wqfSfF4hOBy6JANbOnSzAYueLpy0cmCzDUm36GBo0pQD0kxMwZYqTB5wZGajltUivf0FRv+x7LVxzl1QDN62JS6Fr+JqhnlG8BgoT1/Kby0hSG8WOk/EA4fjb8lnEFpGF/C0mets9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0dbrYDEx; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-846d74770a4so336899241.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 22:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725599455; x=1726204255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wtfXwtPAreobELFhytY+AFMWjfhxEApMqwxtGAQPF5w=;
-        b=0dbrYDExodw5q7EDMLIShbzIwomA2I0yPOB3ohTD3RoOxGmuD/OGGCghTkVH0PPAj4
-         9ivPhju8s80+UJPxswRnSUoWQusFIzJuQprvAqRB9aZkp0yTT1L2i0xRRS7teJBaYdvE
-         dJ+m1iNYRTSqo72H6y64BRAp6yfecZ0NVAxdSultcJ5GLHVI0YBfX/vpGkXjtBkGGden
-         Cmbp7kvbEbFnZUe6PfCj9HUt//cisgoyqiEKAbgVSafzxMJWLKMCZMC5c/Q4FUUfQY0O
-         X9tdDOZfzWEYY7V2t66KJRrEy8Peg9n1t0PhU/ZXwpuSlE3BsTG9g/8EQLNyd5ljFaTz
-         WBfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725599455; x=1726204255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wtfXwtPAreobELFhytY+AFMWjfhxEApMqwxtGAQPF5w=;
-        b=wIixJ3kGntxIPXLM3q+jvlnyUif+OBcoT2vhIeBJVktmHQ7MyR6bp+aNnTb58Jw4qL
-         Gerep4wFhWM3t3sQP/IrE+qN1437tFiBUS1jFyWchalSu6UbfujnJGwqDaUQHPWNmB/3
-         3tLXlBveQP8dJwbF25JUbszlb1zouU4yLYNe2nXxVtc5i5bMT16LM1VgiSbJYZAT11ck
-         mW0TZsL1eJVebBltDW5w+2xv5BMUfdYq58P2VAoCXaeBFxpTfp+jttqLyXsIi4kzhNs5
-         4dMVPfE0cVSaCaHuySt0VDjFGkaBk8N5W5qKsuaeI3XC266moCVQD5/dOqKCRJNby15i
-         +QYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTdsJwtL7ENA+be/1bxOqtveGiBWDLCWU0oxselcm2mkH2WpXOVxHnE+RJBeard7sg0BE4cKeZrnz2wRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySQ12aIFuLTQ1Dw7BciYl5zbacqL435y7tOR/SxLoC/AZfe4s0
-	/io7dfQpzArFaVq61bkyYEsSg0b0uRea4j7WdOdXCbJ/9GmbpjOMd9nzzMw2h5ju67Z3JMn5nvw
-	MqXPWd4vzbvss+ceUqR6qiao68GTN1WUO3WEA7Q==
-X-Google-Smtp-Source: AGHT+IEqVjx1uqswLtj04+06JSwnBwvixcQ6zE4PjuQ1mK8KKr5zEv9HB8xSLkouZcGTEIYAbRmMs9ehQ/l1tT2eMuw=
-X-Received: by 2002:a05:6122:470f:b0:4fc:eda5:634f with SMTP id
- 71dfb90a1353d-50207c2e984mr1486839e0c.4.1725599455053; Thu, 05 Sep 2024
- 22:10:55 -0700 (PDT)
+	s=arc-20240116; t=1725599535; c=relaxed/simple;
+	bh=LZZWxcMxT163bv4rhTf6ukqGVdnUPsJwkRVsmldznFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cFggNstBGGS3mvNT5e5QRdY0Pu+P8FicLMqq9IHMmaDBKUDfcVVER7Cu0rH6DE7Tf5qG97jOAFABb7KUObSQ9KoqELUzy2EKdKYDq32bhKS2fESp/3GH7X8xkmIiKqSnQ4YMoFJTU7A4nXt3kif9OuBUf5pTW2UkAhY0nnBzm14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KVGFLIE4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B52C4CEC6;
+	Fri,  6 Sep 2024 05:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725599535;
+	bh=LZZWxcMxT163bv4rhTf6ukqGVdnUPsJwkRVsmldznFU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KVGFLIE4NNT2z2HPWj+onSPv+4W63UgxRtZYbA9/4wN7mWEtPIA13IFFsE3Jap9wk
+	 WCrU0CorabroVWe2HzB3NLQVzjguncFkU8SHgU1+l0ocQBpWPSuImDeYvAGnBM4WYA
+	 LDMLONQuFvzccUpz2HaW2X8Stl+jobAQgBj/p1xBsew7qUAcYuKd33vl22hNKlVTMC
+	 4waoFgvVHA7deDCOcHyDYkHIYFbNmuWze2OFKNU2Gkz39ymwuhd8V6zzxs7uwgWaP/
+	 KX7ScbrpFyIVW588Q3aJPDkXqAZAuLJe6ja1PWZyXzasVH/zvC8ijRuF/9j5hlDb1i
+	 0KBtC0zAegBfA==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	willy@infradead.org,
+	surenb@google.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	mjguzik@gmail.com,
+	brauner@kernel.org,
+	jannh@google.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH 0/2] uprobes,mm: speculative lockless VMA-to-uprobe lookup
+Date: Thu,  5 Sep 2024 22:12:03 -0700
+Message-ID: <20240906051205.530219-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905082404.119022-1-aardelean@baylibre.com>
- <20240905082404.119022-2-aardelean@baylibre.com> <7ba70132-e661-4f4f-a0e3-0ed1efc1aecb@baylibre.com>
-In-Reply-To: <7ba70132-e661-4f4f-a0e3-0ed1efc1aecb@baylibre.com>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Fri, 6 Sep 2024 08:10:44 +0300
-Message-ID: <CA+GgBR8H1TP1Ux8Fgohx0SkctxdvmtBZfqW+-k4cZsram5yScA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/8] iio: adc: ad7606: add 'bits' parameter to channels macros
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 6, 2024 at 12:25=E2=80=AFAM David Lechner <dlechner@baylibre.co=
-m> wrote:
->
-> On 9/5/24 3:23 AM, Alexandru Ardelean wrote:
-> > There are some newer additions to the AD7606 family, which support 18 b=
-it
-> > precision.
-> > Up until now, all chips were 16 bit.
-> >
-> > This change adds a 'bits' parameter to the AD760X_CHANNEL macro and ren=
-ames
-> > 'ad7606_channels' -> 'ad7606_channels_16bit' for the current devices.
-> >
-> > The AD7606_SW_CHANNEL() macro is also introduced, as a short-hand for I=
-IO
-> > channels in SW mode.
-> >
-> > Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> > ---
->
-> ...
->
-> > diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-> > index 0c6a88cc4695..771121350f98 100644
-> > --- a/drivers/iio/adc/ad7606.h
-> > +++ b/drivers/iio/adc/ad7606.h
-> > @@ -8,7 +8,7 @@
-> >  #ifndef IIO_ADC_AD7606_H_
-> >  #define IIO_ADC_AD7606_H_
-> >
-> > -#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all) { \
-> > +#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all, bits) {   \
-> >               .type =3D IIO_VOLTAGE,                            \
-> >               .indexed =3D 1,                                   \
-> >               .channel =3D num,                                 \
-> > @@ -19,24 +19,26 @@
-> >               .scan_index =3D num,                              \
-> >               .scan_type =3D {                                  \
-> >                       .sign =3D 's',                            \
-> > -                     .realbits =3D 16,                         \
-> > -                     .storagebits =3D 16,                      \
-> > +                     .realbits =3D (bits),                     \
-> > +                     .storagebits =3D (bits),                  \
->
-> Technically OK in this patch since bits is still always 16 but we
-> can avoid changing the same line again later to:
->
->         (bits) > 16 ? 32 : 16
->
-> if we just do that in this patch.
+Implement speculative (lockless) resolution of VMA to inode to uprobe,
+bypassing the need to take mmap_lock for reads, if possible. Patch #1 by Suren
+adds mm_struct helpers that help detect whether mm_struct were changed, which
+is used by uprobe logic to validate that speculative results can be trusted
+after all the lookup logic results in a valid uprobe instance.
 
-sure
-will update
+I ran a few will-it-scale benchmarks to sanity check that patch #1 doesn't
+introduce any noticeable regressions. Which it seems it doesn't.
 
->
->
-> >                       .endianness =3D IIO_CPU,                  \
-> >               },                                              \
-> >  }
+Andrii Nakryiko (1):
+  uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
+
+Suren Baghdasaryan (1):
+  mm: introduce mmap_lock_speculation_{start|end}
+
+ include/linux/mm_types.h  |  3 +++
+ include/linux/mmap_lock.h | 53 +++++++++++++++++++++++++++++++--------
+ kernel/events/uprobes.c   | 51 +++++++++++++++++++++++++++++++++++++
+ kernel/fork.c             |  3 ---
+ 4 files changed, 97 insertions(+), 13 deletions(-)
+
+-- 
+2.43.5
+
 
