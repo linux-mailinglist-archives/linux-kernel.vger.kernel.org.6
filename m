@@ -1,235 +1,129 @@
-Return-Path: <linux-kernel+bounces-318853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A7996F427
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:20:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9EF96F42D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5196B210B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:20:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D14B2200F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A4F1CC8B5;
-	Fri,  6 Sep 2024 12:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0811CC8B7;
+	Fri,  6 Sep 2024 12:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jNExSRcy"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4pM93fq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F5913AA38;
-	Fri,  6 Sep 2024 12:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00241C8FA6;
+	Fri,  6 Sep 2024 12:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725625226; cv=none; b=jJ6L+CrfTbUifePyevlqHN+jjO0aZwHts+JYDDpihlKNgi8fjfRrtGMIQeQde/o3aEg+8YgOL7Q6mmTu4JpVivmKCCPmPgF5LDvXxIqCCT5mZo8MhJnnDnoxz2gE2CczEu9otqWVo8UBruTVA7Y+a2fuhHpWY2S40FjKD2EX52w=
+	t=1725625371; cv=none; b=OrrdQc1fuS+GJJxsrNb87e6r2h0ErjstTW90hV4g1Df7KUTIfx00JyJdBPbNZlLiBIJIAPpd1ULO1iHWQQ7yzLa6OzmBS7BB+1Js2cg+hJcrbg8G+ecDJjAQii1+SAyAL4L2UL4HFaR+KNXWWa7rhObevxBE53Zn5ssNYJ7VoaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725625226; c=relaxed/simple;
-	bh=Y8S3sIUeUo+i76VJqD3Gk9saCrU/jNFW7+ZyZebjSrU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KJtK3q6mXvDuDxZFtfIwFSgkBMA8rd6tL7+c4tt44U6Gc090GiX8cptf05cpDIKA8bxiQQUoPtSD5cvtKLm4Y6cMVZsZNpoxrXkNx1DCUWG1aMbJbbHFi4qmOp+hwmZxFeUpiEG0OMZIp+Qgpr6VC0rDputIM2noKToZJtDeYk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jNExSRcy; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C0DBFC000B;
-	Fri,  6 Sep 2024 12:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725625221;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MtAkF99VG/OSc6QNgU0cRrGhkO1sSV69WMhxrgTuZIA=;
-	b=jNExSRcyFcWBI1DsCEiYSceE1JAcAaEyvsNSpGlZ+CnUdyeO4hPy0kqSD5KcNtxR+JrCtz
-	8pdSSbU2pzy54M70QEe2d+7T6Smnal/7UPkIqpBtxNpfJERTATWh1aG69wFnmQhAx4UfjG
-	Er9rBqCgLzxzafnxqTRCMcHzlPr1ETQyCIOE0JJWnEIE/PZsQi+qyZoa27jCXb9vRdAf4r
-	5FzBKLWClHEfzNSGyioGkjp3o9h3LfFdSDiY9OTCwi/1t5b6+1C4m5a6qtNtVLG5SJh8fi
-	veazp6wgkPV4QmuqgAKOsZBuBKtOK5mM3eQonNdeurMvUW+amm8WbLVBPP7Zqw==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Fri, 06 Sep 2024 14:20:58 +0200
-Subject: [PATCH] ASoC: tlv320aic31xx: Add support for loading filter
- coefficients
+	s=arc-20240116; t=1725625371; c=relaxed/simple;
+	bh=903Y2/P42uqE8vhBIvO5wIN2QsMnZgv3YNQ/YWSAn7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oji7I7r/PI5XutN7zIO40oXMQbr9vb/OX3R66qbPMf8n8wA0dXJeSEalCgnOieXyg949ryiGUc6KNSfYApZ9w27W2gcl62ciXmxezAnTOK6bdeB8y5bKYbzDFvsIGtlGfmnDhSwNtSHHAovcBRqjwFYa9urMMVfcdtdBHh8taYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4pM93fq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E0BC4CEC4;
+	Fri,  6 Sep 2024 12:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725625370;
+	bh=903Y2/P42uqE8vhBIvO5wIN2QsMnZgv3YNQ/YWSAn7Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L4pM93fqNdZdIxxMxpEXrG3FQPjrvPCP40RlhNqsSNuCK0i/Yje8DlYZjzUqdUWPg
+	 do3/n8OFC69685YL8hEB1G+UxkKTlMVCv/60g7F7bCTMqKa22DSNi8ARcLWtOdNLQo
+	 EspFFStIt8SEMTt/WS/WjUdm8hHpDwoINJ/v0V/SRK9msYmYjVLL454R006ChVRdJ+
+	 4wuQjgAqnMUsAoKCEHRbLMK+wy7gmsq+O7hQ4S9HfCTG8PQSgUfsBtUxfAbRfCTDHv
+	 YDQKtSihgyQ+WvGbmg1gu0L96oAPJ8Sis+53SXEXBOIvnHHgqXI8I46fLPm0UychTK
+	 TbOXM8OBD4cKA==
+Message-ID: <f5b768b3-37ad-4bdf-9cb6-b39b14c8ee45@kernel.org>
+Date: Fri, 6 Sep 2024 14:22:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: pmic: enable rtc
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com, quic_kotarake@quicinc.com,
+ quic_kamalw@quicinc.com, quic_skakitap@quicinc.com, quic_fenglinw@quicinc.com
+References: <20240902104302.3959670-1-quic_tingguoc@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240902104302.3959670-1-quic_tingguoc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240906-tlv320-filter-v1-1-6955f53ff435@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAKnz2mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwMz3ZKcMmMjA920zJyS1CJdQwvL1JQUMzMTS7NkJaCegqLUtMwKsHn
- RsbW1ANhLRdpfAAAA
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: romain.gantois@bootlin.com
 
-The TLV320DAC3100 Audio DAC has 25 built-in digital audio processing blocks
-(PRBs). Each of these PRBs has a static filter structure with programmable
-coefficients. Once a PRB is selected for use by the DAC, its filter
-coefficients can be configured via a dedicated set of registers.
+On 02/09/2024 12:43, Tingguo Cheng wrote:
+> Add RTC node, the RTC is controlled by PMIC device via spmi bus.
+> 
+> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+> index 1369c3d43f86..47d05b897d5a 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
 
-Define a new optional firmware which can be loaded by the TLV320DAC driver.
-This firmware describes a full set of filter coefficients for all blocks
-used by the various PRBs.
-
-The firmware's binary format is heavily inspired by the one used in the
-peb2466 driver. It includes a version marker to allow for potential
-evolutions of the format.
-
-Note that adaptive filtering is not supported i.e. filter coefficients are
-loaded once before power-on and then cannot be changed while the DAC is
-powered. This is why only page A coefficients are modified. Page B
-coefficients are only used for adaptive filtering.
-
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- sound/soc/codecs/tlv320aic31xx.c | 100 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 100 insertions(+)
-
-diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
-index 2f94cfda0e33..7e624c4b77b6 100644
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -12,6 +12,7 @@
-  * and mono/stereo Class-D speaker driver.
-  */
- 
-+#include <asm/unaligned.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/init.h>
-@@ -22,6 +23,7 @@
- #include <linux/gpio/consumer.h>
- #include <linux/regulator/consumer.h>
- #include <linux/acpi.h>
-+#include <linux/firmware.h>
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <sound/core.h>
-@@ -1638,6 +1640,98 @@ static const struct i2c_device_id aic31xx_i2c_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, aic31xx_i2c_id);
- 
-+static int tlv320dac3100_fw_load(struct aic31xx_priv *aic31xx,
-+				 const u8 *data, size_t size)
-+{
-+	int ret, reg;
-+	u16 val16;
-+
-+	/*
-+	 * Coefficients firmware binary structure. Multi-byte values are big-endian.
-+	 *
-+	 * @0, 16bits: Magic (0xB30C)
-+	 * @2, 16bits: Version (0x0100 for version 1.0)
-+	 * @4, 8bits: DAC Processing Block Selection
-+	 * @5, 62 16-bit values: Page 8 buffer A DAC programmable filter coefficients
-+	 * @129, 12 16-bit values: Page 9 Buffer A DAC programmable filter coefficients
-+	 *
-+	 * Filter coefficients are interpreted as two's complement values
-+	 * ranging from -32 768 to 32 767. For more details on filter coefficients,
-+	 * please refer to the TLV320DAC3100 datasheet, tables 6-120 and 6-123.
-+	 */
-+
-+	if (size != 153) {
-+		dev_err(aic31xx->dev, "firmware size is %zu, expected 153 bytes\n", size);
-+		return -EINVAL;
-+	}
-+
-+	/* Check magic */
-+	val16 = get_unaligned_be16(data);
-+	if (val16 != 0xb30c) {
-+		dev_err(aic31xx->dev, "fw magic is 0x%04x expected 0xb30c\n", val16);
-+		return -EINVAL;
-+	}
-+	data += 2;
-+
-+	/* Check version */
-+	val16 = get_unaligned_be16(data);
-+	if (val16 != 0x0100) {
-+		dev_err(aic31xx->dev, "invalid firmware version 0x%04x! expected 1", val16);
-+		return -EINVAL;
-+	}
-+	data += 2;
-+
-+	ret = regmap_write(aic31xx->regmap, AIC31XX_DACPRB, *data);
-+	if (ret) {
-+		dev_err(aic31xx->dev, "failed to write PRB index: err %d\n", ret);
-+		return ret;
-+	}
-+	data += 1;
-+
-+	/* Page 8 Buffer A coefficients */
-+	for (reg = 2; reg < 126; reg++) {
-+		ret = regmap_write(aic31xx->regmap, AIC31XX_REG(8, reg), *data);
-+		if (ret) {
-+			dev_err(aic31xx->dev,
-+				"failed to write page 8 filter coefficient %d: err %d\n", reg, ret);
-+			return ret;
-+		}
-+		data++;
-+	}
-+
-+	/* Page 9 Buffer A coefficients */
-+	for (reg = 2; reg < 26; reg++) {
-+		ret = regmap_write(aic31xx->regmap, AIC31XX_REG(9, reg), *data);
-+		if (ret) {
-+			dev_err(aic31xx->dev,
-+				"failed to write page 9 filter coefficient %d: err %d\n", reg, ret);
-+			return ret;
-+		}
-+		data++;
-+	}
-+
-+	dev_info(aic31xx->dev, "done loading DAC filter coefficients\n");
-+
-+	return ret;
-+}
-+
-+static int tlv320dac3100_load_coeffs(struct aic31xx_priv *aic31xx,
-+				     const char *fw_name)
-+{
-+	const struct firmware *fw;
-+	int ret;
-+
-+	ret = request_firmware(&fw, fw_name, aic31xx->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = tlv320dac3100_fw_load(aic31xx, fw->data, fw->size);
-+
-+	release_firmware(fw);
-+
-+	return ret;
-+}
-+
- static int aic31xx_i2c_probe(struct i2c_client *i2c)
- {
- 	struct aic31xx_priv *aic31xx;
-@@ -1727,6 +1821,12 @@ static int aic31xx_i2c_probe(struct i2c_client *i2c)
- 		}
- 	}
- 
-+	if (aic31xx->codec_type == DAC3100) {
-+		ret = tlv320dac3100_load_coeffs(aic31xx, "tlv320dac3100-coeffs.bin");
-+		if (ret)
-+			dev_warn(aic31xx->dev, "Did not load any filter coefficients\n");
-+	}
-+
- 	if (aic31xx->codec_type & DAC31XX_BIT)
- 		return devm_snd_soc_register_component(&i2c->dev,
- 				&soc_codec_driver_aic31xx,
-
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240806-tlv320-filter-189edd66496c
+We achieved consensus allowing sa8775p to stay, but now Qualcomm changes
+point of view and insists on new approach of dropping sa8775p. Therefore
+this change does not make much sense in the new approach.
 
 Best regards,
--- 
-Romain Gantois <romain.gantois@bootlin.com>
+Krzysztof
 
 
