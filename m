@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-319153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F266496F8A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C0B96F8AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15C1281F3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3381F281F3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5C31D319F;
-	Fri,  6 Sep 2024 15:51:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12DF1D3620;
+	Fri,  6 Sep 2024 15:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO+3czJj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A072374F1
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CDC374F1;
+	Fri,  6 Sep 2024 15:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725637872; cv=none; b=rPBNFeOV398WBBkIwLkrnOKdNq6ukpgG6QwGoMavLPQyUJjpLVR8Yn8nhQwyoipakazfa4/J7tDt9JY2M+I7Qy/nlLmQQodoDlokJsh7o2VR16EgZ80LT4O6qBj6r3Vkv37XrGfqDaNosmOs2BQ1Z403G6YT6clNCAElXRtruqw=
+	t=1725637965; cv=none; b=dYhog7buxCfzFXW2YE9xG1br5QS3k7Kopkn5P+eTajYPZidhfm71LQvOMRvCjy32jYhZq6rgy6HM0yHC/dwqAxz03NUVKdMuLCr/++GwlCrEOA+AQfeug8IlgTc1Eijrrq6u6Bq5yi2oD9kl4VqUJFXckhw/Ge3E1mZjFoL9r5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725637872; c=relaxed/simple;
-	bh=qo8O1h2lAqqv1CX/RzBNtMvvKqsJQzhgLJn7r2wlNX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2NhwKhOQm9CntEu7vo03SptXjkQYC53yi9jC89yYMdQjqO3oYYftueWpXkWMXSLGIgfvHBigRmhC75PZ0Z6kqlMgSFEEDQAgQf8LRfXsxd4kauzvcFdwd5+pUTP45Ph2si09r52hVaUoLch4faid3CyetLU+yv1I1Al3SA5tBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1smbEb-0007zn-CX; Fri, 06 Sep 2024 17:50:53 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1smbEZ-005ysl-Jh; Fri, 06 Sep 2024 17:50:51 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1smbEZ-00A9vb-1b;
-	Fri, 06 Sep 2024 17:50:51 +0200
-Date: Fri, 6 Sep 2024 17:50:51 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: net: ethernet-phy: Add
- forced-master/slave properties for SPE PHYs
-Message-ID: <Ztsk23X_0p57KGSS@pengutronix.de>
-References: <20240906144905.591508-1-o.rempel@pengutronix.de>
- <c08ac9b7-08e1-4cde-979c-ed66d4a252f1@lunn.ch>
+	s=arc-20240116; t=1725637965; c=relaxed/simple;
+	bh=8AR/kEPf0FAuH4RNYD8pbMauexDRH29Di8tE7w4W2VY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hrcrIu+Jx99+0MqtXO75//uotNvqKH09fhsiWUq5OlJSeD6QJrOe38WrLW4KIuiGyMIdrLpE4e+yhKGKhQFGfLCs7XXRZq7SFKD3cCJerVQuo7oZ4tLO9IrAWEYHafrvUUThTw0e5M5X+IH+t8c2PcQzpPpcVR07udWAHFV+dic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO+3czJj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7377FC4CEC4;
+	Fri,  6 Sep 2024 15:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725637964;
+	bh=8AR/kEPf0FAuH4RNYD8pbMauexDRH29Di8tE7w4W2VY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DO+3czJjfS30WPnAz5jpXkF6F2ADs1Imkec3ck9TjgqPJLTLqJ8PXc2JHRoA5FAkF
+	 Cd4TSBjHfZv8AUJeCxNbFSh6FOPPzXJjI9DSO8DiCH+zin4oTr/X8C9ZWa+J8abdyW
+	 vFpyvRdg0rLZdxouj/LMv+xpBKTPvWArLvnpOuw4ximJsAbfJQEQ1VewZLkeibUyiz
+	 Z3HqB/pJ8YEvJoLD3nuEju0AhktAnYS5wVh3dcG6e2v2BKC9mfA6n41cNoNKVzvmfI
+	 FFZPvnYhpIUpPOtlGd97aGWmQPBtiGybrOhzXCd/Ds10j1Wd6keDooNMtMR9u2DUOZ
+	 kMHnd3eNr9O2Q==
+From: Georgi Djakov <djakov@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	djakov@kernel.org
+Subject: [GIT PULL] interconnect changes for 6.12
+Date: Fri,  6 Sep 2024 18:52:27 +0300
+Message-Id: <20240906155227.310250-1-djakov@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c08ac9b7-08e1-4cde-979c-ed66d4a252f1@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 06, 2024 at 05:11:54PM +0200, Andrew Lunn wrote:
-> On Fri, Sep 06, 2024 at 04:49:05PM +0200, Oleksij Rempel wrote:
-> > Add two new properties, `forced-master` and `forced-slave`, to the
-> > ethernet-phy binding. These properties are intended for Single Pair
-> > Ethernet (1000/100/10Base-T1) PHYs, where each PHY and product may have
-> > a predefined link role (master or slave). Typically, these roles are set
-> > by hardware strap pins, but in some cases, device tree configuration is
-> > necessary.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >  .../devicetree/bindings/net/ethernet-phy.yaml | 22 +++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > index d9b62741a2259..af7a1eb6ceff6 100644
-> > --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-> > @@ -158,6 +158,28 @@ properties:
-> >        Mark the corresponding energy efficient ethernet mode as
-> >        broken and request the ethernet to stop advertising it.
-> > 
-> > +  forced-master:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      If set, forces the PHY to operate as a master. This is used in Single Pair
-> > +      Ethernet (1000/100/10Base-T1) where each PHY and product has a predefined
-> > +      link role (master or slave). This property is board-specific, as the role
-> > +      is usually configured by strap pins but can be set through the device tree
-> > +      if needed.
-> > +      This property is mutually exclusive with 'forced-slave'; only one of them
-> > +      should be used.
-> 
-> DT reviewers tend to complain about such mutually exclusive
-> properties.
+Hello Greg,
 
-Yes, at this point i was uncertain.
+This is the pull request with interconnect changes for the v6.12-rc1 merge
+window. It contains some new drivers, fixes and clean-ups. As always, the
+summary is in the signed tag.
 
-> What you are effectively adding is support for the ethtool:
-> 
-> ethtool -s [master-slave preferred-master|preferred-slave|forced-master|forced-slave]
+All patches have been in linux-next for almost two weeks. There are no
+reported issues. Please pull into char-misc-next when you get a chance.
 
-ack
+Thanks,
+Georgi
 
-> 10Base-T1 often does not have autoneg, so preferred-master &
-> preferred-slave make non sense in this context, but i wounder if
-> somebody will want these later. An Ethernet switch is generally
-> preferred-master for example, but the client is preferred-slave.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Good point.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-> Maybe make the property a string with supported values 'forced-master'
-> and 'forced-slave', leaving it open for the other two to be added
-> later.
-> 
-> I've not seen the implementation yet, but i don't think there is much
-> driver specific here. We already have phydev->master_slave_set, it
-> just needs to be set from this property. Can it be done in phylib core
-> somewhere?
+are available in the Git repository at:
 
-Yes, this is the idea.
+  git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git tags/icc-6.12-rc1
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+for you to fetch changes up to a5733950fe35d56a935257995d8093a3b4867f61:
+
+  Merge branch 'icc-sm8350' into icc-next (2024-08-26 01:36:44 +0300)
+
+----------------------------------------------------------------
+interconnect changes for 6.12
+
+This pull request contains the interconnect changes for the 6.12-rc1 merge
+window. It contains new drivers and fixes with the following highlights:
+
+Driver changes:
+- New driver for MSM8976 platforms
+- New driver for MSM8937 platforms
+- Enable sync_state for SM8250 platforms
+- Enable QoS support for QCS404
+- Add ab_coeff bandwidth adjustments for MSM8953
+- Drop the unsupported yet DISP nodes on SM8350 platforms
+- Fix missed num_nodes initialization in icc-clk driver
+- Misc DT and documentation fixes
+
+Signed-off-by: Georgi Djakov <djakov@kernel.org>
+
+----------------------------------------------------------------
+Adam Skladowski (9):
+      dt-bindings: interconnect: qcom: Add Qualcomm MSM8976 NoC
+      interconnect: qcom: Add MSM8976 interconnect provider driver
+      dt-bindings: interconnect: qcom: Add Qualcomm MSM8937 NoC
+      interconnect: qcom: Add MSM8937 interconnect provider driver
+      interconnect: qcom: qcs404: Mark AP-owned nodes as such
+      interconnect: qcom: qcs404: Add regmaps and more bus descriptions
+      dt-bindings: interconnect: qcom: msm8939: Fix example
+      interconnect: qcom: msm8953: Add ab_coeff
+      dt-bindings: interconnect: qcom: msm8953: Fix 'See also' in description
+
+Dmitry Baryshkov (3):
+      interconnect: qcom: sm8350: drop DISP nodes
+      dt-bindings: interconnect: qcom,sm8350: drop DISP nodes
+      interconnect: qcom: sm8250: Enable sync_state
+
+Georgi Djakov (3):
+      dt-bindings: interconnect: qcom: Do not require reg for sc8180x virt NoCs
+      Merge branch 'icc-misc' into icc-next
+      Merge branch 'icc-sm8350' into icc-next
+
+Kees Cook (1):
+      interconnect: icc-clk: Add missed num_nodes initialization
+
+Rayyan Ansari (1):
+      dt-bindings: interconnect: qcom,rpmh: correct sm8150 camnoc
+
+Tengfei Fan (1):
+      dt-bindings: interconnect: qcom-bwmon: Document SA8775p bwmon compatibles
+
+ .../devicetree/bindings/interconnect/qcom,msm8939.yaml         |   25 +-
+ .../devicetree/bindings/interconnect/qcom,msm8953.yaml         |    3 +-
+ .../devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml   |    2 +
+ Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml  |    5 +-
+ drivers/interconnect/icc-clk.c                                 |    3 +-
+ drivers/interconnect/qcom/Kconfig                              |   18 +
+ drivers/interconnect/qcom/Makefile                             |    4 +
+ drivers/interconnect/qcom/msm8937.c                            | 1350 +++++++
+ drivers/interconnect/qcom/msm8953.c                            |    2 +
+ drivers/interconnect/qcom/msm8976.c                            | 1440 ++++++++
+ drivers/interconnect/qcom/qcs404.c                             |  127 +-
+ drivers/interconnect/qcom/sm8350.c                             |  155 +-
+ drivers/interconnect/qcom/sm8350.h                             |   10 -
+ include/dt-bindings/interconnect/qcom,msm8937.h                |   93 +
+ include/dt-bindings/interconnect/qcom,msm8976.h                |   97 +
+ include/dt-bindings/interconnect/qcom,sm8350.h                 |   10 -
+ 16 files changed, 3151 insertions(+), 193 deletions(-)
+ create mode 100644 drivers/interconnect/qcom/msm8937.c
+ create mode 100644 drivers/interconnect/qcom/msm8976.c
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8937.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8976.h
 
