@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-318011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE5896E721
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:11:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA8196E724
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBAE2850B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:11:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D395286B6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41D518E0E;
-	Fri,  6 Sep 2024 01:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECFE1B59A;
+	Fri,  6 Sep 2024 01:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DKI1cBhJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhLx8kpE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C6B17991;
-	Fri,  6 Sep 2024 01:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671181DFCF;
+	Fri,  6 Sep 2024 01:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725585081; cv=none; b=EIF4zgjALU34owKw4NjlpHTwM20JKbDKZyMWWV/uR6yXBa+UGfYzHycdw9G/gnbY6OquMemgCSo7EsKQN4Be+VDfYCFEU3lxS7Bs4KhW8rsNkR/Cv3atIQPmzE32MJ4bgNnwQOrEt5IwV58Mce2Vip7YB4+G549LbUjUjaE1yqU=
+	t=1725585153; cv=none; b=Fp6DVspP4wjvy7Q1vTPer3IIcDL/dv3fjQj5LYxaLnSv2H3yU39k1IRkee2t7D1wqurSFZizUbOWBjhDnF9hiz8ELQhX6TsqWrNylpycYUu2Y51EkplIhuYSBT/qk+1TgVIBZGYQt6YHYFzq5b8+T5k6IrgOt0ldrABPv0xt2Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725585081; c=relaxed/simple;
-	bh=8S+jXpwt85dGZWnEqivLD598BH0yX52AmDkn7Gkw3Is=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q4GFsP9s5vkhrKNw8ybFs+tkHJcdYOtbZ4z7xtxYsnqI3FeJaKJ+/rkAF7P1coadXyvZSGI2OEdZg8Fo1DXKGijaUFw6enwvhdKmdfEcLVf6ge6raBLMvZZL1cbqTAYWrAqUav8RjH1OOAZG07JGXvcOurklAaiuMAIs78f60fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DKI1cBhJ; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725585080; x=1757121080;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=8S+jXpwt85dGZWnEqivLD598BH0yX52AmDkn7Gkw3Is=;
-  b=DKI1cBhJJsSDJUi7ZTBV/HcaGHShLyl4Xvll8VtwDetUKr35vKWFjIko
-   3cqVfoqj+wkbWBNoOcCdUyUPOZOwXA0KKMvaydXQbsKAMRPcYHB/37EFB
-   RNs50aTHiq+tcjwGirOwSmjfmKf1DlUnOuTjyZr5l3/hFgNr3UJnVoLEU
-   pPVORo26LjxHvUA5WK9CyOPVFjoPglmzW14900KJKb53tLKDHSHg33K2D
-   jWbNzaXp8oN8kEclwO+g/5AoLieVL/6HFqR2fG94FpNkcfMQQKK0hErNi
-   a18b6hWmyk158ur724w1/ueeE0GEonyVeGOcoWwt8v7XxJO8VKE5yXO9/
-   Q==;
-X-CSE-ConnectionGUID: LDZJzpqYTOmLUH6ed9mN1Q==
-X-CSE-MsgGUID: yZThUJrSRUyjJy30g+avJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="23891490"
-X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
-   d="scan'208";a="23891490"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 18:11:19 -0700
-X-CSE-ConnectionGUID: zPIbzNPWSweJ6Zcr2THlJA==
-X-CSE-MsgGUID: 0g+abiOrSLeuAFE4eFRXCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
-   d="scan'208";a="96523282"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 18:11:15 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  <linux-mm@kvack.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,  "David
- Hildenbrand" <david@redhat.com>,  Davidlohr Bueso <dave@stgolabs.net>,
-  "Jonathan Cameron" <jonathan.cameron@huawei.com>,  Dave Jiang
- <dave.jiang@intel.com>,  Alison Schofield <alison.schofield@intel.com>,
-  Vishal Verma <vishal.l.verma@intel.com>,  Ira Weiny
- <ira.weiny@intel.com>,  Alistair Popple <apopple@nvidia.com>,  Bjorn
- Helgaas <bhelgaas@google.com>,  Baoquan He <bhe@redhat.com>, Philip Li
- <philip.li@intel.com>
-Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
-In-Reply-To: <ZtmOTYF9EWPeLg5u@smile.fi.intel.com> (Andy Shevchenko's message
-	of "Thu, 5 Sep 2024 13:56:13 +0300")
-References: <20240819023413.1109779-1-ying.huang@intel.com>
-	<ZsL-wfDYsUmWKBep@smile.fi.intel.com>
-	<874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
-	<ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
-Date: Fri, 06 Sep 2024 09:07:41 +0800
-Message-ID: <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725585153; c=relaxed/simple;
+	bh=tajvxvjnOiEA5fsVw+UnLHqK+urb541csY0X9cR0iU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U97eDd7VeREYbjlf3QsNzWxu853O+yr6S3xMDY1k0ulqdEkDRl+vrYTXqNMklPLSdCgDSsqD5Hpmsry+h7DB19FIise9vTvjRLNg0oFjFn+Yo9oYWTNrK063F82OKwA0W7KpELWQBNqi6UH28DK16CERVduQ3FJia4ERWl2aYQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhLx8kpE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C353CC4CEC3;
+	Fri,  6 Sep 2024 01:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725585153;
+	bh=tajvxvjnOiEA5fsVw+UnLHqK+urb541csY0X9cR0iU4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NhLx8kpEp0nenjDFHDZlrvUdZU6o6yg/H7umqYZhpaoC+4iMaksv4tCI4vuArh2Ud
+	 78J8Dt70gIbURuImyRfVnurlEcz1gOz2XpPIGMpxmpIrfxKe24R+mo+BUQr3y0XZhB
+	 Hc4AsqZpmS8g8KdYqTuRhimz7GPcOoKzxarmTBfUChG9MTFQ7ezbZrh8oDGFF/USMx
+	 S1OmKWYuigqBtRvoHQoYob1c3rvxnyeK67A8c55YYmcmKdU+UxCCtqxQeFe/Jmsevr
+	 YYMUfT/UdVDQ4cPx/POof04qctPRl8DIoJz0XLxYI5p01HcG3BhAPc3i2R9Oray+eB
+	 EsvIDfQvUnVQQ==
+Date: Fri, 6 Sep 2024 09:12:24 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] usb: cdnsp: Fix incorrect usb_request status
+Message-ID: <20240906011224.GA357232@nchen-desktop>
+References: <20240905072541.332095-1-pawell@cadence.com>
+ <PH7PR07MB95382F640BC61712E986895BDD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+ <20240905080543.GC325295@nchen-desktop>
+ <PH7PR07MB95383CF665431DBDACD73B65DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR07MB95383CF665431DBDACD73B65DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+On 24-09-05 08:45:59, Pawel Laszczak wrote:
+> >
+> >On 24-09-05 07:31:10, Pawel Laszczak wrote:
+> >> Fix changes incorrect usb_request->status returned during disabling
+> >> endpoints. Before fix the status returned during dequeuing requests
+> >> while disabling endpoint was ECONNRESET.
+> >> Patch changes it to ESHUTDOWN.
+> >
+> >Would you please explain why we need this change?
+> 
+> This patch is needed for UVC gadget. 
+> During stopping streaming the class starts dequeuing usb requests and
+> controller driver returns the -ECONNRESET status. After completion
+> requests the class or application "uvc-gadget" try to queue this
+> request again. Changing this status to ESHUTDOWN cause that UVC
+> assume that endpoint is disabled, or device is disconnected and
+> stop re-queuing usb requests.
+> 
 
-> On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
->> Huang, Ying wrote:
->> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
->
-> [..]
->
->> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
->> > > message.
->> > 
->> > Emm... It appears that it's a common practice to include "Cc" in the
->> > commit log.
->> 
->> Yes, just ignore this feedback, it goes against common practice. Cc list
->> as is looks sane to me.
->
-> It seems nobody can give technical arguments why it's better than just keeping
-> them outside of the commit message. Mantra "common practice" nowadays is
-> questionable.
+Get it. Would you please update commit message with your above
+explanation?
 
-Cc list is used by 0day test robot to notify relevant developers and
-maintainers in addition to the author when reporting regressions.  That
-is helpful information.
+Peter
 
---
-Best Regards,
-Huang, Ying
+> >
+> >>
+> >> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence
+> >> USBSSP DRD Driver")
+> >> cc: stable@vger.kernel.org
+> >> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> >> ---
+> >>  drivers/usb/cdns3/cdnsp-ring.c | 6 ++++--
+> >>  1 file changed, 4 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/usb/cdns3/cdnsp-ring.c
+> >> b/drivers/usb/cdns3/cdnsp-ring.c index 1e011560e3ae..bccc8fc143d0
+> >> 100644
+> >> --- a/drivers/usb/cdns3/cdnsp-ring.c
+> >> +++ b/drivers/usb/cdns3/cdnsp-ring.c
+> >> @@ -718,7 +718,8 @@ int cdnsp_remove_request(struct cdnsp_device
+> >*pdev,
+> >>  	seg = cdnsp_trb_in_td(pdev, cur_td->start_seg, cur_td->first_trb,
+> >>  			      cur_td->last_trb, hw_deq);
+> >>
+> >> -	if (seg && (pep->ep_state & EP_ENABLED))
+> >> +	if (seg && (pep->ep_state & EP_ENABLED) &&
+> >> +	    !(pep->ep_state & EP_DIS_IN_RROGRESS))
+> >>  		cdnsp_find_new_dequeue_state(pdev, pep, preq-
+> >>request.stream_id,
+> >>  					     cur_td, &deq_state);
+> >>  	else
+> >> @@ -736,7 +737,8 @@ int cdnsp_remove_request(struct cdnsp_device
+> >*pdev,
+> >>  	 * During disconnecting all endpoint will be disabled so we don't
+> >>  	 * have to worry about updating dequeue pointer.
+> >>  	 */
+> >> -	if (pdev->cdnsp_state & CDNSP_STATE_DISCONNECT_PENDING) {
+> >> +	if (pdev->cdnsp_state & CDNSP_STATE_DISCONNECT_PENDING ||
+> >> +	    pep->ep_state & EP_DIS_IN_RROGRESS) {
+> >>  		status = -ESHUTDOWN;
+> >>  		ret = cdnsp_cmd_set_deq(pdev, pep, &deq_state);
+> >>  	}
+> >> --
+> >> 2.43.0
+> >>
 
