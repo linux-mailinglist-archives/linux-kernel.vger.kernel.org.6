@@ -1,167 +1,180 @@
-Return-Path: <linux-kernel+bounces-318094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6D096E84A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A066A96E84B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB76286455
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1AB286664
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC30E38384;
-	Fri,  6 Sep 2024 03:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCC638384;
+	Fri,  6 Sep 2024 03:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ugOgU1hd"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPMsbbGH"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ED11E521
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 03:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA22B1B969
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 03:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725593558; cv=none; b=TKU0lHHKORkvEPWX6T4Zu30mxAOSzvCizUW+4sSN3itMuWJhZ8qxjzv/XY9KDYrMUEHRPVYstbOpr5JbyWyB3i9VB4+Mllv3AN24cg8fcb+4MaSwxvWRRZgn9l8mrK1MeGk7YVqEEPW1cpV2vE9I4ygBLbdNo3DoZ9BAPE8FDyY=
+	t=1725593728; cv=none; b=dTR6SKb2zdfIyqWuepBj9pFm5ivhwxz3EMZG7roBuZaDpODHQY1hrRtVT+NrlzDzzF3tzDHcADMOV2GNi1f5U5qQqpGDARRUPRsTsnax0VFI1H9XflsZq/WvtYBoDd8qcI+qPysWhzpaTt2L9FtodFrsA+oDlwQ9qpxF3kMAEFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725593558; c=relaxed/simple;
-	bh=AeF1GrQlou929wSFQVEIZucVD8G3MOj3K7volvjSLWw=;
+	s=arc-20240116; t=1725593728; c=relaxed/simple;
+	bh=skzCl0pMNTyTvuDyqXvLLCvghbGETSY4Hcnpja4S17s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VV7pv1DsI6rp4A5J+iSV55rCTXOwkVWx0KOWK5d3GsEt/f/B+UqVF7Dp8/R26GnhnQVnxSDwZFxzFak6AYlBKbdWlOxXs6k5T6cwXaP172np+bDWZ8mOBtjaRHIZJKWr9qEGzFMFe2mQoXAgg63T2+wt2DRQUmNhFv9lrXLDfZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ugOgU1hd; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4567fe32141so104501cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 20:32:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=mFpIfEYK64JrHpR4HlWBlxg5+yvS2p+G3kPYM4kl7EyB+ShXEFSBI7csIBAq+55s8ZYPMzLqxlL8Zfw2KzSOaE/4XYM7zw0czHKBh5DH5KDRw2yNmwhzOkd/Olw723wFhUhkpXgdtfJIYa/LxSGgUPw48USbxpQwQHELRvHzfjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPMsbbGH; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d4f9e39c55so1097667a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 20:35:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725593555; x=1726198355; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725593726; x=1726198526; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oGD+kq844RgjIMgaWd689+bfKQO1SfZUcX5ijNslcG4=;
-        b=ugOgU1hdk57SnP/p1hhiuFFHTR5bR5NC/y8QOFdgzLEbOyJlQN/RaV8G1WINT3fY46
-         J5jLhg8snY3UJYAEUMeh9psjay4wM5z9Sg4jwRdGdYuIfwlcG35uxG8fj8dibh9oRYX2
-         7mnzjIoC0XJdJjkWJTBcMdJ1gdTIaEFAn77lpO99sQP7fU8GKI0Fahhq8WnxHmpPMVTg
-         vvlR/Fv/DwOhUhztIvETib3odA0YP+ikmXsCwQBf0i/cJ8Cb78dfMdnGSQAMZmmbt5Zb
-         F7N2e5pAHUUdZ0AmcYB0cYnOazRZdSi+o14V9XBTTz/VhvB4R4qYGqR2zZmBqrZCt3PF
-         Ak0A==
+        bh=IhuYj790wDLfRfrUaika0uMYzKXg4fII2xntIbGsGSs=;
+        b=IPMsbbGHiCGjoOi7NshLv0x8VotkpPSX/Xc/My3fLlMxcb+AvWZGN1FeHMEBOyhfZ7
+         PNa3W1ot2iHld6/FuNo6LNk4P2lP7DA1+sBMKWvHSIAI35d1k2l2xhtxbdwS4XvRL2Dl
+         7hdPnuZzpjXXtLAo2KDzK8zgGOZ4txeSxcmVf6mO+TEkqabxi4/PmlLuWK8VdHfd7M0w
+         7fG7i7pcLE+OhXuVGwV9FsWBCuCDGMCXtlQJn4TaGKYWBs586d9ijjtZCu4H1RnC4QCi
+         RjUmm8ltpqPCnD2AnN/Py0ad1uBQD8A5Ifrxvja/MJ2Suizz+THXTg5b1C2IJg4wu6Uw
+         o+fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725593555; x=1726198355;
+        d=1e100.net; s=20230601; t=1725593726; x=1726198526;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oGD+kq844RgjIMgaWd689+bfKQO1SfZUcX5ijNslcG4=;
-        b=TWzaedpWB+9NGdSF1r/G5tVahJDizFZR84vazkLWDW3SIvs28eX1+n3qXHn2O4fhBn
-         eVREW1Vl/NaoVFQVWpb1IZ5skQc2yqaIMm2N17gXvabI8f8TqATeSmDLT59l5FS/YU3y
-         DbvQNwUBHXHebkemd74mYSf0nh8XLFJKUYZ7Ws1jOtNM+4+uNL6mLIAriBILUzy5eJHX
-         6KUPf3nYfmKIu2qwMuP8fxLAYZOar9uDyNgZxjQ5jVufZdo4Gx96IauYmjGvD4C/HhQd
-         CdioEMO6JmoukXHRFCS7pa4dajsxl6CFtBZbKQv3TpwayibawFgl96INRB3sxYsSEYYF
-         N8VA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlVoVEYyDJ+UC1erbGiLCZ1c960kV2sP5++3wrvm/z7tfN72zA0oa8Oy77160kzdGAAhzjnR1lP8g2Uww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtAoUU0GFIP9+LUeWoaGFRF4lcFwxPMk9dAmaEvy5sbs96sNnQ
-	ab0sjac2nEngzekxOi6NTDWjM9b0bTiaZLvEAorUSZHCfF0t+HfxnFl4rqohP084l8U9DMcQC89
-	ySNx1d7d0IxPy314zUZhKPeRTm+nKw941tqII
-X-Google-Smtp-Source: AGHT+IHXptcIy8FKYGMHmjV6qcqim8ryRJ5KLZrYDWADLTHrX96IQIVT6l7HSHhb5egWqkpNygLZkIqBcszskium9es=
-X-Received: by 2002:ac8:58c3:0:b0:456:780c:1d3a with SMTP id
- d75a77b69052e-4580e58bf23mr729901cf.19.1725593554976; Thu, 05 Sep 2024
- 20:32:34 -0700 (PDT)
+        bh=IhuYj790wDLfRfrUaika0uMYzKXg4fII2xntIbGsGSs=;
+        b=Qj8SSdHAXZVSS8/Bja1cmMomcxAiwwW+SoL6x7+PRaLmEJEQNSNWk3eigIQ1fl3wys
+         0NF7net3bftp3fxelA4XVK3u5nj1N031McdN9bo84FgdJFJ0GEljM3f2FqGQPdAmTdVf
+         lcZXnAFD9l3rebzthngGtcmQokpZOwyAB1evJLwI0mxEn4c+PWLJv0MCPR2rzonhUMuS
+         gHZSceTGCXpr7VwqP2G5daUnXvvFww1Tbc7yUOf1JUFP6tG5OErYfKoyl43qywcZoo9S
+         CMnnLqfOd2rwujPWmzz0A6HqXHfyCPh0gQi57Z+khtQRfGBwY+ly3Y4sFM67fr1+3wcC
+         tZPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJaZ9+9n1mRT7VI4sPC6aZsVfbsXgKBg5mFsDsOGwliCyj+UUOq0q9VNcNDYGMd2PNot1SAWcwxnwnNE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlkM5+LbyQua9FdpPYJ1IxRRDDno8DGoGN/BGn7HUg7L/QoknA
+	7mOAoSnmw8rtNshZeR1bmOwfVmnrhVz1W6l9uog4pHq17vzzrML6lJNxA0My+qVT5CLJXsQzHOF
+	wSAYDLAFpNb5buH75L+wm8BXhcAY=
+X-Google-Smtp-Source: AGHT+IFdboao3qNZkxuDUbHVJ4PM6zjbRZc22bL5X5Tp6/gOTzAoRIWcICCop5130io2oNLVIWOxQyb8NP8EamXmsj0=
+X-Received: by 2002:a17:90b:384a:b0:2d8:b6a6:bc2b with SMTP id
+ 98e67ed59e1d1-2d8b6a6bffamr19518963a91.21.1725593725981; Thu, 05 Sep 2024
+ 20:35:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906005337.1220091-1-kent.overstreet@linux.dev>
-In-Reply-To: <20240906005337.1220091-1-kent.overstreet@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 5 Sep 2024 20:32:24 -0700
-Message-ID: <CAJuCfpGPAWO5M9SgTYapvtfxnK19EFbNhGZGunGK2OCxdVYNjQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/show_mem.c: report alloc tags in human readable units
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
+References: <20240905095216.7888-1-wangyibo@uniontech.com> <50595531-87b0-4420-9624-948810066a6e@redhat.com>
+In-Reply-To: <50595531-87b0-4420-9624-948810066a6e@redhat.com>
+From: Lucien Wang <lcnwed@gmail.com>
+Date: Fri, 6 Sep 2024 11:35:15 +0800
+Message-ID: <CAHViUT1xrR5c4c9dbMOwO=dFGKFnxYZw8abpHa0hvkuTW-eX4g@mail.gmail.com>
+Subject: Re: [PATCH] mm: move bad zone checking before getting it
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, trivial@kernel.org, 
+	Wang Yibo <wangyibo@uniontech.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 5:53=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
+On Thu, Sep 5, 2024 at 6:22=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
 >
-> We already do this when reporting slab info - more consistent and more
-> readable.
+> On 05.09.24 11:52, Wang Yibo wrote:
+> > When flags from gfp_zone() has an error combination, VM_BUG_ON() should=
+ firt know it before use it.
+>
+> s/firt/first/
+>
+> Please break long lines. (checkpatch.pl should have warned you)
+>
+> >
+> > Signed-off-by: Wang Yibo <wangyibo@uniontech.com>
+> > ---
+> >   include/linux/gfp.h | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> > index f53f76e0b17e..ca61b2440ab3 100644
+> > --- a/include/linux/gfp.h
+> > +++ b/include/linux/gfp.h
+> > @@ -133,10 +133,11 @@ static inline enum zone_type gfp_zone(gfp_t flags=
+)
+> >   {
+> >       enum zone_type z;
+> >       int bit =3D (__force int) (flags & GFP_ZONEMASK);
+> > +     VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+>
+> Better use VM_WARN_ON_ONCE() instead while at it.
+>
+> >
+> >       z =3D (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+> >                                        ((1 << GFP_ZONES_SHIFT) - 1);
+> > -     VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+> > +
+>
+> Unrelated whitespace change.
+>
+> >       return z;
+> >   }
+> >
+>
+> But I don't see why we would want this change? It's not like the kernel
+> would crash when calculating z.
+>
+> Or is there some change in behavior I am missing?
 
-Hi Kent,
-I remember we discussed this before and agreed upon Pasha's suggestion
-that if needed one could do:
+On Thu, Sep 5, 2024 at 9:13=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 05.09.24 12:48, Wang Yibo wrote:
+> > When flags in gfp_zone() has an error combination,
+> > VM_BUG_ON() should first know it before use it.
+> >
+> > Signed-off-by: Wang Yibo <wangyibo@uniontech.com>
+> > ---
+> >   include/linux/gfp.h | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> > index f53f76e0b17e..ca61b2440ab3 100644
+> > --- a/include/linux/gfp.h
+> > +++ b/include/linux/gfp.h
+> > @@ -133,10 +133,11 @@ static inline enum zone_type gfp_zone(gfp_t flags=
+)
+> >   {
+> >       enum zone_type z;
+> >       int bit =3D (__force int) (flags & GFP_ZONEMASK);
+> > +     VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+> >
+> >       z =3D (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+> >                                        ((1 << GFP_ZONES_SHIFT) - 1);
+> > -     VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+> > +
+>
+> I'm afraid you either missed half my review comments or your answer to
+> my mail did not make it to my inbox.
 
-# sort -g /proc/allocinfo|tail|numfmt --to=3Diec
-        2.8M    22648 fs/kernfs/dir.c:615 func:__kernfs_new_node
-        3.8M      953 mm/memory.c:4214 func:alloc_anon_folio
-        4.0M     1010 drivers/staging/ctagmod/ctagmod.c:20 [ctagmod]
-func:ctagmod_start
-        4.1M        4 net/netfilter/nf_conntrack_core.c:2567
-func:nf_ct_alloc_hashtable
-        6.0M     1532 mm/filemap.c:1919 func:__filemap_get_folio
-        8.8M     2785 kernel/fork.c:307 func:alloc_thread_stack_node
-         13M      234 block/blk-mq.c:3421 func:blk_mq_alloc_rqs
-         14M     3520 mm/mm_init.c:2530 func:alloc_large_system_hash
-         15M     3656 mm/readahead.c:247 func:page_cache_ra_unbounded
-         55M     4887 mm/slub.c:2259 func:alloc_slab_page
-        122M    31168 mm/page_ext.c:270 func:alloc_page_ext
-
-That's even documented here:
-https://elixir.bootlin.com/linux/v6.10.8/source/Documentation/mm/allocation=
--profiling.rst#L36
-Did something change?
+I did not read your first email carefully,Sorry for that.
+I will reply to your comments based on your last email.
 
 >
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> ---
->  mm/show_mem.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/show_mem.c b/mm/show_mem.c
-> index 691e1b457d04..1b448e1ebd09 100644
-> --- a/mm/show_mem.c
-> +++ b/mm/show_mem.c
-> @@ -459,15 +459,18 @@ void __show_mem(unsigned int filter, nodemask_t *no=
-demask, int max_zone_idx)
->                                 struct codetag *ct =3D tags[i].ct;
->                                 struct alloc_tag *tag =3D ct_to_alloc_tag=
-(ct);
->                                 struct alloc_tag_counters counter =3D all=
-oc_tag_read(tag);
-> +                               char bytes[10];
-> +
-> +                               string_get_size(counter.bytes, 1, STRING_=
-UNITS_2, bytes, sizeof(bytes));
->
->                                 /* Same as alloc_tag_to_text() but w/o in=
-termediate buffer */
->                                 if (ct->modname)
-> -                                       pr_notice("%12lli %8llu %s:%u [%s=
-] func:%s\n",
-> -                                                 counter.bytes, counter.=
-calls, ct->filename,
-> +                                       pr_notice("%12s %8llu %s:%u [%s] =
-func:%s\n",
-> +                                                 bytes, counter.calls, c=
-t->filename,
->                                                   ct->lineno, ct->modname=
-, ct->function);
->                                 else
-> -                                       pr_notice("%12lli %8llu %s:%u fun=
-c:%s\n",
-> -                                                 counter.bytes, counter.=
-calls, ct->filename,
-> +                                       pr_notice("%12s %8llu %s:%u func:=
-%s\n",
-> +                                                 bytes, counter.calls, c=
-t->filename,
->                                                   ct->lineno, ct->functio=
-n);
->                         }
->                 }
 > --
-> 2.45.2
+> Cheers,
+>
+> David / dhildenb
+>
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
 >
 
