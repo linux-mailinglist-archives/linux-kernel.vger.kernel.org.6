@@ -1,288 +1,150 @@
-Return-Path: <linux-kernel+bounces-319447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B4896FCB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:29:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFED196FCAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C674FB266A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE3381C22AA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3305E1D9330;
-	Fri,  6 Sep 2024 20:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wGEBxofr"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2FB1D7980;
+	Fri,  6 Sep 2024 20:28:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448151D88B3;
-	Fri,  6 Sep 2024 20:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654499; cv=fail; b=cRVXv1jxops7Dxo2K5lXYghRVD75fpgKWysTrG1g+ZEe1Nq2hs12gNF52S7t+/hbdDHxD/R8CgO7NUqqe455XsxsNm2wcTxcGMBB8ny7PlmGFxnIS60Qi9brvD+f8dkWHw6KUXxYgaHkxbh2TM9kiD6FHPcfrOqfRQVY4NyzkmM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654499; c=relaxed/simple;
-	bh=DKmFtNZpt9gnZ5Sjw8TuvuDwJdmPHWJCyB5Yw8Mh/sQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hy6AJrjrSnxhJrU6vd62jyFeAto2bYmMBKLuguz13eqziVTeyF44Z9qF1JHBIlIyxa+tsYCafAPHdBDQzkvXes5YWinVkG2Edp58T5f6NOGokOhGx7xc0SVkRqAEkFaDjqnvulRV7A0ISHqK6to0KvV2RK3BWcepo6QmVmGve2k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wGEBxofr; arc=fail smtp.client-ip=40.107.237.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zUo1O4Ep244N50vsl3lmyZbTFpqyJ4cPgkh7I//Lrz1brelZxN0LOHQU12eWcAc+uJvEDHEcxiG0TmbwsW7eNdhlwj48iy0bTDWyI7pJQBKCoYyzdJ0EzdciRF6vtkHP9mJs8tCA3WtZbvWUZjFiBS4M2mciq9LLCl71oymcStNc6kIF51tmD52hl+zS+fNJvoTJzgBcvl6eFSXtLv8NpOn9VmdGXdLoK9QK4/M0pxaYtf4/s/0Sk0O+NoFhywsRk4ATEteYhoEsoPgmUNtwHWTJIoz1BcFIuwQsbuyPoGrOejqdp8soj+NiXSb3Vx3Cl6dIR9YGwwpcHaDsMMpXTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EbUFsRTJ8oz/SNKqBr6073R+hrqlLoy1d5P3uL8IVrM=;
- b=wdm+xO1fwqV5bieyG+oMLA3qiFXRw0TkeBmTT6z0gIRrmZ/JMhozKQmuMYS+K0HkbMMkDIzBygLsNwIbnhSpvpILdjz1l/9zzKEDks5gRDZJrI1cL37jfFVRZUccqlchOopHHWb+1sI85YSwI/tt6YYZOh9+3tpqpK63F83oWdMwLv3msTroDcY4htPfTMg6FUpss4JHqyUeo0pzE7GPGTEOg6RRxGBdJXwQBSqXQuJGZvyz2yFkBd/wAiroVhLRWISc31i8uE+DOVygxvl+ORm+DOp0PmOkQKws7c4sJIhW9Lvpv9f0mqSnVZD3vFgSfDI0UIxZ7GAtrfioZ+r1lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EbUFsRTJ8oz/SNKqBr6073R+hrqlLoy1d5P3uL8IVrM=;
- b=wGEBxofrmZx1VBgXJLHkaxPRQzeLA/aWE58ypM/Tx2wiFSIXdfKHQx2DDmtJk3L622qaKTZwvoKewQ2GXY3yAcMJ06+ij+lsO1liT+GToK+tQfosIi4s0m0qIUm8smVChjrTGqtr59epGE4GQ+IywI/InV7Eo4dxmarHe55wucA=
-Received: from MW4PR03CA0262.namprd03.prod.outlook.com (2603:10b6:303:b4::27)
- by MN0PR12MB5884.namprd12.prod.outlook.com (2603:10b6:208:37c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
- 2024 20:28:10 +0000
-Received: from SJ5PEPF000001EF.namprd05.prod.outlook.com
- (2603:10b6:303:b4:cafe::10) by MW4PR03CA0262.outlook.office365.com
- (2603:10b6:303:b4::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25 via Frontend
- Transport; Fri, 6 Sep 2024 20:28:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ5PEPF000001EF.mail.protection.outlook.com (10.167.242.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 20:28:09 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
- 2024 15:28:07 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <seanjc@google.com>
-CC: <ashish.kalra@amd.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <kexec@lists.infradead.org>, <kvm@vger.kernel.org>,
-	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<michael.roth@amd.com>, <mingo@redhat.com>, <pbonzini@redhat.com>,
-	<peterz@infradead.org>, <tglx@linutronix.de>, <thomas.lendacky@amd.com>,
-	<x86@kernel.org>
-Subject: Re: [PATCH v2] x86/sev: Fix host kdump support for SNP
-Date: Fri, 6 Sep 2024 20:27:57 +0000
-Message-ID: <20240906202757.5258-1-Ashish.Kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZtjdxNTBJymcx2Lq@google.com>
-References: <ZtjdxNTBJymcx2Lq@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193EB1D6792
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725654484; cv=none; b=f9r7eycDYqkZ3XIq3h3A+xxX/73dSguZQGsdFYY/zS8LRjy9z3jCvCd3qFAL8daU1vUd4TpOrg828kQ6gcpf1zU1lu6eYgNOexmaKukeoPHk8SWbAMC5E3kmJGo2LXbRyitJQsJPWa45eSQbMcir/wo1T+GZ0wqh2E7H5h9F25I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725654484; c=relaxed/simple;
+	bh=PRtIgTaApbHgW0YpkcoBjNU0lEonAW2utLCnljFB370=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nFV9KJsQuaUsv/TJQE/xiigo8eQC3LjrB8XKDt5VQRbP3YmUTN6dlTqhp1TDDX+MMRlC1dqlgLxMVvIpyldaJ80qGWThDR2O5NCau9fzx2cqC/9um5SzAyjT1e6d2QEtTWrnogfqdz+IRnNf4lPTBIkHNA/CHLa1fwtfQvDMFN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0541f519dso15450985ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 13:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725654482; x=1726259282;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3d4eRsYtuHR/RGk0tI3MLQQyTxxdH3GGvC8Z5gCQHIc=;
+        b=Q0llRztjl70dkLuntPMqO5fVOqQWH1SDZAYzecjCZZ0T5Ih8vvGxj4J2+5/cZAGyvD
+         0JFcM/XFnJ9nAtXGwJrnCdE0WE98DbfR8HE5YUam2MUQZHdI4m00u54VER02YuRY1Jr0
+         JHh3qFfKZECAj1oQw8PAowuZ21wuMCxG7z93Vz9dhbMWCzSQlIbASajZOjAc+cwYZXgT
+         XW13b4GSVVUOXluK5gN2BdYY4w3aDI8V4BKUIhv6/Pxtulz5b3pYejjxTFVqWHSGwBx7
+         kzmd2qy+3MVuhBJmircYyKIKhUwxEeg7PGzK4Q8Pb+eMVxEPKDnnQl/K2HT0bG8N+MXo
+         9igg==
+X-Forwarded-Encrypted: i=1; AJvYcCU695WyYw0diWAjpMk8Trziy9MJLtlP8wgh6UfGe03qjELLQqtrnChzeYQM0BaRnWDQb4Qr2p3CSs8k218=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykxFJEpNY4GNEbLPsKEqJVTBppzC8zp7I0kJFymwOERt9zwdH0
+	omw1Ld2RTdxNDxD244F0hvnyaz2DqN7UWlZW7kjEhoTSntpRjGSZMarpT9d/iGWnC4gQsDswlqb
+	JdyKfaPWIxCe4MvaADTpcEJqFlRYi1zpau4nY2jSDoymPR6NQwdlttHs=
+X-Google-Smtp-Source: AGHT+IEnVdpkLvMBZ++QJb0A79YVSw6nnAJsedJd4PIh5qKGyXW3JyFEv1hlh37MzThTbkolrG2xRQjAKIPDvYpUkx4fDxsgJJbe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
- (10.181.40.144)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EF:EE_|MN0PR12MB5884:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1acde7ff-97d2-4e63-0089-08dcceb26c7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KLPuGAkU/CcyvDvEpNY1YmQBRFRAQdrGxX1O0+e60wVVbzJEBRI74OpHDkf1?=
- =?us-ascii?Q?00AGOqfV+8S7fEGb6A36ZreO+vELt4Of5bbfnLAPTaGOnmUCbi2KjCrNLp03?=
- =?us-ascii?Q?YXKCTNUQUGR6+s4Hny032/gq1aHP21uZ5CD1cs+fkZFobCeoKe61dxxQdO99?=
- =?us-ascii?Q?/ZlXFHFB/7wQ4h2e3BHX02sGNEYNmXqcMGgzu8HzZfeDHOKWDdArflwqenkY?=
- =?us-ascii?Q?heU/mI6LBAjwRod2g8g0yhjQd5vvr46ON9MCCkyup8BKM2GFA3rEuMOGgx4c?=
- =?us-ascii?Q?TzP/ZJEvX58WRD9cjiPKQiZ6wROHft51GHhnAYaewTirunmWvrNbMtVvWA7A?=
- =?us-ascii?Q?oIE2nmueDf/SfKTbKzpo9WTFgz8Ut85a0CURwN1EIL6cmsHTvJVSD9Muk+kL?=
- =?us-ascii?Q?x3KkPjZD0svrXSXUSSkqoKiQG3pey/UvCztAW6wRCBij2wnx7VnnoJT74+Wt?=
- =?us-ascii?Q?dJyvCQ3hAdOvdzVNk1QS/b5vG/Cy/Cn/6edSTTPpVJseEGtYWgArtdSLWgWu?=
- =?us-ascii?Q?kEYM4pk/Ie/sTE36eUmPaHwySmbhQNGAVJMaBZyYbiXKLiPtydNUuZYiUZNJ?=
- =?us-ascii?Q?/ymSQkuW5pCsZ4qRkvtMbV7yXfJgDf6sB9n3hVk71Lx6rcug/JjrJSiBQfdl?=
- =?us-ascii?Q?m3vfl+dEEp9T3h2QmsG6G4sRNwcA+fR/Mvnq6O8gO0JdYsfr4jDqowh3C0Ym?=
- =?us-ascii?Q?3oFLwLeXiPuqNVMsTQxJkfYVnYd8zSYpZDnWeUQ1ES6oVlAvfW0rWBVj2N+I?=
- =?us-ascii?Q?ZVqi+YaEiN0zWRcfJUbIumRS+nJp1JtjKd5wEAHPmeJW8J9SiK5gTmNhfe6X?=
- =?us-ascii?Q?ktoBo2oS2OMCQbgkxo6nWkXs+bW4yd1zUJ6G9EBDs3uODqBzIxdDzUUIVyCU?=
- =?us-ascii?Q?tbjzjXGjwR3NcSCe0TlrY23jGZcEHc7wpefeeKj6TXjUMDRIotyL0l0kVhUg?=
- =?us-ascii?Q?l2zko8slqzt2aqoRL1bWaF78j5zKgVjqRtF8Un679fEHk2xSR+5Xe3MIQ6Vu?=
- =?us-ascii?Q?0if8suhMcNLaxdTSIk9ArGk0CEPqbMZwUDhesCRjK1X8+AGbORz4H0h6K/fs?=
- =?us-ascii?Q?H2l3lscqoe1Ia/HN0X396OwjaSCZmKaer4QXmFvos8KghcEaNwUEm0uFRJlD?=
- =?us-ascii?Q?x5EpnPLlxBPRxbDakRdMfa1dtyPIWcOJ/bzteW0qUeN2b02YL7vlkzExoH4F?=
- =?us-ascii?Q?Z7wtYd4VCeFvgVfDlfPxBkXU03c0PILhvgJUgGtNKO6THa8aB0tS/Rtynod9?=
- =?us-ascii?Q?itFqcktOMiSgjagsoKSC3Z2WEUMlvfsynZKImNWWYSalAYDWtg7o0oKYh/39?=
- =?us-ascii?Q?zc690qUJwUByycTqEkZYzmbn0/xsiPlOj3rEWBxndtodBOd23s4jiqKupwZ9?=
- =?us-ascii?Q?FWUgZjpz+WZIGo1IImP4Q5o4OTAJvcIUMBYJtA5wMqCnyTFqEPRUDDW+/CkT?=
- =?us-ascii?Q?x/BMUfi6KULEs5XzDi/lFJrqiHROlppt?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 20:28:09.7682
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1acde7ff-97d2-4e63-0089-08dcceb26c7d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001EF.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5884
+X-Received: by 2002:a05:6e02:1d1d:b0:3a0:4ee1:1ac4 with SMTP id
+ e9e14a558f8ab-3a04f070751mr2033745ab.1.1725654482161; Fri, 06 Sep 2024
+ 13:28:02 -0700 (PDT)
+Date: Fri, 06 Sep 2024 13:28:02 -0700
+In-Reply-To: <CAG-BmofKVU4RwYFLz8LqvK4H9X_E+h-wPpzo7WEOcGR6guAPvQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006a247f0621793eb9@google.com>
+Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_buffer_cached
+From: syzbot <syzbot+adfd64e93c46b99c957e@syzkaller.appspotmail.com>
+To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Sean,
+Hello,
 
-On 9/4/2024 5:23 PM, Sean Christopherson wrote:
-> On Wed, Sep 04, 2024, Ashish Kalra wrote:
->> On 9/4/2024 2:54 PM, Michael Roth wrote:
->>>   - Sean inquired about making the target kdump kernel more agnostic to
->>>     whether or not SNP_SHUTDOWN was done properly, since that might
->>>     allow for capturing state even for edge cases where we can't go
->>>     through the normal cleanup path. I mentioned we'd tried this to some
->>>     degree but hit issues with the IOMMU, and when working around that
->>>     there was another issue but I don't quite recall the specifics.
->>>     Can you post a quick recap of what the issues are with that approach
->>>     so we can determine whether or not this is still an option?
->>
->> Yes, i believe without SNP_SHUTDOWN, early_enable_iommus() configure the
->> IOMMUs into an IRQ remapping configuration causing the crash in
->> io_apic.c::check_timer().
->>
->> It looks like in this case, we enable IRQ remapping configuration *earlier*
->> than when it needs to be enabled and which causes the panic as indicated:
->>
->> EMERGENCY [    1.376701] Kernel panic - not syncing: timer doesn't work
->> through Interrupt-remapped IO-APIC
->
-> I assume the problem is that IOMMU setup fails in the kdump kernel, not that it
-> does the setup earlier.  That's that part I want to understand.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: bad unlock balance in ocfs2_read_blocks
 
-Here is a deeper understanding of this issue:
+loop0: detected capacity change from 0 to 32768
+(syz.0.15,5612,0):ocfs2_read_blocks:240 ERROR: status = -12
+=====================================
+WARNING: bad unlock balance detected!
+6.11.0-rc6-syzkaller-g788220eee30d-dirty #0 Not tainted
+-------------------------------------
+syz.0.15/5612 is trying to release lock (&oi->ip_io_mutex) at:
+[<ffffffff837f5e56>] ocfs2_read_blocks+0x11c6/0x1620 fs/ocfs2/buffer_head_io.c:394
+but there are no more locks to release!
 
-It looks like this is happening: when we do SNP_SHUTDOWN without IOMMU_SNP_SHUTDOWN during panic, kdump boot runs with iommu snp 
-enforcement still enabled and IOMMU completion wait buffers (cwb) still locked and exclusivity still setup on those, and then in 
-kdump boot, we allocate new iommu completion wait buffers and try to use them, but we get a iommu command completion wait time-out,
-due to the locked in (prev) completion wait buffers, the newly allocated completion wait buffers are not getting used for iommu 
-command execution and completion indication :
+other info that might help us debug this:
+2 locks held by syz.0.15/5612:
+ #0: ffff8880166e00e0 (&type->s_umount_key#53/1){+.+.}-{3:3}, at: alloc_super+0x221/0x9d0 fs/super.c:344
+ #1: ffff8880434fd5a8 (&osb->system_file_mutex){+.+.}-{3:3}, at: ocfs2_get_system_file_inode+0x18f/0x7b0 fs/ocfs2/sysfile.c:101
 
-[    1.711588] AMD-Vi: early_amd_iommu_init: irq remaping enabled
-[    1.718972] AMD-Vi: in early_enable_iommus
-[    1.723543] AMD-Vi: Translation is already enabled - trying to copy translation structures
-[    1.733333] AMD-Vi: Copied DEV table from previous kernel.
-[    1.739566] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.11.0-rc6-next-20240903-snp-host-f2a41ff576cc+ #78
-[    1.750920] Hardware name: AMD Corporation ETHANOL_X/ETHANOL_X, BIOS RXM100AB 10/17/2022
-[    1.759950] Call Trace:
-[    1.762677]  <TASK>
-[    1.765018]  dump_stack_lvl+0x70/0x90
-[    1.769109]  dump_stack+0x14/0x20
-[    1.772809]  iommu_completion_wait.part.0.isra.0+0x38/0x140
-[    1.779035]  amd_iommu_flush_all_caches+0xa3/0x240
-[    1.784383]  ? memcpy_toio+0x25/0xc0
-[    1.788372]  early_enable_iommus+0x151/0x880
-[    1.793140]  state_next+0xe67/0x22b0
-[    1.797130]  ? __raw_callee_save___native_queued_spin_unlock+0x19/0x30
-[    1.804421]  amd_iommu_enable+0x24/0x60
-[    1.808702]  irq_remapping_enable+0x1f/0x50
-[    1.813371]  enable_IR_x2apic+0x155/0x260
-[    1.817848]  x86_64_probe_apic+0x13/0x70
-[    1.822226]  apic_intr_mode_init+0x39/0xf0
-[    1.826799]  x86_late_time_init+0x28/0x40
-[    1.831266]  start_kernel+0x6ad/0xb50
-[    1.835436]  x86_64_start_reservations+0x1c/0x30
-[    1.840591]  x86_64_start_kernel+0xbf/0x110
-[    1.845256]  ? setup_ghcb+0x12/0x130
-[    1.849247]  common_startup_64+0x13e/0x141
-[    1.853821]  </TASK>
-[    2.077901] AMD-Vi: Completion-Wait loop timed out
-...
+stack backtrace:
+CPU: 0 UID: 0 PID: 5612 Comm: syz.0.15 Not tainted 6.11.0-rc6-syzkaller-g788220eee30d-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_unlock_imbalance_bug+0x256/0x2c0 kernel/locking/lockdep.c:5199
+ __lock_release kernel/locking/lockdep.c:5436 [inline]
+ lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5780
+ __mutex_unlock_slowpath+0xe2/0x750 kernel/locking/mutex.c:912
+ ocfs2_read_blocks+0x11c6/0x1620 fs/ocfs2/buffer_head_io.c:394
+ ocfs2_read_virt_blocks+0x4c8/0xa50 fs/ocfs2/extent_map.c:1010
+ ocfs2_read_dir_block fs/ocfs2/dir.c:508 [inline]
+ ocfs2_find_entry_el fs/ocfs2/dir.c:715 [inline]
+ ocfs2_find_entry+0x43b/0x2780 fs/ocfs2/dir.c:1080
+ ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1980
+ ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2002
+ _ocfs2_get_system_file_inode fs/ocfs2/sysfile.c:136 [inline]
+ ocfs2_get_system_file_inode+0x305/0x7b0 fs/ocfs2/sysfile.c:112
+ ocfs2_init_global_system_inodes+0x32c/0x730 fs/ocfs2/super.c:457
+ ocfs2_initialize_super fs/ocfs2/super.c:2250 [inline]
+ ocfs2_fill_super+0x3068/0x5880 fs/ocfs2/super.c:994
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f66b2b7b0ba
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f66b38efe68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f66b38efef0 RCX: 00007f66b2b7b0ba
+RDX: 0000000020004480 RSI: 00000000200044c0 RDI: 00007f66b38efeb0
+RBP: 0000000020004480 R08: 00007f66b38efef0 R09: 0000000002800400
+R10: 0000000002800400 R11: 0000000000000246 R12: 00000000200044c0
+R13: 00007f66b38efeb0 R14: 0000000000004475 R15: 00000000200001c0
+ </TASK>
+(syz.0.15,5612,0):ocfs2_read_virt_blocks:1013 ERROR: status = -12
+(syz.0.15,5612,0):ocfs2_read_dir_block:511 ERROR: status = -12
+(syz.0.15,5612,0):ocfs2_init_global_system_inodes:461 ERROR: status = -22
+(syz.0.15,5612,0):ocfs2_init_global_system_inodes:463 ERROR: Unable to load system inode 1, possibly corrupt fs?
+(syz.0.15,5612,0):ocfs2_init_global_system_inodes:472 ERROR: status = -22
+(syz.0.15,5612,0):ocfs2_initialize_super:2252 ERROR: status = -22
+(syz.0.15,5612,0):ocfs2_fill_super:1178 ERROR: status = -22
 
-And because of this the iommu command, in this case which is for enabling irq remapping does not succeed and that eventually causes 
-timer to fail without irq remapping support enabled.
 
-Once IOMMU SNP support is enabled, to enforce RMP enforcement the IOMMU completion wait buffers are setup as read-only and 
-exclusivity set on these and additionally the IOMMU registers used to mark the exclusivity on the store addresses associated with 
-these CWB is also locked. This enforcement of SNP in the IOMMU is only disabled with the IOMMU_SNP_SHUTDOWN parameter with 
-SNP_SHUTDOWN_EX command.
+Tested on:
 
-From the AMD IOMMU specifications:
+commit:         788220ee Merge tag 'pm-6.11-rc7' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16802200580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=14f90d959c4a3f08
+dashboard link: https://syzkaller.appspot.com/bug?extid=adfd64e93c46b99c957e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=115a6567980000
 
-2.12.2.2 SEV-SNP COMPLETION_WAIT Store Restrictions On systems that are SNP-enabled, the store address associated with any host 
-COMPLETION_WAIT command (s=1) is restricted. The Store Address must fall within the address range specified by the Completion Store 
-Base and Completion Store Limit registers. When the system is SNP-enabled, the memory within this range will be marked in the RMP 
-using a special immutable state by the PSP. This memory region will be readable by the CPU but not writable.
-
-2.12.2.3 SEV-SNP Exclusion Range Restrictions The exclusion range feature is not supported on systems that are SNP-enabled. 
-Additionally, the Exclusion Base and Exclusion Range Limit registers are re-purposed to act as the Completion Store Base and Limit 
-registers.
-
-Therefore, we need to disable IOMMU SNP enforcement with SNP_SHUTDOWN_EX command before the kdump kernel starts booting as we can't 
-setup IOMMU CWB again in kdump as SEV-SNP exclusion base and range limit registers are locked as IOMMU SNP support is still enabled.
-
-I tried to use the previous kernel's CWB (cmd_sem) as below: 
-
-static int __init alloc_cwwb_sem(struct amd_iommu *iommu)
-{
-        if (!is_kdump_kernel())
-                iommu->cmd_sem = iommu_alloc_4k_pages(iommu, GFP_KERNEL, 1);
-        else {
-                if (check_feature(FEATURE_SNP)) {
-                        u64 cwwb_sem_paddr;
-
-                        cwwb_sem_paddr = readq(iommu->mmio_base + MMIO_EXCL_BASE_OFFSET);
-                        iommu->cmd_sem = iommu_phys_to_virt(cwwb_sem_paddr);
-        		return iommu->cmd_sem ? 0 : -ENOMEM;
-                }
-        }
-
-        return iommu->cmd_sem ? 0 : -ENOMEM;
-}
-
-I tried this, but this fails as i believe the kdump kernel will not have these previous kernel's allocated IOMMU CWB in the kernel 
-direct map : 
-
-[    1.708959] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.714327] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x100805000, cmd_sem_vaddr 0xffff9f5340805000
-[    1.726309] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.731676] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x1050051000, cmd_sem_vaddr 0xffff9f6290051000
-[    1.743742] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.749109] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x1050052000, cmd_sem_vaddr 0xffff9f6290052000
-[    1.761177] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.766542] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x100808000, cmd_sem_vaddr 0xffff9f5340808000
-[    1.778509] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.783877] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x1050053000, cmd_sem_vaddr 0xffff9f6290053000
-[    1.795942] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.801300] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x100809000, cmd_sem_vaddr 0xffff9f5340809000
-[    1.813268] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.818636] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x1050054000, cmd_sem_vaddr 0xffff9f6290054000
-[    1.830701] AMD-Vi: in alloc_cwwb_sem kdump kernel
-[    1.836069] AMD-Vi: in alloc_cwwb_sem SNP feature enabled, cmd_sem_paddr 0x10080a000, cmd_sem_vaddr 0xffff9f534080a000
-[    1.848039] AMD-Vi: early_amd_iommu_init: irq remaping enabled
-[    1.855431] AMD-Vi: in early_enable_iommus
-[    1.860032] AMD-Vi: Translation is already enabled - trying to copy translation structures
-[    1.869812] AMD-Vi: Copied DEV table from previous kernel.
-[    1.875958] AMD-Vi: in build_completion_wait, paddr = 0x100805000
-[    1.882766] BUG: unable to handle page fault for address: ffff9f5340805000
-[    1.890441] #PF: supervisor read access in kernel mode
-[    1.896177] #PF: error_code(0x0000) - not-present page
-
-....
-
-I think that memremap(..,..,MEMREMAP_WB) will also fail for the same reason as memremap(.., MEMREMAP_WB) for the RAM region will 
-again use the kernel directmap.
-
-So it looks like we need to support IOMMU_SNP_SHUTDOWN with SNP_SHUTDOWN_EX command before kdump kernel starts booting.
-
-Thanks,
-Ashish
 
