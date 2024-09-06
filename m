@@ -1,173 +1,227 @@
-Return-Path: <linux-kernel+bounces-318869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48F596F460
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4CB96F464
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CCC21C233D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06251F24B7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8B31CC897;
-	Fri,  6 Sep 2024 12:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AEA1CCB53;
+	Fri,  6 Sep 2024 12:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2QLrCDm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CMBNxYFA"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049D21A4E6E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F521A2C39
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725626220; cv=none; b=Z+YCWZuBfXtwKqnVWa9mgmmqkh04xHEWXFIAw/dBPXUZzrF3KTnTBA0YDhq9CmL0Uyqm7aMymvKvSN8MQKkOsRhzoT3hzUigPKVsRSohBwsn0zv+gMmr5TE3h4nY/KULi2YAUDOUXSzqpkF/6HuZb3cep/Vm5iyzz6tLsMn0zpY=
+	t=1725626245; cv=none; b=THj2Yd8TlbZNoQIlH/QCYcxSh92G9IXRZrEm1bzYTZN04WjP8ChJ5otomh7oRXVOPBHII5rplMtoLSBblMaIr5ScugRAQA7UsBgE9eNwH2MPIRjSDyvn06RLw/mKPpb4sklJkqys1pJXj6cjzr2QXzZ4Dqt6V4c/Lr6MOq1hCAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725626220; c=relaxed/simple;
-	bh=tJ9daY7WGj0ycxrojbLCpIa6HPeBgYgJObTvkAZ1yDU=;
+	s=arc-20240116; t=1725626245; c=relaxed/simple;
+	bh=NJe/rIXJ+NT4IVv2bVq31vlJmHI1mWgRJANW7wsGAM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nkdKJJ4Y5Mw40G1IghAWCsBfAD1F66lKgaFSaj9WkgNkMqDlFp6WYta5RZuOAhNnck6Tb+z5Dl6+0lewwWfHAAe867RM6QvR5KD8jtVSbcwgJsdLtOBz7oAFs9d7w1YY/MU7h3gXD4jnczf6oylU+b24kjCxaxGkjLa4Gcw15eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2QLrCDm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25C7EC4CEC7;
-	Fri,  6 Sep 2024 12:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725626219;
-	bh=tJ9daY7WGj0ycxrojbLCpIa6HPeBgYgJObTvkAZ1yDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G2QLrCDmMzLSNe5ilBgAQtx2I77NBNaxen3D1zOOhkbp+RXNVlMZfbw5+rzDZ5iEz
-	 m3dTp7FCjuEJBSI9vHZGApiGRMfKOWL79xEjxVzREO7/VXqYCSz6t+OsN6Juyh702s
-	 soHEfg8Ed6T0PmlxUV5AQyr5ZpdRq+YmjnpPZcJimbAlvIvPKUItZwhyIgriC6NUYn
-	 y6Vq6ky0o3zYNbzhiAYZqJoWi0/D1uBnUhfXXEdiS5LDzhq7P4YrbBkm7kQCtQ3puz
-	 tbNRKX8Fd5ZmixojkamuL5h4hAwx8W2/8WxyUUtYSmm4JK9/BRJSpDsC9s7yz/hhQb
-	 H2N0BzA4nkysw==
-Date: Fri, 6 Sep 2024 14:36:56 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hh1vgReugpzm/RNrJ2I/G9e5XNLpo4oNLC2NG7MVMqisi2XGHyIOrsxIfNzihjPchRzYbRzVYwkWU0BgpLVd+lyprnGs4IBbF2faJQ8FOjDBeldV0vxoHCZVO5Bkb5zyrwzTQKkv0z0yejuiL6M3fj/s6PDxGc7+zrHeerparmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CMBNxYFA; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53438aa64a4so2084953e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 05:37:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725626242; x=1726231042; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S/Ay4ffTsg800t8woUNwG83byxvnL8SX0SnXJSfh5LU=;
+        b=CMBNxYFAP2y4sBKRTLRE8s9Pd1bI8IcMFRJxLUhuyz5WAEYizHAQHXc0KCOl3roDJ/
+         BZBzned7yyELEsGakeRZh0XdC3Ga27fkLwyTa7hFezgDTlnna23zMHz59sdvHa1DkmB+
+         AuvsDV2HRlxygLF26rWaJ1CmO/Bs8X/s+SOp7SA2joiczmdhdNcsUywhHLsjAr5nMZ+b
+         ueASkvKAqiHdeV+rHGxqh5IHbEbdmH++Zf6h3vvOzAj+JDs/D0GZj9KwJ1/OoByU0tqq
+         T0A3Dum1erUgvztfKBoyf28xIg9DURPkoPLmQRnOjxkA1YdWoLi8l/Pa878YqOCv72Rk
+         Vo2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725626242; x=1726231042;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S/Ay4ffTsg800t8woUNwG83byxvnL8SX0SnXJSfh5LU=;
+        b=JSTXWxm5TXRlAZtdWHbD52FGUVYrh7nquruit3J7Ky0qLQ0+RCO5D90MZehZOPnIXI
+         WdVK1qb3M67G5/iiupI9yLJdsZgvqAHfUY0Ixt3Ay5iPk/qTHCB969ic5HSMYV4xSo29
+         QRx6SVcf3oeG35wTCCYh+M6AHd4bKeG1K0f9KT8xep+6bK2WKqkRDkVTORNXl93GWI04
+         cu629/swHrbd5aqIFYBProtJOtzUoPakmBXj/Er8+YFDPGQRRW0prlK+WZM61dGQOrB+
+         6SAKZtYvXtH8skEOag8cL7pV0oQfKMdcVeRDhLdOAfk2t47LAulyoj0/9akJ/nDV6xg8
+         1QCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCWRrf7v4u6N2J51ZM2zj6CnveGkpRhEHVx9MNGy3UtBimx1bjdTPChHNOITM5kbfr4b37mTDCyzCSeuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR6yv11AbClX5kg2mh9gm0GsDpPhBX3Z15caAzkkgrPoOBk+an
+	Tn9Uivupgnx3SZotz1meHrAKm4LfHbKC2hLaIZq8gpbxsKfw10hY/fc6UxQH7+s=
+X-Google-Smtp-Source: AGHT+IEvbn3cfcZhjtaT6x4x5o1bTg0s4aL5vUCAn7oA67W0cAj0BmjIXro40QGz4peUaca1k/L7Tg==
+X-Received: by 2002:a05:6512:31ce:b0:52c:e3ad:3fbf with SMTP id 2adb3069b0e04-536587fbb36mr1457304e87.42.1725626241399;
+        Fri, 06 Sep 2024 05:37:21 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6af28c70sm231088866b.154.2024.09.06.05.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 05:37:21 -0700 (PDT)
+Date: Fri, 6 Sep 2024 14:37:19 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] sched/isolation: Add HK_FLAG_SCHED to nohz_full
-Message-ID: <Ztr3aP7GId1yoDKx@pavilion.home>
-References: <20240818234520.90186-1-longman@redhat.com>
- <20240818234520.90186-2-longman@redhat.com>
- <ZtcK3aF_d3BUhiVz@localhost.localdomain>
- <7fa3dbd5-7c2e-4614-a5f4-258546cb090b@redhat.com>
- <ZteAfUXZd1TgIwiL@pavilion.home>
- <4822d111-b02d-469a-a457-46392c35021f@redhat.com>
- <ZthWKgK9B_AUqSs1@localhost.localdomain>
- <20240904130445.GI4723@noisy.programming.kicks-ass.net>
+	Thomas Gleixner <tglx@linutronix.de>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH next v1 1/2] serial: 8250: Switch to nbcon console
+Message-ID: <Ztr3f8M2FaT2Rz1c@pathway.suse.cz>
+References: <20240905134719.142554-1-john.ogness@linutronix.de>
+ <20240905134719.142554-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240904130445.GI4723@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240905134719.142554-2-john.ogness@linutronix.de>
 
-Le Wed, Sep 04, 2024 at 03:04:45PM +0200, Peter Zijlstra a écrit :
-> On Wed, Sep 04, 2024 at 02:44:26PM +0200, Frederic Weisbecker wrote:
-> > Le Tue, Sep 03, 2024 at 09:23:53PM -0400, Waiman Long a écrit :
-> > > > After discussing with Peter lately, the rules should be:
-> > > > 
-> > > > 1) If a nohz_full CPU is part of a multi-CPU domain, then it should
-> > > >     be part of load balancing. Peter even says that nohz_full should be
-> > > >     forbidden in this case, because the tick plays a role in the
-> > > >     load balancing.
-> > > 
-> > > My understand is that most users will use nohz_full together with isolcpus.
-> > > So nohz_full CPUs are also isolated and not in a sched domain. There may
-> > > still be user setting nohz_full without isolcpus though, but that should be
-> > > relatively rare.
-> > 
-> > Apparently there are users wanting to use isolation along with automatic
-> > containers deployments such as kubernetes, which doesn't seem to work
-> > well with isolcpus...
+On Thu 2024-09-05 15:53:18, John Ogness wrote:
+> Implement the necessary callbacks to switch the 8250 console driver
+> to perform as an nbcon console.
 > 
-> I've been proposing to get rid of isolcpus for at least the last 15
-> years or so. There just isn't a good reason to ever use it. We were
-> close and then the whole NOHZ_FULL thing came along.
+> Add implementations for the nbcon console callbacks (write_atomic,
+> write_thread, device_lock, device_unlock) and add CON_NBCON to the
+> initial flags.
 > 
-> You can create single CPU partitions using cpusets dynamically.
+> The legacy code is kept in order to easily switch back to legacy mode
+> by defining USE_SERIAL_8250_LEGACY_CONSOLE.
+> 
+> --- a/drivers/tty/serial/8250/8250_core.c
+> +++ b/drivers/tty/serial/8250/8250_core.c
+> @@ -388,6 +388,7 @@ void __init serial8250_register_ports(struct uart_driver *drv, struct device *de
+>  
+>  #ifdef CONFIG_SERIAL_8250_CONSOLE
+>  
+> +#ifdef USE_SERIAL_8250_LEGACY_CONSOLE
 
-I'm not sure we could have removed isolcpus= even back then.
-It has always been widely used and we would have broke someone's box.
+Just for record. I agree that it is better to simply remove the
+obsolete legacy code.
 
-> 
-> > > Anyway, all these nohz_full/kernel_nose setting will only apply to CPUs in
-> > > isolated cpuset partitions which will not be in a sched domain.
-> > > 
-> > > > 
-> > > > 2) Otherwise, if CPU is not part of a domain or it is the only CPU of all its
-> > > >     domains, then it can be out of the load balancing machinery.
-> > > I am aware that a single-cpu domain is the same as being isolated with no
-> > > load balancing.
-> > 
-> > By the way is it possible to have a single-cpu domain (sorry I'm a noob here)
-> > or do such CPU always end up on a null domain?
-> 
-> IIRC they always end up with the null domain; but its been a while. It
-> simply doesn't make much sense to have a 1 cpu domain. The way the
-> topology code works is by always building the full domain tree, and then
-> throwing away all levels that do not contribute, and in the 1 cpu case,
-> that would be all of them.
-> 
-> Look for 'degenerate' in kernel/sched/topology.c.
+Or maybe, we would need to keep it for the rs485 consoles, see below.
 
-Ok.
+>  static void univ8250_console_write(struct console *co, const char *s,
+>  				   unsigned int count)
+>  {
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -546,6 +546,13 @@ static int serial8250_em485_init(struct uart_8250_port *p)
+>  	if (!p->em485)
+>  		return -ENOMEM;
+>  
+> +#ifndef USE_SERIAL_8250_LEGACY_CONSOLE
+> +	if (uart_console(&p->port)) {
+> +		dev_warn(p->port.dev, "no atomic printing for rs485 consoles\n");
+> +		p->port.cons->write_atomic = NULL;
+> +	}
 
-> 
-> > > > 
-> > > > I'm a bit scared about rule 1) because I know there are existing users of
-> > > > nohz_full on multi-CPU domains... So I feel a bit trapped.
-> > > 
-> > > As stated before, this is not a common use case.
-> > 
-> > Not sure and anyway it's not a forbidden usecase. But this is anyway outside
-> > the scope of this patchset.
-> 
-> Most crucially, it is a completely broken setup. It doesn't actually
-> work well.
-> 
-> Taking it away will force people to fix their broken. That's a good
-> thing, no?
+Wait! This makes the rs485 consoles much less usable for debugging.
+They might have troubles to see the emergency and panic messages.
+Or do I miss anything, please?
 
-I'm all for it but isn't the rule not to break userspace?
+Is this acceptable? Why?
+Why is this limitation exactly needed?
 
-> 
-> > > The isolcpus boot option is deprecated, as stated in kernel-parameters.txt.
-> > 
-> > We should undeprecate it, apparently it's still widely used. Perhaps by people
-> > who can't afford to use cpusets/cgroups.
-> 
-> What is the actual problem with using cpusets? At the very least the
-> whole nohz_full thing needs to be moved into cpusets so it isn't a fixed
-> boot time thing anymore.
+Is is because the following code is not safe enough for the write_atomic
+variant when it is guarded only by the nbcon context ownership?
 
-Sure that's the plan.
+void serial8250_console_write_thread(struct uart_8250_port *up,
+				     struct nbcon_write_context *wctxt)
+{
+[...]
+	if (em485) {
+		if (em485->tx_stopped)
+			up->rs485_start_tx(up);
+		mdelay(port->rs485.delay_rts_before_send);
+	}
+[...]
+	if (em485) {
+		mdelay(port->rs485.delay_rts_after_send);
+		if (em485->tx_stopped)
+			up->rs485_stop_tx(up);
+	}
+[...]
 
-> 
-> > > My plan is to deprecate nohz_full as well once we are able to make dynamic
-> > > CPU isolation via cpuset works almost as good as isolcpus + nohz_full.
-> > 
-> > You can't really deprecate such a kernel boot option unfortunately. Believe me
-> > I wish we could.
-> 
-> Why not? As I said, the only thing that's kept it around, and worse,
-> made it more popular again, is this nohz_full nonsense. That never
-> should've used isolcpus, but that's not something we can do anything
-> about now.
-> 
-> Rigid, boot time only things are teh suck.
+Would it break even the nbcon console context it taken over the safe
+way? Or only by "unsafe" takeover?
 
-I know...
+IMHO, we should risk the "unsafe" takeover. We still would be
+in a better situation than the legacy code which ignores
+the port->lock during panic() all the time (after bust_
 
-Thanks.
+> +#endif
+> +
+>  	hrtimer_init(&p->em485->stop_tx_timer, CLOCK_MONOTONIC,
+>  		     HRTIMER_MODE_REL);
+>  	hrtimer_init(&p->em485->start_tx_timer, CLOCK_MONOTONIC,
+> @@ -3269,6 +3285,11 @@ static void serial8250_console_putchar(struct uart_port *port, unsigned char ch)
+>  
+>  	wait_for_xmitr(up, UART_LSR_THRE);
+>  	serial_port_out(port, UART_TX, ch);
+> +
+> +	if (ch == '\n')
+> +		up->console_newline_needed = false;
+> +	else
+> +		up->console_newline_needed = true;
+
+I might be just dumb but this code confused me. I missed that the
+variable was actually set after printing the character. I inverted
+the logic in my head and it did not make sense.
+
+I vote for adding a comment. Or better make the code more
+straightforward by renaming the variable and inverting the logic:
+
+	if (ch == '\n')
+		up->console_line_ended = true;
+	else
+		up->console_line_ended = false;
+
+>  }
+>  
+>  /*
+> @@ -3421,6 +3443,125 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
+>  	if (locked)
+>  		uart_port_unlock_irqrestore(port, flags);
+>  }
+> +#else
+> +void serial8250_console_write_thread(struct uart_8250_port *up,
+> +				     struct nbcon_write_context *wctxt)
+> +{
+> +	struct uart_8250_em485 *em485 = up->em485;
+> +	struct uart_port *port = &up->port;
+> +	unsigned int ier;
+> +
+> +	touch_nmi_watchdog();
+
+This should not be needed in the write_thread() variant because
+it allows to schedule after emitting one record.
+
+> +	if (!nbcon_enter_unsafe(wctxt))
+> +		return;
+> +
+
+The rest looks good.
+
+Best Regards,
+Petr
 
