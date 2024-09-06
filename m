@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-319102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9449696F7C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7137896F7C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54378282D1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD3E2876B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917C01D365C;
-	Fri,  6 Sep 2024 15:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E1F1D2F78;
+	Fri,  6 Sep 2024 15:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WyKWtegO"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kRg5+knS"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8701D27B6;
-	Fri,  6 Sep 2024 15:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795931D4154;
+	Fri,  6 Sep 2024 15:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635055; cv=none; b=pEGvVyMI7lLZohTAfAQGsS1tVMZRdk3rnbeEGl6wmBsq4ECbKvvESv+3FB/GeiY9lG0hysSa2yI5A9QWn8TDYPEV9Uynbe+K0os0oJGExy8ZF+bwucsaB5uWAsqrh5xsKFf+j2AA3IoPOXYPX57bsbTSNUZrlCO/ck0w7RH8wGM=
+	t=1725635059; cv=none; b=kgF5hg95DdVcZP92ICfD7utbAaFA0VYjmUZD0/vB1jK+WIXYnFHQafdQfgCwVLyeIwl7Ym1vUf78OcNgfG1iR9iln2wWgzpyLy/iqdSUi+NPIbDpw0SLz3WhiJ2MW+KlsraSVJLudpWu7nOvX3JKis2O6PA9WvvP3fzB7knn0Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635055; c=relaxed/simple;
-	bh=An/acgaJ/FF4i3h60dXWEzDRRV/J5TYBW0r59+ju6rw=;
+	s=arc-20240116; t=1725635059; c=relaxed/simple;
+	bh=aMxMfLluDApZg8GZ/hhCoqo5WbxMkrnyc+dD6+FqcOY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HTsBkmLSen7pPDsajp75GpymBK1PiQ+4V+BDgjqqZKfNaJAcl0PSEbTBq3Ft4t+qq3sfnN19yYmziWCjgVbP0gX5AOZ+NGS5k77tFcJeXI+r/c4wOW8MKuvSiPq3DVM5/CLVhLw/GUqgdYsE9TZGbIVyy9Di4Ip0R0/B8MsnazQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WyKWtegO; arc=none smtp.client-ip=217.70.183.194
+	 MIME-Version; b=UkrtZzQkaL80yOuAtGmOmSMbUqcnlRE8rtXrKSEUYYgrXUCbXTxvkFMsQyoLnDD1IS2iOYH2V/RSpIQmGOUqu23slkheh+w8unBxppZEdAE3+8dVA6w1C0fe8z6F4NO6kX/8LjHeGEWbYuVaHVG8iyYE5sOsjVi75Fqe0TtmfCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kRg5+knS; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CF91E40004;
-	Fri,  6 Sep 2024 15:04:09 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C59C1BF205;
+	Fri,  6 Sep 2024 15:04:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725635051;
+	t=1725635055;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pBrEPabcmi1+PMKxDT3k5ophfYgYbtMNtcQd4KLDDOE=;
-	b=WyKWtegOFLdMLP623+7iNJF766m23Vek921Hg8qkxv110ANSAeJNV7SX+BQVCgoVsCjyUz
-	lKudoIUnUimLrCxHFGso9St5C4FDX9M74HkBIc81wuvBR3Ks6DAkXFolWBhKCSLRcqmmn2
-	Mh+IUeEd/zK/jHf1yR8otxqYeYAzEKCIMOxvGD66PK9jikgFoQM3rGrynQN3NkBB7FOV4t
-	X3+Ac8HKwQ0BGGjoEv7HxXtPkmfmTr4HyeP5jUaN5GHafZ/yre0WtEel6lp8vxaR53GKM0
-	dy/wyLmYEOLR8BfLHXLgJEazizbCy9ohyD/0jA9v6N1hFE7MlhkrAU5UEwQCQg==
+	bh=gLX4GxsDjXuYrcRxyG/fXuf+Afhpxwi7So/zPttJNUw=;
+	b=kRg5+knSqmEj0BHFU8nCB6ceUaYg8uGpewryyD4TR1SpbbaUtuMO8VAonAzH3uVLnsS7gw
+	jrUQ5SLNAAdnc7FKr6/knZl9dhd70RR3ff31QMYqp2U4K8FLK2DZmapqd8z7IhL8aFLwj0
+	VTZva4B32Bq7FhWHii/kxctEMqzdgJ9OWfeYTSDL0zBjjPK6BTdEaW8YFl9Uxb7djHPRsv
+	5WEUf10V26FyD56JhKfSMKiJyEqLEE7VOhj0K+A60uMvNT3I+iy0zNoOsplrgUcypNAHfb
+	qs0CYdtjVLh+rihj0XiU5XtwhuT7zlQanOvxkBq5mi6f1NS0jUiUapji1r9HVw==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Jinjie Ruan <ruanjinjie@huawei.com>,
 	miquel.raynal@bootlin.com,
@@ -82,11 +82,11 @@ To: Jinjie Ruan <ruanjinjie@huawei.com>,
 	linux-stm32@st-md-mailman.stormreply.com,
 	krzk@kernel.org,
 	jic23@kernel.org
-Subject: Re: [PATCH -next RESEND 02/10] mtd: rawnand: cadence: Use for_each_child_of_node_scoped()
-Date: Fri,  6 Sep 2024 17:04:09 +0200
-Message-ID: <20240906150409.734780-1-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH -next RESEND 01/10] mtd: rawnand: arasan: Use for_each_child_of_node_scoped()
+Date: Fri,  6 Sep 2024 17:04:13 +0200
+Message-ID: <20240906150413.734809-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240826094328.2991664-3-ruanjinjie@huawei.com>
+In-Reply-To: <20240826094328.2991664-2-ruanjinjie@huawei.com>
 References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,13 +95,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'fc214e50e292550dcd77e459e59a2a385bda4735'
+X-linux-mtd-patch-commit: b'7021a797689d288a06cb48d0da44880d1dcaff8d'
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, 2024-08-26 at 09:43:20 UTC, Jinjie Ruan wrote:
+On Mon, 2024-08-26 at 09:43:19 UTC, Jinjie Ruan wrote:
 > Avoids the need for manual cleanup of_node_put() in early exits
-> from the loop by using for_each_child_of_node_scoped().
+> from the loop.
 > 
 > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
