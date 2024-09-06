@@ -1,91 +1,137 @@
-Return-Path: <linux-kernel+bounces-319549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A386B96FE53
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA7F96FE89
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 01:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBF81F23A52
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:11:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6525E1F246C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB56215B10D;
-	Fri,  6 Sep 2024 23:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA5C15B559;
+	Fri,  6 Sep 2024 23:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Po55viVX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="OvUvdNWI"
+Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193961B85DC
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 23:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E9715B546;
+	Fri,  6 Sep 2024 23:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725664297; cv=none; b=Q3dU16AY1aAvnbhNAEVm0P0hVkkvW/+XkSSyD7OfRh3xp8nZ4R6waQcHahz7M94mBYJxH0gR7OoMWDKzrHPrZVgUe5KK/3wd6zLmIHgwBKcIbtZCpjXo+QnmPQomvqW4p7j2N/HiONevWU8N+nPuKYg2q3H/3tONd+dnazpu3C0=
+	t=1725665926; cv=none; b=RghKBBl0dgCimyyyfzfEsYk2xaWpdnsUD+Oe29ALZP7fGhHXbneVRcA9yC3Imfklwm5BVgUpwFpA65lm5vJujuWW/Nan27F7PfWnevcrDpcG1rkOSpyGwAqh64PzZGs2U+uEfHpLHDQVpE2+pby6RGndc663CS9vZ37AnQWi4EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725664297; c=relaxed/simple;
-	bh=Jm92GTizLR+q2XdM8uwVHTvYGhJOZyIzzzePNtb5tXo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GwN58AAhQnBUndWOQBGawvkEVG6D7k6PjGgdsk+gUt8a+8AxrvGttL/1/vpX+99UyeeARksZHvGtb/U8GQwDSkCz4+Rz92zuPliULw47SX3G9Mj8mbW2AYmTWkRoHsLOFXGPS0TETJsNRAT4fSeTihuftPYdaPc94LpO2Yj7G2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Po55viVX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1725664291;
-	bh=HEF6t61oQcZPeWEFUYghSOz/WmQUigaLAqj5lwawg9Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Po55viVX1hlmgK10Q8yQDjvyM2VHZheLwnbXdnxlKNaW/54rsQJsaCNwJQjO1AX3P
-	 WEwGP9gXr6Mfpng9r8/4K1F1BnVNo9dfXHUA+gYiQ7R7rTPT+iQjCXRLVrMH+0aeLE
-	 bO1pQ5VJFH0MgjafH2HAS3Di72fu1PWEmnJsNNY5UIGArOnZ5mAnIvp1GJXMUf59Bz
-	 9Lu2PD2+1F0krDeVAnsFPjuYYyI8+gfs36WPUNvpBU2NuV4bmvgB3cFQLCWPlCdw+k
-	 st3B1BfRpe0lW6TEOmBQkZ4b2+83p43dY5KEczwDl/JI0OPfw3hADpcvERmJb2j9EA
-	 8VMdqgg5LnAEw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0sRl3CtQz4wj1;
-	Sat,  7 Sep 2024 09:11:31 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, nysal@linux.ibm.com
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.11-3 tag
-In-Reply-To: <CAHk-=wj6L6Qb10jVk+eHH2D3oHFathTc2nnZRpKKbqKuO3Rkow@mail.gmail.com>
-References: <87ttet3rz9.fsf@mail.lhotse>
- <CAHk-=wj6L6Qb10jVk+eHH2D3oHFathTc2nnZRpKKbqKuO3Rkow@mail.gmail.com>
-Date: Sat, 07 Sep 2024 09:11:30 +1000
-Message-ID: <87o7504btp.fsf@mail.lhotse>
+	s=arc-20240116; t=1725665926; c=relaxed/simple;
+	bh=Ekkdq5gLv9Vi/s9zwnhxna+9KYd14k5UvdxW80ID0GM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DUDqMMgoPyocz2VgXE8BJuBy65EVmY00dubjrUxT5O5WEQhEJuwzexrIhCtMeNviY2B6X/gVM44sXsV1Xc/A6hei44008NTUUjkjqM7/p2mqp+9Av4mxROx9xS4fZoP4Ws+h6LXYPEGDiUM+iEh4WgeKbciHOamct/YIYMt/HSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=OvUvdNWI; arc=none smtp.client-ip=67.231.149.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
+	by mx0a-00190b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486Dujg1018852;
+	Sat, 7 Sep 2024 00:17:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=jan2016.eng;
+	 bh=Sa8FsJ1g0jNIiY7XT136rfT0smOpE9h3wS97TK9K/3k=; b=OvUvdNWI5lO5
+	vZPpXhVorhahY+LdpjJnP2PoXGEFESXYkn3WF30fLbC27XPtUTvXM6rbkoIlDYPs
+	P+OIHwuyjg5LonLvDXwLQnaTqJgRrEqmi3ZWKQvCC8PUeXDUalyJUMrLJqibOu7s
+	Mc32uY01wj0gdy3wHvOXUw5jhkHWd8WvEgK7uClhT2uw11RVJfoumlz6gPvio1vE
+	7/jtWqDxjz5+5L7tvitypTPlvmrk5iiV3eG0QtAhLAZksM/P0szNSjEqmPWGE/e8
+	7Vpp18YxpqTmeJVqbh82A9CrN61VmG8GTw+sWM5unf0NACx2KENR6qglDSe84/xU
+	4HZSbyZAKg==
+Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
+	by mx0a-00190b01.pphosted.com (PPS) with ESMTPS id 41fhymrg31-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 07 Sep 2024 00:17:03 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
+	by prod-mail-ppoint1.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 486JcKxj010010;
+	Fri, 6 Sep 2024 19:17:01 -0400
+Received: from prod-mail-relay11.akamai.com ([172.27.118.250])
+	by prod-mail-ppoint1.akamai.com (PPS) with ESMTP id 41fj2pxxk4-1;
+	Fri, 06 Sep 2024 19:17:01 -0400
+Received: from [100.64.0.1] (prod-aoa-csiteclt14.bos01.corp.akamai.com [172.27.97.51])
+	by prod-mail-relay11.akamai.com (Postfix) with ESMTP id 7D43E3407C;
+	Fri,  6 Sep 2024 23:16:59 +0000 (GMT)
+Message-ID: <2d4bc830-0759-41c1-ad83-10413150152f@akamai.com>
+Date: Fri, 6 Sep 2024 16:16:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/1] tcp: check skb is non-NULL in tcp_rto_delta_us()
+To: Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240823033444.1257321-1-johunt@akamai.com>
+ <20240823033444.1257321-2-johunt@akamai.com>
+ <CANn89iJ7uOFshDP_VE=OSKqkw_2=9iuRpHNUV_kzHhP-Xh2icg@mail.gmail.com>
+Content-Language: en-US
+From: Josh Hunt <johunt@akamai.com>
+In-Reply-To: <CANn89iJ7uOFshDP_VE=OSKqkw_2=9iuRpHNUV_kzHhP-Xh2icg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_07,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxlogscore=987 mlxscore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409060172
+X-Proofpoint-GUID: YaCRuc33yKehw2lXVBpGy2RH7jytVl7O
+X-Proofpoint-ORIG-GUID: YaCRuc33yKehw2lXVBpGy2RH7jytVl7O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_08,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 clxscore=1011
+ mlxlogscore=790 priorityscore=1501 phishscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409060173
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-> On Fri, 6 Sept 2024 at 05:08, Michael Ellerman <mpe@ellerman.id.au> wrote:
+On 8/22/24 11:55 PM, Eric Dumazet wrote:
+> On Fri, Aug 23, 2024 at 5:34 AM Josh Hunt <johunt@akamai.com> wrote:
 >>
->> Please pull some more powerpc fixes for 6.11:
+>> There have been multiple occassions where we have crashed in this path
+>> because packets_out suggested there were packets on the write or retransmit
+>> queues, but in fact there weren't leading to a NULL skb being dereferenced.
+>> While we should fix that root cause we should also just make sure the skb
+>> is not NULL before dereferencing it. Also add a warn once here to capture
+>> some information if/when the problem case is hit again.
 >>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-3
->
-> Hmm. New pgp key? Please don't take me by surprise like this.
+>> Signed-off-by: Josh Hunt <johunt@akamai.com>
+> 
+> Hi Josh
+> 
+> We do not want a patch series of one patch, with the stack trace in
+> the cover letter.
+> Please send a standalone patch, with all the information in its changelog.
+> 
+> 1) Add Neal Cardwell in the CC list.
 
-Yes, sorry. I switched to it a few weeks back but this is the first pull
-request I've sent since.
+Sending v2 now with Neal included.
 
-> The key looks fine, I see the signature by Stephen Rothwell, but I get
-> worried when I suddenly see a new signature with no notice and then
-> have to go looking around for it.
+> 
+> 2) Are you using TCP_REPAIR by any chance ?
+> 
 
-It's also signed by my old key.
+No, we're not using TCP_REPAIR on these machines.
 
-I posted it to the keys repo:
-  https://lore.kernel.org/keys/87o75pp2bt.fsf@mail.lhotse/
+> 3) Please double check your kernel has these fixes.
+> 
+> commit 1f85e6267caca44b30c54711652b0726fadbb131    tcp: do not send
+> empty skb from tcp_write_xmit()
+> commit 0c175da7b0378445f5ef53904247cfbfb87e0b78     tcp: prohibit
+> TCP_REPAIR_OPTIONS if data was already sent
+> 
 
-But yeah I still should have mentioned it in the pull request.
+We have the first commit, but not the second.
 
-cheers
+Josh
 
