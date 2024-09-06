@@ -1,125 +1,212 @@
-Return-Path: <linux-kernel+bounces-319341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A2296FB58
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:39:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7745796FB5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D295528EDBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9493A1C2154D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693381C7B68;
-	Fri,  6 Sep 2024 18:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366A11CBE9F;
+	Fri,  6 Sep 2024 18:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hzxzsxea"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJ/Gz7g9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307DA1B85CA;
-	Fri,  6 Sep 2024 18:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF3113C3F2;
+	Fri,  6 Sep 2024 18:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725647981; cv=none; b=bPxFe6zL+o9t4+YcCF69Y1f11YUEKJqpX2TgLX41ZUK1c/ZMq7FDvlj2/NMlIYoOctRyL35aTAw3M6r8ZYWV0wLMPrXc31FdPZR7oTZ3tLImjxTeNLGcuTNcVuRg65wbGQi9K1xI+F/v/6SN7kpmOvkEd223MuGG4uSkzDJ8ZfA=
+	t=1725648023; cv=none; b=JRbDioLJ/UY1wF+fHTYCTSjcE/BG98rj/P2/Cn+/LBsKaWpXrKx31fn6Wea04vBXa91sIli2qAxH4YdrScgL4f9pdJzHcwlzdBzE7F31Dt0oUJsbWWm6yhKz8554aI3PX4BSxu15Qwps3EgyBmjnQXFVEA9Om2MeN4FAqsqU2XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725647981; c=relaxed/simple;
-	bh=yiCPeFkySVHpWWcDLB6biske28eaxBYiii9UlIjTp0g=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QCOK0yWneuEKDZRSYYVgvdn2nrGVOgTtiTFZNnpFBq6O0aAUp/IYZEx/iVQEKK83+VWwh0tGUnD2cNfKFq+I9wycvpXCUmqCLIozBEplsAuCMZ0SBrmcEumIR/b+irfMdm3n+S6wHs/6s10wZbgMIj3ZFJUlReLt5thGkQg6QmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hzxzsxea; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1725648023; c=relaxed/simple;
+	bh=ByBLS/TgKju3kVxjNGcln0VluWof+FbKlFmQWHtreFs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=i6NYOvLYqK7HmXPnzZOFdmCPkx7q/VQEpysTIxEoPMUEh/iUlKKPatc1gHtchG8Rn2DvQUU8rZmVAd19zJtk9EL4RgJnNjegCPvO7VkqegbLWRSArHXqTuoFcOOlA0wEVmYGcrcDEKHZWD510Mueg7mexf5SWuzDhjmSVKX3ofI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nJ/Gz7g9; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725647980; x=1757183980;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=yiCPeFkySVHpWWcDLB6biske28eaxBYiii9UlIjTp0g=;
-  b=HzxzsxeaYIryBhoSMVppwqNfPJwTO+JfgNfoEM1h6uJbVQR8yMsh2TkN
-   QkXzBq5u74cCMnHYXfCA20MOI+7Q3C62QAB4qP7KLA6DHdF7RQrYECCCi
-   S+WmK06sy7WpIapDQ0Uve3t54GeVzd0nfHDD24QkbO4yhJdr3z+dC2//t
-   ocJaFDlpfkb3+fORrkhGF6KKBQWBw2nJf1CH0J3/wVNQAGrpgCCcq8kcN
-   NoWQ+YgXcFIETkuisSxd9dMWhJXsHA7r62kTzkdl27Eld+zbH6Sr9Gt05
-   2uNZjlrKgztw6zyTanKTSVSaGZQeyE+6MKqNzmwrr5fuOoHXbUXHWcUXO
+  t=1725648022; x=1757184022;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ByBLS/TgKju3kVxjNGcln0VluWof+FbKlFmQWHtreFs=;
+  b=nJ/Gz7g94clH0LuHXny8rUYIEZ6x+O4nFz/9lsdcOipNMNQPY3jH9rgj
+   tXS2UwV2choZoiT3VoN7QBkfFjGbHBxVGuyC2IvE+XOOdwbOCnkkm8ywI
+   QQIPtfh4Gdv1Thkh37sCo4z8PEZmtDCxexDyw6oHdTgJnOrrxtjoSreQr
+   cqNmW7VY8WsZSmEDDXdQ/DmEnjCaPGhSp2c2lEQKaPDbkkRjcF7Xd+S3l
+   09PktvQ6YDFG8VLDeO+1czBLvbpB4vNtQMnT7dwqjGPiws7uXZRFZk1BA
+   VqSBxC1NjvoB31rxuS/P/scJDu3XWysgNI7V6Gi19ALrxHUb00HhATGaK
    A==;
-X-CSE-ConnectionGUID: 06r+7VyJQmekSa8Z+cGh7g==
-X-CSE-MsgGUID: ZNprfaWvR4K3dCPciw1zxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24612572"
+X-CSE-ConnectionGUID: LmrNQnZhQFaRmcJCYDg7IQ==
+X-CSE-MsgGUID: xOHVwicRQAmYq/g4VDlH6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="41928408"
 X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="24612572"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:39:39 -0700
-X-CSE-ConnectionGUID: LWFAnCw8TdKnDdo5H1xbHQ==
-X-CSE-MsgGUID: AjteviztS726TAqqpRhrMA==
+   d="scan'208";a="41928408"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:40:21 -0700
+X-CSE-ConnectionGUID: ZmmYJvEYQKWj12aZUXAWYQ==
+X-CSE-MsgGUID: 0Y8eQNHzQt+IcOC5XElDXw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="65722666"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.157])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:39:36 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 6 Sep 2024 21:39:33 +0300 (EEST)
-To: Hans de Goede <hdegoede@redhat.com>
-cc: Kai-Heng Feng <kai.heng.feng@canonical.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, jorge.lopez2@hp.com, 
-    acelan.kao@canonical.com, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v3] platform/x86/hp: Avoid spurious wakeup on HP ProOne
- 440
-In-Reply-To: <3e12ef27-30e4-4b5a-acd6-5d3023a82941@redhat.com>
-Message-ID: <322162d3-ce9d-27fd-6ac3-204d46e7256e@linux.intel.com>
-References: <20240906053047.459036-1-kai.heng.feng@canonical.com> <3e12ef27-30e4-4b5a-acd6-5d3023a82941@redhat.com>
+   d="scan'208";a="66007696"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO xpardee-desk.hsd1.or.comcast.net) ([10.124.222.182])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 11:40:20 -0700
+From: Xi Pardee <xi.pardee@linux.intel.com>
+To: xi.pardee@linux.intel.com,
+	irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v2] platform/x86:intel/pmc: Ignore all LTRs during suspend
+Date: Fri,  6 Sep 2024 11:40:03 -0700
+Message-ID: <20240906184016.268153-1-xi.pardee@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Fri, 6 Sep 2024, Hans de Goede wrote:
-> On 9/6/24 7:30 AM, Kai-Heng Feng wrote:
-> > The HP ProOne 440 has a power saving design that when the display is
-> > off, it also cuts the USB touchscreen device's power off.
-> > 
-> > This can cause system early wakeup because cutting the power off the
-> > touchscreen device creates a disconnect event and prevent the system
-> > from suspending:
-> > [  445.814574] hub 2-0:1.0: hub_suspend
-> > [  445.814652] usb usb2: bus suspend, wakeup 0
-> > [  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, portsc: 0x202a0
-> > [  445.824639] xhci_hcd 0000:00:14.0: resume root hub
-> > [  445.824651] xhci_hcd 0000:00:14.0: handle_port_status: starting usb1 port polling.
-> > [  445.844039] xhci_hcd 0000:00:14.0: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x20 returns -16
-> > [  445.844058] xhci_hcd 0000:00:14.0: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x1c0 returns -16
-> > [  445.844072] xhci_hcd 0000:00:14.0: PM: failed to suspend async: error -16
-> > [  446.276101] PM: Some devices failed to suspend, or early wake event detected
-> > 
-> > So add a quirk to make sure the following is happening:
-> > 1. Let the i915 driver suspend first, to ensure the display is off so
-> >    system also cuts the USB touchscreen's power.
-> > 2. Wait a while to let the USB disconnect event fire and get handled.
-> > 3. Since the disconnect event already happened, the xhci's suspend
-> >    routine won't be interrupted anymore.
-> > 
-> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> 
-> Thanks, patch looks good to me:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> Ilpo, do you plan to do another fixes pull-request for 6.11,
-> or shall I add this to for-next to target 6.12-rc1 ?
-> 
-> Either way works for me. If you plan to do another fixes
-> pull-request, note that I plan to post a v2 of the panasonic
-> patches this Monday.
+From: Xi Pardee <xi.pardee@intel.com>
 
-Hi Hans,
+Add support to ignore all LTRs before suspend and restore the previous
+LTR values after suspend. This feature could be turned off with module
+parameter ltr_ignore_all_suspend.
 
-I was thinking that perhaps one more is necessary the next week.
+LTR value is a mechanism for a device to indicate tolerance to access
+the corresponding resource. When system suspends, the resource is not
+available and therefore the LTR value could be ignored. Ignoring all
+LTR values prevents problematic device from blocking the system to get
+to the deepest package state during suspend.
 
+Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Xi Pardee <xi.pardee@intel.com>
+
+v2:
+- Add more details to commit message
+- Fix format: ltr->LTR, S0IX->S0ix, space between name and email
+
+---
+ drivers/platform/x86/intel/pmc/core.c | 53 +++++++++++++++++++++++++++
+ drivers/platform/x86/intel/pmc/core.h |  2 +
+ 2 files changed, 55 insertions(+)
+
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 01ae71c6df59..0ec703af16a4 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -714,6 +714,49 @@ static int pmc_core_s0ix_blocker_show(struct seq_file *s, void *unused)
+ }
+ DEFINE_SHOW_ATTRIBUTE(pmc_core_s0ix_blocker);
+ 
++static void pmc_core_ltr_ignore_all(struct pmc_dev *pmcdev)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
++		struct pmc *pmc;
++		u32 ltr_ign;
++
++		pmc = pmcdev->pmcs[i];
++		if (!pmc)
++			continue;
++
++		guard(mutex)(&pmcdev->lock);
++		pmc->ltr_ign = pmc_core_reg_read(pmc, pmc->map->ltr_ignore_offset);
++
++		/* ltr_ignore_max is the max index value for LTR ignore register */
++		ltr_ign = pmc->ltr_ign | GENMASK(pmc->map->ltr_ignore_max, 0);
++		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, ltr_ign);
++	}
++
++	/*
++	 * Ignoring ME during suspend is blocking platforms with ADL PCH to get to
++	 * deeper S0ix substate.
++	 */
++	pmc_core_send_ltr_ignore(pmcdev, 6, 0);
++}
++
++static void pmc_core_ltr_restore_all(struct pmc_dev *pmcdev)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
++		struct pmc *pmc;
++
++		pmc = pmcdev->pmcs[i];
++		if (!pmc)
++			continue;
++
++		guard(mutex)(&pmcdev->lock);
++		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, pmc->ltr_ign);
++	}
++}
++
+ static inline u64 adjust_lpm_residency(struct pmc *pmc, u32 offset,
+ 				       const int lpm_adj_x2)
+ {
+@@ -1479,6 +1522,10 @@ static bool warn_on_s0ix_failures;
+ module_param(warn_on_s0ix_failures, bool, 0644);
+ MODULE_PARM_DESC(warn_on_s0ix_failures, "Check and warn for S0ix failures");
+ 
++static bool ltr_ignore_all_suspend = true;
++module_param(ltr_ignore_all_suspend, bool, 0644);
++MODULE_PARM_DESC(ltr_ignore_all_suspend, "Ignore all LTRs during suspend");
++
+ static __maybe_unused int pmc_core_suspend(struct device *dev)
+ {
+ 	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
+@@ -1488,6 +1535,9 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
+ 	if (pmcdev->suspend)
+ 		pmcdev->suspend(pmcdev);
+ 
++	if (ltr_ignore_all_suspend)
++		pmc_core_ltr_ignore_all(pmcdev);
++
+ 	/* Check if the syspend will actually use S0ix */
+ 	if (pm_suspend_via_firmware())
+ 		return 0;
+@@ -1594,6 +1644,9 @@ static __maybe_unused int pmc_core_resume(struct device *dev)
+ {
+ 	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
+ 
++	if (ltr_ignore_all_suspend)
++		pmc_core_ltr_restore_all(pmcdev);
++
+ 	if (pmcdev->resume)
+ 		return pmcdev->resume(pmcdev);
+ 
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index ea04de7eb9e8..e862ea88b816 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -372,6 +372,7 @@ struct pmc_info {
+  * @map:		pointer to pmc_reg_map struct that contains platform
+  *			specific attributes
+  * @lpm_req_regs:	List of substate requirements
++ * @ltr_ign:		Holds LTR ignore data while suspended
+  *
+  * pmc contains info about one power management controller device.
+  */
+@@ -380,6 +381,7 @@ struct pmc {
+ 	void __iomem *regbase;
+ 	const struct pmc_reg_map *map;
+ 	u32 *lpm_req_regs;
++	u32 ltr_ign;
+ };
+ 
+ /**
 -- 
- i.
+2.43.0
 
 
