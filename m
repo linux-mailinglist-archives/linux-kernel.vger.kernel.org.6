@@ -1,416 +1,296 @@
-Return-Path: <linux-kernel+bounces-319233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D7596F989
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F57396F98C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FCF81C228EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261BC1F23E50
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A141CCB57;
-	Fri,  6 Sep 2024 16:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5BA1D4171;
+	Fri,  6 Sep 2024 16:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IRnP9LRL"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cmxkH+PA";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bK/42YcX"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1169F49620
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725641241; cv=none; b=snSfys41IwxXNmgWAL12xJSGBntGToEazjpn0wCCPg4iW92E+7sI/WXl2MVI3wkFj7t6B/3akPniQWWjppdJ+SXuea6z5khY6VYWz+nMC941XOIcyvz+yTZnwkIugEOxV8/acRd5suxCXGWqYliQBOd0yRjAsp+5lnfUE8W/ToQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725641241; c=relaxed/simple;
-	bh=ton7O+V1e26jOtDWr4Qfcok56EZ3DR+262yrKmyr9tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpcNaea7W8RC+bTwG30kTOuNxJJM3Fmr8t0wpfI2zP6gJhdnJVW7upnqMjIOiBGZymYjRqeqjVqVC6GMr6hJG2cyyTs2f2NsbSUbUc58D3cNstSanH/vZFKgVOJagKykp8A+klhBqnCep7sc18O7CI7y7tHdtVRupWbpGEjziBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IRnP9LRL; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d8a7c50607so1613471a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:47:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6AF43AB7;
+	Fri,  6 Sep 2024 16:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725641377; cv=fail; b=lDZ8i9BwifY0QUpkxvTnmJqY+dEIZNyib5+pxf4HMmulqtvqslGDlImm6IwJREOktdYwj3Lzd3PGAamRbpcBD7nZbIJ7Nc5Zw6TKaZmcM666A2MiRcC1SsujJRstep1lnCV0r4klLb4POU7ls1662pOsoonJxKuqBMRfC+OOzf0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725641377; c=relaxed/simple;
+	bh=+xR9ZShxgI8zSBsciByeYnpL1sPz16w87ktV0Srh3Wc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FnBn4nGBAM+5j7SeKcQCP207ggo5oyFHy9RT7FxHoX+vLhaAjMSxfQlHFEbWdY0cRCQz5XITyT/HzU/mFNg6rJvIFHwGx+WSpim/1ed1nxZNR1TYRNEIX2aKeoZlxmw0fyOZwVZLR++69mwsdJlQk8Hf3v6vDfk/cwgM0dnIfiA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cmxkH+PA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bK/42YcX; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 486FtqsW006613;
+	Fri, 6 Sep 2024 16:49:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=M0pi+Wb5D/qBuR+ApxECYHr6l/z1AvHEBcjqbOdOVRk=; b=
+	cmxkH+PALberzJuZFNMSHNwmwISuicS7Abz8+CxDHsCNblMXYM/y3Att2yOALA41
+	UUf/nxP5JNoc0p6+jkwCoEhl2EhxiYKAYYtEkIYZJESXIpo7eYD92B0aC9QsvIrJ
+	/nvyI7GCljG9+iGgXLd1wC0XPjHslFAcqMixWWsb6DjE2y0RNp04okxiTaKGjU48
+	f5Z1U+Fylw5cehdgsejJxu46pKNkfFUqR5d0vcc/sX52hine6X/6GKpqUukaLJn4
+	IJOn8sNxcMAtXpknWOIMD32h3ppUQyItxMIHbazDBPrPxjv78MDvpVBcqQAleulb
+	pR+Nz3HpfF1EzKWvPItyCQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41fhwqj1br-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 06 Sep 2024 16:49:10 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 486FFWbX017908;
+	Fri, 6 Sep 2024 16:49:09 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41fhyh6e12-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 06 Sep 2024 16:49:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yXHHtFaNp4SW8rMAIid3VTz02q7msjG+M0jskTYExA/fpyRu5MH3GQH+UUBOWYssI7otfQ5U/r/IyXq//sTYbdc15OWL1/JZ23d682M7PRBlI2dHk4v2Ev6SQiODo6KNpL/0IsVSQ03qbBcdg7oLzziLqSUPlCFp4SAsKkkD6PEAU/EIVJWtrdIg0vXG3TGiDq3W2PcX7plGo5l3GNEGjBWnUa0fnMVbvrstVQrnEjQWR6PR7tZhN9GpRPThpPBEZLUqjgU+SzL2aWnTJQIMdg6RDSGvd9iJ1Sv/1tGt0grAsj///hN5C4I21wX2vYW3zMIe/8gQBnqKKnlJJSDUsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M0pi+Wb5D/qBuR+ApxECYHr6l/z1AvHEBcjqbOdOVRk=;
+ b=MfZ8tSDcgUsyQUrEjwWxKzgVEpklTGta1PylSWZEnDASXU7wHQpkVlav6uAAOYZrMbkjm76wPaO+w/jpuuRh0ZU3MTzIrkgQLtY1PBGwNjNcN8uqs+B2LhxXzU8erKMXZhIUyWoZr8cqloAKICioGHS4o5uPwPr8Bc3GO1ZS4ekwDr2o7iknaSEyNngxsj2c+fEZrX6rjy8ZTgxwjCGum3goV7ZmWXcS7io/P2vDw/L46qR4P5rl3UO9gX0BPbkAckfR1+ui9hrMZn4N2YsYTV2FaGtGEIUTvBI8KloEpDhat2bIT2gYYABEZHbS3bbMIJh14z4JHcFY6kzkIyyIAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725641239; x=1726246039; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4T3usHnu/v8e0Xg8M9ezvhS0wle7Ze5aY+c8lEWsAMY=;
-        b=IRnP9LRLV8/k/lX56jVcmhCMx67seCZXcPt2lqKWuVnLWm4dJmsZ0xG/jol3Y4DjwG
-         5gSI2KGq6DBNha26amHWdIkCo+92MQpj5PQZ5n1Ieg3OvPjxQZBtklwOPDyett+W9rJj
-         WvwUz2a8aKfp2dx/Lu9LYAcPr6NbAIhqtKHrTPllZE6jRbdHjxlsmu0YHV7CNV5ybmRi
-         NRzsm9DlPJydJsSdrMC1ZcZtiL3mUjjgQo2NAv78eyaxKO6gykyCoZy8dM8MDH+jUQcr
-         uWcgic+gqNQ74cmJ9h6gGGeay7MEORSjgza17auqX7o1a3VOF6xnbylRtMh/TPUZmJ0c
-         kUYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725641239; x=1726246039;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4T3usHnu/v8e0Xg8M9ezvhS0wle7Ze5aY+c8lEWsAMY=;
-        b=LziTfhAZbcuZy0ujd7iHtG0qJTrg3ivCNCpTS3LDmxS8YZ9AcC5HHo1gqGgWObphfx
-         izXX57ic6crTg53K/aMabJe/2wtFpsjyo3r1NNPJ5LKhXujy+HxBPusXCERAuAKzpqZF
-         nDRPcvsIQD0TGaaRjNZ0GC26A44v2MjkWwpjFcQghBzcRqQ/D7cySzaBaUYlRzHj+zJM
-         JHzN9uxSHEbTVZ3GaTsfcBr7/D3XuNONL/bFRb8iq74+d9ydANagvEvNVcxTAk4iw3gm
-         z1RYeM3pFpwVS7GiblZL18604w/bZPxSBorEedyGZAxQ45SLoobR9TTk9s0iAI/JK8hl
-         pJIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ4sieZS+qDUPbXP6ZYsJSeHtjfDsSqiWdwntHjwStlpuwECNA6GDIrZ7vdhlxRwYdp5zSyVJfdHinK5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3OYF7E+Bd5eaNCZQ6gI39c/dnR73YgfdSrWm824vQfbWddN/B
-	WNGsybdr9s4ti/QNwxiVWwM508ZVRtWnP7QwVk1OnjHGvUPgOaXsvcNs8oBu8tk=
-X-Google-Smtp-Source: AGHT+IHA+K3A94H4s88gUuCzhChaP2HGs9QWaMHrgHbfRuAb7V63Uc8Pp8hUgieY7YmAglEcUtqytg==
-X-Received: by 2002:a17:90b:3143:b0:2ca:7636:2217 with SMTP id 98e67ed59e1d1-2dad4de1151mr3795579a91.2.1725641239184;
-        Fri, 06 Sep 2024 09:47:19 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:b394:c2cf:8799:232f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0837casm1804528a91.38.2024.09.06.09.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 09:47:18 -0700 (PDT)
-Date: Fri, 6 Sep 2024 10:47:15 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, s-anna@ti.com,
-	u-kumar1@ti.com, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: k3-r5: Decouple firmware booting from probe
- routine
-Message-ID: <ZtsyE2ibvJwuL7oH@p14s>
-References: <20240906094045.2428977-1-b-padhi@ti.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M0pi+Wb5D/qBuR+ApxECYHr6l/z1AvHEBcjqbOdOVRk=;
+ b=bK/42YcXlN1d+QrPiaA+MinKuO8UfSk49UG9sjYejIDWEaHKJkVtJbSIA2jdlS3stYOoNg7gHgC5se/+mkUZSDHwjEeYn1xmmtyL9tEgVbQwJV+ebNBpIH8ZF7ruB/7HJ1FOX8fLISN/8WXVETZWQL4+4d2PaLOivmu1tu53uQg=
+Received: from CH3PR10MB6833.namprd10.prod.outlook.com (2603:10b6:610:150::8)
+ by CY8PR10MB6467.namprd10.prod.outlook.com (2603:10b6:930:61::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Fri, 6 Sep
+ 2024 16:48:04 +0000
+Received: from CH3PR10MB6833.namprd10.prod.outlook.com
+ ([fe80::8372:fd65:d1ad:2485]) by CH3PR10MB6833.namprd10.prod.outlook.com
+ ([fe80::8372:fd65:d1ad:2485%6]) with mapi id 15.20.7939.016; Fri, 6 Sep 2024
+ 16:48:04 +0000
+Message-ID: <c45d66d7-64fc-4fa8-8c38-ab2e9ca65635@oracle.com>
+Date: Fri, 6 Sep 2024 09:48:02 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in
+ unix_stream_read_actor (2)
+To: Eric Dumazet <edumazet@google.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net,
+        kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        pabeni@redhat.com,
+        syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+References: <e500b808-d0a6-4517-a4ae-c5c31f466115@oracle.com>
+ <20240905203525.26121-1-kuniyu@amazon.com>
+ <19ce4e18-f1e0-44c4-b006-83001eb6ae24@oracle.com>
+ <CANn89iK0F6W2CGCAz5HWWSzpLzV_iMvJYz0=qp3ZyrpDhjws2Q@mail.gmail.com>
+Content-Language: en-US
+From: Shoaib Rao <rao.shoaib@oracle.com>
+In-Reply-To: <CANn89iK0F6W2CGCAz5HWWSzpLzV_iMvJYz0=qp3ZyrpDhjws2Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR01CA0019.prod.exchangelabs.com (2603:10b6:a02:80::32)
+ To CH3PR10MB6833.namprd10.prod.outlook.com (2603:10b6:610:150::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906094045.2428977-1-b-padhi@ti.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB6833:EE_|CY8PR10MB6467:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe0b5e68-cf32-4e15-fcf4-08dcce93ad87
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SzFZVzYrRmVtam1PU0lkRUdib3RwbStZNWJkY2cybUM5aDhMWjNuWjBBS0Zw?=
+ =?utf-8?B?dVkvd3Q4L3R0WmNhdlI2aFlwcDk0R2Q3TVQvUXZiRUNkaGx6aUF0M1BOZ2Fo?=
+ =?utf-8?B?NzZnTXo1K2M5d0d2TUZmSThkWTFrenVIS0U1SVlaRmFCUWFmUWFZR050cTdw?=
+ =?utf-8?B?ZG5KcVNmcFBHTjJubXQxT2VEdFZoN09VQkNYYzB2TVA3dm5BdFdXazB3OG9O?=
+ =?utf-8?B?c3g1YmRzeEJKaXZzSUF5WE5POFNWMVNialVNMVA5QXlaUzJyN2ZTZnUxMENs?=
+ =?utf-8?B?dWViUU5nODZhUUYrVnprNTg0UEhPUkhTcnlLMWh1SG9UeGNSUkgvaHduZDYy?=
+ =?utf-8?B?RnY3SzJQblVDbE4xMHZtWWdEMWp5R3JwSWIwdDZuRTRZaG95Yzljb2xCZFVu?=
+ =?utf-8?B?OGVTME81MUNwVjhOWXVMUS9kR09OMmJFTkdhM0o5cWVTL2NPK0IzVXJicWoz?=
+ =?utf-8?B?cytBdDFRZVhxTzQ5RFZwTFV4bWhJVGEybzVaSU1MczMwK3BCVi9GT2IzWktt?=
+ =?utf-8?B?enU5WVhEUm9xenVPNUlyNHRwWG1pN2hsa0E4dHhmb1Ftc2U5cEtxakRvVGVB?=
+ =?utf-8?B?OVZDb1phaUNXVWFHU2hQa1JQRk5oSjB0SHJ4TGkvVllYMXhHTEpnbWV0K2I1?=
+ =?utf-8?B?d2E4RG83NE1nSzJnQytCaXBKVXFINExQRkdIa1BQUzJXRjBZejRvcG5ReTNW?=
+ =?utf-8?B?eitaQnVnOTdhb1lNVnhPQ0ZJaTVObFhuN3NNSmVyWUVLZmtzSzBGZkhlT2M5?=
+ =?utf-8?B?TW8yYkljR01LRkdCdk96VTFScG9zcHcvTzJxRVpwNUU3QUV1MjFXaXRMYys1?=
+ =?utf-8?B?Q1Y5c2ZXQ0lNRUUzcWVNTElHUUNVUjd4M243V1J5WmpFVjl4SXN5ZGhmOUZ3?=
+ =?utf-8?B?WWtnaG55Wm9qMytWejdBa3VkUXJwTi9ONFB3bTNkTGtNMzAxMjVCZTVQaVJV?=
+ =?utf-8?B?aEhnVmVZcjlvWGc0VldoUnBHeUVpdWJHUVcwcFNsaVN4dElnd3lLMzVUQkVa?=
+ =?utf-8?B?SE9DU0ZjYTlsUlJrMTE5Tjl0d0VtdUs3R0QxRHoxak10RzkwRStRanYvS1Nu?=
+ =?utf-8?B?QWhOMUtQL21yWnRIT0pwdnMzOTZjb0lDd05YSU00VitRQnRVM1JMdVd6UXVZ?=
+ =?utf-8?B?RUtvcjlRbElQM0xzdmp1a2piUnpUQ3p5ajBHRElnNlA3Rll5bW80S3ZmRHpY?=
+ =?utf-8?B?UEF0aG9rUVZIN2VlZ0UwbXNSMDltWWpVaGVETThBV2tHMVd5UUlyeVFqeHM2?=
+ =?utf-8?B?RFV5a3c3b0ZhbnhZaFlFdTYrZVNqcEpUQUR6UG1Ja2JSalR5MktoWmdFVUNE?=
+ =?utf-8?B?RjVML2FvaDF2LzFtRmwvSUNQdG0wbUhlZEdEVTBNNzdHV0JrS1B6SkRxSXFu?=
+ =?utf-8?B?azl2RjRIeW8xLzZkYmRwbEtDR29NN21NbXh6eW5QeDNEZ3pockJHNFIxZi9N?=
+ =?utf-8?B?aEVHN005bnhjb2lMNnJMOWJ6RUtxV0JscDZNaXBWTGlEWEdtdHNXUXBiMWNM?=
+ =?utf-8?B?Z1l3N0xLQStYR0hFVWJQcExwK0h0M0RnbmFxR0E3RnZPNllmeVhUaVBnMURL?=
+ =?utf-8?B?a3VMZE5hd2xXQUNydkZpa1BnWFg0ZDlMWStucnNFemQzWlM5V1pZeW1ndUpS?=
+ =?utf-8?B?Vjc1dGwrWXJRUkNHNzIwV3Q0UlFSc3p0aVNlU2YzK1JLdjcxVnpJUDVnNnNa?=
+ =?utf-8?B?aDVaM2MwRGh3M29OalBxL0s0bWw1czQwNEpGV0tBR1doRGVGQVpVMUJGdFB6?=
+ =?utf-8?B?VHpPODk0V054NmhQMEJoMFhQTEtTR1JxRk5kNFVzVWNGK2FwV1NiZ1ljNWNY?=
+ =?utf-8?B?bllTdjFXbmowZ3VNdmlEdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB6833.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aGIxMFZFdVJtSnc0M3JxelJ0bTJrTVYwUnVVYlExVXNBd3FSeEpJZXprRjIr?=
+ =?utf-8?B?TWxGcXFrdXRsQUZ0ZjI0dTN1cGZSMTI4S0RsU1RMYjVYVFJTbUp3cDZnSm5S?=
+ =?utf-8?B?b21DZVhPcnQ2dmRKMEV1bXhndE84SE0vYkxxQkRXbUdFY2VTc3U1My81a1BI?=
+ =?utf-8?B?M1hnS2dLcEQxdVUxdmtyazJSdDBNWjc3VlpHdW43V0JpMDBnUWE4T1F6eTBK?=
+ =?utf-8?B?by9keThpNGRBdzFrSUlOZ0hUYkpZZi9FbVVObEk4WjhwSERVeHpPUmxZVkpD?=
+ =?utf-8?B?bTU3WFZLVlA2c2IwVHF6V1FncHhnZGtXZldKRERwZWErR05lcFlad2ZNUWRD?=
+ =?utf-8?B?UENoK2ZmK1ZqeGZYd1BJTCs3Um43eGsrektiWDZXSlZDeEtsdHNML1FkZmdH?=
+ =?utf-8?B?Wm44bVptK2kzeHBDd2JqUUMvK2Q4SThTTFFhYXVFcGhGWW9GaGwxam1zSG5I?=
+ =?utf-8?B?b2F4bUdCSlgvWURibUljNmRjQW5tTDBvYWhsQTBnNllRcnc2eThIODFtd1F0?=
+ =?utf-8?B?eXoxZUZyYUhrWWFXVHlNcnFyRHVxck9RZG9XbXBoZWRLaTdGQ052MWdkb3BM?=
+ =?utf-8?B?aXlaVWV1MEcrdFZadGZEY3lOQzRNdXJWOEpSVFVjQXJyZTRVR29HZzdOWlF3?=
+ =?utf-8?B?UDRLMllicEVOcXZqYThpU29OMmZrelRIZ1NrdzkzTTBQdnBMd2g3ODlFWDlp?=
+ =?utf-8?B?ZjVpdHZxOVcvbTBWcEkyUUxxQVdKVFdWSnE4ZFNzTFpXNjVhejl3Z3RwaU5R?=
+ =?utf-8?B?cDczNldkUjdJN1d3Uy9ESW5kQVFpVG5aZUlHNXBsQkRQc3BBOElSM2RhaGgy?=
+ =?utf-8?B?LzNZeEpsUWZPM3hiVkJ2dTRReUJQN0tEdHJtMGkwSXc5MGE3U3pIdHptbVpx?=
+ =?utf-8?B?eDNiSXFoNFhlWXR3ei8xdVBBOXVOQVNiY2lyYisrbDRTNkR4Y2ZFUFhXcDRR?=
+ =?utf-8?B?dDl6WW9BM09XeWhqQ0toSW4rckFpcTZ0aDExanA0TEVJUFp0TUtVb1JVQW8w?=
+ =?utf-8?B?UUlNck9RTXhPOG9nSVNFVnBad1ZZK0c5ck14M1BFMFJUb3ppV1FQbkh5UWNk?=
+ =?utf-8?B?RGZWcWZSMThJcmd3bmRmdjlnSGRxR1lacTBvTEJ4ZWZDc2hrM2FwU2syemlF?=
+ =?utf-8?B?TC95bXFGWTVVUlZIVHVlODJwdzRlaHUyYzQ2Q0tJeklHc3BheEVTTm5VVlhJ?=
+ =?utf-8?B?cDdMR3h6ZkxmU0laM0F1aktmZzYvdTdXMzAzelQ2TkFGQzlWYWRYWG9oU25Z?=
+ =?utf-8?B?b1oxcVF3aXo2cHgyNTNMZHdseUQ4ZisxVC9MUURJUG9ydzdNTjhTaXZQTkNx?=
+ =?utf-8?B?algzTXpGRFo1ZWpWbFdqZHdaNFlhMm9PVXQxT080Mjltc2VTZlpkdWdId0ZN?=
+ =?utf-8?B?dytXNHlKWTdGRkkvQnlRZXpPMmJLSHpSQ1YvdVVNSTdUclJBUCtTcFhKYkJW?=
+ =?utf-8?B?SHdEOWh2UC80YjE4OG9Yb3FOZGdTTUZpQ2tyak1sUHEzZE4yNFpZNXExWnBK?=
+ =?utf-8?B?a0c2RGJVSDN4UVhYT2hFWENSQ0cwV0k4T2hFY3oxNzlURk9UNkE5MzRLTk9U?=
+ =?utf-8?B?Wnl4VlQ2eDdYUjNBRkE2aE5jR3Vub2ttV2doRExkd3l3MkJKV3dlK2U0WTha?=
+ =?utf-8?B?UkJuUVBqamgwaE1tTmRnR3M4cW5NNExHZW5HK2FzL3dZRFlUMTEvb2x0d092?=
+ =?utf-8?B?WW40MUNlOGRNcGVXcGdsemZ2d3VMWEQ0TmFOcjltS3BFRElXNjNVZXk2Qjlv?=
+ =?utf-8?B?K1RucUp0TEs3bTJDUjlhcDVGczRLV2FLSTR3Z3VZRDZNRWs2enhUZFc2bXZl?=
+ =?utf-8?B?QTlONm1uNWlFZHpXZW8xZElTNnJjVlN2MUZ2R0lab1M2Ull3UDJDRVlSWFAw?=
+ =?utf-8?B?RytwSFlJZklVSVZ1ekNqSGlTdEQ2c09mVDVvUktRL2R1dTVwRU9KVHkrVWlk?=
+ =?utf-8?B?bTRETG9iN3RmVVpWY3ZuanlTRGFZaHhicUc0ek1ZV3pEeWxQWjVjWCs3SWNO?=
+ =?utf-8?B?N2JOU0pFSWZSTS9NMEEwTkljTVQxOU9oQ3VRQUMxc1g3ZTloVU0rVmtTYm5s?=
+ =?utf-8?B?ZlZLZ1FhamVzT21vdURITlg4Mk5JWmhvMkNVQjJyWTRpUytBbGg3cmlQcFFr?=
+ =?utf-8?B?RTZQUE04dk0ybjVSVGZpUkJMcXFGQVlXdGJWZVRrYkNPOGtjNnpkN0h6bnRZ?=
+ =?utf-8?B?TEE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4adMpoquTi7Y2YUawwheHbvVP15g2ydbkhLhnmgX+sXepSOiN8lwMSH+9o2I+4WvkT06xPdFXSToiaFkc+ymVvH+6fvmOLINgPoxan1fd+Wds2FiS2PVtzbzGRuYu32wUfvYXGTb/uf3M2X58ICiSgVFunnWWMtricgI8IsljzQj+1uWoLWJ41SIH5AKoAG2v8WhRWdDCRM2aN48X9bruqr56AguUdforw4Mz9yVDmzeLpPEvGRn0bCb2Gtwleez/CTZ6IXFwZE8Yi2Yh2gTKjyakEmw33jiPxb4Nf6jk2Mvnw+pqaF8cAARPILSimlCMUDfP555N+dPa22zrBDDhdkMOFTeCh/VU8qYg/69C5HyomQVweeFRGCiN1GFObyu4sJZlxQE/KmkulkAvFcEYmnj7Qi3q5IR8zxAgBLqs9bWC2GV7hU6cloIsfxwRhbvCOeoFO76j1Qgv3T8i+a7AzEcWNa48cWBOfkiwsDde6l6hG62k6pZYJHRTVCiNEwzldTB0msxNefIGfMnVunYPSVrNVuIS8ddn0W7BXRX9JPBoefLPFuXppqnih3QLukmaO7RnH5gq+bPckVgyr0hM4EFaBS2VjJsoCf+Ys+jRWw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe0b5e68-cf32-4e15-fcf4-08dcce93ad87
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB6833.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 16:48:04.8403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8ErqWIrwmkjdlXi5i1+sojFa5cyxhPEEOTkuDWx98DZkaBVvj4n2q9Z8neocTw/+l+ovHWyG2gZZJkPrsO9Zdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6467
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_03,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409060123
+X-Proofpoint-ORIG-GUID: NlquDNtB6LMtLhGbem8wmkBnVykjp0n7
+X-Proofpoint-GUID: NlquDNtB6LMtLhGbem8wmkBnVykjp0n7
 
-On Fri, Sep 06, 2024 at 03:10:45PM +0530, Beleswar Padhi wrote:
-> The current implementation of the waiting mechanism in probe() waits for
-> the 'released_from_reset' flag to be set which is done in
-> k3_r5_rproc_prepare() as part of rproc_fw_boot(). This causes unexpected
 
-If you are looking at rproc-next, @released_from_reset is set in
-k3_r5_rproc_start().  Moreover, the waiting mechanic happens in
-k3_r5_cluster_rproc_init(), which makes reading your changelog highly confusing.
+On 9/6/2024 5:37 AM, Eric Dumazet wrote:
+> On Thu, Sep 5, 2024 at 10:48 PM Shoaib Rao <rao.shoaib@oracle.com> wrote:
+>>
+>> On 9/5/2024 1:35 PM, Kuniyuki Iwashima wrote:
+>>> From: Shoaib Rao <rao.shoaib@oracle.com>
+>>> Date: Thu, 5 Sep 2024 13:15:18 -0700
+>>>> On 9/5/2024 12:46 PM, Kuniyuki Iwashima wrote:
+>>>>> From: Shoaib Rao <rao.shoaib@oracle.com>
+>>>>> Date: Thu, 5 Sep 2024 00:35:35 -0700
+>>>>>> Hi All,
+>>>>>>
+>>>>>> I am not able to reproduce the issue. I have run the C program at least
+>>>>>> 100 times in a loop. In the I do get an EFAULT, not sure if that is
+>>>>>> intentional or not but no panic. Should I be doing something
+>>>>>> differently? The kernel version I am using is
+>>>>>> v6.11-rc6-70-gc763c4339688. Later I can try with the exact version.
+>>>>> The -EFAULT is the bug meaning that we were trying to read an consumed skb.
+>>>>>
+>>>>> But the first bug is in recvfrom() that shouldn't be able to read OOB skb
+>>>>> without MSG_OOB, which doesn't clear unix_sk(sk)->oob_skb, and later
+>>>>> something bad happens.
+>>>>>
+>>>>>      socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
+>>>>>      sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT) = 1
+>>>>>      recvmsg(3, {msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
+>>>>>      sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE) = 1
+>>>>>> recvfrom(3, "\21", 125, MSG_DONTROUTE|MSG_TRUNC|MSG_DONTWAIT, NULL, NULL) = 1
+>>>>>      recvmsg(3, {msg_namelen=0}, MSG_OOB|MSG_ERRQUEUE) = -1 EFAULT (Bad address)
+>>>>>
+>>>>> I posted a fix officially:
+>>>>> https://urldefense.com/v3/__https://lore.kernel.org/netdev/20240905193240.17565-5-kuniyu@amazon.com/__;!!ACWV5N9M2RV99hQ!IJeFvLdaXIRN2ABsMFVaKOEjI3oZb2kUr6ld6ZRJCPAVum4vuyyYwUP6_5ZH9mGZiJDn6vrbxBAOqYI$
+>>>> Thanks that is great. Isn't EFAULT,  normally indicative of an issue
+>>>> with the user provided address of the buffer, not the kernel buffer.
+>>> Normally, it's used when copy_to_user() or copy_from_user() or
+>>> something similar failed.
+>>>
+>>> But this time, if you turn KASAN off, you'll see the last recvmsg()
+>>> returns 1-byte garbage instead of -EFAULT, so actually KASAN worked
+>>> on your host, I guess.
+>> No it did not work. As soon as KASAN detected read after free it should
+>> have paniced as it did in the report and I have been running the
+>> syzbot's C program in a continuous loop. I would like to reproduce the
+>> issue before we can accept the fix -- If that is alright with you. I
+>> will try your new test case later and report back. Thanks for the patch
+>> though.
+> KASAN does not panic unless you request it.
+>
+> Documentation/dev-tools/kasan.rst
+>
+> KASAN is affected by the generic ``panic_on_warn`` command line parameter.
+> When it is enabled, KASAN panics the kernel after printing a bug report.
+>
+> By default, KASAN prints a bug report only for the first invalid memory access.
+> With ``kasan_multi_shot``, KASAN prints a report on every invalid access. This
+> effectively disables ``panic_on_warn`` for KASAN reports.
+>
+> Alternatively, independent of ``panic_on_warn``, the ``kasan.fault=`` boot
+> parameter can be used to control panic and reporting behaviour:
+>
+> - ``kasan.fault=report``, ``=panic``, or ``=panic_on_write`` controls whether
+>    to only print a KASAN report, panic the kernel, or panic the kernel on
+>    invalid writes only (default: ``report``). The panic happens even if
+>    ``kasan_multi_shot`` is enabled. Note that when using asynchronous mode of
+>    Hardware Tag-Based KASAN, ``kasan.fault=panic_on_write`` always panics on
+>    asynchronously checked accesses (including reads).
 
-> failures in cases where the firmware is unavailable at boot time,
-> resulting in probe failure and removal of the remoteproc handles in the
-> sysfs paths.
-> 
-> To address this, the waiting mechanism is refactored out of the probe
-> routine into the appropriate k3_r5_rproc_prepare/unprepare() and
-> k3_r5_rproc_start/stop() functions. This allows the probe routine to
-> complete without depending on firmware booting, while still maintaining
-> the required power-synchronization between cores.
-> 
-> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Posted this as a Fix as this was breaking usecases where we wanted to load a
-> firmware by writing to sysfs handles in userspace.
-> 
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 170 ++++++++++++++++-------
->  1 file changed, 118 insertions(+), 52 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 747ee467da88..df8f124f4248 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -131,6 +131,7 @@ struct k3_r5_cluster {
->   * @btcm_enable: flag to control BTCM enablement
->   * @loczrama: flag to dictate which TCM is at device address 0x0
->   * @released_from_reset: flag to signal when core is out of reset
-> + * @unhalted: flag to signal when core is unhalted
->   */
->  struct k3_r5_core {
->  	struct list_head elem;
-> @@ -148,6 +149,7 @@ struct k3_r5_core {
->  	u32 btcm_enable;
->  	u32 loczrama;
->  	bool released_from_reset;
-> +	bool unhalted;
+Hi Eric,
 
-Yet another flag?  @released_from_reset is not enough?  And why does it need to
-be "unhalted" rather than something like "running"?  I will not move forward
-with this patch until I get an R-B and a T-B from two other people at TI.
+Thanks for the update. I forgot to mention that I I did set 
+/proc/sys/kernel/panic_on_warn to 1. I ran the program over night in two 
+separate windows, there are no reports and no panic. I first try to 
+reproduce the issue, because if I can not, how can I be sure that I have 
+fixed that bug? I may find another issue and fix it but not the one that 
+I was trying to. Please be assured that I am not done, I continue to 
+investigate the issue.
 
-The above and the exchange with Jan Kiszka is furthering my belief that this
-driver is up for a serious refactoring exercise.  From hereon I will only
-consider bug fixes.
+If someone has a way of reproducing the failure please kindly let me know.
 
-Thanks,
-Mathieu
+Kind regards,
 
->  };
->  
->  /**
-> @@ -448,13 +450,33 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->  {
->  	struct k3_r5_rproc *kproc = rproc->priv;
->  	struct k3_r5_cluster *cluster = kproc->cluster;
-> -	struct k3_r5_core *core = kproc->core;
-> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->  	struct device *dev = kproc->dev;
->  	u32 ctrl = 0, cfg = 0, stat = 0;
->  	u64 boot_vec = 0;
->  	bool mem_init_dis;
->  	int ret;
->  
-> +	/*
-> +	 * R5 cores require to be powered on sequentially, core0 should be in
-> +	 * higher power state than core1 in a cluster. So, wait for core0 to
-> +	 * power up before proceeding to core1 and put timeout of 2sec. This
-> +	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
-> +	 * core1 can be called before core0 due to thread execution order.
-> +	 */
-> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
-> +	    core0->released_from_reset == false) {
-> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
-> +						       core0->released_from_reset,
-> +						       msecs_to_jiffies(2000));
-> +		if (ret <= 0) {
-> +			dev_err(dev, "can not power up core1 before core0");
-> +			return -EPERM;
-> +		}
-> +	}
-> +
->  	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
->  	if (ret < 0)
->  		return ret;
-> @@ -470,6 +492,12 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->  		return ret;
->  	}
->  
-> +	/* Notify all threads in the wait queue when core state has changed so
-> +	 * that threads waiting for this condition can be executed.
-> +	 */
-> +	core->released_from_reset = true;
-> +	wake_up_interruptible(&cluster->core_transition);
-> +
->  	/*
->  	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
->  	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
-> @@ -515,14 +543,46 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
->  {
->  	struct k3_r5_rproc *kproc = rproc->priv;
->  	struct k3_r5_cluster *cluster = kproc->cluster;
-> -	struct k3_r5_core *core = kproc->core;
-> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->  	struct device *dev = kproc->dev;
->  	int ret;
->  
->  	/* Re-use LockStep-mode reset logic for Single-CPU mode */
-> -	ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
-> -	       cluster->mode == CLUSTER_MODE_SINGLECPU) ?
-> -		k3_r5_lockstep_reset(cluster) : k3_r5_split_reset(core);
-> +	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
-> +	    cluster->mode == CLUSTER_MODE_SINGLECPU)
-> +		ret = k3_r5_lockstep_reset(cluster);
-> +	else {
-> +		/*
-> +		 * R5 cores require to be powered off sequentially, core0 should
-> +		 * be in higher power state than core1 in a cluster. So, wait
-> +		 * for core1 to powered off before proceeding to core0 and put
-> +		 * timeout of 2sec. This waiting mechanism is necessary to
-> +		 * prevent stopping core0 before core1 from sysfs.
-> +		 */
-> +		core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-> +		core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-> +
-> +		if (core == core0 && core1->released_from_reset == true) {
-> +			ret = wait_event_interruptible_timeout(cluster->core_transition,
-> +							       !core1->released_from_reset,
-> +							       msecs_to_jiffies(2000));
-> +
-> +			if (ret <= 0) {
-> +				dev_err(dev, "can not power off core0 before core1");
-> +				return -EPERM;
-> +			}
-> +		}
-> +
-> +		ret = k3_r5_split_reset(core);
-> +
-> +		/* Notify all threads in the wait queue when core state has
-> +		 * changed so that threads waiting for this condition can be
-> +		 * executed.
-> +		 */
-> +		core->released_from_reset = false;
-> +		wake_up_interruptible(&cluster->core_transition);
-> +	}
-> +
->  	if (ret)
->  		dev_err(dev, "unable to disable cores, ret = %d\n", ret);
->  
-> @@ -551,16 +611,34 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  	struct k3_r5_rproc *kproc = rproc->priv;
->  	struct k3_r5_cluster *cluster = kproc->cluster;
->  	struct device *dev = kproc->dev;
-> -	struct k3_r5_core *core0, *core;
-> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->  	u32 boot_addr;
->  	int ret;
->  
-> +	/*
-> +	 * R5 cores require to be powered on sequentially, core0 should be in
-> +	 * higher power state than core1 in a cluster. So, wait for core0 to
-> +	 * power up before proceeding to core1 and put timeout of 2sec. This
-> +	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
-> +	 * core1 can be called before core0 due to thread execution order.
-> +	 */
-> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 && core0->unhalted == false) {
-> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
-> +						       core0->unhalted,
-> +						       msecs_to_jiffies(2000));
-> +		if (ret <= 0) {
-> +			dev_err(dev, "can not power up core1 before core0");
-> +			return -EPERM;
-> +		}
-> +	}
-> +
->  	boot_addr = rproc->bootaddr;
->  	/* TODO: add boot_addr sanity checking */
->  	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
->  
->  	/* boot vector need not be programmed for Core1 in LockStep mode */
-> -	core = kproc->core;
->  	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->  	if (ret)
->  		return ret;
-> @@ -573,20 +651,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  				goto unroll_core_run;
->  		}
->  	} else {
-> -		/* do not allow core 1 to start before core 0 */
-> -		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
-> -					 elem);
-> -		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
-> -			dev_err(dev, "%s: can not start core 1 before core 0\n",
-> -				__func__);
-> -			return -EPERM;
-> -		}
-> -
->  		ret = k3_r5_core_run(core);
->  		if (ret)
->  			return ret;
->  
-> -		core->released_from_reset = true;
-> +		/* Notify all threads in the wait queue when core state has
-> +		 * changed so that threads waiting for this condition can be
-> +		 * executed.
-> +		 */
-> +		core->unhalted = true;
->  		wake_up_interruptible(&cluster->core_transition);
->  	}
->  
-> @@ -629,7 +702,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->  	struct k3_r5_rproc *kproc = rproc->priv;
->  	struct k3_r5_cluster *cluster = kproc->cluster;
->  	struct device *dev = kproc->dev;
-> -	struct k3_r5_core *core1, *core = kproc->core;
-> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->  	int ret;
->  
->  	/* halt all applicable cores */
-> @@ -642,19 +715,38 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->  			}
->  		}
->  	} else {
-> -		/* do not allow core 0 to stop before core 1 */
-> -		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
-> -					elem);
-> -		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
-> -			dev_err(dev, "%s: can not stop core 0 before core 1\n",
-> -				__func__);
-> -			ret = -EPERM;
-> -			goto out;
-> +		/*
-> +		 * R5 cores require to be powered off sequentially, core0 should
-> +		 * be in higher power state than core1 in a cluster. So, wait
-> +		 * for core1 to powered off before proceeding to core0 and put
-> +		 * timeout of 2sec. This waiting mechanism is necessary to
-> +		 * prevent stopping core0 before core1 from sysfs.
-> +		 */
-> +		core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
-> +		core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-> +
-> +		if (core == core0 && core1->unhalted == true) {
-> +			ret = wait_event_interruptible_timeout(cluster->core_transition,
-> +							       !core1->unhalted,
-> +							       msecs_to_jiffies(2000));
-> +
-> +			if (ret <= 0) {
-> +				dev_err(dev, "can not power off core0 before core1");
-> +				ret = -EPERM;
-> +				goto out;
-> +			}
->  		}
->  
->  		ret = k3_r5_core_halt(core);
->  		if (ret)
->  			goto out;
-> +
-> +		/* Notify all threads in the wait queue when core state has
-> +		 * changed so that threads waiting for this condition can be
-> +		 * executed.
-> +		 */
-> +		core->unhalted = false;
-> +		wake_up_interruptible(&cluster->core_transition);
->  	}
->  
->  	return 0;
-> @@ -1145,12 +1237,6 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
->  		return reset_ctrl_status;
->  	}
->  
-> -	/*
-> -	 * Skip the waiting mechanism for sequential power-on of cores if the
-> -	 * core has already been booted by another entity.
-> -	 */
-> -	core->released_from_reset = c_state;
-> -
->  	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
->  				     &stat);
->  	if (ret < 0) {
-> @@ -1296,25 +1382,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->  		    cluster->mode == CLUSTER_MODE_SINGLECORE)
->  			break;
->  
-> -		/*
-> -		 * R5 cores require to be powered on sequentially, core0
-> -		 * should be in higher power state than core1 in a cluster
-> -		 * So, wait for current core to power up before proceeding
-> -		 * to next core and put timeout of 2sec for each core.
-> -		 *
-> -		 * This waiting mechanism is necessary because
-> -		 * rproc_auto_boot_callback() for core1 can be called before
-> -		 * core0 due to thread execution order.
-> -		 */
-> -		ret = wait_event_interruptible_timeout(cluster->core_transition,
-> -						       core->released_from_reset,
-> -						       msecs_to_jiffies(2000));
-> -		if (ret <= 0) {
-> -			dev_err(dev,
-> -				"Timed out waiting for %s core to power up!\n",
-> -				rproc->name);
-> -			goto err_powerup;
-> -		}
->  	}
->  
->  	return 0;
-> @@ -1329,7 +1396,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->  		}
->  	}
->  
-> -err_powerup:
->  	rproc_del(rproc);
->  err_add:
->  	k3_r5_reserved_mem_exit(kproc);
-> -- 
-> 2.34.1
-> 
+Shoaib
+
 
