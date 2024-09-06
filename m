@@ -1,157 +1,98 @@
-Return-Path: <linux-kernel+bounces-319007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5213E96F669
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAB396F66D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF451C20C29
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C908B1F24CB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC161D014A;
-	Fri,  6 Sep 2024 14:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7738D1D048B;
+	Fri,  6 Sep 2024 14:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SklHqHyu"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AbtT8Glp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FLRZkBxo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFE91D0496
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CF41D555;
+	Fri,  6 Sep 2024 14:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725632059; cv=none; b=bJ5OqWAMTwE31/1I75r++fFttBmtWUdQDkWe5fdXjxTKW9He1SvdjA57YlsBtWRbSyIyLXuQDlk4Wxtcs7qJggBtz2H8r48NgKGW5NcTZ+dLSXrpeDG2l1v9r9rs/ZKJGzt08S/3BPonwd2Wfx3W77/EtxV7nN1RbuhJagVHlus=
+	t=1725632128; cv=none; b=iio/hcAKAXzc9cd0jXfR88fkJEYaM+hvum111KqEwb3nAW8qa7WNzrkzvicGdB1xfAIyrjyTjwWPpdjGxp1emM/Oy27nWE7O/n/5y+mMA5s6DNfSuJhMl0d+GsPpNBZRLKfkNYsruWXIWcOwFUKucQA0khCqYhxYynqMqKTS35M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725632059; c=relaxed/simple;
-	bh=23suZZslrElYAyZQHWDA+IOgBKqdPtOdcjQ8BplQZZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kmNv9YBXkv8+FXvvZ9d+cSxe2mJIgTrhw00Sq5PFb5NDrLM9sfIYHjscdZ2VbZGnDh6uVCRCeQw9M8Kr/ZKRTUhAKqv6f9lB1nncgiHMYVVgJ+V1dl+uyHE/6/qeseOrfuompsh/5ltz6sVGATMVNRiZ/jHofr+VHVkdUqOFg+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SklHqHyu; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-82a316f8ae1so79164539f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725632057; x=1726236857; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vViw6BTWp76nUCRilCQyxEbSqwSDETKDM1RYVM6mLFE=;
-        b=SklHqHyuX8n95D8ffRvrALZ/EEl3rH3jYDxgIBT8xlNSO5HRlwGB8oLxtew8pe7DSC
-         q+xqPwbDxoW7K5lsdr/JyOtlfNwyIIAye98J+u45QBLpVRJgI+AjRtqQCOqL8tKQ/zhq
-         71daY/HPbAm2tFWtgfLwQJD0Wb5BylXdyNzaQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725632057; x=1726236857;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vViw6BTWp76nUCRilCQyxEbSqwSDETKDM1RYVM6mLFE=;
-        b=aNyQcoTSR4Y2EK6i0xxRtX10VIuXxif+tok5oSxAAmfrQU5NUSstf9Vh6uD0IRHcV1
-         ne9axG22cd22UYClDyB3LHMjDJ0/vsfFajwJ8HDWb3Vl6tvmN1NEui97Huic/Z3etdSH
-         UAdakmWMPIt8MYUZFxdK2w6VxGW+I5l06yk4og+y/M+L35wsLwqY2FU9iVOOC32bVWn1
-         GC0gKhqsbkn2by/Tb4wcPOmhahtw/3LzYdqDdHxc4JOrQMcgYXDzPSzni6kmBcivZB8I
-         bMR3iZTIVt3hBUsmr9W8o/aOndQ/aNkQwh1fvOaH86hwWhJ077cKcAjdowUntj7aozVj
-         KpzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsz6EzpPPIgbpvhkSdpbkdub986RpWYy6EsUjqPGIZMYrXENbFECVaihuoL0mJ2qfqpWfa6TqINJ3XKPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj48ZCF3+zjuA+cI9ll64+J2jGalfux3wbjpCOpnMoKDxDqfUQ
-	c6t7Phtnrqiw7I0YlA5hUNfy0gw+1sGNl/jJ4eHVqlJjGojbnhjV8yYfHWlsgQg=
-X-Google-Smtp-Source: AGHT+IGlBnlDVHagXUvARTKh4F7dvKYhw6L2wgcgb9XFUgHOWtzaogoxzxw4GnvS6B0z13xrB7sNmw==
-X-Received: by 2002:a05:6602:154f:b0:82a:2385:74a6 with SMTP id ca18e2360f4ac-82a9618c4f3mr341912439f.5.1725632056435;
-        Fri, 06 Sep 2024 07:14:16 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d08a22e664sm210986173.67.2024.09.06.07.14.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 07:14:16 -0700 (PDT)
-Message-ID: <cff1553c-d342-44e3-a685-9b074af87858@linuxfoundation.org>
-Date: Fri, 6 Sep 2024 08:14:14 -0600
+	s=arc-20240116; t=1725632128; c=relaxed/simple;
+	bh=5/009keQ+OSK+mhfdXTK4s/Va9Gcr7VoXgKpMZahAg8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lCc3vuxnrOafGsQuxGcLDCkxP5HD9Ugn5+8zVI+jt7Mf9o58v9o6TGUpFaiTepQBVIC3nePwaKMASWy47osDQC4PXjw82qi7WNwzSgKBYRQTHS/Ddsnf78HbkF6irszGKWqa7w6zk0QBhNXHgxII5VnzniDewtcyZ0mtC3CvzfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AbtT8Glp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FLRZkBxo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725632126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oLjDdNiTD7emvN20ub37HRS5DMVqv5ryOW8f9nOtuAc=;
+	b=AbtT8GlpFpMFyPzO2BoraJKOa3lJeBJGJ4dy2g5nW8veU14KyINPCw482kAG6w3Lkqsx55
+	U/k+RwhOdHNN2q6lbU/pNZ10Nq0DGXT6+82tOQE/zSDSdq2ZjDb3tzD2UwDxg3RoKt5mub
+	rXZeNwWyLRQZ21uedC+0GFLZAZZ2O9Df+Q5prSZ1EQBm2a8A7pmaKOZtYSAeFO42w0oOc/
+	R0GpZcwWcy+3S1pn1m0VXIIQVx+7wkWdsSNET6f2Rgr55f0lmRG6KTAd4nve+mgkFPkI4A
+	pj0J+oOjA1A8SFC/+72zbE7qsk4cKn8fUFPqeUDUVUvE9wp5NBaUVdFvT2qvtQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725632126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oLjDdNiTD7emvN20ub37HRS5DMVqv5ryOW8f9nOtuAc=;
+	b=FLRZkBxo6UkdtD61Wopk9SUSjnAWWOmW1h1GOCKg5WqM4evVyOWXJChygc7/r/sFjcHNfR
+	ePMoqQs4WWp3OxCQ==
+To: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Mike Galbraith <umgwanakikbuti@gmail.com>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Subject: [PATCH v4 0/3] zram: Replace bit spinlocks with a spinlock_t.
+Date: Fri,  6 Sep 2024 16:14:42 +0200
+Message-ID: <20240906141520.730009-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests:resctrl: Fix build failure on archs without
- __cpuid_count()
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: shuah@kernel.org, fenghua.yu@intel.com,
- Reinette Chatre <reinette.chatre@intel.com>, usama.anjum@collabora.com,
- linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240905180231.20920-1-skhan@linuxfoundation.org>
- <21267ef6-6fcf-2eed-a3da-2782d1e7013a@linux.intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <21267ef6-6fcf-2eed-a3da-2782d1e7013a@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/6/24 04:12, Ilpo Järvinen wrote:
-> On Thu, 5 Sep 2024, Shuah Khan wrote:
-> 
->> When resctrl is built on architectures without __cpuid_count()
->> support, build fails. resctrl uses __cpuid_count() defined in
->> kselftest.h.
->>
->> Even though the problem is seen while building resctrl on aarch64,
->> this error can be seen on any platform that doesn't support CPUID.
->>
->> CPUID is a x86/x86-64 feature and code paths with CPUID asm commands
->> will fail to build on all other architectures.
->>
->> All others tests call __cpuid_count() do so from x86/x86_64 code paths
->> when _i386__ or __x86_64__ are defined. resctrl is an exception.
->>
->> Fix the problem by defining __cpuid_count() only when __i386__ or
->> __x86_64__ are defined in kselftest.h and changing resctrl to call
->> __cpuid_count() only when __i386__ or __x86_64__ are defined.
->>
->> In file included from resctrl.h:24,
->>                   from cat_test.c:11:
->> In function ‘arch_supports_noncont_cat’,
->>      inlined from ‘noncont_cat_run_test’ at cat_test.c:326:6:
->> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
->>     74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
->>        |         ^~~~~~~
->> cat_test.c:304:17: note: in expansion of macro ‘__cpuid_count’
->>    304 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
->>        |                 ^~~~~~~~~~~~~
->> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
->>     74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
->>        |         ^~~~~~~
->> cat_test.c:306:17: note: in expansion of macro ‘__cpuid_count’
->>    306 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
->>
->> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> Reported-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
->> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> 
-> When the small things from Muhammad and Reinette addressed, this seems
-> okay.
-> 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
+Hi,
 
-Will do. Thank you for the review.
+this is follow up to the previous posting, making the lock
+unconditionally. The original problem with bit spinlock is that it
+disabled preemption and the following operations (within the atomic
+section) perform operations that may sleep on PREEMPT_RT. Mike expressed
+that he would like to keep using zram on PREEMPT_RT.
 
-> Thanks for the solution.
-> 
-> 
-> I'm still left to wonder if the x86 selftest is supposed to clobber
-> CFLAGS? It seems that problem is orthogonal to this cpuid/resctrl problem.
-> I mean this question from the perspective of coherency in the entire
-> kselftest framework, lib.mk seems to want to adjust CFLAGS but those
-> changes will get clobbered in the case of x86 selftest.
-> 
+v3=E2=80=A6v4: https://lore.kernel.org/linux-block/20240705125058.1564001-1=
+-bigeasy@linutronix.de
+  - Inline lock init into zram_meta_alloc().
 
-This isn't the case x86 clobbering the CFLAGS. This falls into the case
-of x86 customizing the flags for the test and the ones set by the common
-lib.mk might interfere with the flags it needs.
+v2=E2=80=A6v3 https://lore.kernel.org/all/20240620153556.777272-1-bigeasy@l=
+inutronix.de/
+  - Do "size_t index" within the for loop.
 
-There isn't anything here to fix based on the history of this test and
-lib.mk.
+v1=E2=80=A6v2: https://lore.kernel.org/all/20240619150814.BRAvaziM@linutron=
+ix.de/:
+  - Add the spinlock_t unconditionally
+  - Remove ZRAM_LOCK since it has no user after the lock has been added.
+  - Make zram_table_entry::flags an integer so struct zram_table_entry
+    does not gain additional weight.
 
-thanks,
--- Shuah
+Sebastian
+
 
