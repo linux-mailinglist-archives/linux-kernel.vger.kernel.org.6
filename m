@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-318038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACDF96E77F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:04:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAFA96E782
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F292857D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B5A5B23365
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3462420B22;
-	Fri,  6 Sep 2024 02:04:05 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE29208A4;
+	Fri,  6 Sep 2024 02:04:17 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DB51FDD;
-	Fri,  6 Sep 2024 02:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6D33770C;
+	Fri,  6 Sep 2024 02:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725588244; cv=none; b=qrDZI1lfl6BtL4y3t3vzi/l2+CkL8DPJrq4qFtQalrZ2qK8JsvR5WdgDTnxfsKjzTIRF+Np//ASDJZ93edtnKP+uNlhx8mhtR/C8G8kohs7T5CZt12i9JJwJV3rPE8mRCMmFNtZLXlwQE2kkeyiBHeK4OIidC8e/j6nVZSbNbxE=
+	t=1725588257; cv=none; b=u2RexSaaNdHRK8Ewr0Uwys4aWOQqu3dNv5fR+MGZux+ER8rKOtvePWornQZFuR7dWhYkcDaUwsq0TvwHvrUIE/KmnqbfynleefWl5nrbXXNkvv/kC22bp3I4LrSegFFl1brFYwiiUmPAr3HuRkrk3s5whbVWOhivSIU+j2OqYzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725588244; c=relaxed/simple;
-	bh=QeYUXtY5JpyYrDpPKMOW6fHt73XzdsW3AkeAkEzbuYc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rC/XDjIZQjX3PZpiraggko1b0ssvW+ajgTVv1fHV4P0wiT18man/TUJY0KcXEsuTEdjRFhPdDCxCkiCTePpDXmsspBv2iNgHNnxg53sJwIhJYtZMNSb/jBq+21qSHaXh6Slzjumu5t7pHCkC0zNFNrBvAdAx6Zasyo+LNn8xNOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAAHDx_sYtpmJrR9AQ--.29972S2;
-	Fri, 06 Sep 2024 10:03:32 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: linus.walleij@linaro.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	bartosz.golaszewski@linaro.org,
-	antonio.borneo@foss.st.com,
-	s.shtylyov@omp.ru,
-	valentin.caron@foss.st.com,
-	peng.fan@nxp.com,
-	make24@iscas.ac.cn,
-	akpm@linux-foundation.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] pinctrl: stm32: check devm_kasprintf() returned value
-Date: Fri,  6 Sep 2024 10:03:23 +0800
-Message-Id: <20240906020323.556593-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725588257; c=relaxed/simple;
+	bh=awWWh4471neVltnSTgYwLXdEobLmgucoHFslH9P7yMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hte1dSTx9geDTMVfzXSGBFrr+mY3LGfM3xekOAYb1/uUHYteR3jTKrf9eMfi7PT1np3+BwnjjoG6PVT9wjxwEbmruiIwj8wd2jMYGOA7al5Xymn2Fny8RGBJjd9IIApZ0F50eIpgWPsuNGKVcbrfaKkKoV3aRZ7ckA6yH3XiVrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X0KK13pZsz1j8D6;
+	Fri,  6 Sep 2024 10:03:49 +0800 (CST)
+Received: from kwepemj200011.china.huawei.com (unknown [7.202.194.23])
+	by mail.maildlp.com (Postfix) with ESMTPS id C346E1A0170;
+	Fri,  6 Sep 2024 10:04:11 +0800 (CST)
+Received: from [10.67.108.52] (10.67.108.52) by kwepemj200011.china.huawei.com
+ (7.202.194.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Sep
+ 2024 10:04:11 +0800
+Message-ID: <e043ff91-773c-4f30-a709-5aa5f2215755@huawei.com>
+Date: Fri, 6 Sep 2024 10:04:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] serial: 8250_aspeed_vuart: Enable module
+ autoloading
+Content-Language: en-US
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <andi.shyti@linux.intel.com>,
+	<andriy.shevchenko@linux.intel.com>, <florian.fainelli@broadcom.com>,
+	<tglx@linutronix.de>
+References: <20240903131503.961178-1-liaochen4@huawei.com>
+ <4nyenalsjnerwjwcuk5zwm52rptnc5jhjhz3yhsmo7qt3gffhs@qadnsjic7p24>
+From: "liaochen (A)" <liaochen4@huawei.com>
+In-Reply-To: <4nyenalsjnerwjwcuk5zwm52rptnc5jhjhz3yhsmo7qt3gffhs@qadnsjic7p24>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAHDx_sYtpmJrR9AQ--.29972S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1kWF4xZrykCr1DAw4xWFg_yoW8Jw48pF
-	s3Gr1Ykr47J3y3CF1UJ34Y9F9agayktFyDGa1I934xZF4Yvayjqr4rKrWUZr4kKF4rXwn8
-	ZF43Jay5Zr1rCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
-	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemj200011.china.huawei.com (7.202.194.23)
 
-devm_kasprintf() can return a NULL pointer on failure but this returned
-value is not checked. Fix this lack and check the returned value.
+On 2024/9/3 23:49, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Tue, Sep 03, 2024 at 01:15:03PM +0000, Liao Chen wrote:
+>> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
+>> on the alias from of_device_id table.
+>>
+>> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+>> ---
+>>   drivers/tty/serial/8250/8250_aspeed_vuart.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_aspeed_vuart.c b/drivers/tty/serial/8250/8250_aspeed_vuart.c
+>> index 53d8eee9b1c8..25c201cfb91e 100644
+>> --- a/drivers/tty/serial/8250/8250_aspeed_vuart.c
+>> +++ b/drivers/tty/serial/8250/8250_aspeed_vuart.c
+>> @@ -561,6 +561,7 @@ static const struct of_device_id aspeed_vuart_table[] = {
+>>   	{ .compatible = "aspeed,ast2500-vuart" },
+>>   	{ },
+>>   };
+>> +MODULE_DEVICE_TABLE(of, aspeed_vuart_table);
+> 
+> I wonder if you found this entry missing by code review, or if you have
+> a machine with that UART and so you actually benefit.
 
-Found by code review.
+I found it from code review. Since this device could be compiled as a 
+module, I think it is better to add this entry.
 
-Cc: stable@vger.kernel.org
-Fixes: 32c170ff15b0 ("pinctrl: stm32: set default gpio line names using pin names")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the patch according to suggestions, added braces;
-- modified the typo.
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Thanks,
+Chen
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index a8673739871d..f23b081f31b3 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -1374,10 +1374,16 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 
- 	for (i = 0; i < npins; i++) {
- 		stm32_pin = stm32_pctrl_get_desc_pin_from_gpio(pctl, bank, i);
--		if (stm32_pin && stm32_pin->pin.name)
-+		if (stm32_pin && stm32_pin->pin.name) {
- 			names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s", stm32_pin->pin.name);
--		else
-+			if (!names[i]) {
-+				err = -ENOMEM;
-+				goto err_clk;
-+			}
-+		}
-+
-+		else {
- 			names[i] = NULL;
-+		}
- 	}
- 
- 	bank->gpio_chip.names = (const char * const *)names;
--- 
-2.25.1
+> 
+> Otherwise looks right to me.
+> 
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> 
+> Best regards
+> Uwe
 
 
