@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-318888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E096F4A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:52:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB0E96F4AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481261C23793
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBAB91C23186
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB4A1CBEA1;
-	Fri,  6 Sep 2024 12:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF911CCEC1;
+	Fri,  6 Sep 2024 12:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="L6CEiLCq"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="1q4NHCHJ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD976C13C;
-	Fri,  6 Sep 2024 12:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1CCC13C;
+	Fri,  6 Sep 2024 12:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627154; cv=none; b=bbDV4y95MQMeFZK+YIAS51rdWMbu0/yfEsDlCqiWiMLKZXHsLALvoP35aK3AFGeL/JgSUtIz5T+JVFmxdP1D4mByRinp97b9a/de8r7rK+PXXT6C378lCtbHA6UK7PDNKp4RfgreYEHh8o21l0oySRVLxyQCxGejRr1gLBc6kq0=
+	t=1725627206; cv=none; b=g1sXxsE+4CtjACl1uL2RHiYe3PD0+Z0B+JmYNiHy+zs/Z2Bt87YOUcxPLjJY/gmVvBaFhoFwQkBBYDm988RJST4l2/kX1FJ5KSgBePcNmzuqlngvGODeFjsQ6YTOxO+z2D6meBx5mx+5SgQrydLm3CIQwPhQ++3bQ95D7Uu/xOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627154; c=relaxed/simple;
-	bh=LAe+SVFODFHG3JO85HxVC4wTLxHPy0xG1UGWXRGSfSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeo6r09yqar6sK5acIaDsNng7lPWQ40WSne4UKgp/oop5/xCGiwK2aGOM/3hkOOabMB6LHf6pA4iWJVi8snrQrhvuhDTMWvcNFkjRJzlOQPnAXoTFMBcH4J5yE4KuoV5QjvbDTDQ4t5OmqtJ4D20gU+0UMpoGVvFutpZM2HuBE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=L6CEiLCq; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53345dcd377so2537035e87.2;
-        Fri, 06 Sep 2024 05:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1725627149; x=1726231949; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a7xpYl6U/W2CVmGwpeWmwDvxtZgNF6LNCUTyVT4QRdE=;
-        b=L6CEiLCqdpj3ga5ePoS+WAQM4u6uqbItQPEqCpx57Rvo5OAaBgKREPrekpDYXq81uA
-         FkB/223QYosmRmJBBupLNC3GT7yAXTOYQMoLHb48Xm/+gCKmckcLQIA5KWb4mJwfFCBk
-         0+bWC6Izs4ppKK1Pa3HAgd5yL6rnxDGPb7pOgL1Hzs21d5PSHnzzu/ku+ozQyixRlbAL
-         BAft8TMcTr9Vb0nNIQ2uvWUVHororXa43jH85t3rtTEHbET+4rFqyaaYkR7v9Vfp9KuJ
-         7KNxtudHP2huXx7+EW+85GTmKVhMNe63fcMCj6P2X8TXBlnTRCyMJkaZF0nyofvaLx9K
-         kDdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725627149; x=1726231949;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7xpYl6U/W2CVmGwpeWmwDvxtZgNF6LNCUTyVT4QRdE=;
-        b=ALY4d0PlL19d/SyLeETOqGlYZ6obtHvHDvouFlWaacjer+m5NddZmoMFR7a5GFHUnQ
-         dS+2+ZLHoOuMfSp3TzndeBgh2CnlLSRk7kGBevnZOiNP8KlpGpTv+QgJceP88H7cFhEy
-         aH1b+gVkZwN/jSIM4KcO0Yg1fTeKJ9boo8SWliM8fKAucWFjemT9dq1H6ghLQuttCZOZ
-         5yGudLfeTZH+G4GD5DgNpLUHp0dK8fQOb/OI7b1x9dlK/1Bhw+ujz8a50LfW+Pzf0xVB
-         8dpywzw9k14eB82ybKsJoI0s0KYlVvXYdMMumiTBuHARtDew7qefi75S5Z0Rdssd46ZU
-         GUHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLve939gW+7fT9mKX1jlIds5r/+Yyo5ubs3e49JHoYUAwcsazXkbRqaNd+ZQ22envokMxAS2CwA5Bwd6E=@vger.kernel.org, AJvYcCVR6PsxVKmEEdWoGQMwKhwGqIiZl3vh6uBqV+at5aeINFRRW++Lvuk3XedKY3/VLAbvn/AUwgFJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt9XxLoYPdOLwM5uUR5sA74zMlohzz7J9ex8nPInHaPhcTz/ra
-	hqahjQlmC4FlHgszCGDIzB2OCfX27mWd6emHVla6EHGU4cJd5jY=
-X-Google-Smtp-Source: AGHT+IHWVUg6w0qXEXxCORO+fGAi77k1sUCAjc1o4hBTuyAu256CvscZNFz2PRcuSJLEh35/EphQNA==
-X-Received: by 2002:a05:6512:3d89:b0:533:4676:c21c with SMTP id 2adb3069b0e04-536587fcdecmr1661821e87.44.1725627148397;
-        Fri, 06 Sep 2024 05:52:28 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b40f2.dip0.t-ipconnect.de. [91.43.64.242])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a45b0sm279211566b.143.2024.09.06.05.52.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 05:52:27 -0700 (PDT)
-Message-ID: <7e973e08-456f-44bc-b769-fb600b49274d@googlemail.com>
-Date: Fri, 6 Sep 2024 14:52:26 +0200
+	s=arc-20240116; t=1725627206; c=relaxed/simple;
+	bh=Fha+Z84HnDt/VNF2ZA9BN4tGKWB4DIwzvakdA71UDqY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=f12Cw11JgknRPKh4va2YMR8LWk+e1EGM4LvVeomVzg1ZN7P3/8JiNWrdg6XbY4tW0U22WqhAbOy5rbIAYPdQuCfaPk/lPqLALpA0uLLAN6Tga9ulyAG0tFepzgAJ6LVOMjVpeXMBWW0RTN5yUwOTxXiHOGlPvrrnVLuUzI7WIQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=1q4NHCHJ; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725627204; x=1757163204;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=Fha+Z84HnDt/VNF2ZA9BN4tGKWB4DIwzvakdA71UDqY=;
+  b=1q4NHCHJxDPTSzdeMlGnwVxuJhXY0KeBMxPdIodAlDOv35Y2jk2gFYYU
+   awkyzOmUetkrhCvS+TubMMt/r67cWz/2WZ2CE8/syFl4Eh07m2BiWWoyT
+   1AxfQ7d4cvotM+jRmWkFVk/X1lPpStOxsp1ZK6qI7zLTVozHZdRMViZDe
+   cUxs8qJpwL1GuvpJtMRXP5W0U+QVaYFReaTEqK7UvAVp1Cw+lhTuOzXIB
+   1VpwVhCAmwAUNRmNE6HOQzi5CpOQit5D7BDIWWWXGmp88yD/J4ZwFAm7S
+   +VkBZublvrUfvdkwUoWcvVjKr4YmrL+vXm0FExhgQUz9IalpVHgkPRXsH
+   g==;
+X-CSE-ConnectionGUID: aks78ZCLRxOyTJZTZgJsDQ==
+X-CSE-MsgGUID: eMbYjd8PQR2gWI+MhhVkPA==
+X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
+   d="scan'208";a="34534551"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Sep 2024 05:53:23 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 6 Sep 2024 05:53:13 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 6 Sep 2024 05:53:11 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH 0/9] phy: sparx5-serdes: add support for lan969x serdes
+ driver
+Date: Fri, 6 Sep 2024 14:52:37 +0200
+Message-ID: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/131] 6.6.50-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240905163540.863769972@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240905163540.863769972@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABX72mYC/x3MwQrCMAyA4VcZORuYdUrrq8gO6RJdQOtIYBTG3
+ t3O43f4/w1cTMXh3m1gsqrrtzScTx1MM5WXoHIzhD4MfQwBfSGrV3xTSbdUseUsjmy6imG8xMS
+ ZOVFM0BaLyVPrf/8YmzO5YDYq03xMP6QF9v0HueWURoUAAAA=
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-phy@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-Am 05.09.2024 um 18:36 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.50 release.
-> There are 131 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+The lan969x switch chip (upstreaming efforts beginning soon) has ten 10G
+SERDES'es which share the same features and data rates as the Sparx5 10G
+SERDES'es. Lets take advantage of this and reuse the existing SERDES
+driver for lan969x.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+In order to do this, we add a new indirection layer to the register
+macros, that takes register differences into account. Additionally, we
+add driver match data for other differences that we need to handle.
+These other differences are handled by a combination of constants (eg.
+the number of SERDES'es), ops and if's
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Patch #1 adds support for match data.
 
+Patch #2 adds a struct to handle constants and adds a constant for the
+number of SERDES'es.
 
-Beste Grüße,
-Peter Schneider
+Patch #3 adds a constant for the number of CMU's
 
+Patch #4 adds a struct for ops and adds a function for setting SERDES
+type.
+
+Patch #5 adds a function for getting the number of CMU's.
+
+Patch #6 adds register macro indirection layer.
+
+Patch #7 adds SERDES target types (eg. Sparx5, lan969x) to be used for
+branching out based on the target.
+
+Patch #8 adds support for lan969x in the Sparx5 dt-bindings.
+
+Patch #9 introduces the new lan969x SERDES driver.
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+Daniel Machon (9):
+      phy: sparx5-serdes: add support for private match data
+      phy: sparx5-serdes: add constants to match data
+      phy: sparx5-serdes: add constant for the number of CMU's
+      phy: sparx5-serdes: add ops to match data
+      phy: sparx5-serdes: add function for getting the CMU index
+      phy: sparx5-serdes: add indirection layer to register macros
+      phy: sparx5-serdes: add support for branching on chip type
+      dt-bindings: phy: sparx5: document lan969x in sparx5 dt-bindings
+      phy: lan969x-serdes: add support for lan969x serdes driver
+
+ .../bindings/phy/microchip,sparx5-serdes.yaml      |  18 +-
+ drivers/phy/microchip/sparx5_serdes.c              | 195 +++++-
+ drivers/phy/microchip/sparx5_serdes.h              |  44 +-
+ drivers/phy/microchip/sparx5_serdes_regs.h         | 746 ++++++++++++++-------
+ 4 files changed, 706 insertions(+), 297 deletions(-)
+---
+base-commit: 221f9cce949ac8042f65b71ed1fde13b99073256
+change-id: 20240822-sparx5-lan969x-serdes-driver-8389dbdd9a89
+
+Best regards,
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Daniel Machon <daniel.machon@microchip.com>
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
