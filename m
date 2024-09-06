@@ -1,133 +1,103 @@
-Return-Path: <linux-kernel+bounces-318788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8337496F362
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F9596F334
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8C61C20EC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8D31C23424
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637A41CBEAE;
-	Fri,  6 Sep 2024 11:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15B51CB32F;
+	Fri,  6 Sep 2024 11:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKDgJwLb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFisxx+d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740F01CB154;
-	Fri,  6 Sep 2024 11:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E81C870E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623036; cv=none; b=S0YBS9buDJ9Ci4LRkAt0puLo0GeA9ZMTGbcCcwdx3sljLoxgq6zR0so52nPweloqf5Z8n1Nmf+6ctRCZUBCZRQts/pRZTAcyHURmSuscTjs+Gex8SiTmdP8kILYf40k25VU7B7ZRX7AX7kOcK8TK2I9mVNhctgRq1nxkoIWkgMc=
+	t=1725622698; cv=none; b=HNPmJSNDy5B61nJZj6BdNg4IXuxRRZ4EmBwCwIbk9WaDgVtYB/L4UEut5VbIX+DTnbk8eLCYc++wCodHdxNYD+1cZgbZInLewYq+R7ZtS/xTCxOAdV7nj59QPoGvLHQDbbOU1sbGYCkdCKpmnbFD0XQ+onNrrv2IunwhBsDJpB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623036; c=relaxed/simple;
-	bh=k2nGLLAeLRhr+YcEzVH1i4afIkU6w/zHEyW7VQqdBPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sKMNG90Pp6X9x2h8d0sNsPHhharhaG5XkoPc71iHDHZXRFe8cigknoV9i4sW8MPd1kXeS9MGYXQvoHqaSrPHNJ4/vSNShRgJLSagHfWuil4JQH6I38Z3iEW/PGxB7/nLvYrqdz8q10vvGrkY/4O5WIeVW3eoM7zvKelWiDlV9qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKDgJwLb; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725623036; x=1757159036;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k2nGLLAeLRhr+YcEzVH1i4afIkU6w/zHEyW7VQqdBPI=;
-  b=GKDgJwLbd13a8tw68awCVJuwYRckGncvyoKj9cSgUCO749yZcqns50SL
-   69JhlaZ2fmzb5kv2kFBEN34j0eq2I2ci4dB9iltrTt3M/5Xf+lkxu/9rl
-   SZdWVphkvfVhTNuQAa297/c5fZEqnVq0Cttsaxtsw8CquZrCpblkFz4h3
-   eQKFQeLKID5+SlmQWcEq3bhH3e+A0pl05SUW1TPx4WnSFUgR9veRbxNnc
-   V20O7vXwVhqnwcPlUkBH6ZeXXmEIZrmwSeoGqPNV8B4yhJLNCr7IuIcEb
-   5I2tdu+EwWXg+0ikJv95DAFumKo2j14Ya8WpqRenA30uQqpD2oKU9JI+F
-   w==;
-X-CSE-ConnectionGUID: pyepTlqeQdK0FlOJrdLIqA==
-X-CSE-MsgGUID: FRtYnJoMRO2v/yrXtWVOxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24488701"
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="24488701"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 04:43:55 -0700
-X-CSE-ConnectionGUID: AqcyRIx+Qq6fKaYYQJNfZQ==
-X-CSE-MsgGUID: a9wONoX+ShCVfnMUHsK6lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="66272496"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 06 Sep 2024 04:43:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5C3131C4; Fri, 06 Sep 2024 14:37:14 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 3/3] pinctrl: cherryview: Replace ifdeffery by pm_sleep_ptr() macro
-Date: Fri,  6 Sep 2024 14:36:08 +0300
-Message-ID: <20240906113710.467716-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240906113710.467716-1-andriy.shevchenko@linux.intel.com>
-References: <20240906113710.467716-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725622698; c=relaxed/simple;
+	bh=isfKCo/EJMP0WbCVrPEFfRQBpB4Ab8FpPw1L1SI1k4M=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=IuHJe9EicPucfV0WA/1npt28EhtkwL+xJD5V/LmrAnuJ9ZWKmoptCHKTBKdrZTRnKCcelA8muqtOe/Fsxkwv42q55ZfEIOwaqrHU9YCLxiHEKRfxqlsFM9rEJ48vtI5ojmxMQzF5X9LliRoCfSRO9cmt9NQt1rNqUya3XmSzeJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFisxx+d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725622695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y6AWmXzOPl7WKbXIU5VgiA4pokfrTwMPgrxFCz0ePH8=;
+	b=RFisxx+dkalJYeKaz4Ss/qG20ieW2SSdrj38ha0KsvwwHI3m0WhtR1jS0pbx9j8llgB+A1
+	pBzZLp9P25/aaNL/ZQ9CKjAbj+fQxny1Lg2wtIIhzc7scF9JuNPKO8oiVTkRZS1nd+jSEz
+	1dlc/4SCAtndGNFSujZSbbLVTdSoHA8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-JKlo3Q2CNTmeCTk9_DIIzQ-1; Fri,
+ 06 Sep 2024 07:38:14 -0400
+X-MC-Unique: JKlo3Q2CNTmeCTk9_DIIzQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA5141955D55;
+	Fri,  6 Sep 2024 11:38:12 +0000 (UTC)
+Received: from [10.45.224.222] (unknown [10.45.224.222])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90E7E1956086;
+	Fri,  6 Sep 2024 11:38:10 +0000 (UTC)
+Date: Fri, 6 Sep 2024 13:38:07 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Mike Snitzer <snitzer@kernel.org>
+cc: Chen Ni <nichen@iscas.ac.cn>, agk@redhat.com, dm-devel@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: dm integrity: Convert comma to semicolon
+In-Reply-To: <ZtnBjyn8eSygoaT1@kernel.org>
+Message-ID: <d6f3b1b0-130b-f83c-fca1-470d3116b08c@redhat.com>
+References: <20240905022832.1642756-1-nichen@iscas.ac.cn> <ZtnBjyn8eSygoaT1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Explicit ifdeffery is ugly and theoretically might be not synchronised
-with the rest of functions that are assigned via pm_sleep_ptr() macro.
-Replace ifdeffery by pm_sleep_ptr() macro to improve this.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 2f0e29c78dfb..5cf99caf511f 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1608,6 +1608,16 @@ static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
- 	return AE_OK;
- }
- 
-+static int chv_pinctrl_pm_init(struct intel_pinctrl *pctrl)
-+{
-+	pctrl->context.pads = devm_kcalloc(pctrl->dev, pctrl->soc->npins,
-+					   sizeof(*pctrl->context.pads), GFP_KERNEL);
-+	if (!pctrl->context.pads)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- static int chv_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct intel_pinctrl_soc_data *soc_data;
-@@ -1648,13 +1658,9 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
- 
- 	community->pad_regs = community->regs + FAMILY_PAD_REGS_OFF;
- 
--#ifdef CONFIG_PM_SLEEP
--	pctrl->context.pads = devm_kcalloc(dev, pctrl->soc->npins,
--					   sizeof(*pctrl->context.pads),
--					   GFP_KERNEL);
--	if (!pctrl->context.pads)
--		return -ENOMEM;
--#endif
-+	ret = intel_pinctrl_context_alloc(pctrl, chv_pinctrl_pm_init);
-+	if (ret)
-+		return ret;
- 
- 	pctrl->context.communities = devm_kcalloc(dev, pctrl->soc->ncommunities,
- 						  sizeof(*pctrl->context.communities),
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+On Thu, 5 Sep 2024, Mike Snitzer wrote:
+
+> On Thu, Sep 05, 2024 at 10:28:32AM +0800, Chen Ni wrote:
+> > Replace comma between expressions with semicolons.
+> > 
+> > Using a ',' in place of a ';' can have unintended side effects.
+> > Although that is not the case here, it is seems best to use ';'
+> > unless ',' is intended.
+> > 
+> > Found by inspection.
+> > No functional change intended.
+> > Compile tested only.
+> > 
+> > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> 
+> I agree, the use of comma is bizarre.  Not sure how that slipped
+> through but...
+> 
+> Reviewed-by: Mike Snitzer <snitzer@kernel.org>
+
+Applied, thanks.
+
+I don't know why I used ',' there.
+
+Mikulas
 
 
