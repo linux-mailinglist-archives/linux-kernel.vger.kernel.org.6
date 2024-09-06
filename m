@@ -1,172 +1,113 @@
-Return-Path: <linux-kernel+bounces-318965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53C096F5C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:48:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8699B96F5CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3559CB22D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02891C24007
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BAB1CEEBB;
-	Fri,  6 Sep 2024 13:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bQRRtaKO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DE41CFEAE;
+	Fri,  6 Sep 2024 13:48:35 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF431CE707;
-	Fri,  6 Sep 2024 13:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD81CF2B3;
+	Fri,  6 Sep 2024 13:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630481; cv=none; b=UMebDOiQdNz9hG7lp9G+C73OErMKPIM1Uqbr5mTrk3pNSuIblXajbNUV3G533cAffElCl2tymvDJEA/8f7p0VmlOtd0g3//QM17Tl4OP1okCw7SfIZJyeN2cssOUfV/bE6BqH+tEpSdeyv+NmeWG7AI0/nL27Icq9jT4nItgtQ8=
+	t=1725630515; cv=none; b=i3BlqYxn54MOZm+7Ya5K3gSRHPH0hYRMvNL5y1+qAnkVY6wB3eCUpyuK+dNpt6egu0/3tB3EyI7AlP0OiIlDQC15wx0y2+XMXEe3Q0tV11nRQNkm+XRxsiZS3MnvTcyWK1LBIhe00RgzFZpuXDia5qQjZm+Zo/WUSSTU+FxAiiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630481; c=relaxed/simple;
-	bh=+8O4pLtD7OCQtBNgOU/P5tr0MQ0TvVJU1QDzGhpSrLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QkLXB7fD8Gms0poDyBNP7GCCpWcz3EXizRzw45xIpkknakiw8e208IaVurPLlT3j7qsWN+WOWUS6vMSpijR5Q0qyyJRlPuGipDB+d0KfdUYHhz6NDxdeli6NGjnlRY0ZEMuR4u6EQ1HjVs6VA/v72R+UqgEBiVWDSiYpumwIxNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bQRRtaKO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725630478; x=1757166478;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+8O4pLtD7OCQtBNgOU/P5tr0MQ0TvVJU1QDzGhpSrLY=;
-  b=bQRRtaKOf6sfz4CvRT16KzlPv0Z11q1DtBO80cYNB2v3A4YcYpAnZ1po
-   6lTZkjrasCuJxffKAfGYrsQB6CANLIoyFwlVJrQhtgVsOMZMbh/NMq2Sz
-   Z8w4enNgt35dQXl5Cd56fbmv+CdCzI10ZXZN5f6TSrQzi/O0BmtIoOYgV
-   Q2hhw2xa+VHPMZp19M+meFFnZkkEzDH+X4p0P2oqIqo1k114tMVfx2Ce9
-   7Zwqf7J2CAMrfEKtShcQRxZoYzYayErM/fzVyhDsn/kGawY1GiLjxX5Dn
-   za8gx6y3NaOiuvwIvm+lFskFWDWdiYO7TSss5kRde/dfBUlU5vOrihUUX
-   A==;
-X-CSE-ConnectionGUID: tCAo1I4DRti7uM40J76Zcg==
-X-CSE-MsgGUID: sb0qgOweS3+oFtzeWUdw0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35773403"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="35773403"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 06:47:56 -0700
-X-CSE-ConnectionGUID: ngtMt1xQR6KpxAymjYN37g==
-X-CSE-MsgGUID: ZlkD7W07TAuam7Q1nt187g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="66503828"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 06:47:57 -0700
-Received: from [10.212.119.23] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.23])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4523C20B5782;
-	Fri,  6 Sep 2024 06:47:54 -0700 (PDT)
-Message-ID: <f171c2e5-3468-4cdb-b369-87e5aeb6660b@linux.intel.com>
-Date: Fri, 6 Sep 2024 09:47:53 -0400
+	s=arc-20240116; t=1725630515; c=relaxed/simple;
+	bh=wlwOWRdYKR00Zm5rmNIKW5fkEehkGxr67EXu3FHs30A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IRor+pQbOpQweMRd0FpwwvompW45hiDtBoK5R6qB9cCtAdo7qGHt6/mR63+mPwfMmrOPJrqjTWCEPyt21H5i2D8FBHSGrxFUzVF5ioHMXgrRODirEc7fQfX03uA9xNN+NJOk/2sZYQPzlZj2/D4Ws68y1bASw8qRG72QY1U/p38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: Sam James <sam@gentoo.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] libbpf: workaround (another) -Wmaybe-uninitialized false positive
+Date: Fri,  6 Sep 2024 14:48:14 +0100
+Message-ID: <f6962729197ae7cdf4f6d1512625bd92f2322d31.1725630494.git.sam@gentoo.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] perf tools: Add fallback for exclude_guest
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
- James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>,
- James Clark <james.clark@linaro.org>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-2-namhyung@kernel.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240905202426.2690105-2-namhyung@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+We get this with GCC 15 -O3 (at least):
+```
+libbpf.c: In function ‘bpf_map__init_kern_struct_ops’:
+libbpf.c:1109:18: error: ‘mod_btf’ may be used uninitialized [-Werror=maybe-uninitialized]
+ 1109 |         kern_btf = mod_btf ? mod_btf->btf : obj->btf_vmlinux;
+      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libbpf.c:1094:28: note: ‘mod_btf’ was declared here
+ 1094 |         struct module_btf *mod_btf;
+      |                            ^~~~~~~
+In function ‘find_struct_ops_kern_types’,
+    inlined from ‘bpf_map__init_kern_struct_ops’ at libbpf.c:1102:8:
+libbpf.c:982:21: error: ‘btf’ may be used uninitialized [-Werror=maybe-uninitialized]
+  982 |         kern_type = btf__type_by_id(btf, kern_type_id);
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libbpf.c: In function ‘bpf_map__init_kern_struct_ops’:
+libbpf.c:967:21: note: ‘btf’ was declared here
+  967 |         struct btf *btf;
+      |                     ^~~
+```
 
+This is similar to the other libbpf fix from a few weeks ago for
+the same modelling-errno issue (fab45b962749184e1a1a57c7c583782b78fad539).
 
-On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
-> Commit 7b100989b4f6bce70 ("perf evlist: Remove __evlist__add_default")
-> changed to parse "cycles:P" event instead of creating a new cycles
-> event for perf record.  But it also changed the way how modifiers are
-> handled so it doesn't set the exclude_guest bit by default.
-> 
-> It seems Apple M1 PMU requires exclude_guest set and returns EOPNOTSUPP
-> if not.  Let's add a fallback so that it can work with default events.
-> 
-> Fixes: 7b100989b4f6bce70 ("perf evlist: Remove __evlist__add_default")
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/builtin-stat.c |  3 +--
->  tools/perf/util/evsel.c   | 21 +++++++++++++++++++++
->  2 files changed, 22 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index cf985cdb9a6ee588..d8315dae930184ba 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -639,8 +639,7 @@ static enum counter_recovery stat_handle_error(struct evsel *counter)
->  	 * (behavior changed with commit b0a873e).
->  	 */
->  	if (errno == EINVAL || errno == ENOSYS ||
-> -	    errno == ENOENT || errno == EOPNOTSUPP ||
-> -	    errno == ENXIO) {
-> +	    errno == ENOENT || errno == ENXIO) {
->  		if (verbose > 0)
->  			ui__warning("%s event is not supported by the kernel.\n",
->  				    evsel__name(counter));
+Link: https://bugs.gentoo.org/939106
+Signed-off-by: Sam James <sam@gentoo.org>
+---
+ tools/lib/bpf/libbpf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It seems the behavior for other reasons which trigger the 'EOPNOTSUPP'
-is changed as well.
-At least, it looks like we don't skip the member event with EOPNOTSUPP
-anymore.
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index a3be6f8fac09e..7315120574c29 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -988,7 +988,7 @@ find_struct_ops_kern_types(struct bpf_object *obj, const char *tname_raw,
+ {
+ 	const struct btf_type *kern_type, *kern_vtype;
+ 	const struct btf_member *kern_data_member;
+-	struct btf *btf;
++	struct btf *btf = NULL;
+ 	__s32 kern_vtype_id, kern_type_id;
+ 	char tname[256];
+ 	__u32 i;
+@@ -1115,7 +1115,7 @@ static int bpf_map__init_kern_struct_ops(struct bpf_map *map)
+ 	const struct btf *btf = obj->btf;
+ 	struct bpf_struct_ops *st_ops;
+ 	const struct btf *kern_btf;
+-	struct module_btf *mod_btf;
++	struct module_btf *mod_btf = NULL;
+ 	void *data, *kern_data;
+ 	const char *tname;
+ 	int err;
+-- 
+2.46.0
 
-I'm not sure if it's a big deal. But I think we'd better mention it in
-the change log or the comments.
-
-Thanks,
-Kan
-
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 49cc71511c0c8ce8..d59ad76b28758906 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -3244,6 +3244,27 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
->  		evsel->core.attr.exclude_kernel = 1;
->  		evsel->core.attr.exclude_hv     = 1;
->  
-> +		return true;
-> +	} else if (err == EOPNOTSUPP && !evsel->core.attr.exclude_guest &&
-> +		   !evsel->exclude_GH) {
-> +		const char *name = evsel__name(evsel);
-> +		char *new_name;
-> +		const char *sep = ":";
-> +
-> +		/* Is there already the separator in the name. */
-> +		if (strchr(name, '/') ||
-> +		    (strchr(name, ':') && !evsel->is_libpfm_event))
-> +			sep = "";
-> +
-> +		if (asprintf(&new_name, "%s%sH", name, sep) < 0)
-> +			return false;
-> +
-> +		free(evsel->name);
-> +		evsel->name = new_name;
-> +		/* Apple M1 requires exclude_guest */
-> +		scnprintf(msg, msgsize, "trying to fall back to excluding guest samples");
-> +		evsel->core.attr.exclude_guest = 1;
-> +
->  		return true;
->  	}
->  
 
