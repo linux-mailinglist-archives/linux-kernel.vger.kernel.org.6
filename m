@@ -1,160 +1,194 @@
-Return-Path: <linux-kernel+bounces-318982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788AE96F61F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F408596F629
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238622841FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA232833AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3700A1EA65;
-	Fri,  6 Sep 2024 14:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285CF1CF5C4;
+	Fri,  6 Sep 2024 14:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CSpZXmDc"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sz4aCJLw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8321799F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6914B1DFEF;
+	Fri,  6 Sep 2024 14:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725631281; cv=none; b=rW3S7uHS1JOzzpZqvP0EEVwR2v3D9w4ipXkRe0L5xhwVTBWk0pHbx03aO0PUzzFMeX1d+L44Ng+0r+cURlHZC7cmJdkJkbKCJ1s8NaJgyTOJKXa7MRfziaLKeow2eQqISwNVXkrRdqpjumpGcB4RO9UI8ZHdYQC5KEerCPRZ7uE=
+	t=1725631380; cv=none; b=ioo9vOuQOeA02TJIZlkRAybA5W8qxnNju0QwYOLBlx1ErzpMWW5j9skbf2DEubG2M2kVStw4xTgeRjFJb4YKQ8GEBCS5z12SMfyIC8S9ltx90H6cI65X+Zemi31aAanWZnSyFR2BHjc6rnsKXKvkFt/32+o3Kw3chXZ5Ds6uaV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725631281; c=relaxed/simple;
-	bh=0TZGFFblseD1XzUlKvxPGUFM77Kk+EJiwlfN3a5N3lw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qB1axZcktklu+6OIaEB9i8ZyHf2Bmkm0kdZUSEL9chZlfhFD9BefjAUT29CREDxJayfAydLFTYzxhZp2uj2A3YxXlQWFi0iIUl9eJoCo28OaAv1YUKG2PpQ+M2jHyN+z/zivAXoowSxfeYaaRZHGH726TRJ/fdjdh3ksFgAXZJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CSpZXmDc; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-536536f6f8fso332474e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725631278; x=1726236078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcUWsTK40ufzjzSKkiyJYxbNIJ0fv8WDhSYTnJO0Ltc=;
-        b=CSpZXmDcbzaZ2t6PDtoQdFf48+1jVMzMJ/KwdE/bqQTqthokSV4t0M5ZMgkB15socK
-         lcl+X0rbJldz/fmhXFpvtACNIKI9KDVSzGkoLpuSv8+y/Ej0OiWYsJVBRnIMahfbX3hY
-         Wa6vUG9RwYu5boC8BIdqsiKYSzjaXT/cEYqwxWL2D20ZvrE1MKIJcbZJnsk2Tr16mlPG
-         tBlLv1UmfBTGRCreRSnyCevDzscL4EGJ6TYI2ej/IxMuzzx/VV8M9x0lIfB6CzONgb9p
-         iBJZUdNTp5gEvFUQpXS6gYJVfBdygtjyIsG1P3EOofVOmIzy/YUE/9kJltfjTwKQQsEo
-         3Nqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725631278; x=1726236078;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AcUWsTK40ufzjzSKkiyJYxbNIJ0fv8WDhSYTnJO0Ltc=;
-        b=A3N7ereCnBE32H8VZAgQF8W6PcGM+UwfG4MM6/dwTJUtY4RIAGXmgCrICq6Hl8tIty
-         68SQ7cRIT0zGiBgXKi2Zm62OuA22WOsRnTrrwHIfj9CRZOAgryCpIhTARifMFz1+AIvz
-         7bPv9wcks2atFwyFXIrd0BUay/FAPhYLcuOJ7DxR6s3Bfxm1rW2R1nRrQ0DM/HhU4fVQ
-         nRUrD2ycU5dh2lUOXsdvmC1YrBp1GoxB/4Ftf2J5QqfPf1hXamNToiEQsWcVEG6WlrPX
-         +2/VbhSL/QREDI8+2O9TH+ouKUqYQBjT7McvuhSoM3wGN6Ku1ox9KBczpaCVX5gmqqTJ
-         Wj4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0s5YQQWvK9Em1BKsvqeo6Zd3wSjVKYVShz+vTI/G7DmA1k+C7pCr5UFTRCloOLiSgZO6VyZsevGXco0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza/x/58k+l2vrj4bnBDjSC73HvoCZlo0Ib+1ATMF/GyXZ/Q4Xa
-	8SKRFTvj+0tCQXiiX9fXQmW7rfaqRbIpz6wCyrWlX+HRLzkEr3GyyhRoRfLMhif2KBF2R/mf0XF
-	s
-X-Google-Smtp-Source: AGHT+IGlmv2AbsdgjpYnNyWtkoQ9kk+XTDqlQ7jIgkBs4spQQBM+yrJuJHUBTyoACaiSEwgScqbw0g==
-X-Received: by 2002:a05:6512:2356:b0:535:681d:34b6 with SMTP id 2adb3069b0e04-5365882c1f9mr813526e87.10.1725631276738;
-        Fri, 06 Sep 2024 07:01:16 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a6236d194sm277544866b.113.2024.09.06.07.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:01:15 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.12
-Date: Fri,  6 Sep 2024 16:01:10 +0200
-Message-ID: <20240906140111.70922-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725631380; c=relaxed/simple;
+	bh=OO0AElYeEOI3GYdUWGdnaZhtFPRBNB1P+5L7lTeyPbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8kHObeHvRJwYlW/zcZOo8hSdYE5ziiCfAJHcK/OwTEFSaJlBtNLpjP/Z5VzojSVD2PrdXFGtBETCfHV6n0Wa1mOgUPs00kIAbwFqhkp7tJa5F6owdY46EsuaoDf14M+JH03DSikNHVRpQs0EX8o5YgrjYdZXYC7Cd+sVzfJReY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sz4aCJLw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0B3C4CEDB;
+	Fri,  6 Sep 2024 14:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725631380;
+	bh=OO0AElYeEOI3GYdUWGdnaZhtFPRBNB1P+5L7lTeyPbM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Sz4aCJLwKJW66WNHMDkSza870NQ+KuHtMUB6RKXaaLIyT1PzUcCXiU4mzUpny79nU
+	 9RplbKUfrE1rlSxsF91T3RDlDEHJHNzGEpu+bq8dJHmOg/KE1E7688DmmhB6r/d36v
+	 Po+T5dBXJSOte9a79XlrkMOnEIOkGVa/4SzIpjKS8DJP1jPgBpD5vxmRcWOET8glIH
+	 umA7qiJHYVFd9YlqX/PGB7Tc0duXENcecSQ7L5Iq1npTo1hNfbj8DQ/b3R1/wOu8/1
+	 oGn7Eql155UsBU542uxU8a6MmTKRggu3qO8gtRyI4zdZGy/jXPqRpD8LyQ/XuTWiD+
+	 iFqto7iQINTvA==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f64cc05564so23203451fa.2;
+        Fri, 06 Sep 2024 07:02:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcyTjr4qcJExDR15b8kdJqoqiba+iHMn6vwkUejq7g2sh0F3QPrhC5hlTpljiQhga50SPd14H7ayXniUK6@vger.kernel.org, AJvYcCVyyJXzrVf+fH41mJ3McGYMY0qn8lLC8phzdl+hKy0Ygmf5u2064QvY/ZZkn+NM9C2RPLC20KiKEkBCWDI=@vger.kernel.org, AJvYcCWFQ2jQOkdCTdzIEchYzQ0UWnf/LLGQ0ZaBGc/jKYN2B0C+OavprhBwlOei7OOFX6vFNZO/Zu1+Rw==@vger.kernel.org, AJvYcCWLFYqI8o152ddt4ZQvaAWTOt3DMlIe/po5ZeiLjesfxK78pnYZqOmEX/PXzr7pVPfdeSuBiePnzscT5a2j@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7aDJWYuSHihe15ou+V3MTX9ZkjxxttV3396aXYqJA0ZJXjlls
+	A2TcmEhDYCGunZA1LJri78R1xB6OiPikm96qlw5I5QFTK7O+N6htQS3cKE4TtFb+D/8lDcWQzu+
+	tbD2M8UMbONvjF3DIayreTlEk8tI=
+X-Google-Smtp-Source: AGHT+IHDPemzgtRgtIK3pe/WquzDZM64UIne/QjVdYwQNSINL5RkN2+H+MExlIZPV5kHOwbjtPDmzO7x05c0KOYPFxo=
+X-Received: by 2002:a2e:868d:0:b0:2f7:4df2:6a13 with SMTP id
+ 38308e7fff4ca-2f751f33229mr16214701fa.25.1725631378202; Fri, 06 Sep 2024
+ 07:02:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com> <20240906-macos-build-support-v2-4-06beff418848@samsung.com>
+In-Reply-To: <20240906-macos-build-support-v2-4-06beff418848@samsung.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 6 Sep 2024 23:02:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARTnJ10ABuD96U-MaYitnX3AF=GD+N-skH7VBfAmOw9RQ@mail.gmail.com>
+Message-ID: <CAK7LNARTnJ10ABuD96U-MaYitnX3AF=GD+N-skH7VBfAmOw9RQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] arm64: nvhe: add bee-headers support
+To: da.gomez@samsung.com
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
+<devnull+da.gomez.samsung.com@kernel.org> wrote:
+>
+> From: Daniel Gomez <da.gomez@samsung.com>
+>
+> endian.h header is not provided by default in macOS. Use pkg-config with
+> the new development package 'bee-headers' [1] to find the path where the
+> headers are installed.
+>
+> [1] Bee Headers Project links:
+> https://github.com/bee-headers/headers
+> https://github.com/bee-headers/homebrew-bee-headers
+>
+> It requires to install bee-headers Homebrew Tap:
+>
+>   brew tap bee-headers/bee-headers
+>   brew install bee-headers/bee-headers/bee-headers
+>
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> ---
+>  arch/arm64/kernel/pi/Makefile     | 1 +
+>  arch/arm64/kernel/vdso32/Makefile | 1 +
+>  arch/arm64/kvm/hyp/nvhe/Makefile  | 3 ++-
+>  3 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/kernel/pi/Makefile b/arch/arm64/kernel/pi/Makefil=
+e
+> index 4d11a8c29181..259c9a45fba0 100644
+> --- a/arch/arm64/kernel/pi/Makefile
+> +++ b/arch/arm64/kernel/pi/Makefile
+> @@ -20,6 +20,7 @@ KBUILD_CFLAGS :=3D $(filter-out $(CC_FLAGS_SCS), $(KBUI=
+LD_CFLAGS))
+>  KBUILD_CFLAGS  :=3D $(filter-out $(CC_FLAGS_LTO), $(KBUILD_CFLAGS))
+>
+>  hostprogs      :=3D relacheck
+> +HOSTCFLAGS_relacheck.o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-header=
+s 2> /dev/null)
+>
+>  quiet_cmd_piobjcopy =3D $(quiet_cmd_objcopy)
+>        cmd_piobjcopy =3D $(cmd_objcopy) && $(obj)/relacheck $(@) $(<)
+> diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32=
+/Makefile
+> index 25a2cb6317f3..6cb8a04bd829 100644
+> --- a/arch/arm64/kernel/vdso32/Makefile
+> +++ b/arch/arm64/kernel/vdso32/Makefile
+> @@ -107,6 +107,7 @@ VDSO_LDFLAGS +=3D --orphan-handling=3D$(CONFIG_LD_ORP=
+HAN_WARN_LEVEL)
+>  # $(hostprogs) with $(obj)
+>  munge :=3D ../../../arm/vdso/vdsomunge
+>  hostprogs :=3D $(munge)
+> +HOSTCFLAGS_$(munge).o =3D $(shell $(HOSTPKG_CONFIG) --cflags bee-headers=
+ 2> /dev/null)
+>
+>  c-obj-vdso :=3D note.o
+>  c-obj-vdso-gettimeofday :=3D vgettimeofday.o
+> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/M=
+akefile
+> index b43426a493df..d20a440b6964 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
+> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+> @@ -15,7 +15,8 @@ ccflags-y +=3D -fno-stack-protector     \
+>              $(DISABLE_STACKLEAK_PLUGIN)
+>
+>  hostprogs :=3D gen-hyprel
+> -HOST_EXTRACFLAGS +=3D -I$(objtree)/include
+> +HOST_EXTRACFLAGS +=3D -I$(objtree)/include \
+> +       $(shell $(HOSTPKG_CONFIG) --cflags bee-headers 2> /dev/null)
+>
+>  lib-objs :=3D clear_page.o copy_page.o memcpy.o memset.o
+>  lib-objs :=3D $(addprefix ../../../lib/, $(lib-objs))
+>
+> --
+> 2.46.0
+>
+>
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+NACK.
 
-are available in the Git repository at:
+Developers working on Linux distributions have no interest
+in your homebrew setup.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.12
+For 99% of users, pkg-config does not do anything good.
+It is a waste of process forks.
 
-for you to fetch changes up to 485e13fe2fb649e60eb49d8bec4404da215c1f5b:
 
-  clk: samsung: add top clock support for ExynosAuto v920 SoC (2024-08-23 09:21:35 +0200)
 
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.12
+You need to do it outside.
 
-1. Exynos850: Add clock for Thermal Management Unit.
-2. Exynos7885: Fix duplicated ID in the header, add missing TOP PLLs and
-   add clocks for USB block in the FSYS clock controller.
-3. ExynosAutov9: Add DPUM clock controller
-4. ExynosAutov920: Add new (first) clock controllers: TOP and PERIC0
-   (and a bit more complete bindings).
 
-----------------------------------------------------------------
-David Virag (7):
-      dt-bindings: clock: exynos7885: Fix duplicated binding
-      dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
-      dt-bindings: clock: exynos7885: Add indices for USB clocks
-      clk: samsung: exynos7885: Update CLKS_NR_FSYS after bindings fix
-      clk: samsung: exynos7885: Add missing MUX clocks from PLLs in CMU_TOP
-      clk: samsung: clk-pll: Add support for pll_1418x
-      clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+ $ HOSTCFLAGS=3D$(pkg-config --cflags bee-headers) make
 
-Krzysztof Kozlowski (3):
-      Merge branch 'for-v6.12/clk-dt-bindings' into next/clk
-      Merge branch 'for-v6.12/clk-dt-bindings' into next/clk
-      Merge branch 'for-v6.12/clk-dt-bindings' into next/clk
+or
 
-Kwanghoon Son (2):
-      dt-bindings: clock: exynosautov9: add dpum clock
-      clk: samsung: exynosautov9: add dpum clock support
+ $ export HOSTCFLAGS=3D$(pkg-config --cflags bee-headers)
+ $ make
 
-Sam Protsenko (2):
-      dt-bindings: clock: exynos850: Add TMU clock
-      clk: samsung: exynos850: Add TMU clock
 
-Sunyeal Hong (3):
-      dt-bindings: clock: add ExynosAuto v920 SoC CMU bindings
-      clk: samsung: clk-pll: Add support for pll_531x
-      clk: samsung: add top clock support for ExynosAuto v920 SoC
 
- .../bindings/clock/samsung,exynosautov9-clock.yaml |   19 +
- .../clock/samsung,exynosautov920-clock.yaml        |  162 +++
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-exynos7885.c               |   93 +-
- drivers/clk/samsung/clk-exynos850.c                |    7 +-
- drivers/clk/samsung/clk-exynosautov9.c             |   83 ++
- drivers/clk/samsung/clk-exynosautov920.c           | 1173 ++++++++++++++++++++
- drivers/clk/samsung/clk-pll.c                      |   62 +-
- drivers/clk/samsung/clk-pll.h                      |    2 +
- include/dt-bindings/clock/exynos7885.h             |   32 +-
- include/dt-bindings/clock/exynos850.h              |    1 +
- include/dt-bindings/clock/samsung,exynosautov9.h   |   11 +
- include/dt-bindings/clock/samsung,exynosautov920.h |  191 ++++
- 13 files changed, 1802 insertions(+), 35 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
- create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
