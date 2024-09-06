@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-319299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642EB96FA41
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7C696FA40
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534A6B22BEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E4F285323
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE6C1D67BD;
-	Fri,  6 Sep 2024 18:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90CB12EBD6;
+	Fri,  6 Sep 2024 18:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="u6nxFC/0"
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="PdoZZFnL"
 Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11022077.outbound.protection.outlook.com [40.93.195.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEA643AB3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C334C433C5
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.77
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725645612; cv=fail; b=kjNcZatz9BZYx5hLSRzL29urvL5FpZkrfOWz/JKwNscELz8/Vqyjfp0c8dBNR4zanj9RegO+S5x5mh9PWVoXy1kT3hWn97FQ3jKwBzox7qvAHJ5rkcYkWVt1qWakRG6cc6TgPHlvSwFIKxK1R433cKpnLVvpjgmISnSt3XN3cf0=
+	t=1725645610; cv=fail; b=dxEKlJpMG8vkdTKSqzAzRbinM08Rdzvy+SRGmIjSwSE4Zf1lZp9btEaLY0IBYZxEY/S3wJeF854QBCFR1puaCSEe9jvSt8ecvI97XAdQzUQU1Rkveb+7rY8ndjx5B+A6yV8SV30Sg5hLea9dcEoCpdqeM4OobcW7ZtU5dzLmCWs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725645612; c=relaxed/simple;
-	bh=fvPLxr7NtWq+48adF0+rNKcdY6V/z8vpn4vGWgzmxCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NtHD1LlFRb//54iXBAnRyisecBvGgMnyZQ1c04+VMrRpPlRcjhtWrvYhlRhaQQzJFPP/3W9WB4O5/iSydOlluAF+I9L7QDkUFihvYTg+4Jj66g96hxjQvbjIRecinN/AodtvHM8HTPAI/fAhWEsQ3gG2f+LVSKVq3L8O0PHlUs0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=u6nxFC/0; arc=fail smtp.client-ip=40.93.195.77
+	s=arc-20240116; t=1725645610; c=relaxed/simple;
+	bh=tXx26WTRbcKC56sJeTm/4CNHeCWl0281W6iDxrTTTYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LYaGC35A15ZZM2WDddUmUXIExlFOkZQ51C/TkREJ2slRsYso0sCdpmUCMIlwKQAztAqLf5Ds7jM/DDGCakwYmZbRVRPyMH8Mp0rGbMr206H1skMihKvdlGTd84rRQHrDIWH/FVbNSXRWhllEK09qUhtGU7X6fhqD74iPwQnkPz4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=PdoZZFnL; arc=fail smtp.client-ip=40.93.195.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C+YKa7u1GzjmNM2703Ob7xNtHm6XOroRTtAxzrT6d7W3Jf0GwGPi9LMyXJ9eZs+R6iKUElw2YZ81zkvaKwyQOXnxAp7SDgsgfuPkc4ZCuYWFa5soQ2BGFtbO51jNlRMma7GsPuy8Yr87u7pkLEs0aFESqQWohx2EcMtfrJGIjT1KN4laIAk3trmRrI4eGYgq+edioZMa5t5FKv2Fa6Ajnn9RcCUliPuksDsLZg7+iB/HW1dJ4dkemnVy3A/ap6TCne6qspNMBQkk4vcL29ZbTPZY7Fffg6lKYn872jNIOBn+hJmenvLfaqK8U3mcvL2wTMxEIaqE85vgo6ZGsRS11Q==
+ b=c7MW3EOyqcvvzPYUoPLshymHRdy1m7pCEFTSngF1VcbEp3Lakgku7Oqvy3jeeUqXE7fZ/K01BQ0J40SogeE56S6R69zcSpnCBgh7bcXJnFnJSCTZLRLOpCd83tYRrjpfDPCuMhdQjc6Kyrlcf+RTyi66sNvkzc0msF5UQpK/6x+iWVXRUmLWIGZ9Rm+H6pfJcHfP/9KmgbkPOOVR8JXWZ6pCus3Mmtz7inT654vlijrmpjRNqNqXnXM3SLud6FcpUj1fJ6F8MAwQV1MSqNemBrGfbfRNBA6YcWtRFvUXRkO32JaHy6HCoxxHtTSll7kDRg54eMktzCgYM/zm7RMlOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1hfMzbTuMCk2BcCguQ6lifNwEvSxz/uuz5HbU3VKr5A=;
- b=ubx1hkyrXzW9MzvfEaQlqSncZpcjedR2tKTekupEOBbgOHBAhkom/AbDPLOzKjARtg3i5KmXdA+949f4evo+F7GcvreCTlfkac4le6PIue4qm3Wbbv3NgBRjVUYjCpG3/RjYCAQOEAW3WKT8oJbeUpXnKGoS+F8C+hx+DnwDt7UAVEuKYbZNlk1eJoHKnPDToMPWdZ7sM5ICseXcTwrq1egS0kHIAZpW1WkjufTSvlr4Da2s8u5SRdt43lNgSkzTlK7lT0njyPQjdhvCgeQphBRLDfd1fqkRRkzXYkfXgHZOSk76If6DyZIiA8QueRVZukOYfUKuOZctIptqpzgktg==
+ bh=rZEmI5ze4VGJmlbeh/nIhqSgSXgQnJWJLInFVw0UZe0=;
+ b=uJVE7MzXii3PlQbLNNC96PAVPZewCPjSMdnM8pD0Pbsrp2M58nXJzkgxonLGpSTADKnWOru6SMKOaNVlqNTQeSjDYW4kAo9f4rkx9p7qru9Q7/NpeJqzFqzGHkum/PMagPIS4TyBudNSssr2wHjPwY4jB2bit3ugcYzzGd0/hcWRt6LlUu8V4qMGUXAk1+CThF0h7wbhtwubMOuGT37UW8hALUYrS18qdclEszMKMWMBoIVPZtnLOgXbC/zd86T4x/U9RataiLPQatMiez4r8m4RFl28D9XQFl6mK8jxgyzJTET0PNooCls92LiVMGftPg1f4I/CQjB8nhTu+HTTBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
  header.from=os.amperecomputing.com; dkim=pass
@@ -43,8 +44,8 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1hfMzbTuMCk2BcCguQ6lifNwEvSxz/uuz5HbU3VKr5A=;
- b=u6nxFC/0w4hZNOXtqkiBlNSdG+pM5Zx0Gi9gFWaacIM6pU3s323kcOamow7Z2bvDkfmRFChbVV5sOmymTxwg1ZE/S7B/5ZmasEAWN9rb15wOm97k/T3D78DEfMSUCtMIFO4vqORQVX/keq2qjH/q/Qr9Pm07zz+qFYuog25xTAw=
+ bh=rZEmI5ze4VGJmlbeh/nIhqSgSXgQnJWJLInFVw0UZe0=;
+ b=PdoZZFnLo9IW411W6Wc4bb+0uUi/uDn+x/Bpo5J6/DnBSLiI5GJy72E/kvEcp0gEfpiZr0N675Aasva10Njrd457mCv8lL3aACy36pbCC+gfZts/c6V1YRHaKJaxeAcVupOhb642ta/YdNCB0PsntdzvImsY5f0Nm3ARufEh5dM=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
 Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
@@ -54,7 +55,7 @@ Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
 Received: from CH0PR01MB6873.prod.exchangelabs.com
  ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
  ([fe80::3850:9112:f3bf:6460%4]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 18:00:03 +0000
+ 18:00:04 +0000
 From: Yang Shi <yang@os.amperecomputing.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -65,10 +66,12 @@ Cc: yang@os.amperecomputing.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 1/2] hugetlb: arm64: add mte support
-Date: Fri,  6 Sep 2024 10:59:44 -0700
-Message-ID: <20240906175945.3636193-1-yang@os.amperecomputing.com>
+Subject: [v3 PATCH 2/2] selftests: arm64: add hugetlb mte tests
+Date: Fri,  6 Sep 2024 10:59:45 -0700
+Message-ID: <20240906175945.3636193-2-yang@os.amperecomputing.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20240906175945.3636193-1-yang@os.amperecomputing.com>
+References: <20240906175945.3636193-1-yang@os.amperecomputing.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: CH0PR03CA0241.namprd03.prod.outlook.com
@@ -82,468 +85,379 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|BY3PR01MB6561:EE_
-X-MS-Office365-Filtering-Correlation-Id: 444664e6-a4ed-42f5-dbed-08dcce9dbbd3
+X-MS-Office365-Filtering-Correlation-Id: c218cdd6-f292-4938-b274-08dcce9dbc65
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Cl9uEdUoNIElHfS93p2NNRcWaq6AbWgLtFtu623Ph7/Fu97nT5dYEIPdCiDy?=
- =?us-ascii?Q?5rfCqz5Nupq0yYlPePOH/hololzzGFD+gm1piqF14CNfAQ5NEyQzRlfw0bVR?=
- =?us-ascii?Q?cLGQtWrNX+xxkKfAqJ0lWJA709Rb4Ai1EXIquuXtlMAU+aquXiZBW93Yur6m?=
- =?us-ascii?Q?NsfKtogjM/M7HLF2U1XegMjwzEPoeyD4QOmxhdr9GPaP9lyRI+CO8v3cCzrJ?=
- =?us-ascii?Q?odzhgm4EUtD1UHB1BkgWj8iRHK50mLMwU1EMREIr/lnmuvZoeTR/Oz7F1O+F?=
- =?us-ascii?Q?IbhzOkIZ28utwonz/dzHpU0xuYsedAX/qCTcQ1t8HZCG6WOENBQJxAyUy/TP?=
- =?us-ascii?Q?Q6zUNX7MU7UMFUE9Tax7H9HmPBHRIhsZlQbSqM8//10QQVButJwEOS/e96D0?=
- =?us-ascii?Q?Ygknao3jNTqg8vL1eCkknJmFeJMRiEzeVhovXyzJUTYXZ982d/+lbVhTYL57?=
- =?us-ascii?Q?TtkF8ipjTIv7urt2YDPhqxlBhvbFoxLzgIq/nW+ogEwRIF2YWkpyliDtUSrr?=
- =?us-ascii?Q?WrhJCoiJbEhyFimxLEZTNgT6ewkDoE0TsuhMPgS4g/sP1ddHqtna6XNrsQX1?=
- =?us-ascii?Q?RGnGqyI2Db0zmO+6JyYgYSiWHMSmhd1fqmrTJaL3BvCJ6hU0RKlYOiNi7Cey?=
- =?us-ascii?Q?Lac/jvB348d65ib/YEXmNKtI8aktb2h38lWBHAkqtZBFZkJOB405WneEUC1D?=
- =?us-ascii?Q?T+JLcMtZl+M6uYLWH5P68ykPPufa/5+1qPXMYo2A6tJQEf9nTeSMxSsyl0qE?=
- =?us-ascii?Q?mDCHxKrg6zg1biypuAOcylFFjUpqLYOOIlGQlzQ5lpJkM8qUXuaHbkNOzWOu?=
- =?us-ascii?Q?21fa60obJph0Drkv36RUG0Z1rM7F6zPuAdQndXNHLZH+oW0ZuJDAhlc03az1?=
- =?us-ascii?Q?33Rjm8sFst2efzHf30bp+b8LlT9kbDC4YgORBDOjmWs2iRYRvQq6hOg/sh+x?=
- =?us-ascii?Q?Qy0fSIZ1T5uzmY8Relvrr5lCTnH7jy2wAPEmWAweTfq4AgXs2wJy0Tr+8+h5?=
- =?us-ascii?Q?IbYaN18AZPwDCC8sUcqUl9/mZj05jqO5i3lwu67+Bcf21+4YvShXcaJKw8jc?=
- =?us-ascii?Q?1xTfH/bnwqzCGZDQNn2phccKSuzorYHmHF+ECGfuJHjT8jSMX9w+lO+AS77C?=
- =?us-ascii?Q?50OKQirWUFmlMWEiBeW39R+JuzP0BEUSAM2jsin3LrJ9UtlZzsPuhNESm6v1?=
- =?us-ascii?Q?JpjAwc5OfbHZpTQIKIuEZ4ZkuzFe7Eg4VWiocbMtcKlGNXqwMnyyXII3bB0s?=
- =?us-ascii?Q?zE6t88XvZc5CF9xXLQTSuM9GYRlXDxfPYCI78ZKVchgPA3W+Hat+vLG6MnxA?=
- =?us-ascii?Q?sWrUZOT0g45gOdQ7jVkWgjyZAjswTsKvz9QR8+lkRP1Hki7zF6M554SCb4gL?=
- =?us-ascii?Q?ML8OiwYsVFSPItdMOeAcFDqlXDixB++wPtqmBCaLZLGCEm1i2A=3D=3D?=
+	=?us-ascii?Q?9OqSYQcfg/sxUNkZIfds67YXtT3/DIAZVRdwoUAI6AcaIxPedGZSeopKN+zy?=
+ =?us-ascii?Q?6DRn2L80HozR56qA/mnXfRgbFhqZ6T+GIgamgr7rI8WeFSdWjkuOq9AFU2o/?=
+ =?us-ascii?Q?74O+p6aYli8TuxFqpzN0jcUtb7UxCQZvYdG4EtrmF5JXJyZhZc2tXeCu+UJ9?=
+ =?us-ascii?Q?7uWZUo+6KbDVbvdFg7LSnvtEBZfY0Ga1eVrW+cXp7NidsvIlzdCyu5wJBSJG?=
+ =?us-ascii?Q?U6hpCG9N8gncRsr1G0YAw/yI9lT/r9fdZMVhUduqRoP2R2YXSwboKOtL39sf?=
+ =?us-ascii?Q?kcshjyhd8O2AG05H4w1hRp5iGLRjjk1pW3Sb+JaVju3QVByODPqanOsR74xz?=
+ =?us-ascii?Q?BxEO/YGMSpJKZLPWS7+JhO0IkUO0z4XA0jSz2g1iP4rkbkN9iIAMXjiN6pZi?=
+ =?us-ascii?Q?8JCvbK7i9ippbV4ADiT3EPD+bwkXs4ta7lYNFAXuHodgdpp1/UPXorOLjcvR?=
+ =?us-ascii?Q?Qp6669ImP6VMmPHcnZVr5NoztVTsQiGGK1XbvRqjWa6O1O/x523uoyoMPQJO?=
+ =?us-ascii?Q?8isfLkWd5PRB+LMIFftfACW6v5LQRUgOgq/A0ozCNVfhW1cny4SFbIDxF/Wd?=
+ =?us-ascii?Q?TD8/SVmB+rQ2djvRxPcpmzyYNAVFBp8CyOQo6qEfHO8YI7eapaKYfNHUonJm?=
+ =?us-ascii?Q?Bh6YDuuDlCQf9hK8uynhGLdQRnCBf9zG+K96zee9o+osHRGYDR6JYOg+7n6h?=
+ =?us-ascii?Q?xa9abv6ILKfzDl82/MIHQoh3V5clUiem7fbJkhPmc5yhsuAIoGJgKSnNoCDL?=
+ =?us-ascii?Q?riNRtpubb2pBblmbfda/TmWIwZl2wnYHcjlf2tEt5fQFYAd4zbk8qKFYPhrQ?=
+ =?us-ascii?Q?eEqFbQfUca4KXJ+02EQRP7fz12yi8ZaSC0rEKX6qGg+cSS40t5w4BHStaYP/?=
+ =?us-ascii?Q?/ZFUisDiHAKZgpW1TiMRcZYQFhy/nmXhCX9dNQytxwFUy6DhgR4yVTdQI4kc?=
+ =?us-ascii?Q?Kw0qY+VqFSYL8/cMTUSfnjpwP905ONqIRv0T7a8jlCmh5zT+l3t0PF2TVxGO?=
+ =?us-ascii?Q?kOffzY5gFDvyJieKRm2QOaEBKf80U/m2drNMLddjSxJWFR1Vzy7kAj0nQUc7?=
+ =?us-ascii?Q?pU0vJtI053/vV0hSE5DbSJK/O8axa8S1UmHi/NVaM6t2q7V94rjsfx7XxAIy?=
+ =?us-ascii?Q?/dcwyJNdln14ykKCCecipRFZ5p6+JCN6RhEL+F2MIloAxolu+RM0ERRKtAvy?=
+ =?us-ascii?Q?DhLzD57Kpk2hq4WDnUyt0w7U8zRukvqgITstXicuNbeTxBgbk+p/C4GETraf?=
+ =?us-ascii?Q?WMTmVp7EY/RxiOwQ4Vv3nRIMjs4bCB0iwNKoM/kDbRXLSutQ9UIiiOOu8y3N?=
+ =?us-ascii?Q?tySS4vBDzr2+auaDZdkMO4bkmxQe/dw2VTXFzCb+KSEihxhDuwJEBoRRsj6S?=
+ =?us-ascii?Q?sCNp5/t5GiYoxKVqLPAohwWCzYJqUHN8/O13MHOWc1BS1A16eA=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?J6glGUrqq82Qzk60n5X30RfMGWihMaWfwTcHfaNUeJuc3ua/Qs2IiKFQztG9?=
- =?us-ascii?Q?Z76eGGXSIuUPL3b0hjDuaL3DHBF3h+U1WVzTzPcs+ZxpG6uM+eilmFsbN5R1?=
- =?us-ascii?Q?gHqjqoOizpHIu9v0k7RpceElReWjjWpdfM5Y0DYIGZJdSacfG/HoRDy/0Hxd?=
- =?us-ascii?Q?6tG1I3vIFDf46nm9DMiDggmm48bisBpbek+b+QedwB2xJSK3XWCoJZ6q66OB?=
- =?us-ascii?Q?YiDQYxcjpQYgTjAjKDd7O3JZH5G1un05oJNVVl7PXJw0c1dPbqnJa5ctvYgk?=
- =?us-ascii?Q?j9WEn39UTmyMXnCBFBAiXkECHps49CwJD0r5gaoLnFvuvfnOcX/hfj+sIykp?=
- =?us-ascii?Q?g3Ryu6jF+3Jkfrw/f65uAnCCAjFzVxKyFkYtKseHkmOuHK4C+jIbE9rd0KOa?=
- =?us-ascii?Q?tUb6DOHhkk2NITGKnFJCXYvLT3uJLBASAgARlOWMBrtQi2+9LhEIevSyk9UH?=
- =?us-ascii?Q?+T4deUxtlf4y8ihRSLkNENiZs4Z0j1oq0Yz2M/sLoRw0/sSN2/6tOxlv8vi9?=
- =?us-ascii?Q?34Vk4wHmrkc2sJVwksDlowkOXlCN57Z1kF1qMaS1dLptN6lcW6S/eLjDr02u?=
- =?us-ascii?Q?1LwtZdrxrOseb5lfBsngo/8rNVN/ZE8Qa837kpH2tBkI2XtmnPLCdEr+erVI?=
- =?us-ascii?Q?X5ERLmPPWcTg59cWTXpxwsjJhjiGJA0P5Ef8ne31+1GZ+9q+UJLeP2LkmYfP?=
- =?us-ascii?Q?xRblN5Nt5CO9ObfezYrX7TmzNM3ii3LuEOIRQsJSJkluvrTfiX5znRuLrghS?=
- =?us-ascii?Q?WlXo4XGwtKZL4C7sBAPKQOihuTbNakuWFfrvc5njx00ukH57VI6eI33LMei8?=
- =?us-ascii?Q?cXZSz2UOlWQEIG4iVc945ERoO8X7uOw/0hBZFUk/aCQe/F2f23mjT9751koF?=
- =?us-ascii?Q?JsGB5fIsBc1F1B9bvDOmKe0IHyIilPy2xW/WD474/JaQh4RopU1LeO3bwgSb?=
- =?us-ascii?Q?l+21YNVKJCgAYhPEBDHtfYo4V235jNcf+pHvmhDjsnSDqW69aYc107hh6/qp?=
- =?us-ascii?Q?e57Zdoh4vw8N8fQHP0NQeF3hRf0HH7fS8cGqY9Yk8f6jcyUa1GPIWpE/Om2j?=
- =?us-ascii?Q?VDQyAsF/YxBUZvCAFwGYajoj247IIxKz1d1OZHa8pGvyec4DUY1jYJH6Yxzc?=
- =?us-ascii?Q?jV0rSTySS5wygjDZZCdGAo4qMZ+MR340dFF/+f6Ebe0hrBO6gaVHgX3RHo7G?=
- =?us-ascii?Q?EUFI9JQz3+XiBcvDCVln/TQ1fctQ1Hb7D5DWhR7LXktX061zm0Y8f06HTtLo?=
- =?us-ascii?Q?dBSwdbmF9IIbBBdElkXPhJBUGx7+iClkxPIKVzvpaTB71eyyS4aaTEoANKcN?=
- =?us-ascii?Q?McyN4IpujxUwYKY4Z78oethcmintWxRNkEJ7FEX4yzh/8A7uHU++k3FpxNUN?=
- =?us-ascii?Q?ysnQfUQtVuPUInH9nM3PmpLtbhBc6NjS5va1XrJ+idp+mpCx7wS0XAUEM1Ml?=
- =?us-ascii?Q?4CEVd082TYuoq5xqu0mV1Bui/+as0LkMsxFvKbzgLHebHKEWUU6jAIBqlNbO?=
- =?us-ascii?Q?QpocbwRkR4hnfh3NSzo/AVUDCG4jg2LNxkVYjimJLhh7VaKCV7jc87z641ld?=
- =?us-ascii?Q?Br6MnZf3aL11h3FeqzPnkN0kVVqIKyxvazdqQ7HYtzjNhBKLIdCDOwfX3yMh?=
- =?us-ascii?Q?Y+frD+noFUszxYwGqrCd0I0=3D?=
+	=?us-ascii?Q?BhAEOjlHXWFktXh5qmzQ+VvirSIG9iYXUtZO4dAQzjtFsbBIZreC7v+CAS2A?=
+ =?us-ascii?Q?PmRRoDqH6lSwHGlujYd9VKEKWA0VUaW097as7+f3LcoaJlpdT7CdASXuLjq0?=
+ =?us-ascii?Q?Ux/bnK6ZbjYtATzW89BJqZ3SYFe3toZi7yaHYUubrdTS5PYnARUdKbd80g3Z?=
+ =?us-ascii?Q?o3bvdVdfVyl1tTMrOz3x9g9oh59nCxMRMhSSL1Gaek7I/+CR+o/8x7j85X3B?=
+ =?us-ascii?Q?6dXi38YAzBInDlybwi+gtbjSD1GqCe0esp4rUpjL7oG+jQLyHcax+BKu9pn9?=
+ =?us-ascii?Q?vPnE/7qdnURqgLeOThcHemkzGblWqH45Jz94x0lpGvHaBRbAgGlfh+dqBjct?=
+ =?us-ascii?Q?cnwOWRgYBEZCp/ti/A4bLSOZEHGOdwnBnokFa1yJk7iJMr5K/1WcvpSi849H?=
+ =?us-ascii?Q?Ixq7MD7clujjHwX6/iFzjAusu892QeXPc4hsv+cs2ouWUEtvlYCiwSBVOtL3?=
+ =?us-ascii?Q?zp/wcqabZ7DdKjC33vqnkR0fYHsMGv2RdYLenOTYmOvfV/onWV5yyWJfvsu4?=
+ =?us-ascii?Q?jH5kDlReTYvwOPhuZe5iOID3WMncGKh5ySrC6/0KXzDcSZj3GE/k306juWy1?=
+ =?us-ascii?Q?qmNQU8QIMx+a88EbMzhxL/yijENOaDcqG78SUU2Jqh43vXLMz8FdfW9Q922L?=
+ =?us-ascii?Q?J9PUQYgQXw13nOSo5mb3dHGmUTsQ0DSAig1c2EGgfRJO1ZSBIo/INcHWvQqG?=
+ =?us-ascii?Q?72+N4JaHPYwA/2TWoDhyDkggQAr4fyn0BnqQCnj2DoF26/WMR281MRl02jdU?=
+ =?us-ascii?Q?BclICRbjkYGmGwoUaWqnhm/nJ0Zz5jsdUWVIIlbR5WyLmnX6d0dTMuEB//to?=
+ =?us-ascii?Q?Sg4iEkGUK1g+5QsJnz9X7i6l/JjOBXbjhUuhcUeECoVplZtKo1gtXT38ujsW?=
+ =?us-ascii?Q?dN8vzarJQITonmnkK1Or5QMW1rqbblqWaAfY1vG0+DxcukWrQd7ZMmPj1xbM?=
+ =?us-ascii?Q?Osm6cYJHluGKbMp2GPJA7CrxjcXU+CkMtrfriJezHJbDGnywWJYY2yTUXk8J?=
+ =?us-ascii?Q?c+GvBCUWhQzttXOCqQ8+bp/DrFBg2a0JoGvr9sGcH6XwEQZSDhVuEiV9/T9g?=
+ =?us-ascii?Q?ltzQmpsSAKn0XSvDnURKzo+v324IAm2Bk7SpQZAQQD4N6UTT8QaRORqG2YJx?=
+ =?us-ascii?Q?0pGVA3kQDdHMIoPq70rl/vweyxHi9OwPtZpKzPeS1yLfmbXYr5PufEFVx1xn?=
+ =?us-ascii?Q?QxArl/2NIoDNf3pZaEy7zUX7cQNVmwj0AAuwAqUXpbZzJ0wTB962/RomaYbo?=
+ =?us-ascii?Q?6zW//3w230YP6VNy5l/YX5kS9FEA8JJEf3ortrQeUtaU446WZDif4w3PZ3fW?=
+ =?us-ascii?Q?APV/dhhQUEDY6Q4gGAld9YF5ZGWxGYF9d288faw9lg3CJvQ4YniRsYIDXlFY?=
+ =?us-ascii?Q?0VEyXxC+1FAEO+1cmVx/2mZSVku0sd2RsVbVHMRgsPZ6GT2/WM4zTrLyS4R7?=
+ =?us-ascii?Q?8Dxa34+4KrN8Y71mCaYJaf43VBSaYLRgPOdAilOuURh3nr4SmDHPuXuBzY8G?=
+ =?us-ascii?Q?ZQlPcApuw2/lFVHTeEapADxPWHVORDowcypsoR+VsEeGgIKDqJ/sJBzaLUln?=
+ =?us-ascii?Q?U9Vxn7ihtZ+3m5sVC1C0n9dw3+pIxr/JnW/mknQ1COwhLjbpBWR0dOHPYT/l?=
+ =?us-ascii?Q?Dnkj6E+4FHfU01e4MHdJ+N4=3D?=
 X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 444664e6-a4ed-42f5-dbed-08dcce9dbbd3
+X-MS-Exchange-CrossTenant-Network-Message-Id: c218cdd6-f292-4938-b274-08dcce9dbc65
 X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 18:00:03.8296
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 18:00:04.8513
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AxUzZnjsb1T08PUhBRNIY4mwWohY9ygtlpmUI5CeOtNRKw/A+gYiWMRXgQIY3Dq+MhTchae+2+SwYSx93yBFZeOaGaATBzRJSAF6pizlRik=
+X-MS-Exchange-CrossTenant-UserPrincipalName: lrFN5SCVKP/JZXLL2ZZEWuJBkDpc2i8ztoblSeDfUTNRa7Wu9N1MIojppy9sWMJ7q19WL+wYWmMhg1sSMEHAPDQ9VqNiXhWcVDUZACsdjec=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR01MB6561
 
-Enable MTE support for hugetlb.
-
-The MTE page flags will be set on the folio only.  When copying
-hugetlb folio (for example, CoW), the tags for all subpages will be copied
-when copying the first subpage.
-
-When freeing hugetlb folio, the MTE flags will be cleared.
+The tests cover mmap, mprotect hugetlb with MTE prot and COW.
 
 Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 ---
- arch/arm64/include/asm/hugetlb.h | 15 ++++++-
- arch/arm64/include/asm/mman.h    |  3 +-
- arch/arm64/include/asm/mte.h     | 67 ++++++++++++++++++++++++++++++++
- arch/arm64/kernel/hibernate.c    |  7 ++++
- arch/arm64/kernel/mte.c          | 25 +++++++++++-
- arch/arm64/kvm/guest.c           | 16 ++++++--
- arch/arm64/kvm/mmu.c             | 11 ++++++
- arch/arm64/mm/copypage.c         | 33 +++++++++++++---
- fs/hugetlbfs/inode.c             |  2 +-
- 9 files changed, 166 insertions(+), 13 deletions(-)
+ .../arm64/mte/check_hugetlb_options.c         | 285 ++++++++++++++++++
+ 1 file changed, 285 insertions(+)
+ create mode 100644 tools/testing/selftests/arm64/mte/check_hugetlb_options.c
 
-v3: * Fixed the build error when !CONFIG_ARM64_MTE.
-    * Incorporated the comment from David to have hugetlb folio
-      specific APIs for manipulating the page flags.
-    * Don't assume the first page is the head page since huge page copy
-      can start from any subpage.
-v2: * Reimplemented the patch to fix the comments from Catalin.
-    * Added test cases (patch #2) per Catalin.
-
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 293f880865e8..06f621c5cece 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -11,6 +11,7 @@
- #define __ASM_HUGETLB_H
- 
- #include <asm/cacheflush.h>
-+#include <asm/mte.h>
- #include <asm/page.h>
- 
- #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-@@ -18,9 +19,21 @@
- extern bool arch_hugetlb_migration_supported(struct hstate *h);
- #endif
- 
-+#ifdef CONFIG_ARM64_MTE
-+#define CLEAR_FLAGS (BIT(PG_dcache_clean) | BIT(PG_mte_tagged) | \
-+		     BIT(PG_mte_lock))
-+#else
-+#define CLEAR_FLAGS BIT(PG_dcache_clean)
-+#endif
+diff --git a/tools/testing/selftests/arm64/mte/check_hugetlb_options.c b/tools/testing/selftests/arm64/mte/check_hugetlb_options.c
+new file mode 100644
+index 000000000000..303260a6dc65
+--- /dev/null
++++ b/tools/testing/selftests/arm64/mte/check_hugetlb_options.c
+@@ -0,0 +1,285 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2024 Ampere Computing LLC
 +
- static inline void arch_clear_hugetlb_flags(struct folio *folio)
- {
--	clear_bit(PG_dcache_clean, &folio->flags);
-+	if (!system_supports_mte()) {
-+		clear_bit(PG_dcache_clean, &folio->flags);
-+		return;
++#define _GNU_SOURCE
++
++#include <errno.h>
++#include <fcntl.h>
++#include <signal.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <ucontext.h>
++#include <sys/mman.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++
++#include "kselftest.h"
++#include "mte_common_util.h"
++#include "mte_def.h"
++
++#define TAG_CHECK_ON		0
++#define TAG_CHECK_OFF		1
++
++static unsigned long default_huge_page_size(void)
++{
++	unsigned long hps = 0;
++	char *line = NULL;
++	size_t linelen = 0;
++	FILE *f = fopen("/proc/meminfo", "r");
++
++	if (!f)
++		return 0;
++	while (getline(&line, &linelen, f) > 0) {
++		if (sscanf(line, "Hugepagesize:       %lu kB", &hps) == 1) {
++			hps <<= 10;
++			break;
++		}
 +	}
 +
-+	folio->flags &= ~CLEAR_FLAGS;
- }
- #define arch_clear_hugetlb_flags arch_clear_hugetlb_flags
- 
-diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
-index 5966ee4a6154..304dfc499e68 100644
---- a/arch/arm64/include/asm/mman.h
-+++ b/arch/arm64/include/asm/mman.h
-@@ -28,7 +28,8 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
- 	 * backed by tags-capable memory. The vm_flags may be overridden by a
- 	 * filesystem supporting MTE (RAM-based).
- 	 */
--	if (system_supports_mte() && (flags & MAP_ANONYMOUS))
-+	if (system_supports_mte() &&
-+	    (flags & (MAP_ANONYMOUS | MAP_HUGETLB)))
- 		return VM_MTE_ALLOWED;
- 
- 	return 0;
-diff --git a/arch/arm64/include/asm/mte.h b/arch/arm64/include/asm/mte.h
-index 0f84518632b4..cec9fb6fec3b 100644
---- a/arch/arm64/include/asm/mte.h
-+++ b/arch/arm64/include/asm/mte.h
-@@ -41,6 +41,8 @@ void mte_free_tag_storage(char *storage);
- 
- static inline void set_page_mte_tagged(struct page *page)
- {
-+	VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
-+
- 	/*
- 	 * Ensure that the tags written prior to this function are visible
- 	 * before the page flags update.
-@@ -51,6 +53,8 @@ static inline void set_page_mte_tagged(struct page *page)
- 
- static inline bool page_mte_tagged(struct page *page)
- {
-+	VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
-+
- 	bool ret = test_bit(PG_mte_tagged, &page->flags);
- 
- 	/*
-@@ -76,6 +80,8 @@ static inline bool page_mte_tagged(struct page *page)
-  */
- static inline bool try_page_mte_tagging(struct page *page)
- {
-+	VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
-+
- 	if (!test_and_set_bit(PG_mte_lock, &page->flags))
- 		return true;
- 
-@@ -157,6 +163,67 @@ static inline int mte_ptrace_copy_tags(struct task_struct *child,
- 
- #endif /* CONFIG_ARM64_MTE */
- 
-+#if defined(CONFIG_HUGETLB_PAGE) && defined(CONFIG_ARM64_MTE)
-+static inline void set_folio_hugetlb_mte_tagged(struct folio *folio)
-+{
-+	VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
-+
-+	/*
-+	 * Ensure that the tags written prior to this function are visible
-+	 * before the folio flags update.
-+	 */
-+	smp_wmb();
-+	set_bit(PG_mte_tagged, &folio->flags);
-+
++	free(line);
++	fclose(f);
++	return hps;
 +}
 +
-+static inline bool folio_hugetlb_mte_tagged(struct folio *folio)
++static bool is_hugetlb_allocated(void)
 +{
-+	VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
++	unsigned long hps = 0;
++	char *line = NULL;
++	size_t linelen = 0;
++	FILE *f = fopen("/proc/meminfo", "r");
 +
-+	bool ret = test_bit(PG_mte_tagged, &folio->flags);
++	if (!f)
++		return false;
++	while (getline(&line, &linelen, f) > 0) {
++		if (sscanf(line, "Hugetlb:       %lu kB", &hps) == 1) {
++			hps <<= 10;
++			break;
++		}
++	}
 +
-+	/*
-+	 * If the folio is tagged, ensure ordering with a likely subsequent
-+	 * read of the tags.
-+	 */
-+	if (ret)
-+		smp_rmb();
-+	return ret;
-+}
++	free(line);
++	fclose(f);
 +
-+static inline bool try_folio_hugetlb_mte_tagging(struct folio *folio)
-+{
-+	VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
-+
-+	if (!test_and_set_bit(PG_mte_lock, &folio->flags))
++	if (hps > 0)
 +		return true;
 +
-+	/*
-+	 * The tags are either being initialised or may have been initialised
-+	 * already. Check if the PG_mte_tagged flag has been set or wait
-+	 * otherwise.
-+	 */
-+	smp_cond_load_acquire(&folio->flags, VAL & (1UL << PG_mte_tagged));
-+
-+	return false;
-+}
-+#else
-+static inline void set_folio_hugetlb_mte_tagged(struct folio *folio)
-+{
-+}
-+
-+static inline bool folio_hugetlb_mte_tagged(struct folio *folio)
-+{
 +	return false;
 +}
 +
-+static inline bool try_folio_hugetlb_mte_tagging(struct folio *folio)
++static void write_sysfs(char *str, unsigned long val)
 +{
-+	return false;
-+}
-+#endif
++	FILE *f;
 +
- static inline void mte_disable_tco_entry(struct task_struct *task)
- {
- 	if (!system_supports_mte())
-diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-index 02870beb271e..ebf81fffa79d 100644
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -266,10 +266,17 @@ static int swsusp_mte_save_tags(void)
- 		max_zone_pfn = zone_end_pfn(zone);
- 		for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++) {
- 			struct page *page = pfn_to_online_page(pfn);
-+			struct folio *folio;
- 
- 			if (!page)
- 				continue;
- 
-+			folio = page_folio(page);
-+
-+			if (folio_test_hugetlb(folio) &&
-+			    !folio_hugetlb_mte_tagged(folio))
-+				continue;
-+
- 			if (!page_mte_tagged(page))
- 				continue;
- 
-diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
-index 6174671be7c1..c8b13bf36fc6 100644
---- a/arch/arm64/kernel/mte.c
-+++ b/arch/arm64/kernel/mte.c
-@@ -38,7 +38,22 @@ EXPORT_SYMBOL_GPL(mte_async_or_asymm_mode);
- void mte_sync_tags(pte_t pte, unsigned int nr_pages)
- {
- 	struct page *page = pte_page(pte);
--	unsigned int i;
-+	struct folio *folio = page_folio(page);
-+	unsigned long i;
-+
-+	if (folio_test_hugetlb(folio)) {
-+		unsigned long nr = folio_nr_pages(folio);
-+		/* Hugetlb MTE flags are set for head page only */
-+		if (try_folio_hugetlb_mte_tagging(folio)) {
-+			for (i = 0; i < nr; i++, page++)
-+				mte_clear_page_tags(page_address(page));
-+			set_folio_hugetlb_mte_tagged(folio);
-+		}
-+
-+		smp_wmb();
-+
++	f = fopen(str, "w");
++	if (!f) {
++		ksft_print_msg("ERR: missing %s\n", str);
 +		return;
 +	}
- 
- 	/* if PG_mte_tagged is set, tags have already been initialised */
- 	for (i = 0; i < nr_pages; i++, page++) {
-@@ -410,6 +425,7 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
- 		void *maddr;
- 		struct page *page = get_user_page_vma_remote(mm, addr,
- 							     gup_flags, &vma);
-+		struct folio *folio;
- 
- 		if (IS_ERR(page)) {
- 			err = PTR_ERR(page);
-@@ -428,7 +444,12 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
- 			put_page(page);
- 			break;
- 		}
--		WARN_ON_ONCE(!page_mte_tagged(page));
++	fprintf(f, "%lu", val);
++	fclose(f);
++}
 +
-+		folio = page_folio(page);
-+		if (folio_test_hugetlb(folio))
-+			WARN_ON_ONCE(!folio_hugetlb_mte_tagged(folio));
-+		else
-+			WARN_ON_ONCE(!page_mte_tagged(page));
- 
- 		/* limit access to the end of the page */
- 		offset = offset_in_page(addr);
-diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-index 11098eb7eb44..c0f4c2acc503 100644
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -1050,6 +1050,7 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
- 		void *maddr;
- 		unsigned long num_tags;
- 		struct page *page;
-+		struct folio *folio;
- 
- 		if (is_error_noslot_pfn(pfn)) {
- 			ret = -EFAULT;
-@@ -1062,10 +1063,13 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
- 			ret = -EFAULT;
- 			goto out;
- 		}
-+		folio = page_folio(page);
- 		maddr = page_address(page);
- 
- 		if (!write) {
--			if (page_mte_tagged(page))
-+			if ((folio_test_hugetlb(folio) &&
-+			     folio_hugetlb_mte_tagged(folio)) ||
-+			     page_mte_tagged(page))
- 				num_tags = mte_copy_tags_to_user(tags, maddr,
- 							MTE_GRANULES_PER_PAGE);
- 			else
-@@ -1079,14 +1083,20 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
- 			 * __set_ptes() in the VMM but still overriding the
- 			 * tags, hence ignoring the return value.
- 			 */
--			try_page_mte_tagging(page);
-+			if (folio_test_hugetlb(folio))
-+				try_folio_hugetlb_mte_tagging(folio);
-+			else
-+				try_page_mte_tagging(page);
- 			num_tags = mte_copy_tags_from_user(maddr, tags,
- 							MTE_GRANULES_PER_PAGE);
- 
- 			/* uaccess failed, don't leave stale tags */
- 			if (num_tags != MTE_GRANULES_PER_PAGE)
- 				mte_clear_page_tags(maddr);
--			set_page_mte_tagged(page);
-+			if (folio_test_hugetlb(folio))
-+				set_folio_hugetlb_mte_tagged(folio);
-+			else
-+				set_page_mte_tagged(page);
- 
- 			kvm_release_pfn_dirty(pfn);
- 		}
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index a509b63bd4dd..fc96becdc395 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1401,10 +1401,21 @@ static void sanitise_mte_tags(struct kvm *kvm, kvm_pfn_t pfn,
- {
- 	unsigned long i, nr_pages = size >> PAGE_SHIFT;
- 	struct page *page = pfn_to_page(pfn);
-+	struct folio *folio = page_folio(page);
- 
- 	if (!kvm_has_mte(kvm))
- 		return;
- 
-+	if (folio_test_hugetlb(folio)) {
-+		/* Hugetlb has MTE flags set on head page only */
-+		if (try_folio_hugetlb_mte_tagging(folio)) {
-+			for (i = 0; i < nr_pages; i++, page++)
-+				mte_clear_page_tags(page_address(page));
-+			set_folio_hugetlb_mte_tagged(folio);
++static void allocate_hugetlb()
++{
++	write_sysfs("/proc/sys/vm/nr_hugepages", 2);
++}
++
++static void free_hugetlb()
++{
++	write_sysfs("/proc/sys/vm/nr_hugepages", 0);
++}
++
++static int check_child_tag_inheritance(char *ptr, int size, int mode)
++{
++	int i, parent_tag, child_tag, fault, child_status;
++	pid_t child;
++
++	parent_tag = MT_FETCH_TAG((uintptr_t)ptr);
++	fault = 0;
++
++	child = fork();
++	if (child == -1) {
++		ksft_print_msg("FAIL: child process creation\n");
++		return KSFT_FAIL;
++	} else if (child == 0) {
++		mte_initialize_current_context(mode, (uintptr_t)ptr, size);
++		/* Do copy on write */
++		memset(ptr, '1', size);
++		mte_wait_after_trig();
++		if (cur_mte_cxt.fault_valid == true) {
++			fault = 1;
++			goto check_child_tag_inheritance_err;
 +		}
-+		return;
-+	}
-+
- 	for (i = 0; i < nr_pages; i++, page++) {
- 		if (try_page_mte_tagging(page)) {
- 			mte_clear_page_tags(page_address(page));
-diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
-index a7bb20055ce0..5c8ef1a4a772 100644
---- a/arch/arm64/mm/copypage.c
-+++ b/arch/arm64/mm/copypage.c
-@@ -18,17 +18,40 @@ void copy_highpage(struct page *to, struct page *from)
- {
- 	void *kto = page_address(to);
- 	void *kfrom = page_address(from);
-+	struct folio *src = page_folio(from);
-+	struct folio *dst = page_folio(to);
-+	unsigned int i, nr_pages;
- 
- 	copy_page(kto, kfrom);
- 
- 	if (kasan_hw_tags_enabled())
- 		page_kasan_tag_reset(to);
- 
--	if (system_supports_mte() && page_mte_tagged(from)) {
--		/* It's a new page, shouldn't have been tagged yet */
--		WARN_ON_ONCE(!try_page_mte_tagging(to));
--		mte_copy_page_tags(kto, kfrom);
--		set_page_mte_tagged(to);
-+	if (system_supports_mte()) {
-+		if (folio_test_hugetlb(src) && folio_hugetlb_mte_tagged(src)) {
-+			if (!try_folio_hugetlb_mte_tagging(dst))
-+				return;
-+
-+			/*
-+			 * Populate tags for all subpages.
-+			 *
-+			 * Don't assume the first page is head page since
-+			 * huge page copy may start from any subpage.
-+			 */
-+			nr_pages = folio_nr_pages(src);
-+			for (i = 0; i < nr_pages; i++) {
-+				kfrom = page_address(folio_page(src, i));
-+				kto = page_address(folio_page(dst, i));
-+				mte_copy_page_tags(kto, kfrom);
++		for (i = 0; i < size; i += MT_GRANULE_SIZE) {
++			child_tag = MT_FETCH_TAG((uintptr_t)(mte_get_tag_address(ptr + i)));
++			if (parent_tag != child_tag) {
++				ksft_print_msg("FAIL: child mte tag (%d) mismatch\n", i);
++				fault = 1;
++				goto check_child_tag_inheritance_err;
 +			}
-+			set_folio_hugetlb_mte_tagged(dst);
-+		} else if (page_mte_tagged(from)) {
-+			/* It's a new page, shouldn't have been tagged yet */
-+			WARN_ON_ONCE(!try_page_mte_tagging(to));
-+
-+			mte_copy_page_tags(kto, kfrom);
-+			set_page_mte_tagged(to);
 +		}
- 	}
- }
- EXPORT_SYMBOL(copy_highpage);
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 9f6cff356796..f944e8e7126b 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -110,7 +110,7 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	 * way when do_mmap unwinds (may be important on powerpc
- 	 * and ia64).
- 	 */
--	vm_flags_set(vma, VM_HUGETLB | VM_DONTEXPAND);
-+	vm_flags_set(vma, VM_HUGETLB | VM_DONTEXPAND | VM_MTE_ALLOWED);
- 	vma->vm_ops = &hugetlb_vm_ops;
- 
- 	ret = seal_check_write(info->seals, vma);
++check_child_tag_inheritance_err:
++		_exit(fault);
++	}
++	/* Wait for child process to terminate */
++	wait(&child_status);
++	if (WIFEXITED(child_status))
++		fault = WEXITSTATUS(child_status);
++	else
++		fault = 1;
++	return (fault) ? KSFT_FAIL : KSFT_PASS;
++}
++
++static int check_mte_memory(char *ptr, int size, int mode, int tag_check)
++{
++	mte_initialize_current_context(mode, (uintptr_t)ptr, size);
++	memset(ptr, '1', size);
++	mte_wait_after_trig();
++	if (cur_mte_cxt.fault_valid == true)
++		return KSFT_FAIL;
++
++	return KSFT_PASS;
++}
++
++static int check_hugetlb_memory_mapping(int mem_type, int mode, int mapping, int tag_check)
++{
++	char *ptr, *map_ptr;
++	int result;
++	unsigned long map_size;
++
++	map_size = default_huge_page_size();
++
++	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG);
++	map_ptr = (char *)mte_allocate_memory(map_size, mem_type, mapping, false);
++	if (check_allocated_memory(map_ptr, map_size, mem_type, false) != KSFT_PASS)
++		return KSFT_FAIL;
++
++	mte_initialize_current_context(mode, (uintptr_t)map_ptr, map_size);
++	/* Only mte enabled memory will allow tag insertion */
++	ptr = mte_insert_tags((void *)map_ptr, map_size);
++	if (!ptr || cur_mte_cxt.fault_valid == true) {
++		ksft_print_msg("FAIL: Insert tags on anonymous mmap memory\n");
++		munmap((void *)map_ptr, map_size);
++		return KSFT_FAIL;
++	}
++	result = check_mte_memory(ptr, map_size, mode, tag_check);
++	mte_clear_tags((void *)ptr, map_size);
++	mte_free_memory((void *)map_ptr, map_size, mem_type, false);
++	if (result == KSFT_FAIL)
++		return KSFT_FAIL;
++
++	return KSFT_PASS;
++}
++
++static int check_clear_prot_mte_flag(int mem_type, int mode, int mapping)
++{
++	char *map_ptr;
++	int prot_flag, result;
++	unsigned long map_size;
++
++	prot_flag = PROT_READ | PROT_WRITE;
++	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG);
++	map_size = default_huge_page_size();
++	map_ptr = (char *)mte_allocate_memory_tag_range(map_size, mem_type, mapping,
++							0, 0);
++	if (check_allocated_memory_range(map_ptr, map_size, mem_type,
++					 0, 0) != KSFT_PASS)
++		return KSFT_FAIL;
++	/* Try to clear PROT_MTE property and verify it by tag checking */
++	if (mprotect(map_ptr, map_size, prot_flag)) {
++		mte_free_memory_tag_range((void *)map_ptr, map_size, mem_type,
++					  0, 0);
++		ksft_print_msg("FAIL: mprotect not ignoring clear PROT_MTE property\n");
++		return KSFT_FAIL;
++	}
++	result = check_mte_memory(map_ptr, map_size, mode, TAG_CHECK_ON);
++	mte_free_memory_tag_range((void *)map_ptr, map_size, mem_type, 0, 0);
++	if (result != KSFT_PASS)
++		return KSFT_FAIL;
++
++	return KSFT_PASS;
++}
++
++static int check_child_hugetlb_memory_mapping(int mem_type, int mode, int mapping)
++{
++	char *ptr;
++	int result;
++	unsigned long map_size;
++
++	map_size = default_huge_page_size();
++
++	mte_switch_mode(mode, MTE_ALLOW_NON_ZERO_TAG);
++	ptr = (char *)mte_allocate_memory_tag_range(map_size, mem_type, mapping,
++						    0, 0);
++	if (check_allocated_memory_range(ptr, map_size, mem_type,
++					 0, 0) != KSFT_PASS)
++		return KSFT_FAIL;
++	result = check_child_tag_inheritance(ptr, map_size, mode);
++	mte_free_memory_tag_range((void *)ptr, map_size, mem_type, 0, 0);
++	if (result == KSFT_FAIL)
++		return result;
++
++	return KSFT_PASS;
++}
++
++int main(int argc, char *argv[])
++{
++	int err;
++
++	err = mte_default_setup();
++	if (err)
++		return err;
++
++	/* Register signal handlers */
++	mte_register_signal(SIGBUS, mte_default_handler);
++	mte_register_signal(SIGSEGV, mte_default_handler);
++
++	allocate_hugetlb();
++
++	if (!is_hugetlb_allocated()) {
++		ksft_print_msg("ERR: Unable allocate hugetlb pages\n");
++		return KSFT_FAIL;
++	}
++
++	/* Set test plan */
++	ksft_set_plan(12);
++
++	mte_enable_pstate_tco();
++
++	evaluate_test(check_hugetlb_memory_mapping(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB, TAG_CHECK_OFF),
++	"Check hugetlb memory with private mapping, sync error mode, mmap memory and tag check off\n");
++
++	mte_disable_pstate_tco();
++	evaluate_test(check_hugetlb_memory_mapping(USE_MMAP, MTE_NONE_ERR, MAP_PRIVATE | MAP_HUGETLB, TAG_CHECK_OFF),
++	"Check hugetlb memory with private mapping, no error mode, mmap memory and tag check off\n");
++
++	evaluate_test(check_hugetlb_memory_mapping(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB, TAG_CHECK_ON),
++	"Check hugetlb memory with private mapping, sync error mode, mmap memory and tag check on\n");
++	evaluate_test(check_hugetlb_memory_mapping(USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB, TAG_CHECK_ON),
++	"Check hugetlb memory with private mapping, sync error mode, mmap/mprotect memory and tag check on\n");
++	evaluate_test(check_hugetlb_memory_mapping(USE_MMAP, MTE_ASYNC_ERR, MAP_PRIVATE | MAP_HUGETLB, TAG_CHECK_ON),
++	"Check hugetlb memory with private mapping, async error mode, mmap memory and tag check on\n");
++	evaluate_test(check_hugetlb_memory_mapping(USE_MPROTECT, MTE_ASYNC_ERR, MAP_PRIVATE | MAP_HUGETLB, TAG_CHECK_ON),
++	"Check hugetlb memory with private mapping, async error mode, mmap/mprotect memory and tag check on\n");
++
++	evaluate_test(check_clear_prot_mte_flag(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB),
++	"Check clear PROT_MTE flags with private mapping, sync error mode and mmap memory\n");
++	evaluate_test(check_clear_prot_mte_flag(USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB),
++	"Check clear PROT_MTE flags with private mapping and sync error mode and mmap/mprotect memory\n");
++
++	evaluate_test(check_child_hugetlb_memory_mapping(USE_MMAP, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB),
++		"Check child hugetlb memory with private mapping, precise mode and mmap memory\n");
++	evaluate_test(check_child_hugetlb_memory_mapping(USE_MMAP, MTE_ASYNC_ERR, MAP_PRIVATE | MAP_HUGETLB),
++		"Check child hugetlb memory with private mapping, precise mode and mmap memory\n");
++	evaluate_test(check_child_hugetlb_memory_mapping(USE_MPROTECT, MTE_SYNC_ERR, MAP_PRIVATE | MAP_HUGETLB),
++		"Check child hugetlb memory with private mapping, precise mode and mmap/mprotect memory\n");
++	evaluate_test(check_child_hugetlb_memory_mapping(USE_MPROTECT, MTE_ASYNC_ERR, MAP_PRIVATE | MAP_HUGETLB),
++		"Check child hugetlb memory with private mapping, precise mode and mmap/mprotect memory\n");
++
++	mte_restore_setup();
++	free_hugetlb();
++	ksft_print_cnts();
++	return ksft_get_fail_cnt() == 0 ? KSFT_PASS : KSFT_FAIL;
++}
 -- 
 2.41.0
 
