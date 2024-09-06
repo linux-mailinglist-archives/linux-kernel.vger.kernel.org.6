@@ -1,140 +1,263 @@
-Return-Path: <linux-kernel+bounces-318210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAE496E9F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:18:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3523796EA08
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D03328AD4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7194CB2241A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995CD13D537;
-	Fri,  6 Sep 2024 06:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AB913D24E;
+	Fri,  6 Sep 2024 06:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CK+Z2e2P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="UVBmSkVr"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BA52F4A;
-	Fri,  6 Sep 2024 06:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB1313D243;
+	Fri,  6 Sep 2024 06:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725603512; cv=none; b=B4rSOApNcMAMvrkupRuopmwb1gEt/Vd65o75aadfg7mP/+ffFgXX6/FSqziaFaxjN5pBwXsxL/nb+SuJeV3GnFC4Duih8LAummgJQtzwtEjXbVeBl+wvQ7m69KxphoowQzmg9ahOiZJnLDEINXvaLv1+6+Y3kjpPcjLWEHHFpgY=
+	t=1725603611; cv=none; b=oBQvoLBIM4018uWNcduzGAdTkfvWWZLLD4Vl3PkN/B1301Lg2HuOf349JgFo9w99IM+guTim0L6TJz6IfDuuOmCFA8yLs6yxbYWc384lEP6mDf0Sof+0hLi7T4rP9MyvUcuqqYe0XPJd6EV1ZPdeqiTTo/8mjTgibY0d7lJo5yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725603512; c=relaxed/simple;
-	bh=pWynbT4Bo6x+Mpc5PslWstyrB67capCi++OODjFq6H8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jtpJhAoS5z2vRbKkdyEDVFXOYthQWHeIXyCtys2A6nMbrFhygsM+CC66fqbrS8Gcbw/TUsVNxjejG1U+Cy3tGp3dd+oaT/bR/fcdUn9zUfiG3QsDU6YwC+h277xa0p1rkZUiWeUiACbNweOz/Xuy2dhMB64OsrhDO02p/mVZlIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CK+Z2e2P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF326C4CEC4;
-	Fri,  6 Sep 2024 06:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725603511;
-	bh=pWynbT4Bo6x+Mpc5PslWstyrB67capCi++OODjFq6H8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CK+Z2e2P5EfK2ZDK86PGh9QayZggVJdvZxxsMZ7RsamBZAFGqzenwyXDpJYnj9X81
-	 nbPZv2a3PEEJm4mZ96Uav/V1IP1vbcAUR8RSWqvTan3ca5uhfHKwlqIOxCGDx3g+2w
-	 Wg/vkdnMjatToqrD67CRk76B0IjiGKnmcwKS/b8K75uMvHU252Fx7SHYfSo6sbncNt
-	 86nwGIQunlRIJ4h2MUFbu8HRPM6G4iwGQn6Xzs5nn0D2wKLokKxsAjHsvf60TYWaw7
-	 8bap/Vbt0+WPg/yyYr5OKv1LoKoHxj98AFgslgrXrboEfnrxstOnkuzyo0bMlPThcR
-	 UeCU6DgmpWBmw==
-Message-ID: <4ce112ca-9c2d-4091-9e98-f2d08e5db299@kernel.org>
-Date: Fri, 6 Sep 2024 15:18:29 +0900
+	s=arc-20240116; t=1725603611; c=relaxed/simple;
+	bh=UKaIpJynoawa1HVOQFmJU5QytarRlsA3CTyROeZKpxE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=piw3P2L6tjt290fl70pNdusbY+zSHnL0kea3t5c8wo9RIDyaL+D0u4zo+trDGJIfG1ityvTK6BoR331Sr37KFn+GYCWuitujUuGK7fuMiB7WqvJS5ZUladmaOF61B39yvQm+VPT1yimJeAlklJRgKdPQMH54a1+qKAlu045tnoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=UVBmSkVr; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Pf0qJBv2a5VO5pnFKJd+fG12gABSq0Jxz8dYrGBJaUk=; t=1725603607; x=1726208407; 
+	b=UVBmSkVrUe+e4GwlrmpYBFL7XThM4/rH8ArwxC9ONYOQqEA5jNJSidPHlRmV4DrUDnGqZRnzrry
+	dSx9rLqHQ1ffD8unKm5kK9jxsw5Hz92ahMhaJXep42l2lzZxx+zOl9Mt1b8gpaAS/J7ZhH+wNvF7D
+	OrQ/Zi/ZV2uvnF4CqftIcFwctaeXeUzjFUFl3SrObKrLv5nBVIs0dstbmGehjZwrm8I1ja2+n5GMT
+	rddZ9SeJLkERnJmtL7qQzMWUzOzBQCh9FKf44VQyZfXOOKinV19UxK7duwG2K5HxdMf1SGqmaCaSq
+	wT4WHd2qmqtptSZq+Ty5J485YkBjTvVBgH7g==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1smSJT-00000003bKB-2zIl; Fri, 06 Sep 2024 08:19:19 +0200
+Received: from dynamic-077-191-186-033.77.191.pool.telefonica.de ([77.191.186.33] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1smSJT-00000001qiA-1L1j; Fri, 06 Sep 2024 08:19:19 +0200
+Message-ID: <f8e0faafbb56e8ab748cf14c314497501d375529.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH RFC v3 0/2] mm: Introduce ADDR_LIMIT_47BIT personality
+ flag
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta
+ <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Guo Ren
+ <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge
+ Deller <deller@gmx.de>,  Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich
+ Felker <dalias@libc.org>, "David S. Miller" <davem@davemloft.net>, Andreas
+ Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>, Christoph
+ Hellwig <hch@infradead.org>, Michal Hocko <mhocko@suse.com>, "Kirill A.
+ Shutemov" <kirill@shutemov.name>, Chris Torek <chris.torek@gmail.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org,  linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org,  linux-abi-devel@lists.sourceforge.net
+Date: Fri, 06 Sep 2024 08:19:17 +0200
+In-Reply-To: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+References: 
+	<20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] block: move non sync requests complete flow to softirq
-To: ZhangHui <zhanghui31@xiaomi.com>, axboe@kernel.dk, bvanassche@acm.org,
- ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240906031431.366806-1-zhanghui31@xiaomi.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240906031431.366806-1-zhanghui31@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 9/6/24 12:14, ZhangHui wrote:
-> From: zhanghui <zhanghui31@xiaomi.com>
-> 
-> Currently, for a controller that supports multiple queues, like UFS4.0,
-> the mq_ops->complete is executed in the interrupt top-half. Therefore, 
-> the file system's end io is executed during the request completion process,
-> such as f2fs_write_end_io on smartphone.
-> 
-> However, we found that the execution time of the file system end io
-> is strongly related to the size of the bio and the processing speed
-> of the CPU. Because the file system's end io will traverse every page
-> in bio, this is a very time-consuming operation.
-> 
-> We measured that the 80M bio write operation on the little CPU will
-> cause the execution time of the top-half to be greater than 100ms,
-> which will undoubtedly affect interrupt response latency.
-> 
-> Let's fixed this issue by moved non sync request completion flow to
-> softirq, and keep the sync request completion in the top-half.
+Hi Charlie,
 
-Typos/grammar:
-
-Let's fix this issue by moving non sync requests completion to softirq context,
-and keeping sync requests completion in the irq top-half context.
-
-> 
-> Signed-off-by: zhanghui <zhanghui31@xiaomi.com>
-> ---
-> Changes in v4:
-> - fix commit log from "scheduling efficiency" to "interrupt response latency"
-> 
-> Changes in v3:
-> - modify op_is_sync to rq_is_sync
-> 
+On Thu, 2024-09-05 at 14:15 -0700, Charlie Jenkins wrote:
+> Some applications rely on placing data in free bits addresses allocated
+> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> address returned by mmap to be less than the 48-bit address space,
+> unless the hint address uses more than 47 bits (the 48th bit is reserved
+> for the kernel address space).
+>=20
+> The riscv architecture needs a way to similarly restrict the virtual
+> address space. On the riscv port of OpenJDK an error is thrown if
+> attempted to run on the 57-bit address space, called sv57 [1].  golang
+> has a comment that sv57 support is not complete, but there are some
+> workarounds to get it to mostly work [2].
+>=20
+> These applications work on x86 because x86 does an implicit 47-bit
+> restriction of mmap() address that contain a hint address that is less
+> than 48 bits.
+>=20
+> Instead of implicitly restricting the address space on riscv (or any
+> current/future architecture), provide a flag to the personality syscall
+> that can be used to ensure an application works in any arbitrary VA
+> space. A similar feature has already been implemented by the personality
+> syscall in ADDR_LIMIT_32BIT.
+>=20
+> This flag will also allow seemless compatibility between all
+> architectures, so applications like Go and OpenJDK that use bits in a
+> virtual address can request the exact number of bits they need in a
+> generic way. The flag can be checked inside of vm_unmapped_area() so
+> that this flag does not have to be handled individually by each
+> architecture.=20
+>=20
+> Link:
+> https://github.com/openjdk/jdk/blob/f080b4bb8a75284db1b6037f8c00ef3b1ef1a=
+dd1/src/hotspot/cpu/riscv/vm_version_riscv.cpp#L79
+> [1]
+> Link:
+> https://github.com/golang/go/blob/9e8ea567c838574a0f14538c0bbbd83c3215aa5=
+5/src/runtime/tagptr_64bit.go#L47
+> [2]
+>=20
+> To: Arnd Bergmann <arnd@arndb.de>
+> To: Richard Henderson <richard.henderson@linaro.org>
+> To: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> To: Matt Turner <mattst88@gmail.com>
+> To: Vineet Gupta <vgupta@kernel.org>
+> To: Russell King <linux@armlinux.org.uk>
+> To: Guo Ren <guoren@kernel.org>
+> To: Huacai Chen <chenhuacai@kernel.org>
+> To: WANG Xuerui <kernel@xen0n.name>
+> To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+> To: Helge Deller <deller@gmx.de>
+> To: Michael Ellerman <mpe@ellerman.id.au>
+> To: Nicholas Piggin <npiggin@gmail.com>
+> To: Christophe Leroy <christophe.leroy@csgroup.eu>
+> To: Naveen N Rao <naveen@kernel.org>
+> To: Alexander Gordeev <agordeev@linux.ibm.com>
+> To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> To: Heiko Carstens <hca@linux.ibm.com>
+> To: Vasily Gorbik <gor@linux.ibm.com>
+> To: Christian Borntraeger <borntraeger@linux.ibm.com>
+> To: Sven Schnelle <svens@linux.ibm.com>
+> To: Yoshinori Sato <ysato@users.sourceforge.jp>
+> To: Rich Felker <dalias@libc.org>
+> To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> To: David S. Miller <davem@davemloft.net>
+> To: Andreas Larsson <andreas@gaisler.com>
+> To: Thomas Gleixner <tglx@linutronix.de>
+> To: Ingo Molnar <mingo@redhat.com>
+> To: Borislav Petkov <bp@alien8.de>
+> To: Dave Hansen <dave.hansen@linux.intel.com>
+> To: x86@kernel.org
+> To: H. Peter Anvin <hpa@zytor.com>
+> To: Andy Lutomirski <luto@kernel.org>
+> To: Peter Zijlstra <peterz@infradead.org>
+> To: Muchun Song <muchun.song@linux.dev>
+> To: Andrew Morton <akpm@linux-foundation.org>
+> To: Liam R. Howlett <Liam.Howlett@oracle.com>
+> To: Vlastimil Babka <vbabka@suse.cz>
+> To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> To: Shuah Khan <shuah@kernel.org>
+> To: Christoph Hellwig <hch@infradead.org>
+> To: Michal Hocko <mhocko@suse.com>
+> To: "Kirill A. Shutemov" <kirill@shutemov.name>
+> To: Chris Torek <chris.torek@gmail.com>
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-alpha@vger.kernel.org
+> Cc: linux-snps-arc@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-csky@vger.kernel.org
+> Cc: loongarch@lists.linux.dev
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-parisc@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-abi-devel@lists.sourceforge.net
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>=20
 > Changes in v2:
-> - fix build warning
+> - Added much greater detail to cover letter
+> - Removed all code that touched architecture specific code and was able
+>   to factor this out into all generic functions, except for flags that
+>   needed to be added to vm_unmapped_area_info
+> - Made this an RFC since I have only tested it on riscv and x86
+> - Link to v1: https://lore.kernel.org/r/20240827-patches-below_hint_mmap-=
+v1-0-46ff2eb9022d@rivosinc.com
+>=20
+> Changes in v3:
+> - Use a personality flag instead of an mmap flag
+> - Link to v2: https://lore.kernel.org/r/20240829-patches-below_hint_mmap-=
+v2-0-638a28d9eae0@rivosinc.com
+>=20
 > ---
->  block/blk-mq.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index e3c3c0c21b55..06b232edff11 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -1193,6 +1193,8 @@ static void blk_mq_raise_softirq(struct request *rq)
->  
->  bool blk_mq_complete_request_remote(struct request *rq)
->  {
-> +	const bool is_sync = rq_is_sync(rq);
-> +
->  	WRITE_ONCE(rq->state, MQ_RQ_COMPLETE);
->  
->  	/*
-> @@ -1210,7 +1212,7 @@ bool blk_mq_complete_request_remote(struct request *rq)
->  		return true;
->  	}
->  
-> -	if (rq->q->nr_hw_queues == 1) {
-> +	if ((rq->q->nr_hw_queues == 1) || !is_sync) {
+> Charlie Jenkins (2):
+>       mm: Add personality flag to limit address to 47 bits
+>       selftests/mm: Create ADDR_LIMIT_47BIT test
+>=20
+>  include/uapi/linux/personality.h                   |  1 +
+>  mm/mmap.c                                          |  3 ++
+>  tools/testing/selftests/mm/.gitignore              |  1 +
+>  tools/testing/selftests/mm/Makefile                |  1 +
+>  tools/testing/selftests/mm/map_47bit_personality.c | 34 ++++++++++++++++=
+++++++
+>  5 files changed, 40 insertions(+)
+> ---
+> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+> change-id: 20240827-patches-below_hint_mmap-b13d79ae1c55
 
-I do not see the point of the is_sync variable, and you do not need the inner
-parenthesis either. Why not:
+Wow, this issue has been plaguing SPARC users for years already as the arch=
+itecture
+uses a 52-bit virtual address space and Javascript engines such as the one =
+in Firefox
+or Webkit have been crashing ever since.
 
-	if (rq->q->nr_hw_queues == 1 || !rq_is_sync(rq)) {
+I should definitely give this series a try and see if that fixes Javascript=
+ crashes
+on SPARC.
 
-And a comment before the "if" explaining why soft-irq is raised for non-sync
-requests would be nice too.
+Thanks a lot for addressing this nasty long-standing problem!
 
->  		blk_mq_raise_softirq(rq);
->  		return true;
->  	}
+Adrian
 
--- 
-Damien Le Moal
-Western Digital Research
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
