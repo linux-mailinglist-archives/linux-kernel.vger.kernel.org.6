@@ -1,207 +1,199 @@
-Return-Path: <linux-kernel+bounces-319440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A8296FC9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A277E96FCA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3029B1C2239D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB3C1C22823
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70AE1D6789;
-	Fri,  6 Sep 2024 20:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMEM1b2T"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6B41D79BB;
+	Fri,  6 Sep 2024 20:24:35 +0000 (UTC)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4B61B85DA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 20:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A6713D251;
+	Fri,  6 Sep 2024 20:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654205; cv=none; b=LWeVQlUDLVEY0/lwq4Iog1vdo1T6ukVOnT3tp4LZYkTwB6cje35Swg6R69q2K4cb9MuZN5BCLPr3XfzcRREKiCTxGMtga4xOZVXY3OnSBs414UWXT4scuyAIa3DpICZVXoeTM7iBPJT5qrVq1Me9OHdCex8m/z2gtQQAd0AnSfc=
+	t=1725654274; cv=none; b=RUEKfSKyy0Uv8nllFt6FQ5b0OyYn+Q+Tzmd23eNAu+1H3rKgTZCW2STNafJAxeuoFE0v5EWOxoIoUsLZ7cigS3AIvAPe2XWtz7F44LQy+gEQt7fna1csllOAg2ZU3clAUh98l8ZvywOwwj4phr9QlnbSMQI2OiAiBKnWDAOJOtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654205; c=relaxed/simple;
-	bh=4B0JL4GdzkZjmJPWJuXyJQr7yGkNMhD/5tTUOgXudwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LiTgwu9l9lUaZGofO9IefFrWU7OBKC5FmqeTOWjughhHqMkCt+acVXtxL1wFjK18MS4NtlZIyNGCvg+2r91g2IyPzmD478iFUNNWgEEqsxHYSKEhwFSze1XIhQYH1Ft5Ofj4kU0yjJIVo7pjar6pw+a8Rd9CF8P2jgrfHbUyq20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMEM1b2T; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725654274; c=relaxed/simple;
+	bh=jfXwEMIyOFbvNSGK8wfH4x/0ilT6Vwp9K8KNooX7VdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Isex9E/1gti9jG+/VPgtKOQSX9nd5EBCBolLQoi32cf52ycT26V9midH2pVFbTorINwA1iHWMpjQIu7QZa/BKlZ6GzlndjbLLz9PXnTooIDnKxKCinU6uv+uNSm90ODQRMcxHkUrZhW+eZszKLfOww0Et8ipQfpkuXMKYqfHByY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-8487af8a274so672497241.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 13:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725654202; x=1726259002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A++Z791gkjq6QACDFHzJLpLm7CT3//vqJgMU5AApAas=;
-        b=AMEM1b2TDLI2++JqupSIwoimCV4PM7CHlwWaXuInoqVpjycH0SfZf0bncj4HHm0gd1
-         h6YlpYlY618ryGoe9GGHoc0qEWfFwlMptG898ndcFZ85kCLKTV/Pydlirl75lzNDLR0B
-         PWpmqOoHLoUsd9iS1vdrGvHMS/JScTORxjhdO9CzDleqwZwVeNf/IjYn9/FIPduVS3gQ
-         UmTtaKMWU3fOvkO6+JFU0pYpzilzLBcxs8tzPk9WEI5xKMZWeFGhl3iA6ZvEjwnBf2pE
-         Ftyl/U9gDdKcPaxU2T/WlvP5EAnbDWqI+CisfjllprDmxaqI7G9wLbpf1obSvNVE5n52
-         Mexg==
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6bce380eb96so1672407a12.0;
+        Fri, 06 Sep 2024 13:24:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725654202; x=1726259002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A++Z791gkjq6QACDFHzJLpLm7CT3//vqJgMU5AApAas=;
-        b=MxRXKcGlTkgCilQ6z1KRRjWE7kWAVi6z6rN8NjodB/EvRKEC1nYmvxu/7puqbistPA
-         zkbzvO9ANF9dpyM5E8/dvROTB1ahnqBcGXpi3TN/wqI1kPvs2clbpzW0j1mlm1UJtOwT
-         t8mHd4Ozpp47ncXZOjv5Scpv2fwkafgYCEmLyXUr4eBP+fhXY0nUTyituwuJoDnnDksk
-         ajQ/5h+5bZ9lSV6QvFo1Pjcvbzqt6BCqrrGRKrf/DPx3Vs8g8iw/TgPij0kY2HE/yEFk
-         RDqIoe7IdG6ij+B21euxniz+z4eAOhTvnD9UMSttK65+sG9lpYaFQxZpkqRzzpglkeWp
-         dwUg==
-X-Gm-Message-State: AOJu0YwYrjKiFVD0SLOXDhIBnRgnKNG5AWOwpdFZdoo/WIWZKM1M5dE4
-	K9hYphHsDeu1iWxA0JFK3FGYqGfBNI9d4Akfn4w2QqmTd76WEZ7orPhfkiCJ2stR9DMYgvsEXGy
-	qRt6ykcTJihL6bW5N6dA0kjj/Gxc=
-X-Google-Smtp-Source: AGHT+IGFEDLHyafKDrN6fpuRLiKotM6Jf0bh+gYC99xcBWlyl5uETSjcE8noSLRFUgpdtqWo+5Zh/bpk8kjcNhuiRxw=
-X-Received: by 2002:a05:6102:509e:b0:498:d12b:4774 with SMTP id
- ada2fe7eead31-49beccf629cmr569574137.7.1725654202146; Fri, 06 Sep 2024
- 13:23:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725654272; x=1726259072;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSbi6dM4OZPilshyK6QPgYGxC4Yeo1GjN7m6drG40AY=;
+        b=iP8oSVV8BqlgKwvz1T3n2MxFvQgVS82PwGU/mrK25npjgDpvH9aa98a6DdnG6dG6SS
+         GZYLUgnQFeduCgF+bNYxnJGOS0e4Yn9cOr/bfFM7352nejVpm3YogpWq1TPdzO5UCO3G
+         n9xpoWk4ex0PuVTZZ1PlboxtWrQltZ3gLZMmuIiyJEyhtL3YN26kqjO2K+9u8mjgnLPH
+         OCOSRfecRAJl5CtPAoQYB5MjmEktclL5PId9cNG1mfvnBpn2wjoFnjxsqyyEGXrsaShp
+         VYLr2rzPPKBHAgpYqQtRVj1sqY251aAQhn2PVbaMKg2YL3gHyUFuevIWHJHDF9yz+AhN
+         rcPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqYeZz7tMShV6Gnd9U01fVuttP6b0ntmPDr/JmYbSo8Ie82LUDuPtn3H1X7AI+QLwMFpY=@vger.kernel.org, AJvYcCV32Tq0Eb9TdFNWsiw28xLZ9oPbQsUC26u4/CWvwARY/iKVgBCo9tFUiPN4lRdMT+snnsJN7RH5AnKSHA1+@vger.kernel.org, AJvYcCWO8p7hFN0QsadzzsLgsYZizdJ255eebkZa2iIrhpq+Lk9VsNlZwCXABwl+x/5GiGbidmaSjP2OUI5+VHtHg8mr@vger.kernel.org, AJvYcCWvVsJv3AcQD0sgutmOMYhnGUSerA965Pv4d+VI53suezAm9K+vj/hMv5NXIEfskG+WpDoftgcx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAiCEqkO1ZWoYYqhiSperuDJhUgM70GhajUuYk0N2SN8qKlD1/
+	VY9wHdlv/6nd1cPzsVO+7mQCHmAYRtixe8/jnedIA2RZ8N3MroM=
+X-Google-Smtp-Source: AGHT+IH2CSru0wQMPbWy2AelMMQpCWm4/s2mJM25XT+w0TpO5N8IBxT6IatEFp0qvbY8weei9UVsQg==
+X-Received: by 2002:a05:6a21:150d:b0:1cf:1218:f87d with SMTP id adf61e73a8af0-1cf1d1b5c06mr4159288637.39.1725654271872;
+        Fri, 06 Sep 2024 13:24:31 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778520e90sm5229695b3a.36.2024.09.06.13.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 13:24:31 -0700 (PDT)
+Date: Fri, 6 Sep 2024 13:24:30 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Florian Kauer <florian.kauer@linutronix.de>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Hangbin Liu <liuhangbin@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jesper Dangaard Brouer <brouer@redhat.com>,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net v2 2/2] bpf: selftests: send packet to devmap
+ redirect XDP
+Message-ID: <Zttk_hTqQ-1wFTtI@mini-arch>
+References: <20240906-devel-koalo-fix-ingress-ifindex-v2-0-4caa12c644b4@linutronix.de>
+ <20240906-devel-koalo-fix-ingress-ifindex-v2-2-4caa12c644b4@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829215242.3641502-1-daeho43@gmail.com> <20240829215242.3641502-2-daeho43@gmail.com>
- <501416af-b08c-448b-881d-0915575e22f5@kernel.org>
-In-Reply-To: <501416af-b08c-448b-881d-0915575e22f5@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Fri, 6 Sep 2024 13:23:11 -0700
-Message-ID: <CACOAw_wgTOAQGJ3vbvp_Dqi_J0ZEsqWRFny-iczpyMD=kpxG-w@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 2/7] f2fs: read summary blocks with the correct
- amount for migration_granularity
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240906-devel-koalo-fix-ingress-ifindex-v2-2-4caa12c644b4@linutronix.de>
 
-On Thu, Sep 5, 2024 at 7:56=E2=80=AFPM Chao Yu <chao@kernel.org> wrote:
->
-> On 2024/8/30 5:52, Daeho Jeong wrote:
-> > From: Daeho Jeong <daehojeong@google.com>
-> >
-> > Now we do readahead for a full section by not considering
-> > migration_granularity and it triggers unnecessary read. So, make it rea=
-d
-> > with the correct amount.
-> >
-> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > ---
-> >   fs/f2fs/gc.c | 33 ++++++++++++++++++++-------------
-> >   1 file changed, 20 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 46e3bc26b78a..b5d3fd40b17a 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -1708,24 +1708,33 @@ static int do_garbage_collect(struct f2fs_sb_in=
-fo *sbi,
-> >       struct blk_plug plug;
-> >       unsigned int segno =3D start_segno;
-> >       unsigned int end_segno =3D start_segno + SEGS_PER_SEC(sbi);
-> > +     unsigned int sec_end_segno;
-> >       int seg_freed =3D 0, migrated =3D 0;
-> >       unsigned char type =3D IS_DATASEG(get_seg_entry(sbi, segno)->type=
-) ?
-> >                                               SUM_TYPE_DATA : SUM_TYPE_=
-NODE;
-> >       unsigned char data_type =3D (type =3D=3D SUM_TYPE_DATA) ? DATA : =
-NODE;
-> >       int submitted =3D 0;
-> >
-> > -     if (__is_large_section(sbi))
-> > -             end_segno =3D rounddown(end_segno, SEGS_PER_SEC(sbi));
-> > +     if (__is_large_section(sbi)) {
-> > +             sec_end_segno =3D rounddown(end_segno, SEGS_PER_SEC(sbi))=
-;
-> >
-> > -     /*
-> > -      * zone-capacity can be less than zone-size in zoned devices,
-> > -      * resulting in less than expected usable segments in the zone,
-> > -      * calculate the end segno in the zone which can be garbage colle=
-cted
-> > -      */
-> > -     if (f2fs_sb_has_blkzoned(sbi))
-> > -             end_segno -=3D SEGS_PER_SEC(sbi) -
-> > +             /*
-> > +              * zone-capacity can be less than zone-size in zoned devi=
-ces,
-> > +              * resulting in less than expected usable segments in the=
- zone,
-> > +              * calculate the end segno in the zone which can be garba=
-ge
-> > +              * collected
-> > +              */
-> > +             if (f2fs_sb_has_blkzoned(sbi))
-> > +                     sec_end_segno -=3D SEGS_PER_SEC(sbi) -
-> >                                       f2fs_usable_segs_in_sec(sbi, segn=
-o);
-> >
-> > +             if (gc_type =3D=3D BG_GC)
-> > +                     end_segno =3D start_segno + sbi->migration_granul=
-arity;
-> > +
-> > +             if (end_segno > sec_end_segno)
-> > +                     end_segno =3D sec_end_segno;
-> > +     }
-> > +
-> >       sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
-> >
-> >       /* readahead multi ssa blocks those have contiguous address */
-> > @@ -1762,9 +1771,6 @@ static int do_garbage_collect(struct f2fs_sb_info=
- *sbi,
-> >
-> >               if (get_valid_blocks(sbi, segno, false) =3D=3D 0)
-> >                       goto freed;
-> > -             if (gc_type =3D=3D BG_GC && __is_large_section(sbi) &&
-> > -                             migrated >=3D sbi->migration_granularity)
->
-> It seems we change the logic from migrating "migration_granularity" segme=
-nts which
-> has valid blocks to scanning "migration_granularity" segments and try mig=
-rating
-> valid blocks in those segments.
->
-> IIUC, when background GC recycle sparse zone, it will take gc thread more=
- round,
-> it seems low efficient. How do you think of keeping previous implementati=
-on?
+On 09/06, Florian Kauer wrote:
+> The current xdp_devmap_attach test attaches a program
+> that redirects to another program via devmap.
+> 
+> It is, however, never executed, so do that to catch
+> any bugs that might occur during execution.
+> 
+> Also, execute the same for a veth pair so that we
+> also cover the non-generic path.
+> 
+> Warning: Running this without the bugfix in this series
+> will likely crash your system.
+> 
+> Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+> ---
+>  .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
+>  1 file changed, 108 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
+> index ce6812558287..c9034f8ae63b 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
+> @@ -1,6 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> +#include <arpa/inet.h>
+>  #include <uapi/linux/bpf.h>
+>  #include <linux/if_link.h>
+> +#include <network_helpers.h>
+> +#include <net/if.h>
+>  #include <test_progs.h>
+>  
+>  #include "test_xdp_devmap_helpers.skel.h"
+> @@ -17,7 +20,7 @@ static void test_xdp_with_devmap_helpers(void)
+>  		.ifindex = IFINDEX_LO,
+>  	};
+>  	__u32 len = sizeof(info);
+> -	int err, dm_fd, map_fd;
+> +	int err, dm_fd, dm_fd_redir, map_fd;
+>  	__u32 idx = 0;
+>  
+>  
+> @@ -25,14 +28,11 @@ static void test_xdp_with_devmap_helpers(void)
+>  	if (!ASSERT_OK_PTR(skel, "test_xdp_with_devmap_helpers__open_and_load"))
+>  		return;
+>  
+> -	dm_fd = bpf_program__fd(skel->progs.xdp_redir_prog);
+> -	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
+> +	dm_fd_redir = bpf_program__fd(skel->progs.xdp_redir_prog);
+> +	err = bpf_xdp_attach(IFINDEX_LO, dm_fd_redir, XDP_FLAGS_SKB_MODE, NULL);
+>  	if (!ASSERT_OK(err, "Generic attach of program with 8-byte devmap"))
+>  		goto out_close;
+>  
+> -	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
+> -	ASSERT_OK(err, "XDP program detach");
+> -
+>  	dm_fd = bpf_program__fd(skel->progs.xdp_dummy_dm);
+>  	map_fd = bpf_map__fd(skel->maps.dm_ports);
+>  	err = bpf_prog_get_info_by_fd(dm_fd, &info, &len);
+> @@ -47,6 +47,23 @@ static void test_xdp_with_devmap_helpers(void)
+>  	ASSERT_OK(err, "Read devmap entry");
+>  	ASSERT_EQ(info.id, val.bpf_prog.id, "Match program id to devmap entry prog_id");
+>  
+> +	/* send a packet to trigger any potential bugs in there */
+> +	char data[10] = {};
+> +	DECLARE_LIBBPF_OPTS(bpf_test_run_opts, opts,
+> +			    .data_in = &data,
+> +			    .data_size_in = 10,
+> +			    .flags = BPF_F_TEST_XDP_LIVE_FRAMES,
+> +			    .repeat = 1,
+> +		);
+> +	err = bpf_prog_test_run_opts(dm_fd_redir, &opts);
+> +	ASSERT_OK(err, "XDP test run");
+> +
+> +	/* wait for the packets to be flushed */
+> +	kern_sync_rcu();
+> +
+> +	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
+> +	ASSERT_OK(err, "XDP program detach");
+> +
+>  	/* can not attach BPF_XDP_DEVMAP program to a device */
+>  	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
+>  	if (!ASSERT_NEQ(err, 0, "Attach of BPF_XDP_DEVMAP program"))
+> @@ -124,6 +141,88 @@ static void test_xdp_with_devmap_frags_helpers(void)
+>  	test_xdp_with_devmap_frags_helpers__destroy(skel);
+>  }
+>  
+> +static void test_xdp_with_devmap_helpers_veth(void)
+> +{
+> +	struct test_xdp_with_devmap_helpers *skel;
 
-I got your point. However, with zoned devices having 1GB sections, per
-every round, we should
-touch almost 2MB size of ssa block pages, even though we didn't need
-to do it. Maybe, we can introduce
-another sysfs node like migration_window_limit, which can be set as
-double as migration_granuality by default,
-limiting the size of scanning.
+skel needs to be initialized to NULL ....
 
->
-> Thanks,
->
-> > -                     goto skip;
-> >               if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi=
-)))
-> >                       goto skip;
-> >
-> > @@ -1803,7 +1809,8 @@ static int do_garbage_collect(struct f2fs_sb_info=
- *sbi,
-> >
-> >               if (__is_large_section(sbi))
-> >                       sbi->next_victim_seg[gc_type] =3D
-> > -                             (segno + 1 < end_segno) ? segno + 1 : NUL=
-L_SEGNO;
-> > +                             (segno + 1 < sec_end_segno) ?
-> > +                                     segno + 1 : NULL_SEGNO;
-> >   skip:
-> >               f2fs_put_page(sum_page, 0);
-> >       }
->
+> +	struct bpf_prog_info info = {};
+> +	struct bpf_devmap_val val = {};
+> +	struct nstoken *nstoken = NULL;
+> +	__u32 len = sizeof(info);
+> +	int err, dm_fd, dm_fd_redir, map_fd, ifindex_dst;
+> +	__u32 idx = 0;
+> +
+> +	SYS(out_close, "ip netns add testns");
+> +	nstoken = open_netns("testns");
+> +	if (!ASSERT_OK_PTR(nstoken, "setns"))
+> +		goto out_close;
+
+... for this goto to not do test_xdp_with_devmap_helpers__destroy(garbage)
+
+pw-bot: cr
 
