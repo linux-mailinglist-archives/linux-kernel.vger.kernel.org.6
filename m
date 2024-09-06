@@ -1,116 +1,163 @@
-Return-Path: <linux-kernel+bounces-319415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCF396FC52
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:47:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59FC96FC57
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA4E28B247
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:47:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3E51F2654F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A861D5885;
-	Fri,  6 Sep 2024 19:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764C01D6789;
+	Fri,  6 Sep 2024 19:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E4G3y5qP"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fy2+DCtI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C715F6EB7C;
-	Fri,  6 Sep 2024 19:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB966EB7C;
+	Fri,  6 Sep 2024 19:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725652051; cv=none; b=qbe1yhSJpwMFuc6MZRspbyFFrkJf4Fn/5dtPXxcibh2pex6HCRMD4qs7sBsIYUamlan59q967wuFv8b3DiTud+nY7//D28t4YqL9ePbvbqFn5IGh32Ktha9Lfl4EhP8gK4RbBGtn4WwQQ4j1P6RelIS6LuX1vUmTcQ9FG7mY1tQ=
+	t=1725652097; cv=none; b=qxg6unGRNSuA16x0iuHXFpBAIcPWb5aOpvEUQNMP/JFQSUq+YwtWZl6hiw7iuOz9vi13/hAPm8W3GjtPpf0eKn8NxcKXx0HsAr4iY3KNZFbrDNr4+8PlhcoCxhT81OAPQ+MM/MDAtMsZgCfWSFO476tU+FfVQGrfdOEwTzeNmGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725652051; c=relaxed/simple;
-	bh=XbV4G23yHZQt0Afyfcg56V50a4AMQgZBjj0zuKMcjJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BW0rmppLJZ3u8WugLqCzeGTiX/4j1QaZH+25HnLAs0obkhT/u/pnLf9HfZF5zts3/ntth4Qwk8Wl5ImFIBhfCJPhUgvETDsWMThyrKJOb5FkR3903RGJEsYjqSfheS00Jc/ZyXAh6PirTJOa5zNv3nuJ1PLSZ5r7H2eniORpmQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E4G3y5qP; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mevBsT9PpGrBemevBsXT6K; Fri, 06 Sep 2024 21:47:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725652040;
-	bh=+Da3YG45hYBpjGQbOAK9bnsoiqlIfkN8ZztMmx3F5yk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=E4G3y5qPUbQ0ybAxno9HO49+HCCyR9DDuZR0Q2jV3MWK6exeZ5zoDY7lr0x/UALpT
-	 y+vBnTduSgfIhWgYOkzU8ApCFhnR5DZ7iL6jE55pF1x+men2aiCGUnhWJQ0oX8Tgng
-	 4q8/TTMBhUj6AsXln/f9GvBsHjaFBLixe+aYDmI/bg/I7WXzvsAPY0fF+BDkh372J0
-	 2Eb0KTU8BCVSmRqDst2CYj2b2aNUQ5YWVjcKIRY4XRF2coIKRDGKFQcYE/FQtfMxsW
-	 zxXQa0kcUtlEbau6xQDhxqnJis3aLD2sLQDC/jl+plgWAPJhWjNhQB7vBlPECayMKM
-	 QVWA17oN+hx1g==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Sep 2024 21:47:20 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] drm/ipuv3/parallel: Fix an error handling path in imx_pd_probe()
-Date: Fri,  6 Sep 2024 21:47:00 +0200
-Message-ID: <1cdd8523443d8850c5531462b30064cb2058924a.1725651992.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725652097; c=relaxed/simple;
+	bh=Ue8pqHqk+M1slk9kDJ7vbKUUmH3JA70snSffYA+4/q0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a2F/390nOplCjGnrQksOEnMMq7b/DApUJxzSw2KimwHz0F6h190DSnS7NNOtDDfpmtFL86HOORzTnMKvkiMfkNkwbpZ9176EuV5w4041UGDd6LHZRVG0PCqYfZu40pVn8Xi/fKy22Me/FD3EuDvXcDHsngiiLp4bZYtBnDtkj5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fy2+DCtI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868hk0f021803;
+	Fri, 6 Sep 2024 19:48:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NA/5pkBd6SgZdss0M2e+CPDEPACI2C9W6/N8XKt+d2g=; b=Fy2+DCtIsEBGTy7r
+	PBba8d3/Ld/fS/EhpHakTCbxJhHFd0+YgSdm0bqR6ADEHzX6Xi7hfSlbMCHxqZ7Q
+	sEURJjMlCVkwwG3tNLjgtoE3SizRyYiaWn5CLOnRQNdBUTd79difxEqtMAtEZEnG
+	91V4UlYtVa5O0K65lnTNa3F/g0e6P50VOmF9uFj615/TQX+3GOm8mr7zinzH9Fou
+	YfnqBJcw1D/1sEi7dZOds4uFzWStlH1LQ+XEZC8+YGpZJQhGkTuNcLYqYHJhAMfP
+	wGU05SEPJewe4d+uvWELnfgLlGPwjYJaVqhm3VloM/iCQVLM+2311DSh7Lvd4QDt
+	itMk+A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu38sv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 19:48:09 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 486Jm8ZK021332
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 19:48:08 GMT
+Received: from [10.216.47.237] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Sep 2024
+ 12:48:04 -0700
+Message-ID: <463caa4f-c32c-d74c-a8c6-1afbc22a877d@quicinc.com>
+Date: Sat, 7 Sep 2024 01:17:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 04/29] media: iris: initialize power resources
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-4-c5fdbbe65e70@quicinc.com>
+ <81fd218f-aa0f-4710-b832-cab927bfab9d@kernel.org>
+ <ba747923-38de-5c05-9220-762c5272ec74@quicinc.com>
+ <76ffb882-10f9-4737-afa2-9bb60248835d@kernel.org>
+ <f88d8596-c6a0-356e-060e-81d68f038995@quicinc.com>
+ <c7fd8c50-d5d9-4210-8253-457d7523eb30@kernel.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <c7fd8c50-d5d9-4210-8253-457d7523eb30@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 24FuV94a64TqePv22neLw2nI7091OTZN
+X-Proofpoint-ORIG-GUID: 24FuV94a64TqePv22neLw2nI7091OTZN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_05,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409060146
 
-If component_add() fails, we need to undo a potential previous
-drm_edid_alloc() call.
+Hi,
 
-Add an error handling path and the missing drm_edid_free(), as already done
-in the reomve function.
+On 9/6/2024 5:34 PM, Krzysztof Kozlowski wrote:
+> On 06/09/2024 13:21, Vikash Garodia wrote:
+>>>>>
+>>>>>> +	}
+>>>>>> +
+>>>>>>  	ret = v4l2_device_register(dev, &core->v4l2_dev);
+>>>>>>  	if (ret)
+>>>>>>  		return ret;
+>>>>>> @@ -88,8 +101,14 @@ static int iris_probe(struct platform_device *pdev)
+>>>>>>  }
+>>>>>>  
+>>>>>>  static const struct of_device_id iris_dt_match[] = {
+>>>>>> -	{ .compatible = "qcom,sm8550-iris", },
+>>>>>> -	{ .compatible = "qcom,sm8250-venus", },
+>>>>>> +	{
+>>>>>> +		.compatible = "qcom,sm8550-iris",
+>>>>>> +		.data = &sm8550_data,
+>>>>>> +	},
+>>>>>> +	{
+>>>>>> +		.compatible = "qcom,sm8250-venus",
+>>>>>> +		.data = &sm8250_data,
+>>>>>
+>>>>> You just added this. No, please do not add code which is immediatly
+>>>>> incorrect.
+>>>> It's not incorrect, in earlier patch we only added the compatible strings
+>>>> and with this patch introducing the platform data and APIs to get it.
+>>>
+>>> It is incorrect to immediately remove it. You keep arguing on basic
+>>> stuff. Sorry, but that is not how it works. If you add code and
+>>> IMMEDIATELY remove it, then it means the code was not needed. Or was not
+>>> correct. Choose one.
+>> I think it is not removing it. It is adding platform data to compatibles
+>> introduced in previous patch. Maybe it appears as if it is removing it.
+> 
+> I know how the diff works.
+Perhaps, i have misunderstood. Are you suggesting to add compat data and
+compatible string together in single patch rather than splitting it in 2 patches
+? If so, that would essentially end up squashing patch #3 and #4. Let me know if
+that would address your comment and we will plan to do that.
 
-Fixes: 42e08287a318 ("drm/ipuv3/parallel: convert to struct drm_edid")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/imx/ipuv3/parallel-display.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+> The way you avoid solving the problem with trivial responses is not
+> helping. We already have been there with another patchset from different
+> person and it lead to annoying all DT maintainers and (usually very
+> patient) some of networking folks. I ask you to approach to the review
+> seriously.
+Please be assured that all comments are valued upon and are being taken seriously.
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-index 91d7808a2d8d..6d51203f7f0f 100644
---- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-+++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-@@ -350,7 +350,15 @@ static int imx_pd_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, imxpd);
- 
--	return component_add(dev, &imx_pd_ops);
-+	ret = component_add(dev, &imx_pd_ops);
-+	if (ret)
-+		goto free_edid;
-+
-+	return 0;
-+
-+free_edid:
-+	drm_edid_free(imxpd->drm_edid);
-+	return ret;
- }
- 
- static void imx_pd_remove(struct platform_device *pdev)
--- 
-2.46.0
-
+> NAK.
+> 
+> Best regards,
+> Krzysztof
+> 
+Regards,
+Vikash
 
