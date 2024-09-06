@@ -1,173 +1,158 @@
-Return-Path: <linux-kernel+bounces-319042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A843696F6E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECA896F6F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2720AB25BC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:34:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB381C242FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09091D1F62;
-	Fri,  6 Sep 2024 14:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA09D1D27B1;
+	Fri,  6 Sep 2024 14:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K+/MypGK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="wWR0epq6"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB1F1D04A0;
-	Fri,  6 Sep 2024 14:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326521D27A3;
+	Fri,  6 Sep 2024 14:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633192; cv=none; b=BSsFU1uUFUfncXiXN/3Y1nYx45UdQFlP3JLeUqxXRdSLP4lqFe7PlOSTKjSDdiBCp3EiQOjkLs2fkdMixL2hWzYQvwZiHlpM8a05oCxLv+l7Of0lNaOyG6aMBzovcQORNzTxqzOf6AKvRGNbTD3xbQzz+29m0GmJsLY3hSgG+JQ=
+	t=1725633251; cv=none; b=rC5my2YPxCXTnvKtV2AOzAfxLKj1SN5ZoO5kTswQvYvhvV3EJzPTRfzM59JHGHqcxKSCH30VD380oJZ1WXAPTUmZQ0mvT+Sry92DKI1d8A0x6FR/HORNLIzYs9DI5OIRX/bMhmaU+k2HkQ87NA2zVhRCjh3Dx4YHZNU/18THYjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633192; c=relaxed/simple;
-	bh=8dpaCdue66SpPxJeJyg203ScP5Exdrq0AoQXlpDpZUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y4t4eoNwJ1z4nw9PF0oy1Zng6ZEc/OIpF8LcoJ4T5KebJfjppXX2oDO8N3WBtoBqNgnALUMgdcdTbOnRq5jWK8UTFYlmhjXJXuCuiQxeT3/xahBCXbbOYk/w+ER3b3PEYaKmkfxhwuT1Y39s7ar2nIidWgJmuUnof3vkU9Y0MxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K+/MypGK; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725633190; x=1757169190;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8dpaCdue66SpPxJeJyg203ScP5Exdrq0AoQXlpDpZUw=;
-  b=K+/MypGKLLx/qbxZ6imDe0q6AL9QUwEEmd0YOBF9vY5p/FOUVXhawV79
-   /51gsOq49iPBG+JT9LNEQGwVw/m2rrDeQzS4kPbCyTbG4jsealoBLlbKB
-   k9I5YTedSRcAsYaXyQ1Hx0zEyGOIgac1Elm7wUhzyAD0rSglYadOjSLm/
-   69xw07zRDjrK7OvVdCC4f+PJwKd/LT/t78jj9eJeNpW2nCnvParqMgj2r
-   BTW4mXeG2u9u+dMxg8g/Ng9qEM9q9gyIvG0HySI7cajXSKzuNnDO56qqk
-   lEqbQhy4crdnAZd+55tlKQaX8u/48TW9W0gyuR6VzdE3HIj/LcgIYLUxB
-   g==;
-X-CSE-ConnectionGUID: VpG5O3mvT7a90WfDUeUTNg==
-X-CSE-MsgGUID: yi3lAZxFRJCztOtAU5jilQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="41902996"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="41902996"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:33:07 -0700
-X-CSE-ConnectionGUID: iw3PU8QNSY2AZN1WMu2O0Q==
-X-CSE-MsgGUID: +sM4bXIZSW2mRVRbmZ35pQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="66003875"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:33:07 -0700
-Received: from [10.212.119.23] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.23])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id E796920B56FE;
-	Fri,  6 Sep 2024 07:33:04 -0700 (PDT)
-Message-ID: <b1002dc7-78bf-40ed-83af-12a50622fb76@linux.intel.com>
-Date: Fri, 6 Sep 2024 10:33:03 -0400
+	s=arc-20240116; t=1725633251; c=relaxed/simple;
+	bh=leL/eXoSOkYWLsqWeoVYVZUWJvEPlTVwiqp/UcfgNfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RNjvJhdUBCSFlCoj95C/B4rOqkC8iN5SmypWzNJb1RgrHu8dcKPw684I7Lh5dwBnZtJOZQsxKS1VV0ZmPAN11esMjtUJBNur6DeVrWqncPAGfDB7Q1DoB3QU5F8Kz8dUZcrpexXm2byi4FSEIjw1o0FvmwESJS83FnBAywdCr90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=wWR0epq6; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1725633237; x=1726238037; i=parker@finest.io;
+	bh=FmA+2X05d+UrhppdlrA1mjNB2wkHDBbIyEQS6gP+1No=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wWR0epq6VF8JN2bIHAvuucDgJNZmvaACaNxUX5ajHsrx/wE6GARtyoDmuVdXfNta
+	 4Ch0ZlevVAYcFXs9Vvk5PfrNUoBVRb34HiJ7+tIzOEzg+Fz9Fz64FFbQn0wc3h+qH
+	 CPCm1+tttHAqC8uF5UxxW50BoZ9XodhFtwV3WFuIAhRAL5cNvZzY8laKNmu67yln0
+	 TyWP+kInitkGP7VAh1fosxsjIeVBdpIqV3DNVxJhw9Sh3VsYyyfe5DL9vudJ0epa2
+	 df9/p2D/AFQomlRE4TnL/fp30Ikic67qcIbF1oU1saieUvxbgNqtB/A/zah9PEB7i
+	 PtQZjZu4aNLlJlC+GA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0MfWg9-1sNcEB3kuh-00R2rM; Fri, 06 Sep 2024 16:33:57 +0200
+Date: Fri, 6 Sep 2024 10:33:54 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
+Message-ID: <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
+In-Reply-To: <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
+References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
+	<20240503143303.15bf82bc@SWDEV2.connecttech.local>
+	<Ztr5u2wEt8VF1IdI@black.fi.intel.com>
+	<20240906095141.021318c8@SWDEV2.connecttech.local>
+	<ZtsQrFgH86AkKgPp@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/10] perf stat: Add --exclude-guest option
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
- James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-5-namhyung@kernel.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240905202426.2690105-5-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sVN0rM0jcj5boBO7Cil77tL8sr7fXEjf8hWkw69PVrbsDrVNTZs
+ gLjbi1kRSpKopbu4qAF9BzFMXoIjAoSCA0lGsO6oabzHzaLSACd/NGD/+sFPsyGjeNp46x2
+ Age02q2j0xY3Pn/jTZHoryPQ3RMmVoJdWM0Zeq9b78tGJbHFey9jzNhju/7rxoV6z93HlAS
+ C3FYumwtLpnYCULmOod4g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rRcfhwzIZTE=;KIDYM5bI+Z1h7l0yHm+wcHjbWNu
+ tQrNKMM83nCxdRCT2g1D2Ik5OlgYIkygE8MUi9a/2KUdPtBJMoR4Zwv7dFq/+MBd1ztT2wP4k
+ BDU3SfGWC4DNSkra+DUaYUngmHo61NDh6PJwFg/0M63fZ91QJ6Rvxoxj+AP8jtur4WXDmxEPa
+ PnSuVxLn7/YYQ6AlZdQJ+lmxaSlP54C40bOvuGlgtetYP8RCcMHuz8QEk76fynMeIoDjtsU8E
+ DFgy3jqGN0ASZVN7Mioy39YywLV+EHd4uU10wKGki7xGEIu6Gu5snNp1JjhUGdkvOqdKxYUsI
+ PwZrNvdSXO8+RZLu/RQSeL7YKPxIHJmhAIH95VsJthfu3aTbERTi+AoK5z1NofYIL/X3v3/dJ
+ G6g2g25a9v6+hc5nPj+I4On6GT7MLbgL+xxh6rIQGnKHlRFKZbb/ejhSOosZKWGv/fxyyH9YB
+ nzoUHDi54tj0BNyxTC+bfBGAux6eeKLVk14eWqjJmC0Rw0UqWZpU1tm+5bNwsmKtHBnhjLS00
+ 4BP4y27hFc7ogDDm0PSjcotovCXE+OHoJserX5kKZtyfGiovxSs3ujTpTWfM7n2EryB2qeel6
+ eqAGdreUsjjvhbDTSCDzf8auIukvmjrpmdS8H7/pNwUQHeKBVC1KXrH/sEtcxiNh7/2XWFM4u
+ uZw4Sb9DyQb/NzTk9m2QC3seP8/jCNqJtSeB92/bELYkE/hV8qlFyPWe1tiVqNJF3mYCK+iAh
+ /uRaXpYaboZJMmU7f9r/uSj54KrpGzGRg==
 
+On Fri, 6 Sep 2024 17:24:44 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
+> On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
+> > On Fri, 6 Sep 2024 15:46:51 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
+> > > > On Fri,  3 May 2024 20:15:52 +0300
+> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > >
+> > > > > After a rework for CONNTECH was done, the driver may need a bit =
+of
+> > > > > love in order to become less verbose (in terms of indentation an=
+d
+> > > > > code duplication) and hence easier to read.
+> > > > >
+> > > > > This clean up series fixes a couple of (not so critical) issues =
+and
+> > > > > cleans up the recently added code. No functional change indented=
+ by
+> > > > > the cleaning up part.
+> > > > >
+> > > > > Parker, please test this and give your formal Tested-by tag
+> > > > > (you may do it by replying to this message if all patches are
+> > > > >  successfully tested; more details about tags are available in
+> > > > >  the Submitting Patches documentation).
+> > > >
+> > > > I was able to test the Connect Tech related code and everything is
+> > > > work as expected. I can't test the non-CTI related changes but the=
+y
+> > > > are pretty minor.
+> > > >
+> > > > Tested-by: Parker Newman <pnewman@connecttech.com>
+> > >
+> > > Sorry for blast from the past, but I have some instersting informati=
+on
+> > > for you. We now have spi-gpio and 93c46 eeprom drivers available to =
+be
+> > > used from others via software nodes, can you consider updating your =
+code
+> > > to replace custom bitbanging along with r/w ops by the instantiating=
+ the
+> > > respective drivers?
+> >
+> > Hi Andy,
+> > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
+> > They have a dedicated "EEPROM interface" which is accessed by the
+> > REGB (0x8E) register. It is a very simple bit-bang interface though,
+> > one bit per signal.
+> >
+> > I guess in theory I could either add  GPIO wrapper to toggle these bit=
+s
+> > and use the spi-gpio driver but I am not sure if that really improves =
+things?
+> > Maybe using the spi-bitbang driver directly is more appropriate?
+> > What do you think?
+>
+> Yes, spi-bitbang seems better in this case.
+>
 
-On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
-> This option is to support the old behavior of setting exclude_guest by
-> default.  Now it doesn't set the bit so users want the old behavior can
-> use this option.
-> 
->   $ perf stat true
-> 
->    Performance counter stats for 'true':
-> 
->                 0.86 msec task-clock:u                     #    0.443 CPUs utilized
->                    0      context-switches:u               #    0.000 /sec
->                    0      cpu-migrations:u                 #    0.000 /sec
->                   49      page-faults:u                    #   56.889 K/sec
->                  ...
-> 
->   $ perf stat --exclude-guest true
-> 
->    Performance counter stats for 'true':
-> 
->                 0.79 msec task-clock:Hu                    #    0.490 CPUs utilized
->                    0      context-switches:Hu              #    0.000 /sec
->                    0      cpu-migrations:Hu                #    0.000 /sec
->                   49      page-faults:Hu                   #   62.078 K/sec
->                  ...
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/Documentation/perf-stat.txt | 7 +++++++
->  tools/perf/builtin-stat.c              | 2 ++
->  2 files changed, 9 insertions(+)
-> 
-> diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-> index 2bc06367248691dd..d28d8370a856598f 100644
-> --- a/tools/perf/Documentation/perf-stat.txt
-> +++ b/tools/perf/Documentation/perf-stat.txt
-> @@ -382,6 +382,13 @@ color the metric's computed value.
->  Don't print output, warnings or messages. This is useful with perf stat
->  record below to only write data to the perf.data file.
->  
-> +--exclude-guest::
-> +Don't count event in the guest mode.  It was the old behavior but the
-> +default is changed to count guest events also.  Use this option if you
-> +want the old behavior (host only).  Note that this option needs to be
-> +before other events in case you added -e/--event option in the command
-> +line.
-
-I'm not sure if we really need this option. I think it may bring more
-trouble than what we get.
-
-The name of the "--exclude-guest" sounds like a replacement of the event
-modifier "H". But in fact, it's not. It should only affect the default.
-It doesn't set the "H" for any events.
-
-Except for the perf kvm user, I don't think there are many users which
-care the exclude_guest. The behavior of the perf kvm is not changed. So
-the option seems not that important. If we really want an option to
-restore the old behavior, it's better to choose a better name and update
-the description.
-
-Thanks,
-Kan
-> +
->  STAT RECORD
->  -----------
->  Stores stat data into perf data file.
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index d8315dae930184ba..4d47675af5cc3094 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -2491,6 +2491,8 @@ int cmd_stat(int argc, const char **argv)
->  		OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
->  				"Configure all used events to run in user space.",
->  				PARSE_OPT_EXCLUSIVE),
-> +		OPT_BOOLEAN(0, "exclude-guest", &exclude_HG_default,
-> +			"Don't count events in the guest mode"),
->  		OPT_BOOLEAN(0, "percore-show-thread", &stat_config.percore_show_thread,
->  			"Use with 'percore' event qualifier to show the event "
->  			"counts of one hardware thread by sum up total hardware "
+I will try to make some time to implement this... Or if someone else from =
+the
+community wants to take this on in the mean time I am certainly happy to t=
+est
+and help out!
+Parker
 
