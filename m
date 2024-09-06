@@ -1,155 +1,153 @@
-Return-Path: <linux-kernel+bounces-319150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD4B96F891
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:45:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3263796F894
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78E41C23705
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D2628666E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F341D2F5E;
-	Fri,  6 Sep 2024 15:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2920F1D2F6C;
+	Fri,  6 Sep 2024 15:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bq/JynaO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPhGTNI7"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EB71CBE83
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF221CEAB1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725637549; cv=none; b=pYpv4ANfQo+Nd77cHUQ7FqnmVVAi7gQKn2hLkLK/tU83bT/xMNh5pbql9C38F9KLp/glJN4qLgAPZ5Elx3Mh9bs3YLV0+1ibY5M1RrrBqTL5ME3+mRuYziN5XRZ43MZqi6w2gvXjkVnfp4/O3NruN6++4X+/TA63D07LbJppp5A=
+	t=1725637629; cv=none; b=mq//LR87nAjEQty4rRGKiFvOF3MMAin17DZI/hPPkRRh3uXEDFx20kvhs98NUQMjCudGIw2mC5VwtUTDbw74YS7wUPKPa1ToizF/bBhEYmOibKZpptD73XAcET0DPNEE/YrWC1pal6AKBIU/HkF1LVQ9qM5qNRLdIcXfvZr8HVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725637549; c=relaxed/simple;
-	bh=1T66QnOQ5YMrzOcnt3O9CCNYqMRn16hQAV4F1GAiWxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s2JrQqzdvKmrWE8qWj9SdxlmTdC0ik3e5pZhEhSpqT+AnyQUDiOcWFGWAB3ygVu9eDbafMWxbPL5fK1Sm5hlGPrHcVIQRb3MMk5cWowZd8D6rwkN51N2SsMiPMSVVuhUlz1xLvE81MIoeuIP0XhiVRQaj79bK0Gi/WVROt1jVQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bq/JynaO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725637545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kuEoHVN4VS1AvlIIhN1QY1SKE4hlBdJDGHFexsIgI2Y=;
-	b=bq/JynaO3bX34im/h2qBOF2llfR17rhR0nW9O+YIzLrn1ZyDXEN4TbtNjHydd8H40si9IK
-	KWbnEKNEWtcV9OCZck1U5PGGPyqIhxznjigiAkLhDadXyFijLF3DERMkrUsncmnmRg1qj5
-	vNybD8m0/9CcBk9+TPJu2A5TWMPVF7Q=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-xEMjjv4DNcetnWHKOb5DKg-1; Fri,
- 06 Sep 2024 11:45:43 -0400
-X-MC-Unique: xEMjjv4DNcetnWHKOb5DKg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF35519344FA;
-	Fri,  6 Sep 2024 15:45:42 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D18D71955D48;
-	Fri,  6 Sep 2024 15:45:18 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 6.11-rc7
-Date: Fri,  6 Sep 2024 11:45:17 -0400
-Message-ID: <20240906154517.191976-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1725637629; c=relaxed/simple;
+	bh=gu20GtAI+AjtMwQyNX0gTbxgQ17/cmjuVAn+9Ihywbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z78qDLfhWccFc/dFE03IKtw8Ik45nYEA04Njx/NpZgW0RBJQsbSOkrjpQMObRnYPD2rqeAMHtACso8Ab6RTuRZj07e9GrGStrMR6ynoq4VMt7ygHDOnmLo2zok8tKDpwdSEVu3D4qJOdMqsMY1P8cqRCBVXOqDBGNVVpDdFeqQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPhGTNI7; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f50966c448so26729091fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725637626; x=1726242426; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dh009DPJvSFVva+/nxDK2xUzYWcU9eTQCK+MUuJaT7Y=;
+        b=HPhGTNI7P0Lf6ZeJX5/maOOlzAMKMLq0ful5nNto+a3zRCZ1RUhFCfAWboR4xvxS/b
+         fKxUreD8Ic5U/sXatJBcFQgIjam1NSE8uKKsuZLl4XoMTttL8ay9CkP0WODMjvq0A5bj
+         +178N/L3DSW1cC8p0mAeLMg16I0QGVYay2ly9UtDfgPfi7z5Sohrn2XvDdzkJtGvZ/G4
+         FjIqZ2w5gZGM5F4/duDn23JMqdzW+O2kylf2CtgKcVOSUGTMtPjc1GDERylOxOs5wC5p
+         p259+maUUFtj8gbUtb6qJV2WX1lu8dObvUWVehWJUu61p25S6J3ZvafWFxmjLCk8jl2d
+         dLNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725637626; x=1726242426;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dh009DPJvSFVva+/nxDK2xUzYWcU9eTQCK+MUuJaT7Y=;
+        b=JugozqbbhbSIPWMob3y2+JOD3r8N5sMk2UiXwv6CODLxMkRixbp5+ryNigIng0e1Oo
+         DNoN3rnsfe1S245VWWS6yQuzJDwtGeGykoBH0QqCZ71XASV3scqVg2sY7lVzrYiM5KFL
+         2t43w/R4Qj8d28G1sGYGwYvGinrh2rUBg5mq74r6Q/zNXMASb635jEQljNw+i15F0ol4
+         MQGodO1y41Xc9DP8saKMwNu8IgeA8pGT0T8cZl0TuKp1mxkYjXNYf2BzsCGnfBXFrqCE
+         aYhMxfqtvSirZf83abatx3maANWpIeVZ7S5G105pEOhA6/w6SLot9w7Qq7peaMsof8fm
+         1vqg==
+X-Gm-Message-State: AOJu0Yw593+A8SwIr/9coxJD030sUEChUKHlRFn7JOtE4ErL6VTDCp8G
+	op7vYAOvU9EeYUMBdDCueQfA/2NmIbGuZ0pXmQyo9uObBDoo8oJNkWideb8DGa2ypDcHxR9mCOj
+	v3GtmSpLhMK5p1EUFuC922YlvEmQ=
+X-Google-Smtp-Source: AGHT+IFVTTO8+ZBCXPaEE36sFeuTpJhoQDkWbuaTISaCNmzvdon+aj6I6+n1c5eaD8ERcgKm6xZ5omk4rnvtxUz71rA=
+X-Received: by 2002:a2e:4c02:0:b0:2f6:4aed:9973 with SMTP id
+ 38308e7fff4ca-2f7524a3509mr18052481fa.44.1725637625018; Fri, 06 Sep 2024
+ 08:47:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240905122020.872466-18-ubizjak@gmail.com> <202409062123.F3r9hB9z-lkp@intel.com>
+In-Reply-To: <202409062123.F3r9hB9z-lkp@intel.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Fri, 6 Sep 2024 17:46:51 +0200
+Message-ID: <CAFULd4Yz=C5oZ=hWa9biLsXvvBK3EqjndD8kRRWgb=RYiSFKAw@mail.gmail.com>
+Subject: Re: [PATCH 17/18] random: Do not include <linux/prandom.h>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, "Theodore Ts'o" <tytso@mit.edu>, 
+	"Jason A. Donenfeld" <Jason@zx2c4.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Fri, Sep 6, 2024 at 4:22=E2=80=AFPM kernel test robot <lkp@intel.com> wr=
+ote:
+>
+> Hi Uros,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on akpm-mm/mm-nonmm-unstable]
+> [also build test ERROR on mtd/mtd/next mtd/mtd/fixes linus/master v6.11-r=
+c6 next-20240906]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Uros-Bizjak/x86-ka=
+slr-Include-linux-prandom-h-instead-of-linux-random-h/20240905-202710
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-no=
+nmm-unstable
+> patch link:    https://lore.kernel.org/r/20240905122020.872466-18-ubizjak=
+%40gmail.com
+> patch subject: [PATCH 17/18] random: Do not include <linux/prandom.h>
+> config: um-randconfig-002-20240906 (https://download.01.org/0day-ci/archi=
+ve/20240906/202409062123.F3r9hB9z-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 0=
+5f5a91d00b02f4369f46d076411c700755ae041)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20240906/202409062123.F3r9hB9z-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409062123.F3r9hB9z-lkp=
+@intel.com/
+>
+> All error/warnings (new ones prefixed by >>):
+>
+>    In file included from crypto/testmgr.c:27:
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+Ah, here we have a negative config flag, enabled for allyesconfig, so
+- the source is disabled with allyesconfig.
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+#ifdef CONFIG_CRYPTO_MANAGER_DISABLE_TESTS
+...
+#endif
 
-are available in the Git repository at:
+Patch is as simple as:
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+--cut here--
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index f02cb075bd68..eeb7edd99a93 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -23,7 +23,7 @@
+#include <linux/fips.h>
+#include <linux/module.h>
+#include <linux/once.h>
+-#include <linux/random.h>
++#include <linux/prandom.h>
+#include <linux/scatterlist.h>
+#include <linux/slab.h>
+#include <linux/string.h>
+--cut here--
 
-for you to fetch changes up to 59cbd4eea48fdbc68fc17a29ad71188fea74b28b:
+Will add the patch to v2 series.
 
-  KVM: Remove HIGH_RES_TIMERS dependency (2024-09-05 12:04:54 -0400)
-
-Many small fixes that accumulated while I was on vacation...
-
-----------------------------------------------------------------
-x86:
-
-- Fixup missed comments from the REMOVED_SPTE=>FROZEN_SPTE rename.
-
-- Ensure a root is successfully loaded when pre-faulting SPTEs.
-
-- Grab kvm->srcu when handling KVM_SET_VCPU_EVENTS to guard against accessing
-  memslots if toggling SMM happens to force a VM-Exit.
-
-- Emulate MSR_{FS,GS}_BASE on SVM even though interception is always disabled,
-  so that KVM does the right thing if KVM's emulator encounters {RD,WR}MSR.
-
-- Explicitly clear BUS_LOCK_DETECT from KVM's caps on AMD, as KVM doesn't yet
-  virtualize BUS_LOCK_DETECT on AMD.
-
-- Cleanup the help message for CONFIG_KVM_AMD_SEV, and call out that KVM now
-  supports SEV-SNP too.
-
-- Specialize return value of KVM_CHECK_EXTENSION(KVM_CAP_READONLY_MEM),
-  based on VM type
-
-- Remove unnecessary dependency on CONFIG_HIGH_RES_TIMERS
-
-- Note an RCU quiescent state on guest exit.  This avoids a call to rcu_core()
-  if there was a grace period request while guest was running.
-
-----------------------------------------------------------------
-Leonardo Bras (1):
-      kvm: Note an RCU quiescent state on guest exit
-
-Maxim Levitsky (1):
-      KVM: SVM: fix emulation of msr reads/writes of MSR_FS_BASE and MSR_GS_BASE
-
-Paolo Bonzini (1):
-      Merge tag 'kvm-x86-fixes-6.11-rcN' of https://github.com/kvm-x86/linux into kvm-master
-
-Ravi Bangoria (1):
-      KVM: SVM: Don't advertise Bus Lock Detect to guest if SVM support is missing
-
-Sean Christopherson (2):
-      KVM: x86/mmu: Check that root is valid/loaded when pre-faulting SPTEs
-      KVM: x86: Acquire kvm->srcu when handling KVM_SET_VCPU_EVENTS
-
-Steven Rostedt (1):
-      KVM: Remove HIGH_RES_TIMERS dependency
-
-Tom Dohrmann (1):
-      KVM: x86: Only advertise KVM_CAP_READONLY_MEM when supported by VM
-
-Vitaly Kuznetsov (1):
-      KVM: SEV: Update KVM_AMD_SEV Kconfig entry and mention SEV-SNP
-
-Yan Zhao (1):
-      KVM: x86/mmu: Fixup comments missed by the REMOVED_SPTE=>FROZEN_SPTE rename
-
- arch/x86/kvm/Kconfig             |  7 ++++---
- arch/x86/kvm/mmu/mmu.c           |  4 +++-
- arch/x86/kvm/mmu/spte.c          |  6 +++---
- arch/x86/kvm/mmu/spte.h          |  2 +-
- arch/x86/kvm/mmu/tdp_mmu.c       |  8 ++++----
- arch/x86/kvm/svm/svm.c           | 15 +++++++++++++++
- arch/x86/kvm/x86.c               |  5 ++++-
- include/linux/context_tracking.h |  6 ++++--
- include/linux/kvm_host.h         | 10 +++++++++-
- 9 files changed, 47 insertions(+), 16 deletions(-)
-
+Thanks to the kernel test robot,
+Uros.
 
