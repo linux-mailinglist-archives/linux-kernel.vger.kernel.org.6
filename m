@@ -1,70 +1,39 @@
-Return-Path: <linux-kernel+bounces-319129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B6D96F81C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:21:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB44C96F821
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188D91C23BEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:21:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2271EB22410
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73AA1D2F41;
-	Fri,  6 Sep 2024 15:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQlgJg94"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA021D1739;
-	Fri,  6 Sep 2024 15:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD081D2F57;
+	Fri,  6 Sep 2024 15:25:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9415A1D0DCB;
+	Fri,  6 Sep 2024 15:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725636088; cv=none; b=X3YdtiLT2Xv9vgQI2i/LyVSTC4Bb7NJ17hdXkDASuGUe/L7yDkQQ0FNfPDR2nAL+BP13dqr9MjCxofeoQ+klkoIMZLhs2AKBl1d8GKrB3FqL0fWiD2CwDD3bZebnP1hTCWrfGvuUEgjxNyiR0QZYBwbvYrLZsH8DWWTlZY2BDiA=
+	t=1725636326; cv=none; b=DhX/bAgf/QaamTk0WWgKT/xuJXvA+Y24NkOv5XMRlCtHA4+hr7TZd8+ym0U9eZsdmdCby9XKT0IAvjvUIYjphhc16kva5qB8ae8Uabtel6NMm5isOwUBN1UqYdFBFR2DYa+WWD1NkXzLvkPMgoVs48brvfmFv6Uk9tBG5TY0Nek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725636088; c=relaxed/simple;
-	bh=oUSjs1MMOxspywHp1oG7MWq+ySDSFas4rJEQB36sgpw=;
+	s=arc-20240116; t=1725636326; c=relaxed/simple;
+	bh=NljnRnbutnsxF1J9z4hLJYKWZghTvG8RmywBz2ykkPM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S0zPt28vV7E+NSfy33gWQZ94aTR8Y/RxQv2CoOBGPkMAecP/t42jQxn6gh8aOrHMTUQseDAZprG0VW+xV5BS38aXAGSZRPzqkhQMSy3O0A7LIF+V+Huj3Ikdyotgqv4rEhTo3HeCDHzUtWyW5LtneDo+3D4has+Il0imO9aT9nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQlgJg94; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725636087; x=1757172087;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oUSjs1MMOxspywHp1oG7MWq+ySDSFas4rJEQB36sgpw=;
-  b=TQlgJg94MwEG4kII6SqP2/7ETxL4sFTifC6vczMirjp4fcBxKA+M4k7o
-   fuASyKB4LJ0tQghJ2G+R0mtX8uqKs88geWV1+VQAJi3tylKvO4FBr+W23
-   bySJAkAiN6GWaY1+8QzHXT5n6KXbifKl6XTpCvvZYzAyLaZ1qNi5bOZfj
-   y59qciWWXmf73E21J+vzBTq05ggkWJDgTJ5a49GncDxjLKFAkKVIqknZH
-   bLL/yPdt3hdK2kmGsZfOyYHkHgZ7YY8i7GW7YPH4MxD/zzJ7Pihm/DMHt
-   hYDLM/tWWURb9Rwk8tUWQ9cHf+0sXMkX51ocH8VyQGhabubgj/8whQJBf
-   g==;
-X-CSE-ConnectionGUID: VYh4zCH2TW6sto2VCpWJsw==
-X-CSE-MsgGUID: 7OlrPE65RxyUUTyr2oX+1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="35750007"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="35750007"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:21:26 -0700
-X-CSE-ConnectionGUID: iWX56I1eTTCTgjLcSy8sDQ==
-X-CSE-MsgGUID: Psce5VTTQyqfgwPEv9VTOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="66222829"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:21:25 -0700
-Received: from [10.212.119.23] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.23])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 2152A20B5782;
-	Fri,  6 Sep 2024 08:21:23 -0700 (PDT)
-Message-ID: <8b9d3cbb-99bd-4474-8daf-e9ab36e42a77@linux.intel.com>
-Date: Fri, 6 Sep 2024 11:21:21 -0400
+	 In-Reply-To:Content-Type; b=N/u7LWWCGc3xZsiX1UAoq8SWH97j4Bil5N+iz+eNoM4Akbm5uXPiWqB3jFXiIB5HPcDgNZ6iFfsn3V0EgoY+PfPkmH+upJf/0P1PoiSz7R6gPNoOrvypXIEZ3v7uNV/vKSfy0vqCiUmONnvNR3/GpmYfzDVIKhUTCfkhdcnVIg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA5FEFEC;
+	Fri,  6 Sep 2024 08:25:49 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFFDF3F73F;
+	Fri,  6 Sep 2024 08:25:20 -0700 (PDT)
+Message-ID: <8e17f1ac-0178-454b-b9dc-bb14ad6c465b@arm.com>
+Date: Fri, 6 Sep 2024 16:25:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,82 +41,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] perf tools: Separate exclude_hv fallback
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
- James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-8-namhyung@kernel.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240905202426.2690105-8-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Optimise non-coherent
+ unmap"
+To: Will Deacon <will@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ Ashish Mhetre <amhetre@nvidia.com>, Rob Clark <robdclark@chromium.org>,
+ Joerg Roedel <joro@8bytes.org>,
+ "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240905124956.84932-1-robdclark@gmail.com>
+ <20240905155330.GA15246@willie-the-truck>
+ <53f13813-a515-475a-836d-0b6017a117eb@arm.com>
+ <20240906105656.GA16124@willie-the-truck>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240906105656.GA16124@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
-> The exclude_hv was added in the evsel__fallback() in the commit
-> 4ec8d984895fef43a ("perf record: Fix priv level with branch sampling
-> for paranoid=2") to address branch stack samples on Intel PMUs.
-> As some other PMUs might not support that, let's separate the bit from
-> exclude_kernel to make sure it can add the bit only if required.
+On 06/09/2024 11:56 am, Will Deacon wrote:
+> On Thu, Sep 05, 2024 at 05:27:28PM +0100, Robin Murphy wrote:
+>> On 05/09/2024 4:53 pm, Will Deacon wrote:
+>>> On Thu, Sep 05, 2024 at 05:49:56AM -0700, Rob Clark wrote:
+>>>> From: Rob Clark <robdclark@chromium.org>
+>>>>
+>>>> This reverts commit 85b715a334583488ad7fbd3001fe6fd617b7d4c0.
+>>>>
+>>>> It was causing gpu smmu faults on x1e80100.
+>>>>
+>>>> I _think_ what is causing this is the change in ordering of
+>>>> __arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
+>>>> memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
+>>>> this patch is supposed to work correctly in the face of other
+>>>> concurrent translations (to buffers unrelated to the one being
+>>>> unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
+>>>> stale data read back into the tlb.
+>>>>
+>>>> Signed-off-by: Rob Clark <robdclark@chromium.org>
+>>>> ---
+>>>>    drivers/iommu/io-pgtable-arm.c | 31 ++++++++++++++-----------------
+>>>>    1 file changed, 14 insertions(+), 17 deletions(-)
+>>>
+>>> Please can you try the diff below, instead?
+>>
+>> Given that the GPU driver's .tlb_add_page is a no-op, I can't see this
+>> making a difference. In fact, given that msm_iommu_pagetable_unmap() still
+>> does a brute-force iommu_flush_iotlb_all() after io-pgtable returns, and in
+>> fact only recently made .tlb_flush_walk start doing anything either for the
+>> sake of the map path, I'm now really wondering how this patch has had any
+>> effect at all... :/
 > 
-> Technically it should change the modifier string at the end of the
-> event name.  ":u" is for exclude_kernel + exclude_hv, so it should be
-> ":uh" if it has exclude_kernel only.  That means the default events for
-> regular users will looks like "cycles:Puh" (for perf record) or
-> "instructions:uh" (for perf stat).  But I'm not sure if it's worth the
-> trouble so I didn't touch the name in this patch.
+> Hmm, yup. Looks like Rob has come back to say the problem lies elsewhere
+> anyway.
 > 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/util/evsel.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+> One thing below though...
 > 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 1a4f52767942e5ad..c5df45bb74dfc1b5 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -3389,10 +3389,20 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
->  		free(evsel->name);
->  		evsel->name = new_name;
->  		scnprintf(msg, msgsize, "kernel.perf_event_paranoid=%d, trying "
-> -			  "to fall back to excluding kernel and hypervisor "
-> -			  " samples", paranoid);
-> +			  "to fall back to excluding kernel samples", paranoid);
->  		evsel->core.attr.exclude_kernel = 1;
-> -		evsel->core.attr.exclude_hv     = 1;
-> +
-> +		return true;
-> +	} else if (err == EACCES && !evsel->core.attr.exclude_hv &&
-> +		   (paranoid = perf_event_paranoid()) > 1) {
-> +		/* If event has exclude user then don't exclude hv. */
-> +		if (evsel->core.attr.exclude_user)
-> +			return false;
-> +
-> +		/* Intel branch stack requires exclude_hv */
+>>>
+>>> Will
+>>>
+>>> --->8
+>>>
+>>> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+>>> index 0e67f1721a3d..0a32e9499e2c 100644
+>>> --- a/drivers/iommu/io-pgtable-arm.c
+>>> +++ b/drivers/iommu/io-pgtable-arm.c
+>>> @@ -672,7 +672,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>                   /* Clear the remaining entries */
+>>>                   __arm_lpae_clear_pte(ptep, &iop->cfg, i);
+>>> -               if (gather && !iommu_iotlb_gather_queued(gather))
+>>> +               if (!iommu_iotlb_gather_queued(gather))
+>>
+>> Note that this would reintroduce the latent issue which was present
+>> originally, wherein iommu_iotlb_gather_queued(NULL) is false, but if we
+>> actually allow a NULL gather to be passed to io_pgtable_tlb_add_page() it
+>> may end up being dereferenced (e.g. in arm-smmu-v3).
+> 
+> I think there is still something to fix here. arm_lpae_init_pte() can
+> pass a NULL gather to __arm_lpae_unmap() and I don't think skipping the
+> invalidation is correct in that case. Either the drivers need to handle
+> that or we shouldn't be passing NULL.
+> 
+> What do you think?
 
-I don't think it's an requirement for Intel branch stack. The HV is
-ignored for all X86.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/core.c#n542
-
-I think it's a generic request for branch on all arch.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/events/core.c#n366
+The subtlety there is that in that case it's always a non-leaf PTE, so 
+all that goes back to the driver is io_pgtable_tlb_flush_walk() and the 
+gather is never used.
 
 Thanks,
-Kan
-
-> +		scnprintf(msg, msgsize, "kernel.perf_event_paranoid=%d, trying "
-> +			  "to fall back to excluding hypervisor samples", paranoid);
-> +		evsel->core.attr.exclude_hv = 1;
->  
->  		return true;
->  	} else if (err == EOPNOTSUPP && !evsel->core.attr.exclude_guest &&
+Robin.
 
