@@ -1,191 +1,133 @@
-Return-Path: <linux-kernel+bounces-319058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46D096F723
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:42:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D881E96F727
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC191F2582D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90AE42862F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C61F1D1732;
-	Fri,  6 Sep 2024 14:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692321D221B;
+	Fri,  6 Sep 2024 14:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZc3U5fZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUesnVBa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDFC156880;
-	Fri,  6 Sep 2024 14:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01501156880;
+	Fri,  6 Sep 2024 14:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633745; cv=none; b=X5Uz3Nw3HJgjvRSAU9LJZYQME0uScoeaNdCSVpdJ0la1V2ST8Ubd89Ex8a0T0H71RF5ngbPM+IimMhlnwnfzm2Qp0c3QIa6tEQpb8+KqWnS9wKdky53h5PbgGmNe9XWD3Jw/9bi1nofKXehF5VI+rYbvtD1zopXH8ybei/ZTxaU=
+	t=1725633753; cv=none; b=KzM7vm6f9tV5bMP/3bri5v7bEgmC93MA1OoL2y2U/IKwnKHbnWPGg1eO4/e7clTRNNAUaxQo9nim3c5DnmDKjRC0vr7MWtjBJZVXH1LE40u/F9JytSinonmsbNzn6ssBrJcP5BCAMz9/Zm8Q7vZyPqepYkwqUhIOu2F4Uetj2EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633745; c=relaxed/simple;
-	bh=TmcKdTXExCJ2UcE1g4PkpPFg+K6EEGji27f/9N6zwT0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QGr0bzmWfdSTmwuLpyLssStf07X75+li9lFR4aW4LxET/MmQ3fuy329F+eyU8QPX1GFJeJLr0rMstVgrIdik9/YldZdypQBh1gGkAOUnxBaFAYsZJGjabjmzdqB2IyUNB8g0JfpE1tttK3hrspms6iIMVoN3lGSXxTX5IeUaUmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZc3U5fZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70578C4CEC4;
-	Fri,  6 Sep 2024 14:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725633744;
-	bh=TmcKdTXExCJ2UcE1g4PkpPFg+K6EEGji27f/9N6zwT0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=kZc3U5fZf44vXMVSFFrz1bJ9A6votpx8WQajkGxDUSrPlM8OPiv1f6Z5yr9fNl2ij
-	 C/+WXsA17kFTHcMX03Y3/PS8eWODt2aFHvgmJbEXdqGVcm9a5q0CmtXYSy0w18/1qY
-	 4s6zBZsVVggdBdVUm4EZ8guz3uyv71PT3UJjbu3OB8U+Gkm2CNFdZvdmCf06jsdXwv
-	 OBViOamHdL09ScYOdhhMNM6CKWO3auKqPam/oN/XpfAF0hfYLu2DKlmXKL9hTxJiQQ
-	 rqnH4044VJVCrImz2XOeny9ykWOxS9e3QQFPKinAYrHXUSXsua65KTOTelz/DYgoSW
-	 RLy5712wW+YWQ==
+	s=arc-20240116; t=1725633753; c=relaxed/simple;
+	bh=E/O01DYIOb9W9GaxJ+Y+3+N4ZJwxnWvEDblOXl2trIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkMXT3pCZg/TIGHon+4Cfp4ea0/UeY9IKwLzv/tspmRPKIRxXYRo6MuGeIiFqvC+CfOQ0KOClELSlNPimcr8GAzD6Agze0YHK3EMPgAGp1koE4Du3wxF13lZAJoSOky6oQ2JP9i2ex78Im5G9NmM6vPNTTDuMx6Rn/A+QuH28To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUesnVBa; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725633752; x=1757169752;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=E/O01DYIOb9W9GaxJ+Y+3+N4ZJwxnWvEDblOXl2trIQ=;
+  b=DUesnVBapj+HxkVE9yFmtSjkTDb7CK4rgNDPaa/sMN5o4qEV2lcsfgrd
+   t2THZcJCf5I/q2Ls1CZH9rbW+3RBuA72UwwOvbZZFI2LaxIM+2sz3GL15
+   BdnnaYRnDsmpyq3NYmbAjosyNuMvwH+bK01NaGwL/pfO0TjcMFTZ4UHX8
+   VK5jWEbzqkfmSAOtG1KCqLERKAqBgyC7flUL24EJBo8emLkxjAmSewPxe
+   qM6VafO79QGdMch0b8rX43e5zeqAe3lNVlWEow1QBwY/2suSJyVFAlLwl
+   EReXW24HwvGy6ypG1BCDrACnarYnKXF/vg5kPzcgCA9i3qdjMigpeq2oU
+   w==;
+X-CSE-ConnectionGUID: 3ZlC6zpsQaSrSuQU2w85ig==
+X-CSE-MsgGUID: gmTkuDYNSeCOjqRCJmHuHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24195842"
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="24195842"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:42:31 -0700
+X-CSE-ConnectionGUID: +TavGMlyQtOrLMLAOCTpuQ==
+X-CSE-MsgGUID: 5eJj58oKRe2mkcdKtxrYng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="65787484"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:42:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1smaAN-00000005pdW-0nay;
+	Fri, 06 Sep 2024 17:42:27 +0300
+Date: Fri, 6 Sep 2024 17:42:26 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
+Message-ID: <ZtsU0nfAFssevmmz@smile.fi.intel.com>
+References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
+ <20240503143303.15bf82bc@SWDEV2.connecttech.local>
+ <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
+ <20240906095141.021318c8@SWDEV2.connecttech.local>
+ <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
+ <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 06 Sep 2024 17:42:20 +0300
-Message-Id: <D3ZA3WBGABKG.1SE9YOAX30B2Y@kernel.org>
-Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
- <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
- <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
- <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
- <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
- <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
- <zhuo.song@linux.alibaba.com>
-Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Shuai Xue" <xueshuai@linux.alibaba.com>, <bp@alien8.de>,
- <rafael@kernel.org>, <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
- <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
- <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
- <gregkh@linuxfoundation.org>, <will@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240902030034.67152-2-xueshuai@linux.alibaba.com>
- <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
- <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
- <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org>
- <D3YEYH69KMV4.13SX59Y2HT6D@kernel.org>
- <34d5d58b-7fc2-4f93-9d3b-3051ec5e6a23@linux.alibaba.com>
-In-Reply-To: <34d5d58b-7fc2-4f93-9d3b-3051ec5e6a23@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri Sep 6, 2024 at 4:53 AM EEST, Shuai Xue wrote:
->
->
-> =E5=9C=A8 2024/9/5 22:17, Jarkko Sakkinen =E5=86=99=E9=81=93:
-> > On Thu Sep 5, 2024 at 5:14 PM EEST, Jarkko Sakkinen wrote:
-> >> On Thu Sep 5, 2024 at 6:04 AM EEST, Shuai Xue wrote:
-> >>>
-> >>>
-> >>> =E5=9C=A8 2024/9/4 00:09, Jarkko Sakkinen =E5=86=99=E9=81=93:
-> >>>> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
-> >>>>> Synchronous error was detected as a result of user-space process ac=
-cessing
-> >>>>> a 2-bit uncorrected error. The CPU will take a synchronous error ex=
-ception
-> >>>>> such as Synchronous External Abort (SEA) on Arm64. The kernel will =
-queue a
-> >>>>> memory_failure() work which poisons the related page, unmaps the pa=
-ge, and
-> >>>>> then sends a SIGBUS to the process, so that a system wide panic can=
- be
-> >>>>> avoided.
-> >>>>>
-> >>>>> However, no memory_failure() work will be queued unless all bellow
-> >>>>> preconditions check passed:
-> >>>>>
-> >>>>> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_ha=
-ndle_memory_failure()
-> >>>>> - `if (flags =3D=3D -1)` in ghes_handle_memory_failure()
-> >>>>> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_me=
-mory_failure()
-> >>>>> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` =
-in ghes_do_memory_failure()
-> >>>>>
-> >>>>> In such case, the user-space process will trigger SEA again.  This =
-loop
-> >>>>> can potentially exceed the platform firmware threshold or even trig=
-ger a
-> >>>>> kernel hard lockup, leading to a system reboot.
-> >>>>>
-> >>>>> Fix it by performing a force kill if no memory_failure() work is qu=
-eued
-> >>>>> for synchronous errors.
-> >>>>>
-> >>>>> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
-> >>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> >>>>>
-> >>>>> ---
-> >>>>>    drivers/acpi/apei/ghes.c | 10 ++++++++++
-> >>>>>    1 file changed, 10 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> >>>>> index 623cc0cb4a65..b0b20ee533d9 100644
-> >>>>> --- a/drivers/acpi/apei/ghes.c
-> >>>>> +++ b/drivers/acpi/apei/ghes.c
-> >>>>> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
-> >>>>>    		}
-> >>>>>    	}
-> >>>>>   =20
-> >>>>> +	/*
-> >>>>> +	 * If no memory failure work is queued for abnormal synchronous
-> >>>>> +	 * errors, do a force kill.
-> >>>>> +	 */
-> >>>>> +	if (sync && !queued) {
-> >>>>> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruptio=
-n\n",
-> >>>>> +			current->comm, task_pid_nr(current));
-> >>>>
-> >>>> Hmm... doest this need "hardware" or would "memory corruption" be
-> >>>> enough?
-> >>>>
-> >>>> Also, does this need to say that it is sending SIGBUS when the signa=
-l
-> >>>> itself tells that already?
-> >>>>
-> >>>> I.e. could "%s:%d has memory corruption" be enough information?
-> >>>
-> >>> Hi, Jarkko,
-> >>>
-> >>> Thank you for your suggestion. Maybe it could.
-> >>>
-> >>> There are some similar error info which use "hardware memory error", =
-e.g.
-> >>
-> >> By tweaking my original suggestion just a bit:
-> >>
-> >> "%s:%d: hardware memory corruption"
-> >>
-> >> Can't get clearer than that, right?
-> >=20
-> > And obvious reason that shorter and more consistent klog message is eas=
-y
-> > to spot and grep. It is simply less convoluted.
-> >=20
-> > If you want also SIGBUS, I'd just put it as "%s:%d: hardware memory
-> > corruption (SIGBUS)"
-> >=20
-> > BR, Jarkko
->
-> Hi, Jarkko,
->
-> I will change it to "%s:%d: hardware memory corruption (SIGBUS)".
->
-> Thank you for valuable suggestion.
+On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
+> On Fri, 6 Sep 2024 17:24:44 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
+> > > On Fri, 6 Sep 2024 15:46:51 +0300
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
 
-Yeah, no intention nitpick, it has a practical value when debugging
-issues :-)
+...
 
->
-> Best Regards,
-> Shuai
+> > > > Sorry for blast from the past, but I have some instersting information
+> > > > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
+> > > > used from others via software nodes, can you consider updating your code
+> > > > to replace custom bitbanging along with r/w ops by the instantiating the
+> > > > respective drivers?
+> > >
+> > > Hi Andy,
+> > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
+> > > They have a dedicated "EEPROM interface" which is accessed by the
+> > > REGB (0x8E) register. It is a very simple bit-bang interface though,
+> > > one bit per signal.
+> > >
+> > > I guess in theory I could either add  GPIO wrapper to toggle these bits
+> > > and use the spi-gpio driver but I am not sure if that really improves things?
+> > > Maybe using the spi-bitbang driver directly is more appropriate?
+> > > What do you think?
+> >
+> > Yes, spi-bitbang seems better in this case.
+> 
+> I will try to make some time to implement this... Or if someone else from the
+> community wants to take this on in the mean time I am certainly happy to test
+> and help out!
 
-BR, Jarkko
+Sure, I shared this thought due to having lack of time to look myself,
+but I prepared the above mentioned drivers to make them work in this case.
+(If you are curios, see the Git history for the last few releases with
+ --author="Andy Shevchenko")
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
