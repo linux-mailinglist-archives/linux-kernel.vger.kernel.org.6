@@ -1,222 +1,233 @@
-Return-Path: <linux-kernel+bounces-318324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B276696EBD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:21:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD89396EBDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C00282A6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:21:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C83DB20D3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E8814C5B5;
-	Fri,  6 Sep 2024 07:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DE514BF87;
+	Fri,  6 Sep 2024 07:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xNyKdDHP"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t4TX1s5H"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4580F14BF87
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE117C9B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725607272; cv=none; b=BcK8kpKqYAbv6t2PnIAmnSPphb1dcsy24n09h6LvrQMJGb1SWM7AQGmLV3j/GAQI3kVL6OmUTamN+LWuCOdYmLCJbH8jUxhB9JV7ZNombRmrgOW5LOoh50XUEhvRPYnJfr4qaS6D6nnh8qUAMcmbrSyAvgUhaCRiB14lxzkUpCo=
+	t=1725607355; cv=none; b=mRY+E4dhjmZGytY1wreMObc7s+IpXF0IcaN9jA64VHw3CRGGkfzNsCjvGSimEbCJwmFhMrMNt3m/wrbXRbUAQXazQ0JNpl35Ag6MRwVvknF6QjrAVeD1A0myGOn8gAKM4OOUlRBAzPuKH3rxgP6668wylOj/RKsQXASPJuNdFcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725607272; c=relaxed/simple;
-	bh=yO/YqnNMOnXRqewYhKP20TS0IxM90XmpKtT+gJDL7QI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r0ar9g3tYdPvlwTFxO2SAHOmptR2ctNAOxpIGFXp+AAHsWc8b0yEO6pGJJg+yoxPCEBv3939VVEQJaXC1gfK2T/mkNgYqR/xSxnThfruzrm1ajaK8zbn388f1RiZgTHd9Bi6tJe8QOJ9qZo+E6sjVBQH2FPNvB7gXeNP639cOps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xNyKdDHP; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d02fe02d-a6c7-4157-bb7d-3fe235f21237@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725607268;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zJPCh8PbP6Ph7SJVvvtMaEdy7Om9qiXdVbZwIKJbLac=;
-	b=xNyKdDHP4ERpm0wvOkIn/jYqCTzwSwzDwa0+P37KJndJaFEiFop/OTDMjIXGU5EDJLKXfQ
-	mM7OUatDpyRMqiet5XMBmQKn4oL7VnZRGFdfrUQz1HJqpKUQfoqZxcWhrkQcnK5SFyFKwO
-	tEHqWfpnmG0P3LEQRiK/xdTIgCz4fc8=
-Date: Fri, 6 Sep 2024 15:20:53 +0800
+	s=arc-20240116; t=1725607355; c=relaxed/simple;
+	bh=KwZZ+AnanxgAt3VuNvV+WPnAmgNU40hFKMZuWq+2Lh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AhXgvkjjgpeVm38+alZ3RVbvmmLjnGhyG/DE33/DT4PKEUx5mnMypY+IKG93wUfLgMQQJaecEfMhhGi4fvZzZPWD8SORXEtY+cNBcD392X8NyoQ5yAMVwPbIORdZvXg2uDyxZPbNf1a1HAYT2ObDIEpoTu3vy8CRNYOcjpZ6aPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t4TX1s5H; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-501269674daso283374e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725607353; x=1726212153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uhgpt3bI2E2g8xPhmof7AuwEUjN30/Xo3LJgy3GqQN4=;
+        b=t4TX1s5H9fxKSfJ+8ThH0GcqFobrj2bPo2ZtNX36MAVSVQyZa97ko2VpP3wQFDdlJ9
+         sVoB90TbaFv4izRNbyyUr2+Sm72qdVTm2Sx5jq0rpcCazA+CpTZEzMqTqrbEo49jw5dz
+         G4cf+r4FKNzHNeMrdkd6LDO6tT2x1Yj3nmZ+jvwJwbNXRtC0MWLJwNGQn3j9YGuNDs0O
+         9j3+ty9ri+9nnrE3Q6p0ZwpdVUsnJfusjIuzuqM5LZXn/xJUC47c/kq6POWxlLbq+s1z
+         SvxbAnatGZQ/box7ljcNIngjWswYGHKWN20OEVlPwgF6+Lb/s2H5XCqsRs5btB72iEae
+         injA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725607353; x=1726212153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uhgpt3bI2E2g8xPhmof7AuwEUjN30/Xo3LJgy3GqQN4=;
+        b=bHg+HWPGxua2Hbbbm1jF006lOUor3lPRwxaYqTW7joCsb4YXtKoEyClRUorQbnUpB5
+         RMmYhjchxRTI1jUAvgd3YGwoqawRO6nAwapkYxWqeKIujITlAOWZd8i8roXPwSJz3UU+
+         fYOXgqH4EYUfeXlClAuzI168I9n2kXCP2gtQNVURuKd0f3QYyrUE7fAUXUBpDp0isQ9e
+         CftZDIwVdBKXcMS3m6/8ob87Iw3hTTaIQ6xrF07ay0de936Cb4R37uMaL7saIvZsG3IQ
+         H0D4px8zoI9IH8OGb23qZfnPlLZphkj3VaztrzcZO2Pb+1brIUzXz/GcA3f6dG2p8T2Z
+         dvcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgQN8eBdO319pa1wCK5vd8/MpC5jF9BBx8qvbGf5DxzvlC6YYV+/0HbohktQ1YktdCEHwIcwv/xydeNWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLvhPSEJy5g5xVSYRlO1Bblv+Lp22Vs5otZurlocBsbV9qriuV
+	dtvLSg6RmYDC2IN6DV+0ZrHUiZten3Iz/kCSn/xhTkM+K3mVe9FQgd4pRSOVJOa5BDMvhVkz8DE
+	N7aaQ3eP5M4n+5Eo+y661AoJcmEyLk4TmMXw1mg==
+X-Google-Smtp-Source: AGHT+IH+SAfQDvH2kLpxnbDKDzaFOm1dacngrzZ/IHWoVFUo66Sq45cgx2tjWkq5kjOIC40bYvIZf/noAiB9QAWi0i4=
+X-Received: by 2002:a05:6122:3123:b0:4ef:678e:8a90 with SMTP id
+ 71dfb90a1353d-50207af372dmr1979153e0c.3.1725607353037; Fri, 06 Sep 2024
+ 00:22:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH v3 01/14] mm: pgtable: introduce
- pte_offset_map_{ro|rw}_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- David Hildenbrand <david@redhat.com>, hughd@google.com, willy@infradead.org,
- vbabka@kernel.org, akpm@linux-foundation.org, rppt@kernel.org,
- vishal.moola@gmail.com, peterx@redhat.com, ryan.roberts@arm.com,
- christophe.leroy2@cs-soprasteria.com
-References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
- <20240904084022.32728-2-zhengqi.arch@bytedance.com>
-In-Reply-To: <20240904084022.32728-2-zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240905163540.863769972@linuxfoundation.org>
+In-Reply-To: <20240905163540.863769972@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 6 Sep 2024 12:52:21 +0530
+Message-ID: <CA+G9fYtWZSJ5G7rEoQ-QLKAEzQBYRKyGyRFhv+2V6QbL3kGMXg@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/131] 6.6.50-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 5 Sept 2024 at 22:06, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.50 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 07 Sep 2024 16:35:08 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.50-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On 2024/9/4 16:40, Qi Zheng wrote:
-> Currently, the usage of pte_offset_map_nolock() can be divided into the
-> following two cases:
->
-> 1) After acquiring PTL, only read-only operations are performed on the PTE
->     page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
->     that the PTE page will not be freed, and there is no need to worry
->     about whether the pmd entry is modified.
->
-> 2) After acquiring PTL, the pte or pmd entries may be modified. At this
->     time, we need to ensure that the pmd entry has not been modified
->     concurrently.
->
-> To more clearing distinguish between these two cases, this commit
-> introduces two new helper functions to replace pte_offset_map_nolock().
-> For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
-> to changing the name to pte_offset_map_rw_nolock(), it also outputs the
-> pmdval when successful. It is applicable for may-write cases where any
-> modification operations to the page table may happen after the
-> corresponding spinlock is held afterwards. But the users should make sure
-> the page table is stable like checking pte_same() or checking pmd_same()
-> by using the output pmdval before performing the write operations.
->
-> Note: "RO" / "RW" expresses the intended semantics, not that the *kmap*
-> will be read-only/read-write protected.
->
-> Subsequent commits will convert pte_offset_map_nolock() into the above
-> two functions one by one, and finally completely delete it.
->
-> Signed-off-by: Qi Zheng<zhengqi.arch@bytedance.com>
-> ---
->   Documentation/mm/split_page_table_lock.rst |  7 +++
->   include/linux/mm.h                         |  5 +++
->   mm/pgtable-generic.c                       | 50 ++++++++++++++++++++++
->   3 files changed, 62 insertions(+)
->
-> diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
-> index e4f6972eb6c04..08d0e706a32db 100644
-> --- a/Documentation/mm/split_page_table_lock.rst
-> +++ b/Documentation/mm/split_page_table_lock.rst
-> @@ -19,6 +19,13 @@ There are helpers to lock/unlock a table and other accessor functions:
->    - pte_offset_map_nolock()
->   	maps PTE, returns pointer to PTE with pointer to its PTE table
->   	lock (not taken), or returns NULL if no PTE table;
-> + - pte_offset_map_ro_nolock()
-> +	maps PTE, returns pointer to PTE with pointer to its PTE table
-> +	lock (not taken), or returns NULL if no PTE table;
-> + - pte_offset_map_rw_nolock()
-> +	maps PTE, returns pointer to PTE with pointer to its PTE table
-> +	lock (not taken) and the value of its pmd entry, or returns NULL
-> +	if no PTE table;
->    - pte_offset_map()
->   	maps PTE, returns pointer to PTE, or returns NULL if no PTE table;
->    - pte_unmap()
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a7c74a840249a..1fde9242231c9 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3006,6 +3006,11 @@ static inline pte_t *pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
->   
->   pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
->   			unsigned long addr, spinlock_t **ptlp);
-> +pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
-> +				unsigned long addr, spinlock_t **ptlp);
-> +pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
-> +				unsigned long addr, pmd_t *pmdvalp,
-> +				spinlock_t **ptlp);
->   
->   #define pte_unmap_unlock(pte, ptl)	do {		\
->   	spin_unlock(ptl);				\
-> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-> index a78a4adf711ac..262b7065a5a2e 100644
-> --- a/mm/pgtable-generic.c
-> +++ b/mm/pgtable-generic.c
-> @@ -317,6 +317,33 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
->   	return pte;
->   }
->   
-> +pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
-> +				unsigned long addr, spinlock_t **ptlp)
-> +{
-> +	pmd_t pmdval;
-> +	pte_t *pte;
-> +
-> +	pte = __pte_offset_map(pmd, addr, &pmdval);
-> +	if (likely(pte))
-> +		*ptlp = pte_lockptr(mm, &pmdval);
-> +	return pte;
-> +}
-> +
-> +pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
-> +				unsigned long addr, pmd_t *pmdvalp,
-> +				spinlock_t **ptlp)
-> +{
-> +	pmd_t pmdval;
-> +	pte_t *pte;
-> +
-> +	VM_WARN_ON_ONCE(!pmdvalp);
-> +	pte = __pte_offset_map(pmd, addr, &pmdval);
-> +	if (likely(pte))
-> +		*ptlp = pte_lockptr(mm, &pmdval);
-> +	*pmdvalp = pmdval;
-> +	return pte;
-> +}
-> +
->   /*
->    * pte_offset_map_lock(mm, pmd, addr, ptlp), and its internal implementation
->    * __pte_offset_map_lock() below, is usually called with the pmd pointer for
-> @@ -356,6 +383,29 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
->    * recheck *pmd once the lock is taken; in practice, no callsite needs that -
->    * either the mmap_lock for write, or pte_same() check on contents, is enough.
->    *
-> + * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like pte_offset_map();
-> + * but when successful, it also outputs a pointer to the spinlock in ptlp - as
-> + * pte_offset_map_lock() does, but in this case without locking it.  This helps
-> + * the caller to avoid a later pte_lockptr(mm, *pmd), which might by that time
-> + * act on a changed *pmd: pte_offset_map_ro_nolock() provides the correct spinlock
-> + * pointer for the page table that it returns. Even after grabbing the spinlock,
-> + * we might be looking either at a page table that is still mapped or one that
-> + * was unmapped and is about to get freed. But for R/O access this is sufficient.
-> + * So it is only applicable for read-only cases where any modification operations
-> + * to the page table are not allowed even if the corresponding spinlock is held
-> + * afterwards.
-> + *
-> + * pte_offset_map_rw_nolock(mm, pmd, addr, pmdvalp, ptlp), above, is like
-> + * pte_offset_map_ro_nolock(); but when successful, it also outputs the pdmval.
-> + * It is applicable for may-write cases where any modification operations to the
-> + * page table may happen after the corresponding spinlock is held afterwards.
-> + * But the users should make sure the page table is stable like checking pte_same()
-> + * or checking pmd_same() by using the output pmdval before performing the write
-> + * operations.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Now, we have two options to make sure the stability of PTE for users
-of pte_offset_map_rw_nolock(), in order to ease this operation, how
-about proposing a new helper (or two, one for pmd_same, another for
-pte_same) like pte_lock_stability (I am not good at naming, maybe
-you can) which helps users 1) hold the PTL and 2) check if the PTE is
-stable and 3) return true if the PTE stable, otherwise return false.
+## Build
+* kernel: 6.6.50-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 89740cbd04a6ed5c1db1a2b5a2cbcda34e1138aa
+* git describe: v6.6.49-132-g89740cbd04a6
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.4=
+9-132-g89740cbd04a6
 
-Muchun,
-Thanks.
+## Test Regressions (compared to v6.6.48-94-g8723d70ba720)
 
-> + *
-> + * Note: "RO" / "RW" expresses the intended semantics, not that the *kmap* will
-> + * be read-only/read-write protected.
-> + *
->    * Note that free_pgtables(), used after unmapping detached vmas, or when
->    * exiting the whole mm, does not take page table lock before freeing a page
->    * table, and may not use RCU at all: "outsiders" like khugepaged should avoid
+## Metric Regressions (compared to v6.6.48-94-g8723d70ba720)
 
+## Test Fixes (compared to v6.6.48-94-g8723d70ba720)
+
+## Metric Fixes (compared to v6.6.48-94-g8723d70ba720)
+
+## Test result summary
+total: 507989, pass: 445691, fail: 4433, skip: 57272, xfail: 593
+
+## Build Summary
+* arc: 15 total, 15 passed, 0 failed
+* arm: 387 total, 387 passed, 0 failed
+* arm64: 123 total, 123 passed, 0 failed
+* i386: 84 total, 78 passed, 6 failed
+* mips: 78 total, 75 passed, 3 failed
+* parisc: 12 total, 12 passed, 0 failed
+* powerpc: 108 total, 105 passed, 3 failed
+* riscv: 30 total, 30 passed, 0 failed
+* s390: 42 total, 39 passed, 3 failed
+* sh: 30 total, 30 passed, 0 failed
+* sparc: 21 total, 21 passed, 0 failed
+* x86_64: 99 total, 99 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
