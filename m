@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-318411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC6796ED79
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0EA96ED7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741981F228B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A901F21F41
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFF2156C5E;
-	Fri,  6 Sep 2024 08:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0901E158216;
+	Fri,  6 Sep 2024 08:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ht/xQM+g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aSU5dIMI";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ceBrJR0Y"
+Received: from a7-42.smtp-out.eu-west-1.amazonses.com (a7-42.smtp-out.eu-west-1.amazonses.com [54.240.7.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708C064A;
-	Fri,  6 Sep 2024 08:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD76A156641;
+	Fri,  6 Sep 2024 08:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725610539; cv=none; b=dYCDeWF+ebN37t1Pd0KYITv5DEGHxMy4xOjsKFuydigPBbYMjNDT2vgQ6GDgroZ3hhUAaQvauMxZgINJVymmTyfGlijV6UaUhJU9rhohxO0goBRIHU5VVycUqM4XS7Ft6XnL/SsuRERT2XdnvH+s1LOthPsteHgsX152sbdRKA0=
+	t=1725610549; cv=none; b=mpTMowzAtVeNywi8VX+iQtXR71hXSL6Qm92UiOneUZD280Z7aad6+JRIGi7NxkQW/Vg6ZMDZ+c8smCKSvqTDuHEkN3un0nsrpyI9jp5zZmuamjOkzJZEjQgbLw3M97G1O/rH119Yfj5ET+yX1wKhIg6OScil2QbmP8x6SGsxWY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725610539; c=relaxed/simple;
-	bh=hsfrynjom+Fv8VFuD0jI6kvDRfTbVwwA1gLQLzU7XmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0DyqJ7EdBKXNc817htUxfLTERdELUjhwrAEAulbIPskOuZHKn5Kbra+xr2fb+34ak4LzvHqFlmQxbaGAblJS/iuqX1GP31cDh3YGpu7fLAE+bNeIV/A6950FeYcrJRe3Y8ebTTY4kM4e0S7ED/AZ05cZiKno5/1U/RyDSJ5PHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ht/xQM+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA493C4CEC4;
-	Fri,  6 Sep 2024 08:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725610539;
-	bh=hsfrynjom+Fv8VFuD0jI6kvDRfTbVwwA1gLQLzU7XmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ht/xQM+gp1Vx5NBd+naDBytKOzOanV/UfsbSh5tcc5M5Pvuagb6BRT28sL6I/wa/g
-	 f/rEKu/BvG5qC9oUpUZz6+XBqF8e21fl6XfSkoOWsSMHvZ/z4yr+Qj03mGBpddfGxl
-	 DIieFDrAQ7ngh8NMprWywNyJvg6YgEqiJkLxaUPs9k23mYPWNc3CeXQfaIolldX842
-	 5hEGERMvCLlxguoEmGyzikwrl7YNStvtFscBUh8cUlrDNM/UdUEDPilGkra5uoaAPR
-	 lhr23bg1vv5g3NXqYdsM2vMb/mkHB6e+yPJHiJfi/OHrBLzJwQ2basZgSOfaCNGGEy
-	 3oswuFOW7u4dA==
-Date: Fri, 6 Sep 2024 10:15:36 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	bpf@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 0/9] bpf: cpumap: enable GRO for XDP_PASS frames
-Message-ID: <Ztq6KAWXwjBcGci0@lore-desk>
-References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
- <20240903135158.7031a3ab@kernel.org>
- <ZteAuB-QjYU6PIf7@lore-desk>
- <Ztnj9ujDg4NLZFDm@lore-desk>
- <20240905172029.5e9ca520@kernel.org>
+	s=arc-20240116; t=1725610549; c=relaxed/simple;
+	bh=yM3jGEYrmpmAPT0rz7opuwruNthFWSkw9+TDL4YVBDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pn86XR+4rK7E7JMODghLTV1AA2ZrvPD61HVjnuSXFlhPVG+VsUvoNMsrDbMein0kC0kX7OIZNMrfas2RVM2TEMqbRZhcD2CPqQYJHq1Muwyc4eCz3zN9Syls5EoVRAnym0LxAQLoTQZnQDTDhxhzUSZOxNZTiAlrXnumQpWxgDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aSU5dIMI; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=ceBrJR0Y; arc=none smtp.client-ip=54.240.7.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725610545;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=yM3jGEYrmpmAPT0rz7opuwruNthFWSkw9+TDL4YVBDA=;
+	b=aSU5dIMIVZa+cVJ8YC9WRBz0bUv9ZRkWK5nvrqULiski3hj0PrU0tO8GE0DE5tDo
+	tJYkolI1oPcFUfhre3qb8194/JecXFEhraqDF6BGAvjeLDCEN5BkjskujGkw787lkOT
+	JhRTqG+8JEPJbuXqi8WS0M4KPo3oeYmR2FNm7ITIAyt6v/4rjAtGbEMhA3nF/r/aSvi
+	cvJF3ozvVIhef+8lnEZd7mQykkA6R5favg/l1EJL46lVMIoLa/YccaPcYzHbhSY3ncG
+	Si6+iKezpPy5tKLOBX5ZsfXB8Y29Xx+BGuNwtu2ZKwyN4h72SZWyU5Lu12NHxsRBeNj
+	qmH0hFNeMQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725610545;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=yM3jGEYrmpmAPT0rz7opuwruNthFWSkw9+TDL4YVBDA=;
+	b=ceBrJR0YS4QJudMIU1bumx8QW4TjyLwKO/B5IlDefuyExI/7A3gSeecXmcnWI0xG
+	IIa1I1+32mFPri3a5FyfqIv201Os4uSGsCSfe0+dXcZR3SV4XhjNg8yiKis28mT1GrA
+	LNjnn7XFJjm6ktDTZhX3qWys+vrNabuz4qn9mLEc=
+Message-ID: <01020191c6674f69-5391f772-bfad-44bd-884e-c3ce732c19b5-000000@eu-west-1.amazonses.com>
+Date: Fri, 6 Sep 2024 08:15:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MhfVJSi/k6SMcMcE"
-Content-Disposition: inline
-In-Reply-To: <20240905172029.5e9ca520@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] media: platform: mtk-mdp3: Use cmdq_pkt_create()
+ and cmdq_pkt_destroy()
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Moudy Ho <moudy.ho@mediatek.com>, 
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20240901143259.16849-1-chunkuang.hu@kernel.org>
+ <20240901143259.16849-3-chunkuang.hu@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240901143259.16849-3-chunkuang.hu@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.06-54.240.7.42
 
+Il 01/09/24 16:32, Chun-Kuang Hu ha scritto:
+> Use cmdq_pkt_create() and cmdq_pkt_destroy() common function
+> instead of implementing mdp3 version.
+> 
+> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
 
---MhfVJSi/k6SMcMcE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> On Thu, 5 Sep 2024 19:01:42 +0200 Lorenzo Bianconi wrote:
-> > In particular, the cpumap kthread pinned on cpu 'n' can schedule the
-> > backlog NAPI associated to cpu 'n'. However according to my understandi=
-ng
-> > it seems the backlog NAPI APIs (in process_backlog()) do not support GR=
-O,
-> > right? Am I missing something?
->=20
-> I meant to use the struct directly, not to schedule it. All you need
-> is GRO - feed it packets, flush it.=20
-
-ack, thx for pointing this out.
-
-> But maybe you can avoid the netdev allocation and patch 3 in other ways.
-> Using backlog NAPI was just the first thing that came to mind.
-
-ack, I will look into it.
-
-Regards,
-Lorenzo
-
---MhfVJSi/k6SMcMcE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZtq6KAAKCRA6cBh0uS2t
-rGXUAP99N9lhIKXp5CPoswzyPZl0OlpKDJfm3TJ37lm/iT8nCAD+N5Ia91Ebwwxb
-SVQKLVHUOm9xHlCsdll3d0URcGa5zAo=
-=S+I7
------END PGP SIGNATURE-----
-
---MhfVJSi/k6SMcMcE--
 
