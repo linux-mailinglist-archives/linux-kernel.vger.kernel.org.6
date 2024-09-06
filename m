@@ -1,201 +1,118 @@
-Return-Path: <linux-kernel+bounces-318743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E66496F26C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:09:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A0596F270
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0B61F218A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:09:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94523B21086
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A8A1CB147;
-	Fri,  6 Sep 2024 11:09:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66D41C870E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620965; cv=none; b=VH8gyyuaYiHCozmkJzA5NUG6W4/zqbp3RIr4NHyZz4SyBzP7XsWpEjnPegYAG57s7wT5Vo4bB9Rf74ocI99BBoGk/1w1OVD1K4axXR4vCKtE0Y/OaJS8adLGVmdS10++M7VHf5qb3xpltYOokjofUgj8rMkJEWA+SlsMz+/tdJs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620965; c=relaxed/simple;
-	bh=d3vs+RPaypFWicZQZYL9ZI9LMD15PKjB5n0Qm0H7qaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=niKwF1E9bVGd/xjCJQV2ZXq7Bw7gPGdlrov477oAM4VNV/Y0bPg5aUSQKfw/KGMt6IxGY2nmiUZm3nEGJO1WCqUGVBf5O53BgBblGvwVxO5ZT2U3ZzVyHRVDn4eLpcXqSvW14Q7fBfrP3vRGkftdoIZ2uAgFiK7d6JSYDGUuyFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5132FEC;
-	Fri,  6 Sep 2024 04:09:49 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A385F3F66E;
-	Fri,  6 Sep 2024 04:09:21 -0700 (PDT)
-Date: Fri, 6 Sep 2024 12:09:15 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "tiantao (H)" <tiantao6@hisilicon.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, jonathan.cameron@huawei.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxarm@huawei.com
-Subject: Re: [PATCH] arm64: Add ARM64_HAS_LSE2 CPU capability
-Message-ID: <Ztri2xyzjaB7k387@J2N7QTR9R3>
-References: <20240906090812.249473-1-tiantao6@hisilicon.com>
- <ZtrPCVhqj5qLrQVY@J2N7QTR9R3>
- <587f7c84-cdfc-b348-4cd0-1015adad2cca@hisilicon.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E801CB153;
+	Fri,  6 Sep 2024 11:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="PJvH4io2"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C50158866;
+	Fri,  6 Sep 2024 11:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725621014; cv=pass; b=tqTyAwDqvkFd3RoBH/obQSpYDZZPeDJTSb+jCHsRukuyuQyDSfbHu2RC5oJW+eD+SYhkj/u1iWIu/lGFLVSeB8YJH+kDkAhGJXSn5dam4VIEGsf97rqymzgwf8J+bzv1UACToAj5cqjwZDppBqLCGmvo7LwX1cye+FWAsIWZpPQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725621014; c=relaxed/simple;
+	bh=VeWu0Q7HBCMb8CC0HM9o9z1Td3lQJ40pCAD7M+w3zUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZMjqA9yU+ifARXkyPt2Xozmf2fWnfUtQjnH5fIS6h4lKpfPsQB+QmV2oTXy407vyuio6Rn69RCdjVGeKcYzgn9eR+/shP5Zg9yyZ006aX5k08a/TvVJS878H5URSZQK3XzVIzR/FE4YhWgfQ4hqaHrLbNoIS5WQO4/5hpS/RSls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=PJvH4io2; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: usama.anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725620994; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TsnyS4d5F1+fQwXS8QdnsodfUwajKiOUmH45kBOZ43eI+GDxG0gtyv8x5jTvvQ6vfhZlKBSfoauFj+u/yA9xPpW55rj0np7/Ou2MqiwHyD0zoB7alqpXqTMVjIdz+Z50sp7w5p9+GrCKkx3bJ84kUzssQ2GfotkhKfrB6zk9+Pc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725620994; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Hk3dEKo4OtxjsOE2EQD+oEBaenRW6kDIqnQG/8TbeKs=; 
+	b=BPOzPrORzaib0/Gqv2WI1xXl8Aq5JaTj+S/7GrtMHUIpV4OsTEv9Y/gUtzl9k3t9drtBXXRrxFQda7JWEDuID/8MfzP/brYQKvzNMFZUIhcyzkcA1jOgLLHvGmj/pz8Q8/Q0Ht0wZRKhodhnS8zAVsQ9gQaaynrVCHbOtjz74g0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725620994;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=Hk3dEKo4OtxjsOE2EQD+oEBaenRW6kDIqnQG/8TbeKs=;
+	b=PJvH4io2t3cq98Q4qvgm9boWlZaM0js5bjMk1kcgRRES83M3mtCQEe2sAl+ml7mU
+	uW4WD0HkEVfHfs6wHUVQXYxBsAu5G66dPR3I1/OKLYsS/edLbWDbB9Sr0oDw3VkjCDb
+	PwgISuLROYgNUFDOXpBCFfPy3hSyiOGfl2q5P3to=
+Received: by mx.zohomail.com with SMTPS id 172562099299268.57317148356151;
+	Fri, 6 Sep 2024 04:09:52 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Stanimir Varbanov <svarbanov@suse.de>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Jim Quinlan <james.quinlan@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: brcmstb: Correctly store and use the output value
+Date: Fri,  6 Sep 2024 16:09:31 +0500
+Message-Id: <20240906110932.299689-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <587f7c84-cdfc-b348-4cd0-1015adad2cca@hisilicon.com>
+X-ZohoMailClient: External
 
-On Fri, Sep 06, 2024 at 06:58:19PM +0800, tiantao (H) wrote:
-> 
-> 在 2024/9/6 17:44, Mark Rutland 写道:
-> > On Fri, Sep 06, 2024 at 05:08:12PM +0800, Tian Tao wrote:
-> > > When FEAT_LSE2 is implemented and Bit 6 of sctlr_elx is nAA, the
-> > > full name of the Not-aligned access. nAA bit has two values:
-> > > 0b0 Unaligned accesses by the specified instructions generate an
-> > > Alignment fault.
-> > > 0b1 Unaligned accesses by the specified instructions do not generate
-> > > an Alignment fault.
-> > > 
-> > > this patch sets the nAA bit to 1,The following instructions will not
-> > > generate an Alignment fault if all bytes being accessed are not within
-> > > a single 16-byte quantity:
-> > > • LDAPR, LDAPRH, LDAPUR, LDAPURH, LDAPURSH, LDAPURSW, LDAR, LDARH,LDLAR,
-> > > LDLARH.
-> > > • STLLR, STLLRH, STLR, STLRH, STLUR, and STLURH
-> > > 
-> > > Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-> > What is going to depend on this? Nothing in the kernel depends on being
-> > able to make unaligned accesses with these instructions, and (since you
-> > haven't added a HWCAP), userspace has no idea that these accesses won't
-> > generate an alignment fault.
-> > 
-> > Mark.
-> 
-> I've come across a situation where the simplified code is as follows:
-> 
->  long  address = (long) mmap(NULL,1024*1024*2,PROT_READ|PROT_WRITE,
-> MAP_PRIVATE|MAP_ANONYMOUS,-1,0);
-> 
-> long new_address = address + 9;
-> 
->  long *p = (long*) new_address;
->  long v = -1;
-> 
->  __atomic_store(p, &v, __ATOMIC_RELEASE);
-> 
-> coredump occurs after executing __atomic_store, but the user code can't be
-> changed,
+brcm_pcie_get_inbound_wins() can return negative error. As
+num_inbound_wins is unsigned, we'll be unable to recognize the error.
+Hence store return value of brcm_pcie_get_inbound_wins() in ret which is
+signed and store result back to num_inbound_wins after confirming that
+it isn't negative.
 
-Where is that code and why can't it be changed? That code has never
-worked and would always have generated a coredump, and even with this
-patch it cannot work on hardware without LSE2.
+Fixes: 46c981fd60de ("PCI: brcmstb: Refactor for chips with many regular inbound windows")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/pci/controller/pcie-brcmstb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> so I'm trying to enable NAA to solve this problem.
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index 55311dc47615d..054810d7962d7 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -1090,9 +1090,10 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 	u32p_replace_bits(&tmp, 1, PCIE_MISC_MISC_CTRL_PCIE_RCB_64B_MODE_MASK);
+ 	writel(tmp, base + PCIE_MISC_MISC_CTRL);
+ 
+-	num_inbound_wins = brcm_pcie_get_inbound_wins(pcie, inbound_wins);
+-	if (num_inbound_wins < 0)
+-		return num_inbound_wins;
++	ret = brcm_pcie_get_inbound_wins(pcie, inbound_wins);
++	if (ret < 0)
++		return ret;
++	num_inbound_wins = (u8)ret;
+ 
+ 	set_inbound_win_registers(pcie, inbound_wins, num_inbound_wins);
+ 
+-- 
+2.39.2
 
-AFAICT that's making a kernel change to paper over a userspace bug.
-As-is I don't think that's a good justification for changing nAA.
-
-Mark.
-
-> 
-> > > ---
-> > >   arch/arm64/Kconfig              | 10 ++++++++++
-> > >   arch/arm64/include/asm/sysreg.h |  1 +
-> > >   arch/arm64/kernel/cpufeature.c  | 18 ++++++++++++++++++
-> > >   arch/arm64/tools/cpucaps        |  1 +
-> > >   4 files changed, 30 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > index 77d7ef0b16c2..7afe73ebcd79 100644
-> > > --- a/arch/arm64/Kconfig
-> > > +++ b/arch/arm64/Kconfig
-> > > @@ -2023,6 +2023,16 @@ config ARM64_TLB_RANGE
-> > >   	  The feature introduces new assembly instructions, and they were
-> > >   	  support when binutils >= 2.30.
-> > > +config ARM64_LSE2_NAA
-> > > +	bool "Enable support for not-aligned access"
-> > > +	depends on AS_HAS_ARMV8_4
-> > > +	help
-> > > +	 LSE2 is an extension to the original LSE (Large System Extensions) feature,
-> > > +	 introduced in ARMv8.4.
-> > > +
-> > > +	 Enable this feature will not generate an Alignment fault if all bytes being
-> > > +	 accessed are not within a single 16-byte quantity.
-> > > +
-> > >   endmenu # "ARMv8.4 architectural features"
-> > >   menu "ARMv8.5 architectural features"
-> > > diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-> > > index 8cced8aa75a9..42e3a1959aa8 100644
-> > > --- a/arch/arm64/include/asm/sysreg.h
-> > > +++ b/arch/arm64/include/asm/sysreg.h
-> > > @@ -854,6 +854,7 @@
-> > >   #define SCTLR_ELx_ENDB	 (BIT(13))
-> > >   #define SCTLR_ELx_I	 (BIT(12))
-> > >   #define SCTLR_ELx_EOS	 (BIT(11))
-> > > +#define SCTLR_ELx_nAA    (BIT(6))
-> > >   #define SCTLR_ELx_SA	 (BIT(3))
-> > >   #define SCTLR_ELx_C	 (BIT(2))
-> > >   #define SCTLR_ELx_A	 (BIT(1))
-> > > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> > > index 646ecd3069fd..558869a7c7f0 100644
-> > > --- a/arch/arm64/kernel/cpufeature.c
-> > > +++ b/arch/arm64/kernel/cpufeature.c
-> > > @@ -2299,6 +2299,14 @@ static void cpu_enable_mte(struct arm64_cpu_capabilities const *cap)
-> > >   }
-> > >   #endif /* CONFIG_ARM64_MTE */
-> > > +#ifdef CONFIG_ARM64_LSE2_NAA
-> > > +static void cpu_enable_lse2(const struct arm64_cpu_capabilities *__unused)
-> > > +{
-> > > +	sysreg_clear_set(sctlr_el2, SCTLR_ELx_nAA, SCTLR_ELx_nAA);
-> > > +	isb();
-> > > +}
-> > > +#endif
-> > > +
-> > >   static void user_feature_fixup(void)
-> > >   {
-> > >   	if (cpus_have_cap(ARM64_WORKAROUND_2658417)) {
-> > > @@ -2427,6 +2435,16 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
-> > >   		ARM64_CPUID_FIELDS(ID_AA64ISAR0_EL1, ATOMIC, IMP)
-> > >   	},
-> > >   #endif /* CONFIG_ARM64_LSE_ATOMICS */
-> > > +#ifdef CONFIG_ARM64_LSE2_NAA
-> > > +	{
-> > > +		.desc = "Support for not-aligned access",
-> > > +		.capability = ARM64_HAS_LSE2,
-> > > +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> > > +		.matches = has_cpuid_feature,
-> > > +		.cpu_enable = cpu_enable_lse2,
-> > > +		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, AT, IMP)
-> > > +	},
-> > > +#endif
-> > >   	{
-> > >   		.desc = "Virtualization Host Extensions",
-> > >   		.capability = ARM64_HAS_VIRT_HOST_EXTN,
-> > > diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-> > > index ac3429d892b9..0c7c0a293574 100644
-> > > --- a/arch/arm64/tools/cpucaps
-> > > +++ b/arch/arm64/tools/cpucaps
-> > > @@ -41,6 +41,7 @@ HAS_HCX
-> > >   HAS_LDAPR
-> > >   HAS_LPA2
-> > >   HAS_LSE_ATOMICS
-> > > +HAS_LSE2
-> > >   HAS_MOPS
-> > >   HAS_NESTED_VIRT
-> > >   HAS_PAN
-> > > -- 
-> > > 2.33.0
-> > > 
-> > > 
-> > .
-> > 
 
