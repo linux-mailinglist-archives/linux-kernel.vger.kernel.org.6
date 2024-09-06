@@ -1,133 +1,192 @@
-Return-Path: <linux-kernel+bounces-318156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F5896E933
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62AE96E941
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF71528640A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7E1284A7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75A677112;
-	Fri,  6 Sep 2024 05:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A3823DE;
+	Fri,  6 Sep 2024 05:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhUdV2eo"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RgjjMUgS"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C269C3CF73;
-	Fri,  6 Sep 2024 05:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82501805A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 05:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725600266; cv=none; b=oKPOLv/G3KzdQEFxySFnMmmcIfcjfHKbZ2tZ4lJjqk+M2hA7QQ0J3FZSKzaJPtSR2uIkrMz1tHHbTOmrmvAhEm/aHMD+DcUhajMQV5Z5QkK5QxnGs210y4SLtn3cwTePOzxmrUdGcIQxZTyqVhytjHWi2s/wnfHcpPIa0pCUChA=
+	t=1725600523; cv=none; b=R1J3/o4AppfvtUA5XWwy0w9J60YdWFoZfzVBkJXuDe8Eh0Iwnasbq294bBlJGnWNVFB7Uw7IRiVgp+VVAyEtsky9xr++Wnb3tP4PU3wYJnRKVUi5nMdVsHLtSQWTRYRY6qBAzOZNE+fkDLjz4CZGrXoyxnKMuzzbxcvE8W3To3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725600266; c=relaxed/simple;
-	bh=wUtVHpZhYqSdiOvfq27tx8qTLyYDpQLKoLioMztavQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uG+wIO18dCBmVO9u9rt+khaNrcDVshTObWxdXQ3DS3FDd5gwSJhbzr/xE/bmSznFJWJnfahGOFOtYIz8JXxiz9E2QUZbLkUSiIHGxKKT/6wLwIcpcvOVP/ZWtXDRXeqnDVszzbq9Sy1yHUkcJlIuoFGISG7tKy5yDYd1Isuiupc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhUdV2eo; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-26fda13f898so996790fac.1;
-        Thu, 05 Sep 2024 22:24:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725600264; x=1726205064; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g0hUiLACmrvnz1yXtrSQ1wQ/roWbnuIi1O6fdmIhG60=;
-        b=QhUdV2eoZ3iwgtP4g7osdVFnhb0O3OHmVrmSoWpA7nCwtqHxLehSe6Nm1YS0p60TcI
-         YiD9xMejDoLxL70V10HFg2wdvaa6peOrvhBqU7cuFI5kP9gMBgpjCKibPsUl5EbiMY0P
-         5b2STxyXR4XYSikSFc7IUpx+r2T3vCuAEQPq3grGQfx724YHzVScBoQfk7e9IWmdZktQ
-         +9RI6GYIBmKiU7f+0yZX5ODUyHXBl4ZtG00fHx6ElOWK+x+aouhQ+hIyBqJ9Jf+i9nm1
-         9UddXQO4sx80jx1rCAD+oymstXjLLI93Flx+v06FMCXTK3cHC0tQ9KQ4SRRLiJZ4v+qE
-         YMvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725600264; x=1726205064;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0hUiLACmrvnz1yXtrSQ1wQ/roWbnuIi1O6fdmIhG60=;
-        b=DX5k+QPtWWRGMQoduR0F9+2wv4xyY/kXRAAFWYcXkWa/Y/fBrU1L2oPW+OF/CLWqzS
-         OzYkGZjnJ/9qzsXqwMDyvmwSozVYj6bmuBhe5LDoyxe6FlSqiRxTWjHepX7qE22C6qVS
-         r15uPLl9SqCJh8VMYgvAFgkqYBFDGJEb1sgRzArj30OLfZANmZBP+svvVjAL39TQjisf
-         +/6525tgJtKhoPuk5j1QaRzXV+iuXU+QrfqXqQW++2xXEUZOMKsBzlNzMyuAWWUc+CGG
-         QkQs7U0a6Jz9J3LlTF6BfoMkF2hXAuko5ryT5kKvT3oGK7X6NZ1QP9/vgEHPsxQbUHuF
-         A6Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGIuu7gtE24ExcXgZVoak51Vt4ETbHGsBPBLp00te2cEGssl1elWMgmZQ05kog5Kd7MjDIkfY9unHAhhwI@vger.kernel.org, AJvYcCVmgP2pPHnamJjf0PHq04Psh8eqcYovVAtL0DcKpyON08LFWNo9aYOOh6B6p9u5ktlXDWmtM+VueLe+ZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZYqpoLK2WXZX4V+F86//c6DXD0P8yYivTWOaw5jkcPvJzWVEh
-	3BxG5E6tD1oPjRDmiNN9G6xd/4O1VOHmkm/6n+iW4mHgVcTeKuT8
-X-Google-Smtp-Source: AGHT+IGdYz//gUlPTOdJCgjsgIKN0yi8MM4ZuYXDy4L3MaGfGGYtupsSkoRabCZzG9XrbLK7/cYsYw==
-X-Received: by 2002:a05:6870:9111:b0:25e:940:e934 with SMTP id 586e51a60fabf-27b8302d160mr1610491fac.47.1725600263547;
-        Thu, 05 Sep 2024 22:24:23 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1de8:3062:3230:1a45])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778520e83sm4080229b3a.42.2024.09.05.22.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 22:24:23 -0700 (PDT)
-Date: Thu, 5 Sep 2024 22:24:20 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>, soc@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH 0/5] Remove support for platform data from matrix keypad
- driver
-Message-ID: <ZtqSBLDeClX9Bq3U@google.com>
-References: <20240805014710.1961677-1-dmitry.torokhov@gmail.com>
- <CACRpkdYFc8vuz__7DkFSMFxUC=LSwCJmEun2KXgUvPMq+_e17A@mail.gmail.com>
- <ZsiygIj9SiP4O0OM@google.com>
- <CACRpkdZ_y=2WKCLwi5or-=MasvNw2bcxht6a+bFjV=yAfvQhdQ@mail.gmail.com>
- <513f718b-b964-4af1-9c51-9e0ba3809225@app.fastmail.com>
+	s=arc-20240116; t=1725600523; c=relaxed/simple;
+	bh=P8NzR1clZZHvq168490j+k6VhlPtn3NzB9PTUUKGTrE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bD8JeBBxseAsSCLqKTQ9nxxHod3VY895FmLl8DxNOtaCQ19bmIsl/h36hXlzfzaaUuF2RRMQt4cbUTPfM96Agwt2fO95jKJofUxguT+K+sKvfioE6sXDBtRwFsHvya0TgxZBYatv6uFMuOYiH1t0JztjtfBTpPko6oROu06hxYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RgjjMUgS; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725600517; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=B59qOTQ5B/DlCcvhL+utjjELqTBP0dtzxxRmP6Grzk4=;
+	b=RgjjMUgSpMjTIS/K9iWKiNvlyIQaT+0h0uwPzqWeeqC9ZLKjDQCZFJo2vZBvGWfmjiqecAm319j4RUrVQnOTNvnSJz4Pf3rWWWXSWg1qZ/j8MmBIQeE6mR24ew9nfQhg/tKo7z/jfH6e5JDp7Jl558yRR2xXDQxqCLW3b9S+DLU=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WEOJP-i_1725600516)
+          by smtp.aliyun-inc.com;
+          Fri, 06 Sep 2024 13:28:37 +0800
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: akpm@linux-foundation.org,
+	hughd@google.com
+Cc: willy@infradead.org,
+	david@redhat.com,
+	21cnbao@gmail.com,
+	ryan.roberts@arm.com,
+	baolin.wang@linux.alibaba.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: shmem: fix khugepaged activation policy for shmem
+Date: Fri,  6 Sep 2024 13:28:23 +0800
+Message-Id: <7c796904528e21152ba5aa639e963e0ae45b7040.1725600217.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <513f718b-b964-4af1-9c51-9e0ba3809225@app.fastmail.com>
 
-On Thu, Sep 05, 2024 at 02:36:15PM +0000, Arnd Bergmann wrote:
-> On Mon, Aug 26, 2024, at 08:52, Linus Walleij wrote:
-> > On Fri, Aug 23, 2024 at 6:02 PM Dmitry Torokhov
-> > <dmitry.torokhov@gmail.com> wrote:
-> >
-> >> I'm glad that we agree that we do not want the elaborate merge process
-> >> and instead push the changes through one tree in one shot we just need
-> >> to decide which one - soc or input. I am fine with using either.
-> >
-> > I'm also fine with either, but let's take the input tree because the
-> > you're in direct control of it so it will be easier.
-> 
-> Sorry I dropped the ball here, I just saw that these five patches
-> are still in the patchwork waiting for me to apply them.
-> 
-> I'm also happy for them to go through the input tree, and have
-> marked them as not-for-us in patchwork now. Dmitry, please add
-> my
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> and pick them up in your tree. I've checked that there are no
-> conflicts against contents of the SoC tree. If you prefer me to
-> pick them up after all, that is also fine, but please resend in
-> that case.
+Shmem has a separate interface (different from anonymous pages) to control
+huge page allocation, that means shmem THP can be enabled while anonymous
+THP is disabled. However, in this case, khugepaged will not start to collapse
+shmem THP, which is unreasonable.
 
-I made an immutable branch off of 6.11-rc6 with the changesi and merged
-it into my 'next' branch for the upcoming merge window. Please feel free
-to also pull it - it does not have any unrelated changes:
+To fix this issue, we should call start_stop_khugepaged() to activate or
+deactivate the khugepaged thread when setting shmem mTHP interfaces.
+Moreover, add a new helper shmem_hpage_pmd_enabled() to help to check
+whether shmem THP is enabled, which will determine if khugepaged should
+be activated.
 
-	git pull git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git ib/6.11-rc6-matrix-keypad-spitz
+Reported-by: Ryan Roberts <ryan.roberts@arm.com>
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+Hi Ryan,
 
-Thanks.
+I remember we discussed the shmem khugepaged activation issue before, but
+I haven’t seen any follow-up patches to fix it. Recently, I am trying to
+fix the shmem mTHP collapse issue in the series [1], and I also addressed
+this activation issue. Please correct me if you have a better idea. Thanks.
 
+[1] https://lore.kernel.org/all/cover.1724140601.git.baolin.wang@linux.alibaba.com/T/#u
+---
+ include/linux/shmem_fs.h |  6 ++++++
+ mm/khugepaged.c          |  2 ++
+ mm/shmem.c               | 29 +++++++++++++++++++++++++++--
+ 3 files changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 515a9a6a3c6f..ee6635052383 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -114,6 +114,7 @@ int shmem_unuse(unsigned int type);
+ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 				struct vm_area_struct *vma, pgoff_t index,
+ 				loff_t write_end, bool shmem_huge_force);
++bool shmem_hpage_pmd_enabled(void);
+ #else
+ static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 				struct vm_area_struct *vma, pgoff_t index,
+@@ -121,6 +122,11 @@ static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ {
+ 	return 0;
+ }
++
++static inline bool shmem_hpage_pmd_enabled(void)
++{
++	return false;
++}
+ #endif
+ 
+ #ifdef CONFIG_SHMEM
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index f9c39898eaff..caf10096d4d1 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -430,6 +430,8 @@ static bool hugepage_pmd_enabled(void)
+ 	if (test_bit(PMD_ORDER, &huge_anon_orders_inherit) &&
+ 	    hugepage_global_enabled())
+ 		return true;
++	if (shmem_hpage_pmd_enabled())
++		return true;
+ 	return false;
+ }
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 74f093d88c78..d7c342ae2b37 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1653,6 +1653,23 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
+ }
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++bool shmem_hpage_pmd_enabled(void)
++{
++	if (shmem_huge == SHMEM_HUGE_DENY)
++		return false;
++	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_always))
++		return true;
++	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_madvise))
++		return true;
++	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_within_size))
++		return true;
++	if (test_bit(HPAGE_PMD_ORDER, &huge_shmem_orders_inherit) &&
++	    shmem_huge != SHMEM_HUGE_NEVER)
++		return true;
++
++	return false;
++}
++
+ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 				struct vm_area_struct *vma, pgoff_t index,
+ 				loff_t write_end, bool shmem_huge_force)
+@@ -5036,7 +5053,7 @@ static ssize_t shmem_enabled_store(struct kobject *kobj,
+ 		struct kobj_attribute *attr, const char *buf, size_t count)
+ {
+ 	char tmp[16];
+-	int huge;
++	int huge, err;
+ 
+ 	if (count + 1 > sizeof(tmp))
+ 		return -EINVAL;
+@@ -5060,7 +5077,9 @@ static ssize_t shmem_enabled_store(struct kobject *kobj,
+ 	shmem_huge = huge;
+ 	if (shmem_huge > SHMEM_HUGE_DENY)
+ 		SHMEM_SB(shm_mnt->mnt_sb)->huge = shmem_huge;
+-	return count;
++
++	err = start_stop_khugepaged();
++	return err ? err : count;
+ }
+ 
+ struct kobj_attribute shmem_enabled_attr = __ATTR_RW(shmem_enabled);
+@@ -5137,6 +5156,12 @@ static ssize_t thpsize_shmem_enabled_store(struct kobject *kobj,
+ 		ret = -EINVAL;
+ 	}
+ 
++	if (ret > 0) {
++		int err = start_stop_khugepaged();
++
++		if (err)
++			ret = err;
++	}
+ 	return ret;
+ }
+ 
 -- 
-Dmitry
+2.39.3
+
 
