@@ -1,236 +1,175 @@
-Return-Path: <linux-kernel+bounces-318847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3108296F415
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:15:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C2896F418
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17072871DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:14:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13177B25683
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B031CE71D;
-	Fri,  6 Sep 2024 12:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739991CCEC1;
+	Fri,  6 Sep 2024 12:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="by0x15ku"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2083.outbound.protection.outlook.com [40.107.100.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYb8Y0YQ"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697B91CCB38
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 12:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725624846; cv=fail; b=tgr4xEi5EW6VaUc13FMPJWxNnpSMvvC2Fl7ZSCkalLOTIZbPY9r9MTd2OWW9ZkxviAno0VJcLXV/+8UIOCdn7Xrm025ehixggomMv/YL8AdVDyN1Yrlu1VQx+f/yRhGj6vlA/csakFxoGkfCruBlDGGCYVjQTImLYl6mNV0YrXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725624846; c=relaxed/simple;
-	bh=2nVnvikOUIsFUodik3VP1JBoAfE933fafZNky8D8X/0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sgpq1m6zEaIrvyoApnVHO6Sf1pkYuvp75+bTpfyCf/ZOCKfjqhUSA24RIfo/hLQWcSdCZ3Nz4nVEZZKkZjeX51zaKA5eDtfyazH9eFYqfwXiQAPSOgc8w00c/wQLn34f5ZbIWhohooOpUnTO3dqznP0pIxXptfVZw9vBMP0qTBQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=by0x15ku; arc=fail smtp.client-ip=40.107.100.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nd5DwerbRlFarzMulc0D/rcLrTDyncrvrXlqXkhuS2J7tsug2d7pqULwq9E8xzvCjk+9ASGuKuQw5tvoWieRb1Z7RrZDquHSEo13v7iiARFKqtpbVDx5+DUacCDkHEqviPq3eus041FEw9xU0b3ltIMEZ+B14uMaRNDoiIS+PTM3tjzLovG2Nu5/9FOOfXW/8ywq3hxyjQVZqii8BlNVLm1gyINLPS3ThvH4fDnrppr25GGHYGo7lUi40LHggeqyXQzNHn8/m5o5UqrRVdz5sT57Yu0fs9GkuP8Wc03Invp0zLaQcqtUp1Ee5CEQAKBuTe31QqlUd1+v7PHe8G7/Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kICso5MGfTTzA8tSvNrzoXPcRm//xOf2qPNobYpXia0=;
- b=iruqxDAZhYNtDztHiRUqTnRS2YPEynv/URzYXAqe0a00likkSVJC1mQGAZxZQ0Ca+6cQefrSJnjRzlZq2GEyuITxcWirLGHbzBu3MqO1ilB8qQmsa42L8hK5Ms59AbCMIkdjJB0j/cDQLae4Q1T84ZekKMpXRf2m9HPkrLxYbHx1yVHh8NvAPgWUeQs/OgvFznOgqd9VeOjQPG6kjTR4rqicjjaTcgu/v6EZlH+uYlcijEpQf2cIyLjL8U6TWSwMlY6HVhqoqOth0rruuWjQ/koauAkcVuK5UW9GJP4O2sEZ8gADCMNpn0z9Dy/EmfnN3VKhQFfLpL1er3b+6x/ZZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kICso5MGfTTzA8tSvNrzoXPcRm//xOf2qPNobYpXia0=;
- b=by0x15kuPLMSaAuExrZCcToZGMIZ//EQxPMIfI/BaMfTMX5fcCmPle5AF9YJEmWz4ucvJmQljZJQYbr6Ej/YJDNmgJ0v6ct8DfGHX1S7wNy8v7X5Ff/kNuHpy0tuWMvUjVLZ2rHoJpi5An7JFdg4+Gt81KiU6B0ksYlTbrAQs98=
-Received: from MN2PR03CA0030.namprd03.prod.outlook.com (2603:10b6:208:23a::35)
- by SJ0PR12MB8614.namprd12.prod.outlook.com (2603:10b6:a03:47d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
- 2024 12:14:00 +0000
-Received: from BL6PEPF0001AB54.namprd02.prod.outlook.com
- (2603:10b6:208:23a:cafe::4c) by MN2PR03CA0030.outlook.office365.com
- (2603:10b6:208:23a::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17 via Frontend
- Transport; Fri, 6 Sep 2024 12:13:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF0001AB54.mail.protection.outlook.com (10.167.241.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 12:13:59 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
- 2024 07:13:55 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
-	<ubizjak@gmail.com>, <jgg@nvidia.com>, <jon.grimm@amd.com>,
-	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v3 5/5] iommu/amd: Do not update DTE in-place in amd_iommu_set_dirty_tracking and set_dte_irq_entry
-Date: Fri, 6 Sep 2024 12:13:08 +0000
-Message-ID: <20240906121308.5013-6-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
-References: <20240906121308.5013-1-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0EA1C9DF7;
+	Fri,  6 Sep 2024 12:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725624868; cv=none; b=OfZTBbY4n+u6pfULV8RO/NCmqrOXXax/EoOACxU5eDM44gY55LWWs4aiyGD3w9Ey2p5Q9tbro7/jnoHNp/6KLcAt2xdP57AejtcHpmsaFKpR8DC1I/kOMFwkdrWsjJAk9aJX1e2j4Psj0NavEgVt5oS2ljtSttDcXM7IugkTFEY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725624868; c=relaxed/simple;
+	bh=unqf3m8/8Vw+S0KGQnHjn/CBMYzdjVAZTYNm4ilTBgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etgu6J1yHrMTpJGVIMg6V0HqFrWqbyIwp0reGQDQYgb1M3cN8wPQN0ebd8nsrqDG2x/GGx336h7fz/pe3tPR4v9E5LWRg1/mHpQXI2oV7Y7XZfqrJInpIDN/IZBcqTvmakLMp0tD2VRh8MyYXy36CnkPep91FxQCXmB2hjYKqIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iYb8Y0YQ; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-536584f6c84so980081e87.0;
+        Fri, 06 Sep 2024 05:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725624864; x=1726229664; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7MCTJ64Ap0FWa8Yerpoe9k6SUGm0Hd0erFmU70Kt+Uk=;
+        b=iYb8Y0YQMxzP3q+vng53jx0B0qjwdGH+pRcqEAG2Kaup5P6iY5ASRr38LGSMpJYt9N
+         THBPTj2mzzB2azppiYf173WHyAVfFSzc/IqSAxlnozt7zdelfEN1jjWKKnKfehRspr97
+         viIJ6ygLgfFg0DybPHAeaolYlhxz/OiXcimhStOZwK1I78850ktygpqHGb44fO9P3F2V
+         6rw8ATw73pEkr+wc7yKnKnnAFSZtP3lfCbxOCLp9ypl3LeP1htzoEuyuP3K1yXEpJ8pi
+         8IdDYPjsF3Mx/yD49UoOq965HJcdD6cMXSEVYalvN/WY+x9n/E8/ccSTPEIhAe4uVnze
+         GHoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725624864; x=1726229664;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7MCTJ64Ap0FWa8Yerpoe9k6SUGm0Hd0erFmU70Kt+Uk=;
+        b=LspxHbshV+JuMAESG42OLrP1lBkkBrgc3mZTSCZJtOiDPTTI/3iYn7k3LU9K27poGl
+         kRYWk5uTUdt+xZr4R4udIGot1fdYEZsMjGteLlKwkEWb1t6hyfS8F+VzYbrkEMpWLgwh
+         OVdqryHPOeKa3nJx1XH6g3p/+rafADoesAEb5uHZNPx3io3Tp69HU5bCvMGRyqG3OD2n
+         ugq2NO33Qe/fME7Okh9VzPkKXu8A9p0TYxhQ995gHKXOL3g+WsWgLr/QmuZqVtuK3pKy
+         9e/Ah9ial/50XITzYksLhLsy3Vtw6Bd5fw6SPk3l7/+bdYYlbvA1p6mv1+wB/ZQRy/t3
+         n5OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdicHYdIZSg8RbunTQzXlPwNMy1Yo/Yl2HRBcz6nXQ6CmCN+RzWK6dfFatJQYpXrwmFChNZr/SFkJxfWV+@vger.kernel.org, AJvYcCUvvlMPFXmUKfwAIlVaBj7EsJ/tD/9QB3EC4cUzfnYtDO7YoUdkhKemF3Jj83GA/5CB56U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTM0XzRTeGd3kmokK4CmYn7efhd+Mfn/OOtqJiugqqO8VJueAn
+	oL6P9oKD0qDyV1ideNKv6324WQaOg1mubRF3Ru7QcjtZw4kYoncA
+X-Google-Smtp-Source: AGHT+IGydFRd1uISwcLNQ7/uLhpGxcjZgeGYt7HNPMfkdE+mw4ggyg3ydgWLV8t9ZR41n0MYx7mGoA==
+X-Received: by 2002:a05:6512:398d:b0:532:ef22:eb4e with SMTP id 2adb3069b0e04-5365880a275mr1109279e87.54.1725624863153;
+        Fri, 06 Sep 2024 05:14:23 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5356d3782e0sm464090e87.299.2024.09.06.05.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 05:14:22 -0700 (PDT)
+Date: Fri, 6 Sep 2024 15:14:20 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: jitendra.vegiraju@broadcom.com
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
+	john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, ahalaney@redhat.com, 
+	xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, linux@armlinux.org.uk, 
+	horms@kernel.org, florian.fainelli@broadcom.com
+Subject: Re: [net-next v5 0/5] net: stmmac: Add PCI driver support for
+ BCM8958x
+Message-ID: <h74bn2huz3oul27lu7b7upy6mtpbr4w4mbtquxqlvzccackoiy@74tc67lafadf>
+References: <20240904054815.1341712-1-jitendra.vegiraju@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB03.amd.com
- (10.181.40.144)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB54:EE_|SJ0PR12MB8614:EE_
-X-MS-Office365-Filtering-Correlation-Id: 183d2a8f-bf1a-4094-486a-08dcce6d6358
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?M/O7OCg7WAQdLx2LhPMh7YvtLnfGNkJc0e7gK/0AVuVYOva5gO02EutMhtl7?=
- =?us-ascii?Q?DYV8BFJbns6mN1h66SWiwP4Z0YojC6bAd/M+HIEGRCIooXcdtpk0uQj7PdWU?=
- =?us-ascii?Q?VYr4ZpjvZNJjyUno+CVHx0uB8gjHNvnPVaChWCiG7+Um+219jxQB/a+z8BTV?=
- =?us-ascii?Q?Ip1AU9ZHZzEEe4BM/YkV1n13MC2kCeq+w0X0WdoQR7uCQo43HBc1F/9mBgu5?=
- =?us-ascii?Q?toswmmuflpQLxNEJn8mM9lCCxOMCCqkUWaIpstRanIShjUnhdsaV9jRViRZ/?=
- =?us-ascii?Q?ITCTRS+D0xIfyWtS5Rr767uiyNOdDy2xFZKLxooZpxa0P0sjIk1i/cpZQYbc?=
- =?us-ascii?Q?EVo8+jzWlsPE1/GNfvI7CFbK/LBf7MSdYRyuPWq2SxPme9g2oIZl9lWRFXoa?=
- =?us-ascii?Q?5HlOwTFexmlmMxwuK+iY5ptvNN3xPDC7Cj9vvchejUWkniWRp/2RlPuwByZy?=
- =?us-ascii?Q?cteyWFEkMxDjaYApIfbyiEz68u0CvY6d129XY/DLDAyEstjPq/T5coRXxXgR?=
- =?us-ascii?Q?Ey5K9m66fRwhfwk4cLAXn0BI3aSd2Ng8XCzRYeO+ojJwKEPhMbonZwSQPU+h?=
- =?us-ascii?Q?zwWE0MkXJUaXgj4MJnRC+ztblhEDSkK5NQHWVJvYa9lXxqkurtZYQWWULtpp?=
- =?us-ascii?Q?sQ0odrvkqtyuc6QJvZgOnqj5svsUrr//k01B1wb4M4kzTlnUI91iwVhAtcjQ?=
- =?us-ascii?Q?ENFk+mtQ6xAJr2qZjY/wg+E8mdlG2ZIL6LQG7ztA5iVxZNCE+xqVXjI5bwkn?=
- =?us-ascii?Q?lkQF/x+9iHxvZZobOE1HY9H1TV3K3BFzo3chJlHFeIVfd5agVNjC6LZhpLKK?=
- =?us-ascii?Q?u20sNRLuxQkwViuUXJdrYbWNSKqj/lc18F0OmnHKpTQPHOzFUovmxXrtj+T8?=
- =?us-ascii?Q?rgegVahgPGJ/xsEhk7d3iWRfqIGkXTEvaedNo+Plz6ppJjebgXAWFfe+0wKv?=
- =?us-ascii?Q?JvnVglwjdpsZeafowoYxLgA5x0AlWdgzXmiGbOwnGTLiNG77b+r7tUTEuulB?=
- =?us-ascii?Q?O/WqWvA+8fwIXjsMtpAoOkAAJmxxeSeEFzKPCTE5+Mfp1F46ZLlNbac6vz1A?=
- =?us-ascii?Q?M/jDo95dKm8XylFR4GYE3U/+lAWWqU1AD1cGIMNBzwbCntZn+S3Kex625cwa?=
- =?us-ascii?Q?QLQYmMT7Lj3EVKsymV7ssJ0ukBK6FMJTtkjFwfwxq9HkFyGyElzukrPhrTWJ?=
- =?us-ascii?Q?+xhPTfrhUnPx9YiVkapMyEiv+Ono8MKa7BASHraL4JwQbmX3/gmAySbaA7vV?=
- =?us-ascii?Q?vBCON79wYvcUPHPIPcbSmbj8+Z+XouW+5+ICJeEPgBlZYw/OR6IP/kH/d6JJ?=
- =?us-ascii?Q?g7rYfYc6Ei5kjQ8/y9/2qPaV+Lj1F8u+DDdcbAUgfdD9X2xd5O4lgbe0VIsq?=
- =?us-ascii?Q?mfKKpHua4TFeVxoleA83c3pJiA+tZn3G0m8iJ/QvWJkTJJgHq4MoUU8xZss/?=
- =?us-ascii?Q?eegv4VYZLnk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 12:13:59.2473
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 183d2a8f-bf1a-4094-486a-08dcce6d6358
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB54.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8614
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904054815.1341712-1-jitendra.vegiraju@broadcom.com>
 
-Update the DTE in place could result in data tearing since the AMD IOMMU
-hardware reads the entire DTE either in two 128-bit transactions or
-a single 256-bit transaction.
+Hi Jitendra
 
-In case of updating only single 64-bit, it is sufficient to lock use
-WRITE_ONCE() beaucse it is writing to memory read back by HW.
+On Tue, Sep 03, 2024 at 10:48:10PM -0700, jitendra.vegiraju@broadcom.com wrote:
+> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> 
+> This patchset adds basic PCI ethernet device driver support for Broadcom
+> BCM8958x Automotive Ethernet switch SoC devices.
+> 
+> This SoC device has PCIe ethernet MAC attached to an integrated ethernet
+> switch using XGMII interface. The PCIe ethernet controller is presented to
+> the Linux host as PCI network device.
+> 
+> The following block diagram gives an overview of the application.
+>              +=================================+
+>              |       Host CPU/Linux            |
+>              +=================================+
+>                         || PCIe
+>                         ||
+>         +==========================================+
+>         |           +--------------+               |
+>         |           | PCIE Endpoint|               |
+>         |           | Ethernet     |               |
+>         |           | Controller   |               |
+>         |           |   DMA        |               |
+>         |           +--------------+               |
+>         |           |   MAC        |   BCM8958X    |
+>         |           +--------------+   SoC         |
+>         |               || XGMII                   |
+>         |               ||                         |
+>         |           +--------------+               |
+>         |           | Ethernet     |               |
+>         |           | switch       |               |
+>         |           +--------------+               |
+>         |             || || || ||                  |
+>         +==========================================+
+>                       || || || || More external interfaces
+> 
+> The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
+> MAC IP introduces new DMA architecture called Hyper-DMA for virtualization
+> scalability.
+> 
+> Driver functionality specific to new MAC (DW25GMAC) is implemented in
+> new file dw25gmac.c.
+> 
+> Management of integrated ethernet switch on this SoC is not handled by
+> the PCIe interface.
+> This SoC device has PCIe ethernet MAC directly attached to an integrated
+> ethernet switch using XGMII interface.
+> 
+> v4->v5:
+>    Summary of changes in this patch series:
+>    As suggested by Serge Semin, defined common setup function for dw25gmac.
+>    To accommodate early adopter DW25GMAC used in BCM8958x device, provide
+>    a mechanism to override snps_id and snps_dev_id used for driver entry
+>    matching in hwif.c
+> 
+>    Patch1:
+>      Added plat_stmmacenet_data::snps_id,snps_dev_id fields - Serge Semin
+>    Patch2:
+>      Define common setup function for dw25gmac_setup() - Serge Semin
+>      Support DW25GMAC IPs with varying VDMA/PDMA count - Abhishek Chauhan
+>      Allocate and initialize hdma mapping configuration data dynamically
+>      based on device's VDMA/PDMA feature capabilities in dw25gmac_setup().
+>      Spelling errors in commit log, lower case 0x for hex -Amit Singh Tomar
+>    Patch3:
+>      Glue support in hwif.c for DW25GMAC in hwif.c - Serge Semin
+>      Provide an option to override snps_id and snps_dev_id when the device
+>      reports version info not conformant with driver's expectations as is
+>      the case with BCM8958x device. - Serge Semin
+>    Patch4:
+>      Remove setup function in the glue driver - Serge Semin
+>      Remove unnecessary calls pci_enable_device() and pci_set_master()
+>      in dwxgmac_brcm_pci_resume() - Jakub Kicinski
+>      Merge variable definitions to single line - Amit Singh Tomar
 
-Also, lock the DTE before updating.
+Thanks for the update. I'll have a closer look at the series early
+next week.
 
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd/iommu.c | 42 ++++++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+-Serge(y)
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 15eb816d4313..e9cfe9238e83 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2753,12 +2753,12 @@ static int amd_iommu_set_dirty_tracking(struct iommu_domain *domain,
- 					bool enable)
- {
- 	struct protection_domain *pdomain = to_pdomain(domain);
--	struct dev_table_entry *dev_table;
-+	struct dev_table_entry *dte;
- 	struct iommu_dev_data *dev_data;
- 	bool domain_flush = false;
- 	struct amd_iommu *iommu;
- 	unsigned long flags;
--	u64 pte_root;
-+	u64 new;
- 
- 	spin_lock_irqsave(&pdomain->lock, flags);
- 	if (!(pdomain->dirty_tracking ^ enable)) {
-@@ -2767,16 +2767,15 @@ static int amd_iommu_set_dirty_tracking(struct iommu_domain *domain,
- 	}
- 
- 	list_for_each_entry(dev_data, &pdomain->dev_list, list) {
-+		spin_lock(&dev_data->dte_lock);
- 		iommu = get_amd_iommu_from_dev_data(dev_data);
--
--		dev_table = get_dev_table(iommu);
--		pte_root = dev_table[dev_data->devid].data[0];
--
--		pte_root = (enable ? pte_root | DTE_FLAG_HAD :
--				     pte_root & ~DTE_FLAG_HAD);
-+		dte = &get_dev_table(iommu)[dev_data->devid];
-+		new = dte->data[0];
-+		new = (enable ? new | DTE_FLAG_HAD : new & ~DTE_FLAG_HAD);
-+		WRITE_ONCE(dte->data[0], new);
-+		spin_unlock(&dev_data->dte_lock);
- 
- 		/* Flush device DTE */
--		dev_table[dev_data->devid].data[0] = pte_root;
- 		device_flush_dte(dev_data);
- 		domain_flush = true;
- 	}
-@@ -3042,17 +3041,24 @@ static void iommu_flush_irt_and_complete(struct amd_iommu *iommu, u16 devid)
- static void set_dte_irq_entry(struct amd_iommu *iommu, u16 devid,
- 			      struct irq_remap_table *table)
- {
--	u64 dte;
--	struct dev_table_entry *dev_table = get_dev_table(iommu);
-+	u64 new;
-+	struct dev_table_entry *dte = &get_dev_table(iommu)[devid];
-+	struct iommu_dev_data *dev_data = search_dev_data(iommu, devid);
-+
-+	if (dev_data)
-+		spin_lock(&dev_data->dte_lock);
-+
-+	new = dte->data[2];
-+	new &= ~DTE_IRQ_PHYS_ADDR_MASK;
-+	new |= iommu_virt_to_phys(table->table);
-+	new |= DTE_IRQ_REMAP_INTCTL;
-+	new |= DTE_INTTABLEN;
-+	new |= DTE_IRQ_REMAP_ENABLE;
- 
--	dte	= dev_table[devid].data[2];
--	dte	&= ~DTE_IRQ_PHYS_ADDR_MASK;
--	dte	|= iommu_virt_to_phys(table->table);
--	dte	|= DTE_IRQ_REMAP_INTCTL;
--	dte	|= DTE_INTTABLEN;
--	dte	|= DTE_IRQ_REMAP_ENABLE;
-+	WRITE_ONCE(dte->data[2], new);
- 
--	dev_table[devid].data[2] = dte;
-+	if (dev_data)
-+		spin_unlock(&dev_data->dte_lock);
- }
- 
- static struct irq_remap_table *get_irq_table(struct amd_iommu *iommu, u16 devid)
--- 
-2.34.1
-
+> [...]
 
