@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-318786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B4396F355
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA11896F35F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352201F256C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2683286F9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96B51CBE84;
-	Fri,  6 Sep 2024 11:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Oy9QaNOD"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A4F1CBEA2;
+	Fri,  6 Sep 2024 11:43:57 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B261CBE8C;
-	Fri,  6 Sep 2024 11:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A041CB33E;
+	Fri,  6 Sep 2024 11:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623007; cv=none; b=Gm0Ynacz/JfSEB0JMD8sL0ONYpWKQIvD2xMJWTElkZ2sl1HGmSH0X5lxAIGy3mv7wQK7xtrwz1PXxekEV5vtz7hxUeFqpVH8ijvAZx3t+R1pKB8wi7XzcrAYdEcEJ8pHWCvTREe0UIXtARYxPEPcmO4LgulaY3cbTZvwhlo6SU4=
+	t=1725623036; cv=none; b=BIV2S24x1CoKvzaDJ0Oi4QynN0eCgLgo5sqLBMB4lKol4rWM95bnwBI4IxUlKQQWrzUOg9r46CUerC/ZNoDgBXkXUBeIqB4SZhLj8Pmt9KVJOPagr5z5AFbEHt0Cq85cwEdePNwj0OtfxG+7m9Z8xMrUimIy/SK8gvgzSLN+fgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623007; c=relaxed/simple;
-	bh=zMmCRgFI714ablx/Mlc9+/NWX2/zpqZ8+lqWhw4i/Sk=;
+	s=arc-20240116; t=1725623036; c=relaxed/simple;
+	bh=i5Vj6pTtqAFcekgqdft2a7YaCzfD36iQZL5KAInZPtA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7niLd1WxVP5+jdf5kkKEJSAbF2LP3x2aJEVRTIy86PIHRLwJcTLj59aclHWfo1JpL3T39j9ozZHGIveDUMOXp+FsQVqhwnw9VHp/MJDiM6K+4Va9gXp8GtNrq1sr3qANGD2QISD3LLqZNASMkuHVo6+1s3keGFRaj5lCoJq6kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Oy9QaNOD; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 5A6361FBFB;
-	Fri,  6 Sep 2024 13:43:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725622997;
-	bh=zHtMclKF/ryXLIb1oo9T38iNo/P84poCTmamh3tRO3k=; h=From:To:Subject;
-	b=Oy9QaNOD6Pyg9+W5FW/VBPabb2wFRnEq7FACgHXChK6/W3nG7zGOA7TUpb0rqS1bu
-	 pUXOv0ZrRLB0ixZLU7oUszsVDguTEmNF0iFOAlmd1GsltJ2LS6nzYmIicosXJi8Swc
-	 jZaSllKAk8C7QN7tLo8s8u3l8zkX0fk4O99W7Ea7iEAL217gN5cicVcFpdQojsiHbs
-	 gNFk6z68L2USSpod9Ms5ltgCrWVImP1AgCBImNSncONRhaXFBmMQzvl0lrIbiq9yLf
-	 PM4LM6K8XbgIFE0CJImR+wC1DQ/q13JivFxiDAtuhFEksT5RjwvBKPB/k+YvS8mkfw
-	 oa1aSKx1S+UOQ==
-Date: Fri, 6 Sep 2024 13:43:11 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Aradhya Bhatia <a-bhatia1@ti.com>, max.krummenacher@toradex.com
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH v3 0/4] drm/tidss: Add OLDI bridge support
-Message-ID: <20240906114311.GA32916@francesco-nb>
-References: <20240716084248.1393666-1-a-bhatia1@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+CLoLxfdcUJacooRDfKkXx+HC3//KklOx+ovesDoCFmHXW9CnLcPHN5+n6fgzChtDbfaGKIUcEiR77IlVgKhsAw2iw5VFP5f63qyOyh8IVaf8lyQalQPUP4Rj51A1IaRTr3I9YTzZrQKF7eA+zvgJjHSHjGjVXWL9EM94P9bPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFE75C4CEC4;
+	Fri,  6 Sep 2024 11:43:46 +0000 (UTC)
+Date: Fri, 6 Sep 2024 12:43:44 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: guoren <guoren@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <Ztrq8PBLJ3QuFJz7@arm.com>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240716084248.1393666-1-a-bhatia1@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
 
-+Max
-
-Hello Aradhya,
-
-On Tue, Jul 16, 2024 at 02:12:44PM +0530, Aradhya Bhatia wrote:
-> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need
-> for some major changes for a full feature experience.
+On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
+> On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
+> > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >> It's also unclear to me how we want this flag to interact with
+> >> the existing logic in arch_get_mmap_end(), which attempts to
+> >> limit the default mapping to a 47-bit address space already.
+> >
+> > To optimize RISC-V progress, I recommend:
+> >
+> > Step 1: Approve the patch.
+> > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
+> > Step 3: Wait approximately several iterations for Go & OpenJDK
+> > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
 > 
-> 1. The OF graph needs to be updated to accurately show the data flow.
-> 2. The tidss and OLDI drivers now need to support the dual-link and the
->    cloned single-link OLDI video signals.
-> 3. The drivers also need to support the case where 2 OLDI TXes are
->    connected to 2 different VPs - thereby creating 2 independent streams
->    of single-link OLDI outputs.
+> I really want to first see a plausible explanation about why
+> RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
+> like all the other major architectures (x86, arm64, powerpc64),
 
-Have you considered/tested the use case in which only single link is used?
-You do not mention it here and to me this is a relevant use case.
+FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
+configuration. We end up with a 47-bit with 16K pages but for a
+different reason that has to do with LPA2 support (I doubt we need this
+for the user mapping but we need to untangle some of the macros there;
+that's for a separate discussion).
 
-There is a workaround for this (use option 2, cloned, even if nothing is
-connected to the second link), but this seems not correct.
+That said, we haven't encountered any user space problems with a 48-bit
+DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
+approach (47 or 48 bit default limit). Better to have some ABI
+consistency between architectures. One can still ask for addresses above
+this default limit via mmap().
 
-We (Max in Cc here) noticed that this specific use case is broken on
-your downstream v6.6 TI branch.
-
-Francesco
-
+-- 
+Catalin
 
