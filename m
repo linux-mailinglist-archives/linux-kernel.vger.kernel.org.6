@@ -1,298 +1,339 @@
-Return-Path: <linux-kernel+bounces-318462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4FD96EE5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:40:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CCE96EE65
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F7511F236E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD9728516F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A8A158543;
-	Fri,  6 Sep 2024 08:40:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF511591FC;
+	Fri,  6 Sep 2024 08:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="BPyoJj2p"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010029.outbound.protection.outlook.com [52.101.128.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622B0156887
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725612027; cv=none; b=dnTv4oP6f9inui9CXB3bf4ain7Vnu4YmBb44hfPiTIv1B5Elmg+omZAs4ASTtUxhyIvqx9Vz6bl6OjtreWWwu6gr/0gw3a5uoPolsSmzlv+bmR1r02mnDrUzaBioTgVk0SyqM/PwipELe0gvMgFQ0THnIsS/q/NT99Rzn66yEis=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725612027; c=relaxed/simple;
-	bh=e8Q9CXP4EQ4aHDpjhvlYAJBy8g2VChIudliQKIE9Qww=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=W5bo9dIzgs38PcWA+bWHALccB4yJ+HSQmjFv6UEHtdzZTL+n/23fpF91nwCvRhNO+uRvJhhUCPf8HvCJcT5g7uRVVnPSCvxiNLo3JwG8rcFcd1imwMuTD3PE8Ud+aevkuubOwgCrApa9rarVXwD3eQd5kXI0XhiE6ZZP1dzQWYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f53b1932aso37700645ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 01:40:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725612023; x=1726216823;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dxMtXmxbmIuI9BH9fl2KBtlQSH4poSJVQCqdbJyhlzA=;
-        b=vPOVXnr+k4gmVVzJ3lRwJ2CAGDurn5ZyNA2Uyk6V/OTyr/13SXRvlLA6h2/hu/cBy0
-         QeorUXW7TC3Jmx4i/kVvt1iVrqXfkjaqBCf6bmBp/KSoZrsJObLN4wJdp25WSpfSw4D3
-         1ePhu5MHkFWz/m86Uoc7vd/TpfUbfaJ5qbHHuGrYSN8RU2Zpts8Zv8ZEYG8rkwjl8Rg1
-         MAsrYng+TbyeBI8QpLbmLvoRGLOHUJ06okvKb6V8K3jA1uqsE8wtJ9ntZMBbpqr561vA
-         1mb8p3Z0Dk1e3vbMejWLkp3Ve2liayZaMXNPUaxmNKoCFUESpxa6+Sj+AYuvKkt9xPZj
-         BSuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhewN/jknxHBV/7lZx8/nNA4nDA6/mbYWZJaKQue6KT7x0bNBkVnaqUuhO6d9yqodW/+z3yOHSU1ij36c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa1yWh1RsqyZs4lgd3k+xCnbqyc9+A+sHhnsgCCLYEonFGqo4g
-	6akR4n5+bx9lCkdma90VXLcHB+dCRtw74qmUEu2V1LQKX+O1V1jDwU+oJYaym+JAbsj8HWssXru
-	4p6pjW6YVSUROwEzjyxcQGpI5oWSq6to/83ERnPj6DtOd/WQS2wkHwJA=
-X-Google-Smtp-Source: AGHT+IGU/x+f6zi6jCEqPmhPkUEnJh9k4zt2qXJR1860FVwoYiqZo117bWs06xrpRKJ/Q6g0XA1Okt9C0Dv+9Dylrg62iw57nUiH
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970FE158538;
+	Fri,  6 Sep 2024 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725612044; cv=fail; b=TPMRSuMFf1qNuTkVH85oCUphAsGEkceGY+pqT+jOFIlz4sg7vbI4HObl1q5dRUlG3ZJKnEJ4nJr8OjMoBg1Zci+aEKdlIPukM560co1pJamfaGfHBUcepAryClPGGRCTDeo+LkN/qTVGp9k3sPLbk6nbxJnl+9MvH7be/aItXgo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725612044; c=relaxed/simple;
+	bh=FrVkqsluabo3DtCEKlh7KSEPuXGJKM1d5xsPZkvA/xU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DNTiHtw3GqcUqTowY3ugMGZppjPnI35L6SrGWEsOQCO7LN49FqKq7KyR659KcXSrMC0G5denNqRPfwxqsqeZJCrtEJutwgspM88wDRI/aTIHgGxmpaM579ypHIMEDHGNzgzPXUNk0fxXZ9fC3luvwoqz+WpfSRpPo+VAW6YLheE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=BPyoJj2p; arc=fail smtp.client-ip=52.101.128.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TpZyyYrRHn7KgpP3ZERX0Q5qHLy0A4PC8yZPlrrVANTYABMut6kkuavZWfwUyriJi+XDXsX6BwDDc3OEx+rAVkg49gidcbbIm3V4xUpZnIMYBRVdgHV5kXdTunFdbZH3rqhEmsvHS8l9Hzt8c6I0KyegevpB0snyc4twuMTAb+G3XAPh0CvRqbDjXCcdvCBonqJzrM9pNjcyqKyBndexoGAFRUo/LuHOB8qkD+fmLyX5+iyztoNiw2QuFBAdu5+JMG26vvbZY1/BJNvKfBJkrcEnGhnRAyfWbKlqdllDXGMF0w3ukt45wq/QQj0+OCv0yv2Oc4dppN6lZV/kThYQgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WH9Q1LOhgnyzCH6K/JCSXfnJwz6Ncp7z/w4Nx4FpR18=;
+ b=uzy5nt6s3uLcIQp9LP+1GpsVCTBa+qz1upVieBAbIJ9JopjArGk19pgAInjSzgS4TcdVQJTyNc76LYDHbX9Cr/ufGgJui9EAPDOa1klagJ+Oznbd2eKC2OdLh2W/SQq7nIKna3r/B3bMcJaE2HRqUTGvxJrrKn7El20vePQnJIB9b6Q/RdUgJaygJcTW50xg4ngwGifSt7Ps2UP080r6yXO3V8Q4cxNqKnfvO+MrtKhnm5YHnzLqvGJYxSM8D4LNd9oYstGYy+kEYsNTAeAmSG56bF2D0Zk6DtQB2AbEHiSwbG+gmo4LiGpXPzIc1GnDYoRXdEVA67XOdYYbtxK0jA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WH9Q1LOhgnyzCH6K/JCSXfnJwz6Ncp7z/w4Nx4FpR18=;
+ b=BPyoJj2pnVH83cFy5S9IbmkHmatnK+kdKotLApfFFbfacDAPO5nEQ33P85Xl9z7qKmA7jhRWYjyOlIJt0/MB8ZFYcKWwpOPyjdh2ZHcAoBqvzQK52e+BC0wzqUTZ+lWmyMzEWZvE5h9tuazhLhAWIklQBOKsJVoQWXXSqesiNceG9RWLKoYhvc8mDZaGeWL59mQazoQB7OoVQHrxoZHQMV0yYaPW/qsqO5OBXEBIMs6lAO6v0t4zoGn3es9PQuF11bXRULOvPxlFczgZE//v/EbZ1tUhVymK09tB9/pMOPcx9EMwZPGTkVei65FXNPrqpIR+yVXv3kFGzcVyqXAW9A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SG2PR06MB5012.apcprd06.prod.outlook.com (2603:1096:4:1c4::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
+ 2024 08:40:37 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
+ 08:40:37 +0000
+Message-ID: <90c35051-0528-4dd4-b97b-6ac937b729ab@vivo.com>
+Date: Fri, 6 Sep 2024 16:40:32 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/7] udmabuf: reuse folio array when pin folios
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240903083818.3071759-1-link@vivo.com>
+ <20240903083818.3071759-8-link@vivo.com>
+ <IA0PR11MB7185D2C5AE98C2EBD72B72C3F89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB7185D2C5AE98C2EBD72B72C3F89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0043.apcprd02.prod.outlook.com
+ (2603:1096:3:18::31) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1386:b0:39d:25b4:1528 with SMTP id
- e9e14a558f8ab-3a04f0e655dmr743625ab.3.1725612023557; Fri, 06 Sep 2024
- 01:40:23 -0700 (PDT)
-Date: Fri, 06 Sep 2024 01:40:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000af47d506216f5b6e@google.com>
-Subject: [syzbot] [fs?] KASAN: slab-use-after-free Read in lockref_get_not_dead
- (2)
-From: syzbot <syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    9b0874286768 Merge branch 'mctp-serial-tx-escapes'
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=11bb370b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
-dashboard link: https://syzkaller.appspot.com/bug?extid=f82b36bffae7ef78b6a7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1627ab2b980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/dcf9f909bf9e/disk-9b087428.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/edebf1ed521a/vmlinux-9b087428.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df22819dee6a/bzImage-9b087428.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __lock_acquire+0x77/0x2040 kernel/locking/lockdep.c:5007
-Read of size 8 at addr ffff88805c6ce248 by task syz.4.339/6895
-
-CPU: 0 UID: 0 PID: 6895 Comm: syz.4.339 Not tainted 6.11.0-rc5-syzkaller-00154-g9b0874286768 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __lock_acquire+0x77/0x2040 kernel/locking/lockdep.c:5007
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- lockref_get_not_dead+0x26/0xc0 lib/lockref.c:184
- get_stashed_dentry fs/libfs.c:2128 [inline]
- path_from_stashed+0x218/0xb90 fs/libfs.c:2222
- proc_ns_get_link+0xf9/0x240 fs/proc/namespaces.c:61
- pick_link+0x631/0xd50
- step_into+0xca9/0x1080 fs/namei.c:1909
- open_last_lookups fs/namei.c:3674 [inline]
- path_openat+0x184b/0x3470 fs/namei.c:3883
- do_filp_open+0x235/0x490 fs/namei.c:3913
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fab18f78850
-Code: 48 89 44 24 20 75 93 44 89 54 24 0c e8 19 8f 02 00 44 8b 54 24 0c 89 da 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 89 44 24 0c e8 6c 8f 02 00 8b 44
-RSP: 002b:00007fab19c74f60 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fab18f78850
-RDX: 0000000000000000 RSI: 00007fab18fe7a56 RDI: 00000000ffffff9c
-RBP: 00007fab18fe7a56 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fab19116130 R15: 00007ffe82b25778
- </TASK>
-
-Allocated by task 6889:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4056
- __d_alloc+0x31/0x700 fs/dcache.c:1631
- prepare_anon_dentry fs/libfs.c:2162 [inline]
- path_from_stashed+0x63a/0xb90 fs/libfs.c:2229
- proc_ns_get_link+0xf9/0x240 fs/proc/namespaces.c:61
- pick_link+0x631/0xd50
- step_into+0xca9/0x1080 fs/namei.c:1909
- open_last_lookups fs/namei.c:3674 [inline]
- path_openat+0x184b/0x3470 fs/namei.c:3883
- do_filp_open+0x235/0x490 fs/namei.c:3913
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 16:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4548
- rcu_do_batch kernel/rcu/tree.c:2569 [inline]
- rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
- smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- __call_rcu_common kernel/rcu/tree.c:3106 [inline]
- call_rcu+0x167/0xa70 kernel/rcu/tree.c:3210
- __dentry_kill+0x497/0x630 fs/dcache.c:629
- dput+0x19f/0x2b0 fs/dcache.c:852
- __fput+0x5f8/0x8a0 fs/file_table.c:430
- __do_sys_close fs/open.c:1566 [inline]
- __se_sys_close fs/open.c:1551 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1551
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88805c6ce178
- which belongs to the cache dentry of size 312
-The buggy address is located 208 bytes inside of
- freed 312-byte region [ffff88805c6ce178, ffff88805c6ce2b0)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5c6ce
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff8880279abf01
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000040 ffff88801bafe8c0 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000150015 00000001fdffffff ffff8880279abf01
-head: 00fff00000000040 ffff88801bafe8c0 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000150015 00000001fdffffff ffff8880279abf01
-head: 00fff00000000001 ffffea000171b381 ffffffffffffffff 0000000000000000
-head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Reclaimable, gfp_mask 0x1d20d0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5646, tgid 5645 (syz.1.52), ts 379968019454, free_ts 379948285619
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2321
- allocate_slab+0x5a/0x2f0 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
- __slab_alloc+0x58/0xa0 mm/slub.c:3813
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4056
- __d_alloc+0x31/0x700 fs/dcache.c:1631
- d_alloc_pseudo+0x1f/0xb0 fs/dcache.c:1763
- alloc_path_pseudo fs/file_table.c:330 [inline]
- alloc_file_pseudo+0x123/0x290 fs/file_table.c:346
- sock_alloc_file+0xb8/0x290 net/socket.c:469
- sock_map_fd net/socket.c:494 [inline]
- __sys_socket+0x1dd/0x3c0 net/socket.c:1715
- __do_sys_socket net/socket.c:1720 [inline]
- __se_sys_socket net/socket.c:1718 [inline]
- __x64_sys_socket+0x7a/0x90 net/socket.c:1718
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5643 tgid 5642 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
- __slab_free+0x31b/0x3d0 mm/slub.c:4384
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
- create_nsproxy kernel/nsproxy.c:56 [inline]
- create_new_namespaces+0x34/0x7b0 kernel/nsproxy.c:74
- prepare_nsset kernel/nsproxy.c:335 [inline]
- __do_sys_setns kernel/nsproxy.c:569 [inline]
- __se_sys_setns+0x2cb/0x1c10 kernel/nsproxy.c:546
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88805c6ce100: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fa
- ffff88805c6ce180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88805c6ce200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                              ^
- ffff88805c6ce280: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fa fb
- ffff88805c6ce300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SG2PR06MB5012:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f6dca3f-0b79-4cf4-1bcd-08dcce4f948d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NmZGckxpbjZIMUlrT2pGbW1VRzFiRGU2MDAzMWJnRHhyNHNMS2FoU1F4NW9p?=
+ =?utf-8?B?dEE0aTUxaE5LdTVFU0dDYVRleS9PQTc1Yno4ZFBvL2IwbVpmYjZVc01lYWxW?=
+ =?utf-8?B?MWo3OVRVaG5nS3pCNmU4MngyVXpmR3BNY05hSHFNL20zSEhRZkRLVTlzNTdD?=
+ =?utf-8?B?amVkSEs1SVh0L2hhUXNXM01PQ2xEaEkrVXV0TDlwWTdlQWs4UFBtc1RPSnFm?=
+ =?utf-8?B?N1ZvcEt5ckxSbWFoRkk4b3M3VytKZXJ4Q2s5Rm0zNm1Cc3hiWG1kOE0yOHJz?=
+ =?utf-8?B?ZDZvSTdzT29mNzkrWGZtZVlkUjl6bDdJTDZGQ0dNZ2I5V3F0R08xdFdJK1Zt?=
+ =?utf-8?B?M281dEFjTG5IUkxVMUc1bzlPYWpZWEJTSmhoUFVMNkdXbHZnR0tUTWh2MWNB?=
+ =?utf-8?B?K0ZYak5WUEdEZTNSSEo2Q0N4OTNpOHVHbDhsMmtYeURKS0x4eEhiTkExbG9p?=
+ =?utf-8?B?NUV3dlluS1hKbHVuZ2tHQ1N5UHA0cWQ2cDRJMWdDeFZ3TlQzS1IxQVdQTU5q?=
+ =?utf-8?B?MFo0a2t3YjBtYk5Wb1YvOFdLZEZtMjhjeitqdkJFQlMyRlg4K2p0UlBVWmdZ?=
+ =?utf-8?B?TU05WHdFdit5TjErMUxTYkRDZW1oNFpzQnVxT0VUQjg3UHRHK01CTWR2NEJn?=
+ =?utf-8?B?bG5GWG5IWWViRllYdm9pZ2VQN0VqeWtKaC9hSWFVU2FDeWZrSzN0TUpPQ3Rx?=
+ =?utf-8?B?c0M1SkVsNFJhOU5jV3I5NFJWQ3VsR0c1b3RkbVZvMlJmNHlMbjFnZGpQWHZz?=
+ =?utf-8?B?YmozWUtvekRlU09SUnoyUFErSE84ajdCc0tMMWYzOVJWcGNUcTVCUmYrVHhZ?=
+ =?utf-8?B?OEYwSE5TeXhzZzhkYWEzdVhvdFdydWFaeGNtczJSb0dCWUYyVm84cm5SSkRU?=
+ =?utf-8?B?QTBKWjI0MW42S3NaNGVsVE1nUlR0bUxvMjBVcDRTYnZhQVM1eHFqbGdEYUdB?=
+ =?utf-8?B?b1hNWUtkL2c5dU84bEpjRnZqVk0rbE5uOTJNN05YcWd3ckl2cXZVMGRvY2s3?=
+ =?utf-8?B?OElKQTNQd1dGSjNNRHFVVWJHUHkyMkpzU01SM0p4aEpybU5sRlUzNXphRUFT?=
+ =?utf-8?B?MGpZcXhTbDkvU2NhVVF2V3paRFREOGc1QWhDUld0UDc2dUFLMDcyN2RTd1VP?=
+ =?utf-8?B?V1dBdEdxQXpoWURNVVZ4LzkyaFdGWVhFMEo2NkFhSjlmM0dTeHZUTUE0ajM2?=
+ =?utf-8?B?K29KRzZiS1NCR3lCM3MvanNUUDFUQms4dFk4Q01hdWZlTWJZYlZTTGtkSE1U?=
+ =?utf-8?B?bmpiVk00dVNUSHk2bE1QYWE1Y05WcEppSnJGZ2o5cEhzblp4aTVGOFNzUTFI?=
+ =?utf-8?B?TXZKWkdVUm1kVlhUN2lkZG84cDI3dnpiT3FFKzRvb2JLdHRQSTN5YkREbUts?=
+ =?utf-8?B?a0lhMXh1Nm5hZ2d1K091Sk55ZC9KZ2VNcytRRkUvK0t3S0FxSzQ0SGU0ODlr?=
+ =?utf-8?B?eG4wRjdJYXU5TTVZY05CYU1HdXBoVHM1Wk9YdVdlMDZLN2NxYm8rOTRZMHdy?=
+ =?utf-8?B?V0NqaVlMRXVFY2ladUU5eFpzc2ZKVXhiU3ZqRWd0dHFaZkFhaFVtektrYXhY?=
+ =?utf-8?B?TzBFOFBBK2Z4S0JYa0pobUtZNFhOM3hxeVJUSkZKdkFZUWx0NDF6RUpraEc2?=
+ =?utf-8?B?UHU4YUVWc08rTm5RSFNqVm9HbUJ1Y3ZqVElqUFdncFV4ekVHZlpyWG5Vb3Qx?=
+ =?utf-8?B?Vzk1bCtxcmRkeEZwOVBlQmRWdENGcmlHYmJ3UU9rQnlvU21nbHZHZXpvU1Yy?=
+ =?utf-8?B?MVJLV0FrUXY5VVJPOTM4VlRDS3V4ak5qdGZ0RzhBdTY1ek1NSW42MlZibEsx?=
+ =?utf-8?B?VmR2dzN2Njl5U3QwWkJsOUZFaFBCQnl3L0dnbEZLODR2MUEvN2VIcWkvSWdr?=
+ =?utf-8?B?RGRpZldaMnpraHdVS2tIK2tIaFRTeCt0amRlSmV0YXJNTVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a2tmM0x1Z1NmVnFFSVdFRlJhd2MxWnlJVVdYRzZjY1Z1NjUxempWODlFcGta?=
+ =?utf-8?B?cWRRVk80MDNWd2MxK1llVkM3TTBIMk95OEdGQzFTRVVzcFA4RDM5SUIxeGFk?=
+ =?utf-8?B?eG5lYXZ5WVFzQk9pVG90aER2MlYwZUZtOVFIQkxVblVIUlFVZktoRXJyWVZ4?=
+ =?utf-8?B?bzcrMitMTjc1Y0RiNDlURnE3dW5Sb0xLSlVMTXI3bk1uUjJoZTc1Z1NSd2J3?=
+ =?utf-8?B?Y0VQa2cxZkxLN2hHa0NVKzU1ZmduenliWHl0aHRGUlI2QVpNQ3ErYkdRd3lT?=
+ =?utf-8?B?Z0lqWUJyRkg3NEU2M1FLZExrV1J4MndWTG9Nd1B0M3g3enMveGw2K1JvQzRU?=
+ =?utf-8?B?VkFMUXlBa0RuSFpVYUJLWTRzNjM2MmtiSW5hSk9TSTZHT3djMjhLbnptVVBN?=
+ =?utf-8?B?Qk9XSEdtMTlRMkc5YmczSVl5d2Q1b1RMZVQyLzR2dDF4dVU3ZzBCcjNUV1Qx?=
+ =?utf-8?B?NThGeFVjaVZtT1RpZ3g3Q0g2dUNHQ1gxSVRTNUo4QXpwaHVwTE5FWExJeHRw?=
+ =?utf-8?B?SnBEYytGNnJob1pNQmxJTUU5bk5KZ1luOVZSRWxoQ2xqZGFmWlB2TExlQWZI?=
+ =?utf-8?B?cEljeFgzZnQvRHBvQ3F6dXN0a0o2YmVuSC9qQjRCZ3MwS2lJYWdUUXlBdWlQ?=
+ =?utf-8?B?T2lVa1NHaHFjbjRkQzRwdkNnaTE4RmdOa3BRUmJGVU5vSXQra1VxTTMwVXpt?=
+ =?utf-8?B?SEJUV2hqL1NLenJtR3NGMHVHbEVxZ3kxUWtFaW05T0RRV2Eybk1iVXZTTENX?=
+ =?utf-8?B?YXpuS2N3eVhaaDdJV3BrQW9uVmRCMm9oTjV6dVp3VGQ2RUgwWU9TK21Gd2Rh?=
+ =?utf-8?B?MXRoQ0dVMG84OXN0cHlXN29VZlY2RmxKNjMrVERqNStjYXVyV0lmdFdXMEQ3?=
+ =?utf-8?B?K3MwM1RRd2NDZ0tZNThoMVN3NHhnVGMxZ2RtUUhlWTBCcVduUjdxS09zVkZh?=
+ =?utf-8?B?eW1LVng5VmNRaHk4VE1zNEZCSGg5TXJMMGVsQVl0YTM3Tzg1MmhpWDRXSDQz?=
+ =?utf-8?B?d3FxYnZWSTB1MDF0WXJYcU41eG1IMTY0V0kzZi9FQ3hsNEVzcjI1Umo2UXZh?=
+ =?utf-8?B?RFMwUEhVS3A2SjBBQWdYdmlqN0c1RG9nZmRubGRkelpmMloxcFROVHVTb3pB?=
+ =?utf-8?B?bmsyYXgyYklya0dwRmd2WThuUlZjcnlNcW1GUjVkUUdUVW5mak8rRitZcDdK?=
+ =?utf-8?B?Q2RlWDFOK2hlR21kOTd4WXhmbjV0OXNKc3ZxYUF1bXBpVVUwS2VYU1lCYnRk?=
+ =?utf-8?B?bXgwVS9UaGcyN0NiQ1JYNkkvNXZpb0c4NHRRT3laWGEyTTYrS2xaWHlpdW1E?=
+ =?utf-8?B?bG8wR0NST1hRdjZNWitoVjdYUHBkZ3F1NGowSSs2Vi9GdW5vV0hUN2J0Z2hw?=
+ =?utf-8?B?b1ZGZGpWOC8zeWQ5RmtZeWo4RExhNTRFQlVCd1ozUHdaV25PakFtQjVOeHpJ?=
+ =?utf-8?B?d1lubFlBVFN6ekZBOUtjUENRTTlxOERSaDRMdWhYaUFVakpXUWVwZGJWV3dN?=
+ =?utf-8?B?QmZOZUFuRXlGcTA2Nm9pb2VMVXVncnlZdTQvRTlCUjM0NnFiL3VtQlBRV0hp?=
+ =?utf-8?B?YjA1STBjVG8ydDUwbmdpT1RHTFpCM1Z3T1RqS1hQYW85dVRqR2VPdC9nT1VW?=
+ =?utf-8?B?S0VoUmJlK1M1RlFQMDRyRDQydlJvKzZlY1ZSTlEvajZNcnplRmlTK1B4Zk44?=
+ =?utf-8?B?WXRmdFdCeGRPM1crTFJzRk1SRjU2b0UrZG52Z1BSRWg5NTZrWGEweUVFdS9E?=
+ =?utf-8?B?VkhScUNxMVYyMndwREtDWExDb2dpQ29Ocnk4dzluRjJBd2hRc1ptOTh6Uk13?=
+ =?utf-8?B?c2p4bUM5dFZpejZVbUxiMlJ5aWFWWFcySmQ0SjFhNkIxRE84eThma0trTUNn?=
+ =?utf-8?B?TXJ1Tko2anIwczVmQkZFSnhYcSttcUdrTEgvZERJVDMyV0tHVVUvcmNBU0NQ?=
+ =?utf-8?B?a0VPMGFrVmFvSjZxcmdlZDFQdERFV1NybkEwQktBRWJsZWlBdjFoZjlLenNo?=
+ =?utf-8?B?TXdsN0RtYVhrNis3QnRBbXl5SHJnekRxTjI2MGlCdisrNUI2UWl4cXB4TGND?=
+ =?utf-8?B?RGJyN2I2SUF4MzllVk9oVDBYZEtyUEdaUjIwa3FpNkEvK2I5d09CNjZpRzdk?=
+ =?utf-8?Q?juY192FSIBLSW4QAxTvQvSZf0?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f6dca3f-0b79-4cf4-1bcd-08dcce4f948d
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:40:37.1323
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jMFLMszeI1J+50a9tKcJHBNFqW1kgX5LJxFru2Yv+roRYhpOfQFvJgMcctzKBAfknsWXnbNFWYKmBMt2thoO4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5012
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+在 2024/9/6 16:23, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH v5 7/7] udmabuf: reuse folio array when pin folios
+>>
+>> When invoke memfd_pin_folios, we need offer an array to save each folio
+>> which we pinned.
+>>
+>> The currently way is dynamic alloc an array, get folios, save into
+>> udmabuf and then free.
+>>
+>> If the size is tiny, alloc from slab, is ok due to slab can cache it.
+>> Or, just PCP order can cover, also ok.
+>>
+>> But if size is huge, need fallback into vmalloc, then, not well, due to
+>> each page will iter alloc, and map into vmalloc area. Too heavy.
+>>
+>> Now that we need to iter each udmabuf item, then pin it's range folios,
+>> we can reuse the maximum size range's folios array.
+>>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 34 ++++++++++++++++++++--------------
+>>   1 file changed, 20 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index d449c1fd67a5..d70e45c33442 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -343,28 +343,21 @@ static int export_udmabuf(struct udmabuf *ubuf,
+>>   }
+>>
+>>   static int udmabuf_pin_folios(struct udmabuf *ubuf, struct file *memfd,
+>> -			      loff_t start, loff_t size)
+>> +			      loff_t start, loff_t size, struct folio **folios)
+>>   {
+>>   	pgoff_t pgoff, pgcnt;
+>>   	pgoff_t upgcnt = ubuf->pagecount;
+>>   	pgoff_t nr_pinned = ubuf->nr_pinned;
+>>   	u32 cur_folio, cur_pgcnt;
+>> -	struct folio **folios = NULL;
+>>   	long nr_folios;
+>>   	loff_t end;
+>>   	int ret = 0;
+>>
+>>   	pgcnt = size >> PAGE_SHIFT;
+>> -	folios = kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
+>> -	if (!folios)
+>> -		return -ENOMEM;
+>> -
+>>   	end = start + (pgcnt << PAGE_SHIFT) - 1;
+>>   	nr_folios = memfd_pin_folios(memfd, start, end, folios, pgcnt,
+>> &pgoff);
+>> -	if (nr_folios <= 0) {
+>> -		ret = nr_folios ? nr_folios : -EINVAL;
+>> -		goto err;
+>> -	}
+>> +	if (nr_folios <= 0)
+>> +		return nr_folios ? nr_folios : -EINVAL;
+>>
+>>   	cur_pgcnt = 0;
+>>   	for (cur_folio = 0; cur_folio < nr_folios; ++cur_folio) {
+>> @@ -389,10 +382,8 @@ static int udmabuf_pin_folios(struct udmabuf
+>> *ubuf, struct file *memfd,
+>>   		pgoff = 0;
+>>   	}
+>>   end:
+>> -err:
+>>   	ubuf->pagecount = upgcnt;
+>>   	ubuf->nr_pinned = nr_pinned;
+>> -	kvfree(folios);
+>>   	return ret;
+> The variable ret is now unused in this function. Remove it and just
+> return 0 at the end.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Oh, nice catch.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>>   }
+>>
+>> @@ -403,6 +394,8 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>   	pgoff_t pgcnt = 0, pglimit;
+>>   	long ret = -EINVAL;
+>>   	struct udmabuf *ubuf;
+>> +	struct folio **folios = NULL;
+>> +	unsigned long max_nr_folios = 0;
+>>   	u32 i, flags;
+>>
+>>   	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
+>> @@ -411,14 +404,19 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>
+>>   	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
+>>   	for (i = 0; i < head->count; i++) {
+>> +		pgoff_t subpgcnt;
+>> +
+>>   		if (!PAGE_ALIGNED(list[i].offset))
+>>   			goto err_noinit;
+>>   		if (!PAGE_ALIGNED(list[i].size))
+>>   			goto err_noinit;
+>>
+>> -		pgcnt += list[i].size >> PAGE_SHIFT;
+>> +		subpgcnt = list[i].size >> PAGE_SHIFT;
+>> +		pgcnt += subpgcnt;
+>>   		if (pgcnt > pglimit)
+>>   			goto err_noinit;
+>> +
+>> +		max_nr_folios = max_t(unsigned long, subpgcnt,
+>> max_nr_folios);
+>>   	}
+>>
+>>   	if (!pgcnt)
+>> @@ -428,6 +426,12 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>   	if (ret)
+>>   		goto err;
+>>
+>> +	folios = kvmalloc_array(max_nr_folios, sizeof(*folios), GFP_KERNEL);
+>> +	if (!folios) {
+>> +		ret = -ENOMEM;
+>> +		goto err;
+>> +	}
+>> +
+>>   	for (i = 0; i < head->count; i++) {
+>>   		struct file *memfd = fget(list[i].memfd);
+>>
+>> @@ -436,7 +440,7 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>   			goto err;
+>>
+>>   		ret = udmabuf_pin_folios(ubuf, memfd, list[i].offset,
+>> -					 list[i].size);
+>> +					 list[i].size, folios);
+>>   		fput(memfd);
+>>   		if (ret)
+>>   			goto err;
+>> @@ -447,12 +451,14 @@ static long udmabuf_create(struct miscdevice
+>> *device,
+>>   	if (ret < 0)
+>>   		goto err;
+>>
+>> +	kvfree(folios);
+> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>
+>>   	return ret;
+>>
+>>   err:
+>>   	deinit_udmabuf(ubuf);
+>>   err_noinit:
+>>   	kfree(ubuf);
+>> +	kvfree(folios);
+>>   	return ret;
+>>   }
+>>
+>> --
+>> 2.45.2
 
