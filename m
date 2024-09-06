@@ -1,130 +1,164 @@
-Return-Path: <linux-kernel+bounces-318372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB1496EC84
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:49:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF3896EC88
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A568A1C25510
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:49:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00D2BB25ED9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E2F155301;
-	Fri,  6 Sep 2024 07:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBpOHeZ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59DA14EC4A;
+	Fri,  6 Sep 2024 07:48:35 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E504150996;
-	Fri,  6 Sep 2024 07:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CECE14264A;
+	Fri,  6 Sep 2024 07:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725608842; cv=none; b=QYCQXFsnTd4Vaz75PfY9OqqGHQIAG9iB331O6jWP7Bk9uJ+jwaFSq0wmqvj710Pc6tcY223QvCTyFpS23Cwu1908/PVPxpT5UcJPc3ZeQcbNgu74M3Ps2zKv4EQHyIBe3t5JtLu+Ut30caTvXnNTc+Nk1NYF5DbW6SgmZfM+k9o=
+	t=1725608915; cv=none; b=fF7mSO+W9+3EcGT8K09rQ4taJ7XPYKZjaFBfBCxaMWOiXw8pTDg4U3OvFJvbKJGUvHZIM8XTTDJRbKFjerE2auS8oc6IFjh/rMmbwrDl7MR2lu3mP5gSnbbstmpvPXfnkR1SXBsrRjV1R960VwxabxFuecTD1VHLk3+kHz9Y7qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725608842; c=relaxed/simple;
-	bh=hu+JAGtJySQgKbao5D33RzcckbHiifZyAyWscrsM0tI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cjCFfpYkhncf/Etd6kxw7C+zGb6ROoCWgHr4l2MpW2bFQ/wNsZocOpKbeYW/3SNXNCAQqW4AMYT4f9ZVeOOAj+VgvAAbdrVBVz389xUefGN1GKwlhu5WhZ4i9Pfp0WK+A5UvwZDoFqHEQPSCpLato8ZT/vPInADT8+wqQr+dB0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBpOHeZ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2545C4CEC6;
-	Fri,  6 Sep 2024 07:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725608842;
-	bh=hu+JAGtJySQgKbao5D33RzcckbHiifZyAyWscrsM0tI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tBpOHeZ4d8C22dDll+yR2/qAwMd86ivVz57ukXTFEoPhHBrwx2GM81zkMtrv0cC+1
-	 JSnB+kDXSBp5J/jT0B0xhxXHi7gsjNWkLedG/1iICHvTIQLmI/ZsBjPgLYhUysvx4X
-	 wik+C+g4c+KTdnQix2z9eUBJHnS9HyCZkhx6MB4zYyP9lxKq7kCtYPncbNu/E8P+iH
-	 jlhm42VvMlTQeALFxHGFgPjIUn3RcfBYwsT6fAE+u0K9tHQdicdcjXvv/iwST4pJ32
-	 r8SBh4hLKOPZh+A2laHn09kUOXihGTT6EDG6S+gBTQTrjkzz5Be4jDkO+ylN2iaEOo
-	 3p/SfULt/zuBQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1smTgc-00ADNL-KF;
-	Fri, 06 Sep 2024 08:47:19 +0100
-Date: Fri, 06 Sep 2024 08:47:18 +0100
-Message-ID: <86frqdusu1.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Qixiang Xu <qixiang.xu@outlook.com>
-Cc: "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"will@kernel.org"
-	<will@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] KVM: arm64: Make nVHE ASLR conditional on nokaslr
-In-Reply-To: <SEZPR04MB63194C0FCB4765A8ABF4A2709E9E2@SEZPR04MB6319.apcprd04.prod.outlook.com>
-References: <20240905061659.3410362-1-qixiang.xu@outlook.com>
-	<20240905063026.3411766-1-qixiang.xu@outlook.com>
-	<SEZPR04MB631983048A8586896CEFE8829E9D2@SEZPR04MB6319.apcprd04.prod.outlook.com>
-	<86mskmv7ts.wl-maz@kernel.org>
-	<SEZPR04MB63194C0FCB4765A8ABF4A2709E9E2@SEZPR04MB6319.apcprd04.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725608915; c=relaxed/simple;
+	bh=wQ27PLSu2PxRg17jkVSKt2A1Ce2Al7tslbtyusXWsNw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ilx+ELBGD+zLvjLhS3sJ7LZRcWcrDbrKzgpxyHMIt+Xh/XhJ1CLZL8j1YJuP5asRHnvzy9qGk3IeO6Jxnn7U0m8o8htW9e+VXXKNX93lHM23yRAauTnpsNqtZE1XYvsvHStGXhGv4t9DLcL5bEgceBSnNRGHMvJJIubLBmiKzlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 4867lY1u023196
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 6 Sep 2024 15:47:34 +0800 (+08)
+	(envelope-from hongchi.peng@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X0Sxf26kfz7ZMt3;
+	Fri,  6 Sep 2024 15:47:34 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Fri, 6 Sep 2024 15:47:33 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Fri, 6 Sep 2024 15:47:33 +0800
+Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
+ (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
+ Transport; Fri, 6 Sep 2024 15:47:33 +0800
+From: Kimriver Liu <kimriver.liu@siengine.com>
+To: <jarkko.nikula@linux.intel.com>
+CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
+        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kimriver.liu@siengine.com>
+Subject: [PATCH] i2c: designware: fix master is holding SCL low while ENABLE bit is disabled
+Date: Fri, 6 Sep 2024 15:47:31 +0800
+Message-ID: <20240906074731.3064-1-kimriver.liu@siengine.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qixiang.xu@outlook.com, oliver.upton@linux.dev, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 4867lY1u023196
 
-On Fri, 06 Sep 2024 08:19:07 +0100,
-Qixiang Xu <qixiang.xu@outlook.com> wrote:
-> 
-> Marc,
-> 
-> Thanks for your reply. 
-> 
-> > This is a change in behaviour that would leave the 2 implementations
-> > affected by Spectre-v3a unmitigated and leaking information to
-> > *guests*, while they would have been safe until this change. Is this
-> > what we really want to do?
-> 
-> The reason for adding this is to make debugging nvhe hyp code easier. 
-> Otherwise, we would need to calculate the offset every time.
-> Do you have any better suggestions for the debugging?
+It was observed issuing ABORT bit(IC_ENABLE[1]) will not work when
+IC_ENABLE is already disabled.
 
-You already have facilities to dump stacktraces from the HYP code, and
-Vincent's tracing infrastructure is available on the list (feel free
-to review it!).
+Check if ENABLE bit(IC_ENABLE[0]) is disabled when the master is
+holding SCL low. If ENABLE bit is disabled, the software need
+enable it before trying to issue ABORT bit. otherwise,
+the controller ignores any write to ABORT bit.
 
-And as I said, I'm not opposed to disabling the randomisation with a
-command-line option. I oppose to using 'nokaslr' for this, as it
-changes the existing behaviour.
+Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
 
-> > This is also not disabling the whole thing, since we still do the
-> > indirect vector dance.
-> 
-> I'm not sure if my understanding is correct, but based on 
-> the hyp_map_vectors function, the address of the indirect vector
-> is only related to __io_map_base and is not random.
+---
+V5->V6: restore i2c_dw_is_master_idling() function checking
+V4->V5: delete master idling checking
+V3->V4:
+      1. update commit messages and add patch version and changelog
+      2. move print the error message in i2c_dw_xfer
+V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
+V1->V2: used standard words in function names and addressed review comments
 
-Of course it isn't random. It is in the idmap, since VBAR_EL2 can be
-leaked to EL1, and that's the whole point that the only thing you can
-leak isn't random.
+link to V1:
+https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
+---
+ drivers/i2c/busses/i2c-designware-common.c | 11 +++++++++++
+ drivers/i2c/busses/i2c-designware-master.c | 22 ++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
-But when you decide to disable randomisation, you might as well
-disable the indirection, which adds extra complexity for no benefit.
-
-You may want to read [1] to get the context of what you are changing.
-
-	M.
-
-[1] https://lore.kernel.org/all/20180314165049.30105-1-marc.zyngier@arm.com/
-
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index e8a688d04aee..2b3398cd4382 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -453,6 +453,17 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 
+ 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+ 	if (abort_needed) {
++		if (!(enable & DW_IC_ENABLE_ENABLE)) {
++			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
++			enable |= DW_IC_ENABLE_ENABLE;
++			/*
++			 * Wait two ic_clk delay when enabling the I2C to ensure ENABLE bit
++			 * is already set by the driver (for 400KHz this is 25us)
++			 * as described in the DesignWare I2C databook.
++			 */
++			fsleep(25);
++		}
++
+ 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+ 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+ 					       !(enable & DW_IC_ENABLE_ABORT), 10,
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index c7e56002809a..132b7237c004 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -253,6 +253,19 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
+ 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
+ }
+ 
++static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
++{
++	u32 status;
++
++	regmap_read(dev->map, DW_IC_STATUS, &status);
++	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
++		return true;
++
++	return !regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
++			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
++			1100, 20000);
++}
++
+ static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
+ {
+ 	u32 val;
+@@ -788,6 +801,15 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 		goto done;
+ 	}
+ 
++	/*
++	 * This happens rarely and is hard to reproduce. Debug trace
++	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
++	 * if disable IC_ENABLE.ENABLE immediately that can result in
++	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
++	 */
++	if (!i2c_dw_is_master_idling(dev))
++		dev_err(dev->dev, "I2C master not idling\n");
++
+ 	/*
+ 	 * We must disable the adapter before returning and signaling the end
+ 	 * of the current transfer. Otherwise the hardware might continue
 -- 
-Without deviation from the norm, progress is not possible.
+2.17.1
+
 
