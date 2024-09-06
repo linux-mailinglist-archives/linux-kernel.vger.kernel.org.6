@@ -1,248 +1,346 @@
-Return-Path: <linux-kernel+bounces-318812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A038996F39E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA81796F3A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0C91C2415C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F72286EC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7B21D0DD7;
-	Fri,  6 Sep 2024 11:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9204C1CC155;
+	Fri,  6 Sep 2024 11:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Y2T9zalC"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011028.outbound.protection.outlook.com [52.101.70.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ7kbW8K"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00521CC8BC;
-	Fri,  6 Sep 2024 11:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623442; cv=fail; b=JdlBVGd70eiAtZhDfYN+aelLqgN4Q6k5GUgRhdyE4DldogPaLddvrtirT2CgfpQAzX+BVML6aAhIUgRq+M2rrS2iLPmS6D//ayk2K1o1EVfUZry+iy4AxysI6Wd0yfHPIgIOwkjvp7+9gT3iBjtx4oI2jgc7pRSf9LmkdaK3hqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623442; c=relaxed/simple;
-	bh=668vttL5tK83Io/zl339S4ODGy4KF/yum198y+j4myk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pv1BYHb68BzsGRD3rL2KTuyVr0LPyXlPr15KWceZ13ORxaH/jZJeP0GyQ6v6+cUxAcBH7Ae+gzUcXdHVQ5/11s4ca8pIZVmNhgxsAbNZrrfF8vEHVlA3E7VpmPmZJ4Ni3kd8b8/De5DBymnU3rKT7j7O6woBOrA4Yf5SXoxlZnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Y2T9zalC; arc=fail smtp.client-ip=52.101.70.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rEJ2zgeaQVdNq8zhl5wz9k2HKyyzoUOq2f0nXf2W6Y/R9ENIYRmOorhL2rckyR0rlaF6h+CWYfKijoqG/iEOuOe5q27GiHbTH1buPK0Bup7dHBVfqpEKHc08Dmuezvj4fsxvy12EgqYNkB0gVbxWnq6Zw013VjtHL3pi5j//ZZEc2xjlSVssH/+/2+Xa7ZMEw1s4VjDxSq7czTMUUwVyaHmG427kcDksbg/+vMZ3ifeGNz1yaLgaMSCRvSxt+2cLkGUibWqNNH2yYqk0adx/xDhky8QrHERYmU7mVqDY1CTC0A9uikb7WdEpBJm2leq1SWQ5m+C+MkpsHRt2wrPqHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JNw5y110xDjKtR5EOWT7AdUC6ma241A0+cOffn/Vk3A=;
- b=oLkTT8FvXfwXmOFkih7Vxpd8db+22O0jBdWDQnHgJeWQA7CS2V3YvxPPQwDhpLepTZ9syMgTx6AChVWrIKjghszSVhN1Wk8B25TowFe00C0ECU3AUzvE7+J+S849KUlpKOpeC/FaR8SyxTWvPXn8A5kd3wAknxjKrGpwnuNyhOYfiHHeNI4esz6Tes6H+M6wj+PL/aYFDRB62cg6+sifzxdKki8ASasD/rLDqKIZ8BeJXr9JAkvmdr15hMg46/4qZD5/Db2baiGJSvZEqiDWXWQSF6ChUmiIjBNFqWxkSrK57urmh32SYyVu+Hk2DmoX4VRpP/qlHXKyTTJ64x/8mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JNw5y110xDjKtR5EOWT7AdUC6ma241A0+cOffn/Vk3A=;
- b=Y2T9zalCFgsykYNSQFOOM1/OxazxsYaG8Ww/S7n9j0S5EPuXF2Z17EMyMnmpdCURO2AONprfz07BHQP3T1mgasq5jfnMpcdpFL6Ki8mnua6QDtsdTtdlsWxdBqb/XwvNCBZtwuUrDQRP1jLcqEjPJ4ruoKKBZFoQb+JCAJuoy0gSBoUDgWQVBfM6yhy5+tZD+V64E8EqAT7W3NfQTN/Zvb8xzDcLwMUHmBGr4QWpRNlOLx69yLWg4QFdQH/+NlaeVpfk6t9k8KwoMJWN8+BoLUgXjZ8NSGpBWWroyCs6Eat7V2af+wu5zt3T8BqHypIvUmLEcdSqKqo9MUb4BCSryw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
- by AS1PR04MB9359.eurprd04.prod.outlook.com (2603:10a6:20b:4db::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
- 2024 11:50:36 +0000
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455%4]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 11:50:36 +0000
-Message-ID: <d934d026-92dc-4832-bb0f-556fe12947a4@oss.nxp.com>
-Date: Fri, 6 Sep 2024 14:50:31 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
- Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240826084214.2368673-1-andrei.stefanescu@oss.nxp.com>
- <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
- <fd18295c-6544-4da6-aab0-6d6b9c12581a@kernel.org>
- <6a65f608-7ca4-44f1-865c-6a1b9891b275@oss.nxp.com>
- <3ab4c235-c513-4dce-8061-b8831ea548a3@kernel.org>
- <0ba90fcf-60b8-478c-bd9d-487acacdc988@oss.nxp.com>
- <d1f9d323-0f66-484b-a5dd-3ea1fc690c6d@kernel.org>
-Content-Language: en-US
-From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-In-Reply-To: <d1f9d323-0f66-484b-a5dd-3ea1fc690c6d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P195CA0020.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d6::7) To AM9PR04MB8487.eurprd04.prod.outlook.com
- (2603:10a6:20b:41a::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D781CBEA9;
+	Fri,  6 Sep 2024 11:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725623532; cv=none; b=qOFbckwTQk6l5m7FPX3Nueag/gaL6a59jJxUchNfLpJs2tzFRA+92pYzw+CkSnvHCR849xUi9JmEznMQCClLHkMVUiXRXsq6lrT23Zglild0t6ei8DdZ7J+QChwIIHfuEAQIHEEzaA/OpN52ocHeHoCo8bBDOJPHWDxUiKQd8Zg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725623532; c=relaxed/simple;
+	bh=xhVoPzyULnkG1uyYHfiE5csn2+QavI48bPyqBnL8mjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YF+KoN4O6rkikAaf7MZrb9csGav0c+ohtwncAUZJimyoXQRm4LR9Pwk00O//SXQE4SsFD3VX900i1ukgm8bIKfwQcp+pMMLPtcBBrQjoj+esl9wZyClWxjsZuCT7qTpd3g2yZ+XA5hlaB5kXE2EB+/emK18g1gY5L+ydin++Z88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ7kbW8K; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2053f6b8201so17130295ad.2;
+        Fri, 06 Sep 2024 04:52:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725623529; x=1726228329; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbePJzZ4hGsbaWWD+/pwowfJhv2yPuQVjdwZ6CxA4rE=;
+        b=UQ7kbW8KK86a4GwtIrqOA369W+8s2YGoKudj6+nFpTWvEdvGmEBF5OwhzIRAiZk90Q
+         FNaWGMhdPs2/BpMmtDmIWQPesCvBONG9uAKx/z3NkDH6FOVn6uqtHJKYEn1kKcJXhqiB
+         Nxs8By4RjJ0Zt04PBg9jZ/njhyQtR1t5T6Atm5brfiTJLkHN3Jt/X1+zGg03apZrVCCj
+         8LS/q+9n5qxmGFOzQ780K6EPVY/bgajeE8vy7/g1Lwmuq/GrIfiJELJZMJCn2qmHQ/vp
+         hEyC7l+IdYmFdH+Wf5wNHyNlyMZLMuxnt127jPUKpy0EU/qpeTlGVFE0svkSbN5xhk1H
+         oIvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725623529; x=1726228329;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AbePJzZ4hGsbaWWD+/pwowfJhv2yPuQVjdwZ6CxA4rE=;
+        b=r0+VLCnUOngYRLjUFNNgHL61EcCNOyQwYFwqMe4TUg7x7gMrqbS2QF2J3ohoGGXsw/
+         Bcf2rw1oLfMJrpSB/k2/2SpCwkNB8Za85P/nz3DFiLF+KOqKYbwXrWuf+ZBi+yp/1vVt
+         QxuH/pytkV/nWkuzJSidnOEKk+TXKmDypvqXowVy1V0r4VagwDdBMM1OmcZuwXlPwHyn
+         JWaE+zdUmjnmry4OMan40tnMT+X+mrLvge2KHuY76yIYCEg08SiWqLYQPsmLZaYMG791
+         7aPxj4hTgISLmX7L5R+c/SXeYR43T/GTX3xIVMyF6LgzfvpqkZPbmJiCqTsD8kyEs/JY
+         8vNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB5OcB3FJfAXwmErhdtZsgf2GTIohJ+0qEhOfmbiByIM/+P6uY6HtIAUba791f/79qr39fYemVTuo5@vger.kernel.org, AJvYcCVC0KoqQf+x3NGwy5y4eCXxa8v9Nol4f/2MZE1p08LHD9gXLbZ/2ERGgNj5RYlma7vmPBTUMHMS4Mnk@vger.kernel.org, AJvYcCVVzL80DMps3NWnRkWu2Oz1GaRI2qmnpEyZkG5wRzVlb6IHwPFP/6rhstoffPPwQxAebIV0atk+YlJdl7g=@vger.kernel.org, AJvYcCWHHvxoeve3zuI5tMQfvxwvA3RjA5ybw8gDXjEuQbxruNBdyL3ucGLDoSuvTc8TbAN7siyAl/ocVKQ=@vger.kernel.org, AJvYcCWTc6WQ7Q8e6WPkBmrGzEvT+MrmUo5jAC2KhzoyseUlEnP24wDoeT1WHh7xjW48rA+tozzArbZ7WZC7Gg==@vger.kernel.org, AJvYcCWqEKScn4PZTgKZ95BQ+g/Bp9oqSuWlmnV03zPZcxS1q8AV8mwU3TI8Y8pxQlLaJk2QBhwuPFNzD0/OAK6aG3g=@vger.kernel.org, AJvYcCWwAsc91Ud/9lfjQFmfz6rrI2aCs7pWTEy7OBuTaaUDGvPpgCs3BWjy83cAmPyaSeqyazuBn4f+Xfr0OybL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRkNqk+zhUlivwK2kY01K3Vv4IeggQalt5YLBtwjfTMUE3rRYJ
+	AlgpeCRCP1ing6rdeB/vfDUzm51CdxCseA1qVFp5jGDNFQ39pnO5
+X-Google-Smtp-Source: AGHT+IH2ACJaY497j/cAt58YuWZEVIFDwipHir1KSNdb3rlbkQHRrJGC/0C5GCJko/BHyw7CX/ljVg==
+X-Received: by 2002:a17:902:f610:b0:205:eec:5755 with SMTP id d9443c01a7336-206f0526051mr33079225ad.23.1725623528999;
+        Fri, 06 Sep 2024 04:52:08 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea37f1dsm41834555ad.125.2024.09.06.04.52.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 04:52:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8e2cecbe-aa48-4e84-93cc-8c028c5e649e@roeck-us.net>
+Date: Fri, 6 Sep 2024 04:52:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|AS1PR04MB9359:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ee1f804-b732-491d-e3e7-08dcce6a1ebd
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TXVSWXhwR0lON2c0amhKV3p3R2NCTnZWY1pqR1NKUTI3bDgzTFdqS0pyNnpS?=
- =?utf-8?B?YU5kdXFqT2lBd3lHeWFaS3ZQY0tTY2pWRFA1Nzk3eXlJU0F6blZmQjV0OUNt?=
- =?utf-8?B?dFBHeVR5bjl1YkM1bHdMWThiZHl6aUgyaWFyejEva3Vxc0dZY29mcDhuUVhl?=
- =?utf-8?B?aW00bnFOT1lmbElIS3FlbEVITVRrcktQZ2tSQjRYT25IMHNjVnd2VktsMkdl?=
- =?utf-8?B?VTBsMWR5alRIcUoxRVBuTENZdXFQbUNUdWswZTRseHJpOVVFWjFIclhJYmFk?=
- =?utf-8?B?TGY4SU1NNDBEaGdMSFlhUWtwZ0F6VDlONVovTzgxK252ZkdlQnpBRHNLNmtW?=
- =?utf-8?B?Rko2aWNUeU42UWxKbWpwL2lxMEhYWUVZQUV2UEdhQldOQVUvWC9keFJoTkh6?=
- =?utf-8?B?Rk5Ed0lEU0RrdVEwZ01vWnBQR2F3MkVJaFpYeWtqU1B4T0FnNnBSalFpQjJl?=
- =?utf-8?B?TTU2bzZNam56TFFOd3F3WXVzVlhJWXpqYlRGYUxldGk2T1k2WXBKWldua2Y3?=
- =?utf-8?B?U3ZvcVdMaTZ6QWxIMk5uMkg3ajhkZjE0SlhOaFAybkZCY21FVktIcnlIcVZH?=
- =?utf-8?B?MTBCbXBCdHJsb2JEdDBtN3F6aUIwUytncmt6dzVDNjhpdkM4MFZJREJVRklk?=
- =?utf-8?B?SGhyQ0o3U0tjMys4MjJWRHpaQ1B5WXM3ZFN6NG1TenZXWGIrdDFQeVhIODV1?=
- =?utf-8?B?d3l6TlhvSUp4a2lYT2N1Tk1rTkFKNTBRN1I5V1kzYTNkSHFXZkh6ZFhJZzNR?=
- =?utf-8?B?STJZbTAyVFZ3bjFNblJkcDlUYUNWeXRMZ09QcnBTc2UwMEpmbTFPSVV4TGFv?=
- =?utf-8?B?QXVJYmF0VGduN25KMUR6b0oxTGY1a3FnSWVZaVBRTTZGMXUrYkdIZDJnV3M3?=
- =?utf-8?B?cnhhRE1kVzlhUGsxU3g4c2pzcWpOUVlrVmpHbHh0c3RIRm9zcy9mSjZyVG9h?=
- =?utf-8?B?ckI1OEFHYmsyUGFURjQvMGJMNy81Q0hrQTZveUVyS2s0a1BTMnNQd25SdjBx?=
- =?utf-8?B?cEtYU0RqZ2o2dk5FR1FKZUlMYVBSeTdhb3o5YVN1SFpqa21GdlJRQXJHQzdu?=
- =?utf-8?B?My9GTTEvRm5NTWNONm5iU1I2QXdEOVJTVWlNWmJoVm9CL2Rady9DeGdReFB2?=
- =?utf-8?B?UGpFWjFtbDdHZUJ3dGM0aUtJd3pOYW1hS1lwUHp3c25OSlM5bHNPM2ZLTm12?=
- =?utf-8?B?VjZmZkViSEJtN0ptNDQ5S1Q5MTM2TjQrYnNvRk4vWktQRlU1RHhiZmtGQnVw?=
- =?utf-8?B?ZGsyVkd4NkoxNzF0ekJoWWJRd0pOWWxKZlFrQnVYbE0yQUU3eUR3ZW91SDNX?=
- =?utf-8?B?UzY0aEMwV1ZrN1ZQQ0xZNkluZ0JZell2NWg5YXVmOXpJWnFrTUdJNXRoZ3lm?=
- =?utf-8?B?bSsxMDBMdVAxWU0vd1F0cDArcmU0NjFLTFlSTUV4Q3dqN3A1aEhhTDNLRGxo?=
- =?utf-8?B?R3VEQmRwaEtlRjF0aUNRSUF1UWxCNXlNT1EvZXo5b1FLUVo0UXhvbExpdTdz?=
- =?utf-8?B?SFZVN2J0RTQ3a0VBalNpSEpWSXZyaGVwS3JwT21QMlZieTBHLzJmNjBJZVRU?=
- =?utf-8?B?MWxWT2xlNnJjVE12N0ZrU0VHVVM2UnB0VHQyNlRZd3IvUFVEeGlVVFZaZm9R?=
- =?utf-8?B?eHUwRGM4V1pFSW9DQ25BY0I5V1hVdW52cHVlZWZzOE9KeXI2ZE5DTlZNT3Ro?=
- =?utf-8?B?S0FJRDA3MTBvdklacTNwOGN3NGN4MEY5Vk4ySnJwVmMrZVFYTzBHbTNzRTla?=
- =?utf-8?B?RkljMjhDa2FVcDRlT3JmQjhPemN6cUdvK3N2ekxYcTl5NDF6S2FFODhBUVBu?=
- =?utf-8?B?eGorcGl4SUt1cXVWOG5HZ3VMVXh0ZHhsV0QwNXhYZnpVbzZHYUZpeGpYZEUw?=
- =?utf-8?Q?KLHVccpuRM3O1?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bUNxcXdZRmFXYm5mQnBlY2ZIaWZxRlp4Q2ZrU215V0h2a0dJVFdpSG1qMkc5?=
- =?utf-8?B?ek1IVXBjNGxhK0FzQVlWV2p1WWFuL1paSlovclBRVS8xYkpDOEF2RGFRcVFa?=
- =?utf-8?B?TEpZVzV5UldET1pnZnpUZjBabGFJQ3NTRXRqSHFRVkFIZkVlTEFoeDV6dFlx?=
- =?utf-8?B?UVRkUTFReGx4bnJ4elMxRUxYRGEvNkt6dXdMZFlBVVE1SmRKTXBKN3o4R2Vy?=
- =?utf-8?B?c3RlSDI4c1NRL3BENnVqYWFzWE9IZUgzYVV4NUx0MVdMcGNiUmJpOHZvZ3Rl?=
- =?utf-8?B?b1FZMkI4R1F3cHRsWXZOVGFsc2NWQlFxSlFsZmlUUWFVNFMvcnpTZ2JFcm1J?=
- =?utf-8?B?Q1J3MmttWmQzRGQ1WC83MkRVeHU3SW50cDJONS9WV2RRbXJiNzRSRy9WUThJ?=
- =?utf-8?B?L3FvQ1g0TU82MWpBcGM0N2ZOVlZYOTljL1E4RjJubUVCUE9sOUZOU3VhRkpy?=
- =?utf-8?B?Y3E0a3prSXQ3WVdySk8vZlJjb2htaFVWTGY4eU1GL2NMTFVMTFJtYmlzc0Qy?=
- =?utf-8?B?K2J1UUt3TDZ5ZktIS0Uwc2dhbTNMdEZUbUYybWlEVHJiUFFFMTRpNjJ1elhl?=
- =?utf-8?B?WURITzJvWUpUUHR6T3d2YmsybEZFL1h0UkF4Nk1keGhvMDY2OFVtWkIreFl0?=
- =?utf-8?B?RGI5REFrbVVLNGdIVXB1c3R4RlZXM3dUMEsvaUIydmVWL1BCQkhielpOOUtx?=
- =?utf-8?B?ZXNHMFlVMFJoK2cycDNMTVp2SnJWVXFYK3FsS2ZXOE02SXhEVS9Ed2xXM1ov?=
- =?utf-8?B?VWVmNHZ4cG4xeCs2b3FTZzVRSTVUS1lkd3ZqOEIrZWgxRzZrQXZPS0dIa0o2?=
- =?utf-8?B?b2hSQTJta3JiWE50N1djR3FwQXp6ZFNKcWRjcnhPV1dzNnRvSUpzTDk2emVi?=
- =?utf-8?B?bXpUWVJZT1BXbXpkZnljRjU1VW15V1VaeHNBbWMvM2ZDM3M0ZGVaeDlMYTlT?=
- =?utf-8?B?VDA5QnJmcEV2WFpuNXR2dUxoczVORUlQL0h3K0JoYUVvbXBlNXFOQ0ZuUzZa?=
- =?utf-8?B?NGQ2VlI1Tko1RGpnWURGeFVvVFFNL25TY2tualFSYTNrTWg3UlA5bk9jbGsv?=
- =?utf-8?B?U2w1Zis2ZjNPR3VaYW1MSmlDQkdBa2o0d3RLdWJ2RzlOeXJsdTZUMkUzcVh6?=
- =?utf-8?B?V0pNR3ZobDhnSXFjVWVnbW1DcnhmMWloL3dRV1k1R2V5bE1XT1FlSWtPcURM?=
- =?utf-8?B?QzA2QnlsbzZpN08raExQNDNVQ3BNYU5QQm5CUldiQ3M0bTFKMy8xaUtHdkxk?=
- =?utf-8?B?ZkFUaTN4QTMxZ2JDbFFhbHdGdEdLblN3VGFzajRGanE4SEFYNVV4VitZQStY?=
- =?utf-8?B?TUFUUzhoOWgydkQ3bnoxWWVCL3VuSTlIUVJiek9uaEwzYTg4blBQOEhFQlAv?=
- =?utf-8?B?bk1QcHhISkl2bEFzRWhvVHhUaWpiSXNiZVpXRUFnei9veXZLaXE0c2lnSUFE?=
- =?utf-8?B?TWtJRG1ldm9DamR4d2pJbWc0aU9pOGVham41UGFNY2RUcU5vNmJlL2kvUGVy?=
- =?utf-8?B?TlRNRklVaVpOSmpScU9CTHRpbXRzZWRSMGZsRE1JVTVEZm96UmgrQTYrbER6?=
- =?utf-8?B?ZWdJb0pYL2Z5cnA5MFFheCtrdUs1WFlYdktKQTR5ZXVDUTVuYWNEVmtFQmxq?=
- =?utf-8?B?MEhSMDBOMllRUlVlWi9tUWVQVDdETTRNNURDMWxqYTA5bm83N1JpWVNPU1FI?=
- =?utf-8?B?Njh3WmJBY3RNRW8wZ3JxRXJROEZrd3I3MWRaMWY3eXM2UTFHS1JtK0Z3MllN?=
- =?utf-8?B?RXphTERtRGp2YU5IdXB3aTJya3VxNnZKUnRXRGpXcjlyVlFyczJTRkdJYTc5?=
- =?utf-8?B?dzA3VFdPV21rRFVNa3c1bTlWZFNvbzNjOXhGTE5yeXRWNW5WT1ZzT2NQZFRS?=
- =?utf-8?B?UHZlQW1QM3RQbWdTOFYxUFlrTUZXSUtYaGVqQWZJRVdDa1VTRWxManVJMnJH?=
- =?utf-8?B?eDVBV2hPL0ErN1M4TFBPLzl3WVNoWFN3Qm9PVEFJWk1TWkgwRERLT1VFYVJv?=
- =?utf-8?B?VTI1OGtlNk1zVHdScjRTNGdQSEEvdUhDczJYZ2h5Mkcyb0Ryb2U5R1dmbURR?=
- =?utf-8?B?TEdnOEROUXhlNzQydTNOMStBays2dU1ieTRySVRsV2U0WXZ2QkprbXE2WDZN?=
- =?utf-8?B?L3pKYnFkamdFVEZMWWtpN014Ry9VdmljcWZpRU4vUHpiSVUrWHpWc3VOeGQ0?=
- =?utf-8?B?MUE9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ee1f804-b732-491d-e3e7-08dcce6a1ebd
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 11:50:36.0507
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fC4cb/ZD6x8Nd8G4pOWN8Q/ZhIH4Mr/pVVxC4anVBT1uEDp7v7fmAjEt6Dy6i/xO3V9+0OhEge6ujNkCZE2Q/ocgGuNGaZjItoHVmjuvjQ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9359
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] watchdog: Add Photonicat PMU watchdog driver
+To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-4-bigfoot@classfun.cn>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240906093630.2428329-4-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 06/09/2024 12:53, Krzysztof Kozlowski wrote:
-> On 06/09/2024 11:45, Andrei Stefanescu wrote:
->> On 06/09/2024 12:39, Krzysztof Kozlowski wrote:
->>> On 06/09/2024 10:43, Andrei Stefanescu wrote:
->>>> Hi Krzysztof,
->>>>
->>>>
->>>>>> +static struct regmap *common_regmap_init(struct platform_device *pdev,
->>>>>> +					 struct regmap_config *conf,
->>>>>> +					 const char *name)
->>>>>> +{
->>>>>> +	struct device *dev = &pdev->dev;
->>>>>> +	struct resource *res;
->>>>>> +	resource_size_t size;
->>>>>> +	void __iomem *base;
->>>>>> +
->>>>>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
->>>>>> +	if (!res) {
->>>>>> +		dev_err(&pdev->dev, "Failed to get MEM resource: %s\n", name);
->>>>>> +		return ERR_PTR(-EINVAL);
->>>>>> +	}
->>>>>> +
->>>>>> +	base = devm_ioremap_resource(dev, res);
->>>>>
->>>>> There is a wrapper for both calls above, so use it.
->>>>
->>>> I am not sure I can change this because I also use the `resource_size`
->>>> call below in order to initialize the regmap_config. 
->>>> Unfortunately, `devm_platform_ioremap_resource_byname` doesn't also retrieve
->>>> the resource via a pointer.
->>>>
->>>> I saw the `devm_platform_get_and_ioremap_resource` function but that one
->>>> retrieves the resource based on the index. I would like to keep identifying
->>>> the resource by its name instead of its index.
->>>
->>> So add the wrapper. Or explain what's wrong with indices?
->>
->> There's nothing wrong but I prefer to not force an order. I will
->> add a wrapper then.
+On 9/6/24 02:36, Junhao Xie wrote:
+> This driver provides access to Photonicat PMU watchdog functionality.
 > 
-> Order is forced. You cannot change it. I don't understand your rationale.
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+> ---
+>   drivers/watchdog/Kconfig          |  12 +++
+>   drivers/watchdog/Makefile         |   1 +
+>   drivers/watchdog/photonicat-wdt.c | 124 ++++++++++++++++++++++++++++++
+>   3 files changed, 137 insertions(+)
+>   create mode 100644 drivers/watchdog/photonicat-wdt.c
 > 
-> Best regards,
-> Krzysztof
-> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index bae1d97cce89..4094216a1c09 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -300,6 +300,18 @@ config MENZ069_WATCHDOG
+>   	  This driver can also be built as a module. If so the module
+>   	  will be called menz069_wdt.
+>   
+> +config PHOTONICAT_PMU_WDT
+> +	tristate "Photonicat PMU Watchdog"
+> +	depends on MFD_PHOTONICAT_PMU
+> +	select WATCHDOG_CORE
+> +	help
+> +	  This driver provides access to Photonicat PMU watchdog functionality.
+> +
+> +	  Say Y here to include support for the Photonicat PMU Watchdog.
+> +
+> +	  This driver can also be built as a module. If so the module
+> +	  will be called photonicat-wdt.
+> +
+>   config WDAT_WDT
+>   	tristate "ACPI Watchdog Action Table (WDAT)"
+>   	depends on ACPI
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index b51030f035a6..14375af84039 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -234,6 +234,7 @@ obj-$(CONFIG_ZIIRAVE_WATCHDOG) += ziirave_wdt.o
+>   obj-$(CONFIG_SOFT_WATCHDOG) += softdog.o
+>   obj-$(CONFIG_MENF21BMC_WATCHDOG) += menf21bmc_wdt.o
+>   obj-$(CONFIG_MENZ069_WATCHDOG) += menz69_wdt.o
+> +obj-$(CONFIG_PHOTONICAT_PMU_WDT) += photonicat-wdt.o
+>   obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
+>   obj-$(CONFIG_STPMIC1_WATCHDOG) += stpmic1_wdt.o
+>   obj-$(CONFIG_SL28CPLD_WATCHDOG) += sl28cpld_wdt.o
+> diff --git a/drivers/watchdog/photonicat-wdt.c b/drivers/watchdog/photonicat-wdt.c
+> new file mode 100644
+> index 000000000000..1e758fcfb49f
+> --- /dev/null
+> +++ b/drivers/watchdog/photonicat-wdt.c
+> @@ -0,0 +1,124 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024 Junhao Xie <bigfoot@classfun.cn>
+> + */
+> +
+> +#include <linux/mfd/photonicat-pmu.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/watchdog.h>
+> +
+> +struct pcat_watchdog {
+> +	struct device *dev;
 
-By order I mean the order in which the memory region descriptions are laid out
-in the reg property. Currently, there is no issue if we, let's say, swap the order
-of opads0 and opads1(as long as we keep the same change for the reg-names).
+I don't see what this is used for.
 
-Just to double check, this would imply adding a new wrapper named
-`devm_platform_get_and_ioremap_resource_byname` which would basically be
-very similar to `devm_platform_get_and_ioremap_resource`. Is that ok?
+> +	struct pcat_pmu *pmu;
+> +	struct watchdog_device wdd;
+> +	u8 timeout;
+> +	bool started;
+> +};
+> +
+> +static const struct watchdog_info pcat_wdt_info = {
+> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+> +	.identity = "Photonicat PMU Watchdog",
+> +};
+> +
+> +static int pcat_wdt_setup(struct pcat_watchdog *data, int timeout)
+> +{
+> +	int ret;
+> +	u8 time = 0;
 
-Best regards,
-Andrei
+Unnecessary initialization.
+
+> +	u8 times[3] = { 60, 60, 0 };
+> +
+> +	time = MIN(255, MAX(0, timeout));
+> +
+> +	ret = pcat_pmu_write_data(data->pmu, PCAT_CMD_WATCHDOG_TIMEOUT_SET,
+> +				  times, sizeof(times));
+
+Where does this actually send the timeout to the chip ?
+
+> +	if (!ret)
+> +		data->started = timeout != 0;
+> +
+> +	return ret;
+> +}
+> +
+> +static int pcat_wdt_start(struct watchdog_device *wdev)
+> +{
+> +	struct pcat_watchdog *data = watchdog_get_drvdata(wdev);
+> +
+> +	return pcat_wdt_setup(data, data->timeout);
+> +}
+> +
+> +static int pcat_wdt_stop(struct watchdog_device *wdev)
+> +{
+> +	struct pcat_watchdog *data = watchdog_get_drvdata(wdev);
+> +
+> +	return pcat_wdt_setup(data, 0);
+> +}
+> +
+> +static int pcat_wdt_ping(struct watchdog_device *wdev)
+> +{
+> +	struct pcat_watchdog *data = watchdog_get_drvdata(wdev);
+> +
+> +	return pcat_pmu_send(data->pmu, PCAT_CMD_HEARTBEAT, NULL, 0);
+> +}
+> +
+> +static int pcat_wdt_set_timeout(struct watchdog_device *wdev, unsigned int val)
+> +{
+> +	int ret = 0;
+> +	struct pcat_watchdog *data = watchdog_get_drvdata(wdev);
+> +
+> +	data->timeout = val;
+
+This needs to store 'timeout' in wdev. Storing it locally is unnecessary.
+
+> +	if (data->started)
+> +		ret = pcat_wdt_setup(data, data->timeout);
+
+This is misleading because it would permit setting the timeout to
+0 when the watchdog isn't running, and then when the watchdog is started
+it would not really start it. The code should not use a local "started"
+variable but call watchdog_active(). It should also not accept "0"
+as a valid timeout.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct watchdog_ops pcat_wdt_ops = {
+> +	.owner = THIS_MODULE,
+> +	.start = pcat_wdt_start,
+> +	.stop = pcat_wdt_stop,
+> +	.ping = pcat_wdt_ping,
+> +	.set_timeout = pcat_wdt_set_timeout,
+> +};
+> +
+> +static int pcat_watchdog_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct pcat_watchdog *watchdog;
+> +
+> +	watchdog = devm_kzalloc(dev, sizeof(*watchdog), GFP_KERNEL);
+> +	if (!watchdog)
+> +		return -ENOMEM;
+> +
+> +	watchdog->dev = dev;
+> +	watchdog->pmu = dev_get_drvdata(dev->parent);
+> +	watchdog->wdd.info = &pcat_wdt_info;
+> +	watchdog->wdd.ops = &pcat_wdt_ops;
+> +	watchdog->wdd.timeout = 60;
+> +	watchdog->wdd.max_timeout = U8_MAX;
+> +	watchdog->wdd.min_timeout = 0;
+
+This effectively lets the user ... kind of ... stop the watchdog
+by setting the timeout to 0. This is not acceptable.
+
+> +	watchdog->wdd.parent = dev;
+> +
+> +	watchdog_stop_on_reboot(&watchdog->wdd);
+> +	watchdog_set_drvdata(&watchdog->wdd, watchdog);
+> +	platform_set_drvdata(pdev, watchdog);
+> +
+No watchdog_init_timeout() ?
+
+> +	return devm_watchdog_register_device(dev, &watchdog->wdd);
+> +}
+> +
+> +static const struct of_device_id pcat_watchdog_dt_ids[] = {
+> +	{ .compatible = "ariaboard,photonicat-pmu-watchdog", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, pcat_watchdog_dt_ids);
+> +
+> +static struct platform_driver pcat_watchdog_driver = {
+> +	.driver = {
+> +		.name = "photonicat-watchdog",
+> +		.of_match_table = pcat_watchdog_dt_ids,
+> +	},
+> +	.probe = pcat_watchdog_probe,
+> +};
+> +module_platform_driver(pcat_watchdog_driver);
+> +
+> +MODULE_AUTHOR("Junhao Xie <bigfoot@classfun.cn>");
+> +MODULE_DESCRIPTION("Photonicat PMU watchdog");
+> +MODULE_LICENSE("GPL");
 
 
