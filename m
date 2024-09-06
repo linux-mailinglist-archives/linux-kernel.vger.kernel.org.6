@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-319188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB40396F917
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:15:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D5296F91A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6258E28625F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E711F23908
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D249C1D31B4;
-	Fri,  6 Sep 2024 16:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324E21D4151;
+	Fri,  6 Sep 2024 16:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dKpQmzXc"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uJaLkb2t"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3CA1D3192
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6AA1D362E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725639312; cv=none; b=u2kf22PVr6hpuIJVelI0eicxIwXUvMo8MATmfWu+3fdx4JgGsiVdN0ADox7ZWvOypSTN58X/R3c1bHxEJkfRZKprc6u7DZ5t55OYadhzTeBrHSf5abik1w8ANaQSMD+3DgRMYDojDU75fvQnnhaS9NkGE59jLqJQJwxZePbS4oc=
+	t=1725639312; cv=none; b=GqTqwvBQZrOOQEUMsOQFjQ1ARNQgN8mHWiIUb/WX4L/y4+8QgS/Lkfwj5zpPChvXauwMxMfVPdoLQCNGd/Eruo9rpBlhlEF58bkSQRW1JeydD3DqMunRXizq1pOnPDmGOSOSvRBpic08cSCGb9UeqtGhnTHtAjqVITpeTJPhFiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725639312; c=relaxed/simple;
-	bh=22yU5CB3XbloUlWmjfe5a8u2Ymnn+CEopQkapNyGFjE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rSWs8ccVdMJMiaRPPJ7H4z7nhgZ4L6k9hK3yDAxkgdda8lwpX6mJGdRqtYHeRdiPpqaeEPnbc4O757LleCFOltACQjg7p+p62VJ0YsHXld1XDzvHCwl6dhBrkEdlhjazp3evlCymzr87yq+v/WPAsaPET92wBYn36xIlJD8TYeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dKpQmzXc; arc=none smtp.client-ip=209.85.210.170
+	bh=Z30ieLDM06mHqkwlhFkl2a4vKxiH7HFPI0x22ElrwLA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JLwQIqKN3X7HUHeoerP2P0nhySntPqTu2/AvKiBSqQlyblQ7B2IXedKsLXpcrxJTA8bywBCUl5iLJKR57X1dQklAWaMz33hd7qWW1iB+dOdxOmkqHjk6GfP/pviXjjlbMhn9jzLRZF7AtsSESSCjtm8QO1v7jNuuqiTf+J/BZyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uJaLkb2t; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-718816be6cbso1114558b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:15:09 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso1626980a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 09:15:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725639309; x=1726244109; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wn2UpEZi41nSQjInl6SrXLXpD6o8knFu4d9yCjfYxLY=;
-        b=dKpQmzXc+koKdjaXMdGrYiNhtYDA/CCci+E1qwKKKdja26sX7Ud8rbhs+rTqceVs4z
-         fctZPwiEI7YojwVJJyobUY6lW3kob8nUlh+YtU/SJd8SxZuwKHeug3nT2V0t9nopJPcr
-         Kr6dWkA67YOwjM+rTEeEeDP8ypFUj/wctztNKm9cVpNQpRgBtwewqEqVKUf0NO8Gg/M0
-         wgM6vx2zd1zKwZKkYLsYQD2+dQs56M09bj3Dukb3dBh2OfrbcrDO9vSMijlq7L1jJvaM
-         0GYPLG/Q4AltMEpixO5freBDwhu4StZGh6gt9Kf+6RoHTM0Od2RkH80e9ZIuvJw8CwSF
-         d7tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725639309; x=1726244109;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725639310; x=1726244110; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wn2UpEZi41nSQjInl6SrXLXpD6o8knFu4d9yCjfYxLY=;
-        b=eEkEJPJTRE07mYgk0/qTgKBdv7408IaTrOBl5xBhC+G711W7ljMdrAwN0EldX7TZ+7
-         qbATJtZ3SnonW/rbc68FQuz/2kDIJqWVPofMdJ4P5Eca/+FjCbguNYj+sCYdnZ09rmij
-         y+rJjzwx2rH3J43KTZRAgqJiBWH4St5D507y7URT34YCBceILs3l9HXUOzF2YFu4wIiy
-         pdtas4T8+Sk0KLDqw6VOxygc4DZxcJciSLMZ5i0T5F5cwEJRzXWAy4qWzNXx+GpjbMm5
-         LyyFK+CJj+a9+5J0bF+IHR06pvxLKDOIR2Wuh1xqvjH7CnxnhIvUBV05Qck1OBRwwNuT
-         gVRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXV6WVNjoFp4QOWcfSU3MDcTEkZi/BLj+31hWlIhhm5IDjatwmJkvn5OELsOu00vvU6rGK7eOXEVM5XdKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6+5jzOGNrrHuaVVqoDhrPo1CmI5UawoANQKm+6vc+/3oskIrE
-	bwtaVnGtFYDGPZgQ8idj4yvyCmgX5rSiJ1MF7t4k5IEvbRiNqO/fL3VsWYWcCI4=
-X-Google-Smtp-Source: AGHT+IGXiEjqpuXYP+ZXwcYudJb6roUqkR2/hbNZu8SceDTTB9vrlPg/xfywsr+XXuBErr/nLwzJrg==
-X-Received: by 2002:a05:6a20:6f05:b0:1c6:fa64:e5bc with SMTP id adf61e73a8af0-1cce10ab0e1mr32688520637.34.1725639308743;
-        Fri, 06 Sep 2024 09:15:08 -0700 (PDT)
+        bh=M23QSkkmj0U8+DRFhBewDD71q06y3alOAwKMp01rg4o=;
+        b=uJaLkb2tAACQZZyj8dYypx4sSVTMYxHapD2G7fqxdgRRB2XIf3LopVRDVPSV2lBjYP
+         GIk3xj77wBsLeytvH7gOBHNfyGbgdVRTNX300DqCyBo0MtQdcFjb2Y4BGNxzbBjV3fGo
+         HSiyq1sKOhrVCylfGAdorDPM0Ub5Xt8nZyxk73+YdVrwFNm9JRn5ijPg71TF0vRNmf+Q
+         kum8/HFCkm6h0Mw33Mqd6Be6oSLE70y/xodEj5fVAed5Ae0atjW/hGaKouYH+8xJge8Y
+         1kC/icAHNUcNlFQmlpUnxP8bf8M5Kytr1hUtFaNrBj566kGDg95eLMC9C4r+FjTwG1TC
+         DCgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725639310; x=1726244110;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M23QSkkmj0U8+DRFhBewDD71q06y3alOAwKMp01rg4o=;
+        b=tIv2KCJKLsV8RN1DJ9tPGDyYnnKznOJXvEctVPMGY/AR/HhJD8cespN/r5JhWkqour
+         21A8RgM91VEYy7QnUiPiGJKgsOyzVeiFG2vGRMVOVmw2XHfqqxqir4IZ6OYwQS9eE+3v
+         W5v1OjpxexLrke6+vT4R0QQAyyrT8JAdfqc08f2pz4MHUN+2IZce0rkNVykYfsetAIrx
+         ogHBw7ewbYD1I4NOVLZJGfjy7/mOA+/qCwAR19CbejqyzIMrbWhuP8H6HDqT2GSro+wS
+         yVf8bVUYQqQk4pwWfbRdtKYbSVLxFeHgC09Z0vNt+eFdAe8eUlhGhP277h1hnnmfXIbX
+         U70Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU6tROWyEy5CMUlmLQFg+3twTagz2Dr3Wp5sfgtG4V7oWwiCfO2dUgfHCFtXbe2BKKQhYw4KMXuyevGYoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoC8VEy3pib/fuJ/FI+tg9+dkWqWN3mSisMF0qtgurp+VhH08e
+	PTBUjGiKA2B4oFgmblM+TVYd9NIMVPa7kViF9+3HISott+cthWUXtKsA0Acnyz8=
+X-Google-Smtp-Source: AGHT+IG42XDdUECXdsVsjNHnNCea/VVAWmmRze3BgvuQbgKT9T3nq0761gcMU17mf5578jJTNXnTdA==
+X-Received: by 2002:a05:6a20:ac44:b0:1cc:9ff8:eb3a with SMTP id adf61e73a8af0-1cf1d059a66mr3145797637.4.1725639309783;
+        Fri, 06 Sep 2024 09:15:09 -0700 (PDT)
 Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778521026sm5207535b3a.18.2024.09.06.09.15.08
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-717c95c5d4bsm1861053b3a.102.2024.09.06.09.15.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 09:15:08 -0700 (PDT)
+        Fri, 06 Sep 2024 09:15:09 -0700 (PDT)
 From: Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode
- constraints
-Date: Fri, 06 Sep 2024 09:14:48 -0700
-Message-Id: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+Date: Fri, 06 Sep 2024 09:14:49 -0700
+Subject: [PATCH v4 1/3] pmdomain: ti_sci: add per-device latency constraint
+ management
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,11 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHkq22YC/43P22rEIBAG4FcJXtfgKaKhlL5H6YXGSVdYk1Std
- Fny7nXdQg8UtneOMN//zxkliB4SGrszilB88utSB3HXoelglhfA3tUZMcIEUYTh4xZwkZgSPK1
- LytH4JSe8BbeG+sQz524eDMxCaFSRLcLs31vA0/N1jvD6VnPy9RNZk6BaIfg8dkX2lOI40ctug
- JRMazB2962AJoJqwZjuKdFK1Ro4pO3RmtPR2wh9ZR7QJebgU17jqZ1VaMv5vGC4dUGhmGBHlbR
- SOXBi+sE3vbBvItU3RVZFISlng5GEqPkPkX+J+h8deRWBD3qylms5iF/ivu8fmmsmJNoBAAA=
+Message-Id: <20240906-lpm-v6-10-constraints-pmdomain-v4-1-4055557fafbc@baylibre.com>
+References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+In-Reply-To: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org
 Cc: Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
  Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
@@ -90,99 +89,131 @@ Cc: Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Kevin Hilman <khilman@baylibre.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3633; i=khilman@baylibre.com;
- h=from:subject:message-id; bh=22yU5CB3XbloUlWmjfe5a8u2Ymnn+CEopQkapNyGFjE=;
- b=owEBbQKS/ZANAwAKAVk3GJrT+8ZlAcsmYgBm2yqLb1vrc1X5+SfRllnnVJ1eiLSPj1yDIjuww
- OgmoHMsb9mJAjMEAAEKAB0WIQR7h0YOFpJ/qfW/8QxZNxia0/vGZQUCZtsqiwAKCRBZNxia0/vG
- ZVYKD/42q/r8/QcPQxtIyUr9BU7QOZz1u88iEQbhvPbBomHdzAKnCIFIawoUzvkpThwNZfd1b6W
- q8u+uZIz5s4nPPbXAWXOu8mGIyHal7/G3MQL3jXICwNMq3L7Z7eA3uPYuFiMM1dVRVZJA/X5FY4
- lPPZ0309eB22ZpZKnE15rW4K+T+PQ2fhXvH1lBsEol1pVsZEHaMmxsZBEhGcUrruWnWb4Lvyuue
- WyimL6rJTVq2PDb9HiqEvpy3pCItmOdOfBOklm6Su78UZJq0THLo2CphvoZsl5RL9XSp6w2bWP0
- ZB39ptNHEdj4+AX3CyrVazicMssQIIq7NnBwJkKOg71+M2XaonHNvqoC+6kqILNHAs1N/fUt+DY
- kzM69bEUQX0PSsA8TOaBXOClutwaD09xZ5YBoHwNv3nd/GF6k/by/MZznYbouf2QrD5qq0J02w0
- bxVktpLVR5ZVc9PAURyFwyo2O65I7A6UZ08lAv2hOlCrBDn+h8/F+UKdzkLcC4wIDcTsk/9VuyF
- FtBKuuXQjCCJbv+MxoN2++0qDVICxv97/3B88dCb6wmaPZ7dPg7yRTmXtYVNTzP/7/mhvpMzbW7
- BOKLvXuUZivIBw7nYJ/pHtK8mKeOksym6waKi/DuhNA2hmyFZElVebXcU1m6N6m1wdvN/sNGetP
- EY3T095dAhW9wYQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3830; i=khilman@baylibre.com;
+ h=from:subject:message-id; bh=Z30ieLDM06mHqkwlhFkl2a4vKxiH7HFPI0x22ElrwLA=;
+ b=owEBbQKS/ZANAwAKAVk3GJrT+8ZlAcsmYgBm2yqLeioEVn+N9TW7gc9VPGmGj/Eky5GN6PguO
+ KOykfS2nTWJAjMEAAEKAB0WIQR7h0YOFpJ/qfW/8QxZNxia0/vGZQUCZtsqiwAKCRBZNxia0/vG
+ ZTM+D/oCriCt5fa8AcDFmDrbjCQCyI9IRqkn4tSiSYkSKsTPyY/fQglGec2YE5LyH94QgtSWOcT
+ NvLxvQbBD2FoRtzgzaKJUAfxi2FIXNwK6uJlwFkSaebQMcjh5GXNKrijTD2EbgS2fBaTVoRME/u
+ dLD0x1Yr9ZgrB2tmdsnPObD6pEIrHSk2oUaRUVqIgYPZ5l/I3/eXWWPfix5PiZHdBFgVC0b6JZS
+ NiQ5s6x2BFI2SNOl0fFdWZkXS77zjSmRp2v2DtUZ/A6vzPa2/HWaEB4GfwcJEhmLtwaEwHRG9yX
+ Tq5aFuJElx/ezGE4rnvGrkOcKDskhme5nIa6gfqjjdJu6lmzDowtDxjXFC9EkXG4zkhMF0aRLMC
+ 9t5S9YvWW5yzgB5FSLOn6Z9dnEUUCGiZR/MbNNAocRbxFECjLsTdRsO+QHaZ8Bq5ui+qzoBBjpB
+ H1uI1ycR+kphQCzryIxKd2nxXViIPU50iL9n3VJgL2e/IoK9vKn/pPKhvckcnhXU5cy46i0bR0E
+ XKaDARGTcc78FER5LhrSNc6vqvjyOVIrUs9gdlThAS2cBGIg6C+ri3xB+ZAA8lbt5NfcLHyeSAb
+ 1xoeETY7VCgXg6XQjb1UEelyudDQ4U5AFUZXkTnu5KXXi7YdVEBhhPReuaLzmF2zS2oACqYle/c
+ DKCoED/lAEL3czA==
 X-Developer-Key: i=khilman@baylibre.com; a=openpgp;
  fpr=7B87460E16927FA9F5BFF10C5937189AD3FBC665
 
-The latest (10.x) version of the firmware for the PM co-processor (aka
-device manager, or DM) adds support for a "managed" mode, where the DM
-firmware will select the specific low power state which is entered
-when Linux requests a system-wide suspend.
+For each device in a TI SCI PM domain, check whether the device has
+any resume latency constraints set via per-device PM QoS.  If
+constraints are set, send them to DM via the new SCI constraints API.
 
-In this mode, the DM will always attempt the deepest low-power state
-available for the SoC.
+Checking for constraints happen for each device before system-wide
+suspend (via ->suspend() hook.)
 
-However, Linux (or OSes running on other cores) may want to constrain
-the DM for certain use cases.  For example, the deepest state may have
-a wakeup/resume latency that is too long for certain use cases.  Or,
-some wakeup-capable devices may potentially be powered off in deep
-low-power states, but if one of those devices is enabled as a wakeup
-source, it should not be powered off.
+An important detail here is that the PM domain driver inserts itself
+into the path of both the ->suspend() and ->resume() hook path
+of *all* devices in the PM domain.  This allows generic PM domain code
+to handle the constraint management and communication with TI SCI.
 
-These kinds of constraints are are already known in Linux by the use
-of existing APIs such as per-device PM QoS and device wakeup APIs, but
-now we need to communicate these constraints to the DM.
+Further, this allows device drivers to use existing PM QoS APIs to
+add/update constraints.
 
-For TI SoCs with TI SCI support, all DM-managed devices will be
-connected to a TI SCI PM domain.  So the goal of this series is to use
-the PM domain driver for TI SCI devices to collect constraints, and
-communicate them to the DM via the new TI SCI APIs.
+DM firmware clears constraints during its resume, so Linux has
+to check/update/send constraints each time system suspends.
 
-This is all managed by TI SCI PM domain code.  No new APIs are needed
-by Linux drivers.  Any device that is managed by TI SCI will be
-checked for QoS constraints or wakeup capability and the constraints
-will be collected and sent to the DM.
-
-This series depends on the support for the new TI SCI APIs (v10) and
-was also tested with this series to update 8250_omap serial support
-for AM62x[2].
-
-[1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
-[2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
-
+Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested-by: Dhruva Gole <d-gole@ti.com>
 Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 ---
-Changes in v4:
-- fixed missing return in wakeirq error path
-- updated trailers with reviewed & tested tags
-- Link to v3: https://lore.kernel.org/r/20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com
+ drivers/pmdomain/ti/ti_sci_pm_domains.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Changes in v3:
-- change latency set functions to static void
-- Link to v2: https://lore.kernel.org/r/20240819-lpm-v6-10-constraints-pmdomain-v2-0-461325a6008f@baylibre.com
+diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+index 1510d5ddae3d..bb95c40ab3ea 100644
+--- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
++++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+@@ -13,6 +13,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/slab.h>
++#include <linux/pm_qos.h>
++#include <linux/pm_runtime.h>
+ #include <linux/soc/ti/ti_sci_protocol.h>
+ #include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+@@ -51,6 +53,27 @@ struct ti_sci_pm_domain {
+ 
+ #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
+ 
++static inline bool ti_sci_pd_is_valid_constraint(s32 val)
++{
++	return val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
++}
++
++static void ti_sci_pd_set_lat_constraint(struct device *dev, s32 val)
++{
++	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
++	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
++	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
++	int ret;
++
++	ret = ti_sci->ops.pm_ops.set_latency_constraint(ti_sci, val, TISCI_MSG_CONSTRAINT_SET);
++	if (ret)
++		dev_err(dev, "ti_sci_pd: set latency constraint failed: ret=%d\n",
++			ret);
++	else
++		dev_dbg(dev, "ti_sci_pd: ID:%d set latency constraint %d\n",
++			pd->idx, val);
++}
++
+ /*
+  * ti_sci_pd_power_off(): genpd power down hook
+  * @domain: pointer to the powerdomain to power off
+@@ -79,6 +102,22 @@ static int ti_sci_pd_power_on(struct generic_pm_domain *domain)
+ 		return ti_sci->ops.dev_ops.get_device(ti_sci, pd->idx);
+ }
+ 
++static int ti_sci_pd_suspend(struct device *dev)
++{
++	int ret;
++	s32 val;
++
++	ret = pm_generic_suspend(dev);
++	if (ret)
++		return ret;
++
++	val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
++	if (ti_sci_pd_is_valid_constraint(val))
++		ti_sci_pd_set_lat_constraint(dev, val);
++
++	return 0;
++}
++
+ /*
+  * ti_sci_pd_xlate(): translation service for TI SCI genpds
+  * @genpdspec: DT identification data for the genpd
+@@ -188,6 +227,13 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+ 				pd->pd.power_on = ti_sci_pd_power_on;
+ 				pd->idx = args.args[0];
+ 				pd->parent = pd_provider;
++				/*
++				 * If SCI constraint functions are present, then firmware
++				 * supports the constraints API.
++				 */
++				if (pd_provider->ti_sci->ops.pm_ops.set_device_constraint &&
++				    pd_provider->ti_sci->ops.pm_ops.set_latency_constraint)
++					pd->pd.domain.ops.suspend = ti_sci_pd_suspend;
+ 
+ 				pm_genpd_init(&pd->pd, NULL, true);
+ 
 
-Changes in v2:
-
-- To simplify this version a bit, drop the pmdomain ->power_off()
-  changes.  Constraints only sent during ->suspend() path.  The pmdomain
-  path was an optimization that may be added back later.
-- With the above simplification, drop the extra state variables that
-  had been added to keep track of constraint status.
-- Link to v1: https://lore.kernel.org/r/20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com
-
----
-Kevin Hilman (3):
-      pmdomain: ti_sci: add per-device latency constraint management
-      pmdomain: ti_sci: add wakeup constraint management
-      pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
-
- drivers/pmdomain/ti/ti_sci_pm_domains.c | 72 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
----
-base-commit: ad7eb1b6b92ee0c959a0a6ae846ddadd7a79ea64
-change-id: 20240802-lpm-v6-10-constraints-pmdomain-f33df5aef449
-prerequisite-message-id: <20240904194229.109886-1-msp@baylibre.com>
-prerequisite-patch-id: a0efbf22e69d23dba8bb96db4032ca644935709b
-prerequisite-patch-id: a9b6a17956ff6a09a6ed19c35df9018e28b5059b
-prerequisite-patch-id: 2999da190c1ba63aabecc55fae501d442e4e0d7b
-prerequisite-patch-id: 69a741b9c81d7990937483fc481aafa70e67669d
-prerequisite-patch-id: 945b15416a011cb40007c5d95561786c1776bb98
-
-Best regards,
 -- 
-Kevin Hilman <khilman@baylibre.com>
+2.46.0
 
 
