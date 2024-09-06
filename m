@@ -1,232 +1,191 @@
-Return-Path: <linux-kernel+bounces-319053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4588496F712
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:40:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1899596F717
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7851F2499D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C614B2862CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09171D1732;
-	Fri,  6 Sep 2024 14:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EBB1D1741;
+	Fri,  6 Sep 2024 14:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7cl6zvY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="LlmEtahG"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F232156880;
-	Fri,  6 Sep 2024 14:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2068156880;
+	Fri,  6 Sep 2024 14:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633599; cv=none; b=XgQOpy5dqZ5S/+ppwt0ynN0dy5hWMKCnnrYzmFoV5x+CemuRPJoyTEb6QnX+YtX9MberwZMPTYC6Bbxe2g1siHwbe1D6uEFTfLvE4Gs5V28p4udXIxRhASyNgSPJc9Rty5kvZEbhW2a9H6QswnhJZwIQhOl7bQBJ9wM9S0KO5Cc=
+	t=1725633654; cv=none; b=e7HUiMXJjn9AGp7pmFXdnOBm+geUtn13/GdgNG/l4LESa/aq3g/JjIciuBrQptbkGhGqCvszaaVczswDrH+S8WJCZ893E7FOwXjKmHa2wQ4b7D0HBw1t/NjQP20icLAco1xafexiO5v0U8jdNXcMg0CthHgasEDWyYxxv9ujG/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633599; c=relaxed/simple;
-	bh=rkekp7kqM0gCAalrU8ea199BED7ngZhFWZ9ZDGtHx3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tqkrb2oRhk299QLIcN0C+sk+6TBbU6Qlx2DBGOUJr7URtHT0eQFAxstVbdkSuKRM2EiLQYAExM2rJj0EeGdWyiwPiwfkqWGU1d+9hp/r+yjUgcq1YnGjKn4/wZkAZrUeacCqtoSCnz6V2I+UraY6arBQk9m7izfcsy2A3cQi4l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7cl6zvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D26C4CEDA;
-	Fri,  6 Sep 2024 14:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725633596;
-	bh=rkekp7kqM0gCAalrU8ea199BED7ngZhFWZ9ZDGtHx3k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I7cl6zvYFJlUme26uJsip2QA6i0I+jgUU8x1ZBpuFST7iADtX6k0Y5N3HgonMY7N7
-	 6X7bCN3MU33QFTXdj5bjsEiDxoUIb1rbIz9WGvfiqjxFpe9Kl39vZFECdx/Uz2vD2B
-	 u5VTZWBu32j/gMhZvIDzDGNYQYzX5vI6vkta+HWWaTMF+98VNhaYIwqp06PqNEQOo1
-	 jv3EiVBU1vU3WZyl6atkTXR+tq9C8vpyhGXkPnjnqWVXySMfkJI1bSfwskMZYmUzGC
-	 Jzoj4DaWHtefTTcpdDUIeJr1JKVqkj77cgAxHoygdqw8uF1ihuAeHovIp0BQNS9xHO
-	 62WX0rTj2ctDQ==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f7528f4658so8436701fa.3;
-        Fri, 06 Sep 2024 07:39:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlrXCeAauAasHPvwpVZJ/oe/pLOpBWJWQCjUGYuLNS5KBpJAkJhTIQmVN080HKwdOo/aap/nObCIC1WsfV@vger.kernel.org, AJvYcCVA/2N8EB9t6BZdaM9tLLJsWV2NNVq4fHSUmXYM+0DMtS7KYHOF+xS6KARZ28BBOcPwkEhZk2ZISQ==@vger.kernel.org, AJvYcCW5cfYUm5Lz+hsMmvLLtgK2GP/3aNSqzrlvh+iIAsolEGuDLYBexTynell3lageGYx4zw6bsbcEDw29WgWV@vger.kernel.org, AJvYcCWn07Dco3J4uTkJYnpi1wEvMWyLBmjc0ogMierwmSTyn+6j5XvxDaEt9CzaD8zdBtxf3WIF7D0A55NY9Lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIcgFixUqEjROnbRKTZZ+L2x3PcVprL0xNSsD8y+wreP1l41DY
-	hRAeF4i1GJw9D9rX2QM+2/QSz8J6J0ohW2ygFKxQ4N67ijDJAc6DhrRtq1b26+ytDbz1/RgLem5
-	3BrGtSpvZwiFhEXKUMRJSSKelctU=
-X-Google-Smtp-Source: AGHT+IGL4aTm6msajUBLkGuh4MV69E6msRZnTsKTajf+VgcUyXlt6LjNklxij0DqQwf4v9zWQkEvfMasw6vxEqRUj9Q=
-X-Received: by 2002:a05:6512:39ce:b0:536:54df:bff2 with SMTP id
- 2adb3069b0e04-53658812f84mr1931952e87.54.1725633595218; Fri, 06 Sep 2024
- 07:39:55 -0700 (PDT)
+	s=arc-20240116; t=1725633654; c=relaxed/simple;
+	bh=RNNKstjMPAiuuKozO5yPRYS1HARNRnneasAfawWOtMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hj6yx2BOHcG5w4DtnyPFI71/VpxAjt0lmtop0MOezdHwYK3Sd0sVUOd5+BmdGUoYbMO5hFrC60TL9aXCo5m3MlpFLs632Mm25etp2xaizI2Uf+TQWGLLgt3pQ0yjeIVkGvzA1zc3fYb3vE0JhhT+p+WUFRT7zbQaju40Nt1oZeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=LlmEtahG; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 13EFF1F9DF;
+	Fri,  6 Sep 2024 16:40:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725633641;
+	bh=l7Ni2p8AvtexQEK46PBSAU7NhUGNeYQJss2Ku2vjkws=; h=From:To:Subject;
+	b=LlmEtahGerQXCR1FfgAkwadc3+sw7zeI34hDD3YJXZvN9ii4lDI7ZBvDUHCl0sVKc
+	 rFS+WxBcrOm17s5oG9RMlShaKc1yjQAg3xt6i6gC3C/4U5noMF7IoOBfN610sL90o6
+	 1p93NaBJLNKeQBCYXFa8d4x0OxFOuyg4vo8CmZJzjMIfUPEoP4UAjOOmnlrZVv5RPK
+	 DQYxH4CbWQHFrs0ykqBROCcUFMun5Oj2ZtXeSqc1X7O2JpV/XUUW/WRUXRwHBCgBKP
+	 hcLCGvsH5jrg1CvBWMkNsBAu93n58qRZDczgYpNaIY2Dlwc4sgj3wH3bx+Kn7vCwKN
+	 5CEcphTHQoTug==
+Date: Fri, 6 Sep 2024 16:40:36 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 02/12] wifi: mwifiex: fix MAC address handling
+Message-ID: <20240906144036.GA45399@francesco-nb>
+References: <20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de>
+ <20240826-mwifiex-cleanup-1-v1-2-56e6f8e056ec@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com> <20240906-macos-build-support-v2-3-06beff418848@samsung.com>
-In-Reply-To: <20240906-macos-build-support-v2-3-06beff418848@samsung.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 6 Sep 2024 23:39:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQDxVGOa5g3f_dqZ5nD_u8_a++T+ussL+AWuOXs-XOsow@mail.gmail.com>
-Message-ID: <CAK7LNAQDxVGOa5g3f_dqZ5nD_u8_a++T+ussL+AWuOXs-XOsow@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] drm/xe: xe_gen_wa_oob: fix program_invocation_short_name
- for macos
-To: da.gomez@samsung.com
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826-mwifiex-cleanup-1-v1-2-56e6f8e056ec@pengutronix.de>
 
-On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
-<devnull+da.gomez.samsung.com@kernel.org> wrote:
->
-> From: Daniel Gomez <da.gomez@samsung.com>
->
-> Use getprogname() [1] instead of program_invocation_short_name() [2]
-> for macOS hosts.
->
-> [1]:
-> https://www.gnu.org/software/gnulib/manual/html_node/
-> program_005finvocation_005fshort_005fname.html
->
-> [2]:
-> https://developer.apple.com/library/archive/documentation/System/
-> Conceptual/ManPages_iPhoneOS/man3/getprogname.3.html
->
-> Fixes build error for macOS hosts:
->
-> drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
-> undeclared identifier 'program_invocation_short_name'    34 |
-> program_invocation_short_name);       |                 ^ 1 error
-> generated.
->
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+On Mon, Aug 26, 2024 at 01:01:23PM +0200, Sascha Hauer wrote:
+> The mwifiex driver tries to derive the MAC addresses of the virtual
+> interfaces from the permanent address by adding the bss_num of the
+> particular interface used. It does so each time the virtual interface
+> is changed from AP to station or the other way round. This means that
+> the devices MAC address changes during a change_virtual_intf call which
+> is pretty unexpected by userspace.
+
+Is this the only reason for this patch or there are other reasons?
+I'd like to understand the whole impact, to be sure the backport to
+stable is what we want.
+
+> Furthermore the driver doesn't use the permanent address to add the
+> bss_num to, but instead the current MAC address increases each time
+> we do a change_virtual_intf.
+> 
+> Fix this by initializing the MAC address once from the permanent MAC
+> address during creation of the virtual interface and never touch it
+> again. This also means that userspace can set a different MAC address
+> which then stays like this forever and is not unexpectedly changed
+> by the driver.
+> 
+> It is not clear how many (if any) MAC addresses after the permanent MAC
+> address are reserved for a device, so set the locally admistered
+> bit for all MAC addresses modified from the permanent address.
+
+I wonder if we should not just use the same permanent mac address whatever
+the virtual interface is. Do we have something similar in other wireless
+drivers?
+
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: stable@vger.kernel.org
 > ---
->  drivers/gpu/drm/xe/xe_gen_wa_oob.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_g=
-en_wa_oob.c
-> index 904cf47925aa..0d933644d8a0 100644
-> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-> @@ -8,6 +8,7 @@
->  #include <errno.h>
->  #include <stdbool.h>
->  #include <stdio.h>
-> +#include <stdlib.h>
->  #include <string.h>
->
->  #define HEADER \
-> @@ -30,6 +31,9 @@
->
->  static void print_usage(FILE *f)
->  {
-> +#ifdef __APPLE__
-> +       const char *program_invocation_short_name =3D getprogname();
-> +#endif
->         fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file>=
- <generated-c-header-file>\n",
->                 program_invocation_short_name);
+>  drivers/net/wireless/marvell/mwifiex/cfg80211.c |  4 +-
+>  drivers/net/wireless/marvell/mwifiex/init.c     |  1 -
+>  drivers/net/wireless/marvell/mwifiex/main.c     | 54 ++++++++++++-------------
+>  drivers/net/wireless/marvell/mwifiex/main.h     |  5 ++-
+>  4 files changed, 30 insertions(+), 34 deletions(-)
+> 
+...
+
+> diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
+> index 96d1f6039fbca..46acddd03ffd1 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/main.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/main.c
+> @@ -971,34 +971,16 @@ mwifiex_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
 >  }
->
-> --
-> 2.46.0
->
->
+>  
+>  int mwifiex_set_mac_address(struct mwifiex_private *priv,
+> -			    struct net_device *dev, bool external,
+> -			    u8 *new_mac)
+> +			    struct net_device *dev, u8 *new_mac)
+>  {
+>  	int ret;
+> -	u64 mac_addr, old_mac_addr;
+> +	u64 old_mac_addr;
+>  
+> -	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
+> +	netdev_info(dev, "%s: old: %pM new: %pM\n", __func__, priv->curr_addr, new_mac);
+>  
+> -	if (external) {
+> -		mac_addr = ether_addr_to_u64(new_mac);
+> -	} else {
+> -		/* Internal mac address change */
+> -		if (priv->bss_type == MWIFIEX_BSS_TYPE_ANY)
+> -			return -EOPNOTSUPP;
+this was the only usage of MWIFIEX_BSS_TYPE_ANY, correct? Did it had any
+reason before?
 
+> -
+> -		mac_addr = old_mac_addr;
+> -
+> -		if (priv->bss_type == MWIFIEX_BSS_TYPE_P2P) {
+> -			mac_addr |= BIT_ULL(MWIFIEX_MAC_LOCAL_ADMIN_BIT);
+> -			mac_addr += priv->bss_num;
+> -		} else if (priv->adapter->priv[0] != priv) {
+> -			/* Set mac address based on bss_type/bss_num */
+> -			mac_addr ^= BIT_ULL(priv->bss_type + 8);
+> -			mac_addr += priv->bss_num;
+> -		}
+> -	}
+> +	old_mac_addr = ether_addr_to_u64(priv->curr_addr);
+>  
+> -	u64_to_ether_addr(mac_addr, priv->curr_addr);
+> +	ether_addr_copy(priv->curr_addr, new_mac);
+>  
+>  	/* Send request to firmware */
+>  	ret = mwifiex_send_cmd(priv, HostCmd_CMD_802_11_MAC_ADDRESS,
+> @@ -1015,6 +997,26 @@ int mwifiex_set_mac_address(struct mwifiex_private *priv,
+>  	return 0;
+>  }
+>  
+> +int mwifiex_set_default_mac_address(struct mwifiex_private *priv,
+> +				    struct net_device *dev)
+> +{
+> +	int priv_num;
+> +	u8 mac[ETH_ALEN];
+> +
+> +	ether_addr_copy(mac, priv->adapter->perm_addr);
+> +
+> +	for (priv_num = 0; priv_num < priv->adapter->priv_num; priv_num++)
+> +		if (priv == priv->adapter->priv[priv_num])
+> +			break;
+> +
+> +	if (priv_num) {
+> +		eth_addr_add(mac, priv_num);
+> +		mac[0] |= 0x2;
+> +	}
 
+Please see my concern on this in the beginning of the email.
 
-Before adding such #ifdef, you should check how other programs do.
+> @@ -1364,10 +1366,6 @@ void mwifiex_init_priv_params(struct mwifiex_private *priv,
+>  	priv->assocresp_idx = MWIFIEX_AUTO_IDX_MASK;
+>  	priv->gen_idx = MWIFIEX_AUTO_IDX_MASK;
+>  	priv->num_tx_timeout = 0;
+> -	if (is_valid_ether_addr(dev->dev_addr))
+> -		ether_addr_copy(priv->curr_addr, dev->dev_addr);
+> -	else
+> -		ether_addr_copy(priv->curr_addr, priv->adapter->perm_addr);
 
+With this change, when mfg_mode is true, priv->curr_addr will be not
+initialized. Wanted? 
 
+Francesco
 
-
-
-
-
-
-
-Solution 1 : hard-code the program name
-
-
-diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-index 106ee2b027f0..9e9a29e2cecf 100644
---- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-+++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-@@ -30,8 +30,7 @@
-
- static void print_usage(FILE *f)
- {
--       fprintf(f, "usage: %s <input-rule-file>
-<generated-c-source-file> <generated-c-header-file>\n",
--               program_invocation_short_name);
-+       fprintf(f, "usage: xe_gen_wa_oob <input-rule-file>
-<generated-c-source-file> <generated-c-header-file>\n");
- }
-
- static void print_parse_error(const char *err_msg, const char *line,
-
-
-
-
-
-
-
-
-Solution 2: use argv[0]
-
-
-diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-index 106ee2b027f0..600c63e88e46 100644
---- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-+++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-@@ -28,10 +28,10 @@
-        "\n" \
-        "#endif\n"
-
--static void print_usage(FILE *f)
-+static void print_usage(FILE *f, const char *progname)
- {
-        fprintf(f, "usage: %s <input-rule-file>
-<generated-c-source-file> <generated-c-header-file>\n",
--               program_invocation_short_name);
-+               progname);
- }
-
- static void print_parse_error(const char *err_msg, const char *line,
-@@ -136,7 +136,7 @@ int main(int argc, const char *argv[])
-
-        if (argc < 3) {
-                fprintf(stderr, "ERROR: wrong arguments\n");
--               print_usage(stderr);
-+               print_usage(stderr, argv[0]);
-                return 1;
-        }
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
