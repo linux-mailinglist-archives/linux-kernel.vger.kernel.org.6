@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-318639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28B596F127
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:16:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47EF96F12C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3681C241C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591322875A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5D41C9840;
-	Fri,  6 Sep 2024 10:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABDE1C9DEE;
+	Fri,  6 Sep 2024 10:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTHVXjli"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="IgMyyyps"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358C21459FA;
-	Fri,  6 Sep 2024 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725617780; cv=none; b=uX9dPIt22alNNna1eHm5/aHk80JY2vkxbybBoXLPKOaki1L/RjKwZw/b3UJRYCN2hjnuueF4k0NEPC6pcUnC9PUWEtFcRW0By2CEsMDQOCkcNMohW6dCYHQu1u8oq2WgYHNX2qOxJxvd5O8XgWkPOXenLCLI4unY4f7SKKEMFYQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725617780; c=relaxed/simple;
-	bh=+bj2BITNSIO7xfbg8J1LoZgShP8Wt/QS5XhqDDEiCew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uiKu5/hQeFzbQ6aZEclSIK/o1HMdbVVVnTSPuRkzd23t5rH6a316MT2kKzFgzFDDy/abHIkkc/pd3zE17+E1fZ5gbiA2MIRMhp+6kJqUjoGShYmX8/hr9uvMSIC6a7++CGbyX4YormTjoeetEK3omGx3tBTt2iB2vGUAFcos9Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTHVXjli; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B6DC4CEC4;
-	Fri,  6 Sep 2024 10:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725617779;
-	bh=+bj2BITNSIO7xfbg8J1LoZgShP8Wt/QS5XhqDDEiCew=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UTHVXjliwy5Ae5mDBk6hUpOgoc8+mOdbFcZvLL4uy1aElRKZsnoF4eUvL9AOB+pL/
-	 RY60w2DiNaqnW7U6VbcC5ZZn/ZUXdJ9nZVd0o7t8Basgq7iQxdhH/JvoPMWL6pxdwX
-	 +r+uFMpAHbtY9YWoNHAbHyZAk8lHU/L7F1xziL+oyDqHmnfcQnwW7IFxKYyHa3GQMT
-	 Pl83ZonwSbJH7v3iXO2gGilDpv3X4EXVujnvR3i13qfYd1apNPkclETqx15nSm3HoP
-	 rB7JNoIPUDC5hXMgCGGw+TGVLhOeulYCUS5M44VBg9gwgugZRdM7J2GGROjKbfu+kb
-	 0lSZqSDYlL8GA==
-Message-ID: <2405c1c2-cd4b-4e97-babe-ed408282bc37@kernel.org>
-Date: Fri, 6 Sep 2024 12:16:13 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8A81459FA;
+	Fri,  6 Sep 2024 10:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725617942; cv=pass; b=QexGxZXiqtnFYqk3UMsM9+CcbvZZ516QEHFZ+dJO+LDAOERx2hE4gazbKrNnFvQGb04q9Kxd4EqkbEv/E2eZczD8faPvlPDqdsEMWUWjCpAsWB7dPbEb6fcrpjHfk7b2i+dMqZQdqXhUxMoGQi09406riENxbWOhlEcvfP3+FGQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725617942; c=relaxed/simple;
+	bh=BRWofQge9sexGsoBhj4FyqYH8VnowpJU4XLwvMOPe1w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=knVgvX4F0TFFem5viNPuU6V6Pog6OefS2po13XnHFB4j58bnEGKJzQC37oFcGVPnMXccIRSeBToJIes4sihA+eO9h+s2X6zZ9dYCRwNbqEXHd+4CsaxM91nYX06Z8F97ybTgEWa8hercV+UoLHc5BieZC7eOIxMd9wrAJge1eEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=IgMyyyps; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: usama.anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725617921; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=oCjCSHpi+yyNyBYa+Tx9U2AxjABzZ+IwSseUgnFz56D3+h8+TGkJldaQ79wKSPT+52ke+00+gRHNuw4S1Zs51pAeUS8YfKIRDNaAs4L/GTPCcG36eE4n5P+B0PyylAmHBozU2mzyLumUntVe7XrwCVhFkA0ROhiR1yT46YCOf3o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725617921; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SoQoRpH+NUi/aH/TnvZGg42kAhbku15tBQ88cZXF1y0=; 
+	b=in+8XObwNnFp5hMAmRcU3UECH0RhlXRBBDXlYkY/74Um1eam9unxHMX2VKlN/QsggtKrltCwNIH9ntBDWTSx67sBCjIqNtM/1OjNFXeC91fGeDwb4hJYZC54fliBfgWu1sbduIbLS7UqqQXMtzYinpqcFIJmWtUDuMFFpJ2OqS4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725617921;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=SoQoRpH+NUi/aH/TnvZGg42kAhbku15tBQ88cZXF1y0=;
+	b=IgMyyypsWp8/qexA4jlxBe4u2lIIGOP1SwDX7BiSw9hYjx7Id3peHgQ4puiCRHFz
+	lSXTum+jw0A+L2Ce7n24qXlB86/BdsuVYcPKROlqVhJqWZn7kFLcuXfJW9EPXTqMNYI
+	n1/JHpjTrb6R+5ocv4OKnsUgnTLQEXo52br5XzG4=
+Received: by mx.zohomail.com with SMTPS id 1725617920753531.4294471338798;
+	Fri, 6 Sep 2024 03:18:40 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] uprobes: remove unneeded condition
+Date: Fri,  6 Sep 2024 15:18:25 +0500
+Message-Id: <20240906101825.177490-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: vendor-prefixes: Add prefix for
- Ariaboard
-To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
- FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240906045706.1004813-1-bigfoot@classfun.cn>
- <20240906045706.1004813-2-bigfoot@classfun.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240906045706.1004813-2-bigfoot@classfun.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 06/09/2024 06:57, Junhao Xie wrote:
-> Add an entry for Ariaboard from Shanghai Novotech
-> 
-> Ariaboard represents a product line from Shanghai Novotech Co., Ltd.
-> 
-> Link: https://shanghainovotech.com/
-> Link: https://ariaboard.com/
-> 
-> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+The area cannot be NULL as we are getting it through container_of().
+Hence there is no need to check its validity. Remove the if condition
+and return statement.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: c67907222c56 ("uprobes: use vm_special_mapping close() functionality")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ kernel/events/uprobes.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 778f1978538ce..9f864504a7e92 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1474,9 +1474,6 @@ static void uprobe_clear_state(const struct vm_special_mapping *sm, struct vm_ar
+ 	delayed_uprobe_remove(NULL, vma->vm_mm);
+ 	mutex_unlock(&delayed_uprobe_lock);
+ 
+-	if (!area)
+-		return;
+-
+ 	put_page(area->pages[0]);
+ 	kfree(area->bitmap);
+ 	kfree(area);
+-- 
+2.39.2
 
 
