@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-319181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5990596F909
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:11:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD5D96F90B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89AA01C21BCD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:11:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1908B25561
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F011D31B4;
-	Fri,  6 Sep 2024 16:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B131D0481;
+	Fri,  6 Sep 2024 16:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZyqXJOi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JmeB1LZL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE0B1C9ECF;
-	Fri,  6 Sep 2024 16:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFA31D31B4
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725639057; cv=none; b=K6Hl50GAiyLJMK2Xlg4lzTVf6CpACtKATbB0SOoOrQ0yE2W0WZtWtIPISKBrDg1TCMaoVOjrOQ+5gKmrvwuPJP/tOsAD9RV8K2srEtc7QP5vJSPVszFcrW4Bypis8vPkkgSF8fBk1jdOz7FPpftmEGekPx+0uyTJzKiRgbeA72s=
+	t=1725639081; cv=none; b=KN8PAVZ/BhpQtxQJWNdj4YsC2kCB/IogFLAybjOQSQUa2Rt2nmGMizeEG2rjAaPYOASwHyeDfYmMTC578f4Ttm/j3VlDibsmjjv3LF+NxJG51r3Mpig1C2k0B+r7l4tBSg+25y9NvSVf5ghinQHm+Hrn8QN4v83y+XL0rROIqv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725639057; c=relaxed/simple;
-	bh=2szDTPeQE7le5G9ilmnouurXIYzTK7CXHCnNfdIVsQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBrgJd0DbC7R9v/fx2qV2pW3wPZ0WgLp8hH+5w4vKJ0j46Tn/w0zXkr/annm+/q1daI87s3up0HsSxaEKh1TXoxkS+2UF3mQXdiwnm9AnqQoBkxjNGX5a0zgAqb95+NCs6vsEdpGa8F3DOEorkaGJlGSfNHnVgLul5ftp95ggGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZyqXJOi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8C0C4CEC6;
-	Fri,  6 Sep 2024 16:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725639057;
-	bh=2szDTPeQE7le5G9ilmnouurXIYzTK7CXHCnNfdIVsQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MZyqXJOifV5k0oTBTDB2yoDl/Jp+NeMmUDL0CHJ3AhNww7M1HITI+Y5XHk9frVKsB
-	 2R1j8StE0O0jZC7a8RxunqpbR9Kh3lErU0pebX7X2CaK68ffgDUyNrMLqLqi3vTlq9
-	 HeDdfR2tCK+vi9xbWNvrf/f3ghNQoS0Q/BnXTKslqtixZ72PNp+fBUwHzm8nlpmcM1
-	 YPjHIZPzqnvN7LOCiie6PVxo3H8mAFHVvkTJc0sA8K3iuFpBiOPz83ZtSica3DdB6v
-	 Sy+u6TX/c7r19XVNp3N65IAj0sPWpXltT1bewwSmpkUEWFauBlEoAXV564VgVRB/5o
-	 e31C0TWJm7h5g==
-Date: Fri, 6 Sep 2024 17:10:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Fuad Tabba <tabba@google.com>
-Cc: Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
- SVE state
-Message-ID: <Ztspjf0SHx7nz2lV@finisterre.sirena.org.uk>
-References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
- <86a5iw3ri2.wl-maz@kernel.org>
- <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
- <ZowGFl/1AEuevh96@e133380.arm.com>
- <a3f2f13e-be22-4a09-a8a6-5faef818defe@sirena.org.uk>
- <CA+EHjTyCvG2KL=LPhbAf+Wo66QoC_EMk1xn+R9X-yKunHQ-JhA@mail.gmail.com>
+	s=arc-20240116; t=1725639081; c=relaxed/simple;
+	bh=oykpAfwcT94UMpePiEz6LwFCZ3iGfocljObZ/xyUUFM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fO6nLAgVzvrWx4KoRTDvcGgI16nMDtUjt5f/cpvQ2b9M6iTU5cMASkV6flvhFt4A6i3sRHDhjzSbNhEFZ1hzKm+qeapoQFKiPTeaGCZQClT3YeAHLb79D4nKvMdyO56AuyKyrnjYNJdaGULOm3ZTw32gCQ57hQzLDZYfASdoZRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JmeB1LZL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725639078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=Ed1iMS2yIj8ipO/lLIK7Zkfp1eGpMGD3p1/JyN6nqnM=;
+	b=JmeB1LZLD5A8C4uSQiUAr0nn49ob2NTglI0etOJKo5lA7h2zkrGKAr+LY5MlQSC5H+NnwP
+	6xNjPLruxe0UW0evG6RpYWQh4Ocy5t1ijtkPt+onE01e+LR1FPekzApQVQsPNTlwcMhVHR
+	6l8djbcxRs/S6uEB8KB5zPMuCD+v2Bs=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-297-1sln7If_PUqoA8CRoEAdAg-1; Fri,
+ 06 Sep 2024 12:11:15 -0400
+X-MC-Unique: 1sln7If_PUqoA8CRoEAdAg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 611A719560B0;
+	Fri,  6 Sep 2024 16:11:12 +0000 (UTC)
+Received: from localhost (unknown [10.22.8.96])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E47EE3000238;
+	Fri,  6 Sep 2024 16:11:10 +0000 (UTC)
+Date: Fri, 6 Sep 2024 13:11:09 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.224-rt116
+Message-ID: <ZtspnYW_sBaMvb31@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MMSauOvZEte8nL2T"
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTyCvG2KL=LPhbAf+Wo66QoC_EMk1xn+R9X-yKunHQ-JhA@mail.gmail.com>
-X-Cookie: Your love life will be... interesting.
-
-
---MMSauOvZEte8nL2T
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Sep 06, 2024 at 04:35:29PM +0100, Fuad Tabba wrote:
+Hello RT-list!
 
-> > > Can't pKVM just hide the non symmetrically supported VLs using ZCR_EL2,
-> > > just as regular KVM does for the guest?
+I'm pleased to announce the 5.10.224-rt116 stable release.
 
-> > > (I may be making bad assumptions about pKVM's relationship with the host
-> > > kernel.)
+This release is just an update to the new stable 5.10.224 version and
+no RT-specific changes have been made.
 
-> > That's one for the pKVM people.
+You can get this release via the git tree at:
 
-> Yes, but that's not really the issue here, unless I'm missing
-> something else. The issue is that pKVM needs to store the host's SVE
-> state too, to be able to restore it. So hiding non-symmetrically
-> supported VLs for the guests shouldn't be relevant.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-If the host kernel is also running at EL1 and it's only the hypervisor
-running at EL2 then the hypervisor can control the VLs that the host
-kernel is able to access?
+  branch: v5.10-rt
+  Head SHA1: 05045e6fd0d63692cc45e269a67cda8cd8f14b09
 
---MMSauOvZEte8nL2T
-Content-Type: application/pgp-signature; name="signature.asc"
+Or to build 5.10.224-rt116 directly, the following patches should be applied:
 
------BEGIN PGP SIGNATURE-----
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbbKYkACgkQJNaLcl1U
-h9CzRwf/fIMZef/R/ou7dSTKrAQHeot3FJE1EEtxuOEoG3pr6rooJk8+BinYXc4Q
-/xxNcHXFXwL3NGpGG05Wpu9cil3JsT7KwPZQ4n1faYfqGxAPG8oKc7EdIPW9nvEI
-Bs4tptCPnl0TrPpJu/PRsOLU+KgF59mbpuZd6bVC5V74UajgioUS9WBeUmCdXLSL
-OGlJ1xMOlMLmrKwKtjo0neJxct7z3nNCwbosbKmkmZ1HDOwyTR5/Xjy6v5tv9NOZ
-1lJN48XSTsi02ndqcuc4RHRnz+r5ea0HLJCATG6T3Yj1fB07V1UI11t1q9v1DbYu
-kQybQGfzLZyrOF5inQDb6s1aB99tMA==
-=78AY
------END PGP SIGNATURE-----
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.224.xz
 
---MMSauOvZEte8nL2T--
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.224-rt116.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
+
 
