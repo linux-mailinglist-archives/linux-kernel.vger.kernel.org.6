@@ -1,243 +1,119 @@
-Return-Path: <linux-kernel+bounces-318771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B5D96F31F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D5896F322
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4C61F21DE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:32:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77DA01F23E0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CAA1CB328;
-	Fri,  6 Sep 2024 11:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730B515852B;
+	Fri,  6 Sep 2024 11:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+9W1ugQ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iT7na9vS"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0E15852B;
-	Fri,  6 Sep 2024 11:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724DD1CB12C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725622334; cv=none; b=Q6kvN3HJfR3IdCYiTILpWJm6uMY9XRKJAimtJPsaAftLWgxWUVc/L4GD/PNKIZG0JfTl6bdb06tYNdnYi7NXnYPEiM0yxSwdCabcIwamL9Ax56RlXiyRDV3Dmok12/YbbQwbgZtSB4gWeUerZJJyYacvGFk1OC9vSVn2WQymOuk=
+	t=1725622408; cv=none; b=Yv6mf46u3rOs35KsxUIzasBoVAU+E1MwsbHI4Gf6ZR5uP3Wyt850idpf+NcRD0D9SIpIYI3YJBbpBiwDvQeGYVUWUZImbjalE7o85L8YPdb9ZMBEjOm9rHPTznhNW9vWI1J6h3lxOPBErl+H7TtcOLenH2iN6Jycrol5yoWugKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725622334; c=relaxed/simple;
-	bh=lQCRrdaaHU/TDfYp9dlT7sumlkf2U2ubUQmsymdhHVs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qWgPpFxrzWZcQTtxaL9F+6pFS0vFE0SBMLlUl4cli0Cp9E80AD/srwyp1jzXfzEstnLPjbBw57eX01TWirOZXDUoNHx1uDJasZZ5PsO5dmx02FeB4j/TRWkMUJo4ffy6TgUId86jKFxfhkLfz7h+AMXUfd/ZWhXwt/h5tcQvIaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+9W1ugQ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c79deb7c4so14388235e9.3;
-        Fri, 06 Sep 2024 04:32:11 -0700 (PDT)
+	s=arc-20240116; t=1725622408; c=relaxed/simple;
+	bh=a1oiwHXhTP5k1qDN8Kz5shKpgHS7gkdYtvq/dlluG9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k5VPSaXVtrs5qwbzJCIt94woth9CZF4qcuIjaPwVVW220fIDAdh5ytci1ME/5jqnN1lRu6LjCa8qENYmvcLYCahydfj4gWfF9od9UlqnxbKH7Smsv7w0V8zi4m/i0tzgVipSK8vjgTqXWoTyYpfzD1nr5/4IZlqH5/3jt+olj7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iT7na9vS; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6d6891012d5so17118957b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 04:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725622330; x=1726227130; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lQCRrdaaHU/TDfYp9dlT7sumlkf2U2ubUQmsymdhHVs=;
-        b=b+9W1ugQCYtCzgqlR4HJ7XsVF3zIYHO0z47zqSorriDh9SsUKt1zABawaO9SCeR88o
-         GdUCtGVZIWj3+bwe0NBu39TvjvmjqhUom6C5yaeX87CT88WRZldcFdYZvhlSIvLVx8Ci
-         sGSh+xGshS8mvzKP9/u5fszW4gj4tifQCt7EQa2cP7bWglogMxsPosDTBDOtYrOU0CXJ
-         zzN4sgdDWH9BIYKvEkKpLON0VcbsxdaV4Q4FEa+EmC9RQlCV+AqM039HtmIb4Q5XG3vQ
-         RyGuUgMmRWuvn8tkUZdFI7JElIn2E/DREEzJ9ZCC1WiOi0u7C+ydnJ+RPDTFiycKoZUF
-         4F7A==
+        d=linaro.org; s=google; t=1725622406; x=1726227206; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a1oiwHXhTP5k1qDN8Kz5shKpgHS7gkdYtvq/dlluG9A=;
+        b=iT7na9vSVMNMOa4G0amg5V2y+C3JlFr5Dz0ewo8hhVHtJ0l68SilcsGyW/t2RwOauC
+         NExXmexDyAe0HVgooQO2lIYOEXCOQJJQE6gM/KZrwncqI761m4EkYJgOJBKwxag6nBog
+         rjPKoR+/pr4qnqTRS6I6GgXMa0Jzzm6ECGGtlhvYiRt5agiiA1Xr69p1Goti2GnRm4R4
+         6fe+4fTh7acfuSjwjls+PETbbMa3pTyH1Yiw1DWZ7jA/P+nk6qKF5cSuSbNie5txJeaL
+         TDosmEygY5hRYdWX+W8zHFuMEsXRhtNXjadAXlff9g3wyZvdjfBkpDM8juXtKPJagaVS
+         aEAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725622330; x=1726227130;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lQCRrdaaHU/TDfYp9dlT7sumlkf2U2ubUQmsymdhHVs=;
-        b=Dm0qbThJovZ3kbgtGFUjMT0N491Bpf5qgtE+vlQ8XbhfG9Cc9d2tcQrxWoW0J8CaUa
-         pf/Zl08MGeZbbZ54SW41uCY+cLM1f8+Vmpw5XW0CvM3kV0fvWEKGJhtG6OAFz+TjSkeq
-         VbPYYYctPUgWrIQF/rglomemYtcN1QYbazdgbBCY7mCOv2fahwikTeVijoGXT9IfknHF
-         MiIl64f1x3GzdoW5B5GLevMLkRuNRSkDNMq3+KlzEdS6IN8Iu1JL7S9ni0ssOQbZ3k19
-         CciEvzFdZxjIJcmo16ae2L5QpkbiiOjeQwbv6TlUP1AdJMe30AY7Qb6uAD0wfreHpnDo
-         5Xug==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNGnd+Tg2Ji50tNj/SGh1P8/cGI8Gn7m85+p+B/6JgB3YMxLMs92okezTWj+tNPnD3nKhXxFp+sTG@vger.kernel.org, AJvYcCW7vEfL/NG26EE5t2o/X9TUzAv/8hEx9jnBKZg9MviQ/Zg4NFVnyiPAr3ycn8Igse+JVDyyjyrvv9L3nFu/@vger.kernel.org, AJvYcCXlJSWySVJuUoiyNwhHzWGoH8+44fpi0ioRLRvv1iAf9o3ytHHvStSv4kmHi82qBp/tMh0LHtzsHpDB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB3xKT/K/+KjDJULVGKu0Htxv6VwjY9y1TY+RS9FOsat1Roc6W
-	HxNXLJG0SyZG8c7m3Es4O+Dq57K9cDbHLS4lpdKV50uX4mTXd6j7
-X-Google-Smtp-Source: AGHT+IHR2a2j+bK/91RR6LZpAxAvRTcTs4mdc5NQieYix0uxLmd2DegBGYLc6MWj+48FlXI9n6sxEg==
-X-Received: by 2002:a05:600c:5103:b0:426:5dd0:a1ea with SMTP id 5b1f17b1804b1-42c9f9d3587mr16049245e9.28.1725622330155;
-        Fri, 06 Sep 2024 04:32:10 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05ccf8dsm17557535e9.19.2024.09.06.04.32.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 04:32:09 -0700 (PDT)
-Message-ID: <5fd8374285d7dadd68777efabad753b981d29f40.camel@gmail.com>
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Angelo Dureghello
-	 <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dlechner@baylibre.com
-Date: Fri, 06 Sep 2024 13:32:09 +0200
-In-Reply-To: <20240906-venomous-candle-8348b00640ca@squawk>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
-	 <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
-	 <20240829-stopwatch-morality-a933abb4d688@spud>
-	 <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
-	 <20240830-quilt-appointee-4a7947e84988@spud>
-	 <9015bc26-1a3a-49df-8728-12ceb8993035@baylibre.com>
-	 <20240906-venomous-candle-8348b00640ca@squawk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1725622406; x=1726227206;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a1oiwHXhTP5k1qDN8Kz5shKpgHS7gkdYtvq/dlluG9A=;
+        b=QbeiAhxBELrLibTI7CcDSW6no/gWBTQ7JndknLNsjqS4BTaf17Zf9PJDMGHjvLm9hB
+         eHZpfpciWJLO4zcVgSuD8x0ipDkrcFHdpSwGiRU1M/+t+fCUXz9qyPjlZs3P6syGGWLT
+         Zcxe+L0Z96+slzzE6DENteRqr8BRSmeDJxJIeYrnU/DZKfWUsnIwSiRMJBSNb4JlTOYG
+         lp6ZBCoJdpuo8yp3pZP8dGqpuFgDlbpJaOuzou/e0TFWRxprIXMuNOnI95OWSP8Ao+Tm
+         4wSPtBH7PEb5K/pnpCzUQm/M2WuS3EoSuiZwo623vhD7BDSIc3uoAzjzBmapsBNjwXdp
+         HvHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPVrYrjJAFnp6VlBxdMCV3HyKlesOGH4LnHDoSRf727h5Hxh2NOIh4mjHbeD4LzOH9e8ifbUgBIsqFiu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCRxOafNBkbOMH/IQs/b9CeJXBQI4UJtc42eF1VIG1sSb9Qapg
+	qmhKAeDTPC1gRfvff53km5/V26sCDwpY2B0VkXBvQh+07dxi9zkDJYwaR4SC4lQnbMrodzRMVPf
+	m6Mc1/cJ+ZoOkT8eRtq1qGggOgpgPHFW5i+uVfw==
+X-Google-Smtp-Source: AGHT+IGkcx0LnZHoHukMiwPH2fOzPIp/adODmKyPix5sHHzkQiP21pFZVgYcCTOOmpTmXp2A5oULIb0ksyDmO2p8kGw=
+X-Received: by 2002:a05:690c:6384:b0:6af:125a:1c6a with SMTP id
+ 00721157ae682-6db452d6a58mr25663227b3.41.1725622406397; Fri, 06 Sep 2024
+ 04:33:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com>
+In-Reply-To: <692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Fri, 6 Sep 2024 13:33:15 +0200
+Message-ID: <CACMJSes4cnCNUHiZUr4CF-K2c8-1VYzuh=T8JDi_erqfShkuZA@mail.gmail.com>
+Subject: Re: [REGRESSION] firmware: qcom: scm: smc: switch to using the SCM allocator
+To: Rudraksha Gupta <guptarud@gmail.com>
+Cc: regressions@lists.linux.dev, brgl@bgdev.pl, andersson@kernel.org, 
+	konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, robimarko@gmail.com, quic_gurus@quicinc.com, 
+	luzmaximilian@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	srinivas.kandagatla@linaro.org, arnd@arndb.de, quic_eberman@quicinc.com, 
+	elder@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@quicinc.com, ahalaney@redhat.com, quic_djaggi@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2024-09-06 at 10:04 +0100, Conor Dooley wrote:
-> On Mon, Sep 02, 2024 at 11:32:37AM +0200, Angelo Dureghello wrote:
-> > Hi Conor,
-> >=20
-> >=20
-> > On 30/08/24 5:33 PM, Conor Dooley wrote:
-> > > On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
-> > > > Hi Conor,
-> > > >=20
-> > > > On 29/08/24 5:46 PM, Conor Dooley wrote:
-> > > > > On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote=
-:
-> > > > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > >=20
-> > > > > > Add bus property.
-> > > > > RFC it may be, but you do need to explain what this bus-type actu=
-ally
-> > > > > describes for commenting on the suitability of the method to be
-> > > > > meaningful.
-> > > > thanks for the feedbacks,
-> > > >=20
-> > > > a "bus" is intended as a generic interface connected to the target,
-> > > > may be used from a custom IP (fpga) to communicate with the target
-> > > > device (by read/write(reg and value)) using a special custom interf=
-ace.
-> > > >=20
-> > > > The bus could also be physically the same of some well-known existi=
-ng
-> > > > interfaces (as parallel, lvds or other uncommon interfaces), but us=
-ing
-> > > > an uncommon/custom protocol over it.
-> > > >=20
-> > > > In concrete, actually bus-type is added to the backend since the
-> > > > ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes =
-DDR
-> > > > parallel bus (interface that i named QSPI, but it's not exactly a Q=
-SPI
-> > > > as a protocol), so it's a device-specific interface.
-> > > >=20
-> > > > With additions in this patchset, other frontends, of course not onl=
-y
-> > > > DACs, will be able to add specific busses and read/wrtie to the bus
-> > > > as needed.
-> > > >=20
-> > > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > > ---
-> > > > > > =C2=A0=C2=A0 Documentation/devicetree/bindings/iio/dac/adi,axi-=
-dac.yaml | 9
-> > > > > > +++++++++
-> > > > > > =C2=A0=C2=A0 1 file changed, 9 insertions(+)
-> > > > > >=20
-> > > > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-=
-dac.yaml
-> > > > > > b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > > > > index a55e9bfc66d7..a7ce72e1cd81 100644
-> > > > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yam=
-l
-> > > > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yam=
-l
-> > > > > > @@ -38,6 +38,15 @@ properties:
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 clocks:
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > > > You mentioned about new compatible strings, does the one currentl=
-y
-> > > > > listed in this binding support both bus types?
-> > > You didn't answer this, and there's insufficient explanation of the
-> > > "hardware" in this RFC, but I found this which is supposedly the
-> > > backend:
-> > > https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
-> > > adi,axi-dac.yaml has a single compatible, and that compatible has
-> > > nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I woul=
-d
-> > > expect either justification for reuse of the compatible, or a brand n=
-ew
-> > > compatible for this backend, even if the driver can mostly be reused.
-> > >=20
-> > > Could you please link to whatever ADI wiki has detailed information o=
-n
-> > > how this stuff works so that I can look at it to better understand th=
-e
-> > > axes of configuration here?
-> >=20
-> > https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-> >=20
-> > that has same structure and register set of the generic ADI AXI-DAC IP:
-> > https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-> >=20
-> >=20
-> > > > > Making the bus type decision based on compatible only really make=
-s sense
-> > > > > if they're different versions of the IP, but not if they're diffe=
-rent
-> > > > > configuration options for a given version.
-> > > > >=20
-> > > > > > +=C2=A0 bus-type:
-> > > > DAC IP on fpga actually respects same structure and register set, e=
-xcept
-> > > > for a named "custom" register that may use specific bitfields depen=
-ding
-> > > > on the application of the IP.
-> > > To paraphrase:
-> > > "The register map is the same, except for the bit that is different".
-> > > If ADI is shipping several different configurations of this IP for
-> > > different DACs, I'd be expecting different compatibles for each backe=
-nd
-> > > to be honest
-> >=20
-> > i am still quite new to this fpga-based implementations, at least for h=
-ow
-> > such IPs are actually interfacing to the linux subsystem, so i may miss
-> > some point.
-> >=20
-> > About the "adi,axi-dac-9.1.b" compatible, the generic DAC IP register s=
-et
-> > is mostly the same structure of this ad3552r IP (links above), except f=
-or
-> > bitfields in the=C2=A0DAC_CUSTOM_CTRL register.
-> >=20
-> > My choice for now was to add a bus-type property.
-> >=20
-> > Not an HDL expert, but i think a different bus means, from an hardware =
-point
-> > of
-> > view, a different IP in terms of internal fpga circuitry, even if not a=
-s a
-> > register-set.
->=20
-> Depending on whether or not the unmodified driver can be used with this
-> IP (so the QSPI bus stuff would need to be optional) then a fallback
-> should be used given the degree of similarity. It, however, seems likely
-> that is not the case, and without the QSPI bus there'd be no way to
-> communicate with the device. Is there any reason to use this IP as a
-> backend, without connecting the QSPI bus at all, leaving the ADC/DAC on
-> a regular SPI bus?
->=20
+On Sun, 25 Aug 2024 at 08:51, Rudraksha Gupta <guptarud@gmail.com> wrote:
+>
+> Hello all,
+>
+>
+> Found a regression with a platform that has the msm8960 SoC. Was hoping
+> to code up a fix myself, but I'm not adept in ARM architecture or the
+> Linux kernel, so I'm just reporting it here. Reverting this commit seems
+> to fix it as well. Please let me know if there is anything else I should
+> provide for this regression report.
+>
+> #regzbot introduced 449d0d84bcd8246b508d07995326d13c54488b8c
+>
+> Error: https://pastebin.com/SDRENUGk
+>
+> Defconfig: https://pastebin.com/CRDjC39a
+>
 
-Somewhere in my replies, I'm doing the exact same question to myself. We pr=
-obably
-need to speak with the FPGA folks but I guess (hope) they had a good reason=
- for this.
+Looks like qcom_scm_get_tzmem_pool() returns NULL. Not sure how this
+happens. Can you confirm that the QCom SCM driver probed correctly?
 
-- Nuno S=C3=A1
+Bart
+
+> Platform:
+> https://wiki.postmarketos.org/wiki/Samsung_Galaxy_Express_SGH-I437_(samsung-expressatt)
+>
+>
+> Thanks,
+> Rudraksha
+>
 
