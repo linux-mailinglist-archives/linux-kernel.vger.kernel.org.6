@@ -1,186 +1,119 @@
-Return-Path: <linux-kernel+bounces-318010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531DE96E716
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE5896E721
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA6D1F24470
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBAE2850B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCC21A28C;
-	Fri,  6 Sep 2024 01:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41D518E0E;
+	Fri,  6 Sep 2024 01:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sQOs/dco"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DKI1cBhJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC4110940
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 01:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C6B17991;
+	Fri,  6 Sep 2024 01:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725584737; cv=none; b=ooUPIq3qWFfTNl+8YjucuG1B0JMQi5N5WkZbRed060Lj/IlwPpy3mNI1RLfFLZqBEpQO0kokvUE2kpmDrMRQyRvCzM2ZUldqHCT8maWvcYUB6B93yWdxMqsysVTd+XKM+tC2dldELWjI8PPmBnxIfBnrb00u+pso15VB98LUmqI=
+	t=1725585081; cv=none; b=EIF4zgjALU34owKw4NjlpHTwM20JKbDKZyMWWV/uR6yXBa+UGfYzHycdw9G/gnbY6OquMemgCSo7EsKQN4Be+VDfYCFEU3lxS7Bs4KhW8rsNkR/Cv3atIQPmzE32MJ4bgNnwQOrEt5IwV58Mce2Vip7YB4+G549LbUjUjaE1yqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725584737; c=relaxed/simple;
-	bh=J02rQJFIdENo8s9OyaLrzvWWAhINGwRko9kbgLPFte4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZ0W3FiVZ5whSQqLKbMzMqn/sxTl38pVKsPG9TO+3FXv7e7cWsEYfaZaYNKoqb8dTJdHJ2r5jjL8nbrIxg26xl12LGoaVPsLSlJTzHXBO8lvFnTFfSjYXNMYxqlQarAl0WODndBd6r0YUnKhzSU/6uvLI5InwZhrTci/qaZJYB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sQOs/dco; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53658e2d828so43596e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 18:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725584734; x=1726189534; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pEISOZKVymIo9I1PGSjsszu4GcOoy0f94hhNiVuBx/I=;
-        b=sQOs/dco09di2xawsEvjQ9W2MTen6rXKTqRy+7Ls3WFyi1HQ8+fbxIgbtZ3VnUEYrJ
-         FAHjC9A7eb3VtSdWPghQzjChzeBRIOZ+RL4vSZONbjWIS7Ly1n7cZWwb5YyG0KS/qDvE
-         L3q8ncY2TwsZRi/ewbXS7KEwtouGpHoyLhn9bIzDSAaKbUG9apMBmC5tOlxjbHXhfr6g
-         3oglPy+g3KGMF8rgsWPw74LB6OOBgvvRbOtOj3ep2HqGb2V2jberNhIjPG0esMRpSaYs
-         YSZ1GbL5MCdD1QxX4iJbXHnkWOHpHjuNn46WLwMS3qwEFX51DNz/GN93J6nTmsuTgNCe
-         yGuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725584734; x=1726189534;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pEISOZKVymIo9I1PGSjsszu4GcOoy0f94hhNiVuBx/I=;
-        b=k5lIrwpTwlmq7Q74cWs3jL87ajxxlmGtGCnjmoYglMYvNJMcafyiETy5eAIjxpJwyW
-         wzleND4YUuKZ5BIMCgdc3M1br51/4AI3RdmjQy7vbXYTC2tdssPn7mY5nO536P9vxh9O
-         n3rtB8PeKHY0GARNnGy65/r+fhjeeGVfCx/MqIF3BcjsPAXrXh8nDzkLjyt4HetIdVzQ
-         kLgBSjkGwNa8kGkFx8rlXbMMo+vCd+6U3HD4192bmfDXplpp8p7IBeu3fKbdDWbpX4bx
-         8OjV62upk1pVUZLsfSOA2Ni1aVPAzmUJNpyees9yaWQhBRaVfD6sKHl7yAXwf5y3X8i+
-         A46Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXkklgg2lD6hjWa9g5xqdaN1qPL0NqChPtAR1hjnStuhLrkLYF5ECBKXkqDTlyxLBWFYi6asIdnpJUrCXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkMydJNqFAWwsJzMSil5Szc9qwG6gNbL5++1Jk30if3ZfapWGN
-	caTT5g4s5bssXVFO4w//e3XCxvDH1mW6UUSRSAesMpSh15b6B3EOBuAIO9qCahUz5WnhAW+vAgd
-	A
-X-Google-Smtp-Source: AGHT+IHqTecyMCXjxz/h97PL0XeJTktBMk1kLCkDh232vEf9xzuW6gKiZrusAkzTTBBC6DSTu79Mgg==
-X-Received: by 2002:a05:6512:b9d:b0:52f:76:c258 with SMTP id 2adb3069b0e04-5365880faefmr194848e87.8.1725584733590;
-        Thu, 05 Sep 2024 18:05:33 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53655171444sm183909e87.213.2024.09.05.18.05.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2024 18:05:33 -0700 (PDT)
-Message-ID: <b9b1e8e9-5fd2-4880-abc5-300d9d28211c@linaro.org>
-Date: Fri, 6 Sep 2024 04:05:31 +0300
+	s=arc-20240116; t=1725585081; c=relaxed/simple;
+	bh=8S+jXpwt85dGZWnEqivLD598BH0yX52AmDkn7Gkw3Is=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q4GFsP9s5vkhrKNw8ybFs+tkHJcdYOtbZ4z7xtxYsnqI3FeJaKJ+/rkAF7P1coadXyvZSGI2OEdZg8Fo1DXKGijaUFw6enwvhdKmdfEcLVf6ge6raBLMvZZL1cbqTAYWrAqUav8RjH1OOAZG07JGXvcOurklAaiuMAIs78f60fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DKI1cBhJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725585080; x=1757121080;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=8S+jXpwt85dGZWnEqivLD598BH0yX52AmDkn7Gkw3Is=;
+  b=DKI1cBhJJsSDJUi7ZTBV/HcaGHShLyl4Xvll8VtwDetUKr35vKWFjIko
+   3cqVfoqj+wkbWBNoOcCdUyUPOZOwXA0KKMvaydXQbsKAMRPcYHB/37EFB
+   RNs50aTHiq+tcjwGirOwSmjfmKf1DlUnOuTjyZr5l3/hFgNr3UJnVoLEU
+   pPVORo26LjxHvUA5WK9CyOPVFjoPglmzW14900KJKb53tLKDHSHg33K2D
+   jWbNzaXp8oN8kEclwO+g/5AoLieVL/6HFqR2fG94FpNkcfMQQKK0hErNi
+   a18b6hWmyk158ur724w1/ueeE0GEonyVeGOcoWwt8v7XxJO8VKE5yXO9/
+   Q==;
+X-CSE-ConnectionGUID: LDZJzpqYTOmLUH6ed9mN1Q==
+X-CSE-MsgGUID: yZThUJrSRUyjJy30g+avJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="23891490"
+X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
+   d="scan'208";a="23891490"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 18:11:19 -0700
+X-CSE-ConnectionGUID: zPIbzNPWSweJ6Zcr2THlJA==
+X-CSE-MsgGUID: 0g+abiOrSLeuAFE4eFRXCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
+   d="scan'208";a="96523282"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 18:11:15 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  <linux-mm@kvack.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,  "David
+ Hildenbrand" <david@redhat.com>,  Davidlohr Bueso <dave@stgolabs.net>,
+  "Jonathan Cameron" <jonathan.cameron@huawei.com>,  Dave Jiang
+ <dave.jiang@intel.com>,  Alison Schofield <alison.schofield@intel.com>,
+  Vishal Verma <vishal.l.verma@intel.com>,  Ira Weiny
+ <ira.weiny@intel.com>,  Alistair Popple <apopple@nvidia.com>,  Bjorn
+ Helgaas <bhelgaas@google.com>,  Baoquan He <bhe@redhat.com>, Philip Li
+ <philip.li@intel.com>
+Subject: Re: [PATCH -v2] Resource: fix region_intersects() for CXL memory
+In-Reply-To: <ZtmOTYF9EWPeLg5u@smile.fi.intel.com> (Andy Shevchenko's message
+	of "Thu, 5 Sep 2024 13:56:13 +0300")
+References: <20240819023413.1109779-1-ying.huang@intel.com>
+	<ZsL-wfDYsUmWKBep@smile.fi.intel.com>
+	<874j6vc10j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<66d8f41cb3e6_3975294f9@dwillia2-xfh.jf.intel.com.notmuch>
+	<ZtmOTYF9EWPeLg5u@smile.fi.intel.com>
+Date: Fri, 06 Sep 2024 09:07:41 +0800
+Message-ID: <87v7z91teq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] media: qcom: camss: Remove use_count guard in
- stop_streaming
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hansverk@cisco.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Milen Mitkov <quic_mmitkov@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
-References: <20240729-linux-next-24-07-13-camss-fixes-v3-0-38235dc782c7@linaro.org>
- <20240729-linux-next-24-07-13-camss-fixes-v3-1-38235dc782c7@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240729-linux-next-24-07-13-camss-fixes-v3-1-38235dc782c7@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-On 7/29/24 15:42, Bryan O'Donoghue wrote:
-> The use_count check was introduced so that multiple concurrent Raw Data
-> Interfaces RDIs could be driven by different virtual channels VCs on the
-> CSIPHY input driving the video pipeline.
-> 
-> This is an invalid use of use_count though as use_count pertains to the
-> number of times a video entity has been opened by user-space not the number
-> of active streams.
-> 
-> If use_count and stream-on count don't agree then stop_streaming() will
-> break as is currently the case and has become apparent when using CAMSS
-> with libcamera's released softisp 0.3.
-> 
-> The use of use_count like this is a bit hacky and right now breaks regular
-> usage of CAMSS for a single stream case. Stopping qcam results in the splat
-> below, and then it cannot be started again and any attempts to do so fails
-> with -EBUSY.
-> 
-> [ 1265.509831] WARNING: CPU: 5 PID: 919 at drivers/media/common/videobuf2/videobuf2-core.c:2183 __vb2_queue_cancel+0x230/0x2c8 [videobuf2_common]
-> ...
-> [ 1265.510630] Call trace:
-> [ 1265.510636]  __vb2_queue_cancel+0x230/0x2c8 [videobuf2_common]
-> [ 1265.510648]  vb2_core_streamoff+0x24/0xcc [videobuf2_common]
-> [ 1265.510660]  vb2_ioctl_streamoff+0x5c/0xa8 [videobuf2_v4l2]
-> [ 1265.510673]  v4l_streamoff+0x24/0x30 [videodev]
-> [ 1265.510707]  __video_do_ioctl+0x190/0x3f4 [videodev]
-> [ 1265.510732]  video_usercopy+0x304/0x8c4 [videodev]
-> [ 1265.510757]  video_ioctl2+0x18/0x34 [videodev]
-> [ 1265.510782]  v4l2_ioctl+0x40/0x60 [videodev]
-> ...
-> [ 1265.510944] videobuf2_common: driver bug: stop_streaming operation is leaving buffer 0 in active state
-> [ 1265.511175] videobuf2_common: driver bug: stop_streaming operation is leaving buffer 1 in active state
-> [ 1265.511398] videobuf2_common: driver bug: stop_streaming operation is leaving buffer 2 in active st
-> 
-> One CAMSS specific way to handle multiple VCs on the same RDI might be:
-> 
-> - Reference count each pipeline enable for CSIPHY, CSID, VFE and RDIx.
-> - The video buffers are already associated with msm_vfeN_rdiX so
->    release video buffers when told to do so by stop_streaming.
-> - Only release the power-domains for the CSIPHY, CSID and VFE when
->    their internal refcounts drop.
-> 
-> Either way refusing to release video buffers based on use_count is
-> erroneous and should be reverted. The silicon enabling code for selecting
-> VCs is perfectly fine. Its a "known missing feature" that concurrent VCs
-> won't work with CAMSS right now.
-> 
-> Initial testing with this code didn't show an error but, SoftISP and "real"
-> usage with Google Hangouts breaks the upstream code pretty quickly, we need
-> to do a partial revert and take another pass at VCs.
-> 
-> This commit partially reverts commit 89013969e232 ("media: camss: sm8250:
-> Pipeline starting and stopping for multiple virtual channels")
-> 
-> Fixes: 89013969e232 ("media: camss: sm8250: Pipeline starting and stopping for multiple virtual channels")
-> Reported-by: Johan Hovold <johan+linaro@kernel.org>
-> Closes: https://lore.kernel.org/lkml/ZoVNHOTI0PKMNt4_@hovoldconsulting.com/
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   drivers/media/platform/qcom/camss/camss-video.c | 6 ------
->   1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
-> index cd72feca618c..3b8fc31d957c 100644
-> --- a/drivers/media/platform/qcom/camss/camss-video.c
-> +++ b/drivers/media/platform/qcom/camss/camss-video.c
-> @@ -297,12 +297,6 @@ static void video_stop_streaming(struct vb2_queue *q)
->   
->   		ret = v4l2_subdev_call(subdev, video, s_stream, 0);
->   
-> -		if (entity->use_count > 1) {
-> -			/* Don't stop if other instances of the pipeline are still running */
-> -			dev_dbg(video->camss->dev, "Video pipeline still used, don't stop streaming.\n");
-> -			return;
-> -		}
-> -
->   		if (ret) {
->   			dev_err(video->camss->dev, "Video pipeline stop failed: %d\n", ret);
->   			return;
-> 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> On Wed, Sep 04, 2024 at 04:58:20PM -0700, Dan Williams wrote:
+>> Huang, Ying wrote:
+>> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+>
+> [..]
+>
+>> > > You may move Cc list after '---', so it won't unnecessarily pollute the commit
+>> > > message.
+>> > 
+>> > Emm... It appears that it's a common practice to include "Cc" in the
+>> > commit log.
+>> 
+>> Yes, just ignore this feedback, it goes against common practice. Cc list
+>> as is looks sane to me.
+>
+> It seems nobody can give technical arguments why it's better than just keeping
+> them outside of the commit message. Mantra "common practice" nowadays is
+> questionable.
+
+Cc list is used by 0day test robot to notify relevant developers and
+maintainers in addition to the author when reporting regressions.  That
+is helpful information.
 
 --
-Best wishes,
-Vladimir
+Best Regards,
+Huang, Ying
 
