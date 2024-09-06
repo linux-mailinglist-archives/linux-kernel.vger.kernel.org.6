@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-318998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E9B96F658
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:10:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F4896F65C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 861E21C21DDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:10:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC04286A60
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338B1D0143;
-	Fri,  6 Sep 2024 14:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2641D014A;
+	Fri,  6 Sep 2024 14:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0j7yjgh"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xrj/PiVX"
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306551CF7C6
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F58C1CF7A8;
+	Fri,  6 Sep 2024 14:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725631840; cv=none; b=hRpew7gMLYf+IIm6s3fiyyGysB4/Nn7JXWu0ARrgn9Uo3IuTcEErJ8O11SqVOUb2vu3EtFyYCaGy+vAPk8Bx5kop5O3bwHxCGplMffG7UlZVL5kmGGg3Hhe9tlmgk0SaPIMSXiuvDKDLwDqQGAjZ8Qb5Gbm0KbQED0RjGgiTSfU=
+	t=1725631870; cv=none; b=WaymvWh3Q7e1BM2YJegyT/WIpiYnpz8rzmxnFlIHFTrQn1YCGrh1HZrCWClKgNwBYdDrL86SdbqYvcFLpksOHOroPceSNJ2NpKiOxtpKcd1scbKoOU5elg7xO46v6A9kPINpi5X6NLRHuVnBnaCihSkpmqJz54n1FV9CFTCK9uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725631840; c=relaxed/simple;
-	bh=Jkg3+i0mTY4FdI4toZ9e/r/mwam+fDR7fNlJ60pKIDQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D1T5V57ieyFcG5UAWiSQ1l7d/7YgYJ3ghB1OvwFAVDRj/dW2j0PgNOSgDCUfZSoQxcDv1d6HdUJKdIdsuXNZ8iT2a5ZWkpkQ46OVVWQ/LjwkoyYUXzH9mqCIwIBVptTaDKshusGkzgK0OuPKcEGcOJrlCkFPmr9EQwHw8GaRDkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0j7yjgh; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-717931bdb24so141865b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725631838; x=1726236638; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tpwGePaDBp0uVaEd/rbAQsUfTJ3bw9Qu1GLMpYo60uQ=;
-        b=B0j7yjghh0g00opqL23GVrMkzfdJ32m22Q5oOzzO+Mlv7/pIPUT5n5iqNaJxY4pTTA
-         o85Jf6AU8eOiYqbwEvco+ngDPtoOqlZCKei5Gpyat4a0fGW7yweRNo3AGiwobsJnSbKo
-         DAwBQOIIq56YwCE7va+VOlZkhq3ZAFSbLEfbifeXqq0vUHz9KCGMyJF1OASz7Y5iU8dN
-         hORL75Gi9ImYSrTCUQght+1fZu7Vrbyw3t5ZTcd8WDMtkKHPu+YNSR21DOeKYPn3VxEb
-         tDachd0eElbbM3a4i3TD0YwBkdJaxBvA/K9Tkarcnbc7BbYaT6F0bhRGPAQXFpbB/ldc
-         Uc9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725631838; x=1726236638;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tpwGePaDBp0uVaEd/rbAQsUfTJ3bw9Qu1GLMpYo60uQ=;
-        b=jydyCdZbacAxD+ka3MF2oYIQmPui+lAi0ie0FnRj5sXcpt8zzfkhIAJsSZneUudcV+
-         y3zxKidT7X31RL5m1dfSmJtVM/bfFF7xrk5F25mslCHPHnV7wguYI29mujVXv/T27L7n
-         zgcAVBDr/dlz07z9UWP/H4t43HstF5AbstfL7X7ew7NZLbXeDycIT2C9PZQkHVo6Mqzg
-         ZpGFTnsn3j9J50/YCho91ED3tfepFSkrbhG271USl0oA4NS7nHeNxoTRm0FNjJeBbera
-         ZXKqRSLfQ9MBAl+CDuA0do5KvSwSaM747mB9RIAbmYypojTihf5HkR91cHPbx8Cu4y17
-         u27g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/laZB0QMHQrKKUMYDMJ91sylEHawRwXnt34EinVWiPA03wx1ddamnuiIirGsH0SXA7fIDuR4A03/qOeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUyhBMXR67hutTKhy41Z+VPeIN+PemnU2VOVWe/UHqlZtf0nNm
-	nlOKIgWLgEZdYZQxaVNCqNv6oO5POpmq8ldP1x8Em9/ZMhJcBKh6
-X-Google-Smtp-Source: AGHT+IHJQZY0Niird7SJgtEDlzL9MuvLmJBzy22Ncjys8umvt8oEcLcJzQ7d9ALDctEaLcf4kz+xmw==
-X-Received: by 2002:a05:6a20:158b:b0:1c4:bb9f:c564 with SMTP id adf61e73a8af0-1cf1ceefa59mr1490912637.0.1725631838339;
-        Fri, 06 Sep 2024 07:10:38 -0700 (PDT)
-Received: from ubuntukernelserver.. ([49.236.212.182])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718d6e78801sm1289976b3a.133.2024.09.06.07.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:10:38 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: include: Fix spelling mistake in rtw_xmit.h
-Date: Fri,  6 Sep 2024 19:55:24 +0545
-Message-Id: <20240906141024.10021-1-topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725631870; c=relaxed/simple;
+	bh=c/t+G8YnmMiXwefYmFLh4cenVroWZGpo0bMweRzBv8U=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=JAbHrDj9fTnWXmY5CakHNWk94f167McnwUYBsz9IEiTy5zbbFtlylscH2XAUF0BFziarHAN27nRfOpoqETs8P3jCfwX0/BWzt93W/KXXMTmMbQ1mzUJ6XxtBuyd9l5j/lxhbrFlD+kpv3tYKMwh2CJ4tN2c6Nixwu8TPiKsbZwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xrj/PiVX; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725631865; bh=5fYQjJJeIHbEi/MHYR9mQgsttlxdfBHHE0O6dknJ3Y4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xrj/PiVXTqidfmJh/BN7GzbmPcYVRueuuK7TD5CDoXYlGT/945RUKSazTb0m3fiA1
+	 uP9HQqIlz1RnJ3IeDGTTuEbvgRJFkpk4duV3TO9a5BroqKVfkvd1ylmgRnZmGMB6Vz
+	 UpkWDnH6z9ECkFxjAorBMyAkAKHg8wRTj2ThxYeI=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 2C2AAECF; Fri, 06 Sep 2024 22:11:02 +0800
+X-QQ-mid: xmsmtpt1725631862tzhi2yfde
+Message-ID: <tencent_5E4FB78DACA5F90D97926A5DBE5D96993007@qq.com>
+X-QQ-XMAILINFO: M/NR0wiIuy70Njpei0mZ6yEAAVkWoC/0dTLDvjX6vuKxIvWSRQE6FfcTMWjKxB
+	 riWgL0TH7Jm1+RM2+7OXuBWUFEWHnw8KX+RGxjTS7VHsJeUZi2DzrzePQ9SQway7aX/Gg1YkD5l/
+	 nxdMA+KuvpZ6CkBu+2RzQZMqjf/UJT3nFAIIZspGyLHG8VfikUaR6/amU6l2XkPSsfXTj7c+KDnF
+	 Ipuhx4bi94ZYW7zPFcvsVPBx9YT9S+eTbTeXVoX8/1rL//uwTL1VgRTjnviehI5FW/r8eAU2kq4z
+	 pkVywMQiVqzmVfmH7+ehyfmOZsCBrcX2P7rP/Rp8ucMepKAhPD8y3CdGjfJ4bAItiBnNd6KsNM+K
+	 e3P2ZMakmu4p0Q4gRDbScsuTehlgiqqOu+0VqNW2ddOAlsBVxKq6sr0vuTc8QijYZo6hYTuD2dqa
+	 Bf7hleegOgS5z4kqzEngLCnCxbu9669z3w9Gk54IDlKjE3u6Uwx6TAuaNdy5NA3yRUM3Na/0HGs7
+	 P8MV5HlwMk8UkWhyFWt008JIMdl9/MmpNo48A8jwFfWDPq+M6fTntTMwVVMBbP35804egygS+BrH
+	 Bdy3F2DzgZbplQPNSa5Qn4t6aeQSjmKzuZuP6zqf3pCOpDeoGi/6EUJ0w0Nm90Zdyksa6TdfKw2f
+	 pho6HiALoqMJ4vcwxWEnSSw+uy4wKGBMf721njFXlF2VhT7O9+qeLdH+Y94LqUmQi8/aDYKOyYVY
+	 R7Vvca4D4oSIgpktG8ZAj+ANHuALlikjsrMLP7q4yq1J8V95Ow2IE/9AD7fxUlLIYh4H9K6XGRO4
+	 s5sEFIDrJ5rncjDjQ3pjw8x04avrZQFfB/LrABzxJgu9fWYfYD0Y+4O1N8y/sQ6V6VybIWbM29k/
+	 js5mHlJMPLAf1m0McdaGswkfE9QK7hy3leDWn1VcaPsJ6zkh1Ixvphd8chKEQ94+l46frCLNQ9eT
+	 gw3UzEbbU6fj3lagJdpO3XjDPcBQSpUepR0Z01usA=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: eadavis@qq.com
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] USB: usbtmc: prevent kernel-usb-infoleak
+Date: Fri,  6 Sep 2024 22:11:03 +0800
+X-OQ-MSGID: <20240906141102.358431-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <tencent_E8A0E926ED22CE20783A6EC02FC56C18950A@qq.com>
+References: <tencent_E8A0E926ED22CE20783A6EC02FC56C18950A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,28 +77,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch fixes spelling mistake to increase code readability
-and searching.
+The syzbot reported a kernel-usb-infoleak in usbtmc_write.
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+The expression "aligned = (transfersize + (USBTMC_HEADER_SIZE + 3)) & ~3;"
+in usbtmcw_write() follows the following pattern:
+
+aligned = (1 + 12 + 3) & ~3 = 16   // 3 bytes have not been initialized
+aligned = (2 + 12 + 3) & ~3 = 16   // 2 bytes have not been initialized
+aligned = (3 + 12 + 3) & ~3 = 16   // 1 byte has not been initialized
+aligned = (4 + 12 + 3) & ~3 = 16   // All bytes have been initialized
+aligned = (5 + 12 + 3) & ~3 = 20   // 3 bytes have not been initialized
+aligned = (6 + 12 + 3) & ~3 = 20   // 2 bytes have not been initialized
+aligned = (7 + 12 + 3) & ~3 = 20   // 1 byte has not been initialized
+aligned = (8 + 12 + 3) & ~3 = 20   // All bytes have been initialized
+aligned = (9 + 12 + 3) & ~3 = 24
+...
+
+Note: #define USBTMC_HEADER_SIZE      12
+
+This results in the buffer[USBTMC_SEAD_SIZE+transfersize] and its
+subsequent memory not being initialized.
+
+The condition aligned < buflen is used to avoid out of bounds access to
+the buffer[USBTMC_HEADER_SIZE + transfersize] when "transfersize = 
+buflen - USBTMC_HEADER_SIZE".
+
+Fixes: 4ddc645f40e9 ("usb: usbtmc: Add ioctl for vendor specific write")
+Reported-and-tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- drivers/staging/rtl8723bs/include/rtw_xmit.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/class/usbtmc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/staging/rtl8723bs/include/rtw_xmit.h b/drivers/staging/rtl8723bs/include/rtw_xmit.h
-index a3b4310caddf..544468f57692 100644
---- a/drivers/staging/rtl8723bs/include/rtw_xmit.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_xmit.h
-@@ -15,7 +15,7 @@
+diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+index 6bd9fe565385..faf8c5508997 100644
+--- a/drivers/usb/class/usbtmc.c
++++ b/drivers/usb/class/usbtmc.c
+@@ -1591,6 +1591,10 @@ static ssize_t usbtmc_write(struct file *filp, const char __user *buf,
+ 		goto exit;
+ 	}
  
- #define XMITBUF_ALIGN_SZ 512
- 
--/*  xmit extension buff defination */
-+/*  xmit extension buff definition */
- #define MAX_XMIT_EXTBUF_SZ	(1536)
- #define NR_XMIT_EXTBUFF	(32)
++	if (aligned < buflen && (transfersize % 4))
++		memset(&buffer[USBTMC_HEADER_SIZE + transfersize], 0,
++			aligned - USBTMC_HEADER_SIZE - transfersize);
++
+ 	dev_dbg(&data->intf->dev, "%s(size:%u align:%u)\n", __func__,
+ 		(unsigned int)transfersize, (unsigned int)aligned);
  
 -- 
-2.34.1
+2.43.0
 
 
