@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-319073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F9F96F762
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:50:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A49D96F75B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1162B259CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A3E02827C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FCE1D1F7C;
-	Fri,  6 Sep 2024 14:49:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FCD1D27AF;
+	Fri,  6 Sep 2024 14:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaD/ctsQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6DE1D1F75
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92B81D1F70;
+	Fri,  6 Sep 2024 14:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725634167; cv=none; b=nE9ZHWkVw52bvo6SLs4m4QhGlgyIgvB3jpmIQ061NIr0fHQjdkgqKBKFsZvF8eGYnpJuomaLNOOKP1WF8fFOdQXUqx1szcUdhEpYb1U+j1JoCUHJJw4AtTQo4NR2KhtnJ4iN+5a6lxZF/3g7YKlOWwuS/FTSoiZ4WgXfpJ/Lwuc=
+	t=1725634152; cv=none; b=rEkNlnsmU7ew8HVwI+49lNFiGwFNKM1QAmfB5wExmrV5YPY2QyJr05G27ph6MVrfTd9sO3ZXSJt9Xvat+0mNn+rX22fhzXnnDvc4jsDNx01DKFpnxRx4oGFcpbYDUW+1yxwTJQVha3YoT4j6pjadMHzwtaUX14li7jOnjpvFE0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725634167; c=relaxed/simple;
-	bh=xVVgbrWIXaB/p99YJfW21mbOGrXIDGuVDt7LUSL8C2A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PHSFPOL07QfuiYA6+ZCeK6EKY/dDLh5c9av/yGqpt1c+y/SXzgWUiP2brSGCnUy13CQQXrGEs8TYe+zbRK70eB+lWsP+oMZ+s8mMVfc9xLEM9G0oDY9hqveI8nwG+FH32OX4h4I24c+LKOoCm48n+f8xGXpfSwZBngZgt9LXRNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1smaGq-0003cv-In; Fri, 06 Sep 2024 16:49:08 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1smaGo-005y8E-Qv; Fri, 06 Sep 2024 16:49:06 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1smaGo-002Tt0-2Q;
-	Fri, 06 Sep 2024 16:49:06 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
+	s=arc-20240116; t=1725634152; c=relaxed/simple;
+	bh=q8NFAWndytiAyShc0RsLlL4YDsYpowOBThyUoQqO95s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCW5WKJ2quooCRxmma8vpaxZAUhNAB/RHJ3JNnAdhg9jZoXBglFybMAyD8i5rRFeqTWtlvkLrrWJwHEJvl0LfeIuNNkRZbPJ0irvmNVtLyjbP3z0PiPG/lfOrbL42bUd/EjbxxAn4UDdPW9Rt5N+9M3w5XphYGeK60k2CvKueZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaD/ctsQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C872C4CEC6;
+	Fri,  6 Sep 2024 14:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725634151;
+	bh=q8NFAWndytiAyShc0RsLlL4YDsYpowOBThyUoQqO95s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OaD/ctsQ4iXV0nrrBeprUpDNN1sNKukqG5wifippuTa4rHRjuJpdK/TrFPcXxzTAJ
+	 0j0FCL9XPfj6DfxlvbrdEArx5OeRhJv9PxUGM0ywA0hBFpnNyxLV9ipG/H6UxfN5mw
+	 LOYgISlNE1Evk+Ele42Te9tlIDrAiwQuLN601Gv1S3nDTfYxz6zwtMZDIGaHlDfitK
+	 tu9xxdAN4w06DN04yZDy6Cbn2WJkteUm73zD/iawT+h//cohpXHZJEhwHwxN7YUZZ/
+	 +kzppUP86j/FZbLB5Hbni2hADgcU2PTdZWGcojSto3Ye0ZU/KT8NpeR6VyGf3kONoP
+	 eTv7flitAbWsg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1smaHD-000000005ly-40G9;
+	Fri, 06 Sep 2024 16:49:32 +0200
+Date: Fri, 6 Sep 2024 16:49:31 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: net: ethernet-phy: Add forced-master/slave properties for SPE PHYs
-Date: Fri,  6 Sep 2024 16:49:05 +0200
-Message-Id: <20240906144905.591508-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: sc8280xp-x13s: keep less
+ regulators always-on
+Message-ID: <ZtsWe6IDKU4rvHIT@hovoldconsulting.com>
+References: <20240905122023.47251-1-brgl@bgdev.pl>
+ <20240905122023.47251-5-brgl@bgdev.pl>
+ <Ztm6fzmoeWcCpqvi@hovoldconsulting.com>
+ <CAMRc=McDHi5EVpBjsuFE+JHgBhh84tsT6xr5PWO5yeU8zbS99Q@mail.gmail.com>
+ <n7scbcdbse4m4rilkegqsinallgkryayjzqojnxtr7qozgxwp7@7mgropizypbz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <n7scbcdbse4m4rilkegqsinallgkryayjzqojnxtr7qozgxwp7@7mgropizypbz>
 
-Add two new properties, `forced-master` and `forced-slave`, to the
-ethernet-phy binding. These properties are intended for Single Pair
-Ethernet (1000/100/10Base-T1) PHYs, where each PHY and product may have
-a predefined link role (master or slave). Typically, these roles are set
-by hardware strap pins, but in some cases, device tree configuration is
-necessary.
+On Thu, Sep 05, 2024 at 10:27:24PM +0300, Dmitry Baryshkov wrote:
+> On Thu, Sep 05, 2024 at 08:23:39PM GMT, Bartosz Golaszewski wrote:
+> > On Thu, Sep 5, 2024 at 4:04 PM Johan Hovold <johan@kernel.org> wrote:
+> > > On Thu, Sep 05, 2024 at 02:20:22PM +0200, Bartosz Golaszewski wrote:
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > Remove the regulator-always-on property from the ones that used to be
+> > > > implicitly needed by the on-board WCN6855 now that its PMU is modeled in
+> > > > device-tree.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- .../devicetree/bindings/net/ethernet-phy.yaml | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> > > What makes you think s10b is only used by wcn6855?
+> > 
+> > I didn't say that. It's used by many components but they seem to be
+> > all described in DT. But I get it, the schematics show it in so many
+> > places, it would be risky to not keep it on.
+> 
+> Well, that depends on the consumers. If all consumers are good and
+> voting, then it should be safe.
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-index d9b62741a2259..af7a1eb6ceff6 100644
---- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-@@ -158,6 +158,28 @@ properties:
-       Mark the corresponding energy efficient ethernet mode as
-       broken and request the ethernet to stop advertising it.
+Right. But in this case, not all consumers are described in DT (e.g.
+ddr) and this is effectively an always-on rail.
 
-+  forced-master:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      If set, forces the PHY to operate as a master. This is used in Single Pair
-+      Ethernet (1000/100/10Base-T1) where each PHY and product has a predefined
-+      link role (master or slave). This property is board-specific, as the role
-+      is usually configured by strap pins but can be set through the device tree
-+      if needed.
-+      This property is mutually exclusive with 'forced-slave'; only one of them
-+      should be used.
-+
-+  forced-slave:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      If set, forces the PHY to operate as a slave. This is used in Single Pair
-+      Ethernet (1000/100/10Base-T1) where each PHY and product has a predefined
-+      link role (master or slave). This property is board-specific, as the role
-+      is usually configured by strap pins but can be set through the device tree
-+      if needed.
-+      This property is mutually exclusive with 'forced-master'; only one of them
-+      should be used.
-+
-   pses:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     maxItems: 1
---
-2.39.2
-
+Johan
 
