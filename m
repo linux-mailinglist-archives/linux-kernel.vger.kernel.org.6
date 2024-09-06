@@ -1,131 +1,250 @@
-Return-Path: <linux-kernel+bounces-318144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D26E96E8ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:00:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC0996E8EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01C82865CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAE91F21EEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9779E56458;
-	Fri,  6 Sep 2024 04:58:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B05754FB5
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 04:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257EF13B783;
+	Fri,  6 Sep 2024 04:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="W2GxPO6N"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89EB53376;
+	Fri,  6 Sep 2024 04:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725598714; cv=none; b=CBhhXCsGTA3cwkbEsSsGXj0FWLtKD1vcYog4morcxduc+2Qv5DqZtuZCcKzykzTodBqIj/Aeek3Wtq+hO2viZhe43o8ojiEIyMYNF8CEWUw025Dj6G/PvoySQebnhzD5COrSMWLLNj6+CiY6Xj1nv2fB1Qpr5SKmIU37/nwzWBk=
+	t=1725598741; cv=none; b=Dabe2hXI3qvTliSWezgJ4r9RwT0LmS8XX6NKAC6zzlw+47kltX5VF1j5eK25tcIS2E54UuIDyELkwIX2ZnxFU1cLsiwxMIVijSEwXFtIvrOC/OFzt9pTAFFkRBTa93qWKkkTNmBgbm/T258Wo4HxeuUJE9c+W66CVcLVwvaVDss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725598714; c=relaxed/simple;
-	bh=6NNFAQTSF6IMXbgi+DbosHlqUy4RCVU10ccpHd+yqX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uOKRmp/tMlSDPwWc/sL9mPGavElPB29r8gU0TyGNnD7bXEQl1+cqgkrYB6NCwmkHDYw5m+WtM27zdeZY5DbPKCyrTP/GQbOK0qgG4wlAmN04hLuUO0u8nI1te+mhEIc6YudgiPze7lIc8TSK9YsIO6TSB4BvXKYPIYDaHOQ73wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6ED7BFEC;
-	Thu,  5 Sep 2024 21:58:56 -0700 (PDT)
-Received: from [10.163.60.122] (unknown [10.163.60.122])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D16F73F73F;
-	Thu,  5 Sep 2024 21:58:27 -0700 (PDT)
-Message-ID: <f632d5c8-93db-402c-82ec-9f3b79906458@arm.com>
-Date: Fri, 6 Sep 2024 10:28:29 +0530
+	s=arc-20240116; t=1725598741; c=relaxed/simple;
+	bh=ALtOr/yvwRsUSZIQfHRKAc9NNI/b66HvWYWhH2NBJ/Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZFKPTOhcCpvPVNj7rzGFAVM0LWrX+Azdk9keCkZ9Dehc1ALaoTCL17e/krtDtPOvXNX86gr9fdjRkicB9S3iQNj/KKomqov+1EuUwPeDBFYiSEgaANcmWqs82JklMSEE2eWE8PqdQIhAsaIEy3YWMImjf347U65HVmh7BPF1HHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=W2GxPO6N; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4861IBGc005747;
+	Thu, 5 Sep 2024 21:58:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=OgLgWktd5YuA9gsUsQMmuQZ
+	wBllmUVl9+f1MkUXajUc=; b=W2GxPO6NOmouCfd6pAzK35bN3BoMg/hJxRIcfLX
+	cwisU47XW30ThVtk2eJJr0MdA14hblbs17Nwnu5BIjKaJ+LGt1HoiSfHhHW+C2JQ
+	MJWV1QSzg3gA6qFRabfasyGMIYJXJeMfh7CuYejleeTyvg251vkjNDb2EzGJgaLT
+	0RGU1Dk1cz6eEVEoAYUxJ9GYxVKOO3Dkxq/jssq0aVBpp7llCPQ51cGBX0bXv+7x
+	+PLMvGgRIs8fd68sLDBffJHDEAsjg7QS4DPz76Di5TtDSCITQMolqiwmoMiFmjd0
+	i8y1mPRdcBX8BtDi/qOuBlDcJ7UBSqWP6mevuxLsc59uu8g==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 41fqxs0hj4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Sep 2024 21:58:46 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 5 Sep 2024 21:58:45 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 5 Sep 2024 21:58:45 -0700
+Received: from naveenm-PowerEdge-T630.marvell.com (unknown [10.29.37.44])
+	by maili.marvell.com (Postfix) with ESMTP id A447E3F704B;
+	Thu,  5 Sep 2024 21:58:41 -0700 (PDT)
+From: Naveen Mamindlapalli <naveenm@marvell.com>
+To: <davem@davemloft.net>, <kuba@kernel.org>, <edumazet@google.com>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <lcherian@marvell.com>, <gakula@marvell.com>, <hkelam@marvell.com>,
+        <sbhatta@marvell.com>
+CC: Naveen Mamindlapalli <naveenm@marvell.com>
+Subject: [net PATCH] octeontx2-af: Modify SMQ flush sequence to drop packets
+Date: Fri, 6 Sep 2024 10:28:38 +0530
+Message-ID: <20240906045838.1620308-1-naveenm@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: arm_pmuv3: Use BR_RETIRED for HW branch event if
- enabled
-To: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240905204732.20546-1-ilkka@os.amperecomputing.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240905204732.20546-1-ilkka@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: eBdt-tzTL6n6W3M0ATpZmGcVvWNBBOGJ
+X-Proofpoint-ORIG-GUID: eBdt-tzTL6n6W3M0ATpZmGcVvWNBBOGJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
 
+The current implementation of SMQ flush sequence waits for the packets
+in the TM pipeline to be transmitted out of the link. This sequence
+doesn't succeed in HW when there is any issue with link such as lack of
+link credits, link down or any other traffic that is fully occupying the
+link bandwidth (QoS). This patch modifies the SMQ flush sequence to
+drop the packets after TL1 level (SQM) instead of polling for the packets
+to be sent out of RPM/CGX link.
 
+Fixes: 5d9b976d4480 ("octeontx2-af: Support fixed transmit scheduler topology")
+Signed-off-by: Naveen Mamindlapalli <naveenm@marvell.com>
+Reviewed-by: Sunil Kovvuri Goutham <sgoutham@marvell.com>
+---
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  3 +-
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   | 59 +++++++++++++++----
+ 2 files changed, 48 insertions(+), 14 deletions(-)
 
-On 9/6/24 02:17, Ilkka Koskinen wrote:
-> The PMU driver attempts to use PC_WRITE_RETIRED for the HW branch event,
-> if enabled. However, PC_WRITE_RETIRED counts only taken branches,
-> whereas BR_RETIRED counts also non-taken ones.
-> 
-> Furthermore, perf uses HW branch event to calculate branch misses ratio,
-> implying BR_RETIRED is the correct event to count.
-But is the event BR_RETIRED always guaranteed to be available. Should not
-armpmu->pmceid_bitmap be checked first ?
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+index 03ee93fd9e94..db2db0738ee4 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+@@ -319,6 +319,7 @@ struct nix_mark_format {
+ 
+ /* smq(flush) to tl1 cir/pir info */
+ struct nix_smq_tree_ctx {
++	u16 schq;
+ 	u64 cir_off;
+ 	u64 cir_val;
+ 	u64 pir_off;
+@@ -328,8 +329,6 @@ struct nix_smq_tree_ctx {
+ /* smq flush context */
+ struct nix_smq_flush_ctx {
+ 	int smq;
+-	u16 tl1_schq;
+-	u16 tl2_schq;
+ 	struct nix_smq_tree_ctx smq_tree_ctx[NIX_TXSCH_LVL_CNT];
+ };
+ 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index 222f9e00b836..82832a24fbd8 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -2259,14 +2259,13 @@ static void nix_smq_flush_fill_ctx(struct rvu *rvu, int blkaddr, int smq,
+ 	schq = smq;
+ 	for (lvl = NIX_TXSCH_LVL_SMQ; lvl <= NIX_TXSCH_LVL_TL1; lvl++) {
+ 		smq_tree_ctx = &smq_flush_ctx->smq_tree_ctx[lvl];
++		smq_tree_ctx->schq = schq;
+ 		if (lvl == NIX_TXSCH_LVL_TL1) {
+-			smq_flush_ctx->tl1_schq = schq;
+ 			smq_tree_ctx->cir_off = NIX_AF_TL1X_CIR(schq);
+ 			smq_tree_ctx->pir_off = 0;
+ 			smq_tree_ctx->pir_val = 0;
+ 			parent_off = 0;
+ 		} else if (lvl == NIX_TXSCH_LVL_TL2) {
+-			smq_flush_ctx->tl2_schq = schq;
+ 			smq_tree_ctx->cir_off = NIX_AF_TL2X_CIR(schq);
+ 			smq_tree_ctx->pir_off = NIX_AF_TL2X_PIR(schq);
+ 			parent_off = NIX_AF_TL2X_PARENT(schq);
+@@ -2301,8 +2300,8 @@ static void nix_smq_flush_enadis_xoff(struct rvu *rvu, int blkaddr,
+ {
+ 	struct nix_txsch *txsch;
+ 	struct nix_hw *nix_hw;
++	int tl2, tl2_schq;
+ 	u64 regoff;
+-	int tl2;
+ 
+ 	nix_hw = get_nix_hw(rvu->hw, blkaddr);
+ 	if (!nix_hw)
+@@ -2310,16 +2309,17 @@ static void nix_smq_flush_enadis_xoff(struct rvu *rvu, int blkaddr,
+ 
+ 	/* loop through all TL2s with matching PF_FUNC */
+ 	txsch = &nix_hw->txsch[NIX_TXSCH_LVL_TL2];
++	tl2_schq = smq_flush_ctx->smq_tree_ctx[NIX_TXSCH_LVL_TL2].schq;
+ 	for (tl2 = 0; tl2 < txsch->schq.max; tl2++) {
+ 		/* skip the smq(flush) TL2 */
+-		if (tl2 == smq_flush_ctx->tl2_schq)
++		if (tl2 == tl2_schq)
+ 			continue;
+ 		/* skip unused TL2s */
+ 		if (TXSCH_MAP_FLAGS(txsch->pfvf_map[tl2]) & NIX_TXSCHQ_FREE)
+ 			continue;
+ 		/* skip if PF_FUNC doesn't match */
+ 		if ((TXSCH_MAP_FUNC(txsch->pfvf_map[tl2]) & ~RVU_PFVF_FUNC_MASK) !=
+-		    (TXSCH_MAP_FUNC(txsch->pfvf_map[smq_flush_ctx->tl2_schq] &
++		    (TXSCH_MAP_FUNC(txsch->pfvf_map[tl2_schq] &
+ 				    ~RVU_PFVF_FUNC_MASK)))
+ 			continue;
+ 		/* enable/disable XOFF */
+@@ -2361,10 +2361,12 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
+ 			 int smq, u16 pcifunc, int nixlf)
+ {
+ 	struct nix_smq_flush_ctx *smq_flush_ctx;
++	int err, restore_tx_en = 0, i;
+ 	int pf = rvu_get_pf(pcifunc);
+ 	u8 cgx_id = 0, lmac_id = 0;
+-	int err, restore_tx_en = 0;
+-	u64 cfg;
++	u16 tl2_tl3_link_schq;
++	u8 link, link_level;
++	u64 cfg, bmap = 0;
+ 
+ 	if (!is_rvu_otx2(rvu)) {
+ 		/* Skip SMQ flush if pkt count is zero */
+@@ -2388,16 +2390,38 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
+ 	nix_smq_flush_enadis_xoff(rvu, blkaddr, smq_flush_ctx, true);
+ 	nix_smq_flush_enadis_rate(rvu, blkaddr, smq_flush_ctx, false);
+ 
+-	cfg = rvu_read64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq));
+-	/* Do SMQ flush and set enqueue xoff */
+-	cfg |= BIT_ULL(50) | BIT_ULL(49);
+-	rvu_write64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq), cfg);
+-
+ 	/* Disable backpressure from physical link,
+ 	 * otherwise SMQ flush may stall.
+ 	 */
+ 	rvu_cgx_enadis_rx_bp(rvu, pf, false);
+ 
++	link_level = rvu_read64(rvu, blkaddr, NIX_AF_PSE_CHANNEL_LEVEL) & 0x01 ?
++			NIX_TXSCH_LVL_TL3 : NIX_TXSCH_LVL_TL2;
++	tl2_tl3_link_schq = smq_flush_ctx->smq_tree_ctx[link_level].schq;
++	link = smq_flush_ctx->smq_tree_ctx[NIX_TXSCH_LVL_TL1].schq;
++
++	/* SMQ set enqueue xoff */
++	cfg = rvu_read64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq));
++	cfg |= BIT_ULL(50);
++	rvu_write64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq), cfg);
++
++	/* Clear all NIX_AF_TL3_TL2_LINK_CFG[ENA] for the TL3/TL2 queue */
++	for (i = 0; i < (rvu->hw->cgx_links + rvu->hw->lbk_links); i++) {
++		cfg = rvu_read64(rvu, blkaddr,
++				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
++		if (!(cfg & BIT_ULL(12)))
++			continue;
++		bmap |= (1 << i);
++		cfg &= ~BIT_ULL(12);
++		rvu_write64(rvu, blkaddr,
++			    NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link), cfg);
++	}
++
++	/* Do SMQ flush and set enqueue xoff */
++	cfg = rvu_read64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq));
++	cfg |= BIT_ULL(50) | BIT_ULL(49);
++	rvu_write64(rvu, blkaddr, NIX_AF_SMQX_CFG(smq), cfg);
++
+ 	/* Wait for flush to complete */
+ 	err = rvu_poll_reg(rvu, blkaddr,
+ 			   NIX_AF_SMQX_CFG(smq), BIT_ULL(49), true);
+@@ -2406,6 +2430,17 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
+ 			 "NIXLF%d: SMQ%d flush failed, txlink might be busy\n",
+ 			 nixlf, smq);
+ 
++	/* Set NIX_AF_TL3_TL2_LINKX_CFG[ENA] for the TL3/TL2 queue */
++	for (i = 0; i < (rvu->hw->cgx_links + rvu->hw->lbk_links); i++) {
++		if (!(bmap & (1 << i)))
++			continue;
++		cfg = rvu_read64(rvu, blkaddr,
++				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
++		cfg |= BIT_ULL(12);
++		rvu_write64(rvu, blkaddr,
++			    NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link), cfg);
++	}
++
+ 	/* clear XOFF on TL2s */
+ 	nix_smq_flush_enadis_rate(rvu, blkaddr, smq_flush_ctx, true);
+ 	nix_smq_flush_enadis_xoff(rvu, blkaddr, smq_flush_ctx, false);
+-- 
+2.34.1
 
-> 
-> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-> ---
->  drivers/perf/arm_pmuv3.c | 27 ++++-----------------------
->  1 file changed, 4 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> index d246840797b6..a8ed08df1411 100644
-> --- a/drivers/perf/arm_pmuv3.c
-> +++ b/drivers/perf/arm_pmuv3.c
-> @@ -46,6 +46,7 @@ static const unsigned armv8_pmuv3_perf_map[PERF_COUNT_HW_MAX] = {
->  	[PERF_COUNT_HW_INSTRUCTIONS]		= ARMV8_PMUV3_PERFCTR_INST_RETIRED,
->  	[PERF_COUNT_HW_CACHE_REFERENCES]	= ARMV8_PMUV3_PERFCTR_L1D_CACHE,
->  	[PERF_COUNT_HW_CACHE_MISSES]		= ARMV8_PMUV3_PERFCTR_L1D_CACHE_REFILL,
-> +	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS]	= ARMV8_PMUV3_PERFCTR_BR_RETIRED,
->  	[PERF_COUNT_HW_BRANCH_MISSES]		= ARMV8_PMUV3_PERFCTR_BR_MIS_PRED,
->  	[PERF_COUNT_HW_BUS_CYCLES]		= ARMV8_PMUV3_PERFCTR_BUS_CYCLES,
->  	[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND]	= ARMV8_PMUV3_PERFCTR_STALL_FRONTEND,
-> @@ -1083,28 +1084,6 @@ static void armv8pmu_reset(void *info)
->  	armv8pmu_pmcr_write(pmcr);
->  }
->  
-> -static int __armv8_pmuv3_map_event_id(struct arm_pmu *armpmu,
-> -				      struct perf_event *event)
-> -{
-> -	if (event->attr.type == PERF_TYPE_HARDWARE &&
-> -	    event->attr.config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS) {
-> -
-> -		if (test_bit(ARMV8_PMUV3_PERFCTR_PC_WRITE_RETIRED,
-> -			     armpmu->pmceid_bitmap))
-> -			return ARMV8_PMUV3_PERFCTR_PC_WRITE_RETIRED;
-> -
-> -		if (test_bit(ARMV8_PMUV3_PERFCTR_BR_RETIRED,
-> -			     armpmu->pmceid_bitmap))
-> -			return ARMV8_PMUV3_PERFCTR_BR_RETIRED;
-
-If BR_RETIRED event is absent on the platform, PC_WRITE_RETIRED still remains
-a good alternative to fallback on. Hence wondering if the above order could
-just be changed to use BR_RETIRED first when available.
-
-> -
-> -		return HW_OP_UNSUPPORTED;
-> -	}
-> -
-> -	return armpmu_map_event(event, &armv8_pmuv3_perf_map,
-> -				&armv8_pmuv3_perf_cache_map,
-> -				ARMV8_PMU_EVTYPE_EVENT);
-> -}
-> -
->  static int __armv8_pmuv3_map_event(struct perf_event *event,
->  				   const unsigned (*extra_event_map)
->  						  [PERF_COUNT_HW_MAX],
-> @@ -1116,7 +1095,9 @@ static int __armv8_pmuv3_map_event(struct perf_event *event,
->  	int hw_event_id;
->  	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
->  
-> -	hw_event_id = __armv8_pmuv3_map_event_id(armpmu, event);
-> +	hw_event_id = armpmu_map_event(event, &armv8_pmuv3_perf_map,
-> +				       &armv8_pmuv3_perf_cache_map,
-> +				       ARMV8_PMU_EVTYPE_EVENT);
->  
->  	/*
->  	 * CHAIN events only work when paired with an adjacent counter, and it
 
