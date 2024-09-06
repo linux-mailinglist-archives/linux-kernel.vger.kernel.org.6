@@ -1,133 +1,174 @@
-Return-Path: <linux-kernel+bounces-319059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D881E96F727
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D133696F729
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90AE42862F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED191F25C7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692321D221B;
-	Fri,  6 Sep 2024 14:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6001D1F56;
+	Fri,  6 Sep 2024 14:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUesnVBa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ldp+Qsdw"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01501156880;
-	Fri,  6 Sep 2024 14:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6318D1D1757;
+	Fri,  6 Sep 2024 14:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633753; cv=none; b=KzM7vm6f9tV5bMP/3bri5v7bEgmC93MA1OoL2y2U/IKwnKHbnWPGg1eO4/e7clTRNNAUaxQo9nim3c5DnmDKjRC0vr7MWtjBJZVXH1LE40u/F9JytSinonmsbNzn6ssBrJcP5BCAMz9/Zm8Q7vZyPqepYkwqUhIOu2F4Uetj2EY=
+	t=1725633764; cv=none; b=OcMICHH8Ahrhx22lj8/H/gctDLn8D1/npuJN1R0YEsLsboYNh5p6psi3c569D+oEoizLhemgTOrw/8FFWSsMX50CocDN3rD0SR4zHn8o5CUa5VOIyj5DzdRdv7MR+C9yb5hpRs9Vi490NMO7rVboCqAv17f14f9SwXIbnMaabWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633753; c=relaxed/simple;
-	bh=E/O01DYIOb9W9GaxJ+Y+3+N4ZJwxnWvEDblOXl2trIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkMXT3pCZg/TIGHon+4Cfp4ea0/UeY9IKwLzv/tspmRPKIRxXYRo6MuGeIiFqvC+CfOQ0KOClELSlNPimcr8GAzD6Agze0YHK3EMPgAGp1koE4Du3wxF13lZAJoSOky6oQ2JP9i2ex78Im5G9NmM6vPNTTDuMx6Rn/A+QuH28To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUesnVBa; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725633752; x=1757169752;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=E/O01DYIOb9W9GaxJ+Y+3+N4ZJwxnWvEDblOXl2trIQ=;
-  b=DUesnVBapj+HxkVE9yFmtSjkTDb7CK4rgNDPaa/sMN5o4qEV2lcsfgrd
-   t2THZcJCf5I/q2Ls1CZH9rbW+3RBuA72UwwOvbZZFI2LaxIM+2sz3GL15
-   BdnnaYRnDsmpyq3NYmbAjosyNuMvwH+bK01NaGwL/pfO0TjcMFTZ4UHX8
-   VK5jWEbzqkfmSAOtG1KCqLERKAqBgyC7flUL24EJBo8emLkxjAmSewPxe
-   qM6VafO79QGdMch0b8rX43e5zeqAe3lNVlWEow1QBwY/2suSJyVFAlLwl
-   EReXW24HwvGy6ypG1BCDrACnarYnKXF/vg5kPzcgCA9i3qdjMigpeq2oU
-   w==;
-X-CSE-ConnectionGUID: 3ZlC6zpsQaSrSuQU2w85ig==
-X-CSE-MsgGUID: gmTkuDYNSeCOjqRCJmHuHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24195842"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="24195842"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:42:31 -0700
-X-CSE-ConnectionGUID: +TavGMlyQtOrLMLAOCTpuQ==
-X-CSE-MsgGUID: 5eJj58oKRe2mkcdKtxrYng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="65787484"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 07:42:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smaAN-00000005pdW-0nay;
-	Fri, 06 Sep 2024 17:42:27 +0300
-Date: Fri, 6 Sep 2024 17:42:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
-Message-ID: <ZtsU0nfAFssevmmz@smile.fi.intel.com>
-References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
- <20240503143303.15bf82bc@SWDEV2.connecttech.local>
- <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
- <20240906095141.021318c8@SWDEV2.connecttech.local>
- <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
- <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
+	s=arc-20240116; t=1725633764; c=relaxed/simple;
+	bh=pj6q7pRbyGidAOFqbosve8d0lwaSXVGdj3+1bN4PSq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OSOrcrgPb7UXvVl0bhLLyM1cJC9d5zCIvrRQ5OoIpax+9rJpa/cyf4kBruDONYvw16gJX44JyCdCNmr7Jefi0q+kuXwGW36S4qCr1KCMAYwUgd7xopuWzlfMMv3A3RMdih0v1bI8Hadyk0H6y2uENSM+H+6y48WQSmUQQoiqoCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ldp+Qsdw; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1725633752; x=1726238552; i=wahrenst@gmx.net;
+	bh=EnJX//TvEm1gJVJJPWoKfObjaG1VzryhTzzDecbT7PA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ldp+QsdwjxOqoiFfvG+QAU62V02ktzMQluOjf+kNal02FQWAx7Ow4tfGbeobO4yI
+	 u4nLuG5ZYTdvgQEgWyPYb0+biJx66zUHuMlJ15Y3FQRzLlN6yGMo9GMaJU66wSsZc
+	 KJIRfP2ux6hN7W9Wyb7esYoaTeOA6XVldxs9jtzKYLRS2dxm10h5GZmgRtp+HlY2l
+	 te3HlazP0+Qllpn2GqIdzbii82gMfUQTewfTU8X4xY1/Nm9j4o9mB+hjeJExECrnF
+	 JcVndOO2vhu0I0gXOqOarEAak/lZNB+SDtZWGum08RW//jdar4vMTFHRqfXQ31vFx
+	 iaK4PpY3G/o2IH/zAw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MysRu-1rr1hK0P1m-00vusc; Fri, 06
+ Sep 2024 16:42:32 +0200
+Message-ID: <357a8f1d-033c-4d55-a6d3-05703cc7e0b0@gmx.net>
+Date: Fri, 6 Sep 2024 16:42:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] tpm: tpm_tis: Provide error messages in
+ tpm_tis_core_init
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Stefan Berger <stefanb@linux.ibm.com>
+References: <20240906060947.4844-1-wahrenst@gmx.net>
+ <20240906060947.4844-3-wahrenst@gmx.net>
+ <D3Z3W2PZDU7C.4CBZUBZYY0RS@kernel.org>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <D3Z3W2PZDU7C.4CBZUBZYY0RS@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cQ3Bi+qJJONkbJSVrtzaDZ7EJa1pKmcUqvZ2PtkEfG6spgtY22s
+ EUZhI3L6o8FJB7SOc+Y39npMQZRIM478F3LTdyhzkhBBnjftLpOWtkIFBu+AQ9Fdy3HgsMj
+ 4hOplRCB5UwTppj3tmhzTtYhEOuwO3+bo69dtUkY4vBJnMgEvIRTxOros5dPK0NAP/l3/Bf
+ tqUfreHVwIETPHNrdowVw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3s6IcaSm9Do=;L/me6pEx9WDHae79V5Rr2Any+nJ
+ Sp4ans00YyU4i0zYXbs/zyhuy2oM3GX44bOZ7mQzG9aUZQLv3gsR/Qf6PoIlTOAU1tJH4eUQi
+ vbjPg5Xwa/Aee7tX6KPe//kWnfnycP9SXyo8E0QDAdM3tU402+c7X2+VMrjj81M8uwdNWkuFg
+ DZpRGxZXjV0C5mc3Y544f5+I2ClKnOFQNScWICeUmTjetzvmZj96oPCXXTyuvRHcZfum+zkMA
+ DK97sAoDMIk5GGQUnyI3NUc7e0u8hlB19cTSVPu/CSl8zOvHav6PEXUeNsmIQsbosgRBtY+7r
+ kMXoIzdOk6SrMrXMRxUkmnphCcK7HJTM38TuZ0M39n2K9AvdQuRwx7O8p9vvbCK5Q4R18dUrP
+ NTkDcSaZkMUf+Mrs0m2h1o1H4jFtoe0CfLs/HhWRQv2tgeMcGfoujuULbzVvsWLY/cjWy99+h
+ VZ9kSa4764Pnjq59YcRDGffRdoWDznT8SrucM1WcTQjft5OSRFiHc+o97CPEMJ6IUPaUJ4R8K
+ vZCKLjM6SqvFzhaG63oRau0d436n6RnHtP868vFf7h56pxIFKrEB1hPcZRr3vxBtU74KmoEEn
+ vUvRPnuJd9ug5D3SPjz1Egk48cLUn7dLgMwFghmP2fvKk1SSAm1IplAjWVMjzbSlhLvmnf3Dp
+ fWEFIaCqINiZnCboD0ZAWxp4Ohh9CHCtra9YbiaP0Q0XgDVzYrAZ4NswlaZjdQHUzjBS23EVD
+ TIVwL3hGywk8gjwuWIzbRu9hq4iYUMq9JRLpn0nwU7DreaqCE3fs5kio9fT9QNnWT1s4vT1kF
+ IWkgIC2McGdLYuD/kK6CFJgQ==
 
-On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
-> On Fri, 6 Sep 2024 17:24:44 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
-> > > On Fri, 6 Sep 2024 15:46:51 +0300
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
+Am 06.09.24 um 11:50 schrieb Jarkko Sakkinen:
+> On Fri Sep 6, 2024 at 9:09 AM EEST, Stefan Wahren wrote:
+>> In case of SPI wiring issues (e.g. MISO pin permanent high) the
+>> core init won't provide any error message on failure. Add some
+>> helpful error messages to tpm_tis_core_init(), which helps
+>> to better understand why the driver won't probe.
+>>
+>> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+>> ---
+>>   drivers/char/tpm/tpm_tis_core.c | 15 ++++++++++++---
+>>   1 file changed, 12 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis=
+_core.c
+>> index fdef214b9f6b..830e331fcebe 100644
+>> --- a/drivers/char/tpm/tpm_tis_core.c
+>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>> @@ -1133,8 +1133,10 @@ int tpm_tis_core_init(struct device *dev, struct=
+ tpm_tis_data *priv, int irq,
+>>   	dev_set_drvdata(&chip->dev, priv);
+>>
+>>   	rc =3D tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
+>> -	if (rc < 0)
+>> +	if (rc < 0) {
+>> +		dev_err(dev, "Failed to read TPM_DID_VID register: %d\n", rc);
+>>   		return rc;
+>> +	}
+>>
+>>   	priv->manufacturer_id =3D vendor;
+>>
+>> @@ -1162,19 +1164,25 @@ int tpm_tis_core_init(struct device *dev, struc=
+t tpm_tis_data *priv, int irq,
+>>   		chip->ops->clk_enable(chip, true);
+>>
+>>   	if (wait_startup(chip, 0) !=3D 0) {
+>> +		dev_err(dev, "TPM device not accessible (0x%0x)\n",
+>> +			vendor);
+>>   		rc =3D -ENODEV;
+>>   		goto out_err;
+>>   	}
+>>
+>>   	/* Take control of the TPM's interrupt hardware and shut it off */
+>>   	rc =3D tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask=
+);
+>> -	if (rc < 0)
+>> +	if (rc < 0) {
+>> +		dev_err(dev, "Failed to read TPM_INT_ENABLE register: %d\n", rc);
+>>   		goto out_err;
+>> +	}
+>>
+>>   	/* Figure out the capabilities */
+>>   	rc =3D tpm_tis_read32(priv, TPM_INTF_CAPS(priv->locality), &intfcaps=
+);
+>> -	if (rc < 0)
+>> +	if (rc < 0) {
+>> +		dev_err(dev, "Failed to read TPM_INTF_CAPS register: %d\n", rc);
+>>   		goto out_err;
+>> +	}
+>>
+>>   	dev_dbg(dev, "TPM interface capabilities (0x%x):\n",
+>>   		intfcaps);
+>> @@ -1209,6 +1217,7 @@ int tpm_tis_core_init(struct device *dev, struct =
+tpm_tis_data *priv, int irq,
+>>
+>>   	rc =3D tpm_tis_request_locality(chip, 0);
+>>   	if (rc < 0) {
+>> +		dev_err(dev, "Failed to request locality (0x%0x)\n", vendor);
+>>   		rc =3D -ENODEV;
+>>   		goto out_err;
+>>   	}
+>> --
+>> 2.34.1
+> No thanks. It not only adds helpful messages but has potential to add
+> unwanted merge conflicts.
+So this is a general NAK?
 
-...
-
-> > > > Sorry for blast from the past, but I have some instersting information
-> > > > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
-> > > > used from others via software nodes, can you consider updating your code
-> > > > to replace custom bitbanging along with r/w ops by the instantiating the
-> > > > respective drivers?
-> > >
-> > > Hi Andy,
-> > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
-> > > They have a dedicated "EEPROM interface" which is accessed by the
-> > > REGB (0x8E) register. It is a very simple bit-bang interface though,
-> > > one bit per signal.
-> > >
-> > > I guess in theory I could either add  GPIO wrapper to toggle these bits
-> > > and use the spi-gpio driver but I am not sure if that really improves things?
-> > > Maybe using the spi-bitbang driver directly is more appropriate?
-> > > What do you think?
-> >
-> > Yes, spi-bitbang seems better in this case.
-> 
-> I will try to make some time to implement this... Or if someone else from the
-> community wants to take this on in the mean time I am certainly happy to test
-> and help out!
-
-Sure, I shared this thought due to having lack of time to look myself,
-but I prepared the above mentioned drivers to make them work in this case.
-(If you are curios, see the Git history for the last few releases with
- --author="Andy Shevchenko")
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+So with every setup where the driver exits without an error message, the
+developer should add its own debug?
+>
+> BR, Jarkko
 
 
