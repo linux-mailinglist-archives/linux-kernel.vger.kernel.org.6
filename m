@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-318498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497A696EEC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:03:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024EB96EEC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7509F1C20D21
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DABC1C23C02
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358711C7B8D;
-	Fri,  6 Sep 2024 09:03:12 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11941157484;
-	Fri,  6 Sep 2024 09:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2F81C7B82;
+	Fri,  6 Sep 2024 09:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klquHuVI"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BAA157484;
+	Fri,  6 Sep 2024 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725613391; cv=none; b=AkWvN0oaaimb3Mab8H84baZHXZZ9ZENb1puoEvnZV/liIkh0qp4+sW71a9roR1ifL6FTL35PiZpqRoKnoF05lqeUnXdRF2mzqqNGC9uWv1hdy/uhjsPo89w8eSMF0YIYoW2zvTIYaq1flDrV6vYQdls9O3tm7t11nlODhnpAook=
+	t=1725613427; cv=none; b=VrQk6yJMRxSPobOLjCIn+vUm88vf0Kg5rYjPN7RDymDIkm7SCPIvv0PCwG9AJ30uD10N1VamNVmpTijgrKAaK1BdaSLd6EzHt7TMpmwiy/7VVGn6nPA98dXPyW2SESt20rSqVg2zY+LNAMV+h0O+A06QwnWKYMnZaV4OMbvw2Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725613391; c=relaxed/simple;
-	bh=2l09rkOqboCyjryA87QJc97kuMI3uMLu5CVxFZ/Bn6k=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TERCNf28w6QhramM97ALXusB5nTyUrKcljjlmI85SMOhgQn4D9L7off3KeqnIP87sUrV6Hb9x/z4Zz7WJri131XW6Xv+IMSbAsyX1mZntBAB2V9kFH4fIEr3jvK51Ly6PFcSI+3ec0D4b0CSba3SugKldczKIDy/3O6tKug0VPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 961EC92009C; Fri,  6 Sep 2024 11:03:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 900F792009B;
-	Fri,  6 Sep 2024 10:03:06 +0100 (BST)
-Date: Fri, 6 Sep 2024 10:03:06 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Masahiro Yamada <masahiroy@kernel.org>, 
-    Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-    Richard Weinberger <richard@nod.at>, 
-    Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-    Johannes Berg <johannes@sipsolutions.net>, 
-    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Wedson Almeida Filho <wedsonaf@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Benno Lossin <benno.lossin@proton.me>, 
-    Andreas Hindborg <a.hindborg@samsung.com>, 
-    Alice Ryhl <aliceryhl@google.com>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Steven Rostedt <rostedt@goodmis.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, 
-    Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-um@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-    linux-mips@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/3] MIPS: Rename mips_instruction type to workaround
- bindgen issue
-In-Reply-To: <20240903-mips-rust-v1-2-0fdf0b2fd58f@flygoat.com>
-Message-ID: <alpine.DEB.2.21.2409060455300.1802@angie.orcam.me.uk>
-References: <20240903-mips-rust-v1-0-0fdf0b2fd58f@flygoat.com> <20240903-mips-rust-v1-2-0fdf0b2fd58f@flygoat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1725613427; c=relaxed/simple;
+	bh=HeY0vZrYVpAMNhd3txyn5kXm7PQgr5qxtPmD+s0Gt4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sX4+8q7tiknJcENzXhtE3oKF+GF3bSZ3fiPf+YG5i1H0g+9F6j+GAdFugzfW9jdy1r4XfaemDp05Py+kbPKdMoR4I46tPQ36BAIEvh5ooi4asD0N9nqbxl9x1JWy+xjF07tk5lLL3zT0dAyv5xx6mtS9G92tB72Yu6eFCBuq4Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klquHuVI; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso1249458a12.1;
+        Fri, 06 Sep 2024 02:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725613425; x=1726218225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v0dPgTNsL4xVhbmjJwsw26FruPkmctG8WEw3T6v40uI=;
+        b=klquHuVIyEE/ALLzVb9DS8AuVWFQIreLoGmGQpj2OEVVgipIrT5LSAz3CAPoe8U0Jx
+         cFGKpM25SulKKFzKhmXqis0C733rzsxU+FxlUetOzZ/JwSrMENU4ol5jHYLO8rnh/bBj
+         2wuLgTaVkJzqQNCEuCg+HCb84x6yrNn1XmDOsuOD1vN9zNXPmyJ03FR/rvGF+mFa9Glu
+         jqwCXCluxDgfZaCMtlG3VtTndTVMk/CCGbDtnZeIdbIWgwi6tGCULmgP/aSoDHu1vCmg
+         CqUV7t4G+6/d5lFv9saPPxtFbiGC7/kxWWwLNo8mcwHUsBm3bZG9UbcPNcdCU9YEE22Y
+         qlOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725613425; x=1726218225;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v0dPgTNsL4xVhbmjJwsw26FruPkmctG8WEw3T6v40uI=;
+        b=Xj67u71UkEdy3g58+bQ3P7n+qaA0PK+XWrnua2qCTltOxacp3CxPJmg+o1Etqcd68b
+         vWi8KgIeJCYim/bbKAduXZcWbtM3Q/kKhJinUCs5qgVP97RpVPMvkWPnWF0Wd2ZuWJ7I
+         kyJ84k2055XdFSChAaJ2WBr0BTEipJgZGiOtU0zKsnKyE4PXXk8DmfOdDcQaTY4sxWEe
+         d59tzVmP32DmiyWY1TMyJ7aJ+MY9VC7ja6KU+SZ0myxEl6zV/BE3YltC3R3IKNqvUNXT
+         MWHAbCXJCGUnGca5HTzy+gO8DgDQ506mwAlcO5HeY5g72xq6ThfBAsXXpvYcQhX8OLXk
+         r9DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy9e7tzd67zRvaxlSxaH1F4RvRn1ERSKPRfVzDnY7thYjOhNx/FYZKv3u2NKtjwG6W3by7l7iACzu/XzGM@vger.kernel.org, AJvYcCV6dvGim78g50ysCE+bVpvByXbosX6o6jIszuo7OnjfQRgsJBhII+AbzZR2121PKN/bL0YC2Vn5IjcSiIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaueJ98rE7sERer1Ic6Zh7IspwwqauVwQVNy/WngdydE2xO94L
+	AwZAXlNkl0iDZxLTPRkgGESaE21vmQoSzbSf7QEv2bX0PgSJCFUR
+X-Google-Smtp-Source: AGHT+IH3PGvaZoEB4Q4ZZHrcHQbQ5ScgTgBi8PlrJmpCMhaaXQ0Ort8b39db7Cc0LfkD5fsVQysXEg==
+X-Received: by 2002:a17:90b:1c08:b0:2d3:da82:28e0 with SMTP id 98e67ed59e1d1-2dad4ef2197mr2148234a91.9.1725613425279;
+        Fri, 06 Sep 2024 02:03:45 -0700 (PDT)
+Received: from localhost.localdomain (111-240-109-89.dynamic-ip.hinet.net. [111.240.109.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc12a1d9sm1007420a91.54.2024.09.06.02.03.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 02:03:44 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: michal.simek@amd.com
+Cc: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	minhuadotchen@gmail.com
+Subject: Re: [PATCH] serial: xilinx_uartps: make cdns_rs485_supported static
+Date: Fri,  6 Sep 2024 17:03:21 +0800
+Message-ID: <20240906090321.537-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <33cb57cd-200b-48a7-9028-3f6bf46b4dde@amd.com>
+References: <33cb57cd-200b-48a7-9028-3f6bf46b4dde@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Sep 2024, Jiaxun Yang wrote:
+Hi Michal,
 
-> Rename it as mips_insn, which is not conflicting with anything
-> and fits the name of header.
-[...]
-> diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
-> index 8c401e42301c..153c9666a77c 100644
-> --- a/arch/mips/kernel/ftrace.c
-> +++ b/arch/mips/kernel/ftrace.c
-> @@ -248,7 +248,7 @@ int ftrace_disable_ftrace_graph_caller(void)
->  #define S_R_SP	(0xafb0 << 16)	/* s{d,w} R, offset(sp) */
->  #define OFFSET_MASK	0xffff	/* stack offset range: 0 ~ PT_SIZE */
->  
-> -unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
-> +static long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
->  		old_parent_ra, unsigned long parent_ra_addr, unsigned long fp)
->  {
->  	unsigned long sp, ip, tmp;
+>This has been applied already as commit 68c5efd9dca ("serial: xilinx_uartps: 
+>Make cdns_rs485_supported static").
+>
+>You can also see it here
+>https://lore.kernel.org/r/20240819120107.3884973-1-ruanjinjie@huawei.com
 
- This goes beyond renaming `mips_instruction' data type to `mips_insn'.
+Got it, thanks for letting me know
 
-> diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
-> index dc39f5b3fb83..7a1b1c3674da 100644
-> --- a/arch/mips/kernel/kprobes.c
-> +++ b/arch/mips/kernel/kprobes.c
-> @@ -90,7 +90,7 @@ int arch_prepare_kprobe(struct kprobe *p)
->  	}
->  
->  	if (copy_from_kernel_nofault(&prev_insn, p->addr - 1,
-> -			sizeof(mips_instruction)) == 0 &&
-> +			sizeof(kprobe_opcode_t)) == 0 &&
->  	    insn_has_delayslot(prev_insn)) {
->  		pr_notice("Kprobes for branch delayslot are not supported\n");
->  		ret = -EINVAL;
+Min-Hua
 
- Likewise.
+>
+>Thanks,
+>Michal
 
-  Maciej
 
