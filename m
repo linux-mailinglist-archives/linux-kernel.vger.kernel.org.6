@@ -1,105 +1,244 @@
-Return-Path: <linux-kernel+bounces-319135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1FB96F82E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DFE96F838
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE05B22B07
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:31:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AACFB2475D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B4C1D2F63;
-	Fri,  6 Sep 2024 15:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7201D3185;
+	Fri,  6 Sep 2024 15:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X+KNZf/Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VsOtiC6u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C5C1A2C39
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A9C1CEAB9;
+	Fri,  6 Sep 2024 15:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725636653; cv=none; b=BxyREdY+x0kpeXdm4451o2fUDrsu5CRavNfSWy/w30H2Tap3BNadCLctpOPyLz/BehFjTmi9lSH/Iyw8fAHGRtvGugc5gaJyyEO2ZLyd7fQOELWUYAHbMn/DMJ88DYDzw6ZKuRpQFYMcjxHYklRu0wQxzdGZXPONeRMVtywlpOY=
+	t=1725636750; cv=none; b=P7NeTC4pQ2/b0RNCdoqocAUlDc/G19R97yfA33RBMs+1WOMzIaX/NIC2oZ5B5Qtjngt9lUxqI4IXcxJBYrQgA5zaNhA89GXoDpWPNHlBvSFW3Xl7DX7wKalD3QenB4035XZogQJPa4IE7z1k5hh+ZptLpSNuP9hwDmPQFBrJ3bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725636653; c=relaxed/simple;
-	bh=NM4cYB/gkWYZrmcXhLgeRFbsxl4UGImhW6EadNKVMfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mZFnwqqmyhUGHVVWzpxIML47E7xUn8Ec4SRdkPcbTuMMpF5E9gGdffYJcmvE1hMh+h1iIzZKvrII1f+bYFuurJ/+fcbhteTUlpkTUpKnaxgAs0tdmGifT665yWAahCPsr8eYN6jAjOqRwAR6yXCggv3KAHhXYYbkFAtTq9b7oTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X+KNZf/Y; arc=none smtp.client-ip=192.198.163.19
+	s=arc-20240116; t=1725636750; c=relaxed/simple;
+	bh=krjsuq3HBhcuxaQHBr9KpekfFKRQ2YCSUdVgMpOdeEg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VijgcT5YM7oiyOYDvd/g6QmfcFW5M0xENw2cuYIeWFVV1Tv3YYxQqNrExGE3FWDu94snR4L49JnPx2egz6+Cddl7iSsEvAlD82ccEMDeBDMWmOL7TeEWMJNHzv4orbaW48Sh/KgGPHJRiijV6XmiamSSKISGaMM5Hlc3/onF2q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VsOtiC6u; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725636652; x=1757172652;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NM4cYB/gkWYZrmcXhLgeRFbsxl4UGImhW6EadNKVMfg=;
-  b=X+KNZf/YmYZjJ9arNYxgFRcnpQvZDiOz2VIvyo710THTFYhbRBMicWI9
-   ZB3A72sADCqTnWpmRrW+x7+YdX0Hm8o5XNYD8nTxpX5At4UgHGeGMAV6d
-   3CQkFbz7fmwnhUHR7dtq6KSps5WUYVDYkF0L+P7m7vkRLUUM6kiVwOlt8
-   Rf0NMIYw9PWONJluT6EsVtkMgAh6O//4JFDyrlweVeL2QTvWKKiwejMp2
-   LHYh1gAFLUkZQcJlp2aomLf+AZeCi42g62JOUzfnHID0uYRi1EsRn1qIp
-   4e2xKTukIoGXYdCCfuIM20b9AWmsAicKsc9jSV5/GfR6PRNPKfvh8QlwB
-   w==;
-X-CSE-ConnectionGUID: yX0TVJlxSCOCHbpPzc5fcw==
-X-CSE-MsgGUID: wu/KERS9QYWpyVO+PeTdQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="23958682"
+  t=1725636749; x=1757172749;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=krjsuq3HBhcuxaQHBr9KpekfFKRQ2YCSUdVgMpOdeEg=;
+  b=VsOtiC6u01dC0RsTTKybcloxvKnyZLVcNNkFzUKS3K8P/KEXceDcMBJl
+   TbSNQ6jr/VN365I/8ARTX/Pp3kfyof+Fm4KLMsx4eWvyuiA/zYn/0E3pl
+   VpDrfnsJYrObm5CZYr2c1F9lQlI35gnm/IGxw42hi2TfExpPS/0gQXmEa
+   ExZh09lXrtIonerPOEAPShRYjuuKt8IweqyZy/MYERRu66a0ioKrgdsd+
+   Om9swmqV4TeUP759ia3MmO5RZhamCEy+68pR9/jbmMBNkbCUpWN75p61b
+   W49xH1WpK79By9FfaSf5TFDyyK9InqAnxNwujzsKbSCnHU0bVAJSYVBHY
+   g==;
+X-CSE-ConnectionGUID: xKLmSjtMQdeHqe5TdNsJRA==
+X-CSE-MsgGUID: mRqdPTpFQteWWGKJ0KlU0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="13412463"
 X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="23958682"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:30:51 -0700
-X-CSE-ConnectionGUID: Q4WoUR+9Qe+8c5I+4AKcfQ==
-X-CSE-MsgGUID: xqTBH8eiR4S+IyF/nBGVHw==
+   d="scan'208";a="13412463"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:32:28 -0700
+X-CSE-ConnectionGUID: 7hg6BEdBSyyGJbhlcVyp1Q==
+X-CSE-MsgGUID: doAxGO40RJyWHOv1GYC2zg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="65673727"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:30:51 -0700
-Received: from [10.212.119.23] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.23])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 6322220B5782;
-	Fri,  6 Sep 2024 08:30:50 -0700 (PDT)
-Message-ID: <5032b967-f1d8-4808-a101-e5c32ab6fd61@linux.intel.com>
-Date: Fri, 6 Sep 2024 11:30:49 -0400
+   d="scan'208";a="70792221"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.62])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:32:15 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, da.gomez@samsung.com
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
+ <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
+ =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon
+ <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, Samuel Thibault
+ <samuel.thibault@ens-lyon.org>, Paul Moore <paul@paul-moore.com>, Stephen
+ Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek
+ <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
+ Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill
+ Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Simona
+ Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, speakup@linux-speakup.org,
+ selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-serial@vger.kernel.org,
+ llvm@lists.linux.dev, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
+Subject: Re: [PATCH v2 3/8] drm/xe: xe_gen_wa_oob: fix
+ program_invocation_short_name for macos
+In-Reply-To: <CAK7LNAQDxVGOa5g3f_dqZ5nD_u8_a++T+ussL+AWuOXs-XOsow@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
+ <20240906-macos-build-support-v2-3-06beff418848@samsung.com>
+ <CAK7LNAQDxVGOa5g3f_dqZ5nD_u8_a++T+ussL+AWuOXs-XOsow@mail.gmail.com>
+Date: Fri, 06 Sep 2024 18:32:08 +0300
+Message-ID: <87h6asn6h3.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Generic hotplug support for a PMU with a scope
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- irogers@google.com, linux-kernel@vger.kernel.org
-References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
- <b97ab074-3889-47ae-a66f-46a2f8a99005@linux.intel.com>
- <20240906151716.GZ4723@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240906151716.GZ4723@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2024-09-06 11:17 a.m., Peter Zijlstra wrote:
-> On Wed, Sep 04, 2024 at 08:44:47AM -0400, Liang, Kan wrote:
->> Hi Peter,
+On Fri, 06 Sep 2024, Masahiro Yamada <masahiroy@kernel.org> wrote:
+> On Fri, Sep 6, 2024 at 8:01=E2=80=AFPM Daniel Gomez via B4 Relay
+> <devnull+da.gomez.samsung.com@kernel.org> wrote:
 >>
->> Gentle ping.
+>> From: Daniel Gomez <da.gomez@samsung.com>
 >>
->> The patch set provides a generic hotplug support to facilitate various
->> specific PMU drivers. Could you please take a look?
-> 
-> Seems nice, still applied, so I've queued it up for the robots to pass
-> judgement.
+>> Use getprogname() [1] instead of program_invocation_short_name() [2]
+>> for macOS hosts.
+>>
+>> [1]:
+>> https://www.gnu.org/software/gnulib/manual/html_node/
+>> program_005finvocation_005fshort_005fname.html
+>>
+>> [2]:
+>> https://developer.apple.com/library/archive/documentation/System/
+>> Conceptual/ManPages_iPhoneOS/man3/getprogname.3.html
+>>
+>> Fixes build error for macOS hosts:
+>>
+>> drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
+>> undeclared identifier 'program_invocation_short_name'    34 |
+>> program_invocation_short_name);       |                 ^ 1 error
+>> generated.
+>>
+>> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+>> Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+>> ---
+>>  drivers/gpu/drm/xe/xe_gen_wa_oob.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_=
+gen_wa_oob.c
+>> index 904cf47925aa..0d933644d8a0 100644
+>> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+>> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+>> @@ -8,6 +8,7 @@
+>>  #include <errno.h>
+>>  #include <stdbool.h>
+>>  #include <stdio.h>
+>> +#include <stdlib.h>
+>>  #include <string.h>
+>>
+>>  #define HEADER \
+>> @@ -30,6 +31,9 @@
+>>
+>>  static void print_usage(FILE *f)
+>>  {
+>> +#ifdef __APPLE__
+>> +       const char *program_invocation_short_name =3D getprogname();
+>> +#endif
+>>         fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file=
+> <generated-c-header-file>\n",
+>>                 program_invocation_short_name);
+>>  }
+>>
+>> --
+>> 2.46.0
+>>
+>>
+>
+>
+>
+> Before adding such #ifdef, you should check how other programs do.
 
-Thanks!
+IMO either option is preferred over adding #ifdefs.
 
-Kan
+BR,
+Jani.
+
+
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> Solution 1 : hard-code the program name
+>
+>
+> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> index 106ee2b027f0..9e9a29e2cecf 100644
+> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> @@ -30,8 +30,7 @@
+>
+>  static void print_usage(FILE *f)
+>  {
+> -       fprintf(f, "usage: %s <input-rule-file>
+> <generated-c-source-file> <generated-c-header-file>\n",
+> -               program_invocation_short_name);
+> +       fprintf(f, "usage: xe_gen_wa_oob <input-rule-file>
+> <generated-c-source-file> <generated-c-header-file>\n");
+>  }
+>
+>  static void print_parse_error(const char *err_msg, const char *line,
+>
+>
+>
+>
+>
+>
+>
+>
+> Solution 2: use argv[0]
+>
+>
+> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> index 106ee2b027f0..600c63e88e46 100644
+> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> @@ -28,10 +28,10 @@
+>         "\n" \
+>         "#endif\n"
+>
+> -static void print_usage(FILE *f)
+> +static void print_usage(FILE *f, const char *progname)
+>  {
+>         fprintf(f, "usage: %s <input-rule-file>
+> <generated-c-source-file> <generated-c-header-file>\n",
+> -               program_invocation_short_name);
+> +               progname);
+>  }
+>
+>  static void print_parse_error(const char *err_msg, const char *line,
+> @@ -136,7 +136,7 @@ int main(int argc, const char *argv[])
+>
+>         if (argc < 3) {
+>                 fprintf(stderr, "ERROR: wrong arguments\n");
+> -               print_usage(stderr);
+> +               print_usage(stderr, argv[0]);
+>                 return 1;
+>         }
+
+--=20
+Jani Nikula, Intel
 
