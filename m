@@ -1,190 +1,313 @@
-Return-Path: <linux-kernel+bounces-319158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D60096F8B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:54:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB9E96F8C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 825ECB2324E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD676B22DA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343D01D3652;
-	Fri,  6 Sep 2024 15:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DB21D4146;
+	Fri,  6 Sep 2024 15:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EdxznCNI"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="Utsxc0n+"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011064.outbound.protection.outlook.com [52.101.65.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706B81D3650
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725638037; cv=none; b=N3ONb8oEl0qzxOkvtb8UeGkDgdIj0fc+QF9me1p6COe8DY9htykU9k18Ib0kb4WZ6y/qZ0n8kUu/DSqoWIovCVcTO6mFUoav94D8nxeJBDtIcUpdBQT6YkqErOsQ0b9y05ieGL9peRIH983uCy/dCPCczqbRfkwrLJlxyCoMobM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725638037; c=relaxed/simple;
-	bh=o0MznKshQJgBs5nWI2XoOX4AsBYGuttamKL1DUIopyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulCDdX4F+w0uoVqOAA0FAMNUPQro3n49yq4zq0yRXTjD2CmDaKzaVtWkuK8LJ+mARF+8aNJe6FNZpeuHtUNjmVVfxuQjmVsvrqg2Kmrv7Ufow2INJ6+jIajUogQTjxBIC/uJ0PfOo6gcyHuCUJUZappAAqgBtLdFKbwgUlZXh9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EdxznCNI; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so16827535e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725638034; x=1726242834; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NC6Cf1A5zM/7S1X0dCOTWrmEp/YKRHomNRr1wAJwj6w=;
-        b=EdxznCNIIfqzj+0VlBd+7J1aT1y/glqrZs/uOmPBdVJQR1c4f6UUiQLxLOh2V/LEFF
-         GseQtg9suYLHCu4C1GU9Cc6pBP+PKV/ZdhiDHo7xH26Pzgf5JuCyDQufuqhSvAo5nKVd
-         iGeqqwSJBq5spXfKmc0M9YpvTEYUlyT4AZuKHdUZn/DqnDhN0y1FsSE8nGKyaTJYJwD1
-         EQfREDmKrExnidtJ5YKCl4Cp/xngLiVry5sUz4hlSpp6n4sIofUt1n6opNN7IhBcJFtm
-         ulYV4QrDCh8xqiyb3rhbCyPDrQ4l6lR8DXSlC6dwB9P598hgyIhpldP+oEUH7Zh0Dkhg
-         BwUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725638034; x=1726242834;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NC6Cf1A5zM/7S1X0dCOTWrmEp/YKRHomNRr1wAJwj6w=;
-        b=IZIci2leXgeEzQ2CqTOuM5rErXoIRVZxIE8tKteQI2J8yGC7Cx2GYF3XXd48WjFen5
-         k6xtouxtr7FbMdDoOI9tkHTL390w/c+7o7gyUF2wH8dnCeomUZnvf7C2q11C+l9Tzhwq
-         hGwlivtiwyVx9Pu660MJbyPmw4ClUCtm+49vPs6U0ThhJeuvkOizgdgXlN2Wk437ssvC
-         NC6O5mzdg0Vo9/VgNaOqDtEVf1Cp1UGcP5YuaGWd33UoH4CXa9KvYm13jkCV0rNov4QE
-         u4WvaIXZHG7fUlIbYOYk17BEJWTVAWe60LF3JukEch08+da7cl2QWZi5T+WyZKiDCF+8
-         No0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWa62/wyV144KjtV8OdMHa22N89H6CGMmWzaip9qzZ1h+nDGVhslQfNa21cDl++05AB1BsignhQB4+DeAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyimlVtNhtiFG1vT1CL/4gDSYJl2jCbSEScj1/NWvST/UXBSHmt
-	H5+bZ1UHJ7lWShTiUV1dZR/4+1J0Swy+AWPcjTNlqCbVAuXkssqzax6Mc5/zn9dEQSjp4nzhM5V
-	exXhu3w==
-X-Google-Smtp-Source: AGHT+IHaSnady74DJ1oEcQaHcxLA4uOPiZb6C4vhozW1nZbyNOH4GbF0OP/WL2CRSWsgv9G05aJ9MA==
-X-Received: by 2002:a5d:4388:0:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-378895b7bdbmr2264093f8f.4.1725638033585;
-        Fri, 06 Sep 2024 08:53:53 -0700 (PDT)
-Received: from [192.168.0.20] ([148.56.230.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca06005bbsm24296915e9.30.2024.09.06.08.53.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 08:53:53 -0700 (PDT)
-Message-ID: <e295e004-891d-4865-b1c4-3cef93976245@suse.com>
-Date: Fri, 6 Sep 2024 17:53:52 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5BA1D31B8;
+	Fri,  6 Sep 2024 15:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725638157; cv=fail; b=hYZvbWKdCO08mEqSoK3gVPfaIkQ0HvKJODNR/FjMb7gqcqoeXP03eMGTcwMTNXhGyGYlbYT3sTDaX/VRLct8/KyeydJIo6Ebp2OU6QHWFi7HmY8IxJRjy0Iszvqzwr+2uqSsjaZChH9yq9R6nwhlcBUMYzx2ySm0Jc06fqZOgBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725638157; c=relaxed/simple;
+	bh=97R6EWXKGgVsm78UkCcL/Zc6vv0Me7KdDubx5Xqetjw=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=X+Hqj3eIcvElUMbD3GjEsAnJMvCk8shOU+AcPsb5YnlbNBqv+QQ5OIQAT8SZeSkU9/Jsod8Idk2bC2zGCJvZZ5P5B352KOGQP5ggVdnkH/PYP1kc6QvHtPKOriXzRxvlRyxuo6SHy/RPmeeE2C4eQcnbDSh4Cpwp2ATS03MNgm4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=Utsxc0n+; arc=fail smtp.client-ip=52.101.65.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dMDrhn62WvuqPIvmS1T02jGk5gVEUPMJ+4OUUafHoFEcUyadBUiz0+kJFnE8TsG5HtpG5L5mOOI9ZSwl7GI1s+MXTJn1ldBqkaKWb+gfyFan8IdQ9Pcy2Xv9A0eU0GVkjC5LCde2XWKvag7yUe6Y1/RjD4RfENx6OBB0QIO4k0LnxbdKHvMzVaDpy2Tqd30dCw20IKYoU1XEbiydlKjVXaSQutsnTUdjzF7Cr1aAEzI7Oiy8M41JkN3kCq4lgorGW0lqi+C2lPQWckWC3Dpsy3zqtcS4Sl8ebs/uIWJQT9zIHl16/PXKZJzFO0qmaGjwj4O8fik/3RHvmVWuXL0Chg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7+w15CH8bXqA69gsezT+sNCd9C3M8DhxBSQArqnmRyE=;
+ b=Fd7HQT+dndJtNHP3HvGGnPPkJUBVwU/jWj5SrI3foc2f3QU/wKdqGV3/1sEysENYNpwHcIwvnh79C86CA3yX/ODsYXcm7sXLJ3WqQZzZgxpu6J4t5Z05u0zPGaIcVHnjnMl4OhLdiYEBe6fejqa0FXPGeJPAk4sSDBdIZ/8xSJCn006IbK0FZ5gtntt36iX4mDM4Z77o7OoycU4hGmt2iWCzLlPx2ydDN4DHq5H8WnNeai2LAzSmF3L2ryn9AHE0QrahW2omMoIM30alJOr+mtFxN6y1pT7WDGLTxR303vj0rgZrK5mPPXXjwLofFKbpOnoZGTugalTGd9Pn6fhqWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7+w15CH8bXqA69gsezT+sNCd9C3M8DhxBSQArqnmRyE=;
+ b=Utsxc0n+gy6oP0KzHGr0C+IHGkmMO35S+A00zHeTJcvFkOG+weSxlgI+/YBY+yAv2aVnDZOnykrAQjda//WwZxSWLmuQGlqcsxqEcuNWQtRLG2vOn6Hix+3Z2aPSeY/b+YGJOLPFfkKRFr4TL+u/Rf7Y37laI1YJckl0m9qVpfE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from DU0PR04MB9562.eurprd04.prod.outlook.com (2603:10a6:10:321::10)
+ by PAXPR04MB8319.eurprd04.prod.outlook.com (2603:10a6:102:1c3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
+ 2024 15:55:46 +0000
+Received: from DU0PR04MB9562.eurprd04.prod.outlook.com
+ ([fe80::ad4d:8d53:1663:d181]) by DU0PR04MB9562.eurprd04.prod.outlook.com
+ ([fe80::ad4d:8d53:1663:d181%6]) with mapi id 15.20.7918.020; Fri, 6 Sep 2024
+ 15:55:46 +0000
+From: Farouk Bouabid <farouk.bouabid@cherry.de>
+Subject: [PATCH v8 0/8] Add tsd,mule-i2c-mux support
+Date: Fri, 06 Sep 2024 17:54:11 +0200
+Message-Id: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKMl22YC/23OzW6DMAwH8Fepcl4qx+SLnfoe0w4kcQbSKFPCU
+ FHFuy90k9gY8sV/S/7Zd5YpdZTZ8+nOEk1d7oZrCfbpxHzbXN+Id6FkhoASSvFAE+8/38scfWl
+ uvBZQ+UBgAAUrax+JYnd7kC+vJbddHoc0Py5MYp3+YKj/Y5PgwEGqRlqMOkZ3GVsaXBr6huc5j
+ 9Tnsx96tsITbpiCIwwL1tTC10pGrYK5+JZSms+BvoFqA7QQB0C1fmMD6gYtAYg9oDbAgD0AVAG
+ MkFKHKoKzYQ/oXwCqA0AXINZRB+M0RId7wGxADXgAmAK4aJyNqrKK/nywLMsXoROLNQECAAA=
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Farouk Bouabid <farouk.bouabid@cherry.de>, 
+ Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+X-Mailer: b4 0.15-dev-77eae
+X-ClientProxiedBy: VE1PR08CA0022.eurprd08.prod.outlook.com
+ (2603:10a6:803:104::35) To DU0PR04MB9562.eurprd04.prod.outlook.com
+ (2603:10a6:10:321::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: s32g2: Disable support for SD/eMMC UHS
- mode
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Chester Lin <chester62515@gmail.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
- <20240830113347.4048370-3-ciprianmarian.costea@oss.nxp.com>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; keydata=
- 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
- PVrr2NoUqi/bxI8fFQJD1jVj8K0=
-In-Reply-To: <20240830113347.4048370-3-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9562:EE_|PAXPR04MB8319:EE_
+X-MS-Office365-Filtering-Correlation-Id: 387ded1c-db2d-48eb-5c0b-08dcce8c5ecb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RUZsYnhHcDRWWXh1SzZFUE9WNGFyN1BOeWZrREpjNXdMaDl5Y2VWYWF5MFdG?=
+ =?utf-8?B?eDhkTG85WUptN0xyTVhxckZPaGJlWjFPbElmc1VjcEV1OVY0V2FvRUdFV3cx?=
+ =?utf-8?B?eDVNbTdnNkJVWDdCNzNINmFUY2lHSmxxT0QreFYvMk0zZm9oTnJ0UHVNOE1l?=
+ =?utf-8?B?NVpPTThvdzA0MTV5RmNPVWhLYVhsS3JKUGVreGRsWGkxcjhvNk1INUlaZG9H?=
+ =?utf-8?B?SGg4T2E3SHp1ZXByNlFWc0xodnZQbWtjZ05WNC9Yd3lqNXQ2UjBkdFMvSEVr?=
+ =?utf-8?B?eHJvdENtY0FnY2swYTU4N0N6REFucXV0LzkrdzJKcEd6TGNGUTEveUc4OEVG?=
+ =?utf-8?B?OFovTWpzTTBsRTg3MTd6MmtJNlhLdnhrWnc2TVBkbUM5Q0dqT1hJOGV6eUJF?=
+ =?utf-8?B?UnBKTnptWGpCeUtCanFFV2tNMVVSalpsR0RuaGF3elNIa2RQWDNqQkYzbkpp?=
+ =?utf-8?B?bmtmQ1FoMnNpSFk1eXV4K1VNMGcvaTIzWnhVNW5Ib1RWZ0hmaDNoM09xNHJv?=
+ =?utf-8?B?Vk5kdGFiTHJJOGcxeHNqSzNROWFDbnRLQzNYRGRFSlkxUlV6VGdxUnM5bHkx?=
+ =?utf-8?B?MWw4a3NrbURDNkdUMW5RN3JveHBhSmF3bHFRRTB0MzFUampsdEQrdU1JS1lx?=
+ =?utf-8?B?T0NXeEVzTnBCVVpTVlJBMDNBVllXTTVqa1dVY2VrS04vcWd0SzhUckxnTnlP?=
+ =?utf-8?B?T2lOUnBHWUQzRHFQWGxYbEI1eGZzMk45RGRvaEd6NlIrWms3WTczMkVXOEV6?=
+ =?utf-8?B?akJiYUsyWDVpckdoeUQwTjd4ZDhWRXZGV25GZzlxMGN5U3k4a2hFQ3doTXFp?=
+ =?utf-8?B?aER6SmFjSjQ3bm4xVU1rcWJTdWVJZ1ZDa1FIKy9wcFhqaHlWSFFJSDFGRXh0?=
+ =?utf-8?B?VWhqZzc2Yk1UcThzWkdweGt1c1ltVWY1OXNxeml4ekExK2NSY216aUFnZnpR?=
+ =?utf-8?B?RE4vZjhGdlhrU0tlMDFPdU5IdTBmM1I2WHhDQ2V6Zi9IMTJiUGRINklpYWFJ?=
+ =?utf-8?B?Qi93aHBGWk1sc3pKQzBSTnlEZ3VSWHhHeWpoczY1Z0IvbzE1ZVVqakYrR0Fj?=
+ =?utf-8?B?blBVeDQwVXBTSjFjSWpYa1VXWDlKaVFWWnRRT21Nd1FsVHJjTTJXb2p2cmNF?=
+ =?utf-8?B?amtuWVpmcGFlODVvaDRTN1FLMzlDNHVaOWoyaFUyak1ISFcySzVUQXZnRVUz?=
+ =?utf-8?B?NUF2Y0hlL05WalNnQVV5ODN5WjBabTBKQUk3VGhXY2xieDNKVU9aZGJBVkg2?=
+ =?utf-8?B?Rkt3a0pWSnJRZmE2T053Q09XOEFiSFRlZFFYbzk3SkI3RUk5NVBqSUlvRzk5?=
+ =?utf-8?B?eEkweG5sSWJBRmtEMG5iYTV1bjlyOGhpK0dtelN0MlZTSmswYUtDNkVEc0ow?=
+ =?utf-8?B?R0FuTXJQRjF3SFJTUnVoMlVKbUFJSElLWEVpNzBPNVgvckp0emNETFk5S3ZB?=
+ =?utf-8?B?WUtwR21tNUlZTHZ4SUtGNEluNkpVVXhESkJDM2NmNDVFS2dkZ3ZQclh5bHdq?=
+ =?utf-8?B?Z0pUdk1mZnlubEhtZG1JNTdWaXdPeHl6Rk1UbUlCYzViTDFBNzBjMlFYV3Zz?=
+ =?utf-8?B?UmVCUnRzb3RpbDJEdVN4N2x4bzdnVGVmaVB2UUY4RUVid0E2WEFuYW42eXd1?=
+ =?utf-8?B?dHJySG44bGtxdG9vdmFRYmllZUZEdWtHak9zWkhHMkExRC8yV3FLWWdHVlFl?=
+ =?utf-8?B?ano2cjRDbVUxSzE5QlpqN25kc210Z01OY1JOVERUZzl2WHRTT3ViN3RBMVNQ?=
+ =?utf-8?B?M1VMeEI1ait2b2psMXpjMElQTVdxeEMvbE94YW92bmF3eTlPYWV4Q1NpQUdT?=
+ =?utf-8?B?N2E5WUh1TFR6UmRIbzdoWFNYTUdxMUNkbVdtdWZpWWtKaFpsUGxJaldpM0R3?=
+ =?utf-8?B?K2F6VzZhTmEzYlBOUzgrWnkwUE0yNUxEUzJyVHN5VXJxR2xHeXRreHpsOXlF?=
+ =?utf-8?Q?kFHDBi2n9ww=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9562.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RGwwTGloSW5ZMVh0M21GR1ZmNG9ZRWpIYjNqaGh3MHRqOWd1b2ttRTZMTlR4?=
+ =?utf-8?B?TDdJRzFZQ2lrQXpmR01RallkQVZUMXlzREQ2SnIwTVBpaXhrUmlaUEorSDVX?=
+ =?utf-8?B?ZVpWWEQwcWFmNXJkeW84cGdOUUlzY0dpNTJHbU42WE9tbU9YRE5xWmE1V04r?=
+ =?utf-8?B?a2RZTGtnL0ZHalY0R3B2cXk0cW5kOHd5VlJMTzA4dEgrVXFDT29XWEQ5bW9H?=
+ =?utf-8?B?dEE0MnJkbVkxRVBTY2FuTVNzU25samM0T1BwNlhubTRyZEJmTHhVWEVPa0pR?=
+ =?utf-8?B?bEpzcXFMOHVHWWtxUHQ5VFVnT2FCaVRWWEJkMkZkdVI4b0RQdjdUdGlCQVlj?=
+ =?utf-8?B?QTFuSlRNM1k4STBlK1hEY1NXNGk1RnFBUm5McDlJNHZhcjlkRHZkT3FkbDR0?=
+ =?utf-8?B?N0JFbDM4blZCT2QxbDRQWjFac21rRTlvb2cxV01xLzhEL0ZVRGUrWVdEOXhR?=
+ =?utf-8?B?Vnp5S3hiY3FGRUkxcW9FbmZVZ0thY0puWnYvYzQ3ZUFhb3pzM3lmcXl6bGc4?=
+ =?utf-8?B?N2NNWjBkTE1jVkRkb3c0RGg1cGhiRVdJYmtXaHVmZHVGRS9kQml0QVFqN0Zk?=
+ =?utf-8?B?SFJjSlErRnN6VmFGTmVUdGZ5SDNxcHUvcm1SY2t4VHhYWU9xRWhFeWNma2Q1?=
+ =?utf-8?B?ck1YdzFTeGdjc1ZBNlBaenduZ1M2YWFvekNvWU5wM09EbGxtOXNXd05zSGtS?=
+ =?utf-8?B?czJLcytVcTZISm0wcTFMVzJjd3ZXakJtdHRlOWhGZzdrL3M5ZllPQlBjb2J5?=
+ =?utf-8?B?NFd0QWRvNWxycXdMRmNBdEZ2eFh1SG5LU1B1bkhiN3EyajE2dUgyMmtPL3Y5?=
+ =?utf-8?B?Y0hhRDdvK0w0QXI2djVSQUhENzU5NUZGY1N5dHdGWFlhMGVWZDlTRUI4SGN1?=
+ =?utf-8?B?OWtFOGZWYVN4aHhjS0JxZFE0Zkw4YWVRTXJ5OXorRFQxcUcrQ3QrTzB0S3FE?=
+ =?utf-8?B?MU1LQ3YwcFdsUnlHakNtZktyYzNrbUNtejYzNnRMbXMzaWdOOWE2VTNOUVY0?=
+ =?utf-8?B?bWJWYmhWVzNiV1NnQStmbUVOQTFiMkFQVTRHZFhiSGY1anhQSTRJeTRsdDNQ?=
+ =?utf-8?B?ekJMTGl5QzExU3MzRzhnU0tyNmloYmNUOWxIeVlvbGo2SDRua0FzR1ZHOEEx?=
+ =?utf-8?B?cXJYTCtMWDU4emQvUHJsdC85Nms5UTNHL0t5NUc2T1g0cythRzNVdGxydDZX?=
+ =?utf-8?B?US9sVjhEVXZ5L2JZcTBuWkZlNGVFc3lMZHdZVE9WY1JzSHZTck1CNXF0dGxS?=
+ =?utf-8?B?T1dZRzd4WnVSOTZFNjZFaU1zTFg4SWpEOERoUGJVeFEwR1oyTkpMOG51U001?=
+ =?utf-8?B?T0ViME5lcGRKMCs2TWVHdUo1NVdOa3BZakhZV0VQeWhvc2RIWm5PWWdvVjBh?=
+ =?utf-8?B?OGFzN1gvdUZkQjkyVldpT3Fpb3FBTXFPWU5aajQ1cEx3Mkp3TFhUSVNxSWZT?=
+ =?utf-8?B?RXZyWU5ZdXRUZ1hFdmV1bzBTQktic3lWb3BXMnN4UDNnU2FZQUNZUm1QNkdB?=
+ =?utf-8?B?dE9kNmUzc3lzcHYxMy9xOGd1Z3ZHbU5Ga0E0YzI1N0Z5REFjWUNlSFl4WFY5?=
+ =?utf-8?B?SkNXY0toN2NiMFJvUnViN2pEWG9kUjRDbGlYLytTWWRFK1MzT1ptWE1GSXV1?=
+ =?utf-8?B?RnpqUGJyRU1ZUEJySERueHdaSENFZThYaTB1YmphWWR6TnQ2eEVQK3labk41?=
+ =?utf-8?B?K0RjMjJVb2N1aEM1MURXT2lETWV6Y3JSYUMrNUpzdTN0WTh3TFZHZVplK1hp?=
+ =?utf-8?B?SHdCTElITmJDNVJHdkpEc3pOaEJkRGFaVGJkMjBWTmdWc2Q5NE5KYkZENFhF?=
+ =?utf-8?B?RE4ra3Z0Y0psYjI3THdCaE9ibFYrTFR6TGt4Qm9Vd1ZiYXlhVzlLeTBIdS84?=
+ =?utf-8?B?V0E4ZnhGa1dKS1MxMlpwbTNiU3NncmRHLzlHMEF0UlpDTzZqcE5ZMXoxOTFh?=
+ =?utf-8?B?TStDZUpzWHpYcFR0aXJaaTlNVzV2QW0yT0VoVy9wR1czVXZRQWJQdCtkWVZ2?=
+ =?utf-8?B?OFNjaUlvdmwzVmZMTHdORmRaZ3k1ZzltU1hpc21MdndueHBEYmdLTU12ZGor?=
+ =?utf-8?B?WFlXT1ZiMHFnRzBoK3prOXBRUkxnamZYdWx5RVJnRnFOM0oza0ZCZExRUC9K?=
+ =?utf-8?B?by9oMHZ3ZDVRZ0s4QnBXRjBvTWlsQUQ4aTZod01jSnBFNEZYaWxsMjRPa3BI?=
+ =?utf-8?B?S2c9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 387ded1c-db2d-48eb-5c0b-08dcce8c5ecb
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9562.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 15:55:46.1749
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RGxWP0/7krjihkK41o3+5FGhWWeTThjyHjLm4giepVicHkxtdg/TODovvjiEF06sJ/thVGRHq2X8kJGWxuy5TBWwANWacjzsjViHZbXH6PY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8319
 
+Theobroma Systems Mule is an MCU that emulates a set of I2C devices which
+are reachable through an I2C-mux.
 
+The devices on the mux can be selected by writing the appropriate
+device number to an I2C config register (0xff) that is not used by
+amc6821 logic. This required us to add a new compatible to the amc6821
+driver, from which, the new platform device "tsd,mule-i2c-mux" is probed.
 
-On 30/08/2024 13:33, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> Disable SD/eMMC UHS modes for NXP boards which do not set VCCQ voltage
-> supply to 1.8V by default, such as S32G274A-EVB and S32G274A-RDB2.
-> 
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+The selected device on the mux can be accessed for reading and writing
+at I2C address 0x6f.
 
-Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+      +--------+----------------+------------------------------+
+      |  Mule                                                  |
+ 0x18 |        +------------------+                            |
+--------+----->|    amc6821       |                            |
+      | |      +------------------+                            |
+      | +----->| tsd,mule-i2c-mux |---+                        |
+      |        +------------------+   |                        |
+      |                               V__          +---------+ |
+      |                              |   \-------->| isl1208 | |
+      |                              |   |         +---------+ |
+ 0x6f |                              | M |-------->| dev #1  | |
+------------------------------------>| U |         +---------+ |
+      |                              | X |-------->| dev #2  | |
+      |                              |   |         +---------+ |
+      |                              |   /-------->| dev #3  | |
+      |                              |__/          +---------+ |
+      +--------------------------------------------------------+
 
-> ---
->   arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 1 +
->   arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 9 +++++++++
->   2 files changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> index 7ab917f547ef..b9a119eea2b7 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> +++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> @@ -39,5 +39,6 @@ &usdhc0 {
->   	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
->   	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
->   	disable-wp;
-> +	no-1-8-v;
->   	status = "okay";
->   };
-> diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> index 8739f63771bc..aaa61a8ad0da 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> +++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> @@ -45,5 +45,14 @@ &usdhc0 {
->   	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
->   	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
->   	disable-wp;
-> +	/* Remove no-1-8-v to enable higher speed modes for SD card.
-> +	 * However, this is not enough to enable HS400 or HS200 modes for eMMC.
-> +	 * In this case, the position of the resistor R797 must be changed
-> +	 * from A to B before removing the property.
-> +	 * If the property is removed without changing the resistor position,
-> +	 * HS*00 may be enabled, but the interface might be unstable because of
-> +	 * the wrong VCCQ voltage applied to the eMMC.
-> +	 */
-> +	no-1-8-v;
->   	status = "okay";
->   };
+This patch-series adds support for the tsd,mule-i2c multiplexer
+as part of rk3399-puma, px30-ringneck, rk3588-tiger and rk3588-jaguar
+boards.
+
+Please merge patch 1 before patch 3
+Please merge patches 2, 3 and 4 (and 1) before patches 5, 6, 7, 8
+
+Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+
+Changes in v8:
+- Rename functions/macro in i2c-mux-mule.c that have "mux_" prefix using
+  prefix "mule_i2c_mux_" instead.
+- Remove extra "/t" after .driver in i2c-mux-mule.c
+- Add a space after "{"" and before "}" for mule_i2c_mux_of_match.
+- Link to v7: https://lore.kernel.org/r/20240902-dev-mule-i2c-mux-v7-0-bf7b8f5385ed@cherry.de
+
+Changes in v7:
+- Merged __mux_select and mux_select functions in patch 2
+- Removed unnecessary prints after mux_alloc and add_adapter calls in patch 2
+- Added Guenter's Reviewed-by tag
+- Added Rob's Reviewed-by tag
+- Added Wolfram's Reviewed/Acked-by tags
+- Link to v6: https://lore.kernel.org/r/20240725-dev-mule-i2c-mux-v6-0-f9f6d7b60fb2@cherry.de
+
+Changes in v6:
+- Move ti,amc6821 from trivial-devices into its own dt-bindings
+- Use same regmap config structure for both tsd,mule and ti,amc6821
+- Remove max_register from regmap config structure for amc6821
+
+- Link to v5: https://lore.kernel.org/r/20240708-dev-mule-i2c-mux-v5-0-71446d3f0b8d@cherry.de
+
+Changes in v5:
+- Drop the mfd implementation of v4
+- Add more dev_probe_err callbacks to tsd,mule-i2c-mux
+- Instantiate tsd,mule-i2c-mux as a platform device from amc6821 driver
+- add "Theobroma Systems" when describing mule.
+
+- Link to v4: https://lore.kernel.org/lkml/20240618-dev-mule-i2c-mux-v4-0-5462d28354c8@cherry.de/
+
+Changes in v4:
+- Drop the previously added i2c adapter quirks
+- Add platform driver probe to amc6821.
+- Change mule-i2c-mux driver to a platform driver
+- Add dev_probe_err in mule-i2c-mux driver
+- Add support for tsd,mule in simple-mfd-i2c
+- Add tsd,mule mfd to supported dts
+
+- Link to v3: https://lore.kernel.org/r/20240611-dev-mule-i2c-mux-v3-0-08d26a28e001@cherry.de
+
+Changes in v3:
+- Change "i2c" in comments/commit-logs to "I2C"
+- Fix long line-length
+- Warn when "share_addr_with_children" is set and the Mux is not an I2C device
+- Fix/stop propagating "I2C_AQ_SKIP_ADDR_CHECK" flag if "share_addr_with_children"
+  is not set.
+- Fix "old_fw" variable is used to indicate the reversed meaning.
+
+- Link to v2: https://lore.kernel.org/r/20240506-dev-mule-i2c-mux-v2-0-a91c954f65d7@cherry.de
+
+Changes in v2:
+- Add i2c-adapter quirks to skip checking for conflict between the mux core
+  and a child device address.
+- Rename dt-binding to "tsd,mule-i2c-mux.yaml"
+- Add Mule description to kconfig
+- Fix indentation
+- Move device table after probe
+
+- Link to v1: https://lore.kernel.org/r/20240426-dev-mule-i2c-mux-v1-0-045a482f6ffb@theobroma-systems.com
+
+---
+Farouk Bouabid (8):
+      dt-bindings: i2c: add support for tsd,mule-i2c-mux
+      i2c: muxes: add support for tsd,mule-i2c multiplexer
+      dt-bindings: hwmon: add support for ti,amc6821
+      hwmon: (amc6821) add support for tsd,mule
+      arm64: dts: rockchip: add tsd,mule-i2c-mux on rk3588-jaguar
+      arm64: dts: rockchip: add tsd,mule-i2c-mux on rk3399-puma
+      arm64: dts: rockchip: add tsd,mule-i2c-mux on rk3588-tiger
+      arm64: dts: rockchip: add tsd,mule-i2c-mux on px30-ringneck
+
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml      |  86 ++++++++++++
+ .../devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml  |  69 ++++++++++
+ .../devicetree/bindings/trivial-devices.yaml       |   2 -
+ arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi    |  24 +++-
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      |  24 +++-
+ arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts     |  25 +++-
+ arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi     |  23 +++-
+ drivers/hwmon/amc6821.c                            |  12 +-
+ drivers/i2c/muxes/Kconfig                          |  16 +++
+ drivers/i2c/muxes/Makefile                         |   1 +
+ drivers/i2c/muxes/i2c-mux-mule.c                   | 148 +++++++++++++++++++++
+ 11 files changed, 404 insertions(+), 26 deletions(-)
+---
+base-commit: b831f83e40a24f07c8dcba5be408d93beedc820f
+change-id: 20240404-dev-mule-i2c-mux-9103cde07021
+
+Best regards,
+-- 
+Farouk Bouabid <farouk.bouabid@cherry.de>
+
 
