@@ -1,231 +1,286 @@
-Return-Path: <linux-kernel+bounces-318167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2A196E962
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5936096E963
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835D81F2387D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8401F238D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3967413698F;
-	Fri,  6 Sep 2024 05:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="VlptsF3J"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866CA2628C;
-	Fri,  6 Sep 2024 05:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E6212C7FD;
+	Fri,  6 Sep 2024 05:42:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F9949627
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 05:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725601246; cv=none; b=aUgffcdqYMtDA946gIMPORXFiSU2Ze/H2TCScV/5jPHhes7/vmXq/kTHhDY32O5a6e4EkisHkUDo1DXvX2ynW2dq37tOYVEDEU16/vtKjm0NJtyOKmMXDDCcDCKwdEJ9heaA0KZS2X/qT1UwEBjPSCmW2sVbibUYg7GV07LMntw=
+	t=1725601345; cv=none; b=n9PekM9/uRODN/wNf1qCrv0N2NZeCb7u1+PVy3w2uIwblCqVLDmJFd2C8yu5nPyBt2D9LGKj4V+ztcLUZqQU0wkmb82lrzdK2NG0IIrMVS7V1aqEjOszKssAQqsaydViBIJO1Zeo5pfvGzfx//yjBFBCy2W65SXv3CiXR03dOjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725601246; c=relaxed/simple;
-	bh=Cniav45urdpVNzapqVqrBdTz6uLrtoPLIOl7/GG06PM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YdNQcELLMjAVD+HOf2FTOvGhOkyKgkngZYlPE9GFaLfolbB8nG5cNt0ZWn9ZM1fUEx/8GN6Q3w3PM2fE580h4MULDwEC4UZP8LANsB4Hd0F73R1xvv2ztcdW/L8LDmdGyM/P7rCv6UM/x8su/BU0yT9x8WqYe9zqknS2yCV41i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=VlptsF3J; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1725601229;
-	bh=Um2fielNufiPq2gPF+cakRDGheYfuE60dnAlgqaba+4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VlptsF3JjbCh+zw7R23THL+asQr2yCm8+ot2y6+ZS41sf0P2y5MoAz8AjOwZzI33p
-	 Oes0w1cLqgls+dqB5AXMEEpxyQlxswec2/MrgknftN1iYKq04QdMcDUEgWGEq5G3TV
-	 5ev8/Um/EpQiThubn8bN15U11J6jygRMafgdv2k0=
-X-QQ-mid: bizesmtp89t1725601217t86fmi1u
-X-QQ-Originating-IP: pp2HEb8VFRV3OyePs+K/oTB0T0vJNpih3CUIsTHdOR4=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 06 Sep 2024 13:40:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3399184416924761505
-From: WangYuli <wangyuli@uniontech.com>
-To: aaro.koskinen@iki.fi,
-	andreas@kemnade.info,
-	khilman@baylibre.com,
-	rogerq@kernel.org,
-	tony@atomide.com,
-	linux@armlinux.org.uk,
-	jgg@ziepe.ca,
-	leon@kernel.org,
-	wangyuli@uniontech.com,
-	gustavoars@kernel.org,
-	mitr@volny.cz,
-	dmitry.torokhov@gmail.com,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	anil.gurumurthy@qlogic.com,
-	sudarsana.kalluru@qlogic.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	obdclark@gmail.com,
-	quic_abhinavk@quicinc.com,
-	dmitry.baryshkov@linaro.org,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-scsi@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	abhinavk@codeaurora.org,
-	architt@codeaurora.org,
-	chandanu@codeaurora.org,
-	jsanka@codeaurora.org,
-	jcrouse@codeaurora.org,
-	ryadav@codeaurora.org,
-	skolluku@codeaurora.org,
-	seanpaul@chromium.org,
-	robdclark@gmail.com,
-	anil_ravindranath@pmc-sierra.com,
-	standby24x7@gmail.com,
-	jkosina@suse.cz,
-	don.hiatt@intel.com,
-	ira.weiny@intel.com,
-	dasaratharaman.chandramouli@intel.com,
-	dledford@redhat.com,
-	eric.piel@tremplin-utc.net,
-	akpm@linux-foundation.org,
-	dtor@mail.ru,
-	vijaykumar@bravegnu.org,
-	dwmw2@infradead.org,
-	kgudipat@brocade.com,
-	James.Bottomley@suse.de,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: [PATCH] treewide: Correct the typo 'retun'
-Date: Fri,  6 Sep 2024 13:40:08 +0800
-Message-ID: <63D0F870EE8E87A0+20240906054008.390188-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1725601345; c=relaxed/simple;
+	bh=BFZijTQr3HfHY6RyfT67gKZp/j70Jc9Iq2fnjjcPxRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JJLHtw3Dqlw+JPQ0qUeyTWA1YdMkJlVAfcMDRuhXcVgN9ivh0ptByagf+hPyDurJe0sjy4GAxw7s2kLqJkOlOwUSMjvOXRDgJHGOwMyw5u3jTaRADTgtoXDmXH22zjGetDWhNUn4EUZiHVdjhjvU4GXWqqCxpeunN309yI1sLMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 665FCFEC;
+	Thu,  5 Sep 2024 22:42:48 -0700 (PDT)
+Received: from [10.162.41.22] (e116581.arm.com [10.162.41.22])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BA253F73F;
+	Thu,  5 Sep 2024 22:42:13 -0700 (PDT)
+Message-ID: <10aea3c3-42be-4f82-8961-75d5142a9653@arm.com>
+Date: Fri, 6 Sep 2024 11:12:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm: Abstract THP allocation
+To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
+ david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240904100923.290042-1-dev.jain@arm.com>
+ <20240904100923.290042-2-dev.jain@arm.com>
+ <336ce914-43dc-4613-a339-1a33f16f71ad@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <336ce914-43dc-4613-a339-1a33f16f71ad@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There are some spelling mistakes of 'retun' in comments which
-should be instead of 'return'.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/arm/mach-omap2/omap-mpuss-lowpower.c | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h  | 2 +-
- drivers/infiniband/core/sa_query.c        | 2 +-
- drivers/input/misc/wistron_btns.c         | 2 +-
- drivers/mtd/nand/raw/nandsim.c            | 2 +-
- drivers/scsi/bfa/bfa_fcs.c                | 2 +-
- drivers/scsi/pmcraid.c                    | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+On 9/5/24 16:38, Ryan Roberts wrote:
+> On 04/09/2024 11:09, Dev Jain wrote:
+>> In preparation for the second patch, abstract away the THP allocation
+>> logic present in the create_huge_pmd() path, which corresponds to the
+>> faulting case when no page is present.
+>>
+>> There should be no functional change as a result of applying
+>> this patch.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
+>>   1 file changed, 67 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 67c86a5d64a6..58125fbcc532 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -943,47 +943,89 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>>   }
+>>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>>   
+>> -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+>> -			struct page *page, gfp_t gfp)
+>> +static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+> Is there a reason for specifying order as a parameter? Previously it was
+> hardcoded to HPAGE_PMD_ORDER. But now, thp_fault_alloc() and
+> __thp_fault_success_stats() both take order and map_pmd_thp() is still
+> implicitly mapping a PMD-sized block. Unless there is a reason you need this
+> parameter in the next patch (I don't think there is?) I suggest simplifying.
 
-diff --git a/arch/arm/mach-omap2/omap-mpuss-lowpower.c b/arch/arm/mach-omap2/omap-mpuss-lowpower.c
-index 7ad74db951f6..f18ef45e2fe1 100644
---- a/arch/arm/mach-omap2/omap-mpuss-lowpower.c
-+++ b/arch/arm/mach-omap2/omap-mpuss-lowpower.c
-@@ -333,7 +333,7 @@ int omap4_hotplug_cpu(unsigned int cpu, unsigned int power_state)
- 	omap_pm_ops.scu_prepare(cpu, power_state);
- 
- 	/*
--	 * CPU never retuns back if targeted power state is OFF mode.
-+	 * CPU never returns back if targeted power state is OFF mode.
- 	 * CPU ONLINE follows normal CPU ONLINE ptah via
- 	 * omap4_secondary_startup().
- 	 */
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-index b26d5fe40c72..febc3e764a63 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-@@ -231,7 +231,7 @@ struct dpu_crtc_state {
- 	container_of(x, struct dpu_crtc_state, base)
- 
- /**
-- * dpu_crtc_frame_pending - retun the number of pending frames
-+ * dpu_crtc_frame_pending - return the number of pending frames
-  * @crtc: Pointer to drm crtc object
-  */
- static inline int dpu_crtc_frame_pending(struct drm_crtc *crtc)
-diff --git a/drivers/infiniband/core/sa_query.c b/drivers/infiniband/core/sa_query.c
-index 8175dde60b0a..53571e6b3162 100644
---- a/drivers/infiniband/core/sa_query.c
-+++ b/drivers/infiniband/core/sa_query.c
-@@ -1420,7 +1420,7 @@ enum opa_pr_supported {
- /*
-  * opa_pr_query_possible - Check if current PR query can be an OPA query.
-  *
-- * Retuns PR_NOT_SUPPORTED if a path record query is not
-+ * Returns PR_NOT_SUPPORTED if a path record query is not
-  * possible, PR_OPA_SUPPORTED if an OPA path record query
-  * is possible and PR_IB_SUPPORTED if an IB path record
-  * query is possible.
-diff --git a/drivers/input/misc/wistron_btns.c b/drivers/input/misc/wistron_btns.c
-index 5c4956678cd0..39d6f642cd19 100644
---- a/drivers/input/misc/wistron_btns.c
-+++ b/drivers/input/misc/wistron_btns.c
-@@ -1075,7 +1075,7 @@ static void wistron_led_init(struct device *parent)
- 	}
- 
- 	if (leds_present & FE_MAIL_LED) {
--		/* bios_get_default_setting(MAIL) always retuns 0, so just turn the led off */
-+		/* bios_get_default_setting(MAIL) always returns 0, so just turn the led off */
- 		wistron_mail_led.brightness = LED_OFF;
- 		if (led_classdev_register(parent, &wistron_mail_led))
- 			leds_present &= ~FE_MAIL_LED;
-diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
-index 179b28459b4b..df48b7d01d16 100644
---- a/drivers/mtd/nand/raw/nandsim.c
-+++ b/drivers/mtd/nand/raw/nandsim.c
-@@ -1381,7 +1381,7 @@ static inline union ns_mem *NS_GET_PAGE(struct nandsim *ns)
- }
- 
- /*
-- * Retuns a pointer to the current byte, within the current page.
-+ * Returns a pointer to the current byte, within the current page.
-  */
- static inline u_char *NS_PAGE_BYTE_OFF(struct nandsim *ns)
- {
-diff --git a/drivers/scsi/bfa/bfa_fcs.c b/drivers/scsi/bfa/bfa_fcs.c
-index 5023c0ab4277..e52ce9b01f49 100644
---- a/drivers/scsi/bfa/bfa_fcs.c
-+++ b/drivers/scsi/bfa/bfa_fcs.c
-@@ -1431,7 +1431,7 @@ bfa_cb_lps_flogo_comp(void *bfad, void *uarg)
-  *	param[in]	vf_id - VF_ID
-  *
-  *	return
-- *	If lookup succeeds, retuns fcs vf object, otherwise returns NULL
-+ *	If lookup succeeds, returns fcs vf object, otherwise returns NULL
-  */
- bfa_fcs_vf_t   *
- bfa_fcs_vf_lookup(struct bfa_fcs_s *fcs, u16 vf_id)
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index a2a084c8075e..72a4c6e3d0c8 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -4009,7 +4009,7 @@ static void pmcraid_tasklet_function(unsigned long instance)
-  * This routine un-registers registered interrupt handler and
-  * also frees irqs/vectors.
-  *
-- * Retun Value
-+ * Return Value
-  *	None
-  */
- static
--- 
-2.43.4
+If I am not wrong, thp_fault_alloc() and __thp_fault_success_stats()
+will remain the same in case of mTHP? I chose to pass order so that these
+functions can be used by others in the future. Therefore, these two functions
+can be generically used in the future while map_pmd_thp() (as the name suggests)
+maps only a PMD-mappable THP.
 
+>
+>> +				  unsigned long haddr, struct folio **foliop,
+> FWIW, I agree with Kirill's suggestion to just return folio* and drop the output
+> param.
+
+As I replied to Kirill, I do not think that is a good idea. If you do a git grep on
+the tree for "foliop", you will find several places where that is being used, for
+example, check out alloc_charge_folio() in mm/khugepaged.c. The author intends to
+do the stat computation and setting *foliop in the function itself, so that the
+caller is only concerned with the return value.
+Also, if we return the folio instead of VM_FAULT_FALLBACK from thp_fault_alloc(),
+then you will have two "if (unlikely(!folio))" branches, the first to do the stat
+computation in the function, and the second branch in the caller to set ret = VM_FAULT_FALLBACK
+and then goto out/release.
+And, it is already inconsistent to break away the stat computation and the return value
+setting, when the stat computation name is of the form "count_vm_event(THP_FAULT_FALLBACK)"
+and friends, at which point it would just be better to open code the function.
+
+If I am missing something and your suggestion can be implemented neatly, please guide.
+
+>
+> Thanks,
+> Ryan
+>
+>> +				  unsigned long addr)
+>>   {
+>> -	struct vm_area_struct *vma = vmf->vma;
+>> -	struct folio *folio = page_folio(page);
+>> -	pgtable_t pgtable;
+>> -	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>> -	vm_fault_t ret = 0;
+>> +	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
+>>   
+>> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>> +	*foliop = folio;
+>> +	if (unlikely(!folio)) {
+>> +		count_vm_event(THP_FAULT_FALLBACK);
+>> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+>> +		return VM_FAULT_FALLBACK;
+>> +	}
+>>   
+>> +	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>>   	if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
+>>   		folio_put(folio);
+>>   		count_vm_event(THP_FAULT_FALLBACK);
+>>   		count_vm_event(THP_FAULT_FALLBACK_CHARGE);
+>> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
+>> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+>> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>>   		return VM_FAULT_FALLBACK;
+>>   	}
+>>   	folio_throttle_swaprate(folio, gfp);
+>>   
+>> -	pgtable = pte_alloc_one(vma->vm_mm);
+>> -	if (unlikely(!pgtable)) {
+>> -		ret = VM_FAULT_OOM;
+>> -		goto release;
+>> -	}
+>> -
+>> -	folio_zero_user(folio, vmf->address);
+>> +	folio_zero_user(folio, addr);
+>>   	/*
+>>   	 * The memory barrier inside __folio_mark_uptodate makes sure that
+>>   	 * folio_zero_user writes become visible before the set_pmd_at()
+>>   	 * write.
+>>   	 */
+>>   	__folio_mark_uptodate(folio);
+>> +	return 0;
+>> +}
+>> +
+>> +static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
+>> +{
+>> +	count_vm_event(THP_FAULT_ALLOC);
+>> +	count_mthp_stat(order, MTHP_STAT_ANON_FAULT_ALLOC);
+>> +	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>> +}
+>> +
+>> +static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+>> +			struct vm_area_struct *vma, unsigned long haddr,
+>> +			pgtable_t pgtable)
+>> +{
+>> +	pmd_t entry;
+>> +
+>> +	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+>> +	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>> +	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>> +	folio_add_lru_vma(folio, vma);
+>> +	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+>> +	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>> +	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>> +	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>> +	mm_inc_nr_ptes(vma->vm_mm);
+>> +}
+>> +
+>> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>> +{
+>> +	struct vm_area_struct *vma = vmf->vma;
+>> +	struct folio *folio = NULL;
+>> +	pgtable_t pgtable;
+>> +	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>> +	vm_fault_t ret = 0;
+>> +	gfp_t gfp = vma_thp_gfp_mask(vma);
+>> +
+>> +	pgtable = pte_alloc_one(vma->vm_mm);
+>> +	if (unlikely(!pgtable)) {
+>> +		ret = VM_FAULT_OOM;
+>> +		goto release;
+>> +	}
+>> +
+>> +	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
+>> +			      vmf->address);
+>> +	if (ret)
+>> +		goto release;
+>>   
+>>   	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>> +
+>>   	if (unlikely(!pmd_none(*vmf->pmd))) {
+>>   		goto unlock_release;
+>>   	} else {
+>> -		pmd_t entry;
+>> -
+>>   		ret = check_stable_address_space(vma->vm_mm);
+>>   		if (ret)
+>>   			goto unlock_release;
+>> @@ -997,20 +1039,9 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+>>   			VM_BUG_ON(ret & VM_FAULT_FALLBACK);
+>>   			return ret;
+>>   		}
+>> -
+>> -		entry = mk_huge_pmd(page, vma->vm_page_prot);
+>> -		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>> -		folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>> -		folio_add_lru_vma(folio, vma);
+>> -		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+>> -		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>> -		update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>> -		add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>> -		mm_inc_nr_ptes(vma->vm_mm);
+>> +		map_pmd_thp(folio, vmf, vma, haddr, pgtable);
+>>   		spin_unlock(vmf->ptl);
+>> -		count_vm_event(THP_FAULT_ALLOC);
+>> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
+>> -		count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>> +		__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
+>>   	}
+>>   
+>>   	return 0;
+>> @@ -1019,7 +1050,8 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+>>   release:
+>>   	if (pgtable)
+>>   		pte_free(vma->vm_mm, pgtable);
+>> -	folio_put(folio);
+>> +	if (folio)
+>> +		folio_put(folio);
+>>   	return ret;
+>>   
+>>   }
+>> @@ -1077,8 +1109,6 @@ static void set_huge_zero_folio(pgtable_t pgtable, struct mm_struct *mm,
+>>   vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>>   {
+>>   	struct vm_area_struct *vma = vmf->vma;
+>> -	gfp_t gfp;
+>> -	struct folio *folio;
+>>   	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>>   	vm_fault_t ret;
+>>   
+>> @@ -1129,14 +1159,8 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>>   		}
+>>   		return ret;
+>>   	}
+>> -	gfp = vma_thp_gfp_mask(vma);
+>> -	folio = vma_alloc_folio(gfp, HPAGE_PMD_ORDER, vma, haddr, true);
+>> -	if (unlikely(!folio)) {
+>> -		count_vm_event(THP_FAULT_FALLBACK);
+>> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
+>> -		return VM_FAULT_FALLBACK;
+>> -	}
+>> -	return __do_huge_pmd_anonymous_page(vmf, &folio->page, gfp);
+>> +
+>> +	return __do_huge_pmd_anonymous_page(vmf);
+>>   }
+>>   
+>>   static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
 
