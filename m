@@ -1,139 +1,190 @@
-Return-Path: <linux-kernel+bounces-319157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020A696F8B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:54:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D60096F8B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F8B1F235C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:54:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 825ECB2324E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC8F1D363C;
-	Fri,  6 Sep 2024 15:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343D01D3652;
+	Fri,  6 Sep 2024 15:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j5MXDLXw"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EdxznCNI"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232961D0DC6
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706B81D3650
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725638033; cv=none; b=QERwkjRnm6HlrYt51iLHTBrRh6jkvz+waQGmhJKaoLS+JxytIMH8IsSiyZWd0/DLP7bHR4Ui3kSdtQHSCiH3H5W6zs2RjYU9LVh85abiV3NsaZSftl4Xugo0WxmuDTyDH8A2cfATv7GcNi//GuPs5ym604/t0zRYO/wTeRjxK6Y=
+	t=1725638037; cv=none; b=N3ONb8oEl0qzxOkvtb8UeGkDgdIj0fc+QF9me1p6COe8DY9htykU9k18Ib0kb4WZ6y/qZ0n8kUu/DSqoWIovCVcTO6mFUoav94D8nxeJBDtIcUpdBQT6YkqErOsQ0b9y05ieGL9peRIH983uCy/dCPCczqbRfkwrLJlxyCoMobM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725638033; c=relaxed/simple;
-	bh=73+bdBPq1AOzINIRfrSoaR2wZA28NZeimBgV3a3wDjg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QFnYPzPdnNsfeT1RVtti2pINJZw2Hn9qRQ+lHSd+KDhrBAkbvtMBQeWa2VRTviTfAz1VTlc9ghSqx4rattGerR3KqnhoO/LYR75ZQKCYp0/G6hrLWwC7cufhuPIWpJpYT0hrksULziS4gwXv/FIcZtM9UAu6eHEJyBM45gpLU+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j5MXDLXw; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-206e614953aso15262825ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:53:50 -0700 (PDT)
+	s=arc-20240116; t=1725638037; c=relaxed/simple;
+	bh=o0MznKshQJgBs5nWI2XoOX4AsBYGuttamKL1DUIopyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ulCDdX4F+w0uoVqOAA0FAMNUPQro3n49yq4zq0yRXTjD2CmDaKzaVtWkuK8LJ+mARF+8aNJe6FNZpeuHtUNjmVVfxuQjmVsvrqg2Kmrv7Ufow2INJ6+jIajUogQTjxBIC/uJ0PfOo6gcyHuCUJUZappAAqgBtLdFKbwgUlZXh9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EdxznCNI; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so16827535e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725638030; x=1726242830; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=st1kODhvyTXk6TV1RcdKVdBXoGE9hcS/ZZYObHLT4cs=;
-        b=j5MXDLXwakArlruciNjt8Ulzzp4zZPjxfUpRF1/z0RAwo9JxLRRPovK5ED8ZUIW0KT
-         pcgjqtLIQZPajf2D29aLuP+YtQoUFKfrvkCuLUDtbQjXUX8qOeaH5BWeH4wfLN3WxSsl
-         KUzIpgctUquNpcSM1RxG2bgJCbdY7B0sJZYyYyDpkGnH6ediiitOfMFxM80+pUpDJpEQ
-         bnixf4IuZNOuX/CQ3axL+4Z3B1N9IeVw189Af+LqzZWf3Umleo7lMmyp83kY3JUFksXO
-         OncHmY0uZ4qifgO4VbSfFeWbqL+kKh+AyyGX7pjmG/BBG1tgnUMgIPwOfTDAkO57TibS
-         yHDg==
+        d=suse.com; s=google; t=1725638034; x=1726242834; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NC6Cf1A5zM/7S1X0dCOTWrmEp/YKRHomNRr1wAJwj6w=;
+        b=EdxznCNIIfqzj+0VlBd+7J1aT1y/glqrZs/uOmPBdVJQR1c4f6UUiQLxLOh2V/LEFF
+         GseQtg9suYLHCu4C1GU9Cc6pBP+PKV/ZdhiDHo7xH26Pzgf5JuCyDQufuqhSvAo5nKVd
+         iGeqqwSJBq5spXfKmc0M9YpvTEYUlyT4AZuKHdUZn/DqnDhN0y1FsSE8nGKyaTJYJwD1
+         EQfREDmKrExnidtJ5YKCl4Cp/xngLiVry5sUz4hlSpp6n4sIofUt1n6opNN7IhBcJFtm
+         ulYV4QrDCh8xqiyb3rhbCyPDrQ4l6lR8DXSlC6dwB9P598hgyIhpldP+oEUH7Zh0Dkhg
+         BwUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725638030; x=1726242830;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=st1kODhvyTXk6TV1RcdKVdBXoGE9hcS/ZZYObHLT4cs=;
-        b=JJhj5JQ5DWScf2wWvQHu+UOurKSnNlnuMA14qyfRIWv5nONfvDp5q6xUxJByKto/jI
-         ZvxK29Zdc+yx5y3MjgNjnzQxc95bUR8yFI3adz2txPcM1DrkyetBJ+JVvHZr6ZNWfVmT
-         8xpvljSP1OwdiGqnEKUFHQZvqlcQlJ7JJW6syWAydbNrwjP391lXfwfZgLauLWyngVDQ
-         kHZq4Ujn/0LEmVxt6hNNRUHfnhbTK25Q9SWtRRctdeJVyMoPBiV/ApH1sm6iFMpJRF1n
-         PSu+NvhJ6k8t40WffAqaGDh7dtgFaevepzQpQitB0G46vnHLSFYrn8486acfeUXLtaLm
-         7kgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXR1GLaQK3/oDGSuMQtGj29WmHtxMnXBrByd5Z3P74olDUqoiZuO3gk4KFnnQtKv9qfH6Vd61pa4d0Vhfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWnWLLnK88bnu6tNbxIGyPg/sGdpmadSc7Vz/C8EAYgDuaIU+z
-	fgkI24NVU7aLjHdPoqy+zEtfK3M9n7NZLbU/TMNazvYooZIhRZEfLeDdBlg7yt0=
-X-Google-Smtp-Source: AGHT+IFw9PxcaxQ7+rDmkcLXn+siO6V9uqYxbdPNfcgdVRHimfqKWxh65K7oC05RbvA9mJZ5BZgqIA==
-X-Received: by 2002:a17:902:da90:b0:206:9060:c452 with SMTP id d9443c01a7336-2069060c57dmr180473135ad.33.1725638030419;
-        Fri, 06 Sep 2024 08:53:50 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae94dcc4sm44569565ad.67.2024.09.06.08.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 08:53:49 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Vibhore Vardhan
- <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur
- <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, Markus
- Schneider-Pargmann <msp@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] pmdomain: ti_sci: handle wake IRQs for IO daisy
- chain wakeups
-In-Reply-To: <CAPDyKFquSHYLGzd288K3JSOF_p+UyRO8GoBP9TGCR_3syGXTDw@mail.gmail.com>
-References: <20240905-lpm-v6-10-constraints-pmdomain-v3-0-e359cbb39654@baylibre.com>
- <20240905-lpm-v6-10-constraints-pmdomain-v3-3-e359cbb39654@baylibre.com>
- <CAPDyKFquSHYLGzd288K3JSOF_p+UyRO8GoBP9TGCR_3syGXTDw@mail.gmail.com>
-Date: Fri, 06 Sep 2024 08:53:49 -0700
-Message-ID: <7hfrqcaicy.fsf@baylibre.com>
+        d=1e100.net; s=20230601; t=1725638034; x=1726242834;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NC6Cf1A5zM/7S1X0dCOTWrmEp/YKRHomNRr1wAJwj6w=;
+        b=IZIci2leXgeEzQ2CqTOuM5rErXoIRVZxIE8tKteQI2J8yGC7Cx2GYF3XXd48WjFen5
+         k6xtouxtr7FbMdDoOI9tkHTL390w/c+7o7gyUF2wH8dnCeomUZnvf7C2q11C+l9Tzhwq
+         hGwlivtiwyVx9Pu660MJbyPmw4ClUCtm+49vPs6U0ThhJeuvkOizgdgXlN2Wk437ssvC
+         NC6O5mzdg0Vo9/VgNaOqDtEVf1Cp1UGcP5YuaGWd33UoH4CXa9KvYm13jkCV0rNov4QE
+         u4WvaIXZHG7fUlIbYOYk17BEJWTVAWe60LF3JukEch08+da7cl2QWZi5T+WyZKiDCF+8
+         No0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWa62/wyV144KjtV8OdMHa22N89H6CGMmWzaip9qzZ1h+nDGVhslQfNa21cDl++05AB1BsignhQB4+DeAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyimlVtNhtiFG1vT1CL/4gDSYJl2jCbSEScj1/NWvST/UXBSHmt
+	H5+bZ1UHJ7lWShTiUV1dZR/4+1J0Swy+AWPcjTNlqCbVAuXkssqzax6Mc5/zn9dEQSjp4nzhM5V
+	exXhu3w==
+X-Google-Smtp-Source: AGHT+IHaSnady74DJ1oEcQaHcxLA4uOPiZb6C4vhozW1nZbyNOH4GbF0OP/WL2CRSWsgv9G05aJ9MA==
+X-Received: by 2002:a5d:4388:0:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-378895b7bdbmr2264093f8f.4.1725638033585;
+        Fri, 06 Sep 2024 08:53:53 -0700 (PDT)
+Received: from [192.168.0.20] ([148.56.230.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca06005bbsm24296915e9.30.2024.09.06.08.53.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 08:53:53 -0700 (PDT)
+Message-ID: <e295e004-891d-4865-b1c4-3cef93976245@suse.com>
+Date: Fri, 6 Sep 2024 17:53:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: s32g2: Disable support for SD/eMMC UHS
+ mode
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+ Chester Lin <chester62515@gmail.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
+ <20240830113347.4048370-3-ciprianmarian.costea@oss.nxp.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <mbrugger@suse.com>
+Autocrypt: addr=mbrugger@suse.com; keydata=
+ xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
+ fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
+ OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
+ gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
+ 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
+ EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
+ fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
+ ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
+ HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
+ 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABzSRNYXR0aGlhcyBC
+ cnVnZ2VyIDxtYnJ1Z2dlckBzdXNlLmNvbT7CwXgEEwECACIFAlV6iM0CGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAAAoJENkUC7JWEwLx6isQAIMGBgJnFWovDS7ClZtjz1LgoY8skcMU
+ ghUZY4Z/rwwPqmMPbY8KYDdOFA+kMTEiAHOR+IyOVe2+HlMrXv/qYH4pRoxQKm8H9FbdZXgL
+ bG8IPlBu80ZSOwWjVH+tG62KHW4RzssVrgXEFR1ZPTdbfN+9Gtf7kKxcGxWnurRJFzBEZi4s
+ RfTSulQKqTxJ/sewOb/0kfGOJYPAt/QN5SUaWa6ILa5QFg8bLAj6bZ81CDStswDt/zJmAWp0
+ 08NOnhrZaTQdRU7mTMddUph5YVNXEXd3ThOl8PetTyoSCt04PPTDDmyeMgB5C3INLo1AXhEp
+ NTdu+okvD56MqCxgMfexXiqYOkEWs/wv4LWC8V8EI3Z+DQ0YuoymI5MFPsW39aPmmBhSiacx
+ diC+7cQVQRwBR6Oz/k9oLc+0/15mc+XlbvyYfscGWs6CEeidDQyNKE/yX75KjLUSvOXYV4d4
+ UdaNrSoEcK/5XlW5IJNM9yae6ZOL8vZrs5u1+/w7pAlCDAAokz/As0vZ7xWiePrI+kTzuOt5
+ psfJOdEoMKQWWFGd/9olX5ZAyh9iXk9TQprGUOaX6sFjDrsTRycmmD9i4PdQTawObEEiAfzx
+ 1m2MwiDs2nppsRr7qwAjyRhCq2TOAh0EDRNgYaSlbIXX/zp38FpK/9DMbtH14vVvG6FXog75
+ HBoOzsFNBF3VOUgBEACbvyZOfLjgfB0hg0rhlAfpTmnFwm1TjkssGZKvgMr/t6v1yGm8nmmD
+ MIa4jblx41MSDkUKFhyB80wqrAIB6SRX0h6DOLpQrjjxbV46nxB5ANLqwektI57yenr/O+ZS
+ +GIuiSTu1kGEbP5ezmpCYk9dxqDsAyJ+4Rx/zxlKkKGZQHdZ+UlXYOnEXexKifkTDaLne6Zc
+ up1EgkTDVmzam4MloyrA/fAjIx2t90gfVkEEkMhZX/nc/naYq1hDQqGN778CiWkqX3qimLqj
+ 1UsZ6qSl6qsozZxvVuOjlmafiVeXo28lEf9lPrzMG04pS3CFKU4HZsTwgOidBkI5ijbDSimI
+ CDJ+luKPy6IjuyIETptbHZ9CmyaLgmtkGaENPqf+5iV4ZbQNFxmYTZSN56Q9ZS6Y3XeNpVm6
+ FOFXrlKeFTTlyFlPy9TWcBMDCKsxV5eB5kYvDGGxx26Tec1vlVKxX3kQz8o62KWsfr1kvpeu
+ fDzx/rFpoY91XJSKAFNZz99xa7DX6eQYkM2qN9K8HuJ7XXhHTxDbxpi3wsIlFdgzVa5iWhNw
+ iFFJdSiEaAeaHu6yXjr39FrkIVoyFPfIJVyK4d1mHe77H47WxFw6FoVbcGTEoTL6e3HDwntn
+ OGAU6CLYcaQ4aAz1HTcDrLBzSw/BuCSAXscIuKuyE/ZT+rFbLcLwOQARAQABwsF2BBgBCAAg
+ FiEE5rmSGMDywyUcLDoX2RQLslYTAvEFAl3VOUgCGwwACgkQ2RQLslYTAvG11w/+Mcn28jxp
+ 0WLUdChZQoJBtl1nlkkdrIUojNT2RkT8UfPPMwNlgWBwJOzaSZRXIaWhK1elnRa10IwwHfWM
+ GhB7nH0u0gIcSKnSKs1ebzRazI8IQdTfDH3VCQ6YMl+2bpPz4XeWqGVzcLAkamg9jsBWV6/N
+ c0l8BNlHT5iH02E43lbDgCOxme2pArETyuuJ4tF36F7ntl1Eq1FE0Ypk5LjB602Gh2N+eOGv
+ hnbkECywPmr7Hi5o7yh8bFOM52tKdGG+HM8KCY/sEpFRkDTA28XGNugjDyttOI4UZvURuvO6
+ quuvdYW4rgLVgAXgLJdQEvpnUu2j/+LjjOJBQr12ICB8T/waFc/QmUzBFQGVc20SsmAi1H9c
+ C4XB87oE4jjc/X1jASy7JCr6u5tbZa+tZjYGPZ1cMApTFLhO4tR/a/9v1Fy3fqWPNs3F4Ra3
+ 5irgg5jpAecT7DjFUCR/CNP5W6nywKn7MUm/19VSmj9uN484vg8w/XL49iung+Y+ZHCiSUGn
+ LV6nybxdRG/jp8ZQdQQixPA9azZDzuTu+NjKtzIA5qtfZfmm8xC+kAwAMZ/ZnfCsKwN0bbnD
+ YfO3B5Q131ASmu0kbwY03Mw4PhxDzZNrt4a89Y95dq5YkMtVH2Me1ZP063cFCCYCkvEAK/C8
+ PVrr2NoUqi/bxI8fFQJD1jVj8K0=
+In-Reply-To: <20240830113347.4048370-3-ciprianmarian.costea@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-> On Fri, 6 Sept 2024 at 00:03, Kevin Hilman <khilman@baylibre.com> wrote:
->>
->> When a device supports IO daisy-chain wakeups, it uses a dedicated
->> wake IRQ.  Devices with IO daisy-chain wakeups enabled should not set
->> wakeup constraints since these can happen even from deep power states,
->> so should not prevent the DM from picking deep power states.
->>
->> Wake IRQs are set with dev_pm_set_wake_irq() or
->> dev_pm_set_dedicated_wake_irq().  The latter is used by the serial
->> driver used on K3 platforms (drivers/tty/serial/8250/8250_omap.c)
->> when the interrupts-extended property is used to describe the
->> dedicated wakeup interrupt.
->>
->> Detect these wake IRQs in the suspend path, and if set, skip sending
->> constraint.
->>
->> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
->> ---
->>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
->> index 1ab1e46924ab..747a7a33c0a9 100644
->> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
->> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
->> @@ -82,6 +82,13 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
->>         int ret;
->>
->>         if (device_may_wakeup(dev)) {
->> +               /*
->> +                * If device can wakeup using IO daisy chain wakeups,
->> +                * we do not want to set a constraint.
->> +                */
->> +               if (dev->power.wakeirq)
->> +                       dev_dbg(dev, "%s: has wake IRQ, not setting constraints\n", __func__);
->
-> return; ?
->
 
-Oops, I meant to remove the "false" return when changing from bool to
-void, but mistakenly removed the whole line.
+On 30/08/2024 13:33, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> 
+> Disable SD/eMMC UHS modes for NXP boards which do not set VCCQ voltage
+> supply to 1.8V by default, such as S32G274A-EVB and S32G274A-RDB2.
+> 
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-d'oh!, good catch.
+Reviewed-by: Matthias Brugger <mbrugger@suse.com>
 
-Thanks.
-
-Kevin
+> ---
+>   arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 1 +
+>   arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 9 +++++++++
+>   2 files changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+> index 7ab917f547ef..b9a119eea2b7 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+> +++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+> @@ -39,5 +39,6 @@ &usdhc0 {
+>   	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
+>   	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
+>   	disable-wp;
+> +	no-1-8-v;
+>   	status = "okay";
+>   };
+> diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+> index 8739f63771bc..aaa61a8ad0da 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+> +++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+> @@ -45,5 +45,14 @@ &usdhc0 {
+>   	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
+>   	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
+>   	disable-wp;
+> +	/* Remove no-1-8-v to enable higher speed modes for SD card.
+> +	 * However, this is not enough to enable HS400 or HS200 modes for eMMC.
+> +	 * In this case, the position of the resistor R797 must be changed
+> +	 * from A to B before removing the property.
+> +	 * If the property is removed without changing the resistor position,
+> +	 * HS*00 may be enabled, but the interface might be unstable because of
+> +	 * the wrong VCCQ voltage applied to the eMMC.
+> +	 */
+> +	no-1-8-v;
+>   	status = "okay";
+>   };
 
