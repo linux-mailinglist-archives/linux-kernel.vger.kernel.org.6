@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-318499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024EB96EEC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFB096EEC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DABC1C23C02
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882DF286057
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2F81C7B82;
-	Fri,  6 Sep 2024 09:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB161C7B73;
+	Fri,  6 Sep 2024 09:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klquHuVI"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UrC1BctU"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BAA157484;
-	Fri,  6 Sep 2024 09:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959C714AD02
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725613427; cv=none; b=VrQk6yJMRxSPobOLjCIn+vUm88vf0Kg5rYjPN7RDymDIkm7SCPIvv0PCwG9AJ30uD10N1VamNVmpTijgrKAaK1BdaSLd6EzHt7TMpmwiy/7VVGn6nPA98dXPyW2SESt20rSqVg2zY+LNAMV+h0O+A06QwnWKYMnZaV4OMbvw2Ds=
+	t=1725613478; cv=none; b=YZ67axi5qNuSGW3w79gnOkb0YTcUPNf15MtYrFdWe0P7rrNxduERW53uX2P3kbL6tf1whhOJF9SAAj858HBoM6gBeWI7nUG7fkUNV0PQ84rOvKmKQK454Bt+aImrzhhnWCRgTez368rpqCCNeWEjJljz/tDxnzK+1211ir7suhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725613427; c=relaxed/simple;
-	bh=HeY0vZrYVpAMNhd3txyn5kXm7PQgr5qxtPmD+s0Gt4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sX4+8q7tiknJcENzXhtE3oKF+GF3bSZ3fiPf+YG5i1H0g+9F6j+GAdFugzfW9jdy1r4XfaemDp05Py+kbPKdMoR4I46tPQ36BAIEvh5ooi4asD0N9nqbxl9x1JWy+xjF07tk5lLL3zT0dAyv5xx6mtS9G92tB72Yu6eFCBuq4Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klquHuVI; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso1249458a12.1;
-        Fri, 06 Sep 2024 02:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725613425; x=1726218225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v0dPgTNsL4xVhbmjJwsw26FruPkmctG8WEw3T6v40uI=;
-        b=klquHuVIyEE/ALLzVb9DS8AuVWFQIreLoGmGQpj2OEVVgipIrT5LSAz3CAPoe8U0Jx
-         cFGKpM25SulKKFzKhmXqis0C733rzsxU+FxlUetOzZ/JwSrMENU4ol5jHYLO8rnh/bBj
-         2wuLgTaVkJzqQNCEuCg+HCb84x6yrNn1XmDOsuOD1vN9zNXPmyJ03FR/rvGF+mFa9Glu
-         jqwCXCluxDgfZaCMtlG3VtTndTVMk/CCGbDtnZeIdbIWgwi6tGCULmgP/aSoDHu1vCmg
-         CqUV7t4G+6/d5lFv9saPPxtFbiGC7/kxWWwLNo8mcwHUsBm3bZG9UbcPNcdCU9YEE22Y
-         qlOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725613425; x=1726218225;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v0dPgTNsL4xVhbmjJwsw26FruPkmctG8WEw3T6v40uI=;
-        b=Xj67u71UkEdy3g58+bQ3P7n+qaA0PK+XWrnua2qCTltOxacp3CxPJmg+o1Etqcd68b
-         vWi8KgIeJCYim/bbKAduXZcWbtM3Q/kKhJinUCs5qgVP97RpVPMvkWPnWF0Wd2ZuWJ7I
-         kyJ84k2055XdFSChAaJ2WBr0BTEipJgZGiOtU0zKsnKyE4PXXk8DmfOdDcQaTY4sxWEe
-         d59tzVmP32DmiyWY1TMyJ7aJ+MY9VC7ja6KU+SZ0myxEl6zV/BE3YltC3R3IKNqvUNXT
-         MWHAbCXJCGUnGca5HTzy+gO8DgDQ506mwAlcO5HeY5g72xq6ThfBAsXXpvYcQhX8OLXk
-         r9DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy9e7tzd67zRvaxlSxaH1F4RvRn1ERSKPRfVzDnY7thYjOhNx/FYZKv3u2NKtjwG6W3by7l7iACzu/XzGM@vger.kernel.org, AJvYcCV6dvGim78g50ysCE+bVpvByXbosX6o6jIszuo7OnjfQRgsJBhII+AbzZR2121PKN/bL0YC2Vn5IjcSiIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaueJ98rE7sERer1Ic6Zh7IspwwqauVwQVNy/WngdydE2xO94L
-	AwZAXlNkl0iDZxLTPRkgGESaE21vmQoSzbSf7QEv2bX0PgSJCFUR
-X-Google-Smtp-Source: AGHT+IH3PGvaZoEB4Q4ZZHrcHQbQ5ScgTgBi8PlrJmpCMhaaXQ0Ort8b39db7Cc0LfkD5fsVQysXEg==
-X-Received: by 2002:a17:90b:1c08:b0:2d3:da82:28e0 with SMTP id 98e67ed59e1d1-2dad4ef2197mr2148234a91.9.1725613425279;
-        Fri, 06 Sep 2024 02:03:45 -0700 (PDT)
-Received: from localhost.localdomain (111-240-109-89.dynamic-ip.hinet.net. [111.240.109.89])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc12a1d9sm1007420a91.54.2024.09.06.02.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 02:03:44 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: michal.simek@amd.com
-Cc: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	minhuadotchen@gmail.com
-Subject: Re: [PATCH] serial: xilinx_uartps: make cdns_rs485_supported static
-Date: Fri,  6 Sep 2024 17:03:21 +0800
-Message-ID: <20240906090321.537-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <33cb57cd-200b-48a7-9028-3f6bf46b4dde@amd.com>
-References: <33cb57cd-200b-48a7-9028-3f6bf46b4dde@amd.com>
+	s=arc-20240116; t=1725613478; c=relaxed/simple;
+	bh=B497wLt2ssybD9uJU4DGGl+hO6F5Bn8pmYWMZSWCJds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTo84NhlKvH8OIx8cun6kTA0DpWbRgsDw3upkQ4ax6GJoete/VgpJyn6uSEqa87PGBCmD8P+oaZAuQhgkmr4rlvxI7Y/B8rljC1lhlDyZ18Nj5nAej6RldZy9Kw+pKf6J2o/y+X7cXnZJjXBB9oiCQh7RMee/kqjyNm82WiqJ94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UrC1BctU; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TrlHxR1jRMFGe1uMPDdSvo212z3cM9yHy4/c2tNOpFk=; b=UrC1BctU15E3CSynEb3sqI291g
+	oFPCx8ZE3dNdsGMfsrOI3vh+enUhgHV589qylUJPgxdZOrRTrZi1Jq3snHP+68Gf+QrbHwMhU6yJv
+	3BbOsu0xKVPKAUPbo40kVIFzLG4ei6qDHNm10ycE7OiztiFR2ctHt2XTtg/n2Yf46m0GqEC6MGukz
+	iMF57ECWrjklev4jGsH7TjHFcQA4tEcxDm+5xXNkuUcHUiGTpWTY3t9mQlNo5gWfKtZoNhV4OFgJB
+	HuPARW6DQwvodDZN0KKp+wPTSVMglR9Loss03TfcslL+aNDjLKrhQMxEpNWg++eOHQalTov3/6idL
+	wKz5S5xA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1smUtB-00000000dB1-1VYG;
+	Fri, 06 Sep 2024 09:04:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 03E313003E1; Fri,  6 Sep 2024 11:04:21 +0200 (CEST)
+Date: Fri, 6 Sep 2024 11:04:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Handle cases where
+ pick_task_scx() is called without preceding balance_scx()
+Message-ID: <20240906090420.GU4723@noisy.programming.kicks-ass.net>
+References: <Ztj_h5c2LYsdXYbA@slm.duckdns.org>
+ <20240905092858.GA15400@noisy.programming.kicks-ass.net>
+ <20240905150012.GF4928@noisy.programming.kicks-ass.net>
+ <ZtnfRnmo-EpWKcyC@slm.duckdns.org>
+ <ZtpYGQ73WQcb95Fe@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtpYGQ73WQcb95Fe@slm.duckdns.org>
 
-Hi Michal,
+On Thu, Sep 05, 2024 at 03:17:13PM -1000, Tejun Heo wrote:
+> On Thu, Sep 05, 2024 at 06:41:42AM -1000, Tejun Heo wrote:
+> > > @@ -12716,6 +12716,12 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+> > >  	if (this_rq->cfs.h_nr_running && !pulled_task)
+> > >  		pulled_task = 1;
+> > >  
+> > > +	/*
+> > > +	 * We pulled a task, but it got stolen before we re-acquired rq->lock.
+> > > +	 */
+> > > +	if (!this_rq->cfs.h_nr_running && pulled_task)
+> > > +		pulled_task = 0;
+> > > +
+> > 
+> > Lemme test that.
+> 
+> Did a bit of testing and it seems like it's mostly coming from delayed
+> dequeue handling. pick_next_entity() does this:
+> 
+> 	struct sched_entity *se = pick_eevdf(cfs_rq);
+> 	if (se->sched_delayed) {
+> 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+> 		SCHED_WARN_ON(se->sched_delayed);
+> 		SCHED_WARN_ON(se->on_rq);
+> 		return NULL;
+> 	}
+> 
+> rq->cfs.nr_running includes the number of delay dequeued tasks which aren't
+> really runnable, so it seems like balance_fair() saying yes and
+> pick_next_entity() then hitting a delayed task.
 
->This has been applied already as commit 68c5efd9dca ("serial: xilinx_uartps: 
->Make cdns_rs485_supported static").
->
->You can also see it here
->https://lore.kernel.org/r/20240819120107.3884973-1-ruanjinjie@huawei.com
+Duh, yes.
 
-Got it, thanks for letting me know
+> Maybe the solution is
+> tracking the number of delayed ones and subtracting that from nr_running?
 
-Min-Hua
+That came up yesterday for something else as well. Let me see if I can
+make that happen.
 
->
->Thanks,
->Michal
+
+Anyway, I suppose you keep your patch for now until I've managed to sort
+this out.
 
 
