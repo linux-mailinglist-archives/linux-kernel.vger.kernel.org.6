@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-318809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C960F96F398
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 712F196F39B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51991C24196
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4441C211DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5121CC8B2;
-	Fri,  6 Sep 2024 11:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F2D1D0143;
+	Fri,  6 Sep 2024 11:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UM5U/cPg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iz0TkLye"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76971CEADE;
-	Fri,  6 Sep 2024 11:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F1B1CFEC9;
+	Fri,  6 Sep 2024 11:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623435; cv=none; b=AW+u6iH7J20stvCKQBEkwLeTy5/6+ueZfkKL4sqjyjfgxkY1SI57zSu3iBrn1/4W9Rzq555MebLOC7EDi+SHjU0v0OMgDg60Spv8R2i3M7bu/jC86D8kKwIikULGh1u5mA5naUSkyDTo2uLH8njYlmFbAxelkE5CP7IUXfwRlnk=
+	t=1725623440; cv=none; b=bqgSIaga4imQOY+rAQuOSXKoylwBtpjD9DlKGi4AWmFSWSwQkBxxGEgRPmwf9sW01WTly7EOZ20EYrblmIylpPMvNR+aHt546H0goA7puBq/f4E0KQS6J63QRMWOu3C40UFdJBxKCQkI9tXTLrgtjzOtuO339imNjJk0U2dwnaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623435; c=relaxed/simple;
-	bh=r6+aoIzCV6mVqMU7MQ7S7hPPKMzL82G9ptr0wZah2Zo=;
+	s=arc-20240116; t=1725623440; c=relaxed/simple;
+	bh=JnKyWhG3EwoEsHqgyqI/LJMj6+JpBz8jATmIzJMWDQI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aXVLBAG1elpwFCTAlxgVx+NsgJ6eFlDDMFTeS4xwiXIvwkOJt41YDFeETAREfatp6+wvahHxXYcsxqyEH77eMLF00QPqiwpcyaDaxPTHfeiOJmGLdTHF0q2GijCdqzVV2O8CFqrhYKfVEbUbB4JGq3a3e8fdBOmo7ZOpbFijHaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UM5U/cPg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68280C4CEC8;
-	Fri,  6 Sep 2024 11:50:31 +0000 (UTC)
+	 MIME-Version; b=AAWixdkc4vkASKUFhY6Sqx9HZg/gtYZscH4QRN6IPS+ue5fiGNk4QueSYAm8GWlx8j9OEbheHmW7hnyAd1IXM4IZQkxutCVunnvgk5Jk1dhAy/V2+BmrSMFU8ny1mmGL8d0/AXUFzgJ3JZS3i/baIIytdA72eX0dyVOlAFKNmyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iz0TkLye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B38B2C4CEC4;
+	Fri,  6 Sep 2024 11:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725623435;
-	bh=r6+aoIzCV6mVqMU7MQ7S7hPPKMzL82G9ptr0wZah2Zo=;
+	s=k20201202; t=1725623439;
+	bh=JnKyWhG3EwoEsHqgyqI/LJMj6+JpBz8jATmIzJMWDQI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UM5U/cPgPKw3kEnBCus9sSnTDEBkR710nYqKA4/rdSS+PwGk8RqqWdwDLuCwYR2ko
-	 b2VSyJNxnE/uVPBd/dOGyjheTkE/jkKsZe5XpKvuZgA41tsfoSRoOxFMiVQ8aQtitz
-	 0w5+UHdNwVR9q11lwcl1hts6lJEkXNwMY0ro/YwA9Uy0H7tTXLVa/nATWJ7/zcEIFg
-	 bnfwhRwZY1477LP8F8BAOgPCsA9DGUbAAGVeW0890GgF8NgI+iVmM+qnd9h/ZptP6C
-	 kXv/r0dbmynQ2f+gMAyo26Hxd3lPnpo/iNr2xaJcTNUHwnhm3kUW+nIrjNCObXoLYA
-	 zmX7egQ1yz9tg==
+	b=Iz0TkLyeGmQP/nJAwVobGqSXXBFxO9PZMd+/ouQDuHczuvQn8KIIzLJ+zozrZ2BM9
+	 gq2fTEy6u7jC0xr2Y/wFzzXRpSOGazouVgnbFCi/Be8QZ0xBh2c5UspEWjlYUnVgLC
+	 U3t6KhlGzzUYicvqqrYfdNicm1dMnHo31RMyAozHZBZOtqAEgXgUC/AVmqZUW2abWW
+	 ItmUDGVjKm/z2vNup0WoqPm7wcsltElxY8+va/UrOorSpRHSdzz3Ev4D8FPL/HTt7I
+	 95j9vms1fazT8c1I7aQzaUXd7XfHIBqs1phVDlWpsH0ImQtNLMOiJFH1lYVGH4AEUw
+	 SBaSERxkG4LYA==
 From: Alexey Gladkov <legion@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-coco@lists.linux.dev
@@ -60,9 +60,9 @@ Cc: "Alexey Gladkov (Intel)" <legion@kernel.org>,
 	cho@microsoft.com,
 	decui@microsoft.com,
 	John.Starks@microsoft.com
-Subject: [PATCH v6 3/6] x86/tdx: Add validation of userspace MMIO instructions
-Date: Fri,  6 Sep 2024 13:50:01 +0200
-Message-ID: <481da97d5b7722845125a9eb7b9b1529d979ec07.1725622408.git.legion@kernel.org>
+Subject: [PATCH v6 4/6] x86/tdx: Allow MMIO from userspace
+Date: Fri,  6 Sep 2024 13:50:02 +0200
+Message-ID: <0a299fe12c5d659ba95dfd14a36f224a4ccfceec.1725622408.git.legion@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1725622408.git.legion@kernel.org>
 References: <cover.1724837158.git.legion@kernel.org> <cover.1725622408.git.legion@kernel.org>
@@ -76,121 +76,51 @@ Content-Transfer-Encoding: 8bit
 
 From: "Alexey Gladkov (Intel)" <legion@kernel.org>
 
-Instructions from kernel space are considered trusted. If the MMIO
-instruction is from userspace it must be checked.
+The MMIO emulation is only allowed for kernel space code. It is carried
+out through a special API, which uses only certain instructions.
 
-For userspace instructions, it is need to check that the INSN has not
-changed at the time of #VE and before the execution of the instruction.
+This does not allow userspace to work with virtual devices.
 
-Once the userspace instruction parsed is enforced that the address
-points to mapped memory of current process and that address does not
-point to private memory.
+Allow userspace to use the same instructions as kernel space to access
+MMIO. Additional checks have been added previously.
 
-After parsing the userspace instruction, it is necessary to ensure that:
-
-1. the operation direction (read/write) corresponds to #VE info;
-2. the address still points to mapped memory of current process;
-3. the address does not point to private memory.
-
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
 ---
- arch/x86/coco/tdx/tdx.c | 130 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 117 insertions(+), 13 deletions(-)
+ arch/x86/coco/tdx/tdx.c | 43 +++++++++++++++++++++++++++++++----------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index eee97dff1eca..636bf4013ef2 100644
+index 636bf4013ef2..1e391897e34f 100644
 --- a/arch/x86/coco/tdx/tdx.c
 +++ b/arch/x86/coco/tdx/tdx.c
-@@ -8,6 +8,7 @@
- #include <linux/export.h>
- #include <linux/io.h>
- #include <linux/kexec.h>
-+#include <linux/mm.h>
- #include <asm/coco.h>
- #include <asm/tdx.h>
- #include <asm/vmx.h>
-@@ -410,6 +411,87 @@ static inline bool is_kernel_addr(unsigned long addr)
- 	return (long)addr < 0;
+@@ -492,6 +492,32 @@ static int valid_vaddr(struct ve_info *ve, enum insn_mmio_type mmio, int size,
+ 	return 0;
  }
  
-+static inline bool is_private_gpa(u64 gpa)
++static int decode_insn_struct(struct insn *insn, struct pt_regs *regs)
 +{
-+	return gpa == cc_mkenc(gpa);
-+}
++	char buffer[MAX_INSN_SIZE];
 +
-+static int get_phys_addr(unsigned long addr, phys_addr_t *phys_addr, bool *writable)
-+{
-+	unsigned int level;
-+	pgd_t *pgdp;
-+	pte_t *ptep;
++	if (user_mode(regs)) {
++		int nr_copied = insn_fetch_from_user(regs, buffer);
 +
-+	/*
-+	 * Address validation only makes sense for a user process. The lock must
-+	 * be obtained before validation can begin.
-+	 */
-+	mmap_assert_locked(current->mm);
++		if (nr_copied <= 0)
++			return -EFAULT;
 +
-+	pgdp = pgd_offset(current->mm, addr);
++		if (!insn_decode_from_regs(insn, regs, buffer, nr_copied))
++			return -EINVAL;
++	} else {
++		if (copy_from_kernel_nofault(buffer, (void *)regs->ip, MAX_INSN_SIZE))
++			return -EFAULT;
 +
-+	if (!pgd_none(*pgdp)) {
-+		ptep = lookup_address_in_pgd(pgdp, addr, &level);
-+		if (ptep) {
-+			unsigned long offset;
-+
-+			if (!pte_decrypted(*ptep))
-+				return -EFAULT;
-+
-+			offset = addr & ~page_level_mask(level);
-+			*phys_addr = PFN_PHYS(pte_pfn(*ptep));
-+			*phys_addr |= offset;
-+
-+			*writable = pte_write(*ptep);
-+
-+			return 0;
-+		}
++		if (insn_decode(insn, buffer, MAX_INSN_SIZE, INSN_MODE_64))
++			return -EINVAL;
 +	}
 +
-+	return -EFAULT;
-+}
-+
-+static int valid_vaddr(struct ve_info *ve, enum insn_mmio_type mmio, int size,
-+		       unsigned long vaddr)
-+{
-+	phys_addr_t phys_addr;
-+	bool writable = false;
-+
-+	/* It's not fatal. This can happen due to swap out or page migration. */
-+	if (get_phys_addr(vaddr, &phys_addr, &writable) || (ve->gpa != cc_mkdec(phys_addr)))
-+		return -EAGAIN;
-+
-+	/*
-+	 * Re-check whether #VE info matches the instruction that was decoded.
-+	 *
-+	 * The ve->gpa was valid at the time ve_info was received. But this code
-+	 * executed with interrupts enabled, allowing tlb shootdown and therefore
-+	 * munmap() to be executed in the parallel thread.
-+	 *
-+	 * By the time MMIO emulation is performed, ve->gpa may be already
-+	 * unmapped from the process, the device it belongs to removed from
-+	 * system and something else could be plugged in its place.
-+	 */
-+	switch (mmio) {
-+	case INSN_MMIO_WRITE:
-+	case INSN_MMIO_WRITE_IMM:
-+		if (!writable || !(ve->exit_qual & EPT_VIOLATION_ACC_WRITE))
-+			return -EFAULT;
-+		break;
-+	case INSN_MMIO_READ:
-+	case INSN_MMIO_READ_ZERO_EXTEND:
-+	case INSN_MMIO_READ_SIGN_EXTEND:
-+		if (!(ve->exit_qual & EPT_VIOLATION_ACC_READ))
-+			return -EFAULT;
-+		break;
-+	default:
-+		WARN_ONCE(1, "Unsupported mmio instruction: %d", mmio);
++	if (!insn->immediate.got)
 +		return -EINVAL;
-+	}
 +
 +	return 0;
 +}
@@ -198,106 +128,42 @@ index eee97dff1eca..636bf4013ef2 100644
  static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
  			     struct pt_regs *regs, struct ve_info *ve)
  {
-@@ -494,7 +576,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+@@ -572,21 +598,14 @@ static int handle_mmio_read(struct insn *insn, enum insn_mmio_type mmio, int siz
+ 
+ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+ {
+-	char buffer[MAX_INSN_SIZE];
  	enum insn_mmio_type mmio;
  	struct insn insn = {};
  	unsigned long vaddr;
--	int size;
-+	int size, ret;
+ 	int size, ret;
  
- 	/* Only in-kernel MMIO is supported */
- 	if (WARN_ON_ONCE(user_mode(regs)))
-@@ -513,6 +595,16 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	if (!user_mode(regs) && !is_kernel_addr(ve->gla)) {
- 		WARN_ONCE(1, "Access to userspace address is not supported");
- 		return -EINVAL;
-+
-+	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
-+
-+	if (user_mode(regs)) {
-+		if (mmap_read_lock_killable(current->mm))
-+			return -EINTR;
-+
-+		ret = valid_vaddr(ve, mmio, size, vaddr);
-+		if (ret)
-+			goto unlock;
- 	}
- 
- 	/*
-@@ -524,30 +616,39 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
- 	 *
- 	 * load_unaligned_zeropad() will recover using exception fixups.
- 	 */
--	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
--	if (vaddr / PAGE_SIZE != (vaddr + size - 1) / PAGE_SIZE)
+-	/* Only in-kernel MMIO is supported */
+-	if (WARN_ON_ONCE(user_mode(regs)))
 -		return -EFAULT;
-+	if (vaddr / PAGE_SIZE != (vaddr + size - 1) / PAGE_SIZE) {
-+		ret = -EFAULT;
-+		goto unlock;
-+	}
- 
- 	switch (mmio) {
- 	case INSN_MMIO_WRITE:
- 	case INSN_MMIO_WRITE_IMM:
- 	case INSN_MMIO_MOVS:
--		return handle_mmio_write(&insn, mmio, size, regs, ve);
-+		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
-+		break;
- 	case INSN_MMIO_READ:
- 	case INSN_MMIO_READ_ZERO_EXTEND:
- 	case INSN_MMIO_READ_SIGN_EXTEND:
--		return handle_mmio_read(&insn, mmio, size, regs, ve);
-+		ret = handle_mmio_read(&insn, mmio, size, regs, ve);
-+		break;
- 	case INSN_MMIO_DECODE_FAILED:
- 		/*
- 		 * MMIO was accessed with an instruction that could not be
- 		 * decoded or handled properly. It was likely not using io.h
- 		 * helpers or accessed MMIO accidentally.
- 		 */
--		return -EINVAL;
-+		ret = -EINVAL;
-+		break;
- 	default:
- 		WARN_ONCE(1, "Unknown insn_decode_mmio() decode value?");
--		return -EINVAL;
-+		ret = -EINVAL;
- 	}
-+unlock:
-+	if (user_mode(regs))
-+		mmap_read_unlock(current->mm);
-+
-+	return ret;
- }
- 
- static bool handle_in(struct pt_regs *regs, int size, int port)
-@@ -691,11 +792,6 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
- 	}
- }
- 
--static inline bool is_private_gpa(u64 gpa)
--{
--	return gpa == cc_mkenc(gpa);
--}
 -
- /*
-  * Handle the kernel #VE.
-  *
-@@ -733,6 +829,14 @@ bool tdx_handle_virt_exception(struct pt_regs *regs, struct ve_info *ve)
- 		insn_len = virt_exception_user(regs, ve);
- 	else
- 		insn_len = virt_exception_kernel(regs, ve);
-+
-+	/*
-+	 * A special case to return to userspace without increasing regs->ip
-+	 * to repeat the instruction once again.
-+	 */
-+	if (insn_len == -EAGAIN)
-+		return true;
-+
- 	if (insn_len < 0)
- 		return false;
+-	if (copy_from_kernel_nofault(buffer, (void *)regs->ip, MAX_INSN_SIZE))
+-		return -EFAULT;
+-
+-	if (insn_decode(&insn, buffer, MAX_INSN_SIZE, INSN_MODE_64))
+-		return -EINVAL;
++	ret = decode_insn_struct(&insn, regs);
++	if (ret)
++		return ret;
  
+ 	mmio = insn_decode_mmio(&insn, &size);
+ 	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
+@@ -786,6 +805,10 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
+ 	switch (ve->exit_reason) {
+ 	case EXIT_REASON_CPUID:
+ 		return handle_cpuid(regs, ve);
++	case EXIT_REASON_EPT_VIOLATION:
++		if (is_private_gpa(ve->gpa))
++			panic("Unexpected EPT-violation on private memory.");
++		return handle_mmio(regs, ve);
+ 	default:
+ 		pr_warn("Unexpected #VE: %lld\n", ve->exit_reason);
+ 		return -EIO;
 -- 
 2.46.0
 
