@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-318351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0A396EC3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:42:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523CA96EC73
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0071F21B59
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:42:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB16B25172
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AE214EC4A;
-	Fri,  6 Sep 2024 07:42:17 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C7815666B;
+	Fri,  6 Sep 2024 07:43:32 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72EE3C463;
-	Fri,  6 Sep 2024 07:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B714D71E;
+	Fri,  6 Sep 2024 07:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725608537; cv=none; b=dt5377THOQUptdJtJUnpSslHsd4Apnu8SLkS4Fhri6ZKPjH5ImB+Whqr1oieobOI6f5dkPW23X2puWUYSxVGIinqksJgWGUZqDHYQBIiphuaitql4+qLDlLTqsiBE+6e8qII/KOShcNDDuQoTXmZMqRC1+3UU7SyARw7OpsC7s4=
+	t=1725608611; cv=none; b=tfhh+4b/xa2cDpM8b2mm2ebM35v6SV9VTJRUVioDeK/U02zEtNF+j5Wsfwkbkh6NnH8ZCm6CZ2Btchd4TFzVsFUONVrnh8z13/J3RGTbURxgopb2+f19rB2ZOqgio8GJY+kJhiCWGaCjod+XDWJijZiVBRKNB1BxYltCkJxVn00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725608537; c=relaxed/simple;
-	bh=UnsJeMKQ8zYPnMw0YAhLPztdm/yfm7bPGAI9ZWv+jNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ciQnXfDiBpfMSv1TYu+6tltIAB7jOyC8e39d2gf6O1teE5P4zyRjeuaW54t2z9rjNnjGmYLYGetTEKOepDwNt1ihPJGbYyLoqomg7S4WzpLnxOlidL2rXAtm6fon+QWz4El04kSPXaas50La0M7BmacGGdpFU2KBM+2nhmkeqX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6b747f2e2b7so15865607b3.3;
-        Fri, 06 Sep 2024 00:42:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725608534; x=1726213334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HOu0qyAEJ6R+fXCEatl02fSOu2FCjiv0QYlkkw1DK6Y=;
-        b=oNYvuKz1/WHCrmM8c06zqE32nqjJsn4t4OMdssZs8OEHA1ZNQE9PvpiYgjrEN1Ts94
-         O6UQMRa21Dd6AoN9vR3yD1Tq2rnutaOAFC8ed0UklWJQ1nQy+BlPrd08o6/KZjhqstyb
-         qCz33gR7b7Y3uO1el0PORW7wsJCKBAfbuTUNFu+8+imlm+P2IhaEj/QkVREXQoP6sCzl
-         Dq5x/p9qrQOX1x0UXAuuxzLcM6s0Revk1KUs3nIKKXEI/vEDXfftBnv0zT7cjeQJIjb9
-         +w0kzPRJHnvw94fKO4RvZBBx04nafQ7Phf1gTM5dVeVz0dQAkNMlnTXBwS1Woh2xt8KT
-         78Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVG2NgSSs2a9EKimyj2MqweKzZ6IUJOLzn+l/Q3S7wd279dhkF+IVjxgMZZBWVu+SvNCAxHIfyKKeURPVrG@vger.kernel.org, AJvYcCWfU3NFHYGHTs76xxYtOwpn1yHbqqFVVOokxo730zDA6WMOl114MccUD3UYVt/JQc/pZumYGmw5Zz6C@vger.kernel.org, AJvYcCWy36jlSKQu93INDD+tA6IFgjsc8OYuVg26ovp5Ry9eFcvjxGsnxOtGL2QSBzNnFSMpm7oYKAcz/XUbbOmty9KOQ7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEoeBuhOYD/0kUAgs7Cr6k7Vng07fp5pBCoEUS6KuUFfknnYNI
-	DZ2ZweEvSr+wkmNA1RRc13sKlvMX5IIFHh6ESLCqGTmBvT5Gz12qVXJcUD4P
-X-Google-Smtp-Source: AGHT+IGFPAezqwsOd1VO6Xth+zrnQgUHzLbjWQFVQzzbyDQyGk8xrgSIdqqhVXkCbx36HWbcBA7dpg==
-X-Received: by 2002:a05:690c:6202:b0:6ad:9550:7617 with SMTP id 00721157ae682-6db4516c9c0mr23053827b3.32.1725608534170;
-        Fri, 06 Sep 2024 00:42:14 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6da7a132071sm15950907b3.141.2024.09.06.00.42.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 00:42:13 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6d4f1d9951fso16071297b3.1;
-        Fri, 06 Sep 2024 00:42:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU39+QvwJa11xJoh5uyaycVuj7fXxI51TyT/RTeic0i6LCvCcwahypDgPxwQRj1FssrMNxaum/fDZYgviBa@vger.kernel.org, AJvYcCUnNyfV7AnHrB4Cp5LkVE9e/QPQXZ6Bc13gCtcsdsPs4bcHQLRM/rF0QhllHDMZYBy3Ml5KGmoAClcLZIuUiJcs3rE=@vger.kernel.org, AJvYcCWshryPN3dpUljVKLapZNa4HYr0bFzVZkO/4a+yfydUXiDJyZOV5hNsXgP+OCofsGSEj21CftC7R0bJ@vger.kernel.org
-X-Received: by 2002:a05:690c:d1a:b0:6db:2753:cd9c with SMTP id
- 00721157ae682-6db45273f36mr19818387b3.44.1725608533743; Fri, 06 Sep 2024
- 00:42:13 -0700 (PDT)
+	s=arc-20240116; t=1725608611; c=relaxed/simple;
+	bh=WBVJTznZlKDb3xF3dJ3M+mo4ckM/wsQeUaHfzaeierQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=euS+mrBp86ZWRnR1IQAVXPDthniNAmLS7K9XPqB8+8c32WwcW4y67xEhNso4Z3DmEum5J/8GBCZfN245UC15yfoW+MI/23pc2CPiuGemH8kaRlE/U2aREOC/NpVY+eDMOgEiEN03ZlExApBMjALGT9XjBgpG37yK20YQYtRclac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4867hGwF087759;
+	Fri, 6 Sep 2024 16:43:16 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
+ Fri, 06 Sep 2024 16:43:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4867hFgV087756
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 6 Sep 2024 16:43:16 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+Date: Fri, 6 Sep 2024 16:43:15 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906062701.37088-1-Delphine_CC_Chiu@wiwynn.com> <20240906062701.37088-23-Delphine_CC_Chiu@wiwynn.com>
-In-Reply-To: <20240906062701.37088-23-Delphine_CC_Chiu@wiwynn.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Sep 2024 09:42:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXFC-TMNdJryq4MBh+QQOntxdHYJrfP2kLqxJk7LKgb9Q@mail.gmail.com>
-Message-ID: <CAMuHMdXFC-TMNdJryq4MBh+QQOntxdHYJrfP2kLqxJk7LKgb9Q@mail.gmail.com>
-Subject: Re: [PATCH v15 22/32] ARM: dts: aspeed: yosemite4: Revise i2c duty-cycle
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
+        tomoyo-users-en@lists.osdn.me,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Delphine,
+On 2024/09/04 23:23, Paul Moore wrote:
+> On Wed, Sep 4, 2024 at 3:10 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> Until 2.6.23, it was officially possible to register/unregister LSM modules
+>> that are implemented as loadable kernel modules.
+> 
+> ...
+> 
+>> Paul Moore has commented
+>>
+>>   I do not intentionally plan to make life difficult for the out-of-tree
+>>   LSMs, but if that happens as a result of design decisions intended to
+>>   benefit in-tree LSMs that is acceptable as far as I am concerned.
+> 
+> Patches that add complexity to the LSM framework without any benefit
+> to the upstream, in-tree LSMs, or the upstream kernel in general, are
+> not good candidates for inclusion in the upstream kernel.
+> 
 
-On Fri, Sep 6, 2024 at 8:28=E2=80=AFAM Delphine CC Chiu
-<Delphine_CC_Chiu@wiwynn.com> wrote:
-> Revise duty cycle SMB11 and SMB16 to high: 40%, low: 60%,
-> to meet 400kHz-i2c clock low time spec (> 1.3 us) from EE request
->
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+The idea and implementation for using LSM from loadable kernel modules is what
+I demonstrated you in a lightening talk session in LinuxCon North America 2010.
+It is 14 years since we learned my concern, and you had been ignoring my concern
+until now.
 
-Thanks for your patch!
+The first solution is "do not use static calls". But you won't agree it. Also,
+I'm not against use of static calls as long as LKM-based LSM is supported.
 
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> @@ -761,6 +761,7 @@ eeprom@54 {
->  &i2c10 {
->         status =3D "okay";
->         bus-frequency =3D <400000>;
-> +       i2c-clk-high-min-percent =3D <40>;
+The second solution is "export static calls" (and leave how it is used by
+LKM-based LSMs). But some of LSM people do not like solutions that can allow
+LKMs to disable built-in LSMs.
 
-This property is documented nowhere, except for a not-yet-accepted
-patch submission in 2022. It looks like you've been told before, multiple
-times...
+The third solution is "continue using linked list for LKM-based LSMs" which was
+suggested by KP Singh [1]. I'm OK with this solution, though it is unlucky that
+LKM-based LSMs can't be benefited from "static calls".
 
->         i2c-mux@74 {
->                 compatible =3D "nxp,pca9544";
->                 i2c-mux-idle-disconnect;
-
-Gr{oetje,eeting}s,
-
-                        Geert
+If you ignore my concern, I have to NACK the static call changes you are
+going to send in the upcoming merge window.
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [1]
+
 
