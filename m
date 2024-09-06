@@ -1,147 +1,170 @@
-Return-Path: <linux-kernel+bounces-319268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B877996F9DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C564F96FA4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D69A11C21B81
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:20:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28C31C240BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73AE1D47D0;
-	Fri,  6 Sep 2024 17:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148D51D47B9;
+	Fri,  6 Sep 2024 18:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GUTFNgtQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U9R9wPK1"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="gj7oYbgy"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788EA1D2F43;
-	Fri,  6 Sep 2024 17:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B704915821D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725643211; cv=none; b=YoqJjUDJcIzSIuCIb3baHpN95zExjAsw6TsEQkXoNkLffW+EwVp+aEXdaLD7EQqvgOsBkHExD8IO2zo4zniBcPB3nnNPvMJNwSdWiSqZ6cTnwOcT8+X8FGroK+W3kygJNbp/k5CXrVZQ/iD/iD92WwRREruclm5pfngMOL1IXk8=
+	t=1725645911; cv=none; b=iWRS4k9VammvF/YEmlKbrO9YrDLo+VDSuhpJTEx7o6YWvItZopKDllknpPH1eTOuc7dxHJiPLQI80MYqN4raaOUHX8GEILJvdXSvJgN3gZJku04h7/EA6jLnVN3L3obYPRm/vAK6P/wOZI9O5iSN++k5aFQmk2TX/1FZQ9VXUHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725643211; c=relaxed/simple;
-	bh=hFsVCuWFovzKfydtu/2HfnueKRA8iG/FfmTYP+cgV60=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=n4pgNb35Ltt5qIrM8nSkrb6SYstEoEHr0gBZdwifNkYqZeKpwZ2K1Q523ZgLwLu+y7Ux2Dw851v0V2kovhOvG4nFnfcDQY6INI9xOnDg+2YozZnJ2kNIVjRSoHO6XBqYEr+Wi0LvTWJCEFlmviIH3wx6OcRzr0pFhNWaMCrKSPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GUTFNgtQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U9R9wPK1; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8FB57114017E;
-	Fri,  6 Sep 2024 13:20:08 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 06 Sep 2024 13:20:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725643208;
-	 x=1725729608; bh=pGqQNxsj9qfH9QsO5+3KB74ZxiKlh96u9meajutmSw8=; b=
-	GUTFNgtQFspoqY52oTwNT8LGQnoU4H5uEN9RCeE6gsv3bwEHDlnVhLP50Pdu9Fu2
-	2kdGuRC787ra70SOi0UHXcegX3AHoLHukGeHXAxg56kIS58HVYC7w0+P/Sm2cSLN
-	DlbIi+sdAUcRaOLVdAU1qUpy/WCbNDNwKiSA6lU8WR8S55y1WdO/oJyoHm07EssY
-	osYOgAcVNnf8/sawYqWKezWV/nLNODEen6w+s2P8IiLxkOjLiI4YkBD/VLV0Q/Nl
-	6LgaZTm7eHbRfQmgYIxXLKmyMpGoLDZRf0mr70S4kMDxBizzrN9ysSeLtNhthK//
-	LeElrKukKR3n4/4pKHbsYg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725643208; x=
-	1725729608; bh=pGqQNxsj9qfH9QsO5+3KB74ZxiKlh96u9meajutmSw8=; b=U
-	9R9wPK1G+49xOApyDsYUf3Fu3yQ5Vpd576/nOMIoIbwoax7odlvHHdYUQdZREVmx
-	QM0CI//E+Bd1YBnjFtXWJqWAI/+gS2W6Br6mrc9hWBYIotQZp/LIjc1yeih9r2RK
-	YSX5FTqLJ28Y/ekzoUfrJHsdpTQx1lH9uBInGAazEeAImpPc248R57rdLjcJKh7b
-	FC0zG3bUZ7bgUI1Ypp1mUO+ZpoF4QLx2p8qce88pDSkAhmKPZFCRg7cpuojXe9Zb
-	uwIPs45uyLTqZzS06qMWOb1tRyHBPRe70+6F2cKBNHPLL0PizwmXMCaEqWbgDz02
-	WNjstbFo++LL9oHYolAiw==
-X-ME-Sender: <xms:xznbZoRc9TVjrwLKZD3SHzdddDiP96tjjtxv7zYuQTxohyzpwwcKxw>
-    <xme:xznbZlwYPXSDx2sdJuDKdfHHY_kloBKx7LdIHrJznJ6NTYm47RJugPzFXBqtpiGba
-    y7hkWlc55lr9ypGJ1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiuddguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprhgt
-    phhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtg
-    hpthhtohepmhgrthhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhm
-    pdhrtghpthhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepnh
-    hpihhgghhinhesghhmrghilhdrtghomhdprhgtphhtthhopehrohhsthgvughtsehgohho
-    ughmihhsrdhorhhgpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:xznbZl1fFpbhEQaSulOr5Sb5zVIVPk3MWod4f0_odz-P4kBqh0pBWw>
-    <xmx:xznbZsCU09WoXMvmnkvlxoT-lKYi7xxe8W1lB0yGdF4oSnkanfmeGg>
-    <xmx:xznbZhia_v-Pv1knXsHTdr-LSugEdm-qUUfO4wftFXFqKrccp8gEiQ>
-    <xmx:xznbZorI3xx_yg1Bao5_pENYkT_hqfWhD2oxzzfDc1KcZTunJ0-Gsw>
-    <xmx:yDnbZm2SOmPpRxhr_WCBYx6zAC4fjvxBPkGmXhlUQA-4a4PbbOdxdC8n>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2F9C7222006F; Fri,  6 Sep 2024 13:20:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725645911; c=relaxed/simple;
+	bh=FqRhF+hgWt9gumhdbMzCTiLzUGjlH3cygb9/nG0z4q4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rNjy0/lIkoWljThl3WD9neCHwnibfw0r02NlSQbGaa5rosiwJQMCx3w37z/7tpe8HbSL5LYB0/PlEiENYl8QlOGIEaUmMkmfMd0b7RjE+gQ+MBhjYhbEtceabTbNKaGleLl44gaKR5FbrMrgGz/JRAW8XjQeR9XpowWtx4uwh2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=gj7oYbgy; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=o77m5vxrdvf55j7oaysbdkjv7e.protonmail; t=1725645907; x=1725905107;
+	bh=hIDpKHjuNvEZhooEGipi9Zn1LoFFiUhBOiw2RNEcaCw=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=gj7oYbgy/i4Al1CZV97N6GCf3VdnHotg3xY/WwdK+B3nzisEVFSVmrwThvJcvUFsW
+	 mi5rgI2ngP6am9TKrtxS0s9SKryOOQt5zu+bj/EKQbCJPSIbRcHJOHnOOz3Elauu41
+	 tTRMhTkCtoTTnQOxCRcwW/uWK6SBWPsYSHPNhaNa1tEEkMupRqSDQINuwHB0EZZzOW
+	 aD9kqe+DRYWxgBn9ExakDFzviJNOwCkQvMUp78QMaASJ27Pay75XMdk7JkZfUydVSM
+	 qZ8kbUZ4SAdyYrpRJswIinhYzIrwejWUXotN1O+KyL3QBvCcJ1lTBpIe5swJTbcA6/
+	 85qml8FHRzYZg==
+Date: Fri, 06 Sep 2024 18:05:01 +0000
+To: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
+From: Patrick Miller <paddymills@proton.me>
+Cc: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH 2/2] checkpatch: warn on known non-plural rust doc headers
+Message-ID: <20240906180456.2302688-1-paddymills@proton.me>
+Feedback-ID: 45271957:user:proton
+X-Pm-Message-ID: 02efb41ff8507f66a2862938f6a743984f27959e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 06 Sep 2024 19:19:46 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mm@kvack.org
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>, "Naveen N Rao" <naveen@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>
-Message-Id: <11527a80-7453-4624-b406-e88c5692b015@app.fastmail.com>
-In-Reply-To: <e28e1974-cced-462c-8f57-ca1474272e73@arm.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-4-vincenzo.frascino@arm.com>
- <cfb5ea05-0322-492b-815d-17a4aad4da99@app.fastmail.com>
- <e28e1974-cced-462c-8f57-ca1474272e73@arm.com>
-Subject: Re: [PATCH 3/9] x86: vdso: Introduce asm/vdso/page.h
-Content-Type: text/plain
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------b6345da3413b866fec74b81929953a5d1f572e8a9a8af0f251bd6273a8f880ec"; charset=utf-8
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------b6345da3413b866fec74b81929953a5d1f572e8a9a8af0f251bd6273a8f880ec
+Content-Type: multipart/mixed;
+ boundary=02ee9be1f60f54d1ede820204ae95459c801db904821ca9e7722b0991a12
+From: Patrick Miller <paddymills@proton.me>
+To: a.hindborg@samsung.com,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dwaipayanray1@gmail.com,
+	gary@garyguo.net,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	wedsonaf@gmail.com
+Cc: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH 2/2] checkpatch: warn on known non-plural rust doc headers
+Date: Fri,  6 Sep 2024 14:04:56 -0400
+Message-ID: <20240906180456.2302688-1-paddymills@proton.me>
+X-Mailer: git-send-email 2.46.0
+MIME-Version: 1.0
+
+--02ee9be1f60f54d1ede820204ae95459c801db904821ca9e7722b0991a12
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 6, 2024, at 11:20, Vincenzo Frascino wrote:
-> On 04/09/2024 15:52, Arnd Bergmann wrote:
->> On Tue, Sep 3, 2024, at 15:14, Vincenzo Frascino wrote:
-> Looking at the definition of PAGE_SIZE and PAGE_MASK for each architecture they
-> all depend on CONFIG_PAGE_SHIFT but they are slightly different, e.g.:
->
-> x86:
-> #define PAGE_SIZE        (_AC(1,UL) << PAGE_SHIFT)
->
-> powerpc:
-> #define PAGE_SIZE        (ASM_CONST(1) << PAGE_SHIFT)
->
-> hence I left to the architecture the responsibility of redefining the constants
-> for the VSDO.
+Adds a check for documentation in rust file. Warns if certain known
+documentation headers are not plural. Even though some sections may
+be singular (i.e. only one example), the header should still be plural
+so that more examples can be added later without needing to change the
+header.
 
-ASM_CONST() is a powerpc-specific macro that is defined the
-same way as _AC(). We could probably just replace all ASM_CONST()
-as a cleanup, but for this purpose, just remove the custom PAGE_SIZE
-and PAGE_SHIFT macros. This can be a single patch fro all
-architectures.
+Fixed the whitespace issue on my previous patch.
 
-    Arnd
+Signed-off-by: Patrick Miller <paddymills@proton.me>
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1110
+
+---
+ scripts/checkpatch.pl | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 39032224d504..cb5ecdb6df9b 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3900,6 +3900,13 @@ sub process {
+ 			     "Avoid using '.L' prefixed local symbol names for denoting a range of code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-annotations.rst\n" . $herecurr);
+ 		}
+ 
++# check that document sec
+tion headers are plural in rust files
++		if ($realfile =~ /\.rs$/
++			&& $rawline =~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guarantee|Panic)\s*$/) {
++			WARN( "RUST_DOC_HEADER",
++				"Rust doc headers should be plural\n" . $herecurr );
++		}
++
+ # check we are in a valid source file C or perl if not then ignore this hunk
+ 		next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
+ 
+-- 
+2.46.0
+
+
+--02ee9be1f60f54d1ede820204ae95459c801db904821ca9e7722b0991a12
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="publickey - paddymills@proton.me
+ - 0xDCA74891.asc"; name="publickey - paddymills@proton.me - 0xDCA74891.asc"
+Content-Type: application/pgp-keys; filename="publickey -
+ paddymills@proton.me - 0xDCA74891.asc"; name="publickey -
+ paddymills@proton.me - 0xDCA74891.asc"
+
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tClZlcnNpb246IEdvcGVuUEdQIDIu
+Ny40CkNvbW1lbnQ6IGh0dHBzOi8vZ29wZW5wZ3Aub3JnCgp4ak1FWWs0UnNSWUpLd1lCQkFIYVJ3
+OEJBUWRBU1FhVy9FUmQ4dGZncXNNSHQweTY3ZFdRTEU3UnV2T3gzanphCmdhRWI0c0xOSzNCaFpH
+UjViV2xzYkhOQWNISnZkRzl1TG0xbElEeHdZV1JrZVcxcGJHeHpRSEJ5YjNSdmJpNXQKWlQ3Q2p3
+UVFGZ29BSUFVQ1lrNFJzUVlMQ1FjSUF3SUVGUWdLQWdRV0FnRUFBaGtCQWhzREFoNEJBQ0VKRUp0
+UgpHcnN1cjU0UkZpRUUzS2RJa1N2VW5DdmU4MDFtbTFFYXV5NnZuaEZpcUFFQXQwVCtwZ3AwUm9X
+d0lmbURQRlRuCjNsbVRRcVA0dUEreDRnNXB2OG5SSHBJQS8xVU1YLzh3akZlK24wZUM0V0pqeTRu
+NS9OZUtxMXovOFBKdFlhdXMKZVZnT3pqZ0VZazRSc1JJS0t3WUJCQUdYVlFFRkFRRUhRRi9mTnBE
+ZmxsRFJuSEhyZUh2VHRJdEZ3dURMM0taQQphaDhZd3dxV0FyNFJBd0VJQjhKNEJCZ1dDQUFKQlFK
+aVRoR3hBaHNNQUNFSkVKdFJHcnN1cjU0UkZpRUUzS2RJCmtTdlVuQ3ZlODAxbW0xRWF1eTZ2bmhH
+R2Z3RUFuWkFzR3BvTDdRaTlWQ05PcGNrcjB2OE41S3hic2xJTGZlUCsKMmNJU0hlY0Erd1RxWDNs
+Z3dnNVJDN1lBT1MvUTBDc3EwY2tPSTBKbnNMS1VaU3I4TlJvQgo9VzE4bgotLS0tLUVORCBQR1Ag
+UFVCTElDIEtFWSBCTE9DSy0tLS0t
+--02ee9be1f60f54d1ede820204ae95459c801db904821ca9e7722b0991a12--
+
+--------b6345da3413b866fec74b81929953a5d1f572e8a9a8af0f251bd6273a8f880ec
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnUEARYIACcFAmbbRE0JEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
+nhEAAFGqAP4wuJeb+8FpgBc3yXEdwyUcI4nondHbGEqFgYUXx5zVLwEA91xJ
+Q2HcygmWeYNrhGSQfGZDRQsPoP5EdT3KRUTEvAY=
+=FRQy
+-----END PGP SIGNATURE-----
+
+
+--------b6345da3413b866fec74b81929953a5d1f572e8a9a8af0f251bd6273a8f880ec--
+
 
