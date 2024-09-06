@@ -1,215 +1,131 @@
-Return-Path: <linux-kernel+bounces-317974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-317975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB32696E699
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:01:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667E696E69C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 02:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB001C22D1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921621C23100
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 00:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D618BF0;
-	Fri,  6 Sep 2024 00:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4017F2F4A;
+	Fri,  6 Sep 2024 00:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aPNIu3b/"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sIEWXPrS"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC1118D
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 00:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F11BA4A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 00:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725580868; cv=none; b=b0vg0QA5XLIYtY+9ur7W+ETBMGj/fxBixlfaOlfw/Pfa0hFIcbefN53yPuf1qurRkPsuuyFDLmoKDgHVmMFEy8lEyA8JdiU7/xAN5MswuTpSQWrWmhgN63BamJlDrE9y8oPxFbJqXFczlqB3KaLvTvs/eyRnyy8GNP44b6usU/M=
+	t=1725581014; cv=none; b=Y9Ng6h6AMv2EUnZEcZHQzf5tn6imbnN0ADZA4HYP8QsF+kxuyJFtBeAmYnjuOdgEsL+lmOCrI149aJ/hpYxpA+kzVraGn2Pd1kTR4MLydpKBMlSBKM2vFM0dvW3UXvFsIq2QOKsEQkSiiMNwAfAuOM6ChE8GPYDNHMn2d/1jXYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725580868; c=relaxed/simple;
-	bh=fpfMJbvCMTbmXggAXAPgiMEos6uWDzVmbGo8vC1dmbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GXLv7VdnoVSj8K/xQjl0rHOUUCSKCIr892AFexKWIf4ZM1yqQN0vu2yO4rYpWQdrcwdcH0oGBwkvG3WdbhtTWP3k0/DlYcpGQc/XMkg7zeRJtMjvhrfZ1WhzDB+Syxw1PPsLD2qgtCU0Oaa0NEzSKLr5sLCoo+0axEJ1If+GHLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aPNIu3b/; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1725581014; c=relaxed/simple;
+	bh=5R/2y/WqhxUV2GXI4fEJ2tBN882Aayxea40bdB1Z9t8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=l1PbQxouheQOA5Hp6NZunktw/8iUlwT4IbbGQBLv7QmjkqS4PAWDiywkB13ZM22TnXwo/vEWXmqm0OOGUycXQJNna48PzAeYA9v7Lz7ETscAn+bhTWDAG499HDM58M1z/5RonetcIp2ZunEf76TY9srkvcA0tko+XvqpcKXIs/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sIEWXPrS; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso10568955e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 17:01:05 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20540baca29so21107285ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 17:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725580864; x=1726185664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5zbiIE5f0ijyM2F94C8pzvs+v46It1WxJmu/JDnwdjw=;
-        b=aPNIu3b/DkRdFxv2/8Tv/CwaqEy5mogFS5DZVUuORzdVU3IB5bBxZ5AvHUm+ZQTvNt
-         cf4KnY3IL5Tt0khQKR7c43/3HqHsJNjAoMIZrFHlVPEtydtpZjYj9hcWdSRCedCShojb
-         LIqcIVOSr1niqv4qibsfHYdrsRrWMNEyG1qYeFItmxyrSFWt6fPwAv8hQUgtqBUcBzQ6
-         +4uddP8cJ5RRgEnDbtj77lo4Ui9rA5SPjD4qaJWm8Tfn2K/A2ek655blJFu7QYqCXzEj
-         BYDKKAAsCHxwadIBL5z9ePoiptvKyiuep9VPWrHVVSY7qSQpy7i2rh1vakRq+8UKRz8W
-         ZHsA==
+        d=google.com; s=20230601; t=1725581013; x=1726185813; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lb94RnSDbmLGLcyEx39Gw1x8H5QxDPdWSPxan+FyvB0=;
+        b=sIEWXPrSMRgVqphJU6Jd1APD/IvekzwH2VCJe6iRTkNQnZB4vdX+CyJ/1TX3t7Pch3
+         vWOKAaedqnDdJ+G4k3ekdqN15cLOio2p3Sjam6HRiFugC+Ow+j5U7dKOMNxRemtoHyla
+         YBSmlHIfmTXx3tnjhY/HJsZjbObV2Kw+NtQBHz7ahHFL7XqM/rELJvQyAevHy3644E2E
+         oJqujwo9pMB+SY+LkAIa75Eexc3yi5EbK4K6Vx782xnJXZE8NvrM3BbSq6H8taRMcw9E
+         oxcoDzYx4pg/eaw50rICN34zXyJDQ7IkcQf+JYIBpULNKDphYjxasd6FsI7VEJETm4IP
+         PYDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725580864; x=1726185664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5zbiIE5f0ijyM2F94C8pzvs+v46It1WxJmu/JDnwdjw=;
-        b=s3JrtcJcY+K5bT7vBBmngAlQNV+QWonlP9CdTfCiOw6KigFQGsSWZeShVSI32//zbj
-         a7VQGW5lnc1D6ohEjgDjMoeCJD1gadC4Drt8Pfo2maZJL5+UOHN8K+CqjKcOfWn1k9V/
-         4Za2VdgSDt28MMUc+48laHrMHGwfF0dVV5mqtu6ys8L2hmWEMxIbmOdA0IuE7/f1f52F
-         IEZGLG3C3m/2oUIsKmn7BgNVZP2WCSw9AB12bcvkIGYYCurbjMG9CYpm6xtCybyRmaoy
-         hgRxxMit4YOvJq3Zvesy5hXG5NELCcrQpfLDqephlzKpiMedO65ykzQW+u+qrySFBeT2
-         8UCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpn1D+ceyP/6kDakkAqMNOH1HCvMzPxnKY70O9UL9KxWDsOn2itQQ6//BE9aP6uVbg58YZzC49ifZyotw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI4/n3KW78YJ7CYRUXO93E9FA/U7e6O3pY7J9wdWlCcbPV+2cH
-	VwdAadU+H8UWqnFrqUb3KIXI4ET+DaHv3e35rgw0EtDch4ag77tsbs4T/QkOtSRxe8ShUOPfHw8
-	60BmNOfLA8oSujcHpItBnFl880tW+PEsKG04dBV11WID8xbkpgPXk
-X-Google-Smtp-Source: AGHT+IGVXtxRG+yYgtoUzZFo9L/X25W9Q/t5h7V6MToEk/e7asHXKKxligC6oCoRrHdVLVYKwitQgwT1nX7qG5GYB7c=
-X-Received: by 2002:a05:600c:4e46:b0:426:60bc:8f4e with SMTP id
- 5b1f17b1804b1-42c9f97b524mr4515845e9.5.1725580863110; Thu, 05 Sep 2024
- 17:01:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725581013; x=1726185813;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lb94RnSDbmLGLcyEx39Gw1x8H5QxDPdWSPxan+FyvB0=;
+        b=kELvfvIPkJMSNjZOmJhSmSvf0oxQ/jTogF3DP1P6pwHRVetVTIZVFQTU9F1r+GkhAb
+         Hjc04zFBG2fyAKUfDhevGp5yaRgThtrzN0x9Opkrw/0mMJ0GtuzmOp1Vn98CDg0IJQ2z
+         oKCaw+WXJxXAPR0AdCXAqmaAMCFQety7rh0r252G3+VGP7MED9aWGCAozdirxya7oOoo
+         Ti/hlJpQ3m0ct5IC9cfRWcOnWwPsZMin0Pr+aV1rjJRfy54McqDq4AysRNYrpcUxLKkN
+         UqSrl4TYNz/wtyrMtJesnafb7n6/d4sD1HXgWVwJbkouPyzXI0U3k5KXaOpUwI3wVHnB
+         Lk/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTnq7UKaaIQR4s+k/DLhrsyjW+aluuFcwTcrs5e+taXSNwM1uPA8r8Yk8ojTh7i/hoVsrWtR6ONwc9O4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHdX2TaSmL4lDk42PRgC7dG4ydH0erEne3Qh+fQXLdf+kiM4K3
+	DLvxHIqommrvxZ/WAXn+vjDO36fShz9GsKkxjQG8uFsWYzhz2hr7nHvZcbEZw5Zeb1u961ELuT8
+	0cmMgjh3iQOUIvA==
+X-Google-Smtp-Source: AGHT+IGRECBEERbLSskRzYgPKP8c+xQVePlIpPB7xS8H6FIHSZLW2hXff4BteDxNIf99GTAFfJ41K18bV+IfaxY=
+X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
+ (user=tjmercier job=sendgmr) by 2002:a17:902:d2ce:b0:205:799f:125e with SMTP
+ id d9443c01a7336-206f0622e71mr203235ad.10.1725581012511; Thu, 05 Sep 2024
+ 17:03:32 -0700 (PDT)
+Date: Fri,  6 Sep 2024 00:03:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240829102543.189453-1-jingxiangzeng.cas@gmail.com>
-In-Reply-To: <20240829102543.189453-1-jingxiangzeng.cas@gmail.com>
-From: Wei Xu <weixugc@google.com>
-Date: Thu, 5 Sep 2024 17:00:40 -0700
-Message-ID: <CAAPL-u-ERAfjg+RP01QE1XfvQqPHn4ngKAwb_XZA2Cy8KTsVwg@mail.gmail.com>
-Subject: Re: [PATCH] mm/vmscan: wake up flushers conditionally to avoid cgroup OOM
-To: Jingxiang Zeng <linuszeng@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Yu Zhao <yuzhao@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	Kairui Song <kasong@tencent.com>, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+Message-ID: <20240906000314.2368749-1-tjmercier@google.com>
+Subject: [PATCH] dma-buf: heaps: Add __init to CMA and system heap module_init functions
+From: "T.J. Mercier" <tjmercier@google.com>
+To: tjmercier@google.com, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, 
+	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 3:25=E2=80=AFAM Jingxiang Zeng
-<jingxiangzeng.cas@gmail.com> wrote:
->
-> From: Zeng Jingxiang <linuszeng@tencent.com>
->
-> Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> removed the opportunity to wake up flushers during the MGLRU page
-> reclamation process can lead to an increased likelihood of triggering
-> OOM when encountering many dirty pages during reclamation on MGLRU.
->
-> This leads to premature OOM if there are too many dirty pages in cgroup:
-> Killed
+Shrink the kernel .text a bit after successful initialization of the
+heaps.
 
-Thanks for the patch. We have encountered a similar problem.
+Signed-off-by: T.J. Mercier <tjmercier@google.com>
+---
+ drivers/dma-buf/heaps/cma_heap.c    | 4 ++--
+ drivers/dma-buf/heaps/system_heap.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
->
-> dd invoked oom-killer: gfp_mask=3D0x101cca(GFP_HIGHUSER_MOVABLE|__GFP_WRI=
-TE),
-> order=3D0, oom_score_adj=3D0
->
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x5f/0x80
->   dump_stack+0x14/0x20
->   dump_header+0x46/0x1b0
->   oom_kill_process+0x104/0x220
->   out_of_memory+0x112/0x5a0
->   mem_cgroup_out_of_memory+0x13b/0x150
->   try_charge_memcg+0x44f/0x5c0
->   charge_memcg+0x34/0x50
->   __mem_cgroup_charge+0x31/0x90
->   filemap_add_folio+0x4b/0xf0
->   __filemap_get_folio+0x1a4/0x5b0
->   ? srso_return_thunk+0x5/0x5f
->   ? __block_commit_write+0x82/0xb0
->   ext4_da_write_begin+0xe5/0x270
->   generic_perform_write+0x134/0x2b0
->   ext4_buffered_write_iter+0x57/0xd0
->   ext4_file_write_iter+0x76/0x7d0
->   ? selinux_file_permission+0x119/0x150
->   ? srso_return_thunk+0x5/0x5f
->   ? srso_return_thunk+0x5/0x5f
->   vfs_write+0x30c/0x440
->   ksys_write+0x65/0xe0
->   __x64_sys_write+0x1e/0x30
->   x64_sys_call+0x11c2/0x1d50
->   do_syscall_64+0x47/0x110
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
->  memory: usage 308224kB, limit 308224kB, failcnt 2589
->  swap: usage 0kB, limit 9007199254740988kB, failcnt 0
->
->   ...
->   file_dirty 303247360
->   file_writeback 0
->   ...
->
-> oom-kill:constraint=3DCONSTRAINT_MEMCG,nodemask=3D(null),cpuset=3Dtest,
-> mems_allowed=3D0,oom_memcg=3D/test,task_memcg=3D/test,task=3Ddd,pid=3D440=
-4,uid=3D0
-> Memory cgroup out of memory: Killed process 4404 (dd) total-vm:10512kB,
-> anon-rss:1152kB, file-rss:1824kB, shmem-rss:0kB, UID:0 pgtables:76kB
-> oom_score_adj:0
->
-> The flusher wake up was removed to decrease SSD wearing, but if we are
-> seeing all dirty folios at the tail of an LRU, not waking up the flusher
-> could lead to thrashing easily. So wake it up when a mem cgroups is
-> about to OOM due to dirty caches.
->
-> MGLRU still suffers OOM issue on latest mm tree, so the test is done
-> with another fix merged [1].
->
-> Link: https://lore.kernel.org/linux-mm/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8=
-S6N-MZUmErNAXoXmw@mail.gmail.com/ [1]
->
-> Fixes: 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  mm/vmscan.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index f27792e77a0f..9cd8c42f67cb 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -4447,6 +4447,7 @@ static int scan_folios(struct lruvec *lruvec, struc=
-t scan_control *sc,
->                                 scanned, skipped, isolated,
->                                 type ? LRU_INACTIVE_FILE : LRU_INACTIVE_A=
-NON);
->
-> +       sc->nr.taken +=3D isolated;
->         /*
->          * There might not be eligible folios due to reclaim_idx. Check t=
-he
->          * remaining to prevent livelock if it's not making progress.
-> @@ -4919,6 +4920,14 @@ static void lru_gen_shrink_lruvec(struct lruvec *l=
-ruvec, struct scan_control *sc
->         if (try_to_shrink_lruvec(lruvec, sc))
->                 lru_gen_rotate_memcg(lruvec, MEMCG_LRU_YOUNG);
->
-> +       /*
-> +        * If too many pages failed to evict due to page being dirty,
-> +        * memory pressure have pushed dirty pages to oldest gen,
-> +        * wake up flusher.
-> +        */
-> +       if (sc->nr.unqueued_dirty >=3D sc->nr.taken)
+diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
+index c384004b918e..39c1e533a2f2 100644
+--- a/drivers/dma-buf/heaps/cma_heap.c
++++ b/drivers/dma-buf/heaps/cma_heap.c
+@@ -366,7 +366,7 @@ static const struct dma_heap_ops cma_heap_ops = {
+ 	.allocate = cma_heap_allocate,
+ };
+ 
+-static int __add_cma_heap(struct cma *cma, void *data)
++static int __init __add_cma_heap(struct cma *cma, void *data)
+ {
+ 	struct cma_heap *cma_heap;
+ 	struct dma_heap_export_info exp_info;
+@@ -391,7 +391,7 @@ static int __add_cma_heap(struct cma *cma, void *data)
+ 	return 0;
+ }
+ 
+-static int add_default_cma_heap(void)
++static int __init add_default_cma_heap(void)
+ {
+ 	struct cma *default_cma = dev_get_cma_area(NULL);
+ 	int ret = 0;
+diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+index d78cdb9d01e5..26d5dc89ea16 100644
+--- a/drivers/dma-buf/heaps/system_heap.c
++++ b/drivers/dma-buf/heaps/system_heap.c
+@@ -421,7 +421,7 @@ static const struct dma_heap_ops system_heap_ops = {
+ 	.allocate = system_heap_allocate,
+ };
+ 
+-static int system_heap_create(void)
++static int __init system_heap_create(void)
+ {
+ 	struct dma_heap_export_info exp_info;
+ 
+-- 
+2.46.0.598.g6f2099f65c-goog
 
-Any reason not to use a strict =3D=3D check as in shrink_inactive_list()?
-
-Also, this check allows the wakeup of the flusher threads when both
-sc->nr.unqueued_dirty and sc->nr.taken are 0, which is undesirable.
-
-If we skip the wakeup for the cases where both counters are 0, then I
-think we need to handle the situation where only dirty file pages are
-left for reclaim in the oldest gen. This means that
-sc->nr.unqueued_dirty needs to be updated in sort_folios() (in
-addition to shrink_folio_list()) as well because sort_folios() doesn't
-send dirty file pages to shrink_folio_list() for eviction.
-
-> +               wakeup_flusher_threads(WB_REASON_VMSCAN);
-> +
->         clear_mm_walk();
->
->         blk_finish_plug(&plug);
-> --
-> 2.43.5
->
 
