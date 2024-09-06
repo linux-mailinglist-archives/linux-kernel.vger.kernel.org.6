@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-318745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC8B96F278
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1960E96F2C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1488B2094B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:12:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7557BB21923
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783981CB307;
-	Fri,  6 Sep 2024 11:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0711CB15D;
+	Fri,  6 Sep 2024 11:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Ujx0Df32"
-Received: from pv50p00im-tydg10021701.me.com (pv50p00im-tydg10021701.me.com [17.58.6.54])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nzw5718O"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A634B158866
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FC81C8FDF;
+	Fri,  6 Sep 2024 11:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725621152; cv=none; b=fmEY1kUZXrpR5GU3yX2+Tux+PaMDgsf5SHFP+I39IQpbvNVGDm00aGu4Q8gqZHGstHE0XTo2icR500CqfQwNyfmmsUW1eOSBJrBN9j7m4Pdw2K2o95tRBWpt492SYQmb33DLB6WZxU2K2ultZQD+A4II3NF/zTpTEO7k48U8ep8=
+	t=1725621625; cv=none; b=IMCPbozC91tR50Pqd944PvcLvXE8a4HuvrDD2Exanzy0aEXESdG5OM2hS2S6mgT0MMl/MSKmXtAFG+iamyRjSLVf6igUGLLJKckZxvy1Sdqlv/8LYRg1ApPBoI43mF81E6JWZLJS5o+JQluv3fZrRgx6w+UWxQxmMEADQO24aWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725621152; c=relaxed/simple;
-	bh=CwTg5C3RAqrdegTeVgfHwHa/Ih6rpo8s6WHBMDaSmCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H4kBLPzyOeypX7VBv9LXh8RIl8AD8QrIWO3Ra4b4AYuaTAROrrxWn7q3l7+fCPorJC2orFZgj/7g1K0BOh1o+roVWBGYDvrJCNVA0VafkOEJi2enVWCkJ2hihrbw8yMTjGedwIfdVE6+I+ovCCuHhJaIDJuHM1+FzJKMU5r+xBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Ujx0Df32; arc=none smtp.client-ip=17.58.6.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725621151;
-	bh=fCUr0yYMyiDqZLvbfPiEFIYbUFw3LPM+MmdgJ6xo9Jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=Ujx0Df32xvrtyUA9oJOyR9JhNWfFNd3ehdqrza3sd0K3/Wg57tWl6j5lNXcR575oR
-	 QEqp6PLArQyMg5TNUSuaGeYYbT+rvgdJxYsXh8HTqVCqAvFzRqgt4JEsj1o5y3YniD
-	 zXZjSFGwxGDgYX2EZxgJYKxB/X10y1VkQg+znt3fLGMYXX81FAa2Banjj5HVIjCwc7
-	 uUCsNa+OMZpJX50XGgfti3of/JdQPTmEwwj3SIBX/kw52g7WS6pvRS2FtcXnv9ubsY
-	 1P0ntLKyA0vdB8TM+Bz9OCN9W43YlU3siALjdj8oedrVUOEd0grH4AqyVu30UvYd63
-	 ZxtatkHsGteUg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-tydg10021701.me.com (Postfix) with ESMTPSA id 208573A1107;
-	Fri,  6 Sep 2024 11:12:26 +0000 (UTC)
-Message-ID: <e45ad7f7-ae35-48bb-ba36-af9952b661cf@icloud.com>
-Date: Fri, 6 Sep 2024 19:12:10 +0800
+	s=arc-20240116; t=1725621625; c=relaxed/simple;
+	bh=vTHoF1biyn8M+Tafa0ZBlDlbVpiqGRus7JO6I3E7+II=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RElvKG/FxBkF/LqfAdKmqN8jDSvKRYXeZyoB8YSfq99UONdGnKLMfEjLXzLlUupaxbjPcWfMCz7MX2D2ZaXW0M57jzrpXGQ1BTsThJvzklqaCYy0u+wcBZLTQhPR5CSln1dCTXaZ7t4Xx1D/aSW8viRB5a9q9VozHuFtovKD8p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nzw5718O; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 486BEjgJ072314;
+	Fri, 6 Sep 2024 06:14:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725621285;
+	bh=bPUR2egFbfVE9nGpinsihw1lIeoFQayKJ5z1HgMVXvY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date;
+	b=nzw5718Of9YGRlxlAu8J+drSDQsGnXhlPf5wAEAVQU76xyh+LqNRhk3QcHpahTN4l
+	 qXf2+CpthUqIlgR29HkB/HqY54uVLR23WAi9zx23n7z7Ta+MKg0+O2vyPjcwwmjXNG
+	 ZixZKqdqn2dGxtEqjVqAmp8lnsWXKFKFXqBggHf0=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 486BEjse025068;
+	Fri, 6 Sep 2024 06:14:45 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 6
+ Sep 2024 06:14:45 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 6 Sep 2024 06:14:45 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 486BEirT102212;
+	Fri, 6 Sep 2024 06:14:45 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers
+	<ebiggers@kernel.org>
+CC: <kristo@kernel.org>, <will@kernel.org>, <akpm@linux-foundation.org>,
+        <davem@davemloft.net>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <vigneshr@ti.com>, <catalin.marinas@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 0/6] Add support for MCRC64 engine to calculate
+ 64-bit CRC in Full-CPU mode
+In-Reply-To: <ZmfBxLB8RC_KNUlx@gondor.apana.org.au>
+References: <20240524-mcrc64-upstream-v3-0-24b94d8e8578@ti.com>
+ <87tti098af.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+ <Zme3EcW4Uz8kTbTt@gondor.apana.org.au>
+ <20240611031314.GA2557@sol.localdomain>
+ <ZmfBxLB8RC_KNUlx@gondor.apana.org.au>
+Date: Fri, 6 Sep 2024 16:44:44 +0530
+Message-ID: <87cylhm3tn.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: sysfs: Fix weird usage of class's namespace relevant
- fields
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240905-fix_class_ns-v1-1-88ecccc3517c@quicinc.com>
- <20240906102150.GD2097826@kernel.org>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20240906102150.GD2097826@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: L6DcvCBmeBusLR_6HNmlx7f3AADNuoSw
-X-Proofpoint-ORIG-GUID: L6DcvCBmeBusLR_6HNmlx7f3AADNuoSw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
- clxscore=1011 malwarescore=0 phishscore=0 adultscore=0 suspectscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409060081
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 2024/9/6 18:21, Simon Horman wrote:
-> On Thu, Sep 05, 2024 at 07:35:38AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> Device class has two namespace relevant fields which are associated by
->> the following usage:
->>
->> struct class {
->> 	...
->> 	const struct kobj_ns_type_operations *ns_type;
->> 	const void *(*namespace)(const struct device *dev);
->> 	...
->> }
->> if (dev->class && dev->class->ns_type)
->> 	dev->class->namespace(dev);
->>
->> The usage looks weird since it checks @ns_type but calls namespace()
->> it is found for all existing class definitions that the other filed is
->> also assigned once one is assigned in current kernel tree, so fix this
->> weird usage by checking @namespace to call namespace().
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->> driver-core tree has similar fix as shown below:
->> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-next&id=a169a663bfa8198f33a5c1002634cc89e5128025
-> 
-> Thanks,
-> 
-> I agree that this change is consistent with the one at the link above.
-> And that, given your explanation there and here, this change
-> makes sense.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> 
-> I don't think there is a need to repost because of this, but for future
-> reference, please keep in mind that patches like this - non bug fixes for
-> Networking code - should, in general, be targeted at net-next.
-> 
-> Subject: [PATCH net-next] ...
-> 
-> See: https://docs.kernel.org/process/maintainer-netdev.html
+Herbert Xu <herbert@gondor.apana.org.au> writes:
 
-thank you very much for such important reminder
-i will follow this guidance for further net patches. (^^)
+> On Mon, Jun 10, 2024 at 08:13:14PM -0700, Eric Biggers wrote:
+>>
+>> I thought the rule is that there needs to be an in-kernel user to add algorithms
+>> to the crypto API?  Is there any precedent for adding new algorithms purely so
+>> that accelerators that implement them can be accessed from userspace via AF_ALG?
+>
+> I agree.  Perhaps this driver could instead be added as a simple
+> char device that is then used directly by the intended user without
+> going through the Crypto API at all.
+>
+> That would make it a lot simpler.
+Thanks for all the support Herbert, Eric.
 
+Just wanted to confirm, if this is being rejected primarily because
+1. there is no in-kernel user for crc64-iso3309
+2. or poor performance benefit of using it from userspace
+
+The context for asking is that we have another superset IP known as MCRC
+(this one is MCRC64), which supports crc8/16/32/64(iso-3309).
+
+That IP has working DMA and will give good offloading numbers.
+
+We are planning to send drivers for crc8/16/32 for MCRC
+1.should I put efforts for crc64-iso3309 as well or
+2.drop the crc64-iso3309 and send only for remaining
+crc8/16/32(standard algorithms with already in-kernel user).
+
+All our devices either have MCRC or MCRC64.
+
+Thanks,
+Kamlesh
 
