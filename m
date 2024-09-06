@@ -1,116 +1,192 @@
-Return-Path: <linux-kernel+bounces-318902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F423196F4D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:57:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4184996F4E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B448628429A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC881F25397
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A77D1CCB53;
-	Fri,  6 Sep 2024 12:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B965A1CCB53;
+	Fri,  6 Sep 2024 13:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4m52fepH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVE9ds3H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8521CB14E;
-	Fri,  6 Sep 2024 12:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2E91CCB37;
+	Fri,  6 Sep 2024 13:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627470; cv=none; b=Xk7td164dEWvFxbLO1zV6JLtY1lezgJ3buNoW4Sws7kJvL1fomi3eROKg61AZLDVLU9ZTjJ9/xBgghvEblnyewFE/FG1lJWKU24BLY+LPKe3AaIvpduwTxsS7HEQ8ihiWV9pRFF6sUPva7O6Tm01bbwrz2hfQ6oFv2EmgkR9EoE=
+	t=1725627604; cv=none; b=kMi7e8OA9jjvbx3JDTDZbSatrNDRYuPyyhsj5TXS8zCtOfxuI2/wFLYQqXfFZqmpsUeW/+UxhO5lShXZzOuU+zmMbq+uWvafNoRs28yL4qKK1DMCj54R8PMMjB4aTXHS3Oxq1cpT4SkvJ00Bbr6sycIIARKUD9Em1lKiX5bbAME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627470; c=relaxed/simple;
-	bh=/2FtnWCHaPjHsUcPxHXdI1VpOC7eip5BSxs8aBELA+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZE42o7GRPqjyMxIAEELaxOPwGR+FT3wrawGUhY75UwIjcVCr3Z3S7WI6dV6s1pFVRk84IHY2nj0dXtDnY5z/3GRBw5cRNDEFlXVaOqK1jryxfGZ3GVo42zuqxPJQy6kXh40sDKTVe/YiKDlRPH0icEPYQYZ3yMTeZ/fjgp1Go9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4m52fepH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZZLMqGWTh9m7ksvTShRd1ZBjtLKzyMJggprBHSOKla0=; b=4m52fepHMFB4fqS/495CWIdz34
-	F2NPjaqbz1BohSs+cIe8xG8HumG+uZUFaCToIdb3k6bOXXTxfSzDI/aOTl2jktjcQmc6K5KJeVe6u
-	/+iH8rTx/w/9tAlCsNUOAhoV7/I4DTl8VYSD1U6VugZu5JTaXS8UQ6y7zH+1CW1ebczI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1smYWt-006oLc-Li; Fri, 06 Sep 2024 14:57:35 +0200
-Date: Fri, 6 Sep 2024 14:57:35 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tarun.Alle@microchip.com
-Cc: Arun.Ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: microchip_t1: SQI support for LAN887x
-Message-ID: <af78280b-68a5-47f4-986e-667cc704f8da@lunn.ch>
-References: <20240904102606.136874-1-tarun.alle@microchip.com>
- <dba796b1-bb59-4d90-b592-1d56e3fba758@lunn.ch>
- <DM4PR11MB623922B7FE567372AB617CA88B9E2@DM4PR11MB6239.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1725627604; c=relaxed/simple;
+	bh=oefV0SX3omS4xfk61TQppF8i4Kw29y+8gVPlyvNH1Og=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZNC0/pNzWUPNHzgCF9U93Yr1godAvRBufsIK7oYw51CZq9ER7RUqIisto3fRIA5Na+2gnE9vSToGZlwTsVtUh7YuvC5p6GEDDm/rxzrQ4ArCZty5m8knBxKtRvbNFD1S36wxww6Z9La6cujqYHo66m3+1v8B5HIglSO2iuvwLAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVE9ds3H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABF2C4CEC4;
+	Fri,  6 Sep 2024 12:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725627603;
+	bh=oefV0SX3omS4xfk61TQppF8i4Kw29y+8gVPlyvNH1Og=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GVE9ds3HQyRwRvxLUc3pdXTEquCNSGPmqpcsD8JopyKVrtaZt+dNwOGiy4MiWK/np
+	 UYQkHEIWeKkYvUoGC7uOKz+WQcfGR1rlRNbhHnRD/JS4iG33nbworDbD0GX/Tyn6bk
+	 ZFbjWBTRuXDLwtmLKWhCeUFk+sdqDZH57bl4TOKA7dp8Fzq5qea2scdqdl1UFr3fWw
+	 5LzZ7TtPf+RldzD4rNCzM6Xw9QiLc7IV0z6a9HRRff11gXrTDep6059icuVlJmvzcr
+	 4yRj8ATIVjjT4QJb6w5h3FfO5QH/PU//DH2e4aduV2ZIWGRVFXNcqSvFHMrCm9F2LY
+	 794jA8xHubmtw==
+Message-ID: <c0aa5342-a2af-4ac4-bc33-b6dbfff77f63@kernel.org>
+Date: Fri, 6 Sep 2024 14:59:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM4PR11MB623922B7FE567372AB617CA88B9E2@DM4PR11MB6239.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] dt-bindings: phy: sparx5: document lan969x in sparx5
+ dt-bindings
+To: Daniel Machon <daniel.machon@microchip.com>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>, UNGLinuxDriver@microchip.com,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
+ <20240906-sparx5-lan969x-serdes-driver-v1-8-8d630614c58a@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240906-sparx5-lan969x-serdes-driver-v1-8-8d630614c58a@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > How long does this take?
-> > 
+On 06/09/2024 14:52, Daniel Machon wrote:
+> Document lan969x in the existing Sparx5 dt-bindings.
 > 
-> ~76ms
 
-That is faster than i expected. You have a pretty efficient MDIO bus
-implementation.
+Say something useful, not copy of subject.
 
-> > genphy_c45_read_link() takes a few MDIO transaction, plus the two you see
-> > here. So maybe 1000 MDIO bus transactions? Which could be
-> > 3000-4000 if it needs to use C45 over C22.
-> > 
-> > Do you have any data on the accuracy, with say 10, 20, 40, 80, 160 samples?
-> >
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+
+A nit, subject: drop second/last, redundant "dt-bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+
+> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+> ---
+>  .../bindings/phy/microchip,sparx5-serdes.yaml          | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
 > 
-> Here number of samples are suggested by our compliance test data.
-> There is an APP Note regarding SQI samples and calculations.
-> No, the number of samples are only 200 as any other count was not
-> consistent in terms of accuracy.
+> diff --git a/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml b/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+> index bdbdb3bbddbe..1e07a311e8a5 100644
+> --- a/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+> +++ b/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+> @@ -8,6 +8,7 @@ title: Microchip Sparx5 Serdes controller
 >  
-> > Can the genphy_c45_read_link() be moved out of the loop? If the link is lost, is the
-> > sample totally random, or does it have a well defined value? Looking at the link
-> > status every iteration, rather than before and after collecting the samples, you are
-> > trying to protect against the link going down and back up again. If it is taking a
-> > couple of seconds to collect all the samples, i suppose that is possible, but if its
-> > 50ms, do you really have to worry?
-> > 
-> 
-> 
-> Sampling data is random. If the link is down at any point during
-> the data sampling we are discarding the entire set.
-> If we check the link status before and after the data collection, there could
-> be an invalidate SQI derivation in very worst-case scenario.
-> 
-> Just to improve instead of register read can I change it to use phydev->link variable?
-> This link variable is update by PHY state machine.
+>  maintainers:
+>    - Steen Hegelund <steen.hegelund@microchip.com>
+> +  - Daniel Machon <daniel.machon@microchip.com>
+>  
+>  description: |
+>    The Sparx5 SERDES interfaces share the same basic functionality, but
+> @@ -62,12 +63,17 @@ description: |
+>    * 10.3125 Gbps (10GBASE-R/10GBASE-KR/USXGMII)
+>    * 25.78125 Gbps (25GBASE-KR/25GBASE-CR/25GBASE-SR/25GBASE-LR/25GBASE-ER)
+>  
+> +  lan969x has ten SERDES10G interfaces that share the same features, operating
+> +  modes and data rates as the equivalent Sparx5 SERDES10G interfaces.
+> +
+>  properties:
+>    $nodename:
+>      pattern: "^serdes@[0-9a-f]+$"
+>  
+>    compatible:
+> -    const: microchip,sparx5-serdes
+> +    enum:
+> +      - microchip,sparx5-serdes
+> +      - microchip,lan969x-serdes
 
-Which won't get to run because the driver is actively doing SQI. There
-is no preemption here, this code will run to completion, and then
-phylib will deal with any interrupts for link down, or do its once per
-second poll to check the link status.
+It seems there is no lan969x SoC/chip. Are you sure you are using
+correct naming, matching what kernel is using? Maybe you just sent
+whatever you had in downstream (hint: that's never a good idea).
 
-With this only taking 76ms, what is the likelihood of link down and
-link up again within 76ms? For a 1000BaseT PHY, they don't report link
-down for 1 second, and it takes another 1 second to perform autoneg
-before the link is up again. Now this is an automotive PHY, so the
-timing is different. What does the data sheet say about how fast it
-detects and reports link down and up?
+>  
+>    reg:
+>      minItems: 1
+> @@ -90,11 +96,19 @@ additionalProperties: false
+>  
+>  examples:
+>    - |
+> -    serdes: serdes@10808000 {
+> +    serdes@10808000 {
+>        compatible = "microchip,sparx5-serdes";
+>        #phy-cells = <1>;
+>        clocks = <&sys_clk>;
+>        reg = <0x10808000 0x5d0000>;
+>      };
+>  
+> +  - |
+> +    serdes@e3410000 {
+> +      compatible = "microchip,lan969x-serdes";
+> +      #phy-cells = <1>;
+> +      clocks = <&fabric_clk>;
 
-	Andrew
+No differences so no need for new example. Also please follow DTS coding
+style in case of any DTS code.
+
+Best regards,
+Krzysztof
+
 
