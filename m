@@ -1,114 +1,212 @@
-Return-Path: <linux-kernel+bounces-318189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D35796E9A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D1896E9A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031431F24805
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:00:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 635681C23263
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC49413B79F;
-	Fri,  6 Sep 2024 06:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372B13B79F;
+	Fri,  6 Sep 2024 06:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8/biv6i"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nZFI6S1e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lzC0D+eB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nZFI6S1e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lzC0D+eB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104354E1B3;
-	Fri,  6 Sep 2024 06:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2A7768FC;
+	Fri,  6 Sep 2024 06:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725602417; cv=none; b=RBEevg3LzSold4hgQImEIKbzDfvc8wdib6aOPb37H0usr5p69PpjBBncbNykYpXSjt3rvCLbK61xH9v3C5rYi51ZqwAgXALWc5Xy1Iw19kQfE1wFocpl31wvq9hEsBhOZ7cy3VG/sVnBD032V3k2yRlHOPlW3LFxPn6pS9/igNE=
+	t=1725602629; cv=none; b=IZgHNHNeDeHIbmvh+wtXL1ib1j8Rynm1xUmHE0fh3vMKLJFJ3ceQax8udetN3gPCtKwSrxiJn3ZhlY8n7fScfaTZmSR+XIbri2dD1mJ/U3dgMXQNxnbsNTAFaWifZLWvlEUWGFgNVI9gJ0ePS+34H7xdXN/RNx8K1ILCT9RiaRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725602417; c=relaxed/simple;
-	bh=EnRN4nX4lupNbivR88Ar1U9N7NRH5bDlZaYIoAnfVS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b4vTBuDhPbwkV4fmVMlNpPHxeYPpVvTGta3AL8pGpUAwxeYGYK6Oc9sZQPhUmZZIdBVDedl4EwoTRrQJTZ3wVrWbWzdnnCLsKNjS7Zcx+jAJZkwL/67D8aJBqpgDEZZ/qUl216+A/NrsWTFhxCiFdEos+rVARSyScNtmU5CpN/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8/biv6i; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d5119d6fedso701351a12.0;
-        Thu, 05 Sep 2024 23:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725602415; x=1726207215; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HpcpbxoJTaOMVxxiS+ey5NZ2Ihy9N2jS9ng2J6eDOcU=;
-        b=X8/biv6imIuCDrrNb5m1SeT+xX8fOOy0iE+pasu2hkt38fvAblJT/VXuaxvUSD9LGA
-         m6ycaUWMM4gQo8SIQ3g/p9b1E1Z2b65wXrLAX9eoAvMpVVimlAut+20ybDPBzxd6XTUB
-         gzUN0FXLe6FOKuCJHlGcD41r9LxdknA9KcLqLvS9ONvS1OLRJVPp8tPS8Y0XkGwCmnr7
-         BnX+t7Ejq4LfhtVtsQXHIEICl9vAgxZ1Zckob0/kGhaqav+6boe8QRIQVd50GDIwlaqo
-         YM+BbM9+oHMuUNWU/Xh/TBRgGR+8V8o6KrIp3JE31eEHYBBPCd5230vjGYWTxqjhOifK
-         0QGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725602415; x=1726207215;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HpcpbxoJTaOMVxxiS+ey5NZ2Ihy9N2jS9ng2J6eDOcU=;
-        b=TdwNu+p2xOxKJe2x6P1AtisU+wExPHdHOnMklhetAfmDAtbYLlxSJDGObAXGpRjydR
-         kizBetG5LK5Vf1WKXf9tlkKxylb6P5fk3ZuXYGpCSxo69lg23/dvNm9vOLQm0vxwlX5D
-         Nu1NkFAXwq6Y+7H/Ozy3w2hBWpGobrlYEPsmCRdxbWKNuqUXRit9z8sXD+fmkwVtj7al
-         e9g5X211JNJnBm7N8QnL4FVIDhKGNdOQi9lsAc1oYicDYxtsOFE8VFjWnsQHfa+Nmaaj
-         ahlW9Bpw6y0ZXf2b6FUdqWLM4lp9jDOTWVWOGBv4W5ARZRAkHAYvZQXo0l7fbTirqGUW
-         BSdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTb0TufcOw+wZFKwxqUg9t7imvCV1t4igXbpyoQ0aqXO+LKRtiRSEud5lj6zZvtPosGoIBGS/NIqb07v8=@vger.kernel.org, AJvYcCWMk2nz9cVautZ74lGevqU4M8XzMv3+xwA4j4vwptf/91Ulb5aDWS7WjwkIWvnq4KUuz5UHpk8P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQlgH6+adf0gh5HbxNahAG3i6e0XT4QhaxsRQYDCYwy/BtN9j8
-	NVkR7JWOEZojHns1jaAS8/v8B76AYyoNTD48uw/EUhk7GGG9O9sI
-X-Google-Smtp-Source: AGHT+IEVlQ5pIIO2DTJ7spAd1xntv1DbKAmpeQJtRu6HvAQoNVxIS1MCSu9N53xu4LM055J6Lf5ppg==
-X-Received: by 2002:a17:90a:c702:b0:2da:8b9f:5b74 with SMTP id 98e67ed59e1d1-2dad511c4b3mr2772269a91.13.1725602414675;
-        Thu, 05 Sep 2024 23:00:14 -0700 (PDT)
-Received: from dev.. ([129.41.59.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc083e85sm624823a91.40.2024.09.05.23.00.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 23:00:14 -0700 (PDT)
-From: Rohit Chavan <roheetchavan@gmail.com>
-To: Edward Cree <ecree.xilinx@gmail.com>,
-	Martin Habets <habetsm.xilinx@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-net-drivers@amd.com,
-	linux-kernel@vger.kernel.org
-Cc: Rohit Chavan <roheetchavan@gmail.com>
-Subject: [PATCH] sfc: It's a small cleanup to use ERR_CAST() here.
-Date: Fri,  6 Sep 2024 11:29:50 +0530
-Message-Id: <20240906055950.729327-1-roheetchavan@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725602629; c=relaxed/simple;
+	bh=hR0j4UoqUwDNt65/rn30mx6uWp+ch3LmkhRvE+GJI+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q59P+cn2pYe1twcn5hjZk+Kv1BJEYTz36dh8f757+mZixed6tgiCnmftJhyxQa8eP9U9EAxf2crplZd/ofJLordnOro6iazrRXDq+nnKXq4bLre+i7hogVHZLy553O232UPnIzSN0+RClWin60sXfwp5C1KgohG5j7uWvbxRBlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nZFI6S1e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lzC0D+eB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nZFI6S1e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lzC0D+eB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 685751F893;
+	Fri,  6 Sep 2024 06:03:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725602624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EuAKXNWGXAvYBag+UKFUj5/vO6KSi0h81RlNCNME7jw=;
+	b=nZFI6S1eMsmrHT/4yK4wF0h93LrzfAtm9O3U8SLHz1P+8i0+BC3AqljFuWsYPnUpjcwCOt
+	entl1QaER10Z2pvmNPivdqdC3vgajp4Pb0bqq1pfr8QXc7XnWLrbeDvcCXGr/nQveMl14t
+	YsthS2v2WDT6vwd6QM6gCfjKp9TIzLs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725602624;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EuAKXNWGXAvYBag+UKFUj5/vO6KSi0h81RlNCNME7jw=;
+	b=lzC0D+eB7aqVoqOtPMu/jEtwVbekokNe+hDSxdCcP9Cpztc8LQoqzjMrwO1v2UsUUwYbZ9
+	djotmZTCn3AHT7AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725602624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EuAKXNWGXAvYBag+UKFUj5/vO6KSi0h81RlNCNME7jw=;
+	b=nZFI6S1eMsmrHT/4yK4wF0h93LrzfAtm9O3U8SLHz1P+8i0+BC3AqljFuWsYPnUpjcwCOt
+	entl1QaER10Z2pvmNPivdqdC3vgajp4Pb0bqq1pfr8QXc7XnWLrbeDvcCXGr/nQveMl14t
+	YsthS2v2WDT6vwd6QM6gCfjKp9TIzLs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725602624;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EuAKXNWGXAvYBag+UKFUj5/vO6KSi0h81RlNCNME7jw=;
+	b=lzC0D+eB7aqVoqOtPMu/jEtwVbekokNe+hDSxdCcP9Cpztc8LQoqzjMrwO1v2UsUUwYbZ9
+	djotmZTCn3AHT7AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F8CF136A8;
+	Fri,  6 Sep 2024 06:03:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id abTtCUCb2mZyHAAAD6G6ig
+	(envelope-from <jslaby@suse.cz>); Fri, 06 Sep 2024 06:03:44 +0000
+Message-ID: <7a31001d-da37-4deb-a366-084a4027bcd2@suse.cz>
+Date: Fri, 6 Sep 2024 08:03:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] drivers: tty: imx: fix flags of rs485 not work
+ properly
+To: shawnguo@kernel.org, LiangCheng Wang <zaq14760@gmail.com>
+Cc: s.hauer@pengutronix.de, gregkh@linuxfoundation.org,
+ kernel@pengutronix.de, festevam@gmail.com, u.kleine-koenig@pengutronix.de,
+ cniedermaier@dh-electronics.com, l.sanfilippo@kunbus.com,
+ linux@rasmusvillemoes.dk, stefan.eichenberger@toradex.com,
+ tglx@linutronix.de, rickaran@axis.com, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20240906021905.197891-1-zaq14760@gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jslaby@suse.cz>
+Autocrypt: addr=jslaby@suse.cz; keydata=
+ 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
+In-Reply-To: <20240906021905.197891-1-zaq14760@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[pengutronix.de,linuxfoundation.org,gmail.com,dh-electronics.com,kunbus.com,rasmusvillemoes.dk,toradex.com,linutronix.de,axis.com,vger.kernel.org,lists.linux.dev,lists.infradead.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Using ERR_CAST() is more reasonable and safer, When it is necessary
-to convert the type of an error pointer and return it.
+It seems gmail refuses to send this to zaq14760@gmail.com (the author).
 
-Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
----
- drivers/net/ethernet/sfc/tc_counters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 06. 09. 24, 4:19, LiangCheng Wang wrote:
+> The rs485.flags are lost in functions such as imx_uart_stop_tx(),
+> causing the function of RS485 to be invalid when using the
+> serial port as the RS485 port. Use a variable to store the state to
+> avoid this issue.
 
-diff --git a/drivers/net/ethernet/sfc/tc_counters.c b/drivers/net/ethernet/sfc/tc_counters.c
-index c44088424323..76d32641202b 100644
---- a/drivers/net/ethernet/sfc/tc_counters.c
-+++ b/drivers/net/ethernet/sfc/tc_counters.c
-@@ -249,7 +249,7 @@ struct efx_tc_counter_index *efx_tc_flower_get_counter_index(
- 					       &ctr->linkage,
- 					       efx_tc_counter_id_ht_params);
- 			kfree(ctr);
--			return (void *)cnt; /* it's an ERR_PTR */
-+			return ERR_CAST(cnt); /* it's an ERR_PTR */
- 		}
- 		ctr->cnt = cnt;
- 		refcount_set(&ctr->ref, 1);
+AFAICT, this feels rather wrong. Any rs485 experts around?
+
+At minimum, how are the flags "lost" and why this does not matter to 
+other drivers?
+
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -209,7 +209,7 @@ struct imx_port {
+>   	const struct imx_uart_data *devdata;
+>   
+>   	struct mctrl_gpios *gpios;
+> -
+> +	int flags;
+
+Definitely not int for flags.
+
+thanks,
 -- 
-2.34.1
+js
+suse labs
 
 
