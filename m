@@ -1,103 +1,179 @@
-Return-Path: <linux-kernel+bounces-318449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F3696EE31
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:34:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA5696EE34
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403C2286214
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE141C23DFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E8C157492;
-	Fri,  6 Sep 2024 08:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lAbhSCkw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73052158216;
+	Fri,  6 Sep 2024 08:34:01 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B672545BE3;
-	Fri,  6 Sep 2024 08:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311AE158205
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611627; cv=none; b=tVqI4pHRLlwhYxvQUnLjVOrqTZkReWu5nMgZaPhZxoJpydnsLIBx2t+YuxWxoJ8X6PdgAGEc+i692N0hqPzt7cTX39tsIv9ErGeWCQo19U1VbxHYPxBkGB4tSkfN2Jp0HWssh6Nx4VP9DV6+tmzi+7MSOUVOzGVics69tl8/Vjc=
+	t=1725611641; cv=none; b=Mj8tD20P6DZElWgZXxigC7Toexya9Lzv7LjZtoAD1hlNE1HTN1N5NcdoGxbLfcyRYtsdlUkjOZJ6veWdUQ5kBNWeDb6EbumcABdDyHY830BdYp2tt+jCCXqpLgZBH9UpPT7hueqiz/xhXxTSk/HhfSVakMxPRSFlmEpRpnXBahY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611627; c=relaxed/simple;
-	bh=zfqVcNDd2InBULh79J4Bpfr4W/mecVaaNu0JccNnN0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WiwR4PdyXLjfCpApPznwacn5ZwEwdfGmIl7BIoPFB0bfYaXALz9I3rzWY0DXSxJbgD1xcGLBu979r2hS3bBvpC7UGEQFMBXdv3TAaf6tqnWYA5xcUEmXWcLY63hxdTD9qwq0wquDhUu9Usr7yfZuUBzMRzQvAyx83erBDEJzgHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lAbhSCkw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725611623;
-	bh=oWhWhJ1rtSPcuJ/t1xAToET/G6tEZKPb4PuXuNI2Hw8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lAbhSCkwEzViSjcIa0XORiO2QFDgTSs2pHIjZINGRpDmsnreqSW+twOU8VdKf5Ocd
-	 cYsPnz9fPiYfy/5xdVtU/q8hUpddcMUqaQrYpKwybjFIc5JT5DN0Se13ug5dpnvxr7
-	 wXvL3DJM8fSvm92C8BCsBaVG9gI9Q5hfF+puVi+U7ZroGdBiOfx2V166Yz/eX8stGH
-	 1gs7kEX7bks0bRyAWrGxI4wEIJMiI+mmMffEobtRNpu8L9PIdhV9esT9VvK2R2kgVw
-	 bypDiXGkcUL4rSiur1n61rAhzeX4r8zu0j38UlS+cUx5ajGzFLMZjX0qD65hh66Slr
-	 6YANg+kVNSt1A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0Tyv3qDBz4x0H;
-	Fri,  6 Sep 2024 18:33:43 +1000 (AEST)
-Date: Fri, 6 Sep 2024 18:33:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the slab tree
-Message-ID: <20240906183342.78d62a54@canb.auug.org.au>
+	s=arc-20240116; t=1725611641; c=relaxed/simple;
+	bh=k9FuvOEmK/1gQYxA9EMdGLyTvjpxpy8oRJUJTi/fyuI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tO5Qvjf16ZB+z2IZADFLgCfMj1sy8VO3B9675+NbGM6UxGENkC6Hi7GLX6fhnm519dO8l7T5SfkhyKozNrfB9sceDJVL3nbsNAoflNs9soUzulUudIQh0HXDXpBpJdIW5YAUn2L4LKPIBcmDAM8l0jLcRm0ewd2HTmP7Uc4jKsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X0Tz86SRrz9sRs;
+	Fri,  6 Sep 2024 10:33:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LvZ6uifAMcER; Fri,  6 Sep 2024 10:33:56 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X0Tz85Ztlz9sRr;
+	Fri,  6 Sep 2024 10:33:56 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id ACDED8B77C;
+	Fri,  6 Sep 2024 10:33:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id ZD8DcvanrHnh; Fri,  6 Sep 2024 10:33:56 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.70])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E92688B764;
+	Fri,  6 Sep 2024 10:33:55 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andrei Vagin <avagin@gmail.com>
+Subject: [PATCH 1/2] powerpc/vdso: Fix VDSO data access when running in a non-root time namespace
+Date: Fri,  6 Sep 2024 10:33:43 +0200
+Message-ID: <700dbf296d02e32376329774be35cfbead08041d.1725611321.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/VtoQ=jgr3bk8pqcBWL++1VA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725611624; l=3823; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=k9FuvOEmK/1gQYxA9EMdGLyTvjpxpy8oRJUJTi/fyuI=; b=nX3SmYIkJKIljITFXxDqbMnj5EJjUmmKYZfNZ9b9qaKQ+lctkvzNw/1Ss42lUZ48SFSTtdwZs EH3vr4+iyWCBtSGBkf7IpshNODLT7CY7pJ8qJa5FsxLxVwIxQt6MDwD
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
---Sig_/VtoQ=jgr3bk8pqcBWL++1VA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When running in a non-root time namespace, the global VDSO data page
+is replaced by a dedicated namespace data page and the global data
+page is mapped next to it. Detailed explanations can be found at
+commit 660fd04f9317 ("lib/vdso: Prepare for time namespace support").
 
-Hi all,
+When it happens, __kernel_get_syscall_map and __kernel_get_tbfreq
+and __kernel_sync_dicache don't work anymore because they read 0
+instead of the data they need.
 
-After merging the slab tree, today's linux-next build (htmldocs) produced
-this warning:
+To address that, clock_mode has to be read. When it is set to
+VDSO_CLOCKMODE_TIMENS, it means it is a dedicated namespace data page
+and the global data is located on the following page.
 
-include/linux/slab.h:244: warning: Cannot understand  * @align: The require=
-d alignment for the objects.
- on line 244 - I thought it was a doc line
+Add a macro called get_realdatapage which reads clock_mode and add
+PAGE_SIZE to the pointer provided by get_datapage macro when
+clock_mode is equal to VDSO_CLOCKMODE_TIMENS. Use this new macro
+instead of get_datapage macro except for time functions as they handle
+it internally.
 
-Introduced by commit
+Fixes: 74205b3fc2ef ("powerpc/vdso: Add support for time namespaces")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/include/asm/vdso_datapage.h | 15 +++++++++++++++
+ arch/powerpc/kernel/asm-offsets.c        |  2 ++
+ arch/powerpc/kernel/vdso/cacheflush.S    |  2 +-
+ arch/powerpc/kernel/vdso/datapage.S      |  4 ++--
+ 4 files changed, 20 insertions(+), 3 deletions(-)
 
-  0c64b97ac116 ("slab: add struct kmem_cache_args")
+diff --git a/arch/powerpc/include/asm/vdso_datapage.h b/arch/powerpc/include/asm/vdso_datapage.h
+index e17500c5237e..248dee138f7b 100644
+--- a/arch/powerpc/include/asm/vdso_datapage.h
++++ b/arch/powerpc/include/asm/vdso_datapage.h
+@@ -113,6 +113,21 @@ extern struct vdso_arch_data *vdso_data;
+ 	addi	\ptr, \ptr, (_vdso_datapage - 999b)@l
+ .endm
+ 
++#include <asm/asm-offsets.h>
++#include <asm/page.h>
++
++.macro get_realdatapage ptr scratch
++	get_datapage \ptr
++#ifdef CONFIG_TIME_NS
++	lwz	\scratch, VDSO_CLOCKMODE_OFFSET(\ptr)
++	xoris	\scratch, \scratch, VDSO_CLOCKMODE_TIMENS@h
++	xori	\scratch, \scratch, VDSO_CLOCKMODE_TIMENS@l
++	cntlzw	\scratch, \scratch
++	rlwinm	\scratch, \scratch, PAGE_SHIFT - 5, 1 << PAGE_SHIFT
++	add	\ptr, \ptr, \scratch
++#endif
++.endm
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* __KERNEL__ */
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index eedb2e04c785..131a8cc10dbe 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -347,6 +347,8 @@ int main(void)
+ #else
+ 	OFFSET(CFG_SYSCALL_MAP32, vdso_arch_data, syscall_map);
+ #endif
++	OFFSET(VDSO_CLOCKMODE_OFFSET, vdso_arch_data, data[0].clock_mode);
++	DEFINE(VDSO_CLOCKMODE_TIMENS, VDSO_CLOCKMODE_TIMENS);
+ 
+ #ifdef CONFIG_BUG
+ 	DEFINE(BUG_ENTRY_SIZE, sizeof(struct bug_entry));
+diff --git a/arch/powerpc/kernel/vdso/cacheflush.S b/arch/powerpc/kernel/vdso/cacheflush.S
+index 0085ae464dac..3b2479bd2f9a 100644
+--- a/arch/powerpc/kernel/vdso/cacheflush.S
++++ b/arch/powerpc/kernel/vdso/cacheflush.S
+@@ -30,7 +30,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_COHERENT_ICACHE)
+ #ifdef CONFIG_PPC64
+ 	mflr	r12
+   .cfi_register lr,r12
+-	get_datapage	r10
++	get_realdatapage	r10, r11
+ 	mtlr	r12
+   .cfi_restore	lr
+ #endif
+diff --git a/arch/powerpc/kernel/vdso/datapage.S b/arch/powerpc/kernel/vdso/datapage.S
+index db8e167f0166..2b19b6201a33 100644
+--- a/arch/powerpc/kernel/vdso/datapage.S
++++ b/arch/powerpc/kernel/vdso/datapage.S
+@@ -28,7 +28,7 @@ V_FUNCTION_BEGIN(__kernel_get_syscall_map)
+ 	mflr	r12
+   .cfi_register lr,r12
+ 	mr.	r4,r3
+-	get_datapage	r3
++	get_realdatapage	r3, r11
+ 	mtlr	r12
+ #ifdef __powerpc64__
+ 	addi	r3,r3,CFG_SYSCALL_MAP64
+@@ -52,7 +52,7 @@ V_FUNCTION_BEGIN(__kernel_get_tbfreq)
+   .cfi_startproc
+ 	mflr	r12
+   .cfi_register lr,r12
+-	get_datapage	r3
++	get_realdatapage	r3, r11
+ #ifndef __powerpc64__
+ 	lwz	r4,(CFG_TB_TICKS_PER_SEC + 4)(r3)
+ #endif
+-- 
+2.44.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/VtoQ=jgr3bk8pqcBWL++1VA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbavmYACgkQAVBC80lX
-0Gwmmgf/WeN8lZwfxJHe/vGPHatVkb3/O2ioQEeNXXQhDUNN6X2coLOLA0wWQvK5
-Edwxh0JO7qUC0DORv8tCxaahuQi+i0IxtWn62Eaql7pnp0Spf/ZzOGBckp5xbIH+
-B/nDHPX37MVJOMCAxldb1TtnbJtpiZ96nSdqgOvXJ8DJFSrwhqrVhLouDSZ7Z/dE
-G2tQzPzY1W/DQgbGYlFCctU8/PcKtFIbaDKmG91vas/xNkkHtnexA+UHiqkf0cmg
-gW5dnzc91AebOFpV/f+fGfdyLTK39sTx/wAYXUJ5FWTmWPkgRA4pko0LS+7Dbp4H
-bwU7EFxwLJt3Clr+v8JQA31svsSamg==
-=3bY/
------END PGP SIGNATURE-----
-
---Sig_/VtoQ=jgr3bk8pqcBWL++1VA--
 
