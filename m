@@ -1,208 +1,111 @@
-Return-Path: <linux-kernel+bounces-318582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3DD96F01F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:48:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E487A96F021
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E98F81C21081
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0917281910
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4B9156F57;
-	Fri,  6 Sep 2024 09:47:20 +0000 (UTC)
-Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 65A1141A8F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7B41C86F2;
+	Fri,  6 Sep 2024 09:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKWUHgCG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173FC41A8F;
+	Fri,  6 Sep 2024 09:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725616040; cv=none; b=MUK7GcawgK6mvnAi6MFuvoM7CwgR9JWYDXzpa0naj4KJNuR/v/odsqhPdgYKT78JPEOjzopW/L08d0975l2g2/ZoEMP+FrbL9cPgsI2FgQrhWpotQ/vfrXRKTtYubwEPZNM8crmtRFOcYTR4JFGkNJSZIcYOBv2IMuwxR9M1sIE=
+	t=1725616076; cv=none; b=hLN//DwYO7qg3lg4bo1DWHy9S6RWeOaCXmweyukif4L3RJafFhf4GLKve2EHRSfQaz2+lMGPALzAcXJ/pqUQ2Nlw/9/RBZnGSWq728uy4euNpJCDL44gS4HSLNWwLMw3sEG+mr39ImopjOYDQgGpu/6Zq90o7WXHG1Ljul8T8gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725616040; c=relaxed/simple;
-	bh=LuQosShwQuJFIYgyfLWKF8xsGn/wx9lb/Psp6NDSHcg=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WQhZn1MU5gxfToHCfi2FzV02FXvxdl/iTr4/DqBaAINxdl9jyWcX/XQ74bBTQhIoZOcExnL9p2AfPUfTiyg29wkvb2C7bt6asWIFBTcpsjaI8vZ57Ew15cjrstphShZYyD5g41UG0xDNQ6Na8QQjyc3cXia2677m/WrckKj9liU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; arc=none smtp.client-ip=111.202.70.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.65.19])
-	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 2CAD318B081ED5;
-	Fri,  6 Sep 2024 17:46:59 +0800 (CST)
-Received: from didi-ThinkCentre-M930t-N000 (10.79.65.101) by
- BJ02-ACTMBX-01.didichuxing.com (10.79.65.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Fri, 6 Sep 2024 17:47:08 +0800
-Date: Fri, 6 Sep 2024 17:47:00 +0800
-X-MD-Sfrom: tiozhang@didiglobal.com
-X-MD-SrcIP: 10.79.65.19
-From: Tio Zhang <tiozhang@didiglobal.com>
-To: <dianders@chromium.org>
-CC: <akpm@linux-foundation.org>, <bristot@redhat.com>, <bsegall@google.com>,
-	<dietmar.eggemann@arm.com>, <john.ogness@linutronix.de>,
-	<juri.lelli@redhat.com>, <kjlx@templeofstupid.com>,
-	<linux-kernel@vger.kernel.org>, <linux@weissschuh.net>,
-	<lizhe.67@bytedance.com>, <mcgrof@kernel.org>, <mgorman@suse.de>,
-	<mingo@redhat.com>, <peterz@infradead.org>, <rostedt@goodmis.org>,
-	<tglx@linutronix.de>, <tiozhang@didiglobal.com>,
-	<vincent.guittot@linaro.org>, <vschneid@redhat.com>, <zyhtheonly@gmail.com>,
-	<zyhtheonly@yeah.net>
-Subject: [PATCH v2 1/1] kernel/watchdog: always restore
- watchdog_softlockup(,hardlockup)_user_enabled after proc show
-Message-ID: <20240906094700.GA30052@didi-ThinkCentre-M930t-N000>
-Mail-Followup-To: dianders@chromium.org, akpm@linux-foundation.org,
-	bristot@redhat.com, bsegall@google.com, dietmar.eggemann@arm.com,
-	john.ogness@linutronix.de, juri.lelli@redhat.com,
-	kjlx@templeofstupid.com, linux-kernel@vger.kernel.org,
-	linux@weissschuh.net, lizhe.67@bytedance.com, mcgrof@kernel.org,
-	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org,
-	rostedt@goodmis.org, tglx@linutronix.de, vincent.guittot@linaro.org,
-	vschneid@redhat.com, zyhtheonly@gmail.com, zyhtheonly@yeah.net
+	s=arc-20240116; t=1725616076; c=relaxed/simple;
+	bh=t9WXDI7C8MEWM9cGLSJKb0IC5/+Pqc2jbnUhHiU9H6w=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=bEAX0XWv9NkVrZn90ojkm0/bVQcOUimgKkBPcotyVa4hy2qqGDPEmJHhV0Z5iu9xrC5AsWFwoBlKIK55GJjQNf9yJgTkVV1UxGprS7J3iKUZkqfWtbgWdZWV56wdePKrALLpHqmtFx2+/X94LVFFHu7yHIrPunmuuvLIi332H0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKWUHgCG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10134C4CEC4;
+	Fri,  6 Sep 2024 09:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725616075;
+	bh=t9WXDI7C8MEWM9cGLSJKb0IC5/+Pqc2jbnUhHiU9H6w=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=UKWUHgCG8Vo5woHikdETAfFMbJBCI9KKfz4Yco1Y3ppfYpiTF7wCeqPTKQq4449HA
+	 XGpDwuycHRKwINBOzccFgRmAbu+Jcsv2mxAQaS76P553VWzZzGpB0UCIPWpuAkEoLh
+	 RYTkf+cy5tRp495ZKP77qkgx0HdUHi7zxfCjr7A7WCfY2JIwF9Z4UnQUEhk/pVsmRx
+	 WKDlGg6jrxdknh1PhlmWoPiAfAQ4VhfQ2TvdeZUJ9j9TCIgokjYj5LvN7xD3TNIgnS
+	 AHQ4mFIqr1INC5v9QmbSpWYl9374JXhdvk28Rf1UZ/GRyAENG7x6obPqLuerctNhDk
+	 AbxZuePqYpo3w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Vw1fG9sUiG4R6LiKnR2fgnt5Wr4QKzRg+v8MC15pWUEg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: BJ03-PUBMBX-01.didichuxing.com (10.79.71.11) To
- BJ02-ACTMBX-01.didichuxing.com (10.79.65.19)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 06 Sep 2024 12:47:51 +0300
+Message-Id: <D3Z3UFHWQ3MG.N8JU7ZHX3XHN@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Stefan Berger" <stefanb@linux.ibm.com>
+Subject: Re: [PATCH RFC 1/2] tpm: tpm_tis_spi: Ensure SPI mode 0
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Wahren" <wahrenst@gmx.net>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>
+X-Mailer: aerc 0.18.2
+References: <20240906060947.4844-1-wahrenst@gmx.net>
+ <20240906060947.4844-2-wahrenst@gmx.net>
+In-Reply-To: <20240906060947.4844-2-wahrenst@gmx.net>
 
-Otherwise when watchdog_enabled becomes 0,
-watchdog_softlockup(,hardlockup)_user_enabled will changes to 0 after
-proc show.
+On Fri Sep 6, 2024 at 9:09 AM EEST, Stefan Wahren wrote:
+> According to TCG PC Client Platform TPM Profile (PTP) Specification
+> only SPI mode 0 is supported. In order to ensure the SPI controller
+> supports the necessary settings, call spi_setup() and bail out
+> as soon as possible in error case.
+>
+> This change should affect all supported TPM SPI devices, because
+> tpm_tis_spi_probe is either called direct or indirectly.
+>
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> ---
+>  drivers/char/tpm/tpm_tis_spi_main.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_t=
+is_spi_main.c
+> index 61b42c83ced8..e62d297b040e 100644
+> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+> @@ -248,6 +248,17 @@ static int tpm_tis_spi_write_bytes(struct tpm_tis_da=
+ta *data, u32 addr,
+>  int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy=
+,
+>  		     int irq, const struct tpm_tis_phy_ops *phy_ops)
+>  {
+> +	int ret;
+> +
+> +	spi->mode &=3D ~SPI_MODE_X_MASK;
+> +	spi->mode |=3D SPI_MODE_0;
+> +
+> +	ret =3D spi_setup(spi);
+> +	if (ret < 0) {
+> +		dev_err(&spi->dev, "SPI setup failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	phy->iobuf =3D devm_kmalloc(&spi->dev, SPI_HDRSIZE + MAX_SPI_FRAMESIZE,=
+ GFP_KERNEL);
+>  	if (!phy->iobuf)
+>  		return -ENOMEM;
+> --
+> 2.34.1
 
-Steps to reproduce:
 
-  step 1:
-  # cat /proc/sys/kernel/*watchdog
-  1
-  1
-  1
+Why?
 
-  | name                             | value
-  |----------------------------------|--------------------------
-  | watchdog_enabled                 | 1
-  |----------------------------------|--------------------------
-  | watchdog_hardlockup_user_enabled | 1
-  |----------------------------------|--------------------------
-  | watchdog_softlockup_user_enabled | 1
-  |----------------------------------|--------------------------
-  | watchdog_user_enabled            | 1
-  |----------------------------------|--------------------------
-
-  step 2:
-  # echo 0 > /proc/sys/kernel/watchdog
-
-  | name                             | value
-  |----------------------------------|--------------------------
-  | watchdog_enabled                 | 0
-  |----------------------------------|--------------------------
-  | watchdog_hardlockup_user_enabled | 1
-  |----------------------------------|--------------------------
-  | watchdog_softlockup_user_enabled | 1
-  |----------------------------------|--------------------------
-  | watchdog_user_enabled            | 0
-  |----------------------------------|--------------------------
-
-  step 3:
-  # cat /proc/sys/kernel/*watchdog
-  0
-  0
-  0
-
-  | name                             | value
-  |----------------------------------|--------------------------
-  | watchdog_enabled                 | 0
-  |----------------------------------|--------------------------
-  | watchdog_hardlockup_user_enabled | 0
-  |----------------------------------|--------------------------
-  | watchdog_softlockup_user_enabled | 0
-  |----------------------------------|--------------------------
-  | watchdog_user_enabled            | 0
-  |----------------------------------|--------------------------
-
-  step 4:
-  # echo 1 > /proc/sys/kernel/watchdog
-
-  | name                             | value
-  |----------------------------------|--------------------------
-  | watchdog_enabled                 | 0
-  |----------------------------------|--------------------------
-  | watchdog_hardlockup_user_enabled | 0
-  |----------------------------------|--------------------------
-  | watchdog_softlockup_user_enabled | 0
-  |----------------------------------|--------------------------
-  | watchdog_user_enabled            | 0
-  |----------------------------------|--------------------------
-
-  step 5:
-  # cat /proc/sys/kernel/*watchdog
-  0
-  0
-  0
-
-If we dont do "step 3", do "step 4" right after "step 2", it will be
-
-  | name                             | value
-  |----------------------------------|--------------------------
-  | watchdog_enabled                 | 1
-  |----------------------------------|--------------------------
-  | watchdog_hardlockup_user_enabled | 1
-  |----------------------------------|--------------------------
-  | watchdog_softlockup_user_enabled | 1
-  |----------------------------------|--------------------------
-  | watchdog_user_enabled            | 1
-  |----------------------------------|--------------------------
-
-then everything works correctly.
-
-So this patch fix "step 3"'s value into
-
-| name                             | value
-|----------------------------------|--------------------------
-| watchdog_enabled                 | 0
-|----------------------------------|--------------------------
-| watchdog_hardlockup_user_enabled | 1
-|----------------------------------|--------------------------
-| watchdog_softlockup_user_enabled | 1
-|----------------------------------|--------------------------
-| watchdog_user_enabled            | 0
-|----------------------------------|--------------------------
-
-And still print 0 as before.
-
-Signed-off-by: Tio Zhang <tiozhang@didiglobal.com>
----
- kernel/watchdog.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 51915b44ac73..ade69b2319f6 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -990,6 +990,7 @@ static int proc_watchdog_common(int which, struct ctl_table *table, int write,
- 
- 	mutex_lock(&watchdog_mutex);
- 
-+	old = *param;
- 	if (!write) {
- 		/*
- 		 * On read synchronize the userspace interface. This is a
-@@ -997,8 +998,8 @@ static int proc_watchdog_common(int which, struct ctl_table *table, int write,
- 		 */
- 		*param = (watchdog_enabled & which) != 0;
- 		err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+		*param = old;
- 	} else {
--		old = READ_ONCE(*param);
- 		err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 		if (!err && old != READ_ONCE(*param))
- 			proc_watchdog_update();
--- 
-2.17.1
-
+BR, Jarkko
 
