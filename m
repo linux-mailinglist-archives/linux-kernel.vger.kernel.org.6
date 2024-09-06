@@ -1,79 +1,115 @@
-Return-Path: <linux-kernel+bounces-318821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A67896F3BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:56:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678AB96F3AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F201C24508
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:56:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3CE2B25C8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18C81CC897;
-	Fri,  6 Sep 2024 11:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="MnZBcpCk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BFB17C9B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05251CC8AF;
+	Fri,  6 Sep 2024 11:52:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E771CC147;
+	Fri,  6 Sep 2024 11:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725623733; cv=none; b=oSU0FsNKGN/V/rTID8mrj2UinCwY2a+lDH4PKrrsLIf6G3pnVaUkZhPN2cRvJ+L4amFnOqKTG4Rn7Lp47iJXEvWEEguWQot+M9cXuBMpKf15X1bxS6EaLkhhi5KrFgAtdQNYHTb3lo15aru53uMdzWvJ5UpiwoV5QstQq9XJI9g=
+	t=1725623579; cv=none; b=bK31wh/r2RLors3SGupwrfwC20rUpq6UZjSS0KD9MNe8pLeWU5k+x5tlKz9WNeX31OOjkAhZ3BVY3xsmCNHRO/MyTfokruvW2krCFl6YZal+HBoTbf8Y37hQ2wvRDO3Hellxd+JnHnnlPvh3nxwKFtp+jXiK05ay+eMu1Nqb+Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725623733; c=relaxed/simple;
-	bh=7zJd8pqsGbtorV2RA9SGRcvUEjR+eD3Dxzhd3Hx/9aE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aez2lPdcdQky/0KHHCpeD2OzNtFzW3gMPkD/xqQdIL2qSjmT7VvB6iYxryzUFSe+Y98iEKHoETlbOPH8xG75SyYp5ZkJ8nigRKvGU88G3PQB7H7urjOnoqT7+KO9jGvpsF4vVWq/pUK+u2SX/40W/kzguMgeOhZRBszn/wPUfyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=MnZBcpCk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1725623730;
-	bh=D4Tr3xq01QTABI4MGDDJgIWKSI4WtSOuzrdByLrAR/o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=MnZBcpCko69YZN85FnTOGIbw5GEuf6Qco7BMs7ynvKVa2dOPSQuCl+uCN4rO5XwcP
-	 rlV37HMCXYfMYMIrB0fQa+25ienTlCphVdiyiFymWa3x40EPqK2ElAgVFpOYhXaH80
-	 /JB6jtLO3TgzrupFrSxQhwGBRUsnTwwLqBHdSv1CWLL6huCR0IRBisTA8KWidfOFoS
-	 BnQ9xsytS2Vb/ihFAhkIsmkVv9X+pM93ayOH+n8P+KR1xe+rG9HxZ93t0hxkTVN58P
-	 nV+ZYfUVVlIkHVpGir8Lz84/osUjNKAX5JfPLH5uJbXj/UA5lKFd/x9Gj+B/aoXWO5
-	 LDa2sptqW/hEw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0ZRk3C0Jz4wy9;
-	Fri,  6 Sep 2024 21:55:30 +1000 (AEST)
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-In-Reply-To: <0fa863f2f69b2ca4094ae066fcf1430fb31110c9.1724313540.git.christophe.leroy@csgroup.eu>
-References: <0fa863f2f69b2ca4094ae066fcf1430fb31110c9.1724313540.git.christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH] powerpc/vdso: Inconditionally use CFUNC macro
-Message-Id: <172562357203.467568.1789157792030341503.b4-ty@ellerman.id.au>
-Date: Fri, 06 Sep 2024 21:52:52 +1000
+	s=arc-20240116; t=1725623579; c=relaxed/simple;
+	bh=IKrZnhFDxnXq31XmUBrR57Qz8ZUzXA7i1uyXXW3VBPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TIO/zIzLEvLo5B9MmZqt/6kKq/Mxesu6zarXx1yNzWWFIrfCba+mx4HAfld6WUMF5FwER/5yHyywMNHfTbwT+RNycX0kOoIyvrSd30tm8M4+oBbVzTwG3WExTgEuvJFbgLHl603CIRDj/eFQ+P7VfvVBp6s8rFpQqS5q24wyqEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34291113E;
+	Fri,  6 Sep 2024 04:53:24 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 612893F73B;
+	Fri,  6 Sep 2024 04:52:54 -0700 (PDT)
+Message-ID: <72f3d6cf-a03b-4a16-9983-77d3dd70b0ea@arm.com>
+Date: Fri, 6 Sep 2024 12:52:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 9/9] vdso: Modify getrandom to include the correct
+ namespace
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-10-vincenzo.frascino@arm.com>
+ <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Aug 2024 10:00:29 +0200, Christophe Leroy wrote:
-> During merge of commit 4e991e3c16a3 ("powerpc: add CFUNC assembly
-> label annotation") a fallback version of CFUNC macro was added at
-> the last minute, so it can be used inconditionally.
+
+
+On 04/09/2024 18:26, Christophe Leroy wrote:
+> 
+> 
+> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
+...
+
+> 
+> Now build fails on powerpc because struct vgetrandom_opaque_params is unknown.
+> 
+> x86 get it by chance via the following header inclusion chain:
+> 
+> In file included from ./include/linux/random.h:10,
+>                  from ./include/linux/nodemask.h:98,
+>                  from ./include/linux/mmzone.h:18,
+>                  from ./include/linux/gfp.h:7,
+>                  from ./include/linux/xarray.h:16,
+>                  from ./include/linux/radix-tree.h:21,
+>                  from ./include/linux/idr.h:15,
+>                  from ./include/linux/kernfs.h:12,
+>                  from ./include/linux/sysfs.h:16,
+>                  from ./include/linux/kobject.h:20,
+>                  from ./include/linux/of.h:18,
+>                  from ./include/linux/clocksource.h:19,
+>                  from ./include/clocksource/hyperv_timer.h:16,
+>                  from ./arch/x86/include/asm/vdso/gettimeofday.h:21,
+>                  from ./include/vdso/datapage.h:164,
+>                  from arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
+>                  from arch/x86/entry/vdso/vgetrandom.c:7:
+> 
+> 
 > 
 > 
 
-Applied to powerpc/next.
+This tells me very little ;)
 
-[1/1] powerpc/vdso: Inconditionally use CFUNC macro
-      https://git.kernel.org/powerpc/c/65948b0e716a47382731889ee6bbb18642b8b003
+Can you please provide more details? e.g. What is the error you are getting? How
+do I reproduce it?
 
-cheers
+I am happy to include the required change as part of this series.
+
+Overall, the reason why I am doing this exercise it to sanitize the headers for
+all the architectures so that in future we do not have issues. It is good we
+find problems now.
+
+-- 
+Regards,
+Vincenzo
 
