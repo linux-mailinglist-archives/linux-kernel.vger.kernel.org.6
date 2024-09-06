@@ -1,155 +1,222 @@
-Return-Path: <linux-kernel+bounces-318323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A4096EBD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B276696EBD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA251286A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C00282A6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B6314AD24;
-	Fri,  6 Sep 2024 07:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E8814C5B5;
+	Fri,  6 Sep 2024 07:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="WMAGYB8q"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2020.outbound.protection.outlook.com [40.92.107.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xNyKdDHP"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1262213DDD3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725607152; cv=fail; b=bcxEPMtOO4LhcokbBrBuRME+PZwQXvUcKP6nTacNf1eEKlq788kgkfm4hmSWQsAi/cmoKLdkAvNQyl69mVk9QC25pGrDXQFKwy7eZaTF88mULTa91lm/iIBN/XGOLtqXGCPn71rGKhp0ZoWS3jC3OkDrDqtEYI12qh+iWihMfVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725607152; c=relaxed/simple;
-	bh=z/xLH4zstEKE7N9u0jweyG3rDSdW+L/5pAq8iAskwdw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=e0QqWmb4HKXGrW54rVxRZJraC3xUuatQgxPR2csTYWNPGcAXTWSBUHmCVlawRf84FUnqsJYNJF6+PWpMTmiU3ZGxowmhzXgHRBxg8nbgT+oagiNS5H9HeDZlb4Tje1G/Wl00Ej9CukxofAtxjVVBDxuJ2GBLhNkNlo2Clq5bFRU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=WMAGYB8q; arc=fail smtp.client-ip=40.92.107.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QDfFIw0xqnBNQPhONsK/58VbMDI2smHhtgsHxHXe8uYsHOUVHCwTVpId3V0iCuzvW5dbwWGIcMFE3nBGkNnnlUID5lrfQ/e1TpXPTNTkTrb5J4P8PigcQRlVINBUVjcFfhQ07yjoUG8IYOSqzKwHQMZSEAH5uPjzf9a17+tn58B4G/7w6wKvGERF5/Vypdcv2G7wKx0jZJeO+7+g6+/WLhp/tYi2fDdbOAg2udogNEngyGSQjOSvh5FPjVqv0NfzMoKualiAa50Cdyj0pqDXc2g9dF3iBglHsvISTWlCFTt3zu1VSsWL6QSdQD7Z+hA78duYU/DbInhGR8y8eKMT7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z/xLH4zstEKE7N9u0jweyG3rDSdW+L/5pAq8iAskwdw=;
- b=aL/t/WBJEHxgRYax93yZAXbxEncoEFJRf5c2qjKhNrsKDGgUmX/FinTjfOu3Q2QtFrPxA2UD0iw6W/XzmcyN7fNKlBr5MtUNoCMhKN58oUUHNMGLx3XRJH4FHDH1dTuHhy8Xb9YkdNXyRphm2sGjD4yedmHm8Zj/YRcP2FbmbUwUiSyzopvPK9HoSyR0Get4QqXtCLBxXJW/3ZdO2I9FMG/GxaceVJE5ekkBc0dlTfORZnfePTarUT6c9WgdusAXa1G9+ttsCQJeCvZ280+cldOhwP4R3TXSb69EAph/jbsWcLsmSl/BSA+lkePU1iRo2fMbk2sAQ+v3QLaBSKMuow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z/xLH4zstEKE7N9u0jweyG3rDSdW+L/5pAq8iAskwdw=;
- b=WMAGYB8qeDNyCd3bWcAhZ8kxzsbg3PpFsYFCD0ALrXICF8x7Zx7D35VevCXiSfNQz4OrHNBRSRbgkXGdiA81vvb3Poq9tZzv37zoBSOSx3oOXBuBO7Jf5/Bbl/8sMiWNCyUWojcpmY3p4KIn30Fh182MdgHs4REfm543MVyCIr9/FWu0BsKouatVB+WaZ1thAkuCcD0ntZtaQ0JLhWxgIdG9I0qqXT2XZfloWPebG0cLQoOiE0W2nT20st8aSHXVI5Xs3Y5Wf58FVBk5LwoYaffw7vCmKlX3ErnX2C1AVxBvbxN/SK9iXqzsAB3Zz114dfnCsUyUmTmE6ondnra2hg==
-Received: from SEZPR04MB6319.apcprd04.prod.outlook.com (2603:1096:101:a6::7)
- by TYZPR04MB7029.apcprd04.prod.outlook.com (2603:1096:400:44e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Fri, 6 Sep
- 2024 07:19:07 +0000
-Received: from SEZPR04MB6319.apcprd04.prod.outlook.com
- ([fe80::8a6:22f0:5560:f3b4]) by SEZPR04MB6319.apcprd04.prod.outlook.com
- ([fe80::8a6:22f0:5560:f3b4%4]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 07:19:07 +0000
-From: Qixiang Xu <qixiang.xu@outlook.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: "oliver.upton@linux.dev" <oliver.upton@linux.dev>, "will@kernel.org"
-	<will@kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] KVM: arm64: Make nVHE ASLR conditional on nokaslr
-Thread-Topic: [PATCH 1/1] KVM: arm64: Make nVHE ASLR conditional on nokaslr
-Thread-Index: AQHa/10xN4eXue8VL0iYhiu2J/myqLJI15uAgAGDn6A=
-Date: Fri, 6 Sep 2024 07:19:07 +0000
-Message-ID:
- <SEZPR04MB63194C0FCB4765A8ABF4A2709E9E2@SEZPR04MB6319.apcprd04.prod.outlook.com>
-References: <20240905061659.3410362-1-qixiang.xu@outlook.com>
-	<20240905063026.3411766-1-qixiang.xu@outlook.com>
-	<SEZPR04MB631983048A8586896CEFE8829E9D2@SEZPR04MB6319.apcprd04.prod.outlook.com>
- <86mskmv7ts.wl-maz@kernel.org>
-In-Reply-To: <86mskmv7ts.wl-maz@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-tmn: [N4WYE08sevJEt7+4yW3bGdGmggM2Agzi]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR04MB6319:EE_|TYZPR04MB7029:EE_
-x-ms-office365-filtering-correlation-id: ec9b7801-d876-4b87-97bd-08dcce443229
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|15080799006|19110799003|15030799003|3430499032|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- zNsqx9LsQoBVXYIE3m6IoZK4cgX0E6C4yyUL+I75RnKAN6o6Pn6SDjvrX7lW3ubxuVUPb2Ikm2YokgJpQKipgQY5RkPX0mGIwsyIa3asZkACLUrjXYnbL/jbF6yUrIacLzesX8P5urMKSNP4hg4Lk6n/aY0Kv35Zkl5A2BIRNd0PJl12mwoySMPSZB/wv7W0zzTHF/BKssUI+TO2z7J5nRfIy/yuYtLyqQXAu+AKMCRqN3YERjBpHNGpJS3aVGMLwkVN6M6pClRX2xInDJJ1KhO4lV1Pbvads3k6ENIixUQe04REJNNZQ+k9uj5WQnVDG7h7tSuUvkS5UDaiTPXQ6Nw1O27ctQq2GDaLoXvUMIPkjqJdUPv8oIbl400zY1ZSI3WypM1aoz8AefS0gJBEqS60zIKzL4ffOU+Wn2/tvt2sXgU5gtxjCKrb9SqsapqoTUXTe4nAn3fl5X2OTtloi5FuEpf2zHi0bLXIabXfnvW2bWlMSwR2OwG6+kBC02hW4NDXt/5OpRO/3olfKsGVgg+IYTCvQTOnH1sfefTI5AVdWVkhgof5AXgrH5hFCxSlDpDoM28gnATjhGja1vSU4n/n974QxWE71Z8tgONxX2lElSVEn7vSMiuV5ARGCVXpqFURcF9aWWf7eFCzS+F5qGj+xUhRiXUfnv/I4w0m2Mi9HQQOi/EsvTzNz0HuEiqvrM88ivrL/h8N+T4G4Rd6/w==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?rqV5jriA10J7kIBnBnkXoHu7KVwX4vIJi/cjAOhDejhAF+ALvCIHjoCBJJ?=
- =?iso-8859-1?Q?3xEgFC0W/SjooL5cvlOKSyVPZN2XwRwE4R+NwWgClIsv229Y/8Rtr6va8g?=
- =?iso-8859-1?Q?hvQ1NJQil845hw9c8tOlPbPexnsrCYg8ed7wm3WVrC8lDJQSZGsBNW1+lF?=
- =?iso-8859-1?Q?3/mQ+S9E/W8Xhl1R2Xmt1a431GoOC9XMkI+rdcMEVrfpNk0xaViSzECkyr?=
- =?iso-8859-1?Q?0XF2h1PBPhvDRWk3lnxnB9fyihou3xrgu0CxH/Tm3ltkXJp/KN/6B+v4Ri?=
- =?iso-8859-1?Q?fV8D/LwTwDjL5HRolH8x+ajpOTBjrtZSBzh1eito2gICbAeo1e7GHpUYdk?=
- =?iso-8859-1?Q?/4iAhTXwtoRUugy/YYGTDB8lgHd6/O/9tQwPjQ+GU33k1BZ0jsDOzNmHzk?=
- =?iso-8859-1?Q?xePw3q488oOLIZh8mpn2KOLpyYiRXFy9GiOp2JRu5uVUGxtTIUQCEZxWYz?=
- =?iso-8859-1?Q?nlZb4oO3foTX/m62/qqCv+yZac5KAY1Ul4KSeCUQgdFjYYtqsBndo+xsNd?=
- =?iso-8859-1?Q?0uUobEo2JRQN5Z/nVSDjzsdaagMNAo/c4iOfCpGiHwf2IoYlSYiOnrcXOM?=
- =?iso-8859-1?Q?AYShrlc97OTAQxcebk5MB5478JJ8S8JCVNSVDAE1eEhUwEESqR8H+KNXw+?=
- =?iso-8859-1?Q?cpWhSgs/8SCnU4pLcsIQpz7eYeXdZ5TrrrFVjFdpUyDClDFOSQu6f78Riq?=
- =?iso-8859-1?Q?4wXxH/GbeUw0cGOmA1chpnBg80cld+01bi4ds9kIZFREJcXEN9IDJsjoJq?=
- =?iso-8859-1?Q?/tg+vSAMNo+ud4UMhrVravanyC7rv1bAzzupHHx/uXAITXmdFPCeroqC3g?=
- =?iso-8859-1?Q?TZVc4PdVThkfgl/z4WiFGvvXtvaPHYWhbAA9aYalm+BbGChzw7JeklRCKu?=
- =?iso-8859-1?Q?0R871cUWPPNjs+rkwSs8rB2M4anOkn8w0CLxP6nO56JnOvofkdICIRu5tx?=
- =?iso-8859-1?Q?dhoazMI26rgSqNWVVW5Em5PlWmo7DULsKTwmVEF/3Vs2PvclUTTXX9/fY7?=
- =?iso-8859-1?Q?++seIGUIiCFQjMqv3udDXTqGczPf2uhantyaI9cFm7NTZWZMduCnqFWyho?=
- =?iso-8859-1?Q?PWFIpIKqbBn6bxfJIzO7r1JdXCO/AFhxe8gmXg23bxnMMFyDB72OthU6KY?=
- =?iso-8859-1?Q?e7t8rroje624L4noy8CQxfUsJ5PqKHEvjE4PN6Di4lM4EPsEE7C0wv9ZHQ?=
- =?iso-8859-1?Q?lmgcSH5q9UN78ZJNQL8CYZ8l/jjAiBLKSXu8lgS4CNxLZpIURtnyX4D8ec?=
- =?iso-8859-1?Q?V9PZ+WvbnQDSV4tz2ufRZjWQk2UxPtKqf5cBcO2gE=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4580F14BF87
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725607272; cv=none; b=BcK8kpKqYAbv6t2PnIAmnSPphb1dcsy24n09h6LvrQMJGb1SWM7AQGmLV3j/GAQI3kVL6OmUTamN+LWuCOdYmLCJbH8jUxhB9JV7ZNombRmrgOW5LOoh50XUEhvRPYnJfr4qaS6D6nnh8qUAMcmbrSyAvgUhaCRiB14lxzkUpCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725607272; c=relaxed/simple;
+	bh=yO/YqnNMOnXRqewYhKP20TS0IxM90XmpKtT+gJDL7QI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=r0ar9g3tYdPvlwTFxO2SAHOmptR2ctNAOxpIGFXp+AAHsWc8b0yEO6pGJJg+yoxPCEBv3939VVEQJaXC1gfK2T/mkNgYqR/xSxnThfruzrm1ajaK8zbn388f1RiZgTHd9Bi6tJe8QOJ9qZo+E6sjVBQH2FPNvB7gXeNP639cOps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xNyKdDHP; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d02fe02d-a6c7-4157-bb7d-3fe235f21237@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725607268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zJPCh8PbP6Ph7SJVvvtMaEdy7Om9qiXdVbZwIKJbLac=;
+	b=xNyKdDHP4ERpm0wvOkIn/jYqCTzwSwzDwa0+P37KJndJaFEiFop/OTDMjIXGU5EDJLKXfQ
+	mM7OUatDpyRMqiet5XMBmQKn4oL7VnZRGFdfrUQz1HJqpKUQfoqZxcWhrkQcnK5SFyFKwO
+	tEHqWfpnmG0P3LEQRiK/xdTIgCz4fc8=
+Date: Fri, 6 Sep 2024 15:20:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR04MB6319.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec9b7801-d876-4b87-97bd-08dcce443229
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2024 07:19:07.4141
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB7029
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH v3 01/14] mm: pgtable: introduce
+ pte_offset_map_{ro|rw}_nolock()
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ David Hildenbrand <david@redhat.com>, hughd@google.com, willy@infradead.org,
+ vbabka@kernel.org, akpm@linux-foundation.org, rppt@kernel.org,
+ vishal.moola@gmail.com, peterx@redhat.com, ryan.roberts@arm.com,
+ christophe.leroy2@cs-soprasteria.com
+References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
+ <20240904084022.32728-2-zhengqi.arch@bytedance.com>
+In-Reply-To: <20240904084022.32728-2-zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Marc,=0A=
-=0A=
-Thanks for your reply. =0A=
-=0A=
-> This is a change in behaviour that would leave the 2 implementations=0A=
-> affected by Spectre-v3a unmitigated and leaking information to=0A=
-> *guests*, while they would have been safe until this change. Is this=0A=
-> what we really want to do?=0A=
-=0A=
-The reason for adding this is to make debugging nvhe hyp code easier. =0A=
-Otherwise, we would need to calculate the offset every time.=0A=
-Do you have any better suggestions for the debugging?=0A=
-=0A=
-=0A=
-> This is also not disabling the whole thing, since we still do the=0A=
-> indirect vector dance.=0A=
-=0A=
-I'm not sure if my understanding is correct, but based on =0A=
-the hyp_map_vectors function, the address of the indirect vector=0A=
-is only related to __io_map_base and is not random.=0A=
-=0A=
-=0A=
-Thanks. =0A=
-Qixiang Xu=
+
+
+On 2024/9/4 16:40, Qi Zheng wrote:
+> Currently, the usage of pte_offset_map_nolock() can be divided into the
+> following two cases:
+>
+> 1) After acquiring PTL, only read-only operations are performed on the PTE
+>     page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
+>     that the PTE page will not be freed, and there is no need to worry
+>     about whether the pmd entry is modified.
+>
+> 2) After acquiring PTL, the pte or pmd entries may be modified. At this
+>     time, we need to ensure that the pmd entry has not been modified
+>     concurrently.
+>
+> To more clearing distinguish between these two cases, this commit
+> introduces two new helper functions to replace pte_offset_map_nolock().
+> For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
+> to changing the name to pte_offset_map_rw_nolock(), it also outputs the
+> pmdval when successful. It is applicable for may-write cases where any
+> modification operations to the page table may happen after the
+> corresponding spinlock is held afterwards. But the users should make sure
+> the page table is stable like checking pte_same() or checking pmd_same()
+> by using the output pmdval before performing the write operations.
+>
+> Note: "RO" / "RW" expresses the intended semantics, not that the *kmap*
+> will be read-only/read-write protected.
+>
+> Subsequent commits will convert pte_offset_map_nolock() into the above
+> two functions one by one, and finally completely delete it.
+>
+> Signed-off-by: Qi Zheng<zhengqi.arch@bytedance.com>
+> ---
+>   Documentation/mm/split_page_table_lock.rst |  7 +++
+>   include/linux/mm.h                         |  5 +++
+>   mm/pgtable-generic.c                       | 50 ++++++++++++++++++++++
+>   3 files changed, 62 insertions(+)
+>
+> diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
+> index e4f6972eb6c04..08d0e706a32db 100644
+> --- a/Documentation/mm/split_page_table_lock.rst
+> +++ b/Documentation/mm/split_page_table_lock.rst
+> @@ -19,6 +19,13 @@ There are helpers to lock/unlock a table and other accessor functions:
+>    - pte_offset_map_nolock()
+>   	maps PTE, returns pointer to PTE with pointer to its PTE table
+>   	lock (not taken), or returns NULL if no PTE table;
+> + - pte_offset_map_ro_nolock()
+> +	maps PTE, returns pointer to PTE with pointer to its PTE table
+> +	lock (not taken), or returns NULL if no PTE table;
+> + - pte_offset_map_rw_nolock()
+> +	maps PTE, returns pointer to PTE with pointer to its PTE table
+> +	lock (not taken) and the value of its pmd entry, or returns NULL
+> +	if no PTE table;
+>    - pte_offset_map()
+>   	maps PTE, returns pointer to PTE, or returns NULL if no PTE table;
+>    - pte_unmap()
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a7c74a840249a..1fde9242231c9 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3006,6 +3006,11 @@ static inline pte_t *pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
+>   
+>   pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+>   			unsigned long addr, spinlock_t **ptlp);
+> +pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
+> +				unsigned long addr, spinlock_t **ptlp);
+> +pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
+> +				unsigned long addr, pmd_t *pmdvalp,
+> +				spinlock_t **ptlp);
+>   
+>   #define pte_unmap_unlock(pte, ptl)	do {		\
+>   	spin_unlock(ptl);				\
+> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> index a78a4adf711ac..262b7065a5a2e 100644
+> --- a/mm/pgtable-generic.c
+> +++ b/mm/pgtable-generic.c
+> @@ -317,6 +317,33 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+>   	return pte;
+>   }
+>   
+> +pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
+> +				unsigned long addr, spinlock_t **ptlp)
+> +{
+> +	pmd_t pmdval;
+> +	pte_t *pte;
+> +
+> +	pte = __pte_offset_map(pmd, addr, &pmdval);
+> +	if (likely(pte))
+> +		*ptlp = pte_lockptr(mm, &pmdval);
+> +	return pte;
+> +}
+> +
+> +pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
+> +				unsigned long addr, pmd_t *pmdvalp,
+> +				spinlock_t **ptlp)
+> +{
+> +	pmd_t pmdval;
+> +	pte_t *pte;
+> +
+> +	VM_WARN_ON_ONCE(!pmdvalp);
+> +	pte = __pte_offset_map(pmd, addr, &pmdval);
+> +	if (likely(pte))
+> +		*ptlp = pte_lockptr(mm, &pmdval);
+> +	*pmdvalp = pmdval;
+> +	return pte;
+> +}
+> +
+>   /*
+>    * pte_offset_map_lock(mm, pmd, addr, ptlp), and its internal implementation
+>    * __pte_offset_map_lock() below, is usually called with the pmd pointer for
+> @@ -356,6 +383,29 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+>    * recheck *pmd once the lock is taken; in practice, no callsite needs that -
+>    * either the mmap_lock for write, or pte_same() check on contents, is enough.
+>    *
+> + * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like pte_offset_map();
+> + * but when successful, it also outputs a pointer to the spinlock in ptlp - as
+> + * pte_offset_map_lock() does, but in this case without locking it.  This helps
+> + * the caller to avoid a later pte_lockptr(mm, *pmd), which might by that time
+> + * act on a changed *pmd: pte_offset_map_ro_nolock() provides the correct spinlock
+> + * pointer for the page table that it returns. Even after grabbing the spinlock,
+> + * we might be looking either at a page table that is still mapped or one that
+> + * was unmapped and is about to get freed. But for R/O access this is sufficient.
+> + * So it is only applicable for read-only cases where any modification operations
+> + * to the page table are not allowed even if the corresponding spinlock is held
+> + * afterwards.
+> + *
+> + * pte_offset_map_rw_nolock(mm, pmd, addr, pmdvalp, ptlp), above, is like
+> + * pte_offset_map_ro_nolock(); but when successful, it also outputs the pdmval.
+> + * It is applicable for may-write cases where any modification operations to the
+> + * page table may happen after the corresponding spinlock is held afterwards.
+> + * But the users should make sure the page table is stable like checking pte_same()
+> + * or checking pmd_same() by using the output pmdval before performing the write
+> + * operations.
+
+Now, we have two options to make sure the stability of PTE for users
+of pte_offset_map_rw_nolock(), in order to ease this operation, how
+about proposing a new helper (or two, one for pmd_same, another for
+pte_same) like pte_lock_stability (I am not good at naming, maybe
+you can) which helps users 1) hold the PTL and 2) check if the PTE is
+stable and 3) return true if the PTE stable, otherwise return false.
+
+Muchun,
+Thanks.
+
+> + *
+> + * Note: "RO" / "RW" expresses the intended semantics, not that the *kmap* will
+> + * be read-only/read-write protected.
+> + *
+>    * Note that free_pgtables(), used after unmapping detached vmas, or when
+>    * exiting the whole mm, does not take page table lock before freeing a page
+>    * table, and may not use RCU at all: "outsiders" like khugepaged should avoid
+
 
