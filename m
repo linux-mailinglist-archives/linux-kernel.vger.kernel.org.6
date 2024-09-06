@@ -1,314 +1,268 @@
-Return-Path: <linux-kernel+bounces-318728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D436496F230
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:02:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F1796F248
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E071287702
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C901D1C2037A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D53A1CB52D;
-	Fri,  6 Sep 2024 11:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F861CDA29;
+	Fri,  6 Sep 2024 11:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SB5A8/fr"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2069.outbound.protection.outlook.com [40.107.100.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsPz/rSi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCDF1CB334;
-	Fri,  6 Sep 2024 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620497; cv=fail; b=kp1O5FooxWfyJ+2SspJpjdguhabmyoO7kOYCFBGdhSvKqkOEJ2YXp2yV62Ku4fqkaYb5+6IH+DMUS4HTaSPxSBFOQPdO4ZkXFcZH5AV1r2sJJjBikJ8x8j/BQ9dzN47AyHz3+AbcIpHlToqpKeRDCmMg4s8nacg0y6pAD2HTKvw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620497; c=relaxed/simple;
-	bh=0EBtVRHt4serazTpODaBBzbM1CQWFB581YXNockqjIo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jkt6gI1X37FzWuYYYW/95NaA17XCvUfp5hhJ8Q1WSgpx7XSL0x4gZKkc+v6MbZvvhrlHIidla1cnIu5I0Zr9vBPWQn50uOQ4Lx45m3m2yjCuKdU31K3jRWdGssZ1ThviRumCKnLdIZF4oayIagRCpVW0vnBXPIOu9jL+Ej8rOqA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SB5A8/fr; arc=fail smtp.client-ip=40.107.100.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SXxCpK789tl4l8o37IcxVMqxhMI41x/mX2eYaUIZbm9Dz2+1N5UVpjazbByQ61TwAnnkTXBKxjkzkB72nJCF2uSUnp5NVc1hgdtPjjts13D99ZE+H6TrfFgJPknCyr4zbKU035BsPKxeXhjjKyaqg2e9aVD5HxQHhhgmTCVz0mwq1/u6AeLSTqBLkbVLr8dq8dElXMmd9NBW6jIORCtLKZoaC27Wf0DSoF5f3QftrTqw9+nbo7kPYLRHPJoIvLyIcqnsbTOjPYnl+z4CC/LK26u7A9G2VTvGDeln5PHvESCY5KWBPbiVyS7FOPp9pr65IceI1Cilwm0SSQvWO6J+MQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/mgQnQujlDRhyvJfjgDxSZYbzQSOlQeubMM4Tmo472w=;
- b=AEOvqrn68UucUHz9mIEKhvvXQfXfb3IP1If5Cpcfxq79qdLvW3qOQAsdHK6a3fZfOyQ+n2kEfecpzyDPGfFf0wC5Fmq4hQ6nqS/3IfIQD2JADAY7vcQT6mq7OST+xpANSl3PKxCZNiuuS7GooSF5sqB8TOV7/0ZQZvLpq6bOpJIzhy3L3tN4eNVAhEffoFKxz5SWVj1d7QPPJRrkb4L6wpDkmzJByq4H/1lVSd0gcIBe1jVp/W0rq9SVyWTQVR8d38TmFktEE0ketbTWSwP6YWy4kxY/FLqXYwpxU1AAlaSkMcnPcjaR9eAFYUwrakRcbX6HjPPLdHNFjBJR4syamw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/mgQnQujlDRhyvJfjgDxSZYbzQSOlQeubMM4Tmo472w=;
- b=SB5A8/frAk9THHGqexSUk5krI2UuTc4Muam8jjSnE8+kFf6U0fl/RGLnTbgKzn7IzMaf+AprygDhttNnc0DtIIYvgSkdC1SlX2FmNtCqEqgCmRSex9xdXrpi4h8xqA0iK0KEN51eizuRGdgfs/VsR4cX6wo9h3kaXaywaAjh5/o=
-Received: from SN1PR12CA0070.namprd12.prod.outlook.com (2603:10b6:802:20::41)
- by SA1PR12MB6970.namprd12.prod.outlook.com (2603:10b6:806:24d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Fri, 6 Sep
- 2024 11:01:32 +0000
-Received: from SN1PEPF00026368.namprd02.prod.outlook.com
- (2603:10b6:802:20:cafe::94) by SN1PR12CA0070.outlook.office365.com
- (2603:10b6:802:20::41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
- Transport; Fri, 6 Sep 2024 11:01:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SN1PEPF00026368.mail.protection.outlook.com (10.167.241.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 11:01:32 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
- 2024 06:01:31 -0500
-Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 6 Sep 2024 06:01:27 -0500
-From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek
-	<michal.simek@amd.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jay Buddhabhatti
-	<jay.buddhabhatti@amd.com>, Praveen Teja Kundanala
-	<praveen.teja.kundanala@amd.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<saikrishna12468@gmail.com>, <git@amd.com>, Sai Krishna Potthuri
-	<sai.krishna.potthuri@amd.com>
-Subject: [PATCH v5 3/3] pinctrl: pinctrl-zynqmp: Add support for Versal platform
-Date: Fri, 6 Sep 2024 16:31:13 +0530
-Message-ID: <20240906110113.3154327-4-sai.krishna.potthuri@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
-References: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599E71CBEBD;
+	Fri,  6 Sep 2024 11:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725620500; cv=none; b=XhmlwymCIlwSUrMAE2vI7Ek98ky/ZHB+jhujeo9uKVJZrXnwlRt7rVh/9m72BoNW3wtx2BCt5MvgkeinT0H33/lI0Hd4fCzcrU6iepnc9YceLXRZjfFlrhxFXuR/EhZUFVGJwPT8tC9RymfkBcjhi/A8nhbFgQvKXhe+0FQm0EU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725620500; c=relaxed/simple;
+	bh=TZ+5SMHrhrYlL8TOlFpYxPkfKpZGWI5ka+ne8BNKBYU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ub2g1wp6bxOiF4b+G+82OCiZuxMDNFhxI/zoM3lZj88jXmxwjY+a5YE60fFoC+JGuaapZU5SfDwiW/zwUoH7JJWiOq7GT1VrYMoXhKzxL9htBuOSq8NaY7sxIW2rSFcFUgXZkClFXDkLk3C2iiyh2AKF4AcgahoA8AV5TqTaYS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsPz/rSi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CF6A7C4CECB;
+	Fri,  6 Sep 2024 11:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725620499;
+	bh=TZ+5SMHrhrYlL8TOlFpYxPkfKpZGWI5ka+ne8BNKBYU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=EsPz/rSiQlXGQJZAplFuV7djjKI0Bk3bxrXy/Ay04/nanHb0TmgO15cuYyvw/wTfe
+	 CMOiE+R6NxyJr3sgSNw9QXoW1Rpm0l2pkUfRrcOSmLmvMZXdDHkXWqZJFEBywNO7pd
+	 wLX/gscdGoFd8hOxSWeUerNYUdkAWf+r0pTtseDDOcRR6h730Tv4BF5e08xtvnfLO3
+	 DLF6b/U//YCKX29CEQu1WnDy4LqXIxoYMnYBod5HKshud7A1bjVZ4bO2DJ+19Geizy
+	 pzJgizOSL+pWSuakTm3zDKxt8KiQszMHHmQwFe69lNmwQm2VjGOGJIBC8DOxzWnNAz
+	 EFaqTkw9EHZKA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AA8CD5BDD;
+	Fri,  6 Sep 2024 11:01:39 +0000 (UTC)
+From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
+Subject: [PATCH v2 0/8] Enable build system on macOS hosts
+Date: Fri, 06 Sep 2024 13:01:27 +0200
+Message-Id: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: sai.krishna.potthuri@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00026368:EE_|SA1PR12MB6970:EE_
-X-MS-Office365-Filtering-Correlation-Id: 998cedd7-d3c3-4923-fec9-08dcce634495
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?AKZWO2hPWlQL+gt9xAVj3VmekdKDmoof1CK9JLD4K2V+P2xaXlFIzwt382yt?=
- =?us-ascii?Q?Zk4LcMNOtLn+2Ef7eYB47pqTJnb8edMDNsHNj55gQ3lBnw3NOkNivQoNVyC7?=
- =?us-ascii?Q?WBXv1EzBnPsPXS6FrCfdhs/hKXOgPMbGqXHPS47qW4/qUKh3ES6IxwHm/TSO?=
- =?us-ascii?Q?OnUuWMiUghxKj9JHRnwgI9eQMAcKGqf9AarJnrowuoOSxX9iXUK1SFMyxTAQ?=
- =?us-ascii?Q?BQknKAPRqavl5RhuPczsoAuPU8NdaDlqX65PWl6BcebQc8w3g6od1BFBfp+y?=
- =?us-ascii?Q?Gz3BWx3JtMUguEZ4JmoD5mYtLErKn4cFjjmIjIODhQhfrvCQDHlk8f+axv8i?=
- =?us-ascii?Q?hF3zANKFOGwYxh6rk1wceOcR60YxZelxNVQfA+nFuK6yR7eAU+zgPOAIToLs?=
- =?us-ascii?Q?5hey2oFQZg0fVTJoyG9ZA42Vn8miyWZFZ0L5A6yrYEKhef8WdrXF5wF2fAur?=
- =?us-ascii?Q?3MOuxi4+Bn3RI/K/n9QwKSVWG80jlN1hMr2/7NnkYEbZ9ZG411ub5mnCDr5v?=
- =?us-ascii?Q?H4PH6HNuUOzCpY97WhHL/aHWyBjfOQT85QTI+kWP25ANh8RvhzmebF7Driq8?=
- =?us-ascii?Q?wC/asMN5/l+XMzy/fhDzddEDA9xbDGqebThB/vCrqEvdPuiIp8sGjDXKl2mE?=
- =?us-ascii?Q?dYGoIPqoSMveCt+OjrPTxzzyHU8qiFbD9UwtwfuTk31HqteVwR7wIa8AvgdY?=
- =?us-ascii?Q?x1xkjsWaZMJCl+8KtnTkJa3Riszt6OtnVVfdwPHhfG8Xwg/Zt9lO/HEgxnVI?=
- =?us-ascii?Q?vq826tBu1dMgog7pKN/mpJXNQUmS3hGew4HoW9IpwI98mF60Lf2iSHb4gsYT?=
- =?us-ascii?Q?4wXQI/WIaRSzSOk9NKuu1OH0YGFfeIfhTEli2J46QLT97eLbXUihV3c8Qrb2?=
- =?us-ascii?Q?L6xpGEBWaWDdcvPFp9HnomFpNvmhRMH7fB59WlZnlm6AEOqfW3545lxZg+2B?=
- =?us-ascii?Q?urd8yF0EehCnkHfQ9n2PgnZ1DpmOTpMZHNE3Gc7IkSAxMfUqEoEzgpVo4pHl?=
- =?us-ascii?Q?Zqm+xSU52rtflb+yBaHS6khOP7hV5JOJiLOqt7RW726Tcyb9PmM+ytjpwgBK?=
- =?us-ascii?Q?5kiEOHeGb0TOj2kaa0EnAWX8rSRx0GytIgOMMHLDVFeAjiocFpp10Ov8elDK?=
- =?us-ascii?Q?obhOuaCSNi1CqQQxhpmmCqwaZRsKBenLGgY5mLk070UC2acajO5QQgENp1or?=
- =?us-ascii?Q?aYNqqLjTN7Zg/TOf7xwdIvMFiAHL5EctGJtMWfeZkrFCyiRS34C0XsHagr3G?=
- =?us-ascii?Q?jsJlcqwKbD6silqAFKz8vk1B1vIxX9RTe0bZxT9OElirzkRqaB8X1mH5RIee?=
- =?us-ascii?Q?GWzdhJ7mBtAVXqgjQ1fVXsq6p8wUCGtWoaNAoVYiIcXoYvRzZzauTP61l2Iu?=
- =?us-ascii?Q?QUcawoU0xPk+b+v8jl6NkAfPWFe/DZp/M3GK1fzedIOFYaQdii2zq5/vT/0e?=
- =?us-ascii?Q?8F0hAOpdeVvoB/l1padrcITQuhTdnhKH?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 11:01:32.6126
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 998cedd7-d3c3-4923-fec9-08dcce634495
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00026368.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6970
+X-B4-Tracking: v=1; b=H4sIAAfh2mYC/32NQQ6CMBBFr0Jm7ZiWoAVX3sOwKJ0KkwglHUo0h
+ LtbOYDL95L//gbiI3uBW7FB9CsLhylDeSrADXbqPTJlhlKVlaqVwdG6INglfhFKmucQF2ycVWS
+ MpU4byMs5+ie/j+qjzTywLCF+jpNV/+z/3qpRYeVIk6f6cm2qu9hR0tSfXRih3ff9C2+x1CC4A
+ AAA
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, William Hubbs <w.d.hubbs@gmail.com>, 
+ Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, 
+ Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+ Paul Moore <paul@paul-moore.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Ondrej Mosnacek <omosnace@redhat.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ speakup@linux-speakup.org, selinux@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+ Finn Behrens <me@kloenk.dev>, 
+ "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com, 
+ Daniel Gomez <da.gomez@samsung.com>, 
+ Nick Desaulniers <nick.desaulniers@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725620498; l=6996;
+ i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
+ bh=TZ+5SMHrhrYlL8TOlFpYxPkfKpZGWI5ka+ne8BNKBYU=;
+ b=ayL2MPQnBtEx4lGC0G1crXfF8O4KlaX6OFWn5S6fsN4KlxD3Qdnjil/2zTLO/l2WVayP0UXIO
+ ZVoNG/cKjqEDiiR+0GxTIYS6rNsNoRuqaX/hj9danc0NcoamLKkrxlf
+X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
+ pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
+X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
+ auth_id=175
+X-Original-From: Daniel Gomez <da.gomez@samsung.com>
+Reply-To: da.gomez@samsung.com
 
-Add Pinctrl support for Xilinx Versal platform.
-Driver checks for firmware support to retrieve the Pin information, if it
-is supported then proceed further otherwise it returns error saying
-operation not supported. Latest Xilinx Platform Management Firmware must
-be used to make use of the Pinctrl driver for Versal platform.
+This patch set allows for building the Linux kernel for arm64 in macOS
+with LLVM.
 
-Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Patches are based on previous Nick's work and suggestions [1][2][3] to
+enable the Linux kernel build system on macOS hosts.
+
+macOS does not provide certain headers that are available in a GNU/Linux
+distribution with development headers installed, usually provided by
+the GNU C Library (glibc) and/or other projects. These missing headers
+are needed as build dependencies. To address this, the patches depend
+on a new Bee Headers Homebrew Tap formula [6][7][8] that provides them
+together with a pkg-config file to locate the include directory.
+
+To locate them, Makefiles include something like:
+	$(shell $(HOSTPKG_CONFIG) --cflags bee-headers 2> /dev/null)
+
+[6] Project:
+https://github.com/bee-headers
+[7] Headers repository:
+https://github.com/bee-headers/headers.git
+[8] Homebrew Tap formula:
+https://github.com/bee-headers/homebrew-bee-headers.git
+
+To set up the environment, documentation is provided via last patch in
+this series.
+
+More configurations and architectures as well as support for Rust
+(from Finn Behrens [4] [5]) can be added in the future to extend build
+support.
+
+[1]: WIP: build Linux on MacOS
+https://github.com/ClangBuiltLinux/linux/commit/f06333e29addbc3d714adb340355f471c1dfe95a
+
+[2] Subject: [PATCH] scripts: subarch.include: fix SUBARCH on MacOS hosts
+https://lore.kernel.org/all/20221113233812.36784-1-nick.desaulniers@gmail.com/
+
+[3] Subject: Any interest in building the Linux kernel from a MacOS host?
+https://lore.kernel.org/all/CAH7mPvj64Scp6_Nbaj8KOfkoV5f7_N5L=Tv5Z9zGyn5SS+gsUw@mail.gmail.com/
+
+[4] https://github.com/kloenk/linux/commits/rust-project_macos-dylib/
+
+[5] https://kloenk.eu/posts/build-linux-on-m1-macos/
+
+To: Masahiro Yamada <masahiroy@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nicolas@fjasle.eu>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: William Hubbs <w.d.hubbs@gmail.com>
+To: Chris Brannon <chris@the-brannons.com>
+To: Kirk Reiser <kirk@reisers.ca>
+To: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: Paul Moore <paul@paul-moore.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+To: James Morse <james.morse@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Zenghui Yu <yuzenghui@huawei.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+To: Nick Desaulniers <ndesaulniers@google.com>
+To: Bill Wendling <morbo@google.com>
+To: Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: intel-xe@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: speakup@linux-speakup.org
+Cc: selinux@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: kvmarm@lists.linux.dev
+Cc: linux-serial@vger.kernel.org
+Cc: llvm@lists.linux.dev
+Cc: Finn Behrens <me@kloenk.dev>
+Cc: Daniel Gomez (Samsung) <d+samsung@kruces.com>
+Cc: gost.dev@samsung.com
+
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
 ---
- drivers/pinctrl/pinctrl-zynqmp.c | 97 ++++++++++++++++++++++++++++++--
- 1 file changed, 92 insertions(+), 5 deletions(-)
+Changes in v2:
+- Add documentation and set this 'feature' as experimental.
+- Update cover letter.
+- Drop unnecessary changes. Patches removed:
+	- kbuild: add header_install dependency to scripts
+	- include: add endian.h support
+	- include: add elf.h support
+- Update Makefiles to find Bee Headers with pkg-config.
+- Update file2alias to solve uuid_t conflicts inside Makefile as
+suggested by Nicolas Schier.
+- Adapt xe_gen_wa_oob to solve getprogname()/
+program_invocation_short_name in runtime. as suggested by Lucas De
+Marchi.
+- Remove linux/version.h in accessibility/speakup as suggested by
+Masahiro Yamada.
+- Replace selinux patches with new Masahiro Yamada's patches:
+	Message-id: 20240809122007.1220219-1-masahiroy@kernel.org
+	Link: https://lore.kernel.org/all/20240809122007.1220219-1-masahiroy@kernel.org/
+- Replace tty/vt with new Masahiro Yamada's patch:
+	Message-id: 20240809160853.1269466-1-masahiroy@kernel.org
+	Link: https://lore.kernel.org/all/20240809160853.1269466-1-masahiroy@kernel.org/
+	(Already merged in the linux-next tag used)
+- Replace scripts/kallsyms patch with Masahiro Yamada's patch:
+	Message-id: 20240807181148.660157-1-masahiroy@kernel.org
+	Link: https://lore.kernel.org/all/20240807181148.660157-1-masahiroy@kernel.org/
+	(Already merged in the linux-next tag used)
+- Link to v1: https://lore.kernel.org/r/20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com
 
-diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-index 3c6d56fdb8c9..2b9f8db49a15 100644
---- a/drivers/pinctrl/pinctrl-zynqmp.c
-+++ b/drivers/pinctrl/pinctrl-zynqmp.c
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
- 
-+#include <linux/bitfield.h>
- #include <linux/bitmap.h>
- #include <linux/init.h>
- #include <linux/module.h>
-@@ -44,6 +45,12 @@
- #define DRIVE_STRENGTH_8MA	8
- #define DRIVE_STRENGTH_12MA	12
- 
-+#define VERSAL_LPD_PIN_PREFIX		"LPD_MIO"
-+#define VERSAL_PMC_PIN_PREFIX		"PMC_MIO"
-+
-+#define VERSAL_PINCTRL_ATTR_NODETYPE_MASK	GENMASK(19, 14)
-+#define VERSAL_PINCTRL_NODETYPE_LPD_MIO		BIT(0)
-+
- /**
-  * struct zynqmp_pmux_function - a pinmux function
-  * @name:	Name of the pin mux function
-@@ -93,6 +100,8 @@ struct zynqmp_pctrl_group {
- };
- 
- static struct pinctrl_desc zynqmp_desc;
-+static u32 family_code;
-+static u32 sub_family_code;
- 
- static int zynqmp_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
- {
-@@ -596,8 +605,12 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
- 			if (!groups[resp[i]].name)
- 				return -ENOMEM;
- 
--			for (pin = 0; pin < groups[resp[i]].npins; pin++)
--				__set_bit(groups[resp[i]].pins[pin], used_pins);
-+			for (pin = 0; pin < groups[resp[i]].npins; pin++) {
-+				if (family_code == ZYNQMP_FAMILY_CODE)
-+					__set_bit(groups[resp[i]].pins[pin], used_pins);
-+				else
-+					__set_bit((u8)groups[resp[i]].pins[pin] - 1, used_pins);
-+			}
- 		}
- 	}
- done:
-@@ -873,6 +886,70 @@ static int zynqmp_pinctrl_prepare_pin_desc(struct device *dev,
- 	return 0;
- }
- 
-+static int versal_pinctrl_get_attributes(u32 pin_idx, u32 *response)
-+{
-+	struct zynqmp_pm_query_data qdata = {0};
-+	u32 payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	qdata.qid = PM_QID_PINCTRL_GET_ATTRIBUTES;
-+	qdata.arg1 = pin_idx;
-+
-+	ret = zynqmp_pm_query_data(qdata, payload);
-+	if (ret)
-+		return ret;
-+
-+	memcpy(response, &payload[1], sizeof(*response));
-+
-+	return 0;
-+}
-+
-+static int versal_pinctrl_prepare_pin_desc(struct device *dev,
-+					   const struct pinctrl_pin_desc **zynqmp_pins,
-+					   unsigned int *npins)
-+{
-+	u32 lpd_mio_pins = 0, attr, nodetype;
-+	struct pinctrl_pin_desc *pins, *pin;
-+	int ret, i;
-+
-+	ret = zynqmp_pm_is_function_supported(PM_QUERY_DATA, PM_QID_PINCTRL_GET_ATTRIBUTES);
-+	if (ret)
-+		return ret;
-+
-+	ret = zynqmp_pinctrl_get_num_pins(npins);
-+	if (ret)
-+		return ret;
-+
-+	pins = devm_kzalloc(dev, sizeof(*pins) * *npins, GFP_KERNEL);
-+	if (!pins)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < *npins; i++) {
-+		ret = versal_pinctrl_get_attributes(i, &attr);
-+		if (ret)
-+			return ret;
-+
-+		pin = &pins[i];
-+		pin->number = attr;
-+		nodetype = FIELD_GET(VERSAL_PINCTRL_ATTR_NODETYPE_MASK, attr);
-+		if (nodetype == VERSAL_PINCTRL_NODETYPE_LPD_MIO) {
-+			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
-+						   VERSAL_LPD_PIN_PREFIX, i);
-+			lpd_mio_pins++;
-+		} else {
-+			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
-+						   VERSAL_PMC_PIN_PREFIX, i - lpd_mio_pins);
-+		}
-+
-+		if (!pin->name)
-+			return -ENOMEM;
-+	}
-+
-+	*zynqmp_pins = pins;
-+
-+	return 0;
-+}
-+
- static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct zynqmp_pinctrl *pctrl;
-@@ -882,9 +959,18 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 	if (!pctrl)
- 		return -ENOMEM;
- 
--	ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev,
--					      &zynqmp_desc.pins,
--					      &zynqmp_desc.npins);
-+	ret = zynqmp_pm_get_family_info(&family_code, &sub_family_code);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (family_code == ZYNQMP_FAMILY_CODE) {
-+		ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
-+						      &zynqmp_desc.npins);
-+	} else {
-+		ret = versal_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
-+						      &zynqmp_desc.npins);
-+	}
-+
- 	if (ret) {
- 		dev_err(&pdev->dev, "pin desc prepare fail with %d\n", ret);
- 		return ret;
-@@ -907,6 +993,7 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 
- static const struct of_device_id zynqmp_pinctrl_of_match[] = {
- 	{ .compatible = "xlnx,zynqmp-pinctrl" },
-+	{ .compatible = "xlnx,versal-pinctrl" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, zynqmp_pinctrl_of_match);
+---
+Daniel Gomez (5):
+      file2alias: fix uuid_t definitions for macos
+      drm/xe: xe_gen_wa_oob: fix program_invocation_short_name for macos
+      arm64: nvhe: add bee-headers support
+      scripts: add bee-headers support
+      Documentation: add howto build in macos
+
+Masahiro Yamada (2):
+      selinux: do not include <linux/*.h> headers from host programs
+      selinux: move genheaders to security/selinux/
+
+Nick Desaulniers (1):
+      scripts: subarch.include: fix SUBARCH on macOS hosts
+
+ Documentation/kbuild/llvm.rst                      | 78 ++++++++++++++++++++++
+ arch/arm64/kernel/pi/Makefile                      |  1 +
+ arch/arm64/kernel/vdso32/Makefile                  |  1 +
+ arch/arm64/kvm/hyp/nvhe/Makefile                   |  3 +-
+ drivers/gpu/drm/xe/xe_gen_wa_oob.c                 |  4 ++
+ scripts/Makefile                                   |  4 +-
+ scripts/mod/Makefile                               |  7 ++
+ scripts/mod/file2alias.c                           |  3 +
+ scripts/remove-stale-files                         |  3 +
+ scripts/selinux/Makefile                           |  2 +-
+ scripts/selinux/genheaders/.gitignore              |  2 -
+ scripts/selinux/genheaders/Makefile                |  5 --
+ scripts/selinux/mdp/Makefile                       |  2 +-
+ scripts/selinux/mdp/mdp.c                          |  4 --
+ scripts/subarch.include                            |  2 +-
+ security/selinux/.gitignore                        |  1 +
+ security/selinux/Makefile                          |  7 +-
+ .../genheaders => security/selinux}/genheaders.c   |  3 -
+ security/selinux/include/classmap.h                | 19 ++++--
+ security/selinux/include/initial_sid_to_string.h   |  2 -
+ 20 files changed, 123 insertions(+), 30 deletions(-)
+---
+base-commit: ad40aff1edffeccc412cde93894196dca7bc739e
+change-id: 20240807-macos-build-support-9ca0d77adb17
+
+Best regards,
 -- 
-2.25.1
+Daniel Gomez <da.gomez@samsung.com>
+
 
 
