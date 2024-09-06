@@ -1,283 +1,172 @@
-Return-Path: <linux-kernel+bounces-318458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32A496EE4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACCB96EE50
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BCB1C2162F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EE91F24014
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02457156C40;
-	Fri,  6 Sep 2024 08:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E94157E99;
+	Fri,  6 Sep 2024 08:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="LR9D6mWO"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011065.outbound.protection.outlook.com [52.101.129.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKhGu4ym"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331AC154C19;
-	Fri,  6 Sep 2024 08:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611852; cv=fail; b=egvvd9q7MyKAuZDvPKhMzHkYoYVgcKrkHjdXbHIrPIc/ta5d9loo76Y/cSaIi8IZVVC188i1pE3AmQ7ba+XSSh/WVuZ4CEDJQlLAuyjyeevuUZMaMjMoF6FhVq1tINpLnCViNHuYvY5mcuuj6y94rBCHCQ+AL2xM+TWBsGHYPEg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611852; c=relaxed/simple;
-	bh=+HN3zT6sZCf4j+GJOIWCoWBk+u+yuAgm/SdUutJxsmE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OEfWaRCT9Vh8DxXrVJDfoLmpiwa+ITUgO3MA18GHCs6tiRlo8n5t7bpK8H+F6q7sZCK1OIvCVnsCzcdEgp7nfBInBfOm8kwbR100IBx4b8OxntEVBb1u12zxOB4ULyj2bqx6EIKy1oqN3L6E2q/Hs/VxqJCuclzP3GNchWYFSec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=LR9D6mWO; arc=fail smtp.client-ip=52.101.129.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yb3ZYO9GDuA0KDltOcyp9IubKMUV8MLxYzVtDx7/Pb3HUH9WvmE42Ee8bvCfUCAg9EDrjWPbUa5OOKmaZpim44e9xdIVc+frWwHERcT/o2xbKulXVk/9Y8XgYg66IohS/XKJd8bfmNOCcnlWb9Rw//ayy2fPI1D64JGu5h1swLlh99WANCeyb0IVE53lddhmWnyCtFZvm4edEbIk5lvQhbDUxQXO8qX2tZgOOnhngxwyw2HroNp3/WjFKzgayKHxZ5OcZ5U0sSLzaUUNJ6kB09TJznaAoWaqwKiA3Q/E36VGOaxJ2zgIAIrvNlQacbiQ+DvIkYTtw2sq38Gp7JpoSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7PCHF776DpFWARjwlbvyB8cqCpoKEHmnwWBHim0ww0o=;
- b=NqiA1p1XBQPTZx1m3syyvALokKmjkEC8D8HAJRsQUmSa5mIAdeDEImwCue3mYe1nFpvD+ae2cL5j58De6Qc53Z+CLBIchx6eQ+a4sm4W4VCv0DFH1uoNekUyzM7wOPHAPLaawrSBms13cG4Um3VzdyFzjqtZpQMJ414BFBFVcVs4Em9sCrYaWvYpEzcywnp4HZSInt8m+0DBQro+va5DKCLIqDWd0YbN1D1yQexsbBMwOh97NQC4iFVlc4Wkjx9ut6pi34h2aqq1vXr2+tklpvX1B7dXVDZjMGWcIELHHDuSP4K70NZjp2KF9N+2P/9LsAJ/8KxK/SR/7sezC55O4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7PCHF776DpFWARjwlbvyB8cqCpoKEHmnwWBHim0ww0o=;
- b=LR9D6mWOuOFFye1JZCewydfn+bwuAVeNPBaS6ZrgtIud0To1G+JCeldM8cf7iXfSUzQ4GUO7/p5qo3cM2oY0dtzrTRvFVYuV93SgWH91xYLfW313/qxDmniJBM0diluMyVYvXav2RvJLOFwWvUTBNnUlTtabaci6RKnv8ZAJaFcNz1v/BkaB4x7AdX2PtxEcw73ePDMcWgDYSCFXmDmyTWE8IbddykFff4MBcgygchQtR/c8pk8uQ1u/cykEl2QK+GvAylcbJYJzKUvZGTJRdWc13qlOEWerotfM6q8tz5E8o+bUA6xndn7G15XmbEzuxBDZA7oIr/M2ysY25jPW8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by TYSPR06MB6501.apcprd06.prod.outlook.com (2603:1096:400:47d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Fri, 6 Sep
- 2024 08:37:23 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
- 08:37:23 +0000
-Message-ID: <55af756d-5002-4534-857b-f3ef3c8e34e6@vivo.com>
-Date: Fri, 6 Sep 2024 16:37:18 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] udmabuf: pre-fault when first page fault
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20240903083818.3071759-1-link@vivo.com>
- <20240903083818.3071759-2-link@vivo.com>
- <IA0PR11MB718502273712359BC456893CF89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <IA0PR11MB718502273712359BC456893CF89E2@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0008.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::19) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B1714B945;
+	Fri,  6 Sep 2024 08:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725611920; cv=none; b=LArhmxoNPXK0/gpNhYxzsQuMVUutAuAzqPKqwpzwLfmmUhGZDZ3ARroBL5Y3a8Ym3UpY+GhnTuhGUwef5RCMq2h+ggs7NhLMfZQnGNlKUQ3CtehXWhocD5vqR09yzgLkXMGsDO3wtnM53sSRamfGjTs/UsKKW3gAXe+8JvbHe4Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725611920; c=relaxed/simple;
+	bh=8raF76XSM3ymus0m9y5pGxcw01NyiiwG5lE+/gP+Tx8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qnDEOi/Zmu/P3OtDk+sWaQkOpSHM9GEvaXOJy/clNRA0Yru6cOMSylAodSrUSPIiS2UPCNVl63Kt6DFyoptB4Km5NyQ1PiHZxlJOYQPEO2NLMmxusL8At4soqYxvr0OupnE7XcfsdRp3cQR0awOAyGpDNAKg1sF+9XrhcljQbSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKhGu4ym; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374bd0da617so968885f8f.3;
+        Fri, 06 Sep 2024 01:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725611917; x=1726216717; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8raF76XSM3ymus0m9y5pGxcw01NyiiwG5lE+/gP+Tx8=;
+        b=EKhGu4ymbco3pPfSyjzgkE4CAJBTUDPAcX9vkdlMjfpnGBzRPB1sU8xbJib8NJCNfU
+         SAXu8I/Vsh+Ho5LRAfLPGtakV5DnDDjiVsMQRVokQL9noxH5TbQzi/ZFyIMmtXZ2ojEA
+         bnOwhskaGbHd1LPTG2lA14HZbb60MKef223jR0ySnOBRbDDfcoQ9RRUmEHZ0gAidChrE
+         xvPdNSIRwLq0Hyrpcizn5e1M6xWhXU5dvoAS00oCn+H80+lz/BRvGq1isISV40cSUkAa
+         1EceJ1zf+GS9IP3217euktI6/GgopQlMdpXFrrLE6POmwaTnv6DAUxOPHp0WoZHY4/aI
+         PYaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725611917; x=1726216717;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8raF76XSM3ymus0m9y5pGxcw01NyiiwG5lE+/gP+Tx8=;
+        b=lpBnMDh0SFZEz4HRuvrur0mXvVD0DCoraaXhBVLOD61pa9nhOZAn1g94d6f5zYhzo2
+         M6dmm8V9FLXkENzu1rqQwwV+VpXRKuzpyftqnjgPeuAnbTPQjYbLE3PB8dDfW9wIFcKj
+         hvcuZet3l92lhmnYmRE9azkRrYQU5PizM4C/KY9EdrHZJZsPmYfALoaoFnGXjBl/eEAu
+         yeEjctHnjUKSMnJfV+hHAy6igndlVUyz+OMvwjjTmOstOpBnO/o9JMhpU705lb/YHoz1
+         fe9i/qcQe0IeTa5NdxRAfF6X4mu2gqJj0cyoHFbpg93vLHJWKJhI7tRkrovApPNMvyXL
+         4rzw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Ngn3qGpJllAfFAS9ea+S0a9btdRXy83qrBs4D41ek+QfAAsbC3UwfXQp3W6pe5DBMw2+gADLxGoSn1fA@vger.kernel.org, AJvYcCX5leiMbyjrvF6vXdCwLGpIKAs98weofP2hvC4oguqyS+11djB4a4uauN5YB65WrkzVA4XXmjAXjKlpng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjFJ/OjEXgailcRCGJvw9iayqK2dcRxrdHU4rR61tmBtYcNgJ3
+	1L37cX7/uIG/w8nCLJDzusTbvbr78DUZmS7Q9KhMpC9hA0M04vgN
+X-Google-Smtp-Source: AGHT+IHlzZPjqXmHzA7hhRy6zi9jyU3PnwqZDCEF37RMM/xjAjbI+PygqX50FiXGb0hOo19HX2MVLA==
+X-Received: by 2002:a5d:4088:0:b0:369:9358:4634 with SMTP id ffacd0b85a97d-378895cbb2dmr1224626f8f.19.1725611916464;
+        Fri, 06 Sep 2024 01:38:36 -0700 (PDT)
+Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-375348df4e8sm9494391f8f.115.2024.09.06.01.38.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 01:38:36 -0700 (PDT)
+Message-ID: <9db96c99c805e615ba40ca7fd3632174d1e8d11f.camel@gmail.com>
+Subject: Re: [PATCH] Input: keypad-nomadik-ske - remove the driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Arnd Bergmann
+ <arnd@arndb.de>,  Michael Hennerich <michael.hennerich@analog.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, Utsav Agarwal
+ <utsav.agarwal@analog.com>
+Date: Fri, 06 Sep 2024 10:38:35 +0200
+In-Reply-To: <ZsNcpom_Fm5uCyEj@google.com>
+References: <Zr-gX0dfN4te_8VG@google.com>
+	 <1bc01e00-7b70-4e90-8060-f3de3ec7afa3@app.fastmail.com>
+	 <ZsNcpom_Fm5uCyEj@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYSPR06MB6501:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88fe3e71-63a1-4869-c29c-08dcce4f20b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Rkx3aXlKRVZNQjJMcE1CdmtxWStwbjR6RWJobDFHK0tFNTVDSDBwWXJId29M?=
- =?utf-8?B?MWZsRDR6eGNUYkIzUlduK0tubW1KOHhvQlNNUTBxQkpmVzVhQisydVFOcGxQ?=
- =?utf-8?B?TDdybzhsNmJuOFN1VDBnZzFIMTk1cHIzODJ3WEtqb3Z4dXZweFE5aVEwMklN?=
- =?utf-8?B?UXVBdGJMQXREc01KVW85ZWYyOWlqVmJmUkx0QmZ1ZmwrS1VVTWZmNldRSUR6?=
- =?utf-8?B?RnNCWGZSekR3Q29yN1lwK2ZnMW93UHFjTkJLWFhUdnhLL1JYRFplNjg4VEdm?=
- =?utf-8?B?TFpRamxVemFEZGhORkRxdXVhdWZJWEhSQ285SHpzWjBUbTBZdGRyRXJwck44?=
- =?utf-8?B?NmdnMFc5MkVQdGp3T1ByaW10MVlGMnZjSGNTZmF4RUJFeWRvWnpGOE1XQUNq?=
- =?utf-8?B?VFVrYXVzeDVQRTNiYm5SeWZwNU05cXVkM1hFRk9aeThiejE2dm5jalVCVGtq?=
- =?utf-8?B?T1ppUTNVM2hZQndEZkVJbnFtU0xNK0dhQnRwYm9lYVFvZi9yOUN4c3lXVm9r?=
- =?utf-8?B?VktBRTN1NGlPK2trd2tZcEtxWEVxbGVOc0lLZ2wwQXdNa0ZFemxvL0hQWk5n?=
- =?utf-8?B?aGRma3BIQUFnRmlpS2ZFUjhCbmVWSEVodm1HaFAzNlNHSnNSQ3d4dFhCUm9P?=
- =?utf-8?B?RmJKYiticXRrWTZhbml4K2VZS0I3SFlFc3JoK1BUZEMyQkFXTW8rOFlxV3hM?=
- =?utf-8?B?THNGc0tvWER0S1huRGRnMWdhMGxSQW9YWi90a3YrRmRraDcrVUp5TXlmTU1r?=
- =?utf-8?B?dk43TnpEdTQ4MXQzVVAxRGlJQnFXaDlhejJXb3VVRXUvNXRHT2ZpUG9YcnJZ?=
- =?utf-8?B?ZEd6dDNCUDhTbjQvYUhvUmdMR2xuWDZ6RXFnWlNDZjFWejJJWDJ1cDhxUkpr?=
- =?utf-8?B?YVRTZjJuUVhsYlFjU3hHSXl4ekZNazlVRmRlVmNqQ3kvZEM4eDlSeEtEMzRr?=
- =?utf-8?B?Vm1HOXZRV3M0K0RaaWRHdytOZHM3RWVrUFJUaFdSWlV4dWFYK0pWU1h0czlz?=
- =?utf-8?B?ODBBSUQvQTZKYllCYmdFTWk1YXJpL0kybnpIS2ovaEtsWWEvdnoyUmJUanNN?=
- =?utf-8?B?K1NCeXBJTUNLaUlKaDRlNGNzcS9oeDNsQ3d1RTdJTjI4SGtSWHg2SEdzdUFr?=
- =?utf-8?B?U1pHL3ZBN1grYXJSQUJrVkhFRS9KVkdORXowaWpqSUkzOHd5cUZLSVpjSytv?=
- =?utf-8?B?REQ2Rkg5TWU5bU9BT09WN0xKbmpOSkU1VFh3amtZL2h6YTd6WEwrVUZ5T0hO?=
- =?utf-8?B?V01jMVNrbFFoK2QxVUpIQXhQaDB1cVNWTitaSHZFT1Boci9sQ2JpVWlEMG9l?=
- =?utf-8?B?RExIMmE4MWxuL09NR3RoQ3pjcjd0QUpkOEJ5UnZhZ1JJOThDMTRyb25sMG9a?=
- =?utf-8?B?aDZBcEFiQk9WL0p4ZjVIdnVFYkFzMW9acWV3ckZPeElmcld1SUtyNkM5bWZN?=
- =?utf-8?B?Uyt5UU13Q1R1cGwvNnVHbHp1K0htK2lUREpRblRkdXdkcVFUdUJ6R3Q4Mjdv?=
- =?utf-8?B?VWtyNmFPY1NXTlpyYVllQ1ZVTytleU9MZFFmVENwL3FuT0tkUW1RdEM5UEZ1?=
- =?utf-8?B?dlZnVzdBL0NGN01VTDVqRlNIdjFPUFhadGF0NEpoc3JUeGZtK3dUUzAvZi9D?=
- =?utf-8?B?RHFmcUF6K1ovYWVCU1NuSmVzZi9WMDFCL2hCWlB3Qk1iOGpQamZORmkvek1P?=
- =?utf-8?B?dndYRVBJMHJLSzdxME41SzFQTnBKcHk3MUovSnM5YmtqaTVxVEN3a2J0aVpG?=
- =?utf-8?B?NkJkN1RabjgyQVJNenY5bTlBMFNIbEszZGNsbEc5T29NSnNoR3I5czcva1E1?=
- =?utf-8?B?SHcreXdicTdkZFpIZXExMno1M3k5YTVyUUpzZ2FJZFNIVEM4NVFISENTdC83?=
- =?utf-8?B?KzB0U3RnL0xIaFFqV1dLQTZFdU5ybFQ2alBiaTNuN09aMGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WXhERGxpaFE1U0gvSUVPSkdMQlppOGVQVHFKN0tOZ0w2dlh2YSthQlcyUHZK?=
- =?utf-8?B?M2dSM3B1WDU1UVJVU3NnMGZJb2JJK0Yza1JmZHVXaTczcFdBdTZBc29kRkg0?=
- =?utf-8?B?OXdCNmhlRU9EVjlZYW5vak5OMWI3aFVQS1luTHFHcE8wZHVWdlk4Ylg0U2p6?=
- =?utf-8?B?bnhJbFFjbjQzbEhlWlZsVTQyeVdRL2IrNmhVSGhOK0hqS3JtNDRuZXhPWm5S?=
- =?utf-8?B?WmJheW56L3BBZWhBUTFsYVgrTk5XSEt6QVk1UGxiRnRRd2lKS2pUa3M5Mm8z?=
- =?utf-8?B?aTJIQTJ0djlHWmRKQ05KTTd1NGNQa3BhOVdVYVNkZmk0TENvKzlqVU1Pb0tI?=
- =?utf-8?B?V0VtdVRPS1UzWE5FQnFDK1kzUXVsTk52SEhLRzA3V3Vsd3lzamtRVlozVjlu?=
- =?utf-8?B?b3F3YnBWbnpUd0tZNXA2bk1oNU1STGVyTmVNUFQxbXArSXlrdmI1S3hTZmVW?=
- =?utf-8?B?cXlXOXZ1T1F5WGtJZFdRMk96TkUwOXo1dTBOYTdRWWlWZ0NldjYrVFI4dDdj?=
- =?utf-8?B?K2ZoamxnQnV2L1JzU2FEZGpyWERrU1VCcFNOWm55dlhweEdJVU9LVW45aHFj?=
- =?utf-8?B?YnZ1VXZWOUxXdkZ5NkFwcEtSN21WdDl0S3lRMkJSOGUvL3FTRStEckM1ZDV1?=
- =?utf-8?B?VktJSTh0WE9ocS9IU2NiREhJZlNuN0lOVUxldkl1cDUxUmsxZFJNMlM1ZG5L?=
- =?utf-8?B?emRjeDg3THVLYTIrUENNVkVkSjhyemw2d2o1N1NzVkhFWThFWlgvVC8xc1BG?=
- =?utf-8?B?UGFyQWZZdmNLU2hZcnJhUHowdDJwV3pEOU1KRUlsK1BEKzFlVXBGUW1iQmhl?=
- =?utf-8?B?T25TcVYvaUo2U3pEOStSQUtSSlpJckhQQWNTMkFRZDdWcVEvQ3NHREZvS2Ji?=
- =?utf-8?B?SE1GK1ZvQk5sN0tyTTJMZzhrQm03WXY5VG1NaFRHdjdxNUtnWk8vRStEWnh0?=
- =?utf-8?B?V1NEa05vcndBbEtFd3R3dDUzaUNlVlVyVGVCK1pRMzBjcGhPZlVVK3RZRWp1?=
- =?utf-8?B?eUdweGJ3NUg2em9UajdlQzN2TEE0OEtPUmRFTmYxRWcwL1ZmRnBkTkJMOVp2?=
- =?utf-8?B?dXBwajlzTCtxYzRjaUxFZ0cwNXpBQys2RVg0TFliQnRaN3h5bTVkYWlnV1BD?=
- =?utf-8?B?Qmc1ZGc0Tm9RNEhlTjhCc05YVmRrYy96OFlDY24wYjJBQmdmcDhQRWN3Q2JI?=
- =?utf-8?B?RHEvVDU4WWM3ODdnTWp4YS9mU3VpQm5Mb0dnc2dtSlVRTlJWZjhhYnhQMmNh?=
- =?utf-8?B?ZSs3NmlLMkkybmw3WlJwV3g5akZlQVZDTHlvWUxMZEhrRS9IODdnUzJuWUVM?=
- =?utf-8?B?eVJKNTh6OHpaMlBxKy9UK0xOYTIxUEJGak84VHlEYU9ESENYZ3UwVFZxZTZ3?=
- =?utf-8?B?NVRMb2R0TjBLc2t2QjhraXczNHdLMVFRS3VnblE0cEpSeUlvSzRNSDgrY0c1?=
- =?utf-8?B?NmhNQ3pubDh3VVY0RkZMRGRzRExBVXppN2RQakpyRllMZklqaTNzdXI4OVJw?=
- =?utf-8?B?VHBKbS9lVzNXYXdwNkUrekNBdEcwVWZRT0p2dFB2V0haUjU1NnZFZ0hQek1T?=
- =?utf-8?B?emVjNWprWDFmNG0wcVZmczhRSFAyeGJtL1p0TUt6c0poSXdGRjY3WWVZVHg1?=
- =?utf-8?B?dFZmZjlyUnBTMVRpSFc1VEo5SFJ6SFVaYXV3eXNCSlZBRTZkWW1IWTBRQkxm?=
- =?utf-8?B?WHVLbjBueDhTUXE3UkV0bjJCd0xpcDNqQ2RHbS9ueTJXRGgvd3FOZit4WWxR?=
- =?utf-8?B?WjAvN3ZLSUkzT0dWaHEvdjhRckowcnVBbURFU3VQSVdkSTVIZ3JQemVVMGxY?=
- =?utf-8?B?dTRKRGtObHJRSEgxQXhLZTBXSWhYbjdlMnhHZEluOWVhancrSlU2T0NuaHZy?=
- =?utf-8?B?NEtoQXJ6c2RDY2lhb2FSSlJmS3I0cEpsUnRibFFMTmFqN2lJUERmSmVMZUhl?=
- =?utf-8?B?bC9rZVN2UFlhMkhRQllkVmZRQnB5UzY3OER0RXpxamhYWURnZ1YzWkwremlZ?=
- =?utf-8?B?S3d1U05PQ2NpN3duc2xvWGNGa1pnYVYwL3lRbjRhazlLSDEvZ05sNlRCc2xr?=
- =?utf-8?B?ckRiZllTK25SM3lBOCt3YUprOFRDdzFMWk5HQ1NsR2RuTW50L3FoeDYwdDc5?=
- =?utf-8?Q?4poveUvTL+uoENAx58ZIOktNJ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88fe3e71-63a1-4869-c29c-08dcce4f20b6
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:37:22.8232
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HWY26D16AoGY4RMBSPP4kEuGis9gc8wBKdIXrN6dE12el6FiHpKdvIBoV7yjGYjHUGztkx4hPzSK50SfDDqVFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6501
 
+On Mon, 2024-08-19 at 07:54 -0700, Dmitry Torokhov wrote:
+> On Mon, Aug 19, 2024 at 11:29:32AM +0200, Arnd Bergmann wrote:
+> > On Fri, Aug 16, 2024, at 20:54, Dmitry Torokhov wrote:
+> > > The users of this driver were removed in 2013 in commit 28633c54bda6
+> > > ("ARM: ux500: Rip out keypad initialisation which is no longer used")=
+.
+> > >=20
+> > > Remove the driver as well.
+> > >=20
+> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > ---
+> > > =C2=A0drivers/input/keyboard/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 11 -
+> > > =C2=A0drivers/input/keyboard/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 -
+> > > =C2=A0drivers/input/keyboard/nomadik-ske-keypad.c=C2=A0=C2=A0 | 378 -=
+-----------------
+> > > =C2=A0.../linux/platform_data/keypad-nomadik-ske.h=C2=A0 |=C2=A0 50 -=
+--
+> > > =C2=A04 files changed, 440 deletions(-)
+> > >=20
+> >=20
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >=20
+> > I have a list of drivers that I determined to be likely
+> > unused as well and found a few more input drivers
+> > that were unused in 2022:
+> >=20
+> > CONFIG_KEYBOARD_ADP5520/CONFIG_PMIC_ADP5520
+> > CONFIG_KEYBOARD_ADP5589
+> > CONFIG_INPUT_AD714X
+> > CONFIG_TOUCHSCREEN_AD7877
+> >=20
+> > As far as I can tell, these all lost their last device
+> > definition, or they never had one and are impossible to
+> > be used with device tree data.
+>=20
+> I asked Analog Devices folks (CCed) about 5589 and Nuno said that it is
+> still relevant and promised to do conversion to DT similar to adp5588.
+>=20
+> Nuno, Michale, what about the other drivers that Arnd listed?
+>=20
 
-在 2024/9/6 16:12, Kasireddy, Vivek 写道:
-> Hi Huan,
->
->> Subject: [PATCH v5 1/7] udmabuf: pre-fault when first page fault
->>
->> The current udmabuf mmap uses a page fault to populate the vma.
->>
->> However, the current udmabuf has already obtained and pinned the folio
->> upon completion of the creation.This means that the physical memory has
->> already been acquired, rather than being accessed dynamically.
->>
->> As a result, the page fault has lost its purpose as a demanding
->> page. Due to the fact that page fault requires trapping into kernel mode
->> and filling in when accessing the corresponding virtual address in mmap,
->> when creating a large size udmabuf, this represents a considerable
->> overhead.
->>
->> This patch first the pfn into page table, and then pre-fault each pfn
->> into vma, when first access. Should know, if anything wrong when
->> pre-fault, will not report it's error, else, report when task access it
->> at the first time.
->>
->> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
->> Signed-off-by: Huan Yang <link@vivo.com>
->> ---
->>   drivers/dma-buf/udmabuf.c | 35 +++++++++++++++++++++++++++++++++--
->>   1 file changed, 33 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
->> index 047c3cd2ceff..0a8c231a36e1 100644
->> --- a/drivers/dma-buf/udmabuf.c
->> +++ b/drivers/dma-buf/udmabuf.c
->> @@ -43,7 +43,8 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
->> *vmf)
->>   	struct vm_area_struct *vma = vmf->vma;
->>   	struct udmabuf *ubuf = vma->vm_private_data;
->>   	pgoff_t pgoff = vmf->pgoff;
->> -	unsigned long pfn;
->> +	unsigned long addr, end, pfn;
->> +	vm_fault_t ret;
->>
->>   	if (pgoff >= ubuf->pagecount)
->>   		return VM_FAULT_SIGBUS;
->> @@ -51,7 +52,37 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
->> *vmf)
->>   	pfn = folio_pfn(ubuf->folios[pgoff]);
->>   	pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
->>
->> -	return vmf_insert_pfn(vma, vmf->address, pfn);
->> +	ret = vmf_insert_pfn(vma, vmf->address, pfn);
->> +	if (ret & VM_FAULT_ERROR)
->> +		return ret;
->> +
->> +	/* pre fault */
->> +	pgoff = vma->vm_pgoff;
->> +	end = vma->vm_end;
-> Nit: use vma->vm_end directly in the loop below, as end is used only once.
->
->> +	addr = vma->vm_start;
->> +
->> +	for (; addr < end; pgoff++, addr += PAGE_SIZE) {
->> +		if (addr == vmf->address)
->> +			continue;
->> +
->> +		if (WARN_ON(pgoff >= ubuf->pagecount))
->> +			break;
->> +
->> +		pfn = folio_pfn(ubuf->folios[pgoff]);
->> +
-> Nit: no need for a blank line here.
->
->> +		pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
->> +
->> +		/**
->> +		 * If something wrong, due to this vm fault success,
->> +		 * do not report in here, report only when true access
->> +		 * this addr.
->> +		 * So, don't update ret here, just break.
-> Please rewrite the above comments as:
-> * If the below vmf_insert_pfn() fails, we do not return an error here
-> * during this pre-fault step. However, an error will be returned if the
-> * failure occurs when the addr is truly accessed.
-Thank you
->
-> With that,
+Hi Dmitry,
 
-OK.
+This is not forgotten and I plan to start working on this early next week.
 
-Thanks
+One thing I noticed and I might as well just ask before starting the work, =
+is that
+the platform data allows, in theory, for you to have holes in your keymap [=
+1]. Like
+enabling row 1 and 3 skipping 2. AFAICT, the matrix stuff does not allow th=
+is out of
+the box as we just define the number of rows/cols and then without any othe=
+r property
+we assume (I think) that the map is contiguous.=C2=A0
 
-> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
->
->> +		 */
->> +		if (vmf_insert_pfn(vma, addr, pfn) & VM_FAULT_ERROR)
->> +			break;
->> +	}
->> +
->> +	return ret;
->>   }
->>
->>   static const struct vm_operations_struct udmabuf_vm_ops = {
->> --
->> 2.45.2
+This is just early thinking but one way to support the current behavior wou=
+ld be 2
+custom DT properties that would be 2 u32 arrays specifying the enabled colu=
+mns and
+rows. Out of it, we could build row and col masks and get the total number =
+of cols
+and rows that we could pass to matrix_keypad_build_keymap().
+
+The question is... is it worth it? I'm aware that if we just assume a conti=
+guous
+keymap we could break some old users. But I guess it would be only out of t=
+ree ones
+as we don't have any in kernel user of the platform data. On top of it, I g=
+uess it's
+sane to assume that one just wants a contiguous keymap...
+
+[1]: https://elixir.bootlin.com/linux/v6.10.8/source/drivers/input/keyboard=
+/adp5589-keys.c#L630
+
+Thanks!
+- Nuno S=C3=A1
+
 
