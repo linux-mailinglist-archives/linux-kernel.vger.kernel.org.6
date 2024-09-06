@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-318763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F79596F2F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC3096F2FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85D31F239EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B601C234B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AFC1CB322;
-	Fri,  6 Sep 2024 11:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57E61CB319;
+	Fri,  6 Sep 2024 11:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PvZXtmKL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3Ty7zU4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE7F1A2C39
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BA62233B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725621850; cv=none; b=pCygH9jsOIofSH3GlNTixo+Q7J0Z0Ql1CyneQV8ld5lib9TSG2g/HhBeVGlsTG0U4rmV4wBMAmWyz0RfYPOb54B0mXAVZIoAY8iLgzs9+b4nU9k8Y0I/xVDPtu4H/m78K5N4HdMAqmeo0lNJm5OFat5S0iY+UekCTRzKkmUOSds=
+	t=1725621882; cv=none; b=rb53fvwhdyVWm85bc27hrrITO9RwzVWATWizcSBYE7E6EGurbwh54eUeL5NO4cantAqslTKImkFCgQ3oJldv0voIbP9jDQcf/T3zC+BgQRNK/Vlw0K1SMBmesDAARfvGUFELhbClMtEA2F1VSIjQZF2dfRLQLty6Uzl9xcQF4Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725621850; c=relaxed/simple;
-	bh=quQ02BPzKwGeHMB5/HiXQA1AThxnySxCLemaeN85UCQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=aMSGJGc1HpgyMFraXj7rNjEvbDcf9xbPnaf0YGU2Pv1PLEwqtOU7GmNXnWRNFDQ1U07Hk2iulTtOHE1LYMB+eoXXB2sjQYNUj+pRw/KZxUCp4Ffav7RRzBwikvQjwXfMpENbDJNRUsfHjND0Xd2Kdn0eigjBKR9s6sMCj0gaMiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PvZXtmKL; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1725621882; c=relaxed/simple;
+	bh=3Ufl/3mWoFm4+5k0to8mapiQOc9KkLb2U6Bz95TlxUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4DedY9jR0U6+46qfWhTluhtz6oQQy7p3dIAUEKWg6iyMrNsCCDXj+dMWr5Nny/pkuHjZY3dcDmoapmxr7n6GRr5DMnYccSHPzR38CiT9iCu/LnOhOTyEzIJ0HdCCiNAXTZvNza9uEtkT7Qmu/kLhoQYMUT4DEds0b+rKYTRF3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3Ty7zU4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725621848;
+	s=mimecast20190719; t=1725621879;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4Sh7NNRzd/yNJ6l4v6+y7Ry9bwNbYl8mvsIbShOjOiw=;
-	b=PvZXtmKL5OHx8EjTNXEvuVeUzcfbStZ4q/YL9WOY3DTHVhIezUPE9ZSf4c7KVRsUW5vP1q
-	2NNdo00HBkIRQryzqYNiZyq75tya506/Q6C3or7PLekVdTQSO6DMjpsuG+VuYvrLL96ZAX
-	tCLG+nCK84Zp26XUQTwKyuhk2m0SjlU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=eysmM2GxvsFnUbEGNgAB4tNvEDMGL4waMBASTYBY7EU=;
+	b=h3Ty7zU43QHx6o7iL34igxRb2Idya2H6odV1gHgP67AAmcilKUkgFBbbeojM4RmHHrQRGX
+	Feakk/FtKA+m0D2D+xSvzMnoGuRPNeejjgHDPtcipgFdAneFVLLMZP3NQctZrslb4e3gHu
+	qYGcGFNgR47/UkJ+kE7cAJbQabci6us=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-599-YoqNuUw4N1KYGO138DZNNQ-1; Fri,
- 06 Sep 2024 07:24:05 -0400
-X-MC-Unique: YoqNuUw4N1KYGO138DZNNQ-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-TTHnnhLsN3qbI5scpRN9gA-1; Fri,
+ 06 Sep 2024 07:24:34 -0400
+X-MC-Unique: TTHnnhLsN3qbI5scpRN9gA-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 389EB1955F68;
-	Fri,  6 Sep 2024 11:24:03 +0000 (UTC)
-Received: from [10.45.224.222] (unknown [10.45.224.222])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 096C23000236;
-	Fri,  6 Sep 2024 11:23:59 +0000 (UTC)
-Date: Fri, 6 Sep 2024 13:23:57 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-cc: Mike Snitzer <snitzer@kernel.org>, Eric Biggers <ebiggers@kernel.org>, 
-    dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
-    Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, Sami Tolvanen <samitolvanen@google.com>, 
-    linux-nfs@vger.kernel.org
-Subject: Re: sharing rescuer threads when WQ_MEM_RECLAIM needed? [was: Re:
- dm verity: don't use WQ_MEM_RECLAIM]
-In-Reply-To: <ZtpcI-Qv_Q6g0Q6Z@slm.duckdns.org>
-Message-ID: <9d380772-6287-b75d-2d4d-e1c9a69ea981@redhat.com>
-References: <20240904040444.56070-1-ebiggers@kernel.org> <086a76c4-98da-d9d1-9f2f-6249c3d55fe9@redhat.com> <20240905223555.GA1512@sol.localdomain> <ZtpATbuopBFAzl89@kernel.org> <ZtpcI-Qv_Q6g0Q6Z@slm.duckdns.org>
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4FA5F19560B4;
+	Fri,  6 Sep 2024 11:24:32 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.74])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9560F3000238;
+	Fri,  6 Sep 2024 11:24:28 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  6 Sep 2024 13:24:21 +0200 (CEST)
+Date: Fri, 6 Sep 2024 13:24:17 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Roman Kisel <romank@linux.microsoft.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, ssengar@microsoft.com,
+	sunilmut@microsoft.com, vdso@hexbites.dev
+Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
+ FS
+Message-ID: <20240906112345.GA17874@redhat.com>
+References: <20240905212741.143626-1-romank@linux.microsoft.com>
+ <20240905212741.143626-2-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905212741.143626-2-romank@linux.microsoft.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+Add cc's. Perhaps someone else can ack/nack the intent...
 
+This (trivial) patch is obviously buggy, but fixable. I won't argue
+if it can help userspace.
 
-On Thu, 5 Sep 2024, Tejun Heo wrote:
+On 09/05, Roman Kisel wrote:
+>
+> For debugging, it might be useful to run the debug trap
+> instruction to break into the debugger. To detect the debugger
+> presence, the kernel provides the `/proc/self/status` pseudo-file
+> that needs to be searched for the "TracerPid:" string.
+>
+> Provide a prctl command that returns the PID of the tracer if any.
 
-> Hello,
-> 
-> On Thu, Sep 05, 2024 at 07:35:41PM -0400, Mike Snitzer wrote:
-> ...
-> > > I wonder if there's any way to safely share the rescuer threads.
-> > 
-> > Oh, I like that idea, yes please! (would be surprised if it exists,
-> > but I love being surprised!).  Like Mikulas pointed out, we have had
-> > to deal with fundamental deadlocks due to resource sharing in DM.
-> > Hence the need for guaranteed forward progress that only
-> > WQ_MEM_RECLAIM can provide.
+prctl?
 
-I remember that one of the first thing that I did when I started at Red 
-Hat was to remove shared resources from device mapper :) There were shared 
-mempools and shared kernel threads.
+> That allows for much simpler logic in the user land, and makes it
+> possible to detect tracer presence even if PROC_FS is not enabled.
 
-You can see this piece of code in mm/mempool.c that was a workaround for 
-shared mempool bugs:
-        /*
-         * FIXME: this should be io_schedule().  The timeout is there as a
-         * workaround for some DM problems in 2.6.18.
-         */
-        io_schedule_timeout(5*HZ);
+You should probably move the links from 0/1 to the changelog to make
+it more convincing.
 
-> The most straightforward way to do this would be simply sharing the
-> workqueue across the entities that wanna be in the same forward progress
-> guarantee domain. It shouldn't be that difficult to make workqueues share a
-> rescuer either but may be a bit of an overkill.
-> 
-> Taking a step back tho, how would you determine which ones can share a
-> rescuer? Things which stack on top of each other can't share the rescuer cuz
-> higher layer occupying the rescuer and stall lower layers and thus deadlock.
-> The rescuers can be shared across independent stacks of dm devices but that
-> sounds like that will probably involve some graph walking. Also, is this a
-> real problem?
-> 
-> Thanks.
+> +	if (request == PTRACE_TRACER) {
+> +		rcu_read_lock();
+> +		tracer = ptrace_parent(current);
+> +		ret = tracer ? task_pid_nr_ns(tracer,
+> +					task_active_pid_ns(current->parent)) : -ESRCH;
 
-It would be nice if we could know dependencies of every Linux driver. But 
-we are not quite there. We know the dependencies inside device mapper, but 
-when you use some non-dm device (like md, loop), we don't have a dependecy 
-graph for that.
+The namespace is wrong, we need task_active_pid_ns(current). So this
+code should simply do task_tgid_vnr(tracer) like sys_getppid() does.
+And to me it would be better to return 0 if !current->ptrace.
 
-Mikulas
+> +		rcu_read_unlock();
+> +		goto out;
+
+Wrong, this code runs after "child = find_get_task_by_vpid(pid);" above.
+
+And why? perhaps the intent was to check if this child is traced, not
+current?
+
+Oleg.
 
 
