@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-318119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7745F96E8A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:34:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FD396E8AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AE51F24ED0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:34:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50FD11C236B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6904485628;
-	Fri,  6 Sep 2024 04:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9D413957C;
+	Fri,  6 Sep 2024 04:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z6qUfcVF"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FUPefJP/"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEA654757
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 04:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809FD86250
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 04:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725597262; cv=none; b=ujcc2Nxclb7xlLA/GeylCGPJe5uZtH+qpwzsnf2iOR3DSZ2HNApvm2s22zBo/0v3FQJg7rWBjKU6EoL9JCoW/ew+0JbG8sVwun8ZMYo3ySIjATc8e2WG03h/sz52tjQlbiIdaRJiBGgIDdRx3JPSxmNUUdqJV3h1THADUA1CEOk=
+	t=1725597264; cv=none; b=CsCZI2yG8zB/3IdVUNSygspPRVh9fAoeX79jqkU5Gh37UWlSBbKooGMkW+z78Mbertf+ASEydIr6dNb4Evk3gbD7dOGOAON7AYTyKNNhbACNi9CMrlPbOTmjuYlPNsZPo4b4MzXkugKlgpH5jafEe7MVaOaF68Pd2zrdq1PkLfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725597262; c=relaxed/simple;
-	bh=eDNwSm0+gbgy/kZmZL0w/jpknN55gI59zurj7zb2dhI=;
+	s=arc-20240116; t=1725597264; c=relaxed/simple;
+	bh=vUO7vGmYGYbyr6uF29dDmJSIjGj15xrKsxlgZD+fbfg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cnFG0WbEDEFLb0JDvVnmCeF9VPy2331BFEosHxKcBCoSlCBjlYSE0x+Nmb53bT08xRAWYMbTt0CiN6PvP7kqkk/5QY7numQpkQS9jA+M8kUtvDvBduIycRyi+l7m7TTXV5mLUe6ilqfHXIPozjeVQs7AlFxdnheSYEmFdaUMay8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z6qUfcVF; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=i3j2W891NqIjPCEVXMb0s4G6KUlR9ym/aLmSkxFIMG+zZK7nyKZOxLVizvAxY/TLuKKpk0tGgOWgGUlEpLYVBWoeTJtdt0lUinDB7SNu21oEjSPX2VsbTcYQOgrHDGjll0AcXoXUcQIH7iSqnTyEHPJgbVPf1/gau4VnKy+eids=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FUPefJP/; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d73d0944acso63340397b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 21:34:21 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7cd7614d826so3289237a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 21:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725597260; x=1726202060; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725597263; x=1726202063; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJlh6I1bqg+VJjot9mgJ443ha3usj4WF5fwSb0yKCRc=;
-        b=z6qUfcVFty3w5sjiH0ssZ+6fQW4EL0rVjaHewPvndsjgjgDuMkM2lUUkPu45JY0yuA
-         o2a1AUITRMKPopdeiKTpHqLoIMHEX7Fx5PE6KmQaPgirjXZ97RKx4AofdbRTHi8Lap3R
-         h0B66iT6z0Bsmvy2VnYfnnXNHQwDxiQJN/ymw/eVZAxuc1rFwQrtJBjk13z4LfqicGof
-         cio6B8Y+nMgBOymaWEfXedKSdEQQmMceZ0K9uLEnLPe2IWTreR3iRfVBTyuQsIdIjwzG
-         eN8S8Byc/Hga+FosILUEvGL9Ku/pyGxwsP//RmAnAN7EDuOFIjQChZjDeuTFbfu+F9pT
-         /Ykw==
+        bh=vgikLRROm580u43MLI6MsYbRQEvUit5RnsfmT63jtwE=;
+        b=FUPefJP/mkwt7ASgqON3SD6fgvjFdLDCw9mLfc8r2DxQjNQT3Y0uu/K+G+KTwUsijd
+         qCues+6mUfE5EtMqwGhcGBnj4oMKTYKTrgQTJiK3YcFC3QX/sW76yM0FsjHZcn73es1I
+         1osHDH++r5teDW1cB4uOXvpZDZ02NdblZMixcbyPg6muPZenSDfjF9WpyiaOi8D3iJsw
+         Gp7p7+0l2fPQ26TTTSQdsbwVGeoi2tw4+KeahFw2/YophgQgjIQzAL6G1OcKLt6zdBAQ
+         vWMJRLaVAbDh7DrxWX4o4Hvtd+NXuAnUP19ZKNLgLPDFHS/kIdLvjTGNijavviUkdQK+
+         vbAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725597260; x=1726202060;
+        d=1e100.net; s=20230601; t=1725597263; x=1726202063;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mJlh6I1bqg+VJjot9mgJ443ha3usj4WF5fwSb0yKCRc=;
-        b=AIGx7F+CxUvTRW8supOd0edl6dBE/pYd4SIbVUpUfDIQg1OonByF7Cgv450saJhar2
-         l5zvA7ZUlnibozzRFTDPkxSSR7jcBsqv75K7Td5cGS3Y0Y/KLa70kQK3iyfbqU1STW8D
-         uVfMhtvtZjMb+RunLZmlqUKFK+siiNpvCXMf1guCtbuqt25YHpHfXUllKXajgo7Gu9Rm
-         A5XypcJndO5dAIz/oiGg2RzP760tU9yWejDJdSdGfdTEXhSX7vcHjQx+0vWJyMuhm8pD
-         4cRPl+/LC06nApvU2MwcrpM9Kw+hWbsHEjg3WHZdx8jo//ILJ+Zfk9MAqOqr7dq6MsSQ
-         VzDA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3u4qnEV0RY2cmaDJZwbYb7BSSf9XEjnq8LLYju7eTl3YIo5URLGMPJwyhSnzdZD9Zjv35Y4qdkYjzTY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKcyT59JEHjN3O0CxY5sv1PhIggjoxpVCDse7DYuP0K4lIQOZ5
-	0kIr2q1LUQdqMs/SPuieAuW4csnvoUo5XrZP1xL+voUh0436KmD6r+tjlmXB/MvhdOn5EjIoYai
-	q4A==
-X-Google-Smtp-Source: AGHT+IEPohibJVK7CmOK3wntKFvrjLv1A44TW/i8I3yEYDsA5G0xDa+I83WX8upp1fWDeFMg/T0IzHbDDpU=
+        bh=vgikLRROm580u43MLI6MsYbRQEvUit5RnsfmT63jtwE=;
+        b=NYM8UAV04pL7T4qhs4grceBPwDowdQujt6HQMwWlR3s58ccI8LRN8yJe+tAh7Zj/Fl
+         Ych1IUmKyp1S5hv6xWUcHdJ43EAvNkyel6sIJv2SIIM9+qYD/jdE75T2vZlMQEGQgrXe
+         jQnTdDkRMA8mlxETI8t/ye2h5cbxuxuQDm9Krxv1UhiJobajkR5AtknGxYlZETbZs7k2
+         b7IMawamsgTW4ApTNR1fPIuf+b2O17p2vuX+d4KDvg8R5jA8CSRD2J6rDm4H7D7Wp5vQ
+         ddLHubOAssOklm7L1gndbrpQ896DetHBVtooyIKC3zDHqeXtrUE3xF3npYQGjiIHFQx4
+         Dpnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUx2epWPqEkDCtdAGNZ8jKq4sXOPEDoijku2PSWJ5I8Pt+HZJ/qGI8eeXn4Rtae6XUki+15FDWjBwt0FKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrMzu/wzPDVoINLwQSb+KJRn2zP6KOfWc6D6BWGbGQ2DEfrtbL
+	rk/kT7t4QiEtv9XPvcnQvyIuoAqyja+4rklxq2arnuWjcMFTgqLgNw+E5NzJtNYBEMB1BCdej6+
+	g9Q==
+X-Google-Smtp-Source: AGHT+IEyEFfjoRDNJyVIEZ+IVKjmpudL0fgn44x8C5JkT3Kr/DFcFMcxqut3wtjuTeyUVblYq49w0HSFXXU=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:2c11:b0:690:8ad7:55f9 with SMTP id
- 00721157ae682-6db44d6c217mr285207b3.2.1725597260254; Thu, 05 Sep 2024
- 21:34:20 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:903:1c5:b0:206:8dca:1b1d with SMTP id
+ d9443c01a7336-206eeba5a3dmr964925ad.4.1725597262568; Thu, 05 Sep 2024
+ 21:34:22 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu,  5 Sep 2024 21:34:08 -0700
+Date: Thu,  5 Sep 2024 21:34:09 -0700
 In-Reply-To: <20240906043413.1049633-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240906043413.1049633-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240906043413.1049633-3-seanjc@google.com>
-Subject: [PATCH v2 2/7] KVM: nVMX: Get to-be-acknowledge IRQ for nested
- VM-Exit at injection site
+Message-ID: <20240906043413.1049633-4-seanjc@google.com>
+Subject: [PATCH v2 3/7] KVM: nVMX: Suppress external interrupt VM-Exit
+ injection if there's no IRQ
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -85,131 +85,33 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zeng Guang <guang.zeng@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Move the logic to get the to-be-acknowledge IRQ for a nested VM-Exit from
-nested_vmx_vmexit() to vmx_check_nested_events(), which is subtly the one
-and only path where KVM invokes nested_vmx_vmexit() with
-EXIT_REASON_EXTERNAL_INTERRUPT.  A future fix will perform a last-minute
-check on L2's nested posted interrupt notification vector, just before
-injecting a nested VM-Exit.  To handle that scenario correctly, KVM needs
-to get the interrupt _before_ injecting VM-Exit, as simply querying the
-highest priority interrupt, via kvm_cpu_has_interrupt(), would result in
-TOCTOU bug, as a new, higher priority interrupt could arrive between
-kvm_cpu_has_interrupt() and kvm_cpu_get_interrupt().
+In the should-be-impossible scenario that kvm_cpu_get_interrupt() doesn't
+return a valid vector after checking kvm_cpu_has_interrupt(), skip VM-Exit
+injection to reduce the probability of crashing/confusing L1.  Now that
+KVM gets the IRQ _before_ calling nested_vmx_vmexit(), squashing the
+VM-Exit injection is trivial since there are no actions that need to be
+undone.
 
-Unfortunately, simply moving the call to kvm_cpu_get_interrupt() doesn't
-suffice, as a VMWRITE to GUEST_INTERRUPT_STATUS.SVI is hiding in
-kvm_get_apic_interrupt(), and acknowledging the interrupt before nested
-VM-Exit would cause the VMWRITE to hit vmcs02 instead of vmcs01.
-
-Open code a rough equivalent to kvm_cpu_get_interrupt() so that the IRQ
-is acknowledged after emulating VM-Exit, taking care to avoid the TOCTOU
-issue described above.
-
-Opportunistically convert the WARN_ON() to a WARN_ON_ONCE().  If KVM has
-a bug that results in a false positive from kvm_cpu_has_interrupt(),
-spamming dmesg won't help the situation.
-
-Note, nested_vmx_reflect_vmexit() can never reflect external interrupts as
-they are always "wanted" by L0.
-
+Reviewed-by: Chao Gao <chao.gao@intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/irq.c              |  3 ++-
- arch/x86/kvm/vmx/nested.c       | 36 ++++++++++++++++++++++++---------
- 3 files changed, 30 insertions(+), 10 deletions(-)
+ arch/x86/kvm/vmx/nested.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 950a03e0181e..d66d562c0ab3 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2251,6 +2251,7 @@ int kvm_cpu_has_injectable_intr(struct kvm_vcpu *v);
- int kvm_cpu_has_interrupt(struct kvm_vcpu *vcpu);
- int kvm_cpu_has_extint(struct kvm_vcpu *v);
- int kvm_arch_interrupt_allowed(struct kvm_vcpu *vcpu);
-+int kvm_cpu_get_extint(struct kvm_vcpu *v);
- int kvm_cpu_get_interrupt(struct kvm_vcpu *v);
- void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
- 
-diff --git a/arch/x86/kvm/irq.c b/arch/x86/kvm/irq.c
-index 3d7eb11d0e45..810da99ff7ed 100644
---- a/arch/x86/kvm/irq.c
-+++ b/arch/x86/kvm/irq.c
-@@ -108,7 +108,7 @@ EXPORT_SYMBOL_GPL(kvm_cpu_has_interrupt);
-  * Read pending interrupt(from non-APIC source)
-  * vector and intack.
-  */
--static int kvm_cpu_get_extint(struct kvm_vcpu *v)
-+int kvm_cpu_get_extint(struct kvm_vcpu *v)
- {
- 	if (!kvm_cpu_has_extint(v)) {
- 		WARN_ON(!lapic_in_kernel(v));
-@@ -131,6 +131,7 @@ static int kvm_cpu_get_extint(struct kvm_vcpu *v)
- 	} else
- 		return kvm_pic_read_irq(v->kvm); /* PIC */
- }
-+EXPORT_SYMBOL_GPL(kvm_cpu_get_extint);
- 
- /*
-  * Read pending interrupt vector and intack.
 diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 2392a7ef254d..e6af5f1d3b61 100644
+index e6af5f1d3b61..6b7e0ab0e45e 100644
 --- a/arch/x86/kvm/vmx/nested.c
 +++ b/arch/x86/kvm/vmx/nested.c
-@@ -4284,11 +4284,37 @@ static int vmx_check_nested_events(struct kvm_vcpu *vcpu)
- 	}
+@@ -4304,7 +4304,8 @@ static int vmx_check_nested_events(struct kvm_vcpu *vcpu)
+ 		}
  
- 	if (kvm_cpu_has_interrupt(vcpu) && !vmx_interrupt_blocked(vcpu)) {
-+		int irq;
-+
- 		if (block_nested_events)
- 			return -EBUSY;
- 		if (!nested_exit_on_intr(vcpu))
- 			goto no_vmexit;
--		nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT, 0, 0);
-+
-+		if (!nested_exit_intr_ack_set(vcpu)) {
-+			nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT, 0, 0);
-+			return 0;
-+		}
-+
-+		irq = kvm_cpu_get_extint(vcpu);
-+		if (irq != -1) {
-+			nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT,
-+					  INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR | irq, 0);
-+			return 0;
-+		}
-+
-+		irq = kvm_apic_has_interrupt(vcpu);
-+		WARN_ON_ONCE(irq < 0);
-+
-+		nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT,
-+				  INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR | irq, 0);
-+
-+		/*
-+		 * ACK the interrupt _after_ emulating VM-Exit, as the IRQ must
-+		 * be marked as in-service in vmcs01.GUEST_INTERRUPT_STATUS.SVI
-+		 * if APICv is active.
-+		 */
-+		kvm_apic_ack_interrupt(vcpu, irq);
- 		return 0;
- 	}
+ 		irq = kvm_apic_has_interrupt(vcpu);
+-		WARN_ON_ONCE(irq < 0);
++		if (WARN_ON_ONCE(irq < 0))
++			goto no_vmexit;
  
-@@ -4969,14 +4995,6 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 vm_exit_reason,
- 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
- 
- 	if (likely(!vmx->fail)) {
--		if ((u16)vm_exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT &&
--		    nested_exit_intr_ack_set(vcpu)) {
--			int irq = kvm_cpu_get_interrupt(vcpu);
--			WARN_ON(irq < 0);
--			vmcs12->vm_exit_intr_info = irq |
--				INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR;
--		}
--
- 		if (vm_exit_reason != -1)
- 			trace_kvm_nested_vmexit_inject(vmcs12->vm_exit_reason,
- 						       vmcs12->exit_qualification,
+ 		nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT,
+ 				  INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR | irq, 0);
 -- 
 2.46.0.469.g59c65b2a67-goog
 
