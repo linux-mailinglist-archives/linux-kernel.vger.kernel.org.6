@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-319037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E8196F6D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447F396F6D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7438BB22AB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3C7283081
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAEE1D362A;
-	Fri,  6 Sep 2024 14:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63E21D365A;
+	Fri,  6 Sep 2024 14:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDcEQm3t"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="drww67Qj"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186821D31BC;
-	Fri,  6 Sep 2024 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA831D363C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633085; cv=none; b=l4D3er07mBa6EqWxAtRi/hb/O1H1QPkGq9kwVo2kiOVvYj9g91EF5Vs2Lkfu76EFtRkiASUqxdGOXpFqrHunDYnXaJGa8hbGrGvE2aRD1Rmo+WQf5P3P7rAf0vw+B/DsZXrtbl7sVQ7KiTjfHsRdbWj93UaB8UrO4b9rCNdUhgo=
+	t=1725633090; cv=none; b=r5sa/kU8xV12Rv+spNHR3Y8UnU0AvkLyiWK7pypflhzN3TTQFahOBpcryIEvZqkXrPpMv++2K43fB7GeKjlRpG5funfXwFgHqHxluMGiwd5033sTXnJdlwLLyaaX/2jXmJU1k4WKnURx3ABDOKyjmEkff09zP5EiM92QTUfqzPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633085; c=relaxed/simple;
-	bh=WW54gdwLUbR2vRtO4ItV9tgMkKvU53P2EOjp+KhAuI8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BSlt6jQso/ez2Jzn9JC8xLF2YQbUrd3h1JS2F6THVZxs2ZGTXqDn2w3N0jBxYtxXD+iTYqt1BakpJnhw77vqO52ktVvtosAoWmAkXNH51t+evZyv1TNcMG1CMre6+CTss/wBfxBttP9JWpIL6858vKUuyNGQj4ZfqZG9jc7Wv0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDcEQm3t; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-204d391f53bso20122565ad.2;
-        Fri, 06 Sep 2024 07:31:23 -0700 (PDT)
+	s=arc-20240116; t=1725633090; c=relaxed/simple;
+	bh=YE/0rnSl4ZrAzn5Z2ufG5g8z+UdgXqEia3Kn68UiSx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PUP479SnZ1yVLX//XaPdXS4ymICvT/Uh6H0+SrCP5ksyME+NknpYBh5geOvbeIt01WLph0u4Juyjim//y/8jcDvXVw5fayYRFARZlsysqivlF9II8H5pLg51s86hYtg0EHukUdD2Qt7cZENd/ll7VkFC+91xWV8w02mEddSkvX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=drww67Qj; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20570b42f24so26946065ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725633083; x=1726237883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRhWJrEYy3VMtGEOiJyga7bTazzfIqhRdV1t7XTzZag=;
-        b=hDcEQm3twmMYaReTr6sShNV6XmkAIeFeqT4d5YwPmXaTl3NPfgZLFki9oadDrjVyJo
-         EBpXcT/vBgT6VJlCkUg7ADuXA7EWKj+FA8rHMrKNG2WZfM75M7BZyUmYvEudrzUhxGx6
-         rhoOFyhU2tM0f183tzFgDUYj1OeS/K9lMg0LQXuUjReCdjn/dqf8/CgO+nsRA6/qHNTX
-         yEL/FG7lheqoiQLsZUS2+0ExDkzRJfu1tx7ZsIXzDtjbY+Zr5AbXkp/j2kJkMUsHyF1c
-         7186535xxoEDm/7U7o5NdMuGaGvJjgN6ppY1BBHu9GUI0BZwvAMR/GUMuzhRwLp0Hhhe
-         zomA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725633086; x=1726237886; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7U0n4Pc54X9wROP7p7GrRRTyFQ6kR6FXGp+66jt8aEE=;
+        b=drww67QjEi1g68UC6WyFWDKZZShaUBr2rpdDl5aQ51GAjYb+2kVSgOvJpuwAbzZ8t4
+         XM+W5EjkDeTkblTjVoOvR2OS2Eoj2m5rSh8BCZWQTeC3Pal5mj9GXbLW5uVsdsuMdv8p
+         1banzbnpzPKVKlD3EyABiP6lX3EcBoBIiqTK5+qQypsWT9s8xwlLagT1YD7+K2NJT9ML
+         54OL9s/HZT4Bh9hlpMj6dqmwkP7ee6OjqhkYexQceQBRNFznMUBF2gwj0467kK5ygYVW
+         zoXgcOKSw1Coe4jugXol4/yTQj0V2vl0q/9nX8ioUF9SpyBzTbmnVwZ5fU7sddTRmMS9
+         bIKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725633083; x=1726237883;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRhWJrEYy3VMtGEOiJyga7bTazzfIqhRdV1t7XTzZag=;
-        b=f8yDABtp5aFkBf/UsUhCXRV3YK7u4K5e7XiPh8vYLztWAZWwflBVbBTWYD48YQ7z4h
-         5GG/DBAHpK1W5mLhb2L4UPWywzWjrJYk5vUUxNuphpORHKXcHkYaKTtwoen77Qun+fIO
-         R98uzwhS1RtyujOeaB/XWQN1GS/esmRqCI4bcgMvUxTXBeX6wE8oNejs6RmiTRRLUvfR
-         HRcJjd+neReXRC7DvAZ4b/D7OQEPZlOHklG9qKy6ghvlGv5pFpsZjILIRfuCsKEiOAN6
-         pN8B+A3+yr8owIafgAdf1jKYMO0rfBId9oobcIbejZDFJGhI3YXK2jiHym1MGPqL/7N3
-         1BIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMluRHwXsmw14pg8jVcGOvQLPFRSNY/BR30sGMX2vBSTt+r1WCKWuWOhaFZQgDCYZKfrFXXyrKE3+cIqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgrLYR0PO62vOLjfEEefk8D5H+pUQ/qlOrdu4iKg8RtnU7JbfH
-	mULgIsPyd8o0zYOSPlZT6p8N46Tbilp/Fk7fWpCYsRWUmv0OBuVA
-X-Google-Smtp-Source: AGHT+IHD12G59ybspMl52ExP69orF2krTF1ik13xLU72/3C/hDwxeZAUZl2YwzBjT9cjXIzWG8GICw==
-X-Received: by 2002:a17:902:cf0b:b0:202:3e32:5d3e with SMTP id d9443c01a7336-206f055d122mr30488055ad.36.1725633083271;
-        Fri, 06 Sep 2024 07:31:23 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-206ae94dcf3sm43951975ad.80.2024.09.06.07.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:31:22 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	rmk+kernel@armlinux.org.uk,
-	linux@armlinux.org.uk,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v10 7/7] net: stmmac: silence FPE kernel logs
-Date: Fri,  6 Sep 2024 22:30:12 +0800
-Message-Id: <39943d7967f291674a97ef0572878aca273087e9.1725631883.git.0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1725631883.git.0x1207@gmail.com>
-References: <cover.1725631883.git.0x1207@gmail.com>
+        d=1e100.net; s=20230601; t=1725633086; x=1726237886;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7U0n4Pc54X9wROP7p7GrRRTyFQ6kR6FXGp+66jt8aEE=;
+        b=rxkg2hmScZmCA+5khXiGOcjwFET96Us64/vbtz3ndrNlQBtkUbOShxTCK2tAg1Mvwo
+         wz4KTboJgO/up+01ln9xCWZQ1EfVmseU7MVs5yvM/YbSXmIC8LpNFVvDy2VuLOSF5TzI
+         wIAQ65xL9OLpnYP8ZrFTZirLxfuSAW9fnfjDb2f+KcaQJXrWHYLd6UrOBomH3zq11Gmc
+         m4FbY7gx8QCymdHzGdnG8Dz408NtcSO3S382ANZZrErObie10dz22N8nKFoADCu9n2Ic
+         iJwLbwhSdy1sNUonsiOWGvxZYB/NVTRCd3zHkJvi+KsPxLPpT0jREIsnwyKOGHGF2HSM
+         GJVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2LDKtVqj54L6A3OSjXlRc7QPm5a6Q+o8RKGcutHCDWCBI9805qNko8GOyvK88L5oBCwLRU5WXyH5SyXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiFqKW1gHTt+BDcCtLz+U6p3InHOxPcXgQbhpbjnKCHCC57sfP
+	WIkWfSau8THhKJIV9cVOw11/5uUGOrQm94/ckZpDknSgLR/49D61V7H81noEV+I=
+X-Google-Smtp-Source: AGHT+IEPfdmdEsv8HUYFO8clIbkuI6Sz6ThdFkSoyqPyPHneUf+Q1tqC+WbfE6fv2a9x6soILPKu8Q==
+X-Received: by 2002:a17:902:f682:b0:205:4721:1a7 with SMTP id d9443c01a7336-206f05428d6mr26833875ad.31.1725633086449;
+        Fri, 06 Sep 2024 07:31:26 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206b7ce6c47sm40861855ad.32.2024.09.06.07.31.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 07:31:25 -0700 (PDT)
+Message-ID: <feb77bdc-512a-4f59-8a9e-1dc7751a2fa7@kernel.dk>
+Date: Fri, 6 Sep 2024 08:31:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] zram: Replace bit spinlocks with a spinlock_t.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mike Galbraith <umgwanakikbuti@gmail.com>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+References: <20240906141520.730009-1-bigeasy@linutronix.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240906141520.730009-1-bigeasy@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-ethtool --show-mm can get real-time state of FPE.
-fpe_irq_status logs should keep quiet.
+On 9/6/24 8:14 AM, Sebastian Andrzej Siewior wrote:
+> Hi,
+> 
+> this is follow up to the previous posting, making the lock
+> unconditionally. The original problem with bit spinlock is that it
+> disabled preemption and the following operations (within the atomic
+> section) perform operations that may sleep on PREEMPT_RT. Mike expressed
+> that he would like to keep using zram on PREEMPT_RT.
 
-tc-taprio can always query driver state, delete unbalanced logs.
+Looks good to me:
 
-Signed-off-by: Furong Xu <0x1207@gmail.com>
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac5.c    | 8 ++++----
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 4 ----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
-index ab96fc055f48..08add508db84 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
-@@ -620,22 +620,22 @@ int dwmac5_fpe_irq_status(void __iomem *ioaddr, struct net_device *dev)
- 
- 	if (value & TRSP) {
- 		status |= FPE_EVENT_TRSP;
--		netdev_info(dev, "FPE: Respond mPacket is transmitted\n");
-+		netdev_dbg(dev, "FPE: Respond mPacket is transmitted\n");
- 	}
- 
- 	if (value & TVER) {
- 		status |= FPE_EVENT_TVER;
--		netdev_info(dev, "FPE: Verify mPacket is transmitted\n");
-+		netdev_dbg(dev, "FPE: Verify mPacket is transmitted\n");
- 	}
- 
- 	if (value & RRSP) {
- 		status |= FPE_EVENT_RRSP;
--		netdev_info(dev, "FPE: Respond mPacket is received\n");
-+		netdev_dbg(dev, "FPE: Respond mPacket is received\n");
- 	}
- 
- 	if (value & RVER) {
- 		status |= FPE_EVENT_RVER;
--		netdev_info(dev, "FPE: Verify mPacket is received\n");
-+		netdev_dbg(dev, "FPE: Verify mPacket is received\n");
- 	}
- 
- 	return status;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 05ffff00a524..832998bc020b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -1067,8 +1067,6 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 	if (ret)
- 		goto disable;
- 
--	netdev_info(priv->dev, "configured EST\n");
--
- 	return 0;
- 
- disable:
-@@ -1087,8 +1085,6 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 
- 	stmmac_fpe_map_preemption_class(priv, priv->dev, extack, 0);
- 
--	netdev_info(priv->dev, "disabled FPE\n");
--
- 	return ret;
- }
- 
 -- 
-2.34.1
+Jens Axboe
+
 
 
