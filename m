@@ -1,156 +1,172 @@
-Return-Path: <linux-kernel+bounces-318086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76DE96E826
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:22:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7AF96E82C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B3B1C221F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 984BEB23377
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD38C4962E;
-	Fri,  6 Sep 2024 03:21:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C33C3B1BC;
+	Fri,  6 Sep 2024 03:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EpAD/w5B"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2052.outbound.protection.outlook.com [40.92.102.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F4E2233B;
-	Fri,  6 Sep 2024 03:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725592869; cv=none; b=rlgf1TRVDOt0iMy200C4TOnwJUZ1TUon/HwCQmAp0EVckQPBX/9TfhmAhs21z6Nh2/MvCKlQnkW/a3M9fc9P0MvqOVv3Rv7KHoV4+Ny4OJpEAoTa94AT0KdmkXkyB4ZMWC5WQOrLyOA0uvU8FOlYTUJmCRDkjnpOVxjhFuSswLM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725592869; c=relaxed/simple;
-	bh=lkUEIs3Vj51e0baBIH0ImGISwWmjl3aVQKG25LjrFfw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JhcB8jyaMAzzZU06IhwzVrZgyTrXPtG5pxEHAzyTsEHMrluteeYU8LZCeXaAaiVkD3Sk0rKaHTrkaDgYHY+eCq93dYFrBYWWclMc1MKx37sIDHdwCoQY7ef1qp6S0I7KL5m/aAO1k8yIUgEj8RKdAKhHT+3vU3kq1781y8Scu6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X0M1p5z65z4f3jjk;
-	Fri,  6 Sep 2024 11:20:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 390891A158B;
-	Fri,  6 Sep 2024 11:20:57 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP4 (Coremail) with SMTP id gCh0CgCHu8cVddpmAf0YAg--.14627S2;
-	Fri, 06 Sep 2024 11:20:57 +0800 (CST)
-Subject: Re: [RFC PATCH bpf-next] bpf: Check percpu map value size first
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>
-References: <20240905171406.832962-1-chen.dylane@gmail.com>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <fab1c1c1-a973-a32c-8936-d0d885d4b5af@huaweicloud.com>
-Date: Fri, 6 Sep 2024 11:20:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C4B17BA0;
+	Fri,  6 Sep 2024 03:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725593066; cv=fail; b=EKUoBeczNaNpxNSIPROenGB1bPfZhwQNRsRHqie8pqlVuvxWMeRRWl9upttbmgMsERW/p/aSZWPYxirPJJL+WBXhWb7VIwCr4Ssh2sYCbIYTaCIodlGq6SarXTCK8zlc/ZfA8ayRGysprTf7HdbocX+rwc79qU9/lU51qrWopC4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725593066; c=relaxed/simple;
+	bh=mA8++2ObAb6fs+lDdrtnKg2TjtvF92vaj4MsH+NWA1c=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jwawxwH71lCC2/GLwScoF98cVGkrG3RcoAmjdO7TE5nX000VEr+qdm8x329Wf2kB5eI37dZB1WD4bHEgbqWOdY8wH88FVYy0w6bxlR7PznfM4/PkCidIrCz4CjSGwuhBrNTh+0l2b+fgOcFeUXqGQFV8hnMWCIHMewKLnTyUm4g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EpAD/w5B; arc=fail smtp.client-ip=40.92.102.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VvEACOgzlcBlmLiIsawrAG0ERD4K5RkiB1R/MOEqYPcIbamYNvnv0xlb2EO4dEAXN/RAg8lrfHXx/W/DkHf+mjQEsJpAo3NsO2rytYd4ZC08KoeMElAjixElMLHjXC9il4QbT8yccb3F4UTKiHeCXeNrkEd18TujJr2pkV5HKJp3g+NJqae4mnp9NOunMOpXHUlX2Ax/a9JDjZtclSUF5Ulp1zRlwB/UQj0H5kz3Nyycokl4O7KZSBWuZzLTfHWxeeyeJPzCccg0zhurjr+GmWmemRBZEyjK5E3WqA8JWSxE/krKwFnP2XcsTXpoup2UU5SdjresHahFpCeGvopi2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bh197ihKOOrMcgta4T7X7uPO911j6ZQ+IrdahvslpWw=;
+ b=SgnELdUZhos8eHX2LJdB1Ko8qz1ITzg1yYb2/2rmCvYuhVzL6aVozES2xKKO46KlsdyfGofxpkVoGn0uw1s4ic4A9CoHQl2q7KxqmNDpaQCdmeTNhhBAOOZky4EE6fApvbHPsTM9U7u0o0MnXBBDfCT4mgRwgdfrm92bBL3Y/EBpB+XLVB/SSAhPVVwVxrpPAb91k2iEopu3Y04LpIZnjShceZ035SWRHjjsiQ20yFTLJclsulUAC28t6+UOqk7WitzYqBnpluE1KwUzp2PCxKP5GhcqmO9u35owJcwI8h/JKjd4oo3XgThw/0WhvHnCxzleiLMHGq3Rdl6nK6cK/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bh197ihKOOrMcgta4T7X7uPO911j6ZQ+IrdahvslpWw=;
+ b=EpAD/w5Bu+6USdK7C6uJ4PabQ05CygB8x3PuwrOSCEMUSKfzWj3U7fXM+YH9bYiNc/1FSGYkF6+FQHi3Sc7jc8jdpO2ojqHGD3HeFmPCOhNwEzgniiNKZvffW63I3jHm6wYRCoH0tO7MbETy0EOmku3QjTof/hhBUSr83ubgKGIO6gPyCVPXx5jB7vaz5aPHPAHnX09A48/5TxD4PRB7A9f4aicFJnKGKbdbUnmPHwtuTKDURgsgqVlTk96Y7hboW3PLZEoJnxQpZOpCcrM3hIdO3YHF3v3yEXNGYf/4zANrHyRJD2Jc/P+UJxEpljP5tTuRQSHzUPFTRtGko2d+FQ==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN3P287MB0291.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:d4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Fri, 6 Sep
+ 2024 03:24:20 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%7]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
+ 03:24:19 +0000
+Message-ID:
+ <MA0P287MB282200D15F3A93CE187FA66FFE9E2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 6 Sep 2024 11:24:14 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patches in the sophgo tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Inochi Amaoto <inochiama@outlook.com>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240906120436.74ffdd06@canb.auug.org.au>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20240906120436.74ffdd06@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [9FWivQKDtDjGz4ULbwQbF3eSFsD8UG1t]
+X-ClientProxiedBy: SG2PR02CA0013.apcprd02.prod.outlook.com
+ (2603:1096:3:17::25) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <5e153628-0187-4221-9bbc-62b6031cb4e0@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240905171406.832962-1-chen.dylane@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID:gCh0CgCHu8cVddpmAf0YAg--.14627S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr18AFWxJFWrKrW5tr15CFg_yoW8KFyUpF
-	Z3GFyUtr4jqwn293y5t3W8C3yrXwn8Ja47G3Z8JFy0vr47Gwn7Kr1qgFWUWFyavF1qkr40
-	yas0qayFk3yjvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB0291:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1fbf679-80ba-4511-dd9d-08dcce236489
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|5072599009|19110799003|6090799003|8022599003|461199028|8060799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	9HfTOeWwoZgUWDeUNfmbtdsFd2Unlr/vASm+j3sxwmonVx030y8bCV9DwQZwKCNGFU6QIW+r8ppI5zT/duaQtwDQTJRFXVfX1ociZD/HDdz7DN1PUTgJV/g0ACZzkc77y1froyySKrEUYfctFeO9eFXQsrnmrTUOsrSYbcL19zx7r8/kBY7bhpPody/ZTu9/cB0z90c0OdRSnbC+CvImo2P5zz9+11Wvaxv2rX+4EMX57lq4CKWG3DlS6nzAaJvS/uSS0peJWm4t8igSZuUtx3XCEObpWv7xZu2cpzFrb0meSlP/l/DEov45ljXxokvVXWa1oOvq2+OqSFY7rcaxueB9+B0GWMHADGjX/Jp5D0V6onR9qzdoH52+SJAutJX7U93WGFzMa6MvKYTSgwcU+sr5yCcRoaFqXFoTA5Ot4UOnIBxP89BoVYkZta1JE77X5Pd5EvO/ex7UOyx2YBGYKC6i/xletf3NpRv/c1NfZ7pKYjJ7jvsKUQoiGHWZ9l6tJ6lYcYzkxk0XN67fc2Ia3r9qJBSUS6EyAcI3oPCazThY0Ky+kHTtJ8n5lg2t0GKaITtDhPMCPhqdnpxvZL8G+63e7u9CCwpBhvxi/xnMp0nSSy6gnWv+x6G9emAnpmkJbaCEuBt9ZWOEhS+n7M24Z6m+iyn/vSXT25lw/cbWAxlAu4OtsuSEFVU24aILGBATGFi3sH7FizKiKSiN73Dks2SrrLj9diqOGhTAxAKugEHZ4V4tyJVvugEIqn3bXoV1hnRnVJp2487LodnTAgfNGg==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RUxPUXRYa2h1MUh1ayt1NW9FZWZLTm5PanFnMG8rK1l5Tk5tVjlsUWJUeWZY?=
+ =?utf-8?B?S1Zka2xBY0VmSEpmeEVkT0lmdmRLdW5IR2poZkQrS0xjN2ExYlc0R1laRTlk?=
+ =?utf-8?B?OTNUZ1RFU0k4ekFrK2FNRFNIK2w5UmZzRWY0ZENGdzk2SU5ibFhQMng2N0ZF?=
+ =?utf-8?B?WHVtVzZWbTl3UUUzMG9abDVNUWZtRXpQOHhjV2hNVjMrMFBuejhSVU0zSEdN?=
+ =?utf-8?B?K01PN0t5Y0k0Rmxab0JEeFU5RTd4bEZpdXZsK2phbnFkdjFsbjgxa29IbkVv?=
+ =?utf-8?B?dXJ5R3JnUTFaMTM5S3o1ZlR0V1J5NGN6UGVuUE02azd1TkVzeFM1b1FqanZs?=
+ =?utf-8?B?TTFqb3U1TW9kbWhBNWJJeGJFYm0xcDg1TFNUTEpFTnNwMmo4ZlYvUFBoTlha?=
+ =?utf-8?B?TUFGSVpJNFBidmdpV3QzdzBGM0c3R0h1QWYrUCtWTThVdXJWaVQxRTNQZzVQ?=
+ =?utf-8?B?Y1cwWUo1YndnajlzcFJSQ1RTUDRlbGlzRC9XWGRJZ09MRk5VVzh3WHlrVk95?=
+ =?utf-8?B?MWZhN3c4QVNJOGZvVmQrK2NQRy9XNmhNZDBsQktzbkNxK1hIek96ajlsM0gx?=
+ =?utf-8?B?RjFsV2sxeHI4RG40MnVHeElDQXJMd3RNMk1zRWY4MzM1SUdZUk8vSW4wZDZk?=
+ =?utf-8?B?TWxlQTBTazdYaXd3K3FocmYxUnNiUUtEdWVleVF3ZnZzcUpoM3Z2OVFxRW9E?=
+ =?utf-8?B?NE1xcmVocDZpdXhKaTBjM1RzTzc4Y2NCN3hwNCtvRFlOYm1vYjJWcVF1K2dy?=
+ =?utf-8?B?RitpamRLYWlnWStQSUh4aXFDaVZiSGMvaGNPNHFoYlY2ZFhxNE56K2t4bDdy?=
+ =?utf-8?B?emQvNWwzYmVrNklsclNZVVBsc2ZXcWpLaWEzQi9UWmFBdnlOazJHRjYzVTJm?=
+ =?utf-8?B?eDdQVC9UaHFmUlhlbnV2alVNZFF3c1gzOUFRWmdRWWFYNElxb2xueUVBcGtK?=
+ =?utf-8?B?M1VQMjFlQWNyeXhTNEtwdVU4bHdnZEFKY2VhRzM1cGpkOEM2ZzhCSzdPNk1K?=
+ =?utf-8?B?TExnbHM3aXJFS3BtVHEycW9sQWc3T1E2eFFtcGhaOWhDUVZIVGM5d2tSSktx?=
+ =?utf-8?B?UEtvSmdOYWJTR2g3aVY4bGp6elVCUmVoSGNjQ2VsTTVsYXlXeUsrTm5KOTlk?=
+ =?utf-8?B?NGtweWRVZzd6RG45MzEybllsREpRMU9aZE9Rc2xuem5DOUFHUTZzelM2SkY5?=
+ =?utf-8?B?K0xWK2dCeUs4MkRKNTExaTE4MkVqVTlCb2lBRzVXYm81WFBTK3cyM01vWEd5?=
+ =?utf-8?B?c2hlbmJhRG12bXpINGtLTElPRnpOem9mSWFKcXlzdldTSmNGd1JMMEpyQS8w?=
+ =?utf-8?B?dnZlT2p6Qm5OV3U3MzJLQmdiSW95UVZZYk5hbnVuWUlJNE5RQy9PbDN3UTM0?=
+ =?utf-8?B?Wk5TMUR4Z2hSVEVtVVZuZGdsMmxqdWpMQWpzZVdraHVZOWtXTERNYXFFZDFC?=
+ =?utf-8?B?OVFpcUNKNWZibWk3YlpnL2EwQzl6V044UXBDdG1Vdkdia1JpbTBEV3plaG5p?=
+ =?utf-8?B?aTZvRDdrcGVwSVc2R0RUSHVsVVZZZXVDNlFkTWl0VGZqbkRnOGZNUk5veUtl?=
+ =?utf-8?B?bTFlS2NGRzQxTDJVd1BZb2NrZDU4enkzRXJ1d3dlL1IzQVVZWUdaTjJHZzEv?=
+ =?utf-8?B?eE1oU2FQaHZsRGZPb2R3MHJZNmJTdEdEc1pWYzFaNk40ZElhYTMzY0ZXa2Uy?=
+ =?utf-8?Q?n500iJupzNYGRaFYqmnH?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1fbf679-80ba-4511-dd9d-08dcce236489
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 03:24:19.9080
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0291
 
-Hi,
+Hi，Stephen,
 
-On 9/6/2024 1:14 AM, Tao Chen wrote:
-> Percpu map is often used, but the map value size limit often ignored,
-> like issue: https://github.com/iovisor/bcc/issues/2519. Actually,
-> percpu map value size is bound by PCPU_MIN_UNIT_SZIE, so we
+The arm-soc tree contains these patches is due to I submited a PR to 
+Arnd and he merged this today.
 
-s/SZIE/SIZE
-> can check the value size whether it exceeds PCPU_MIN_UNIT_SZIE first,
+And for the sophgo/for-next branch, it does contains these patches. I 
+created the PR branch(sophgo/riscv-sophgo-dt-for-next) and cherry-picked 
+these patches from sophgo/for-next and submited the PR. I see the 
+commits in arm-soc are the same as that from 
+sophgo/riscv-sophgo-dt-for-next, but they are different against the 
+commit ids from sophgo/for-next due to cherry-pick operation.
 
-The same typo here.
-> like percpu map of local_storage. Maybe the error message seems clearer
-> compared with "cannot allocate memory".
+So my question is, do we need to make sure commit id the same between PR 
+branch and sophgo/for-next branch?
+
+Thanks,
+
+Chen
+
+On 2024/9/6 10:04, Stephen Rothwell wrote:
+> Hi all,
 >
-> the test case we create a percpu map with large value like:
-> struct test_t {
->         int a[100000];
-> };
-> struct {
->         __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
->         __uint(max_entries, 1);
->         __type(key, u32);
->         __type(value, struct test_t);
-> } start SEC(".maps");
+> The following commits are also in the arm-soc tree as different commits
+> (but the same patches):
 >
-> test on ubuntu24.04 vm:
-> libbpf: Error in bpf_create_map_xattr(start):Argument list too long(-7).
-> Retrying without BTF.
-
-Could you please convert it into a separated bpf selftest patch ?
+>    0014d11186f5 ("riscv: dts: sophgo: Add sdhci0 configuration for Huashan Pi")
+>    161477baee0f ("riscv: dts: sophgo: Add i2c device support for sg2042")
+>    33ae4c56cacf ("riscv: sophgo: dts: add mmc controllers for SG2042 SoC")
+>    47e5a8daf0b9 ("dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
+> ")
+>    4f8fb973389d ("riscv: sophgo: dts: add gpio controllers for SG2042 SoC")
+>    7f3cf53e4c65 ("riscv: dts: sophgo: Use common "interrupt-parent" for all peri
+> pherals for sg2042")
+>    c0a4490b120f ("riscv: dts: sophgo: cv18xx: add DMA controller")
+>    e8b4716e68ba ("riscv: dts: sophgo: Add mcu device for Milk-V Pioneer")
+>    f9cc479ddc8c ("dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic")
 >
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
-> ---
->  kernel/bpf/arraymap.c | 3 +++
->  kernel/bpf/hashtab.c  | 3 +++
->  2 files changed, 6 insertions(+)
->
-> diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-> index a43e62e2a8bb..7c3c32f156ff 100644
-> --- a/kernel/bpf/arraymap.c
-> +++ b/kernel/bpf/arraymap.c
-> @@ -73,6 +73,9 @@ int array_map_alloc_check(union bpf_attr *attr)
->  	/* avoid overflow on round_up(map->value_size) */
->  	if (attr->value_size > INT_MAX)
->  		return -E2BIG;
-> +	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
-> +	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
-> +		return -E2BIG;
->  
->  	return 0;
->  }
-
-Make sense. However because the map passes round_up(attr->value_size, 8)
-to bpf_map_alloc_percpu(). Is it more reasonable to check
-round_up(value_size) > PCPU_MIN_UNIT_SIZE instead ?
-> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-> index 45c7195b65ba..16d590fe1ffb 100644
-> --- a/kernel/bpf/hashtab.c
-> +++ b/kernel/bpf/hashtab.c
-> @@ -462,6 +462,9 @@ static int htab_map_alloc_check(union bpf_attr *attr)
->  		 * kmalloc-able later in htab_map_update_elem()
->  		 */
->  		return -E2BIG;
-> +	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
-> +	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
-> +		return -E2BIG;
->  
-
-The percpu allocation logic is the same as the array map:
-round_up(value_size, 8) is used.
->  	return 0;
->  }
-
 
