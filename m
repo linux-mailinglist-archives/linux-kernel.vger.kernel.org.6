@@ -1,55 +1,72 @@
-Return-Path: <linux-kernel+bounces-319060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D133696F729
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:43:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFB796F732
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED191F25C7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7795285B79
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6001D1F56;
-	Fri,  6 Sep 2024 14:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9D81D1741;
+	Fri,  6 Sep 2024 14:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ldp+Qsdw"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zp4uVLKv"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6318D1D1757;
-	Fri,  6 Sep 2024 14:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D551D1B3757
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633764; cv=none; b=OcMICHH8Ahrhx22lj8/H/gctDLn8D1/npuJN1R0YEsLsboYNh5p6psi3c569D+oEoizLhemgTOrw/8FFWSsMX50CocDN3rD0SR4zHn8o5CUa5VOIyj5DzdRdv7MR+C9yb5hpRs9Vi490NMO7rVboCqAv17f14f9SwXIbnMaabWE=
+	t=1725633900; cv=none; b=TQt6R5M5RSt4e1xevICZmf6BBeYRMwhKmWoZIcGyGnhpeuJXtzIwvxoYgKbfYdov8WtmzgWALdVF13PfMVHb1jslfBG8XN6nxuWbZlq99CbVQ15qWQ4kZ8l5kZN0Jk3kOz4ugI5/8ZEVe5gXP+dZKeLPcmYFAIApQBobzzbThzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633764; c=relaxed/simple;
-	bh=pj6q7pRbyGidAOFqbosve8d0lwaSXVGdj3+1bN4PSq8=;
+	s=arc-20240116; t=1725633900; c=relaxed/simple;
+	bh=tjAs7g4JFo1JouP8WkaLodacIptG39PhZzgvCwZWTNU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OSOrcrgPb7UXvVl0bhLLyM1cJC9d5zCIvrRQ5OoIpax+9rJpa/cyf4kBruDONYvw16gJX44JyCdCNmr7Jefi0q+kuXwGW36S4qCr1KCMAYwUgd7xopuWzlfMMv3A3RMdih0v1bI8Hadyk0H6y2uENSM+H+6y48WQSmUQQoiqoCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ldp+Qsdw; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1725633752; x=1726238552; i=wahrenst@gmx.net;
-	bh=EnJX//TvEm1gJVJJPWoKfObjaG1VzryhTzzDecbT7PA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ldp+QsdwjxOqoiFfvG+QAU62V02ktzMQluOjf+kNal02FQWAx7Ow4tfGbeobO4yI
-	 u4nLuG5ZYTdvgQEgWyPYb0+biJx66zUHuMlJ15Y3FQRzLlN6yGMo9GMaJU66wSsZc
-	 KJIRfP2ux6hN7W9Wyb7esYoaTeOA6XVldxs9jtzKYLRS2dxm10h5GZmgRtp+HlY2l
-	 te3HlazP0+Qllpn2GqIdzbii82gMfUQTewfTU8X4xY1/Nm9j4o9mB+hjeJExECrnF
-	 JcVndOO2vhu0I0gXOqOarEAak/lZNB+SDtZWGum08RW//jdar4vMTFHRqfXQ31vFx
-	 iaK4PpY3G/o2IH/zAw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MysRu-1rr1hK0P1m-00vusc; Fri, 06
- Sep 2024 16:42:32 +0200
-Message-ID: <357a8f1d-033c-4d55-a6d3-05703cc7e0b0@gmx.net>
-Date: Fri, 6 Sep 2024 16:42:31 +0200
+	 In-Reply-To:Content-Type; b=KKiGqTSsGDekCmsqucn4DGtKj4zw8eiPTtCzRnDpqfEsok5Nf/LHSF46/l/5YnheQojU9kHxJ4LvtzNZOyJML+wrQhwhKZC8EV8mVG+fL6m06Ajh2t2kqGIWQDfx7cz7Ix91zTMpmapPG5BKvlPVItp0Fcq1YU7cQq9c8rVddIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zp4uVLKv; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-70f670eb827so996578a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725633898; x=1726238698; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GyxUOYRk77DlFPakFZdQBB8IksHfOA+7wF/s9YT50NI=;
+        b=Zp4uVLKv9zTGdx9xTh1I2DbJwsLrMrDnpBhbc9cio1N7prSluzi8NPISgIBGafBkdG
+         dCc71Dav/iXP9mWxHDiKDPly7K7QijlMtGtrP9u8ciclcUb4D2G3crQE0jXz/+CNdO75
+         6gYRruIs4tIsdLu9L49n7PVM9gTFRziJus4oy3GQ9Frs9JRf3oFeXK/gIFBKG+zDrm68
+         Wk4/HW16hRwisGMrFO8ARBpk57l5M64ErbPsyXV5PJatn9WOpLvQFx4UyEkAOdHU+6xu
+         EMPRh7MUHlEqdEERhjLQEXdI/Mk3F7wYtO2tYVWa1QQ9PFfINapWY5pMmGF72LvSKlTB
+         vUXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725633898; x=1726238698;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GyxUOYRk77DlFPakFZdQBB8IksHfOA+7wF/s9YT50NI=;
+        b=dQwKdsq81jEZuK51qA9d7hSMgtn9D4I5hx4UNE3xlrnCr4HH8uMMQGsMcku/h5c8V/
+         T015sBquhnQJzXxKFJ4AKHfZYoSHmodcjaRoGwwey7jZm0QUkkZKYo/C4Mqz2Kh+9MCG
+         ZC5b/7LlTkJUfabjFJceHgGTh1zEcFjvCM7cJUOSRM9/AS7PIlq9Na84qplcX61TndN+
+         L//fODsGEBWWj3JEHVn3r7BA7nnQTd4KdylTv9BHFBwH3sfImiMLteiNOGCK6dL1lthp
+         jGP+z7WRjr6/yDG/i7GfRzQiJPunCxZpOzh9RnFKk4bqlTxe7XgASqloC8kEbw9t4QTe
+         N11g==
+X-Gm-Message-State: AOJu0YyiOK4XZDeDpubvPzpGz0Tne6KpCcZJ6uyMUPz+gF4b1c+3kSKz
+	j2VYmcppneacZ40thy34qBaV8IrsEbGjyUx7z8KKHx5iza3CY4V6
+X-Google-Smtp-Source: AGHT+IHMQDqhtdJGb9vyXpHdHFvZFVG4lkfcKhyySIkCk4aZ5q39igSbjuHhU/CwGK2TOnT9q/pDDw==
+X-Received: by 2002:a05:6830:6c87:b0:710:cce7:5bb8 with SMTP id 46e09a7af769-710cce75effmr723161a34.15.1725633897836;
+        Fri, 06 Sep 2024 07:44:57 -0700 (PDT)
+Received: from [192.168.1.224] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f7642579fsm2894273a34.66.2024.09.06.07.44.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 07:44:57 -0700 (PDT)
+Message-ID: <d4d3ef1f-3f34-40c5-88d5-ed1f35123705@gmail.com>
+Date: Fri, 6 Sep 2024 09:44:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,118 +74,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/2] tpm: tpm_tis: Provide error messages in
- tpm_tis_core_init
-To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- Stefan Berger <stefanb@linux.ibm.com>
-References: <20240906060947.4844-1-wahrenst@gmx.net>
- <20240906060947.4844-3-wahrenst@gmx.net>
- <D3Z3W2PZDU7C.4CBZUBZYY0RS@kernel.org>
+Subject: Re: [PATCH v8 3/4] driver core: shut down devices asynchronously
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Martin Belanger <Martin.Belanger@dell.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
+ Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+ David Jeffery <djeffery@redhat.com>, Jeremy Allison <jallison@ciq.com>,
+ Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org
+References: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
+ <20240822202805.6379-4-stuart.w.hayes@gmail.com>
+ <20240905221340.GA2732347@thelio-3990X>
 Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <D3Z3W2PZDU7C.4CBZUBZYY0RS@kernel.org>
+From: stuart hayes <stuart.w.hayes@gmail.com>
+In-Reply-To: <20240905221340.GA2732347@thelio-3990X>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cQ3Bi+qJJONkbJSVrtzaDZ7EJa1pKmcUqvZ2PtkEfG6spgtY22s
- EUZhI3L6o8FJB7SOc+Y39npMQZRIM478F3LTdyhzkhBBnjftLpOWtkIFBu+AQ9Fdy3HgsMj
- 4hOplRCB5UwTppj3tmhzTtYhEOuwO3+bo69dtUkY4vBJnMgEvIRTxOros5dPK0NAP/l3/Bf
- tqUfreHVwIETPHNrdowVw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3s6IcaSm9Do=;L/me6pEx9WDHae79V5Rr2Any+nJ
- Sp4ans00YyU4i0zYXbs/zyhuy2oM3GX44bOZ7mQzG9aUZQLv3gsR/Qf6PoIlTOAU1tJH4eUQi
- vbjPg5Xwa/Aee7tX6KPe//kWnfnycP9SXyo8E0QDAdM3tU402+c7X2+VMrjj81M8uwdNWkuFg
- DZpRGxZXjV0C5mc3Y544f5+I2ClKnOFQNScWICeUmTjetzvmZj96oPCXXTyuvRHcZfum+zkMA
- DK97sAoDMIk5GGQUnyI3NUc7e0u8hlB19cTSVPu/CSl8zOvHav6PEXUeNsmIQsbosgRBtY+7r
- kMXoIzdOk6SrMrXMRxUkmnphCcK7HJTM38TuZ0M39n2K9AvdQuRwx7O8p9vvbCK5Q4R18dUrP
- NTkDcSaZkMUf+Mrs0m2h1o1H4jFtoe0CfLs/HhWRQv2tgeMcGfoujuULbzVvsWLY/cjWy99+h
- VZ9kSa4764Pnjq59YcRDGffRdoWDznT8SrucM1WcTQjft5OSRFiHc+o97CPEMJ6IUPaUJ4R8K
- vZCKLjM6SqvFzhaG63oRau0d436n6RnHtP868vFf7h56pxIFKrEB1hPcZRr3vxBtU74KmoEEn
- vUvRPnuJd9ug5D3SPjz1Egk48cLUn7dLgMwFghmP2fvKk1SSAm1IplAjWVMjzbSlhLvmnf3Dp
- fWEFIaCqINiZnCboD0ZAWxp4Ohh9CHCtra9YbiaP0Q0XgDVzYrAZ4NswlaZjdQHUzjBS23EVD
- TIVwL3hGywk8gjwuWIzbRu9hq4iYUMq9JRLpn0nwU7DreaqCE3fs5kio9fT9QNnWT1s4vT1kF
- IWkgIC2McGdLYuD/kK6CFJgQ==
+Content-Transfer-Encoding: 7bit
 
-Am 06.09.24 um 11:50 schrieb Jarkko Sakkinen:
-> On Fri Sep 6, 2024 at 9:09 AM EEST, Stefan Wahren wrote:
->> In case of SPI wiring issues (e.g. MISO pin permanent high) the
->> core init won't provide any error message on failure. Add some
->> helpful error messages to tpm_tis_core_init(), which helps
->> to better understand why the driver won't probe.
->>
->> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
->> ---
->>   drivers/char/tpm/tpm_tis_core.c | 15 ++++++++++++---
->>   1 file changed, 12 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis=
-_core.c
->> index fdef214b9f6b..830e331fcebe 100644
->> --- a/drivers/char/tpm/tpm_tis_core.c
->> +++ b/drivers/char/tpm/tpm_tis_core.c
->> @@ -1133,8 +1133,10 @@ int tpm_tis_core_init(struct device *dev, struct=
- tpm_tis_data *priv, int irq,
->>   	dev_set_drvdata(&chip->dev, priv);
->>
->>   	rc =3D tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
->> -	if (rc < 0)
->> +	if (rc < 0) {
->> +		dev_err(dev, "Failed to read TPM_DID_VID register: %d\n", rc);
->>   		return rc;
->> +	}
->>
->>   	priv->manufacturer_id =3D vendor;
->>
->> @@ -1162,19 +1164,25 @@ int tpm_tis_core_init(struct device *dev, struc=
-t tpm_tis_data *priv, int irq,
->>   		chip->ops->clk_enable(chip, true);
->>
->>   	if (wait_startup(chip, 0) !=3D 0) {
->> +		dev_err(dev, "TPM device not accessible (0x%0x)\n",
->> +			vendor);
->>   		rc =3D -ENODEV;
->>   		goto out_err;
->>   	}
->>
->>   	/* Take control of the TPM's interrupt hardware and shut it off */
->>   	rc =3D tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask=
-);
->> -	if (rc < 0)
->> +	if (rc < 0) {
->> +		dev_err(dev, "Failed to read TPM_INT_ENABLE register: %d\n", rc);
->>   		goto out_err;
->> +	}
->>
->>   	/* Figure out the capabilities */
->>   	rc =3D tpm_tis_read32(priv, TPM_INTF_CAPS(priv->locality), &intfcaps=
-);
->> -	if (rc < 0)
->> +	if (rc < 0) {
->> +		dev_err(dev, "Failed to read TPM_INTF_CAPS register: %d\n", rc);
->>   		goto out_err;
->> +	}
->>
->>   	dev_dbg(dev, "TPM interface capabilities (0x%x):\n",
->>   		intfcaps);
->> @@ -1209,6 +1217,7 @@ int tpm_tis_core_init(struct device *dev, struct =
-tpm_tis_data *priv, int irq,
->>
->>   	rc =3D tpm_tis_request_locality(chip, 0);
->>   	if (rc < 0) {
->> +		dev_err(dev, "Failed to request locality (0x%0x)\n", vendor);
->>   		rc =3D -ENODEV;
->>   		goto out_err;
->>   	}
->> --
->> 2.34.1
-> No thanks. It not only adds helpful messages but has potential to add
-> unwanted merge conflicts.
-So this is a general NAK?
 
-So with every setup where the driver exits without an error message, the
-developer should add its own debug?
->
-> BR, Jarkko
 
+On 9/5/2024 5:13 PM, Nathan Chancellor wrote:
+> Hi Stuart,
+> 
+> On Thu, Aug 22, 2024 at 03:28:04PM -0500, Stuart Hayes wrote:
+>> Add code to allow asynchronous shutdown of devices, ensuring that each
+>> device is shut down before its parents & suppliers.
+>>
+>> Only devices with drivers that have async_shutdown_enable enabled will be
+>> shut down asynchronously.
+>>
+>> This can dramatically reduce system shutdown/reboot time on systems that
+>> have multiple devices that take many seconds to shut down (like certain
+>> NVMe drives). On one system tested, the shutdown time went from 11 minutes
+>> without this patch to 55 seconds with the patch.
+>>
+>> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+>> Signed-off-by: David Jeffery <djeffery@redhat.com>
+> 
+> I am noticing several QEMU machines hang while shutting down after this
+> change as commit 8064952c6504 ("driver core: shut down devices
+> asynchronously") in -next. An easy test case due to the size of the
+> configuration:
+> 
+>    $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux- mrproper virtconfig Image.gz
+> 
+>    $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/arm64-rootfs.cpio.zst | zstd -d >rootfs.cpio
+> 
+>    $ timeout --foreground 3m \
+>      qemu-system-aarch64 \
+>        -display none \
+>        -nodefaults \
+>        -cpu max,pauth-impdef=true \
+>        -machine virt,gic-version=max,virtualization=true \
+>        -append 'console=ttyAMA0 earlycon' \
+>        -kernel arch/arm64/boot/Image.gz \
+>        -initrd rootfs.cpio \
+>        -m 512m \
+>        -serial mon:stdio
+>    [    0.000000] Linux version 6.11.0-rc4-00022-g8064952c6504 (nathan@thelio-3990X) (aarch64-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT Thu Sep  5 15:02:42 MST 2024
+>    ...
+>    The system is going down NOW!
+>    Sent SIGTERM to all processes
+>    Sent SIGKILL to all processes
+>    Requesting system poweroff
+>    qemu-system-aarch64: terminating on signal 15 from pid 2753792 (timeout)
+> 
+> At the parent commit, there are the following two prints after
+> "Requesting system poweroff" then the machine properly shuts down:
+> 
+>    [    3.411387] kvm: exiting hardware virtualization
+>    [    3.411741] reboot: Power down
+> 
+> If there is any other information I can provide or patches that I can
+> test, I am more than happy to do so.
+> 
+> Cheers,
+> Nathan
+
+
+Thanks, I'll take a look.
 
