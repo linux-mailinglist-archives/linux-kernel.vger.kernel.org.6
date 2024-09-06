@@ -1,202 +1,148 @@
-Return-Path: <linux-kernel+bounces-319143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BEB96F873
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:38:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F63C96F86C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2622281306
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:38:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7CE5B21A0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0BD1D2F6E;
-	Fri,  6 Sep 2024 15:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44901D2F6E;
+	Fri,  6 Sep 2024 15:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R+HlsD2b"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ALci5JqW"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D761C8FCE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53021C9EA8
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725637088; cv=none; b=VKfu/vPHGn+aWC+eYsjBNxtzs6ix6ruKbQMdUlE1okA4bSnQHYOjzEqjRORXaq+sbSAP65hz6wMKIXc6Frojm8HlwNgbclBIZVDZih+42oGq6+FrzJbb1N3KI+pi8RVKcdDA9aQBjCiJHtjVcg34SMZG5yhhX7YP/ce0qMZh+LE=
+	t=1725637071; cv=none; b=MhmHICv8JNX0T99vO+LaNfTW7Z+0UgNfCkdtJXqY3Qkamx+UO8FJ3ip8ZKWsoHzX8+3Na+dSh4YteMdrsoS9zzuLZbGv3DRcwg/pkbjxIuaRvYQWbSSLufjheL5EsRXUTlbgbwmxTQ7vTqLRWyh6HCSJS4kZ35xzsRR1kirvEHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725637088; c=relaxed/simple;
-	bh=Fbwhku1H3Hv6CXpiNrpiJsXJmT0rO8n01IkZMIWnkok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=svE4BJ3TfnvrCSHWS+PB0nMaIDBc0yRI6lx7Q1fSRAINHbqig1No9UYI39i/maVzosuBAV7YYTs3VluekzpqnbS4O9QndtMgnC7zCfvFKJof+qN9PZ8S2xjbxDgWT99QG0eyqfiPGL69NKXMCegni9KXkDGPIluqOeWjBPQ0pIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R+HlsD2b; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4868GQqQ019213;
-	Fri, 6 Sep 2024 15:37:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:reply-to
-	:from:in-reply-to:content-type:content-transfer-encoding; s=pp1;
-	 bh=1SgdAixw3Dva4vhzmvhrbo0SJvloO8Mj7vL3piT8bK8=; b=R+HlsD2bllEg
-	QhoeLPFz2HwV6eLv+JWoC5VzRfgkhqCOvb9jaJAK1fCyXhKYGRgokTySoa9Np7Hv
-	QXqlxpmkKjWZ36RCZEiN+lCc094bEITMprfRQBm6UgmWK2WDuCdvSWlZF/vfaLCF
-	6P8YYFnEkMObS7dm4aC3S6u+hiBskxKNJ5u/4DdQTsQe8y/th9tgqCP+ux4fwx6c
-	Pg0rybJeEdGRo8LTqYZa2LeO3QRCkRF+QDzqs5ygD4yNsHyCcHM8t7sIFCO9qw03
-	D464UoHaFtX6fsF3ER3OuoQr+Yo573wu7/jQ+Gw9jmRVGjjKFU/9ZbtLNmVJRfL7
-	aJ21x5vg6Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41fj1m4w0h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 15:37:49 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 486FWtt4032070;
-	Fri, 6 Sep 2024 15:37:49 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41fj1m4w0b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 15:37:49 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 486BwP3V000480;
-	Fri, 6 Sep 2024 15:37:47 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41fj494cf1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Sep 2024 15:37:47 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 486Fbl9W58720742
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Sep 2024 15:37:47 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E03C058060;
-	Fri,  6 Sep 2024 15:37:46 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 322AB58056;
-	Fri,  6 Sep 2024 15:37:40 +0000 (GMT)
-Received: from [9.43.122.119] (unknown [9.43.122.119])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  6 Sep 2024 15:37:39 +0000 (GMT)
-Message-ID: <237bc4c4-101a-4124-b7db-8c461825e22c@linux.ibm.com>
-Date: Fri, 6 Sep 2024 21:07:37 +0530
+	s=arc-20240116; t=1725637071; c=relaxed/simple;
+	bh=YYfsMooY6JRsFx5MjH08AaUAn1lLYbeFUCeUENE/piI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZZWsfjhi3boXs+GXeYna3FlGWAGeirOUNTXvG4byoMMW5Let8iu7w5SSr82CXRSjmurmcU4ky0/iwFeK7Q60WfHpe6OVzqyg2J3ph6JwBz9rGl1MBdCDdxfYn7p26x7rWx+6lVhO18zLHtoquQihv994dYdl3qbG9oTa/xvxnTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ALci5JqW; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3df04219e31so1179237b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 08:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725637069; x=1726241869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=51fSNS3rM+FuqMEGUJ3gTvDTMw/vdesIgPrKMZDJNvk=;
+        b=ALci5JqWuhD1I2/5kkz0L0xD4hnsp+NlgaWZubGzpCFsrFWi0aUexPk83NYHY0AQ8j
+         0pJbEaeg9JMNFAWDAPx8hHI2srcpDmFvERykR3rTQe35wzN0UJ58TJrwY/V7AQ5L+28Q
+         eIPhvWjV/dczc02mDYH0ALMOtl+cvfClV6GYRmZ0hIl5a6VUia5o+G5Vrm/JIYf1AJ+s
+         zgLC/vM9KyOG3tnPg2SAWfJA65d2QXwcUegaJ6h1l/sumLzWYfolWZUixlIgElfVwFx9
+         YSQjktZDSxd30HkAIDJO74Geu9KYTvS8qoFJDzWf9+R56zm+Cosyb5xlpVVEuDqiZigl
+         neEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725637069; x=1726241869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=51fSNS3rM+FuqMEGUJ3gTvDTMw/vdesIgPrKMZDJNvk=;
+        b=CEzB8mg/bNLV01mqYPmar95G4RnkyRg6dpWQPbiDHB7Pw+kzgxNaMWZMl8y7EWtaWb
+         KEr4ro9zIGyYmCGpSpZy0Z782ZBRS0jb2UE1Yi0A4/NGg2y/FrvyeQ2N6oq9MfAdn97h
+         7XZst8w8xXvUg1XtKqN0Eyua7ys0v5sQrnmrLXkaItaKgaiqGewBKu/NXROV3dBhjzDQ
+         MmZ5gUUqcTmfMjEzj0pqQhggacUdSDbwRXN1sJpzDSrmsRlPDi8cQD0tvqX+gylsZlwc
+         ZrEogmZ5uRCuYf358Hoc7rVySoDgATp5U0kBuFtiod8/MR0swlAxnxQ/n8tkILmSQQUg
+         OgAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNzGPjaF0e58HHji/yfpH5t1tMu4KOA88TZyn3bc+84wY9+mLsjpKt1J8ZV9T57o9q4iD0AcjafkxF7xM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh2hy1O8XAjdjarZCraQ0pNZVsN6ru2FMaHiDutor3HKLoF83T
+	1Uxa2DaCstKdwbPJHnAdlGlAsyxKC7Tcz9e0beA0QATEid5G22tUzzeJjR2D9+2FPwirmY1iF7t
+	gnnHASagAYZJ/imNxfY7fxoIWp/IW0QbJH6Ul
+X-Google-Smtp-Source: AGHT+IGCTXLw0gynr5maKctmKNni/hD/6+szND2YFDicURbzJQ4hM6uz31CTQAhYHzSUA20t2HKgRIzxt0IIRzb3xIU=
+X-Received: by 2002:a05:6808:2e85:b0:3e0:1222:b195 with SMTP id
+ 5614622812f47-3e01222b388mr9953931b6e.20.1725637068660; Fri, 06 Sep 2024
+ 08:37:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched: fix warning in sched_setaffinity
-To: Josh Don <joshdon@google.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240829220427.2764399-1-joshdon@google.com>
- <e915c024-9a53-4736-9194-988e5cdd06a3@linux.ibm.com>
- <CABk29Nsx3cX=GmO0OSH5N_Ggqyi7iUxtVxU+yhHDKJW6y7h9JQ@mail.gmail.com>
-Content-Language: en-US
-Reply-To: CABk29Nsx3cX=GmO0OSH5N_Ggqyi7iUxtVxU+yhHDKJW6y7h9JQ@mail.gmail.com
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <CABk29Nsx3cX=GmO0OSH5N_Ggqyi7iUxtVxU+yhHDKJW6y7h9JQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xcCWHoz7iQNaFt1YtfMd0fLhIS8-2mAx
-X-Proofpoint-ORIG-GUID: cqIOIMmbuBe39TD-tLYVMzMmsHPanbaX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_03,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 spamscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409060115
+References: <20240809122007.1220219-3-masahiroy@kernel.org>
+ <3447459d08dd7ebb58972129cddf1c44@paul-moore.com> <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
+In-Reply-To: <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 6 Sep 2024 11:37:37 -0400
+Message-ID: <CAHC9VhSz+kwYOnkfWPHOmoKCRfOjm3_L5xMLeSGVNxq5g=ikww@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selinux: move genheaders to security/selinux/
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Josh Don,
+On Fri, Sep 6, 2024 at 11:19=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+> On Tue, Aug 27, 2024 at 6:22=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Aug  9, 2024 Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > This tool is only used in security/selinux/Makefile.
+> > >
+> > > There is no reason to keep it under scripts/.
+> > >
+> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > ---
+> > >  scripts/remove-stale-files                                 | 3 +++
+> > >  scripts/selinux/Makefile                                   | 2 +-
+> > >  scripts/selinux/genheaders/.gitignore                      | 2 --
+> > >  scripts/selinux/genheaders/Makefile                        | 3 ---
+> > >  security/selinux/.gitignore                                | 1 +
+> > >  security/selinux/Makefile                                  | 7 +++++=
+--
+> > >  .../selinux/genheaders =3D> security/selinux}/genheaders.c   | 0
+> > >  7 files changed, 10 insertions(+), 8 deletions(-)
+> > >  delete mode 100644 scripts/selinux/genheaders/.gitignore
+> > >  delete mode 100644 scripts/selinux/genheaders/Makefile
+> > >  rename {scripts/selinux/genheaders =3D> security/selinux}/genheaders=
+.c (100%)
+> >
+> > As long as there is no harm in keeping genheaders under scripts/selinux=
+,
+> > and based on your cover letter it would appear that there is no problem
+> > with the current location, I would prefer to keep it where it currently
+> > lives.
+>
+> 'make clean' is meant to clean up the tree, but keep
+> build artifacts necessary for building external modules.
+>
+> See the help message:
+>
+>   clean           - Remove most generated files but keep the config and
+>                     enough build support to build external modules
+>
+> 'make clean' does not clean up under scripts/
+> because tools located scripts/ are used in tree-wide
+> and often used for external modules as well.
+>
+> So, scripts/selinux/genheaders/genheaders is left over.
+>
+> genheaders is locally used in security/selinux/.
+>
+> 'make clean' will properly clean up security/selinux/genheaders.
 
-On 04/09/24 03:03, Josh Don wrote:
-> Hi Madadi,
-> 
-> On Sun, Sep 1, 2024 at 7:25 AM Madadi Vineeth Reddy
-> <vineethr@linux.ibm.com> wrote:
->>
->> Hi Josh Don,
->>
->> On 30/08/24 03:34, Josh Don wrote:
->>> Commit 8f9ea86fdf99b added some logic to sched_setaffinity that included
->>> a WARN when a per-task affinity assignment races with a cpuset update.
->>>
->>> Specifically, we can have a race where a cpuset update results in the
->>> task affinity no longer being a subset of the cpuset. That's fine; we
->>> have a fallback to instead use the cpuset mask. However, we have a WARN
->>> set up that will trigger if the cpuset mask has no overlap at all with
->>> the requested task affinity. This shouldn't be a warning condition; its
->>> trivial to create this condition.
->>>
->>> Reproduced the warning by the following setup:
->>>
->>> - $PID inside a cpuset cgroup
->>> - another thread repeatedly switching the cpuset cpus from 1-2 to just 1
->>> - another thread repeatedly setting the $PID affinity (via taskset) to 2
->>>
->>
->> I was testing the patch using the following two scripts run concurrently:
->>
->> Script 1:
->> while true; do
->>     echo 1 > /sys/fs/cgroup/test_group/cpuset.cpus;
->>     echo 1-2 > /sys/fs/cgroup/test_group/cpuset.cpus;
->> done
->>
->> Script 2:
->> while true; do
->>     sudo taskset -p 0x2 $$;
->> done
->>
->> However, I am unable to trigger the warning in dmesg on the unpatched kernel.
->> I was expecting to see the warning as described, but it doesn't seem to appear.
->>
->> Additionally, I also tried the following script to increase the chances of
->> triggering the race condition:
->>
->> while true; do
->>     echo 1 > /sys/fs/cgroup/test_group/cpuset.cpus;
->>     sudo taskset -p 0x2 $$;
->>     sleep 0.1;
->>     echo 1-2 > /sys/fs/cgroup/test_group/cpuset.cpus;
->> done
->>
->> Despite this, the warning still does not appear in dmesg.
->>
->> Am I missing something in my testing approach, or is there a different setup
->> required to reproduce the issue?
-> 
-> taskset -p 0x2 $$ will affine to cpu 1 :)
-> 
-> I'd recommend using the '-c' arg to specify the mask as a cpulist, as
-> it is easier to validate.
-> 
-> taskset -c -p 2 $$
-> 
+Your last sentence is confusing and doesn't align with the rest of
+your email, please clarify.
 
-Thanks for the clarification.
+Regardless, this sort of explanation is what one needs to put in the
+commit description, a simple "There is no reason to keep it under
+scripts/" isn't sufficient.  Patches like this need to provide a well
+defined reason to justify the code churn.
 
-Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-
-Thanks and Regards
-Madadi Vineeth Reddy
-
->>
->> Thanks and Regards
->> Madadi Vineeth Reddy
->>
->>> Fixes: 8f9ea86fdf99b ("sched: Always preserve the user requested cpumask")
->>> Signed-off-by: Josh Don <joshdon@google.com>
->>
-> 
-> Best,
-> Josh
-
+--=20
+paul-moore.com
 
