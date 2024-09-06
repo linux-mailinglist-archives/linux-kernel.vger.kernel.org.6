@@ -1,169 +1,111 @@
-Return-Path: <linux-kernel+bounces-318376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934FF96EC8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:51:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D7896EC90
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F1D1C25541
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F841F250E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162C714264A;
-	Fri,  6 Sep 2024 07:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D49914AD3A;
+	Fri,  6 Sep 2024 07:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EJ6g3j2q"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ji6a+zWi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781961B59A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA05112EBDB;
+	Fri,  6 Sep 2024 07:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725609059; cv=none; b=uFItWYbcNgp18hci/Oats8KlzUrtPUkUwCyQ7j7rif+o/re58Tlb3MO8c/PU9TJXf3HYEc5opN6K+w1D+PJdWWALnCa6fKTM0C+HQQVWgf21DyLdG/XaqEn6Ij+TBzhEkL4WfrxfHTiUAIuQOi8dd6LH7tOggD/MkwNQCGraXNQ=
+	t=1725609104; cv=none; b=SB1KFUg39NtZU/74Qlk9d4C6z873d5nx5H7x4RFIoIpSl8M/TLZ7/Yd/qDitu2Gt7J9R1d0QbmM1Ufzjcn34El+uJ/HTOJU6Miur9VNUn0ib+JJOLMuwFFpFsNS6CCbkYB4nfiqvTtQTZFXixH/bczQTXwVxvjb8MANgf68/v4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725609059; c=relaxed/simple;
-	bh=wD19amo2g4diYkaR+wM0BDj3uhwHMg7ctui+1OFkYtw=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kTbUdvT/ybG+3loIFj1glXOr+dpxlRT1Vi1L9mjKQEoIcy27ENWXAORwzfZHkgTpq3Hzqhoon0/OJC3CAwyduB4fvYGFUmDjMG0b6tMUlXyPrdqhz6xBxYgL0D3EF8/Fs2n9jTsvXRc4fhaM1Hk68wpJ6mdZEnnx0SaUr82pWRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EJ6g3j2q; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=iho5zugydncillcokazyce2k2y.protonmail; t=1725609053; x=1725868253;
-	bh=VVxmZMlnrbulCOpYgicmWJL7Hjrf6qlakYElzAYVcx8=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=EJ6g3j2ql6dS53qy+DUJpHYtxWeg/k2Q+PdJXM9Dxeh7imx/Y+2pAfa22tIl3XxiD
-	 fHxvw3NckWeDq5vksr0qLvfdySYrsyFo76Z2hy8iAFDuD78ze1EF1tObNg/9Y49cXx
-	 MqvKaDWS89PpSea5jlL7SOxb8w/Ob8B97xRpAo/EtQmrQrIn0o1D3iRSwJuNAJBBFa
-	 2sG6EXkJOyllwnNgpGeE8koXB6GM3BJ7+/UZD1H8ieOTkwdbQ0oPGPC5VW4j5O3L/d
-	 jkV4exXSGWeMCbdHvzbiFIfJs4dhoDh/JfNiQoqx8CJEq7NBSQi9kpDVpvCpyFiRh9
-	 0jIuNoDWwzw7A==
-Date: Fri, 06 Sep 2024 07:50:46 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>, Linus Torvalds <torvalds@linux-foundation.org>
-From: Nathan Owens <ndowens08@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
-Message-ID: <01252d3a-1856-4e9e-a395-3f15c0a3afd0@proton.me>
-Feedback-ID: 104529665:user:proton
-X-Pm-Message-ID: 67c5618fa3ee3272c816ec8cd41028e86b003fd0
+	s=arc-20240116; t=1725609104; c=relaxed/simple;
+	bh=4Q6QBPQx0Q3Hsvug/TgTFRvcIUp3b3WiTX1Mnyr8qBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZqVZUmuJRlzFXbX02mvZu/m3jqSjTCGkSufbg/58r7zjgtISo9hOK8O865ngNzQYAnafVJtsxKnAJnmb8tfFmUGYkwccHhYjneaRlVO/5WgMd9HcQtPevjm7g0zaNJfcYKW2EVpTxVMBjCpOCq5aYb1dofcDM7yFGJ8uQagvnSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ji6a+zWi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C84C4CEC4;
+	Fri,  6 Sep 2024 07:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725609104;
+	bh=4Q6QBPQx0Q3Hsvug/TgTFRvcIUp3b3WiTX1Mnyr8qBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ji6a+zWiL9JTLas91YgLsCxxIqj2cN/GecYl72V+r40HHNcJsHL/xeioVwrSOt1LY
+	 A6mNFmNqSxCdXE1oiGpqPjYunpCg89upZAH77wad3kbLV3JAJwwgtah53asWHRHg6O
+	 JJL78UGtHDMTTGjI2RMOkTjL4JWDC3sKDNGSr7/hXEBVXlYL2gLZOdLhu5a2Q1Xl5k
+	 f7aY3an9ijVUpBhNNhkSrCa1sBIw6uljUM23wxX0hC+3E8wicnDMph1UpI6AMpAaRu
+	 tvcWeFjGYaArmuR/K9Gr1/4WTSnsdD2GPva9Clkb+FOiOeMdKYBRPsL8mtFox9HuyH
+	 NACu5UrNSJZkA==
+Date: Fri, 6 Sep 2024 09:51:41 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Adam Ford <aford173@gmail.com>
+Cc: Dominique Martinet <dominique.martinet@atmark-techno.com>, 
+	Liu Ying <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Frieder Schrempf <frieder.schrempf@kontron.de>, dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: imx8mp-hdmi-tx: allow 0.5% margin with
+ selected clock
+Message-ID: <20240906-strange-spiffy-nautilus-330add@houat>
+References: <20240904083103.1257480-1-dominique.martinet@atmark-techno.com>
+ <CAHCN7xLmZYZcHyPh3gy20vFKP7aTDKvWu+a_mbG6LN2gdEifTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08"; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ejxvdrh7pzfeccnj"
+Content-Disposition: inline
+In-Reply-To: <CAHCN7xLmZYZcHyPh3gy20vFKP7aTDKvWu+a_mbG6LN2gdEifTA@mail.gmail.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08
-Content-Type: multipart/mixed;
- boundary=c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f
-Message-ID: <01252d3a-1856-4e9e-a395-3f15c0a3afd0@proton.me>
-Date: Fri, 6 Sep 2024 02:50:41 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
- <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
- <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
- <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
- <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
- <CAHk-=wgpb0UPYYSe6or8_NHKQD+VooTxpfgSpHwKydhm3GkS0A@mail.gmail.com>
- <wdxl2l4h2k3ady73fb4wiyzhmfoszeelmr2vs5h36xz3nl665s@n4qzgzsdekrg>
- <CAHk-=wjwn-YAJpSNo57+BB10fZjsG6OYuoL0XToaYwyz4fi1MA@mail.gmail.com>
- <bczhy3gwlps24w3jwhpztzuvno7uk7vjjk5ouponvar5qzs3ye@5fckvo2xa5cz>
-Content-Language: en-US
-From: Nathan Owens <ndowens08@proton.me>
-In-Reply-To: <bczhy3gwlps24w3jwhpztzuvno7uk7vjjk5ouponvar5qzs3ye@5fckvo2xa5cz>
 
---c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+--ejxvdrh7pzfeccnj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will say both Linus and Kent has their points and reasoning, but I must 
-ask, Kent please stick with the guidelines of submitting fixes, 
-features, etc. I would like that Bcachefs to stay in the kernel and see 
-how well Bcachefs comes along in the future and when it has your 
-features and ideas. One day I would like to maybe switch from BTRFS to 
-Bcachefs when it gets more features and some of the things I would like 
-to be able to do, like restore from snapshot and eventually boot to 
-snapshots to restore a messed up system. If it gets taken out of the 
-tree, less people will know about it, nor likely take the trouble of 
-compiling a kernel for Bcachefs.
+On Thu, Sep 05, 2024 at 08:23:51PM GMT, Adam Ford wrote:
+> On Wed, Sep 4, 2024 at 3:31=E2=80=AFAM Dominique Martinet
+> <dominique.martinet@atmark-techno.com> wrote:
+> >
+> > This allows the hdmi driver to pick e.g. 64.8MHz instead of 65Mhz when =
+we
+> > cannot output the exact frequency, enabling the imx8mp HDMI output to
+> > support more modes
+> >
+> I went from 19 options on Modetest with my AOC 4K monitor to 31.  Of
+> those 31, three did not appear to sync, but not all the frequencies in
+> the LUT sync for me either, so I have no objection to moving forward
+> with this, but I wonder if we should have a note in there about why we
+> have a 5% tolerance.
 
-This comment is not bash either Linus or you Kent, but just a thought in 
-hopes that more people will possibly switch to it and encourage 
-production keeps happening as well.
+Yeah, I agree, it's something you want a comment for.
 
-On 8/23/24 10:10 PM, Kent Overstreet wrote:
-> On Sat, Aug 24, 2024 at 10:57:55AM GMT, Linus Torvalds wrote:
->> On Sat, 24 Aug 2024 at 10:48, K
-ent Overstreet <kent.overstreet@linux.dev> wrote:
->>> Sure, which is why I'm not sending you anything here that isn't a fix
->>> for a real issue.
->> Kent, bugs happen.
-> I _know_.
->
-> Look, filesystem development is as high stakes as it gets. Normal kernel
-> development, you fuck up - you crash the machine, you lose some work,
-> you reboot, people are annoyed but generally it's ok.
->
-> In filesystem land, you can corrupt data and not find out about it until
-> weeks later, or _worse_. I've got stories to give people literal
-> nightmares. Hell, that stuff has fueled my own nightmares for years. You
-> know how much grey my beard has now?
->
-> Which is why I have spent many years of my life building a codebase and
-> development process where I can work productively where I can not just
-> catch but recover from pretty much any fuckup imaginable.
->
-> Because peace of mind is priceless...
->
+Maxime
 
---c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="publickey - ndowens08@proton.me -
- 0x227C5078.asc"; name="publickey - ndowens08@proton.me - 0x227C5078.asc"
-Content-Type: application/pgp-keys; filename="publickey -
- ndowens08@proton.me - 0x227C5078.asc"; name="publickey -
- ndowens08@proton.me - 0x227C5078.asc"
-
-LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCkNvbW1lbnQ6IGh0dHBzOi8vZ29w
-ZW5wZ3Aub3JnClZlcnNpb246IEdvcGVuUEdQIDIuNy40Cgp4ak1FWmZubzBoWUpLd1lCQkFIYVJ3
-OEJBUWRBRlJwRGNwSFNmUUExMXR4MGpmNWtheFZJVVJydzY0YklIMllZCkdJVFRRTjdOS1c1a2Iz
-ZGxibk13T0VCd2NtOTBiMjR1YldVZ1BHNWtiM2RsYm5Nd09FQndjbTkwYjI0dWJXVSsKd293RUVC
-WUtBRDRGZ21YNTZOSUVDd2tIQ0FtUUhDdWw3M0lpR01FREZRZ0tCQllBQWdFQ0dRRUNtd01DSGdF
-VwpJUVFpZkZCNGppWDY3WU5wYURnY0s2WHZjaUlZd1FBQVdwd0JBTG5oVzd6Snh1MDhiWjAwUE83
-cFZkMk1TQTVQCnozTGMzYWpXYjkzZHkwUzhBUUNiUG4xeTJ6YXVGT1doM2lKNGk5QzRlWC9IWXFi
-b0ZlV3BrVTl4SDlSK0NzNDQKQkdYNTZOSVNDaXNHQVFRQmwxVUJCUUVCQjBBcVNkNVFHVVJWR3F3
-QWNjemlJRTd6SjQxMER6WnIrRkRQVzVLRQpzM2kwWEFNQkNBZkNlQVFZRmdvQUtnV0NaZm5vMGdt
-UUhDdWw3M0lpR01FQ213d1dJUVFpZkZCNGppWDY3WU5wCmFEZ2NLNlh2Y2lJWXdRQUF1RU1CQU1F
-ZGdqRGxVazlNRG5PYzlqaHVGSnEwcC9aenhsMFNGVVpDYW0zazlUMk4KQVA5eHJrZnpKaXhOV1dt
-RUwvdDhaNGNQYldGdHhMUjB4MzFTMXlZckljMGdEZz09Cj1YNjgxCi0tLS0tRU5EIFBHUCBQVUJM
-SUMgS0VZIEJMT0NLLS0tLS0=
---c95c0d4fd079171dbe7160a3b7232914832ed911c964f39bff6d90f0d38f--
-
---------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08
+--ejxvdrh7pzfeccnj
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: ProtonMail
 
-wnUEARYIACcFAmbatFUJEBwrpe9yIhjBFiEEInxQeI4l+u2DaWg4HCul73Ii
-GMEAAJO5AQDsuQo4Nv0WUG9zL9MNOWlUwRtsc0BYxfmCNTJK9HS40wD/UjKn
-bh5aQ/fw+v4TJ2E7n17BX+uUpvk/S1ZFTG2a/gA=
-=lifC
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZtq0iAAKCRAnX84Zoj2+
+dkeCAXwPeLKzxqgBG+rta8SfG1sXvEd6pNwz9VSiFA47y7aJ9OD7j+7lQJW5Hp9A
+f8lglUYBgKqiDZpM9XRPFEvccSnysACDM8/y9q+NAxU4Y9HqgSK9gBnnPQl+OJqX
+ls8XD7B2aw==
+=SnQ0
 -----END PGP SIGNATURE-----
 
-
---------db22c30af5b7d01c9653c4dabb75cf791da2b320a6affc106f90ce0e3bbe0e08--
-
+--ejxvdrh7pzfeccnj--
 
