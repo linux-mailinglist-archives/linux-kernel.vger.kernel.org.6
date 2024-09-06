@@ -1,146 +1,155 @@
-Return-Path: <linux-kernel+bounces-318404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA4896ED47
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:12:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B8096ED4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2656C1F23FA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:12:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2418EB24088
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423E6156872;
-	Fri,  6 Sep 2024 08:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430A515667E;
+	Fri,  6 Sep 2024 08:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCplR2Ej"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="s/uadl+4"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A52155732;
-	Fri,  6 Sep 2024 08:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DA4153835;
+	Fri,  6 Sep 2024 08:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725610355; cv=none; b=IYuZok3oxcs4P4c4YyUzoM24zTU+pzBRIKdVCKiFJMapilNLVes7qsIpDCOPntQxwJF7uKKmeJmLDUCnJl2DDHEpJznVQs2YsQuTBn6fZBXIybKxypbPfz1FJwE08h2oImClSFQTIAirRzyO3iVoREdOhxL5YKvZpMI3XbxG8mQ=
+	t=1725610434; cv=none; b=ns74hPP3tOT8wqey8lMWQWAJWO55Sb1Om4KC7N9aoY3JOxsy2vms4OMB9DJWKOr2zldQXdBNrERrlhnTVewvPBLp+t8auLW0OBHR57bdIVxRQeXyIP28WtBRK+CjLuR6t98VWYW0ZZJkMUhblXnq+y1NUF/9J+1LqUvqJlkZOf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725610355; c=relaxed/simple;
-	bh=UWpwGB3hOXzvwxu0sLSidDGYUqVqGHxyP+GWMOcbby8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+zdoUMhlYsTCtQytpvo6rFMJjLM9Wi1OJC3H76rlcSiWVZ7gv+SLRGI8CY5jI1j4FHvkfpyHgg+M6aE+TcMQIT+BFlgDeZYX6+GsZzVTl5UYRkzs/hnCeovruirMOd3lAhfRii8G+EfWc3HYq3Z8BvCyz482fMmstv0xguIDqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCplR2Ej; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42c94e59b93so15426915e9.1;
-        Fri, 06 Sep 2024 01:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725610352; x=1726215152; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bC+dvkJhq/G3oGDne228ddeYfJVB1YPiQTaYddUNBtE=;
-        b=fCplR2EjQdARw6bXdBRnibX2TwnYh3pMAOkgH4J5vPfnf9hIvY8CF6Jl14b6vVkrIV
-         mAcOKnLVv3UEvWCHXMoeZwbpXZAy5jzLvdeYZKVKf67PnTBh2ePcmEmgNb+VJZII6oyS
-         xHsV5dVpDFTzayyMXh8TeYDktc+HLl4YQLJBpMWpOrECNLkbVs7/og3nZSwFpkXVCyWB
-         qDFkMOoiXKu7Yn2b8f82DJWPFpGu7oMwBFo7HZyCU2jVGlFnO4moDhrhaX6XhY4bJQ1c
-         onD/PNCO+l3pPFLv7mpN2Z2uY8ln6xT/3/imw3vx1+6rG5PJHgxLkuwlUwk3bagX5Kek
-         79Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725610352; x=1726215152;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bC+dvkJhq/G3oGDne228ddeYfJVB1YPiQTaYddUNBtE=;
-        b=b6Fy0vZmG/VYLFbm2mJ8qa//TOWqFOF0Rio5VRvBanJTpbk03srJzJLuGLPD60gcyu
-         VIOOIOFEgYsDPLCYOw2YBcGNbYXJxom8W1qXpUmMndyGvEELaCZavvny0pZhk9NDBlmI
-         qIQFn2agIubWEBNurih4/fkqs6ojARPywFOppInK7c1ophbiy+43Y7XCSf0FQmdlfnC8
-         f0vj+mzvVro5pqWzLFVmwLpoE3ywRCAJjWp7155nWqvIKB9XF802g1GoF6GWgCiiO3FE
-         2FUye8TYe7EfKwtarBc0r26uj8TpdYR6jPX1jDfEkmAxlLol3G2mFwTkOby2KRuf/tvL
-         P4Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYJFNE7z5KAuH3A/ptbEpgRVFyt4+iGp8JUlh4JgUZctmuHGGce/nrdZMRohICDsqQ4HYz+XB1rJT/UG2A8i18vA==@vger.kernel.org, AJvYcCWJ2UiIQmaXfjFWeIaG4udHx0ZIcM3xzQcIXo8X11wsSjYMqrK5sY+iSD6Cc8CiRx8qOCyU+Tv0fegW9yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJFdXL8ifQNOTrKg/XyTtS0KV0XIicPICZyrPJkszvMN7IWVSt
-	jh5/zcS12mbd/KIZ7+zBh+hpArFjASsrWSNyNXer8ADZep6jNZGX
-X-Google-Smtp-Source: AGHT+IG1ZJtWKkJO8/SAaiocgyDO2wR5cL37STT+7rljQjF4nIaJLxXaNcyE08Uc3wakXLAogFHq+g==
-X-Received: by 2002:adf:a15d:0:b0:377:7256:bb3f with SMTP id ffacd0b85a97d-3779a612a68mr4931270f8f.14.1725610351490;
-        Fri, 06 Sep 2024 01:12:31 -0700 (PDT)
-Received: from gmail.com (1F2EF525.nat.pool.telekom.hu. [31.46.245.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca054c166sm12486665e9.0.2024.09.06.01.12.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 01:12:30 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Fri, 6 Sep 2024 10:12:28 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	gautham.shenoy@amd.com, ravi.bangoria@amd.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
-Message-ID: <Ztq5bI0PBhYWEUV4@gmail.com>
-References: <20240905153821.3822-1-Dhananjay.Ugwekar@amd.com>
+	s=arc-20240116; t=1725610434; c=relaxed/simple;
+	bh=VOxkkh/5u3ECueYG8Sem1GcFqEzK/WKjY98n7yggqxg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G33Bm4Wg2enotQ7nV+OEedwkM52uJLpzN8QRmvj2/wkMtc0suDOSqL9svywcb5MbfNLa04rtI+RLyqEiiZYn9XGm3mBD72zNoQvGHkIxjEJiiMZD9MpAnej2ZDDCTVFmQ71gId7aywyc/ryH0H0SmGb78sXnpR8gPrk7T07gO1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=s/uadl+4; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1725610424; x=1725869624;
+	bh=4WkEZvOd1NHE2AYSSsvpts7kEp2V8Fr8yZ7Qxca0NXs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=s/uadl+4+mu1lDOkKdYEs3hFyGj7HXEyd3fYECKC54FKuMFdTKqUy783XpnbCTigF
+	 +ZiZYN+3nEpVPKgQct6tMyorJ0bzXTon4JCQyObP6OQSlrOXaMVSTxHYTqPeOsgycx
+	 HfQ3pfbPGGABhsFBAcpo1Kwcz0ifDbd0IIanwxq5TuCOchtgBPgaDrhCViwILa4R3D
+	 9ejwkb9DRF+7PpjMLQUz6cAynUQXVSzIzLLXSicxe6dToJB2//7ypVLkt5FUix/7wt
+	 eJlYTGSe02COOUewbnF9CLf1ywRznqU4PuHkEsUY3IV6mbQ+cd1aqK20XKO2zSwA0e
+	 wz/45aGmIq3lA==
+Date: Fri, 06 Sep 2024 08:13:35 +0000
+To: Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/6] clk: clocking-wizard: move dynamic reconfig setup behind flag
+Message-ID: <D3Z1U6IHATAI.2Z2L37F10HOSE@protonmail.com>
+In-Reply-To: <0161bb1640489c7a677ac26967b65ee1.sboyd@kernel.org>
+References: <20240831111056.3864-1-hpausten@protonmail.com> <20240831111056.3864-7-hpausten@protonmail.com> <0161bb1640489c7a677ac26967b65ee1.sboyd@kernel.org>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: b241db668ae37d8b33bab20ad447cb114d9a75e1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905153821.3822-1-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Thu Sep 5, 2024 at 8:06 PM BST, Stephen Boyd wrote:
+> Quoting Harry Austen (2024-08-31 04:13:26)
+> > diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/x=
+ilinx/clk-xlnx-clock-wizard.c
+> > index 1a65a7d153c35..967eacc28050d 100644
+> > --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> > +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> > @@ -1146,20 +1146,6 @@ static int clk_wzrd_probe(struct platform_device=
+ *pdev)
+> >         if (IS_ERR(clk_wzrd->base))
+> >                 return PTR_ERR(clk_wzrd->base);
+> >
+> > -       ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd-=
+>speed_grade);
+> > -       if (!ret) {
+> > -               if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade =
+> 3) {
+> > -                       dev_warn(&pdev->dev, "invalid speed grade '%d'\=
+n",
+> > -                                clk_wzrd->speed_grade);
+> > -                       clk_wzrd->speed_grade =3D 0;
+> > -               }
+> > -       }
+> > -
+> > -       clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
+> > -       if (IS_ERR(clk_wzrd->clk_in1))
+> > -               return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_=
+in1),
+> > -                                    "clk_in1 not found\n");
+> > -
+> >         clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_a=
+clk");
+> >         if (IS_ERR(clk_wzrd->axi_clk))
+> >                 return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_=
+clk),
+> > @@ -1170,31 +1156,48 @@ static int clk_wzrd_probe(struct platform_devic=
+e *pdev)
+> >                 return -EINVAL;
+> >         }
+> >
+> > -       ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs)=
+;
+> > -       if (ret)
+> > -               return ret;
+> > -
+> > -       clk_wzrd->clk_data.num =3D nr_outputs;
+> > -       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onece=
+ll_get, &clk_wzrd->clk_data);
+> > -       if (ret) {
+> > -               dev_err(&pdev->dev, "unable to register clock provider\=
+n");
+> > -               return ret;
+> > -       }
+> > +       if (of_property_read_bool(np, "xlnx,dynamic-reconfig")) {
+>
+> Is this going to break the existing DTBs? Before the property existed,
+> the driver seems to have always tried to read xlnx,speed-grade and then
+> setup a notifier, etc. Why would xlnx,speed-grade be set if
+> xlnx,dynamic-reconfig wasn't set?
 
-* Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com> wrote:
+I did wonder about this. What is the kernel's policy on breaking DT ABI?
+Especially in this case where there are no such DTs in the kernel source
+tree (AMD/Xilinx have their own tools for devicetree generation, e.g. see
+the clocking wizard DT node generation TCL script on GitHub [1]). Agree it
+would be better to maintain compatibility with existing DTs if it makes
+sense to do so though.
 
-> After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"),
-> on AMD processors that support extended CPUID leaf 0x80000026, the
-> topology_die_cpumask() and topology_logical_die_id() macros, no longer
-> return the package cpumask and package id, instead they return the CCD
-> (Core Complex Die) mask and id respectively. This leads to the energy-pkg
-> event scope to be modified to CCD instead of package.
-> 
-> So, change the PMU scope for AMD and Hygon back to package.
-> 
-> On a 12 CCD 1 Package AMD Zen4 Genoa machine:
-> 
-> Before:
-> $ cat /sys/devices/power/cpumask
-> 0,8,16,24,32,40,48,56,64,72,80,88.
-> 
-> The expected cpumask here is supposed to be just "0", as it is a package
-> scope event, only one CPU will be collecting the event for all the CPUs in
-> the package.
-> 
-> After:
-> $ cat /sys/devices/power/cpumask
-> 0
-> 
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-> ---
-> v3 Link: https://lore.kernel.org/all/20240904100934.3260-1-Dhananjay.Ugwekar@amd.com/
-> 
-> Changes from v3:
-> * Move the rapl_pmu_is_pkg_scope() check before the memory allocation for rapl_pmus
-> 
-> tip/master + PMU scope patchset [1] to be taken as base for testing this patch. 
+In terms of speed grade, as you say it currently only affects how you
+would want to interact with the dynamic reconfiguration registers. But
+that's not to say that it might be relevant to some other register added in
+future (since it is just a generic property of the chip). So using presence
+of the xlnx,speed-grade property to indicate dynamic reconfiguration
+enablement feels like potentially a bad idea as well.
 
-> @@ -643,9 +672,10 @@ static int __init init_rapl_pmus(void)
->  	rapl_pmus->pmu.start		= rapl_pmu_event_start;
->  	rapl_pmus->pmu.stop		= rapl_pmu_event_stop;
->  	rapl_pmus->pmu.read		= rapl_pmu_event_read;
-> +	rapl_pmus->pmu.scope		= rapl_pmu_scope;
->  	rapl_pmus->pmu.module		= THIS_MODULE;
-> -	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
->  	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
-> +
->  	return 0;
->  }
+>
+> The binding has implicitly had xlnx,dynamic-reconfig set before this
+> patch, and we should strive to maintain that. Perhaps the property
+> should be inverted, i.e. xlnx,static-config, and the absence of that
+> property can imply the reconfig property.
 
-This chunk doesn't apply to perf/urgent.
+I don't mind this. A bit of a shame that it's then inverted to how the IP
+core is configured through Vivado, but that's not the end of the world.
+Unless anyone can think of a better idea, will probably go with this in v2
+of this patchset.
 
-Thanks,
+Thanks for the review!
+Harry
 
-	Ingo
+[1]: https://github.com/Xilinx/device-tree-xlnx/blob/master/axi_clk_wiz/dat=
+a/axi_clk_wiz.tcl
+
 
