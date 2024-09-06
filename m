@@ -1,138 +1,78 @@
-Return-Path: <linux-kernel+bounces-318688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5226396F1AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:39:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B2196F1C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F90D1C21C4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB85282AAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B071CA683;
-	Fri,  6 Sep 2024 10:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="FNFMKHya"
-Received: from classfun.cn (unknown [129.204.178.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356BB1C8FC7;
-	Fri,  6 Sep 2024 10:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5671CB14B;
+	Fri,  6 Sep 2024 10:40:43 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F8813AD2A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725619141; cv=none; b=R4oT5lTdZpy49s7vr9QH/Jfy1ZLirtqpY1tdhSL/60cDPzjfBrJJlOY8fatpg+R16u8lgwW7e8QhcXATaNi00YpIaTU2LozaMP8XRryNpooJxWehBNmsww4Pg1oMXqFvSWXDUdf5AmrGHP0sB3bj/hI1ZnOpMdgiThJjJR6z6Vk=
+	t=1725619243; cv=none; b=VmrKEUWkOAlP7BrTzD9qcYvjmmOnBvfLW1AkQ9JkWy6Gbbbfs7f8bSa6ihwZbPz6BECDlRankwHSksmn6hKLykvAG0xh1GxehB2ExulJeNbLHlPlgYa/1rxJhjaFeAnYXmrrBazxxCgdM1Vcr/zJo13YsIH7DB8bVsyNXtNF4e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725619141; c=relaxed/simple;
-	bh=05KjF2XPr/hICg9p1IUhg3U7t26HXoWZBUdtqY6Tsx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=o2Pn0fLh0MjFzmH/Wkaj1eO6djF+FSEDSQZLgm5TbVTnFjOCFX/Z9G/bPPSVLoeE5nVziYBwao+UeGtWi0sM5gO21w1X/bHyNeoXrv3+9CSgvr8HD6w+oq0L24gFlC2nnn6lh+7SveumjvxttONuF0r7bNW4t14pk37Ht4dcU54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=FNFMKHya; arc=none smtp.client-ip=129.204.178.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
-Received: from [192.168.0.160] (unknown [14.155.100.110])
-	(Authenticated sender: bigfoot)
-	by classfun.cn (Postfix) with ESMTPSA id B0B1F78A00;
-	Fri,  6 Sep 2024 18:38:55 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn B0B1F78A00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
-	s=default; t=1725619136;
-	bh=8rF690V9mxP9B5MKXF/MRXog3KWCE9DsM6auRSLOXzk=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=FNFMKHyau1cg/FaXUCYgUv0fzbUE2FHQRJlL5jYLYwVzGyaJ2vRMQXyt61NzmpH8v
-	 PCpi1+bahB9oEv0ktn1DEbTVKpfrumG60lLdvBjqbyRa3ptauqaQd4//b+cr/Ox1I4
-	 vsMjjLL+oFDBXc1aPncIrFVsMZB4udQ3HeB2DL4o=
-Message-ID: <f538ee4b-82ed-4ee1-b4e8-768a4500283e@classfun.cn>
-Date: Fri, 6 Sep 2024 18:40:23 +0800
+	s=arc-20240116; t=1725619243; c=relaxed/simple;
+	bh=gcIVkC1w3X62VCIPNCrnux26MLhXtSgPx0udfbwjhds=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rKqM04/etElct7+2R0CzXCBrFm0mG6Ezl0BR8rVdTZgXPYFDY3jSZWX/gSSriJSFuUYzbSNuno9mqBu3BKKcfDpICkOTQ1HoTS9zCc10ayqPS3osMziTzDoG84Z6sSfmOBRaL4VlgjlcvZtQiafUoJfUGFJAZP2Dc7N6OnmyxE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso44576665ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:40:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725619241; x=1726224041;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pouJITnDG8UdL3InJhnxx8n3DlGTcqoaKdUuUcsso9w=;
+        b=TSaGjjbBTdZksqB0trfrJQUC1JxT96v+ZA1ZtO92hSxqc23hV7epdToj8mov5xVIYk
+         X8xqAEAUJVt7bE4VkOtEt0mF26exGdInsNpLN3tBwmXT0aeDy2P4ImiJ3oTJK68hCBYa
+         nRkGQY1BIRe4qlFhKC8exPSF2Jin2j2MRQJjdm1gAJ097K0z2K7pYdhAOoZDW6zzXSMg
+         2giL8mSOyIbUVJ/BzKprR5Bpv1i+9K/xPvIq7Nu9elBGVPehjTV3+IMiiQVf1hFhiGr2
+         LtETVvqjyp1WTSADJ4E5wYAqCiNwEu+41gU3o3q8YO5JhHSSJ4ltGwrMINl/S5a6XeE6
+         F/cQ==
+X-Gm-Message-State: AOJu0YzmBQIDJdr+TjLejhufRUN4dG0p+XBwM43uMr+Q2Rn+Kx+pK8JT
+	fJLrPV1cwchFRBoLr8v89Gi6qEjLetCP5bvsyNldILYJPYfoIRiLrxSDV7WNNQupv5QBEPkVour
+	Rra/dF2qcU3dJNGtTSWKNIiAOVbe8I7mNibyFmYWJsrJWuJllkAUJoU0=
+X-Google-Smtp-Source: AGHT+IEJNer4DSdSx3S2bwQHgrPaH2/VRq9vtcCpxrdoXMaA9+rDxsURX66sv3B3Vroj57TQHB2o3XXpDG6HxGk7DNwra2zYvm2k
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-2-bigfoot@classfun.cn>
- <e4ee504b-98a8-4b35-9e1a-195395cdacf8@kernel.org>
-Content-Language: en-US
-Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley,"
- <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
- Chukun Pan <amadeus@jmu.edu.cn>, Junhao Xie <bigfoot@classfun.cn>
-From: Junhao Xie <bigfoot@classfun.cn>
-In-Reply-To: <e4ee504b-98a8-4b35-9e1a-195395cdacf8@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:204a:b0:4c0:a8a5:81cc with SMTP id
+ 8926c6da1cb9f-4d084f6dc91mr92884173.3.1725619241487; Fri, 06 Sep 2024
+ 03:40:41 -0700 (PDT)
+Date: Fri, 06 Sep 2024 03:40:41 -0700
+In-Reply-To: <000000000000aaa4a905ac646223@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e81f1b062171094d@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+77e5e02c6c81136cdaff@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/6 17:43, Krzysztof Kozlowski wrote:
-> On 06/09/2024 11:36, Junhao Xie wrote:
->> Add a driver for Photonicat power management MCU, which
-[...]>> +void *pcat_data_get_data(struct pcat_data *data)
->> +{
->> +	if (!data)
->> +		return NULL;
->> +	return data->data;
->> +}
->> +EXPORT_SYMBOL_GPL(pcat_data_get_data);
-> 
-> You need kerneldoc... or just drop it. Looks a bit useless as an
-> export... Is it because you want to hide from your own driver pcat_data?
-> What for? It's your driver...
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Now struct pcat_data is in mfd-photonicat.c,
-I will move it to photonicat-pmu.h and remove pcat_data_get_data.
+***
 
-> 
-[...]
->> +void pcat_pmu_unregister_notify(struct pcat_pmu *pmu, struct notifier_block *nb)
-> 
-> You need kerneldoc.
+Subject: 
+Author: nogikh@google.com
 
-I will add missing kernel documentation for all exported functions.
+#syz invalid
 
-> 
-[...]
->> +
->> +static const struct of_device_id pcat_pmu_dt_ids[] = {
->> +	{ .compatible = "ariaboard,photonicat-pmu", },
-> 
-> Undocumented compatible.
-> 
-> Remember about correct order of patches. ABI documentation is before users.
-> 
-
-I will adjust order of patches.
-
-> 
-[...]
->> +
->> +MODULE_ALIAS("platform:photonicat-pmu");
-> 
-> You should not need MODULE_ALIAS() in normal cases. If you need it,
-> usually it means your device ID table is wrong (e.g. misses either
-> entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-> for incomplete ID table.
-> 
-> And it is not even correct. This is not a platform driver!
-> 
-
-Yes, I will remove MODULE_ALIAS line
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Thanks for your review, I will fix all problems in next version!
-
-Best regards,
-Junhao
+Repro triggers a different kind of problem
 
