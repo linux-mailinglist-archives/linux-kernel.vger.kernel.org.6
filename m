@@ -1,117 +1,82 @@
-Return-Path: <linux-kernel+bounces-318959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4747496F5AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:45:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48C996F5AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A998A282A5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC532841BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A761CDFB9;
-	Fri,  6 Sep 2024 13:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2141CE707;
+	Fri,  6 Sep 2024 13:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="SBBleonV"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIn6X0dg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3F51CE707;
-	Fri,  6 Sep 2024 13:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E18188A31;
+	Fri,  6 Sep 2024 13:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630322; cv=none; b=issGW0LeEkwavIqpzcUcR9JDTHhMLhHUXUaV4mb/hzGH/q+DArWQwAg5bO4jVUz7pD3iUnbVTZyMv4Dc97qvM5bT8hdKEKfQkqlm+iOX3NuT3w7ZG+WU6OtQ/zG19PvJAYdtIH0lffMEbuRVECz438aG3iOMJnnWCqd1wK8Bpsk=
+	t=1725630327; cv=none; b=rRbK1/Va4HyukYYvpCx0n2zUtg2dp/SWSZZp/Z1mKjJaGmpHopayAX4D7snYIp7lNQfFEkl3ipgToVZl70bhup+4u1L9AH1eTWgxS/9iZ3JfHD54iDlqaHCRS0CuPKHpWWDrExsSFXJKsE98LreYMYWaTF0Vk7+eTc6eK72PbxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630322; c=relaxed/simple;
-	bh=LzRu9zx/RUvzGJLN1xZh1Ep1FK6fI45Qs5Gss1BDzLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6oDhnEdlj6yMujGW4a4CZS0MKMLXntSvJT32HBaKFWT+q++9m2Xw41n1W1y3RBkCEEXQn0x2ehnQXZ/kz2nMaSN60FZoIbmrOEKZiNmJhn6GjfFbx2Or6xvEJ7jZORsM8NvrMhQ7Q7G5mRzgPBHfkZuKftlezlzJX8/84n66DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=SBBleonV; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86e9db75b9so255789666b.1;
-        Fri, 06 Sep 2024 06:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1725630319; x=1726235119; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t7QnaMeuAhRWgF7/G1QpvRene3BE387G8iUVU/cYI6I=;
-        b=SBBleonVUtaT7+605LDExoaYQ+t1BUYKr8RMt5EugGPPXjG4MSiUho8lJ5SWY0vuse
-         wK+V3zJFJskT9kYHAdNF2XGkY4UeUrdC3BpJW2vE8MkE2gqk9f3jnenXnImRtmWS8hnf
-         3b7hnqcIOWxbPba/yOS4Hm9DEtLWnqRBckQInas69dJin4kZ9VbKkvKKXjIYXl4ru53+
-         rt922OPkBEagkNcXfJKsV0y4K4+vdQ+nRd/P165V/hoCIjcwS6CP9FqPulNXErZbIFX8
-         ZUtGnEbLI6IezmECCSpExVzgvj0r56ZKowIqCwjY+pEs6GJrF7NzLWjCK5Ir5Y5E3V8U
-         WbdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725630319; x=1726235119;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t7QnaMeuAhRWgF7/G1QpvRene3BE387G8iUVU/cYI6I=;
-        b=RQ3vAbgZUrLBpheXjKldlTwYwtFy2gDDEKjkEc7tl5w3JtsVFeeLBwH4NG5/ESodPR
-         Oh/rGx6ZYE+7mPd/rHc//6M5H0f8J9wlPGJh5qDj8TC4h29zjQcn+fO/5ycS3Gjyc7zN
-         fwJIDjIb/a2nt6zNqogiOIR+ARLWXw4Z6T1Rq8h4hofGVyyhj5dhgbXpl0dQDp8DhJVR
-         lens4/3s73jDCJV+aZpasN46AZNQNbxqSU/bvbHLEKo8Qlk4fIa1XRaWoGAXhkt5kfZq
-         g6zdAVnEMYoGnqe4DsWC0a3S6MW5iqS/xmSraaxNT8FV5aOQZUIvGjzgVjP8KkCCDbzx
-         r94w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFr47xmh9Wis6KCocC3imZ0vYYRYLoU5LigxuUM6azWmjZlRwhKG6eHVFqvlbV1hgXEZWNnMtXvpaOSoY=@vger.kernel.org, AJvYcCVWmnL874bBgOFL3G9LKOnPKGiYoo065T50NZ5TiEwidMr+7jg+vVXUJd5A58b7Zf1PUghhZSnJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJte8NN58/5DsUit2hpUmXCL4/r8NrKj6mCKlALAg2FxDuKCMH
-	UvudE4d5ftBB7Q7ea8KY6wAMW+IGgXRrWvdKj2UvDgkUuh+EMYY=
-X-Google-Smtp-Source: AGHT+IEv8YGmNOmoxLrIE4zsDNN/4eYRy5OvNPIBzaSoVTJV/vA5tWTyX1TUK/eEESiUddviQvTMwQ==
-X-Received: by 2002:a17:906:4796:b0:a8a:7898:1420 with SMTP id a640c23a62f3a-a8a88667910mr200813066b.31.1725630319134;
-        Fri, 06 Sep 2024 06:45:19 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b40f2.dip0.t-ipconnect.de. [91.43.64.242])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a77140b3dsm206649166b.213.2024.09.06.06.45.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 06:45:18 -0700 (PDT)
-Message-ID: <63922fdb-6aa0-483c-ad57-1c310df160b0@googlemail.com>
-Date: Fri, 6 Sep 2024 15:45:17 +0200
+	s=arc-20240116; t=1725630327; c=relaxed/simple;
+	bh=D9mwUNXxC/j5K9uvw5L/WU/SNxAuyrswt76dmUCYKJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqszrZdx31tEzUzc3Ovn3VCC5SZf7H8/Ni8UT3WBzNrf4FcODr4E2dSYt9ubYAVu9IVai/y4W3QLN+Zsd4gZgdPu/GdVq9eZ4ZfUyOuO7WyXqatHeVTCZJqK9Fvm4g8pURaOaqVgXPcv3yBRbxwvhhyo9QsSb6/Me/Rhq5z2fpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIn6X0dg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8895CC4CEC9;
+	Fri,  6 Sep 2024 13:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725630325;
+	bh=D9mwUNXxC/j5K9uvw5L/WU/SNxAuyrswt76dmUCYKJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QIn6X0dg1+OCbht+1ToTsNTDiFpGWyNc6BimGxj8umIct/EzudGB/vOIscfl9e84k
+	 wpRm9e06RYSPFT/bFxhin95DIdl5Z/kLOqvTEI4OGIPWvluEOdHh0Z4c+aHS72rwTU
+	 RtgmPB85779ZYVxRAZUrusedoTHobpCjbFgdiLW0mLnfeyH2sC7AqCMeMafwFORxMu
+	 GSODvHlvO4Iwlim0VK+jia9FyLmqybffPcSwmJy2mgUgW58NVg//6lZ7IZIKIiXmGk
+	 1kiIkG+m3apPISLxrh6fqlq5iVeUguJZdLEVklvens/eZF+sShzLivNRNlxPzeiCSF
+	 LH6dzzOxhXvLQ==
+Date: Fri, 6 Sep 2024 15:45:23 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 05/15] timers: Rename sleep_idle_range() to
+ sleep_range_idle()
+Message-ID: <ZtsHcyjnEu1Ml56C@pavilion.home>
+References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
+ <20240904-devel-anna-maria-b4-timers-flseep-v1-5-e98760256370@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.10 000/183] 6.10.9-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240905163542.314666063@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240905163542.314666063@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-5-e98760256370@linutronix.de>
 
-Am 05.09.2024 um 18:36 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.10.9 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Le Wed, Sep 04, 2024 at 03:04:55PM +0200, Anna-Maria Behnsen a �crit :
+> sleep_idle_range() is a variant of sleep_range(). Both are using
+> sleep_range_state() as a base. To be able to find all the related functions
+> in one go, rename it sleep_idle_range() to sleep_range_idle().
+> 
+> No functional change.
+> 
+> Cc: SeongJae Park <sj@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: damon@lists.linux.dev
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
