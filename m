@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-318887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF0C96F4A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E096F4A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8870B1C20DD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:51:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481261C23793
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA351CBEBA;
-	Fri,  6 Sep 2024 12:51:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A825C8FF;
-	Fri,  6 Sep 2024 12:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB4A1CBEA1;
+	Fri,  6 Sep 2024 12:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="L6CEiLCq"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD976C13C;
+	Fri,  6 Sep 2024 12:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627099; cv=none; b=R6DcS48S9of5/i+xNs3czPC9UOGNnpdZQdbEUubWYZDAn0MIoHAhNVFbyllw4CzXJCyzUOQ+YQ0LUF29apeTHXt0wHiYktO60aqOhOfrtZR7EMVyKrjygYPfzsy6YCy4L525TpGrKd/iOA8i5BVAaR4KNHekbqM79vpkWjAHlyA=
+	t=1725627154; cv=none; b=bbDV4y95MQMeFZK+YIAS51rdWMbu0/yfEsDlCqiWiMLKZXHsLALvoP35aK3AFGeL/JgSUtIz5T+JVFmxdP1D4mByRinp97b9a/de8r7rK+PXXT6C378lCtbHA6UK7PDNKp4RfgreYEHh8o21l0oySRVLxyQCxGejRr1gLBc6kq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627099; c=relaxed/simple;
-	bh=XlIjnH4dIYrx7LDtvBOMrleJY8pGMuPFXS/r/MZTZU4=;
+	s=arc-20240116; t=1725627154; c=relaxed/simple;
+	bh=LAe+SVFODFHG3JO85HxVC4wTLxHPy0xG1UGWXRGSfSQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jjWoy/f26lSoKz0xTXZNehXWahLys0mDbzjMd6kW/kUUVqNQscTcS4/YRsGtwnPUuh8mBsFO9P3kaL+Uup7Sv6B0g6jJry4eyo7+6VGJw6UbPF+H3FVajrjIjXdFGN/f4JICOQX6TtQGbVQ6N8DdzY/wdkBC4EXfomL4OEJrwvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1A14113E;
-	Fri,  6 Sep 2024 05:52:03 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48D8B3F73B;
-	Fri,  6 Sep 2024 05:51:33 -0700 (PDT)
-Message-ID: <30c2b836-06cf-4631-8de1-90bcd37b0247@arm.com>
-Date: Fri, 6 Sep 2024 13:51:31 +0100
+	 In-Reply-To:Content-Type; b=aeo6r09yqar6sK5acIaDsNng7lPWQ40WSne4UKgp/oop5/xCGiwK2aGOM/3hkOOabMB6LHf6pA4iWJVi8snrQrhvuhDTMWvcNFkjRJzlOQPnAXoTFMBcH4J5yE4KuoV5QjvbDTDQ4t5OmqtJ4D20gU+0UMpoGVvFutpZM2HuBE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=L6CEiLCq; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53345dcd377so2537035e87.2;
+        Fri, 06 Sep 2024 05:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1725627149; x=1726231949; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a7xpYl6U/W2CVmGwpeWmwDvxtZgNF6LNCUTyVT4QRdE=;
+        b=L6CEiLCqdpj3ga5ePoS+WAQM4u6uqbItQPEqCpx57Rvo5OAaBgKREPrekpDYXq81uA
+         FkB/223QYosmRmJBBupLNC3GT7yAXTOYQMoLHb48Xm/+gCKmckcLQIA5KWb4mJwfFCBk
+         0+bWC6Izs4ppKK1Pa3HAgd5yL6rnxDGPb7pOgL1Hzs21d5PSHnzzu/ku+ozQyixRlbAL
+         BAft8TMcTr9Vb0nNIQ2uvWUVHororXa43jH85t3rtTEHbET+4rFqyaaYkR7v9Vfp9KuJ
+         7KNxtudHP2huXx7+EW+85GTmKVhMNe63fcMCj6P2X8TXBlnTRCyMJkaZF0nyofvaLx9K
+         kDdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725627149; x=1726231949;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a7xpYl6U/W2CVmGwpeWmwDvxtZgNF6LNCUTyVT4QRdE=;
+        b=ALY4d0PlL19d/SyLeETOqGlYZ6obtHvHDvouFlWaacjer+m5NddZmoMFR7a5GFHUnQ
+         dS+2+ZLHoOuMfSp3TzndeBgh2CnlLSRk7kGBevnZOiNP8KlpGpTv+QgJceP88H7cFhEy
+         aH1b+gVkZwN/jSIM4KcO0Yg1fTeKJ9boo8SWliM8fKAucWFjemT9dq1H6ghLQuttCZOZ
+         5yGudLfeTZH+G4GD5DgNpLUHp0dK8fQOb/OI7b1x9dlK/1Bhw+ujz8a50LfW+Pzf0xVB
+         8dpywzw9k14eB82ybKsJoI0s0KYlVvXYdMMumiTBuHARtDew7qefi75S5Z0Rdssd46ZU
+         GUHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLve939gW+7fT9mKX1jlIds5r/+Yyo5ubs3e49JHoYUAwcsazXkbRqaNd+ZQ22envokMxAS2CwA5Bwd6E=@vger.kernel.org, AJvYcCVR6PsxVKmEEdWoGQMwKhwGqIiZl3vh6uBqV+at5aeINFRRW++Lvuk3XedKY3/VLAbvn/AUwgFJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt9XxLoYPdOLwM5uUR5sA74zMlohzz7J9ex8nPInHaPhcTz/ra
+	hqahjQlmC4FlHgszCGDIzB2OCfX27mWd6emHVla6EHGU4cJd5jY=
+X-Google-Smtp-Source: AGHT+IHWVUg6w0qXEXxCORO+fGAi77k1sUCAjc1o4hBTuyAu256CvscZNFz2PRcuSJLEh35/EphQNA==
+X-Received: by 2002:a05:6512:3d89:b0:533:4676:c21c with SMTP id 2adb3069b0e04-536587fcdecmr1661821e87.44.1725627148397;
+        Fri, 06 Sep 2024 05:52:28 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b40f2.dip0.t-ipconnect.de. [91.43.64.242])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a45b0sm279211566b.143.2024.09.06.05.52.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 05:52:27 -0700 (PDT)
+Message-ID: <7e973e08-456f-44bc-b769-fb600b49274d@googlemail.com>
+Date: Fri, 6 Sep 2024 14:52:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] vdso: Modify getrandom to include the correct
- namespace
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-10-vincenzo.frascino@arm.com>
- <b899bce8-8704-4288-9f32-bcb2fa0d29a8@csgroup.eu>
- <72f3d6cf-a03b-4a16-9983-77d3dd70b0ea@arm.com>
- <4a4873d9-c783-4374-a505-3628d3c92137@csgroup.eu>
- <3155e7ba-33fe-4de8-bb63-867579c3eac8@arm.com>
- <2aaf06aa-af16-43fc-8bc5-3908760438bb@csgroup.eu>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <2aaf06aa-af16-43fc-8bc5-3908760438bb@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/131] 6.6.50-rc2 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240905163540.863769972@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240905163540.863769972@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Am 05.09.2024 um 18:36 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.50 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
-On 06/09/2024 13:49, Christophe Leroy wrote:
-> 
-> 
-> Le 06/09/2024 à 14:40, Vincenzo Frascino a écrit :
->>
->>
->> On 06/09/2024 13:04, Christophe Leroy wrote:
->>>
->>>
->>> Le 06/09/2024 à 13:52, Vincenzo Frascino a écrit :
->>>>
->>>>
->>>> On 04/09/2024 18:26, Christophe Leroy wrote:
->>>>>
->>>>>
->>>>> Le 03/09/2024 à 17:14, Vincenzo Frascino a écrit :
->>>> ...
->>>>
->>
->> ...
->>
->>>
->>> More details:
->>>
->>> $ make ARCH=powerpc CROSS_COMPILE=ppc-linux- mpc885_ads_defconfig
->>>
->>> $ LANG= make ARCH=powerpc CROSS_COMPILE=ppc-linux- vmlinux
->>>    SYNC    include/config/auto.conf
->>>    SYSHDR  arch/powerpc/include/generated/uapi/asm/unistd_32.h
->>>    SYSHDR  arch/powerpc/include/generated/uapi/asm/unistd_64.h
->>>    SYSTBL  arch/powerpc/include/generated/asm/syscall_table_32.h
->>>    SYSTBL  arch/powerpc/include/generated/asm/syscall_table_64.h
->>>    SYSTBL  arch/powerpc/include/generated/asm/syscall_table_spu.h
->>
->> Thank you Christophe, is upstream code sufficient to reproduce the issue? Or do
->> I need specific patches?
->>
-> 
-> You need random git tree plus the patch "[PATCH] powerpc patches for Vincenzo's
-> series" I have just sent to you.
->
-
-Thank you!
-
-> Christophe
+Beste Grüße,
+Peter Schneider
 
 -- 
-Regards,
-Vincenzo
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
