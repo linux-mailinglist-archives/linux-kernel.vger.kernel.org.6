@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-318640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47EF96F12C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE68996F137
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591322875A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:19:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1BC287789
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABDE1C9DEE;
-	Fri,  6 Sep 2024 10:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60081C9DF9;
+	Fri,  6 Sep 2024 10:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="IgMyyyps"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kfj9foWk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8A81459FA;
-	Fri,  6 Sep 2024 10:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725617942; cv=pass; b=QexGxZXiqtnFYqk3UMsM9+CcbvZZ516QEHFZ+dJO+LDAOERx2hE4gazbKrNnFvQGb04q9Kxd4EqkbEv/E2eZczD8faPvlPDqdsEMWUWjCpAsWB7dPbEb6fcrpjHfk7b2i+dMqZQdqXhUxMoGQi09406riENxbWOhlEcvfP3+FGQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725617942; c=relaxed/simple;
-	bh=BRWofQge9sexGsoBhj4FyqYH8VnowpJU4XLwvMOPe1w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=knVgvX4F0TFFem5viNPuU6V6Pog6OefS2po13XnHFB4j58bnEGKJzQC37oFcGVPnMXccIRSeBToJIes4sihA+eO9h+s2X6zZ9dYCRwNbqEXHd+4CsaxM91nYX06Z8F97ybTgEWa8hercV+UoLHc5BieZC7eOIxMd9wrAJge1eEQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=IgMyyyps; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: usama.anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725617921; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=oCjCSHpi+yyNyBYa+Tx9U2AxjABzZ+IwSseUgnFz56D3+h8+TGkJldaQ79wKSPT+52ke+00+gRHNuw4S1Zs51pAeUS8YfKIRDNaAs4L/GTPCcG36eE4n5P+B0PyylAmHBozU2mzyLumUntVe7XrwCVhFkA0ROhiR1yT46YCOf3o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725617921; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SoQoRpH+NUi/aH/TnvZGg42kAhbku15tBQ88cZXF1y0=; 
-	b=in+8XObwNnFp5hMAmRcU3UECH0RhlXRBBDXlYkY/74Um1eam9unxHMX2VKlN/QsggtKrltCwNIH9ntBDWTSx67sBCjIqNtM/1OjNFXeC91fGeDwb4hJYZC54fliBfgWu1sbduIbLS7UqqQXMtzYinpqcFIJmWtUDuMFFpJ2OqS4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725617921;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=SoQoRpH+NUi/aH/TnvZGg42kAhbku15tBQ88cZXF1y0=;
-	b=IgMyyypsWp8/qexA4jlxBe4u2lIIGOP1SwDX7BiSw9hYjx7Id3peHgQ4puiCRHFz
-	lSXTum+jw0A+L2Ce7n24qXlB86/BdsuVYcPKROlqVhJqWZn7kFLcuXfJW9EPXTqMNYI
-	n1/JHpjTrb6R+5ocv4OKnsUgnTLQEXo52br5XzG4=
-Received: by mx.zohomail.com with SMTPS id 1725617920753531.4294471338798;
-	Fri, 6 Sep 2024 03:18:40 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] uprobes: remove unneeded condition
-Date: Fri,  6 Sep 2024 15:18:25 +0500
-Message-Id: <20240906101825.177490-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08891459FA;
+	Fri,  6 Sep 2024 10:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725617983; cv=none; b=hm1uil6/s7otrTrvIsYdxGxmZynaPSQKQH2I2Dg1xmUcyecmdIgq/6q0Q+xW6b/fBB14YnE29K6aIuPCtJSUHBcTnKddyLmiNvc+NQkdLDHqNKmBCcHkkSGtZP0p8whR2XPYiV0BHf8QaPfMEYzOIatlKbc5JrLfms/kr/9IF80=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725617983; c=relaxed/simple;
+	bh=srodkuBFrYDQvY3Z2yPu1/Qkt9CMCyaM+joC1OF5AJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xfjo7XeqANQoTpUYSlz5B2l3pdi5nHMf3QHXnxgdklAKXworWPzOZqD6wVgByRg3hRMwM9Kr8hXj+g2zPdwjsTUnN1QjAG73e8pdr8luiKuPznDvXFuCb1L7JbZs3utiNmIGnhDCGpoA9G6gN4+VwToOD6taY+AhqwbhPv58/Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kfj9foWk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E4B5F40E0284;
+	Fri,  6 Sep 2024 10:19:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id N2XDnXbkepOf; Fri,  6 Sep 2024 10:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725617966; bh=52Bjqy9wKt3PBv7t7YsYKaL/GEu9aXl+PiSD/OpMtcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kfj9foWkQozT+pk6uixpd8CqfmhsgKwuDezd5/C8Dn/IdycDN7w+HxiO9/ONLAXVo
+	 l6fo0fUdbYSUtgR+XjOGJfmOdm6J+3WCF5fogoWz7/M0qx5tJK8zhaccI9SNyIPe3I
+	 H0C5B8wHDLL1Z6lpFvkCJnC/ymdnwEhLfte/+DNCfZ8JGMhbZVlsdip0XwCzLA9UiH
+	 HqwHBSnj7DleV8KzJ6jNefUV6o76AfUAyjrdUdjPS7Yoza3z1HSzyRlZeyv2ictr8V
+	 9QoEF+ClZCrSw5o9aJdeRNqz8Xo/1GlfRTrarDhzaEW+9NUeEvxmk3adoIZ9hn6qVc
+	 3xWFyJ8h0UciGfs1iCNJGRgciQqVOhDca8NSc0H3TNFwtTgEY2ZgDFFCtLwlIl6Y9G
+	 NrhyOYwzYIEMZ5bdjZRLKhh1qbaACAs5EquKjN8xWqAYN35zd1AMwfRbRj0RSoZUQf
+	 d53uoIWbcLbZ0Fz7/7KetL5KdhtuZmnOgWxw+fU/reivADe1a8tUCTio7vtCMGvydV
+	 794JqHeJ8IaXQYMUz/vhsPHWTG1e6pxCNbzmrClw3YRWrIV+FNpkTKeR1S8Lu5nhug
+	 h/n08xhuciBdw2IHI/aLHCuD5BwI6XqjDbgF83Vgo/oLQG4Nh9em7T8vR0vXwaak9r
+	 HX64YnCqiwuXxg4w8FpeqSpw=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0AA340E0191;
+	Fri,  6 Sep 2024 10:19:14 +0000 (UTC)
+Date: Fri, 6 Sep 2024 12:19:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>, Michael Matz <matz@suse.de>
+Subject: Re: [RFC 28/31] x86/alternative: Create symbols for special section
+ entries
+Message-ID: <20240906101909.GAZtrXHVweqJJ2j82v@fat_crate.local>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <7bc1bcb1cd875350948f43c77c9895173bd22012.1725334260.git.jpoimboe@kernel.org>
+ <20240903082909.GP4723@noisy.programming.kicks-ass.net>
+ <20240904042829.tkcpql65cxgzvhpx@treble>
+ <20240904123918.GCZthU9rOJLWUKBbsv@fat_crate.local>
+ <20240904164429.hstbg5beejt32mlu@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904164429.hstbg5beejt32mlu@treble>
 
-The area cannot be NULL as we are getting it through container_of().
-Hence there is no need to check its validity. Remove the if condition
-and return statement.
+On Wed, Sep 04, 2024 at 09:44:29AM -0700, Josh Poimboeuf wrote:
+> Not that I know of, since the compiler usually doesn't have visibility
+> to these sections.
+> 
+> It might be possible to specify "entsize" in the .pushsection flags,
+> which is an ELF section header attribute which objtool could read.
+> 
+> But that wouldn't work for .altinstr_replacement and other sections with
+> variable-size entries.  Also, "objtool klp diff" works by copying
+> symbols, so the current solution is definitely simpler as it fits in
+> nicely with the rest of the implementation.
 
-Fixes: c67907222c56 ("uprobes: use vm_special_mapping close() functionality")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- kernel/events/uprobes.c | 3 ---
- 1 file changed, 3 deletions(-)
+Right, I was talking to Michael about it yesterday, CCed.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 778f1978538ce..9f864504a7e92 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1474,9 +1474,6 @@ static void uprobe_clear_state(const struct vm_special_mapping *sm, struct vm_ar
- 	delayed_uprobe_remove(NULL, vma->vm_mm);
- 	mutex_unlock(&delayed_uprobe_lock);
- 
--	if (!area)
--		return;
--
- 	put_page(area->pages[0]);
- 	kfree(area->bitmap);
- 	kfree(area);
+He suggested that you might be better off creating these annotations by
+sticking the required info in a section instead of generating symbols.
+
+I.e.,
+
+.pushsection .klp_objects
+ .size \\name\\@, \\end - .\n"
+ ...
+.popsection
+
+and so this section will be completely out of the way, you won't pollute the
+symbol table with countless fake symbols and you can simply parse that section
+to get the info you need.
+
+Right?
+
 -- 
-2.39.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
