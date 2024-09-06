@@ -1,134 +1,185 @@
-Return-Path: <linux-kernel+bounces-319148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F7396F88B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14B196F88F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF1B1C226A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C541F22B1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9762B1D2F7F;
-	Fri,  6 Sep 2024 15:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084111D2F5E;
+	Fri,  6 Sep 2024 15:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iI6lpr+z"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539F1D1F60;
-	Fri,  6 Sep 2024 15:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5Voszv5"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A0B1D318E;
+	Fri,  6 Sep 2024 15:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725637481; cv=none; b=lYy2aR2EJ2luPOTxPfIuwSTFE77AqPYKJIk4wNhL7vvYsajUy8nR3hpUAQEz4uQLS+1oeiv+rP5pRVBFhRajX0dp4aiZRbyNlcobK2ecE3wfTrHIFcS0GcpTTjaC1ki6pe1Q9lp4a+3Uxpo5BX7H12LbyclWW1IImBt4k6esbZc=
+	t=1725637505; cv=none; b=QbOTeYA7ZcUD+v0jT8CJuddOputWEvU9VOe9+htM5C0toldiLCO9OLS4Dv0V8pO8G3fqqJu2x8nVvfIYQI3eUQpcbKFcMKzy3RUYlkmVC9jlUdj9OSHupQ7EoJz6G5zFtTdlGylgZGeGi3UtHrYrbxK8EtXRF/ABZulTn3fu20g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725637481; c=relaxed/simple;
-	bh=ZvPFD8bPKG1etjMtBkCrFyLUx7SmSfqtAsFtfAF+cx4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kT/stet79T4Cimph0UtnKPP175QjDLg8cZPuVc9WK5/R79Wfss0a8Jor+L9Vuyhq5EFf7YOg6fy03oE7sxEURI6Jz/L8fGvv2RK2wuM2GpRG98Vwy/PKEbgevtR1BQmfx9OV9RrwA350VObNSRwnfuDtANz0C3VfcVUZtie7hWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iI6lpr+z; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Vn/aY
-	4/1WDYl2eiuTqp/va7eYXiS8/ytS0g6RbDVMU0=; b=iI6lpr+zlRyawnvHWnANw
-	cRHTymyuaYuPA0HU108UT6xecX1kXephVm+7LBlChKVWK754v1XZFAcf6TWgXQNf
-	o3O+25dtlnwU1oXgbNWzSod4tLpdaEy+OkQlGAaR6lsJPZqtns0x2HxiAoWtJRWK
-	xQik30pWOQ4myZdzbBIkBg=
-Received: from localhost.localdomain (unknown [111.35.190.113])
-	by gzga-smtp-mta-g3-2 (Coremail) with SMTP id _____wD3f6U7I9tmL+v1Hg--.60435S4;
-	Fri, 06 Sep 2024 23:44:15 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [BUG?] bcachefs performance: read is way too slow when a file has no overwrite.
-Date: Fri,  6 Sep 2024 23:43:54 +0800
-Message-Id: <20240906154354.61915-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725637505; c=relaxed/simple;
+	bh=v+6PmdptN06I4wNjTeXRkYbKX2jdmJq46oAeXHd9CjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=opjBYkJJ2+YwYFjw9B1kBGVE7UFwgJSjG0LarzEvxb2gxBViRLNA5W9om45nGEmDyEYYKi/D1cBkvOCPkWoAFdg0oelNZJfwDYSSI9cOg3aOOIAkNo6/Jz1IQMeppPO1LH4Nkup2t3SxOgBEnQq/Y1C3BJY6Cm0YmOEvAw6ht4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5Voszv5; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718d6ad6050so678152b3a.0;
+        Fri, 06 Sep 2024 08:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725637503; x=1726242303; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6qJt3dWuSS/7B+CarKMiwXcxl0tVTC+pGimSt0Bqmgk=;
+        b=P5Voszv5BetaZTHJ1HDct8VKhVYh4sTCDfmR/zQ4m8q1aepy0zwIpdaIwM728/pQs7
+         Bdi4hgSPzGmQjK8E3Ym3Wan7rSV+phuloqcdVOXL5Y78KelXGwQ7pAG026caifxQKPG0
+         EOEt++D8D95gCgk9veg4SpvxEv8Y5MLc8zRKPHfEv9D9LPsp6KJz3sn4P1A/EsNinqq5
+         pkeD8OB6DdZEJtByZpaowdga8V7r6cD0a05YIu5YsAaChRqgJf0RFTpMeS+xFhs/pDwQ
+         zXgwJ6hgRSrA+RQUEflBHxUIun+vOOVKSFmolsQ9lWRyKKE+daoIPx/wOBhck/Hk2Bpc
+         nt6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725637503; x=1726242303;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6qJt3dWuSS/7B+CarKMiwXcxl0tVTC+pGimSt0Bqmgk=;
+        b=RvZYLFIlOVvtaEntvO/92GuedyMA7pEs85UxIEiGIoMeAE9HNUZm0tnQX+c90qNXlY
+         zlaqk8yurQiHSMyFnLqeiToacfH+6UVakHs2O0QqFBmhRyysGfGyNdXUQ88N5FqAR9jk
+         F3fu1IT5SbD9+k/hucpWMHPD7k0avXx+OuBZiOxKwujQ1iM/kKkITok8ClhfuG7Zxx05
+         ghg34vWobpgQqPvstZ/vbWVVkbIhfyRJXGHEX5ZuFjJzCeQ0pVEJfWKlRI4ytUuI5SSx
+         abkNdSXQCbJimGgLQaOn4EYL0fIVKGYsqytdrsqojm1y19zSDQ5ao5d9whB9xPNDlLhA
+         O/bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCQ/OPwqpXfe/s+ZXowmiiQ6dW+cldPpcLykznxSHQLAUOLZtAIkQn/bx+nLEf22JzM24mCYRMkBhhutM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyGbjFQt63Nv6YrAPMUs4ZtR6pRFvMIbaCPkgXqRvgxwVCAKwp
+	I0G0NnFs/qfPWCWDnwrtDSaykSZLARe3piprtgYJSu7B1ocPe0aw
+X-Google-Smtp-Source: AGHT+IFDHfgU9JbVYBlq+aSvZ5zwRSimx0Dro3dTyFgId2njIwo5aE1ZzLA7cptKc9zGvd0qPQf5Rg==
+X-Received: by 2002:a05:6a00:1303:b0:70d:323f:d0c6 with SMTP id d2e1a72fcca58-718d5f542b1mr3597391b3a.24.1725637502877;
+        Fri, 06 Sep 2024 08:45:02 -0700 (PDT)
+Received: from [192.168.0.106] ([183.247.1.38])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7178df6b01esm2941047b3a.75.2024.09.06.08.44.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 08:45:02 -0700 (PDT)
+Message-ID: <8195c890-d862-4427-9a5c-e59cf11009e3@gmail.com>
+Date: Fri, 6 Sep 2024 23:44:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH bpf-next] bpf: Check percpu map value size first
+To: Hou Tao <houtao@huaweicloud.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>
+References: <20240905171406.832962-1-chen.dylane@gmail.com>
+ <fab1c1c1-a973-a32c-8936-d0d885d4b5af@huaweicloud.com>
+From: Tao Chen <chen.dylane@gmail.com>
+In-Reply-To: <fab1c1c1-a973-a32c-8936-d0d885d4b5af@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f6U7I9tmL+v1Hg--.60435S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxur1UGryxGF18Cr4Dtr18Krg_yoW5Cr13pF
-	WY9340yrZ8Xrn5Cws0y34UKF18Jw15Jay5WF10gr42gF95XFy3KaySkay5JrWDuFW7Ww1U
-	tFZ2vryUAF1qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UD739UUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRNSqmVOCtKGQgAAs1
+
+在 2024/9/6 11:20, Hou Tao 写道:
+> Hi,
+> 
+> On 9/6/2024 1:14 AM, Tao Chen wrote:
+>> Percpu map is often used, but the map value size limit often ignored,
+>> like issue: https://github.com/iovisor/bcc/issues/2519. Actually,
+>> percpu map value size is bound by PCPU_MIN_UNIT_SZIE, so we
+> 
+> s/SZIE/SIZE
+
+Hi Hou, thank you for your reply!
+My bad, i will fix it in v2.
+
+>> can check the value size whether it exceeds PCPU_MIN_UNIT_SZIE first,
+> 
+> The same typo here.
+>> like percpu map of local_storage. Maybe the error message seems clearer
+>> compared with "cannot allocate memory".
+>>
+>> the test case we create a percpu map with large value like:
+>> struct test_t {
+>>          int a[100000];
+>> };
+>> struct {
+>>          __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+>>          __uint(max_entries, 1);
+>>          __type(key, u32);
+>>          __type(value, struct test_t);
+>> } start SEC(".maps");
+>>
+>> test on ubuntu24.04 vm:
+>> libbpf: Error in bpf_create_map_xattr(start):Argument list too long(-7).
+>> Retrying without BTF.
+> 
+> Could you please convert it into a separated bpf selftest patch ?
+
+No problem, i will add test case in v2.
+
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+>> ---
+>>   kernel/bpf/arraymap.c | 3 +++
+>>   kernel/bpf/hashtab.c  | 3 +++
+>>   2 files changed, 6 insertions(+)
+>>
+>> diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+>> index a43e62e2a8bb..7c3c32f156ff 100644
+>> --- a/kernel/bpf/arraymap.c
+>> +++ b/kernel/bpf/arraymap.c
+>> @@ -73,6 +73,9 @@ int array_map_alloc_check(union bpf_attr *attr)
+>>   	/* avoid overflow on round_up(map->value_size) */
+>>   	if (attr->value_size > INT_MAX)
+>>   		return -E2BIG;
+>> +	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
+>> +	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
+>> +		return -E2BIG;
+>>   
+>>   	return 0;
+>>   }
+> 
+> Make sense. However because the map passes round_up(attr->value_size, 8)
+
+Yeah, you are right, it seems better, i will add it in v2.
+
+> to bpf_map_alloc_percpu(). Is it more reasonable to check
+> round_up(value_size) > PCPU_MIN_UNIT_SIZE instead ?
+>> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+>> index 45c7195b65ba..16d590fe1ffb 100644
+>> --- a/kernel/bpf/hashtab.c
+>> +++ b/kernel/bpf/hashtab.c
+>> @@ -462,6 +462,9 @@ static int htab_map_alloc_check(union bpf_attr *attr)
+>>   		 * kmalloc-able later in htab_map_update_elem()
+>>   		 */
+>>   		return -E2BIG;
+>> +	/* percpu map value size is bound by PCPU_MIN_UNIT_SIZE */
+>> +	if (percpu && attr->value_size > PCPU_MIN_UNIT_SIZE)
+>> +		return -E2BIG;
+>>   
+> 
+> The percpu allocation logic is the same as the array map:
+> round_up(value_size, 8) is used.
+
+ok.
+
+>>   	return 0;
+>>   }
+> 
 
 
-Hi,
-
-I notice a very strange performance issue:
-When run `fio direct randread` test on a fresh new bcachefs, the performance is very bad:
-	fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randread  --runtime=600 --numjobs=8 --time_based=1
-	...
-	Run status group 0 (all jobs):
-	   READ: bw=87.0MiB/s (91.2MB/s), 239B/s-14.2MiB/s (239B/s-14.9MB/s), io=1485MiB (1557MB), run=15593-17073msec
-
-But if the files already exist and have alreay been thoroughly overwritten, the read performance is about 850MB+/s,
-almost 10-times better!
-
-This means, if I copy some file from somewhere else, and make read access only afterwards, I would get really bad performance.
-(I copy files from other filesystem, and run fio read test on those files, the performance is indeed bad.)
-Copy some prepared files, and make readonly usage afterwards, this usage scenario is quite normal for lots of apps, I think.
-
-
-I made some profiling, when read the file without any overwritten to it:
-
-	io_submit_one(98.339% 2635814/2680333)
-	    aio_read(96.756% 2550297/2635814)
-		bch2_read_iter(98.190% 2504125/2550297)
-		    __bch2_read(70.217% 1758320/2504125)
-			__bch2_read_extent(74.571% 1311194/1758320)
-			    bch2_bio_alloc_pages_pool(72.933% 956297/1311194)  <-----This stands out
-			    submit_bio_noacct_nocheck(11.074% 145207/1311194)
-			    bio_alloc_bioset(3.823% 50126/1311194)
-			    bch2_bkey_pick_read_device(2.157% 28281/1311194)
-			    bio_associate_blkg(1.668% 21877/1311194)
-				...
-
-And when the file was thoroughly overwritten, by a previous readwrite FIO session, the profiling is:
-
-	io_submit_one(97.596% 12373330/12678072)
-	    aio_read(94.856% 11736821/12373330)
-		bch2_read_iter(94.817% 11128518/11736821)
-		    __bch2_read(70.841% 7883577/11128518)
-			__bch2_read_extent(35.572% 2804346/7883577)
-			    submit_bio_noacct_nocheck(46.356% 1299974/2804346)
-			    bch2_bkey_pick_read_device(8.972% 251601/2804346)
-			    bio_associate_blkg(8.067% 226227/2804346)
-			    submit_bio_noacct(7.005% 196432/2804346)
-			    bch2_trans_unlock(6.241% 175020/2804346)
-			    bch2_can_narrow_extent_crcs(3.714% 104157/2804346)
-			    local_clock(1.873% 52513/2804346)
-			    submit_bio(1.355% 37997/2804346)
-				...
-
-Both profilings have sample 10-minutes duration, and same sample frequency.
-Base on the difference between total sample count, 2680333 vs 12678072,
- I would suspect bch2_bio_alloc_pages_pool would incur lots of locking.
-
-Here more detail for bch2_bio_alloc_pages_pool:
-
-	bch2_bio_alloc_pages_pool(72.933% 956297/1311194)
-	    alloc_pages_mpol_noprof(82.644% 790323/956297)
-		__alloc_pages_noprof(89.562% 707833/790323)
-		    get_page_from_freelist(79.801% 564855/707833)
-			__rmqueue_pcplist(24.713% 139593/564855)
-			post_alloc_hook(15.045% 84983/564855)
-				...
-		    __next_zones_zonelist(3.578% 25323/707833)
-			...
-		policy_nodemask(3.352% 26495/790323)
-			...
-	    bio_add_page(10.740% 102710/956297)
-
-
-
-Thanks~
-David
-
+-- 
+Best Regards
+Dylane Chen
 
