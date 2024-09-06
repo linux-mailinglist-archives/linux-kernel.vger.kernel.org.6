@@ -1,111 +1,166 @@
-Return-Path: <linux-kernel+bounces-318367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523CA96EC73
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937F396EC77
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB16B25172
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:47:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DFF91F27B9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C7815666B;
-	Fri,  6 Sep 2024 07:43:32 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0D9156C6F;
+	Fri,  6 Sep 2024 07:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FwzpELgo"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B714D71E;
-	Fri,  6 Sep 2024 07:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A5914F9E7
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725608611; cv=none; b=tfhh+4b/xa2cDpM8b2mm2ebM35v6SV9VTJRUVioDeK/U02zEtNF+j5Wsfwkbkh6NnH8ZCm6CZ2Btchd4TFzVsFUONVrnh8z13/J3RGTbURxgopb2+f19rB2ZOqgio8GJY+kJhiCWGaCjod+XDWJijZiVBRKNB1BxYltCkJxVn00=
+	t=1725608688; cv=none; b=qHlDXW0Ypv3gPaqIbBGQzArS6Yn21p4jyoE4J0hTxAlGjwQ332VqGqjXO4cto4biQ0XlwjhpE/caWi2z6/4dVvlQ7R/suhmhZaLaMQCPElY8KgXB0vFZxpWAYbuF27p2pYoFKLZ2zZfwhmaQNHtxiQrvbeDsVSY2TGe3v2Y28+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725608611; c=relaxed/simple;
-	bh=WBVJTznZlKDb3xF3dJ3M+mo4ckM/wsQeUaHfzaeierQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=euS+mrBp86ZWRnR1IQAVXPDthniNAmLS7K9XPqB8+8c32WwcW4y67xEhNso4Z3DmEum5J/8GBCZfN245UC15yfoW+MI/23pc2CPiuGemH8kaRlE/U2aREOC/NpVY+eDMOgEiEN03ZlExApBMjALGT9XjBgpG37yK20YQYtRclac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4867hGwF087759;
-	Fri, 6 Sep 2024 16:43:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
- Fri, 06 Sep 2024 16:43:16 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4867hFgV087756
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 6 Sep 2024 16:43:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
-Date: Fri, 6 Sep 2024 16:43:15 +0900
+	s=arc-20240116; t=1725608688; c=relaxed/simple;
+	bh=07b0IMeSMwgMzjCtM2DsBnr3riDLhDHjvKXOx8+lQuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O8+3eQLdvGwDI0cBfhhUhVepoMXVXw4hDWq5RmKzU6Yzx/a37uKX97An4Lr8+EIpIHBTq0DCUhHkt7OwxUBUBXbrB+CbxLVGxdCP74jTOLJKPZvZme2CAkOvnaTUFrcNzWWHdM9lY0rQ/s0xAX9HRT8bGEAXM+7zk4cjkY30oG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FwzpELgo; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f5064816edso20082931fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 00:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725608685; x=1726213485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g2iWgb97T7hXzF6zuXBGICV8UKLvinMfR+RbHOd+dQ4=;
+        b=FwzpELgoHJC9THi2bUeB2ndw3/6JOEDtdFAJALrB4oexXzw3rdvVi8LhcapOZ/Udvq
+         rqP9rF+tp8Lq6rR3C+EZ0xnYjAeiD90B/cqBpnABujIyYUQ/hnuJ3sb16LmNNKsjm37M
+         e93Iu6rnKhX6fH9KYD3f/rTs/uo8lTtrilq32E68dE2fwRN7T2PHNTrjbgt42aDlOntz
+         lP6prAedjWVPtCPIxwSFOYhHGH93+m6nDwSlFtPcxNCJVHVtSiNRL8y+s3NQAJySKAls
+         duYqvWFNMjoy5Bo21iVIPl/l9vEQFJzUg2aEReOh1DlGaES0i29XtimxmhLKte2lCZM8
+         J4Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725608685; x=1726213485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g2iWgb97T7hXzF6zuXBGICV8UKLvinMfR+RbHOd+dQ4=;
+        b=hqiAuqqIZnPeVWDbjm/sni0dE/zQv/oIVUNHe9FaccmTg+2v9vivI+NF6K01e4B1fs
+         hsEdgCQGueZ/UXtYoHI+YUtJXc2OvM0b1K0Kn05u40mrHmZnEjldPjqOI3VkyV60rLml
+         mzEFJ5i/cs+uoYA+8jNmJQj3+hl2Q9PP3TD0JjNu8eMmVzXHQc7xR38qFCLZQ+Yv5mAw
+         EmrTRYeVlYg8Hx9y8VRdIC1b9yHf1r+wc5gt2bQax6QHfiqXBkk62KyPJy1Xmu3e3IsJ
+         foOxJx2Yz7tNRjx5LpHmEDwYH4Zz3kkgEiNjDTGVUmp1aA9D+TypahOS+dBssaEw+jht
+         Os4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXbC3nA+dv57htjbmrXH5OZYCwBnqQ/gzd33iFRbFIACskdfHnIVSxSQlBaeRkvJjTWP4scsv6y49AlbFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydcgo1uTUJt+PBeBx6YAqaJ6nDh435nvzGzpy6QrpvYVzXmakV
+	FhdspxFbvrPVNnUnDVf+bAjAY+w9mIK3J+uloRqCXsuRv+nZ9alVvBVjRX9AlpJBZDJ7FPnje3W
+	03rTzfVnire9f5vJB6tTrjJTDQT385J6db5A7rA==
+X-Google-Smtp-Source: AGHT+IELjdXPrNR2ftHe5XllcZ3pyQfKCzq7O/b2xjHbW9q9Q4+MDzmZTA0vD6TNGPaxV5kp8/BSGDK9jb01VsONIG4=
+X-Received: by 2002:a2e:819:0:b0:2f7:4c9d:7a87 with SMTP id
+ 38308e7fff4ca-2f75232641cmr10706661fa.21.1725608683728; Fri, 06 Sep 2024
+ 00:44:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
-        tomoyo-users-en@lists.osdn.me,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
- <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org>
+ <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
+ <87y146ayrm.fsf@kernel.org> <CAMRc=Mfes+=59WP8dcMsiUApqjsFrY9iVFEdKU6FbTKAFP1k_A@mail.gmail.com>
+ <878qw6hs4s.fsf@kernel.org>
+In-Reply-To: <878qw6hs4s.fsf@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 6 Sep 2024 09:44:32 +0200
+Message-ID: <CAMRc=Mc_Qy6-Rgsw_uOweUXtoiZGMR0D22Ou9nXUJDDdPCZqLw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
+ of the ath11k on WCN6855
+To: Kalle Valo <kvalo@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/09/04 23:23, Paul Moore wrote:
-> On Wed, Sep 4, 2024 at 3:10 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> Until 2.6.23, it was officially possible to register/unregister LSM modules
->> that are implemented as loadable kernel modules.
-> 
-> ...
-> 
->> Paul Moore has commented
->>
->>   I do not intentionally plan to make life difficult for the out-of-tree
->>   LSMs, but if that happens as a result of design decisions intended to
->>   benefit in-tree LSMs that is acceptable as far as I am concerned.
-> 
-> Patches that add complexity to the LSM framework without any benefit
-> to the upstream, in-tree LSMs, or the upstream kernel in general, are
-> not good candidates for inclusion in the upstream kernel.
-> 
+On Thu, Sep 5, 2024 at 8:28=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote:
+>
+> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+>
+> > On Thu, Sep 5, 2024 at 5:47=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wr=
+ote:
+> >>
+> >> Bartosz Golaszewski <brgl@bgdev.pl> writes:
+> >>
+> >> >> > +  - if:
+> >> >> > +      properties:
+> >> >> > +        compatible:
+> >> >> > +          contains:
+> >> >> > +            const: pci17cb,1103
+> >> >> > +    then:
+> >> >> > +      required:
+> >> >> > +        - vddrfacmn-supply
+> >> >> > +        - vddaon-supply
+> >> >> > +        - vddwlcx-supply
+> >> >> > +        - vddwlmx-supply
+> >> >> > +        - vddrfa0p8-supply
+> >> >> > +        - vddrfa1p2-supply
+> >> >> > +        - vddrfa1p8-supply
+> >> >> > +        - vddpcie0p9-supply
+> >> >> > +        - vddpcie1p8-supply
+> >> >>
+> >> >> Like we discussed before, shouldn't these supplies be optional as n=
+ot
+> >> >> all modules need them?
+> >> >>
+> >> >
+> >> > The answer is still the same: the ATH11K inside a WCN6855 does - in
+> >> > fact - always need them. The fact that the X13s doesn't define them =
+is
+> >> > bad representation of HW and I'm fixing it in a subsequent DTS patch=
+.
+> >>
+> >> But, like we discussed earlier, M.2 boards don't need these so I think
+> >> this should be optional.
+> >>
+> >
+> > If they are truly dynamic, plug-and-play M.2 boards then they
+> > shouldn't need any description in device-tree. If they are M.2 sockets
+> > that use custom, vendor-specific pins (like what is the case on
+> > sc8280xp-crd and X13s) then the HW they carry needs to be described
+> > correctly. We've discussed that before.
+>
+> Sigh. Please reread the previous discussion. In some cases we need to
+> set qcom,ath11k-calibration-variant even for M.2 boards.
+>
 
-The idea and implementation for using LSM from loadable kernel modules is what
-I demonstrated you in a lightening talk session in LinuxCon North America 2010.
-It is 14 years since we learned my concern, and you had been ignoring my concern
-until now.
+Maybe instead of posting patronizing comments and forcing me to
+reiterate all my previous points, you should reread the discussion as
+well?
 
-The first solution is "do not use static calls". But you won't agree it. Also,
-I'm not against use of static calls as long as LKM-based LSM is supported.
+DT describes hardware and the WNC6855 package is composed of several
+modules which we represent as separate DT nodes - currently: PMU,
+WLAN, Bluetooth. The WLAN module takes inputs from the PMU so it
+*DOES* need the supplies. The fact that you only want to specify the
+qcom,ath11k-calibration-variant property is irrelevant because the HW
+is what it is. Device-tree source is not a configuration file - it's a
+description of hardware.
 
-The second solution is "export static calls" (and leave how it is used by
-LKM-based LSMs). But some of LSM people do not like solutions that can allow
-LKMs to disable built-in LSMs.
+For upstream - if you're using the WCN6855, you must specify the
+inputs for the WLAN module so it's only fair they be described as
+"required". For out-of-tree DTS I couldn't care less.
 
-The third solution is "continue using linked list for LKM-based LSMs" which was
-suggested by KP Singh [1]. I'm OK with this solution, though it is unlucky that
-LKM-based LSMs can't be benefited from "static calls".
+You are not correct saying that "M.2 boards don't need these" because
+as a matter of fact: the WLAN module on your M.2 card takes these
+inputs from the PMU inside the WCN6855 package.
 
-If you ignore my concern, I have to NACK the static call changes you are
-going to send in the upcoming merge window.
-
-
-
-Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [1]
-
+Bartosz
 
