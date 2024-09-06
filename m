@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-319540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC0796FE1F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FB696FE22
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9331F2212A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 488151F21F1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CD415B0E5;
-	Fri,  6 Sep 2024 22:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ECD15B0EC;
+	Fri,  6 Sep 2024 22:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmOMbz1Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UNTJN6sg"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCFA156C5F;
-	Fri,  6 Sep 2024 22:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D815C613;
+	Fri,  6 Sep 2024 22:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725663169; cv=none; b=IePH6xEfxQugYNre0UbddvFyI8Y3YFrEK18nCvG+xfxU+hc3Dh3z5fwEuxa0Y9ASmDogDWks5Qes/T3YGiUZXW48gVLCxsq68ln/uj/G9pLnk+BGh8nsW3hXAdDaCkBv++yO2ZCH/YlNSpiA+lehNbCdwpCmF6CaVhZJYXodsEg=
+	t=1725663288; cv=none; b=HkCjXxepTvT3ZlCnMP0+ckqlk6P1mD3ysOd1L7nfXxaLiVYIEx+fySWB4nGAodfu7R2HJWaMWlOC6urzx3qhx0l52F4aQMKymMxDamT30J2ezl+y7QJ2tGmFvFKJDCcKIUXhMZAElQ1rV1atntzeb5BgVjEMt8+dcL0pzJdqclA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725663169; c=relaxed/simple;
-	bh=NDnhJYHmPd2gD/xHsSON9t0iaghHfHefv1ORSmknexs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8ahdCfhDDBWVHPqn44wAKXcWS25uK7XEtdS3BIro578M6V4sFAKEFbArgMkBinnLClRVw38JDLtv0soalacOJ9rb4ZCxP3LmF6CNOhhv+JOiW6MWajfD+/9K3LusSonMMAAbD9FT32knai0d00YfmpLqLFu+yjTXm0lx/xKayY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmOMbz1Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45AAC4CEC4;
-	Fri,  6 Sep 2024 22:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725663169;
-	bh=NDnhJYHmPd2gD/xHsSON9t0iaghHfHefv1ORSmknexs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OmOMbz1Yng608S7ZHV8nL7P33mP/I1cgtxwld3tlPtgBimMvyn/i3RrPZeskoiy1E
-	 vbP8PjWpEdhJlckEfJgZDQL/5/W5FJ4ya1rKqx2TEJCI9QYLvVBzt9WA0rQ/+xggy0
-	 gmtSIPLnVlirDUNqJeQK7gZzwmxwRAfxemJ31J/GThvr7ZrAs9Z8khggJhW9LKLb2d
-	 aBXD+tcAHqvCEq7YGzxhE3mftg7/f5GsBiz5qnbOOYRCFUK9v9odrl7Eia4tnqH2mg
-	 cSJ4Ubrqyy4D0ztFqQM6HLscdAeduk6jPItefUuZY+6Fh5cyalk6NzK93yuZn/z6eC
-	 +w5Zm1Liu+wEA==
-Date: Fri, 6 Sep 2024 22:52:47 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: Wu Bo <bo.wu@vivo.com>, Wu Bo <wubo.oduw@gmail.com>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: stop allocating pinned sections
- if EAGAIN happens"
-Message-ID: <ZtuHv9ZbCxLmzuZp@google.com>
-References: <20240906083117.3648386-1-bo.wu@vivo.com>
- <d5505e7f-19db-44dd-8c3f-5b43cfff6b29@kernel.org>
+	s=arc-20240116; t=1725663288; c=relaxed/simple;
+	bh=K+TyAlOejg63hmx9YlhvDKcjkusM06MwT8AYsMGptEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C+vDibM3NwBAZDW7cyeSbCFrwngfQLZY+bA7nuJ+BpHEfRMj8CeAyV6dG89hbLjiORKmYRICul47HoEuKySyj259ZVOPY/33OciaiczHG4hpB5B0f9BRehZtOzL8Uff37kWGz538XvAOtAPeuEpllqLMZLdM4bBIMG93sfHg4/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UNTJN6sg; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id D3F1AC0000F7;
+	Fri,  6 Sep 2024 15:54:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com D3F1AC0000F7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1725663285;
+	bh=K+TyAlOejg63hmx9YlhvDKcjkusM06MwT8AYsMGptEQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UNTJN6sgMrTL+c7d+3RdvAUmk6EJqQ2R6OpgG9A3POXRfnMQiUWua+ltgURgT2zC8
+	 SnleS9qGmo+pl8u0RhEYcOPmw7bzLaiv5fUwodmHjN6FaPArGLHQjxWAEx8knz1V/E
+	 HuBiF1HnWYvWUMEgx2fWu7edkDYMiSgiHDnRh0sU=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 73AE918041CAC6;
+	Fri,  6 Sep 2024 15:54:45 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-serial@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <james.quinlan@broadcom.com>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org (open list:TTY LAYER AND SERIAL DRIVERS)
+Subject: [PATCH] tty: rp2: Fix reset with non forgiving PCIe host bridges
+Date: Fri,  6 Sep 2024 15:54:33 -0700
+Message-ID: <20240906225435.707837-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d5505e7f-19db-44dd-8c3f-5b43cfff6b29@kernel.org>
 
-On 09/06, Chao Yu wrote:
-> On 2024/9/6 16:31, Wu Bo wrote:
-> > On Tue, Feb 20, 2024 at 02:50:11PM +0800, Chao Yu wrote:
-> > > On 2024/2/8 16:11, Wu Bo wrote:
-> > > > On 2024/2/5 11:54, Chao Yu wrote:
-> > > > > How about calling f2fs_balance_fs() to double check and make sure there is
-> > > > > enough free space for following allocation.
-> > > > > 
-> > > > >          if (has_not_enough_free_secs(sbi, 0,
-> > > > >              GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
-> > > > >              f2fs_down_write(&sbi->gc_lock);
-> > > > >              stat_inc_gc_call_count(sbi, FOREGROUND);
-> > > > >              err = f2fs_gc(sbi, &gc_control);
-> > > > >              if (err == -EAGAIN)
-> > > > >                  f2fs_balance_fs(sbi, true);
-> > > > >              if (err && err != -ENODATA)
-> > > > >                  goto out_err;
-> > > > >          }
-> > > > > 
-> > > > > Thanks,
-> > > > 
-> > > > f2fs_balance_fs() here will not change procedure branch and may just trigger another GC.
-> > > > 
-> > > > I'm afraid this is a bit redundant.
-> > > 
-> > > Okay.
-> > > 
-> > > I guess maybe Jaegeuk has concern which is the reason to commit
-> > > 2e42b7f817ac ("f2fs: stop allocating pinned sections if EAGAIN happens").
-> > 
-> > Hi Jaegeuk,
-> > 
-> > We occasionally receive user complaints about OTA failures caused by this issue.
-> > Please consider merging this patch.
+The write to RP2_GLOBAL_CMD followed by an immediate read of
+RP2_GLOBAL_CMD in rp2_reset_asic() is intented to flush out the write,
+however by then the device is already in reset and cannot respond to a
+memory cycle access.
 
-What about adding a retry logic here, as it's literally EAGAIN?
+On platforms such as the Raspberry Pi 4 and others using the
+pcie-brcmstb.c driver, any memory access to a device that cannot respond
+is met with a fatal system error, rather than being substituted with all
+1s as is usually the case on PC platforms.
 
-> 
-> I'm fine w/ this patch, but one another quick fix will be triggering
-> background GC via f2fs ioctl after fallocate() failure, once
-> has_not_enough_free_secs(, ovp_segs) returns false, fallocate() will
-> succeed.
+Swapping the delay and the read ensures that the device has finished
+resetting before we attempt to read from it.
 
-> 
-> Reviewed-by: Chao Yu <chao@kernel.org>
-> 
-> Thanks,
-> 
-> > 
-> > Thanks
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > > > 
-> > > > > 
-> > > 
-> > > 
-> > > _______________________________________________
-> > > Linux-f2fs-devel mailing list
-> > > Linux-f2fs-devel@lists.sourceforge.net
-> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Fixes: 7d9f49afa451 ("serial: rp2: New driver for Comtrol RocketPort 2 cards")
+Suggested-by: Jim Quinlan <james.quinlan@broadcom.com>
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ drivers/tty/serial/rp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/rp2.c b/drivers/tty/serial/rp2.c
+index 4132fcff7d4e..8bab2aedc499 100644
+--- a/drivers/tty/serial/rp2.c
++++ b/drivers/tty/serial/rp2.c
+@@ -577,8 +577,8 @@ static void rp2_reset_asic(struct rp2_card *card, unsigned int asic_id)
+ 	u32 clk_cfg;
+ 
+ 	writew(1, base + RP2_GLOBAL_CMD);
+-	readw(base + RP2_GLOBAL_CMD);
+ 	msleep(100);
++	readw(base + RP2_GLOBAL_CMD);
+ 	writel(0, base + RP2_CLK_PRESCALER);
+ 
+ 	/* TDM clock configuration */
+-- 
+2.43.0
+
 
