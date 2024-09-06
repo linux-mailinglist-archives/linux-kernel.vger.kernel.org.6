@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-319115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D768796F7ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:12:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DE896F7F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8231F21B3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB9A1F25BAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B069E1D2F45;
-	Fri,  6 Sep 2024 15:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049F61D27B8;
+	Fri,  6 Sep 2024 15:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MMTINSCa"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wdbzAy6E"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935F61C9EA4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3521C9EA4;
+	Fri,  6 Sep 2024 15:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725635525; cv=none; b=k7O0bMquN4Bc7peeQwPZyI4KkALz5vxu0aO1HKEPTxD10ehgnpP9agjKXHKCbyeBqWV9L+jpW8rvuz3zZSoFFLY/DVqD86NglgvlONQNdsGDbR1qadGv7N6Y63zbQwtHrI7axnWloG4jIfuKB5wvKQDCLVGamAu/6/CCn6bSeI0=
+	t=1725635538; cv=none; b=NWXPF66TyMIqYtKfhWiJWkHNHjua4VjozN6VpjC1dI8/zLYOjrQ3pEXZT84ryGH6i1c9hKl0IvWFHz7j/vr5/H1AHa2C/hiilju09eu84cXu4at533HIFg9lrXWpm9l+xSSTGNEe37R/mCDypSk8n5bvaEhBR5u2JiHYzSHmq4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725635525; c=relaxed/simple;
-	bh=KZ8ycNl1smLGMiKkaKG9mqETvEzKrx08A5JeCZehCn0=;
+	s=arc-20240116; t=1725635538; c=relaxed/simple;
+	bh=nHfH1To98MiQXw9Cq91V2tGugWtiARfETsNaWf94Vjk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPWWE5/eBlu6j39D95Z9ZHySE7ExA2TP5sQX/TPNGGjHqmdbWPhv6W6UONEXzOc6eG2q1b54xgCba4vIk1eydXVi0O3SQZjGfGQebLUp1wExXX+CKlmWWUe/y3JlzLVojMEDrW+60ABJ+OLJBmosMAXIMy0Ho4mZ/nHr5OWoOn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MMTINSCa; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4KtlGRE+XqkN5ReAUGUK00NC9g09bXflHijBmLUF1FE=; b=MMTINSCaQIcvKQ+FuKNsn8uYZP
-	vP9f/bUG6r5nJcqeGJwdKfbjrOK02SHjK/reaLKJnTtnLODQg+wSOXsgwIZnWwJN3BzY90mP084nt
-	D/wfjMHPeAq++2oI5/zHQEAW7JDGHSKr2dBwIdUAyUFXLgv2hdPlJzpQsSFPjPRvkc9wo9bMfTG+h
-	FxnOnddK4tICejWXyLWbPE3woLPTaOsnxHqTnXsu3UZDtmIXTBnUXeHxIsQHYvf0OKIEvaiJbRdIp
-	qjqCMBlsWr8isAAO/jtUOZxvvewMAsDmF8YMwKQuvvXwdb3fCMLchb787MoHsT56qDh7uJAl7sTqa
-	NDldYPFA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1smacs-00000000goU-3OrL;
-	Fri, 06 Sep 2024 15:11:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 042283003E1; Fri,  6 Sep 2024 17:11:54 +0200 (CEST)
-Date: Fri, 6 Sep 2024 17:11:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] perf: Add PERF_EV_CAP_READ_SCOPE
-Message-ID: <20240906151153.GX4723@noisy.programming.kicks-ass.net>
-References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
- <20240802151643.1691631-3-kan.liang@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oD83CamoyWKkhRhDVQ0Xkk5+f50q0CLL6P+lNZ8/IAewDpC1InXqQinNyKu5HeFmDvYDJ1nWSCXq7L583Ktfp3wScidIehrVAO7o8g5rub992+L6/xjIUdvDVSOkBabUQE9nCC7HniUDz3F9eLPn+SK3nCQpWL1PT2wItc64ncI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wdbzAy6E; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Xowjl4gL3MXeOIeUtVOUSScxtHchudp16w9u5iKTOEs=; b=wdbzAy6EeZvgycIkxYYLjSZA1B
+	Xy0tkwAQITTeHNPdj2CXU0RfM+zMPkXK9OHTZ1hvlaOynIsxPCUaHCItAJq3koypsWRrld+/73Yqd
+	hxx1k9PHAVmr4gHunyOisTpGH/XlH1WYClj4jne10loGmnfjfdjqaIxNCYCirllO3xpE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1smacs-006pnp-Si; Fri, 06 Sep 2024 17:11:54 +0200
+Date: Fri, 6 Sep 2024 17:11:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: net: ethernet-phy: Add
+ forced-master/slave properties for SPE PHYs
+Message-ID: <c08ac9b7-08e1-4cde-979c-ed66d4a252f1@lunn.ch>
+References: <20240906144905.591508-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,69 +66,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802151643.1691631-3-kan.liang@linux.intel.com>
+In-Reply-To: <20240906144905.591508-1-o.rempel@pengutronix.de>
 
-On Fri, Aug 02, 2024 at 08:16:38AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On Fri, Sep 06, 2024 at 04:49:05PM +0200, Oleksij Rempel wrote:
+> Add two new properties, `forced-master` and `forced-slave`, to the
+> ethernet-phy binding. These properties are intended for Single Pair
+> Ethernet (1000/100/10Base-T1) PHYs, where each PHY and product may have
+> a predefined link role (master or slave). Typically, these roles are set
+> by hardware strap pins, but in some cases, device tree configuration is
+> necessary.
 > 
-> Usually, an event can be read from any CPU of the scope. It doesn't need
-> to be read from the advertised CPU.
-> 
-> Add a new event cap, PERF_EV_CAP_READ_SCOPE. An event of a PMU with
-> scope can be read from any active CPU in the scope.
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  include/linux/perf_event.h |  3 +++
->  kernel/events/core.c       | 14 +++++++++++---
->  2 files changed, 14 insertions(+), 3 deletions(-)
+>  .../devicetree/bindings/net/ethernet-phy.yaml | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 > 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 1102d5c2be70..1206bc86eb4f 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -633,10 +633,13 @@ typedef void (*perf_overflow_handler_t)(struct perf_event *,
->   * PERF_EV_CAP_SIBLING: An event with this flag must be a group sibling and
->   * cannot be a group leader. If an event with this flag is detached from the
->   * group it is scheduled out and moved into an unrecoverable ERROR state.
-> + * PERF_EV_CAP_READ_SCOPE: A CPU event that can be read from any CPU of the
-> + * PMU scope where it is active.
->   */
->  #define PERF_EV_CAP_SOFTWARE		BIT(0)
->  #define PERF_EV_CAP_READ_ACTIVE_PKG	BIT(1)
->  #define PERF_EV_CAP_SIBLING		BIT(2)
-> +#define PERF_EV_CAP_READ_SCOPE		BIT(3)
->  
->  #define SWEVENT_HLIST_BITS		8
->  #define SWEVENT_HLIST_SIZE		(1 << SWEVENT_HLIST_BITS)
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 5e1877c4cb4c..c55294f34575 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4463,16 +4463,24 @@ struct perf_read_data {
->  	int ret;
->  };
->  
-> +static inline const struct cpumask *perf_scope_cpu_topology_cpumask(unsigned int scope, int cpu);
-> +
->  static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
->  {
-> +	int local_cpu = smp_processor_id();
->  	u16 local_pkg, event_pkg;
->  
->  	if ((unsigned)event_cpu >= nr_cpu_ids)
->  		return event_cpu;
->  
-> -	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
-> -		int local_cpu = smp_processor_id();
-> +	if (event->group_caps & PERF_EV_CAP_READ_SCOPE) {
-> +		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(event->pmu->scope, event_cpu);
-> +
-> +		if (cpumask && cpumask_test_cpu(local_cpu, cpumask))
-> +			return local_cpu;
-> +	}
->  
-> +	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> index d9b62741a2259..af7a1eb6ceff6 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -158,6 +158,28 @@ properties:
+>        Mark the corresponding energy efficient ethernet mode as
+>        broken and request the ethernet to stop advertising it.
+> 
+> +  forced-master:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      If set, forces the PHY to operate as a master. This is used in Single Pair
+> +      Ethernet (1000/100/10Base-T1) where each PHY and product has a predefined
+> +      link role (master or slave). This property is board-specific, as the role
+> +      is usually configured by strap pins but can be set through the device tree
+> +      if needed.
+> +      This property is mutually exclusive with 'forced-slave'; only one of them
+> +      should be used.
 
-I'm guessing the goal is to eventually remove this one, right?
+DT reviewers tend to complain about such mutually exclusive
+properties.
+
+What you are effectively adding is support for the ethtool:
+
+ethtool -s [master-slave preferred-master|preferred-slave|forced-master|forced-slave]
+
+10Base-T1 often does not have autoneg, so preferred-master &
+preferred-slave make non sense in this context, but i wounder if
+somebody will want these later. An Ethernet switch is generally
+preferred-master for example, but the client is preferred-slave.
+
+Maybe make the property a string with supported values 'forced-master'
+and 'forced-slave', leaving it open for the other two to be added
+later.
+
+I've not seen the implementation yet, but i don't think there is much
+driver specific here. We already have phydev->master_slave_set, it
+just needs to be set from this property. Can it be done in phylib core
+somewhere?
+
+	Andrew
 
