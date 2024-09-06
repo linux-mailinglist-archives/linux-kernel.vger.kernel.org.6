@@ -1,80 +1,127 @@
-Return-Path: <linux-kernel+bounces-319539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2109896FE1E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC0796FE1F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3634B24E03
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9331F2212A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C188715B0E5;
-	Fri,  6 Sep 2024 22:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CD415B0E5;
+	Fri,  6 Sep 2024 22:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2RHE1d+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmOMbz1Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181E32D045;
-	Fri,  6 Sep 2024 22:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCFA156C5F;
+	Fri,  6 Sep 2024 22:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725662931; cv=none; b=fttTXUF5PrBzXOp+wzD/eAGWKjmFpl9peTi2zHj0G4i+rNMB8HERZdFKY+t+AZupihHYSgUWWbXgy+89+88qZX2fxwKqfPXqLGhjwh6Gbg3+039gPCE/2iCYRrIDpL6T1FV/MmH+Z+8Tx9jaoRPl1WSvTxkvDRcCA5Q4emU3mVg=
+	t=1725663169; cv=none; b=IePH6xEfxQugYNre0UbddvFyI8Y3YFrEK18nCvG+xfxU+hc3Dh3z5fwEuxa0Y9ASmDogDWks5Qes/T3YGiUZXW48gVLCxsq68ln/uj/G9pLnk+BGh8nsW3hXAdDaCkBv++yO2ZCH/YlNSpiA+lehNbCdwpCmF6CaVhZJYXodsEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725662931; c=relaxed/simple;
-	bh=X7aFEhqI3rIH0qa0XetrnPUhyomIEUgiBfMwLK/ZLXg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=a8outf6SeYzhqwin87F5OcrsJQEMJB8e/LyqXId2jM8dKFOLQ9222SbZCQQlbF77GKUnzfUi0RX29Y3nCqYPhuU3S5K6g7s3hDB8G1lOoSc6wb+mXjrQhjcHwSyTcnBrtwtLmr76yjlWAGqABdKJm9ph+5Kt99qCrE3esZ55exE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2RHE1d+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EDDCC4CEC4;
-	Fri,  6 Sep 2024 22:48:50 +0000 (UTC)
+	s=arc-20240116; t=1725663169; c=relaxed/simple;
+	bh=NDnhJYHmPd2gD/xHsSON9t0iaghHfHefv1ORSmknexs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f8ahdCfhDDBWVHPqn44wAKXcWS25uK7XEtdS3BIro578M6V4sFAKEFbArgMkBinnLClRVw38JDLtv0soalacOJ9rb4ZCxP3LmF6CNOhhv+JOiW6MWajfD+/9K3LusSonMMAAbD9FT32knai0d00YfmpLqLFu+yjTXm0lx/xKayY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmOMbz1Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45AAC4CEC4;
+	Fri,  6 Sep 2024 22:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725662930;
-	bh=X7aFEhqI3rIH0qa0XetrnPUhyomIEUgiBfMwLK/ZLXg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=s2RHE1d+1PQQ4WwkJSPyupwN88Gzc7zE5uPmBFp4fX1rp1cvkd5YYG/VPA+fYRtke
-	 lnVt3Dw6vIXz1Hnw7NkIwx4d+6rdvTUiFspKrUmPNJCVLf9u7hcaL1/5KUk80xwv0x
-	 P85zAjjG8OMRQDiCiBnFbrL9tSEtpT/2+v6HAiMUc7X5dPLs+TmpyJ4zSlqS47aL1y
-	 nVp3VcgeAMXP3TqIeESnuqdNUZB20tCl7VOrNeOBmuq3SCztrXk2J0DjWG1v7A0oQu
-	 Evl8NIF9wrsd8l5lds3kT21Cf/bMtQgTcI35HxftRmM/MDNyb03CyEM+vSw+TTuT6J
-	 oCgnIY/qZJbOw==
-Message-ID: <cc247e3a006b15a9c9ed10cd2770f8b0.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725663169;
+	bh=NDnhJYHmPd2gD/xHsSON9t0iaghHfHefv1ORSmknexs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OmOMbz1Yng608S7ZHV8nL7P33mP/I1cgtxwld3tlPtgBimMvyn/i3RrPZeskoiy1E
+	 vbP8PjWpEdhJlckEfJgZDQL/5/W5FJ4ya1rKqx2TEJCI9QYLvVBzt9WA0rQ/+xggy0
+	 gmtSIPLnVlirDUNqJeQK7gZzwmxwRAfxemJ31J/GThvr7ZrAs9Z8khggJhW9LKLb2d
+	 aBXD+tcAHqvCEq7YGzxhE3mftg7/f5GsBiz5qnbOOYRCFUK9v9odrl7Eia4tnqH2mg
+	 cSJ4Ubrqyy4D0ztFqQM6HLscdAeduk6jPItefUuZY+6Fh5cyalk6NzK93yuZn/z6eC
+	 +w5Zm1Liu+wEA==
+Date: Fri, 6 Sep 2024 22:52:47 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Wu Bo <bo.wu@vivo.com>, Wu Bo <wubo.oduw@gmail.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: stop allocating pinned sections
+ if EAGAIN happens"
+Message-ID: <ZtuHv9ZbCxLmzuZp@google.com>
+References: <20240906083117.3648386-1-bo.wu@vivo.com>
+ <d5505e7f-19db-44dd-8c3f-5b43cfff6b29@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240906140111.70922-1-krzysztof.kozlowski@linaro.org>
-References: <20240906140111.70922-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.12
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Fri, 06 Sep 2024 15:48:48 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d5505e7f-19db-44dd-8c3f-5b43cfff6b29@kernel.org>
 
-Quoting Krzysztof Kozlowski (2024-09-06 07:01:10)
-> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
-7b:
->=20
->   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.12
->=20
-> for you to fetch changes up to 485e13fe2fb649e60eb49d8bec4404da215c1f5b:
->=20
->   clk: samsung: add top clock support for ExynosAuto v920 SoC (2024-08-23=
- 09:21:35 +0200)
->=20
-> ----------------------------------------------------------------
+On 09/06, Chao Yu wrote:
+> On 2024/9/6 16:31, Wu Bo wrote:
+> > On Tue, Feb 20, 2024 at 02:50:11PM +0800, Chao Yu wrote:
+> > > On 2024/2/8 16:11, Wu Bo wrote:
+> > > > On 2024/2/5 11:54, Chao Yu wrote:
+> > > > > How about calling f2fs_balance_fs() to double check and make sure there is
+> > > > > enough free space for following allocation.
+> > > > > 
+> > > > >          if (has_not_enough_free_secs(sbi, 0,
+> > > > >              GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
+> > > > >              f2fs_down_write(&sbi->gc_lock);
+> > > > >              stat_inc_gc_call_count(sbi, FOREGROUND);
+> > > > >              err = f2fs_gc(sbi, &gc_control);
+> > > > >              if (err == -EAGAIN)
+> > > > >                  f2fs_balance_fs(sbi, true);
+> > > > >              if (err && err != -ENODATA)
+> > > > >                  goto out_err;
+> > > > >          }
+> > > > > 
+> > > > > Thanks,
+> > > > 
+> > > > f2fs_balance_fs() here will not change procedure branch and may just trigger another GC.
+> > > > 
+> > > > I'm afraid this is a bit redundant.
+> > > 
+> > > Okay.
+> > > 
+> > > I guess maybe Jaegeuk has concern which is the reason to commit
+> > > 2e42b7f817ac ("f2fs: stop allocating pinned sections if EAGAIN happens").
+> > 
+> > Hi Jaegeuk,
+> > 
+> > We occasionally receive user complaints about OTA failures caused by this issue.
+> > Please consider merging this patch.
 
-Thanks. Pulled into clk-next
+What about adding a retry logic here, as it's literally EAGAIN?
+
+> 
+> I'm fine w/ this patch, but one another quick fix will be triggering
+> background GC via f2fs ioctl after fallocate() failure, once
+> has_not_enough_free_secs(, ovp_segs) returns false, fallocate() will
+> succeed.
+
+> 
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> 
+> Thanks,
+> 
+> > 
+> > Thanks
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > > > 
+> > > > > 
+> > > 
+> > > 
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
