@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-318173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359E896E971
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCD596E975
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217E71C22FA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EC1286413
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CB713211A;
-	Fri,  6 Sep 2024 05:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2461913211A;
+	Fri,  6 Sep 2024 05:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQnhd1mO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDuN2ABK"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C9717BBE;
-	Fri,  6 Sep 2024 05:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AE52941B;
+	Fri,  6 Sep 2024 05:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725601571; cv=none; b=aWMo/9rLopt0LZ2h92OWoq2E37uxtZOES1tTD9qvW+1RRW34wAFWzzhvbuI6JkfTGb0reCZI9fLEv+ZxLX0nQuRFNgu0Sm7UuEYbwdS263wkepPddHgDV54jCu1So7Kp62y3zaNoptXWLxRxBHjQ8nw5dELtWNuVkKgvcoHe49Y=
+	t=1725601790; cv=none; b=lMWCTJUkMxm4ezXbka3uBHWHwnqr85ceJ6uHZoSuJ6s8WDKKgqttIrd02+txFwZLH3KtHS2X9Mt4YpsycBFVNu5weWojIEoP6NtRwb0xDrX9Az3Aw2gRuwRhmKPZJTnQYLRnQFnkMgc1itiyQ26+/3aSBcCX1fxuOhBtpjbD4yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725601571; c=relaxed/simple;
-	bh=Kxgv3UuGhwPS+NatP6LemxhH72yqs1T4CFoWXsBxsig=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ne1/w9ZTGwsG6WELlnDM3jYCdUKbFgaL+HAPV5Zd9df7GBoN30atw+XPojqHItEhWx7bG7y84xeChHu1AgZB+kENOtWfdVMxppJzp8tQdbGj3S9Uex9cFDWJzlUGz76WjdpocQ5nFo+0/wngCGfgm0vIYmzBEWfAk4IAKjvjTSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQnhd1mO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8B8C4CEC4;
-	Fri,  6 Sep 2024 05:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725601571;
-	bh=Kxgv3UuGhwPS+NatP6LemxhH72yqs1T4CFoWXsBxsig=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MQnhd1mOVurFbxhV4XM9ihuJ/AFwtauEgDfKITNu5Z8nxGoK6O+qDRkhN1Kkg2Lpr
-	 74erken7zre4z8ccJUR9laSWuIKN+Z8WqRKw6Ew7DjVUKNjmjaZDrcYxSjvvokdskX
-	 CI50HdFsQEN7BpYsr2HuTsC1ROCva0LUw33h5LPD3yEvCvWVCxUL7AFfJHzGRImU/c
-	 e5DIV3Gu9fSlxJJzs5wPA4AIpTv6BaqddhRrsV7oIZQaLEW0387bMNcDMBnNZFXkzs
-	 EVWjPtUTVWWN9wePneXu9urbcjuHdWA63e+SkJXxJTiy8i+MejNemzc+GFaBGo9KdZ
-	 23gWmrot4UALQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 713883806654;
-	Fri,  6 Sep 2024 05:46:13 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725601790; c=relaxed/simple;
+	bh=VTMK80NSVXM+EogFAW/STROfe75Jb5gUQlF6p/SCq4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=damSVEIRWWcDt/q/8u+fDmwaNLjjQF0zjYLZWkDrZ1QXIvlyOvLcjx7a+XtY9CV5iHZQQnkmcMxcD4iPddF+0qijGjMQpn4uBzUW3BXjPJiDcd5YoqMyh0H+5/QLVf79Lnu7HeuzpgZ/ePR+quqXfdFFnZFbbUUGg/txK5xyhtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDuN2ABK; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71781f42f75so1287140b3a.1;
+        Thu, 05 Sep 2024 22:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725601788; x=1726206588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aFxAoI+AmDB/7xZ2dXgpDS99xLnRaOzmM8IMypR71F8=;
+        b=FDuN2ABK+43neScKXiwi4xCLf2b+lSUoJINmRXOJ1ILViKgkUs3cBTuXMzvOzt6pch
+         fYvRaSSJt5AfHRRcz+4xLNxWQvHLY5pBVRBu6Kny0ro/nUQixFVkwXJOBVuqWYoB9YK4
+         PuTB4yizNuvI7Fu309fHJfZMOVoApcB6yQ9OX3byRtbHSYC6trJSYmow9ItEPLK6gWZC
+         w1VeWjUsQtSuGIrStAP+KRc39m2zOjSAfwvYgR6z/hh3+1R8pT6T6eSaoi6qZgKpNn6z
+         n0bK/drgKm+JgFgh3WfIil50ca0CDYO8Mbx9Y1nNyGVh1+xDcQstKWgPwuHtjQWrhhle
+         cmIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725601788; x=1726206588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aFxAoI+AmDB/7xZ2dXgpDS99xLnRaOzmM8IMypR71F8=;
+        b=Hxtt49IttN+koVv17iNLSTTttGMw4IuBTxOlFwZkc54gAyQfNdrNDUjvnRpwxhcFy5
+         Bcy38DKAlCUCs+kEw6TcNqUurZgobETy3KjM6ll5Ad/TnVz92fbwt76LPpsUqP74824t
+         HWDwojYf8ZudBaFoW3EGzpJZYuHYh3Ke62sp+Z+g6usnAwD3hSR448T+6v0Tfvn85IKz
+         Y0A5MpMX1V1gIRdNaBX9DSaUatGAV4tkcljbV2CKdjcBwheh8ZmgvI7kU1zowqWfuOp4
+         uX3cuUJD6/YQJ2EWy28Mc0wEb67hi9ruMyatMcTyI0H8VfR0cFTQ1WeYe1eonoNzlqI8
+         vCwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh3bny9AmlstagJ6CF4s9c2rHCvFEI67Dalon+ee5jWxwkbLtXLjQmyZpcvk22YMwglwFwvt2oJMHs1XQj@vger.kernel.org, AJvYcCX6fbYGrAUM7YZKwqolsuM86z//5z4zRs+bwHjRxmrhxMNAxZCapcWmOtv9ZMHA2QUhYRp9Xc7h6JlkVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD/iwn8IFfRlIpH87tdVQboUPCK8vPpntTY2ERmnavYGk95SUt
+	MBiKddg5/SifBpqcxZFPsEQ5yEn4hFiTHYsaRpSb5b0DYNZ2JrzJ
+X-Google-Smtp-Source: AGHT+IFQPy+cE4PEV+mF55KxZABHttVp0OyMcBdlGTc5pIVFEqfE4gNMjmYFYweTGcDQXiFld6v3Yg==
+X-Received: by 2002:a05:6a00:845:b0:717:8a87:7d02 with SMTP id d2e1a72fcca58-718d5f068a4mr2085736b3a.23.1725601788190;
+        Thu, 05 Sep 2024 22:49:48 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1de8:3062:3230:1a45])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71797560c7asm1323681b3a.141.2024.09.05.22.49.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 22:49:47 -0700 (PDT)
+Date: Thu, 5 Sep 2024 22:49:45 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/18] zforse_ts: assorted cleanups
+Message-ID: <ZtqX-d-7jsetQp8J@google.com>
+References: <20240824055047.1706392-1-dmitry.torokhov@gmail.com>
+ <20240902100805.2148ccea@akair>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v30 00/13] Add Realtek automotive PCIe driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172560157225.1943577.9568991767721746511.git-patchwork-notify@kernel.org>
-Date: Fri, 06 Sep 2024 05:46:12 +0000
-References: <20240904032114.247117-1-justinlai0215@realtek.com>
-In-Reply-To: <20240904032114.247117-1-justinlai0215@realtek.com>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- andrew@lunn.ch, jiri@resnulli.us, horms@kernel.org, rkannoth@marvell.com,
- jdamato@fastly.com, pkshih@realtek.com, larry.chiu@realtek.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902100805.2148ccea@akair>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 4 Sep 2024 11:21:01 +0800 you wrote:
-> This series includes adding realtek automotive ethernet driver
-> and adding rtase ethernet driver entry in MAINTAINERS file.
+On Mon, Sep 02, 2024 at 10:08:05AM +0200, Andreas Kemnade wrote:
+> Hi Dmitry,
 > 
-> This ethernet device driver for the PCIe interface of
-> Realtek Automotive Ethernet Switch,applicable to
-> RTL9054, RTL9068, RTL9072, RTL9075, RTL9068, RTL9071.
+> Am Fri, 23 Aug 2024 22:50:24 -0700
+> schrieb Dmitry Torokhov <dmitry.torokhov@gmail.com>:
 > 
-> [...]
+> > Hi,
+> > 
+> > This is a set of somewhat random cleanups for the zforce_ts driver. 
+> > 
+> > Heiko, Andreas, if you still have access to the hardware it would be
+> > great if you could give it a spin.
+> > 
+> > Thanks!
+> > 
+> nice cleanup,
+> I tested a bit on the Toline Shine 2HD without gui (have not rebased my
+> other stuff to 6.11 yet)
+> 
+> A short move on the touchscreen gives this:
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 24
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 1159
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 596
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 48 (ABS_MT_TOUCH_MAJOR), value 11
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 49 (ABS_MT_TOUCH_MINOR), value 11
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 52 (ABS_MT_ORIENTATION), value 0
+> Event: time 1725264307.093542, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 0 (ABS_X), value 1159
+> Event: time 1725264307.093542, type 3 (EV_ABS), code 1 (ABS_Y), value 596
+> Event: time 1725264307.093542, -------------- SYN_REPORT ------------
+> Event: time 1725264307.096361, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 1039
+> Event: time 1725264307.096361, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 607
+> Event: time 1725264307.096361, type 3 (EV_ABS), code 0 (ABS_X), value 1039
+> Event: time 1725264307.096361, type 3 (EV_ABS), code 1 (ABS_Y), value 607
+> Event: time 1725264307.096361, -------------- SYN_REPORT ------------
+> Event: time 1725264307.112426, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 934
+> Event: time 1725264307.112426, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 637
+> Event: time 1725264307.112426, type 3 (EV_ABS), code 0 (ABS_X), value 934
+> Event: time 1725264307.112426, type 3 (EV_ABS), code 1 (ABS_Y), value 637
+> Event: time 1725264307.112426, -------------- SYN_REPORT ------------
+> Event: time 1725264307.131523, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 859
+> Event: time 1725264307.131523, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 661
+> Event: time 1725264307.131523, type 3 (EV_ABS), code 48 (ABS_MT_TOUCH_MAJOR), value 12
+> Event: time 1725264307.131523, type 3 (EV_ABS), code 0 (ABS_X), value 859
+> Event: time 1725264307.131523, type 3 (EV_ABS), code 1 (ABS_Y), value 661
+> Event: time 1725264307.131523, -------------- SYN_REPORT ------------
+> Event: time 1725264307.150540, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 795
+> Event: time 1725264307.150540, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 671
+> Event: time 1725264307.150540, type 3 (EV_ABS), code 48 (ABS_MT_TOUCH_MAJOR), value 13
+> Event: time 1725264307.150540, type 3 (EV_ABS), code 0 (ABS_X), value 795
+> Event: time 1725264307.150540, type 3 (EV_ABS), code 1 (ABS_Y), value 671
+> Event: time 1725264307.150540, -------------- SYN_REPORT ------------
+> Event: time 1725264307.169589, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 760
+> Event: time 1725264307.169589, type 3 (EV_ABS), code 54 (ABS_MT_POSITION_Y), value 675
+> Event: time 1725264307.169589, type 3 (EV_ABS), code 0 (ABS_X), value 760
+> Event: time 1725264307.169589, type 3 (EV_ABS), code 1 (ABS_Y), value 675
+> Event: time 1725264307.169589, -------------- SYN_REPORT ------------
+> Event: time 1725264307.188157, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+> Event: time 1725264307.188157, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+> Event: time 1725264307.188157, -------------- SYN_REPORT ------------
+> 
+> So,
+> 
+> Tested-by: Andreas Kemnade <andreas@kemnade.info> # Tolino Shine2HD
 
-Here is the summary with links:
-  - [net-next,v30,01/13] rtase: Add support for a pci table in this module
-    https://git.kernel.org/netdev/net-next/c/a36e9f5cfe9e
-  - [net-next,v30,02/13] rtase: Implement the .ndo_open function
-    https://git.kernel.org/netdev/net-next/c/ea244d7d8dce
-  - [net-next,v30,03/13] rtase: Implement the rtase_down function
-    https://git.kernel.org/netdev/net-next/c/5a2a2f15244c
-  - [net-next,v30,04/13] rtase: Implement the interrupt routine and rtase_poll
-    https://git.kernel.org/netdev/net-next/c/2bbba79e348d
-  - [net-next,v30,05/13] rtase: Implement hardware configuration function
-    https://git.kernel.org/netdev/net-next/c/85dd839ad1e5
-  - [net-next,v30,06/13] rtase: Implement .ndo_start_xmit function
-    https://git.kernel.org/netdev/net-next/c/d6e882b89fdf
-  - [net-next,v30,07/13] rtase: Implement a function to receive packets
-    https://git.kernel.org/netdev/net-next/c/cf7226c80845
-  - [net-next,v30,08/13] rtase: Implement net_device_ops
-    https://git.kernel.org/netdev/net-next/c/079600489960
-  - [net-next,v30,09/13] rtase: Implement pci_driver suspend and resume function
-    https://git.kernel.org/netdev/net-next/c/a25a0b070c51
-  - [net-next,v30,10/13] rtase: Implement ethtool function
-    https://git.kernel.org/netdev/net-next/c/dd7f17c40fd1
-  - [net-next,v30,11/13] rtase: Add a Makefile in the rtase folder
-    https://git.kernel.org/netdev/net-next/c/14cb81d1359e
-  - [net-next,v30,12/13] realtek: Update the Makefile and Kconfig in the realtek folder
-    https://git.kernel.org/netdev/net-next/c/ad61903add56
-  - [net-next,v30,13/13] MAINTAINERS: Add the rtase ethernet driver entry
-    https://git.kernel.org/netdev/net-next/c/b0613ba1cd93
+Thank you for giving it a spin!
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Dmitry
 
