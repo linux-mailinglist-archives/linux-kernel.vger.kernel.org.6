@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-318900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A031296F4C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:55:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94F296F4BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28F3B23C21
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:55:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8F21C23DA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A611CEEBE;
-	Fri,  6 Sep 2024 12:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00841CEAC9;
+	Fri,  6 Sep 2024 12:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mWHF30Wy"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="OMs7ZvQ7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705741CE704;
-	Fri,  6 Sep 2024 12:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B682A1CE6FF;
+	Fri,  6 Sep 2024 12:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725627256; cv=none; b=o9CkxBl39xx5UjRRuHc1PiuYSExEa+mvfmaiIWLqvWNiJBPtjebO5yHPSiCi2ISSraAgnKD8Q84hXrv8B5zn7vp9CLihcfGloHIQ2B18pNPhTh0RVmDkA7nvjp/AvUATxjil2R047SK5LIT9iaueF4uBvLLijek/iV7wfZiOUDQ=
+	t=1725627249; cv=none; b=fOLhmc1l93a03dW1gmgOgC5DKWAhhbfTKw2x2YeUr1uUnQJBJ2AcgC0cNj59y4kxfjlAPGZBLsaL1mmCqQ1kqR3ur+6zSaAiPr//rkNNRTDhJfk4u2GbTIYwyctL609I2mGxdpZOIQniJICSUmEE3d0wgZCCk5QIa1du8IdmgkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725627256; c=relaxed/simple;
-	bh=tjcjEhjpTxjl2BLDskeVYj2Lk7MhcvUneySLl+PKUE8=;
+	s=arc-20240116; t=1725627249; c=relaxed/simple;
+	bh=YuZBdtQE5MqcdrUj6rfc2zVrFcaYBODaSIfNfhlSw14=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=V/kVp+5cNfa6OHtCmS8MlDLco/QnOT0CT85TWao1Eg70xA3qKhmF6Qf2ZiytFO/uWhzV9ayo4ekOOQWRKruxLIO02QzDfAgVBRRPbLm0NdHV/uLhCIfHUkw1nnxEyYi9y/VjKAxYA6wn3UcDoLmXN2WBltEadcISMSIOk0l7TG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mWHF30Wy; arc=none smtp.client-ip=68.232.153.233
+	 In-Reply-To:To:CC; b=k/m/zUDoOw0vSUZSI+H+/RBMH+KfNmdGI4jyL3FijV0xuTcBmdoAls+GcaA1Nol8FJpgB2vMUHDg05b961Kl6RPWGtS6BxbHxaxjpBrhTDJR+QvsoAB/CGKJC/94VZFL9VINfkTYcsWsjQ1TJ8Nn9vjNE0UYR1fs2hSV3zot4BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=OMs7ZvQ7; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725627254; x=1757163254;
+  t=1725627247; x=1757163247;
   h=from:date:subject:mime-version:content-transfer-encoding:
    message-id:references:in-reply-to:to:cc;
-  bh=tjcjEhjpTxjl2BLDskeVYj2Lk7MhcvUneySLl+PKUE8=;
-  b=mWHF30WyqsRdk1fpgnAOd9GpIllP9xNlUzFvp/rpbYoF7xm+OvdaZd4M
-   3jAERdBoAM+z4bP8riiCq3jd+n9BGxsRG7gnBmVnkGyr0GsbnKjSDOebi
-   dEFLmoIWZlDD1QMZvmJhukBdUR09B0ksVNY82xlGZdrBsvpULXgV7eyMC
-   YA8i8RjUW6cSKMq28RKdQUVes6Y9Yy5/p1pPmAGu9WXMVCdIX1j06KO7A
-   996pU9wj/vEfNsmAaNC47iUeNFV8wlGdRPiLDGc7rsuJ/doMwdxhDBfVH
-   crHhVyddn28mOZumnJbuiA0DBSS0LBFou6R64/rWkE+i9MN3Ex4TyuMjH
+  bh=YuZBdtQE5MqcdrUj6rfc2zVrFcaYBODaSIfNfhlSw14=;
+  b=OMs7ZvQ7zjskPbhOKjWN6RtOVSmyQKCvOlBnnOvBDC1y2pkKrK5aB/VG
+   fy7t8BspBjS4HXKAbLq9AmSirL6zVaBOCpOyrQOAlb/VH66oHvobKuGDr
+   JnXHuy20jVHW5NVep0v1sSicukVBeGaZc3PV/hP44da98zvFMhXaG/scr
+   3qzjg+Frc+2ufbgliSfxDR3KmmeJmLpFetptFR7Bbkzb/xhJVa2Q20nYa
+   k3yyH9/Dto3c5Zbxem+iWyZ/jDOPMHN8HDs4cNB+aOxEjDoiM6xHRr/ds
+   KjhscZ97Oo6rQBcseBmhEcs990MdM1jjkY1YzIha+JWOQ9LhHNCZcu67S
    Q==;
-X-CSE-ConnectionGUID: aGkh2dtQQfCI8QG2frKi1g==
-X-CSE-MsgGUID: b7FA8d3ASK2gCHjhEpqjfw==
+X-CSE-ConnectionGUID: sLMTJciFQoOe3QYYo7sv+w==
+X-CSE-MsgGUID: xjGOYz0LQ8G5DM5GODpyag==
 X-IronPort-AV: E=Sophos;i="6.10,207,1719903600"; 
-   d="scan'208";a="262386468"
+   d="scan'208";a="31334947"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Sep 2024 05:54:13 -0700
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Sep 2024 05:54:06 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 6 Sep 2024 05:53:29 -0700
+ 15.1.2507.35; Fri, 6 Sep 2024 05:53:32 -0700
 Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 6 Sep 2024 05:53:27 -0700
+ 15.1.2507.35 via Frontend Transport; Fri, 6 Sep 2024 05:53:29 -0700
 From: Daniel Machon <daniel.machon@microchip.com>
-Date: Fri, 6 Sep 2024 14:52:44 +0200
-Subject: [PATCH 7/9] phy: sparx5-serdes: add support for branching on chip
- type
+Date: Fri, 6 Sep 2024 14:52:45 +0200
+Subject: [PATCH 8/9] dt-bindings: phy: sparx5: document lan969x in sparx5
+ dt-bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240906-sparx5-lan969x-serdes-driver-v1-7-8d630614c58a@microchip.com>
+Message-ID: <20240906-sparx5-lan969x-serdes-driver-v1-8-8d630614c58a@microchip.com>
 References: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
 In-Reply-To: <20240906-sparx5-lan969x-serdes-driver-v1-0-8d630614c58a@microchip.com>
 To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -81,103 +81,66 @@ CC: <linux-phy@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
 X-Mailer: b4 0.14-dev
 
-In preparation for lan969x, add a way to branch out on code that is to
-be executed on either Sparx5 or lan969x.  Initially, this is required to
-branch out when checking the SERDES types and SERDES speeds, since the
-handling of these differ on the two platforms. This will also be used by
-the lan969x driver introduced in a subsequent patch.
+Document lan969x in the existing Sparx5 dt-bindings.
 
 Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
 ---
- drivers/phy/microchip/sparx5_serdes.c | 29 ++++++++++++++++++-----------
- drivers/phy/microchip/sparx5_serdes.h |  5 +++++
- 2 files changed, 23 insertions(+), 11 deletions(-)
+ .../bindings/phy/microchip,sparx5-serdes.yaml          | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/microchip/sparx5_serdes.c b/drivers/phy/microchip/sparx5_serdes.c
-index 8a716bfaa023..05fdf225ff43 100644
---- a/drivers/phy/microchip/sparx5_serdes.c
-+++ b/drivers/phy/microchip/sparx5_serdes.c
-@@ -2298,10 +2298,12 @@ static int sparx5_serdes_set_speed(struct phy *phy, int speed)
- {
- 	struct sparx5_serdes_macro *macro = phy_get_drvdata(phy);
+diff --git a/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml b/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+index bdbdb3bbddbe..1e07a311e8a5 100644
+--- a/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
++++ b/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+@@ -8,6 +8,7 @@ title: Microchip Sparx5 Serdes controller
  
--	if (macro->sidx < SPX5_SERDES_10G_START && speed > SPEED_5000)
--		return -EINVAL;
--	if (macro->sidx < SPX5_SERDES_25G_START && speed > SPEED_10000)
--		return -EINVAL;
-+	if (macro->priv->data->type == SPX5_TARGET_SPARX5) {
-+		if (macro->sidx < SPX5_SERDES_10G_START && speed > SPEED_5000)
-+			return -EINVAL;
-+		if (macro->sidx < SPX5_SERDES_25G_START && speed > SPEED_10000)
-+			return -EINVAL;
-+	}
- 	if (speed != macro->speed) {
- 		macro->speed = speed;
- 		if (macro->serdesmode != SPX5_SD_MODE_NONE)
-@@ -2338,11 +2340,14 @@ static int sparx5_serdes_validate(struct phy *phy, enum phy_mode mode,
- 	if (macro->speed == 0)
- 		return -EINVAL;
+ maintainers:
+   - Steen Hegelund <steen.hegelund@microchip.com>
++  - Daniel Machon <daniel.machon@microchip.com>
  
--	if (macro->sidx < SPX5_SERDES_10G_START && macro->speed > SPEED_5000)
--		return -EINVAL;
--	if (macro->sidx < SPX5_SERDES_25G_START && macro->speed > SPEED_10000)
--		return -EINVAL;
--
-+	if (macro->priv->data->type == SPX5_TARGET_SPARX5) {
-+		if (macro->sidx < SPX5_SERDES_10G_START &&
-+		    macro->speed > SPEED_5000)
-+			return -EINVAL;
-+		if (macro->sidx < SPX5_SERDES_25G_START &&
-+		    macro->speed > SPEED_10000)
-+			return -EINVAL;
-+	}
- 	switch (submode) {
- 	case PHY_INTERFACE_MODE_1000BASEX:
- 		if (macro->speed != SPEED_100 && /* This is for 100BASE-FX */
-@@ -2515,6 +2520,7 @@ static struct sparx5_serdes_io_resource sparx5_serdes_iomap[] =  {
- };
+ description: |
+   The Sparx5 SERDES interfaces share the same basic functionality, but
+@@ -62,12 +63,17 @@ description: |
+   * 10.3125 Gbps (10GBASE-R/10GBASE-KR/USXGMII)
+   * 25.78125 Gbps (25GBASE-KR/25GBASE-CR/25GBASE-SR/25GBASE-LR/25GBASE-ER)
  
- static const struct sparx5_serdes_match_data sparx5_desc = {
-+	.type = SPX5_TARGET_SPARX5,
- 	.iomap = sparx5_serdes_iomap,
- 	.iomap_size = ARRAY_SIZE(sparx5_serdes_iomap),
- 	.tsize = sparx5_serdes_tsize,
-@@ -2618,8 +2624,9 @@ static int sparx5_serdes_probe(struct platform_device *pdev)
- 			return err;
- 	}
- 
--	/* Power down all CMUs by default */
--	sparx5_serdes_cmu_power_off(priv);
-+	/* Power down all CMU's by default */
-+	if (priv->data->type == SPX5_TARGET_SPARX5)
-+		sparx5_serdes_cmu_power_off(priv);
- 
- 	provider = devm_of_phy_provider_register(priv->dev, sparx5_serdes_xlate);
- 
-diff --git a/drivers/phy/microchip/sparx5_serdes.h b/drivers/phy/microchip/sparx5_serdes.h
-index 50900bf06c4c..1beaa3d05a5d 100644
---- a/drivers/phy/microchip/sparx5_serdes.h
-+++ b/drivers/phy/microchip/sparx5_serdes.h
-@@ -34,6 +34,10 @@ enum sparx5_10g28cmu_mode {
- 	SPX5_SD10G28_CMU_MAX,
- };
- 
-+enum sparx5_target {
-+	SPX5_TARGET_SPARX5,
-+};
++  lan969x has ten SERDES10G interfaces that share the same features, operating
++  modes and data rates as the equivalent Sparx5 SERDES10G interfaces.
 +
- struct sparx5_serdes_macro {
- 	struct sparx5_serdes_private *priv;
- 	u32 sidx;
-@@ -56,6 +60,7 @@ struct sparx5_serdes_ops {
- };
+ properties:
+   $nodename:
+     pattern: "^serdes@[0-9a-f]+$"
  
- struct sparx5_serdes_match_data {
-+	enum sparx5_target type;
- 	const struct sparx5_serdes_consts consts;
- 	const struct sparx5_serdes_ops ops;
- 	const struct sparx5_serdes_io_resource *iomap;
+   compatible:
+-    const: microchip,sparx5-serdes
++    enum:
++      - microchip,sparx5-serdes
++      - microchip,lan969x-serdes
+ 
+   reg:
+     minItems: 1
+@@ -90,11 +96,19 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    serdes: serdes@10808000 {
++    serdes@10808000 {
+       compatible = "microchip,sparx5-serdes";
+       #phy-cells = <1>;
+       clocks = <&sys_clk>;
+       reg = <0x10808000 0x5d0000>;
+     };
+ 
++  - |
++    serdes@e3410000 {
++      compatible = "microchip,lan969x-serdes";
++      #phy-cells = <1>;
++      clocks = <&fabric_clk>;
++      reg = <0xe3410000 0x150000>;
++    };
++
+ ...
 
 -- 
 2.34.1
