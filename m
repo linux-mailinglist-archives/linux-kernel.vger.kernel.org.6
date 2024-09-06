@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-319147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6409096F888
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:43:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F7396F88B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC66EB20EAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF1B1C226A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CA11D318E;
-	Fri,  6 Sep 2024 15:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9762B1D2F7F;
+	Fri,  6 Sep 2024 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MkQuaC+9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9D31D2F65
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 15:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iI6lpr+z"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539F1D1F60;
+	Fri,  6 Sep 2024 15:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725637422; cv=none; b=kdocdO2DTbiUpR45JM7bRY/BR+3wR5CUptbiQmK4OzltaH1OPVJo+5A989OBIek8D5ha8w63l24D3kBcodqJY26QMoYnWyfx9H3kHdFaPYuiITXNCIRqj7YCZADRo+X/z52TexoLNQybjTsQiyl76WhKcjosQ3/YgKjh6np5kQ4=
+	t=1725637481; cv=none; b=lYy2aR2EJ2luPOTxPfIuwSTFE77AqPYKJIk4wNhL7vvYsajUy8nR3hpUAQEz4uQLS+1oeiv+rP5pRVBFhRajX0dp4aiZRbyNlcobK2ecE3wfTrHIFcS0GcpTTjaC1ki6pe1Q9lp4a+3Uxpo5BX7H12LbyclWW1IImBt4k6esbZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725637422; c=relaxed/simple;
-	bh=5FDvh4fea6HWFs/qXnSsOsUIHGXCTXgCLjpn+Cc/8yM=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGmksCTrhAqKIt3LG5XHVdDYBoOs5gKN3y3zkt1HedZUOhpN8nwDnKa3iHFdiTJYjY7XaboHwfWeesM7r7fLBG91Y3ySK4Skfks7fIQMxvWnP1k4DrG8E00hbom+iojYQXJ/Bd1sE6DDe6obVR9UDzoOOmLbiwFP1YrfSNW4nhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MkQuaC+9; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725637420; x=1757173420;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=5FDvh4fea6HWFs/qXnSsOsUIHGXCTXgCLjpn+Cc/8yM=;
-  b=MkQuaC+9x8VvWotjGZx5d7ZtX6Z3yOn2SDQXxJimYY8Q+1y0feTcK0tX
-   0egZ7vuLMhv0OaTQsiJY63fe+FphvfZqDn6QwXmGWF5V8owOO4PB1Z9wT
-   o7FgsBw1QCJlcqVtfgRNj+B+7uKiM9XwkAVO1UF5625uEut+H43SmZaFy
-   WhIPD4zrSPfKEVMA54x5czW3+exnKugCG9h4otPMMSbqLeU6/FxWRn4Rv
-   aqOMBamUuvxypQ4Rycx5KcJRy0o0m9AgF8WFdb3l47uY250DrUgTQ8bcG
-   wdoOq12hEKHxiyHzjzmle5No7uZW7pMMCByDLIGELwGTN0YGUpCwQDzBK
-   A==;
-X-CSE-ConnectionGUID: VffPyVbeQrKW4l6EGsxCFQ==
-X-CSE-MsgGUID: RamcLHc9RWGnGTr5uGj63A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24349664"
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="24349664"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:43:39 -0700
-X-CSE-ConnectionGUID: L0dOF7V6Ts+sggY5gOybcg==
-X-CSE-MsgGUID: vYswIGANTV+XEgUtmza+cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
-   d="scan'208";a="65960892"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 08:43:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1smb7X-00000005qmn-0yUi;
-	Fri, 06 Sep 2024 18:43:35 +0300
-Date: Fri, 6 Sep 2024 18:43:34 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] maple_tree: Drop unused functions to fix the build
-Message-ID: <ZtsjJoGKRxszp-m6@smile.fi.intel.com>
-References: <20240906150533.568994-1-andriy.shevchenko@linux.intel.com>
- <krsjmi43ziyojqicc4pxzwfwbffqrnk5npbuoq6l2cnq5eovkd@afofyteb5wo3>
+	s=arc-20240116; t=1725637481; c=relaxed/simple;
+	bh=ZvPFD8bPKG1etjMtBkCrFyLUx7SmSfqtAsFtfAF+cx4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kT/stet79T4Cimph0UtnKPP175QjDLg8cZPuVc9WK5/R79Wfss0a8Jor+L9Vuyhq5EFf7YOg6fy03oE7sxEURI6Jz/L8fGvv2RK2wuM2GpRG98Vwy/PKEbgevtR1BQmfx9OV9RrwA350VObNSRwnfuDtANz0C3VfcVUZtie7hWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iI6lpr+z; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Vn/aY
+	4/1WDYl2eiuTqp/va7eYXiS8/ytS0g6RbDVMU0=; b=iI6lpr+zlRyawnvHWnANw
+	cRHTymyuaYuPA0HU108UT6xecX1kXephVm+7LBlChKVWK754v1XZFAcf6TWgXQNf
+	o3O+25dtlnwU1oXgbNWzSod4tLpdaEy+OkQlGAaR6lsJPZqtns0x2HxiAoWtJRWK
+	xQik30pWOQ4myZdzbBIkBg=
+Received: from localhost.localdomain (unknown [111.35.190.113])
+	by gzga-smtp-mta-g3-2 (Coremail) with SMTP id _____wD3f6U7I9tmL+v1Hg--.60435S4;
+	Fri, 06 Sep 2024 23:44:15 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [BUG?] bcachefs performance: read is way too slow when a file has no overwrite.
+Date: Fri,  6 Sep 2024 23:43:54 +0800
+Message-Id: <20240906154354.61915-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <krsjmi43ziyojqicc4pxzwfwbffqrnk5npbuoq6l2cnq5eovkd@afofyteb5wo3>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f6U7I9tmL+v1Hg--.60435S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxur1UGryxGF18Cr4Dtr18Krg_yoW5Cr13pF
+	WY9340yrZ8Xrn5Cws0y34UKF18Jw15Jay5WF10gr42gF95XFy3KaySkay5JrWDuFW7Ww1U
+	tFZ2vryUAF1qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UD739UUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRNSqmVOCtKGQgAAs1
 
-On Fri, Sep 06, 2024 at 11:26:26AM -0400, Liam R. Howlett wrote:
-> This exists to stop people from using the bits while the feature is in
-> active development.  We had the same patch a few days (weeks?) ago.
 
-This breaks build. Can you propose better solution, please?
+Hi,
 
-> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> [240906 11:05]:
-> > A few functions defined but not used. This, in particular,
-> > prevents kernel builds with clang, `make W=1` and CONFIG_WERROR=y:
-> > 
-> > lib/maple_tree.c:351:21: error: unused function 'mte_set_full' [-Werror,-Wunused-function]
-> >   351 | static inline void *mte_set_full(const struct maple_enode *node)
-> >       |                     ^~~~~~~~~~~~
-> > lib/maple_tree.c:356:21: error: unused function 'mte_clear_full' [-Werror,-Wunused-function]
-> >   356 | static inline void *mte_clear_full(const struct maple_enode *node)
-> >       |                     ^~~~~~~~~~~~~~
-> > lib/maple_tree.c:361:20: error: unused function 'mte_has_null' [-Werror,-Wunused-function]
-> >   361 | static inline bool mte_has_null(const struct maple_enode *node)
-> >       |                    ^~~~~~~~~~~~
-> > 
-> > Fix this by dropping unused functions.
-> > 
-> > See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> > inline functions for W=1 build").
-> > 
-> > Fixes: 6e7ba8b5e238 ("maple_tree: mte_set_full() and mte_clear_full() clang-analyzer clean up")
-> > Fixes: 54a611b60590 ("Maple Tree: add new data structure")
+I notice a very strange performance issue:
+When run `fio direct randread` test on a fresh new bcachefs, the performance is very bad:
+	fio --randrepeat=1 --ioengine=libaio --direct=1 --name=test  --bs=4k --iodepth=64 --size=1G --readwrite=randread  --runtime=600 --numjobs=8 --time_based=1
+	...
+	Run status group 0 (all jobs):
+	   READ: bw=87.0MiB/s (91.2MB/s), 239B/s-14.2MiB/s (239B/s-14.9MB/s), io=1485MiB (1557MB), run=15593-17073msec
 
--- 
-With Best Regards,
-Andy Shevchenko
+But if the files already exist and have alreay been thoroughly overwritten, the read performance is about 850MB+/s,
+almost 10-times better!
 
+This means, if I copy some file from somewhere else, and make read access only afterwards, I would get really bad performance.
+(I copy files from other filesystem, and run fio read test on those files, the performance is indeed bad.)
+Copy some prepared files, and make readonly usage afterwards, this usage scenario is quite normal for lots of apps, I think.
+
+
+I made some profiling, when read the file without any overwritten to it:
+
+	io_submit_one(98.339% 2635814/2680333)
+	    aio_read(96.756% 2550297/2635814)
+		bch2_read_iter(98.190% 2504125/2550297)
+		    __bch2_read(70.217% 1758320/2504125)
+			__bch2_read_extent(74.571% 1311194/1758320)
+			    bch2_bio_alloc_pages_pool(72.933% 956297/1311194)  <-----This stands out
+			    submit_bio_noacct_nocheck(11.074% 145207/1311194)
+			    bio_alloc_bioset(3.823% 50126/1311194)
+			    bch2_bkey_pick_read_device(2.157% 28281/1311194)
+			    bio_associate_blkg(1.668% 21877/1311194)
+				...
+
+And when the file was thoroughly overwritten, by a previous readwrite FIO session, the profiling is:
+
+	io_submit_one(97.596% 12373330/12678072)
+	    aio_read(94.856% 11736821/12373330)
+		bch2_read_iter(94.817% 11128518/11736821)
+		    __bch2_read(70.841% 7883577/11128518)
+			__bch2_read_extent(35.572% 2804346/7883577)
+			    submit_bio_noacct_nocheck(46.356% 1299974/2804346)
+			    bch2_bkey_pick_read_device(8.972% 251601/2804346)
+			    bio_associate_blkg(8.067% 226227/2804346)
+			    submit_bio_noacct(7.005% 196432/2804346)
+			    bch2_trans_unlock(6.241% 175020/2804346)
+			    bch2_can_narrow_extent_crcs(3.714% 104157/2804346)
+			    local_clock(1.873% 52513/2804346)
+			    submit_bio(1.355% 37997/2804346)
+				...
+
+Both profilings have sample 10-minutes duration, and same sample frequency.
+Base on the difference between total sample count, 2680333 vs 12678072,
+ I would suspect bch2_bio_alloc_pages_pool would incur lots of locking.
+
+Here more detail for bch2_bio_alloc_pages_pool:
+
+	bch2_bio_alloc_pages_pool(72.933% 956297/1311194)
+	    alloc_pages_mpol_noprof(82.644% 790323/956297)
+		__alloc_pages_noprof(89.562% 707833/790323)
+		    get_page_from_freelist(79.801% 564855/707833)
+			__rmqueue_pcplist(24.713% 139593/564855)
+			post_alloc_hook(15.045% 84983/564855)
+				...
+		    __next_zones_zonelist(3.578% 25323/707833)
+			...
+		policy_nodemask(3.352% 26495/790323)
+			...
+	    bio_add_page(10.740% 102710/956297)
+
+
+
+Thanks~
+David
 
 
