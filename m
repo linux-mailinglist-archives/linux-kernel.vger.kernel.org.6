@@ -1,229 +1,157 @@
-Return-Path: <linux-kernel+bounces-319006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E2896F668
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:14:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5213E96F669
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B66031F23633
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF451C20C29
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 14:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242B51D0491;
-	Fri,  6 Sep 2024 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC161D014A;
+	Fri,  6 Sep 2024 14:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FEaK7rX9"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2057.outbound.protection.outlook.com [40.107.100.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SklHqHyu"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F7B1C7B93;
-	Fri,  6 Sep 2024 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725632056; cv=fail; b=IfRS0bQ2dStFe7e3ORdDK8wlVDYpLQ/ZBvW/Zwb03ltDDQDcJuxSPWroqky+eeSqgi15GaBvKlndhSnwKe5RRx3oeHR1EO+53YcXXUaJUVrEN4q5Hh+Ei90VnECdM8lm51Tx+i9C74UyyqhRjNdDB3w6QK2ceOXKDQPL8YdqoFo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725632056; c=relaxed/simple;
-	bh=nozGox9f5D9OWq7XXQajIYiEACPuQb7GJzhrMrgm0Ho=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TTg7b8mNnifgijojFcjrqpdkW9rQDHiS5pSAFhDQqON1d2IPH70pRpjERSf0YBncCILFCo7SvWLLY9WZC/M2ndIDDa/2m4293G8JHR+s7EYgGO83daMz7ANC9pyKLwtS5t/aICKwCDvoXAUzaOmRu98HOsUYbnQuwylxVBO2DcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FEaK7rX9; arc=fail smtp.client-ip=40.107.100.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DrgDayf/i39KhCsylXjAuX780Q4mhnmV74VmPG7LN+3gENT9Mdl/aEy1wbxvYuHXuCzInea6sSUHgGqrqckg7B4KCJNZNelTHvv3hXPCawsLYejst+fDXQybUNYIaHGYeRdtGJcrBZO34rPJ3KZOfd679esVZhfg1AjHG1FDF72+5ku9cW5QV5TBYDyl68vtCBehj3kEF8BWA3GbgwYcFKkaryZgjy7FI5vcXNcd7VTJaj/w/4seF9lzvunIPg+eBL2QaoBWk7QrFSRwje4yv/9Gx35gPhlR1SxylQsN275Iqqy/nXeeIq/XGR+1IR+PpVSzuDII1B7Oid4cblOPhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NhofM1l3nKPCK0DDiD4bhEn+SDzr6Ctg9U2+HTIHRoI=;
- b=ragfnRc40i+A+wbxuDq7TMKg6yP8NFPFRhS9Dn8P2DManMgohgGXsxITWc2XS0Yosvl9D4k8Gi2KOTLbez191Bq5+DghCEsojfIR2qxZY3lSkTvkkG9Du1LH9BtOJVmY5kB+WnjiaHxyJA7m98mUuiwL/TS8h2dzH34DiGnD41qdaggu7yHnLiYiXD9PLQCcHoTRmW2JYVumEgxFeUWb8GAgLDdp6ccyJKELq5pXvY+SrjCfVLFCQXMjoekPSWVkunD89Bm8MKdm4cttd1655+8Sq9/bzgrVidA+v0a1NdPawpp0ORfQynlh8zGbDis+UknGbXCt4k7SxYk1AOBitQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NhofM1l3nKPCK0DDiD4bhEn+SDzr6Ctg9U2+HTIHRoI=;
- b=FEaK7rX9wL4M1q20wxiqiiyAC7osVfzlc4G1qJZm2/e0EJRT2cFHAnTUU75l0+tPteX/piQmcGAYhFeRYv8f9ZulDris9PAPAa097UR4jcjp/6ILB3bnHGnj1Ji/f5BonA1gUA2eU3ZO7iNHO6zuVr20MT5fE7Al0H9RtE5189fk+eafHzVQmMUpLa7a3dAsDbSW8RFbPTSSMWnZe5TpucXS2A9KGyKN8i8nNKlH46Vz6fmv1t7FJ8q1FkFuBfLCcaf/4qu5vXjYpaFXkzuuAS8HeMo8/DnD2EcKJ/k4cq8Hhs6NuMuTubXkz8vNt1wnfKJHAQxjWvlozr2ZbEOXiQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM8PR12MB5447.namprd12.prod.outlook.com (2603:10b6:8:36::7) by
- MW6PR12MB8867.namprd12.prod.outlook.com (2603:10b6:303:249::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.25; Fri, 6 Sep 2024 14:14:11 +0000
-Received: from DM8PR12MB5447.namprd12.prod.outlook.com
- ([fe80::5f8:82ee:7da9:219b]) by DM8PR12MB5447.namprd12.prod.outlook.com
- ([fe80::5f8:82ee:7da9:219b%4]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 14:14:11 +0000
-Message-ID: <fdeadc0c-7f8d-4547-8703-c402bf06e495@nvidia.com>
-Date: Fri, 6 Sep 2024 15:14:04 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the
- zonda_pll_adjust_l_val()
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Taniya Das <quic_tdas@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- kernel test robot <lkp@intel.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20240906113905.641336-1-quic_skakitap@quicinc.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20240906113905.641336-1-quic_skakitap@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0600.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:295::20) To DM8PR12MB5447.namprd12.prod.outlook.com
- (2603:10b6:8:36::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFE91D0496
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 14:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725632059; cv=none; b=bJ5OqWAMTwE31/1I75r++fFttBmtWUdQDkWe5fdXjxTKW9He1SvdjA57YlsBtWRbSyIyLXuQDlk4Wxtcs7qJggBtz2H8r48NgKGW5NcTZ+dLSXrpeDG2l1v9r9rs/ZKJGzt08S/3BPonwd2Wfx3W77/EtxV7nN1RbuhJagVHlus=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725632059; c=relaxed/simple;
+	bh=23suZZslrElYAyZQHWDA+IOgBKqdPtOdcjQ8BplQZZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kmNv9YBXkv8+FXvvZ9d+cSxe2mJIgTrhw00Sq5PFb5NDrLM9sfIYHjscdZ2VbZGnDh6uVCRCeQw9M8Kr/ZKRTUhAKqv6f9lB1nncgiHMYVVgJ+V1dl+uyHE/6/qeseOrfuompsh/5ltz6sVGATMVNRiZ/jHofr+VHVkdUqOFg+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SklHqHyu; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-82a316f8ae1so79164539f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 07:14:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725632057; x=1726236857; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vViw6BTWp76nUCRilCQyxEbSqwSDETKDM1RYVM6mLFE=;
+        b=SklHqHyuX8n95D8ffRvrALZ/EEl3rH3jYDxgIBT8xlNSO5HRlwGB8oLxtew8pe7DSC
+         q+xqPwbDxoW7K5lsdr/JyOtlfNwyIIAye98J+u45QBLpVRJgI+AjRtqQCOqL8tKQ/zhq
+         71daY/HPbAm2tFWtgfLwQJD0Wb5BylXdyNzaQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725632057; x=1726236857;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vViw6BTWp76nUCRilCQyxEbSqwSDETKDM1RYVM6mLFE=;
+        b=aNyQcoTSR4Y2EK6i0xxRtX10VIuXxif+tok5oSxAAmfrQU5NUSstf9Vh6uD0IRHcV1
+         ne9axG22cd22UYClDyB3LHMjDJ0/vsfFajwJ8HDWb3Vl6tvmN1NEui97Huic/Z3etdSH
+         UAdakmWMPIt8MYUZFxdK2w6VxGW+I5l06yk4og+y/M+L35wsLwqY2FU9iVOOC32bVWn1
+         GC0gKhqsbkn2by/Tb4wcPOmhahtw/3LzYdqDdHxc4JOrQMcgYXDzPSzni6kmBcivZB8I
+         bMR3iZTIVt3hBUsmr9W8o/aOndQ/aNkQwh1fvOaH86hwWhJ077cKcAjdowUntj7aozVj
+         KpzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsz6EzpPPIgbpvhkSdpbkdub986RpWYy6EsUjqPGIZMYrXENbFECVaihuoL0mJ2qfqpWfa6TqINJ3XKPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj48ZCF3+zjuA+cI9ll64+J2jGalfux3wbjpCOpnMoKDxDqfUQ
+	c6t7Phtnrqiw7I0YlA5hUNfy0gw+1sGNl/jJ4eHVqlJjGojbnhjV8yYfHWlsgQg=
+X-Google-Smtp-Source: AGHT+IGlBnlDVHagXUvARTKh4F7dvKYhw6L2wgcgb9XFUgHOWtzaogoxzxw4GnvS6B0z13xrB7sNmw==
+X-Received: by 2002:a05:6602:154f:b0:82a:2385:74a6 with SMTP id ca18e2360f4ac-82a9618c4f3mr341912439f.5.1725632056435;
+        Fri, 06 Sep 2024 07:14:16 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d08a22e664sm210986173.67.2024.09.06.07.14.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 07:14:16 -0700 (PDT)
+Message-ID: <cff1553c-d342-44e3-a685-9b074af87858@linuxfoundation.org>
+Date: Fri, 6 Sep 2024 08:14:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5447:EE_|MW6PR12MB8867:EE_
-X-MS-Office365-Filtering-Correlation-Id: 467afef0-4061-428f-a059-08dcce7e2dad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZGlHZFlNNlJQRkl5OG8yZmtlLzJqaDRwVW1ZZEk0R3JoTldYN2h1WG52akhX?=
- =?utf-8?B?NnZDaXZPK014UE9oQ3haMnhLU3ArU0V5ZFlFZWs4aVV4L1Z3OElvZ0Q4LzFS?=
- =?utf-8?B?cWVnT28wd01NVTVhWG9NZFpUQjIyK0dhWS9DeFloSFkvbGMrZjBVTVRCa0dF?=
- =?utf-8?B?Qm5rUVd3RVd6OEp2Qm8vTFhpUDJETmdrYnFyclYyM2I5RVUvMER2WVhGY0hq?=
- =?utf-8?B?eHJPL3ZRNHVnRkNpc2dqaWZUSFc3dDNEdmZOSVMvYUszTXpjZEJPWi84WER2?=
- =?utf-8?B?TXhFNEdlRnNGbW1adkxnM1JJSlJkT1l0UWYzbnRpWG9xTWZ0YmxENzZsSFVR?=
- =?utf-8?B?ZzdQQjI0UGdFZVlFNzl5YUJhaXJlVkdMSHVPSkZuajdrWWIyN3h5YWUzR3k0?=
- =?utf-8?B?aFcrOVh0eHplYjhqWFNaWnpFVGNLWUNyR2J1cjRCUmJzSkpUcVpvRWFhWFVh?=
- =?utf-8?B?UDRSWCtkMVFlb2JtZGVZbytIZ2NyRU5qYXVGK1RVSG4yRSs4N0ZESllhemp6?=
- =?utf-8?B?NFJRUnAzamFldXZIOFlhRWhlUFl0SDlWcGI1QlJERmtHQWNqVUYrN2dydkl2?=
- =?utf-8?B?M3VyT014SnRpdjZVY09Ic3MyS0kzWFhKdU5JVDFKMlpOVmJPckUrUk54cnVQ?=
- =?utf-8?B?WmMrNEdQdlVJZW9xYitFRzJWblFQTXAyM01xanRrQktybVNpSCtsdTNqb3Fa?=
- =?utf-8?B?d2liQjVXeElnK1lVMStrVDBlUjM2NXZ0SDZmZmc4blYxTlc0UHp5MEhmS1pD?=
- =?utf-8?B?TW02N1B6ZUNEdnZDaVZYVUREaGZiaWZGKzdWMEVLcXNFUTRWNjNNVUtqbko5?=
- =?utf-8?B?WEd3OVRWSythWmlvbDJqWDhuL2lMTkNVWFFFL3UrSWFqeUhadk5RR2tmcnBq?=
- =?utf-8?B?ZTRwNFp4S1IrblBaaHFHRGtOVGx3eE5qWklnNXdRSHAramM0RVJyd3VQekNN?=
- =?utf-8?B?eFQ3Z3J3c1ZZbnBHVENwTkk4OU81emZEOVUvcUNPMFVYTHl4cnI2QkhHMTJ2?=
- =?utf-8?B?MjczaVlQU2NGdzZqMG1zMmxoY01IeEJZTENsUHBFMk95QXc0NE52QkJYSVZZ?=
- =?utf-8?B?bUxSQ3I5YWFWZFJlR0pXQk9GbFY0UzEvVTE3M3RtbUFyRVVWRG1PZ1J3TjQ5?=
- =?utf-8?B?dkllT2kzL1FhY2pMdTIwcnh3aVA0RUxsTEs4ZGlJM3lxb2llTHg1R2pHaXU2?=
- =?utf-8?B?aGliZDBBWDZheEMvYTNvTkdqaVBzSXVUTk05S2hzOXRRZW5lcEttNTdTeE8v?=
- =?utf-8?B?dkROQVVqd05mT0JxYU53bmMyOWd6eFhJWm8zZUZ3c1BLQytPVEZVVUY1ZzBH?=
- =?utf-8?B?d2dEendrVjVLZmhFU0plc2FxNTVlWFY0TGtqczJSelVpMzcvWEFxWVFKOWlw?=
- =?utf-8?B?ZitqbVBzaERTWDBsVGtzSHV6SW1Ub1JaR0U3QUNwTlRMQWErMEVocXRDbzR3?=
- =?utf-8?B?QVpUR1hCdll1RkJzQlZuVG12YjNmSUthREo5c1ZnZ2xPNlRjRzRiR0tnZ05B?=
- =?utf-8?B?Q2xTdkxtcmE1UnVKa0ZtYk9pN3g5THltbVVwS1BzNTM1MklvalhsTkRwZlQy?=
- =?utf-8?B?R3lzeFR5ZHViMTEyTUlGTCtTanlQdUVGcmkyN2w2T2RweFlFYzVtV1ViNE95?=
- =?utf-8?B?TnNyZnVObFNZZHpmMkZxUjNJaXBaazNoYWRNUGZGS1p3STJpb2NXZ2N2SUtt?=
- =?utf-8?B?d0UrbGZyUXpvK1FneXk0SWVmL2dCSE9yVHpONXlxNG5ZNVpXMEtwUU9hVmlt?=
- =?utf-8?B?RlBNSzc0R0JMOEU2WnVHdUFRNU5pbWtuRG9qbExybk9GQmVCU0UyaXI0Nmov?=
- =?utf-8?B?NUs4WDFnNi9WbmpoL0JGUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UndXMEdYKzl1WXdpWU1GL2hydkhrWm5rTFU0Mm5Vbnk4SVhDQTFuTmFZK2Fl?=
- =?utf-8?B?RVlzREVjZmtvaTU3OW5zTjd1NlFDamdEalYyZXRmeDZ1RXgyUHRWMUtSb2hX?=
- =?utf-8?B?VWJ5S0ZnUC9yRVNuYXJDUHI4TGg1b3hHL1BaTGpoWndKZXh5bDEyVUNYSVFu?=
- =?utf-8?B?MUI4Y2pQZWVuaFZia2JwYTZyeFZrSDNEUHdHZ3psOU9QSjd5WWxBRDdqTGZU?=
- =?utf-8?B?NGJvRUZodDlERVlmd000aXJkTGkwTFkyWEt3ais5WnlNRFBxL0E3OEtKNFlS?=
- =?utf-8?B?RldsbnZIMnhFV2w0SDJKaDJGVnhDTCtDNUo4d1J4Si9IcExmdHlaT1N6UGU0?=
- =?utf-8?B?NUJNR3ZCUzBDYlcvZWNWM2xqcWg4RktlN0hLblR4QVpsSnlHOG40MG90dVNt?=
- =?utf-8?B?TThuUnRFUThZY2lUSHNWbmdpTDB1bXcrK25mejZ4MXNGcldLWGNKcmNNSVJK?=
- =?utf-8?B?b3NOakxEVDZFZldNL0FUZU9Oakc1SEFLYUlGUFdFUXFyTndsUkwxT05NeU1p?=
- =?utf-8?B?SjhqNzJ6c2lxQjBnL2NwTlRaSDMxdnpUTUVBTVYzU0F3b21qcGtLaFVpWEVV?=
- =?utf-8?B?NUFDY3VuTldBd1I0d3cvL3h0ZlJiTWJCRUtZQ3hLbGIyL0Fpc3ZWcVRkS042?=
- =?utf-8?B?UkZZNytEcWRJakU4WjRXVzlBY2dyMzU5aFlzWDhMQlRacFBpTTdmTE1kQTFT?=
- =?utf-8?B?WmNXVmlmaExFNTArTVZ1aHdGRGJVMmxqb1RkNktsZk8zeFJYczAybTJDalA1?=
- =?utf-8?B?bGg5OFZhTW1DUU05cGZiYW1CN0NwSUV6VlI3M0tyLytnU0Q4ejV0VWRTVHdH?=
- =?utf-8?B?dWlYNWpROE5PeU81RkpZL1c2NkVDOTM4WUszdkFpU053ZXpsaVYwc3ZMbkFo?=
- =?utf-8?B?NzRzd0QybmJPR2VlZHphb1ZBK1dCTVRYdkRjU1lqV0lNVWQvRWVCUDlrZkFu?=
- =?utf-8?B?ZzRGQmlNMHk5OGZuTTlhR2U0UjVBNXVMTW5kdlpJNnVsN0ZGaFJRWlh5emJk?=
- =?utf-8?B?UGtRdVRZRnFySHlTZWMwY2tzVDBDc3lFQ2ZFS2pESkgwZCtuaFVDVC93OVg2?=
- =?utf-8?B?SVkwMUNqdGRlUXlrMmxCS2RJNHl6Rnh2OC8zb21zcXhmckY3dkd4Y3k5NjZ3?=
- =?utf-8?B?Yjg3ajZLT0ErME1wcHJEblkzOVFpdTJXODJROVBQOUJBOXFEN0QrYzRieUtI?=
- =?utf-8?B?bVYzVTRmY0xqWHN6c2htY3l2TDRYamZ1Z3NoaExoSmNRS2VYOTJsTUYrYmsy?=
- =?utf-8?B?VllJSW5JSmxHK3B0b0VPQ0hlZXplZXBDZ2YvaGZ2Z0JHc09Gc0hydzV5eml0?=
- =?utf-8?B?b0tIUUNmdWRHV2ZYcS9xeWtJYUUzL3ZqM2FXejh6YklPU0NaK1VBNmlBaUpl?=
- =?utf-8?B?Uy9oSnIwUVZESWhkVlZJUHd2bXE3QUtYZXdGSE5xblZLVEZMNkZ4YWdTZmZr?=
- =?utf-8?B?dDEyU1pqa1Nwbmd4dTk3WHMzc1FyeXBaS0hibW42ejEvaWtoU2VZbXU2Wk4w?=
- =?utf-8?B?cFYyQjlBSjFrYU9tV1RhTEJ1NVJiZmdpa2xTVnhiWVl6Y2R1cko2WWtDYWJH?=
- =?utf-8?B?ZFZXb0dlOCtVL1BmbTM4YnFnQWV6QS9tNnROZjZZYy8zQTZ3V05jMXJLRG5J?=
- =?utf-8?B?ZGQ0bmN2YmRmMUI1Yit1ckRoT2RYSkhCVUd6MFc0TFVMRGZkM1RkZ1AvRUp6?=
- =?utf-8?B?ekVzUGgrM056YnduQjk2UTR2UGZma1NsOGswbUtRVW0xYjZPYko3ajUzb3Vm?=
- =?utf-8?B?TGhuRmRJQk1JRkN3SEhtM1hOZU1uSm1zNGVaUlBUSVlwODB1NWJZOFUyclhP?=
- =?utf-8?B?WG5JVW0ralNPUUprRlRwSS90ZU5oZ0RQdW9TWU9XUDhvYmlVM1o0enNFRE44?=
- =?utf-8?B?Z2MveG1zRXJSdEM4QTB1b1dCeW95aXpOdkthc3l4S0JobEJROUsvdUhSOUFL?=
- =?utf-8?B?MzBGRkwrYnlxd2FueURIQ3VpSkQ0WVlNdXBzYXBaODNNMUlDcTl4Vjlpcmdh?=
- =?utf-8?B?bCtqdldoU28yRFZ6NVJ5NVE1VXJXZlNTL3hwd2FmUSthZEFjSHgxRytQeEc1?=
- =?utf-8?B?K2RqNU16Y0ZzRTJWYWdXaXk4WEFNcVJOOTE3TlUycjhEQWVLZjFJUy9VNzdW?=
- =?utf-8?B?Yyt3ci9IWG9kVDEyazVQaWRGSks3MUpsODdzY24reEZnclF5WHZaVFlkakh0?=
- =?utf-8?B?cGNqVndScUY1ZWt3eUp0R3ZDMGhrMWUyM1o2dzZzRDBkK0dkQ3VXWHFlV2Rt?=
- =?utf-8?B?RVcwWS9Ia2FmWXJFRjM2TWp5ZTdBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 467afef0-4061-428f-a059-08dcce7e2dad
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5447.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 14:14:10.9428
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EC+8IV3KW/WbOHzXSiwXZ9N5g1HIMXSWG1APCSNYID9fNsELPKcebBYPOspQKDRUno3BVjBQUt0BbKA5s4rp3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8867
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests:resctrl: Fix build failure on archs without
+ __cpuid_count()
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: shuah@kernel.org, fenghua.yu@intel.com,
+ Reinette Chatre <reinette.chatre@intel.com>, usama.anjum@collabora.com,
+ linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240905180231.20920-1-skhan@linuxfoundation.org>
+ <21267ef6-6fcf-2eed-a3da-2782d1e7013a@linux.intel.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <21267ef6-6fcf-2eed-a3da-2782d1e7013a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On 06/09/2024 12:39, Satya Priya Kakitapalli wrote:
-> In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> operator to fix below build error and smatch warning.
+On 9/6/24 04:12, Ilpo Järvinen wrote:
+> On Thu, 5 Sep 2024, Shuah Khan wrote:
 > 
-> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
-> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
+>> When resctrl is built on architectures without __cpuid_count()
+>> support, build fails. resctrl uses __cpuid_count() defined in
+>> kselftest.h.
+>>
+>> Even though the problem is seen while building resctrl on aarch64,
+>> this error can be seen on any platform that doesn't support CPUID.
+>>
+>> CPUID is a x86/x86-64 feature and code paths with CPUID asm commands
+>> will fail to build on all other architectures.
+>>
+>> All others tests call __cpuid_count() do so from x86/x86_64 code paths
+>> when _i386__ or __x86_64__ are defined. resctrl is an exception.
+>>
+>> Fix the problem by defining __cpuid_count() only when __i386__ or
+>> __x86_64__ are defined in kselftest.h and changing resctrl to call
+>> __cpuid_count() only when __i386__ or __x86_64__ are defined.
+>>
+>> In file included from resctrl.h:24,
+>>                   from cat_test.c:11:
+>> In function ‘arch_supports_noncont_cat’,
+>>      inlined from ‘noncont_cat_run_test’ at cat_test.c:326:6:
+>> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
+>>     74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
+>>        |         ^~~~~~~
+>> cat_test.c:304:17: note: in expansion of macro ‘__cpuid_count’
+>>    304 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+>>        |                 ^~~~~~~~~~~~~
+>> ../kselftest.h:74:9: error: impossible constraint in ‘asm’
+>>     74 |         __asm__ __volatile__ ("cpuid\n\t"                               \
+>>        |         ^~~~~~~
+>> cat_test.c:306:17: note: in expansion of macro ‘__cpuid_count’
+>>    306 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+>>
+>> Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> Reported-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 > 
-> smatch warnings:
-> drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn: replace
-> divide condition '(remainder * 2) / prate' with '(remainder * 2) >= prate'
+> When the small things from Muhammad and Reinette addressed, this seems
+> okay.
 > 
-> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 > 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 019713c38f25..f9105443d7db 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
->   
->   	quotient = rate;
->   	remainder = do_div(quotient, prate);
-> -	*l = quotient;
->   
-> -	if ((remainder * 2) / prate)
-> -		*l = *l + 1;
-> +	*l = rate + (u32)(remainder * 2 >= prate);
->   }
->   
->   static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
 
+Will do. Thank you for the review.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Thanks for the solution.
+> 
+> 
+> I'm still left to wonder if the x86 selftest is supposed to clobber
+> CFLAGS? It seems that problem is orthogonal to this cpuid/resctrl problem.
+> I mean this question from the perspective of coherency in the entire
+> kselftest framework, lib.mk seems to want to adjust CFLAGS but those
+> changes will get clobbered in the case of x86 selftest.
+> 
 
-Thanks!
-Jon
+This isn't the case x86 clobbering the CFLAGS. This falls into the case
+of x86 customizing the flags for the test and the ones set by the common
+lib.mk might interfere with the flags it needs.
 
--- 
-nvpublic
+There isn't anything here to fix based on the history of this test and
+lib.mk.
+
+thanks,
+-- Shuah
 
