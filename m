@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-318331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2151296EBE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 975B196EBE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D07F52853D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5192328545E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8AD14B959;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210B814B95E;
 	Fri,  6 Sep 2024 07:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="f8OAPzw2"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HGS/ZfQX"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD9914F108
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C507214F115
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 07:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725607533; cv=none; b=hvDixzhstv8bOIlvS+NPU8ToZMRz/FF8lTROQzDWH48p4oz5xMBTgj/kFiIllYInerlUL+Whc3Oht9H5egPkBcB/TjmVQLJsR9b+HOD96wrpYy1u0vDQFo5hf9FOgVESNFGZZQ7m8BRwbMVuoE+3aqaLEMKCJGqEXIwzUFtRpDA=
+	t=1725607533; cv=none; b=CvmrgiNbX9lc1DFqXAJR0kUGj8IMS1fDog83lt60HuW/EnZFkOYrdve+8LuyvYBQMJSk4JrWHVXLAVmeigacVFOxVkGYIzcDkTn5Kz74f0atUdnUXv2iQtZccpngLZHgxvb6OCF7JKFBYHO98ZDsMDOYzg3Gcsi0nQH1s8x9X6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725607533; c=relaxed/simple;
-	bh=PiVWt21tAReUiAhhFPwvh9TMdF4fMykLiH3+6YtBZWA=;
+	bh=Aj7CfEvkwzk8Nedyysmr0vb1PpXi8DAeRQNN3Kg7rr8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=byhDHiOPv71s+gXgSNKSJQk5k9n0z4XhqtRQf887owCvnAND08/bQAJZ9ddz7QrAfJ3JR0SZE3MQf3rbDZCAWQ7fV/R4Qn9q8uOLXQ8KkuXfskhS8Qpu35EwQ4+ZlMIoFduhPKeVL/Lto+SqctuwriBpiaB8EpOtuDliW7uxK5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=f8OAPzw2; arc=none smtp.client-ip=213.167.242.64
+	 MIME-Version; b=G4laP/mDQnOi4ZS+qHPC6kQe7QUvOQnKAqBiZ28gIi6Tg35qjaETcDeVKUP72wMOMGV5EeTRjhzueEjjLUUMhoTTwrOiyjeC1k2P2Yh+GLtXkm9lT/1AG6zCuw1eXVV+qmB/hOex0u21zQXPBzv6N5otdGb5TmbOXh5Vni6Rzjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HGS/ZfQX; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:c173:4b:4a04:3a21])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09699220;
-	Fri,  6 Sep 2024 09:24:06 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7FC7C13BE;
+	Fri,  6 Sep 2024 09:24:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725607450;
-	bh=PiVWt21tAReUiAhhFPwvh9TMdF4fMykLiH3+6YtBZWA=;
+	s=mail; t=1725607452;
+	bh=Aj7CfEvkwzk8Nedyysmr0vb1PpXi8DAeRQNN3Kg7rr8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f8OAPzw2Mpzm2vucjK4vQOlnVJaYovrwbx3nfLyHdSKs5dTfJsWcDJiaNKt9AjUa4
-	 mYdT4Ms81r71PCow4dgdrOpQ7ZsNnUfxYdPBW7Er4IquQU/on3fxTmsyX/Z2mAD3Xd
-	 eD+PRW1oYFHDRh+cNWzknoeKaJ64+oxJO4+W4EYg=
+	b=HGS/ZfQXFnIJy4Ubtcs5yYSQSd/LRQnbxuG3ZuylUZhb8yBlX10YgKnOYYvaRuPc9
+	 QKRDwxVtDjLiLQhoCckZvMVkNOUru8C3R15cHBYWozqdnP3wVdVMeiW2VyufBvXWVb
+	 KzUg1fpZuxLxKur8MvaPXsTapplg0psqs7Gkxtx4=
 From: Umang Jain <umang.jain@ideasonboard.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
@@ -55,9 +55,9 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Phil Elwell <phil@raspberrypi.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH v4 2/7] staging: vchiq_core: Simplify vchiq_bulk_transfer()
-Date: Fri,  6 Sep 2024 12:55:01 +0530
-Message-ID: <20240906072506.174026-3-umang.jain@ideasonboard.com>
+Subject: [PATCH v4 3/7] staging: vchiq_core: Factor out bulk transfer for blocking mode
+Date: Fri,  6 Sep 2024 12:55:02 +0530
+Message-ID: <20240906072506.174026-4-umang.jain@ideasonboard.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240906072506.174026-1-umang.jain@ideasonboard.com>
 References: <20240906072506.174026-1-umang.jain@ideasonboard.com>
@@ -69,280 +69,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out core logic for preparing bulk data transfer(mutex locking,
-waits on vchiq_bulk_queue wait-queue, initialising the bulk transfer)
-out of the vchiq_bulk_transfer(). This simplifies the existing
-vchiq_bulk_transfer() and makes it more readable since all the core
-logic is handled in vchiq_bulk_xfer_queue_msg_interruptible(). It
-will also help us to refactor vchiq_bulk_transfer() easily for different
-vchiq bulk transfer modes.
+Factor out bulk transfer for blocking mode into a separate dedicated
+function bulk_xfer_blocking_interruptible(). It is suffixed by
+"_interruptible" to denote that it can be interrupted and -EAGAIN
+can be returned. It would be up to the users of the function to retry
+the call in those cases.
 
-No functional changes intended in this patch.
+Adjust the calls to vchiq-dev.c ioctl interface and vchiq_arm.c
+for blocking bulk transfers.
 
 Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 ---
- .../interface/vchiq_arm/vchiq_core.c          | 217 ++++++++++--------
- 1 file changed, 121 insertions(+), 96 deletions(-)
+ .../interface/vchiq_arm/vchiq_arm.c           |  5 +--
+ .../interface/vchiq_arm/vchiq_core.c          | 42 ++++++++++++++++---
+ .../interface/vchiq_arm/vchiq_core.h          |  5 +++
+ .../interface/vchiq_arm/vchiq_dev.c           |  6 +++
+ 4 files changed, 49 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 2239f59519be..f36044bab194 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -189,6 +189,13 @@ static const char *const conn_state_names[] = {
- static void
- release_message_sync(struct vchiq_state *state, struct vchiq_header *header);
- 
-+static int
-+vchiq_bulk_xfer_queue_msg_interruptible(struct vchiq_service *service,
-+					void *offset, void __user *uoffset,
-+					int size, void *userdata,
-+					enum vchiq_bulk_mode mode,
-+					enum vchiq_bulk_dir dir);
-+
- static const char *msg_type_str(unsigned int msg_type)
- {
- 	switch (msg_type) {
-@@ -2991,15 +2998,9 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
- 			enum vchiq_bulk_mode mode, enum vchiq_bulk_dir dir)
- {
- 	struct vchiq_service *service = find_service_by_handle(instance, handle);
--	struct vchiq_bulk_queue *queue;
--	struct vchiq_bulk *bulk;
--	struct vchiq_state *state;
- 	struct bulk_waiter *bulk_waiter = NULL;
--	const char dir_char = (dir == VCHIQ_BULK_TRANSMIT) ? 't' : 'r';
--	const int dir_msgtype = (dir == VCHIQ_BULK_TRANSMIT) ?
--		VCHIQ_MSG_BULK_TX : VCHIQ_MSG_BULK_RX;
-+	struct vchiq_bulk *bulk;
- 	int status = -EINVAL;
--	int payload[2];
- 
- 	if (!service)
- 		goto error_exit;
-@@ -3027,89 +3028,10 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
- 		goto error_exit;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index c4d97dbf6ba8..688c9b1be868 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -968,9 +968,8 @@ vchiq_blocking_bulk_transfer(struct vchiq_instance *instance, unsigned int handl
+ 			return -ENOMEM;
  	}
  
--	state = service->state;
--
--	queue = (dir == VCHIQ_BULK_TRANSMIT) ?
--		&service->bulk_tx : &service->bulk_rx;
--
--	if (mutex_lock_killable(&service->bulk_mutex)) {
--		status = -EAGAIN;
--		goto error_exit;
--	}
--
--	if (queue->local_insert == queue->remove + VCHIQ_NUM_SERVICE_BULKS) {
--		VCHIQ_SERVICE_STATS_INC(service, bulk_stalls);
--		do {
--			mutex_unlock(&service->bulk_mutex);
--			if (wait_for_completion_interruptible(&service->bulk_remove_event)) {
--				status = -EAGAIN;
--				goto error_exit;
--			}
--			if (mutex_lock_killable(&service->bulk_mutex)) {
--				status = -EAGAIN;
--				goto error_exit;
--			}
--		} while (queue->local_insert == queue->remove +
--				VCHIQ_NUM_SERVICE_BULKS);
--	}
--
--	bulk = &queue->bulks[BULK_INDEX(queue->local_insert)];
--
--	bulk->mode = mode;
--	bulk->dir = dir;
--	bulk->userdata = userdata;
--	bulk->size = size;
--	bulk->actual = VCHIQ_BULK_ACTUAL_ABORTED;
--
--	if (vchiq_prepare_bulk_data(instance, bulk, offset, uoffset, size, dir))
--		goto unlock_error_exit;
--
--	/*
--	 * Ensure that the bulk data record is visible to the peer
--	 * before proceeding.
--	 */
--	wmb();
--
--	dev_dbg(state->dev, "core: %d: bt (%d->%d) %cx %x@%pad %pK\n",
--		state->id, service->localport, service->remoteport,
--		dir_char, size, &bulk->data, userdata);
--
--	/*
--	 * The slot mutex must be held when the service is being closed, so
--	 * claim it here to ensure that isn't happening
--	 */
--	if (mutex_lock_killable(&state->slot_mutex)) {
--		status = -EAGAIN;
--		goto cancel_bulk_error_exit;
--	}
--
--	if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
--		goto unlock_both_error_exit;
--
--	payload[0] = lower_32_bits(bulk->data);
--	payload[1] = bulk->size;
--	status = queue_message(state,
--			       NULL,
--			       VCHIQ_MAKE_MSG(dir_msgtype,
--					      service->localport,
--					      service->remoteport),
--			       memcpy_copy_callback,
--			       &payload,
--			       sizeof(payload),
--			       QMFLAGS_IS_BLOCKING |
--			       QMFLAGS_NO_MUTEX_LOCK |
--			       QMFLAGS_NO_MUTEX_UNLOCK);
-+	status = vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uoffset,
-+							 size, userdata, mode, dir);
- 	if (status)
--		goto unlock_both_error_exit;
--
--	queue->local_insert++;
--
--	mutex_unlock(&state->slot_mutex);
--	mutex_unlock(&service->bulk_mutex);
--
--	dev_dbg(state->dev, "core: %d: bt:%d %cx li=%x ri=%x p=%x\n",
--		state->id, service->localport, dir_char, queue->local_insert,
--		queue->remote_insert, queue->process);
-+		goto error_exit;
+-	ret = vchiq_bulk_transfer(instance, handle, data, NULL, size,
+-				  &waiter->bulk_waiter,
+-				  VCHIQ_BULK_MODE_BLOCKING, dir);
++	ret = vchiq_bulk_xfer_blocking_interruptible(instance, handle, data, NULL, size,
++						     &waiter->bulk_waiter, dir);
+ 	if ((ret != -EAGAIN) || fatal_signal_pending(current) || !waiter->bulk_waiter.bulk) {
+ 		struct vchiq_bulk *bulk = waiter->bulk_waiter.bulk;
  
- 	vchiq_service_put(service);
- 
-@@ -3123,13 +3045,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
- 
- 	return 0;
- 
--unlock_both_error_exit:
--	mutex_unlock(&state->slot_mutex);
--cancel_bulk_error_exit:
--	vchiq_complete_bulk(service->instance, bulk);
--unlock_error_exit:
--	mutex_unlock(&service->bulk_mutex);
--
- error_exit:
- 	if (service)
- 		vchiq_service_put(service);
-@@ -3289,6 +3204,116 @@ vchiq_release_message(struct vchiq_instance *instance, unsigned int handle,
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index f36044bab194..43f951fa4b89 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -2985,6 +2985,42 @@ vchiq_remove_service(struct vchiq_instance *instance, unsigned int handle)
+ 	return status;
  }
- EXPORT_SYMBOL(vchiq_release_message);
  
-+/*
-+ * Prepares a bulk transfer to be queued. The function is interruptible and is
-+ * intended to be called from user threads. It may return -EAGAIN to indicate
-+ * that a signal has been received and the call should be retried after being
-+ * returned to user context.
-+ */
-+static int
-+vchiq_bulk_xfer_queue_msg_interruptible(struct vchiq_service *service,
-+					void *offset, void __user *uoffset,
-+					int size, void *userdata,
-+					enum vchiq_bulk_mode mode,
-+					enum vchiq_bulk_dir dir)
++int
++vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned int handle,
++				       void *offset, void __user *uoffset, int size,
++				       void __user *userdata, enum vchiq_bulk_dir dir)
 +{
-+	struct vchiq_bulk_queue *queue;
-+	struct vchiq_bulk *bulk;
-+	struct vchiq_state *state = service->state;
-+	const char dir_char = (dir == VCHIQ_BULK_TRANSMIT) ? 't' : 'r';
-+	const int dir_msgtype = (dir == VCHIQ_BULK_TRANSMIT) ?
-+		VCHIQ_MSG_BULK_TX : VCHIQ_MSG_BULK_RX;
++	struct vchiq_service *service = find_service_by_handle(instance, handle);
++	struct bulk_waiter *bulk_waiter;
++	enum vchiq_bulk_mode mode = VCHIQ_BULK_MODE_BLOCKING;
 +	int status = -EINVAL;
-+	int payload[2];
 +
-+	queue = (dir == VCHIQ_BULK_TRANSMIT) ?
-+		&service->bulk_tx : &service->bulk_rx;
-+
-+	if (mutex_lock_killable(&service->bulk_mutex))
-+		return -EAGAIN;
-+
-+	if (queue->local_insert == queue->remove + VCHIQ_NUM_SERVICE_BULKS) {
-+		VCHIQ_SERVICE_STATS_INC(service, bulk_stalls);
-+		do {
-+			mutex_unlock(&service->bulk_mutex);
-+			if (wait_for_completion_interruptible(&service->bulk_remove_event))
-+				return -EAGAIN;
-+			if (mutex_lock_killable(&service->bulk_mutex))
-+				return -EAGAIN;
-+		} while (queue->local_insert == queue->remove +
-+				VCHIQ_NUM_SERVICE_BULKS);
-+	}
-+
-+	bulk = &queue->bulks[BULK_INDEX(queue->local_insert)];
-+
-+	bulk->mode = mode;
-+	bulk->dir = dir;
-+	bulk->userdata = userdata;
-+	bulk->size = size;
-+	bulk->actual = VCHIQ_BULK_ACTUAL_ABORTED;
-+
-+	if (vchiq_prepare_bulk_data(service->instance, bulk, offset, uoffset, size, dir))
-+		goto unlock_error_exit;
-+
-+	/*
-+	 * Ensure that the bulk data record is visible to the peer
-+	 * before proceeding.
-+	 */
-+	wmb();
-+
-+	dev_dbg(state->dev, "core: %d: bt (%d->%d) %cx %x@%pad %pK\n",
-+		state->id, service->localport, service->remoteport,
-+		dir_char, size, &bulk->data, userdata);
-+
-+	/*
-+	 * The slot mutex must be held when the service is being closed, so
-+	 * claim it here to ensure that isn't happening
-+	 */
-+	if (mutex_lock_killable(&state->slot_mutex)) {
-+		status = -EAGAIN;
-+		goto cancel_bulk_error_exit;
-+	}
++	if (!service)
++		return -EINVAL;
 +
 +	if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
-+		goto unlock_both_error_exit;
++		goto error_exit;
 +
-+	payload[0] = lower_32_bits(bulk->data);
-+	payload[1] = bulk->size;
-+	status = queue_message(state,
-+			       NULL,
-+			       VCHIQ_MAKE_MSG(dir_msgtype,
-+					      service->localport,
-+					      service->remoteport),
-+			       memcpy_copy_callback,
-+			       &payload,
-+			       sizeof(payload),
-+			       QMFLAGS_IS_BLOCKING |
-+			       QMFLAGS_NO_MUTEX_LOCK |
-+			       QMFLAGS_NO_MUTEX_UNLOCK);
-+	if (status)
-+		goto unlock_both_error_exit;
++	if (!offset && !uoffset)
++		goto error_exit;
 +
-+	queue->local_insert++;
++	if (vchiq_check_service(service))
++		goto error_exit;
 +
-+	mutex_unlock(&state->slot_mutex);
-+	mutex_unlock(&service->bulk_mutex);
++	bulk_waiter = userdata;
++	init_completion(&bulk_waiter->event);
++	bulk_waiter->actual = 0;
++	bulk_waiter->bulk = NULL;
 +
-+	dev_dbg(state->dev, "core: %d: bt:%d %cx li=%x ri=%x p=%x\n",
-+		state->id, service->localport, dir_char, queue->local_insert,
-+		queue->remote_insert, queue->process);
++	status = vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uoffset, size,
++							 userdata, mode, dir);
 +
-+	return status;
-+
-+unlock_both_error_exit:
-+	mutex_unlock(&state->slot_mutex);
-+cancel_bulk_error_exit:
-+	vchiq_complete_bulk(service->instance, bulk);
-+unlock_error_exit:
-+	mutex_unlock(&service->bulk_mutex);
++error_exit:
++	vchiq_service_put(service);
 +
 +	return status;
 +}
 +
- static void
- release_message_sync(struct vchiq_state *state, struct vchiq_header *header)
- {
+ /*
+  * This function may be called by kernel threads or user threads.
+  * User threads may receive -EAGAIN to indicate that a signal has been
+@@ -3018,12 +3054,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
+ 	case VCHIQ_BULK_MODE_NOCALLBACK:
+ 	case VCHIQ_BULK_MODE_CALLBACK:
+ 		break;
+-	case VCHIQ_BULK_MODE_BLOCKING:
+-		bulk_waiter = userdata;
+-		init_completion(&bulk_waiter->event);
+-		bulk_waiter->actual = 0;
+-		bulk_waiter->bulk = NULL;
+-		break;
+ 	default:
+ 		goto error_exit;
+ 	}
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+index 985d9ea3a06a..2dd89101c1c6 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+@@ -474,6 +474,11 @@ extern int
+ vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance *instance,
+ 				      unsigned int handle, struct bulk_waiter *userdata);
+ 
++extern int
++vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned int handle,
++				       void *offset, void __user *uoffset, int size,
++				       void __user *userdata, enum vchiq_bulk_dir dir);
++
+ extern int
+ vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle, void *offset,
+ 		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_mode mode,
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+index 550838d2863b..830633f2326b 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+@@ -304,6 +304,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ 		}
+ 
+ 		userdata = &waiter->bulk_waiter;
++
++		status = vchiq_bulk_xfer_blocking_interruptible(instance, args->handle,
++								NULL, args->data, args->size,
++								userdata, dir);
++
++		goto bulk_transfer_handled;
+ 	} else if (args->mode == VCHIQ_BULK_MODE_WAITING) {
+ 		mutex_lock(&instance->bulk_waiter_list_mutex);
+ 		list_for_each_entry(iter, &instance->bulk_waiter_list,
 -- 
 2.45.2
 
