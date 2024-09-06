@@ -1,86 +1,67 @@
-Return-Path: <linux-kernel+bounces-318074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDC396E805
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8346A96E806
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3D32B21FB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3715E284C3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14243EA69;
-	Fri,  6 Sep 2024 03:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AEEnVWIM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9737D34CC4;
+	Fri,  6 Sep 2024 03:11:57 +0000 (UTC)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2D14AEF2;
-	Fri,  6 Sep 2024 03:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8128379
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 03:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725592172; cv=none; b=DX5slylc62vNLNmnGRCti0Or0IkOSEs5Kg8ah0FLt/II5DRu6XufTb/TaeQxohog9nhh0m/YLZA/6soiW1S2ZGIvG4WUa60cPcesWOpl6cNNBdXYAo5+szetfTtkumCTscU9EB+qgxuACY34woTY7jRt1Q7eR+Fu4TwXkhQ9/N8=
+	t=1725592317; cv=none; b=dIIw2k2Vjpawj9jACir44Mh7HjKx352ZjfC52MXY7F3Q2rzMzN7NAyI4wxV+lkjlTsl/r2tN8Sw29AFH56qCfw0kZKHwmGu/EHhE4lfnbGOAEaDmi3BY6K7hYut/FBZda1jCEvuprdnyI2CCOvXQ5x1GdlRRcQEyD5by3GgrCHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725592172; c=relaxed/simple;
-	bh=PSFihkZgLasjDkyToU3y/y2OCLAaD/A4Hx/YphgS1CM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LAmd65w1nKqSAKXTVCuK9FOLO9cfP14ICozVaEVncU1QUyU+fZPDf6mZCtnmEU/lXL3aVdF1D42lbpF1m0/Pi4/HTi6QH+OejKoQC+/hBxb629JhPCUh82n80xHyXW0bKnyUJ/WWFEhZm5eMr9a/LDAW0b2ra1IjXDh4JJOupUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AEEnVWIM; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725592170; x=1757128170;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PSFihkZgLasjDkyToU3y/y2OCLAaD/A4Hx/YphgS1CM=;
-  b=AEEnVWIMPpnKFei5Scmnq1d3zHfG3iUZ2AMO92t0DOy5CDhZtLspIJ4S
-   XOPF3y3yRzK67PvEaMRm3vyhsK3wCXDG9zXJKcYR7Um/JF6uZduK8F/MD
-   4/gz/JQZzk9/9KBFd2hT7oohUlG/yezRTfxTp3udBlfAOevsLV6a9tJv5
-   3jwu+Qf4+Ym3HHgMX4zmlsvoKkQ6tKSP2cX3T0D0viEP01kx1rXEPqCES
-   gLVW/iuan3S4cEceZqMiyV3we39eGD1TpSuuqm1AGWbsAjw23KiOZw3e7
-   9dLdubMmhzxJZTGMPUk+D5UaxGNBHGxt2IDLf0OsANrz6Se/MfdBd8Lkm
-   g==;
-X-CSE-ConnectionGUID: 22hlmmOcQ0S216mX6K0/Tw==
-X-CSE-MsgGUID: anYqW03fRPyanAXJZiIrtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="28089487"
-X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
-   d="scan'208";a="28089487"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 20:09:30 -0700
-X-CSE-ConnectionGUID: x+ooRBcEQECl/064bwq7yg==
-X-CSE-MsgGUID: 64nkZDu+REefnITy+IXeiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
-   d="scan'208";a="66364412"
-Received: from unknown (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.245.242.189])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 20:09:26 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
+	s=arc-20240116; t=1725592317; c=relaxed/simple;
+	bh=hYbpknmZv1Wf5kY87MzCjpa2/VIs0v7yv/FVVUOCUGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AWS4BmFH4p2RvSYV2UdPuCeO93eOVMBUysYIuNwdEwAl9h7rSaJ49QqbZYmb9CxfEfqXwyKcoYmBXFr7uv1T5o5FLnn7l59idH6lQvj7ogKO1PF48kSKmR78UZoc4nTJKtEHXKxv1EtFoZBbelyaMPEMZtq2PM9dbg2Ynuz/Vmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7093b53f315so605084a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 20:11:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725592315; x=1726197115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vHWxSRmAIq5y+t+Bsnw0e3+Xv51/57FXG9eUtKPq2dg=;
+        b=LuxKr8BJaEQksB7FYjeL7EaeaeJ4Qoti9CCxV/kndk9Zt+BwTdlIertBq0/N5WWeYM
+         fFciD8LEhgil6N3XAje7lqq1feCT4PI/rFCSNV3nU1fBviLc61kitF6sjnO0KV3nJXy3
+         3aqN/uKcV33ffxiIZqNaYioMNlXPtD5qLeISGiiOoi2m8FHqpfwB7DHTEJ0e+fxbzqRS
+         OImgx2rWAyvLkYHFS2K3sLS/zWf90qo3yKwT/5+FhPckEL9nqDvtFKrK1FLBCR/pm1sI
+         fpnhaevZeWJverOjw1qN9gKqxWcEdhnnAHKFQ7K2vK+CqtglfMtx6K/vd7kWmFZctpVq
+         2lUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6KkFyavlHPwMlo/Bf3NUJn1Wscbs7NFfxRsOHCofZIJRLVJAE0eH5yXZID2zdWDV2qAGjn7Ag5udOh2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRuuX5FRPif4g4kQVDypYOHq4AcRi3n4KWEi0yeFlDCm/lyBxD
+	dgIJUtgbeeKGpKV5tsq6ZDFlxwEWHD153Z4ejr7ObXKb3yD5CWmd
+X-Google-Smtp-Source: AGHT+IGiIJOqPOM3+WDLMgLiBuKcw5W6p2Wxvkgw77bXyGx4kYgLOl7X9U6U2rRwJoGlwAqNa/wNNA==
+X-Received: by 2002:a05:6830:61c3:b0:709:3585:fd7e with SMTP id 46e09a7af769-70f5c3d48e5mr31144675a34.12.1725592314754;
+        Thu, 05 Sep 2024 20:11:54 -0700 (PDT)
+Received: from snowbird.attlocal.net ([2600:1700:7c10:db60:551c:dde1:25ee:9a04])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd84e73sm3425244a12.11.2024.09.05.20.11.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 20:11:54 -0700 (PDT)
+From: Dennis Zhou <dennis@kernel.org>
+To: Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>
 Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Baoquan He <bhe@redhat.com>
-Subject: [PATCH -v3 3/3] resource, kunit: Add test case for region_intersects()
-Date: Fri,  6 Sep 2024 11:07:13 +0800
-Message-Id: <20240906030713.204292-4-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240906030713.204292-1-ying.huang@intel.com>
-References: <20240906030713.204292-1-ying.huang@intel.com>
+	Dennis Zhou <dennis@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH] percpu: fix data race with pcpu_nr_empty_pop_pages
+Date: Thu,  5 Sep 2024 20:11:51 -0700
+Message-ID: <20240906031151.80719-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,258 +70,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-region_intersects() is important because it's used for /dev/mem
-permission checking.  To avoid possible bug of region_intersects() in
-the future, a kunit test case for region_intersects() is added.
+Fixes the data race by moving the read to be behind the pcpu_lock. This
+is okay because the code (initially) above it will not increase the
+empty populated page count because it is populating backing pages that
+already have allocations served out of them.
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Baoquan He <bhe@redhat.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202407191651.f24e499d-oliver.sang@intel.com
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 ---
- kernel/resource.c       |  20 ++++--
- kernel/resource_kunit.c | 143 ++++++++++++++++++++++++++++++++++++++++
- lib/Kconfig.debug       |   1 +
- 3 files changed, 158 insertions(+), 6 deletions(-)
+ mm/percpu.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 035ef16c1a66..e6d222fb0f84 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -1860,7 +1860,17 @@ EXPORT_SYMBOL(resource_list_free);
- #ifdef CONFIG_GET_FREE_REGION
- #define GFR_DESCENDING		(1UL << 0)
- #define GFR_REQUEST_REGION	(1UL << 1)
--#define GFR_DEFAULT_ALIGN (1UL << PA_SECTION_SHIFT)
-+#ifdef PA_SECTION_SHIFT
-+#define GFR_DEFAULT_ALIGN	(1UL << PA_SECTION_SHIFT)
-+#else
-+#define GFR_DEFAULT_ALIGN	PAGE_SIZE
-+#endif
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 20d91af8c033..325fb8412e90 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -1864,6 +1864,10 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 
+ area_found:
+ 	pcpu_stats_area_alloc(chunk, size);
 +
-+#ifdef MAX_PHYSMEM_BITS
-+#define MAX_PHYS_ADDR		((1ULL << MAX_PHYSMEM_BITS) - 1)
-+#else
-+#define MAX_PHYS_ADDR		(-1ULL)
-+#endif
++	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
++		pcpu_schedule_balance_work();
++
+ 	spin_unlock_irqrestore(&pcpu_lock, flags);
  
- static resource_size_t gfr_start(struct resource *base, resource_size_t size,
- 				 resource_size_t align, unsigned long flags)
-@@ -1868,8 +1878,7 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
- 	if (flags & GFR_DESCENDING) {
- 		resource_size_t end;
- 
--		end = min_t(resource_size_t, base->end,
--			    (1ULL << MAX_PHYSMEM_BITS) - 1);
-+		end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
- 		return end - size + 1;
+ 	/* populate if not all pages are already there */
+@@ -1891,9 +1895,6 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
+ 		mutex_unlock(&pcpu_alloc_mutex);
  	}
  
-@@ -1886,8 +1895,7 @@ static bool gfr_continue(struct resource *base, resource_size_t addr,
- 	 * @size did not wrap 0.
- 	 */
- 	return addr > addr - size &&
--	       addr <= min_t(resource_size_t, base->end,
--			     (1ULL << MAX_PHYSMEM_BITS) - 1);
-+		addr <= min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
- }
- 
- static resource_size_t gfr_next(resource_size_t addr, resource_size_t size,
-@@ -2048,7 +2056,7 @@ struct resource *alloc_free_mem_region(struct resource *base,
- 	return get_free_mem_region(NULL, base, size, align, name,
- 				   IORES_DESC_NONE, flags);
- }
--EXPORT_SYMBOL_NS_GPL(alloc_free_mem_region, CXL);
-+EXPORT_SYMBOL_GPL(alloc_free_mem_region);
- #endif /* CONFIG_GET_FREE_REGION */
- 
- static int __init strict_iomem(char *str)
-diff --git a/kernel/resource_kunit.c b/kernel/resource_kunit.c
-index 0e509985a44a..42d2d8d20f5d 100644
---- a/kernel/resource_kunit.c
-+++ b/kernel/resource_kunit.c
-@@ -7,6 +7,8 @@
- #include <linux/ioport.h>
- #include <linux/kernel.h>
- #include <linux/string.h>
-+#include <linux/sizes.h>
-+#include <linux/mm.h>
- 
- #define R0_START	0x0000
- #define R0_END		0xffff
-@@ -137,9 +139,150 @@ static void resource_test_intersection(struct kunit *test)
- 	} while (++i < ARRAY_SIZE(results_for_intersection));
- }
- 
-+/*
-+ * The test resource tree for region_intersects() test:
-+ *
-+ * BASE-BASE+1M-1 : Test System RAM 0
-+ *		  # hole 0 (BASE+1M-BASE+2M)
-+ * BASE+2M-BASE+3M-1 : Test CXL Window 0
-+ * BASE+3M-BASE+4M-1 : Test System RAM 1
-+ * BASE+4M-BASE+7M-1 : Test CXL Window 1
-+ *   BASE+4M-BASE+5M-1 : Test System RAM 2
-+ *     BASE+4M+128K-BASE+4M+256K-1: Test Code
-+ *   BASE+5M-BASE+6M-1 : Test System RAM 3
-+ */
-+#define RES_TEST_RAM0_OFFSET	0
-+#define RES_TEST_RAM0_SIZE	SZ_1M
-+#define RES_TEST_HOLE0_OFFSET	(RES_TEST_RAM0_OFFSET + RES_TEST_RAM0_SIZE)
-+#define RES_TEST_HOLE0_SIZE	SZ_1M
-+#define RES_TEST_WIN0_OFFSET	(RES_TEST_HOLE0_OFFSET + RES_TEST_HOLE0_SIZE)
-+#define RES_TEST_WIN0_SIZE	SZ_1M
-+#define RES_TEST_RAM1_OFFSET	(RES_TEST_WIN0_OFFSET + RES_TEST_WIN0_SIZE)
-+#define RES_TEST_RAM1_SIZE	SZ_1M
-+#define RES_TEST_WIN1_OFFSET	(RES_TEST_RAM1_OFFSET + RES_TEST_RAM1_SIZE)
-+#define RES_TEST_WIN1_SIZE	(SZ_1M * 3)
-+#define RES_TEST_RAM2_OFFSET	RES_TEST_WIN1_OFFSET
-+#define RES_TEST_RAM2_SIZE	SZ_1M
-+#define RES_TEST_CODE_OFFSET	(RES_TEST_RAM2_OFFSET + SZ_128K)
-+#define RES_TEST_CODE_SIZE	SZ_128K
-+#define RES_TEST_RAM3_OFFSET	(RES_TEST_RAM2_OFFSET + RES_TEST_RAM2_SIZE)
-+#define RES_TEST_RAM3_SIZE	SZ_1M
-+#define RES_TEST_TOTAL_SIZE	((RES_TEST_WIN1_OFFSET + RES_TEST_WIN1_SIZE))
-+
-+static void remove_free_resource(void *ctx)
-+{
-+	struct resource *res = (struct resource *)ctx;
-+
-+	remove_resource(res);
-+	kfree(res);
-+}
-+
-+static void resource_test_request_region(struct kunit *test, struct resource *parent,
-+					 resource_size_t start, resource_size_t size,
-+					 const char *name, unsigned long flags)
-+{
-+	struct resource *res;
-+
-+	res = __request_region(parent, start, size, name, flags);
-+	KUNIT_ASSERT_NOT_NULL(test, res);
-+	kunit_add_action_or_reset(test, remove_free_resource, res);
-+}
-+
-+static void resource_test_insert_resource(struct kunit *test, struct resource *parent,
-+					  resource_size_t start, resource_size_t size,
-+					  const char *name, unsigned long flags)
-+{
-+	struct resource *res;
-+
-+	res = kzalloc(sizeof(*res), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, res);
-+
-+	res->name = name;
-+	res->start = start;
-+	res->end = start + size - 1;
-+	res->flags = flags;
-+	if (insert_resource(parent, res)) {
-+		kfree(res);
-+		KUNIT_FAIL_AND_ABORT(test, "Fail to insert resource %pR\n", res);
-+	}
-+
-+	kunit_add_action_or_reset(test, remove_free_resource, res);
-+}
-+
-+static void resource_test_region_intersects(struct kunit *test)
-+{
-+	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-+	struct resource *parent;
-+	resource_size_t start;
-+
-+	/* Find an iomem_resource hole to hold test resources */
-+	parent = alloc_free_mem_region(&iomem_resource, RES_TEST_TOTAL_SIZE, SZ_1M,
-+				       "test resources");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+	start = parent->start;
-+	kunit_add_action_or_reset(test, remove_free_resource, parent);
-+
-+	resource_test_request_region(test, parent, start + RES_TEST_RAM0_OFFSET,
-+				     RES_TEST_RAM0_SIZE, "Test System RAM 0", flags);
-+	resource_test_insert_resource(test, parent, start + RES_TEST_WIN0_OFFSET,
-+				      RES_TEST_WIN0_SIZE, "Test CXL Window 0",
-+				      IORESOURCE_MEM);
-+	resource_test_request_region(test, parent, start + RES_TEST_RAM1_OFFSET,
-+				     RES_TEST_RAM1_SIZE, "Test System RAM 1", flags);
-+	resource_test_insert_resource(test, parent, start + RES_TEST_WIN1_OFFSET,
-+				      RES_TEST_WIN1_SIZE, "Test CXL Window 1",
-+				      IORESOURCE_MEM);
-+	resource_test_request_region(test, parent, start + RES_TEST_RAM2_OFFSET,
-+				     RES_TEST_RAM2_SIZE, "Test System RAM 2", flags);
-+	resource_test_insert_resource(test, parent, start + RES_TEST_CODE_OFFSET,
-+				      RES_TEST_CODE_SIZE, "Test Code", flags);
-+	resource_test_request_region(test, parent, start + RES_TEST_RAM3_OFFSET,
-+				     RES_TEST_RAM3_SIZE, "Test System RAM 3", flags);
-+	kunit_release_action(test, remove_free_resource, parent);
-+
-+	KUNIT_EXPECT_EQ(test, REGION_INTERSECTS,
-+			region_intersects(start + RES_TEST_RAM0_OFFSET, PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_INTERSECTS,
-+			region_intersects(start + RES_TEST_RAM0_OFFSET +
-+					  RES_TEST_RAM0_SIZE - PAGE_SIZE, 2 * PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_DISJOINT,
-+			region_intersects(start + RES_TEST_HOLE0_OFFSET, PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_DISJOINT,
-+			region_intersects(start + RES_TEST_HOLE0_OFFSET +
-+					  RES_TEST_HOLE0_SIZE - PAGE_SIZE, 2 * PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_MIXED,
-+			region_intersects(start + RES_TEST_WIN0_OFFSET +
-+					  RES_TEST_WIN0_SIZE - PAGE_SIZE, 2 * PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_INTERSECTS,
-+			region_intersects(start + RES_TEST_RAM1_OFFSET +
-+					  RES_TEST_RAM1_SIZE - PAGE_SIZE, 2 * PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_INTERSECTS,
-+			region_intersects(start + RES_TEST_RAM2_OFFSET +
-+					  RES_TEST_RAM2_SIZE - PAGE_SIZE, 2 * PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_INTERSECTS,
-+			region_intersects(start + RES_TEST_CODE_OFFSET, PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_INTERSECTS,
-+			region_intersects(start + RES_TEST_RAM2_OFFSET,
-+					  RES_TEST_RAM2_SIZE + PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+	KUNIT_EXPECT_EQ(test, REGION_MIXED,
-+			region_intersects(start + RES_TEST_RAM3_OFFSET,
-+					  RES_TEST_RAM3_SIZE + PAGE_SIZE,
-+					  IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE));
-+}
-+
- static struct kunit_case resource_test_cases[] = {
- 	KUNIT_CASE(resource_test_union),
- 	KUNIT_CASE(resource_test_intersection),
-+	KUNIT_CASE(resource_test_region_intersects),
- 	{}
- };
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index a30c03a66172..383453cbf4af 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2616,6 +2616,7 @@ config RESOURCE_KUNIT_TEST
- 	tristate "KUnit test for resource API" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	default KUNIT_ALL_TESTS
-+	select GET_FREE_REGION
- 	help
- 	  This builds the resource API unit test.
- 	  Tests the logic of API provided by resource.c and ioport.h.
+-	if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
+-		pcpu_schedule_balance_work();
+-
+ 	/* clear the areas and return address relative to base address */
+ 	for_each_possible_cpu(cpu)
+ 		memset((void *)pcpu_chunk_addr(chunk, cpu, 0) + off, 0, size);
 -- 
-2.39.2
+2.43.0
 
 
