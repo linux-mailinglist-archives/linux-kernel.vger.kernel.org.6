@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-319509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAC196FD87
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2974996FD88
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C001F244A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B8141C2262E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92C215990C;
-	Fri,  6 Sep 2024 21:45:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58B2159209;
+	Fri,  6 Sep 2024 21:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEtnz78F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E400E1598EE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA71B85DC;
+	Fri,  6 Sep 2024 21:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725659104; cv=none; b=RQd+iwqE+wfLKQZuGgP835llG2Dh7yMeEjAfpQiVCzjQfEMKykN42alXrj/4Xql3LHxIeN10RwYexOq41KHOQ83zPOmxW3n/vthfPhiBMl6/3xC8cwvgpcWN8sM1Xmnt7ojvDPTtrYQLaIQvoCx8Nro893oZdJx87oMQKlON5oc=
+	t=1725659260; cv=none; b=UEq7i21+PZ3f7NUaNNtCNUrE0g+8wY8blYAjX4Soz0LKyHK5b2ggoFOeR3QLZv/OtrN9FcYzXh/OYq2XD3dtk3fCrz1807lp8t93jGdtiBXwrYXCE5TFL/hphTOAY9DpbZn5PEnsGqe+aczBJe0hh8Vk42JHEuTt2uSbzuYSt08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725659104; c=relaxed/simple;
-	bh=vQJAzXg0Ve7cd7eLQUhLmYpFhx5pRLuWuyrN6fB/92U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kauSoRAqSk6oDNU5o5lgsawLUVRZjEXjNnshfpmGEztW8WvD+vzEKMoeBapddRzcnTGKCJOis2DUnqGo3SVg1q+d7Zwd9rW8Jj3xDC5xbBGi6a9J5Ruie5TpndzdPzKoRqbPopMLPPvHL1AE6Mpci3hKgCZidydMNg1Vl9sS25E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a231e35ddso487523239f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 14:45:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725659102; x=1726263902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKRnfaZVz+TriRYszdIiGoeKN1ji67pKmKHylWhjTPg=;
-        b=Xg19dSpSGMWvFbDjzhMEtJ7q3B3VzkUn2Vmup6loLeNfjWUtEHnyiVK4ba/LQIAdUs
-         9xn8Bj/hU7gXfnKx8Qn3ou23ofRJGXc5QnLKA3K19DoQEKgiKQQ/Bfl8Fct6h7Qm+v0K
-         +a/mr//T+m+LxHNnrRXWSGko884zRlJ1peHNGY34ZybTVPg5iGQfvyJEvdoxDeC5VR6+
-         Q/kyBVVrkKwrcIk/iFgpMaC/jShjjOO0UVwX/570ja3THCCYTasefUsiTquiWaSUwpgW
-         ovR9IYZvjxhyVikvGZk3rWozk1Hn1E264N9erBCqGPqOze4bDCDLNIu9LuEhhXBGIAk2
-         X9nA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYRcKbONOC4qs6M3Xob3TrFFgbTc0ntgf1xvFVnnjK/tHlNZgGch1Gv01jvks1Bsyh2yaC5DA6FyOqVto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFg7WJUAimE5yKkmlbfPbJXlWPy//LP82E9q9XCrJJbwQaO4tK
-	GaN3a24UNW5fD0MdHpHxpv7WpFG+4Dl9ZJ0gqipiFLPD4PiyEe8zOAKWfDQX6aBbfXGkYufxWQU
-	bvLnnfPaKqlQw2DIwsiZ6pIiZ4Z8BFRIrHOaamTMso2JL0aUjH9SDPO4=
-X-Google-Smtp-Source: AGHT+IEkCvQJA8x0CFn62kiMPQ9qduBCbVZQvrQTL3WC/wnLdYlGWrviPYYLYBiyRuJXvCPfd8tgnIdD11W5kiUP4UgiwrQ+gm7i
+	s=arc-20240116; t=1725659260; c=relaxed/simple;
+	bh=VpnExuu/oCtrLPrN79vCifxfCZG70C6vxmuSYa4e+Gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyoCHqcy6DmL12UcdY+nZspr2TLl1ffNwxiC6IyHfXVPjGsR2674rDJEE+EIq5fV6aT+MDIn1kkM5flXOJCn0YhxMPTQ7S4kgl8NRTs6jcl7/UOo2tvIS3M0UOX3hL73lrOiVmqZI+NFdqUFjr3BM/xG2fmqBFArbRfAkaPHKvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gEtnz78F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B1EC4CEC4;
+	Fri,  6 Sep 2024 21:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725659259;
+	bh=VpnExuu/oCtrLPrN79vCifxfCZG70C6vxmuSYa4e+Gg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gEtnz78FAP6STg+CnIRUr8/KhWsG+2ZUSr8HbMYg2nb+NbrZyerroWnYzq3mA71O1
+	 hZcAnu4ByJ7uUp3dkLlhz1MEVJjX802vFz9CXlnFW1P6guagGV9IPk65U7XS57aGzz
+	 UDvRdrX+KXhWLFh8UrUMHlYhSa9aOzI2tpy6eVsZabmiqSaN5MfFRmqsLCUnBzF3//
+	 dVdrPPrmzrpRd5p8x9ixunanSZFP8DivFPb3cb0N8kp4XlZoyN7DW939WPJMuN4NJf
+	 NpuTFJJrXVjP22BNVVLO0Z111XZWJD8zZ3mHQGdRYIHg/8EOxC9L/9U92bY/Ti1B6o
+	 sp7AxL04p10Ow==
+Date: Fri, 6 Sep 2024 23:47:35 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, 
+	Thierry Reding <treding@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the i2c-host tree
+Message-ID: <fsb6a3aqoeyeqg6djzdcqyo4lykbtt4vmwpdb3gsduv6xucimx@xfamxmpsoxom>
+References: <20240829100504.091160a4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4122:b0:4c8:d4a7:898d with SMTP id
- 8926c6da1cb9f-4d084cc4d22mr179524173.0.1725659102069; Fri, 06 Sep 2024
- 14:45:02 -0700 (PDT)
-Date: Fri, 06 Sep 2024 14:45:02 -0700
-In-Reply-To: <CAG-BmocAqtJ94=C4O8O56SpQ7x62i7JMRfXQZMTqeco4GW0hzg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c8529c06217a5106@google.com>
-Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_buffer_cached
-From: syzbot <syzbot+adfd64e93c46b99c957e@syzkaller.appspotmail.com>
-To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829100504.091160a4@canb.auug.org.au>
 
-Hello,
+Hi Stephen,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thanks a lot for your report.
 
-Reported-by: syzbot+adfd64e93c46b99c957e@syzkaller.appspotmail.com
-Tested-by: syzbot+adfd64e93c46b99c957e@syzkaller.appspotmail.com
+On Thu, Aug 29, 2024 at 10:05:04AM GMT, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commits are also in the tegra tree as different commits
+> (but the same patches):
+> 
+>   6302d41b3f7a ("dt-bindings: i2c: nvidia,tegra20-i2c: define power-domains top-level")
+>   20b9b216daf8 ("dt-bindings: i2c: nvidia,tegra20-i2c: restrict also clocks in if:then:")
+>   cd07e699cea9 ("dt-bindings: i2c: nvidia,tegra20-i2c: combine same if:then: clauses")
+> 
+> These are commits
+> 
+>   fd16970c9d67 ("dt-bindings: i2c: nvidia,tegra20-i2c: Define power-domains top-level")
+>   e0c7b7fcaf77 ("dt-bindings: i2c: nvidia,tegra20-i2c: Restrict also clocks in if:then:")
+>   69a87db435a7 ("dt-bindings: i2c: nvidia,tegra20-i2c: Combine same if:then: clauses")
 
-Tested on:
+I think these patches should go through the i2c branch.
+devicetree/bindings/i2c/ is maintained by the i2c community.
 
-commit:         6b8ff511 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=139e03c7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=14f90d959c4a3f08
-dashboard link: https://syzkaller.appspot.com/bug?extid=adfd64e93c46b99c957e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15eb2ffb980000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks,
+Andi
 
