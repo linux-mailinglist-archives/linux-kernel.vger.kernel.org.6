@@ -1,209 +1,181 @@
-Return-Path: <linux-kernel+bounces-318130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F4096E8C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E64096E8D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 06:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30DAB1F24E54
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57881F24F7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 04:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274695C603;
-	Fri,  6 Sep 2024 04:53:33 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37A35B216;
+	Fri,  6 Sep 2024 04:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1TP/rjR"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B997745C1C;
-	Fri,  6 Sep 2024 04:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F6E4AEF2;
+	Fri,  6 Sep 2024 04:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725598412; cv=none; b=uWKj7YGh7x/qh88Nvi5/r7zZT3r9LxIAS1qkgv31lYQnuExbfAcuGlkifsFVI+CiBlMggQEymQMWZvNhsg8AGALa5tf2PGuNpTEFxFht86FFuQRraaX4YVmoGlatXoRsLgREco5QqMcmBgXD2EbGRqAjH9ejXsxkJnfMzguvGe8=
+	t=1725598602; cv=none; b=UG5cRQeVPswMF71OuTSHlDr+neADkKz5GAC1APcFteHaxSLBnuBFaJd4hTnwYpHwa5YHFiPRD487M+vlgxP+xIeLH/cozQ2MKVxT7DiTqDGMwbQzC5su9+/Ww/4C93Uq//Hs6pXaFO7sJX+deZpYULOY+cVE7Qe88ZsZi6zPKIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725598412; c=relaxed/simple;
-	bh=A75lYGrLa/x3ArGAifgM6TS5Vw27r6mpHb5G0N+ZIgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CP0iOHUwkvqdCf406EW8DjgA/qvGnQfgtZtmmi2F41i2Ez5o/JR06OZv/VEfrqepLhTNHRvGFFkt02OAuICoj3fWYLFYREh4tOiKT5NuPlhnzh9aVApvXD5sDjwOkTvjZsyuyq+UdcmmioNjn6JL1NC3kieUjyrXWbjrcWzPztA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X0P4l4sMRz9sRy;
-	Fri,  6 Sep 2024 06:53:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cGNa5ow0wQLB; Fri,  6 Sep 2024 06:53:27 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X0P4l3spgz9sRs;
-	Fri,  6 Sep 2024 06:53:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 739B98B778;
-	Fri,  6 Sep 2024 06:53:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id X35N0C8uKPzN; Fri,  6 Sep 2024 06:53:27 +0200 (CEST)
-Received: from [192.168.235.70] (unknown [192.168.235.70])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7D03E8B764;
-	Fri,  6 Sep 2024 06:53:26 +0200 (CEST)
-Message-ID: <45f7170d-a209-4079-9384-274b0c413a4b@csgroup.eu>
-Date: Fri, 6 Sep 2024 06:53:26 +0200
+	s=arc-20240116; t=1725598602; c=relaxed/simple;
+	bh=06NYwGV/b26HXwoNN3RC4u3U54HUhPzpWQfYgTicPjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XLdItsNxpsGQaKh2j26eY5o4tF4A+IgvrS4uwD3S2Uifd/mG1zd2f6/fj3lbxvgFEjYcoD7b3p1LaUjrUL/QnMftIQs2gnRlr1uAs6X4qufLFWygQTaC6JSXgkKYPWUMON5TQQdRtOH0Ega8Wq5bDy2BX5CrNGq5ZKxgo6p2BB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1TP/rjR; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e172cc6d66so944693eaf.2;
+        Thu, 05 Sep 2024 21:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725598600; x=1726203400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ob3grukux8jAuJGDrQV1ST/lFWPUfHGs10KzV3SCsCg=;
+        b=W1TP/rjRtctScPxoABA57O92qtfzQO+TPirxFuJ5pWMTRlHw3qCotud/Zxhbs+bcrP
+         DqonB3CPx3LHQpAEdBh283asaN96UnN490lFMhvCJymN3B5kOE88eJlnPaPZKHxBQLQU
+         0LNZNHVHJiPPMMd9QNhCIVMgOJPlTisxmg7neU9x5L7ZRnlXlQALsQjiqMoNFREKIfIy
+         Tzp8SHcHZWX8AN2kxaSANtc1ZaSBBm6WzLKq2gXUjsLQAgptW2hbByLlgE5H/jBotxbL
+         RJkNueSowZmbQxvidFImTC1c36lfQkriJ7UawXDz/S5fddSKxasK8/ynE7Ck9iNZIzdH
+         MpVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725598600; x=1726203400;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ob3grukux8jAuJGDrQV1ST/lFWPUfHGs10KzV3SCsCg=;
+        b=S4iy08JztFMyLAmAboffuAWjoBcnH57kZT5kNsMTMRFupP2b1xAiwNCcKiypgxLKAu
+         LgIDAbmS1+kzho2iFIG6//5xe7/znEJljmuiaBcl5IzQc9HIKyLjVRMud15rW5I8x4oE
+         3MeI8MJI6Y0j1eqbOA50CF/rNyZ1ThsNPL+Z6/oVufT9z2UXLMnseMIC0iLVXLiP437x
+         DLOB9p/9CXgG7sLdZVhvjD7q6RlRuDpzRW41gCQFe/aecgFt8tYZkql6qSCsxWR1Ipcy
+         YKOxDhA6SsoKe96UcJumcQjtoH+wWwsyk57UfZysZBS13+xH/HRLlx03SkqsVUVAODym
+         2GpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvUwzaK58ztum9XS9ZRGc/wG+4TDoG7n6zmTFycdMmTRgnJpVpXSnIUzx3/rzXSwQhUHfwYIpDUws275I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXMqCg5xQmsnhbcxE0TwQSgsz0B40CXJBbs0raG0Ibp5ubagX+
+	YaeKqlTsLaScqY2KwfHldRhubMXm8aFDX2cocRAwDyhBsBgxR4vt
+X-Google-Smtp-Source: AGHT+IHer/O4jKLDfgNK47fqGGGDsM3FDOhwLhyyoIVhUdPzGfkP+qXtM/YrAO9Wg+uMGV5Q3zd+5Q==
+X-Received: by 2002:a05:6870:330e:b0:277:f925:4f67 with SMTP id 586e51a60fabf-27b82db385fmr1794920fac.4.1725598599821;
+        Thu, 05 Sep 2024 21:56:39 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71791e54585sm1704002b3a.182.2024.09.05.21.56.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 21:56:39 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	rmk+kernel@armlinux.org.uk,
+	linux@armlinux.org.uk,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v9 0/7] net: stmmac: FPE via ethtool + tc
+Date: Fri,  6 Sep 2024 12:55:55 +0800
+Message-Id: <cover.1725597121.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on VDSO32
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <cover.1725304404.git.christophe.leroy@csgroup.eu>
- <1f49c2ce009f8b007ab0676fb41187b2d54f28b2.1725304404.git.christophe.leroy@csgroup.eu>
- <ZtnYqZI-nrsNslwy@zx2c4.com> <ZtoXhGYflBNR74g0@zx2c4.com>
- <ZtptfOicjZU3k3ZV@zx2c4.com> <Ztp16FkqG0ALlXnh@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <Ztp16FkqG0ALlXnh@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Jason,
+Move the Frame Preemption(FPE) over to the new standard API which uses
+ethtool-mm/tc-mqprio/tc-taprio.
 
-Le 06/09/2024 à 05:24, Jason A. Donenfeld a écrit :
-> On Fri, Sep 06, 2024 at 04:48:28AM +0200, Jason A. Donenfeld wrote:
->> On Thu, Sep 05, 2024 at 10:41:40PM +0200, Jason A. Donenfeld wrote:
->>> On Thu, Sep 05, 2024 at 06:13:29PM +0200, Jason A. Donenfeld wrote:
->>>>> +/*
->>>>> + * The macro sets two stack frames, one for the caller and one for the callee
->>>>> + * because there are no requirement for the caller to set a stack frame when
->>>>> + * calling VDSO so it may have omitted to set one, especially on PPC64
->>>>> + */
->>>>> +
->>>>> +.macro cvdso_call funct
->>>>> +  .cfi_startproc
->>>>> +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
->>>>> +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
->>>>> +	mflr		r0
->>>>> +	PPC_STLU	r1, -PPC_MIN_STKFRM(r1)
->>>>> +  .cfi_adjust_cfa_offset PPC_MIN_STKFRM
->>>>> +	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
->>>>> +  .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
->>>>> +	get_datapage	r8
->>>>> +	addi		r8, r8, VDSO_RNG_DATA_OFFSET
->>>>> +	bl		CFUNC(DOTSYM(\funct))
->>>>> +	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
->>>>> +	cmpwi		r3, 0
->>>>> +	mtlr		r0
->>>>> +	addi		r1, r1, 2 * PPC_MIN_STKFRM
->>>>> +  .cfi_restore lr
->>>>> +  .cfi_def_cfa_offset 0
->>>>> +	crclr		so
->>>>> +	bgelr+
->>>>> +	crset		so
->>>>> +	neg		r3, r3
->>>>> +	blr
->>>>> +  .cfi_endproc
->>>>> +.endm
->>>>
->>>> Can you figure out what's going on and send a fix, which I'll squash
->>>> into this commit?
->>>
->>> This doesn't work, but I wonder if something like it is what we want. I
->>> need to head out for the day, but here's what I've got. It's all wrong
->>> but might be of interest.
->>
->> Oh, I just got one small detail wrong before. The below actually works,
->> and uses the same strategy as on arm64.
->>
->> Let me know if you'd like me to fix up this commit with the below patch,
->> or if you have another way you'd like to go about it.
-> 
-> And here's the much shorter version in assembly, which maybe you prefer.
-> Also works, and is a bit less invasive than the other thing.
-> 
-> diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
-> index a957cd2b2b03..070daba2d547 100644
-> --- a/arch/powerpc/kernel/vdso/getrandom.S
-> +++ b/arch/powerpc/kernel/vdso/getrandom.S
-> @@ -32,6 +32,14 @@
->     .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
->   #endif
->   	get_datapage	r8
-> +#ifdef CONFIG_TIME_NS
-> +	lis		r10, 0x7fff
-> +	ori		r10, r10, 0xffff
-> +	lwz		r9, VDSO_DATA_OFFSET + 4(r8)
-> +	cmpw		r9, r10
-> +	bne		+8
-> +	addi		r8, r8, (1 << CONFIG_PAGE_SHIFT)
-> +#endif
->   	addi		r8, r8, VDSO_RNG_DATA_OFFSET
->   	bl		CFUNC(DOTSYM(\funct))
->   	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-> 
+Changes in v9:
+  1. drop redundant netif_device_present() since ethnl_ops_begin()
+  has its own netif_device_present() call
+  2. open-code some variables of struct ethtool_mm_state directly
+  in struct stmmac_fpe_cfg
+  3. convert timer_delete_sync() to timer_shutdown_sync(), thus the
+  timer will not be rearmed again
+  4. fixed variable declarations in the middle of the scope
 
-Thanks for looking.
+Changes in v8:
+  1. use timer_delete_sync() instead of deprecated del_timer_sync()
+  2. check netif_running() to guarantee synchronization rules between
+  mod_timer() and timer_delete_sync()
+  3. split up stmmac_tc_ops of dwmac4, dwmac4+ and dwxgmac to give user
+  more descriptive error message
+  4. fix wrong indentation about switch-case
+  5. delete more unbalanced logs
 
-I came to more or less the same solutions thnt you with the following 
-that seems to work:
+Changes in v7:
+  1. code style fixes and clean up warnings reported by
+  patchwork netdev checks, no functional change intended
 
-diff --git a/arch/powerpc/kernel/vdso/vgetrandom.c 
-b/arch/powerpc/kernel/vdso/vgetrandom.c
-index 5f855d45fb7b..9705344d39d0 100644
---- a/arch/powerpc/kernel/vdso/vgetrandom.c
-+++ b/arch/powerpc/kernel/vdso/vgetrandom.c
-@@ -4,11 +4,19 @@
-   *
-   * Copyright (C) 2024 Christophe Leroy <christophe.leroy@csgroup.eu>, 
-CS GROUP France
-   */
-+#include <linux/container_of.h>
-  #include <linux/time.h>
-  #include <linux/types.h>
+Changes in v6:
+  1. new FPE verification process based on Vladimir Oltean's proposal
+  2. embed ethtool_mm_state into stmmac_fpe_cfg
+  3. convert some bit ops to u32_replace_bits
+  4. register name and function name update to be more descriptive
+  5. split up stmmac_tc_ops of dwmac4+ and dwxgmac, they have different
+  implementations about mqprio
+  6. some code style fixes
 
-+#include <asm/vdso_datapage.h>
-+
-  ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int 
-flags, void *opaque_state,
-  			     size_t opaque_len, const struct vdso_rng_data *vd)
-  {
-+	struct vdso_arch_data *arch_data = container_of(vd, struct 
-vdso_arch_data, rng_data);
-+
-+	if (IS_ENABLED(CONFIG_TIME_NS) && arch_data->data[0].clock_mode == 
-VDSO_CLOCKMODE_TIMENS)
-+		vd = (void *)vd + (1UL << CONFIG_PAGE_SHIFT);
-+
-  	return __cvdso_getrandom_data(vd, buffer, len, flags, opaque_state, 
-opaque_len);
-  }
+Changes in v5:
+  1. fix typo in commit message
+  2. drop FPE capability check in tc-mqprio/tc-taprio
 
+Changes in v4:
+  1. reorder FPE-related declarations and definitions into clean groups
+  2. move mm_lock to stmmac_fpe_cfg.lock
+  3. protect user configurations across NIC up/down
+  4. block stmmac_set_mm() when fpe_task is in progress to finish
+  5. convert to ethtool_dev_mm_supported() to check FPE capability in
+  tc-mqprio/tc-taprio
+  6. silence FPE workqueue start/stop logs
 
-However, if we have this problem with __kernel_getrandom, don't we also 
-have it with: ?
-		__kernel_get_syscall_map;
-		__kernel_get_tbfreq;
-		__kernel_sync_dicache;
+Changes in v3:
+  1. avoid races among ISR, workqueue, link update and
+  register configuration.
+  2. update FPE verification retry logic, so it retries
+  and fails as expected.
 
-If they are also affected, then get_page macro is the place to fix.
+Changes in v2:
+  1. refactor FPE verification process
+  2. suspend/resume and kselftest-ethtool_mm, all test cases passed
+  3. handle TC:TXQ remapping for DWMAC CORE4+
 
-I will check all of this now and keep you updated before noon (Paris Time).
+Furong Xu (7):
+  net: stmmac: move stmmac_fpe_cfg to stmmac_priv data
+  net: stmmac: drop stmmac_fpe_handshake
+  net: stmmac: refactor FPE verification process
+  net: stmmac: configure FPE via ethtool-mm
+  net: stmmac: support fp parameter of tc-mqprio
+  net: stmmac: support fp parameter of tc-taprio
+  net: stmmac: silence FPE kernel logs
 
-Christophe
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  10 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  96 ++++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  12 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |   9 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   6 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  22 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  35 ++-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  96 +++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 269 ++++++++----------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 153 +++++++---
+ include/linux/stmmac.h                        |  28 --
+ 11 files changed, 494 insertions(+), 242 deletions(-)
+
+-- 
+2.34.1
+
 
