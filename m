@@ -1,151 +1,193 @@
-Return-Path: <linux-kernel+bounces-319261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B571196F9CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF6A96F9CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBEB1C2270C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359021F2539A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DF91D5889;
-	Fri,  6 Sep 2024 17:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5891D47CE;
+	Fri,  6 Sep 2024 17:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sge7ZYHo"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iqinmev4"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3DE1D47CE
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172B1CBE8C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725642930; cv=none; b=Zf8XmmhGe53bjCUncbxWGeS/tcPwOwefvu2mNzUSEID0prDxOxvZfvaBaOmUmA24MsZYq1+wW/lAAX0HqtoWOtQKRKi6wbnLAFo5FeR1AcNDxDTh5qtIqTg73UvTlRLq0aqaWlEUYWI7q86WUT/j9H8FuL8VugHJ+2+YJVxOo5Q=
+	t=1725642954; cv=none; b=Y76SZl8ylmUT3np1a+qsPBZjLay/fAKzJNq8Kb3y+3pheze4hDcWFv218JfUqFhOzsxiNfSGsQeL/E9McUhrV/eOyEr41ypAx6X+udFvZUe/3wpGl+0swdzx/BacYHefN285JCqcJMcMspgUj9YGwErgTd3ztezU2EA27KoMWGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725642930; c=relaxed/simple;
-	bh=uqVFwUB/0TxQaJs2TOgKnw2jAoMSxxHld8KhtvpAURw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ImuPbRxfrqezJTVPaP85G9nHBeLumuXWsXyRyuvB8gwdZkvFgJFVoibAC2dxnkNWq1dXbOftcnikWwGYhHaiVpOrJ5Qwth0n3tRX4Fm+XWFSnAe9pmb7WO8CE3FafslQZl8BTSG+uXrgZyeD0cuCHOApC8IJigmVQ3yuYMhsmuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sge7ZYHo; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso1723092a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 10:15:28 -0700 (PDT)
+	s=arc-20240116; t=1725642954; c=relaxed/simple;
+	bh=Gm4NAXQPSdgNUn+z7bxw9q/Kz8fIbNcCedpXsJ4i1b4=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=rcOS6wqTMqIooDl2VTvj3ThSlhApwk3Ix2wbqSpZvPWpGcz2nUMZ7xOZ7AsFblO0LPqhX9bPXanlfgg4gUMhUeisrEo7GQIsFANy6Nw0erzEFbaBcCMRMcBc9OLpWms4DTd2mZqDsIS3XT6rqFuiYBEBzZTGoPUzqpM9euSDvEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iqinmev4; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42c828c8863so18436365e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 10:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725642928; x=1726247728; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1725642951; x=1726247751; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:cc:to:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C2Awb8QHiwgK4hQKj8EI8RJlryPJ8iCefANxC9lVPtM=;
-        b=Sge7ZYHoQ2jMS5nwm0oGMpYIECVz4qwjyCt9JXTgQwHi0d2Gz+g6F/93ZBxeyqGgpW
-         dXJLw1NJ0Fn33l7fzgfUPQa7kF/tITxLOEkiavpZrtLxVhCZl2HKCv2SgqakZyTsTkIY
-         AVIVUv6HB2qt+DcV9O1JwTIC921LSFyqPuPSV+xMV0hLyyJlAcV8oYY4gWrEmt1QJD9C
-         clDzigZ5JKy4OrX8o0WLSHQAcqKw2cOv67U7PE68gnEDDMvimZiNLR37euTelI/NBkYF
-         8VzHpjf+ZFnYEVfHxsHsp0l0pgvewPlexYJcV5g2rIMAomjsSh7RHZak9l1z5aVF3Eo9
-         oxPQ==
+        bh=IawqMe/GbGXjS+X2KFd8Q1O5CtFxJX4z2H7g3oGBFqQ=;
+        b=Iqinmev4hU76kvReL8PupImXomNxQ9GQ9gdTgaZz2PFgpYu8dJcgqjGuz8IyrLLqLO
+         b652QpNCH0e1G1B31T1EFnVw8GA7A++vUTOGi6COIj5QRdtAa+8NVdBFJqXKyNVt0E41
+         5ikJDJtk+4R5XR6l93dVMHURAXaEr8LevWKl7oTM/p3UXlI7DLBXYpTL2GBPQAnnsLd1
+         ZyD1MSkHepDvPwzfl1kJDu3XPSLpSCHe03y3/Cg/SVDcLo06Mdxjd3YI07lq6hlXwBu3
+         0SdBSd7KG/VjYRxHEAIZgjWU90XM8AjX6HyubIyjjZJvWc1Ki7pPaGkeTOSCTae8+DP6
+         3G4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725642928; x=1726247728;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C2Awb8QHiwgK4hQKj8EI8RJlryPJ8iCefANxC9lVPtM=;
-        b=BguI7VVNaObs5pOoahlVlOqEQhOAZzo98BcdhFaJ0OZv4YkUxjnmPD1IDBo6qyhJt/
-         PcU9/ZL7+3+jZjWVKlRru/uobnSrH/CHmZCt1OUPpvIAGIOKDlgo9zVQnL9luCILfYiD
-         XzkF0O6LKbgJ3pWXFNRevLAu7TIQF4vHB5ZRtm1l/p6Ob1qxmINrzD1mAWhHKP5BKdoE
-         +i6TYsBAr0qLRgW/VSSOnz7nHUADzd3Mz2oBbo3JSSVVTtVftYwZ7O4URhQurW+/EIwV
-         ZU3Tdxgi1V8mLuZYNU8lFNbNvDmXMx3s1IoXGihvTrk9VU5rBL5KgYRzRxpUcLr7N37W
-         vMuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrnJBaInSRe1cLt3IjVcJH3UnYV5cbeslbVpKvlY1AF30SCebm4j8/aIONSR/4XptxmaEoE8VWjcTZBgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ8yLU7epZ0kjkjnixTDzKIKe2AA4r908q/SBUI9cU/yERX0Lx
-	pih+UFqQ1BRq+IIRaMsCOAe8xStMqOJPTiAjDYaEAX1acfgs2iyZ
-X-Google-Smtp-Source: AGHT+IEitKjL9pf51BQRfyrnIhp+JSQo2gkjFGgr1MpgdrNgRy39LdtoUZno7Bc9XWCc1kIaXZP2HA==
-X-Received: by 2002:a17:90b:68a:b0:2da:6812:c1bd with SMTP id 98e67ed59e1d1-2dafcf1ac51mr112698a91.15.1725642928140;
-        Fri, 06 Sep 2024 10:15:28 -0700 (PDT)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2dadc10fa99sm1841519a91.39.2024.09.06.10.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 10:15:27 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: asahi@lists.linux.dev,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH RESEND 2/2] arm64: cpufeature: Pretend that Apple A10(X), T2 does not support 32-bit EL0
-Date: Sat,  7 Sep 2024 01:13:26 +0800
-Message-ID: <20240906171449.324354-4-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240906171449.324354-1-towinchenmi@gmail.com>
-References: <20240906171449.324354-1-towinchenmi@gmail.com>
+        d=1e100.net; s=20230601; t=1725642951; x=1726247751;
+        h=content-transfer-encoding:subject:cc:to:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IawqMe/GbGXjS+X2KFd8Q1O5CtFxJX4z2H7g3oGBFqQ=;
+        b=Ma7/W08OwxFxYcLgFY3cm5cSde0o0+54mYYCWb02XnhOY9jAYcHE8GeZlBRuL9hdL+
+         v99oPDaIkEp+LSwZsVvOmpjgpcSB5mjm/Yf6cHXNQ5Ddi9gbjBDNWBokAIixbkEZJDXO
+         euXmJwJDvIHYkTMf40iS0IB5UYs4TBsb+rRpphDzW0hajdP9IlXUfQHbCTeHSRTMgSZ/
+         FxUR9z8D1D4Qal3gBALqJTinJknDpdKGRAnNMR/NqMPmXSC76GJL/l09mmjG+BpL+jhB
+         7dKi+jopiq0/mbc79oetJ6q+YYK4hPg2W678HkeXK7Dt0ySxqNxHO8rI/MlmhhkCTbEv
+         I6iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9+TrbkDzH69DbUeshfHjgOsz/UZvEBRN3WqZXoHXd+caznL2nKFLPXl1l4s951YHb0bIxiPGzUFT7KOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypOOqTdh+BY5aJHSftsv3WWinfSRkf1Kv9IsOv68n6ZmAl6t9v
+	aO7kxKT53XmHMxbJjykBg1dq4YYsEaIEkEwumrGpELWQms+kFUTg4w9jAFwwx/A=
+X-Google-Smtp-Source: AGHT+IFXcie6JWDnnZRnhGgH5Z6nsMxiZSEXTUHOubNLWIZVdCKzi4JkEzYod5+Q4AqL9HxmmeeLQg==
+X-Received: by 2002:a05:600c:4715:b0:426:61e8:fb3b with SMTP id 5b1f17b1804b1-42c9f9d6e77mr19856295e9.27.1725642950456;
+        Fri, 06 Sep 2024 10:15:50 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42ca0600651sm26552385e9.32.2024.09.06.10.15.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2024 10:15:50 -0700 (PDT)
+Message-ID: <6054852d-975f-4e83-850e-815f263a40c5@linaro.org>
+Date: Fri, 6 Sep 2024 19:15:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ankit Agrawal <agrawal.ag.ankit@gmail.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Gaosheng Cui <cuigaosheng1@huawei.com>, Marek Maslanka
+ <mmaslanka@google.com>, Uros Bizjak <ubizjak@gmail.com>,
+ Zhang Zekun <zhangzekun11@huawei.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] timer drivers material for v6.12-rc1
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The Apple A10(X), T2 consists of logical cores that can switch
-between P-mode and E-mode based on the frequency. However, only
-P-mode supported 32-bit EL0.
 
-Trying to support 32-bit EL0 on a CPU that can only execute it in certain
-states is a bad idea. The A10(X), T2 only supports 16KB page size anyway so
-many AArch32 executables won't run anyways. Pretend that it does not
-support 32-bit EL0 at all.
+Hi Thomas,
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/kernel/cpufeature.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+please consider pulling the new timer drivers material. This cycle 
+mainly provided a few changes related to fixes and devm_* variant.
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 718728a85430..458bcbc4f328 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -3529,6 +3529,29 @@ void __init setup_boot_cpu_features(void)
- 	setup_boot_cpu_capabilities();
- }
- 
-+static void __init bad_aarch32_el0_fixup(void)
-+{
-+#ifdef CONFIG_ARCH_APPLE
-+	static const struct midr_range bad_aarch32_el0[] = {
-+		MIDR_ALL_VERSIONS(MIDR_APPLE_A10_T2_HURRICANE_ZEPHYR),
-+		MIDR_ALL_VERSIONS(MIDR_APPLE_A10X_HURRICANE_ZEPHYR),
-+		{}
-+	};
-+
-+	if (is_midr_in_range_list(read_cpuid_id(), bad_aarch32_el0)) {
-+		struct arm64_ftr_reg *regp;
-+
-+		regp = get_arm64_ftr_reg(SYS_ID_AA64PFR0_EL1);
-+		if (!regp)
-+			return;
-+		u64 val = (regp->sys_val & ~ID_AA64PFR0_EL1_EL0_MASK)
-+		  | ID_AA64PFR0_EL1_EL0_IMP;
-+
-+		update_cpu_ftr_reg(regp, val);
-+	}
-+#endif
-+}
-+
- static void __init setup_system_capabilities(void)
- {
- 	/*
-@@ -3562,6 +3585,8 @@ static void __init setup_system_capabilities(void)
- 
- void __init setup_system_features(void)
- {
-+	bad_aarch32_el0_fixup();
-+
- 	setup_system_capabilities();
- 
- 	kpti_install_ng_mappings();
+The following changes since commit 79f8b28e85f83563c86f528b91eff19c0c4d1177:
+
+   timers: Annotate possible non critical data race of next_expiry 
+(2024-09-04 11:57:56 +0200)
+
+are available in the Git repository at:
+
+   https://git.linaro.org/people/daniel.lezcano/linux.git 
+tags/timers-v6.12-rc1
+
+for you to fetch changes up to 2376d871f8552aadea19f5bc0b1370db54a3a5f2:
+
+   platform/x86:intel/pmc: Fix comment for the 
+pmc_core_acpi_pm_timer_suspend_resume function (2024-09-06 14:49:21 +0200)
+
+----------------------------------------------------------------
+- Add the DT binding for the rk3576 compatible (Detlev Casanova)
+
+- Use for_each_available_child_of_node_scoped() to remove the
+   of_node_put() calls in the loop (Zhang Zekun)
+
+- Add the ability to register external callbacks for suspend/resume on
+   ACPI PM driver and enable to turn it off when suspended (Marek
+   Maslanka)
+
+- Use the devm_clk_get_enabled() variant on the ingenic timer (Huan
+   Yang)
+
+- Add missing iounmap() on errors in msm_dt_timer_init() (Ankit
+   Agrawal)
+
+- Add missing clk_disable_unprepare() in init routine error code path
+   on the asm9260 and the cadence_ttc timers (Gaosheng Cui)
+
+- Use request_percpu_irq() instead of request_irq() in order to fix a
+   wrong address space access reported by sparse (Uros Bizjak)
+
+- Fix comment format for the pmc_core_acpi_pm_timer_suspend_resume()
+   function (Marek Maslanka)
+
+----------------------------------------------------------------
+Ankit Agrawal (1):
+       clocksource/drivers/qcom: Add missing iounmap() on errors in 
+msm_dt_timer_init()
+
+Detlev Casanova (1):
+       dt-bindings: timer: rockchip: Add rk3576 compatible
+
+Gaosheng Cui (2):
+       clocksource/drivers/asm9260: Add missing clk_disable_unprepare in 
+asm9260_timer_init
+       clocksource/drivers/cadence-ttc: Add missing 
+clk_disable_unprepare in ttc_setup_clockevent
+
+Huan Yang (1):
+       clocksource/drivers/ingenic: Use devm_clk_get_enabled() helpers
+
+Marek Maslanka (3):
+       clocksource: acpi_pm: Add external callback for suspend/resume
+       platform/x86:intel/pmc: Enable the ACPI PM Timer to be turned off 
+when suspended
+       platform/x86:intel/pmc: Fix comment for the 
+pmc_core_acpi_pm_timer_suspend_resume function
+
+Uros Bizjak (1):
+       clocksource/drivers/jcore: Use request_percpu_irq()
+
+Zhang Zekun (1):
+       clocksource/drivers/arm_arch_timer: Using 
+for_each_available_child_of_node_scoped()
+
+  .../bindings/timer/rockchip,rk-timer.yaml          |  1 +
+  drivers/clocksource/acpi_pm.c                      | 32 +++++++++++++++
+  drivers/clocksource/arm_arch_timer.c               | 11 ++----
+  drivers/clocksource/asm9260_timer.c                |  1 +
+  drivers/clocksource/ingenic-ost.c                  |  7 +---
+  drivers/clocksource/jcore-pit.c                    |  7 ++--
+  drivers/clocksource/timer-cadence-ttc.c            |  6 ++-
+  drivers/clocksource/timer-qcom.c                   |  7 +++-
+  drivers/platform/x86/intel/pmc/adl.c               |  2 +
+  drivers/platform/x86/intel/pmc/cnp.c               |  2 +
+  drivers/platform/x86/intel/pmc/core.c              | 45 
+++++++++++++++++++++++
+  drivers/platform/x86/intel/pmc/core.h              |  8 ++++
+  drivers/platform/x86/intel/pmc/icl.c               |  2 +
+  drivers/platform/x86/intel/pmc/mtl.c               |  2 +
+  drivers/platform/x86/intel/pmc/spt.c               |  2 +
+  drivers/platform/x86/intel/pmc/tgl.c               |  2 +
+  include/linux/acpi_pmtmr.h                         | 13 +++++++
+  17 files changed, 129 insertions(+), 21 deletions(-)
+
 -- 
-2.46.0
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
