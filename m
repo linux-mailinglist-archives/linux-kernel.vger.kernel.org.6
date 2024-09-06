@@ -1,175 +1,204 @@
-Return-Path: <linux-kernel+bounces-319178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE6496F905
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E773896F907
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD79B218E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110551C21EDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 16:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274E01D3630;
-	Fri,  6 Sep 2024 16:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD261D31B9;
+	Fri,  6 Sep 2024 16:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE6rhNI8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQqX5L2a"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72996156880;
-	Fri,  6 Sep 2024 16:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73299156880
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 16:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725638811; cv=none; b=bxvyq9Yt2EvSRkzhRCFOFKgyrnJCDba7mc7AlAZypLYLmVpYzKdS1IpTqvNYpKdHFxTrYvyN3U/dkvf8TRMXnImQIGOBbiALllCfsf1R0IXxjZYPhqqS4Ouw34uncmbTorxXG8KYn8LR7+Uetplt1c0oD1CrHNo7BkkU9aKbfwk=
+	t=1725638928; cv=none; b=IPLHl3DCuFgulTQoqHwz/DzIVhHQmdr4trJBAy58jCAqEqFkrItF9yAwG0ksWE6OGjJ++I5s+1IpbSk2/kBaBTVR6QL2PCbWgYbulRiLgGLiYA6XDitEsY3jP4jQWsMh7g05QnJ/zk9Q0aSJXJcmvgNdNLpGsFyiQfs/TeQNtOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725638811; c=relaxed/simple;
-	bh=i/OkE91URyTzY90ECCfSngBaJoQ8kM7EZjVwKU/nibM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ix+9AqfV1/Zoy/QjcZ4ZFtg80xfx6ORRDcuknGHrPs7Apc9jx3hs6/hBvSGl/5o9TMTbOhs8hPdVjWQC732HWeiv67G6BDftiMV5s5lo252/N6NJ0as99Bxm15Yps4sGulaAh3fQ30nw1E+I1nErdl9rpVvy/UeD3eOpyiUhMcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE6rhNI8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F0AC4CEC4;
-	Fri,  6 Sep 2024 16:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725638810;
-	bh=i/OkE91URyTzY90ECCfSngBaJoQ8kM7EZjVwKU/nibM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OE6rhNI8cJ2OXKEni6bcRwpT6jSCCLxqIy8xHnpKkfhoth0UUNGVfEAH7mZJNv8bX
-	 mPuRtc40C90SZk0+bIQ3ckpMrvmU8G96N6b5r2O74i3/Ag/3pjpo2/kxbv2pZl7m8Y
-	 N0lsnYpoGi3wlPNkCTNszDVOSG4dLTtKHFfcxKVuQ8LuIBsLhXNWsq/kC/0Bo8wPGB
-	 ilYCJCJ7et6HnjM1GRM3m/bLs+C00ACZR9ajyTCXb7OaFHHign/wY2ikwv67bWbGUy
-	 zpi1zPk1Ut0y4oztiOYaguN1CeA7B4p2al7zD7sgSvYDVP7GKQ6X93BkNj7KJuf4/c
-	 qmYwcqlW69ziA==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f4f2868783so24508641fa.2;
-        Fri, 06 Sep 2024 09:06:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhUSzzCAVDlelFe37FKZOirgsOwEPmTB0EsooCUs28pVB31UlKxJS0/TvvzqgAQh8KhvMfFiNiq/zTEIU=@vger.kernel.org, AJvYcCWIQQN5sPpsoEiQDsXwMdDXW1ZpCEhM95VzYBQq9TGviAZncyfnmWG29iPr2ETDazxNtXmO/JwW1A==@vger.kernel.org, AJvYcCWoN2w8uCMTps4y8OciW+36Q6Xu9r8Ik69sytsJrVuVgcFdN97RYd+VHgAOR9aODQNvJ962FlFVW4BSiiRf@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUwm75dVu/u+G9EVzSM4eoNmC2TzuHnsbFXSTTtMTtBHYfZ+Xz
-	gkvPPHhppSHlHxvALb9BhPbzPlwTPDom9OekzyCklioTUdq5v0xecb6hlXFkExwBWbeCzP4J6yp
-	oSFJSA32jZUPahfZGP2K55MsN8Oo=
-X-Google-Smtp-Source: AGHT+IEDx2MBYfSAMZc9/iSOJYGNK9wJwMGiIy4jTSeZNrkUYrYuCYOsVH8obdUVZIByAwCUoQoZ1LhcYSGwXCX1fyg=
-X-Received: by 2002:a2e:b8c7:0:b0:2f5:c13:bd11 with SMTP id
- 38308e7fff4ca-2f751ee3bfcmr26016901fa.17.1725638809571; Fri, 06 Sep 2024
- 09:06:49 -0700 (PDT)
+	s=arc-20240116; t=1725638928; c=relaxed/simple;
+	bh=EEPnW6LB4zj+vyT061YrwlUkBzbpRmsKB9QKu4Z1gh8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=kITqdCm5TraKYi40udxKbtgeZmm1+hRck0ZsLsEnQwHfntRozpMpMVBWa614U1ptjQacqPj5Bm3wi7/qF3EkTK2EXHJQcTSFNRZyWyWIhs17e2/ZtBP7Wl3+jMZ2x1ATsuRG1cmV5VwQ2EKTyrRvHtsMnb61vn2QTzZ4+iIpYMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQqX5L2a; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725638926; x=1757174926;
+  h=date:from:to:cc:subject:message-id;
+  bh=EEPnW6LB4zj+vyT061YrwlUkBzbpRmsKB9QKu4Z1gh8=;
+  b=GQqX5L2aeTZdPdfe/ZTR18Ub9Weo7nHeI/KyybEQ4BtuzzIf3kbI46bf
+   Py75rwHB/BQnxjEPRJ7D/JeIMVzS6p8U3Lra/cNQ/BRVmp6YUuUfEEBDF
+   SCX8sWC2Zk4cS9+FVjrMwGDmvwTBeYto2e/kyb2MfzpToyoYp9Ouf6vQe
+   vAp2Mz61YHfuQXBJkXdIH5el8f/ChjiLytR02O8fyC3SB35vhhwzgL/AQ
+   mRBiiPERPDKqHVvGBg4dEpgQHr8oKCEO/K0hrmFwiQH/wO1k0wcRtbCbc
+   4fB9QzrsRlprCQKO5Az1Oe2TJshokHQPr5HBCeogy2vjsuqQ2MvmoJVhl
+   Q==;
+X-CSE-ConnectionGUID: 7CB3C6tLTNCszUhjk1Mr4Q==
+X-CSE-MsgGUID: FbXSgNnVRNqyCBL3AFmVGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11187"; a="24352671"
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="24352671"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2024 09:08:31 -0700
+X-CSE-ConnectionGUID: 7ZdgmZctQ0KiKC9KFnmKHw==
+X-CSE-MsgGUID: cUgtkkpATai6XXWG2CJOWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,208,1719903600"; 
+   d="scan'208";a="70941798"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 06 Sep 2024 09:08:31 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smbVc-000BSw-1U;
+	Fri, 06 Sep 2024 16:08:28 +0000
+Date: Sat, 07 Sep 2024 00:08:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/bugs] BUILD SUCCESS
+ 1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d
+Message-ID: <202409070020.AgqtX5td-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240809122007.1220219-3-masahiroy@kernel.org>
- <3447459d08dd7ebb58972129cddf1c44@paul-moore.com> <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
- <CAHC9VhSz+kwYOnkfWPHOmoKCRfOjm3_L5xMLeSGVNxq5g=ikww@mail.gmail.com>
-In-Reply-To: <CAHC9VhSz+kwYOnkfWPHOmoKCRfOjm3_L5xMLeSGVNxq5g=ikww@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 7 Sep 2024 01:06:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARj7mx9ZkucABBKujEmwggqZvn+8PZ1e-_ofaa43pfz0Q@mail.gmail.com>
-Message-ID: <CAK7LNARj7mx9ZkucABBKujEmwggqZvn+8PZ1e-_ofaa43pfz0Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selinux: move genheaders to security/selinux/
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 7, 2024 at 12:37=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Fri, Sep 6, 2024 at 11:19=E2=80=AFAM Masahiro Yamada <masahiroy@kernel=
-.org> wrote:
-> > On Tue, Aug 27, 2024 at 6:22=E2=80=AFAM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Aug  9, 2024 Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > >
-> > > > This tool is only used in security/selinux/Makefile.
-> > > >
-> > > > There is no reason to keep it under scripts/.
-> > > >
-> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > ---
-> > > >  scripts/remove-stale-files                                 | 3 +++
-> > > >  scripts/selinux/Makefile                                   | 2 +-
-> > > >  scripts/selinux/genheaders/.gitignore                      | 2 --
-> > > >  scripts/selinux/genheaders/Makefile                        | 3 ---
-> > > >  security/selinux/.gitignore                                | 1 +
-> > > >  security/selinux/Makefile                                  | 7 +++=
-++--
-> > > >  .../selinux/genheaders =3D> security/selinux}/genheaders.c   | 0
-> > > >  7 files changed, 10 insertions(+), 8 deletions(-)
-> > > >  delete mode 100644 scripts/selinux/genheaders/.gitignore
-> > > >  delete mode 100644 scripts/selinux/genheaders/Makefile
-> > > >  rename {scripts/selinux/genheaders =3D> security/selinux}/genheade=
-rs.c (100%)
-> > >
-> > > As long as there is no harm in keeping genheaders under scripts/selin=
-ux,
-> > > and based on your cover letter it would appear that there is no probl=
-em
-> > > with the current location, I would prefer to keep it where it current=
-ly
-> > > lives.
-> >
-> > 'make clean' is meant to clean up the tree, but keep
-> > build artifacts necessary for building external modules.
-> >
-> > See the help message:
-> >
-> >   clean           - Remove most generated files but keep the config and
-> >                     enough build support to build external modules
-> >
-> > 'make clean' does not clean up under scripts/
-> > because tools located scripts/ are used in tree-wide
-> > and often used for external modules as well.
-> >
-> > So, scripts/selinux/genheaders/genheaders is left over.
-> >
-> > genheaders is locally used in security/selinux/.
-> >
-> > 'make clean' will properly clean up security/selinux/genheaders.
->
-> Your last sentence is confusing and doesn't align with the rest of
-> your email, please clarify.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/bugs
+branch HEAD: 1dbb6b1495d472806fef1f4c94f5b3e4c89a3c1d  x86/bugs: Fix handling when SRSO mitigation is disabled
 
+elapsed time: 1796m
 
-I do not understand what was unclear.
+configs tested: 112
+configs skipped: 1
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                            allyesconfig   clang-20
+alpha                            allyesconfig   gcc-13.3.0
+arc                              allmodconfig   clang-20
+arc                              allmodconfig   gcc-13.2.0
+arc                              allyesconfig   clang-20
+arc                              allyesconfig   gcc-13.2.0
+arc                   randconfig-001-20240906   gcc-13.2.0
+arc                   randconfig-002-20240906   gcc-13.2.0
+arm                              allmodconfig   clang-20
+arm                              allmodconfig   gcc-14.1.0
+arm                              allyesconfig   clang-20
+arm                              allyesconfig   gcc-14.1.0
+arm                   randconfig-001-20240906   clang-20
+arm                   randconfig-002-20240906   gcc-14.1.0
+arm                   randconfig-003-20240906   gcc-14.1.0
+arm                   randconfig-004-20240906   gcc-14.1.0
+arm64                            allmodconfig   clang-20
+arm64                 randconfig-001-20240906   clang-20
+arm64                 randconfig-002-20240906   clang-17
+arm64                 randconfig-003-20240906   gcc-14.1.0
+arm64                 randconfig-004-20240906   gcc-14.1.0
+csky                  randconfig-001-20240906   gcc-14.1.0
+csky                  randconfig-002-20240906   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                          allyesconfig   clang-20
+hexagon               randconfig-001-20240906   clang-20
+hexagon               randconfig-002-20240906   clang-14
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240906   clang-18
+i386         buildonly-randconfig-002-20240906   gcc-12
+i386         buildonly-randconfig-003-20240906   clang-18
+i386         buildonly-randconfig-004-20240906   gcc-12
+i386         buildonly-randconfig-005-20240906   clang-18
+i386         buildonly-randconfig-006-20240906   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240906   gcc-12
+i386                  randconfig-002-20240906   clang-18
+i386                  randconfig-003-20240906   gcc-12
+i386                  randconfig-004-20240906   clang-18
+i386                  randconfig-005-20240906   clang-18
+i386                  randconfig-006-20240906   gcc-12
+i386                  randconfig-011-20240906   gcc-12
+i386                  randconfig-012-20240906   clang-18
+i386                  randconfig-013-20240906   gcc-12
+i386                  randconfig-014-20240906   gcc-12
+i386                  randconfig-015-20240906   gcc-12
+i386                  randconfig-016-20240906   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch             randconfig-001-20240906   gcc-14.1.0
+loongarch             randconfig-002-20240906   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+nios2                 randconfig-001-20240906   gcc-14.1.0
+nios2                 randconfig-002-20240906   gcc-14.1.0
+openrisc                          allnoconfig   clang-20
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   clang-20
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                randconfig-001-20240906   gcc-14.1.0
+parisc                randconfig-002-20240906   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   clang-20
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-20
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc               randconfig-001-20240906   clang-17
+powerpc               randconfig-002-20240906   gcc-14.1.0
+powerpc               randconfig-003-20240906   clang-15
+powerpc64             randconfig-001-20240906   clang-20
+powerpc64             randconfig-002-20240906   clang-15
+powerpc64             randconfig-003-20240906   clang-20
+riscv                            allmodconfig   clang-20
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   clang-20
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-20
+riscv                            allyesconfig   gcc-14.1.0
+riscv                 randconfig-001-20240906   gcc-14.1.0
+riscv                 randconfig-002-20240906   clang-20
+s390                             allmodconfig   clang-20
+s390                             allmodconfig   gcc-14.1.0
+s390                              allnoconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                  randconfig-001-20240906   clang-20
+s390                  randconfig-002-20240906   clang-20
+sh                               allmodconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                    randconfig-001-20240906   gcc-14.1.0
+sh                    randconfig-002-20240906   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64               randconfig-001-20240906   gcc-14.1.0
+sparc64               randconfig-002-20240906   gcc-14.1.0
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-17
+um                                allnoconfig   clang-20
+um                               allyesconfig   clang-20
+um                               allyesconfig   gcc-12
+um                    randconfig-001-20240906   clang-20
+um                    randconfig-002-20240906   clang-20
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                randconfig-001-20240906   gcc-14.1.0
+xtensa                randconfig-002-20240906   gcc-14.1.0
 
-'make clean' cannot clean the current path,
-scripts/selinux/genheaders/genheaders.
-
-'make clean' can clean the proposed path,
-security/selinux/genheaders.
-
-
-
-genheaders is only used during the kernel build.
-When you run 'make clean', there is no reason to keep it
-for external modules.
-Thus, it should move to the directory path that
-'make clean' can handle.
-
-
-Clearer?
-
-
-
-
-
-
->
-> Regardless, this sort of explanation is what one needs to put in the
-> commit description, a simple "There is no reason to keep it under
-> scripts/" isn't sufficient.  Patches like this need to provide a well
-> defined reason to justify the code churn.
->
-> --
-> paul-moore.com
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
