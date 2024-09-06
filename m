@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-318744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A0596F270
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC8B96F278
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94523B21086
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:10:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1488B2094B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E801CB153;
-	Fri,  6 Sep 2024 11:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783981CB307;
+	Fri,  6 Sep 2024 11:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="PJvH4io2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Ujx0Df32"
+Received: from pv50p00im-tydg10021701.me.com (pv50p00im-tydg10021701.me.com [17.58.6.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C50158866;
-	Fri,  6 Sep 2024 11:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725621014; cv=pass; b=tqTyAwDqvkFd3RoBH/obQSpYDZZPeDJTSb+jCHsRukuyuQyDSfbHu2RC5oJW+eD+SYhkj/u1iWIu/lGFLVSeB8YJH+kDkAhGJXSn5dam4VIEGsf97rqymzgwf8J+bzv1UACToAj5cqjwZDppBqLCGmvo7LwX1cye+FWAsIWZpPQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725621014; c=relaxed/simple;
-	bh=VeWu0Q7HBCMb8CC0HM9o9z1Td3lQJ40pCAD7M+w3zUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZMjqA9yU+ifARXkyPt2Xozmf2fWnfUtQjnH5fIS6h4lKpfPsQB+QmV2oTXy407vyuio6Rn69RCdjVGeKcYzgn9eR+/shP5Zg9yyZ006aX5k08a/TvVJS878H5URSZQK3XzVIzR/FE4YhWgfQ4hqaHrLbNoIS5WQO4/5hpS/RSls=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=PJvH4io2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: usama.anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725620994; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TsnyS4d5F1+fQwXS8QdnsodfUwajKiOUmH45kBOZ43eI+GDxG0gtyv8x5jTvvQ6vfhZlKBSfoauFj+u/yA9xPpW55rj0np7/Ou2MqiwHyD0zoB7alqpXqTMVjIdz+Z50sp7w5p9+GrCKkx3bJ84kUzssQ2GfotkhKfrB6zk9+Pc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725620994; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Hk3dEKo4OtxjsOE2EQD+oEBaenRW6kDIqnQG/8TbeKs=; 
-	b=BPOzPrORzaib0/Gqv2WI1xXl8Aq5JaTj+S/7GrtMHUIpV4OsTEv9Y/gUtzl9k3t9drtBXXRrxFQda7JWEDuID/8MfzP/brYQKvzNMFZUIhcyzkcA1jOgLLHvGmj/pz8Q8/Q0Ht0wZRKhodhnS8zAVsQ9gQaaynrVCHbOtjz74g0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725620994;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=Hk3dEKo4OtxjsOE2EQD+oEBaenRW6kDIqnQG/8TbeKs=;
-	b=PJvH4io2t3cq98Q4qvgm9boWlZaM0js5bjMk1kcgRRES83M3mtCQEe2sAl+ml7mU
-	uW4WD0HkEVfHfs6wHUVQXYxBsAu5G66dPR3I1/OKLYsS/edLbWDbB9Sr0oDw3VkjCDb
-	PwgISuLROYgNUFDOXpBCFfPy3hSyiOGfl2q5P3to=
-Received: by mx.zohomail.com with SMTPS id 172562099299268.57317148356151;
-	Fri, 6 Sep 2024 04:09:52 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Stanimir Varbanov <svarbanov@suse.de>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Jim Quinlan <james.quinlan@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: brcmstb: Correctly store and use the output value
-Date: Fri,  6 Sep 2024 16:09:31 +0500
-Message-Id: <20240906110932.299689-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A634B158866
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 11:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725621152; cv=none; b=fmEY1kUZXrpR5GU3yX2+Tux+PaMDgsf5SHFP+I39IQpbvNVGDm00aGu4Q8gqZHGstHE0XTo2icR500CqfQwNyfmmsUW1eOSBJrBN9j7m4Pdw2K2o95tRBWpt492SYQmb33DLB6WZxU2K2ultZQD+A4II3NF/zTpTEO7k48U8ep8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725621152; c=relaxed/simple;
+	bh=CwTg5C3RAqrdegTeVgfHwHa/Ih6rpo8s6WHBMDaSmCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4kBLPzyOeypX7VBv9LXh8RIl8AD8QrIWO3Ra4b4AYuaTAROrrxWn7q3l7+fCPorJC2orFZgj/7g1K0BOh1o+roVWBGYDvrJCNVA0VafkOEJi2enVWCkJ2hihrbw8yMTjGedwIfdVE6+I+ovCCuHhJaIDJuHM1+FzJKMU5r+xBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Ujx0Df32; arc=none smtp.client-ip=17.58.6.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725621151;
+	bh=fCUr0yYMyiDqZLvbfPiEFIYbUFw3LPM+MmdgJ6xo9Jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=Ujx0Df32xvrtyUA9oJOyR9JhNWfFNd3ehdqrza3sd0K3/Wg57tWl6j5lNXcR575oR
+	 QEqp6PLArQyMg5TNUSuaGeYYbT+rvgdJxYsXh8HTqVCqAvFzRqgt4JEsj1o5y3YniD
+	 zXZjSFGwxGDgYX2EZxgJYKxB/X10y1VkQg+znt3fLGMYXX81FAa2Banjj5HVIjCwc7
+	 uUCsNa+OMZpJX50XGgfti3of/JdQPTmEwwj3SIBX/kw52g7WS6pvRS2FtcXnv9ubsY
+	 1P0ntLKyA0vdB8TM+Bz9OCN9W43YlU3siALjdj8oedrVUOEd0grH4AqyVu30UvYd63
+	 ZxtatkHsGteUg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-tydg10021701.me.com (Postfix) with ESMTPSA id 208573A1107;
+	Fri,  6 Sep 2024 11:12:26 +0000 (UTC)
+Message-ID: <e45ad7f7-ae35-48bb-ba36-af9952b661cf@icloud.com>
+Date: Fri, 6 Sep 2024 19:12:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: sysfs: Fix weird usage of class's namespace relevant
+ fields
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240905-fix_class_ns-v1-1-88ecccc3517c@quicinc.com>
+ <20240906102150.GD2097826@kernel.org>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20240906102150.GD2097826@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: L6DcvCBmeBusLR_6HNmlx7f3AADNuoSw
+X-Proofpoint-ORIG-GUID: L6DcvCBmeBusLR_6HNmlx7f3AADNuoSw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
+ clxscore=1011 malwarescore=0 phishscore=0 adultscore=0 suspectscore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409060081
 
-brcm_pcie_get_inbound_wins() can return negative error. As
-num_inbound_wins is unsigned, we'll be unable to recognize the error.
-Hence store return value of brcm_pcie_get_inbound_wins() in ret which is
-signed and store result back to num_inbound_wins after confirming that
-it isn't negative.
+On 2024/9/6 18:21, Simon Horman wrote:
+> On Thu, Sep 05, 2024 at 07:35:38AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Device class has two namespace relevant fields which are associated by
+>> the following usage:
+>>
+>> struct class {
+>> 	...
+>> 	const struct kobj_ns_type_operations *ns_type;
+>> 	const void *(*namespace)(const struct device *dev);
+>> 	...
+>> }
+>> if (dev->class && dev->class->ns_type)
+>> 	dev->class->namespace(dev);
+>>
+>> The usage looks weird since it checks @ns_type but calls namespace()
+>> it is found for all existing class definitions that the other filed is
+>> also assigned once one is assigned in current kernel tree, so fix this
+>> weird usage by checking @namespace to call namespace().
+>>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>> driver-core tree has similar fix as shown below:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-next&id=a169a663bfa8198f33a5c1002634cc89e5128025
+> 
+> Thanks,
+> 
+> I agree that this change is consistent with the one at the link above.
+> And that, given your explanation there and here, this change
+> makes sense.
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> I don't think there is a need to repost because of this, but for future
+> reference, please keep in mind that patches like this - non bug fixes for
+> Networking code - should, in general, be targeted at net-next.
+> 
+> Subject: [PATCH net-next] ...
+> 
+> See: https://docs.kernel.org/process/maintainer-netdev.html
 
-Fixes: 46c981fd60de ("PCI: brcmstb: Refactor for chips with many regular inbound windows")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/pci/controller/pcie-brcmstb.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 55311dc47615d..054810d7962d7 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -1090,9 +1090,10 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
- 	u32p_replace_bits(&tmp, 1, PCIE_MISC_MISC_CTRL_PCIE_RCB_64B_MODE_MASK);
- 	writel(tmp, base + PCIE_MISC_MISC_CTRL);
- 
--	num_inbound_wins = brcm_pcie_get_inbound_wins(pcie, inbound_wins);
--	if (num_inbound_wins < 0)
--		return num_inbound_wins;
-+	ret = brcm_pcie_get_inbound_wins(pcie, inbound_wins);
-+	if (ret < 0)
-+		return ret;
-+	num_inbound_wins = (u8)ret;
- 
- 	set_inbound_win_registers(pcie, inbound_wins, num_inbound_wins);
- 
--- 
-2.39.2
+thank you very much for such important reminder
+i will follow this guidance for further net patches. (^^)
 
 
