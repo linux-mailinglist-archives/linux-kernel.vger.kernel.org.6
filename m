@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-318405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697FB96ED49
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:12:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA4896ED47
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8777A1C2326B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2656C1F23FA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FE7156C72;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423E6156872;
 	Fri,  6 Sep 2024 08:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Qe+aW9WI"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2102.outbound.protection.outlook.com [40.92.103.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCplR2Ej"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389DD3C463;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A52155732;
 	Fri,  6 Sep 2024 08:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725610356; cv=fail; b=QLzwW/+/OKBt5+efnDFAj0yZRXKwIU0xzOqGptqUhGJUmNNWejvxRPlgBASAUKYdrtwblgl/E/Pqj+9SKCl7OM4SJPY3RVfybL8gmTytGquHoddKRav6yenOeneeG852Dz7it+g7OkX8mfxObq4/l2NOkpq1XVUn0N5KCCeq2oc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725610356; c=relaxed/simple;
-	bh=LSTeVSV7ICtefU4tq6fb1rMFizBY49Fw3VhA5Hn1w2k=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=D+vKDEoBQVECpVugrHn39XPv0khyooGo2QlBUF/JeNa07pObFaEsxT5I/CR1qkPKBP0wKPRmVOOyNjbQ57hYYqB5oaNVyTZ/+y1dZUE+xzvXisYJzBJWoVd8738DjUZfKxbAVuMQak3LPriNCxkmNLQXmEpVkcHNT/pmGHVnV74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Qe+aW9WI; arc=fail smtp.client-ip=40.92.103.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xT4VGEQuVfcS28BjbZqkaXefejPpXFZryA68iv+LbGbouzELM9HYsGGFJ7afov6aZ5DJ9sz+1lEHfGyeJq+3F8Newd5Qb63++v/yN3fTWy/vRhG870YqBJgiJSAHq0SdwV+5bdnlbx++zVqs6ld1H3EvB9VQHjXHVcJOQ6EHXVc52fMhj8ltnYslnVDy+3gfY5qjUNKDdSFqmcWOgys9zmBYHeCN8lCtT3EH2L6frbETmgBEDBVKXIKVR1rK2JHTAZEp6SZ8doqJsJ+JEdatb3fMYK1CU9uZVkJPjVU5O7vhH/1p14b/xv+L+msgUUU1NYJQ2Sh76OLdXBUOqKk4QQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n8Ok1rLKZXpo19bkgfSFY1tsRe9t1kGf0rJPMAK/En0=;
- b=jbHvHeZDY0tWV56p39aM23KCDqy/L2SMOA9CdkL8Qt0LJ8H1egWXdijUpmTMlfb/mZm7wJvLWtD0gxOnKmooNJuoRmvTF01MbUSC4dZcK7e3nqnrA6ePdVSMJbCLrDFHYKOjAOD/1pi6Qy9TThqRKgCBOyLVTTycU/QsMB7XKPt0pX1nCORWe6aAOyoxF8oP7RpddbkesKpGyqB/R0KWV66EzUVsOY9JE4nXNljz+lwFYJYFHdQ/EYEPlUTRAmgikD4OjtXrD4tP4u30ls8Af/GIgpbvh25aMXuHe2WM+7dCnpUegHcqmB75S1tLgMBvwxUFdqfBJJkVIJTowFZgYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n8Ok1rLKZXpo19bkgfSFY1tsRe9t1kGf0rJPMAK/En0=;
- b=Qe+aW9WI8dv6a3ZKUOWbPMIL+90s7aEaoWo9MFMrsssuGsGXdacdsGk30kvmVMjA35JAGUgOFv2GkIFD3QDGkRxJAI5ux/YNU6QcU/BsFvkYZ8wC22cQMR1ZHTXCvdbelauaGDeP5eywaGdiOWMTLnVE8BxR8VkfqDhVvTUMPdearyaijvzgxoPlBeXgmRvy9oY7D5pcgMlUpoKwStzMJb3zHBGN5nDRMPXIzYhtZ+pxCWdU/xq9QTX/S9a88f1P6EWSnLcIDG2Uu1E1WeDEspcPpYvoWjLaOR7s0w5hQIyXUG03FNaI2EHlEJ8zt2C9ZnoxPzC+bZwARCJ1mmB38g==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN2P287MB1081.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:155::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Fri, 6 Sep
- 2024 08:12:29 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%7]) with mapi id 15.20.7939.017; Fri, 6 Sep 2024
- 08:12:29 +0000
-Message-ID:
- <MA0P287MB28222124EBD67F5B036943EDFE9E2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Fri, 6 Sep 2024 16:12:26 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patches in the sophgo tree
-To: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Inochi Amaoto <inochiama@outlook.com>, Olof Johansson <olof@lixom.net>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-References: <20240906120436.74ffdd06@canb.auug.org.au>
- <MA0P287MB282200D15F3A93CE187FA66FFE9E2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <9b83c044-5f22-499e-94a2-1c81f41cb620@app.fastmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <9b83c044-5f22-499e-94a2-1c81f41cb620@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [QAyg2tZyqY8jseHwIVuvkmpl2i+mbUWK]
-X-ClientProxiedBy: SG2P153CA0029.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::16)
- To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <45ab2254-277b-43a8-b39c-ffec4d756cf9@outlook.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725610355; cv=none; b=IYuZok3oxcs4P4c4YyUzoM24zTU+pzBRIKdVCKiFJMapilNLVes7qsIpDCOPntQxwJF7uKKmeJmLDUCnJl2DDHEpJznVQs2YsQuTBn6fZBXIybKxypbPfz1FJwE08h2oImClSFQTIAirRzyO3iVoREdOhxL5YKvZpMI3XbxG8mQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725610355; c=relaxed/simple;
+	bh=UWpwGB3hOXzvwxu0sLSidDGYUqVqGHxyP+GWMOcbby8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+zdoUMhlYsTCtQytpvo6rFMJjLM9Wi1OJC3H76rlcSiWVZ7gv+SLRGI8CY5jI1j4FHvkfpyHgg+M6aE+TcMQIT+BFlgDeZYX6+GsZzVTl5UYRkzs/hnCeovruirMOd3lAhfRii8G+EfWc3HYq3Z8BvCyz482fMmstv0xguIDqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCplR2Ej; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42c94e59b93so15426915e9.1;
+        Fri, 06 Sep 2024 01:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725610352; x=1726215152; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bC+dvkJhq/G3oGDne228ddeYfJVB1YPiQTaYddUNBtE=;
+        b=fCplR2EjQdARw6bXdBRnibX2TwnYh3pMAOkgH4J5vPfnf9hIvY8CF6Jl14b6vVkrIV
+         mAcOKnLVv3UEvWCHXMoeZwbpXZAy5jzLvdeYZKVKf67PnTBh2ePcmEmgNb+VJZII6oyS
+         xHsV5dVpDFTzayyMXh8TeYDktc+HLl4YQLJBpMWpOrECNLkbVs7/og3nZSwFpkXVCyWB
+         qDFkMOoiXKu7Yn2b8f82DJWPFpGu7oMwBFo7HZyCU2jVGlFnO4moDhrhaX6XhY4bJQ1c
+         onD/PNCO+l3pPFLv7mpN2Z2uY8ln6xT/3/imw3vx1+6rG5PJHgxLkuwlUwk3bagX5Kek
+         79Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725610352; x=1726215152;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bC+dvkJhq/G3oGDne228ddeYfJVB1YPiQTaYddUNBtE=;
+        b=b6Fy0vZmG/VYLFbm2mJ8qa//TOWqFOF0Rio5VRvBanJTpbk03srJzJLuGLPD60gcyu
+         VIOOIOFEgYsDPLCYOw2YBcGNbYXJxom8W1qXpUmMndyGvEELaCZavvny0pZhk9NDBlmI
+         qIQFn2agIubWEBNurih4/fkqs6ojARPywFOppInK7c1ophbiy+43Y7XCSf0FQmdlfnC8
+         f0vj+mzvVro5pqWzLFVmwLpoE3ywRCAJjWp7155nWqvIKB9XF802g1GoF6GWgCiiO3FE
+         2FUye8TYe7EfKwtarBc0r26uj8TpdYR6jPX1jDfEkmAxlLol3G2mFwTkOby2KRuf/tvL
+         P4Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYJFNE7z5KAuH3A/ptbEpgRVFyt4+iGp8JUlh4JgUZctmuHGGce/nrdZMRohICDsqQ4HYz+XB1rJT/UG2A8i18vA==@vger.kernel.org, AJvYcCWJ2UiIQmaXfjFWeIaG4udHx0ZIcM3xzQcIXo8X11wsSjYMqrK5sY+iSD6Cc8CiRx8qOCyU+Tv0fegW9yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJFdXL8ifQNOTrKg/XyTtS0KV0XIicPICZyrPJkszvMN7IWVSt
+	jh5/zcS12mbd/KIZ7+zBh+hpArFjASsrWSNyNXer8ADZep6jNZGX
+X-Google-Smtp-Source: AGHT+IG1ZJtWKkJO8/SAaiocgyDO2wR5cL37STT+7rljQjF4nIaJLxXaNcyE08Uc3wakXLAogFHq+g==
+X-Received: by 2002:adf:a15d:0:b0:377:7256:bb3f with SMTP id ffacd0b85a97d-3779a612a68mr4931270f8f.14.1725610351490;
+        Fri, 06 Sep 2024 01:12:31 -0700 (PDT)
+Received: from gmail.com (1F2EF525.nat.pool.telekom.hu. [31.46.245.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca054c166sm12486665e9.0.2024.09.06.01.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 01:12:30 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Fri, 6 Sep 2024 10:12:28 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	gautham.shenoy@amd.com, ravi.bangoria@amd.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
+Message-ID: <Ztq5bI0PBhYWEUV4@gmail.com>
+References: <20240905153821.3822-1-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB1081:EE_
-X-MS-Office365-Filtering-Correlation-Id: a666d73e-0435-4633-a07f-08dcce4ba694
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|461199028|15080799006|6090799003|19110799003|5072599009|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	vdyOY/sqn5dorcjf/07r8r5uXPMQLW3CjgA9R8OnDoyGCIT5ifTzdOOF1OXZVMOL4x3AG5bK2KrEsEprkHJvZru8BwpbXEPd8oNk46nVBEfMwXH2pT8vnP0h5o0RSSXBDvwNKN7Wd2wClNFdAp8sbC3I/C3f1kMue5UejmUZX39dv7QBr1ed9DntQjFMPsLffThInpZbrYZb4+BUwAJZFHAyLjO3SAGtD1WpjvnN36Y/5/YqzHBVqWhuwMS9d44htkYOulEaQjVepEw6zm1DWrdHbwEksG3ojESxqIuCrIvuHdOR1vTSJw/lVp0b6BvY/6dwUJuhvQY0bvV582VPO6oBp/6J2hmgzKdvhM8sOt6M3v4KHdzAuAlf7hVZtt5VDpv3nT8wXlmIfGH7iC7pA6im+Bn4VRinsoSNEpvOSKby2PDDpOpC6Ae33J5ClxiMnp/oj7akw8arZ/SfGMJ2XtuPy5SwB8QAe7LDtg/ijlWGnRQNwZYyBUD63jAQrulCpLSrkdOnfuSGa+7KUPoDrjivSLwwZWHu/81xbhb60fcwuCFiXd5nkv4/DPac3aPPgqYa3BjxkOvV770/4K5wl2FZvP1Hlx2tjWk2EgPo5XDJtQ4Ujb7Vl59PeOv0mHuuRjVyNVbzin7/p/H4YlYnsocDcXbYVVUBU8e9eL83u25pfBGLKrGpj5nVZc0SaFL+kbW+kWpcAaThVUGlC9strHYravZA3jvWxczsYJ4Pj6c=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tjl0bmJvUGRBb3RBL1hRSmh2Z0pwOGFpenVPQmVrMSs1WUs3VStpejE3VHZ5?=
- =?utf-8?B?cGFnYW1ibmxEMkF0SVZyOFdCTkJKQWpqUGRGVFA1TUNFQThuMG1sajRrQ1pz?=
- =?utf-8?B?S1FHWnhHSkU2Zng0WnhkK0d6VmFvQmVlZUZuSmlpVDFPSnQrQmpVakc3Nmda?=
- =?utf-8?B?NWwvYld0aEo3ZWdMcFk1VjQ5c1ZqVnRIRVpVdWpFbk1NbjR5UDZOSktYMjlw?=
- =?utf-8?B?OCsvelVyN1A4b3RkTnNWZEU4Uy9BSzJLejJ0Yk91bXpEQU96YWdSMC8zaU9n?=
- =?utf-8?B?TGhTcHBZM25icCsxQXZmT0FXMDI1T0xoaXVaek56Y2RYQnpvdDNGc2J4SzhY?=
- =?utf-8?B?MC83L0NRK0NvbzFHR1NFaGxVRmIyZVNNb050bGcxS0gyazdIUEgrNTRZdXdq?=
- =?utf-8?B?UVNNY3d6UmxsSURXZWpmZC9rZEhiRVBMMUhoOUMzU2FKYXpCbTBLVldOaCtT?=
- =?utf-8?B?d0RuU2pCVlRnZ2VqL0t5bUNKc1lxaVNKdjltbFVJaEZLb0NURENFZG5PVzls?=
- =?utf-8?B?cHZOU29lNW0vdVJMVGhWVER4LzR0cTFueHpDaTI2T1dxZkRwOHVKUXI5eDRt?=
- =?utf-8?B?SzVpZzhqY2JabGNMYVhSMk0vUEpGQlZ5d0pVZmZ0M0ZwZkVKK29kOFVTdlJj?=
- =?utf-8?B?dytsQm5pYVRJYytXYWtIOXh4L05nS2lXbFQ1TGlKZVNuTDA1Q2cvaTZ3YklG?=
- =?utf-8?B?OHl4NWlGWksrSzRGVERoMWEvelB0WWJLSERoZkxQek9zMWVyRTcvUncyV2gw?=
- =?utf-8?B?WVVOd3hVd1ZZSmFCUzNjbXJ5N3gwakJzWWtkQ3ZucnRuOHh5REJUQ3crd0RX?=
- =?utf-8?B?UTdtYlhjaDJ5UkIrNHVkN0hITWhNQmRPcEd5NHRqRmhtMkFDRkZqcUM2Tnlr?=
- =?utf-8?B?ZnB2eUYrOHp0K2VTTXBUVER2aitac0NwNjRKYmgxS0hMejdzR2NtcTEwT1hZ?=
- =?utf-8?B?anFldnRDTVpjY1Q1QjA3YW5Xb3d1NlYycEEyOUZGN0xQdlQ0SWJ5Q09NNWIz?=
- =?utf-8?B?Tjg1L3JacTRqeTN5YytUQVIvTUZJbWl3K1hYU3g2QzFVVzh2SkRoMTBGS1VC?=
- =?utf-8?B?cTZGSUFsdVY3VXA5ZHRkVGJiTFJLM0hkd1pPSHorR0Mvd2FSSDFZdUJtTUc1?=
- =?utf-8?B?aU9tMDBZOW5nQ1d1ZnBvb3RCYzhJZFRmRFRrNDViVkhhSTZyVFExbndDT3JM?=
- =?utf-8?B?b2ZwZmxOVHNOY3dYT1RCbkxodTVhU2EwM056QnBzcnZOVFJOS01xdlhUSFJ4?=
- =?utf-8?B?a2xVMm5tbEQydzVFZFhUU1lUOWtxTERvZ3JBOWNTQ0trRkxQQjU2TmgzRWFX?=
- =?utf-8?B?L3hjYmNoWnVnMDRlYjE4OFZ5UnpyWERNbmV4MXY2U1lsOGZ0dXY4aGo5dFNI?=
- =?utf-8?B?aWZsUjBUZ2NmSWU2cE5mL1pUUTQwZjhCMWdLUE1hTVpNOFZoZnBRdTZYSUh6?=
- =?utf-8?B?UnV0ZGpGejZSZFdybkt0NHZJd05PMERadXNCV3A1NlVrSEpHMkVVbU1nbDFy?=
- =?utf-8?B?aHUrRXRFOExHREJyVHkzM0lCTXJwZm9SajBuVkpxbWttdVBSMHVaenhET0F5?=
- =?utf-8?B?bVZqL2xMc3Z4bDkrV1RPR3hoemU2NHVrYXdpY2xxdklSNGdGQXlVYXlWclJ6?=
- =?utf-8?B?YXlmcWxGNStKUnVpdmE0OTNDL0RCN1BVRGI5Vm1DOEVNeWJ0OHNnc2cwc2dh?=
- =?utf-8?Q?z7p0F3stg8SjdNiYRFZY?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a666d73e-0435-4633-a07f-08dcce4ba694
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:12:29.4991
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905153821.3822-1-Dhananjay.Ugwekar@amd.com>
 
 
-On 2024/9/6 14:54, Arnd Bergmann wrote:
-> On Fri, Sep 6, 2024, at 03:24, Chen Wang wrote:
->> Hi，Stephen,
->>
->> The arm-soc tree contains these patches is due to I submited a PR to
->> Arnd and he merged this today.
->>
->> And for the sophgo/for-next branch, it does contains these patches. I
->> created the PR branch(sophgo/riscv-sophgo-dt-for-next) and cherry-picked
->> these patches from sophgo/for-next and submited the PR. I see the
->> commits in arm-soc are the same as that from
->> sophgo/riscv-sophgo-dt-for-next, but they are different against the
->> commit ids from sophgo/for-next due to cherry-pick operation.
->>
->> So my question is, do we need to make sure commit id the same between PR
->> branch and sophgo/for-next branch?
-> It certainly makes things easier for everyone if you have the
-> same commit IDs, yes. Aside from tripping Stephen's sanity checks,
-> having rebased commits in your tree also means that the branch that
-> gets tested is different from the one that gets merged.
->
-> If you have multiple branches that you want to be in linux-next but
-> get merged through different upstream trees, your for-next branch
-> would normally just be a merge of those rather than a cherry-pick.
->
-> [Side note: you should also ensure that each of those branches
-> individually works correctly, i.e. it may add features that only work
-> when combined with the other branches, but it never introduces
-> regressions when merged without the other ones.]
->
->        Arnd
+* Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com> wrote:
 
-Thank you Arnd for your careful explaination. I will pay attention to 
-these issues later.
+> After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"),
+> on AMD processors that support extended CPUID leaf 0x80000026, the
+> topology_die_cpumask() and topology_logical_die_id() macros, no longer
+> return the package cpumask and package id, instead they return the CCD
+> (Core Complex Die) mask and id respectively. This leads to the energy-pkg
+> event scope to be modified to CCD instead of package.
+> 
+> So, change the PMU scope for AMD and Hygon back to package.
+> 
+> On a 12 CCD 1 Package AMD Zen4 Genoa machine:
+> 
+> Before:
+> $ cat /sys/devices/power/cpumask
+> 0,8,16,24,32,40,48,56,64,72,80,88.
+> 
+> The expected cpumask here is supposed to be just "0", as it is a package
+> scope event, only one CPU will be collecting the event for all the CPUs in
+> the package.
+> 
+> After:
+> $ cat /sys/devices/power/cpumask
+> 0
+> 
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+> ---
+> v3 Link: https://lore.kernel.org/all/20240904100934.3260-1-Dhananjay.Ugwekar@amd.com/
+> 
+> Changes from v3:
+> * Move the rapl_pmu_is_pkg_scope() check before the memory allocation for rapl_pmus
+> 
+> tip/master + PMU scope patchset [1] to be taken as base for testing this patch. 
 
-Regards,
+> @@ -643,9 +672,10 @@ static int __init init_rapl_pmus(void)
+>  	rapl_pmus->pmu.start		= rapl_pmu_event_start;
+>  	rapl_pmus->pmu.stop		= rapl_pmu_event_stop;
+>  	rapl_pmus->pmu.read		= rapl_pmu_event_read;
+> +	rapl_pmus->pmu.scope		= rapl_pmu_scope;
+>  	rapl_pmus->pmu.module		= THIS_MODULE;
+> -	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
+>  	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
+> +
+>  	return 0;
+>  }
 
-Chen
+This chunk doesn't apply to perf/urgent.
 
+Thanks,
 
+	Ingo
 
