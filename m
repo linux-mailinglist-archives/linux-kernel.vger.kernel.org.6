@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-318598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F81B96F061
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:55:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F77D96F06E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38091F27B44
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC451F2769A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9011C9DD8;
-	Fri,  6 Sep 2024 09:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705AB1C9EBB;
+	Fri,  6 Sep 2024 09:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0Kh6B7/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjfpPnVp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04B1C7B90;
-	Fri,  6 Sep 2024 09:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC01B13CFB6;
+	Fri,  6 Sep 2024 09:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725616416; cv=none; b=rjz0zDRNOGDLuyuce/1Ei5qJin+7X3PDIcgPIfDSz+s4hh3bh2PWv9JCQDtZTWrlLUqmV5lO1JLEh4VL4UGLc6Wg5JhGV81bd1AI3MoK5E2DJyY+ZJ5/5ZsCuCeruVDr+sZuagmEGgvXL4KXKzbJmRzWQiFE6iAAada2BvkQ6+A=
+	t=1725616446; cv=none; b=E4F29TMEI0GLZMQN4HyJIfxnTWAnE4xXPH+uyMP77Ep2v5aGb9Jwla2BKDKy2vnE/rOWfaSnzcm+uH2N+i93hKQxB2pajOqxKABkt7tTcaJk3UMZEAz5j9SkgdKw1vtlO66YlxyWXogqqRqRdU82P4CiF+GznCFiIdIgwDZNpRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725616416; c=relaxed/simple;
-	bh=sIHvnuKMsGosS+8Rs7mZhNLKmzTCYjE+RF/2DCpylBU=;
+	s=arc-20240116; t=1725616446; c=relaxed/simple;
+	bh=0GAwWux2Waq9c7WyP1vw7CKt/kx9RR5Wr4x5nyAISsE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qBXr9hM4KVoREBKqsgQKSum2xlHSCftiSY2d/k8Y79EsiMZ0mrVFGu55NEf3CBhfUWIaDrkzA5eFE4McOaSZ9Y2Bbu0brrscRoHlA8Xd25TTq000PuntJK0PkOpXAnZ7WBw6aBy7DvzWIWm39u8GFQB/bjm+V56zaS4mPklQv4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0Kh6B7/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC927C4CEC4;
-	Fri,  6 Sep 2024 09:53:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dTkapkg021EvTGQFS35JJdmZ7KKWUINpSKn7e6fArNgBK+1nQWHUKM1/snt/uyXDEfQRkpf4uTszjZysPRVPXoCoI/bCGFFkptJrj4V2O+i/UCTT4q5IMrZrJRLrrU+d2xuqsqvZSN7TDtTRpxzc+hmPko3bgzpvZQT8AcS7eIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjfpPnVp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96AA3C4CEC5;
+	Fri,  6 Sep 2024 09:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725616415;
-	bh=sIHvnuKMsGosS+8Rs7mZhNLKmzTCYjE+RF/2DCpylBU=;
+	s=k20201202; t=1725616446;
+	bh=0GAwWux2Waq9c7WyP1vw7CKt/kx9RR5Wr4x5nyAISsE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V0Kh6B7/JEEC+j2Sh8mb3x7luLB0E0ek5QRiojlgGxsfkKSWnjdoT0CfrFaZ2ORSi
-	 GIIMbclpgW6B9F2Rru5D0DA12a0b7LtuFHGT+jAslayGdkHw5SOrpH2cW4Tde6/LLw
-	 c6sHRiihOD3hDM6CdZnCPGOQeJjlKkZ2VU8fudwlnmo9S7WNvWDIOm6BscFwx1uRKb
-	 4nIUn6o2hsjP8l9/6Lnb2/dZWqaTrVXql6gweQXNBkCat0gvlKM7mZQ+uH0iuzdQrJ
-	 rfP+A1fNNFcTiD9LtdFNvxDw8vuDcGYrWSRWY0nX7GbyfNln2x71XFDHPzrcEz2AGp
-	 2XIiLsT7RL6Zg==
-Message-ID: <5c8b066c-6e61-44c1-b99d-4ae1a2313033@kernel.org>
-Date: Fri, 6 Sep 2024 11:53:25 +0200
+	b=OjfpPnVp4JUcf0LUfBAUe3tBQilABUegt3zEGR/dD1u6yRwQUAHpFUkfnffp8DEi3
+	 GnAycqnGQnJWHQqPH/VRqCma7kAUbAvxQdlS31LYxomlFQqXv4bjpjqj9Og7bh7z0y
+	 Q0W4cYWkqzfdTj35dRcTRzG5O8eVqMshNslOMvDKONNoG1P/T/vIechZt2BriW8GmE
+	 GwC+E4j8H07wMP3Rkn5ZvoI2BkR0VhE7VvqhEo8++wHEXOfMN/scO8aUGzCaI6lCzt
+	 ODSHV8HhQbaSS7+PU2bIKkKIOsCkhJmDRC7xuG2OQCdbVFCeXhYXveYB/DI26LFvhO
+	 SGoq08EECQ8GA==
+Message-ID: <d1f9d323-0f66-484b-a5dd-3ea1fc690c6d@kernel.org>
+Date: Fri, 6 Sep 2024 11:53:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] arm64: dts: rockchip: add Photonicat PMU support for
- Ariaboard Photonicat
-To: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
- Chukun Pan <amadeus@jmu.edu.cn>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-10-bigfoot@classfun.cn>
-Content-Language: en-US
+Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
+ support
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240826084214.2368673-1-andrei.stefanescu@oss.nxp.com>
+ <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
+ <fd18295c-6544-4da6-aab0-6d6b9c12581a@kernel.org>
+ <6a65f608-7ca4-44f1-865c-6a1b9891b275@oss.nxp.com>
+ <3ab4c235-c513-4dce-8061-b8831ea548a3@kernel.org>
+ <0ba90fcf-60b8-478c-bd9d-487acacdc988@oss.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -110,46 +113,50 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240906093630.2428329-10-bigfoot@classfun.cn>
+In-Reply-To: <0ba90fcf-60b8-478c-bd9d-487acacdc988@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/09/2024 11:36, Junhao Xie wrote:
-> This commit adds support for Photonicat power management MCU on
-> Ariaboard Photonicat.
+On 06/09/2024 11:45, Andrei Stefanescu wrote:
+> On 06/09/2024 12:39, Krzysztof Kozlowski wrote:
+>> On 06/09/2024 10:43, Andrei Stefanescu wrote:
+>>> Hi Krzysztof,
+>>>
+>>>
+>>>>> +static struct regmap *common_regmap_init(struct platform_device *pdev,
+>>>>> +					 struct regmap_config *conf,
+>>>>> +					 const char *name)
+>>>>> +{
+>>>>> +	struct device *dev = &pdev->dev;
+>>>>> +	struct resource *res;
+>>>>> +	resource_size_t size;
+>>>>> +	void __iomem *base;
+>>>>> +
+>>>>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
+>>>>> +	if (!res) {
+>>>>> +		dev_err(&pdev->dev, "Failed to get MEM resource: %s\n", name);
+>>>>> +		return ERR_PTR(-EINVAL);
+>>>>> +	}
+>>>>> +
+>>>>> +	base = devm_ioremap_resource(dev, res);
+>>>>
+>>>> There is a wrapper for both calls above, so use it.
+>>>
+>>> I am not sure I can change this because I also use the `resource_size`
+>>> call below in order to initialize the regmap_config. 
+>>> Unfortunately, `devm_platform_ioremap_resource_byname` doesn't also retrieve
+>>> the resource via a pointer.
+>>>
+>>> I saw the `devm_platform_get_and_ioremap_resource` function but that one
+>>> retrieves the resource based on the index. I would like to keep identifying
+>>> the resource by its name instead of its index.
+>>
+>> So add the wrapper. Or explain what's wrong with indices?
 > 
-> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
-> ---
->  .../boot/dts/rockchip/rk3568-photonicat.dts   | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
-> index 2fe403cd61cb..597275702408 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
-> @@ -513,6 +513,49 @@ &uart4 {
->  	dma-names = "tx", "rx";
->  	status = "okay";
->  	/* Onboard power management MCU */
-> +
-> +	pcat_pmu: mcu {
-> +		compatible = "ariaboard,photonicat-pmu";
-> +		current-speed = <115200>;
-> +		local-address = <1>;
-> +		remote-address = <1>;
-> +
-> +		pcat_pmu_battery: supply-battery {
+> There's nothing wrong but I prefer to not force an order. I will
+> add a wrapper then.
 
-Drop unused labels. Everywhere. You are not making the code more readable.
-
-
-> +			compatible = "ariaboard,photonicat-pmu-supply";
-> +			label = "battery";
-> +			monitored-battery = <&battery>;
-> +			power-supplies = <&pcat_pmu_charger>;
-
-Why do you reference internal design of the device as DTS? You cannot
-have here other power supply, can you?
+Order is forced. You cannot change it. I don't understand your rationale.
 
 Best regards,
 Krzysztof
