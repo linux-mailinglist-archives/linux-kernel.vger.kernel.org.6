@@ -1,206 +1,134 @@
-Return-Path: <linux-kernel+bounces-318146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2126596E8F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:02:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5C796E8F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F17F1C2373C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298931F24CCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB916EB5C;
-	Fri,  6 Sep 2024 05:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F81F54FB5;
+	Fri,  6 Sep 2024 05:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HjySdNts"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hjLId02R"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F29347C7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 05:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA021FDD
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 05:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725598952; cv=none; b=WHJyxa1Jlo7qGm6XafcW1lCtwSwZpFDX4i/tVBDuZagufJRnWFE1FfjCIvh+l4xBzaq50iLQHE3P2MeOQeSuMsDUJpPsNvKrkXZEOuwtG8IaAwPU/GCOM1s5kNVhNkWO3CH60DNz2oSyVximyE2rNo1drZjNtEbFrqqzsp1YYuw=
+	t=1725599112; cv=none; b=bvXfBkWbJ+OcfKAHNourSjsyOyPwhz1r65tPNL3mB3RtgnwfC68uy5rCO+gy5wporGmoLYsfYmr+G4gsPWK+TSVja3MwcEoAQ8tJfGolfxFW3Yx+7M822Lve9RpnS13t7bm0M5l6ERnbyp177Arnw5Afn8LrZfMd0hMw2VFP9OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725598952; c=relaxed/simple;
-	bh=hEZQjKK3U1lVEgR6Ec5XlLc+QX5ucm6APvF55Y/fCgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pg7EsChfjqNZMvfEXQq5vtruAf9XVcEdRaBtwzw5kvYqvPSKj7+wIsurYknQzk/ZUxO1Bvv0zAhYCDpQEXguM1XeljLxvhNnp0MZ0UU0FXokvimY21XwJvSkoaM/K0RjuChAsyCJx4VOZbfVsF02AqiR4JkCaNmczDCoEZxdhxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HjySdNts; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <99b11f32-387c-4501-bd60-efa37618c53d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725598947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7UCcDgwolFukqOlsE6zZGkaasTrGd0hAjw8DCvXSBgg=;
-	b=HjySdNtsnksmvuloVYqPdTgVnr6jSKJ1t+6vKN94VaExJPcsyMTvd2JSrZpy0vOhb9FPpl
-	SDdWrlXjVpRDAqU6vkqegubGThAf4nSLJNTGPjhi621uBsELKSpvFT0RbSNmRNAwPXO3Vj
-	Nka1Q4oRr5LTzqWJZ2rYBxUs7HsYrOY=
-Date: Fri, 6 Sep 2024 13:02:16 +0800
+	s=arc-20240116; t=1725599112; c=relaxed/simple;
+	bh=sZ2k21ZEXYLV9VovrLLyiV4uy0Dxri8c+6ypHItgeMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=txPlrrKurOdSt6BBSuNwLMir46vrm6fwZ06cmhpmTgDfjaEDGgZglHZHbQ3h6Q2TzlRQPW6+BTGBfOcmuoNH6z8moBq85Q7ibFwcqNv8+aHL1cGb6FMO32ZD0mQBx2gsRhxUozo0jcRcCCGj4q+wHAfd5b0Q8c2R+nROkiKKb9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hjLId02R; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso1216264a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2024 22:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725599111; x=1726203911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=URjs2e14Fp7RVkIyMVrCJPWGc66YEPbg+saVVglr4c0=;
+        b=hjLId02RkOAuojahihlML8IlSeGZR+ZlcVFUN2KTssMjhS53ar/GA/2a1D1DrfUdU0
+         UNfbvARJ69SsFSY46qfP6S+ew8MlrHj+IiX3uvFEHBdTP0ArJmLoQnJYIjKibhTMlA33
+         fSYHT1U+F7RG3T4J8o5ebpESyoydDLAVKywzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725599111; x=1726203911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=URjs2e14Fp7RVkIyMVrCJPWGc66YEPbg+saVVglr4c0=;
+        b=i0ZvOrimaeWChOLUpEqIwFeqT3erfj52Ms5Cz+jMDd/DVhnq3nXkELJOrOmyu8gVIo
+         5BibGvKrHTh6yFgODAlU94kzRCVMhYzAcSDNGKTHbGO+Vnx3DUrztMM7T9OrfMYvtGz3
+         iXF/nb0Ozt5NOHIVYUFLBEH5B/4lMOwXehcwGFLGt9297KC7VPT0sAzZNbAOl5LMtyub
+         OmORvqT607ptT/RZT5GxWKWmH9/neeXOYyI7LSanrweeutwgk7ZRNo3bYcxQuE5I68c0
+         7SIWOG+ELHjv162BNuLPhnz8mw7JU6J6MHL3g13lWGgHaWBpM4TGck1+HYFxZfwRKDE/
+         NhxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqdgDhlAeAUbh1Dvb0jCZ2eP0MPO0xfU3JC5g6hyJmxUj+WPYMGyUkMXpRPR5h9LI0utHhXLUtQtHEpZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFaNuc8PH2XoYMjWNvdTjkZhjDnRvi0JrXF3nz31Ps3CWhQ9UQ
+	KD8v6PQVGdMLmpndW8LJAtCI1FCSyGslC0hoAiyocVjwx1ZKM4b9OjSV1+PO+w==
+X-Google-Smtp-Source: AGHT+IFF/cAKRv6jWIUL9IOZEt399Ti517iaCaiz6PRilgbEyGIRgojHin+i4Pgxl2noLFwa9C3h+A==
+X-Received: by 2002:a05:6a21:3102:b0:1ce:e67a:66af with SMTP id adf61e73a8af0-1cee67a66f3mr17441522637.26.1725599110602;
+        Thu, 05 Sep 2024 22:05:10 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:8eb7:9f7e:1b0e:95db])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae90f3a2sm36252945ad.38.2024.09.05.22.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 22:05:10 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Richard Chang <richardycc@google.com>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv1 0/3] zram: optimal post-processing target selection
+Date: Fri,  6 Sep 2024 14:04:44 +0900
+Message-ID: <20240906050501.2494686-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH rdma-next 0/2] Introduce mlx5 data direct placement (DDP)
-To: Edward Srouji <edwards@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
- Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
- Yishai Hadas <yishaih@nvidia.com>
-References: <cover.1725362773.git.leon@kernel.org>
- <829ac3ed-a338-4589-a76d-77bb165f0608@linux.dev>
- <f0e05a6d-6f9c-4351-af7a-7227fb3998be@nvidia.com>
- <aaf9263b-931e-4b1d-8aea-1218faec2802@linux.dev>
- <09db1552-db97-4e82-9517-3b67c4b33feb@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <09db1552-db97-4e82-9517-3b67c4b33feb@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2024/9/5 20:23, Edward Srouji 写道:
-> 
-> On 9/4/2024 2:53 PM, Zhu Yanjun wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 在 2024/9/4 16:27, Edward Srouji 写道:
->>>
->>> On 9/4/2024 9:02 AM, Zhu Yanjun wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 在 2024/9/3 19:37, Leon Romanovsky 写道:
->>>>> From: Leon Romanovsky <leonro@nvidia.com>
->>>>>
->>>>> Hi,
->>>>>
->>>>> This series from Edward introduces mlx5 data direct placement (DDP)
->>>>> feature.
->>>>>
->>>>> This feature allows WRs on the receiver side of the QP to be consumed
->>>>> out of order, permitting the sender side to transmit messages without
->>>>> guaranteeing arrival order on the receiver side.
->>>>>
->>>>> When enabled, the completion ordering of WRs remains in-order,
->>>>> regardless of the Receive WRs consumption order.
->>>>>
->>>>> RDMA Read and RDMA Atomic operations on the responder side continue to
->>>>> be executed in-order, while the ordering of data placement for RDMA
->>>>> Write and Send operations is not guaranteed.
->>>>
->>>> It is an interesting feature. If I got this feature correctly, this
->>>> feature permits the user consumes the data out of order when RDMA Write
->>>> and Send operations. But its completiong ordering is still in order.
->>>>
->>> Correct.
->>>> Any scenario that this feature can be applied and what benefits will be
->>>> got from this feature?
->>>>
->>>> I am just curious about this. Normally the users will consume the data
->>>> in order. In what scenario, the user will consume the data out of 
->>>> order?
->>>>
->>> One of the main benefits of this feature is achieving higher bandwidth
->>> (BW) by allowing
->>> responders to receive packets out of order (OOO).
->>>
->>> For example, this can be utilized in devices that support multi-plane
->>> functionality,
->>> as introduced in the "Multi-plane support for mlx5" series [1]. When
->>> mlx5 multi-plane
->>> is supported, a single logical mlx5 port aggregates multiple physical
->>> plane ports.
->>> In this scenario, the requester can "spray" packets across the
->>> multiple physical
->>> plane ports without guaranteeing packet order, either on the wire or
->>> on the receiver
->>> (responder) side.
->>>
->>> With this approach, no barriers or fences are required to ensure
->>> in-order packet
->>> reception, which optimizes the data path for performance. This can
->>> result in better
->>> BW, theoretically achieving line-rate performance equivalent to the
->>> sum of
->>> the maximum BW of all physical plane ports, with only one QP.
->>
->> Thanks a lot for your quick reply. Without ensuring in-order packet
->> reception, this does optimize the data path for performance.
->>
->> I agree with you.
->>
->> But how does the receiver get the correct packets from the out-of-order
->> packets efficiently?
->>
->> The method is implemented in Software or Hardware?
-> 
-> 
-> The packets have new field that is used by the HW to understand the 
-> correct message order (similar to PSN).
-> 
-> Once the packets arrive OOO to the receiver side, the data is scattered 
-> directly (hence the DDP - "Direct Data Placement" name) by the HW.
-> 
-> So the efficiency is achieved by the HW, as it also saves the required 
-> context and metadata so it can deliver the correct completion to the 
-> user (in-order) once we have some WQEs that can be considered an 
-> "in-order window" and be delivered to the user.
-> 
-> The SW/Applications may receive OOO WR_IDs though (because the first CQE 
-> may have consumed Recv WQE of any index on the receiver side), and it's 
-> their responsibility to handle it from this point, if it's required.
+Problem:
+--------
+Both recompression and writeback perform a very simple linear scan
+of all zram slots in search for post-processing (writeback or
+recompress) candidate slots.  This often means that we pick the
+worst candidate for pp (post-processing), e.g. a 48 bytes object for
+writeback, which is nearly useless, because it only releases 48
+bytes from zsmalloc pool, but consumes an entire 4K slot in the
+backing device.  Similarly, recompression of an 48 bytes objects
+is unlikely to save more memory that recompression of a 3000 bytes
+object.  Both recompression and writeback consume constrained
+resources (CPU time, batter, backing device storage space) and
+quite often have a (daily) limit on the number of items they
+post-process, so we should utilize those constrained resources in
+the most optimal way.
 
-Got it. It seems that all the functionalities are implemented in HW. The 
-SW only receives OOO WR_IDs. Thanks a lot. Perhaps it is helpful to RDMA 
-LAG devices. It should enhance the performance^_^
+Solution:
+---------
+This patch reworks the way we select pp targets.  We, quite clearly,
+want to sort all the candidates and always pick the largest, be it
+recompression or writeback.  Especially for writeback, because the
+larger object we writeback the more memory we release.  This series
+introduces concept of pp buckets and pp scan/selection.
 
-BTW, do you have any performance data with this feature?
+The scan step is a simple iteration over all zram->table entries,
+just like what we currently do, but we don't post-process a candidate
+slot immediately.  Instead we assign it to a pp bucket, we have 16 (in
+this patch) of them.  PP bucket is, basically, a list which holds
+pp candidate slots that belong to the same size class. PP buckets
+are 256 bytes apart from each other on a 4K system:
 
-Best Regards,
-Zhu Yanjun
+        pp bucket #16: holds candidates of sizes 3840-4096 bytes
+        pp bucket #15: holds candidates of sizes 3584-3840 bytes
+        and so on
 
-> 
->>
->> I am just interested in this feature and want to know more about this.
->>
->> Thanks,
->>
->> Zhu Yanjun
->>
->>>
->>> [1] https://lore.kernel.org/lkml/cover.1718553901.git.leon@kernel.org/
->>>> Thanks,
->>>> Zhu Yanjun
->>>>
->>>>>
->>>>> Thanks
->>>>>
->>>>> Edward Srouji (2):
->>>>>    net/mlx5: Introduce data placement ordering bits
->>>>>    RDMA/mlx5: Support OOO RX WQE consumption
->>>>>
->>>>>   drivers/infiniband/hw/mlx5/main.c    |  8 +++++
->>>>>   drivers/infiniband/hw/mlx5/mlx5_ib.h |  1 +
->>>>>   drivers/infiniband/hw/mlx5/qp.c      | 51
->>>>> +++++++++++++++++++++++++---
->>>>>   include/linux/mlx5/mlx5_ifc.h        | 24 +++++++++----
->>>>>   include/uapi/rdma/mlx5-abi.h         |  5 +++
->>>>>   5 files changed, 78 insertions(+), 11 deletions(-)
->>>>>
->>>>
->> -- 
->> Best Regards,
->> Yanjun.Zhu
->>
+The select step simply iterates over pp buckets from highest to lowest
+and picks all candidate slots a particular buckets contains.  So this
+gives us sorted candidates (in linear time) and allows us to select
+most optimal (largest) candidates for post-processing first.
+
+Sergey Senozhatsky (3):
+  zram: introduce ZRAM_PP_SLOT flag
+  zram: rework recompress target selection strategy
+  zram: rework writeback target selection strategy
+
+ drivers/block/zram/zram_drv.c | 283 ++++++++++++++++++++++++++++------
+ drivers/block/zram/zram_drv.h |   1 +
+ 2 files changed, 238 insertions(+), 46 deletions(-)
+
+-- 
+2.46.0.469.g59c65b2a67-goog
 
 
