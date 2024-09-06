@@ -1,94 +1,154 @@
-Return-Path: <linux-kernel+bounces-318475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2372F96EE83
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F1596EE85
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0828B20E16
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140A82831CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDC114A604;
-	Fri,  6 Sep 2024 08:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jmHTdtdU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p4EvLS17"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B0E157A59;
+	Fri,  6 Sep 2024 08:48:23 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8781FAA
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAD11FAA;
+	Fri,  6 Sep 2024 08:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725612449; cv=none; b=E0/Oh0qM7lww8yVEm7RSi43bJBovEJbfOO7yC5kb2mxeK08x/qf8eR7zgeepdS4fA6DMVm6tFn7nHfbSsOW38ABypoI+UhmXq+GOblR36VMdNO5qd5jQPxpGNfElcFD4JKXrAoAGhCwNShe7O+7/JT3dBP9kksM6KN9IPYiKETE=
+	t=1725612503; cv=none; b=oTjZqF7AzoYyBC4EEf1t2WJtOH8QxUe+pQlWC5OblMPSwn8hAHA7vY+GdU0nYLtfs6Sr6Ha9cx1wR1YH2DJTvvJE6XoBm6cMkQ/aJpg1NvV+Ezpi5ZSYbKZLzB9olu+Vn3FFwSAtdp8lH0/tstPnSZ21EzDL7BhW/4jSXW/00R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725612449; c=relaxed/simple;
-	bh=Oa8B0exPuHorkfb3VBgoef687xB6sMs73RRCB0C9WhI=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=P7tRV9W7KtQ+fc4eNvmzSuz6vEcKooXY7tEzIZeLNGhRirs3tu4dr2NQE14u8nYtqlsWErXkuTJgQO4zlSPRUSY75ABIIRfUyZ23Onl49zK7Xkw7W4mQHAKAPO8gS7XY5knn3fgJFh9kKG6CW5j+C5mqEhfxGiM7EivwFX8CV0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jmHTdtdU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p4EvLS17; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725612445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oa8B0exPuHorkfb3VBgoef687xB6sMs73RRCB0C9WhI=;
-	b=jmHTdtdUGvZY4c5xEMGMPt8nSh9czuB7Jj3l9qfv9EQigYmGn3Ie9SEOdanBnAHuPojb7l
-	hUgVGAdt7WpDxjVkLzCObUOrc4wsqiVEURn3vfiVd+CKSgRCsnrN9ecA94HQbkIFgi1Hr9
-	NlDzC73sZikE6Er/v5CtxHroxj8eNasoNl+SmnxIYVbu4xuSS1PwNy/56spFcGxTpi10oj
-	3alpK/SvjsKYfNSt8ACVCEhta4rwCvERxeFiwfSADG5TwSM85dcyBt2QhOCX9TS7alaP6V
-	Ruwd63raIZjTRYXFDwOQj3yBsIdr5UY0vqEWeFFJ3SXDmGRlN3tHPj60/CZuxg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725612445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oa8B0exPuHorkfb3VBgoef687xB6sMs73RRCB0C9WhI=;
-	b=p4EvLS17dbTj5Ob8xY8Oe8RB2BbwrpnLWY2cdQDAt6u+h2mzS9aSCA82XaY0xA2fN/usUZ
-	PBAoxx6bWkAvNkBA==
-To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Javier Martinez Canillas
- <javierm@redhat.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, Petr Mladek <pmladek@suse.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3] drm/log: Introduce a new boot logger to draw
- the kmsg on the screen
-In-Reply-To: <87seudchlu.fsf@jogness.linutronix.de>
-References: <20240801100640.462606-1-jfalempe@redhat.com>
- <20240801100640.462606-4-jfalempe@redhat.com>
- <87o76czfb2.fsf@jogness.linutronix.de>
- <d4412d54-41b1-4671-9733-34ba1423404c@redhat.com>
- <87zfpwxqpc.fsf@jogness.linutronix.de>
- <87a5gm2khw.fsf@jogness.linutronix.de>
- <a421b31b-53ad-4f56-88be-66a7d4c3bb61@redhat.com>
- <87seudchlu.fsf@jogness.linutronix.de>
-Date: Fri, 06 Sep 2024 10:53:25 +0206
-Message-ID: <87plphcgo2.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1725612503; c=relaxed/simple;
+	bh=wa+B/VX5ZH3+Qs1eU0YBOaeqkw6Kt+1kMu1rCCscQpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2OI4MhmjMkbmxaiUIXIRN95LqFEkTNY7zPnexjeY8MSQ2g+C3FampgSgcAZxyIk3qyZMOGxGXSq2ndslIkU0kXvqqV9smwgVSrIWMz5EgdxR177DoE0jmUV2ysjQCMKY8QCOuaxCbPs7jbDdQ0N9EoV7dHE1U6cddpy/6BMlcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c260b19f71so1934270a12.1;
+        Fri, 06 Sep 2024 01:48:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725612500; x=1726217300;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=87rBKScRz3ev/bfm5D1NGFd+7Kine22vuIY6M5kV5Lw=;
+        b=IrPa8Pnm+ng206k9RwY7LjjHaGdpmhjlKuAl2LehHZ8iAsn6psf1i5JbzLzE9tCoQw
+         7GIrS+QiMaQTUuA74dzb6C6Zgt67cC+6WX783sb2PqmOxsuJgbe7h3+P0TJJup1LxTsQ
+         kHpHLOhURXz9jaewsZ3KinPL+tbvSiyvrJVnIuOguaA3sMmPssHWqKC7cXbg6iUPJhv+
+         fEvOMuvMlvCr6DBI3lrtGIyrSHqeO1REG02NAgYEQqJWePi18zIxaySV31PHlSBNH28h
+         cKQa+1hPSTXawu3Mf2h+zIAj0ntAlkl3TPiWe6lOrHxzzH+HgiwyINLIeHwT4Ju6rmeR
+         fOFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVz1fggcQH3evXyWL+JnikfXX48SjZVsa2JkA25KXJbwN/d8+jseM+Pul1p3eSD1ZgQUaISlhYP180yBZQ=@vger.kernel.org, AJvYcCWPjMkCoSpyW5IzYV/JGLsRk7UjzlsPIfRrnm/k+PrWfcSOo4A/hqUJ0YImppCTvaUUNOnjFFov@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJCtUEFpkafseLCwOFROdA/AMFrMu+kLB4xyZOiG6JdGeRi7NW
+	EIuvf7xpjTE4KCMp3HGVAo2j2c8+FxDoXLagmzRVq8Kg9Fa0vBuW
+X-Google-Smtp-Source: AGHT+IGXKJGkXdghz404iaNV/EhyPOiJVH1hczaqYgw8PxZ1NSaq8x5JLDVIWhaaOX+IlCbNsIT31w==
+X-Received: by 2002:a05:6402:35cf:b0:5c2:7699:fb6f with SMTP id 4fb4d7f45d1cf-5c3dc79783amr1163066a12.15.1725612498771;
+        Fri, 06 Sep 2024 01:48:18 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3cc5425f6sm2173146a12.22.2024.09.06.01.48.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 01:48:18 -0700 (PDT)
+Date: Fri, 6 Sep 2024 01:48:15 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
+	thevlad@meta.com, max@kutsevol.com
+Subject: Re: [PATCH net-next 8/9] net: netconsole: split send_msg_fragmented
+Message-ID: <20240906-spirited-versatile-cougar-2babed@devvm32600>
+References: <20240903140757.2802765-1-leitao@debian.org>
+ <20240903140757.2802765-9-leitao@debian.org>
+ <20240904111636.GV4792@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904111636.GV4792@kernel.org>
 
-On 2024-09-06, John Ogness <john.ogness@linutronix.de> wrote:
-> Your device_lock()/device_unlock() callbacks probably just need to
-> lock/unlock your mutex @drm_log_lock.
+On Wed, Sep 04, 2024 at 12:16:36PM +0100, Simon Horman wrote:
+> On Tue, Sep 03, 2024 at 07:07:51AM -0700, Breno Leitao wrote:
+> > Refactor the send_msg_fragmented() function by extracting the logic for
+> > sending the message body into a new function called
+> > send_fragmented_body().
+> > 
+> > Now, send_msg_fragmented() handles appending the release and header, and
+> > then delegates the task of sending the body to send_fragmented_body().
+> 
+> I think it would be good to expand a bit on why here.
+> 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  drivers/net/netconsole.c | 85 +++++++++++++++++++++++-----------------
+> >  1 file changed, 48 insertions(+), 37 deletions(-)
+> > 
+> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> > index be23def330e9..81d7d2b09988 100644
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -1066,45 +1066,21 @@ static void append_release(char *buf)
+> >  	scnprintf(buf, MAX_PRINT_CHUNK, "%s,", release);
+> >  }
+> >  
+> > -static void send_msg_fragmented(struct netconsole_target *nt,
+> > -				const char *msg,
+> > -				const char *userdata,
+> > -				int msg_len,
+> > -				int release_len)
+> > +static void send_fragmented_body(struct netconsole_target *nt, char *buf,
+> > +				 const char *msgbody, int header_len,
+> > +				 int msgbody_len)
+> >  {
+> > -	int header_len, msgbody_len, body_len;
+> > -	static char buf[MAX_PRINT_CHUNK]; /* protected by target_list_lock */
+> > -	int offset = 0, userdata_len = 0;
+> > -	const char *header, *msgbody;
+> > -
+> > -	if (userdata)
+> > -		userdata_len = nt->userdata_length;
+> > -
+> > -	/* need to insert extra header fields, detect header and msgbody */
+> > -	header = msg;
+> > -	msgbody = memchr(msg, ';', msg_len);
+> > -	if (WARN_ON_ONCE(!msgbody))
+> > -		return;
+> > -
+> > -	header_len = msgbody - header;
+> > -	msgbody_len = msg_len - header_len - 1;
+> > -	msgbody++;
+> > -
+> > -	/*
+> > -	 * Transfer multiple chunks with the following extra header.
+> > -	 * "ncfrag=<byte-offset>/<total-bytes>"
+> > -	 */
+> > -	if (release_len)
+> > -		append_release(buf);
+> > +	int body_len, offset = 0;
+> > +	const char *userdata = NULL;
+> > +	int userdata_len = 0;
+> >  
+> > -	/* Copy the header into the buffer */
+> > -	memcpy(buf + release_len, header, header_len);
+> > -	header_len += release_len;
+> > +#ifdef CONFIG_NETCONSOLE_DYNAMIC
+> > +	userdata = nt->userdata_complete;
+> > +	userdata_len = nt->userdata_length;
+> > +#endif
+> 
+> I think that dropping the userdata parameter of send_msg_fragmented() ought
+> to part of an earlier patch or separate patch. It doesn't seem strictly
+> related to this patch.
 
-Sorry, forgot to mention that the device_lock() callback must also
-disable migration. Since you are using a mutex, you will need to
-manually do that as well...
+I agree with you. Let me separate it in a different patch, then.
 
-mutex_lock(&drm_log_lock);
-migrate_disable();
-
-John
+Thanks for the review,
+--breno
 
