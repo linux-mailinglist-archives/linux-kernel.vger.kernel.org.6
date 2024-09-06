@@ -1,114 +1,294 @@
-Return-Path: <linux-kernel+bounces-318635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E5F96F114
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:11:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BEF96F11B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 12:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC5B281666
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:11:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F432B20FB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507EF1C9DDB;
-	Fri,  6 Sep 2024 10:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375581C9DFD;
+	Fri,  6 Sep 2024 10:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knpOi3WS"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SNKoIlux"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA0017ADEE;
-	Fri,  6 Sep 2024 10:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1AF1C9DD1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 10:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725617468; cv=none; b=LcwAkVEMbK783ySomizBU6fZ5tZdw9USDb75/t+sSznJibHZAcQqtX8YkeEt4vlfqocSq7VDtlD5nMSBNuFBy0W12F64nZO80pvQege38y3EoTpAHd0tP0rUrrSZJrqR1WnhUg8s8dfoDU8uAryctbaCaFirHc/+G7ZPGlvDLNo=
+	t=1725617575; cv=none; b=bvFUGmdLuv6imb5M6NJ3TQIxQECTFtYh09bxjNGrw8tQfFkOl+5h63sVhqsUCUxLdizxhLg/+TVN3/w1KXCGINkTBbEbiByoDncZ+DWIYHlPNtBU3z3SJRyI4Esz0EfTyq3XNiKoZbOEDgnoqF7USNAAj56W/lPLaxq1nLdMeVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725617468; c=relaxed/simple;
-	bh=Wrsol6aKw9uVdTSdlWkD5Y05e14U7sz6vsblZrfii2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j5LPWT78XnQ96Vjb8MtuICWGFCWTWKzdBkUq13A5OyS+FCLz3pBk44Q4xxe/GO/MZuoPRJk9PAhRzt0SZ4mhcn7AMOFRjJWs0g47AYXxr2M9XqH8gaO3QMj31hH2JOrYkjRzxBWlgW00NnbEBTKBl76IDIk58Y4UAM1P2eZyQY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knpOi3WS; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1ce8a675f7so2161843276.3;
-        Fri, 06 Sep 2024 03:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725617466; x=1726222266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wrsol6aKw9uVdTSdlWkD5Y05e14U7sz6vsblZrfii2s=;
-        b=knpOi3WSEd8QzroeHTpoJ3JIJC8O5jS5Bf/r1lLL/22lGEmN1Qt0vfudIx7zIM1O39
-         /sHUOBSUV+jq5ACAuK4p5OBr0+xDiWxbDcfzps8VNjXF5aoEXDUrkj/6MVlSbIbqmCOx
-         gdAZFu4mQfvnDmrx8pb2c2PhlX+2cooBtE9KY6wawU/x9spnisfVDQgNmekCmXrPJVg1
-         sH+dHjXtGG2vmmF0IAQ7NxXtZm8RM0WudKZ4CMM7BKCMDk/cEv/W39TGKFkm5sG0/e0f
-         dKm7M/nm/tzqEe7gyQ7hzoDM0cWRhinxjYzlveZsvao2e2lTLUqKP36INWzFzd4V8VGd
-         Ws8g==
+	s=arc-20240116; t=1725617575; c=relaxed/simple;
+	bh=Q9TXSvDsVrJJkjBOgWLMxDjKglYwFps2Xb2s+cWc8UE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTp0oQRGFNGpmlyWVkH91Rg6zIOFyBk0pDUhLyF5q/xm6wvLHuUswzd+1f8T+HkQ869mbXsPs7cTBL0kI2HThSMUx35DoV7nf2HWbirqH/F6O3JyAVdCFKC6b16f5KCrkxAnhhxHYWmDwA91TA3Bofi1Wd0Wg8kETvwkNs4fjMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SNKoIlux; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725617572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NHoMcpM/TTdua1Refqr6XchkQxlkBGAth1WdrFW7wCs=;
+	b=SNKoIluxS9AOw14XMIkJrpccIQ2xoe3jKtHwS/4ORmTPWSXAYxDiOHMupBCk5IT0Y02yZ3
+	Nf6wvc0ePZ07qdQdS8CmSj8K/ZgK0w7XHPv2sleCz7KN+5RMQYt+JJJMcIRKGzzmLYme7e
+	4D8IwtRioPKgjQrZSj9/lToHCHjGtPs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-1-zPdnkl-eNMydNLBe71iANw-1; Fri, 06 Sep 2024 06:12:49 -0400
+X-MC-Unique: zPdnkl-eNMydNLBe71iANw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c7bc97425so9834795e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 03:12:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725617466; x=1726222266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wrsol6aKw9uVdTSdlWkD5Y05e14U7sz6vsblZrfii2s=;
-        b=M4c0La69cOztW7YfX2nFo6a+Qth2zQY8IzVsnTX3vqRGAnffELtpM7t+1bjf5cmchK
-         3cJUEnQunq0K6lU32NQGLbrGUsmMaFcPUBmncNEk9M0vESQg1PJVvtyPyfslMiRoWNZX
-         HWDzneaYVqRyfIzZzNIrf/kgGipYCUO2w00GIzraKtn8M49dqWPAZYUhOz4W8S+Gcyp3
-         cY150qa+/fdJqSN2wdvZh2HnZh7W6jeLvzjFhIaVE/vklM0ibPzqy/oVXj1RrtfmZa0Z
-         jSt3IFxo9RM5LCsE2XaY5pivAlWzs0ktcSPDcb6dKNYkgQ2cnqcSm+0PDqJPQj7sbYP8
-         ZBWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1s0aoY4Bun7CnLHTQRWZwHl6bTThThFA/8WsKshjKWypDAJROiBa2NyahX6pnhfVfXF2EEhP5UbLh@vger.kernel.org, AJvYcCXNFxWVj1iv6NZuJuFZsCsFd0zkunmPtK4VOLH3hNc5PPO2vWOg5xp0Dat0PVwDYCzgvVHOMJyef30oog9k@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAel4pZtCdZQBBJ+XygzCfWEA2uqlsHgNxvvPTM9bgyNcfb8zx
-	3wmq0xHgdwLTHkdOTUGSTgy1gJ8Q9dWRTnHUisMvbxPt4SM7BGU4zu4eR0g/ZCpiR8qG0s7R7vu
-	Q2L7Dc1A1+iYUhLFI70uEpPixFx8=
-X-Google-Smtp-Source: AGHT+IGWcWAX0/60a3kLYTOxWZ/RBDMXvA9Bhh0EDGWHKhS2U26NaLeBKk/71kFQtwBOx2YojF+fr2635MJZT3i5ArA=
-X-Received: by 2002:a05:6902:2290:b0:e13:d0af:b1f9 with SMTP id
- 3f1490d57ef6-e1d349e6433mr2440672276.44.1725617466380; Fri, 06 Sep 2024
- 03:11:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725617568; x=1726222368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NHoMcpM/TTdua1Refqr6XchkQxlkBGAth1WdrFW7wCs=;
+        b=djg3G8WKI3G4TBPhh9mUNj68QGF+sohVz/QCGhUUaEgw1AoA6Bmc7i/xjY2Ed6kD8J
+         6RRim2UfKi2i20psSX/mcOtMsSLtVQBtQkzRBVBP5J/ij1E8wEY58C1fKGCZbgocYvcw
+         fSPZtJXoxqMFANGghpE0iLYa5s+121Rq/zPPNDRaCFNeKeAKwK0K9gVxbQprzM+cwr9v
+         qbVUfXCtr+nXny1jVw71s7cB8yferDYFWTJS3wjCphR50y4UG2EbX51n1sUXRK0PNevW
+         Mh54XBUPxD8Mv5fHrjoKVtIyYbpiKtT3JYjfJUjlRnHyAA9JSq+OmZ25N9RQ5rdOwvXr
+         ptKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/FMZnOZMDe5liltZ3JoXSYrduP0vwWAv2y2qOFad0/7ui6fGg0g9RkCi0iCJyJnXpky7Ot2RD28/m0NM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9wcHSxuxSsTboozNNUaFvBRzD9NHDNnyoihKTU8d+7W0lfLft
+	6F6PGavPoX0W1cKfRrhvi+LdsDHBZFGsjqkhYnDFC1f3e89lFGZVs+s8yGGDU6H0qLtX6uhyqKk
+	eQg3gF322Dkf1jtr+zrNkApWQLDnct0HrYJ9P01dTPh/SrUQYNYPYz563v2QR4w==
+X-Received: by 2002:a05:600c:4f53:b0:424:8743:86b4 with SMTP id 5b1f17b1804b1-42c95af7f2fmr53544565e9.6.1725617568307;
+        Fri, 06 Sep 2024 03:12:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMfGZxhbaSheOh3dZIC/k+Wm9PeRBDxUi0/bTiDhPKgwP4ARFmRyEdrGyTRIlflMDP6BaG0A==
+X-Received: by 2002:a05:600c:4f53:b0:424:8743:86b4 with SMTP id 5b1f17b1804b1-42c95af7f2fmr53544195e9.6.1725617567652;
+        Fri, 06 Sep 2024 03:12:47 -0700 (PDT)
+Received: from redhat.com ([155.133.17.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05ccaa4sm15146275e9.14.2024.09.06.03.12.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 03:12:47 -0700 (PDT)
+Date: Fri, 6 Sep 2024 06:12:35 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	virtualization@lists.linux.dev, Si-Wei Liu <si-wei.liu@oracle.com>,
+	Darren Kenny <darren.kenny@oracle.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [RFC PATCH v2 5/7] Revert "virtio_net: rx remove premapped
+ failover code"
+Message-ID: <20240906061055-mutt-send-email-mst@kernel.org>
+References: <cover.1725616135.git.mst@redhat.com>
+ <69d3032b6560323844d6d9fb0ac4f832ed87f13d.1725616135.git.mst@redhat.com>
+ <1725616970.1687496-2-xuanzhuo@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830085441.3589713-1-lukma@denx.de> <20240905143645.7946fb0e@wsk>
- <CAOMZO5D3y1_-_TX_a7zuYPxdRKGHGN7JFwWMNe_dtS6i0Rx2jw@mail.gmail.com> <20240906100248.39156474@wsk>
-In-Reply-To: <20240906100248.39156474@wsk>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 6 Sep 2024 07:10:52 -0300
-Message-ID: <CAOMZO5B5DQGdW9mnVPzHcwXU824WFrxEpCBff56Co23RrYadKA@mail.gmail.com>
-Subject: Re: [PATCH v3] dts: nxp: mxs: Add descriptions for imx287 based
- btt3-[012] devices
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1725616970.1687496-2-xuanzhuo@linux.alibaba.com>
 
-Hi Lukasz,
+On Fri, Sep 06, 2024 at 06:02:50PM +0800, Xuan Zhuo wrote:
+> On Fri, 6 Sep 2024 05:52:36 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> > This reverts commit defd28aa5acb0fd7c15adc6bc40a8ac277d04dea.
+> >
+> > leads to crashes with no ACCESS_PLATFORM when
+> > sysctl net.core.high_order_alloc_disable=1
+> >
+> > Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Reported-by: Si-Wei Liu <si-wei.liu@oracle.com>
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > ---
+> >  drivers/net/virtio_net.c | 89 +++++++++++++++++++++++-----------------
+> >  1 file changed, 52 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index 0944430dfb1f..0a2ec9570521 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -348,6 +348,9 @@ struct receive_queue {
+> >
+> >  	/* Record the last dma info to free after new pages is allocated. */
+> >  	struct virtnet_rq_dma *last_dma;
+> > +
+> > +	/* Do dma by self */
+> > +	bool do_dma;
+> >  };
+> >
+> >  /* This structure can contain rss message with maximum settings for indirection table and keysize
+> > @@ -867,7 +870,7 @@ static void *virtnet_rq_get_buf(struct receive_queue *rq, u32 *len, void **ctx)
+> >  	void *buf;
+> >
+> >  	buf = virtqueue_get_buf_ctx(rq->vq, len, ctx);
+> > -	if (buf)
+> > +	if (buf && rq->do_dma)
+> >  		virtnet_rq_unmap(rq, buf, *len);
+> >
+> >  	return buf;
+> > @@ -880,6 +883,11 @@ static void virtnet_rq_init_one_sg(struct receive_queue *rq, void *buf, u32 len)
+> >  	u32 offset;
+> >  	void *head;
+> >
+> > +	if (!rq->do_dma) {
+> > +		sg_init_one(rq->sg, buf, len);
+> > +		return;
+> > +	}
+> > +
+> >  	head = page_address(rq->alloc_frag.page);
+> >
+> >  	offset = buf - head;
+> > @@ -905,42 +913,44 @@ static void *virtnet_rq_alloc(struct receive_queue *rq, u32 size, gfp_t gfp)
+> >
+> >  	head = page_address(alloc_frag->page);
+> >
+> > -	dma = head;
+> > +	if (rq->do_dma) {
+> > +		dma = head;
+> >
+> > -	/* new pages */
+> > -	if (!alloc_frag->offset) {
+> > -		if (rq->last_dma) {
+> > -			/* Now, the new page is allocated, the last dma
+> > -			 * will not be used. So the dma can be unmapped
+> > -			 * if the ref is 0.
+> > +		/* new pages */
+> > +		if (!alloc_frag->offset) {
+> > +			if (rq->last_dma) {
+> > +				/* Now, the new page is allocated, the last dma
+> > +				 * will not be used. So the dma can be unmapped
+> > +				 * if the ref is 0.
+> > +				 */
+> > +				virtnet_rq_unmap(rq, rq->last_dma, 0);
+> > +				rq->last_dma = NULL;
+> > +			}
+> > +
+> > +			dma->len = alloc_frag->size - sizeof(*dma);
+> > +
+> > +			addr = virtqueue_dma_map_single_attrs(rq->vq, dma + 1,
+> > +							      dma->len, DMA_FROM_DEVICE, 0);
+> > +			if (virtqueue_dma_mapping_error(rq->vq, addr))
+> > +				return NULL;
+> > +
+> > +			dma->addr = addr;
+> > +			dma->need_sync = virtqueue_dma_need_sync(rq->vq, addr);
+> > +
+> > +			/* Add a reference to dma to prevent the entire dma from
+> > +			 * being released during error handling. This reference
+> > +			 * will be freed after the pages are no longer used.
+> >  			 */
+> > -			virtnet_rq_unmap(rq, rq->last_dma, 0);
+> > -			rq->last_dma = NULL;
+> > +			get_page(alloc_frag->page);
+> > +			dma->ref = 1;
+> > +			alloc_frag->offset = sizeof(*dma);
+> > +
+> > +			rq->last_dma = dma;
+> >  		}
+> >
+> > -		dma->len = alloc_frag->size - sizeof(*dma);
+> > -
+> > -		addr = virtqueue_dma_map_single_attrs(rq->vq, dma + 1,
+> > -						      dma->len, DMA_FROM_DEVICE, 0);
+> > -		if (virtqueue_dma_mapping_error(rq->vq, addr))
+> > -			return NULL;
+> > -
+> > -		dma->addr = addr;
+> > -		dma->need_sync = virtqueue_dma_need_sync(rq->vq, addr);
+> > -
+> > -		/* Add a reference to dma to prevent the entire dma from
+> > -		 * being released during error handling. This reference
+> > -		 * will be freed after the pages are no longer used.
+> > -		 */
+> > -		get_page(alloc_frag->page);
+> > -		dma->ref = 1;
+> > -		alloc_frag->offset = sizeof(*dma);
+> > -
+> > -		rq->last_dma = dma;
+> > +		++dma->ref;
+> >  	}
+> >
+> > -	++dma->ref;
+> > -
+> >  	buf = head + alloc_frag->offset;
+> >
+> >  	get_page(alloc_frag->page);
+> > @@ -957,9 +967,12 @@ static void virtnet_rq_set_premapped(struct virtnet_info *vi)
+> >  	if (!vi->mergeable_rx_bufs && vi->big_packets)
+> >  		return;
+> >
+> > -	for (i = 0; i < vi->max_queue_pairs; i++)
+> > -		/* error should never happen */
+> > -		BUG_ON(virtqueue_set_dma_premapped(vi->rq[i].vq));
+> > +	for (i = 0; i < vi->max_queue_pairs; i++) {
+> > +		if (virtqueue_set_dma_premapped(vi->rq[i].vq))
+> > +			continue;
+> > +
+> > +		vi->rq[i].do_dma = true;
+> > +	}
+> 
+> This is too much code to revert. We can just revert this and next one.
+> And add a patch to turn off the default premapped setting (return from this
+> function directly). Otherwise, we will have to do all the work again in the
+> future.
+> 
+> There is no need to revert xsk related code, xsk function cannot be enabled, in
+> the case that premapped mode is not turned on. There is no direct impact itself.
+> 
+> Thanks.
 
-On Fri, Sep 6, 2024 at 5:02=E2=80=AFAM Lukasz Majewski <lukma@denx.de> wrot=
-e:
+I tried but quickly got lost as the automatic
+revert did not work, and it's very close to release, so
+I wanted to be sure it's right.
 
-> As most of those bindings are "legacy" (and already upstreamed) now - it
-> could take some time...
+Post your own version of a revert for testing then please.
 
-I am not saying that all the mxs dt-schema warnings must be solved to
-get these new i.MX28 boards upstreamed.
 
-I am saying that all new boards must have an entry in fsl.yaml.
+> 
+> >  }
+> >
+> >  static void virtnet_rq_unmap_free_buf(struct virtqueue *vq, void *buf)
+> > @@ -2107,7 +2120,8 @@ static int add_recvbuf_small(struct virtnet_info *vi, struct receive_queue *rq,
+> >
+> >  	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
+> >  	if (err < 0) {
+> > -		virtnet_rq_unmap(rq, buf, 0);
+> > +		if (rq->do_dma)
+> > +			virtnet_rq_unmap(rq, buf, 0);
+> >  		put_page(virt_to_head_page(buf));
+> >  	}
+> >
+> > @@ -2221,7 +2235,8 @@ static int add_recvbuf_mergeable(struct virtnet_info *vi,
+> >  	ctx = mergeable_len_to_ctx(len + room, headroom);
+> >  	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
+> >  	if (err < 0) {
+> > -		virtnet_rq_unmap(rq, buf, 0);
+> > +		if (rq->do_dma)
+> > +			virtnet_rq_unmap(rq, buf, 0);
+> >  		put_page(virt_to_head_page(buf));
+> >  	}
+> >
+> > @@ -5392,7 +5407,7 @@ static void free_receive_page_frags(struct virtnet_info *vi)
+> >  	int i;
+> >  	for (i = 0; i < vi->max_queue_pairs; i++)
+> >  		if (vi->rq[i].alloc_frag.page) {
+> > -			if (vi->rq[i].last_dma)
+> > +			if (vi->rq[i].do_dma && vi->rq[i].last_dma)
+> >  				virtnet_rq_unmap(&vi->rq[i], vi->rq[i].last_dma, 0);
+> >  			put_page(vi->rq[i].alloc_frag.page);
+> >  		}
+> > --
+> > MST
+> >
 
-See this commit for an example:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-Documentation/devicetree/bindings/arm/fsl.yaml?h=3Dnext-20240906&id=3D7dfb4=
-97191f0d87c3b3ccfd3039df4c03d6769f6
-
-or this one for the i.MX28 boards:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-Documentation/devicetree/bindings/arm/fsl.yaml?h=3Dnext-20240906&id=3D8ddbc=
-7b9ef9862c34117ec552f00a054101ffc36
 
