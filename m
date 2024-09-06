@@ -1,450 +1,229 @@
-Return-Path: <linux-kernel+bounces-319326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CBD96FB27
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CCF96FB29
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 20:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E7228DE46
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721E42896B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 18:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E65CEAE7;
-	Fri,  6 Sep 2024 18:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4D81B85CC;
+	Fri,  6 Sep 2024 18:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OD+b0Pvr"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Sv7JvHqR"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64B41304BF;
-	Fri,  6 Sep 2024 18:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7814642D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 18:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725646675; cv=none; b=gdjqRTvtiBS7Ntva+kSpkYYMrD4zzbS7vaij9JJPAwCDyoAfeYj5FbxijZOZgN9Errs/9yTqpXOsKYhg76zIdcvAAJ/RniTKDhCMNKeH7ggpRDL8v1OnarEE5InZF3BXxeVSqtayqMUy97kTaFoDwSanR25D5sjwZjrr0H5ku1s=
+	t=1725646826; cv=none; b=WJJEmIIn/jaUKgzx4LG0cNYJw0V6mCKu2Zh1ORjiSjAY7wtyrww0XT3fyOG0Vus0esvB5Su5MGZ4B9UmDQ7W8VTGriKkNS3hPHni4hPnZdafnzZBlwUPxgSCnnrMWn83Oq3LUa2pKqkjXN5ClJXs/0K5os8MHmQ/SGe0cGDVp3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725646675; c=relaxed/simple;
-	bh=3ZsVZxZRiOEtdIbt7m3kXxVk3snOz/dBbtGCqg7xyjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lil5PnTwv3HskoYaEOfiyksRkeKMPHVhOyuQTBA6Cjy+V46vH9bSGktvGwFBw5zN/u1ucrM09vEqVyycJikOiPcU05O3LTTRKRVrHJbgO1dok74ywhBhukV694MHOzVRcnf/zbLiVqHyf6kWT7pPCFElK9EQPT55YQw2NW2bagE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OD+b0Pvr; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 486IHawa080299;
-	Fri, 6 Sep 2024 13:17:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725646656;
-	bh=hYglL1zDcOHOA/KWyKkQET2E5wdq6KlS/ZwLBgUMino=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=OD+b0PvrynLSdRKqj2E6dl/w39rg3Sz5TjvuJSKqXr8beQmMu64tjqwjVpfjntvFo
-	 VQDretE0MxIN8rAdmPkkczhxlmP8CV1rS/hyDtNtjqwKBX7Nl0IiBmFDyL37/9GAmt
-	 eNnSOyJKFNilJvSLUTQAumh2ADORJtfJkFB1R3PM=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 486IHa9d019898
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 6 Sep 2024 13:17:36 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 6
- Sep 2024 13:17:36 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 6 Sep 2024 13:17:36 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 486IHWXs125220;
-	Fri, 6 Sep 2024 13:17:33 -0500
-Message-ID: <9ea91582-4745-4559-97a5-65b57ead7d70@ti.com>
-Date: Fri, 6 Sep 2024 23:47:31 +0530
+	s=arc-20240116; t=1725646826; c=relaxed/simple;
+	bh=0Dqf7yEMDT3GU1OcV1Q71EYSHNpgxuqGRxl6CL0g7h0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IVs3NAM5BzypuS8af7RIsMuBdQRCJZRhDgugIZv+Dqx1Di+tfxDEisbfMs0WHa95JBz/PL0JsGHFZNEI16sdtjP59MXD2TLE0m8BewwcUkBJHQkc5+ow7nd28FPxRTl1ly6INaWcLgGLB3yysGm3ZFywbyw3BagUYNrCyOv3viw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Sv7JvHqR; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f502086419so29889161fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 11:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1725646823; x=1726251623; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sMw4wqMNF3gou8CeDI9rTiXO4qJ8If5w8Db9xBE7Y1s=;
+        b=Sv7JvHqRhKwWY2qPIUa4rSMRoKNEJEzt/F5vCUDmYitDrFW10sKolqs91Xomn/4AlA
+         tm7e6mSGoOLbnxeN9/NRqb5YIxWj6K74uZD0/7yuEOD+BcERBkvun30wPAQUakaN9ZtS
+         Uy67KyBRsB5RiwEOeJX6FE9d8uYidgRGWc9Ys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725646823; x=1726251623;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sMw4wqMNF3gou8CeDI9rTiXO4qJ8If5w8Db9xBE7Y1s=;
+        b=E1ZcN+/rPE941V3Juhjwx8wQc3c3GxkGYrLEoQd38LWB5Anh2t4gB0s5DIN59ees8X
+         +XuAJJ7+Se7eGEpuVb1nmaOxsCoQxV6Ms5NlK5CCFz5ISuz4XC9jHc9T+JFtHrJI9Ion
+         RcidOsUtVzPCT0psGKR7kX8+J0fw7qNthyoAuNezhwJlanzXz+gNl0Zwr1IARK9huoju
+         7UsMkl31rWJfBnY/qrxK+LXIxqTrjf6tFagIFQsRKYMhVgS/cPsDLkjJ4FQ48jCtVeCq
+         SmZOxIb+VSTA1IJYnaKg5DE/JuzC6aGpMtcMPA0OnCnJ2wFond0XDiCxzzn+dEuxpBpk
+         CWMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLrxk1yqzOsZfDlRHtQQMe0K6Khdvblw7DAny1hMULE2ttSKCQGJnsSizAtUD+7WC4rf6E+bQ52w0UB94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxNG1oEj8Y0um1MNxzv8iUjK5u9BfuNtEgaqcgAfYAGyF5GRzs
+	4ySylv5PSJze9M2sjLcPpAzLa28cVH4r1OFfV1TioHwINsElJpygJe+AaigSZDXGfLRzy0zUuLz
+	2Vs8DPQrMhNdULUlUIaRloTl3N86Hrzm8q89P
+X-Google-Smtp-Source: AGHT+IEHEZYgUv5mXrbS/7ZnxTxwwtl6ZKK3ovVOYFLuDUIVQ5O0Dq48SsSB8PHCGJ4os5/N3PGP7YtGQw68Ue3BCi4=
+X-Received: by 2002:a05:6512:e98:b0:536:54db:ddd0 with SMTP id
+ 2adb3069b0e04-5365856b131mr1998230e87.0.1725646822521; Fri, 06 Sep 2024
+ 11:20:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: k3-r5: Decouple firmware booting from probe
- routine
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <afd@ti.com>, <hnagalla@ti.com>, <s-anna@ti.com>,
-        <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240906094045.2428977-1-b-padhi@ti.com> <ZtsyE2ibvJwuL7oH@p14s>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <ZtsyE2ibvJwuL7oH@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240906110932.299689-1-usama.anjum@collabora.com>
+In-Reply-To: <20240906110932.299689-1-usama.anjum@collabora.com>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Fri, 6 Sep 2024 14:20:09 -0400
+Message-ID: <CA+-6iNw1PCNL6k3bx18VySbgt8m2tjOMokqC-esDfHaSN-dh0A@mail.gmail.com>
+Subject: Re: [PATCH] PCI: brcmstb: Correctly store and use the output value
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Jim Quinlan <jim2101024@gmail.com>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Stanimir Varbanov <svarbanov@suse.de>, kernel@collabora.com, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000e80843062177757d"
 
-Hi Mathieu,
+--000000000000e80843062177757d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06-09-2024 22:17, Mathieu Poirier wrote:
-> On Fri, Sep 06, 2024 at 03:10:45PM +0530, Beleswar Padhi wrote:
->> The current implementation of the waiting mechanism in probe() waits for
->> the 'released_from_reset' flag to be set which is done in
->> k3_r5_rproc_prepare() as part of rproc_fw_boot(). This causes unexpected
-> If you are looking at rproc-next, @released_from_reset is set in
-> k3_r5_rproc_start().
-
-
-You are correct. Apologies, this flag is set in the start() function 
-(still a part of rproc_fw_boot()), not prepare(). I wanted to point out 
-@released_from_reset is set in rproc_fw_boot() routine, and is checked 
-for in the probe() routine.
-
-> Moreover, the waiting mechanic happens in
-> k3_r5_cluster_rproc_init(), which makes reading your changelog highly confusing.
-
-
-Yes, the mechanism is in the k3_r5_cluster_rproc_init() function which 
-is called from k3_r5_probe(), hence I referred to it being called in the 
-probe routine. The point I wanted to make was, any error while booting 
-firmware would end up in a probe failure. Apologies for not making it 
-clearer.
-
+On Fri, Sep 6, 2024 at 7:10=E2=80=AFAM Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
 >
->> failures in cases where the firmware is unavailable at boot time,
->> resulting in probe failure and removal of the remoteproc handles in the
->> sysfs paths.
->>
->> To address this, the waiting mechanism is refactored out of the probe
->> routine into the appropriate k3_r5_rproc_prepare/unprepare() and
->> k3_r5_rproc_start/stop() functions. This allows the probe routine to
->> complete without depending on firmware booting, while still maintaining
->> the required power-synchronization between cores.
->>
->> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->> Posted this as a Fix as this was breaking usecases where we wanted to load a
->> firmware by writing to sysfs handles in userspace.
->>
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 170 ++++++++++++++++-------
->>   1 file changed, 118 insertions(+), 52 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 747ee467da88..df8f124f4248 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -131,6 +131,7 @@ struct k3_r5_cluster {
->>    * @btcm_enable: flag to control BTCM enablement
->>    * @loczrama: flag to dictate which TCM is at device address 0x0
->>    * @released_from_reset: flag to signal when core is out of reset
->> + * @unhalted: flag to signal when core is unhalted
->>    */
->>   struct k3_r5_core {
->>   	struct list_head elem;
->> @@ -148,6 +149,7 @@ struct k3_r5_core {
->>   	u32 btcm_enable;
->>   	u32 loczrama;
->>   	bool released_from_reset;
->> +	bool unhalted;
-> Yet another flag?  @released_from_reset is not enough?
+> brcm_pcie_get_inbound_wins() can return negative error. As
+> num_inbound_wins is unsigned, we'll be unable to recognize the error.
+> Hence store return value of brcm_pcie_get_inbound_wins() in ret which is
+> signed and store result back to num_inbound_wins after confirming that
+> it isn't negative.
 
 
-So, technically @released_from_reset should maintain the sync between 
-_prepare() of #core0 and #core1. But with commit 8fa052c29e50 
-("remoteproc: k3-r5: Delay notification of wakeup event"), we are trying 
-to maintain the sync of both _prepare() and _start() with just this one 
-flag by pushing the notification from prepare() to start(). Having two 
-flags is a cleanup attempt, where @released_from_reset handles 
-_prepare() sync and @unhalted handles _start() sync.
+Hello Muhammad,
+You are correct -- I was asked to make a few variables to be of the
+type u8, but I missed having an int (ret) hold the
+resultof that call. I believe I am still in the process of submitting
+this commit series -- V7 is coming next -- so I will
+take your email as a review instead of adding a fixup commit.
 
->   And why does it need to
-> be "unhalted" rather than something like "running"?
+Unless Bjorn says that V6 was applied.
 
-
-"running" sounds like a better name for this flag. Thank you!
-
->   I will not move forward
-> with this patch until I get an R-B and a T-B from two other people at TI.
+Thanks and regards,
+Jim Quinlan
+Broadcom STB/CM
 >
-> The above and the exchange with Jan Kiszka is furthering my belief that this
-> driver is up for a serious refactoring exercise.  From hereon I will only
-> consider bug fixes.
-
-
-I understand the concern. I will do the refactor and possibly include 
-this patch as part of that refactoring series.
-
-Thanks,
-Beleswar
-
 >
-> Thanks,
-> Mathieu
+> Fixes: 46c981fd60de ("PCI: brcmstb: Refactor for chips with many regular =
+inbound windows")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 >
->>   };
->>   
->>   /**
->> @@ -448,13 +450,33 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->>   {
->>   	struct k3_r5_rproc *kproc = rproc->priv;
->>   	struct k3_r5_cluster *cluster = kproc->cluster;
->> -	struct k3_r5_core *core = kproc->core;
->> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->>   	struct device *dev = kproc->dev;
->>   	u32 ctrl = 0, cfg = 0, stat = 0;
->>   	u64 boot_vec = 0;
->>   	bool mem_init_dis;
->>   	int ret;
->>   
->> +	/*
->> +	 * R5 cores require to be powered on sequentially, core0 should be in
->> +	 * higher power state than core1 in a cluster. So, wait for core0 to
->> +	 * power up before proceeding to core1 and put timeout of 2sec. This
->> +	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
->> +	 * core1 can be called before core0 due to thread execution order.
->> +	 */
->> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 &&
->> +	    core0->released_from_reset == false) {
->> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
->> +						       core0->released_from_reset,
->> +						       msecs_to_jiffies(2000));
->> +		if (ret <= 0) {
->> +			dev_err(dev, "can not power up core1 before core0");
->> +			return -EPERM;
->> +		}
->> +	}
->> +
->>   	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
->>   	if (ret < 0)
->>   		return ret;
->> @@ -470,6 +492,12 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->>   		return ret;
->>   	}
->>   
->> +	/* Notify all threads in the wait queue when core state has changed so
->> +	 * that threads waiting for this condition can be executed.
->> +	 */
->> +	core->released_from_reset = true;
->> +	wake_up_interruptible(&cluster->core_transition);
->> +
->>   	/*
->>   	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
->>   	 * of TCMs, so there is no need to perform the s/w memzero. This bit is
->> @@ -515,14 +543,46 @@ static int k3_r5_rproc_unprepare(struct rproc *rproc)
->>   {
->>   	struct k3_r5_rproc *kproc = rproc->priv;
->>   	struct k3_r5_cluster *cluster = kproc->cluster;
->> -	struct k3_r5_core *core = kproc->core;
->> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->>   	struct device *dev = kproc->dev;
->>   	int ret;
->>   
->>   	/* Re-use LockStep-mode reset logic for Single-CPU mode */
->> -	ret = (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->> -	       cluster->mode == CLUSTER_MODE_SINGLECPU) ?
->> -		k3_r5_lockstep_reset(cluster) : k3_r5_split_reset(core);
->> +	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->> +	    cluster->mode == CLUSTER_MODE_SINGLECPU)
->> +		ret = k3_r5_lockstep_reset(cluster);
->> +	else {
->> +		/*
->> +		 * R5 cores require to be powered off sequentially, core0 should
->> +		 * be in higher power state than core1 in a cluster. So, wait
->> +		 * for core1 to powered off before proceeding to core0 and put
->> +		 * timeout of 2sec. This waiting mechanism is necessary to
->> +		 * prevent stopping core0 before core1 from sysfs.
->> +		 */
->> +		core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +		core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +
->> +		if (core == core0 && core1->released_from_reset == true) {
->> +			ret = wait_event_interruptible_timeout(cluster->core_transition,
->> +							       !core1->released_from_reset,
->> +							       msecs_to_jiffies(2000));
->> +
->> +			if (ret <= 0) {
->> +				dev_err(dev, "can not power off core0 before core1");
->> +				return -EPERM;
->> +			}
->> +		}
->> +
->> +		ret = k3_r5_split_reset(core);
->> +
->> +		/* Notify all threads in the wait queue when core state has
->> +		 * changed so that threads waiting for this condition can be
->> +		 * executed.
->> +		 */
->> +		core->released_from_reset = false;
->> +		wake_up_interruptible(&cluster->core_transition);
->> +	}
->> +
->>   	if (ret)
->>   		dev_err(dev, "unable to disable cores, ret = %d\n", ret);
->>   
->> @@ -551,16 +611,34 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>   	struct k3_r5_rproc *kproc = rproc->priv;
->>   	struct k3_r5_cluster *cluster = kproc->cluster;
->>   	struct device *dev = kproc->dev;
->> -	struct k3_r5_core *core0, *core;
->> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->>   	u32 boot_addr;
->>   	int ret;
->>   
->> +	/*
->> +	 * R5 cores require to be powered on sequentially, core0 should be in
->> +	 * higher power state than core1 in a cluster. So, wait for core0 to
->> +	 * power up before proceeding to core1 and put timeout of 2sec. This
->> +	 * waiting mechanism is necessary because rproc_auto_boot_callback() for
->> +	 * core1 can be called before core0 due to thread execution order.
->> +	 */
->> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1 && core0->unhalted == false) {
->> +		ret = wait_event_interruptible_timeout(cluster->core_transition,
->> +						       core0->unhalted,
->> +						       msecs_to_jiffies(2000));
->> +		if (ret <= 0) {
->> +			dev_err(dev, "can not power up core1 before core0");
->> +			return -EPERM;
->> +		}
->> +	}
->> +
->>   	boot_addr = rproc->bootaddr;
->>   	/* TODO: add boot_addr sanity checking */
->>   	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
->>   
->>   	/* boot vector need not be programmed for Core1 in LockStep mode */
->> -	core = kproc->core;
->>   	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->>   	if (ret)
->>   		return ret;
->> @@ -573,20 +651,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>   				goto unroll_core_run;
->>   		}
->>   	} else {
->> -		/* do not allow core 1 to start before core 0 */
->> -		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
->> -					 elem);
->> -		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
->> -			dev_err(dev, "%s: can not start core 1 before core 0\n",
->> -				__func__);
->> -			return -EPERM;
->> -		}
->> -
->>   		ret = k3_r5_core_run(core);
->>   		if (ret)
->>   			return ret;
->>   
->> -		core->released_from_reset = true;
->> +		/* Notify all threads in the wait queue when core state has
->> +		 * changed so that threads waiting for this condition can be
->> +		 * executed.
->> +		 */
->> +		core->unhalted = true;
->>   		wake_up_interruptible(&cluster->core_transition);
->>   	}
->>   
->> @@ -629,7 +702,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>   	struct k3_r5_rproc *kproc = rproc->priv;
->>   	struct k3_r5_cluster *cluster = kproc->cluster;
->>   	struct device *dev = kproc->dev;
->> -	struct k3_r5_core *core1, *core = kproc->core;
->> +	struct k3_r5_core *core0, *core1, *core = kproc->core;
->>   	int ret;
->>   
->>   	/* halt all applicable cores */
->> @@ -642,19 +715,38 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>   			}
->>   		}
->>   	} else {
->> -		/* do not allow core 0 to stop before core 1 */
->> -		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
->> -					elem);
->> -		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
->> -			dev_err(dev, "%s: can not stop core 0 before core 1\n",
->> -				__func__);
->> -			ret = -EPERM;
->> -			goto out;
->> +		/*
->> +		 * R5 cores require to be powered off sequentially, core0 should
->> +		 * be in higher power state than core1 in a cluster. So, wait
->> +		 * for core1 to powered off before proceeding to core0 and put
->> +		 * timeout of 2sec. This waiting mechanism is necessary to
->> +		 * prevent stopping core0 before core1 from sysfs.
->> +		 */
->> +		core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->> +		core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
->> +
->> +		if (core == core0 && core1->unhalted == true) {
->> +			ret = wait_event_interruptible_timeout(cluster->core_transition,
->> +							       !core1->unhalted,
->> +							       msecs_to_jiffies(2000));
->> +
->> +			if (ret <= 0) {
->> +				dev_err(dev, "can not power off core0 before core1");
->> +				ret = -EPERM;
->> +				goto out;
->> +			}
->>   		}
->>   
->>   		ret = k3_r5_core_halt(core);
->>   		if (ret)
->>   			goto out;
->> +
->> +		/* Notify all threads in the wait queue when core state has
->> +		 * changed so that threads waiting for this condition can be
->> +		 * executed.
->> +		 */
->> +		core->unhalted = false;
->> +		wake_up_interruptible(&cluster->core_transition);
->>   	}
->>   
->>   	return 0;
->> @@ -1145,12 +1237,6 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
->>   		return reset_ctrl_status;
->>   	}
->>   
->> -	/*
->> -	 * Skip the waiting mechanism for sequential power-on of cores if the
->> -	 * core has already been booted by another entity.
->> -	 */
->> -	core->released_from_reset = c_state;
->> -
->>   	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
->>   				     &stat);
->>   	if (ret < 0) {
->> @@ -1296,25 +1382,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->>   		    cluster->mode == CLUSTER_MODE_SINGLECORE)
->>   			break;
->>   
->> -		/*
->> -		 * R5 cores require to be powered on sequentially, core0
->> -		 * should be in higher power state than core1 in a cluster
->> -		 * So, wait for current core to power up before proceeding
->> -		 * to next core and put timeout of 2sec for each core.
->> -		 *
->> -		 * This waiting mechanism is necessary because
->> -		 * rproc_auto_boot_callback() for core1 can be called before
->> -		 * core0 due to thread execution order.
->> -		 */
->> -		ret = wait_event_interruptible_timeout(cluster->core_transition,
->> -						       core->released_from_reset,
->> -						       msecs_to_jiffies(2000));
->> -		if (ret <= 0) {
->> -			dev_err(dev,
->> -				"Timed out waiting for %s core to power up!\n",
->> -				rproc->name);
->> -			goto err_powerup;
->> -		}
->>   	}
->>   
->>   	return 0;
->> @@ -1329,7 +1396,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->>   		}
->>   	}
->>   
->> -err_powerup:
->>   	rproc_del(rproc);
->>   err_add:
->>   	k3_r5_reserved_mem_exit(kproc);
->> -- 
->> 2.34.1
->>
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controll=
+er/pcie-brcmstb.c
+> index 55311dc47615d..054810d7962d7 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1090,9 +1090,10 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>         u32p_replace_bits(&tmp, 1, PCIE_MISC_MISC_CTRL_PCIE_RCB_64B_MODE_=
+MASK);
+>         writel(tmp, base + PCIE_MISC_MISC_CTRL);
+>
+> -       num_inbound_wins =3D brcm_pcie_get_inbound_wins(pcie, inbound_win=
+s);
+> -       if (num_inbound_wins < 0)
+> -               return num_inbound_wins;
+> +       ret =3D brcm_pcie_get_inbound_wins(pcie, inbound_wins);
+> +       if (ret < 0)
+> +               return ret;
+> +       num_inbound_wins =3D (u8)ret;
+>
+>         set_inbound_win_registers(pcie, inbound_wins, num_inbound_wins);
+>
+> --
+> 2.39.2
+>
+
+--000000000000e80843062177757d
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIQbgYJKoZIhvcNAQcCoIIQXzCCEFsCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3FMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBU0wggQ1oAMCAQICDEjuN1Vuw+TT9V/ygzANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE3MTNaFw0yNTA5MTAxMjE3MTNaMIGO
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xFDASBgNVBAMTC0ppbSBRdWlubGFuMSkwJwYJKoZIhvcNAQkB
+FhpqYW1lcy5xdWlubGFuQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBAKtQZbH0dDsCEixB9shqHxmN7R0Tywh2HUGagri/LzbKgXsvGH/LjKUjwFOQwFe4EIVds/0S
+hNqJNn6Z/DzcMdIAfbMJ7juijAJCzZSg8m164K+7ipfhk7SFmnv71spEVlo7tr41/DT2HvUCo93M
+7Hu+D3IWHBqIg9YYs3tZzxhxXKtJW6SH7jKRz1Y94pEYplGQLM+uuPCZaARbh+i0auVCQNnxgfQ/
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBhb2Sc27VmSlp//h0BLU+ZNGPopzTr
+6wF9BANZ+47dnTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA5
+MDYxODIwMjNaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEATFxaErzESOtzg3QUIn9NWdqAiON09qZrCPtK7AiSji33/UMv
+UNRYOhzuC5gKbUXxE2p7w0uwz/N2w9kc4Iw8VVNqEPgnCGJe7dbb2He8AgeJ+lr4R03Tbqsdhhx3
+dn3+rIjfkHXjStfF4SOPxU4nMeArQxQ5iokKoJ+ngVqZmumbtpPH7y9HVZLf/BHvqM7wN3ruDb0R
+xRS8w+FuLPSO+02faq5+aExpERQynbb9p/dbObVRK5Yj/ehM3SbKVjj3dtCCf6eTZx+5JT+7Zp5W
+jhOCh/FpVP+xlgXTV+yU+y+QAURNtkLqqQJzMvQ7aA8AKiFonzisJ8HipSBUeTUgBA==
+--000000000000e80843062177757d--
 
