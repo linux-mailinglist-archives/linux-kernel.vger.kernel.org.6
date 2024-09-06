@@ -1,243 +1,337 @@
-Return-Path: <linux-kernel+bounces-318537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE3A96EF55
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BC496EF46
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8561F28B2C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0EDA28A771
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765B81C8FC3;
-	Fri,  6 Sep 2024 09:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YA/KwICx"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206B41C86F3;
-	Fri,  6 Sep 2024 09:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725615148; cv=fail; b=V41Vm2ddi1hG5xsxl4xODbJ30HGQCpS2Q1Y2GDDwsEvvFk/DbHkAYgrOFMyGMsIeVVCmq/uIyEnO0ODBHNFVS+ZEa6pBZirvsC3kfuOpks4p0IOwxSB9eB38CaVrsvyXYpEYZZvIrpwMqD24Y4VmZ2XP/mpTXUrWlza4vzwOauc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725615148; c=relaxed/simple;
-	bh=QGAbhZGzJ8xWMqwR0n5g6/14Lu5AC79BbsFpR5v2L4w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aZu2S9aiy91CmBwE0LAcDmx9VRJr0HVjdE8iI+MYkjLI7EH0UctwtftRSll+ZpFGvS8Fd2MSxCNyiRYXWjb1fwyr28UcAupXrHk5yQWOx4SnxD67xIqSzwhsslzWMWHhrXNhPRn58cl5g7SO41rXVo6ZYKezdb8/4xXeyOVWQnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YA/KwICx; arc=fail smtp.client-ip=40.107.220.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hk7OS5Mkunnb1LbYqD2d1AiShxxfwP8rtxyM7l+mjhFIAjanFX+/JU6G5Q3GXxMXs0qVwmr09TKeccr7sX3ihOubWvHNVHoKBvUcVw1L91Bhfyt3pYeEO+hnuxh6WKCilXTnqnoHqjZf07EdcTf8T8MRRXTbxNqsTDxaBkJ9X4hq3BhvxxKplMYNd+aYXJ0Lu62hcP8+s7sXBK1lsYlLQhoekKdMdQF9cuQZjuY1jRdefI4rip5VSGjAhgz8XGOL7gqxFWfdZzmGAPjKHtoXppyXhjMkIxoxJYdCzLt2v+cHUUo4Cz937yp0+r3BthvlFZls7nX23HHEGBkUSRIxlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1YOqrT0AojDcSKqnRtXqUNbpkncz4YmnEBLi7chPvdE=;
- b=lg8ZhwLZRErIS0g5rJggdP8IB6M5mPSuKubodMvU6Pfjh9lznL+6ziEM7W0AXNzuU7XuqG3rW+B7bwtnp4iq4Zf99BJbstm2Y62vRg7mtWBUEwrDKSyXXeEUY2JS++4kCxfq9FttAJGyBpDuZwhHBtsJJSpEYDnx1rYMwdwtwu5H8Dtl3ZXCJ84SakURziMrkDh6g1jGyycojBRGsjAtv+z2+TdFUr3WxhU2DNuvIk/zcPDgz1dHwkdqav8g9iFXOXwOYemM86hHHAlXuGsMUbE6rpcbhsx9SjzAj8yaWjMHgjXZW+jS0S9Us7CWxkSBh8ykBTK4NqVuBJICkfFTDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1YOqrT0AojDcSKqnRtXqUNbpkncz4YmnEBLi7chPvdE=;
- b=YA/KwICx/6SlidyO5qhxNL3WH6rjzvabD1faC2CP0J76poGn4tjcYjObu45MPsnjkSJ+sn3buPi44LVXt58yVNsp4dt6qXE7hGEldIExRlXyQ/5ZxL89WQ2Z0QJ4soMFYxtGj2jq3goPJpfip80/QI/YEtV9Mb2QzuyfAJ5zehc=
-Received: from MW3PR05CA0010.namprd05.prod.outlook.com (2603:10b6:303:2b::15)
- by IA1PR12MB7760.namprd12.prod.outlook.com (2603:10b6:208:418::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
- 2024 09:32:23 +0000
-Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
- (2603:10b6:303:2b:cafe::f2) by MW3PR05CA0010.outlook.office365.com
- (2603:10b6:303:2b::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17 via Frontend
- Transport; Fri, 6 Sep 2024 09:32:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 6 Sep 2024 09:32:22 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Sep
- 2024 04:32:18 -0500
-Received: from xhdbharatku40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 6 Sep 2024 04:32:14 -0500
-From: Thippeswamy Havalige <thippesw@amd.com>
-To: <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-	<linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>
-CC: <bharat.kumar.gogada@amd.com>, <michal.simek@amd.com>,
-	<lpieralisi@kernel.org>, <kw@linux.com>, Thippeswamy Havalige
-	<thippesw@amd.com>
-Subject: [PATCH 2/2] PCI: xilinx-cpm: Add support for Versal CPM5 Root Port controller-1
-Date: Fri, 6 Sep 2024 15:01:48 +0530
-Message-ID: <20240906093148.830452-3-thippesw@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240906093148.830452-1-thippesw@amd.com>
-References: <20240906093148.830452-1-thippesw@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A501C7B7E;
+	Fri,  6 Sep 2024 09:31:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9E841A8F
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725615116; cv=none; b=CbvMFmFtBWzEL2hhwf2RilVD+vUt1VgcXt6Al4G613hdrW7VgA95M976j6W/8zRi3QOh0cJk0LvBhiWoaOFrWSIkEwKuE0rHg9MRRrOa1WUmREOvxRmdx9q64QqecPKbvURYukFJP5PvzI81XwkBMFwTEN/lGtTmrzWRN9lTCS8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725615116; c=relaxed/simple;
+	bh=HrsKY1uyIgmUzemQzBOzzeVVcNvjHfCiFqD0tngeGZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YWFilZDPdDQsV3ySTa0G6SA6gDsKcJCaherW+cvC+iCdsNPrUPIsxHIIaGAWhQkoOAMUksHUO4Q/1NZqgeqzOM43MRvJ7E7HWZ3ujJfkAjpeWYomcd/Ez8uuPlt6q5mnRZq3aAafih6k1lal1Id23Awz3ASoWqEcLbv6btFHeQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D20EFFEC;
+	Fri,  6 Sep 2024 02:32:19 -0700 (PDT)
+Received: from [10.57.86.132] (unknown [10.57.86.132])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D6A43F73F;
+	Fri,  6 Sep 2024 02:31:49 -0700 (PDT)
+Message-ID: <ae7a415a-ccd0-4241-a899-8e15e6c48a0b@arm.com>
+Date: Fri, 6 Sep 2024 10:31:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: Allocate THP on hugezeropage wp-fault
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
+ willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240904100923.290042-1-dev.jain@arm.com>
+ <20240904100923.290042-3-dev.jain@arm.com>
+ <542b8267-39de-4593-82ef-a586bb372824@arm.com>
+ <7b7c5dc8-933b-405f-be27-907624f7f8ce@arm.com>
+ <ce7bb8c0-7b3d-4755-a64e-0327bf009536@arm.com>
+ <709c0648-c9c5-4197-83f2-64d36293b99e@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <709c0648-c9c5-4197-83f2-64d36293b99e@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: thippesw@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|IA1PR12MB7760:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9f89fac-557a-4b03-a6b0-08dcce56cf97
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bl9yClukUxYZCOgSCVq8tsz3O8DBLwxytdMahanJ83jQ+sTKzRXNqpVGD3zT?=
- =?us-ascii?Q?GdFF310qBLB2rQKKRAeLHvrzjlcAecjLoLdg/tNJWH2Py+DE6Z+7LYRoTq83?=
- =?us-ascii?Q?h45SSyhJsG6FnGNgMxGi9GPG5xnojNuNkyablSA/lMj9AG3wJELThAm6uF9w?=
- =?us-ascii?Q?Sd2Sz4Ouav14XORYd/3ZHgjC8sPg7+k0jtvDDEBpyfJfywON04ByegkqNbs3?=
- =?us-ascii?Q?uHKLqDrZgSAJOTNoHNxiqiGKUOWpPjE05WbXzuwZsdPDh18KPYVKLEIbrPl9?=
- =?us-ascii?Q?jJlFsACIv0mCQ6Hw4Ngx+64Sn+Ee4MrVt2bMGJQ6ew+9E/adQGDJz+TcIW8F?=
- =?us-ascii?Q?HY1bla2T0KuzcNKE1hX0Fbu8bCrU1bKO/LVr2D1keJN5Z77B3P02SungQRdG?=
- =?us-ascii?Q?WG6NBFpJOIHT4bjuNe2pYhnyVhvqmYFRDN5vGDIQgulDZprkrRHsp9syQMis?=
- =?us-ascii?Q?5WxdNOEBIe3ih9w2u6PKo2unP9cFWxKX2UnZ+UmClPW0LB15vD/yekzoziyc?=
- =?us-ascii?Q?rE4qUfm6OTmfBQb19mPErAoMCf6Nk/+OnFybPFIosKPIrpchm6Hqa62OeFBE?=
- =?us-ascii?Q?ygT0cFO8xn5KMVLoKYpci9T8yjsD2i985WQDLIAoHwNcjYrXZysNwAgHnqVc?=
- =?us-ascii?Q?99oC9plgRTJ+/xSfYGgiR7nSP8Rkhzht0tJ2o7sLXbHWumIK1XUfKIuCtwG2?=
- =?us-ascii?Q?DuEKJQy63Oogx1AP61rgxc1h2H0Nb3Hed5/RBFnBFnYuAzqIZ/s7/9MYk8Qu?=
- =?us-ascii?Q?braXp9yNkCpf1FhFPwl9RuoueiLiDpP546OPhlwVSyIhtcUjgDWlPNyyqYxH?=
- =?us-ascii?Q?GcJ6RPcEin7jVSYjs5Y49QSF//xQgf9kNqIRyU2bUhz3bcuUPQM2tJjuRN5M?=
- =?us-ascii?Q?k4YiWJ07Ova02DmWCG17ltNl79qOldjW+dmsSWJnnxVQmHK1/jzCUb/J/fhv?=
- =?us-ascii?Q?wJEhNWGH0SCQQR7Lh8qADOXPIOXuqlGKC2NeV8Y6HL29xPx4d9WFz7h4w3Bx?=
- =?us-ascii?Q?ze0DVDC1DAPWlVHZxACj+XNlSZWiKqCXxZHkD6YNlj0cqj4XM8n6r16xxVh/?=
- =?us-ascii?Q?xQmFoFeWwTgdjzEwCMQjqYH/uqxiI+DVt6RUYzOl29Uoz5mHs9hsWgNNTvMu?=
- =?us-ascii?Q?0YsuiGdA9517DXsF0F4cs5zFw9vceLFMWMWzL/mtMju0MpX4xnJXHh+pFxwJ?=
- =?us-ascii?Q?6RtquONG9qTqRrHs4nw8ixYYvXkoYqKUF1l6DxlPnqMavfHRWy5jcaoLOyat?=
- =?us-ascii?Q?ZaJrFhHwoLfSxvtAo/VTwYU7pUA8Vn1x09nN++dqLk+W3ncgv7Tod8u4DfIC?=
- =?us-ascii?Q?BbmlLEtekv2sUyyWokxwH2BWpxGOjauhNjeEvaD6uaLTdPt+UmWOK8X1nRYl?=
- =?us-ascii?Q?5lwFfOBDJ4ArErztGv/5Ur/4foz/B6jVQ18Rv3fzwZv4+Z6KHzjbKyyop4Xk?=
- =?us-ascii?Q?wheYQKyJyg8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 09:32:22.3380
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9f89fac-557a-4b03-a6b0-08dcce56cf97
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7760
 
-In the CPM5, controller-1 has platform-specific error interrupt bits
-located at different offsets compared to controller-0.
+On 06/09/2024 10:00, Dev Jain wrote:
+> 
+> On 9/6/24 14:13, Ryan Roberts wrote:
+>> On 06/09/2024 08:05, Dev Jain wrote:
+>>> On 9/5/24 18:44, Ryan Roberts wrote:
+>>>> On 04/09/2024 11:09, Dev Jain wrote:
+>>>>> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
+>>>>> replace it with a PMD-mapped THP. Change the helpers introduced in the
+>>>>> previous patch to flush TLB entry corresponding to the hugezeropage,
+>>>>> and preserve PMD uffd-wp marker. In case of failure, fallback to
+>>>>> splitting the PMD.
+>>>>>
+>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>> ---
+>>>>>    include/linux/huge_mm.h |  6 ++++
+>>>>>    mm/huge_memory.c        | 79 +++++++++++++++++++++++++++++++++++------
+>>>>>    mm/memory.c             |  5 +--
+>>>>>    3 files changed, 78 insertions(+), 12 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>>> index e25d9ebfdf89..fdd2cf473a3c 100644
+>>>>> --- a/include/linux/huge_mm.h
+>>>>> +++ b/include/linux/huge_mm.h
+>>>>> @@ -9,6 +9,12 @@
+>>>>>    #include <linux/kobject.h>
+>>>>>      vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
+>>>>> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+>>>>> +               unsigned long haddr, struct folio **foliop,
+>>>>> +               unsigned long addr);
+>>>>> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+>>>>> +         struct vm_area_struct *vma, unsigned long haddr,
+>>>>> +         pgtable_t pgtable);
+>>>> I don't think you are using either of these outside of huge_memory.c, so not
+>>>> sure you need to declare them here or make them non-static?
+>>> As pointed out by Kirill, you are right, I forgot to drop these from my previous
+>>> approach.
+>>>
+>>>>>    int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>>>>>              pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
+>>>>>              struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
+>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>>> index 58125fbcc532..150163ad77d3 100644
+>>>>> --- a/mm/huge_memory.c
+>>>>> +++ b/mm/huge_memory.c
+>>>>> @@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp,
+>>>>> unsigned long addr,
+>>>>>    }
+>>>>>    EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>>>>>    -static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct
+>>>>> vm_area_struct *vma,
+>>>>> -                  unsigned long haddr, struct folio **foliop,
+>>>>> -                  unsigned long addr)
+>>>>> +vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
+>>>>> +               unsigned long haddr, struct folio **foliop,
+>>>>> +               unsigned long addr)
+>>>>>    {
+>>>>>        struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
+>>>>>    @@ -984,21 +984,29 @@ static void __thp_fault_success_stats(struct
+>>>>> vm_area_struct *vma, int order)
+>>>>>        count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>>>>>    }
+>>>>>    -static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+>>>>> -            struct vm_area_struct *vma, unsigned long haddr,
+>>>>> -            pgtable_t pgtable)
+>>>>> +void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+>>>>> +         struct vm_area_struct *vma, unsigned long haddr,
+>>>>> +         pgtable_t pgtable)
+>>>>>    {
+>>>>> -    pmd_t entry;
+>>>>> +    pmd_t entry, old_pmd;
+>>>>> +    bool is_pmd_none = pmd_none(*vmf->pmd);
+>>>>>          entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+>>>>>        entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>>>>>        folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>>>>>        folio_add_lru_vma(folio, vma);
+>>>>> -    pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+>>>>> +    if (!is_pmd_none) {
+>>>>> +        old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
+>>>>> +        if (pmd_uffd_wp(old_pmd))
+>>>>> +            entry = pmd_mkuffd_wp(entry);
+>>>> I don't really get this; entry is writable, so I wouldn't expect to also be
+>>>> setting uffd-wp here? That combination is not allowed and is checked for in
+>>>> page_table_check_pte_flags().
+>>>>
+>>>> It looks like you expect to get here in the uffd-wp-async case, which used to
+>>>> cause the pmd to be split to ptes. I'm guessing (but don't know for sure) that
+>>>> would cause the uffd-wp bit to be set in each of the new ptes, then during
+>>>> fallback to handling the wp fault on the pte, uffd would handle it?
+>>> I guess you are correct; I missed the WARN_ON() in page_table_check_pmd_flags(),
+>>> but I did see, if I read the uffd code correctly, that mfill_atomic() will just
+>>> return in case of pmd_trans_huge(*dst_pmd) while doing a uffd_copy to the
+>>> destination
+>>> location. So preserving pmd_uffd_wp is useless in case a THP is mapped, but I
+>>> did not
+>>> know that in fact it is supposed to be an invalid combination. So, I will
+>>> drop it,
+>>> unless someone has some other objection.
+>> So what's the correct way to handle uffd-wp-async in wp_huge_pmd()? Just split
+>> it? If so, you can revert your changes in memory.c.
+> 
+> I think so.
+> 
+>>
+>>>>> +    }
+>>>>> +    if (pgtable)
+>>>>> +        pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+>>>> Should this call be moved outside of here? It doesn't really feel like it
+>>>> belongs. Could it be called before calling map_pmd_thp() for the site that
+>>>> has a
+>>>> pgtable?
+>>> Every other place I checked, they are doing this: make the entry -> deposit
+>>> pgtable ->
+>>> set_pmd_at(). I guess the general flow is to do the deposit based on the old
+>>> pmd, before
+>>> setting the new one. Which implies: I should at least move this check before
+>>> I call
+>>> pmdp_huge_clear_flush(). And, since vmf->pmd and creating the new entry has no
+>>> relation,
+>>> I am inclined to do what you are saying.
+>> pgtable_trans_huge_deposit() is just adding the pgtable to a list so that if the
+>> THP needs to be split in future, then we have preallocated the pte pgtable so
+>> the operation can't fail.
+> 
+> Yes.
+> 
+>> And enqueing it is just under the protection of the
+>> PTL as far as I can tell. So I think the only ordering requirement is that you
+>> both set the pmd and deposit the pgtable under the lock (without dropping it in
+>> between). So you can deposit either before or after map_pmd_thp().
+> 
+> Yes I'll do that before.
+> 
+>> And
+>> pmdp_huge_clear_flush() is irrelavent, I think?
+> 
+> You mean, in this context? Everywhere, pgtable deposit uses the old pmd
+> value to be replaced as its input, that is, it is called before set_pmd_at().
+> So calling pgtable deposit after clear_flush() will violate this ordering.
+> I do not think this ordering is really required but I'd rather be safe :)
 
-Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
----
- drivers/pci/controller/pcie-xilinx-cpm.c | 39 +++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 7 deletions(-)
+The pmd pointer is just used to get the pmd table (the pointer points to an
+entry inside the table so its just a case of backwards aligning the pointer).
+The pointer is never dereferenced, so the value of the entry is irrelevant.
 
-diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-index a0f5e1d67b04..d672f620bc4c 100644
---- a/drivers/pci/controller/pcie-xilinx-cpm.c
-+++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-@@ -30,10 +30,13 @@
- #define XILINX_CPM_PCIE_REG_IDRN_MASK	0x00000E3C
- #define XILINX_CPM_PCIE_MISC_IR_STATUS	0x00000340
- #define XILINX_CPM_PCIE_MISC_IR_ENABLE	0x00000348
--#define XILINX_CPM_PCIE_MISC_IR_LOCAL	BIT(1)
-+#define XILINX_CPM_PCIE0_MISC_IR_LOCAL	BIT(1)
-+#define XILINX_CPM_PCIE1_MISC_IR_LOCAL	BIT(2)
- 
--#define XILINX_CPM_PCIE_IR_STATUS       0x000002A0
--#define XILINX_CPM_PCIE_IR_ENABLE       0x000002A8
-+#define XILINX_CPM_PCIE0_IR_STATUS       0x000002A0
-+#define XILINX_CPM_PCIE1_IR_STATUS       0x000002B4
-+#define XILINX_CPM_PCIE0_IR_ENABLE       0x000002A8
-+#define XILINX_CPM_PCIE1_IR_ENABLE       0x000002BC
- #define XILINX_CPM_PCIE_IR_LOCAL        BIT(0)
- 
- #define IMR(x) BIT(XILINX_PCIE_INTR_ ##x)
-@@ -280,10 +283,17 @@ static void xilinx_cpm_pcie_event_flow(struct irq_desc *desc)
- 	pcie_write(port, val, XILINX_CPM_PCIE_REG_IDR);
- 
- 	if (port->variant->version == CPM5) {
--		val = readl_relaxed(port->cpm_base + XILINX_CPM_PCIE_IR_STATUS);
-+		val = readl_relaxed(port->cpm_base + XILINX_CPM_PCIE0_IR_STATUS);
- 		if (val)
- 			writel_relaxed(val, port->cpm_base +
--					    XILINX_CPM_PCIE_IR_STATUS);
-+					    XILINX_CPM_PCIE0_IR_STATUS);
-+	}
-+
-+	else if (port->variant->version == CPM5_HOST1) {
-+		val = readl_relaxed(port->cpm_base + XILINX_CPM_PCIE1_IR_STATUS);
-+		if (val)
-+			writel_relaxed(val, port->cpm_base +
-+					    XILINX_CPM_PCIE1_IR_STATUS);
- 	}
- 
- 	/*
-@@ -483,12 +493,19 @@ static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
- 	 * XILINX_CPM_PCIE_MISC_IR_ENABLE register is mapped to
- 	 * CPM SLCR block.
- 	 */
--	writel(XILINX_CPM_PCIE_MISC_IR_LOCAL,
-+	writel(XILINX_CPM_PCIE0_MISC_IR_LOCAL,
- 	       port->cpm_base + XILINX_CPM_PCIE_MISC_IR_ENABLE);
- 
- 	if (port->variant->version == CPM5) {
- 		writel(XILINX_CPM_PCIE_IR_LOCAL,
--		       port->cpm_base + XILINX_CPM_PCIE_IR_ENABLE);
-+		       port->cpm_base + XILINX_CPM_PCIE0_IR_ENABLE);
-+	}
-+
-+	else if (port->variant->version == CPM5_HOST1) {
-+		writel(XILINX_CPM_PCIE1_MISC_IR_LOCAL,
-+		       port->cpm_base + XILINX_CPM_PCIE_MISC_IR_ENABLE);
-+		writel(XILINX_CPM_PCIE_IR_LOCAL,
-+		       port->cpm_base + XILINX_CPM_PCIE1_IR_ENABLE);
- 	}
- 
- 	/* Enable the Bridge enable bit */
-@@ -615,6 +632,10 @@ static const struct xilinx_cpm_variant cpm5_host = {
- 	.version = CPM5,
- };
- 
-+static const struct xilinx_cpm_variant cpm5_host = {
-+	.version = CPM5_HOST1,
-+};
-+
- static const struct of_device_id xilinx_cpm_pcie_of_match[] = {
- 	{
- 		.compatible = "xlnx,versal-cpm-host-1.00",
-@@ -624,6 +645,10 @@ static const struct of_device_id xilinx_cpm_pcie_of_match[] = {
- 		.compatible = "xlnx,versal-cpm5-host",
- 		.data = &cpm5_host,
- 	},
-+	{
-+		.compatible = "xlnx,versal-cpm5-host1",
-+		.data = &cpm5_host1,
-+	},
- 	{}
- };
- 
--- 
-2.34.1
+> 
+>>
+>>>>>        set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>>>>>        update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>>>>>        add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>>>>> -    mm_inc_nr_ptes(vma->vm_mm);
+>>>>> +    if (is_pmd_none)
+>>>>> +        mm_inc_nr_ptes(vma->vm_mm);
+>>>>>    }
+>>>>>      static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>>>>> @@ -1576,6 +1584,50 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
+>>>>>        spin_unlock(vmf->ptl);
+>>>>>    }
+>>>>>    +static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
+>>>>> +                         unsigned long haddr,
+>>>>> +                         struct folio *folio)
+>>>>> +{
+>>>>> +    struct vm_area_struct *vma = vmf->vma;
+>>>>> +    vm_fault_t ret = 0;
+>>>>> +
+>>>>> +    ret = check_stable_address_space(vma->vm_mm);
+>>>>> +    if (ret)
+>>>>> +        goto out;
+>>>>> +    map_pmd_thp(folio, vmf, vma, haddr, NULL);
+>>>>> +out:
+>>>>> +    return ret;
+>>>>> +}
+>>>>> +
+>>>>> +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long
+>>>>> haddr)
+>>>>> +{
+>>>>> +    struct vm_area_struct *vma = vmf->vma;
+>>>>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
+>>>>> +    struct mmu_notifier_range range;
+>>>>> +    struct folio *folio = NULL;
+>>>>> +    vm_fault_t ret = 0;
+>>>>> +
+>>>>> +    ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
+>>>>> +                  vmf->address);
+>>>> Just checking: the PTE table was already allocated during the read fault,
+>>>> right?
+>>>> So we don't have to allocate it here.
+>>> Correct, that happens in set_huge_zero_folio(). Thanks for checking.
+>>>
+>>>>> +    if (ret)
+>>>>> +        goto out;
+>>>>> +
+>>>>> +    mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
+>>>>> +                haddr + HPAGE_PMD_SIZE);
+>>>>> +    mmu_notifier_invalidate_range_start(&range);
+>>>>> +    vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>>>>> +    if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
+>>>>> +        goto unlock;
+>>>>> +    ret = do_huge_zero_wp_pmd_locked(vmf, haddr, folio);
+>>>>> +    if (!ret)
+>>>>> +        __thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
+>>>>> +unlock:
+>>>>> +    spin_unlock(vmf->ptl);
+>>>>> +    mmu_notifier_invalidate_range_end(&range);
+>>>> I'll confess I don't understand all the mmu notifier rules.
+>>> I confess the same :)
+>>>
+>>>> But the doc at
+>>>> Documentation/mm/mmu_notifier.rst implies that the notification must be done
+>>>> while holding the PTL. Although that's not how wp_page_copy(). Are you
+>>>> confident
+>>>> what you have done is correct?
+>>> Everywhere else, invalidate_range_end() is getting called after dropping the
+>>> lock,
+>>> one reason is that it has a might_sleep(), and therefore we cannot call it while
+>>> holding a spinlock. I still don't know what exactly these calls mean...but I
+>>> think
+>>> what I have done is correct.
+>> High level; they are notifying secondary MMUs (e.g. IOMMU) of a change so the
+>> tables of those secondary MMUs can be kept in sync. I don't understand all the
+>> ordering requirement details though.
+>>
+>> I think what you have is probably correct, would be good for someone that knows
+>> what they are talking about to confirm though :)
+> 
+> Exactly.
+> 
+>>
+>>>> Thanks,
+>>>> Ryan
+>>>>
+>>>>> +out:
+>>>>> +    return ret;
+>>>>> +}
+>>>>> +
+>>>>>    vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+>>>>>    {
+>>>>>        const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
+>>>>> @@ -1588,8 +1640,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+>>>>>        vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
+>>>>>        VM_BUG_ON_VMA(!vma->anon_vma, vma);
+>>>>>    -    if (is_huge_zero_pmd(orig_pmd))
+>>>>> +    if (is_huge_zero_pmd(orig_pmd)) {
+>>>>> +        vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
+>>>>> +
+>>>>> +        if (!(ret & VM_FAULT_FALLBACK))
+>>>>> +            return ret;
+>>>>> +
+>>>>> +        /* Fallback to splitting PMD if THP cannot be allocated */
+>>>>>            goto fallback;
+>>>>> +    }
+>>>>>          spin_lock(vmf->ptl);
+>>>>>    diff --git a/mm/memory.c b/mm/memory.c
+>>>>> index 3c01d68065be..c081a25f5173 100644
+>>>>> --- a/mm/memory.c
+>>>>> +++ b/mm/memory.c
+>>>>> @@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault
+>>>>> *vmf)
+>>>>>        if (vma_is_anonymous(vma)) {
+>>>>>            if (likely(!unshare) &&
+>>>>>                userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
+>>>>> -            if (userfaultfd_wp_async(vmf->vma))
+>>>>> +            if (!userfaultfd_wp_async(vmf->vma))
+>>>>> +                return handle_userfault(vmf, VM_UFFD_WP);
+>>>>> +            if (!is_huge_zero_pmd(vmf->orig_pmd))
+>>>>>                    goto split;
+>>>>> -            return handle_userfault(vmf, VM_UFFD_WP);
+>>>>>            }
+>>>>>            return do_huge_pmd_wp_page(vmf);
+>>>>>        }
 
 
