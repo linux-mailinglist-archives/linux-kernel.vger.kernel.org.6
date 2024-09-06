@@ -1,120 +1,87 @@
-Return-Path: <linux-kernel+bounces-318966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4246796F5C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA9296F5CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 15:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBF31C23F99
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9A81C24101
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 13:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D1B1CF299;
-	Fri,  6 Sep 2024 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="n0RKf9b/"
-Received: from classfun.cn (unknown [129.204.178.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64651CBE89;
-	Fri,  6 Sep 2024 13:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C5015852B;
+	Fri,  6 Sep 2024 13:51:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9351A270
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 13:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630511; cv=none; b=MB6bnbyJWL1xJGEO9EbBcVzt0lqHd9n9vUggSZfeGSss+rZQw54GFx8Wjai9+HtvRkb7ppHdYkJiRGchaw7b9+8ksrhtQaO3xgL2cJUogHdM5dFFB+eZ6hRUqssfAeUoN7nbeXh5UzhUuvwFc9e4O0kIKMZ+qm+RcjlrzlmGybs=
+	t=1725630664; cv=none; b=rChwTRtHV4Z9htGzhx21hqyn0le0nrTwEa1TuJMqb6ezyIngLm2PPeLUzlzO35NzGfzIkdFG6PQBTGfOAmoGZC6a7w8CYuy7kRDKvzOoa97uDG2zYWomoAzr7ZiMKJasnkRmOqbz8w6cjI/0o4kc6JLKJl4sAqMcJDHpnSd7dbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630511; c=relaxed/simple;
-	bh=de27J4yiTEMCkWp47eHD/sFM0Yeb9I683sS0iZ0vUHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=i3t9/yJrWoS5wIlLJODAUD9Kt1NaHMjio2nHi0LpfB4IeSmaeofP+boVAT3CtROPvDU/xkGx1wMMsHEhxXSAKVkJdEhd6Hn7b/mLTZIGB5OR4/BX0sfyhWd1EYXESaqXII2sOsewaUoMkCBsVxDwm3KnuFjYC6vhCgfAUUlRK60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=n0RKf9b/; arc=none smtp.client-ip=129.204.178.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
-Received: from [192.168.0.160] (unknown [14.155.100.110])
-	(Authenticated sender: bigfoot)
-	by classfun.cn (Postfix) with ESMTPSA id 87A39789F3;
-	Fri,  6 Sep 2024 21:48:25 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 87A39789F3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
-	s=default; t=1725630506;
-	bh=naamg7UNm6mx3z8yDA7GqJbR3zn2wb64TfuOIljta10=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=n0RKf9b/BT9pj0TqQuZAJCtA+K9QdxCzyNV2W+mW02toJQh7G1JEjiqdtQto5j+QZ
-	 z3U8LTHHqrtkvIKGlcR1XEsiqaGremCMy13hGmd7uhkTIGoEifo+PeGrMzy8GMcy/d
-	 BZez3KgmN0sFed3e726VlCfDBh5NFNzJ5o8toZtc=
-Message-ID: <e1f98265-ab75-45fe-a7a9-8e65cc13908e@classfun.cn>
-Date: Fri, 6 Sep 2024 21:49:53 +0800
+	s=arc-20240116; t=1725630664; c=relaxed/simple;
+	bh=jV7JE6LQ9QEedtAxCDCFbWNpY0RoY7LB5NLAZoyIozA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ISTg7AqTt3+OeS7g7G0zQd9Rdzs5yH+BO9eEOZB/9D49WwAbwM23YA28RNGXMuYGWZJs4kvBZojzlmyMJdZbNp89XEYo4wICnhXqsDRPaWl41kK2jOQKJxzWKNWShuGK9oOZWp/kxem5ANk+lPtGhLQRm+9vitLZ4RrV2tGrrag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d49576404so37126045ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 06:51:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725630662; x=1726235462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AkmS85jfaARBa/4oGFZ9rOuWPrJWaa/RkMIGLv/cExk=;
+        b=DN+XJ+n7QFD5Avs11JizHZiY81YE1Kddl8kBHLVLYa/e3DCABdG0ltNeotP9y0Zhh5
+         rVyWQ+g2n6Y0+WDcLCWFuakzZj6B45dY7IJacVM9Q64v7NmfpVEX7vfZvha1QX/n/TYD
+         FE8qEnlbp1rzAHUuJxQydkIu5lc8cRmsnfTdZxp9lAWVfuK65E2EEPZm+Mc8ad3y8m95
+         GDTYjk/Jvyrb+3H8xTrkhmzsUaHvpzV2XvoZItAhNm4I5/dLYuvk9SkWSIasOiNpAGid
+         y69nGNF4yoWuf5sEjbNOUaPO5AP00AWKYHT6ICe3FDxDXUYaekDTbA4/BmM7sktUBqeb
+         F7aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSmaesAeLF7CWhck0GF1inhjwV/w81ijOzIaCiVlphvSdKZggdahhh69Vx17Byh2rCsyzYMaWWTAfVt0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw80d+68I2z6KJc9fv1vPWMmkpC3qUp57K1H1ygJCd8ccf3R+l7
+	4+QDLqyy3Ys6eRlUiusCFTntMZkdBrLqI35a3jjL2hn52i1qdbLjbV73OL5Dwv6MlKUjX3tgmyE
+	9jmJ6RmTGdQ9IuAA9sZ9JfjbNT0H+STtdDwJ/EhXEjk0LAwLRr0rskgI=
+X-Google-Smtp-Source: AGHT+IFlq54UeL7HCvIeplUW5HkKnmw2fLWW1T/GzN2wHn1pbqpy3d2OADOsEc2zzBlLrKOOsAju48nVXTjuC2G5JMydnhAqtSVV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] hwmon: Add support for Photonicat PMU board
- temperature sensor
-To: Guenter Roeck <linux@roeck-us.net>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-7-bigfoot@classfun.cn>
- <a33633be-800c-4ca0-9d1e-f190e23384d5@roeck-us.net>
-Content-Language: en-US
-Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley,"
- <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
- Chukun Pan <amadeus@jmu.edu.cn>, Junhao Xie <bigfoot@classfun.cn>
-From: Junhao Xie <bigfoot@classfun.cn>
-In-Reply-To: <a33633be-800c-4ca0-9d1e-f190e23384d5@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b4e:b0:39f:6ec9:d918 with SMTP id
+ e9e14a558f8ab-3a04f0f59a2mr1241995ab.3.1725630662559; Fri, 06 Sep 2024
+ 06:51:02 -0700 (PDT)
+Date: Fri, 06 Sep 2024 06:51:02 -0700
+In-Reply-To: <tencent_157C251EBA15BB1533CB9E1C1B254BF11B08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a7df7b062173b20d@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbtmc_write
+From: syzbot <syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/6 19:41, Guenter Roeck wrote:
-> On 9/6/24 02:36, Junhao Xie wrote:
->> Photonicat PMU MCU will send status reports regularly,
->> including board temperature.
->>
-> 
-> This is not an appropriate description.
+Hello,
 
-I will change to a better description.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> 
->> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
->> ---
->>   drivers/hwmon/Kconfig            |  10 +++
->>   drivers/hwmon/Makefile           |   1 +
->>   drivers/hwmon/photonicat-hwmon.c | 129 +++++++++++++++++++++++++++++++
-> 
-> Documentation missing.
+Reported-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
+Tested-by: syzbot+9d34f80f841e948c3fdb@syzkaller.appspotmail.com
 
-Does it need to be placed in Documentation/hwmon/photonicat-hwmon.rst?
+Tested on:
 
-> 
->> +static int pcat_hwmon_probe(struct platform_device *pdev)
->> +{
-> ...
->> +    dev_info(dev, "Board Temprature: %d degress C\n", hwmon->temperature);
->> +
-> 
-> Unacceptable (misspelled) noise.
-> 
->> +    hwmon->hwmon = devm_hwmon_device_register_with_groups(
->> +        dev, label, hwmon, pcat_pmu_temp_groups);
->> +
-> 
-> Please use the with_info API. I am not going to review the code because
-> it will need to be completely rewritten.
-> 
-> Guenter
-> 
+commit:         b831f83e Merge tag 'bpf-6.11-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110e8d8f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d34f80f841e948c3fdb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16be13fb980000
 
-Thanks for your review, I will rewrite this driver!
-
-Best regards,
-Junhao
+Note: testing is done by a robot and is best-effort only.
 
