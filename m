@@ -1,194 +1,166 @@
-Return-Path: <linux-kernel+bounces-318032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E366E96E760
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB9296E764
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 03:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE03285780
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4A0E28496B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 01:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161171D555;
-	Fri,  6 Sep 2024 01:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1A51D554;
+	Fri,  6 Sep 2024 01:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MKIj2ttR"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ITtirQEP"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A8B10E0;
-	Fri,  6 Sep 2024 01:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2504A1EA87;
+	Fri,  6 Sep 2024 01:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725587295; cv=none; b=ROUWsicdXLn/1HPYXDw5Z//u+gGctVwZFECtJwU5lQzFkaS7MuTnMaMoLAPAJF/Py2UFRYlhDz39WC0evMbuu4a35BoQIIeSLEON63T1t+R7SC3R0B20MThB+ua2MSXNqbd47ljPXoaKBGUGgCFn4mZFte92S/X+Qta2+C9P8UU=
+	t=1725587626; cv=none; b=KhA5+O4126RmT3W+qaYDTTwfN+E+8WgxHQpNoo1Oza0FFxpeqeQlcZr3SiTz50Pni3+lHWhUOH7mnyhOCobMvUeqPEW8aiZuIFpNglwE0BO4u+waJgssoXNMJRgfFVhrjW7EKKtdVP0dmKI3gwe2on/3XKBQPMlcTef1IoNzWPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725587295; c=relaxed/simple;
-	bh=7zCL/F2SegnjDaIDN/6aX2HgHqwrif0ajQVQEgillWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SAvFJnjYbovLpMHiY8l3xdYuT80osMP/s7jUYIJuQ0blFffHGXddj7IP7ZyBIZ6/KTmAg2slWA+MOr5v08Svn1TnSyn2wiK6rphBc8IGel00XBzlfn0gBmsT4AlFhaYNkrIrSV1SfnoEh50C5ACVJ6SO8ke5vQcYWp2yjlRvR7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MKIj2ttR; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725587290;
-	bh=pdg98YKJnJpUX8y4oKFacGDedcpygu8u2LZ+ChqaW6s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MKIj2ttRnjhW+TU7tGJwsvykwpcdxYilXJy14dhQbxc42pXcSD2VXZ+HVuS8iiXlb
-	 Kf+/fa24Gj5xcfLdV69TV51CgZMaLeat8fuPWfGwcViT+usFYZXkbDgLJ0Faz/Izqh
-	 WYzRSTbb22irCuyIUGYkGDVHq4Nj2k7TzGPJynA5ulceFDJRbxXSohuhQlWp3LzCga
-	 +ZgFvXjV1HQvsN6PqwrYxZBVO5lBqM6V2jLnaL+onotcjpi1mbE7n4geHVaXgTsADE
-	 Uk8X4CGFzGzJy+tqnVUD4qNS4Bex3aLOpJwLscIKaaug/UwMFQCyc2PpdLknw1u69P
-	 AciXmZMTk9mLg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0Jyx73H9z4wp0;
-	Fri,  6 Sep 2024 11:48:09 +1000 (AEST)
-Date: Fri, 6 Sep 2024 11:48:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Steve French
- <smfrench@gmail.com>
-Cc: CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Steve French
- <stfrench@microsoft.com>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the cifs
- tree
-Message-ID: <20240906114809.08a545d9@canb.auug.org.au>
-In-Reply-To: <20240906093821.30c5114e@canb.auug.org.au>
-References: <20240906084637.295241d1@canb.auug.org.au>
-	<20240906093821.30c5114e@canb.auug.org.au>
+	s=arc-20240116; t=1725587626; c=relaxed/simple;
+	bh=a72T8cDYzUMTleXuRPYVQQflQxStcn2RcQeqC/p5UYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IfWFUDbgTzqam5hifoLnku2kuOXU8WxOJQvuTYJdHZwhZSuARkrt2WyIJzbPAc2ENLHBDlhn5IRzncFPCxuOidWe9VvdmN+vNvaOQ9EoAYZl6TLT7j1FltOKdlXwuttgfuA8Hl3K8OwSCHXsbFAiIXna4KRSstokI6zcR1yXObE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ITtirQEP; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725587615; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=yXCCgOuWDZJBwrrZhsFP69ynA9Ps5ml3WXCsMeJVNTQ=;
+	b=ITtirQEPxGpi9kdKM+EdwFUZccl3xC2+TtkJSry5nuuL9eQWkVmhdX+h8aMjIKLt/GXC92uLdY73yTr5jfYnHamKgkq6k3i0nSZjmyi/H+zjcdafJ4grlNyE/CwGStFMZ+dOANiVMiwCRbPYsIzNNqNcO4q8bsfWsQFlJrP5i1E=
+Received: from 30.246.162.144(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WENXsHu_1725587611)
+          by smtp.aliyun-inc.com;
+          Fri, 06 Sep 2024 09:53:33 +0800
+Message-ID: <34d5d58b-7fc2-4f93-9d3b-3051ec5e6a23@linux.alibaba.com>
+Date: Fri, 6 Sep 2024 09:53:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/MK_.kF7nY/TSQlrslTd9U3_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Jarkko Sakkinen <jarkko@kernel.org>, bp@alien8.de, rafael@kernel.org,
+ wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
+ tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
+ james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
+ will@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240902030034.67152-2-xueshuai@linux.alibaba.com>
+ <D3WS2P2DU0CE.SANBOLMHG6TC@kernel.org>
+ <bf984773-2a8e-4528-9af1-9775fdc7c4e2@linux.alibaba.com>
+ <D3YEWCUXEWY3.ALFECJPKZMMG@kernel.org> <D3YEYH69KMV4.13SX59Y2HT6D@kernel.org>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <D3YEYH69KMV4.13SX59Y2HT6D@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/MK_.kF7nY/TSQlrslTd9U3_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Fri, 6 Sep 2024 09:38:21 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Fri, 6 Sep 2024 08:46:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > Today's linux-next merge of the vfs-brauner tree got a conflict in:
-> >=20
-> >   fs/smb/client/cifssmb.c
-> >=20
-> > between commit:
-> >=20
-> >   a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the same way a=
-s SMB2/3")
-> >=20
-> > from the cifs tree and commit:
-> >=20
-> >   0fda1f8c6bf8 ("netfs: Speed up buffered reading")
-> >=20
-> > from the vfs-brauner tree.
-> >=20
-> > I fixed it up (I used the former as it is (supposedly) a much newer pat=
-ch)
-> > and can carry the fix as necessary. This is now fixed as far as linux-n=
-ext
-> > is concerned, but any non trivial conflicts should be mentioned to your
-> > upstream maintainer when your tree is submitted for merging.  You may
-> > also want to consider cooperating with the maintainer of the conflicting
-> > tree to minimise any particularly complex conflicts. =20
->=20
-> The fixup ended up being as below.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc fs/smb/client/cifssmb.c
-> index cfae2e918209,04f2a5441a89..790b3f5ea64b
-> --- a/fs/smb/client/cifssmb.c
-> +++ b/fs/smb/client/cifssmb.c
-> @@@ -1261,16 -1261,6 +1261,15 @@@ openRetry
->   	return rc;
->   }
->  =20
->  +static void cifs_readv_worker(struct work_struct *work)
->  +{
->  +	struct cifs_io_subrequest *rdata =3D
->  +		container_of(work, struct cifs_io_subrequest, subreq.work);
->  +
-> - 	netfs_subreq_terminated(&rdata->subreq,
-> - 				(rdata->result =3D=3D 0 || rdata->result =3D=3D -EAGAIN) ?
-> - 				rdata->got_bytes : rdata->result, true);
-> ++	rdata->subreq.transferred +=3D rdata->got_bytes;
-> ++	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, true);
->  +}
->  +
->   static void
->   cifs_readv_callback(struct mid_q_entry *mid)
->   {
+在 2024/9/5 22:17, Jarkko Sakkinen 写道:
+> On Thu Sep 5, 2024 at 5:14 PM EEST, Jarkko Sakkinen wrote:
+>> On Thu Sep 5, 2024 at 6:04 AM EEST, Shuai Xue wrote:
+>>>
+>>>
+>>> 在 2024/9/4 00:09, Jarkko Sakkinen 写道:
+>>>> On Mon Sep 2, 2024 at 6:00 AM EEST, Shuai Xue wrote:
+>>>>> Synchronous error was detected as a result of user-space process accessing
+>>>>> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+>>>>> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+>>>>> memory_failure() work which poisons the related page, unmaps the page, and
+>>>>> then sends a SIGBUS to the process, so that a system wide panic can be
+>>>>> avoided.
+>>>>>
+>>>>> However, no memory_failure() work will be queued unless all bellow
+>>>>> preconditions check passed:
+>>>>>
+>>>>> - `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
+>>>>> - `if (flags == -1)` in ghes_handle_memory_failure()
+>>>>> - `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
+>>>>> - `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
+>>>>>
+>>>>> In such case, the user-space process will trigger SEA again.  This loop
+>>>>> can potentially exceed the platform firmware threshold or even trigger a
+>>>>> kernel hard lockup, leading to a system reboot.
+>>>>>
+>>>>> Fix it by performing a force kill if no memory_failure() work is queued
+>>>>> for synchronous errors.
+>>>>>
+>>>>> Suggested-by: Xiaofei Tan <tanxiaofei@huawei.com>
+>>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>>>>
+>>>>> ---
+>>>>>    drivers/acpi/apei/ghes.c | 10 ++++++++++
+>>>>>    1 file changed, 10 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>>>>> index 623cc0cb4a65..b0b20ee533d9 100644
+>>>>> --- a/drivers/acpi/apei/ghes.c
+>>>>> +++ b/drivers/acpi/apei/ghes.c
+>>>>> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>>>>    		}
+>>>>>    	}
+>>>>>    
+>>>>> +	/*
+>>>>> +	 * If no memory failure work is queued for abnormal synchronous
+>>>>> +	 * errors, do a force kill.
+>>>>> +	 */
+>>>>> +	if (sync && !queued) {
+>>>>> +		pr_err("Sending SIGBUS to %s:%d due to hardware memory corruption\n",
+>>>>> +			current->comm, task_pid_nr(current));
+>>>>
+>>>> Hmm... doest this need "hardware" or would "memory corruption" be
+>>>> enough?
+>>>>
+>>>> Also, does this need to say that it is sending SIGBUS when the signal
+>>>> itself tells that already?
+>>>>
+>>>> I.e. could "%s:%d has memory corruption" be enough information?
+>>>
+>>> Hi, Jarkko,
+>>>
+>>> Thank you for your suggestion. Maybe it could.
+>>>
+>>> There are some similar error info which use "hardware memory error", e.g.
+>>
+>> By tweaking my original suggestion just a bit:
+>>
+>> "%s:%d: hardware memory corruption"
+>>
+>> Can't get clearer than that, right?
+> 
+> And obvious reason that shorter and more consistent klog message is easy
+> to spot and grep. It is simply less convoluted.
+> 
+> If you want also SIGBUS, I'd just put it as "%s:%d: hardware memory
+> corruption (SIGBUS)"
+> 
+> BR, Jarkko
 
-Also this (which I will roll into the above merge resolution tomorrow):
+Hi, Jarkko,
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 6 Sep 2024 11:39:25 +1000
-Subject: [PATCH] fix up for "netfs: Speed up buffered reading"
+I will change it to "%s:%d: hardware memory corruption (SIGBUS)".
 
-interacting with "cifs: Fix SMB1 readv/writev callback in the same way
-as SMB2/3"
+Thank you for valuable suggestion.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/smb/client/cifssmb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Best Regards,
+Shuai
 
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 790b3f5ea64b..76fb2287c17b 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -1326,9 +1326,9 @@ cifs_readv_callback(struct mid_q_entry *mid)
- 		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 		rdata->result =3D 0;
- 	} else {
--		if (rdata->got_bytes < rdata->actual_len &&
--		    rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes =
-=3D=3D
--		    ictx->remote_i_size) {
-+		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
-+		if (trans < rdata->subreq.len &&
-+		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
- 			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 			rdata->result =3D 0;
- 		}
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MK_.kF7nY/TSQlrslTd9U3_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbaX1kACgkQAVBC80lX
-0Gz3Agf9GVTl7yTMuYijti1PvQ91bw4HKIGv0EngK3z1zjBo7XQ0YBAYTVVfTFuS
-X/uGLNEyTsPxqSJYR9bknzes4a6L194c9ehZAGOh+kABQnCP3AEfx85KnqRIcJwq
-bcEjgKeT3ohidbmdupg0h9JOkL3ki8syc7vETg4d8GXv5BEF/x3sbWB9df7ZXmfV
-o/gQ20I290uYSmd53h+ar1X7g0bXfp4kLlt9k/Jz0tnsmOHwt4oMhm7rZ7LscJ7x
-LaR+VL41e2xL3NQAZDSavb7dGpMTS9n2CzruXUu7CV69ZM/VijI1QG3HiELODFPI
-G8KN9VLuIfumnaWzSD3eIzHvrK/8KA==
-=qSIV
------END PGP SIGNATURE-----
-
---Sig_/MK_.kF7nY/TSQlrslTd9U3_--
 
