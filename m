@@ -1,193 +1,157 @@
-Return-Path: <linux-kernel+bounces-319262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF6A96F9CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:15:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFDB96F9CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 19:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359021F2539A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:15:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B262832E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 17:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5891D47CE;
-	Fri,  6 Sep 2024 17:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB48A1D4178;
+	Fri,  6 Sep 2024 17:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iqinmev4"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TP1IhbIH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172B1CBE8C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0B8129E93
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 17:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725642954; cv=none; b=Y76SZl8ylmUT3np1a+qsPBZjLay/fAKzJNq8Kb3y+3pheze4hDcWFv218JfUqFhOzsxiNfSGsQeL/E9McUhrV/eOyEr41ypAx6X+udFvZUe/3wpGl+0swdzx/BacYHefN285JCqcJMcMspgUj9YGwErgTd3ztezU2EA27KoMWGE=
+	t=1725642970; cv=none; b=oaFIYnvxkDvsGtuFsvzRfHtqjA1IXspaTpte03B0B3jRc1hYgibWKP/eTZThHf6FvIcE0UxYM571V7ZQTSsqq3SKDhfxRSDYwKN+6TbVD9c2BTogqHulzFnRqLJbHDSW/xkI8Ud3jZxAz0+ZoS91dZFybbp/8VtQnd1ZNa+FZxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725642954; c=relaxed/simple;
-	bh=Gm4NAXQPSdgNUn+z7bxw9q/Kz8fIbNcCedpXsJ4i1b4=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=rcOS6wqTMqIooDl2VTvj3ThSlhApwk3Ix2wbqSpZvPWpGcz2nUMZ7xOZ7AsFblO0LPqhX9bPXanlfgg4gUMhUeisrEo7GQIsFANy6Nw0erzEFbaBcCMRMcBc9OLpWms4DTd2mZqDsIS3XT6rqFuiYBEBzZTGoPUzqpM9euSDvEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iqinmev4; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42c828c8863so18436365e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 10:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725642951; x=1726247751; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IawqMe/GbGXjS+X2KFd8Q1O5CtFxJX4z2H7g3oGBFqQ=;
-        b=Iqinmev4hU76kvReL8PupImXomNxQ9GQ9gdTgaZz2PFgpYu8dJcgqjGuz8IyrLLqLO
-         b652QpNCH0e1G1B31T1EFnVw8GA7A++vUTOGi6COIj5QRdtAa+8NVdBFJqXKyNVt0E41
-         5ikJDJtk+4R5XR6l93dVMHURAXaEr8LevWKl7oTM/p3UXlI7DLBXYpTL2GBPQAnnsLd1
-         ZyD1MSkHepDvPwzfl1kJDu3XPSLpSCHe03y3/Cg/SVDcLo06Mdxjd3YI07lq6hlXwBu3
-         0SdBSd7KG/VjYRxHEAIZgjWU90XM8AjX6HyubIyjjZJvWc1Ki7pPaGkeTOSCTae8+DP6
-         3G4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725642951; x=1726247751;
-        h=content-transfer-encoding:subject:cc:to:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IawqMe/GbGXjS+X2KFd8Q1O5CtFxJX4z2H7g3oGBFqQ=;
-        b=Ma7/W08OwxFxYcLgFY3cm5cSde0o0+54mYYCWb02XnhOY9jAYcHE8GeZlBRuL9hdL+
-         v99oPDaIkEp+LSwZsVvOmpjgpcSB5mjm/Yf6cHXNQ5Ddi9gbjBDNWBokAIixbkEZJDXO
-         euXmJwJDvIHYkTMf40iS0IB5UYs4TBsb+rRpphDzW0hajdP9IlXUfQHbCTeHSRTMgSZ/
-         FxUR9z8D1D4Qal3gBALqJTinJknDpdKGRAnNMR/NqMPmXSC76GJL/l09mmjG+BpL+jhB
-         7dKi+jopiq0/mbc79oetJ6q+YYK4hPg2W678HkeXK7Dt0ySxqNxHO8rI/MlmhhkCTbEv
-         I6iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9+TrbkDzH69DbUeshfHjgOsz/UZvEBRN3WqZXoHXd+caznL2nKFLPXl1l4s951YHb0bIxiPGzUFT7KOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypOOqTdh+BY5aJHSftsv3WWinfSRkf1Kv9IsOv68n6ZmAl6t9v
-	aO7kxKT53XmHMxbJjykBg1dq4YYsEaIEkEwumrGpELWQms+kFUTg4w9jAFwwx/A=
-X-Google-Smtp-Source: AGHT+IFXcie6JWDnnZRnhGgH5Z6nsMxiZSEXTUHOubNLWIZVdCKzi4JkEzYod5+Q4AqL9HxmmeeLQg==
-X-Received: by 2002:a05:600c:4715:b0:426:61e8:fb3b with SMTP id 5b1f17b1804b1-42c9f9d6e77mr19856295e9.27.1725642950456;
-        Fri, 06 Sep 2024 10:15:50 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42ca0600651sm26552385e9.32.2024.09.06.10.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 10:15:50 -0700 (PDT)
-Message-ID: <6054852d-975f-4e83-850e-815f263a40c5@linaro.org>
-Date: Fri, 6 Sep 2024 19:15:49 +0200
+	s=arc-20240116; t=1725642970; c=relaxed/simple;
+	bh=aE1Xcj78JU4ye7NcyZ7ekBSM5M5rF82jsfwtvrFTCkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpM1qsAQVZXQBtpBu19+OmRUiVp3odSjcBU1kftTNWywWRrPCeRAb7Uq3q+Y3Z+askYqCuAOrwBNrvM2EUYC/YIp92WYI9rKIzHD+Rj/SdWpnHa0/abLG7oFfhQ+6Lgg2vKIAjlzhYTT4IBR6aH+SR3x22jxOvamRm1HdtUZcIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TP1IhbIH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C7CC4CEC4;
+	Fri,  6 Sep 2024 17:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725642969;
+	bh=aE1Xcj78JU4ye7NcyZ7ekBSM5M5rF82jsfwtvrFTCkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TP1IhbIHsX96dsuCqgcgiHTwQz5/v9nUYDYYklrNLeaGFU6ioNJ81njLYIi0QpTEH
+	 UMmOiaMPKGBaVSAyXZk7+2RQnQPYnyEZvznWa03SC50jR0Rrw3IozlqxP+tEwmUATt
+	 PaOUzxMnVdQdFWjk1XdwnlMYEcFd13l6f01yrtrsUSpIqffR45zY6jcimztz+wD1kF
+	 Vl50LMr7JL5XGtvXKN7F/rJEoiVhYm0AIuJkWPl+UUXg0Tw5eOaAW9X7A08L/U6+JN
+	 XjnltmOgj8rSUa7IV/1AdlSydLvOQUBhZo5YPAfiUeeP+cm/PeqCs0Z9o3blRZYYEg
+	 07YBG+HMkBsnQ==
+Date: Fri, 6 Sep 2024 18:16:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] arm64/fpsimd: Ensure we don't contend a SMCU from idling
+ CPUs
+Message-ID: <Zts41l46Ufo0tk4Q@finisterre.sirena.org.uk>
+References: <20240618-arm64-sme-no-cpuidle-v1-1-1de872e1691f@kernel.org>
+ <Zo7qzWVXRWulVtCT@arm.com>
+ <Zo8ZDBisWJonBVqF@finisterre.sirena.org.uk>
+ <Ztnvosf0JHsvCf7-@arm.com>
+ <8c625518-7f73-40c9-8c91-3a0b14240003@sirena.org.uk>
+ <ZtsYNOTA6ekEa6TE@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ankit Agrawal <agrawal.ag.ankit@gmail.com>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Gaosheng Cui <cuigaosheng1@huawei.com>, Marek Maslanka
- <mmaslanka@google.com>, Uros Bizjak <ubizjak@gmail.com>,
- Zhang Zekun <zhangzekun11@huawei.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] timer drivers material for v6.12-rc1
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A2vu8oGfyfYpZjk9"
+Content-Disposition: inline
+In-Reply-To: <ZtsYNOTA6ekEa6TE@arm.com>
+X-Cookie: Your love life will be... interesting.
 
 
-Hi Thomas,
+--A2vu8oGfyfYpZjk9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-please consider pulling the new timer drivers material. This cycle 
-mainly provided a few changes related to fixes and devm_* variant.
+On Fri, Sep 06, 2024 at 03:56:52PM +0100, Catalin Marinas wrote:
+> On Thu, Sep 05, 2024 at 07:34:41PM +0100, Mark Brown wrote:
 
-The following changes since commit 79f8b28e85f83563c86f528b91eff19c0c4d1177:
+> > On context switch the SMSTOP is issued as part of loading the state for
+> > the task but we only do that when either returning to userspace or it's
+> > a kernel thread with active FPSIMD usage.  The idle thread is a kernel
+> > thread with no FPSIMD usage so we don't touch the state.  If we did the
+> > SMSTOP unconditionally that'd mean that the optimisation where we don't
+> > reload the FP state if we bounce through a kernel thread would be broken
+> > while using SME which doesn't seem ideal, idling really does seem like a
+> > meaningfully special case here.
 
-   timers: Annotate possible non critical data race of next_expiry 
-(2024-09-04 11:57:56 +0200)
+> It depends on why the CPU is idling and we don't have the whole
+> information in this function. If it was a wait on a syscall, we already
+> discarded the state (but we only issue sme_smstop_sm() IIUC). With this
+> patch, we'd disable the ZA storage as well, can it cause any performance
+> issues by forcing the user to re-fault?
 
-are available in the Git repository at:
+There will be some overhead from reloading the FP state, yes.
 
-   https://git.linaro.org/people/daniel.lezcano/linux.git 
-tags/timers-v6.12-rc1
+> If it's some short-lived wait for I/O on page faults, we may not want to
+> disable streaming mode. I don't see this last case much different from
+> switching to a kernel thread that doesn't use SME.
 
-for you to fetch changes up to 2376d871f8552aadea19f5bc0b1370db54a3a5f2:
+Yeah, that one is going to depend a lot on how performant the I/O is.
 
-   platform/x86:intel/pmc: Fix comment for the 
-pmc_core_acpi_pm_timer_suspend_resume function (2024-09-06 14:49:21 +0200)
+> So I think this leaves us with the case where a thread is migrated to a
+> different CPU and the current CPU goes into idle for longer. But, again,
+> we can't tell in the arch callback. The cpuidle driver calling into
+> firmware is slightly better informed since it knows it's been idle (or
+> going to be) for longer.
 
-----------------------------------------------------------------
-- Add the DT binding for the rk3576 compatible (Detlev Casanova)
+Yes, cpuidle is a whole different case - this is mainly targeted at the
+case where that's been disabled in the kernel configuration (I was
+considering making this conditional on !CPUIDLE, it was an oversight not
+to do that in the first place).
 
-- Use for_each_available_child_of_node_scoped() to remove the
-   of_node_put() calls in the loop (Zhang Zekun)
+> > > Also this looks hypothetical until we have some hardware to test it on,
+> > > see how it would behave with a shared SME unit.
 
-- Add the ability to register external callbacks for suspend/resume on
-   ACPI PM driver and enable to turn it off when suspended (Marek
-   Maslanka)
+> > The specific performance impacts will depend on hardware (there'll
+> > likely be some power impact even on things with a single FP unit per
+> > PE) but given that keeping SM and ZA disabled when not in use is a
+> > fairly strong recommendation in the programming model my inclination at
+> > this point would be to program to the advertised model until we have
+> > confirmation that the hardware actually behaves otherwise.
 
-- Use the devm_clk_get_enabled() variant on the ingenic timer (Huan
-   Yang)
+> Does the programming model talk about shared units (I haven't read it,
+> not even sure where it is)? I hope one CPU cannot DoS another by not
+> issuing SMSTOPs and the hardware has some provisions for sharing that
+> guarantees forward progress on all CPUs. They may not be optimal but
+> it's highly depended on the software usage and hardware behaviour.
 
-- Add missing iounmap() on errors in msm_dt_timer_init() (Ankit
-   Agrawal)
+This is all getting totally into IMPDEF behaviour (and QoI issues) but
+implementations are supposed to default to something which shares things
+equally between all the users and guarantees forward progress.  Anything
+that doesn't guarantee forward progress would obviously be quite
+specialist, and you'd hope that if the PE isn't actually issuing FP
+instructions it won't impact anything.  Even if things do great you'll
+still have the cost of keeping the unit on though.
 
-- Add missing clk_disable_unprepare() in init routine error code path
-   on the asm9260 and the cadence_ttc timers (Gaosheng Cui)
+> I'm inclined not to do anything at this stage until we see the actual
+> hardware behaviour in practice.
 
-- Use request_percpu_irq() instead of request_irq() in order to fix a
-   wrong address space access reported by sparse (Uros Bizjak)
+Like I say my inclination is the opposite way round, though probably
+with a check for !CONFIG_CPUIDLE.
 
-- Fix comment format for the pmc_core_acpi_pm_timer_suspend_resume()
-   function (Marek Maslanka)
+--A2vu8oGfyfYpZjk9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-Ankit Agrawal (1):
-       clocksource/drivers/qcom: Add missing iounmap() on errors in 
-msm_dt_timer_init()
+-----BEGIN PGP SIGNATURE-----
 
-Detlev Casanova (1):
-       dt-bindings: timer: rockchip: Add rk3576 compatible
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbbONMACgkQJNaLcl1U
+h9DatQf8D9DHZ0Vhbq9V0cW2vIt6LXXEvxPf5EjBHJ1p6KSyMGAvAdxDqz/09FN5
+NJuh7VMS6a41FqJlxNx3P3f+5qBk2L+IrEycA4jXrjXIx2Hfzt95NKc3KoGu44jS
+gh+VJ0Vc7kz+CgvLOnPb4qATxQpX9XstQdPtDty5qBERzeHslmiaQiL7wQc7zbBQ
++M9FNp+DUmZHZ0PS++bvyVTjUNzaspkXRW89OTejVXfRkrve6OXP6dG1GZv8dNr1
+Xg3GQNYNnYHDAbx/m95mIOFbeQu0mZrGXw0QKYdkpk978dT+zcSh9jLGaNRdbefm
+aYPmR8eWD54xQ42n1T+hh+xljVjQmQ==
+=Zxil
+-----END PGP SIGNATURE-----
 
-Gaosheng Cui (2):
-       clocksource/drivers/asm9260: Add missing clk_disable_unprepare in 
-asm9260_timer_init
-       clocksource/drivers/cadence-ttc: Add missing 
-clk_disable_unprepare in ttc_setup_clockevent
-
-Huan Yang (1):
-       clocksource/drivers/ingenic: Use devm_clk_get_enabled() helpers
-
-Marek Maslanka (3):
-       clocksource: acpi_pm: Add external callback for suspend/resume
-       platform/x86:intel/pmc: Enable the ACPI PM Timer to be turned off 
-when suspended
-       platform/x86:intel/pmc: Fix comment for the 
-pmc_core_acpi_pm_timer_suspend_resume function
-
-Uros Bizjak (1):
-       clocksource/drivers/jcore: Use request_percpu_irq()
-
-Zhang Zekun (1):
-       clocksource/drivers/arm_arch_timer: Using 
-for_each_available_child_of_node_scoped()
-
-  .../bindings/timer/rockchip,rk-timer.yaml          |  1 +
-  drivers/clocksource/acpi_pm.c                      | 32 +++++++++++++++
-  drivers/clocksource/arm_arch_timer.c               | 11 ++----
-  drivers/clocksource/asm9260_timer.c                |  1 +
-  drivers/clocksource/ingenic-ost.c                  |  7 +---
-  drivers/clocksource/jcore-pit.c                    |  7 ++--
-  drivers/clocksource/timer-cadence-ttc.c            |  6 ++-
-  drivers/clocksource/timer-qcom.c                   |  7 +++-
-  drivers/platform/x86/intel/pmc/adl.c               |  2 +
-  drivers/platform/x86/intel/pmc/cnp.c               |  2 +
-  drivers/platform/x86/intel/pmc/core.c              | 45 
-++++++++++++++++++++++
-  drivers/platform/x86/intel/pmc/core.h              |  8 ++++
-  drivers/platform/x86/intel/pmc/icl.c               |  2 +
-  drivers/platform/x86/intel/pmc/mtl.c               |  2 +
-  drivers/platform/x86/intel/pmc/spt.c               |  2 +
-  drivers/platform/x86/intel/pmc/tgl.c               |  2 +
-  include/linux/acpi_pmtmr.h                         | 13 +++++++
-  17 files changed, 129 insertions(+), 21 deletions(-)
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--A2vu8oGfyfYpZjk9--
 
