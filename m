@@ -1,144 +1,150 @@
-Return-Path: <linux-kernel+bounces-318169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E85696E966
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 389F296E969
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 07:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF361C22337
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:43:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571841C2153E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 05:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FCC1304BF;
-	Fri,  6 Sep 2024 05:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685CE130AF6;
+	Fri,  6 Sep 2024 05:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zo7pzq3Q"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b1tUGkeO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72750823DE;
-	Fri,  6 Sep 2024 05:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821443EA71;
+	Fri,  6 Sep 2024 05:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725601378; cv=none; b=LG9GttCGWndWnfC0c33uSwE3/7YttV7YI8w80SgFyyD9BHN6SJ+KBuaUkJBo6RNPNNzq9D2g2LnpDYBLD7M0yqw2+ypeF7gCTay26u5YpmidDv1Pg8fbxy5Vc6ajfn8w0PWqgUJ3uWjfQ9vz7TWBmdd9beK/j86yA1mH9Q7W3X8=
+	t=1725601425; cv=none; b=oHeihMxTTAYaAQCGfqxZzvPtylPagP2nTzYNIce4a0jgRFOdaZi6pAlxzVqwaXhAmZzgxv4F3ncRtBam4IH1nGdvlx02aCaf18V5LMFz0Mboeqn7MXGdohGEQbBxyJEmOf6WlWqc5GJQHDksCmjgsPldWuGRg6a82Xxj4/fZN9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725601378; c=relaxed/simple;
-	bh=FibNwDMhsA8z2wTpJ/BzZSh9CtLlTzrE9Qno5NZov7E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=s7rCqZBpPRfSZw7Ou4CgF3n9wWfiWgl5euG15uvpKUCkiXGfwbKxChp4psC8CQaTjmcNm8KiZ6H/Zg7MevDGVqykcLWDShWzDlP6Oo0NeQ+LMI0EOLTStiLT7KSmvvaEFIZ6SdjId2WklBI2Dw3z0yvS6Lg3v+iShu9PtFmQmzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zo7pzq3Q; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so834798f8f.0;
-        Thu, 05 Sep 2024 22:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725601375; x=1726206175; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vjpDyak0TFczfXSRi7Pq8kh8YugVSoE+O6Foe+VRLcA=;
-        b=Zo7pzq3QHFfdBpdpuHoCq7btcMMyZGBfyFL0dXEh3oB6INyFaH1OhsNhVTKme1WdHO
-         U4TjtkiR8uv29hPlqqee/RtzVgRFyrx3qgeZbt7yjSeQCwcCQO+SgjJpfMMpNjxNMUe2
-         CUq2pFJGE68fDpmUujWN7co8xtwMYqR9Z5eeHWyVe76ULAE0ZTgJQJQSZ+wK9d/dudvd
-         4zdwra6bfvcxupJzRS7O7x1yKnas8DoZaN371YYUW/lAVanTndBrVC7QUU4ZapLdBn7k
-         +AfWADd2p9yi8JD9aB16R3m++e19ScZ0+DHtQpmrReb+cQ7rA/1idqsCu2EEt+PDn9Mk
-         k1YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725601375; x=1726206175;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vjpDyak0TFczfXSRi7Pq8kh8YugVSoE+O6Foe+VRLcA=;
-        b=PxiVy0Cih7Y5/BAMNsaYvUzrbZWykcBXdXjHy4rZSqupSduuo6MJzsLd9HoKITUKdz
-         hkpzu5td/Yn8JVJ5rIutZok7HqZg5qyUkWSpki1QOYZ/08gDlDpKxKk5aamOOixYe02p
-         M5uoqxC2alcEH7WIfhz2rLaejpo+xymUYyk31FkM++YyNg4CsnKkqLNtJrIATIsmIoKA
-         8nmhMMVGsGEZtWWYZdvCnKPVmA0fjiAlD52MmDhiQJn7WKUepRc9ZW9GJb4HvioYbgdC
-         TUWBT6l1Zmky4aqB6iDJ5uhrZ4Ep7XGd57Bq9jQlJn3b/dUSL76F+1bZ8PnuLNIKSOYX
-         PAgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8BEQRc0S0zOIT+yUv67EgVcg6PG1mBLDU654cP6WIvx9upzxSQkonLJ070D/Jv2e9q5A9Eu3h1QzF@vger.kernel.org, AJvYcCXUNk/0zp1MxNhUIwoUb01nArgc8/gYfi50HDbTuwk2XPzwh6Al+6QiR45nbvo2g/6fS+IjXcCUgqApOv+T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNMbv6g5BVMZy7/qlZ2OBViEQlAfzu2i3I+ZdCcBDJhRHzymWl
-	YuMZieY0pPvJsnffLZ/26XwEghtx2vXxRYXWjSEzNOeWhrdOLmkGCHwWUyLgiRc=
-X-Google-Smtp-Source: AGHT+IHEE2ETGsFjotqK0IiGxCscqkAmi1xG8i8FdV0u62BNo/JNchjZe5S9F9NnC5dhPEM5IVYtVA==
-X-Received: by 2002:a5d:42c4:0:b0:374:c33d:377b with SMTP id ffacd0b85a97d-378896a5d0cmr935331f8f.45.1725601374090;
-        Thu, 05 Sep 2024 22:42:54 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374ca0cef22sm12568102f8f.106.2024.09.05.22.42.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 22:42:53 -0700 (PDT)
-Message-ID: <35d882417c0a9c37e51b878790e2fa31dd0a1d63.camel@gmail.com>
-Subject: Re: [PATCH v2 4/9] iio: backend adi-axi-dac: add registering of
- child fdt node
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
- <adureghello@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 06 Sep 2024 07:42:52 +0200
-In-Reply-To: <7bd162bb-dce8-4aff-9f56-1ab73b091a28@baylibre.com>
-References: 
-	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
-	 <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-4-87d669674c00@baylibre.com>
-	 <7bd162bb-dce8-4aff-9f56-1ab73b091a28@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725601425; c=relaxed/simple;
+	bh=QALysbEfzf6RkIso6C9fLiPPbsx+FjMEmnplVNyCwVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JnByqDYWURUIKCd/sFBYo55akqqF8g7SMx/C8V+gdNEx4zkIedYZneGvh6R4TGmP2e1Fe8xLTPZRl1webWGduM2j9Lt9Qn4bXlZQD4UcvEWz654Rm1LjnKI9RsvVQe0s507GVtklHAAq+9JWD08sPfFO2SCBXzLKOq1xYUuHwfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b1tUGkeO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 485JlVVO003624;
+	Fri, 6 Sep 2024 05:43:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	muMw3xEZUEqQ2KRiHg8E1HlqwPDT1EzEEMwXJzk4ryY=; b=b1tUGkeOHgCpY9vk
+	WIV8ji6zVr6Fl2H5b7VPdBRWps1Bz/MpvG25iDUGfQhV/jJvT0ycwOUXNG1FH0pG
+	dUYb/+ez9xdsBKMR5BPsej0ZAKPQQF+mwFyqe1Oa1SVdt8j0rJBw2ecvZI582GEW
+	8/M0PA7pSheOay+YW0uhDzy8DSPyOUKFS8SRAPIWmiELip9BR8MdYbIJDACQM2Dv
+	d4xrMTadeW7e7mFQpSfJbeXA9gnzdcE/0CJ4U87QVwlXMZpO/DYGAAKsOqzyNNY8
+	D1r9rNtOfUrY2R3Ort43dMKkUxArxcbpVaRwd/fXInnquNFjJEl3jdLW+AWKE88W
+	vwnxyQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41fhwu16n3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Sep 2024 05:43:39 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4865hdZP024519
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Sep 2024 05:43:39 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Sep 2024
+ 22:43:36 -0700
+Message-ID: <19cf953d-09b2-4c5c-9201-5f1fd84118e7@quicinc.com>
+Date: Fri, 6 Sep 2024 13:43:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] soc: qcom: llcc: add errata to get bank num
+To: Konrad Dybcio <konradybcio@gmail.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Conor Dooley
+	<conor@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
+ <20240903-qcs8300_llcc_driver-v1-3-228659bdf067@quicinc.com>
+ <bb1a6cd0-42aa-4452-9203-460ba768e6a0@gmail.com>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <bb1a6cd0-42aa-4452-9203-460ba768e6a0@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2kB2qB_0xhV5-huAN3EPfcLbCRKztUVd
+X-Proofpoint-GUID: 2kB2qB_0xhV5-huAN3EPfcLbCRKztUVd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-05_17,2024-09-05_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1011 impostorscore=0 spamscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409060040
 
-On Thu, 2024-09-05 at 14:19 -0500, David Lechner wrote:
-> On 9/5/24 10:17 AM, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> >=20
-> > Change to obtain the fdt use case as reported in the
-> > adi,ad3552r.yaml file in this patchset, with the DAC device that
-> > is actually using the backend set as a child node of the backend.
-> >=20
-> > To obtain this, registering all the child fdt nodes as platform
-> > devices.
-> >=20
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > Co-developed-by: David Lechner <dlechner@baylibre.com>
-> > Co-developed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-> > ---
-> > =C2=A0drivers/iio/dac/adi-axi-dac.c | 15 +++++++++++++++
-> > =C2=A01 file changed, 15 insertions(+)
-> >=20
-> > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-da=
-c.c
-> > index cc31e1dcd1df..e883cd557b6a 100644
-> > --- a/drivers/iio/dac/adi-axi-dac.c
-> > +++ b/drivers/iio/dac/adi-axi-dac.c
-> > @@ -783,6 +783,7 @@ static int axi_dac_probe(struct platform_device *pd=
-ev)
-> > =C2=A0{
-> > =C2=A0	struct axi_dac_state *st;
-> > =C2=A0	const struct axi_dac_info *info;
-> > +	struct platform_device *child_pdev;
-> > =C2=A0	void __iomem *base;
-> > =C2=A0	unsigned int ver;
-> > =C2=A0	struct clk *clk;
-> > @@ -862,6 +863,20 @@ static int axi_dac_probe(struct platform_device *p=
-dev)
-> > =C2=A0		return dev_err_probe(&pdev->dev, ret,
-> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to register iio backend\n");
-> > =C2=A0
-> > +	device_for_each_child_node_scoped(&pdev->dev, child) {
->=20
-> This should use fwnode_for_each_available_child_node() so that it skips
-> nodes with status !=3D "okay".
->=20
+Hi Konrad,
 
-device_for_each_child_node() already only looks at available nodes IIRC
+On 9/5/2024 9:29 PM, Konrad Dybcio wrote:
+> On 3.09.2024 8:21 AM, Jingyi Wang wrote:
+>> Use "num-banks" property to indicate the actual num of banks for
+>> errata.
+>>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>> ---
+>>  drivers/soc/qcom/llcc-qcom.c | 15 ++++++++++-----
+>>  1 file changed, 10 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+>> index 8fa4ffd3a9b5..3fb45e625d82 100644
+>> --- a/drivers/soc/qcom/llcc-qcom.c
+>> +++ b/drivers/soc/qcom/llcc-qcom.c
+>> @@ -1275,12 +1275,17 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>>  		goto err;
+>>  	cfg = &cfgs->llcc_config[cfg_index];
+>>  
+>> -	ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+>> -	if (ret)
+>> -		goto err;
+>> +	if (unlikely(!of_property_read_u32(dev->of_node, "num-banks", &num_banks))) {
+>> +		/* errata: get num of llcc banks. */
+>> +	} else {
+>> +		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+>> +		if (ret)
+>> +			goto err;
+>> +
+>> +		num_banks &= LLCC_LB_CNT_MASK;
+>> +		num_banks >>= LLCC_LB_CNT_SHIFT;
+>> +	}
+> 
+> Is num-banks going to be populated by the bootloader, or hardcoded?
+> 
+> If the latter, we may just do so in the driver, hoping no more SoCs
+> have this erratum..
+> 
+> Konrad
 
-- Nuno S=C3=A1
+We would like modify that in driver instead of bootloader, so you suggestion
+is hardcode it in struct like "qcom_llcc_config" instead of adding property
+in devicetree? Please correct my if there is misunderstanding.
+
+Thanks,
+Jingyi
+
 
 
