@@ -1,114 +1,236 @@
-Return-Path: <linux-kernel+bounces-318500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFB096EEC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17F996EECA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 11:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882DF286057
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A38F1C23BC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 09:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB161C7B73;
-	Fri,  6 Sep 2024 09:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3D01C7B92;
+	Fri,  6 Sep 2024 09:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UrC1BctU"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5OBxIfz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959C714AD02
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 09:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C802D1C7B82;
+	Fri,  6 Sep 2024 09:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725613478; cv=none; b=YZ67axi5qNuSGW3w79gnOkb0YTcUPNf15MtYrFdWe0P7rrNxduERW53uX2P3kbL6tf1whhOJF9SAAj858HBoM6gBeWI7nUG7fkUNV0PQ84rOvKmKQK454Bt+aImrzhhnWCRgTez368rpqCCNeWEjJljz/tDxnzK+1211ir7suhQ=
+	t=1725613479; cv=none; b=E6XGJQc7L+FUVjKgO8G+X9yAj+/hmMBrsJEwZFjN7DCcZotk7al9MBy0R1w8UR2udpYdwt/N3ZEvVZJQgXTUPfCTJmF5QtbtyHgazxadEAbT1H79Q6fpYGYhqQHmgF/H6XNBmw/IlhtYaMgpzLjHaVVyDi7kpI6gDCd7hR6vPgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725613478; c=relaxed/simple;
-	bh=B497wLt2ssybD9uJU4DGGl+hO6F5Bn8pmYWMZSWCJds=;
+	s=arc-20240116; t=1725613479; c=relaxed/simple;
+	bh=Le2oIPvtlq+pLBLTecCbgOVdJnpt21aAFe8k39P1tc0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTo84NhlKvH8OIx8cun6kTA0DpWbRgsDw3upkQ4ax6GJoete/VgpJyn6uSEqa87PGBCmD8P+oaZAuQhgkmr4rlvxI7Y/B8rljC1lhlDyZ18Nj5nAej6RldZy9Kw+pKf6J2o/y+X7cXnZJjXBB9oiCQh7RMee/kqjyNm82WiqJ94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UrC1BctU; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TrlHxR1jRMFGe1uMPDdSvo212z3cM9yHy4/c2tNOpFk=; b=UrC1BctU15E3CSynEb3sqI291g
-	oFPCx8ZE3dNdsGMfsrOI3vh+enUhgHV589qylUJPgxdZOrRTrZi1Jq3snHP+68Gf+QrbHwMhU6yJv
-	3BbOsu0xKVPKAUPbo40kVIFzLG4ei6qDHNm10ycE7OiztiFR2ctHt2XTtg/n2Yf46m0GqEC6MGukz
-	iMF57ECWrjklev4jGsH7TjHFcQA4tEcxDm+5xXNkuUcHUiGTpWTY3t9mQlNo5gWfKtZoNhV4OFgJB
-	HuPARW6DQwvodDZN0KKp+wPTSVMglR9Loss03TfcslL+aNDjLKrhQMxEpNWg++eOHQalTov3/6idL
-	wKz5S5xA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1smUtB-00000000dB1-1VYG;
-	Fri, 06 Sep 2024 09:04:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 03E313003E1; Fri,  6 Sep 2024 11:04:21 +0200 (CEST)
-Date: Fri, 6 Sep 2024 11:04:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Handle cases where
- pick_task_scx() is called without preceding balance_scx()
-Message-ID: <20240906090420.GU4723@noisy.programming.kicks-ass.net>
-References: <Ztj_h5c2LYsdXYbA@slm.duckdns.org>
- <20240905092858.GA15400@noisy.programming.kicks-ass.net>
- <20240905150012.GF4928@noisy.programming.kicks-ass.net>
- <ZtnfRnmo-EpWKcyC@slm.duckdns.org>
- <ZtpYGQ73WQcb95Fe@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KbPSZ5AKJrERYQx2KTdCPj3LFm2fCQ7wJ7xu8xc7I6cnxMAKEfDAQ5N2058M0JHZ28YIl1EqAnoQ4ElqnHcFMOcNnO7RiWJgoTnmsyGVGAUzHYwc78SmT9MesDahq7xnWJ+Heogm0kLDycJjjTCCYWXss0Aa84b5WxaeEgAs+Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5OBxIfz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79EDC4CEC4;
+	Fri,  6 Sep 2024 09:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725613479;
+	bh=Le2oIPvtlq+pLBLTecCbgOVdJnpt21aAFe8k39P1tc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C5OBxIfz/6c5TB3tGWtwoH+VeiWRNd0r4qJanosGCuY1lv+l3+2TgEob6PtDTt+iw
+	 tum4dc2Snsv8jyw2jn2vCSZdK3sMWB1XhdvKFfYvtih1fn4/LifCpHVVfXWYtrV6c6
+	 ytOh2jrCekCiQ43UPUtUFLLe0/TSI12YMBpCEqjbUcrRurSUoZUW3br1j3ultELUeg
+	 1T1KDMxhOJVxJFkYNSbr7d9Po6hx9jt4T9aNUuDzBDaQH/jYo6ba/LrdfnsPNhTVIX
+	 GT51OJAROxTjkBJOEHfVdXEGXrVp6OPE/QUXofVEB/fCSqmAnPdpxvDU+JXUkyQE1O
+	 ZGZ7C63A+UuSg==
+Date: Fri, 6 Sep 2024 10:04:40 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
+ property
+Message-ID: <20240906-venomous-candle-8348b00640ca@squawk>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+ <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
+ <20240829-stopwatch-morality-a933abb4d688@spud>
+ <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
+ <20240830-quilt-appointee-4a7947e84988@spud>
+ <9015bc26-1a3a-49df-8728-12ceb8993035@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ERt/zHyxT7r5QZIw"
 Content-Disposition: inline
-In-Reply-To: <ZtpYGQ73WQcb95Fe@slm.duckdns.org>
-
-On Thu, Sep 05, 2024 at 03:17:13PM -1000, Tejun Heo wrote:
-> On Thu, Sep 05, 2024 at 06:41:42AM -1000, Tejun Heo wrote:
-> > > @@ -12716,6 +12716,12 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
-> > >  	if (this_rq->cfs.h_nr_running && !pulled_task)
-> > >  		pulled_task = 1;
-> > >  
-> > > +	/*
-> > > +	 * We pulled a task, but it got stolen before we re-acquired rq->lock.
-> > > +	 */
-> > > +	if (!this_rq->cfs.h_nr_running && pulled_task)
-> > > +		pulled_task = 0;
-> > > +
-> > 
-> > Lemme test that.
-> 
-> Did a bit of testing and it seems like it's mostly coming from delayed
-> dequeue handling. pick_next_entity() does this:
-> 
-> 	struct sched_entity *se = pick_eevdf(cfs_rq);
-> 	if (se->sched_delayed) {
-> 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
-> 		SCHED_WARN_ON(se->sched_delayed);
-> 		SCHED_WARN_ON(se->on_rq);
-> 		return NULL;
-> 	}
-> 
-> rq->cfs.nr_running includes the number of delay dequeued tasks which aren't
-> really runnable, so it seems like balance_fair() saying yes and
-> pick_next_entity() then hitting a delayed task.
-
-Duh, yes.
-
-> Maybe the solution is
-> tracking the number of delayed ones and subtracting that from nr_running?
-
-That came up yesterday for something else as well. Let me see if I can
-make that happen.
+In-Reply-To: <9015bc26-1a3a-49df-8728-12ceb8993035@baylibre.com>
 
 
-Anyway, I suppose you keep your patch for now until I've managed to sort
-this out.
+--ERt/zHyxT7r5QZIw
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 02, 2024 at 11:32:37AM +0200, Angelo Dureghello wrote:
+> Hi Conor,
+>=20
+>=20
+> On 30/08/24 5:33 PM, Conor Dooley wrote:
+> > On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
+> > > Hi Conor,
+> > >=20
+> > > On 29/08/24 5:46 PM, Conor Dooley wrote:
+> > > > On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > >=20
+> > > > > Add bus property.
+> > > > RFC it may be, but you do need to explain what this bus-type actual=
+ly
+> > > > describes for commenting on the suitability of the method to be
+> > > > meaningful.
+> > > thanks for the feedbacks,
+> > >=20
+> > > a "bus" is intended as a generic interface connected to the target,
+> > > may be used from a custom IP (fpga) to communicate with the target
+> > > device (by read/write(reg and value)) using a special custom interfac=
+e.
+> > >=20
+> > > The bus could also be physically the same of some well-known existing
+> > > interfaces (as parallel, lvds or other uncommon interfaces), but using
+> > > an uncommon/custom protocol over it.
+> > >=20
+> > > In concrete, actually bus-type is added to the backend since the
+> > > ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes DDR
+> > > parallel bus (interface that i named QSPI, but it's not exactly a QSPI
+> > > as a protocol), so it's a device-specific interface.
+> > >=20
+> > > With additions in this patchset, other frontends, of course not only
+> > > DACs, will be able to add specific busses and read/wrtie to the bus
+> > > as needed.
+> > >=20
+> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > ---
+> > > > >    Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9=
+ +++++++++
+> > > > >    1 file changed, 9 insertions(+)
+> > > > >=20
+> > > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-da=
+c.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > index a55e9bfc66d7..a7ce72e1cd81 100644
+> > > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> > > > > @@ -38,6 +38,15 @@ properties:
+> > > > >      clocks:
+> > > > >        maxItems: 1
+> > > > You mentioned about new compatible strings, does the one currently
+> > > > listed in this binding support both bus types?
+> > You didn't answer this, and there's insufficient explanation of the
+> > "hardware" in this RFC, but I found this which is supposedly the
+> > backend:
+> > https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
+> > adi,axi-dac.yaml has a single compatible, and that compatible has
+> > nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I would
+> > expect either justification for reuse of the compatible, or a brand new
+> > compatible for this backend, even if the driver can mostly be reused.
+> >=20
+> > Could you please link to whatever ADI wiki has detailed information on
+> > how this stuff works so that I can look at it to better understand the
+> > axes of configuration here?
+>=20
+> https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+>=20
+> that has same structure and register set of the generic ADI AXI-DAC IP:
+> https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
+>=20
+>=20
+> > > > Making the bus type decision based on compatible only really makes =
+sense
+> > > > if they're different versions of the IP, but not if they're differe=
+nt
+> > > > configuration options for a given version.
+> > > >=20
+> > > > > +  bus-type:
+> > > DAC IP on fpga actually respects same structure and register set, exc=
+ept
+> > > for a named "custom" register that may use specific bitfields dependi=
+ng
+> > > on the application of the IP.
+> > To paraphrase:
+> > "The register map is the same, except for the bit that is different".
+> > If ADI is shipping several different configurations of this IP for
+> > different DACs, I'd be expecting different compatibles for each backend
+> > to be honest
+>=20
+> i am still quite new to this fpga-based implementations, at least for how
+> such IPs are actually interfacing to the linux subsystem, so i may miss
+> some point.
+>=20
+> About the "adi,axi-dac-9.1.b" compatible, the generic DAC IP register set
+> is mostly the same structure of this ad3552r IP (links above), except for
+> bitfields in the=A0DAC_CUSTOM_CTRL register.
+>=20
+> My choice for now was to add a bus-type property.
+>=20
+> Not an HDL expert, but i think a different bus means, from an hardware po=
+int
+> of
+> view, a different IP in terms of internal fpga circuitry, even if not as a
+> register-set.
+
+Depending on whether or not the unmodified driver can be used with this
+IP (so the QSPI bus stuff would need to be optional) then a fallback
+should be used given the degree of similarity. It, however, seems likely
+that is not the case, and without the QSPI bus there'd be no way to
+communicate with the device. Is there any reason to use this IP as a
+backend, without connecting the QSPI bus at all, leaving the ADC/DAC on
+a regular SPI bus?
+
+>=20
+>=20
+> > .
+> > If each DAC specific backend was to have a unique compatible, would the
+> > type of bus used be determinable from it? Doesn't have to work for all
+> > devices from now until the heath death of the universe, but at least for
+> > the devices that you're currently aware of?
+> >=20
+> > > > If, as you mentioned, there are multiple bus types, a non-flag prop=
+erty
+> > > > does make sense. However, I am really not keen on these "forced" nu=
+merical
+> > > > properties at all, I'd much rather see strings used here.
+> > > > > +    maxItems: 1
+> > > > > +    description: |
+> > > > > +      Configure bus type:
+> > > > > +        - 0: none
+> > > > > +        - 1: qspi
+> > Also, re-reading the cover letter, it says "this platform driver uses a=
+ 4
+> > lanes parallel bus, plus a clock line, similar to a qspi."
+> > I don't think we should call this "qspi" if it is not actually qspi,
+> > that's just confusing.
+>=20
+> Agree, name should be something different.
+
+Nuno's comment appears to disagree, and that is /is/ actually a qspi
+controller. Please see my comments to him about parentage.
+
+--ERt/zHyxT7r5QZIw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtrFpAAKCRB4tDGHoIJi
+0g3wAP9s/XejcMpB6KWLTrimG/V79jhB5R7aZ0Bhehsa5VCuvwD/fMyuRfcymdHv
+lFTOFyh8Poe07NdTLRgBoj3gFZpd7Qs=
+=uDft
+-----END PGP SIGNATURE-----
+
+--ERt/zHyxT7r5QZIw--
 
