@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-318455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-318456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775FA96EE43
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1AC96EE44
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 10:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9988B25629
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:36:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1F81C23CC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 08:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0598B158216;
-	Fri,  6 Sep 2024 08:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ijaXyTGO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936515624B;
+	Fri,  6 Sep 2024 08:36:38 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD82156887;
-	Fri,  6 Sep 2024 08:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C12155741
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 08:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611786; cv=none; b=BkfBsJOLq3Ga+mQ8CVkIeIk+9bzMg+9yxVEivDI4DyxJkcLr5kqrDBCbS55sNp8z+HmCN2hG8d6JHsx02gjYhwxU5twAVi1bHICWdIjnCAEoc49KjDsrVG+0hqMXe1ocwEu1QS2yW65A13Wfl9I/Fj6KU+p/+G0nExVjZNp6qCA=
+	t=1725611798; cv=none; b=avY6MFMcd3cpPuBOCPTS5Jy7WihFwgLAKKz+Y5s/lrbhyBPJelGWu9/wsgQtWBpxSX3HO6dk5kGYzeRqYdjnKRKWRTSnP10gdM50JngCyz8gSlajEygMLp0raeL7RhPwPT+/MQ5Mx94HjuzuTMF06YLXWrQrjl1k07yTWp+jfNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611786; c=relaxed/simple;
-	bh=Ufb1LlJGHhC6MxgpYbKC14Y6OPK7bDTGXrteL1QT4AU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=krvvuzQaVE0TRpN0hHwSTOY9yC7WWqxkwrLTUB7Z7u+i1m0dKps9rbZHYLnK2qfBxExq8w3QnQS0leK9bsb6QhHqXIuSlEfuqpzvvj5+XYAGbsjhOEs61It96+5jTyyC9e2NTJyhUgrFBRNePLIhiH/E6YTTm0uSyf/nta0CxmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ijaXyTGO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725611782;
-	bh=TuqfYsJZU0XQyuCWKxvpq7UEnmN1oev/1RlFk9+uzJI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ijaXyTGOyVAItIiYjSDMMUKKHXCqe8SrrXpj4y2K8Q8de9tStY/LETB0C/YANi489
-	 cqg4zwp2cBJFNjIBozzgopMe5RMJ+t0g5uiZcgBIXvRB0dS38NbEozd0n6z4yfJUIi
-	 c25GLPjjTD6/YtnkAsn71LI+TDzBUfYFBT3ewgbVT7Gfit18NuAUxETWb5vvgq81tm
-	 V39ZABMGu3SNJB60KRP0Z8iF2CQbrocbyminyyyMc0reQSZkX3Y8Y43nEZB5JZiHBd
-	 L9VkNCGwTJwBVIpOGhtNoDDrfpLVNR/EQzmIzL6UEtncUVBVdCQ2IZQtITOW3ynl3U
-	 10IaiVkjymY2A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X0V1x5CVhz4w2N;
-	Fri,  6 Sep 2024 18:36:21 +1000 (AEST)
-Date: Fri, 6 Sep 2024 18:36:21 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>
-Cc: Andrew Davis <afd@ti.com>, Hari Nagalla <hnagalla@ti.com>, Martyn Welch
- <martyn.welch@collabora.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the rpmsg tree
-Message-ID: <20240906183621.6c630b7f@canb.auug.org.au>
-In-Reply-To: <20240828150900.7ffd7588@canb.auug.org.au>
-References: <20240822142603.3608a26d@canb.auug.org.au>
-	<20240828150900.7ffd7588@canb.auug.org.au>
+	s=arc-20240116; t=1725611798; c=relaxed/simple;
+	bh=LX8d09ElBUQrKuUSUc/NzyTz7UsOkBUXjBdIXEkeEJs=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=noaUp+kMkZA59SzTs408ZErJXxbiJZ6bpekwm2CJvbS3Bqw43UmiId/ccWWm3UgABwdnVS1UTfMYbNEDnCjYBftq5EYAYf3BbrCdLtWNxhvFS9uZSEXj7YZoDEPqdPpXFLCTm4KMWVit0NpFAnUNzAKTSf9sECHM8GSg4lc16e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X0V1j5nCmz1j8Fj;
+	Fri,  6 Sep 2024 16:36:09 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 679981402DE;
+	Fri,  6 Sep 2024 16:36:32 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 6 Sep 2024 16:36:31 +0800
+CC: <yangyicong@hisilicon.com>, Pierre Gondois <pierre.gondois@arm.com>,
+	<linuxppc-dev@lists.ozlabs.org>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <mingo@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <mpe@ellerman.id.au>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <sudeep.holla@arm.com>,
+	<will@kernel.org>, <catalin.marinas@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dietmar.eggemann@arm.com>,
+	<gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>
+Subject: Re: [PATCH v5 3/4] arm64: topology: Support SMT control on ACPI based
+ system
+To: Morten Rasmussen <morten.rasmussen@arm.com>
+References: <20240806085320.63514-1-yangyicong@huawei.com>
+ <20240806085320.63514-4-yangyicong@huawei.com>
+ <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
+ <00e6110a-462a-c117-0292-e88b57d27a05@huawei.com>
+ <3947cb79-3199-4cd6-b784-51a245084581@arm.com>
+ <1a7b5ac7-f040-672f-07a0-d7f3dc170c88@huawei.com>
+ <6c05e39c-41f3-451c-b119-7b8662c1ceee@arm.com>
+ <7f722af2-2969-aae5-1fb5-68d353eb95b9@huawei.com>
+ <277bd093-422b-4301-92a3-d0a58eb41af5@arm.com>
+ <10082e64-b00a-a30b-b9c5-1401a54f6717@huawei.com>
+ <Ztqp-SUinu8C9a-P@R5WKVNH4JW>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <bb2bd7f4-e0ea-a771-7960-e35949ec9e03@huawei.com>
+Date: Fri, 6 Sep 2024 16:36:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zOQC+lR_X4iRYSszQBxK3N9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <Ztqp-SUinu8C9a-P@R5WKVNH4JW>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
---Sig_/zOQC+lR_X4iRYSszQBxK3N9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/9/6 15:06, Morten Rasmussen wrote:
+> Hi Yicong,
+> 
+> On Thu, Sep 05, 2024 at 08:02:20PM +0800, Yicong Yang wrote:
+>> On 2024/9/5 16:34, Pierre Gondois wrote:
+>>> Hello Yicong,
+>>>
+>>> If a platform has CPUs with:
+>>> - 1 thread
+>>> - X (!= 1) threads
+>>> Then I think that the asymmetry is not detected
+>>
+>> Ah ok, I only handle the case where there are several thread numbers except no SMT CPUs in the
+>> system. For this case I was thinking we don't need to handle this since there's only one kind
+>> of SMT core in the system, control should works fine for the SMT CPU clusters and we may not
+>> care about the CPUs with no SMT.
+>>
+>> Below code should handle the case if we initialize the max_smt_thread_num to 0. I also
+>> reword the warning messages to match the fact. For heterogeneous SMT topology we still
+>> support control SMT by on/off toggle but not fully support setting the thread number.
+>>
+>> 	int max_smt_thread_num = 0;
+>> 	[...]
+>> 	/*
+>> 	 * This should be a short loop depending on the number of heterogeneous
+>> 	 * CPU clusters. Typically on a homogeneous system there's only one
+>> 	 * entry in the XArray.
+>> 	 */
+>> 	xa_for_each(&hetero_cpu, hetero_id, entry) {
+>> 		/*
+>> 		 * If max_smt_thread_num has been initialized and doesn't match
+>> 		 * the thread number of this entry, then the system has
+>> 		 * heterogeneous SMT topology.
+>> 		 */
+>> 		if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)
+>> 			pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+> 
+> What does 'partly supported' mean here?
+> 
+> If the SMT control doesn't work as intended for this topology, I don't
+> think it should be enabled for it.
+> 
 
-Hi all,
+The /sys/devices/system/cpu/smt/control supports 2 kind of controls [1]
+(a) enable/disable SMT entirely by writing on/off
+(b) enable/disable SMT partially by writing a valid thread number (CONFIG_SMT_NUM_THREADS_DYNAMIC)
 
-On Wed, 28 Aug 2024 15:09:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Thu, 22 Aug 2024 14:26:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the rpmsg tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
-> >=20
-> > WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-> >   Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
-> >   Selected by [m]:
-> >   - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 || COMP=
-ILE_TEST [=3Dy])
-> >=20
-> > Probably introduced by commit
-> >=20
-> >   ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F sub=
-system") =20
->=20
-> I am still seeing this warning.
+We assume 3 kind of SMT topology:
+1. homogeneous SMT topology, all the CPUs support SMT or not
+2.1 heterogeneous SMT topology, part of CPU clusters have SMT and others not. Clusters support SMT
+    have the same SMT thread number
+2.2 heterogeneous SMT topology, part of CPU clusters have SMT and the thread number may differs
+    (e.g. cluster 1 is of SMT 2 and cluster 2 is of SMT 4. not sure there's such a real system)
 
-I am still getting this warning.
+For any of above SMT topology, control (a) should work as expected. When enabling SMT by writing "on"
+the SMT is disabled for those CPU clusters who have SMT. Same for disabling SMT by writing "off".
+But control (b) may not work for case 2.2 since the SMT thread number is not the same across
+the system.
 
---=20
-Cheers,
-Stephen Rothwell
+For this series alone we won't met this since CONFIG_SMT_NUM_THREADS_DYNAMIC is not enabled.
+So control (b) only supports write 1/max_thread which behaves same as write off/on and will
+work as intended for all the 3 cases. As discussed Pierre will add support for
+ CONFIG_SMT_NUM_THREADS_DYNAMIC since thunderX2 is a symmetric SMT4 machine and
+CONFIG_SMT_NUM_THREADS_DYNAMIC would be useful. We thought a warning should be useful
+if running on a system of case 2.2.
 
---Sig_/zOQC+lR_X4iRYSszQBxK3N9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
 
------BEGIN PGP SIGNATURE-----
+Thanks.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbavwUACgkQAVBC80lX
-0GyZQgf+MwYetBvIMkWmc6x/0pPYvB+yVtlrRl6bmOQty14Exc5Cx6E7RvV/FQ88
-blOH4A53iKvx0fJiVQu90up1djOVshycKWIC2CN/zlqRSPrxBwz7SHSMxgjb6x1J
-9pdCziVH1r2xBCw911OjbJn0Lk2Oz7WV9RHiI5pGwuX7ZWrMLptcdCkhweb0y2yo
-Gi5MwKIN0fGCjnqaw9wunxYxAyCT7GpfbjVaDvtCoDscYQE7o7WsjA3fCtq99v10
-rHfEojW3ojj/oxpMrcYnbWqXZhU2QRsBeW5pANar0wcunWG1FF7/eb96Dx9K42wN
-2uWc7IVTDVHW02x3LkAOVQCU3bvYog==
-=TXpy
------END PGP SIGNATURE-----
-
---Sig_/zOQC+lR_X4iRYSszQBxK3N9--
 
