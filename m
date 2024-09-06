@@ -1,131 +1,88 @@
-Return-Path: <linux-kernel+bounces-319534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F1796FE0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:38:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29B896FE16
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2024 00:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96B81F2328F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:38:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE0FB24B19
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 22:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224E315B0E0;
-	Fri,  6 Sep 2024 22:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vzD4W7/i"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F6E15B0F2;
+	Fri,  6 Sep 2024 22:45:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04851581EA;
-	Fri,  6 Sep 2024 22:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244AB3612D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 22:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725662317; cv=none; b=HTsYReh7+9gEr9flp/yHYeYSLagLTh/fkcPtL6K+ajyeYe+vBQjF38OyIs3lsxvRHwHzWPXl1A/ZQ36E6o5DmoaCYiYGFZmCkTR+KQpAPHJCJab99UNgde97soPSooba0fcu3VxQcwqmBT1cqUtax5mRm9Q2BCdb7yoOKcjKYjw=
+	t=1725662704; cv=none; b=Fs1IjbyxOcqDE7wN7VUVwMeFN3E1MQpcLbHrm3Fo1BvnlwS+Q7GOAfVyFA9x74b4PG0G8MYP/F6mmFvGdA3+Cir/jZmugh5Bz9DD8IefUCmrXofLTwL1o+VySHmVObzOXMJ2UcUY0mV9527EeXMRlKHXNCee8urOBWh/gtIn6Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725662317; c=relaxed/simple;
-	bh=X/567zU5k9K5hStaCvKzrLyx0nYNiuyl9q1uQZPX8L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1pjpXh0YOItmvWh48wo6teWMJRiGNiqrggUXhGVyQDfYmS+g458oER/j1SYyCJapaKzDfMm2fc54/7D9aQ6zjkjTofx+CD/vbwv9A0ueoprD1Kvuue+E8OQCYbxtrmF8crnMg5OlzP3/Scx04F4jUR0oWWJ0VtNFxZtcecdZZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vzD4W7/i; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4B02D593;
-	Sat,  7 Sep 2024 00:37:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725662239;
-	bh=X/567zU5k9K5hStaCvKzrLyx0nYNiuyl9q1uQZPX8L8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vzD4W7/iYfESqZfmK/mbSEn5BHWHvxf2mB/jDB6qZkE4SlU6MP+u6VC3yN1UBXoA0
-	 dMDj6v6Jiz5MrFxruBYZ3W+DB7eIC6dHdkUMvlIT3McftmORcL5D43H886pgUMYCVi
-	 vSbeFfomlt/UIQqLM5HOCDtv44xnTtR8lLQC4GgI=
-Date: Sat, 7 Sep 2024 01:38:31 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/3] media: platform: rzg2l-cru: rzg2l-csi2: Implement
- .get_frame_desc()
-Message-ID: <20240906223831.GB12915@pendragon.ideasonboard.com>
-References: <20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240906173947.282402-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1725662704; c=relaxed/simple;
+	bh=8J91T6+0g+beF3geljjWtDOb+BKObrCgpP4cX5Q+tZk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Aqbg7VeDmw8YuVXOFvhS6Jg7Z+CCNCe6Ah1kCPjNiK6h0KS26aasCVLQIOG3z/aZZAR4e+YwB+e8iPw30e0YCy5VmBepNlgCbd5GZRxAkZeZE2F0751zT7ODpuzPe+Y/2434G+ZXfd+ivfvWmQ7Yp4G1ZijXysOxdWgfJOXBK0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a492c9d88so527390739f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 15:45:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725662702; x=1726267502;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRgWmnR7uxjc65cAqAgk0UjOgG5A5PqPSZqQa+3EZ2Q=;
+        b=azvFUgIbGTzflFtOCu6ifWLuHsczNCgI7juUUECPjYO/26xyj+2VDSKhvPnjX3vKU0
+         oX6SWBzxJWAP4bIQLQMfRcGmC/n/MboF1p4cl8p2JJDkmSGeafpkY6My6XTQRt2zZnqQ
+         /Ni5ec94DhdBOYQ6zP0Vh4G2Urh7sMfUFgYZYES8k1Up0RUweiMPbgrBUHyJ/YakKxeW
+         si21ZONLDb9oQpEZDh/sE431f8p/K7J2PpF3lNm1JdNxYH/4HtCl8f+IS/Q5DfNzmCGr
+         DUIqQWQcVEKZneZxfXyX0OrjJ4BXAAbu8VAt5RO4qcN8KVY1Ie05Lh58QwyGfKz5gf66
+         5+DA==
+X-Forwarded-Encrypted: i=1; AJvYcCXW4oSJft2vfofyI9TX5nljNwsC8Gt1f72AdxruTykmpWU73sYPOsyacE2kLlyJPm38ItCCtEvEb2kuWZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBcoTLFhitAj4ZPsvqaS4cfMea2x988lsW5jPX6jJzrAqkIp/z
+	DK3+F/paM+BW4vsW4MXtZKgUJREIbKAyGDOEOkkkJ+No9Vs6a5Y+RF6v6XBP/UUazYS5n23jRuz
+	yCP7QlyAJXOMo9GVxtmaLHFPhAOb0jlZiBD93MyZNiDtCdmDCQVpNGcM=
+X-Google-Smtp-Source: AGHT+IFqA9fMK742QQwzYjDsOeVkVXJcKjISB60SiHI/k2L8TrTH1fBBcL8EvOf3OrjhRjQbEWTp58lobOM9hLeOZomwN0RMMfbC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240906173947.282402-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Received: by 2002:a05:6638:6c8e:b0:4b9:b122:d07d with SMTP id
+ 8926c6da1cb9f-4d084ff3a53mr120378173.4.1725662702252; Fri, 06 Sep 2024
+ 15:45:02 -0700 (PDT)
+Date: Fri, 06 Sep 2024 15:45:02 -0700
+In-Reply-To: <20240906221658.2144-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005ec5bb06217b2833@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in
+ lockref_get_not_dead (2)
+From: syzbot <syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Prabhakar,
+Hello,
 
-Thank you for the patch.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Fri, Sep 06, 2024 at 06:39:45PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The RZ/G2L CRU requires information about which VCx to process data from,
-> among the four available VCs. To obtain this information, the
-> .get_frame_desc() routine is implemented. This routine, in turn, calls
-> .get_frame_desc() on the remote sensor connected to the CSI2 bridge.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c    | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index c7fdee347ac8..a7e4a0c109da 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -582,6 +582,17 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_subdev *sd,
->  	return 0;
->  }
->  
-> +static int rzg2l_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-> +				     struct v4l2_mbus_frame_desc *fd)
-> +{
-> +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
-> +
-> +	if (!csi2->remote_source)
-> +		return -EINVAL;
+Reported-by: syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com
+Tested-by: syzbot+f82b36bffae7ef78b6a7@syzkaller.appspotmail.com
 
-Maybe -ENODEV ?
+Tested on:
 
-> +
-> +	return v4l2_subdev_call(csi2->remote_source, pad, get_frame_desc, pad, fd);
-> +}
-> +
+commit:         d759ee24 Merge tag 'net-6.11-rc7' of git://git.kernel...
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=17816567980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f82b36bffae7ef78b6a7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16949200580000
 
-I wonder if we should implement a wrapper around .get_frame_desc() that
-would automatically forward the call to the source if .get_frame_desc()
-isn't implemented by a subdev. That's not a requirement for this series,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->  static const struct v4l2_subdev_video_ops rzg2l_csi2_video_ops = {
->  	.s_stream = rzg2l_csi2_s_stream,
->  	.pre_streamon = rzg2l_csi2_pre_streamon,
-> @@ -593,6 +604,7 @@ static const struct v4l2_subdev_pad_ops rzg2l_csi2_pad_ops = {
->  	.enum_frame_size = rzg2l_csi2_enum_frame_size,
->  	.set_fmt = rzg2l_csi2_set_format,
->  	.get_fmt = v4l2_subdev_get_fmt,
-> +	.get_frame_desc = rzg2l_csi2_get_frame_desc,
->  };
->  
->  static const struct v4l2_subdev_ops rzg2l_csi2_subdev_ops = {
-
--- 
-Regards,
-
-Laurent Pinchart
+Note: testing is done by a robot and is best-effort only.
 
