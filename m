@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-319491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-319492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC09196FD4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:27:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F31F96FD54
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 23:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E55A1F25F17
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:27:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA181C23E67
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2024 21:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC5314B956;
-	Fri,  6 Sep 2024 21:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F57715957E;
+	Fri,  6 Sep 2024 21:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JKvgTu1J"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOyEfkbK"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D56C158520
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2024 21:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608D01B85DD;
+	Fri,  6 Sep 2024 21:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725658014; cv=none; b=cJaClmZW8wTuxMXpFjUUPFK1F/MAVkWLVfMVlbIgSVY12P0c3YS3jWVNQszPdM/B07G/slCptIPMIKWFK0isOegGvijZXHQlgwr9F1hMUNP6eTDZHYmT2GK/HOcR2jILa9kD7BNdZWW7Q1eR4zBceFyA6nVNMBvSuaob96cCJsE=
+	t=1725658217; cv=none; b=QnkjYKg0DRHwEX4O8o9cUyGypx2+jdo5ajsHaUecjhF7tQLo0kkawA6aojxkqFTBj5cbCApGJknB9MS8jqPVVya6BSw9nTDH8EAoIrzYWOMqtWwoNY7AxEqV2SrYXBBX33Uh58PtOk8GNpSEAOmCKRd40RL5ysa4o+j5VMDFryE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725658014; c=relaxed/simple;
-	bh=vbvupfzOCTKreM50XsTfLydOOQ4mxvFu/eBa7h5keDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D9zf37VfrFopLozIkBJDs+A66M2WRpWrs9+QS0yo7ewl2jOv/hIoXKGHltB2ePnTqhsPq/avjDs6dujRc1HNZfu9osZHQanEuRz5rCI/BgQ+ds3Lwn3LyNQRRWJfihnu80bS8vUL5g7AOySGOs8cLGQ4hIllvM5Eb6DHFIsbhPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JKvgTu1J; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c3d209db94so2234931a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2024 14:26:53 -0700 (PDT)
+	s=arc-20240116; t=1725658217; c=relaxed/simple;
+	bh=y+y0VlIllb5CtOz4Ek+InCMwxUKWOuc56I5A+WE7J8M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OcqE/m67+f/CULrOlQoUgnDrmLpiPhbHSHBL8t7LPZcIlAYO3Ck6aB8yWeKGXoGDp1zUglLWhxlXbLdiEs7PIo1AgZjc2KPU9UHeekUim0etYWZR9qwPNSxFjjINvq6mI0Xm1wfyob6Hw1+VRtghoVWdQCso2/BQlF0OaDnNORo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOyEfkbK; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2059112f0a7so25589535ad.3;
+        Fri, 06 Sep 2024 14:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725658011; x=1726262811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=modpcTFGLF9aKbO8/hxRVTkNY+Z5zDvT8kayu0jRlU4=;
-        b=JKvgTu1Jwf2Pw5lek6K2IyNLQW1ilwlXk217vDBVUk5BvXrID+a9jrIDhOfPLa1FVB
-         HxF9a0FD/FhparVVp1c01hePYVIFYNDssVHGZMlMuwUSh50ir6Tdx1BIGO2P3zBPCamp
-         bw/b27BXhNu5S3LOkAbIsgZ50MLnbXOAdouAY=
+        d=gmail.com; s=20230601; t=1725658215; x=1726263015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsHQ5h54doNUK/ufVxcrXlo/0lcc6AzIgFEDd9yj2fY=;
+        b=LOyEfkbKKMOtMq4X5HpOq7oRblnV2p0juoW0/CKrG4MUSrHcQObf08KbeH5TpOI2FD
+         lgLO0ZxTUvkmbYTyHVfjJXK2AS4oMG15zpnuNW1IaI81ETAP7hxSWBQTf4tMSIr1+zaA
+         wGyd9D4ihqY08dVBs5A9wHSVpcCbE4Qy9xZkhjtM94hWPNf9zr0M6qACVCgzN8ohKVrU
+         EsFCMzr0tMhwunOTG3o3tHAo+GwWY6Co1qnxt/vuAOzCnyp+k6GoAcTDpkG0NhhjC/Da
+         sguRecby6SR3mInVT78LrEWdMI8LveMlj+lleWG5CDfzmDNi5vpHhKim58fMuJwE7IZM
+         2iqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725658011; x=1726262811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=modpcTFGLF9aKbO8/hxRVTkNY+Z5zDvT8kayu0jRlU4=;
-        b=pGp91zqAYjQV8YwPotjWP6sI8N3gnEM+27wkiHu4wx+E2kL4Noi+AiCxKqtgn8/6XU
-         XF0lbYvBgxfKZNyKlYa+WSWaLak+mw7Dn6TOgpZhfaQwnTw4DudZg+KgGiltvYuWh9LJ
-         whU23IGg6VjD0YRMmtAdXIl4ZpEHwPImVUErUJ9VpEyiNIGNvRExyI5j7vjARBAzhTO8
-         N9l5iU+curb+XrAaBTErFaiGAmJf3C6n9GSYEKToOgGqF/W4JqdZbZdGtXZY2y1TFr8Z
-         2CQ8gY29NP4NcLtkRSWAz8ar+LDVZxg9NOYQnrTG05NIVGzJbRnpr0s9fYs6/EAUsaHi
-         VVgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUV/o3007twK1tmTD6oeLwdRZjhb2OyGL6IqFiPY3FDqeJorFydjKulvpP1EuYHkU11Hn+LydBPrY5ZGes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwipHc5kIsRkm/EEJ7SLHhm2DSxo6qHOi2UQJgXSxWjdY7A4IZY
-	7ZKS7Wj+SJH5q//NlWSumW5yCa9MR+2scnh/Ypyh29puJk/QqiISvYx+a9ehUStkQRTxUHxxJgb
-	p9ChVdXWoih5Nx+azTcewRgAfdQJ/3EKb2ZGR
-X-Google-Smtp-Source: AGHT+IHcF5eFRWlqZt110Uz30CQNhxKthjlTRSddSsueRyNGudDWIFoPa9u+T+MfMoSREaLKrpMFRIaqTdFrN9C5Yew=
-X-Received: by 2002:a05:6402:35c1:b0:5c2:4ad9:6d9f with SMTP id
- 4fb4d7f45d1cf-5c3e953355dmr454244a12.1.1725658011403; Fri, 06 Sep 2024
- 14:26:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725658215; x=1726263015;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dsHQ5h54doNUK/ufVxcrXlo/0lcc6AzIgFEDd9yj2fY=;
+        b=bbIUShQ9B6R2ACHH1k4d5HRl4lY4FXXPdhCanfY9iKHqJMxHMAGOlDfrcHQuzZPI80
+         m3J5XDRvXYNiifo00xRGBF/J0IkPMiVhVdvV1REjkjR15Rse6kFs56WElzrXh/GT62nr
+         /8UvOOLyqK1/MjiejAao7mosXrggJyOpkNiG8bm4dui6Ms28K/8bHmsOwTvjEoUg7qfR
+         /pYdcEsxZN3Pfswy5nFu+1bBPYDR5r/p34Ul8rXuTMrZglZ6cJj/ymXBFT/eS5qeD0Tp
+         G3PIx2OCHSnB7TmbKSoKd3OBqRcRI+jBI7LXAcvIUaRkVCnKvWOLij8ROz4djmzeoGUY
+         vrqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9kwYhmFBOeKkzWXP6UdrC0yMkUhlrnqLIxwKXfdd/3qfj9nS+Ho7/m6PHHseWbHGpcOaMAnej@vger.kernel.org, AJvYcCVwpGozJ9a1JrxQ7Rz5Y8Nrpynrr3f1ikTjjD24nPbb1DU0HmEgcT8SVLunMXCReGoxAsQYUSrRKM6yINF1/z5AQHJsGNKn@vger.kernel.org, AJvYcCXVVTM5JMLp01EmP+RN001YW4GJdhfuavsMS4KQb+pLbw5YsVj+11b/L6vtYMBgHvLNxAtUD/WgxAqKQK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbF/uJv9PkY9kyIvLtPlvn0jlyQbKsbNLNQ34+SCKGPFzQivd4
+	fgCQlGoe6RfVZQmn0uzXdz85iu3nZjOSvJ4rAfY9Kioj2cHZVpta
+X-Google-Smtp-Source: AGHT+IHlBPJGfsi7DG7bnhqRrXUVLLOWGqvqfg2nr5hiLVWfmhC7Cpgcyq8IeMIPowRRJIv/NNqkCg==
+X-Received: by 2002:a17:903:18f:b0:202:cbf:2d6f with SMTP id d9443c01a7336-2070701f045mr12805625ad.57.1725658215407;
+        Fri, 06 Sep 2024 14:30:15 -0700 (PDT)
+Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea67bd1sm47081065ad.247.2024.09.06.14.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 14:30:14 -0700 (PDT)
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: outreachy@lists.linux.dev
+Cc: mic@digikod.net,
+	gnoack@google.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com,
+	jannh@google.com,
+	netdev@vger.kernel.org,
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: [PATCH v4 0/6] landlock: Signal scoping support
+Date: Fri,  6 Sep 2024 15:30:02 -0600
+Message-Id: <cover.1725657727.git.fahimitahera@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906085739.1322676-1-cengjianeng@huaqin.corp-partner.google.com>
- <20240906085739.1322676-2-cengjianeng@huaqin.corp-partner.google.com>
-In-Reply-To: <20240906085739.1322676-2-cengjianeng@huaqin.corp-partner.google.com>
-From: Hsin-Yi Wang <hsinyi@chromium.org>
-Date: Fri, 6 Sep 2024 14:26:25 -0700
-Message-ID: <CAJMQK-imYrDTuycVzQxkfbkZuHehE8uwc+qS2w=UDShETsBvEw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: arm: mediatek: Add MT8186 Ponyta Chromebook
-To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-Cc: angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	knoxchiou@google.com, hsinyi@google.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 6, 2024 at 1:57=E2=80=AFAM Jianeng Ceng
-<cengjianeng@huaqin.corp-partner.google.com> wrote:
->
-> Ponyta is a custom label Chromebook based on MT8186. It is a
-> self-developed project of Huaqin and has no fixed OEM.
->
-> Signed-off-by: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
-> ---
-> Changes in v4:
-> - PATCH 1/2: Add more info for Ponyta custom label in commit.
-> - Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjia=
-neng@huaqin.corp-partner.google.com/
->
-> Changes in v3:
-> - PATCH 1/2: Modify lable to label.
-> - Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjia=
-neng@huaqin.corp-partner.google.com/
->
-> Chage since V2:
-> - No change.
->
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Docume=
-ntation/devicetree/bindings/arm/mediatek.yaml
-> index 1d4bb50fcd8d..4bc1777b9ea6 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> @@ -257,6 +257,17 @@ properties:
->            - const: google,steelix-sku393218
->            - const: google,steelix
->            - const: mediatek,mt8186
-> +      - description: Google Ponyta (Custom label)
-> +        items:
-> +          - const: google,ponyta-sku0
-> +          - const: google,ponyta-sku2147483647
+This patch series adds scoping mechanism for signals.
+Closes: https://github.com/landlock-lsm/linux/issues/8
 
-sku2147483647 is not available anywhere besides the factory, so you
-can drop this. Same for the v4 2/2 dts patch.
+Problem
+=======
 
-> +          - const: google,ponyta
-> +          - const: mediatek,mt8186
-> +      - description: Google Ponyta (Custom label)
-> +        items:
-> +          - const: google,ponyta-sku1
-> +          - const: google,ponyta
-> +          - const: mediatek,mt8186
->        - description: Google Rusty (Lenovo 100e Chromebook Gen 4)
->          items:
->            - const: google,steelix-sku196609
+A sandboxed process is currently not restricted from sending signals
+(e.g. SIGKILL) to processes outside the sandbox since Landlock has no
+restriction on signals(see more details in [1]).
+
+A simple way to apply this restriction would be to scope signals the
+same way abstract unix sockets are restricted.
+
+[1]https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+
+Solution
+========
+
+To solve this issue, we extend the "scoped" field in the Landlock
+ruleset attribute structure by introducing "LANDLOCK_SCOPED_SIGNAL"
+field to specify that a ruleset will deny sending any signals from
+within the sandbox domain to its parent(i.e. any parent sandbox or
+non-sandbox processes).
+
+Example
+=======
+
+Create a sansboxed shell and pass the character "s" to LL_SCOPED:
+LL_FD_RO=/ LL_FS_RW=. LL_SCOPED="s" ./sandboxer /bin/bash
+Try to send a signal(like SIGTRAP) to a process ID <PID> through:
+kill -SIGTRAP <PID>
+The sandboxed process should not be able to send the signal.
+
+Previous Versions
+=================
+v3:https://lore.kernel.org/all/cover.1723680305.git.fahimitahera@gmail.com/
+v2:https://lore.kernel.org/all/cover.1722966592.git.fahimitahera@gmail.com/
+v1:https://lore.kernel.org/all/cover.1720203255.git.fahimitahera@gmail.com/
+
+Tahera Fahimi (6):
+  landlock: Add signal scoping control
+  selftest/landlock: Signal restriction tests
+  selftest/landlock: Add signal_scoping_threads test
+  selftest/landlock: Test file_send_sigiotask by sending out-of-bound
+    message
+  sample/landlock: Support sample for signal scoping restriction
+  landlock: Document LANDLOCK_SCOPED_SIGNAL
+
+ Documentation/userspace-api/landlock.rst      |  22 +-
+ include/uapi/linux/landlock.h                 |   3 +
+ samples/landlock/sandboxer.c                  |  17 +-
+ security/landlock/fs.c                        |  17 +
+ security/landlock/fs.h                        |   6 +
+ security/landlock/limits.h                    |   2 +-
+ security/landlock/task.c                      |  59 +++
+ .../selftests/landlock/scoped_signal_test.c   | 371 ++++++++++++++++++
+ .../testing/selftests/landlock/scoped_test.c  |   2 +-
+ 9 files changed, 486 insertions(+), 13 deletions(-)
+ create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
+
+-- 
+2.34.1
+
 
